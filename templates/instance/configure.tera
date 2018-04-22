@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Configuration</title>
+    </head>
+    <body>
+        <h1>Configure your instance</h1>
+        <form method="post">
+            <label for="local_domain">Internal domain</label>
+            <input name="local_domain">
+
+            <label for="public_domain">Public domain</label>
+            <input name="public_domain">
+
+            <label for="name">Name</label>
+            <input name="name">
+
+            <input type="submit" value="Let's go!"/>            
+        </form>
+    </body>
+</html>

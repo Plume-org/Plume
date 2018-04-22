@@ -1,0 +1,10 @@
+[package]
+authors = ["Bat' <baptiste@gelez.xyz>"]
+name = "plume"
+version = "0.1.0"
+[dependencies]
+diesel = { version = "*", features = [ "postgres", "r2d2" ] }
+rocket = "*"
+rocket_codegen = "*"
+rocket_contrib = { version = "*", features = [ "tera_templates", "json" ] }
+dotenv = "*"
