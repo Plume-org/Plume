@@ -1,7 +1,8 @@
 use diesel;
 use diesel::{ QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection };
 use std::iter::Iterator;
-use schema::instances;
+use schema::{instances, users};
+use models::user::User;
 
 #[derive(Identifiable, Queryable)]
 pub struct Instance {
@@ -54,6 +55,10 @@ impl Instance {
     pub fn block(&self) {}
 
     pub fn has_admin(&self, conn: &PgConnection) -> bool {
-        false
+        users::table.filter(users::instance_id.eq(self.id))
+            .filter(users::is_admin.eq(true))
+            .load::<User>(conn)
+            .expect("Couldn't load admins")
+            .len() > 0
     }
 }
