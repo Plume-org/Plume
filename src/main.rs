@@ -6,6 +6,7 @@ extern crate diesel;
 extern crate dotenv;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate bcrypt;
 
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
@@ -48,7 +49,11 @@ fn main() {
     rocket::ignite()
         .mount("/", routes![
             routes::instance::configure,
-            routes::instance::post_config
+            routes::instance::post_config,
+
+            routes::user::details,
+            routes::user::new,
+            routes::user::create,
         ])
         .manage(init_pool())
         .attach(Template::fairing())

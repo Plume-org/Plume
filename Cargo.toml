@@ -3,8 +3,15 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
-diesel = { version = "*", features = [ "postgres", "r2d2" ] }
+bcrypt = "0.2"
+dotenv = "*"
 rocket = "*"
 rocket_codegen = "*"
-rocket_contrib = { version = "*", features = [ "tera_templates", "json" ] }
-dotenv = "*"
+
+[dependencies.diesel]
+features = ["postgres", "r2d2"]
+version = "*"
+
+[dependencies.rocket_contrib]
+features = ["tera_templates", "json"]
+version = "*"
