@@ -43,8 +43,12 @@ impl Instance {
             .expect("Error saving new instance")
     }
 
-    pub fn get(id: i32) -> Option<Instance> {
-        None
+    pub fn get(conn: &PgConnection, id: i32) -> Option<Instance> {
+        instances::table.filter(instances::id.eq(id))
+            .limit(1)
+            .load::<Instance>(conn)
+            .expect("Error loading local instance infos")
+            .into_iter().nth(0)
     }
 
     pub fn block(&self) {}
