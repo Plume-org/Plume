@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use db_conn::DbConn;
 use models::user::*;
 use models::instance::Instance;
+use activity_pub::Actor;
 
 #[get("/me")]
 fn me(user: User) -> String {
@@ -36,17 +37,15 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
     let form = data.get();
 
     if form.password == form.password_confirmation {
-        User::insert(&*conn, NewUser {
-            username: form.username.to_string(),
-            display_name: form.username.to_string(),
-            outbox_url: User::compute_outbox(form.username.to_string(), inst.public_domain.to_string()),
-            inbox_url: User::compute_inbox(form.username.to_string(), inst.public_domain.to_string()),
-            is_admin: !inst.has_admin(&*conn),
-            summary: String::from(""),
-            email: Some(form.email.to_string()),
-            hashed_password: Some(User::hash_pass(form.password.to_string())),
-            instance_id: inst.id
-        });
+        User::insert(&*conn, NewUser::new_local(
+            form.username.to_string(),
+            form.username.to_string(),
+            !inst.has_admin(&*conn),
+            String::from(""),
+            form.email.to_string(),
+            User::hash_pass(form.password.to_string()),
+            inst.id
+        )).update_boxes(&*conn);
     }
     
     Redirect::to(format!("/@/{}", data.get().username).as_str())

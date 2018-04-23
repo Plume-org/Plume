@@ -34,14 +34,6 @@ impl Blog {
             .expect("Error saving new blog")
     }
 
-    pub fn compute_outbox(blog: String, hostname: String) -> String {
-        format!("https://{}/~/{}/outbox", hostname, blog)
-    }
-
-    pub fn compute_inbox(blog: String, hostname: String) -> String {
-        format!("https://{}/~/{}/inbox", hostname, blog)
-    }
-
     pub fn get(conn: &PgConnection, id: i32) -> Option<Blog> {
         blogs::table.filter(blogs::id.eq(id))
             .limit(1)
@@ -57,6 +49,20 @@ impl Blog {
             .expect("Error loading blog by email")
             .into_iter().nth(0)
     }
+
+    pub fn update_boxes(&self, conn: &PgConnection) {
+        if self.outbox_url.len() == 0 {
+            diesel::update(self)
+                .set(blogs::outbox_url.eq(self.compute_outbox(conn)))
+                .get_result::<Blog>(conn).expect("Couldn't update outbox URL");
+        }
+
+        if self.inbox_url.len() == 0 {
+            diesel::update(self)
+                .set(blogs::inbox_url.eq(self.compute_inbox(conn)))
+                .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
+        }
+    }
 }
 
 impl Actor for Blog {
@@ -70,5 +76,23 @@ impl Actor for Blog {
 
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
+    }
+}
+
+impl NewBlog {
+    pub fn new_local(
+        actor_id: String,
+        title: String,
+        summary: String,
+        instance_id: i32
+    ) -> NewBlog {
+        NewBlog {
+            actor_id: actor_id,
+            title: title,
+            summary: summary,
+            outbox_url: String::from(""),
+            inbox_url: String::from(""),
+            instance_id: instance_id
+        }
     }
 }

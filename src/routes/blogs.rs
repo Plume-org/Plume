@@ -30,14 +30,12 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, _user: User) -> Redirect {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
 
-    Blog::insert(&*conn, NewBlog {
-        actor_id: slug.to_string(),
-        title: form.title.to_string(),
-        summary: String::from(""),
-        outbox_url: Blog::compute_outbox(slug.to_string(), inst.public_domain.to_string()),
-        inbox_url: Blog::compute_inbox(slug.to_string(), inst.public_domain.to_string()),
-        instance_id: inst.id
-    });
+    Blog::insert(&*conn, NewBlog::new_local(
+        slug.to_string(),
+        form.title.to_string(),
+        String::from(""),
+        inst.id
+    )).update_boxes(&*conn);
     
     Redirect::to(format!("/~/{}", slug).as_str())
 }

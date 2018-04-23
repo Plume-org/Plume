@@ -49,14 +49,6 @@ impl User {
             .expect("Error saving new user")
     }
 
-    pub fn compute_outbox(user: String, hostname: String) -> String {
-        format!("https://{}/@/{}/outbox", hostname, user)
-    }
-
-    pub fn compute_inbox(user: String, hostname: String) -> String {
-        format!("https://{}/@/{}/inbox", hostname, user)
-    }
-
     pub fn get(conn: &PgConnection, id: i32) -> Option<User> {
         users::table.filter(users::id.eq(id))
             .limit(1)
@@ -88,6 +80,20 @@ impl User {
     pub fn auth(&self, pass: String) -> bool {
         bcrypt::verify(pass.as_str(), self.hashed_password.clone().unwrap().as_str()).is_ok()
     }
+
+    pub fn update_boxes(&self, conn: &PgConnection) {
+        if self.outbox_url.len() == 0 {
+            diesel::update(self)
+                .set(users::outbox_url.eq(self.compute_outbox(conn)))
+                .get_result::<User>(conn).expect("Couldn't update outbox URL");                
+        }
+
+        if self.inbox_url.len() == 0 {
+            diesel::update(self)
+                .set(users::inbox_url.eq(self.compute_inbox(conn)))
+                .get_result::<User>(conn).expect("Couldn't update outbox URL");                
+        }
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -114,5 +120,30 @@ impl Actor for User {
 
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
+    }
+}
+
+impl NewUser {
+    /// Creates a new local user
+    pub fn new_local(
+        username: String,
+        display_name: String,
+        is_admin: bool,
+        summary: String,
+        email: String,
+        password: String,
+        instance_id: i32
+    ) -> NewUser {
+        NewUser {
+            username: username,
+            display_name: display_name,
+            outbox_url: String::from(""),
+            inbox_url: String::from(""),
+            is_admin: is_admin,
+            summary: summary,
+            email: Some(email),
+            hashed_password: Some(password),
+            instance_id: instance_id
+        }
     }
 }
