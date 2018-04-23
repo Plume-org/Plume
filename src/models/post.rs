@@ -39,4 +39,12 @@ impl Post {
             .expect("Error loading post by id")
             .into_iter().nth(0)
     }
+
+    pub fn find_by_slug(conn: &PgConnection, slug: String) -> Option<Post> {
+        posts::table.filter(posts::slug.eq(slug))
+            .limit(1)
+            .load::<Post>(conn)
+            .expect("Error loading post by slug")
+            .into_iter().nth(0)
+    }
 }

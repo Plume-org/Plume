@@ -1,4 +1,5 @@
 use heck::CamelCase;
+use rocket::response::Redirect;
 
 /// Remove non alphanumeric characters and CamelCase a string
 pub fn make_actor_id(name: String) -> String {
@@ -8,4 +9,8 @@ pub fn make_actor_id(name: String) -> String {
         .chars()
         .filter(|c| c.is_alphanumeric())
         .collect()
+}
+
+pub fn requires_login() -> Redirect {
+    Redirect::to("/login")
 }

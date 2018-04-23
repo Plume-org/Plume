@@ -66,6 +66,11 @@ fn main() {
             routes::blogs::details,
             routes::blogs::new,
             routes::blogs::create,
+
+            routes::posts::details,
+            routes::posts::new,
+            routes::posts::new_auth,
+            routes::posts::create
         ])
         .manage(init_pool())
         .attach(Template::fairing())
