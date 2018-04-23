@@ -15,6 +15,7 @@ use dotenv::dotenv;
 use std::env;
 use rocket_contrib::Template;
 
+mod activity_pub;
 mod db_conn;
 mod models;
 mod schema;
