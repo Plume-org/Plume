@@ -51,9 +51,13 @@ fn main() {
             routes::instance::configure,
             routes::instance::post_config,
 
+            routes::user::me,
             routes::user::details,
             routes::user::new,
             routes::user::create,
+
+            routes::session::new,
+            routes::session::create
         ])
         .manage(init_pool())
         .attach(Template::fairing())

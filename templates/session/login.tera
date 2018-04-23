@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Login</h1>
+        <form method="post">
+            <label for="email_or_name">Username or email</label>
+            <input name="email_or_name">
+
+            <label for="password">Password</label>
+            <input type="password" name="password">
+
+            <input type="submit" value="Login"/>            
+        </form>
+    </body>
+</html>

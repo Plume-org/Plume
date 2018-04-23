@@ -1,6 +1,13 @@
+use rocket::request;
+use rocket::request::{FromRequest, Request};
+use rocket::outcome::IntoOutcome;
 use diesel;
-use diesel::{ QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection };
+use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use schema::users;
+use db_conn::DbConn;
+use bcrypt;
+
+pub const AUTH_COOKIE: &'static str = "user_id";
 
 #[derive(Queryable, Identifiable)]
 pub struct User {
@@ -37,7 +44,7 @@ impl User {
         diesel::insert_into(users::table)
             .values(new)
             .get_result(conn)
-            .expect("Error saving new instance")
+            .expect("Error saving new user")
     }
 
     pub fn compute_outbox(user: String, hostname: String) -> String {
@@ -48,5 +55,48 @@ impl User {
         format!("https://{}/@/{}/inbox", hostname, user)
     }
 
-    fn get () {}
+    pub fn get(conn: &PgConnection, id: i32) -> Option<User> {
+        users::table.filter(users::id.eq(id))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading user by id")
+            .into_iter().nth(0)
+    }
+
+    pub fn find_by_email(conn: &PgConnection, email: String) -> Option<User> {
+        users::table.filter(users::email.eq(email))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading user by email")
+            .into_iter().nth(0)
+    }
+
+    pub fn find_by_name(conn: &PgConnection, username: String) -> Option<User> {
+        users::table.filter(users::username.eq(username))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading user by email")
+            .into_iter().nth(0)
+    }
+
+    pub fn hash_pass(pass: String) -> String {
+        bcrypt::hash(pass.as_str(), bcrypt::DEFAULT_COST).unwrap()
+    }
+
+    pub fn auth(&self, pass: String) -> bool {
+        bcrypt::verify(pass.as_str(), self.hashed_password.clone().unwrap().as_str()).is_ok()
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for User {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<User, ()> {
+        let conn = request.guard::<DbConn>()?;
+        request.cookies()
+            .get_private(AUTH_COOKIE)
+            .and_then(|cookie| cookie.value().parse().ok())
+            .map(|id| User::get(&*conn, id).unwrap())
+            .or_forward(())
+    }
 }

@@ -2,16 +2,19 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use std::collections::HashMap;
-use bcrypt::{hash, DEFAULT_COST};
 
 use db_conn::DbConn;
 use models::user::*;
 use models::instance::Instance;
 
+#[get("/me")]
+fn me(user: User) -> String {
+    format!("Logged in as {}", user.username.to_string())
+}
 
 #[get("/@/<name>")]
-fn details(name: String) {
-
+fn details(name: String) -> String {
+    format!("Hello, @{}", name)
 }
 
 #[get("/users/new")]
@@ -41,7 +44,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
             is_admin: !inst.has_admin(&*conn),
             summary: String::from(""),
             email: Some(form.email.to_string()),
-            hashed_password: Some(hash(form.password.as_str(), DEFAULT_COST).unwrap()),
+            hashed_password: Some(User::hash_pass(form.password.to_string())),
             instance_id: inst.id
         });
     }
