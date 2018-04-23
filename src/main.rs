@@ -60,6 +60,7 @@ fn main() {
 
             routes::session::new,
             routes::session::create,
+            routes::session::delete,
 
             routes::blogs::details,
             routes::blogs::new,

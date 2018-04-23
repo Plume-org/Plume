@@ -43,3 +43,10 @@ fn create(conn: DbConn, data: Form<LoginForm>, mut cookies: Cookies) -> Result<R
         Err(e) => Err(NotFound(String::from(e)))
     }
 }
+
+#[get("/logout")]
+fn delete(mut cookies: Cookies) -> Redirect {
+    let cookie = cookies.get_private(AUTH_COOKIE).unwrap();
+    cookies.remove_private(cookie);
+    Redirect::to("/")
+}
