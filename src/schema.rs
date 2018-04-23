@@ -1,4 +1,13 @@
 table! {
+    blog_authors (id) {
+        id -> Int4,
+        blog_id -> Int4,
+        author_id -> Int4,
+        is_owner -> Bool,
+    }
+}
+
+table! {
     blogs (id) {
         id -> Int4,
         actor_id -> Varchar,
@@ -36,10 +45,13 @@ table! {
     }
 }
 
+joinable!(blog_authors -> blogs (blog_id));
+joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
+    blog_authors,
     blogs,
     instances,
     users,
