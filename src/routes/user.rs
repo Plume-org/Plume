@@ -1,20 +1,27 @@
 use rocket::request::Form;
 use rocket::response::Redirect;
-use rocket_contrib::Template;
+use rocket_contrib::{Json, Template};
 use std::collections::HashMap;
 
 use db_conn::DbConn;
 use models::user::*;
 use models::instance::Instance;
+use activity_pub::Actor;
 
 #[get("/me")]
 fn me(user: User) -> String {
     format!("Logged in as {}", user.username.to_string())
 }
 
-#[get("/@/<name>")]
+#[get("/@/<name>", rank = 2)]
 fn details(name: String) -> String {
     format!("Hello, @{}", name)
+}
+
+#[get("/@/<name>", format = "application/activity+json", rank = 1)]
+fn activity(name: String, conn: DbConn) -> Json {
+    let user = User::find_by_name(&*conn, name).unwrap();
+    Json(user.as_activity_pub())
 }
 
 #[get("/users/new")]

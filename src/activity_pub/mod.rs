@@ -1,5 +1,6 @@
 use models::instance::Instance;
 use diesel::PgConnection;
+use serde_json::Value;
 
 pub trait Actor {
     fn get_box_prefix() -> &'static str;
@@ -7,6 +8,10 @@ pub trait Actor {
     fn get_actor_id(&self) -> String;
 
     fn get_instance(&self, conn: &PgConnection) -> Instance;
+
+    fn as_activity_pub (&self) -> Value {
+        json!({})
+    }
 
     fn compute_outbox(&self, conn: &PgConnection) -> String {
         self.compute_box(conn, "outbox")

@@ -1,6 +1,6 @@
 use rocket::request::Form;
 use rocket::response::Redirect;
-use rocket_contrib::Template;
+use rocket_contrib::{Json, Template};
 use std::collections::HashMap;
 
 use utils;
@@ -9,10 +9,17 @@ use models::blogs::*;
 use models::blog_authors::*;
 use models::instance::Instance;
 use models::user::User;
+use activity_pub::Actor;
 
-#[get("/~/<name>")]
+#[get("/~/<name>", rank = 2)]
 fn details(name: String) -> String {
     format!("Welcome on ~{}", name)
+}
+
+#[get("/~/<name>", format = "application/activity+json", rank = 1)]
+fn activity(name: String, conn: DbConn) -> Json {
+    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
+    Json(blog.as_activity_pub())
 }
 
 #[get("/blogs/new")]

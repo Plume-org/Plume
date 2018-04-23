@@ -8,6 +8,8 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate bcrypt;
 extern crate heck;
+#[macro_use]
+extern crate serde_json;
 
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
@@ -56,6 +58,7 @@ fn main() {
 
             routes::user::me,
             routes::user::details,
+            routes::user::activity,
             routes::user::new,
             routes::user::create,
 
@@ -64,6 +67,7 @@ fn main() {
             routes::session::delete,
 
             routes::blogs::details,
+            routes::blogs::activity,            
             routes::blogs::new,
             routes::blogs::create,
 
