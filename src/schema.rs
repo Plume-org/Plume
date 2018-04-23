@@ -31,6 +31,14 @@ table! {
 }
 
 table! {
+    post_authors (id) {
+        id -> Int4,
+        post_id -> Int4,
+        author_id -> Int4,
+    }
+}
+
+table! {
     posts (id) {
         id -> Int4,
         blog_id -> Int4,
@@ -60,6 +68,8 @@ table! {
 joinable!(blog_authors -> blogs (blog_id));
 joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
+joinable!(post_authors -> posts (post_id));
+joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
 joinable!(users -> instances (instance_id));
 
@@ -67,6 +77,7 @@ allow_tables_to_appear_in_same_query!(
     blog_authors,
     blogs,
     instances,
+    post_authors,
     posts,
     users,
 );
