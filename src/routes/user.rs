@@ -4,7 +4,7 @@ use rocket_contrib::{Json, Template};
 use std::collections::HashMap;
 
 use db_conn::DbConn;
-use models::user::*;
+use models::users::*;
 use models::instance::Instance;
 use activity_pub::Actor;
 

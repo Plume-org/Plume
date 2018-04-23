@@ -2,7 +2,7 @@ use diesel;
 use diesel::{ QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection };
 use std::iter::Iterator;
 use schema::{instances, users};
-use models::user::User;
+use models::users::User;
 
 #[derive(Identifiable, Queryable)]
 pub struct Instance {

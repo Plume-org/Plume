@@ -8,7 +8,7 @@ use db_conn::DbConn;
 use models::blogs::*;
 use models::blog_authors::*;
 use models::instance::Instance;
-use models::user::User;
+use models::users::User;
 use activity_pub::Actor;
 
 #[get("/~/<name>", rank = 2)]

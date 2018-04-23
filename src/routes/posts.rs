@@ -7,9 +7,9 @@ use heck::KebabCase;
 use utils;
 use db_conn::DbConn;
 use models::blogs::*;
-use models::post::*;
+use models::posts::*;
 use models::post_authors::*;
-use models::user::User;
+use models::users::User;
 
 #[get("/~/<blog>/<slug>", rank = 3)]
 fn details(blog: String, slug: String, conn: DbConn) -> String {
