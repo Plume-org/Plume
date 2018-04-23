@@ -38,7 +38,7 @@ pub struct NewUser {
 }
 
 impl User {
-    fn grant_admin_rights() {}
+    pub fn grant_admin_rights() {}
 
     pub fn insert (conn: &PgConnection, new: NewUser) -> User {
         diesel::insert_into(users::table)
