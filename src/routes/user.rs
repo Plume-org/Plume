@@ -21,7 +21,7 @@ fn details(name: String) -> String {
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
 fn activity(name: String, conn: DbConn) -> Json {
     let user = User::find_by_name(&*conn, name).unwrap();
-    Json(user.as_activity_pub())
+    Json(user.as_activity_pub(&*conn))
 }
 
 #[get("/users/new")]

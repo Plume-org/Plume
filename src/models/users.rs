@@ -5,7 +5,7 @@ use diesel;
 use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use schema::users;
 use db_conn::DbConn;
-use activity_pub::Actor;
+use activity_pub::{ActorType, Actor};
 use models::instance::Instance;
 use bcrypt;
 
@@ -120,6 +120,10 @@ impl Actor for User {
 
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
+    }
+
+    fn get_actor_type() -> ActorType {
+        ActorType::Person
     }
 }
 

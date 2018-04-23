@@ -19,7 +19,7 @@ fn details(name: String) -> String {
 #[get("/~/<name>", format = "application/activity+json", rank = 1)]
 fn activity(name: String, conn: DbConn) -> Json {
     let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
-    Json(blog.as_activity_pub())
+    Json(blog.as_activity_pub(&*conn))
 }
 
 #[get("/blogs/new")]
