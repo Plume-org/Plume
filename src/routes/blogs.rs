@@ -7,6 +7,7 @@ use utils;
 use db_conn::DbConn;
 use models::blogs::*;
 use models::instance::Instance;
+use models::user::User;
 
 #[get("/~/<name>")]
 fn details(name: String) -> String {
@@ -14,7 +15,7 @@ fn details(name: String) -> String {
 }
 
 #[get("/blogs/new")]
-fn new() -> Template {
+fn new(_user: User) -> Template {
     Template::render("blogs/new", HashMap::<String, i32>::new())
 }
 
@@ -24,7 +25,7 @@ struct NewBlogForm {
 }
 
 #[post("/blogs/new", data = "<data>")]
-fn create(conn: DbConn, data: Form<NewBlogForm>) -> Redirect {
+fn create(conn: DbConn, data: Form<NewBlogForm>, _user: User) -> Redirect {
     let inst = Instance::get_local(&*conn).unwrap();
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
