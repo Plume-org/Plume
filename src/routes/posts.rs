@@ -8,6 +8,7 @@ use utils;
 use db_conn::DbConn;
 use models::blogs::*;
 use models::post::*;
+use models::post_authors::*;
 use models::user::User;
 
 #[get("/~/<blog>/<slug>", rank = 3)]
@@ -35,17 +36,21 @@ struct NewPostForm {
 }
 
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: Form<NewPostForm>, _user: User, conn: DbConn) -> Redirect {
+fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) -> Redirect {
     let blog = Blog::find_by_actor_id(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
-    Post::insert(&*conn, NewPost {
+    let post = Post::insert(&*conn, NewPost {
         blog_id: blog.id,
         slug: slug.to_string(),
         title: form.title.to_string(),
         content: form.content.to_string(),
         published: true,
         license: form.license.to_string()
+    });
+    PostAuthor::insert(&*conn, NewPostAuthor {
+        post_id: post.id,
+        author_id: user.id
     });
     Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())
 }
