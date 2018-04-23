@@ -7,6 +7,7 @@ extern crate dotenv;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate bcrypt;
+extern crate heck;
 
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
@@ -18,6 +19,7 @@ mod db_conn;
 mod models;
 mod schema;
 mod routes;
+mod utils;
 
 use db_conn::DbConn;
 use models::instance::*;
@@ -57,7 +59,11 @@ fn main() {
             routes::user::create,
 
             routes::session::new,
-            routes::session::create
+            routes::session::create,
+
+            routes::blogs::details,
+            routes::blogs::new,
+            routes::blogs::create,
         ])
         .manage(init_pool())
         .attach(Template::fairing())

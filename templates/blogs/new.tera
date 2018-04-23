@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>New blog</title>
+    </head>
+    <body>
+        <h1>Create a blog</h1>
+        <form method="post">
+            <label for="title">Title</label>
+            <input name="title">
+
+            <input type="submit" value="Create blog"/>            
+        </form>
+    </body>
+</html>

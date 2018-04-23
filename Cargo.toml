@@ -5,6 +5,7 @@ version = "0.1.0"
 [dependencies]
 bcrypt = "0.2"
 dotenv = "*"
+heck = "0.3.0"
 rocket = "*"
 rocket_codegen = "*"
 
