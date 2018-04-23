@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use utils;
 use db_conn::DbConn;
 use models::blogs::*;
+use models::blog_authors::*;
 use models::instance::Instance;
 use models::user::User;
 
@@ -25,17 +26,24 @@ struct NewBlogForm {
 }
 
 #[post("/blogs/new", data = "<data>")]
-fn create(conn: DbConn, data: Form<NewBlogForm>, _user: User) -> Redirect {
+fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
     let inst = Instance::get_local(&*conn).unwrap();
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
 
-    Blog::insert(&*conn, NewBlog::new_local(
+    let blog = Blog::insert(&*conn, NewBlog::new_local(
         slug.to_string(),
         form.title.to_string(),
         String::from(""),
         inst.id
-    )).update_boxes(&*conn);
+    ));
+    blog.update_boxes(&*conn);
+
+    BlogAuthor::insert(&*conn, NewBlogAuthor {
+        blog_id: blog.id,
+        author_id: user.id,
+        is_owner: true
+    });
     
     Redirect::to(format!("/~/{}", slug).as_str())
 }
