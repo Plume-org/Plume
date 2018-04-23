@@ -5,6 +5,8 @@ use diesel;
 use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use schema::users;
 use db_conn::DbConn;
+use activity_pub::Actor;
+use models::instance::Instance;
 use bcrypt;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
@@ -98,5 +100,19 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             .and_then(|cookie| cookie.value().parse().ok())
             .map(|id| User::get(&*conn, id).unwrap())
             .or_forward(())
+    }
+}
+
+impl Actor for User {
+    fn get_box_prefix() -> &'static str {
+        "@"
+    }
+
+    fn get_actor_id(&self) -> String {
+        self.username.to_string()
+    }
+
+    fn get_instance(&self, conn: &PgConnection) -> Instance {
+        Instance::get(conn, self.instance_id).unwrap()
     }
 }
