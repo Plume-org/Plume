@@ -6,7 +6,6 @@ use std::collections::HashMap;
 use db_conn::DbConn;
 use models::user::*;
 use models::instance::Instance;
-use activity_pub::Actor;
 
 #[get("/me")]
 fn me(user: User) -> String {

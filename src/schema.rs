@@ -31,6 +31,18 @@ table! {
 }
 
 table! {
+    posts (id) {
+        id -> Int4,
+        blog_id -> Int4,
+        slug -> Varchar,
+        title -> Varchar,
+        content -> Text,
+        published -> Bool,
+        license -> Varchar,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
@@ -48,11 +60,13 @@ table! {
 joinable!(blog_authors -> blogs (blog_id));
 joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
+joinable!(posts -> blogs (blog_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
     blog_authors,
     blogs,
     instances,
+    posts,
     users,
 );
