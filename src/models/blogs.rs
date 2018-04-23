@@ -1,6 +1,8 @@
 use diesel;
 use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use schema::blogs;
+use activity_pub::Actor;
+use models::instance::Instance;
 
 #[derive(Queryable, Identifiable)]
 pub struct Blog {
@@ -54,5 +56,19 @@ impl Blog {
             .load::<Blog>(conn)
             .expect("Error loading blog by email")
             .into_iter().nth(0)
+    }
+}
+
+impl Actor for Blog {
+    fn get_box_prefix() -> &'static str {
+        "~"
+    }
+
+    fn get_actor_id(&self) -> String {
+        self.actor_id.to_string()
+    }
+
+    fn get_instance(&self, conn: &PgConnection) -> Instance {
+        Instance::get(conn, self.instance_id).unwrap()
     }
 }

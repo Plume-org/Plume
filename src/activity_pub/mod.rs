@@ -1,8 +1,8 @@
 use models::instance::Instance;
 use diesel::PgConnection;
 
-trait Actor {
-    fn get_box_prefix() -> String;
+pub trait Actor {
+    fn get_box_prefix() -> &'static str;
 
     fn get_actor_id(&self) -> String;
 
