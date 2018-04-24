@@ -1,5 +1,5 @@
-use serde_json;
 use diesel::PgConnection;
+use serde_json;
 
 pub trait Webfinger {
     fn webfinger_subject(&self, conn: &PgConnection) -> String;

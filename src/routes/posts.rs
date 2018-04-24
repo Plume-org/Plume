@@ -1,15 +1,15 @@
-use rocket::response::Redirect;
+use heck::KebabCase;
 use rocket::request::Form;
+use rocket::response::Redirect;
 use rocket_contrib::Template;
 use std::collections::HashMap;
-use heck::KebabCase;
 
-use utils;
 use db_conn::DbConn;
 use models::blogs::*;
-use models::posts::*;
 use models::post_authors::*;
+use models::posts::*;
 use models::users::User;
+use utils;
 
 #[get("/~/<blog>/<slug>", rank = 3)]
 fn details(blog: String, slug: String, conn: DbConn) -> String {
@@ -18,13 +18,13 @@ fn details(blog: String, slug: String, conn: DbConn) -> String {
     format!("{} in {}", post.title, blog.title)
 }
 
-#[get("/~/<blog>/new", rank = 1)]
-fn new(blog: String, user: User) -> Template {
+#[get("/~/<_blog>/new", rank = 1)]
+fn new(_blog: String, _user: User) -> Template {
     Template::render("posts/new", HashMap::<String, String>::new())
 }
 
-#[get("/~/<blog>/new", rank = 2)]
-fn new_auth(blog: String) -> Redirect {
+#[get("/~/<_blog>/new", rank = 2)]
+fn new_auth(_blog: String) -> Redirect {
     utils::requires_login()
 }
 

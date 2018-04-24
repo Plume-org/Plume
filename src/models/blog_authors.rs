@@ -1,5 +1,5 @@
-use diesel;
-use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+
 use schema::blog_authors;
 
 #[derive(Queryable, Identifiable)]

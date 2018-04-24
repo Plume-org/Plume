@@ -1,9 +1,8 @@
-use models::instance::Instance;
-use db_conn::DbConn;
-use models::users::User;
-use models::blogs::Blog;
-use rocket_contrib::Json;
 use activity_pub::webfinger::Webfinger;
+use db_conn::DbConn;
+use models::blogs::Blog;
+use models::instance::Instance;
+use models::users::User;
 
 #[get("/.well-known/host-meta", format = "application/xml")]
 fn host_meta(conn: DbConn) -> String {

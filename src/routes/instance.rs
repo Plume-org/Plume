@@ -1,6 +1,6 @@
-use rocket_contrib::Template;
-use rocket::response::Redirect;
 use rocket::request::Form;
+use rocket::response::Redirect;
+use rocket_contrib::Template;
 use std::collections::HashMap;
 
 use db_conn::DbConn;

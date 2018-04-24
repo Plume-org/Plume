@@ -3,10 +3,10 @@ use rocket::response::Redirect;
 use rocket_contrib::{Json, Template};
 use std::collections::HashMap;
 
+use activity_pub::actor::Actor;
 use db_conn::DbConn;
-use models::users::*;
 use models::instance::Instance;
-use activity_pub::Actor;
+use models::users::*;
 
 #[get("/me")]
 fn me(user: User) -> String {

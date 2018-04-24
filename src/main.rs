@@ -1,21 +1,21 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
+extern crate bcrypt;
+extern crate heck;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
 extern crate rocket;
 extern crate rocket_contrib;
-extern crate bcrypt;
-extern crate heck;
 #[macro_use]
 extern crate serde_json;
 
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
-use std::env;
 use rocket_contrib::Template;
+use std::env;
 
 mod activity_pub;
 mod db_conn;

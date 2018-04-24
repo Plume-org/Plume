@@ -1,8 +1,8 @@
-use diesel;
-use diesel::{ QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection };
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
-use schema::{instances, users};
+
 use models::users::User;
+use schema::{instances, users};
 
 #[derive(Identifiable, Queryable)]
 pub struct Instance {

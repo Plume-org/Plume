@@ -1,13 +1,12 @@
-use std::collections::HashMap;
-use rocket_contrib::Template;
+use rocket::http::{Cookie, Cookies};
 use rocket::response::Redirect;
-use rocket::request::Form;
-use models::users::User;
 use rocket::response::status::NotFound;
-use rocket::http::Cookies;
+use rocket::request::Form;
+use rocket_contrib::Template;
+use std::collections::HashMap;
+
 use db_conn::DbConn;
-use rocket::http::Cookie;
-use models::users::AUTH_COOKIE;
+use models::users::{User, AUTH_COOKIE};
 
 #[get("/login")]
 fn new() -> Template {

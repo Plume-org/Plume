@@ -1,14 +1,13 @@
-use rocket::request;
-use rocket::request::{FromRequest, Request};
-use rocket::outcome::IntoOutcome;
-use diesel;
-use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
-use schema::users;
-use db_conn::DbConn;
-use activity_pub::{ActorType, Actor};
-use models::instance::Instance;
 use bcrypt;
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use rocket::request::{self, FromRequest, Request};
+use rocket::outcome::IntoOutcome;
+
+use activity_pub::actor::{ActorType, Actor};
 use activity_pub::webfinger::Webfinger;
+use db_conn::DbConn;
+use models::instance::Instance;
+use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 

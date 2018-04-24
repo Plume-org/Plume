@@ -1,9 +1,10 @@
-use diesel;
-use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
-use schema::blogs;
-use activity_pub::{Actor, ActorType};
-use models::instance::Instance;
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+
+use activity_pub::actor::{Actor, ActorType};
 use activity_pub::webfinger::*;
+use models::instance::Instance;
+use schema::blogs;
+
 
 #[derive(Queryable, Identifiable)]
 pub struct Blog {

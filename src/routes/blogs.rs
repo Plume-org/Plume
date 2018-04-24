@@ -3,13 +3,13 @@ use rocket::response::Redirect;
 use rocket_contrib::{Json, Template};
 use std::collections::HashMap;
 
-use utils;
+use activity_pub::actor::Actor;
 use db_conn::DbConn;
-use models::blogs::*;
 use models::blog_authors::*;
+use models::blogs::*;
 use models::instance::Instance;
 use models::users::User;
-use activity_pub::Actor;
+use utils;
 
 #[get("/~/<name>", rank = 2)]
 fn details(name: String) -> String {
