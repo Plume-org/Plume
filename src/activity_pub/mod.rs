@@ -2,6 +2,8 @@ use models::instance::Instance;
 use diesel::PgConnection;
 use serde_json::Value;
 
+pub mod webfinger;
+
 pub enum ActorType {
     Person,
     Blog

@@ -8,6 +8,7 @@ use db_conn::DbConn;
 use activity_pub::{ActorType, Actor};
 use models::instance::Instance;
 use bcrypt;
+use activity_pub::webfinger::Webfinger;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
@@ -124,6 +125,33 @@ impl Actor for User {
 
     fn get_actor_type() -> ActorType {
         ActorType::Person
+    }
+}
+
+impl Webfinger for User {
+    fn webfinger_subject(&self, conn: &PgConnection) -> String {
+        format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain)
+    }
+    fn webfinger_aliases(&self, conn: &PgConnection) -> Vec<String> {
+        vec![self.compute_id(conn)]
+    }
+    fn webfinger_links(&self, conn: &PgConnection) -> Vec<Vec<(String, String)>> {
+        vec![
+            vec![
+                (String::from("rel"), String::from("http://webfinger.net/rel/profile-page")),
+                (String::from("href"), self.compute_id(conn))
+            ],
+            vec![
+                (String::from("rel"), String::from("http://schemas.google.com/g/2010#updates-from")),
+                (String::from("type"), String::from("application/atom+xml")),
+                (String::from("href"), self.compute_box(conn, "feed.atom"))
+            ],
+            vec![
+                (String::from("rel"), String::from("self")),
+                (String::from("type"), String::from("application/activity+json")),
+                (String::from("href"), self.compute_id(conn))
+            ]
+        ]
     }
 }
 
