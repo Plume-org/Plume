@@ -1,3 +1,6 @@
+use rocket::http::ContentType;
+use rocket::response::Content;
+
 use activity_pub::webfinger::Webfinger;
 use db_conn::DbConn;
 use models::blogs::Blog;
@@ -20,17 +23,8 @@ struct WebfingerQuery {
     resource: String
 }
 
-#[get("/.well-known/webfinger?<query>", format = "application/jrd+json")]
-fn webfinger_json(query: WebfingerQuery, conn: DbConn) -> Result<String, &'static str> {
-    webfinger(query, conn, "json")
-}
-
-#[get("/.well-known/webfinger?<query>", format = "application/xrd+xml")]
-fn webfinger_xml(query: WebfingerQuery, conn: DbConn) -> Result<String, &'static str> {
-    webfinger(query, conn, "xml")
-}
-
-fn webfinger(query: WebfingerQuery, conn: DbConn, format: &'static str) -> Result<String, &'static str> {
+#[get("/.well-known/webfinger?<query>")]
+fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<Result<String, &'static str>> {
     let mut parsed_query = query.resource.split(":");
     println!("{:?}", parsed_query.clone().collect::<Vec<&str>>());
     let res_type = parsed_query.next().unwrap();
@@ -43,17 +37,18 @@ fn webfinger(query: WebfingerQuery, conn: DbConn, format: &'static str) -> Resul
         let domain = Instance::get_local(&*conn).unwrap().public_domain;
 
         if res_dom == domain {
-            match User::find_by_name(&*conn, String::from(user)) {
-                Some(usr) => Ok(usr.webfinger(format, &*conn)),
+            let res = match User::find_by_name(&*conn, String::from(user)) {
+                Some(usr) => Ok(usr.webfinger(&*conn)),
                 None => match Blog::find_by_actor_id(&*conn, String::from(user)) {
-                    Some(blog) => Ok(blog.webfinger(format, &*conn)),
+                    Some(blog) => Ok(blog.webfinger(&*conn)),
                     None => Err("Requested actor not found")
                 }
-            }
+            };
+            Content(ContentType::new("application", "jrd+json"), res)            
         } else {
-            Err("Invalid instance")
+            Content(ContentType::new("text", "plain"), Err("Invalid instance"))
         }
     } else {
-        Err("Invalid resource type. Only acct is supported")
+        Content(ContentType::new("text", "plain"), Err("Invalid resource type. Only acct is supported"))
     }
 }

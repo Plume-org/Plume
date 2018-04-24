@@ -54,8 +54,7 @@ fn main() {
     rocket::ignite()
         .mount("/", routes![
             routes::well_known::host_meta,
-            routes::well_known::webfinger_json,
-            routes::well_known::webfinger_xml,
+            routes::well_known::webfinger,
 
             routes::instance::configure,
             routes::instance::post_config,
