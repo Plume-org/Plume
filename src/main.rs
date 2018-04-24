@@ -8,6 +8,10 @@ extern crate diesel;
 extern crate dotenv;
 extern crate rocket;
 extern crate rocket_contrib;
+#[feature(custom_attribute)]
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 

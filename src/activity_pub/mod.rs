@@ -3,10 +3,14 @@ use rocket::response::Content;
 use rocket_contrib::Json;
 use serde_json;
 
+pub mod activity;
 pub mod actor;
+pub mod object;
 pub mod webfinger;
 
-pub type Activity = Content<Json>;
+pub type ActivityPub = Content<Json>;
+
+pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 
 pub fn context() -> serde_json::Value {
     json!([
@@ -32,6 +36,6 @@ pub fn context() -> serde_json::Value {
     ])
 }
 
-pub fn activity(json: serde_json::Value) -> Activity {
+pub fn activity_pub(json: serde_json::Value) -> ActivityPub {
     Content(ContentType::new("application", "activity+json"), Json(json))
 }

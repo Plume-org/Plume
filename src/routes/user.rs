@@ -3,7 +3,7 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use std::collections::HashMap;
 
-use activity_pub::Activity;
+use activity_pub::ActivityPub;
 use activity_pub::actor::Actor;
 use db_conn::DbConn;
 use models::instance::Instance;
@@ -20,7 +20,7 @@ fn details(name: String) -> String {
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> Activity {
+fn activity_details(name: String, conn: DbConn) -> ActivityPub {
     let user = User::find_by_name(&*conn, name).unwrap();
     user.as_activity_pub(&*conn)
 }

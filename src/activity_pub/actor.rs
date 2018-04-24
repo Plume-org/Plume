@@ -1,6 +1,8 @@
 use diesel::PgConnection;
 
-use activity_pub::{activity, Activity, context};
+use activity_pub::{activity_pub, ActivityPub, context};
+use activity_pub::activity::Create;
+use activity_pub::object::{Attribuable, Object};
 use models::instance::Instance;
 
 pub enum ActorType {
@@ -26,8 +28,8 @@ pub trait Actor {
 
     fn get_actor_type() -> ActorType;
 
-    fn as_activity_pub (&self, conn: &PgConnection) -> Activity {
-        activity(json!({
+    fn as_activity_pub (&self, conn: &PgConnection) -> ActivityPub {
+        activity_pub(json!({
             "@context": context(),
             "id": self.compute_id(conn),
             "type": Self::get_actor_type().to_string(),
@@ -62,5 +64,10 @@ pub trait Actor {
             prefix = Self::get_box_prefix(),
             user = self.get_actor_id()
         )
+    }
+
+    fn create<T>(&self, obj: T) -> Create<Self, T> where T: Object + Attribuable, Self: Actor + Sized {
+        obj.set_attribution::<Self>(self);
+        Create::<Self, T>::new(self, obj)
     }
 }
