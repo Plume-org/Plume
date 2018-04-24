@@ -1,6 +1,6 @@
 use diesel::PgConnection;
-use serde_json::Value;
 
+use activity_pub::{activity, Activity, context};
 use models::instance::Instance;
 
 pub enum ActorType {
@@ -26,29 +26,9 @@ pub trait Actor {
 
     fn get_actor_type() -> ActorType;
 
-    fn as_activity_pub (&self, conn: &PgConnection) -> Value {
-        json!({
-            "@context": [
-                "https://www.w3.org/ns/activitystreams",
-                "https://w3id.org/security/v1",
-                {
-                    "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
-                    "sensitive": "as:sensitive",
-                    "movedTo": "as:movedTo",
-                    "Hashtag": "as:Hashtag",
-                    "ostatus":"http://ostatus.org#",
-                    "atomUri":"ostatus:atomUri",
-                    "inReplyToAtomUri":"ostatus:inReplyToAtomUri",
-                    "conversation":"ostatus:conversation",
-                    "toot":"http://joinmastodon.org/ns#",
-                    "Emoji":"toot:Emoji",
-                    "focalPoint": {
-                        "@container":"@list",
-                        "@id":"toot:focalPoint"
-                    },
-                    "featured":"toot:featured"
-                }
-            ],
+    fn as_activity_pub (&self, conn: &PgConnection) -> Activity {
+        activity(json!({
+            "@context": context(),
             "id": self.compute_id(conn),
             "type": Self::get_actor_type().to_string(),
             "inbox": self.compute_inbox(conn),
@@ -60,7 +40,7 @@ pub trait Actor {
             "endpoints": {
                 "sharedInbox": "https://plu.me/inbox"
             }
-        })
+        }))
     }
 
     fn compute_outbox(&self, conn: &PgConnection) -> String {

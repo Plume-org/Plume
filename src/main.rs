@@ -61,7 +61,7 @@ fn main() {
 
             routes::user::me,
             routes::user::details,
-            routes::user::activity,
+            routes::user::activity_details,
             routes::user::new,
             routes::user::create,
 
@@ -70,7 +70,7 @@ fn main() {
             routes::session::delete,
 
             routes::blogs::details,
-            routes::blogs::activity,            
+            routes::blogs::activity_details,            
             routes::blogs::new,
             routes::blogs::create,
 
