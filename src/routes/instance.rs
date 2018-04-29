@@ -6,6 +6,18 @@ use std::collections::HashMap;
 use db_conn::DbConn;
 use models::instance::*;
 
+#[get("/")]
+fn index(conn: DbConn) -> String {
+    match Instance::get_local(&*conn) {
+        Some(inst) => {
+            format!("Welcome on {}", inst.name)
+        }
+        None => {
+            String::from("Not initialized")
+        }
+    }
+}
+
 #[get("/configure")]
 fn configure() -> Template {
     Template::render("instance/configure", HashMap::<String, i32>::new())

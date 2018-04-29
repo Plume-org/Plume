@@ -46,24 +46,13 @@ fn init_pool() -> PgPool {
     Pool::new(manager).expect("db pool")
 }
 
-#[get("/")]
-fn index(conn: DbConn) -> String {
-    match Instance::get_local(&*conn) {
-        Some(inst) => {
-            format!("Welcome on {}", inst.name)
-        }
-        None => {
-            String::from("Not initialized")
-        }
-    }
-}
-
 fn main() {
     rocket::ignite()
         .mount("/", routes![
             routes::well_known::host_meta,
             routes::well_known::webfinger,
 
+            routes::instance::index,
             routes::instance::configure,
             routes::instance::post_config,
 
