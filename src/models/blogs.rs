@@ -72,7 +72,7 @@ impl Blog {
         Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
     }
 
-    fn get_activities(&self, conn: &PgConnection) -> Vec<Activity> {
+    fn get_activities(&self, _conn: &PgConnection) -> Vec<Activity> {
         vec![]
     }
 }

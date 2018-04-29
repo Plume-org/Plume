@@ -12,10 +12,7 @@ extern crate dotenv;
 extern crate openssl;
 extern crate rocket;
 extern crate rocket_contrib;
-#[feature(custom_attribute)]
 extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 
@@ -31,9 +28,6 @@ mod models;
 mod schema;
 mod routes;
 mod utils;
-
-use db_conn::DbConn;
-use models::instance::*;
 
 type PgPool = Pool<ConnectionManager<PgConnection>>;
 

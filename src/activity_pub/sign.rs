@@ -1,7 +1,7 @@
 use base64;
 use hex;
 use chrono::Utc;
-use openssl::sha::{sha256, sha512};
+use openssl::sha::sha256;
 use serde_json;
 
 // (Comments are from the Mastodon source code, to remember what to do.)
