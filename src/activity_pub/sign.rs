@@ -4,7 +4,7 @@ use chrono::Utc;
 use openssl::sha::{sha256, sha512};
 use serde_json;
 
-// Comments are from the Mastodon source code, to knremow what to do.
+// (Comments are from the Mastodon source code, to remember what to do.)
 
 pub trait Signer {
     fn get_key_id(&self) -> String;

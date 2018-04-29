@@ -1,6 +1,8 @@
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 
+use activity_pub::activity::Activity;
 use activity_pub::actor::{Actor, ActorType};
+use activity_pub::outbox::Outbox;
 use activity_pub::webfinger::*;
 use models::instance::Instance;
 use schema::blogs;
@@ -64,6 +66,14 @@ impl Blog {
                 .set(blogs::inbox_url.eq(self.compute_inbox(conn)))
                 .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
         }
+    }
+
+    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
+        Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
+    }
+
+    fn get_activities(&self, conn: &PgConnection) -> Vec<Activity> {
+        vec![]
     }
 }
 

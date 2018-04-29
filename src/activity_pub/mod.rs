@@ -6,6 +6,8 @@ use serde_json;
 pub mod activity;
 pub mod actor;
 pub mod object;
+pub mod outbox;
+pub mod sign;
 pub mod webfinger;
 
 pub type ActivityPub = Content<Json>;
@@ -14,7 +16,7 @@ pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 
 pub fn context() -> serde_json::Value {
     json!([
-        "https://www.w3.org/ns/activitystreams",
+        CONTEXT_URL,
         "https://w3id.org/security/v1",
         {
             "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",

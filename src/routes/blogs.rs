@@ -5,6 +5,7 @@ use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
 use activity_pub::actor::Actor;
+use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::blog_authors::*;
 use models::blogs::*;
@@ -54,4 +55,10 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
     });
     
     Redirect::to(format!("/~/{}", slug).as_str())
+}
+
+#[get("/~/<name>/outbox")]
+fn outbox(name: String, conn: DbConn) -> Outbox {
+    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
+    blog.outbox(&*conn)
 }

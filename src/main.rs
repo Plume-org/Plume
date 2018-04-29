@@ -79,6 +79,7 @@ fn main() {
 
             routes::blogs::details,
             routes::blogs::activity_details,            
+            routes::blogs::outbox,            
             routes::blogs::new,
             routes::blogs::create,
 
