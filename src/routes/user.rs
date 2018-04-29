@@ -5,6 +5,7 @@ use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
 use activity_pub::actor::Actor;
+use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::instance::Instance;
 use models::users::*;
@@ -56,4 +57,10 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
     }
     
     Redirect::to(format!("/@/{}", data.get().username).as_str())
+}
+
+#[get("/@/<name>/outbox")]
+fn outbox(name: String, conn: DbConn) -> Outbox {
+    let user = User::find_by_name(&*conn, name).unwrap();
+    user.outbox(&*conn)
 }

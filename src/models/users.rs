@@ -3,7 +3,9 @@ use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
 
+use activity_pub::activity::Activity;
 use activity_pub::actor::{ActorType, Actor};
+use activity_pub::outbox::Outbox;
 use activity_pub::webfinger::Webfinger;
 use db_conn::DbConn;
 use models::instance::Instance;
@@ -93,6 +95,14 @@ impl User {
                 .set(users::inbox_url.eq(self.compute_inbox(conn)))
                 .get_result::<User>(conn).expect("Couldn't update outbox URL");                
         }
+    }
+
+    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
+        Outbox::new(self.compute_outbox(conn), self.get_activities())
+    }
+
+    fn get_activities(&self) -> Vec<Activity> {
+        vec![]
     }
 }
 

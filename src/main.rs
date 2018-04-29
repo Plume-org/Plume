@@ -59,6 +59,7 @@ fn main() {
             routes::user::me,
             routes::user::details,
             routes::user::activity_details,
+            routes::user::outbox,
             routes::user::new,
             routes::user::create,
 
