@@ -1,11 +1,15 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
+extern crate base64;
 extern crate bcrypt;
+extern crate chrono;
 extern crate heck;
+extern crate hex;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+extern crate openssl;
 extern crate rocket;
 extern crate rocket_contrib;
 #[feature(custom_attribute)]

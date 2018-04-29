@@ -3,9 +3,13 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
+base64 = "0.9.1"
 bcrypt = "0.2"
+chrono = "0.4"
 dotenv = "*"
 heck = "0.3.0"
+hex = "0.3"
+openssl = "0.10.6"
 rocket = "*"
 rocket_codegen = "*"
 serde = "*"
