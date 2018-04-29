@@ -1,8 +1,12 @@
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
+use models::posts::Post;
+use models::users::User;
 use schema::post_authors;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Associations)]
+#[belongs_to(Post)]
+#[belongs_to(User, foreign_key = "author_id")]
 pub struct PostAuthor {
     pub id: i32,
     pub post_id: i32,

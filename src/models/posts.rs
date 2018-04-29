@@ -1,5 +1,7 @@
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
+use serde_json;
 
+use activity_pub::object::Object;
 use schema::posts;
 
 #[derive(Queryable, Identifiable)]
@@ -46,5 +48,11 @@ impl Post {
             .load::<Post>(conn)
             .expect("Error loading post by slug")
             .into_iter().nth(0)
+    }
+}
+
+impl Object for Post {
+    fn serialize(&self) -> serde_json::Value {
+        json!({})
     }
 }

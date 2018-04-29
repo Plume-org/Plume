@@ -1,5 +1,6 @@
 use bcrypt;
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
+use diesel::dsl::any;
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
 
@@ -9,6 +10,8 @@ use activity_pub::outbox::Outbox;
 use activity_pub::webfinger::Webfinger;
 use db_conn::DbConn;
 use models::instance::Instance;
+use models::post_authors::PostAuthor;
+use models::posts::Post;
 use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
@@ -98,11 +101,15 @@ impl User {
     }
 
     pub fn outbox(&self, conn: &PgConnection) -> Outbox {
-        Outbox::new(self.compute_outbox(conn), self.get_activities())
+        Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
     }
 
-    fn get_activities(&self) -> Vec<Activity> {
-        vec![]
+    fn get_activities(&self, conn: &PgConnection) -> Vec<Activity> {
+        use schema::posts;
+        use schema::post_authors;
+        let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
+        let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
+        posts.into_iter().map(|p| Activity::create(self, p, conn)).collect::<Vec<Activity>>()
     }
 }
 

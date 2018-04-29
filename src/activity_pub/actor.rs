@@ -1,7 +1,7 @@
 use diesel::PgConnection;
 
 use activity_pub::{activity_pub, ActivityPub, context};
-use activity_pub::activity::Create;
+// use activity_pub::activity::Create;
 use activity_pub::object::{Attribuable, Object};
 use models::instance::Instance;
 
@@ -66,8 +66,8 @@ pub trait Actor {
         )
     }
 
-    fn create<T>(&self, obj: T) -> Create<Self, T> where T: Object + Attribuable, Self: Actor + Sized {
-        obj.set_attribution::<Self>(self);
-        Create::<Self, T>::new(self, obj)
-    }
+    // fn create<T>(&self, obj: T) -> Create<Self, T> where T: Object + Attribuable, Self: Actor + Sized {
+    //     obj.set_attribution::<Self>(self);
+    //     Create::<Self, T>::new(self, obj)
+    // }
 }
