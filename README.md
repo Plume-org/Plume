@@ -1,4 +1,4 @@
-# Plume
+# Plume [![Build Status](https://travis-ci.org/Plume-org/Plume.svg?branch=master)](https://travis-ci.org/Plume-org/Plume)
 
 Federated blogging engine, based on ActivityPub.
 
