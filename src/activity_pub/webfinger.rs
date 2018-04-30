@@ -1,4 +1,7 @@
 use diesel::PgConnection;
+use reqwest::Client;
+use reqwest::header::{Accept, qitem};
+use reqwest::mime::Mime;
 use serde_json;
 
 pub trait Webfinger {
@@ -19,4 +22,27 @@ pub trait Webfinger {
             }).collect::<Vec<serde_json::Value>>()
         }).to_string()
     }
+}
+
+pub fn resolve(acct: String) -> Result<String, String> {
+    let instance = acct.split("@").next().unwrap();
+    let url = format!("https://{}/.well-known/webfinger?resource=acct:{}", instance, acct);
+    Client::new()
+        .get(&url[..])
+        .header(Accept(vec![qitem("application/jrd+json".parse::<Mime>().unwrap())]))
+        .send()
+        .map(|mut r| {
+            let res = r.text().unwrap();
+            let json: serde_json::Value = serde_json::from_str(&res[..]).unwrap();
+            json["links"].as_array().unwrap()
+                .into_iter()
+                .find_map(|link| {
+                    if link["rel"].as_str().unwrap() == "self" && link["href"].as_str().unwrap() == "application/activity+json" {
+                        Some(String::from(link["href"].as_str().unwrap()))
+                    } else {
+                        None
+                    }
+                }).unwrap()
+        })
+        .map_err(|_| String::from("Error while fetchin WebFinger resource"))
 }

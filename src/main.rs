@@ -1,4 +1,4 @@
-#![feature(plugin, custom_derive)]
+#![feature(plugin, custom_derive, iterator_find_map)]
 #![plugin(rocket_codegen)]
 
 extern crate base64;
