@@ -1,7 +1,12 @@
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
+use diesel::dsl::any;
 use serde_json;
 
+use activity_pub::PUBLIC_VISIBILTY;
+use activity_pub::actor::Actor;
 use activity_pub::object::Object;
+use models::users::User;
+use models::post_authors::PostAuthor;
 use schema::posts;
 
 #[derive(Queryable, Identifiable)]
@@ -49,10 +54,30 @@ impl Post {
             .expect("Error loading post by slug")
             .into_iter().nth(0)
     }
+
+    pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
+        use schema::users;
+        use schema::post_authors;
+        let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
+        users::table.filter(users::id.eq(any(author_list))).load::<User>(conn).unwrap()
+    }
 }
 
 impl Object for Post {
-    fn serialize(&self) -> serde_json::Value {
-        json!({})
+    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
+        json!({
+            "type": "Article",
+            "attributedTo": self.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
+            "content": self.content,
+            // TODO: "image": "image",
+            // TODO: "preview": "preview",
+            // TODO: "published": "published",
+            // TODO: "replies": "replies",
+            // TODO: "summary": "summary",
+            "tag": [],
+            // TODO: "updated": "updated",
+            // TODO: "url": "url",
+            "to": [ PUBLIC_VISIBILTY ]
+        })
     }
 }

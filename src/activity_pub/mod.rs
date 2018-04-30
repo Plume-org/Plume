@@ -13,6 +13,7 @@ pub mod webfinger;
 pub type ActivityPub = Content<Json>;
 
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
+pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
 
 pub fn context() -> serde_json::Value {
     json!([
