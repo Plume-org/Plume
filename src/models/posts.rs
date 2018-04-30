@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
 use diesel::dsl::any;
 use serde_json;
@@ -17,7 +18,8 @@ pub struct Post {
     pub title: String,
     pub content: String,
     pub published: bool,
-    pub license: String
+    pub license: String,
+    pub creation_date: NaiveDateTime    
 }
 
 #[derive(Insertable)]

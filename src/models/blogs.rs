@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 
 use activity_pub::activity::Activity;
@@ -16,7 +17,8 @@ pub struct Blog {
     pub summary: String,
     pub outbox_url: String,
     pub inbox_url: String,
-    pub instance_id: i32
+    pub instance_id: i32,
+    pub creation_date: NaiveDateTime    
 }
 
 #[derive(Insertable)]

@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
 
@@ -11,7 +12,8 @@ pub struct Instance {
     pub public_domain: String,
     pub name: String,
     pub local: bool,
-    pub blocked: bool
+    pub blocked: bool,
+    pub creation_date: NaiveDateTime    
 }
 
 #[derive(Insertable)]

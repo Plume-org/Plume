@@ -16,6 +16,7 @@ table! {
         outbox_url -> Varchar,
         inbox_url -> Varchar,
         instance_id -> Int4,
+        creation_date -> Timestamp,
     }
 }
 
@@ -27,6 +28,7 @@ table! {
         name -> Varchar,
         local -> Bool,
         blocked -> Bool,
+        creation_date -> Timestamp,
     }
 }
 
@@ -47,6 +49,7 @@ table! {
         content -> Text,
         published -> Bool,
         license -> Varchar,
+        creation_date -> Timestamp,
     }
 }
 
@@ -62,6 +65,7 @@ table! {
         email -> Nullable<Text>,
         hashed_password -> Nullable<Text>,
         instance_id -> Int4,
+        creation_date -> Timestamp,
     }
 }
 

@@ -1,4 +1,5 @@
 use bcrypt;
+use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
 use diesel::dsl::any;
 use rocket::request::{self, FromRequest, Request};
@@ -27,7 +28,8 @@ pub struct User {
     pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
-    pub instance_id: i32
+    pub instance_id: i32,
+    pub creation_date: NaiveDateTime    
 }
 
 #[derive(Insertable)]
