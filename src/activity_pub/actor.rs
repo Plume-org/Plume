@@ -1,8 +1,8 @@
 use diesel::PgConnection;
+use reqwest::Client;
 
 use activity_pub::{activity_pub, ActivityPub, context};
-// use activity_pub::activity::Create;
-use activity_pub::object::{Attribuable, Object};
+use activity_pub::activity::Activity;
 use models::instance::Instance;
 
 pub enum ActorType {
@@ -66,8 +66,14 @@ pub trait Actor {
         )
     }
 
-    // fn create<T>(&self, obj: T) -> Create<Self, T> where T: Object + Attribuable, Self: Actor + Sized {
-    //     obj.set_attribution::<Self>(self);
-    //     Create::<Self, T>::new(self, obj)
-    // }
+    fn send_to_inbox(&self, conn: &PgConnection, act: Activity) {
+        let res = Client::new()
+            .post(&self.compute_inbox(conn)[..])
+            .body(act.serialize().to_string())
+            .send();
+        match res {
+            Ok(_) => println!("Successfully sent activity to inbox"),
+            Err(_) => println!("Error while sending to inbox")
+        }
+    }
 }

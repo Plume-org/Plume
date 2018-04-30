@@ -10,6 +10,7 @@ extern crate hex;
 extern crate diesel;
 extern crate dotenv;
 extern crate openssl;
+extern crate reqwest;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde;
