@@ -37,7 +37,7 @@ fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<Result<String, &'st
         let domain = Instance::get_local(&*conn).unwrap().public_domain;
 
         if res_dom == domain {
-            let res = match User::find_by_name(&*conn, String::from(user)) {
+            let res = match User::find_local(&*conn, String::from(user)) {
                 Some(usr) => Ok(usr.webfinger(&*conn)),
                 None => match Blog::find_by_actor_id(&*conn, String::from(user)) {
                     Some(blog) => Ok(blog.webfinger(&*conn)),

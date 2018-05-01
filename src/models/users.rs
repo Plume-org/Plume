@@ -2,13 +2,17 @@ use bcrypt;
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
 use diesel::dsl::any;
+use reqwest::Client;
+use reqwest::header::{Accept, qitem};
+use reqwest::mime::Mime;
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
+use serde_json;
 
 use activity_pub::activity::Activity;
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::outbox::Outbox;
-use activity_pub::webfinger::Webfinger;
+use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
 use models::instance::Instance;
 use models::post_authors::PostAuthor;
@@ -17,7 +21,7 @@ use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Serialize)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -72,12 +76,75 @@ impl User {
             .into_iter().nth(0)
     }
 
-    pub fn find_by_name(conn: &PgConnection, username: String) -> Option<User> {
+    pub fn find_by_name(conn: &PgConnection, username: String, instance_id: i32) -> Option<User> {
         users::table.filter(users::username.eq(username))
+            .filter(users::instance_id.eq(instance_id))
             .limit(1)
             .load::<User>(conn)
             .expect("Error loading user by email")
             .into_iter().nth(0)
+    }
+
+    pub fn find_local(conn: &PgConnection, username: String) -> Option<User> {
+        User::find_by_name(conn, username, Instance::local_id(conn))
+    }
+
+    pub fn find_by_fqn(conn: &PgConnection, fqn: String) -> Option<User> {
+        if fqn.contains("@") { // remote user
+            match Instance::get_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
+                Some(instance) => {
+                    match User::find_by_name(conn, String::from(fqn.split("@").nth(0).unwrap()), instance.id) {
+                        Some(u) => Some(u),
+                        None => User::fetch_from_webfinger(conn, fqn)
+                    }
+                },
+                None => User::fetch_from_webfinger(conn, fqn)
+            }
+        } else { // local user
+            User::find_local(conn, fqn)
+        }
+    }
+
+    fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
+        match resolve(acct) {
+            Ok(url) => {
+                let req = Client::new()
+                    .get(&url[..])
+                    .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
+                    .send();
+                match req {
+                    Ok(mut res) => {
+                        let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
+                        Some(User::from_activity(conn, json, url.split("@").last().unwrap().to_string()))
+                    },
+                    Err(_) => None
+                }
+            },
+            Err(details) => {
+                println!("{}", details);
+                None
+            }
+        }
+    }
+
+    fn from_activity(conn: &PgConnection, acct: serde_json::Value, inst: String) -> User {
+        let instance = match Instance::get_by_domain(conn, inst.clone()) {
+            Some(instance) => instance,
+            None => {
+                Instance::insert(conn, String::from(""), inst.clone(), inst.clone(), false)
+            }
+        };
+        User::insert(conn, NewUser {
+            username: acct["preferredUsername"].as_str().unwrap().to_string(),
+            display_name: acct["name"].as_str().unwrap().to_string(),
+            outbox_url: acct["outbox"].as_str().unwrap().to_string(),
+            inbox_url: acct["inbox"].as_str().unwrap().to_string(),
+            is_admin: false,
+            summary: acct["summary"].as_str().unwrap().to_string(),
+            email: None,
+            hashed_password: None,
+            instance_id: instance.id
+        })
     }
 
     pub fn hash_pass(pass: String) -> String {

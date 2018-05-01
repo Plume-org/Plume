@@ -1,6 +1,7 @@
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
+use serde_json;
 use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
@@ -16,13 +17,16 @@ fn me(user: User) -> String {
 }
 
 #[get("/@/<name>", rank = 2)]
-fn details(name: String) -> String {
-    format!("Hello, @{}", name)
+fn details(name: String, conn: DbConn) -> Template {
+    let user = User::find_by_fqn(&*conn, name).unwrap();
+    Template::render("users/details", json!({
+        "user": serde_json::to_value(user).unwrap()
+    }))
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
 fn activity_details(name: String, conn: DbConn) -> ActivityPub {
-    let user = User::find_by_name(&*conn, name).unwrap();
+    let user = User::find_local(&*conn, name).unwrap();
     user.as_activity_pub(&*conn)
 }
 
@@ -61,6 +65,6 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
 
 #[get("/@/<name>/outbox")]
 fn outbox(name: String, conn: DbConn) -> Outbox {
-    let user = User::find_by_name(&*conn, name).unwrap();
+    let user = User::find_local(&*conn, name).unwrap();
     user.outbox(&*conn)
 }

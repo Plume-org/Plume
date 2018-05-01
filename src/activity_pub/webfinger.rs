@@ -25,7 +25,7 @@ pub trait Webfinger {
 }
 
 pub fn resolve(acct: String) -> Result<String, String> {
-    let instance = acct.split("@").next().unwrap();
+    let instance = acct.split("@").last().unwrap();
     let url = format!("https://{}/.well-known/webfinger?resource=acct:{}", instance, acct);
     Client::new()
         .get(&url[..])
@@ -37,12 +37,12 @@ pub fn resolve(acct: String) -> Result<String, String> {
             json["links"].as_array().unwrap()
                 .into_iter()
                 .find_map(|link| {
-                    if link["rel"].as_str().unwrap() == "self" && link["href"].as_str().unwrap() == "application/activity+json" {
+                    if link["rel"].as_str().unwrap() == "self" && link["type"].as_str().unwrap() == "application/activity+json" {
                         Some(String::from(link["href"].as_str().unwrap()))
                     } else {
                         None
                     }
                 }).unwrap()
         })
-        .map_err(|_| String::from("Error while fetchin WebFinger resource"))
+        .map_err(|e| format!("Error while fetchin WebFinger resource ({})", e))
 }

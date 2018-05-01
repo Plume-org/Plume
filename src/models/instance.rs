@@ -34,6 +34,10 @@ impl Instance {
             .into_iter().nth(0)
     }
 
+    pub fn local_id(conn: &PgConnection) -> i32 {
+        Instance::get_local(conn).unwrap().id
+    }
+
     pub fn insert<'a>(conn: &PgConnection, loc_dom: String, pub_dom: String, name: String, local: bool) -> Instance {
         diesel::insert_into(instances::table)
             .values(NewInstance {
@@ -51,6 +55,14 @@ impl Instance {
             .limit(1)
             .load::<Instance>(conn)
             .expect("Error loading local instance infos")
+            .into_iter().nth(0)
+    }
+
+    pub fn get_by_domain(conn: &PgConnection, domain: String) -> Option<Instance> {
+        instances::table.filter(instances::public_domain.eq(domain))
+            .limit(1)
+            .load::<Instance>(conn)
+            .expect("Couldn't load instance by domain")
             .into_iter().nth(0)
     }
 

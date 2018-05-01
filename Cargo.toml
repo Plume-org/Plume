@@ -5,7 +5,7 @@ version = "0.1.0"
 [dependencies]
 base64 = "0.9.1"
 bcrypt = "0.2"
-chrono = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
 dotenv = "*"
 heck = "0.3.0"
 hex = "0.3"

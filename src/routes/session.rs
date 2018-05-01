@@ -24,7 +24,7 @@ fn create(conn: DbConn, data: Form<LoginForm>, mut cookies: Cookies) -> Result<R
     let form = data.get();
     let user = match User::find_by_email(&*conn, form.email_or_name.to_string()) {
         Some(usr) => Ok(usr),
-        None => match User::find_by_name(&*conn, form.email_or_name.to_string()) {
+        None => match User::find_local(&*conn, form.email_or_name.to_string()) {
             Some(usr) => Ok(usr),
             None => Err("Invalid username or password")
         }
