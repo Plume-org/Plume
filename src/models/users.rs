@@ -106,7 +106,7 @@ impl User {
     }
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
-        match resolve(acct) {
+        match resolve(acct.clone()) {
             Ok(url) => {
                 let req = Client::new()
                     .get(&url[..])
@@ -115,7 +115,7 @@ impl User {
                 match req {
                     Ok(mut res) => {
                         let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
-                        Some(User::from_activity(conn, json, url.split("@").last().unwrap().to_string()))
+                        Some(User::from_activity(conn, json, acct.split("@").last().unwrap().to_string()))
                     },
                     Err(_) => None
                 }
