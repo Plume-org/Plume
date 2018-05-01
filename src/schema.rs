@@ -21,6 +21,14 @@ table! {
 }
 
 table! {
+    follows (id) {
+        id -> Int4,
+        follower_id -> Int4,
+        following_id -> Int4,
+    }
+}
+
+table! {
     instances (id) {
         id -> Int4,
         local_domain -> Varchar,
@@ -80,6 +88,7 @@ joinable!(users -> instances (instance_id));
 allow_tables_to_appear_in_same_query!(
     blog_authors,
     blogs,
+    follows,
     instances,
     post_authors,
     posts,
