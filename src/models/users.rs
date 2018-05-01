@@ -11,6 +11,7 @@ use serde_json;
 
 use activity_pub::activity::Activity;
 use activity_pub::actor::{ActorType, Actor};
+use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
@@ -223,6 +224,13 @@ impl Actor for User {
 
     fn get_actor_type() -> ActorType {
         ActorType::Person
+    }
+}
+
+impl Inbox for User {
+    fn received(&self, conn: &PgConnection, act: serde_json::Value) {
+        self.save(conn, act);
+        // TODO: add to stream or create notification, or whatever needs to be done
     }
 }
 

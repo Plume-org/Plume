@@ -6,6 +6,7 @@ use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
 use activity_pub::actor::Actor;
+use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::instance::Instance;
@@ -67,4 +68,12 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
 fn outbox(name: String, conn: DbConn) -> Outbox {
     let user = User::find_local(&*conn, name).unwrap();
     user.outbox(&*conn)
+}
+
+#[post("/@/<name>/inbox", data = "<data>")]
+fn inbox(name: String, conn: DbConn, data: String) -> String {
+    let user = User::find_local(&*conn, name).unwrap();
+    let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+    user.received(&*conn, act);
+    String::from("")
 }

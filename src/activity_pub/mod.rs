@@ -5,6 +5,7 @@ use serde_json;
 
 pub mod activity;
 pub mod actor;
+pub mod inbox;
 pub mod object;
 pub mod outbox;
 pub mod sign;
