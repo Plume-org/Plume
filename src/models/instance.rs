@@ -34,6 +34,12 @@ impl Instance {
             .into_iter().nth(0)
     }
 
+    pub fn get_remotes(conn: &PgConnection) -> Vec<Instance> {
+        instances::table.filter(instances::local.eq(false))
+            .load::<Instance>(conn)
+            .expect("Error loading remote instances infos")
+    }
+
     pub fn local_id(conn: &PgConnection) -> i32 {
         Instance::get_local(conn).unwrap().id
     }
