@@ -19,7 +19,7 @@ impl ToString for ActorType {
     }
 }
 
-pub trait Actor {
+pub trait Actor: Sized {
     fn get_box_prefix() -> &'static str;
 
     fn get_actor_id(&self) -> String;
@@ -76,4 +76,6 @@ pub trait Actor {
             Err(_) => println!("Error while sending to inbox")
         }
     }
+
+    fn from_url(conn: &PgConnection, url: String) -> Option<Self>;
 }

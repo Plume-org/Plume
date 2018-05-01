@@ -18,7 +18,8 @@ pub struct Blog {
     pub outbox_url: String,
     pub inbox_url: String,
     pub instance_id: i32,
-    pub creation_date: NaiveDateTime    
+    pub creation_date: NaiveDateTime,
+    pub ap_url: String
 }
 
 #[derive(Insertable)]
@@ -29,7 +30,8 @@ pub struct NewBlog {
     pub summary: String,
     pub outbox_url: String,
     pub inbox_url: String,
-    pub instance_id: i32
+    pub instance_id: i32,
+    pub ap_url: String    
 }
 
 impl Blog {
@@ -52,7 +54,7 @@ impl Blog {
         blogs::table.filter(blogs::actor_id.eq(username))
             .limit(1)
             .load::<Blog>(conn)
-            .expect("Error loading blog by email")
+            .expect("Error loading blog by actor_id")
             .into_iter().nth(0)
     }
 
@@ -67,6 +69,12 @@ impl Blog {
             diesel::update(self)
                 .set(blogs::inbox_url.eq(self.compute_inbox(conn)))
                 .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
+        }
+
+        if self.ap_url.len() == 0 {
+            diesel::update(self)
+                .set(blogs::ap_url.eq(self.compute_id(conn)))
+                .get_result::<Blog>(conn).expect("Couldn't update AP URL");
         }
     }
 
@@ -94,6 +102,14 @@ impl Actor for Blog {
 
     fn get_actor_type () -> ActorType {
         ActorType::Blog
+    }
+
+    fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
+        blogs::table.filter(blogs::ap_url.eq(url))
+            .limit(1)
+            .load::<Blog>(conn)
+            .expect("Error loading blog from url")
+            .into_iter().nth(0)
     }
 }
 
@@ -137,7 +153,8 @@ impl NewBlog {
             summary: summary,
             outbox_url: String::from(""),
             inbox_url: String::from(""),
-            instance_id: instance_id
+            instance_id: instance_id,
+            ap_url: String::from("")
         }
     }
 }

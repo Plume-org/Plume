@@ -5,7 +5,6 @@ version = "0.1.0"
 [dependencies]
 base64 = "0.9.1"
 bcrypt = "0.2"
-chrono = { version = "0.4", features = ["serde"] }
 dotenv = "*"
 heck = "0.3.0"
 hex = "0.3"
@@ -16,6 +15,11 @@ rocket_codegen = "*"
 serde = "*"
 serde_derive = "1.0"
 serde_json = "1.0"
+url = "1.7"
+
+[dependencies.chrono]
+features = ["serde"]
+version = "0.4"
 
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]

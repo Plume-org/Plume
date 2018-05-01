@@ -8,6 +8,7 @@ use reqwest::mime::Mime;
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
 use serde_json;
+use url::Url;
 
 use activity_pub::activity::Activity;
 use activity_pub::actor::{ActorType, Actor};
@@ -35,7 +36,8 @@ pub struct User {
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
-    pub creation_date: NaiveDateTime    
+    pub creation_date: NaiveDateTime,
+    pub ap_url: String
 }
 
 #[derive(Insertable)]
@@ -49,7 +51,8 @@ pub struct NewUser {
     pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
-    pub instance_id: i32
+    pub instance_id: i32,
+    pub ap_url: String
 }
 
 impl User {
@@ -83,7 +86,7 @@ impl User {
             .filter(users::instance_id.eq(instance_id))
             .limit(1)
             .load::<User>(conn)
-            .expect("Error loading user by email")
+            .expect("Error loading user by name")
             .into_iter().nth(0)
     }
 
@@ -109,23 +112,25 @@ impl User {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
         match resolve(acct.clone()) {
-            Ok(url) => {
-                let req = Client::new()
-                    .get(&url[..])
-                    .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
-                    .send();
-                match req {
-                    Ok(mut res) => {
-                        let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
-                        Some(User::from_activity(conn, json, acct.split("@").last().unwrap().to_string()))
-                    },
-                    Err(_) => None
-                }
-            },
+            Ok(url) => User::fetch_from_url(conn, url),
             Err(details) => {
                 println!("{}", details);
                 None
             }
+        }
+    }
+
+    fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
+        let req = Client::new()
+            .get(&url[..])
+            .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
+            .send();
+        match req {
+            Ok(mut res) => {
+                let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
+                Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+            },
+            Err(_) => None
         }
     }
 
@@ -145,7 +150,8 @@ impl User {
             summary: acct["summary"].as_str().unwrap().to_string(),
             email: None,
             hashed_password: None,
-            instance_id: instance.id
+            instance_id: instance.id,
+            ap_url: acct["id"].as_str().unwrap().to_string()
         })
     }
 
@@ -167,7 +173,13 @@ impl User {
         if self.inbox_url.len() == 0 {
             diesel::update(self)
                 .set(users::inbox_url.eq(self.compute_inbox(conn)))
-                .get_result::<User>(conn).expect("Couldn't update outbox URL");                
+                .get_result::<User>(conn).expect("Couldn't update inbox URL");                
+        }
+
+        if self.ap_url.len() == 0 {
+            diesel::update(self)
+                .set(users::ap_url.eq(self.compute_id(conn)))
+                .get_result::<User>(conn).expect("Couldn't update AP URL");
         }
     }
 
@@ -225,6 +237,26 @@ impl Actor for User {
     fn get_actor_type() -> ActorType {
         ActorType::Person
     }
+
+    fn from_url(conn: &PgConnection, url: String) -> Option<User> {
+        let in_db = users::table.filter(users::ap_url.eq(url.clone()))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading user by AP url")
+            .into_iter().nth(0);
+        match in_db {
+            Some(u) => Some(u),
+            None => {
+                // The requested user was not in the DB
+                // We try to fetch it if it is remote
+                if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != Instance::get_local(conn).unwrap().public_domain {
+                    Some(User::fetch_from_url(conn, url).unwrap())
+                } else {
+                    None
+                }
+            }
+        }
+    }
 }
 
 impl Inbox for User {
@@ -281,7 +313,8 @@ impl NewUser {
             summary: summary,
             email: Some(email),
             hashed_password: Some(password),
-            instance_id: instance_id
+            instance_id: instance_id,
+            ap_url: String::from("")
         }
     }
 }

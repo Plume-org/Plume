@@ -17,6 +17,7 @@ table! {
         inbox_url -> Varchar,
         instance_id -> Int4,
         creation_date -> Timestamp,
+        ap_url -> Text,
     }
 }
 
@@ -74,6 +75,7 @@ table! {
         hashed_password -> Nullable<Text>,
         instance_id -> Int4,
         creation_date -> Timestamp,
+        ap_url -> Text,
     }
 }
 
