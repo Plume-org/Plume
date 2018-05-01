@@ -8,7 +8,8 @@ use activity_pub::object::Object;
 #[derive(Clone)]
 pub enum Activity {
     Create(Payload),
-    Accept(Payload)
+    Accept(Payload),
+    Follow(Payload)
 }
 impl Activity {
     pub fn serialize(&self) -> serde_json::Value {
@@ -23,14 +24,16 @@ impl Activity {
     pub fn get_type(&self) -> String {
         match self {
             Activity::Accept(_) => String::from("Accept"),
-            Activity::Create(_) => String::from("Create")
+            Activity::Create(_) => String::from("Create"),
+            Activity::Follow(_) => String::from("Follow")
         }
     }
 
     pub fn payload(&self) -> Payload {
         match self {
             Activity::Accept(p) => p.clone(),
-            Activity::Create(p) => p.clone()
+            Activity::Create(p) => p.clone(),
+            Activity::Follow(p) => p.clone()
         }
     }
 
@@ -40,6 +43,10 @@ impl Activity {
 
     pub fn accept<A: Actor>(by: &A, what: String, conn: &PgConnection) -> Activity {
         Activity::Accept(Payload::new(serde_json::Value::String(by.compute_id(conn)), serde_json::Value::String(what)))
+    }
+
+    pub fn follow<A: Actor, B: Actor>(by: &A, obj: &B, conn: &PgConnection) -> Activity {
+        Activity::Follow(Payload::new(serde_json::Value::String(by.compute_id(conn)), serde_json::Value::String(obj.compute_id(conn))))
     }
 }
 

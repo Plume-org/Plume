@@ -5,10 +5,12 @@ use serde_json;
 use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
+use activity_pub::activity::Activity;
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
+use models::follows::*;
 use models::instance::Instance;
 use models::users::*;
 
@@ -23,6 +25,17 @@ fn details(name: String, conn: DbConn) -> Template {
     Template::render("users/details", json!({
         "user": serde_json::to_value(user).unwrap()
     }))
+}
+
+#[get("/@/<name>/follow")]
+fn follow(name: String, conn: DbConn, user: User) -> Redirect {
+    let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
+    Follow::insert(&*conn, NewFollow {
+        follower_id: user.id,
+        following_id: target.id
+    });
+    target.send_to_inbox(&*conn, Activity::follow(&user, &target, &*conn));
+    Redirect::to(format!("/@/{}", name).as_ref())
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
