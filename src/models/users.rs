@@ -14,6 +14,7 @@ use activity_pub::actor::{ActorType, Actor};
 use activity_pub::outbox::Outbox;
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
+use models::follows::Follow;
 use models::instance::Instance;
 use models::post_authors::PostAuthor;
 use models::posts::Post;
@@ -179,6 +180,18 @@ impl User {
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
         posts.into_iter().map(|p| Activity::create(self, p, conn)).collect::<Vec<Activity>>()
+    }
+
+    pub fn get_followers(&self, conn: &PgConnection) -> Vec<User> {
+        use schema::follows;
+        let follows = Follow::belonging_to(self).select(follows::follower_id);
+        users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
+    }
+
+    pub fn get_following(&self, conn: &PgConnection) -> Vec<User> {
+        use schema::follows;
+        let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);
+        users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 }
 

@@ -1,8 +1,10 @@
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
+use models::users::User;
 use schema::follows;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Associations)]
+#[belongs_to(User, foreign_key = "following_id")]
 pub struct Follow {
     pub id: i32,
     pub follower_id: i32,
