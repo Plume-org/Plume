@@ -25,8 +25,7 @@ struct WebfingerQuery {
 
 #[get("/.well-known/webfinger?<query>")]
 fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<Result<String, &'static str>> {
-    let mut parsed_query = query.resource.split(":");
-    println!("{:?}", parsed_query.clone().collect::<Vec<&str>>());
+    let mut parsed_query = query.resource.splitn(2, ":");
     let res_type = parsed_query.next().unwrap();
     let res = parsed_query.next().unwrap();
     if res_type == "acct" {
