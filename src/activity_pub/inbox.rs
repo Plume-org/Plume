@@ -1,5 +1,4 @@
 use diesel::PgConnection;
-use diesel::associations::Identifiable;
 use serde_json;
 
 use activity_pub::activity::Activity;

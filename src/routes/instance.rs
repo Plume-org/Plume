@@ -3,6 +3,7 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use std::collections::HashMap;
 
+use BASE_URL;
 use db_conn::DbConn;
 use models::instance::*;
 
@@ -25,8 +26,6 @@ fn configure() -> Template {
 
 #[derive(FromForm)]
 struct NewInstanceForm {
-    local_domain: String,
-    public_domain: String,
     name: String
 }
 
@@ -35,8 +34,7 @@ fn post_config(conn: DbConn, data: Form<NewInstanceForm>) -> Redirect {
     let form = data.get();
     let inst = Instance::insert(
         &*conn,
-        form.local_domain.to_string(),
-        form.public_domain.to_string(), 
+        BASE_URL.as_str().to_string(),
         form.name.to_string(),
         true);
     if inst.has_admin(&*conn) {

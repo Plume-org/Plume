@@ -9,6 +9,8 @@ extern crate hex;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+#[macro_use]
+extern crate lazy_static;
 extern crate openssl;
 extern crate reqwest;
 extern crate rocket;
@@ -33,15 +35,22 @@ mod schema;
 mod routes;
 mod utils;
 
+lazy_static! {
+    pub static ref BASE_URL: String = env::var("BASE_URL")
+        .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
+    
+    pub static ref DB_URL: String = env::var("DB_URL")
+        .unwrap_or(format!("DATABASE_URL=postgres://plume:plume@localhost/{}", env::var("DB_TABLE").unwrap_or(String::from("plume"))));
+}
+
 type PgPool = Pool<ConnectionManager<PgConnection>>;
 
 /// Initializes a database pool.
 fn init_pool() -> PgPool {
     dotenv().ok();
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
-    Pool::new(manager).expect("db pool")
+    let manager = ConnectionManager::<PgConnection>::new(DB_URL.as_str());
+    Pool::new(manager).expect("DB pool error")
 }
 
 fn main() {

@@ -10,6 +10,7 @@ use rocket::outcome::IntoOutcome;
 use serde_json;
 use url::Url;
 
+use BASE_URL;
 use activity_pub::activity::Activity;
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::inbox::Inbox;
@@ -138,7 +139,7 @@ impl User {
         let instance = match Instance::get_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
-                Instance::insert(conn, String::from(""), inst.clone(), inst.clone(), false)
+                Instance::insert(conn, inst.clone(), inst.clone(), false)
             }
         };
         User::insert(conn, NewUser {
@@ -249,7 +250,7 @@ impl Actor for User {
             None => {
                 // The requested user was not in the DB
                 // We try to fetch it if it is remote
-                if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != Instance::get_local(conn).unwrap().public_domain {
+                if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
                     Some(User::fetch_from_url(conn, url).unwrap())
                 } else {
                     None

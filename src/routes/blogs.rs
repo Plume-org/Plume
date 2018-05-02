@@ -36,7 +36,6 @@ struct NewBlogForm {
 
 #[post("/blogs/new", data = "<data>")]
 fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
-    let inst = Instance::get_local(&*conn).unwrap();
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
 
@@ -44,7 +43,7 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
         slug.to_string(),
         form.title.to_string(),
         String::from(""),
-        inst.id
+        Instance::local_id(&*conn)
     ));
     blog.update_boxes(&*conn);
 

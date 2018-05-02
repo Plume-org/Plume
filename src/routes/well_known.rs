@@ -1,21 +1,20 @@
 use rocket::http::ContentType;
 use rocket::response::Content;
 
+use BASE_URL;
 use activity_pub::webfinger::Webfinger;
 use db_conn::DbConn;
 use models::blogs::Blog;
-use models::instance::Instance;
 use models::users::User;
 
 #[get("/.well-known/host-meta", format = "application/xml")]
-fn host_meta(conn: DbConn) -> String {
-    let domain = Instance::get_local(&*conn).unwrap().public_domain;
+fn host_meta() -> String {
     format!(r#"
     <?xml version="1.0"?>
     <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
         <Link rel="lrdd" type="application/xrd+xml" template="https://{domain}/.well-known/webfinger?resource={{uri}}"/>
     </XRD>
-    "#, domain = domain)
+    "#, domain = BASE_URL.as_str())
 }
 
 #[derive(FromForm)]
@@ -34,9 +33,7 @@ fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<Result<String, &'st
         let user = parsed_res.next().unwrap();
         let res_dom = parsed_res.next().unwrap();
 
-        let domain = Instance::get_local(&*conn).unwrap().public_domain;
-
-        if res_dom == domain {
+        if res_dom == BASE_URL.as_str() {
             let res = match User::find_local(&*conn, String::from(user)) {
                 Some(usr) => Ok(usr.webfinger(&*conn)),
                 None => match Blog::find_by_actor_id(&*conn, String::from(user)) {

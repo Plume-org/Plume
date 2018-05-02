@@ -8,7 +8,6 @@ use schema::{instances, users};
 #[derive(Identifiable, Queryable)]
 pub struct Instance {
     pub id: i32,
-    pub local_domain: String,
     pub public_domain: String,
     pub name: String,
     pub local: bool,
@@ -19,7 +18,6 @@ pub struct Instance {
 #[derive(Insertable)]
 #[table_name = "instances"]
 pub struct NewInstance {
-    pub local_domain: String,
     pub public_domain: String,
     pub name: String,
     pub local: bool
@@ -44,10 +42,9 @@ impl Instance {
         Instance::get_local(conn).unwrap().id
     }
 
-    pub fn insert<'a>(conn: &PgConnection, loc_dom: String, pub_dom: String, name: String, local: bool) -> Instance {
+    pub fn insert<'a>(conn: &PgConnection, pub_dom: String, name: String, local: bool) -> Instance {
         diesel::insert_into(instances::table)
             .values(NewInstance {
-                local_domain: loc_dom,
                 public_domain: pub_dom,
                 name: name,
                 local: local
