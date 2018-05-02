@@ -2,6 +2,7 @@ use rocket::http::ContentType;
 use rocket::response::Content;
 
 use BASE_URL;
+use activity_pub::ap_url;
 use activity_pub::webfinger::Webfinger;
 use db_conn::DbConn;
 use models::blogs::Blog;
@@ -12,9 +13,9 @@ fn host_meta() -> String {
     format!(r#"
     <?xml version="1.0"?>
     <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
-        <Link rel="lrdd" type="application/xrd+xml" template="https://{domain}/.well-known/webfinger?resource={{uri}}"/>
+        <Link rel="lrdd" type="application/xrd+xml" template="{url}"/>
     </XRD>
-    "#, domain = BASE_URL.as_str())
+    "#, url = ap_url(format!("{domain}/.well-known/webfinger?resource={{uri}}", domain = BASE_URL.as_str())))
 }
 
 #[derive(FromForm)]

@@ -40,7 +40,7 @@ lazy_static! {
         .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
     
     pub static ref DB_URL: String = env::var("DB_URL")
-        .unwrap_or(format!("DATABASE_URL=postgres://plume:plume@localhost/{}", env::var("DB_TABLE").unwrap_or(String::from("plume"))));
+        .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
 }
 
 type PgPool = Pool<ConnectionManager<PgConnection>>;

@@ -39,3 +39,25 @@ cargo run
 You'll need Rust nightly.
 
 Once the app started, try to visit [localhost:8000](http://localhost:8000).
+
+To configure the instance (needed before you can do anything else),
+go on [/configire](http://localhost:8000/configure).
+
+## Testing the federation
+
+To test the federation, you'll need to setup another database (see "Setup the database"),
+also owned by the "plume" user, but with a different name. Then, you'll need to run the
+migrations for this database too.
+
+```
+diesel migration run --database-url postgres://plume:plume@localhost/my_other_plume_db
+```
+
+To run this other instance, you'll need to give two environment variables:
+
+- `ROCKET_PORT`, the port on which your app will run
+- `DB_NAME`, the name of the database you just created
+
+```
+ROCKET_PORT=3033 DB_NAME=my_other_plume_db cargo run
+```

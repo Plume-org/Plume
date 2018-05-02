@@ -1,7 +1,8 @@
 use diesel::PgConnection;
 use reqwest::Client;
 
-use activity_pub::{activity_pub, ActivityPub, context};
+use BASE_URL;
+use activity_pub::{activity_pub, ActivityPub, context, ap_url};
 use activity_pub::activity::Activity;
 use models::instance::Instance;
 
@@ -40,7 +41,7 @@ pub trait Actor: Sized {
             "summary": "",
             "url": self.compute_id(conn),
             "endpoints": {
-                "sharedInbox": "https://plu.me/inbox"
+                "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
             }
         }))
     }
@@ -58,12 +59,12 @@ pub trait Actor: Sized {
     }
 
     fn compute_id(&self, conn: &PgConnection) -> String {
-        format!(
-            "https://{instance}/{prefix}/{user}",
+        ap_url(format!(
+            "{instance}/{prefix}/{user}",
             instance = self.get_instance(conn).public_domain,
             prefix = Self::get_box_prefix(),
             user = self.get_actor_id()
-        )
+        ))
     }
 
     fn send_to_inbox(&self, conn: &PgConnection, act: Activity) {

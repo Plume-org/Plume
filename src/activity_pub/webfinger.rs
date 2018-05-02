@@ -4,6 +4,8 @@ use reqwest::header::{Accept, qitem};
 use reqwest::mime::Mime;
 use serde_json;
 
+use activity_pub::ap_url;
+
 pub trait Webfinger {
     fn webfinger_subject(&self, conn: &PgConnection) -> String;
     fn webfinger_aliases(&self, conn: &PgConnection) -> Vec<String>;
@@ -26,7 +28,7 @@ pub trait Webfinger {
 
 pub fn resolve(acct: String) -> Result<String, String> {
     let instance = acct.split("@").last().unwrap();
-    let url = format!("https://{}/.well-known/webfinger?resource=acct:{}", instance, acct);
+    let url = ap_url(format!("{}/.well-known/webfinger?resource=acct:{}", instance, acct));
     Client::new()
         .get(&url[..])
         .header(Accept(vec![qitem("application/jrd+json".parse::<Mime>().unwrap())]))
