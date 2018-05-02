@@ -5,7 +5,7 @@ use serde_json;
 use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
-use activity_pub::activity::Activity;
+use activity_pub::activity;
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
@@ -34,7 +34,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
         follower_id: user.id,
         following_id: target.id
     });
-    target.send_to_inbox(&*conn, Activity::follow(&user, &target, &*conn));
+    target.send_to_inbox(&*conn, activity::Follow::new(&user, &target, &*conn));
     Redirect::to(format!("/@/{}", name).as_ref())
 }
 

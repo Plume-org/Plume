@@ -11,7 +11,7 @@ use serde_json;
 use url::Url;
 
 use BASE_URL;
-use activity_pub::activity::Activity;
+use activity_pub::activity::{Create, Activity};
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
@@ -184,16 +184,16 @@ impl User {
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
+    pub fn outbox<A: Activity + Clone + 'static>(&self, conn: &PgConnection) -> Outbox<A> {
         Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
     }
 
-    fn get_activities(&self, conn: &PgConnection) -> Vec<Activity> {
+    fn get_activities<A: Activity>(&self, conn: &PgConnection) -> Vec<Box<A>> {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
-        posts.into_iter().map(|p| Activity::create(self, p, conn)).collect::<Vec<Activity>>()
+        posts.into_iter().map(|p| Box::new(Create::new(self, &p, conn)) as Box<A>).collect::<Vec<Box<A>>>()
     }
 
     pub fn get_followers(&self, conn: &PgConnection) -> Vec<User> {

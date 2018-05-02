@@ -4,7 +4,7 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use std::collections::HashMap;
 
-use activity_pub::activity::Activity;
+use activity_pub::activity::Create;
 use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::blogs::*;
@@ -55,7 +55,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         author_id: user.id
     });
 
-    let act = Activity::create(&user, post, &*conn);
+    let act = Create::new(&user, &post, &*conn);
     broadcast(&*conn, act, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())

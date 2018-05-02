@@ -1,7 +1,7 @@
 use diesel::PgConnection;
 use serde_json;
 
-use activity_pub::activity::Activity;
+use activity_pub::activity;
 use activity_pub::actor::Actor;
 use models::blogs::Blog;
 use models::follows::{Follow, NewFollow};
@@ -29,13 +29,13 @@ pub trait Inbox: Actor + Sized {
                 }
             },
             "Follow" => {
-                let follow_id = act["object"].as_str().unwrap().to_string();
+                let follow_act = activity::Follow::deserialize(act.clone());
                 let from = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
                 match User::from_url(conn, act["object"].as_str().unwrap().to_string()) {
-                    Some(u) => self.accept_follow(conn, &from, &u, follow_id, from.id, u.id),
+                    Some(u) => self.accept_follow(conn, &from, &u, &follow_act, from.id, u.id),
                     None => {
-                        let blog = Blog::from_url(conn, follow_id.clone()).unwrap();
-                        self.accept_follow(conn, &from, &blog, follow_id, from.id, blog.id)
+                        let blog = Blog::from_url(conn, follow_act.get_target_id()).unwrap();
+                        self.accept_follow(conn, &from, &blog, &follow_act, from.id, blog.id)
                     }
                 };
                 
@@ -45,13 +45,13 @@ pub trait Inbox: Actor + Sized {
         }
     }
 
-    fn accept_follow<A: Actor, B: Actor>(&self, conn: &PgConnection, from: &A, target: &B, follow_id: String, from_id: i32, target_id: i32) {
+    fn accept_follow<A: Actor, B: Actor, T: activity::Activity>(&self, conn: &PgConnection, from: &A, target: &B, follow: &T, from_id: i32, target_id: i32) {
         Follow::insert(conn, NewFollow {
             follower_id: from_id,
             following_id: target_id
         });
 
-        let accept = Activity::accept(target, follow_id, conn);
+        let accept = activity::Accept::new(target, follow, conn);
         from.send_to_inbox(conn, accept)
     }
 }

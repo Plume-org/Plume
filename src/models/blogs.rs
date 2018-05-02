@@ -78,11 +78,11 @@ impl Blog {
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
+    pub fn outbox<A: Activity + Clone + 'static>(&self, conn: &PgConnection) -> Outbox<A> {
         Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
     }
 
-    fn get_activities(&self, _conn: &PgConnection) -> Vec<Activity> {
+    fn get_activities<A: Activity + Clone>(&self, _conn: &PgConnection) -> Vec<Box<A>> {
         vec![]
     }
 }

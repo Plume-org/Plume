@@ -1,69 +1,150 @@
 use chrono;
 use diesel::PgConnection;
 use serde_json;
+use std::str::FromStr;
 
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
 
-#[derive(Clone)]
-pub enum Activity {
-    Create(Payload),
-    Accept(Payload),
-    Follow(Payload)
+pub trait Activity: ActivityClone {
+    fn get_id(&self) -> String;
+
+    fn serialize(&self) -> serde_json::Value;
+
+    // fn deserialize(serde_json::Value) -> Self;
 }
-impl Activity {
-    pub fn serialize(&self) -> serde_json::Value {
-        json!({
-            "type": self.get_type(),
-            "actor": self.payload().by,
-            "object": self.payload().object,
-            "published": self.payload().date.to_rfc3339()
-        })
-    }
 
-    pub fn get_type(&self) -> String {
-        match self {
-            Activity::Accept(_) => String::from("Accept"),
-            Activity::Create(_) => String::from("Create"),
-            Activity::Follow(_) => String::from("Follow")
-        }
-    }
+trait ActivityClone {
+    fn clone_box(&self) -> Box<Activity>;
+}
 
-    pub fn payload(&self) -> Payload {
-        match self {
-            Activity::Accept(p) => p.clone(),
-            Activity::Create(p) => p.clone(),
-            Activity::Follow(p) => p.clone()
-        }
+impl<T> ActivityClone for T
+where
+    T: 'static + Activity + Clone,
+{
+    fn clone_box(&self) -> Box<Activity> {
+        Box::new(self.clone())
     }
+}
 
-    pub fn create<T: Object, U: Actor>(by: &U, obj: T, conn: &PgConnection) -> Activity {
-        Activity::Create(Payload::new(serde_json::Value::String(by.compute_id(conn)), obj.serialize(conn)))
-    }
-
-    pub fn accept<A: Actor>(by: &A, what: String, conn: &PgConnection) -> Activity {
-        Activity::Accept(Payload::new(serde_json::Value::String(by.compute_id(conn)), serde_json::Value::String(what)))
-    }
-
-    pub fn follow<A: Actor, B: Actor>(by: &A, obj: &B, conn: &PgConnection) -> Activity {
-        Activity::Follow(Payload::new(serde_json::Value::String(by.compute_id(conn)), serde_json::Value::String(obj.compute_id(conn))))
+// We can now implement Clone manually by forwarding to clone_box.
+impl Clone for Box<Activity> {
+    fn clone(&self) -> Box<Activity> {
+        self.clone_box()
     }
 }
 
 #[derive(Clone)]
-pub struct Payload {
-    by: serde_json::Value,
+pub struct Accept {
+    id: String,
+    actor: serde_json::Value,
     object: serde_json::Value,
     date: chrono::DateTime<chrono::Utc>
 }
 
-impl Payload {
-    pub fn new(by: serde_json::Value, obj: serde_json::Value) -> Payload {
-        Payload {
-            by: by,
-            object: obj,
+impl Accept {
+    pub fn new<A: Activity, B: Actor>(who: &B, what: &A, conn: &PgConnection) -> Accept {
+        Accept {
+            id: "TODO".to_string(),
+            actor: serde_json::Value::String(who.compute_id(conn)),
+            object: serde_json::Value::String(what.get_id()),
             date: chrono::Utc::now()
         }
     }
 }
 
+impl Activity for Accept {
+    fn get_id(&self) -> String {
+        self.id.clone()
+    }
+
+    fn serialize(&self) -> serde_json::Value {
+        json!({
+            "type": "Accept",
+            "actor": self.actor,
+            "object": self.object,
+            "published": self.date.to_rfc3339()
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct Create {
+    id: String,
+    actor: serde_json::Value,
+    object: serde_json::Value,
+    date: chrono::DateTime<chrono::Utc>
+}
+
+impl Create {
+    pub fn new<A: Actor, B: Object>(actor: &A, obj: &B, conn: &PgConnection) -> Create {
+        Create {
+            id: "TODO".to_string(),
+            actor: serde_json::Value::String(actor.compute_id(conn)),
+            object: obj.serialize(conn),
+            date: chrono::Utc::now()
+        }
+    }
+}
+
+impl Activity for Create {
+    fn get_id(&self) -> String {
+        self.id.clone()
+    }
+
+    fn serialize(&self) -> serde_json::Value {
+        json!({
+            "type": "Create",
+            "actor": self.actor,
+            "object": self.object,
+            "published": self.date.to_rfc3339()
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct Follow {
+    id: String,
+    actor: serde_json::Value,
+    object: serde_json::Value,
+    date: chrono::DateTime<chrono::Utc>
+}
+
+impl Follow {
+    pub fn new<A: Actor, B: Actor>(follower: &A, following: &B, conn: &PgConnection) -> Follow {
+        Follow {
+            id: "TODO".to_string(),
+            actor: serde_json::Value::String(follower.compute_id(conn)),
+            object: serde_json::Value::String(following.compute_id(conn)),
+            date: chrono::Utc::now()
+        }
+    }
+
+    pub fn deserialize(json: serde_json::Value) -> Follow {
+        Follow {
+            id: json["id"].as_str().unwrap().to_string(),
+            actor: json["actor"].clone(),
+            object: json["object"].clone(),
+            date: chrono::DateTime::from_str(json["published"].as_str().unwrap()).unwrap()
+        }
+    }
+
+    pub fn get_target_id(&self) -> String {
+        self.object.as_str().unwrap().to_string()
+    }
+}
+
+impl Activity for Follow {
+    fn get_id(&self) -> String {
+        self.id.clone()
+    }
+
+    fn serialize(&self) -> serde_json::Value {
+        json!({
+            "type": "Follow",
+            "actor": self.actor,
+            "object": self.object,
+            "published": self.date.to_rfc3339()
+        })
+    }
+}

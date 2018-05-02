@@ -67,7 +67,7 @@ pub trait Actor: Sized {
         ))
     }
 
-    fn send_to_inbox(&self, conn: &PgConnection, act: Activity) {
+    fn send_to_inbox<A: Activity>(&self, conn: &PgConnection, act: A) {
         let res = Client::new()
             .post(&self.compute_inbox(conn)[..])
             .body(act.serialize().to_string())
