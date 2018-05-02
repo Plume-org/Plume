@@ -8,6 +8,7 @@ use reqwest::mime::Mime;
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
 use serde_json;
+use std::sync::Arc;
 use url::Url;
 
 use BASE_URL;
@@ -184,16 +185,16 @@ impl User {
         }
     }
 
-    pub fn outbox<A: Activity + Clone + 'static>(&self, conn: &PgConnection) -> Outbox<A> {
+    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
         Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
     }
 
-    fn get_activities<A: Activity>(&self, conn: &PgConnection) -> Vec<Box<A>> {
+    fn get_activities(&self, conn: &PgConnection) -> Vec<Arc<Activity>> {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
-        posts.into_iter().map(|p| Box::new(Create::new(self, &p, conn)) as Box<A>).collect::<Vec<Box<A>>>()
+        posts.into_iter().map(|p| Arc::new(Create::new(self, &p, conn)) as Arc<Activity>).collect::<Vec<Arc<Activity>>>()
     }
 
     pub fn get_followers(&self, conn: &PgConnection) -> Vec<User> {

@@ -1,5 +1,6 @@
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use std::sync::Arc;
 
 use activity_pub::activity::Activity;
 use activity_pub::actor::{Actor, ActorType};
@@ -78,11 +79,11 @@ impl Blog {
         }
     }
 
-    pub fn outbox<A: Activity + Clone + 'static>(&self, conn: &PgConnection) -> Outbox<A> {
+    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
         Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
     }
 
-    fn get_activities<A: Activity + Clone>(&self, _conn: &PgConnection) -> Vec<Box<A>> {
+    fn get_activities(&self, _conn: &PgConnection) -> Vec<Arc<Activity>> {
         vec![]
     }
 }

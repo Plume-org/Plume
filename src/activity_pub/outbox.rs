@@ -3,19 +3,20 @@ use rocket::http::Status;
 use rocket::response::{Response, Responder};
 use rocket::request::Request;
 use serde_json;
+use std::sync::Arc;
 
 use activity_pub::{activity_pub, ActivityPub, context};
 use activity_pub::activity::Activity;
 use activity_pub::actor::Actor;
 use models::users::User;
 
-pub struct Outbox<A> where A: Activity + Clone {
+pub struct Outbox {
     id: String,
-    items: Vec<Box<A>>
+    items: Vec<Arc<Activity>>
 }
 
-impl<A: Activity + Clone + 'static> Outbox<A> {
-    pub fn new(id: String, items: Vec<Box<A>>) -> Outbox<A> {
+impl Outbox {
+    pub fn new(id: String, items: Vec<Arc<Activity>>) -> Outbox {
         Outbox {
             id: id,
             items: items
@@ -34,7 +35,7 @@ impl<A: Activity + Clone + 'static> Outbox<A> {
     }
 }
 
-impl<'r, A: Activity + Clone + 'static> Responder<'r> for Outbox<A> {
+impl<'r> Responder<'r> for Outbox {
     fn respond_to(self, request: &Request) -> Result<Response<'r>, Status> {
         self.serialize().respond_to(request)
     }

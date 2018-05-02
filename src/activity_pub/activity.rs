@@ -6,32 +6,12 @@ use std::str::FromStr;
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
 
-pub trait Activity: ActivityClone {
+pub trait Activity {
     fn get_id(&self) -> String;
 
     fn serialize(&self) -> serde_json::Value;
 
     // fn deserialize(serde_json::Value) -> Self;
-}
-
-trait ActivityClone {
-    fn clone_box(&self) -> Box<Activity>;
-}
-
-impl<T> ActivityClone for T
-where
-    T: 'static + Activity + Clone,
-{
-    fn clone_box(&self) -> Box<Activity> {
-        Box::new(self.clone())
-    }
-}
-
-// We can now implement Clone manually by forwarding to clone_box.
-impl Clone for Box<Activity> {
-    fn clone(&self) -> Box<Activity> {
-        self.clone_box()
-    }
 }
 
 #[derive(Clone)]

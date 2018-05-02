@@ -4,7 +4,6 @@ use rocket_contrib::Template;
 use std::collections::HashMap;
 
 use activity_pub::ActivityPub;
-use activity_pub::activity::Activity;
 use activity_pub::actor::Actor;
 use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
@@ -58,7 +57,7 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
 }
 
 #[get("/~/<name>/outbox")]
-fn outbox<A: Activity + Clone + 'static>(name: String, conn: DbConn) -> Outbox<A> {
+fn outbox(name: String, conn: DbConn) -> Outbox {
     let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
     blog.outbox(&*conn)
 }
