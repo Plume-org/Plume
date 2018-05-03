@@ -75,6 +75,8 @@ table! {
         instance_id -> Int4,
         creation_date -> Timestamp,
         ap_url -> Text,
+        private_key -> Nullable<Text>,
+        public_key -> Text,
     }
 }
 

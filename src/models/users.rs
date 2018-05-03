@@ -2,6 +2,10 @@ use bcrypt;
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
 use diesel::dsl::any;
+use openssl::hash::MessageDigest;
+use openssl::pkey::{PKey, Private};
+use openssl::rsa::Rsa;
+use openssl::sign::Signer;
 use reqwest::Client;
 use reqwest::header::{Accept, qitem};
 use reqwest::mime::Mime;
@@ -16,6 +20,7 @@ use activity_pub::activity::{Create, Activity};
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
+use activity_pub::sign;
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
 use models::follows::Follow;
@@ -39,7 +44,9 @@ pub struct User {
     pub hashed_password: Option<String>,
     pub instance_id: i32,
     pub creation_date: NaiveDateTime,
-    pub ap_url: String
+    pub ap_url: String,
+    pub private_key: Option<String>,
+    pub public_key: String    
 }
 
 #[derive(Insertable)]
@@ -54,7 +61,9 @@ pub struct NewUser {
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
-    pub ap_url: String
+    pub ap_url: String,
+    pub private_key: Option<String>,
+    pub public_key: String    
 }
 
 impl User {
@@ -153,7 +162,9 @@ impl User {
             email: None,
             hashed_password: None,
             instance_id: instance.id,
-            ap_url: acct["id"].as_str().unwrap().to_string()
+            ap_url: acct["id"].as_str().unwrap().to_string(),
+            public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap().to_string(),
+            private_key: None
         })
     }
 
@@ -207,6 +218,10 @@ impl User {
         use schema::follows;
         let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
+    }
+
+    pub fn get_keypair(&self) -> PKey<Private> {
+        PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 }
 
@@ -303,6 +318,19 @@ impl Webfinger for User {
     }
 }
 
+impl sign::Signer for User {
+    fn get_key_id(&self, conn: &PgConnection) -> String {
+        format!("{}#main-key", self.compute_id(conn))
+    }
+
+    fn sign(&self, to_sign: String) -> Vec<u8> {
+        let key = self.get_keypair();
+        let mut signer = Signer::new(MessageDigest::sha256(), &key).unwrap();
+        signer.update(to_sign.as_bytes()).unwrap();
+        signer.sign_to_vec().unwrap()
+    }
+}
+
 impl NewUser {
     /// Creates a new local user
     pub fn new_local(
@@ -314,6 +342,7 @@ impl NewUser {
         password: String,
         instance_id: i32
     ) -> NewUser {
+        let (pub_key, priv_key) = NewUser::gen_keypair();
         NewUser {
             username: username,
             display_name: display_name,
@@ -324,7 +353,16 @@ impl NewUser {
             email: Some(email),
             hashed_password: Some(password),
             instance_id: instance_id,
-            ap_url: String::from("")
+            ap_url: String::from(""),
+            public_key: String::from_utf8(pub_key).unwrap(),
+            private_key: Some(String::from_utf8(priv_key).unwrap())
         }
+    }
+
+    // Returns (public key, private key)
+    fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
+        let keypair = Rsa::generate(2048).unwrap();
+        let keypair = PKey::from_rsa(keypair).unwrap();
+        (keypair.public_key_to_pem().unwrap(), keypair.private_key_to_pem_pkcs8().unwrap())
     }
 }
