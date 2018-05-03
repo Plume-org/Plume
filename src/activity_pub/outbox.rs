@@ -8,6 +8,7 @@ use std::sync::Arc;
 use activity_pub::{activity_pub, ActivityPub, context};
 use activity_pub::activity::Activity;
 use activity_pub::actor::Actor;
+use activity_pub::sign::Signer;
 use models::users::User;
 
 pub struct Outbox {
@@ -41,8 +42,8 @@ impl<'r> Responder<'r> for Outbox {
     }
 }
 
-pub fn broadcast<A: Activity + Clone>(conn: &PgConnection, act: A, to: Vec<User>) {
+pub fn broadcast<A: Activity + Clone, S: Actor + Signer>(conn: &PgConnection, sender: &S, act: A, to: Vec<User>) {
     for user in to {
-        user.send_to_inbox(conn, act.clone()); // TODO: run it in Sidekiq or something like that
+        user.send_to_inbox(conn, sender, act.clone()); // TODO: run it in Sidekiq or something like that
     }
 }

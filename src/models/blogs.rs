@@ -1,10 +1,15 @@
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use openssl::hash::MessageDigest;
+use openssl::pkey::{PKey, Private};
+use openssl::rsa::Rsa;
+use openssl::sign::Signer;
 use std::sync::Arc;
 
 use activity_pub::activity::Activity;
 use activity_pub::actor::{Actor, ActorType};
 use activity_pub::outbox::Outbox;
+use activity_pub::sign;
 use activity_pub::webfinger::*;
 use models::instance::Instance;
 use schema::blogs;
@@ -20,7 +25,9 @@ pub struct Blog {
     pub inbox_url: String,
     pub instance_id: i32,
     pub creation_date: NaiveDateTime,
-    pub ap_url: String
+    pub ap_url: String,
+    pub private_key: Option<String>,
+    pub public_key: String
 }
 
 #[derive(Insertable)]
@@ -32,7 +39,9 @@ pub struct NewBlog {
     pub outbox_url: String,
     pub inbox_url: String,
     pub instance_id: i32,
-    pub ap_url: String    
+    pub ap_url: String,
+    pub private_key: Option<String>,
+    pub public_key: String
 }
 
 impl Blog {
@@ -85,6 +94,10 @@ impl Blog {
 
     fn get_activities(&self, _conn: &PgConnection) -> Vec<Arc<Activity>> {
         vec![]
+    }
+
+    pub fn get_keypair(&self) -> PKey<Private> {
+        PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 }
 
@@ -149,6 +162,19 @@ impl Webfinger for Blog {
     }
 }
 
+impl sign::Signer for Blog {
+    fn get_key_id(&self, conn: &PgConnection) -> String {
+        format!("{}#main-key", self.compute_id(conn))
+    }
+
+    fn sign(&self, to_sign: String) -> Vec<u8> {
+        let key = self.get_keypair();
+        let mut signer = Signer::new(MessageDigest::sha256(), &key).unwrap();
+        signer.update(to_sign.as_bytes()).unwrap();
+        signer.sign_to_vec().unwrap()
+    }
+}
+
 impl NewBlog {
     pub fn new_local(
         actor_id: String,
@@ -156,6 +182,7 @@ impl NewBlog {
         summary: String,
         instance_id: i32
     ) -> NewBlog {
+        let (pub_key, priv_key) = sign::gen_keypair();
         NewBlog {
             actor_id: actor_id,
             title: title,
@@ -163,7 +190,9 @@ impl NewBlog {
             outbox_url: String::from(""),
             inbox_url: String::from(""),
             instance_id: instance_id,
-            ap_url: String::from("")
+            ap_url: String::from(""),
+            public_key: String::from_utf8(pub_key).unwrap(),
+            private_key: Some(String::from_utf8(priv_key).unwrap())
         }
     }
 }

@@ -3,6 +3,7 @@ use serde_json;
 
 use activity_pub::activity;
 use activity_pub::actor::Actor;
+use activity_pub::sign::*;
 use models::blogs::Blog;
 use models::follows::{Follow, NewFollow};
 use models::posts::{Post, NewPost};
@@ -45,13 +46,21 @@ pub trait Inbox: Actor + Sized {
         }
     }
 
-    fn accept_follow<A: Actor, B: Actor, T: activity::Activity>(&self, conn: &PgConnection, from: &A, target: &B, follow: &T, from_id: i32, target_id: i32) {
+    fn accept_follow<A: Actor, B: Actor + Signer, T: activity::Activity>(
+        &self,
+        conn: &PgConnection,
+        from: &A,
+        target: &B,
+        follow: &T,
+        from_id: i32,
+        target_id: i32
+    ) {
         Follow::insert(conn, NewFollow {
             follower_id: from_id,
             following_id: target_id
         });
 
         let accept = activity::Accept::new(target, follow, conn);
-        from.send_to_inbox(conn, accept)
+        from.send_to_inbox(conn, target, accept)
     }
 }

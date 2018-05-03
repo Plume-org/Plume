@@ -1,9 +1,11 @@
 use diesel::PgConnection;
 use reqwest::Client;
+use serde_json;
 
 use BASE_URL;
 use activity_pub::{activity_pub, ActivityPub, context, ap_url};
 use activity_pub::activity::Activity;
+use activity_pub::sign::*;
 use models::instance::Instance;
 
 pub enum ActorType {
@@ -33,8 +35,12 @@ pub trait Actor: Sized {
 
     fn get_actor_type() -> ActorType;
 
+    fn custom_props(&self, _conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
+        serde_json::Map::new()
+    }
+
     fn as_activity_pub (&self, conn: &PgConnection) -> ActivityPub {
-        activity_pub(json!({
+        let mut repr = json!({
             "@context": context(),
             "id": self.compute_id(conn),
             "type": Self::get_actor_type().to_string(),
@@ -47,7 +53,11 @@ pub trait Actor: Sized {
             "endpoints": {
                 "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
             }
-        }))
+        });
+
+        self.custom_props(conn).iter().for_each(|p| repr[p.0] = p.1.clone());
+
+        activity_pub(repr)
     }
 
     fn compute_outbox(&self, conn: &PgConnection) -> String {
@@ -71,10 +81,12 @@ pub trait Actor: Sized {
         ))
     }
 
-    fn send_to_inbox<A: Activity>(&self, conn: &PgConnection, act: A) {
+    fn send_to_inbox<A: Activity, S: Actor + Signer>(&self, conn: &PgConnection, sender: &S, act: A) {
+        let mut act = act.serialize();
+        let signed = act.sign(sender, conn);
         let res = Client::new()
             .post(&self.compute_inbox(conn)[..])
-            .body(act.serialize().to_string())
+            .body(signed.to_string())
             .send();
         match res {
             Ok(_) => println!("Successfully sent activity to inbox"),

@@ -56,7 +56,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     });
 
     let act = Create::new(&user, &post, &*conn);
-    broadcast(&*conn, act, user.get_followers(&*conn));
+    broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())
 }

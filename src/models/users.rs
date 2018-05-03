@@ -5,7 +5,7 @@ use diesel::dsl::any;
 use openssl::hash::MessageDigest;
 use openssl::pkey::{PKey, Private};
 use openssl::rsa::Rsa;
-use openssl::sign::Signer;
+use openssl::sign;
 use reqwest::Client;
 use reqwest::header::{Accept, qitem};
 use reqwest::mime::Mime;
@@ -20,7 +20,7 @@ use activity_pub::activity::{Create, Activity};
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
-use activity_pub::sign;
+use activity_pub::sign::{Signer, gen_keypair};
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
 use models::follows::Follow;
@@ -263,6 +263,16 @@ impl Actor for User {
         ActorType::Person
     }
 
+    fn custom_props(&self, conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
+        let mut res = serde_json::Map::new();
+        res.insert("publicKey".to_string(), json!({
+            "id": self.get_key_id(conn),
+            "owner": self.compute_id(conn),
+            "publicKeyPem": self.public_key
+        }));
+        res
+    }
+
     fn from_url(conn: &PgConnection, url: String) -> Option<User> {
         let in_db = users::table.filter(users::ap_url.eq(url.clone()))
             .limit(1)
@@ -318,14 +328,14 @@ impl Webfinger for User {
     }
 }
 
-impl sign::Signer for User {
+impl Signer for User {
     fn get_key_id(&self, conn: &PgConnection) -> String {
         format!("{}#main-key", self.compute_id(conn))
     }
 
     fn sign(&self, to_sign: String) -> Vec<u8> {
         let key = self.get_keypair();
-        let mut signer = Signer::new(MessageDigest::sha256(), &key).unwrap();
+        let mut signer = sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
         signer.update(to_sign.as_bytes()).unwrap();
         signer.sign_to_vec().unwrap()
     }
@@ -342,7 +352,7 @@ impl NewUser {
         password: String,
         instance_id: i32
     ) -> NewUser {
-        let (pub_key, priv_key) = NewUser::gen_keypair();
+        let (pub_key, priv_key) = gen_keypair();
         NewUser {
             username: username,
             display_name: display_name,
@@ -357,12 +367,5 @@ impl NewUser {
             public_key: String::from_utf8(pub_key).unwrap(),
             private_key: Some(String::from_utf8(priv_key).unwrap())
         }
-    }
-
-    // Returns (public key, private key)
-    fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
-        let keypair = Rsa::generate(2048).unwrap();
-        let keypair = PKey::from_rsa(keypair).unwrap();
-        (keypair.public_key_to_pem().unwrap(), keypair.private_key_to_pem_pkcs8().unwrap())
     }
 }

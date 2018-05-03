@@ -34,7 +34,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
         follower_id: user.id,
         following_id: target.id
     });
-    target.send_to_inbox(&*conn, activity::Follow::new(&user, &target, &*conn));
+    target.send_to_inbox(&*conn, &user, activity::Follow::new(&user, &target, &*conn));
     Redirect::to(format!("/@/{}", name).as_ref())
 }
 

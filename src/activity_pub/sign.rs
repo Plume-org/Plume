@@ -2,8 +2,17 @@ use base64;
 use diesel::PgConnection;
 use hex;
 use chrono::Utc;
+use openssl::pkey::PKey;
+use openssl::rsa::Rsa;
 use openssl::sha::sha256;
 use serde_json;
+
+/// Returns (public key, private key)
+pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
+    let keypair = Rsa::generate(2048).unwrap();
+    let keypair = PKey::from_rsa(keypair).unwrap();
+    (keypair.public_key_to_pem().unwrap(), keypair.private_key_to_pem_pkcs8().unwrap())
+}
 
 pub trait Signer {
     fn get_key_id(&self, conn: &PgConnection) -> String;
@@ -13,7 +22,7 @@ pub trait Signer {
 }
 
 pub trait Signable {
-    fn sign<T>(&mut self, creator: T, conn: &PgConnection) -> &mut Self where T: Signer;
+    fn sign<T>(&mut self, creator: &T, conn: &PgConnection) -> &mut Self where T: Signer;
 
     fn hash(data: String) -> String {
         let bytes = data.into_bytes();
@@ -22,7 +31,7 @@ pub trait Signable {
 }
 
 impl Signable for serde_json::Value {
-    fn sign<T: Signer>(&mut self, creator: T, conn: &PgConnection) -> &mut serde_json::Value {
+    fn sign<T: Signer>(&mut self, creator: &T, conn: &PgConnection) -> &mut serde_json::Value {
         let creation_date = Utc::now().to_rfc3339();
         let mut options = json!({
             "type": "RsaSignature2017",
