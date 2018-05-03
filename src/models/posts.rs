@@ -82,36 +82,7 @@ impl Object for Post {
     }
 
     fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
-        json!({
-            "type": "Article",
-            "attributedTo": self.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
-            "content": self.content,
-            // TODO: "image": "image",
-            // TODO: "preview": "preview",
-            // TODO: "published": "published",
-            // TODO: "replies": "replies",
-            // TODO: "summary": "summary",
-            "tag": [],
-            // TODO: "updated": "updated",
-            // TODO: "url": "url",
-            "to": [ PUBLIC_VISIBILTY ]
-        })
-    }
-}
-
-/// ActivityPub Object to make it possible to view posts in Mastodon/Pleroma
-/// and interact with them from there.
-pub struct PostNote {
-    pub post: Post
-}
-
-impl Object for PostNote {
-fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/{}/{}/note", BASE_URL.as_str(), self.post.get_blog(conn).actor_id, self.post.slug))
-    }
-
-    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
-        let followers = self.post.get_authors(conn).into_iter().map(|a| a.get_followers(conn)).collect::<Vec<Vec<User>>>();
+        let followers = self.get_authors(conn).into_iter().map(|a| a.get_followers(conn)).collect::<Vec<Vec<User>>>();
         let mut to = followers.into_iter().fold(vec![], |mut acc, f| {
             for x in f {
                 acc.push(x.ap_url);
@@ -119,10 +90,11 @@ fn compute_id(&self, conn: &PgConnection) -> String {
             acc
         });
         to.push(PUBLIC_VISIBILTY.to_string());
+
         json!({
-            "type": "Note",
-            "attributedTo": self.post.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
-            "content": format!("<b>{}</b> in {}", self.post.title, self.post.get_blog(conn).title),
+            "type": "Article",
+            "attributedTo": self.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
+            "content": self.content,
             // TODO: "image": "image",
             // TODO: "preview": "preview",
             // TODO: "published": "published",
