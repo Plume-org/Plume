@@ -111,6 +111,14 @@ fn compute_id(&self, conn: &PgConnection) -> String {
     }
 
     fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
+        let followers = self.post.get_authors(conn).into_iter().map(|a| a.get_followers(conn)).collect::<Vec<Vec<User>>>();
+        let mut to = followers.into_iter().fold(vec![], |mut acc, f| {
+            for x in f {
+                acc.push(x.ap_url);
+            }
+            acc
+        });
+        to.push(PUBLIC_VISIBILTY.to_string());
         json!({
             "type": "Note",
             "attributedTo": self.post.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
@@ -123,7 +131,7 @@ fn compute_id(&self, conn: &PgConnection) -> String {
             "tag": [],
             // TODO: "updated": "updated",
             // TODO: "url": "url",
-            "to": [ PUBLIC_VISIBILTY ]
+            "to": to
         })
     }
 }
