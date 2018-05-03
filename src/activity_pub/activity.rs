@@ -47,6 +47,7 @@ impl Activity for Accept {
     fn serialize(&self) -> serde_json::Value {
         json!({
             "type": "Accept",
+            "id": self.id,            
             "actor": self.actor,
             "object": self.object,
             "published": self.date.to_rfc3339()
@@ -85,6 +86,7 @@ impl Activity for Create {
     fn serialize(&self) -> serde_json::Value {
         json!({
             "type": "Create",
+            "id": self.id,
             "actor": self.actor,
             "object": self.object,
             "published": self.date.to_rfc3339()
@@ -133,6 +135,7 @@ impl Activity for Follow {
     fn serialize(&self) -> serde_json::Value {
         json!({
             "type": "Follow",
+            "id": self.id,            
             "actor": self.actor,
             "object": self.object
         })
