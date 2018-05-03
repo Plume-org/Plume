@@ -9,6 +9,8 @@ use activity_pub::object::Object;
 pub trait Activity {
     fn get_id(&self) -> String;
 
+    fn get_type(&self) -> String;    
+
     fn serialize(&self) -> serde_json::Value;
 
     // fn deserialize(serde_json::Value) -> Self;
@@ -25,7 +27,7 @@ pub struct Accept {
 impl Accept {
     pub fn new<A: Activity, B: Actor>(who: &B, what: &A, conn: &PgConnection) -> Accept {
         Accept {
-            id: "TODO".to_string(),
+            id: format!("{}/accept/{}/{}", who.compute_id(conn), what.get_type().to_lowercase(), what.get_id()),
             actor: serde_json::Value::String(who.compute_id(conn)),
             object: serde_json::Value::String(what.get_id()),
             date: chrono::Utc::now()
@@ -36,6 +38,10 @@ impl Accept {
 impl Activity for Accept {
     fn get_id(&self) -> String {
         self.id.clone()
+    }
+
+    fn get_type(&self) -> String {
+        "Accept".to_string()
     }
 
     fn serialize(&self) -> serde_json::Value {
@@ -59,7 +65,7 @@ pub struct Create {
 impl Create {
     pub fn new<A: Actor, B: Object>(actor: &A, obj: &B, conn: &PgConnection) -> Create {
         Create {
-            id: "TODO".to_string(),
+            id: format!("{}/activity", obj.compute_id(conn)),
             actor: serde_json::Value::String(actor.compute_id(conn)),
             object: obj.serialize(conn),
             date: chrono::Utc::now()
@@ -70,6 +76,10 @@ impl Create {
 impl Activity for Create {
     fn get_id(&self) -> String {
         self.id.clone()
+    }
+
+    fn get_type(&self) -> String {
+        "Create".to_string()
     }
 
     fn serialize(&self) -> serde_json::Value {
@@ -93,7 +103,7 @@ pub struct Follow {
 impl Follow {
     pub fn new<A: Actor, B: Actor>(follower: &A, following: &B, conn: &PgConnection) -> Follow {
         Follow {
-            id: "TODO".to_string(),
+            id: format!("{}/follow/{}", follower.compute_id(conn), following.compute_id(conn)),
             actor: serde_json::Value::String(follower.compute_id(conn)),
             object: serde_json::Value::String(following.compute_id(conn)),
             date: chrono::Utc::now()
@@ -117,6 +127,10 @@ impl Follow {
 impl Activity for Follow {
     fn get_id(&self) -> String {
         self.id.clone()
+    }
+
+    fn get_type(&self) -> String {
+        "Follow".to_string()
     }
 
     fn serialize(&self) -> serde_json::Value {

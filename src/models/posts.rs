@@ -3,9 +3,11 @@ use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, Belon
 use diesel::dsl::any;
 use serde_json;
 
-use activity_pub::PUBLIC_VISIBILTY;
+use BASE_URL;
+use activity_pub::{PUBLIC_VISIBILTY, ap_url};
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
+use models::blogs::Blog;
 use models::users::User;
 use models::post_authors::PostAuthor;
 use schema::posts;
@@ -63,9 +65,22 @@ impl Post {
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
         users::table.filter(users::id.eq(any(author_list))).load::<User>(conn).unwrap()
     }
+
+    pub fn get_blog(&self, conn: &PgConnection) -> Blog {
+        use schema::blogs;
+        blogs::table.filter(blogs::id.eq(self.blog_id))
+            .limit(1)
+            .load::<Blog>(conn)
+            .expect("Couldn't load blog associted to post")
+            .into_iter().nth(0).unwrap()
+    }
 }
 
 impl Object for Post {
+    fn compute_id(&self, conn: &PgConnection) -> String {
+        ap_url(format!("{}/{}/{}", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
+    }
+
     fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
         json!({
             "type": "Article",
