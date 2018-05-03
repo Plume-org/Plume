@@ -93,6 +93,7 @@ impl Object for Post {
 
         json!({
             "type": "Article",
+            "id": self.compute_id(conn),
             "attributedTo": self.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
             "content": self.content,
             // TODO: "image": "image",
