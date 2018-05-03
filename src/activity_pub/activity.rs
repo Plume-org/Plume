@@ -89,7 +89,9 @@ impl Activity for Create {
             "id": self.id,
             "actor": self.actor,
             "object": self.object,
-            "published": self.date.to_rfc3339()
+            "published": self.date.to_rfc3339(),
+            "to": self.object["to"],
+            "cc": self.object["cc"]
         })
     }
 }
