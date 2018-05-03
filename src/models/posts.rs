@@ -96,6 +96,8 @@ impl Object for Post {
             "id": self.compute_id(conn),
             "attributedTo": self.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
             "content": self.content,
+            "actor": self.get_authors(conn)[0].compute_id(conn),
+            "published": self.creation_date,
             // TODO: "image": "image",
             // TODO: "preview": "preview",
             // TODO: "published": "published",
@@ -104,7 +106,8 @@ impl Object for Post {
             "tag": [],
             // TODO: "updated": "updated",
             // TODO: "url": "url",
-            "to": to
+            "to": to,
+            "cc": []
         })
     }
 }
