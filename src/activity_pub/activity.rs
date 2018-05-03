@@ -96,8 +96,7 @@ impl Activity for Create {
 pub struct Follow {
     id: String,
     actor: serde_json::Value,
-    object: serde_json::Value,
-    date: chrono::DateTime<chrono::Utc>
+    object: serde_json::Value
 }
 
 impl Follow {
@@ -105,8 +104,7 @@ impl Follow {
         Follow {
             id: format!("{}/follow/{}", follower.compute_id(conn), following.compute_id(conn)),
             actor: serde_json::Value::String(follower.compute_id(conn)),
-            object: serde_json::Value::String(following.compute_id(conn)),
-            date: chrono::Utc::now()
+            object: serde_json::Value::String(following.compute_id(conn))
         }
     }
 
@@ -114,8 +112,7 @@ impl Follow {
         Follow {
             id: json["id"].as_str().unwrap().to_string(),
             actor: json["actor"].clone(),
-            object: json["object"].clone(),
-            date: chrono::DateTime::from_str(json["published"].as_str().unwrap()).unwrap()
+            object: json["object"].clone()
         }
     }
 
@@ -137,8 +134,7 @@ impl Activity for Follow {
         json!({
             "type": "Follow",
             "actor": self.actor,
-            "object": self.object,
-            "published": self.date.to_rfc3339()
+            "object": self.object
         })
     }
 }
