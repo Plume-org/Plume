@@ -232,6 +232,14 @@ impl Actor for User {
         self.username.to_string()
     }
 
+    fn get_display_name(&self) -> String {
+        self.display_name.clone()
+    }
+
+    fn get_summary(&self) -> String {
+        self.summary.clone()
+    }
+
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
     }

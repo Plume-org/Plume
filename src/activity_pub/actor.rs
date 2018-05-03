@@ -25,6 +25,10 @@ pub trait Actor: Sized {
 
     fn get_actor_id(&self) -> String;
 
+    fn get_display_name(&self) -> String;
+
+    fn get_summary(&self) -> String;
+
     fn get_instance(&self, conn: &PgConnection) -> Instance;
 
     fn get_actor_type() -> ActorType;
@@ -37,8 +41,8 @@ pub trait Actor: Sized {
             "inbox": self.compute_inbox(conn),
             "outbox": self.compute_outbox(conn),
             "preferredUsername": self.get_actor_id(),
-            "name": "",
-            "summary": "",
+            "name": self.get_display_name(),
+            "summary": self.get_summary(),
             "url": self.compute_id(conn),
             "endpoints": {
                 "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))

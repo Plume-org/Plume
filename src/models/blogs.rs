@@ -97,6 +97,14 @@ impl Actor for Blog {
         self.actor_id.to_string()
     }
 
+    fn get_display_name(&self) -> String {
+        self.title.clone()
+    }
+
+    fn get_summary(&self) -> String {
+        self.summary.clone()
+    }
+
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
     }
