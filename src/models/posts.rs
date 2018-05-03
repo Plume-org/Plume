@@ -98,3 +98,32 @@ impl Object for Post {
         })
     }
 }
+
+/// ActivityPub Object to make it possible to view posts in Mastodon/Pleroma
+/// and interact with them from there.
+pub struct PostNote {
+    pub post: Post
+}
+
+impl Object for PostNote {
+fn compute_id(&self, conn: &PgConnection) -> String {
+        ap_url(format!("{}/{}/{}/note", BASE_URL.as_str(), self.post.get_blog(conn).actor_id, self.post.slug))
+    }
+
+    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
+        json!({
+            "type": "Note",
+            "attributedTo": self.post.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
+            "content": format!("<b>{}</b> in {}", self.post.title, self.post.get_blog(conn).title),
+            // TODO: "image": "image",
+            // TODO: "preview": "preview",
+            // TODO: "published": "published",
+            // TODO: "replies": "replies",
+            // TODO: "summary": "summary",
+            "tag": [],
+            // TODO: "updated": "updated",
+            // TODO: "url": "url",
+            "to": [ PUBLIC_VISIBILTY ]
+        })
+    }
+}
