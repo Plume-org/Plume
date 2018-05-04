@@ -90,7 +90,7 @@ pub trait Actor: Sized {
         let res = Client::new()
             .post(&self.compute_inbox(conn)[..])
             .headers(request::headers())
-            .header(request::signature(sender, request::headers, conn))
+            .header(request::signature(sender, request::headers(), conn))
             .header(request::digest(signed.to_string()))
             .body(signed.to_string())
             .send();

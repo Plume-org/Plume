@@ -25,7 +25,7 @@ pub fn headers() -> Headers {
     headers
 }
 
-pub fn signature<S: Signer>(signer: S, headers: Headers, conn: &PgConnection) -> Signature {
+pub fn signature<S: Signer>(signer: &S, headers: Headers, conn: &PgConnection) -> Signature {
     let signed_string = headers.iter().map(|h| format!("{}: {}", h.name().to_lowercase(), h.value_string())).collect::<Vec<String>>().join("\n");
     let signed_headers = headers.iter().map(|h| h.name().to_string()).collect::<Vec<String>>().join(" ").to_lowercase();
     
