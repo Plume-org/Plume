@@ -30,4 +30,3 @@ version = "*"
 [dependencies.rocket_contrib]
 features = ["tera_templates", "json"]
 version = "*"
-"
