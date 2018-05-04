@@ -78,7 +78,7 @@ impl Post {
 
 impl Object for Post {
     fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/{}/{}", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
+        ap_url(format!("{}/~/{}/{}", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
     }
 
     fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
