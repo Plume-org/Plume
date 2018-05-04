@@ -105,7 +105,7 @@ impl Object for Post {
             // TODO: "summary": "summary",
             "tag": [],
             // TODO: "updated": "updated",
-            // TODO: "url": "url",
+            "url": self.compute_id(conn),
             "to": to,
             "cc": []
         })
