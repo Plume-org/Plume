@@ -5,6 +5,7 @@ use serde_json;
 use BASE_URL;
 use activity_pub::{activity_pub, ActivityPub, context, ap_url};
 use activity_pub::activity::Activity;
+use activity_pub::request;
 use activity_pub::sign::*;
 use models::instance::Instance;
 
@@ -85,8 +86,12 @@ pub trait Actor: Sized {
         let mut act = act.serialize();
         act["@context"] = context();
         let signed = act.sign(sender, conn);
+        
         let res = Client::new()
             .post(&self.compute_inbox(conn)[..])
+            .headers(request::headers())
+            .header(request::signature(sender, request::headers, conn))
+            .header(request::digest(signed.to_string()))
             .body(signed.to_string())
             .send();
         match res {

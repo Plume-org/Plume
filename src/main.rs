@@ -7,6 +7,8 @@ extern crate chrono;
 extern crate heck;
 extern crate hex;
 #[macro_use]
+extern crate hyper;
+#[macro_use]
 extern crate diesel;
 extern crate dotenv;
 #[macro_use]

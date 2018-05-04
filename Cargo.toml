@@ -3,11 +3,12 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
-base64 = "0.9.1"
+base64 = "0.9"
 bcrypt = "0.2"
 dotenv = "*"
 heck = "0.3.0"
 hex = "0.3"
+hyper = "*"
 lazy_static = "*"
 openssl = "0.10.6"
 reqwest = "0.8"
@@ -29,3 +30,4 @@ version = "*"
 [dependencies.rocket_contrib]
 features = ["tera_templates", "json"]
 version = "*"
+"
