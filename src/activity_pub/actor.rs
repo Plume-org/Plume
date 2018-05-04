@@ -3,7 +3,7 @@ use reqwest::Client;
 use serde_json;
 
 use BASE_URL;
-use activity_pub::{activity_pub, ActivityPub, context, ap_url, CONTEXT};
+use activity_pub::{activity_pub, ActivityPub, context, ap_url, context};
 use activity_pub::activity::Activity;
 use activity_pub::sign::*;
 use models::instance::Instance;
@@ -83,7 +83,7 @@ pub trait Actor: Sized {
 
     fn send_to_inbox<A: Activity, S: Actor + Signer>(&self, conn: &PgConnection, sender: &S, act: A) {
         let mut act = act.serialize();
-        act["@context"] = CONTEXT;
+        act["@context"] = context();
         let signed = act.sign(sender, conn);
         let res = Client::new()
             .post(&self.compute_inbox(conn)[..])
