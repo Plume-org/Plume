@@ -3,7 +3,7 @@ use reqwest::Client;
 use serde_json;
 
 use BASE_URL;
-use activity_pub::{activity_pub, ActivityPub, context, ap_url, context};
+use activity_pub::{activity_pub, ActivityPub, context, ap_url};
 use activity_pub::activity::Activity;
 use activity_pub::sign::*;
 use models::instance::Instance;
