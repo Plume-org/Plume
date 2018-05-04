@@ -270,6 +270,7 @@ impl Actor for User {
             "owner": self.compute_id(conn),
             "publicKeyPem": self.public_key
         }));
+        res.insert("followers".to_string(), serde_json::Value::String(self.compute_box(conn, "followers")));
         res
     }
 
