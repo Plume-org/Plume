@@ -4,8 +4,7 @@ use rocket_contrib::Template;
 use serde_json;
 use std::collections::HashMap;
 
-use activity_pub::ActivityPub;
-use activity_pub::activity;
+use activity_pub::{activity, activity_pub, ActivityPub, context};
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
 use activity_pub::outbox::Outbox;
@@ -89,4 +88,19 @@ fn inbox(name: String, conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
     user.received(&*conn, act);
     String::from("")
+}
+
+#[get("/@/<name>/followers")]
+fn followers(name: String, conn: DbConn) -> ActivityPub {
+    let user = User::find_local(&*conn, name).unwrap();
+    let followers = user.get_followers(&*conn).into_iter().map(|f| f.compute_id(&*conn)).collect::<Vec<String>>();
+    
+    let json = json!({
+        "@context": context(),
+        "id": user.compute_box(&*conn, "followers"),
+        "type": "OrderedCollection",
+        "totalItems": followers.len(),
+        "orderedItems": followers
+    });
+    activity_pub(json)
 }
