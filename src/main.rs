@@ -83,6 +83,7 @@ fn main() {
             routes::blogs::create,
 
             routes::posts::details,
+            routes::posts::activity_details,
             routes::posts::new,
             routes::posts::new_auth,
             routes::posts::create

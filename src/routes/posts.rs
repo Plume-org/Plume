@@ -4,7 +4,9 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use std::collections::HashMap;
 
+use activity_pub::{context, activity_pub, ActivityPub};
 use activity_pub::activity::Create;
+use activity_pub::object::Object;
 use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::blogs::*;
@@ -13,21 +15,31 @@ use models::posts::*;
 use models::users::User;
 use utils;
 
-#[get("/~/<blog>/<slug>", rank = 3)]
+#[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn) -> String {
     let blog = Blog::find_by_actor_id(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug).unwrap();
     format!("{} in {}", post.title, blog.title)
 }
 
-#[get("/~/<_blog>/new", rank = 1)]
-fn new(_blog: String, _user: User) -> Template {
-    Template::render("posts/new", HashMap::<String, String>::new())
+#[get("/~/<_blog>/<slug>", rank = 3, format = "application/activity+json")]
+fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
+    // TODO: posts in different blogs may have the same slug
+    let post = Post::find_by_slug(&*conn, slug).unwrap();
+
+    let mut act = post.serialize(&*conn);
+    act["@context"] = context();
+    activity_pub(act)
 }
 
 #[get("/~/<_blog>/new", rank = 2)]
 fn new_auth(_blog: String) -> Redirect {
     utils::requires_login()
+}
+
+#[get("/~/<_blog>/new", rank = 1)]
+fn new(_blog: String, _user: User) -> Template {
+    Template::render("posts/new", HashMap::<String, String>::new())
 }
 
 #[derive(FromForm)]
