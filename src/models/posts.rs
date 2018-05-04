@@ -94,7 +94,7 @@ impl Object for Post {
         json!({
             "type": "Article",
             "id": self.compute_id(conn),
-            "attributedTo": self.get_authors(conn).into_iter().map(|a| a.compute_id(conn)).collect::<Vec<String>>(),
+            "attributedTo": self.get_authors(conn)[0].compute_id(conn),
             "content": self.content,
             "actor": self.get_authors(conn)[0].compute_id(conn),
             "published": self.creation_date,
