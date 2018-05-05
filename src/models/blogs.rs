@@ -126,6 +126,10 @@ impl Actor for Blog {
         ActorType::Blog
     }
 
+    fn get_inbox_url(&self) -> String {
+        self.inbox_url.clone()
+    }
+
     fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
         blogs::table.filter(blogs::ap_url.eq(url))
             .limit(1)

@@ -263,6 +263,10 @@ impl Actor for User {
         ActorType::Person
     }
 
+    fn get_inbox_url(&self) -> String {
+        self.inbox_url.clone()
+    }
+
     fn custom_props(&self, conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
         let mut res = serde_json::Map::new();
         res.insert("publicKey".to_string(), json!({

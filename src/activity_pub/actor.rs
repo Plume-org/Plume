@@ -36,6 +36,8 @@ pub trait Actor: Sized {
 
     fn get_actor_type() -> ActorType;
 
+    fn get_inbox_url(&self) -> String;
+
     fn custom_props(&self, _conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
         serde_json::Map::new()
     }
@@ -88,15 +90,15 @@ pub trait Actor: Sized {
         let signed = act.sign(sender, conn);
         
         let res = Client::new()
-            .post(&self.compute_inbox(conn)[..])
+            .post(&self.get_inbox_url()[..])
             .headers(request::headers())
             .header(request::signature(sender, request::headers(), conn))
             .header(request::digest(signed.to_string()))
             .body(signed.to_string())
             .send();
         match res {
-            Ok(_) => println!("Successfully sent activity to inbox"),
-            Err(_) => println!("Error while sending to inbox")
+            Ok(mut r) => println!("Successfully sent activity to inbox ({})\n\n{:?}", self.get_inbox_url(), r.text().unwrap()),
+            Err(e) => println!("Error while sending to inbox ({:?})", e)
         }
     }
 
