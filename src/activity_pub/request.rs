@@ -29,11 +29,14 @@ pub fn signature<S: Signer>(signer: &S, headers: Headers, conn: &PgConnection) -
     let signed_string = headers.iter().map(|h| format!("{}: {}", h.name().to_lowercase(), h.value_string())).collect::<Vec<String>>().join("\n");
     let signed_headers = headers.iter().map(|h| h.name().to_string()).collect::<Vec<String>>().join(" ").to_lowercase();
     
+    println!("Signing {}", signed_string);
+    println!("signed header {}", signed_headers);
     let data = signer.sign(signed_string);
-    let sign = hex::encode(sha256(&data[..]));
+    let sign = base64::encode(&data[..]);
+    println!("sigature {}", sign);
 
     Signature(format!(
-        "keyId=\"{key_id}\",algorithm=\"rsa-sha256\",headers=\"#{signed_headers}\",signature=\"#{signature}\"",
+        "keyId=\"{key_id}\",algorithm=\"rsa-sha256\",headers=\"{signed_headers}\",signature=\"{signature}\"",
         key_id = signer.get_key_id(conn),
         signed_headers = signed_headers,
         signature = sign
