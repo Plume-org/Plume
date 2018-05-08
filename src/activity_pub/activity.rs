@@ -29,7 +29,7 @@ impl Accept {
         Accept {
             id: format!("{}/accept/{}/{}", who.compute_id(conn), what.get_type().to_lowercase(), what.get_id()),
             actor: serde_json::Value::String(who.compute_id(conn)),
-            object: serde_json::Value::String(what.get_id()),
+            object: what.serialize(),
             date: chrono::Utc::now()
         }
     }
