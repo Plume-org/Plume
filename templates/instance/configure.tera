@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Configuration</title>
-    </head>
-    <body>
-        <h1>Configure your instance</h1>
-        <form method="post">
-            <label for="name">Name</label>
-            <input name="name">
+{% extends "base" %}
 
-            <input type="submit" value="Let's go!"/>            
-        </form>
-    </body>
-</html>
+{% block title %}
+Configuration
+{% endblock title %}
+
+{% block content %}
+<h1>Configure your instance</h1>
+<form method="post">
+    <label for="name">Name</label>
+    <input name="name">
+
+    <input type="submit" value="Let's go!"/>            
+</form>
+{% endblock content %}

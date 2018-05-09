@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>{{ user.display_name }}</title>
-    </head>
-    <body>
-        <h1>{{ user.display_name }}</h1>
-        <div>
-            {{ user.summary | safe }}
-        </div>
-    </body>
-</html>
+{% extends "base" %}
+
+{% block title %}
+{{ user.display_name }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ user.display_name }}</h1>
+<div>
+    {{ user.summary | safe }}
+</div>
+{% endblock content %}

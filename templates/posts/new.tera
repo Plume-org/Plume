@@ -1,22 +1,21 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>New post</title>
-    </head>
-    <body>
-        <h1>Create a post</h1>
-        <form method="post">
-            <label for="title">Title</label>
-            <input name="title">
+{% extends "base" %}
 
-            <label for="content">Content</label>
-            <textarea name="content"></textarea>
+{% block title %}
+New post
+{% endblock title %}
 
-            <label for="license">License</label>
-            <input name="license">
+{% block content %}
+<h1>Create a post</h1>
+<form method="post">
+    <label for="title">Title</label>
+    <input name="title">
 
-            <input type="submit" value="Publish"/>            
-        </form>
-    </body>
-</html>
+    <label for="content">Content</label>
+    <textarea name="content"></textarea>
+
+    <label for="license">License</label>
+    <input name="license">
+
+    <input type="submit" value="Publish"/>            
+</form>
+{% endblock content %}

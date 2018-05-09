@@ -1,25 +1,24 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>New account</title>
-    </head>
-    <body>
-        <h1>Create an account</h1>
-        <form method="post">
-            <label for="username">Username</label>
-            <input name="username">
+{% extends "base" %}
 
-            <label for="email">Email</label>
-            <input name="email">
+{% block title %}
+New Account
+{% endblock title %}
 
-            <label for="password">Password</label>
-            <input type="password" name="password">
+{% block content %}
+<h1>Create an account</h1>
+<form method="post">
+    <label for="username">Username</label>
+    <input name="username">
 
-            <label for="password_confirmation">Password confirmation</label>
-            <input type="password" name="password_confirmation">
+    <label for="email">Email</label>
+    <input name="email">
 
-            <input type="submit" value="Create account"/>            
-        </form>
-    </body>
-</html>
+    <label for="password">Password</label>
+    <input type="password" name="password">
+
+    <label for="password_confirmation">Password confirmation</label>
+    <input type="password" name="password_confirmation">
+
+    <input type="submit" value="Create account"/>            
+</form>
+{% endblock content %}
