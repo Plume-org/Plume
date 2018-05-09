@@ -14,8 +14,11 @@ use models::users::User;
 use utils;
 
 #[get("/~/<name>", rank = 2)]
-fn details(name: String) -> String {
-    format!("Welcome on ~{}", name)
+fn details(name: String, conn: DbConn) -> Template {
+    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();    
+    Template::render("blogs/details", json!({
+        "blog": blog
+    }))
 }
 
 #[get("/~/<name>", format = "application/activity+json", rank = 1)]

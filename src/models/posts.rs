@@ -12,7 +12,7 @@ use models::users::User;
 use models::post_authors::PostAuthor;
 use schema::posts;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Serialize)]
 pub struct Post {
     pub id: i32,
     pub blog_id: i32,

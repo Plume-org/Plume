@@ -15,7 +15,7 @@ use models::instance::Instance;
 use schema::blogs;
 
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Serialize)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,

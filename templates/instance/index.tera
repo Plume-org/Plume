@@ -1,0 +1,9 @@
+{% extends "base" %}
+
+{% block title %}
+{{ instance.name }}
+{% endblock title %}
+
+{% block content %}
+<h1>Welcome on {{ instance.name }}</h1>
+{% endblock content %}

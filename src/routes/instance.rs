@@ -8,13 +8,17 @@ use db_conn::DbConn;
 use models::instance::*;
 
 #[get("/")]
-fn index(conn: DbConn) -> String {
+fn index(conn: DbConn) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
-            format!("Welcome on {}", inst.name)
+            Template::render("instance/index", json!({
+                "instance": inst
+            }))
         }
         None => {
-            String::from("Not initialized")
+            Template::render("errors/500", json!({
+                "error_message": "You need to configure your instance before using it."
+            }))
         }
     }
 }

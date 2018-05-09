@@ -14,8 +14,8 @@ use models::instance::Instance;
 use models::users::*;
 
 #[get("/me")]
-fn me(user: User) -> String {
-    format!("Logged in as {}", user.username.to_string())
+fn me(user: User) -> Redirect {
+    Redirect::to(format!("/@/{}", user.username).as_ref())
 }
 
 #[get("/@/<name>", rank = 2)]

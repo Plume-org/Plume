@@ -1,0 +1,10 @@
+{% extends "base" %}
+
+{% block title %}
+{{ blog.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ blog.title }} (~{{ blog.actor_id }})</h1>
+<p>{{ blog.summary }}</p>
+{% endblock content %}

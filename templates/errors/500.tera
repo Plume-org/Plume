@@ -1,0 +1,6 @@
+{% extends "errors/base" %}
+
+{% block error %}
+    <h1>Something broke on our side.</h1>
+    <h2>Sorry about that. If you think this is a bug, please report it.</h2>
+{% endblock error %}

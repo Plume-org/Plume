@@ -1,0 +1,15 @@
+{% extends "base" %}
+
+{% block title %}
+{{ post.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>Published in {{ blog.title }}</p>
+<hr>
+<p>
+    {{ post.content | safe }}
+</p>
+<p>License: {{ post.license }}</p>
+{% endblock content %}

@@ -5,7 +5,7 @@ use std::iter::Iterator;
 use models::users::User;
 use schema::{instances, users};
 
-#[derive(Identifiable, Queryable)]
+#[derive(Identifiable, Queryable, Serialize)]
 pub struct Instance {
     pub id: i32,
     pub public_domain: String,

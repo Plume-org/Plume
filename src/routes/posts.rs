@@ -16,10 +16,13 @@ use models::users::User;
 use utils;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
-fn details(blog: String, slug: String, conn: DbConn) -> String {
+fn details(blog: String, slug: String, conn: DbConn) -> Template {
     let blog = Blog::find_by_actor_id(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug).unwrap();
-    format!("{} in {}", post.title, blog.title)
+    Template::render("posts/details", json!({
+        "post": post,
+        "blog": blog
+    }))
 }
 
 #[get("/~/<_blog>/<slug>", rank = 3, format = "application/activity+json")]
