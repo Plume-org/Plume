@@ -24,6 +24,20 @@ table! {
 }
 
 table! {
+    comments (id) {
+        id -> Int4,
+        content -> Text,
+        in_response_to_id -> Nullable<Int4>,
+        post_id -> Int4,
+        author_id -> Int4,
+        creation_date -> Timestamp,
+        ap_url -> Nullable<Varchar>,
+        sensitive -> Bool,
+        spoiler_text -> Text,
+    }
+}
+
+table! {
     follows (id) {
         id -> Int4,
         follower_id -> Int4,
@@ -85,6 +99,8 @@ table! {
 joinable!(blog_authors -> blogs (blog_id));
 joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
+joinable!(comments -> posts (post_id));
+joinable!(comments -> users (author_id));
 joinable!(post_authors -> posts (post_id));
 joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
@@ -93,6 +109,7 @@ joinable!(users -> instances (instance_id));
 allow_tables_to_appear_in_same_query!(
     blog_authors,
     blogs,
+    comments,
     follows,
     instances,
     post_authors,
