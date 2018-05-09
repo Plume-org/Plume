@@ -1,8 +1,6 @@
 use base64;
 use diesel::PgConnection;
-use hex;
 use openssl::hash::{Hasher, MessageDigest};
-use openssl::sha::sha256;
 use reqwest::header::{Date, Headers, UserAgent};
 use std::time::SystemTime;
 
@@ -45,7 +43,7 @@ pub fn signature<S: Signer>(signer: &S, headers: Headers, conn: &PgConnection) -
 
 pub fn digest(body: String) -> Digest {
     let mut hasher = Hasher::new(MessageDigest::sha256()).unwrap();
-    hasher.update(&body.into_bytes()[..]);
+    hasher.update(&body.into_bytes()[..]).unwrap();
     let res = base64::encode(&hasher.finish().unwrap());
     Digest(format!("SHA-256={}", res))
 }

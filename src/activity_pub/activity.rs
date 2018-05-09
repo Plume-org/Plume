@@ -1,7 +1,6 @@
 use chrono;
 use diesel::PgConnection;
 use serde_json;
-use std::str::FromStr;
 
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
