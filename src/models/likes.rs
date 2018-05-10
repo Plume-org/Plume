@@ -1,24 +1,31 @@
 use chrono;
-use diesel::{PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use schema::likes;
 
 #[derive(Queryable)]
 pub struct Like {
-    id: i32,
-    user_id: i32,
-    post_id: i32,
-    creation_date: chrono::NaiveDateTime
+    pub id: i32,
+    pub user_id: i32,
+    pub post_id: i32,
+    pub creation_date: chrono::NaiveDateTime
 }
 
 #[derive(Insertable)]
 #[table_name = "likes"]
 pub struct NewLike {
-    user_id: i32,
-    post_id: i32
+    pub user_id: i32,
+    pub post_id: i32
 }
 
 impl Like {
+    pub fn insert(conn: &PgConnection, new: NewLike) -> Like {
+        diesel::insert_into(likes::table)
+            .values(new)
+            .get_result(conn)
+            .expect("Unable to insert new like")
+    }
+
      pub fn get(conn: &PgConnection, id: i32) -> Option<Like> {
         likes::table.filter(likes::id.eq(id))
             .limit(1)

@@ -6,8 +6,9 @@ use activity_pub::actor::Actor;
 use activity_pub::sign::*;
 use models::blogs::Blog;
 use models::comments::*;
-use models::follows::{Follow, NewFollow};
-use models::posts::{Post, NewPost};
+use models::follows::*;
+use models::likes::*;
+use models::posts::*;
 use models::users::User;
 
 pub trait Inbox: Actor + Sized {
@@ -58,6 +59,14 @@ pub trait Inbox: Actor + Sized {
                 
                 // TODO: notification
             }
+            "Like" => {
+                let liker = User::from_url(conn, act["actor"].as_str().unwrap().to_string());
+                let post = Post::get_by_ap_url(conn, act["object"].as_str().unwrap().to_string());
+                Like::insert(conn, NewLike {
+                    post_id: post.unwrap().id,
+                    user_id: liker.unwrap().id
+                });
+            },
             x => println!("Received unknow activity type: {}", x)
         }
     }
