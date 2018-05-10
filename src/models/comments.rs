@@ -1,6 +1,7 @@
 use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
 
+use models::users::User;
 use schema::comments;
 
 #[derive(Queryable, Identifiable, Serialize)]
@@ -42,5 +43,15 @@ impl Comment {
             .load::<Comment>(conn)
             .expect("Error loading comment by id")
             .into_iter().nth(0)
+    }
+
+    pub fn for_post(conn: &PgConnection, post_id: i32) -> Vec<Comment> {
+        comments::table.filter(comments::post_id.eq(post_id))
+            .load::<Comment>(conn)
+            .expect("Error loading comment by post id")
+    }
+
+    pub fn get_author(&self, conn: &PgConnection) -> User {
+        User::get(conn, self.author_id).unwrap()
     }
 }

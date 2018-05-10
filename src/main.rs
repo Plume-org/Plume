@@ -89,7 +89,10 @@ fn main() {
             routes::posts::activity_details,
             routes::posts::new,
             routes::posts::new_auth,
-            routes::posts::create
+            routes::posts::create,
+            
+            routes::comments::new,
+            routes::comments::create
         ])
         .manage(init_pool())
         .attach(Template::fairing())

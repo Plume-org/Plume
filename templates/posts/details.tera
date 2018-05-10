@@ -5,11 +5,20 @@
 {% endblock title %}
 
 {% block content %}
-<h1>{{ post.title }}</h1>
-<p>Published in {{ blog.title }}</p>
-<hr>
-<p>
-    {{ post.content | safe }}
-</p>
-<p>License: {{ post.license }}</p>
+    <h1>{{ post.title }}</h1>
+    <p>Published in {{ blog.title }}</p>
+    <hr>
+    <p>
+        {{ post.content | safe }}
+    </p>
+    <p>License: {{ post.license }}</p>
+    <hr>
+    <h2>Comments</h2>
+    {% for comment in comments %}
+        <div>
+            <b>{{ comment.author.display_name }}</b>
+            <div>{{ comment.content | safe }}</div>
+        </div>
+    {% endfor %}
+    <a href="comment">Comment</a>
 {% endblock content %}

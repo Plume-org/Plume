@@ -2,6 +2,7 @@ use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
+use serde_json;
 use std::collections::HashMap;
 
 use activity_pub::{context, activity_pub, ActivityPub};
@@ -10,6 +11,7 @@ use activity_pub::object::Object;
 use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::blogs::*;
+use models::comments::Comment;
 use models::post_authors::*;
 use models::posts::*;
 use models::users::User;
@@ -19,9 +21,16 @@ use utils;
 fn details(blog: String, slug: String, conn: DbConn) -> Template {
     let blog = Blog::find_by_actor_id(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug).unwrap();
+    let comments = Comment::for_post(&*conn, post.id);    
     Template::render("posts/details", json!({
         "post": post,
-        "blog": blog
+        "blog": blog,
+        "comments": comments.into_iter().map(|c| {
+            json!({
+                "content": c.content,
+                "author": c.get_author(&*conn)
+            })
+        }).collect::<Vec<serde_json::Value>>()
     }))
 }
 

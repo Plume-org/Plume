@@ -1,0 +1,20 @@
+{% extends "base" %}
+
+{% block title %}
+Comment "{{ post.title }}"
+{% endblock title %}
+
+{% block content %}
+<h1>Comment "{{ post.title }}"</h1>
+<form method="post">
+    <label for="content">Content</label>
+    <textarea name="content"></textarea>
+
+    {% if responding_to %}
+        <input name="respond_to" value="{{ responding_to }}">
+    {% endif %}
+
+    <input type="submit" value="Submit comment"/>            
+</form>
+{% endblock content %}
+
