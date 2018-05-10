@@ -5,6 +5,7 @@ use activity_pub::activity;
 use activity_pub::actor::Actor;
 use activity_pub::sign::*;
 use models::blogs::Blog;
+use models::comments::*;
 use models::follows::{Follow, NewFollow};
 use models::posts::{Post, NewPost};
 use models::users::User;
@@ -18,14 +19,29 @@ pub trait Inbox: Actor + Sized {
                 match act["object"]["type"].as_str().unwrap() {
                     "Article" => {
                         Post::insert(conn, NewPost {
-                            blog_id: 0,    
-                            slug: String::from(""),
-                            title: String::from(""),
+                            blog_id: 0, // TODO
+                            slug: String::from(""), // TODO
+                            title: String::from(""), // TODO
                             content: act["object"]["content"].as_str().unwrap().to_string(),
                             published: true,
-                            license: String::from("CC-0")
+                            license: String::from("CC-0"),
+                            ap_url: act["object"]["url"].as_str().unwrap().to_string()
                         });
                     },
+                    "Note" => {
+                        let previous_comment = Comment::get_by_ap_url(conn, act["object"]["inReplyTo"].as_str().unwrap().to_string());
+                        Comment::insert(conn, NewComment {
+                            content: act["object"]["content"].as_str().unwrap().to_string(),
+                            spoiler_text: act["object"]["summary"].as_str().unwrap_or("").to_string(),
+                            ap_url: Some(act["object"]["id"].as_str().unwrap().to_string()),
+                            in_response_to_id: previous_comment.clone().map(|c| c.id),
+                            post_id: previous_comment
+                                .map(|c| c.post_id)
+                                .unwrap_or(Post::get_by_ap_url(conn, act["object"]["inReplyTo"].as_str().unwrap().to_string()).unwrap().id),
+                            author_id: User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap().id,
+                            sensitive: act["object"]["sensitive"].as_bool().unwrap_or(false)
+                        });
+                    }
                     x => println!("Received a new {}, but didn't saved it", x)
                 }
             },

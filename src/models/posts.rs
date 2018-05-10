@@ -21,7 +21,8 @@ pub struct Post {
     pub content: String,
     pub published: bool,
     pub license: String,
-    pub creation_date: NaiveDateTime    
+    pub creation_date: NaiveDateTime,
+    pub ap_url: String
 }
 
 #[derive(Insertable)]
@@ -32,7 +33,8 @@ pub struct NewPost {
     pub title: String,
     pub content: String,
     pub published: bool,
-    pub license: String
+    pub license: String,
+    pub ap_url: String
 }
 
 impl Post {
@@ -59,6 +61,14 @@ impl Post {
             .into_iter().nth(0)
     }
 
+    pub fn get_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Post> {
+        posts::table.filter(posts::ap_url.eq(ap_url))
+            .limit(1)
+            .load::<Post>(conn)
+            .expect("Error loading post by AP URL")
+            .into_iter().nth(0)
+    }
+
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;
@@ -73,6 +83,14 @@ impl Post {
             .load::<Blog>(conn)
             .expect("Couldn't load blog associted to post")
             .into_iter().nth(0).unwrap()
+    }
+
+    pub fn update_ap_url(&self, conn: &PgConnection) {
+        if self.ap_url.len() == 0 {
+            diesel::update(self)
+                .set(posts::ap_url.eq(self.compute_id(conn)))
+                .get_result::<Post>(conn).expect("Couldn't update AP URL");
+        }
     }
 }
 

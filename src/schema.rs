@@ -74,6 +74,7 @@ table! {
         published -> Bool,
         license -> Varchar,
         creation_date -> Timestamp,
+        ap_url -> Varchar,
     }
 }
 

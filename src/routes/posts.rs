@@ -72,8 +72,10 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         title: form.title.to_string(),
         content: form.content.to_string(),
         published: true,
-        license: form.license.to_string()
+        license: form.license.to_string(),
+        ap_url: "".to_string()
     });
+    post.update_ap_url(&*conn);
     PostAuthor::insert(&*conn, NewPostAuthor {
         post_id: post.id,
         author_id: user.id

@@ -4,7 +4,7 @@ use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
 use models::users::User;
 use schema::comments;
 
-#[derive(Queryable, Identifiable, Serialize)]
+#[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Comment {
     pub id: i32,
     pub content: String,
@@ -49,6 +49,14 @@ impl Comment {
         comments::table.filter(comments::post_id.eq(post_id))
             .load::<Comment>(conn)
             .expect("Error loading comment by post id")
+    }
+
+    pub fn get_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Comment> {
+        comments::table.filter(comments::ap_url.eq(ap_url))
+            .limit(1)
+            .load::<Comment>(conn)
+            .expect("Error loading comment by AP URL")
+            .into_iter().nth(0)
     }
 
     pub fn get_author(&self, conn: &PgConnection) -> User {
