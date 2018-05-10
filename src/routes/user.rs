@@ -19,10 +19,11 @@ fn me(user: User) -> Redirect {
 }
 
 #[get("/@/<name>", rank = 2)]
-fn details(name: String, conn: DbConn) -> Template {
+fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
     Template::render("users/details", json!({
-        "user": serde_json::to_value(user).unwrap()
+        "user": serde_json::to_value(user).unwrap(),
+        "account": account
     }))
 }
 
@@ -44,8 +45,10 @@ fn activity_details(name: String, conn: DbConn) -> ActivityPub {
 }
 
 #[get("/users/new")]
-fn new() -> Template {
-    Template::render("users/new", HashMap::<String, i32>::new())
+fn new(user: Option<User>) -> Template {
+    Template::render("users/new", json!({
+        "account": user
+    }))
 }
 
 #[derive(FromForm)]

@@ -1,4 +1,91 @@
-html {
+html, body {
     margin: 0px;
     padding: 0px;
+    font-family: 'Lato';
+    line-height: 1.5em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 200;
+}
+
+a, a:visited {
+    color: #7a28cb;
+    text-decoration: none;
+}
+
+header {
+    padding: 20px 10%;
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+}
+
+header nav a {
+    margin: 0px 20px;
+}
+
+main > * {
+    padding: 20px 20%;
+}
+
+main article {
+    font-family: 'Utopia';
+}
+
+.inline {
+    display: flex;
+    align-items: center;
+}
+
+.button, input[type="submit"] {
+    background: white;
+    color: #7a28cb;
+    border: 1px solid #7a28cb;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin: 0px 20px;
+}
+
+input[type="submit"] {
+    margin: 10px 0px;
+}
+
+.article-meta {
+    background: #F9F9F9;
+}
+
+.comment {
+    background: white;
+    border: 1px solid #7a28cb;
+    border-radius: 3px;
+    padding: 20px;
+    margin: 10px 0px;
+}
+
+.comment a {
+    margin-top: 10px;
+    display: block;
+}
+
+.inline-block {
+    display: inline-block;
+    margin: 0px;
+}
+
+label {
+    display: block;
+}
+
+input {
+    border: none;
+    border-bottom: 1px solid #DADADA;
+    display: block;
+    margin: 10px 0px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 200px;
+    resize: vertical;
 }

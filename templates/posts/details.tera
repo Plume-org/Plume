@@ -4,28 +4,34 @@
 {{ post.title }}
 {% endblock title %}
 
+{% block header %}
+    <a href="../">{{ blog.title }}</a>
+{% endblock header %}
+
 {% block content %}
     <h1>{{ post.title }}</h1>
-    <p>Published in {{ blog.title }}</p>
-    <hr>
-    <p>
+    <article>
         {{ post.content | safe }}
-    </p>
-    <p>License: {{ post.license }}</p>
-    <hr>
+    </article>
 
-    <p>
-        {{ n_likes }} like{{ n_likes | pluralize }}
-    </p>
-    <a href="like">Add yours</a>
+    <div class="article-meta">
+        <p>This article is under the {{ post.license }} license.</p>
 
-    <h2>Comments</h2>
-    {% for comment in comments %}
-        <div id="comment-{{ comment.id }}">
-            <b>{{ comment.author.display_name }}</b>
-            <div>{{ comment.content | safe }}</div>
-            <a href="comment?responding_to={{ comment.id }}">Respond</a>
+        <div class="inline">
+            <p>
+                {{ n_likes }} like{{ n_likes | pluralize }}
+            </p>
+            <a class="button" href="like">Add yours</a>
         </div>
-    {% endfor %}
-    <a href="comment?">Comment</a>
+
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <div class="comment" id="comment-{{ comment.id }}">
+                <b>{{ comment.author.display_name }}</b>
+                <div>{{ comment.content | safe }}</div>
+                <a href="comment?responding_to={{ comment.id }}">Respond</a>
+            </div>
+        {% endfor %}
+        <a class="button inline-block" href="comment?">Comment</a>
+    </div>
 {% endblock content %}

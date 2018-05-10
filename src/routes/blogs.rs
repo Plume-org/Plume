@@ -14,10 +14,11 @@ use models::users::User;
 use utils;
 
 #[get("/~/<name>", rank = 2)]
-fn details(name: String, conn: DbConn) -> Template {
+fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
     let blog = Blog::find_by_actor_id(&*conn, name).unwrap();    
     Template::render("blogs/details", json!({
-        "blog": blog
+        "blog": blog,
+        "account": user
     }))
 }
 
@@ -28,8 +29,10 @@ fn activity_details(name: String, conn: DbConn) -> ActivityPub {
 }
 
 #[get("/blogs/new")]
-fn new(_user: User) -> Template {
-    Template::render("blogs/new", HashMap::<String, i32>::new())
+fn new(user: User) -> Template {
+    Template::render("blogs/new", json!({
+        "account": user
+    }))
 }
 
 #[derive(FromForm)]

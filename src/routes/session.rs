@@ -9,8 +9,10 @@ use db_conn::DbConn;
 use models::users::{User, AUTH_COOKIE};
 
 #[get("/login")]
-fn new() -> Template {
-    Template::render("session/login", HashMap::<String, String>::new())
+fn new(user: Option<User>) -> Template {
+    Template::render("session/login", json!({
+        "account": user
+    }))
 }
 
 #[derive(FromForm)]

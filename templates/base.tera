@@ -6,7 +6,26 @@
         <link rel="stylesheet" href="/static/main.css">
     </head>
     <body>
-        {% block content %}
-        {% endblock content %}
+        <header>
+            <nav>
+                <a href="/">Plume</a>
+                {% block header %}
+                {% endblock header %}
+            </nav>
+            <nav>
+                {% if account %}
+                    <a href="/notifications">Notifications</a>
+                    <a href="/me">My account</a>
+                    <a href="/logout">Log Out</a>
+                {% else %}
+                    <a href="/login">Log In</a>
+                    <a href="/users/new">Register</a>
+                {% endif %}
+            </nav>
+        </header>
+        <main>
+            {% block content %}
+            {% endblock content %}
+        </main>
     </body>
 </html>

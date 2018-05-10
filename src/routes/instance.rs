@@ -5,14 +5,16 @@ use std::collections::HashMap;
 
 use BASE_URL;
 use db_conn::DbConn;
+use models::users::User;
 use models::instance::*;
 
 #[get("/")]
-fn index(conn: DbConn) -> Template {
+fn index(conn: DbConn, user: Option<User>) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
             Template::render("instance/index", json!({
-                "instance": inst
+                "instance": inst,
+                "account": user
             }))
         }
         None => {
@@ -25,7 +27,7 @@ fn index(conn: DbConn) -> Template {
 
 #[get("/configure")]
 fn configure() -> Template {
-    Template::render("instance/configure", HashMap::<String, i32>::new())
+    Template::render("instance/configure", json!({}))
 }
 
 #[derive(FromForm)]

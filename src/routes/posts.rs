@@ -18,7 +18,7 @@ use models::users::User;
 use utils;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
-fn details(blog: String, slug: String, conn: DbConn) -> Template {
+fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
     let blog = Blog::find_by_actor_id(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug).unwrap();
     let comments = Comment::for_post(&*conn, post.id);    
@@ -32,7 +32,8 @@ fn details(blog: String, slug: String, conn: DbConn) -> Template {
                 "author": c.get_author(&*conn)
             })
         }).collect::<Vec<serde_json::Value>>(),
-        "n_likes": post.get_likes(&*conn).len()
+        "n_likes": post.get_likes(&*conn).len(),
+        "account": user
     }))
 }
 
@@ -52,8 +53,10 @@ fn new_auth(_blog: String) -> Redirect {
 }
 
 #[get("/~/<_blog>/new", rank = 1)]
-fn new(_blog: String, _user: User) -> Template {
-    Template::render("posts/new", HashMap::<String, String>::new())
+fn new(_blog: String, user: User) -> Template {
+    Template::render("posts/new", json!({
+        "account": user
+    }))
 }
 
 #[derive(FromForm)]

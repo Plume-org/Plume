@@ -10,10 +10,11 @@ use models::posts::Post;
 use models::users::User;
 
 #[get("/~/<_blog>/<slug>/comment")]
-fn new(_blog: String, slug: String, _user: User, conn: DbConn) -> Template {
+fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
     let post = Post::find_by_slug(&*conn, slug).unwrap();
     Template::render("comments/new", json!({
         "post": post,
+        "account": user
     }))
 }
 
