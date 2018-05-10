@@ -92,6 +92,17 @@ impl Post {
                 .get_result::<Post>(conn).expect("Couldn't update AP URL");
         }
     }
+
+    pub fn get_receivers_urls(&self, conn: &PgConnection) -> Vec<String> {
+        let followers = self.get_authors(conn).into_iter().map(|a| a.get_followers(conn)).collect::<Vec<Vec<User>>>();
+        let to = followers.into_iter().fold(vec![], |mut acc, f| {
+            for x in f {
+                acc.push(x.ap_url);
+            }
+            acc
+        });
+        to
+    }
 }
 
 impl Object for Post {
@@ -100,13 +111,7 @@ impl Object for Post {
     }
 
     fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
-        let followers = self.get_authors(conn).into_iter().map(|a| a.get_followers(conn)).collect::<Vec<Vec<User>>>();
-        let mut to = followers.into_iter().fold(vec![], |mut acc, f| {
-            for x in f {
-                acc.push(x.ap_url);
-            }
-            acc
-        });
+        let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
         json!({

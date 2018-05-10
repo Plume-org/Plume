@@ -2,6 +2,8 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 
+use activity_pub::activity::Create;
+use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::comments::*;
 use models::posts::Post;
@@ -38,5 +40,8 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
         sensitive: false,
         spoiler_text: "".to_string()
     });
+    let act = Create::new(&user, &comment, &*conn);
+    broadcast(&*conn, &user, act, user.get_followers(&*conn));
+
     Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id).as_ref())
 }
