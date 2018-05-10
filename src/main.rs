@@ -58,6 +58,8 @@ fn init_pool() -> PgPool {
 fn main() {
     rocket::ignite()
         .mount("/", routes![
+            routes::static_files,
+
             routes::well_known::host_meta,
             routes::well_known::webfinger,
 
