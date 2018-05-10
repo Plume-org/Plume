@@ -1,0 +1,7 @@
+-- Your SQL goes here
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT now()
+)

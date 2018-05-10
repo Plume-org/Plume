@@ -57,6 +57,15 @@ table! {
 }
 
 table! {
+    likes (id) {
+        id -> Int4,
+        user_id -> Int4,
+        post_id -> Int4,
+        creation_date -> Timestamp,
+    }
+}
+
+table! {
     post_authors (id) {
         id -> Int4,
         post_id -> Int4,
@@ -102,6 +111,8 @@ joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
 joinable!(comments -> posts (post_id));
 joinable!(comments -> users (author_id));
+joinable!(likes -> posts (post_id));
+joinable!(likes -> users (user_id));
 joinable!(post_authors -> posts (post_id));
 joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
@@ -113,6 +124,7 @@ allow_tables_to_appear_in_same_query!(
     comments,
     follows,
     instances,
+    likes,
     post_authors,
     posts,
     users,

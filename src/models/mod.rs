@@ -3,6 +3,7 @@ pub mod blogs;
 pub mod comments;
 pub mod follows;
 pub mod instance;
+pub mod likes;
 pub mod post_authors;
 pub mod posts;
 pub mod users;
