@@ -8,6 +8,7 @@ use activity_pub::{PUBLIC_VISIBILTY, ap_url};
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
 use models::blogs::Blog;
+use models::likes::Like;
 use models::users::User;
 use models::post_authors::PostAuthor;
 use schema::posts;
@@ -83,6 +84,13 @@ impl Post {
             .load::<Blog>(conn)
             .expect("Couldn't load blog associted to post")
             .into_iter().nth(0).unwrap()
+    }
+
+    pub fn get_likes(&self, conn: &PgConnection) -> Vec<Like> {
+        use schema::likes;
+        likes::table.filter(likes::post_id.eq(self.id))
+            .load::<Like>(conn)
+            .expect("Couldn't load likes associted to post")
     }
 
     pub fn update_ap_url(&self, conn: &PgConnection) {

@@ -31,7 +31,8 @@ fn details(blog: String, slug: String, conn: DbConn) -> Template {
                 "content": c.content,
                 "author": c.get_author(&*conn)
             })
-        }).collect::<Vec<serde_json::Value>>()
+        }).collect::<Vec<serde_json::Value>>(),
+        "n_likes": post.get_likes(&*conn).len()
     }))
 }
 

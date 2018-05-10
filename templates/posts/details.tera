@@ -13,6 +13,12 @@
     </p>
     <p>License: {{ post.license }}</p>
     <hr>
+
+    <p>
+        {{ n_likes }} like{{ n_likes | pluralize }}
+    </p>
+    <a href="like">Add yours</a>
+
     <h2>Comments</h2>
     {% for comment in comments %}
         <div id="comment-{{ comment.id }}">

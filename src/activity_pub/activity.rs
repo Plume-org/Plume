@@ -46,7 +46,7 @@ impl Activity for Accept {
     fn serialize(&self) -> serde_json::Value {
         json!({
             "type": "Accept",
-            "id": self.id,            
+            "id": self.id,
             "actor": self.actor,
             "object": self.object,
             "published": self.date.to_rfc3339()
@@ -136,7 +136,43 @@ impl Activity for Follow {
     fn serialize(&self) -> serde_json::Value {
         json!({
             "type": "Follow",
-            "id": self.id,            
+            "id": self.id,
+            "actor": self.actor,
+            "object": self.object
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct Like {
+    id: String,
+    actor: serde_json::Value,
+    object: serde_json::Value
+}
+
+impl Like {
+    pub fn new<A: Actor, B: Object>(actor: &A, obj: &B, conn: &PgConnection) -> Like {
+        Like {
+            id: format!("{}/like/{}", actor.compute_id(conn), obj.compute_id(conn)),
+            actor: serde_json::Value::String(actor.compute_id(conn)),
+            object: serde_json::Value::String(obj.compute_id(conn))
+        }
+    }
+}
+
+impl Activity for Like {
+    fn get_id(&self) -> String {
+        self.id.clone()
+    }
+
+    fn get_type(&self) -> String {
+        "Follow".to_string()
+    }
+
+    fn serialize(&self) -> serde_json::Value {
+        json!({
+            "type": "Follow",
+            "id": self.id,
             "actor": self.actor,
             "object": self.object
         })

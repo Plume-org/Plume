@@ -92,7 +92,9 @@ fn main() {
             routes::posts::create,
             
             routes::comments::new,
-            routes::comments::create
+            routes::comments::create,
+
+            routes::likes::create
         ])
         .manage(init_pool())
         .attach(Template::fairing())
