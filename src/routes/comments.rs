@@ -11,23 +11,27 @@ use models::users::User;
 fn new(_blog: String, slug: String, _user: User, conn: DbConn) -> Template {
     let post = Post::find_by_slug(&*conn, slug).unwrap();
     Template::render("comments/new", json!({
-        "post": post
+        "post": post,
     }))
 }
 
 #[derive(FromForm)]
-struct NewCommentForm {
-    pub content: String,
-    pub respond_to: Option<i32>
+struct CommentQuery {
+    responding_to: Option<i32>
 }
 
-#[post("/~/<blog>/<slug>/comment", data = "<data>")]
-fn create(blog: String, slug: String, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
+#[derive(FromForm)]
+struct NewCommentForm {
+    pub content: String
+}
+
+#[post("/~/<blog>/<slug>/comment?<query>", data = "<data>")]
+fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
     let post = Post::find_by_slug(&*conn, slug.clone()).unwrap();
     let form = data.get();
     let comment = Comment::insert(&*conn, NewComment {
         content: form.content.clone(),
-        in_response_to_id: form.respond_to,
+        in_response_to_id: query.responding_to,
         post_id: post.id,
         author_id: user.id,
         ap_url: None,

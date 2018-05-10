@@ -18,7 +18,8 @@
         <div id="comment-{{ comment.id }}">
             <b>{{ comment.author.display_name }}</b>
             <div>{{ comment.content | safe }}</div>
+            <a href="comment?responding_to={{ comment.id }}">Respond</a>
         </div>
     {% endfor %}
-    <a href="comment">Comment</a>
+    <a href="comment?">Comment</a>
 {% endblock content %}
