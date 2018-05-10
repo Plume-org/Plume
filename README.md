@@ -41,7 +41,7 @@ You'll need Rust nightly.
 Once the app started, try to visit [localhost:8000](http://localhost:8000).
 
 To configure the instance (needed before you can do anything else),
-go on [/configire](http://localhost:8000/configure).
+go on [/configure](http://localhost:8000/configure).
 
 ## Testing the federation
 
