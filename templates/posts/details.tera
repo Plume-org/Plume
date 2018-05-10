@@ -15,7 +15,7 @@
     <hr>
     <h2>Comments</h2>
     {% for comment in comments %}
-        <div>
+        <div id="comment-{{ comment.id }}">
             <b>{{ comment.author.display_name }}</b>
             <div>{{ comment.content | safe }}</div>
         </div>

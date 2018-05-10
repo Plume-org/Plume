@@ -21,11 +21,11 @@ struct NewCommentForm {
     pub respond_to: Option<i32>
 }
 
-#[post("/~/<_blog>/<slug>/comment", data = "<data>")]
-fn create(_blog: String, slug: String, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
-    let post = Post::find_by_slug(&*conn, slug).unwrap();
+#[post("/~/<blog>/<slug>/comment", data = "<data>")]
+fn create(blog: String, slug: String, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
+    let post = Post::find_by_slug(&*conn, slug.clone()).unwrap();
     let form = data.get();
-    Comment::insert(&*conn, NewComment {
+    let comment = Comment::insert(&*conn, NewComment {
         content: form.content.clone(),
         in_response_to_id: form.respond_to,
         post_id: post.id,
@@ -34,5 +34,5 @@ fn create(_blog: String, slug: String, data: Form<NewCommentForm>, user: User, c
         sensitive: false,
         spoiler_text: "".to_string()
     });
-    Redirect::to("")
+    Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id).as_ref())
 }

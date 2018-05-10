@@ -27,6 +27,7 @@ fn details(blog: String, slug: String, conn: DbConn) -> Template {
         "blog": blog,
         "comments": comments.into_iter().map(|c| {
             json!({
+                "id": c.id,
                 "content": c.content,
                 "author": c.get_author(&*conn)
             })
