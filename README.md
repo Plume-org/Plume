@@ -2,6 +2,8 @@
 
 Federated blogging engine, based on ActivityPub.
 
+[**Demo instance**](https://baptiste.gelez.xyz/)
+
 ## Setup the database
 
 You'll need Postgres.
