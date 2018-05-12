@@ -3,7 +3,6 @@ use rocket::response::Redirect;
 use rocket::response::status::NotFound;
 use rocket::request::Form;
 use rocket_contrib::Template;
-use std::collections::HashMap;
 
 use db_conn::DbConn;
 use models::users::{User, AUTH_COOKIE};

@@ -2,15 +2,16 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
-use std::collections::HashMap;
 
 use activity_pub::{activity, activity_pub, ActivityPub, context};
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
+use activity_pub::object::Object;
 use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::follows::*;
 use models::instance::Instance;
+use models::posts::Post;
 use models::users::*;
 
 #[get("/me")]
@@ -21,9 +22,18 @@ fn me(user: User) -> Redirect {
 #[get("/@/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
+    let recents = Post::get_recents_for_author(&*conn, &user, 5);
     Template::render("users/details", json!({
         "user": serde_json::to_value(user).unwrap(),
-        "account": account
+        "account": account,
+        "recents": recents.into_iter().map(|p| {
+            json!({
+                "post": p,
+                "author": p.get_authors(&*conn)[0],
+                "url": p.compute_id(&*conn),
+                "date": p.creation_date.timestamp()
+            })
+        }).collect::<Vec<serde_json::Value>>()
     }))
 }
 

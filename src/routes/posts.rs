@@ -3,7 +3,6 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
-use std::collections::HashMap;
 
 use activity_pub::{context, activity_pub, ActivityPub};
 use activity_pub::activity::Create;

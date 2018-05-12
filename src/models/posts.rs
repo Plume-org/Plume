@@ -77,6 +77,25 @@ impl Post {
             .expect("Error loading recent posts")
     }
 
+    pub fn get_recents_for_author(conn: &PgConnection, author: &User, limit: i64) -> Vec<Post> {
+        use schema::post_authors;
+
+        let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
+        posts::table.filter(posts::id.eq(any(posts)))
+            .order(posts::creation_date.desc())
+            .limit(limit)
+            .load::<Post>(conn)
+            .expect("Error loading recent posts for author")
+    }
+
+    pub fn get_recents_for_blog(conn: &PgConnection, blog: &Blog, limit: i64) -> Vec<Post> {
+        posts::table.filter(posts::blog_id.eq(blog.id))
+            .order(posts::creation_date.desc())
+            .limit(limit)
+            .load::<Post>(conn)
+            .expect("Error loading recent posts for blog")
+    }
+
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;

@@ -1,24 +1,35 @@
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
-use std::collections::HashMap;
+use serde_json;
 
 use activity_pub::ActivityPub;
 use activity_pub::actor::Actor;
+use activity_pub::object::Object;
 use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::blog_authors::*;
 use models::blogs::*;
 use models::instance::Instance;
+use models::posts::Post;
 use models::users::User;
 use utils;
 
 #[get("/~/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
-    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();    
+    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
+    let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
     Template::render("blogs/details", json!({
         "blog": blog,
-        "account": user
+        "account": user,
+        "recents": recents.into_iter().map(|p| {
+            json!({
+                "post": p,
+                "author": p.get_authors(&*conn)[0],
+                "url": p.compute_id(&*conn),
+                "date": p.creation_date.timestamp()
+            })
+        }).collect::<Vec<serde_json::Value>>()
     }))
 }
 
