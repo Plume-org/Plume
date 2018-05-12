@@ -1,0 +1,24 @@
+{% extends "base" %}
+
+{% block title %}
+Edit your account
+{% endblock title %}
+
+{% block content %}
+<h1>Your Profile</h1>
+<form method="post">
+    <!-- Rocket hack to use various HTTP methods -->
+    <input type=hidden name="_method" value="put">    
+
+    <label for="display_name">Display Name</label>
+    <input name="display_name" value="{{ account.display_name }}">
+
+    <label for="email">Email</label>
+    <input name="email" value="{{ account.email }}">
+
+    <label for="summary">Summary</label>
+    <input name="summary" value="{{ account.summary }}">
+
+    <input type="submit" value="Update account"/>            
+</form>
+{% endblock content %}

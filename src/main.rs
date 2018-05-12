@@ -69,6 +69,8 @@ fn main() {
 
             routes::user::me,
             routes::user::details,
+            routes::user::edit,
+            routes::user::update,
             routes::user::follow,
             routes::user::activity_details,
             routes::user::outbox,

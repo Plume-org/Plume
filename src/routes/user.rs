@@ -61,6 +61,34 @@ fn new(user: Option<User>) -> Template {
     }))
 }
 
+#[get("/@/<name>/edit")]
+fn edit(name: String, user: User) -> Option<Template> {
+    if user.username == name && !name.contains("@") {
+        Some(Template::render("users/edit", json!({
+            "account": user
+        })))
+    } else {
+        None
+    }
+}
+
+#[derive(FromForm)]
+struct UpdateUserForm {
+    display_name: Option<String>,
+    email: Option<String>,
+    summary: Option<String>,
+}
+
+#[put("/@/<_name>/edit", data = "<data>")]
+fn update(_name: String, conn: DbConn, user: User, data: Form<UpdateUserForm>) -> Redirect {
+    user.update(&*conn,
+        data.get().display_name.clone().unwrap_or(user.display_name.to_string()).to_string(),
+        data.get().email.clone().unwrap_or(user.email.clone().unwrap()).to_string(),
+        data.get().summary.clone().unwrap_or(user.summary.to_string())
+    );
+    Redirect::to("/me")
+}
+
 #[derive(FromForm)]
 struct NewUserForm {
     username: String,

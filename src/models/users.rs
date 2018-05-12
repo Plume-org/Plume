@@ -76,6 +76,17 @@ impl User {
             .expect("Error saving new user")
     }
 
+    pub fn update(&self, conn: &PgConnection, name: String, email: String, summary: String) -> User {
+        diesel::update(self)
+            .set((
+                users::display_name.eq(name),
+                users::email.eq(email),
+                users::summary.eq(summary),
+            )).load::<User>(conn)
+            .expect("Couldn't update user")
+            .into_iter().nth(0).unwrap()
+    }
+
     pub fn get(conn: &PgConnection, id: i32) -> Option<User> {
         users::table.filter(users::id.eq(id))
             .limit(1)
