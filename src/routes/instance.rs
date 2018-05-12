@@ -1,10 +1,12 @@
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
-use std::collections::HashMap;
+use serde_json;
 
 use BASE_URL;
+use activity_pub::object::Object;
 use db_conn::DbConn;
+use models::posts::Post;
 use models::users::User;
 use models::instance::*;
 
@@ -12,9 +14,19 @@ use models::instance::*;
 fn index(conn: DbConn, user: Option<User>) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
+            let recents = Post::get_recents(&*conn, 5);
+
             Template::render("instance/index", json!({
                 "instance": inst,
-                "account": user
+                "account": user,
+                "recents": recents.into_iter().map(|p| {
+                    json!({
+                        "post": p,
+                        "author": p.get_authors(&*conn)[0],
+                        "url": p.compute_id(&*conn),
+                        "date": p.creation_date.timestamp()
+                    })
+                }).collect::<Vec<serde_json::Value>>()
             }))
         }
         None => {

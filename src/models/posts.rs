@@ -70,6 +70,13 @@ impl Post {
             .into_iter().nth(0)
     }
 
+    pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
+        posts::table.order(posts::creation_date.desc())
+            .limit(limit)
+            .load::<Post>(conn)
+            .expect("Error loading recent posts")
+    }
+
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;
