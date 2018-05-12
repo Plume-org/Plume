@@ -31,6 +31,7 @@ main > * {
 
 main article {
     font-family: 'Utopia';
+    text-align: justify;
 }
 
 .inline {
