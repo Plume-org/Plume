@@ -1,6 +1,6 @@
 use rocket::response::Redirect;
 
-use activity_pub::activity::Like;
+use activity_pub::activity::{Like, Delete};
 use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::likes;
@@ -21,7 +21,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
     } else {
         let like = likes::Like::for_user_on_post(&*conn, &user, &post).unwrap();
         like.delete(&*conn);
-        // TODO: send Delete to AP
+        broadcast(&*conn, &user, Delete::new(&user, &like, &*conn), user.get_followers(&*conn));
     }
     
     Redirect::to(format!("/~/{}/{}/", blog, slug).as_ref())

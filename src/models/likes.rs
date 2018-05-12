@@ -1,6 +1,9 @@
 use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use serde_json;
 
+use activity_pub::actor::Actor;
+use activity_pub::object::Object;
 use models::posts::Post;
 use models::users::User;
 use schema::likes;
@@ -47,5 +50,21 @@ impl Like {
 
     pub fn delete(&self, conn: &PgConnection) {
         diesel::delete(self).execute(conn).unwrap();
+    }
+}
+
+impl Object for Like {
+    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
+        json!({
+            "id": self.compute_id(conn)
+        })
+    }
+
+    fn compute_id(&self, conn: &PgConnection) -> String {
+        format!(
+            "{}/like/{}",
+            User::get(conn, self.user_id).unwrap().compute_id(conn),
+            Post::get(conn, self.post_id).unwrap().compute_id(conn)
+        )
     }
 }

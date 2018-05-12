@@ -96,6 +96,50 @@ impl Activity for Create {
 }
 
 #[derive(Clone)]
+pub struct Delete {
+    id: String,
+    actor: serde_json::Value,
+    object: serde_json::Value,
+    date: chrono::DateTime<chrono::Utc>
+}
+
+impl Delete {
+    pub fn new<A: Actor, B: Object>(actor: &A, obj: &B, conn: &PgConnection) -> Delete {
+        Delete {
+            id: format!("{}#delete", obj.compute_id(conn)),
+            actor: serde_json::Value::String(actor.compute_id(conn)),
+            object: serde_json::Value::String(obj.compute_id(conn)),
+            date: chrono::Utc::now()
+        }
+    }
+}
+
+impl Activity for Delete {
+    fn get_id(&self) -> String {
+        self.id.clone()
+    }
+
+    fn get_type(&self) -> String {
+        "Delete".to_string()
+    }
+
+    fn serialize(&self) -> serde_json::Value {
+        json!({
+            "type": "Delete",
+            "id": self.id,
+            "actor": self.actor,
+            "object": {
+                "type": "Tombstone",
+                "id": self.object
+            },
+            "published": self.date.to_rfc3339(),
+            "to": self.object["to"],
+            "cc": self.object["cc"]
+        })
+    }
+}
+
+#[derive(Clone)]
 pub struct Follow {
     id: String,
     actor: serde_json::Value,
