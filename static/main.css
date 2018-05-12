@@ -58,10 +58,11 @@ input[type="submit"] {
 
 .comment {
     background: white;
-    border: 1px solid #7a28cb;
     border-radius: 3px;
     padding: 20px;
     margin: 10px 0px;
+    box-shadow: 0px 0px 5px #7a28cb1a;
+    margin-bottom: 20px;
 }
 
 .comment a {
