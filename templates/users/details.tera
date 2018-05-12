@@ -5,17 +5,33 @@
 {% endblock title %}
 
 {% block content %}
-<h1>{{ user.display_name }}</h1>
-<div>
-    {{ user.summary | safe }}
-</div>
-
-<h2>Latest articles</h2>
-{% for article in recents %}
     <div>
-        <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
-        <p>{{ article.post.content | escape | truncate(length=200) }}…</p>
-        <p>By {{ article.author.display_name }} ⋅ {{ article.date | date(format="%B %e") }}</p>
+        <h1>
+            {{ user.display_name }}
+            {% if user.is_admin %}
+                <span class="badge">Admin</span>
+            {% endif %}
+            
+            {% if is_self %}
+                <span class="badge">It is you</span>
+            {% endif %}
+        </h1>
+
+        {% if is_self %}
+            <a href="edit" class="button inline-block">Edit your profile</a>
+        {% endif %}
     </div>
-{% endfor %}
+
+    <div>
+        {{ user.summary | safe }}
+    </div>
+
+    <h2>Latest articles</h2>
+    {% for article in recents %}
+        <div>
+            <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
+            <p>{{ article.post.content | escape | truncate(length=200) }}…</p>
+            <p>By {{ article.author.display_name }} ⋅ {{ article.date | date(format="%B %e") }}</p>
+        </div>
+    {% endfor %}
 {% endblock content %}

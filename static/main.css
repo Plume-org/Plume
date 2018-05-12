@@ -91,3 +91,13 @@ textarea {
     min-height: 200px;
     resize: vertical;
 }
+
+.badge {
+    font-size: 12pt;
+    background: white;
+    color: #7a28cb;
+    border: 1px solid #7a28cb;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin: 0px 10px;
+}

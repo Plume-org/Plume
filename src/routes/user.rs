@@ -23,6 +23,8 @@ fn me(user: User) -> Redirect {
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
     let recents = Post::get_recents_for_author(&*conn, &user, 5);
+    let user_id = user.id.clone();
+
     Template::render("users/details", json!({
         "user": serde_json::to_value(user).unwrap(),
         "account": account,
@@ -33,7 +35,8 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
                 "url": p.compute_id(&*conn),
                 "date": p.creation_date.timestamp()
             })
-        }).collect::<Vec<serde_json::Value>>()
+        }).collect::<Vec<serde_json::Value>>(),
+        "is_self": account.map(|a| a.id == user_id).unwrap_or(false)
     }))
 }
 
