@@ -26,7 +26,7 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
             json!({
                 "post": p,
                 "author": p.get_authors(&*conn)[0],
-                "url": p.compute_id(&*conn),
+                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
                 "date": p.creation_date.timestamp()
             })
         }).collect::<Vec<serde_json::Value>>()

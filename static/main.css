@@ -21,6 +21,10 @@ header {
     justify-content: space-between;
 }
 
+header #menu {
+    display: none;
+}
+
 header nav a {
     margin: 0px 20px;
 }
@@ -100,4 +104,33 @@ textarea {
     border-radius: 3px;
     padding: 5px 10px;
     margin: 0px 10px;
+}
+
+@media screen and (max-width: 500px) {
+    header {
+        padding: 20px 0px;
+        flex-direction: column;
+    }
+
+    header #menu {
+        display: flex;
+    }
+
+    header > nav {
+        display: none;
+        text-align: center;
+    }
+
+    header nav a {
+        padding: 10px;
+    }
+
+    header:focus-within > nav {
+        display: flex;
+        flex-direction: column;
+    }
+
+    input {
+        width: 100%;
+    }
 }
