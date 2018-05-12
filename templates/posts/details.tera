@@ -21,7 +21,13 @@
             <p>
                 {{ n_likes }} like{{ n_likes | pluralize }}
             </p>
-            <a class="button" href="like">Add yours</a>
+            <a class="button" href="like">
+                {% if has_liked %}
+                    I don't like this anymore
+                {% else %}
+                    Add yours
+                {% endif %}
+            </a>
         </div>
 
         <h2>Comments</h2>

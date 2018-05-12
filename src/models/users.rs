@@ -31,7 +31,7 @@ use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
-#[derive(Queryable, Identifiable, Serialize)]
+#[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -229,6 +229,17 @@ impl User {
         use schema::follows;
         let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
+    }
+
+    pub fn has_liked(&self, conn: &PgConnection, post: &Post) -> bool {
+        use schema::likes;
+        use models::likes::Like;
+        likes::table
+            .filter(likes::post_id.eq(post.id))
+            .filter(likes::user_id.eq(self.id))
+            .load::<Like>(conn)
+            .expect("Couldn't load likes")
+            .len() > 0
     }
 
     pub fn get_keypair(&self) -> PKey<Private> {

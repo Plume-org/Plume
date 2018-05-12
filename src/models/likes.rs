@@ -1,9 +1,11 @@
 use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
+use models::posts::Post;
+use models::users::User;
 use schema::likes;
 
-#[derive(Queryable)]
+#[derive(Queryable, Identifiable)]
 pub struct Like {
     pub id: i32,
     pub user_id: i32,
@@ -32,5 +34,18 @@ impl Like {
             .load::<Like>(conn)
             .expect("Error loading like by ID")
             .into_iter().nth(0)
+    }
+
+    pub fn for_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Like> {
+        likes::table.filter(likes::post_id.eq(post.id))
+            .filter(likes::user_id.eq(user.id))
+            .limit(1)
+            .load::<Like>(conn)
+            .expect("Error loading like for user and post")
+            .into_iter().nth(0)
+    }
+
+    pub fn delete(&self, conn: &PgConnection) {
+        diesel::delete(self).execute(conn).unwrap();
     }
 }

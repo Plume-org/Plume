@@ -4,7 +4,6 @@ use rocket_contrib::Template;
 use serde_json;
 
 use BASE_URL;
-use activity_pub::object::Object;
 use db_conn::DbConn;
 use models::posts::Post;
 use models::users::User;

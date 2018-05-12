@@ -5,7 +5,6 @@ use serde_json;
 
 use activity_pub::ActivityPub;
 use activity_pub::actor::Actor;
-use activity_pub::object::Object;
 use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::blog_authors::*;

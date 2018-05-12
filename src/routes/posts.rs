@@ -32,6 +32,7 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
             })
         }).collect::<Vec<serde_json::Value>>(),
         "n_likes": post.get_likes(&*conn).len(),
+        "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
         "account": user
     }))
 }
