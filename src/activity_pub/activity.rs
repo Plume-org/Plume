@@ -210,12 +210,48 @@ impl Activity for Like {
     }
 
     fn get_type(&self) -> String {
-        "Follow".to_string()
+        "Like".to_string()
     }
 
     fn serialize(&self) -> serde_json::Value {
         json!({
-            "type": "Follow",
+            "type": "Like",
+            "id": self.id,
+            "actor": self.actor,
+            "object": self.object
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct Undo {
+    id: String,
+    actor: serde_json::Value,
+    object: serde_json::Value
+}
+
+impl Undo {
+    pub fn new<A: Actor, B: Object>(actor: &A, obj: &B, conn: &PgConnection) -> Undo {
+        Undo {
+            id: format!("{}/undo", obj.compute_id(conn)),
+            actor: serde_json::Value::String(actor.compute_id(conn)),
+            object: obj.serialize(conn)
+        }
+    }
+}
+
+impl Activity for Undo {
+    fn get_id(&self) -> String {
+        self.id.clone()
+    }
+
+    fn get_type(&self) -> String {
+        "Undo".to_string()
+    }
+
+    fn serialize(&self) -> serde_json::Value {
+        json!({
+            "type": "Undo",
             "id": self.id,
             "actor": self.actor,
             "object": self.object

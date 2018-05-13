@@ -64,8 +64,18 @@ pub trait Inbox: Actor + Sized {
                 let post = Post::get_by_ap_url(conn, act["object"].as_str().unwrap().to_string());
                 Like::insert(conn, NewLike {
                     post_id: post.unwrap().id,
-                    user_id: liker.unwrap().id
+                    user_id: liker.unwrap().id,
+                    ap_url: act["id"].as_str().unwrap().to_string()
                 });
+            },
+            "Undo" => {
+                match act["object"]["type"].as_str().unwrap() {
+                    "Like" => {
+                        let like = Like::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()).unwrap();
+                        like.delete(conn);
+                    }
+                    x => println!("Wanted to Undo a {}, but it is not supported yet", x)
+                }
             },
             x => println!("Received unknow activity type: {}", x)
         }

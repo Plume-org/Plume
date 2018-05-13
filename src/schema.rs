@@ -62,6 +62,7 @@ table! {
         user_id -> Int4,
         post_id -> Int4,
         creation_date -> Timestamp,
+        ap_url -> Varchar,
     }
 }
 
