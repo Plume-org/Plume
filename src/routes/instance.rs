@@ -4,6 +4,7 @@ use rocket_contrib::Template;
 use serde_json;
 
 use BASE_URL;
+use activity_pub::inbox::Inbox;
 use db_conn::DbConn;
 use models::posts::Post;
 use models::users::User;
@@ -64,4 +65,12 @@ fn post_config(conn: DbConn, data: Form<NewInstanceForm>) -> Redirect {
     } else {
         Redirect::to("/users/new")
     }
+}
+
+#[post("/inbox", data = "<data>")]
+fn shared_inbox(conn: DbConn, data: String) -> String {
+    let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+    let instance = Instance::get_local(&*conn).unwrap();
+    instance.received(&*conn, act);
+    String::from("")
 }

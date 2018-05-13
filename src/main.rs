@@ -67,6 +67,7 @@ fn main() {
             routes::instance::index,
             routes::instance::configure,
             routes::instance::post_config,
+            routes::instance::shared_inbox,
 
             routes::notifications::notifications,
 

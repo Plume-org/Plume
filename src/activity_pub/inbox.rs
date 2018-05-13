@@ -12,7 +12,7 @@ use models::likes::*;
 use models::posts::*;
 use models::users::User;
 
-pub trait Inbox: Actor + Sized {
+pub trait Inbox {
     fn received(&self, conn: &PgConnection, act: serde_json::Value);
 
     fn save(&self, conn: &PgConnection, act: serde_json::Value) {
