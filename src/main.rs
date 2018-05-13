@@ -67,6 +67,8 @@ fn main() {
             routes::instance::configure,
             routes::instance::post_config,
 
+            routes::notifications::notifications,
+
             routes::user::me,
             routes::user::details,
             routes::user::followers,            

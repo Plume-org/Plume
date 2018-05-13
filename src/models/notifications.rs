@@ -1,8 +1,9 @@
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
 
+use models::users::User;
 use schema::notifications;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Serialize)]
 pub struct Notification {
     pub id: i32,
     pub title: String,
@@ -34,5 +35,11 @@ impl Notification {
             .load::<Notification>(conn)
             .expect("Couldn't load notification by ID")
             .into_iter().nth(0)
+    }
+
+    pub fn find_for_user(conn: &PgConnection, user: &User) -> Vec<Notification> {
+        notifications::table.filter(notifications::user_id.eq(user.id))
+            .load::<Notification>(conn)
+            .expect("Couldn't load user notifications")
     }
 }

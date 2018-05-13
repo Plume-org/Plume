@@ -1,0 +1,19 @@
+{% extends "base" %}
+
+{% block title %}
+Notifications
+{% endblock title %}
+
+{% block content %}
+    <h1>Notifications</h1>
+    <div>
+        {% for notification in notifications %}
+            <div>
+                <h3><a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}">{{ notification.title }}</h3>
+                {% if notification.content %}
+                    <p>{{ notification.content }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
