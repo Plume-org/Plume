@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ user.display_name }}
@@ -32,10 +33,6 @@
 
     <h2>Latest articles</h2>
     {% for article in recents %}
-        <div>
-            <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
-            <p>{{ article.post.content | escape | truncate(length=200) }}…</p>
-            <p>By {{ article.author.display_name }} ⋅ {{ article.date | date(format="%B %e") }}</p>
-        </div>
+        {{ macros::post_card(article=article) }}
     {% endfor %}
 {% endblock content %}

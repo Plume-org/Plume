@@ -227,7 +227,11 @@ impl User {
     }
 
     pub fn get_fqn(&self, conn: &PgConnection) -> String {
-        format!("{}@{}", self.username, self.get_instance(conn).public_domain)
+        if self.instance_id == Instance::local_id(conn) {
+            self.username.clone()
+        } else {
+            format!("{}@{}", self.username, self.get_instance(conn).public_domain)
+        }
     }
 
     pub fn get_followers(&self, conn: &PgConnection) -> Vec<User> {
