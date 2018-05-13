@@ -23,6 +23,7 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
     let recents = Post::get_recents_for_author(&*conn, &user, 5);
     let user_id = user.id.clone();
+    let n_followers = user.get_followers(&*conn).len();
 
     Template::render("users/details", json!({
         "user": serde_json::to_value(user).unwrap(),
@@ -35,7 +36,8 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
                 "date": p.creation_date.timestamp()
             })
         }).collect::<Vec<serde_json::Value>>(),
-        "is_self": account.map(|a| a.id == user_id).unwrap_or(false)
+        "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
+        "n_followers": n_followers
     }))
 }
 
@@ -48,6 +50,24 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     });
     target.send_to_inbox(&*conn, &user, activity::Follow::new(&user, &target, &*conn));
     Redirect::to(format!("/@/{}", name).as_ref())
+}
+
+#[get("/@/<name>/followers", rank = 2)]
+fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
+    let user = User::find_by_fqn(&*conn, name.clone()).unwrap();
+    let user_id = user.id.clone();
+    
+    Template::render("users/followers", json!({
+        "user": serde_json::to_value(user.clone()).unwrap(),
+        "followers": user.get_followers(&*conn).into_iter().map(|f| {
+            let fqn = f.get_fqn(&*conn);
+            let mut json = serde_json::to_value(f).unwrap();
+            json["fqn"] = serde_json::Value::String(fqn);
+            json
+        }).collect::<Vec<serde_json::Value>>(),
+        "account": account,
+        "is_self": account.map(|a| a.id == user_id).unwrap_or(false)
+    }))
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
@@ -133,8 +153,8 @@ fn inbox(name: String, conn: DbConn, data: String) -> String {
     String::from("")
 }
 
-#[get("/@/<name>/followers")]
-fn followers(name: String, conn: DbConn) -> ActivityPub {
+#[get("/@/<name>/followers", format = "application/activity+json")]
+fn ap_followers(name: String, conn: DbConn) -> ActivityPub {
     let user = User::find_local(&*conn, name).unwrap();
     let followers = user.get_followers(&*conn).into_iter().map(|f| f.compute_id(&*conn)).collect::<Vec<String>>();
     

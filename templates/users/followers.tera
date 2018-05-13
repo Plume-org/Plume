@@ -1,0 +1,28 @@
+{% extends "base" %}
+
+{% block title %}
+{{ user.display_name }}'s Followers
+{% endblock title %}
+
+{% block content %}
+    <div>
+        <h1>
+            {{ user.display_name }}
+            {% if user.is_admin %}
+                <span class="badge">Admin</span>
+            {% endif %}
+            
+            {% if is_self %}
+                <span class="badge">It is you</span>
+            {% endif %}
+        </h1>
+    </div>
+
+    <h2>Followers</h2>
+    {% for follower in followers %}
+        <div>
+            <h3><a href="{{ follower.ap_url }}">{{ follower.display_name }}</a> &mdash; @{{ follower.fqn }}</h3>
+            <p>{{ follower.summary }}</p>
+        </div>
+    {% endfor %}
+{% endblock content %}

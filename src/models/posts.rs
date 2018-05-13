@@ -39,7 +39,7 @@ pub struct NewPost {
 }
 
 impl Post {
-    pub fn insert (conn: &PgConnection, new: NewPost) -> Post {
+    pub fn insert(conn: &PgConnection, new: NewPost) -> Post {
         diesel::insert_into(posts::table)
             .values(new)
             .get_result(conn)
@@ -62,7 +62,7 @@ impl Post {
             .into_iter().nth(0)
     }
 
-    pub fn get_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Post> {
+    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Post> {
         posts::table.filter(posts::ap_url.eq(ap_url))
             .limit(1)
             .load::<Post>(conn)

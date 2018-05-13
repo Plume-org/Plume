@@ -61,7 +61,7 @@ impl Instance {
             .into_iter().nth(0)
     }
 
-    pub fn get_by_domain(conn: &PgConnection, domain: String) -> Option<Instance> {
+    pub fn find_by_domain(conn: &PgConnection, domain: String) -> Option<Instance> {
         instances::table.filter(instances::public_domain.eq(domain))
             .limit(1)
             .load::<Instance>(conn)
@@ -69,7 +69,9 @@ impl Instance {
             .into_iter().nth(0)
     }
 
-    pub fn block(&self) {}
+    pub fn block(&self) {
+        unimplemented!()
+    }
 
     pub fn has_admin(&self, conn: &PgConnection) -> bool {
         users::table.filter(users::instance_id.eq(self.id))

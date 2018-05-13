@@ -23,6 +23,10 @@
     </div>
 
     <div>
+        <a href="followers">{{ n_followers }} follower{{ n_followers | pluralize }}</a>
+    </div>
+
+    <div>
         {{ user.summary | safe }}
     </div>
 

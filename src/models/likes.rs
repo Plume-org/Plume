@@ -57,7 +57,7 @@ impl Like {
             .into_iter().nth(0)
     }
 
-    pub fn for_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Like> {
+    pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Like> {
         likes::table.filter(likes::post_id.eq(post.id))
             .filter(likes::user_id.eq(user.id))
             .limit(1)

@@ -69,13 +69,14 @@ fn main() {
 
             routes::user::me,
             routes::user::details,
+            routes::user::followers,            
             routes::user::edit,
             routes::user::update,
             routes::user::follow,
             routes::user::activity_details,
             routes::user::outbox,
             routes::user::inbox,
-            routes::user::followers,
+            routes::user::ap_followers,
             routes::user::new,
             routes::user::create,
 

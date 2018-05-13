@@ -30,7 +30,7 @@ pub trait Inbox: Actor + Sized {
                         });
                     },
                     "Note" => {
-                        let previous_comment = Comment::get_by_ap_url(conn, act["object"]["inReplyTo"].as_str().unwrap().to_string());
+                        let previous_comment = Comment::find_by_ap_url(conn, act["object"]["inReplyTo"].as_str().unwrap().to_string());
                         Comment::insert(conn, NewComment {
                             content: act["object"]["content"].as_str().unwrap().to_string(),
                             spoiler_text: act["object"]["summary"].as_str().unwrap_or("").to_string(),
@@ -38,7 +38,7 @@ pub trait Inbox: Actor + Sized {
                             in_response_to_id: previous_comment.clone().map(|c| c.id),
                             post_id: previous_comment
                                 .map(|c| c.post_id)
-                                .unwrap_or_else(|| Post::get_by_ap_url(conn, act["object"]["inReplyTo"].as_str().unwrap().to_string()).unwrap().id),
+                                .unwrap_or_else(|| Post::find_by_ap_url(conn, act["object"]["inReplyTo"].as_str().unwrap().to_string()).unwrap().id),
                             author_id: User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap().id,
                             sensitive: act["object"]["sensitive"].as_bool().unwrap_or(false)
                         });
@@ -61,7 +61,7 @@ pub trait Inbox: Actor + Sized {
             }
             "Like" => {
                 let liker = User::from_url(conn, act["actor"].as_str().unwrap().to_string());
-                let post = Post::get_by_ap_url(conn, act["object"].as_str().unwrap().to_string());
+                let post = Post::find_by_ap_url(conn, act["object"].as_str().unwrap().to_string());
                 Like::insert(conn, NewLike {
                     post_id: post.unwrap().id,
                     user_id: liker.unwrap().id,

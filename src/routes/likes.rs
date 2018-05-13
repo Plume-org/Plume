@@ -21,7 +21,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
         let act = Like::new(&user, &post, &*conn);
         broadcast(&*conn, &user, act, user.get_followers(&*conn));
     } else {
-        let like = likes::Like::for_user_on_post(&*conn, &user, &post).unwrap();
+        let like = likes::Like::find_by_user_on_post(&*conn, &user, &post).unwrap();
         like.delete(&*conn);
         broadcast(&*conn, &user, Undo::new(&user, &like, &*conn), user.get_followers(&*conn));
     }

@@ -20,7 +20,7 @@ use utils;
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
     let blog = Blog::find_by_actor_id(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug).unwrap();
-    let comments = Comment::for_post(&*conn, post.id);    
+    let comments = Comment::find_by_post(&*conn, post.id);    
     Template::render("posts/details", json!({
         "post": post,
         "blog": blog,

@@ -50,13 +50,13 @@ impl Comment {
             .into_iter().nth(0)
     }
 
-    pub fn for_post(conn: &PgConnection, post_id: i32) -> Vec<Comment> {
+    pub fn find_by_post(conn: &PgConnection, post_id: i32) -> Vec<Comment> {
         comments::table.filter(comments::post_id.eq(post_id))
             .load::<Comment>(conn)
             .expect("Error loading comment by post id")
     }
 
-    pub fn get_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Comment> {
+    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Comment> {
         comments::table.filter(comments::ap_url.eq(ap_url))
             .limit(1)
             .load::<Comment>(conn)

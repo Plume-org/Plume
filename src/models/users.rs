@@ -67,9 +67,14 @@ pub struct NewUser {
 }
 
 impl User {
-    pub fn grant_admin_rights() {}
+    pub fn grant_admin_rights(&self, conn: &PgConnection) {
+        diesel::update(self)
+            .set(users::is_admin.eq(true))
+            .load::<User>(conn)
+            .expect("Couldn't grant admin rights");
+    }
 
-    pub fn insert (conn: &PgConnection, new: NewUser) -> User {
+    pub fn insert(conn: &PgConnection, new: NewUser) -> User {
         diesel::insert_into(users::table)
             .values(new)
             .get_result(conn)
@@ -118,7 +123,7 @@ impl User {
 
     pub fn find_by_fqn(conn: &PgConnection, fqn: String) -> Option<User> {
         if fqn.contains("@") { // remote user
-            match Instance::get_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
+            match Instance::find_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
                 Some(instance) => {
                     match User::find_by_name(conn, String::from(fqn.split("@").nth(0).unwrap()), instance.id) {
                         Some(u) => Some(u),
@@ -157,7 +162,7 @@ impl User {
     }
 
     fn from_activity(conn: &PgConnection, acct: serde_json::Value, inst: String) -> User {
-        let instance = match Instance::get_by_domain(conn, inst.clone()) {
+        let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
                 Instance::insert(conn, inst.clone(), inst.clone(), false)
@@ -217,6 +222,10 @@ impl User {
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
         posts.into_iter().map(|p| Arc::new(Create::new(self, &p, conn)) as Arc<Activity>).collect::<Vec<Arc<Activity>>>()
+    }
+
+    pub fn get_fqn(&self, conn: &PgConnection) -> String {
+        format!("{}@{}", self.username, self.get_instance(conn).public_domain)
     }
 
     pub fn get_followers(&self, conn: &PgConnection) -> Vec<User> {
