@@ -27,7 +27,6 @@ pub fn ap_url(url: String) -> String {
     format!("https://{}", url)
 }
 
-
 pub fn context() -> serde_json::Value {
     json!([
         CONTEXT_URL,

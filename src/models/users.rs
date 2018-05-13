@@ -16,6 +16,7 @@ use std::sync::Arc;
 use url::Url;
 
 use BASE_URL;
+use activity_pub::ap_url;
 use activity_pub::activity::{Create, Activity};
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::inbox::Inbox;
@@ -48,7 +49,8 @@ pub struct User {
     pub creation_date: NaiveDateTime,
     pub ap_url: String,
     pub private_key: Option<String>,
-    pub public_key: String    
+    pub public_key: String,
+    pub shared_inbox_url: Option<String>
 }
 
 #[derive(Insertable)]
@@ -65,7 +67,8 @@ pub struct NewUser {
     pub instance_id: i32,
     pub ap_url: String,
     pub private_key: Option<String>,
-    pub public_key: String    
+    pub public_key: String,
+    pub shared_inbox_url: Option<String>    
 }
 
 impl User {
@@ -182,7 +185,8 @@ impl User {
             instance_id: instance.id,
             ap_url: acct["id"].as_str().unwrap().to_string(),
             public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap().to_string(),
-            private_key: None
+            private_key: None,
+            shared_inbox_url: acct["endpoints"]["sharedInbox"].as_str().map(|s| s.to_string())
         })
     }
 
@@ -211,6 +215,12 @@ impl User {
             diesel::update(self)
                 .set(users::ap_url.eq(self.compute_id(conn)))
                 .get_result::<User>(conn).expect("Couldn't update AP URL");
+        }
+
+        if self.shared_inbox_url.is_none() {
+            diesel::update(self)
+                .set(users::shared_inbox_url.eq(ap_url(format!("{}/inbox", Instance::get_local(conn).unwrap().public_domain))))
+                .get_result::<User>(conn).expect("Couldn't update shared inbox URL");
         }
     }
 
@@ -305,7 +315,7 @@ impl Actor for User {
     }
 
     fn get_shared_inbox_url(&self) -> Option<String> {
-       None
+       self.shared_inbox_url.clone()
     }
 
     fn custom_props(&self, conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
@@ -450,7 +460,8 @@ impl NewUser {
             instance_id: instance_id,
             ap_url: String::from(""),
             public_key: String::from_utf8(pub_key).unwrap(),
-            private_key: Some(String::from_utf8(priv_key).unwrap())
+            private_key: Some(String::from_utf8(priv_key).unwrap()),
+            shared_inbox_url: None
         }
     }
 }

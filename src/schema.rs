@@ -114,6 +114,7 @@ table! {
         ap_url -> Text,
         private_key -> Nullable<Text>,
         public_key -> Text,
+        shared_inbox_url -> Nullable<Varchar>,
     }
 }
 
