@@ -10,7 +10,9 @@
     <p>{{ blog.summary }}</p>
 
     <h2>Latest articles</h2>
-    {% for article in recents %}
-        {{ macros::post_card(article=article) }}
-    {% endfor %}
+    <div class="cards">
+        {% for article in recents %}
+            {{ macros::post_card(article=article) }}
+        {% endfor %}
+    </div>
 {% endblock content %}

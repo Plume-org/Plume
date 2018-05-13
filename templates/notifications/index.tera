@@ -6,9 +6,9 @@ Notifications
 
 {% block content %}
     <h1>Notifications</h1>
-    <div>
+    <div class="list">
         {% for notification in notifications %}
-            <div>
+            <div class="card">
                 <h3><a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}">{{ notification.title }}</h3>
                 {% if notification.content %}
                     <p>{{ notification.content }}</p>

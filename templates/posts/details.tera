@@ -31,13 +31,15 @@
         </div>
 
         <h2>Comments</h2>
-        {% for comment in comments %}
-            <div class="comment" id="comment-{{ comment.id }}">
-                <b>{{ comment.author.display_name }}</b>
-                <div>{{ comment.content | safe }}</div>
-                <a href="comment?responding_to={{ comment.id }}">Respond</a>
-            </div>
-        {% endfor %}
+        <div class="list">
+            {% for comment in comments %}
+                <div class="card" id="comment-{{ comment.id }}">
+                    <b>{{ comment.author.display_name }}</b>
+                    <div>{{ comment.content | safe }}</div>
+                    <a href="comment?responding_to={{ comment.id }}">Respond</a>
+                </div>
+            {% endfor %}
+        </div>
         <a class="button inline-block" href="comment?">Comment</a>
     </div>
 {% endblock content %}

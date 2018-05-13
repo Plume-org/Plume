@@ -9,7 +9,9 @@
     <h1>Welcome on {{ instance.name }}</h1>
 
     <h2>Latest articles</h2>
-    {% for article in recents %}
-        {{ macros::post_card(article=article) }}
-    {% endfor %}
+    <div class="cards">
+        {% for article in recents %}
+            {{ macros::post_card(article=article) }}
+        {% endfor %}
+    </div>
 {% endblock content %}
