@@ -1,3 +1,8 @@
+use reqwest::Client;
+use reqwest::header::{Accept, qitem};
+use reqwest::mime::Mime;
+use serde_json;
+use url::Url;
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use openssl::hash::MessageDigest;
@@ -60,12 +65,77 @@ impl Blog {
             .into_iter().nth(0)
     }
 
-    pub fn find_by_actor_id(conn: &PgConnection, username: String) -> Option<Blog> {
-        blogs::table.filter(blogs::actor_id.eq(username))
+    pub fn find_by_name(conn: &PgConnection, name: String, instance_id: i32) -> Option<Blog> {
+        blogs::table.filter(blogs::actor_id.eq(name))
+            .filter(blogs::instance_id.eq(instance_id))
             .limit(1)
             .load::<Blog>(conn)
-            .expect("Error loading blog by actor_id")
+            .expect("Error loading blog by name")
             .into_iter().nth(0)
+    }
+
+    pub fn find_local(conn: &PgConnection, name: String) -> Option<Blog> {
+        Blog::find_by_name(conn, name, Instance::local_id(conn))
+    }
+
+    pub fn find_by_fqn(conn: &PgConnection, fqn: String) -> Option<Blog> {
+        if fqn.contains("@") { // remote blog
+            match Instance::find_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
+                Some(instance) => {
+                    match Blog::find_by_name(conn, String::from(fqn.split("@").nth(0).unwrap()), instance.id) {
+                        Some(u) => Some(u),
+                        None => Blog::fetch_from_webfinger(conn, fqn)
+                    }
+                },
+                None => Blog::fetch_from_webfinger(conn, fqn)
+            }
+        } else { // local blog
+            Blog::find_local(conn, fqn)
+        }
+    }
+
+    fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<Blog> {
+        match resolve(acct.clone()) {
+            Ok(url) => Blog::fetch_from_url(conn, url),
+            Err(details) => {
+                println!("{}", details);
+                None
+            }
+        }
+    }
+
+    fn fetch_from_url(conn: &PgConnection, url: String) -> Option<Blog> {
+        let req = Client::new()
+            .get(&url[..])
+            .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
+            .send();
+        match req {
+            Ok(mut res) => {
+                let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
+                Some(Blog::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+            },
+            Err(_) => None
+        }
+    }
+
+    fn from_activity(conn: &PgConnection, acct: serde_json::Value, inst: String) -> Blog {
+        let instance = match Instance::find_by_domain(conn, inst.clone()) {
+            Some(instance) => instance,
+            None => {
+                Instance::insert(conn, inst.clone(), inst.clone(), false)
+            }
+        };
+        Blog::insert(conn, NewBlog {
+            actor_id: acct["preferredUsername"].as_str().unwrap().to_string(),
+            title: acct["name"].as_str().unwrap().to_string(),
+            outbox_url: acct["outbox"].as_str().unwrap().to_string(),
+            inbox_url: acct["inbox"].as_str().unwrap().to_string(),
+            summary: acct["summary"].as_str().unwrap().to_string(),
+            instance_id: instance.id,
+            ap_url: acct["id"].as_str().unwrap().to_string(),
+            public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap_or("").to_string(),
+            private_key: None
+        })
     }
 
     pub fn update_boxes(&self, conn: &PgConnection) {

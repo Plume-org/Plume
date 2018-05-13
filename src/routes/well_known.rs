@@ -36,7 +36,7 @@ fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<Result<String, &'st
         if res_dom == BASE_URL.as_str() {
             let res = match User::find_local(&*conn, String::from(user)) {
                 Some(usr) => Ok(usr.webfinger(&*conn)),
-                None => match Blog::find_by_actor_id(&*conn, String::from(user)) {
+                None => match Blog::find_local(&*conn, String::from(user)) {
                     Some(blog) => Ok(blog.webfinger(&*conn)),
                     None => Err("Requested actor not found")
                 }

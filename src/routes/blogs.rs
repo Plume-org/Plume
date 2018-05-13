@@ -16,7 +16,7 @@ use utils;
 
 #[get("/~/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
-    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
+    let blog = Blog::find_by_fqn(&*conn, name).unwrap();
     let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
     Template::render("blogs/details", json!({
         "blog": blog,
@@ -34,7 +34,7 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
 
 #[get("/~/<name>", format = "application/activity+json", rank = 1)]
 fn activity_details(name: String, conn: DbConn) -> ActivityPub {
-    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
+    let blog = Blog::find_local(&*conn, name).unwrap();
     blog.as_activity_pub(&*conn)
 }
 
@@ -74,6 +74,6 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
 
 #[get("/~/<name>/outbox")]
 fn outbox(name: String, conn: DbConn) -> Outbox {
-    let blog = Blog::find_by_actor_id(&*conn, name).unwrap();
+    let blog = Blog::find_local(&*conn, name).unwrap();
     blog.outbox(&*conn)
 }
