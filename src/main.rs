@@ -59,17 +59,35 @@ fn init_pool() -> PgPool {
 fn main() {
     rocket::ignite()
         .mount("/", routes![
-            routes::static_files,
+            routes::blogs::details,
+            routes::blogs::activity_details,            
+            routes::blogs::outbox,            
+            routes::blogs::new,
+            routes::blogs::create,
 
-            routes::well_known::host_meta,
-            routes::well_known::webfinger,
+            routes::comments::new,
+            routes::comments::create,
 
             routes::instance::index,
             routes::instance::configure,
             routes::instance::post_config,
             routes::instance::shared_inbox,
 
+            routes::likes::create,
+
             routes::notifications::notifications,
+
+            routes::posts::details,
+            routes::posts::activity_details,
+            routes::posts::new,
+            routes::posts::new_auth,
+            routes::posts::create,
+
+            routes::session::new,
+            routes::session::create,
+            routes::session::delete,
+
+            routes::static_files,
 
             routes::user::me,
             routes::user::details,
@@ -84,26 +102,8 @@ fn main() {
             routes::user::new,
             routes::user::create,
 
-            routes::session::new,
-            routes::session::create,
-            routes::session::delete,
-
-            routes::blogs::details,
-            routes::blogs::activity_details,            
-            routes::blogs::outbox,            
-            routes::blogs::new,
-            routes::blogs::create,
-
-            routes::posts::details,
-            routes::posts::activity_details,
-            routes::posts::new,
-            routes::posts::new_auth,
-            routes::posts::create,
-            
-            routes::comments::new,
-            routes::comments::create,
-
-            routes::likes::create
+            routes::well_known::host_meta,
+            routes::well_known::webfinger
         ])
         .manage(init_pool())
         .attach(Template::fairing())
