@@ -56,8 +56,6 @@ pub trait Inbox: Actor + Sized {
                         self.accept_follow(conn, &from, &blog, &follow_act, from.id, blog.id)
                     }
                 };
-                
-                // TODO: notification
             }
             "Like" => {
                 let liker = User::from_url(conn, act["actor"].as_str().unwrap().to_string());

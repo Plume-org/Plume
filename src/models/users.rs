@@ -23,8 +23,10 @@ use activity_pub::outbox::Outbox;
 use activity_pub::sign::{Signer, gen_keypair};
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
+use models::comments::Comment;
 use models::follows::Follow;
 use models::instance::Instance;
+use models::notifications::*;
 use models::post_authors::PostAuthor;
 use models::posts::Post;
 use schema::users;
@@ -332,8 +334,47 @@ impl Actor for User {
 
 impl Inbox for User {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act);
-        // TODO: add to stream or create notification, or whatever needs to be done
+        self.save(conn, act.clone());
+
+        // Notifications
+        match act["type"].as_str().unwrap() {
+            "Follow" => {
+                let follower = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
+                Notification::insert(conn, NewNotification {
+                    title: format!("{} started following you", follower.display_name.clone()),
+                    content: None,
+                    link: Some(follower.ap_url),
+                    user_id: self.id
+                });
+            }
+            "Like" => {
+                let liker = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
+                let post = Post::find_by_ap_url(conn, act["object"].as_str().unwrap().to_string()).unwrap();
+                Notification::insert(conn, NewNotification {
+                    title: format!("{} liked your article", liker.display_name.clone()),
+                    content: Some(post.title),
+                    link: Some(post.ap_url),
+                    user_id: self.id
+                });
+            },
+            "Create" => {
+                match act["object"]["type"].as_str().unwrap() {
+                    "Note" => {
+                        let comment = Comment::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()).unwrap();
+                        Notification::insert(conn, NewNotification {
+                            title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
+                            content: Some(comment.get_post(conn).title),
+                            link: comment.ap_url,
+                            user_id: self.id
+                        });
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
+
+        // TODO: add to stream, or whatever needs to be done
     }
 }
 
