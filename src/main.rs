@@ -1,6 +1,7 @@
 #![feature(plugin, custom_derive, iterator_find_map)]
 #![plugin(rocket_codegen)]
 
+extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
 extern crate chrono;

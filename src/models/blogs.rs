@@ -15,7 +15,7 @@ use models::instance::Instance;
 use schema::blogs;
 
 
-#[derive(Queryable, Identifiable, Serialize)]
+#[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -128,6 +128,10 @@ impl Actor for Blog {
 
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
+    }
+
+    fn get_shared_inbox_url(&self) -> Option<String> {
+        None
     }
 
     fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {

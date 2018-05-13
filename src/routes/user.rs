@@ -6,7 +6,7 @@ use serde_json;
 use activity_pub::{activity, activity_pub, ActivityPub, context};
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
-use activity_pub::outbox::Outbox;
+use activity_pub::outbox::{broadcast, Outbox};
 use db_conn::DbConn;
 use models::follows::*;
 use models::instance::Instance;
@@ -48,7 +48,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
         follower_id: user.id,
         following_id: target.id
     });
-    target.send_to_inbox(&*conn, &user, activity::Follow::new(&user, &target, &*conn));
+    broadcast(&*conn, &user, activity::Follow::new(&user, &target, &*conn), vec![target]);
     Redirect::to(format!("/@/{}", name).as_ref())
 }
 

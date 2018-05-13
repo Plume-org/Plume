@@ -1,12 +1,8 @@
 use diesel::PgConnection;
-use reqwest::Client;
 use serde_json;
 
 use BASE_URL;
 use activity_pub::{activity_pub, ActivityPub, context, ap_url};
-use activity_pub::activity::Activity;
-use activity_pub::request;
-use activity_pub::sign::*;
 use models::instance::Instance;
 
 pub enum ActorType {
@@ -37,6 +33,8 @@ pub trait Actor: Sized {
     fn get_actor_type() -> ActorType;
 
     fn get_inbox_url(&self) -> String;
+
+    fn get_shared_inbox_url(&self) -> Option<String>;
 
     fn custom_props(&self, _conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
         serde_json::Map::new()
@@ -82,24 +80,6 @@ pub trait Actor: Sized {
             prefix = Self::get_box_prefix(),
             user = self.get_actor_id()
         ))
-    }
-
-    fn send_to_inbox<A: Activity, S: Actor + Signer>(&self, conn: &PgConnection, sender: &S, act: A) {
-        let mut act = act.serialize();
-        act["@context"] = context();
-        let signed = act.sign(sender, conn);
-        
-        let res = Client::new()
-            .post(&self.get_inbox_url()[..])
-            .headers(request::headers())
-            .header(request::signature(sender, request::headers(), conn))
-            .header(request::digest(signed.to_string()))
-            .body(signed.to_string())
-            .send();
-        match res {
-            Ok(mut r) => println!("Successfully sent activity to inbox ({})\n\n{:?}", self.get_inbox_url(), r.text().unwrap()),
-            Err(e) => println!("Error while sending to inbox ({:?})", e)
-        }
     }
 
     fn from_url(conn: &PgConnection, url: String) -> Option<Self>;

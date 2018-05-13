@@ -3,6 +3,7 @@ use serde_json;
 
 use activity_pub::activity;
 use activity_pub::actor::Actor;
+use activity_pub::outbox::broadcast;
 use activity_pub::sign::*;
 use models::blogs::Blog;
 use models::comments::*;
@@ -79,7 +80,7 @@ pub trait Inbox: Actor + Sized {
         }
     }
 
-    fn accept_follow<A: Actor, B: Actor + Signer, T: activity::Activity>(
+    fn accept_follow<A: Actor + Signer, B: Actor + Clone, T: activity::Activity>(
         &self,
         conn: &PgConnection,
         from: &A,
@@ -94,6 +95,6 @@ pub trait Inbox: Actor + Sized {
         });
 
         let accept = activity::Accept::new(target, follow, conn);
-        from.send_to_inbox(conn, target, accept)
+        broadcast(conn, from, accept, vec![target.clone()]);
     }
 }
