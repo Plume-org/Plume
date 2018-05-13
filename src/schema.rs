@@ -67,6 +67,16 @@ table! {
 }
 
 table! {
+    notifications (id) {
+        id -> Int4,
+        title -> Varchar,
+        content -> Nullable<Text>,
+        link -> Nullable<Varchar>,
+        user_id -> Int4,
+    }
+}
+
+table! {
     post_authors (id) {
         id -> Int4,
         post_id -> Int4,
@@ -114,6 +124,7 @@ joinable!(comments -> posts (post_id));
 joinable!(comments -> users (author_id));
 joinable!(likes -> posts (post_id));
 joinable!(likes -> users (user_id));
+joinable!(notifications -> users (user_id));
 joinable!(post_authors -> posts (post_id));
 joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
@@ -126,6 +137,7 @@ allow_tables_to_appear_in_same_query!(
     follows,
     instances,
     likes,
+    notifications,
     post_authors,
     posts,
     users,
