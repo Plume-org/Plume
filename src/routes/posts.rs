@@ -1,13 +1,12 @@
+use activitystreams_types::activity::Create;
 use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{context, activity_pub, ActivityPub};
-use activity_pub::activity::Create;
+use activity_pub::{broadcast, context, activity_pub, ActivityPub, Id};
 use activity_pub::object::Object;
-use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::blogs::*;
 use models::comments::Comment;
@@ -86,8 +85,12 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         author_id: user.id
     });
 
-    let act = Create::new(&user, &post, &*conn);
-    broadcast(&*conn, &user, act, user.get_followers(&*conn));
+    // TODO: use Post -> Create conversion
+    // let act = Create::default();
+    // act.object_props.set_id_string(format!("{}/activity", post.compute_id(&*conn)));
+    // act.set_actor_link(Id::new(user.ap_url));
+    // act.set_object_object();
+    // broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())
 }

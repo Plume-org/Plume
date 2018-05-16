@@ -1,14 +1,17 @@
+use activitystreams_types::{
+    activity::Follow,
+    collection::OrderedCollection
+};
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{activity, activity_pub, ActivityPub, context};
+use activity_pub::{activity_pub, ActivityPub, ActivityStream, context, broadcast};
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
-use activity_pub::outbox::{broadcast, Outbox};
 use db_conn::DbConn;
-use models::follows::*;
+use models::follows;
 use models::instance::Instance;
 use models::posts::Post;
 use models::users::*;
@@ -49,11 +52,13 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
 #[get("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
-    Follow::insert(&*conn, NewFollow {
+    follows::Follow::insert(&*conn, follows::NewFollow {
         follower_id: user.id,
         following_id: target.id
     });
-    broadcast(&*conn, &user, activity::Follow::new(&user, &target, &*conn), vec![target]);
+    let act = Follow::default();
+    // TODO
+    broadcast(&*conn, &user, act, vec![target]);
     Redirect::to(format!("/@/{}", name).as_ref())
 }
 
@@ -145,7 +150,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
 }
 
 #[get("/@/<name>/outbox")]
-fn outbox(name: String, conn: DbConn) -> Outbox {
+fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
     let user = User::find_local(&*conn, name).unwrap();
     user.outbox(&*conn)
 }

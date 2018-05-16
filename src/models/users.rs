@@ -1,3 +1,7 @@
+use activitystreams_types::{
+    activity::Create,
+    collection::OrderedCollection
+};
 use bcrypt;
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
@@ -12,15 +16,12 @@ use reqwest::mime::Mime;
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
 use serde_json;
-use std::sync::Arc;
 use url::Url;
 
 use BASE_URL;
-use activity_pub::ap_url;
-use activity_pub::activity::{Create, Activity};
+use activity_pub::{ap_url, ActivityStream};
 use activity_pub::actor::{ActorType, Actor};
 use activity_pub::inbox::Inbox;
-use activity_pub::outbox::Outbox;
 use activity_pub::sign::{Signer, gen_keypair};
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
@@ -224,16 +225,22 @@ impl User {
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
-        Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
+    pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
+        let mut coll = OrderedCollection::default(); // TODO
+        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).unwrap();
+        ActivityStream::new(coll)
     }
 
-    fn get_activities(&self, conn: &PgConnection) -> Vec<Arc<Activity>> {
+    fn get_activities(&self, conn: &PgConnection) -> Vec<serde_json::Value> {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
-        posts.into_iter().map(|p| Arc::new(Create::new(self, &p, conn)) as Arc<Activity>).collect::<Vec<Arc<Activity>>>()
+        posts.into_iter().map(|_| {
+            // TODO Create::new(self, &p, conn)
+            // TODO: add a method to convert Post -> Create
+            serde_json::to_value(Create::default()).unwrap()
+        }).collect::<Vec<serde_json::Value>>()
     }
 
     pub fn get_fqn(&self, conn: &PgConnection) -> String {
@@ -352,7 +359,7 @@ impl Actor for User {
 
 impl Inbox for User {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone());
+        self.save(conn, act.clone()).unwrap();
 
         // Notifications
         match act["type"].as_str().unwrap() {

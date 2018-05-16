@@ -1,3 +1,4 @@
+use activitystreams_types::collection::OrderedCollection;
 use reqwest::Client;
 use reqwest::header::{Accept, qitem};
 use reqwest::mime::Mime;
@@ -9,11 +10,9 @@ use openssl::hash::MessageDigest;
 use openssl::pkey::{PKey, Private};
 use openssl::rsa::Rsa;
 use openssl::sign::Signer;
-use std::sync::Arc;
 
-use activity_pub::activity::Activity;
+use activity_pub::ActivityStream;
 use activity_pub::actor::{Actor, ActorType};
-use activity_pub::outbox::Outbox;
 use activity_pub::sign;
 use activity_pub::webfinger::*;
 use models::instance::Instance;
@@ -158,11 +157,14 @@ impl Blog {
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
-        Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
+    pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
+        let mut coll = OrderedCollection::default();
+        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).unwrap();
+        coll.collection_props.set_total_items_u64(self.get_activities(conn).len() as u64).unwrap();
+        ActivityStream::new(coll)
     }
 
-    fn get_activities(&self, _conn: &PgConnection) -> Vec<Arc<Activity>> {
+    fn get_activities(&self, _conn: &PgConnection) -> Vec<serde_json::Value> {
         vec![]
     }
 
