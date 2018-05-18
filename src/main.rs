@@ -2,6 +2,8 @@
 #![plugin(rocket_codegen)]
 
 extern crate activitystreams;
+#[macro_use]
+extern crate activitystreams_derive;
 extern crate activitystreams_traits;
 extern crate activitystreams_types;
 extern crate array_tool;

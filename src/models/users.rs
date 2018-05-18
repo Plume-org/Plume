@@ -1,7 +1,9 @@
-use activitystreams_traits::{Actor, Object};
+use activitystreams_traits::{Actor, Object, Link};
 use activitystreams_types::{
-    activity::Create,
-    collection::OrderedCollection
+    actor::Person,
+    collection::OrderedCollection,
+    object::properties::ObjectProperties,
+    CustomObject
 };
 use bcrypt;
 use chrono::NaiveDateTime;
@@ -227,8 +229,11 @@ impl User {
     }
 
     pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
-        let mut coll = OrderedCollection::default(); // TODO
-        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).unwrap();
+        let acts = self.get_activities(conn);
+        let n_acts = acts.len();
+        let mut coll = OrderedCollection::default();
+        coll.collection_props.items = serde_json::to_value(acts).unwrap();
+        coll.collection_props.set_total_items_u64(n_acts as u64).unwrap();
         ActivityStream::new(coll)
     }
 
@@ -237,10 +242,8 @@ impl User {
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
-        posts.into_iter().map(|_| {
-            // TODO Create::new(self, &p, conn)
-            // TODO: add a method to convert Post -> Create
-            serde_json::to_value(Create::default()).unwrap()
+        posts.into_iter().map(|p| {
+            serde_json::to_value(p.create_activity(conn)).unwrap()
         }).collect::<Vec<serde_json::Value>>()
     }
 
@@ -278,6 +281,42 @@ impl User {
     pub fn get_keypair(&self) -> PKey<Private> {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> CustomObject<ApProps, Person> {
+        let mut actor = Person::default();
+        actor.object_props = ObjectProperties {
+            id: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            name: Some(serde_json::to_value(self.get_display_name()).unwrap()),
+            summary: Some(serde_json::to_value(self.get_summary()).unwrap()),
+            url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            ..ObjectProperties::default()
+        };
+
+        CustomObject::new(actor, ApProps {
+            inbox: Some(serde_json::to_value(self.compute_inbox(conn)).unwrap()),
+            outbox: Some(serde_json::to_value(self.compute_outbox(conn)).unwrap()),
+            preferred_username: Some(serde_json::to_value(self.get_actor_id()).unwrap()),
+            endpoints: Some(json!({
+                "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
+            }))
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize, Default, Properties)]
+#[serde(rename_all = "camelCase")]
+pub struct ApProps {
+    #[activitystreams(ab(Object, Link))]
+    inbox: Option<serde_json::Value>,
+
+    #[activitystreams(ab(Object, Link))]
+    outbox: Option<serde_json::Value>,
+
+    #[activitystreams(ab(Object, Link))]
+    preferred_username: Option<serde_json::Value>,
+
+    #[activitystreams(ab(Object))]
+    endpoints: Option<serde_json::Value>
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -359,7 +398,7 @@ impl APActor for User {
 }
 
 impl IntoId for User {
-    fn into(&self) -> Id {
+    fn into_id(self) -> Id {
         Id::new(self.ap_url.clone())
     }
 }

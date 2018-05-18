@@ -7,7 +7,7 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{activity_pub, ActivityPub, ActivityStream, context, broadcast};
+use activity_pub::{activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId};
 use activity_pub::actor::Actor;
 use activity_pub::inbox::Inbox;
 use db_conn::DbConn;
@@ -56,8 +56,10 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
         follower_id: user.id,
         following_id: target.id
     });
-    let act = Follow::default();
-    // TODO
+    let mut act = Follow::default();
+    act.set_actor_link::<Id>(user.clone().into_id()).unwrap();
+    act.set_object_object(user.into_activity(&*conn)).unwrap();
+    act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
     broadcast(&*conn, &user, act, vec![target]);
     Redirect::to(format!("/@/{}", name).as_ref())
 }

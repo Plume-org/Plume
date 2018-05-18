@@ -1,4 +1,3 @@
-use activitystreams_types::activity::{Like, Undo};
 use rocket::response::Redirect;
 
 use activity_pub::broadcast;
@@ -18,12 +17,12 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
                 ap_url: "".to_string()
         });
         like.update_ap_url(&*conn);
-        // TODO: let act = Like::new(&user, &post, &*conn);
-        // TODO: broadcast(&*conn, &user, act, user.get_followers(&*conn));
+
+        broadcast(&*conn, &user, like.into_activity(&*conn), user.get_followers(&*conn));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, &user, &post).unwrap();
-        // TODO: like.delete(&*conn);
-        // TODO: broadcast(&*conn, &user, Undo::new(&user, &like, &*conn), user.get_followers(&*conn));
+        let delete_act = like.delete(&*conn);
+        broadcast(&*conn, &user, delete_act, user.get_followers(&*conn));
     }
 
     Redirect::to(format!("/~/{}/{}/", blog, slug).as_ref())

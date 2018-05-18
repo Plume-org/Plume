@@ -1,7 +1,9 @@
+use activitystreams_types::activity;
 use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 use serde_json;
 
+use activity_pub::IntoId;
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
 use models::posts::Post;
@@ -66,8 +68,25 @@ impl Like {
             .into_iter().nth(0)
     }
 
-    pub fn delete(&self, conn: &PgConnection) {
+    pub fn delete(&self, conn: &PgConnection) -> activity::Undo {
         diesel::delete(self).execute(conn).unwrap();
+
+        let mut act = activity::Undo::default();
+        act.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
+        act.set_object_object(self.into_activity(conn)).unwrap();
+        act
+    }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> activity::Like {
+        let mut act = activity::Like::default();
+        act.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
+        act.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
+        act.object_props.set_id_string(format!("{}/like/{}",
+            User::get(conn, self.user_id).unwrap().ap_url,
+            Post::get(conn, self.post_id).unwrap().ap_url
+        )).unwrap();
+
+        act
     }
 }
 

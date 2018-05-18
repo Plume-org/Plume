@@ -102,7 +102,7 @@ pub fn broadcast<A: Activity + Clone, S: sign::Signer, T: inbox::WithInbox + Act
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Id {
     #[serde(flatten)]
     id: String
@@ -117,7 +117,7 @@ impl Id {
 }
 
 pub trait IntoId {
-    fn into(&self) -> Id;
+    fn into_id(self) -> Id;
 }
 
 impl Link for Id {}

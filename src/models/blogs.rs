@@ -12,7 +12,7 @@ use openssl::pkey::{PKey, Private};
 use openssl::rsa::Rsa;
 use openssl::sign::Signer;
 
-use activity_pub::{ActivityStream, Id};
+use activity_pub::{ActivityStream, Id, IntoId};
 use activity_pub::actor::{Actor as APActor, ActorType};
 use activity_pub::inbox::WithInbox;
 use activity_pub::sign;
@@ -175,8 +175,8 @@ impl Blog {
     }
 }
 
-impl Into<Id> for Blog {
-    fn into(self) -> Id {
+impl IntoId for Blog {
+    fn into_id(self) -> Id {
         Id::new(self.ap_url)
     }
 }

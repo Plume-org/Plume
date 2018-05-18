@@ -1,11 +1,10 @@
-use activitystreams_types::activity::Create;
 use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub, Id};
+use activity_pub::{broadcast, context, activity_pub, ActivityPub};
 use activity_pub::object::Object;
 use db_conn::DbConn;
 use models::blogs::*;
@@ -38,7 +37,7 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
 
 #[get("/~/<_blog>/<slug>", rank = 3, format = "application/activity+json")]
 fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
-    // TODO: posts in different blogs may have the same slug
+    // FIXME: posts in different blogs may have the same slug
     let post = Post::find_by_slug(&*conn, slug).unwrap();
 
     let mut act = post.serialize(&*conn);
@@ -85,12 +84,8 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         author_id: user.id
     });
 
-    // TODO: use Post -> Create conversion
-    // let act = Create::default();
-    // act.object_props.set_id_string(format!("{}/activity", post.compute_id(&*conn)));
-    // act.set_actor_link(Id::new(user.ap_url));
-    // act.set_object_object();
-    // broadcast(&*conn, &user, act, user.get_followers(&*conn));
+    let act = post.create_activity(&*conn);
+    broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())
 }

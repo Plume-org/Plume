@@ -1,10 +1,14 @@
+use activitystreams_types::{
+    activity::Create,
+    object::{Article, properties::ObjectProperties}
+};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
 use diesel::dsl::any;
 use serde_json;
 
 use BASE_URL;
-use activity_pub::{PUBLIC_VISIBILTY, ap_url};
+use activity_pub::{PUBLIC_VISIBILTY, ap_url, Id, IntoId};
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
 use models::blogs::Blog;
@@ -136,6 +140,40 @@ impl Post {
             acc
         });
         to
+    }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> Article {
+        let mut to = self.get_receivers_urls(conn);
+        to.push(PUBLIC_VISIBILTY.to_string());
+
+        let mut article = Article::default();
+        article.object_props = ObjectProperties {
+            name: Some(serde_json::to_value(self.title.clone()).unwrap()),
+            id: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
+            attributed_to: Some(serde_json::to_value(self.get_authors(conn).into_iter().map(|x| x.ap_url).collect::<Vec<String>>()).unwrap()),
+            content: Some(serde_json::to_value(self.content.clone()).unwrap()),
+            published: Some(serde_json::to_value(self.creation_date).unwrap()),
+            tag: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
+            url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            to: Some(serde_json::to_value(to).unwrap()),
+            cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
+            ..ObjectProperties::default()                
+        };
+        article
+    }
+
+    pub fn create_activity(&self, conn: &PgConnection) -> Create {
+        let mut act = Create::default();
+        act.object_props.set_id_string(format!("{}/activity", self.ap_url)).unwrap();
+        act.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
+        act.set_object_object(self.into_activity(conn)).unwrap();
+        act
+    }
+}
+
+impl IntoId for Post {
+    fn into_id(self) -> Id {
+        Id::new(self.ap_url.clone())
     }
 }
 

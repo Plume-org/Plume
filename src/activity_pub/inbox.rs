@@ -8,7 +8,7 @@ use diesel::PgConnection;
 use failure::Error;
 use serde_json;
 
-use activity_pub::{broadcast, IntoId};
+use activity_pub::{broadcast, Id, IntoId};
 use activity_pub::actor::Actor as APActor;
 use activity_pub::sign::*;
 use models::blogs::Blog;
@@ -118,7 +118,7 @@ pub trait Inbox {
         }
     }
 
-    fn accept_follow<A: Signer + IntoId, B: Clone + WithInbox + Actor>(
+    fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor>(
         &self,
         conn: &PgConnection,
         from: &A,
@@ -132,8 +132,8 @@ pub trait Inbox {
             following_id: target_id
         });
 
-        let mut accept = Accept::default();//new(target, follow, conn);
-        accept.set_actor_link(from.into()).unwrap();
+        let mut accept = Accept::default();
+        accept.set_actor_link::<Id>(from.clone().into_id()).unwrap();
         accept.set_object_object(follow).unwrap();
         broadcast(conn, &*from, accept, vec![target.clone()]);
     }
