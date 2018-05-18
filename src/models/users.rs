@@ -1,3 +1,10 @@
+use activitystreams_traits::{Actor, Object, Link};
+use activitystreams_types::{
+    actor::Person,
+    collection::OrderedCollection,
+    object::properties::ObjectProperties,
+    CustomObject
+};
 use bcrypt;
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
@@ -12,15 +19,12 @@ use reqwest::mime::Mime;
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
 use serde_json;
-use std::sync::Arc;
 use url::Url;
 
 use BASE_URL;
-use activity_pub::ap_url;
-use activity_pub::activity::{Create, Activity};
-use activity_pub::actor::{ActorType, Actor};
-use activity_pub::inbox::Inbox;
-use activity_pub::outbox::Outbox;
+use activity_pub::{ap_url, ActivityStream, Id, IntoId};
+use activity_pub::actor::{ActorType, Actor as APActor};
+use activity_pub::inbox::{Inbox, WithInbox};
 use activity_pub::sign::{Signer, gen_keypair};
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
@@ -34,7 +38,7 @@ use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
-#[derive(Queryable, Identifiable, Serialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -224,16 +228,23 @@ impl User {
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
-        Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
+    pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
+        let acts = self.get_activities(conn);
+        let n_acts = acts.len();
+        let mut coll = OrderedCollection::default();
+        coll.collection_props.items = serde_json::to_value(acts).unwrap();
+        coll.collection_props.set_total_items_u64(n_acts as u64).unwrap();
+        ActivityStream::new(coll)
     }
 
-    fn get_activities(&self, conn: &PgConnection) -> Vec<Arc<Activity>> {
+    fn get_activities(&self, conn: &PgConnection) -> Vec<serde_json::Value> {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
-        posts.into_iter().map(|p| Arc::new(Create::new(self, &p, conn)) as Arc<Activity>).collect::<Vec<Arc<Activity>>>()
+        posts.into_iter().map(|p| {
+            serde_json::to_value(p.create_activity(conn)).unwrap()
+        }).collect::<Vec<serde_json::Value>>()
     }
 
     pub fn get_fqn(&self, conn: &PgConnection) -> String {
@@ -270,6 +281,42 @@ impl User {
     pub fn get_keypair(&self) -> PKey<Private> {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> CustomObject<ApProps, Person> {
+        let mut actor = Person::default();
+        actor.object_props = ObjectProperties {
+            id: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            name: Some(serde_json::to_value(self.get_display_name()).unwrap()),
+            summary: Some(serde_json::to_value(self.get_summary()).unwrap()),
+            url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            ..ObjectProperties::default()
+        };
+
+        CustomObject::new(actor, ApProps {
+            inbox: Some(serde_json::to_value(self.compute_inbox(conn)).unwrap()),
+            outbox: Some(serde_json::to_value(self.compute_outbox(conn)).unwrap()),
+            preferred_username: Some(serde_json::to_value(self.get_actor_id()).unwrap()),
+            endpoints: Some(json!({
+                "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
+            }))
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize, Default, Properties)]
+#[serde(rename_all = "camelCase")]
+pub struct ApProps {
+    #[activitystreams(ab(Object, Link))]
+    inbox: Option<serde_json::Value>,
+
+    #[activitystreams(ab(Object, Link))]
+    outbox: Option<serde_json::Value>,
+
+    #[activitystreams(ab(Object, Link))]
+    preferred_username: Option<serde_json::Value>,
+
+    #[activitystreams(ab(Object))]
+    endpoints: Option<serde_json::Value>
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -285,7 +332,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
     }
 }
 
-impl Actor for User {
+impl APActor for User {
     fn get_box_prefix() -> &'static str {
         "@"
     }
@@ -350,9 +397,28 @@ impl Actor for User {
     }
 }
 
+impl IntoId for User {
+    fn into_id(self) -> Id {
+        Id::new(self.ap_url.clone())
+    }
+}
+
+impl Object for User {}
+impl Actor for User {}
+
+impl WithInbox for User {
+    fn get_inbox_url(&self) -> String {
+        self.inbox_url.clone()
+    }
+
+    fn get_shared_inbox_url(&self) -> Option<String> {
+       self.shared_inbox_url.clone()
+    }
+}
+
 impl Inbox for User {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone());
+        self.save(conn, act.clone()).unwrap();
 
         // Notifications
         match act["type"].as_str().unwrap() {

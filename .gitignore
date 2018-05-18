@@ -2,3 +2,4 @@
 rls
 /target
 **/*.rs.bk
+rls

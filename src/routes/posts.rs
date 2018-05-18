@@ -4,10 +4,8 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{context, activity_pub, ActivityPub};
-use activity_pub::activity::Create;
+use activity_pub::{broadcast, context, activity_pub, ActivityPub};
 use activity_pub::object::Object;
-use activity_pub::outbox::broadcast;
 use db_conn::DbConn;
 use models::blogs::*;
 use models::comments::Comment;
@@ -39,7 +37,7 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
 
 #[get("/~/<_blog>/<slug>", rank = 3, format = "application/activity+json")]
 fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
-    // TODO: posts in different blogs may have the same slug
+    // FIXME: posts in different blogs may have the same slug
     let post = Post::find_by_slug(&*conn, slug).unwrap();
 
     let mut act = post.serialize(&*conn);
@@ -86,7 +84,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         author_id: user.id
     });
 
-    let act = Create::new(&user, &post, &*conn);
+    let act = post.create_activity(&*conn);
     broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())

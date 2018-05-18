@@ -1,11 +1,11 @@
+use activitystreams_types::collection::OrderedCollection;
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::ActivityPub;
+use activity_pub::{ActivityStream, ActivityPub};
 use activity_pub::actor::Actor;
-use activity_pub::outbox::Outbox;
 use db_conn::DbConn;
 use models::blog_authors::*;
 use models::blogs::*;
@@ -78,7 +78,7 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
 }
 
 #[get("/~/<name>/outbox")]
-fn outbox(name: String, conn: DbConn) -> Outbox {
+fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
     let blog = Blog::find_local(&*conn, name).unwrap();
     blog.outbox(&*conn)
 }

@@ -1,3 +1,5 @@
+use activitystreams_traits::{Actor, Object};
+use activitystreams_types::collection::OrderedCollection;
 use reqwest::Client;
 use reqwest::header::{Accept, qitem};
 use reqwest::mime::Mime;
@@ -9,18 +11,17 @@ use openssl::hash::MessageDigest;
 use openssl::pkey::{PKey, Private};
 use openssl::rsa::Rsa;
 use openssl::sign::Signer;
-use std::sync::Arc;
 
-use activity_pub::activity::Activity;
-use activity_pub::actor::{Actor, ActorType};
-use activity_pub::outbox::Outbox;
+use activity_pub::{ActivityStream, Id, IntoId};
+use activity_pub::actor::{Actor as APActor, ActorType};
+use activity_pub::inbox::WithInbox;
 use activity_pub::sign;
 use activity_pub::webfinger::*;
 use models::instance::Instance;
 use schema::blogs;
 
 
-#[derive(Queryable, Identifiable, Serialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -158,11 +159,14 @@ impl Blog {
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> Outbox {
-        Outbox::new(self.compute_outbox(conn), self.get_activities(conn))
+    pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
+        let mut coll = OrderedCollection::default();
+        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).unwrap();
+        coll.collection_props.set_total_items_u64(self.get_activities(conn).len() as u64).unwrap();
+        ActivityStream::new(coll)
     }
 
-    fn get_activities(&self, _conn: &PgConnection) -> Vec<Arc<Activity>> {
+    fn get_activities(&self, _conn: &PgConnection) -> Vec<serde_json::Value> {
         vec![]
     }
 
@@ -171,7 +175,26 @@ impl Blog {
     }
 }
 
-impl Actor for Blog {
+impl IntoId for Blog {
+    fn into_id(self) -> Id {
+        Id::new(self.ap_url)
+    }
+}
+
+impl Object for Blog {}
+impl Actor for Blog {}
+
+impl WithInbox for Blog {
+    fn get_inbox_url(&self) -> String {
+        self.inbox_url.clone()
+    }
+
+    fn get_shared_inbox_url(&self) -> Option<String> {
+        None
+    }
+}
+
+impl APActor for Blog {
     fn get_box_prefix() -> &'static str {
         "~"
     }

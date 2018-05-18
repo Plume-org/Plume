@@ -1,8 +1,12 @@
+use activitystreams_types::{
+    activity::Create,
+    object::{Note, properties::ObjectProperties}
+};
 use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
 use serde_json;
 
-use activity_pub::{ap_url, PUBLIC_VISIBILTY};
+use activity_pub::{ap_url, IntoId, PUBLIC_VISIBILTY};
 use activity_pub::actor::Actor;
 use activity_pub::object::Object;
 use models::posts::Post;
@@ -70,6 +74,37 @@ impl Comment {
 
     pub fn get_post(&self, conn: &PgConnection) -> Post {
         Post::get(conn, self.post_id).unwrap()        
+    }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> Note {
+        let mut to = self.get_author(conn).get_followers(conn).into_iter().map(|f| f.ap_url).collect::<Vec<String>>();
+        to.append(&mut self.get_post(conn).get_receivers_urls(conn));
+        to.push(PUBLIC_VISIBILTY.to_string());
+
+        let mut comment = Note::default();
+        comment.object_props = ObjectProperties {
+            id: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
+            summary: Some(serde_json::to_value(self.spoiler_text.clone()).unwrap()),
+            content: Some(serde_json::to_value(self.content.clone()).unwrap()),
+            in_reply_to: Some(serde_json::to_value(self.in_response_to_id.map_or_else(|| self.get_post(conn).ap_url, |id| {
+                let comm = Comment::get(conn, id).unwrap();
+                comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
+            })).unwrap()),
+            published: Some(serde_json::to_value(self.creation_date).unwrap()),
+            attributed_to: Some(serde_json::to_value(self.get_author(conn).compute_id(conn)).unwrap()),
+            to: Some(serde_json::to_value(to).unwrap()),
+            cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
+            ..ObjectProperties::default()
+        };
+        comment
+    }
+
+    pub fn create_activity(&self, conn: &PgConnection) -> Create {
+        let mut act = Create::default();
+        act.set_actor_link(self.get_author(conn).into_id()).unwrap();
+        act.set_object_object(self.into_activity(conn)).unwrap();
+        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).unwrap();
+        act
     }
 }
 
