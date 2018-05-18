@@ -125,11 +125,17 @@ struct NewUserForm {
 }
 
 #[post("/users/new", data = "<data>")]
-fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
+fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
     let inst = Instance::get_local(&*conn).unwrap();
     let form = data.get();
 
-    if form.password == form.password_confirmation {
+    if form.username.clone().len() < 1 {
+        Err(String::from("Username is required"))
+    } else if form.email.clone().len() < 1 {
+        Err(String::from("Email is required"))
+    } else if form.password.clone().len() < 8 {
+        Err(String::from("Password should be at least 8 characters long"))
+    } else if form.password == form.password_confirmation {
         User::insert(&*conn, NewUser::new_local(
             form.username.to_string(),
             form.username.to_string(),
@@ -139,9 +145,10 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Redirect {
             User::hash_pass(form.password.to_string()),
             inst.id
         )).update_boxes(&*conn);
+        Ok(Redirect::to(format!("/@/{}", data.get().username).as_str()))        
+    } else {
+        Err(String::from("Passwords don't match"))
     }
-    
-    Redirect::to(format!("/@/{}", data.get().username).as_str())
 }
 
 #[get("/@/<name>/outbox")]
