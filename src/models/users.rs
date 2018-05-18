@@ -1,3 +1,4 @@
+use activitystreams_traits::{Actor, Object};
 use activitystreams_types::{
     activity::Create,
     collection::OrderedCollection
@@ -19,9 +20,9 @@ use serde_json;
 use url::Url;
 
 use BASE_URL;
-use activity_pub::{ap_url, ActivityStream};
-use activity_pub::actor::{ActorType, Actor};
-use activity_pub::inbox::Inbox;
+use activity_pub::{ap_url, ActivityStream, Id, IntoId};
+use activity_pub::actor::{ActorType, Actor as APActor};
+use activity_pub::inbox::{Inbox, WithInbox};
 use activity_pub::sign::{Signer, gen_keypair};
 use activity_pub::webfinger::{Webfinger, resolve};
 use db_conn::DbConn;
@@ -35,7 +36,7 @@ use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
-#[derive(Queryable, Identifiable, Serialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -292,7 +293,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
     }
 }
 
-impl Actor for User {
+impl APActor for User {
     fn get_box_prefix() -> &'static str {
         "@"
     }
@@ -354,6 +355,25 @@ impl Actor for User {
                 }
             }
         }
+    }
+}
+
+impl IntoId for User {
+    fn into(&self) -> Id {
+        Id::new(self.ap_url.clone())
+    }
+}
+
+impl Object for User {}
+impl Actor for User {}
+
+impl WithInbox for User {
+    fn get_inbox_url(&self) -> String {
+        self.inbox_url.clone()
+    }
+
+    fn get_shared_inbox_url(&self) -> Option<String> {
+       self.shared_inbox_url.clone()
     }
 }
 

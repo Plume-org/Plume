@@ -1,18 +1,19 @@
+use activitystreams_traits::Actor;
 use activitystreams_types::{
     actor::Person,
-    activity::{Create, Follow, Like, Undo},
+    activity::{Accept, Create, Follow, Like, Undo},
     object::{Article, Note}
 };
-use activitystreams::activity::Activity;
 use diesel::PgConnection;
 use failure::Error;
 use serde_json;
 
-// use activity_pub::broadcast;
+use activity_pub::{broadcast, IntoId};
 use activity_pub::actor::Actor as APActor;
 use activity_pub::sign::*;
 use models::blogs::Blog;
 use models::comments::*;
+use models::follows;
 use models::likes;
 use models::posts::*;
 use models::users::User;
@@ -63,10 +64,10 @@ pub trait Inbox {
     fn follow(&self, conn: &PgConnection, follow: Follow) -> Result<(), Error> {
         let from = User::from_url(conn, follow.actor.as_str().unwrap().to_string()).unwrap();
         match User::from_url(conn, follow.object.as_str().unwrap().to_string()) {
-            Some(u) => self.accept_follow(conn, &from, &u, &follow, from.id, u.id),
+            Some(u) => self.accept_follow(conn, &from, &u, follow, from.id, u.id),
             None => {
                 let blog = Blog::from_url(conn, follow.object.as_str().unwrap().to_string()).unwrap();
-                self.accept_follow(conn, &from, &blog, &follow, from.id, blog.id)
+                self.accept_follow(conn, &from, &blog, follow, from.id, blog.id)
             }
         };
         Ok(())
@@ -117,22 +118,29 @@ pub trait Inbox {
         }
     }
 
-    fn accept_follow<A: Signer, B: Clone, T: Activity>(
+    fn accept_follow<A: Signer + IntoId, B: Clone + WithInbox + Actor>(
         &self,
-        _conn: &PgConnection,
-        _from: &A,
-        _target: &B,
-        _follow: &T,
-        _from_id: i32,
-        _target_id: i32
+        conn: &PgConnection,
+        from: &A,
+        target: &B,
+        follow: Follow,
+        from_id: i32,
+        target_id: i32
     ) {
-        // TODO
-        //Follow::insert(conn, NewFollow {
-        //    follower_id: from_id,
-        //    following_id: target_id
-        //});
+        follows::Follow::insert(conn, follows::NewFollow {
+            follower_id: from_id,
+            following_id: target_id
+        });
 
-        //let accept = activity::Accept::new(target, follow, conn);
-        //broadcast(conn, from, accept, vec![target.clone()]);
+        let mut accept = Accept::default();//new(target, follow, conn);
+        accept.set_actor_link(from.into()).unwrap();
+        accept.set_object_object(follow).unwrap();
+        broadcast(conn, &*from, accept, vec![target.clone()]);
     }
+}
+
+pub trait WithInbox {
+    fn get_inbox_url(&self) -> String;
+
+    fn get_shared_inbox_url(&self) -> Option<String>;
 }

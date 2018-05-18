@@ -1,3 +1,4 @@
+use activitystreams_traits::{Actor, Object};
 use activitystreams_types::collection::OrderedCollection;
 use reqwest::Client;
 use reqwest::header::{Accept, qitem};
@@ -11,15 +12,16 @@ use openssl::pkey::{PKey, Private};
 use openssl::rsa::Rsa;
 use openssl::sign::Signer;
 
-use activity_pub::ActivityStream;
-use activity_pub::actor::{Actor, ActorType};
+use activity_pub::{ActivityStream, Id};
+use activity_pub::actor::{Actor as APActor, ActorType};
+use activity_pub::inbox::WithInbox;
 use activity_pub::sign;
 use activity_pub::webfinger::*;
 use models::instance::Instance;
 use schema::blogs;
 
 
-#[derive(Queryable, Identifiable, Serialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -173,7 +175,26 @@ impl Blog {
     }
 }
 
-impl Actor for Blog {
+impl Into<Id> for Blog {
+    fn into(self) -> Id {
+        Id::new(self.ap_url)
+    }
+}
+
+impl Object for Blog {}
+impl Actor for Blog {}
+
+impl WithInbox for Blog {
+    fn get_inbox_url(&self) -> String {
+        self.inbox_url.clone()
+    }
+
+    fn get_shared_inbox_url(&self) -> Option<String> {
+        None
+    }
+}
+
+impl APActor for Blog {
     fn get_box_prefix() -> &'static str {
         "~"
     }

@@ -1,4 +1,4 @@
-use activitystreams_traits::{Activity, Object, Link};
+use activitystreams_traits::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use diesel::PgConnection;
 use reqwest::Client;
@@ -76,7 +76,7 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     }
 }
 
-pub fn broadcast<A: Activity + Clone, S: actor::Actor + sign::Signer, T: actor::Actor>(conn: &PgConnection, sender: &S, act: A, to: Vec<T>) {
+pub fn broadcast<A: Activity + Clone, S: sign::Signer, T: inbox::WithInbox + Actor>(conn: &PgConnection, sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
         .collect::<Vec<String>>()
@@ -114,6 +114,10 @@ impl Id {
             id: id.into()
         }
     }
+}
+
+pub trait IntoId {
+    fn into(&self) -> Id;
 }
 
 impl Link for Id {}
