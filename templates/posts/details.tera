@@ -9,12 +9,12 @@
 {% endblock header %}
 
 {% block content %}
-    <p>
-        <b>Written by <a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></b>
+    <h1 class="article">{{ post.title }}</h1>
+    <p class="article-info">
+        <span class="author">Written by <a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></span>
         &mdash;
-        <span>{{ date | date(format="%B %e, %Y") }}</span>
+        <span class="date">{{ date | date(format="%B %e, %Y") }}</span>
     </p>
-    <h1>{{ post.title }}</h1>
     <article>
         {{ post.content | safe }}
     </article>
@@ -22,29 +22,32 @@
     <div class="article-meta">
         <p>This article is under the {{ post.license }} license.</p>
 
-        <div class="inline">
+        <div class="likes">
             <p>
                 {{ n_likes }} like{{ n_likes | pluralize }}
             </p>
-            <a class="button" href="like">
-                {% if has_liked %}
-                    I don't like this anymore
-                {% else %}
-                    Add yours
-                {% endif %}
-            </a>
+            {% if has_liked %}
+                <a class="button liked" href="like">I don't like this anymore</a>
+            {% else %}
+                <a class="button" href="like">Like</a>
+            {% endif %}
         </div>
 
-        <h2>Comments</h2>
-        <div class="list">
-            {% for comment in comments %}
-                <div class="card" id="comment-{{ comment.id }}">
-                    <b>{{ comment.author.display_name }}</b>
-                    <div>{{ comment.content | safe }}</div>
-                    <a href="comment?responding_to={{ comment.id }}">Respond</a>
-                </div>
-            {% endfor %}
+        <div class="comments">
+            <h2>Comments</h2>
+            <a class="button" href="comment?">Comment</a>
+            <div class="list">
+                {% for comment in comments %}
+                    <div class="comment" id="comment-{{ comment.id }}">
+                        <a class="author" href="{{ comment.author.ap_url }}">
+                            <span class="display-name">{{ comment.author.display_name }}</span>
+                            <span class="username">@{{ comment.author.username }}</span>
+                        </a>
+                        <div class="text">{{ comment.content | safe }}</div>
+                        <a class="button" href="comment?responding_to={{ comment.id }}">Respond</a>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <a class="button inline-block" href="comment?">Comment</a>
     </div>
 {% endblock content %}

@@ -8,17 +8,17 @@ New Account
 <h1>Create an account</h1>
 <form method="post">
     <label for="username">Username</label>
-    <input name="username">
+    <input type="text" id="username" name="username" />
 
     <label for="email">Email</label>
-    <input name="email">
+    <input type="email" id="email" name="email" />
 
     <label for="password">Password</label>
-    <input type="password" name="password">
+    <input type="password" id="password" name="password" />
 
     <label for="password_confirmation">Password confirmation</label>
-    <input type="password" name="password_confirmation">
+    <input type="password" id="password_confirmation" name="password_confirmation" />
 
-    <input type="submit" value="Create account"/>            
+    <input type="submit" value="Create account" />            
 </form>
 {% endblock content %}

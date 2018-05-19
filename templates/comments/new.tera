@@ -8,8 +8,8 @@ Comment "{{ post.title }}"
 <h1>Comment "{{ post.title }}"</h1>
 <form method="post">
     <label for="content">Content</label>
-    <textarea name="content"></textarea>
-    <input type="submit" value="Submit comment"/>            
+    <textarea id="content" name="content"></textarea>
+    <input type="submit" value="Comment" />
 </form>
 {% endblock content %}
 

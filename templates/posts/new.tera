@@ -6,16 +6,13 @@ New post
 
 {% block content %}
 <h1>Create a post</h1>
-<form method="post">
-    <label for="title">Title</label>
-    <input name="title">
-
-    <label for="content">Content</label>
-    <textarea name="content"></textarea>
+<form class="new-post" method="post">
+    <input type="text" class="title" name="title" placeholder="Title">
+    <textarea name="content" placeholder="Content..."></textarea>
 
     <label for="license">License</label>
-    <input name="license">
+    <input type="text" id="licence" name="license" />
 
-    <input type="submit" value="Publish"/>            
+    <input type="submit" value="Publish" />            
 </form>
 {% endblock content %}

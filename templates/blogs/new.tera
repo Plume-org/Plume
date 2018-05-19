@@ -8,8 +8,8 @@ New blog
 <h1>Create a blog</h1>
 <form method="post">
     <label for="title">Title</label>
-    <input name="title">
+    <input type="text" id="title" name="title" />
 
-    <input type="submit" value="Create blog"/>            
+    <input type="submit" value="Create blog" />            
 </form>
 {% endblock content %}

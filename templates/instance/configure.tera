@@ -8,8 +8,8 @@ Configuration
 <h1>Configure your instance</h1>
 <form method="post">
     <label for="name">Name</label>
-    <input name="name">
+    <input type="text" id="name" name="name" />
 
-    <input type="submit" value="Let's go!"/>            
+    <input type="submit" value="Let's go!" />            
 </form>
 {% endblock content %}

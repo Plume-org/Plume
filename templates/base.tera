@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
         <title>{% block title %}{% endblock title %} ⋅ Plume</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">        
-        <link rel="stylesheet" href="/static/main.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />        
+        <link rel="stylesheet" href="/static/main.css" />
+        <link rel="stylesheet" href="/static/fontawesome-5.0.10/css/fontawesome-all.min.css" />
     </head>
     <body>
         <header>
             <nav id="menu"><a href="#">Menu</a></nav>
             <nav>
-                <a href="/">Plume</a>
+                <a href="/" class="title">Plume</a>
                 {% block header %}
                 {% endblock header %}
             </nav>
