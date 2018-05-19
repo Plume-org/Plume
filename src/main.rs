@@ -90,6 +90,8 @@ fn main() {
             routes::posts::new_auth,
             routes::posts::create,
 
+            routes::reshares::create,
+
             routes::session::new,
             routes::session::create,
             routes::session::delete,

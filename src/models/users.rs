@@ -287,6 +287,17 @@ impl User {
             .len() > 0
     }
 
+    pub fn has_reshared(&self, conn: &PgConnection, post: &Post) -> bool {
+        use schema::reshares;
+        use models::reshares::Reshare;
+        reshares::table
+            .filter(reshares::post_id.eq(post.id))
+            .filter(reshares::user_id.eq(self.id))
+            .load::<Reshare>(conn)
+            .expect("Couldn't load reshares")
+            .len() > 0
+    }
+
     pub fn get_keypair(&self) -> PKey<Private> {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
