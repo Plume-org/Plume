@@ -39,6 +39,8 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
         }).collect::<Vec<serde_json::Value>>(),
         "n_likes": post.get_likes(&*conn).len(),
         "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
+        "n_reshares": post.get_reshares(&*conn).len(),
+        "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
         "account": user,
         "date": &post.creation_date.timestamp()
     }))

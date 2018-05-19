@@ -17,6 +17,7 @@ use models::{
     blogs::Blog,
     likes::Like,
     post_authors::PostAuthor,
+    reshares::Reshare,
     users::User
 };
 use schema::posts;
@@ -125,6 +126,13 @@ impl Post {
         likes::table.filter(likes::post_id.eq(self.id))
             .load::<Like>(conn)
             .expect("Couldn't load likes associted to post")
+    }
+
+    pub fn get_reshares(&self, conn: &PgConnection) -> Vec<Reshare> {
+        use schema::reshares;
+        reshares::table.filter(reshares::post_id.eq(self.id))
+            .load::<Reshare>(conn)
+            .expect("Couldn't load reshares associted to post")
     }
 
     pub fn update_ap_url(&self, conn: &PgConnection) {

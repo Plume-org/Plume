@@ -33,6 +33,17 @@
                     Add yours
                 {% endif %}
             </a>
+
+            <p>
+                {{ n_reshares }} reshare{{ n_reshares | pluralize }}
+            </p>
+            <a class="button" href="reshare">
+                {% if has_reshared %}
+                    I don't want to reshare this anymore
+                {% else %}
+                    Reshare
+                {% endif %}
+            </a>
         </div>
 
         <h2>Comments</h2>
