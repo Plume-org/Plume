@@ -4,14 +4,15 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub};
-use activity_pub::object::Object;
+use activity_pub::{broadcast, context, activity_pub, ActivityPub, object::Object};
 use db_conn::DbConn;
-use models::blogs::*;
-use models::comments::Comment;
-use models::post_authors::*;
-use models::posts::*;
-use models::users::User;
+use models::{
+    blogs::*,
+    comments::Comment,
+    post_authors::*,
+    posts::*,
+    users::User
+};
 use utils;
 
 #[get("/~/<blog>/<slug>", rank = 4)]

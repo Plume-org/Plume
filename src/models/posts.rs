@@ -8,13 +8,17 @@ use diesel::dsl::any;
 use serde_json;
 
 use BASE_URL;
-use activity_pub::{PUBLIC_VISIBILTY, ap_url, Id, IntoId};
-use activity_pub::actor::Actor;
-use activity_pub::object::Object;
-use models::blogs::Blog;
-use models::likes::Like;
-use models::users::User;
-use models::post_authors::PostAuthor;
+use activity_pub::{
+    PUBLIC_VISIBILTY, ap_url, Id, IntoId,
+    actor::Actor,
+    object::Object
+};
+use models::{
+    blogs::Blog,
+    likes::Like,
+    post_authors::PostAuthor,
+    users::User
+};
 use schema::posts;
 
 #[derive(Queryable, Identifiable, Serialize)]

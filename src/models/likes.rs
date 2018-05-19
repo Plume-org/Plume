@@ -3,11 +3,15 @@ use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 use serde_json;
 
-use activity_pub::IntoId;
-use activity_pub::actor::Actor;
-use activity_pub::object::Object;
-use models::posts::Post;
-use models::users::User;
+use activity_pub::{
+    IntoId,
+    actor::Actor,
+    object::Object
+};
+use models::{
+    posts::Post,
+    users::User
+};
 use schema::likes;
 
 #[derive(Queryable, Identifiable)]

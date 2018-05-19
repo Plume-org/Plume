@@ -1,7 +1,8 @@
-use rocket::http::{Cookie, Cookies};
-use rocket::response::Redirect;
-use rocket::response::status::NotFound;
-use rocket::request::Form;
+use rocket::{
+    http::{Cookie, Cookies},
+    response::{Redirect, status::NotFound},
+    request::Form
+};
 use rocket_contrib::Template;
 
 use db_conn::DbConn;

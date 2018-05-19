@@ -1,7 +1,9 @@
 use diesel::PgConnection;
 use reqwest::Client;
-use reqwest::header::{Accept, qitem};
-use reqwest::mime::Mime;
+use reqwest::{
+    header::{Accept, qitem},
+    mime::Mime
+};
 use serde_json;
 
 use activity_pub::ap_url;

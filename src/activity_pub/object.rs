@@ -6,4 +6,3 @@ pub trait Object {
 
     fn compute_id(&self, conn: &PgConnection) -> String;
 }
-

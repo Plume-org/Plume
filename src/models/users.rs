@@ -7,33 +7,42 @@ use activitystreams_types::{
 };
 use bcrypt;
 use chrono::NaiveDateTime;
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection};
-use diesel::dsl::any;
-use openssl::hash::MessageDigest;
-use openssl::pkey::{PKey, Private};
-use openssl::rsa::Rsa;
-use openssl::sign;
-use reqwest::Client;
-use reqwest::header::{Accept, qitem};
-use reqwest::mime::Mime;
-use rocket::request::{self, FromRequest, Request};
-use rocket::outcome::IntoOutcome;
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection, dsl::any};
+use openssl::{
+    hash::MessageDigest,
+    pkey::{PKey, Private},
+    rsa::Rsa,
+    sign
+};
+use reqwest::{
+    Client,
+    header::{Accept, qitem},
+    mime::Mime
+};
+use rocket::{
+    request::{self, FromRequest, Request},
+    outcome::IntoOutcome
+};
 use serde_json;
 use url::Url;
 
 use BASE_URL;
-use activity_pub::{ap_url, ActivityStream, Id, IntoId};
-use activity_pub::actor::{ActorType, Actor as APActor};
-use activity_pub::inbox::{Inbox, WithInbox};
-use activity_pub::sign::{Signer, gen_keypair};
-use activity_pub::webfinger::{Webfinger, resolve};
+use activity_pub::{
+    ap_url, ActivityStream, Id, IntoId,
+    actor::{ActorType, Actor as APActor},
+    inbox::{Inbox, WithInbox},
+    sign::{Signer, gen_keypair},
+    webfinger::{Webfinger, resolve}
+};
 use db_conn::DbConn;
-use models::comments::Comment;
-use models::follows::Follow;
-use models::instance::Instance;
-use models::notifications::*;
-use models::post_authors::PostAuthor;
-use models::posts::Post;
+use models::{
+    comments::Comment,
+    follows::Follow,
+    instance::Instance,
+    notifications::*,
+    post_authors::PostAuthor,
+    posts::Post
+};
 use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";

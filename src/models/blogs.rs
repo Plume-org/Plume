@@ -1,22 +1,28 @@
 use activitystreams_traits::{Actor, Object};
 use activitystreams_types::collection::OrderedCollection;
-use reqwest::Client;
-use reqwest::header::{Accept, qitem};
-use reqwest::mime::Mime;
+use reqwest::{
+    Client,
+    header::{Accept, qitem},
+    mime::Mime
+};
 use serde_json;
 use url::Url;
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
-use openssl::hash::MessageDigest;
-use openssl::pkey::{PKey, Private};
-use openssl::rsa::Rsa;
-use openssl::sign::Signer;
+use openssl::{
+    hash::MessageDigest,
+    pkey::{PKey, Private},
+    rsa::Rsa,
+    sign::Signer
+};
 
-use activity_pub::{ActivityStream, Id, IntoId};
-use activity_pub::actor::{Actor as APActor, ActorType};
-use activity_pub::inbox::WithInbox;
-use activity_pub::sign;
-use activity_pub::webfinger::*;
+use activity_pub::{
+    ActivityStream, Id, IntoId,
+    actor::{Actor as APActor, ActorType},
+    inbox::WithInbox,
+    sign,
+    webfinger::*
+};
 use models::instance::Instance;
 use schema::blogs;
 

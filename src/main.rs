@@ -33,8 +33,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate url;
 
-use diesel::pg::PgConnection;
-use diesel::r2d2::{ConnectionManager, Pool};
+use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
 use rocket_contrib::Template;
 use std::env;

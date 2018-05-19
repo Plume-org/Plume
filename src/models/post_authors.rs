@@ -1,7 +1,9 @@
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use models::posts::Post;
-use models::users::User;
+use models::{
+    posts::Post,
+    users::User
+};
 use schema::post_authors;
 
 #[derive(Queryable, Identifiable, Associations)]

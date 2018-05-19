@@ -2,11 +2,9 @@ use rocket::http::ContentType;
 use rocket::response::Content;
 
 use BASE_URL;
-use activity_pub::ap_url;
-use activity_pub::webfinger::Webfinger;
+use activity_pub::{ap_url, webfinger::Webfinger};
 use db_conn::DbConn;
-use models::blogs::Blog;
-use models::users::User;
+use models::{blogs::Blog, users::User};
 
 #[get("/.well-known/host-meta", format = "application/xml")]
 fn host_meta() -> String {

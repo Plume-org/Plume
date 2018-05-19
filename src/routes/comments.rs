@@ -1,12 +1,13 @@
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{ request::Form, response::Redirect};
 use rocket_contrib::Template;
 
 use activity_pub::broadcast;
 use db_conn::DbConn;
-use models::comments::*;
-use models::posts::Post;
-use models::users::User;
+use models::{
+    comments::*,
+    posts::Post,
+    users::User
+};
 
 #[get("/~/<_blog>/<slug>/comment")]
 fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {

@@ -6,11 +6,15 @@ use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
 use serde_json;
 
-use activity_pub::{ap_url, IntoId, PUBLIC_VISIBILTY};
-use activity_pub::actor::Actor;
-use activity_pub::object::Object;
-use models::posts::Post;
-use models::users::User;
+use activity_pub::{
+    ap_url, IntoId, PUBLIC_VISIBILTY,
+    actor::Actor,
+    object::Object
+};
+use models::{
+    posts::Post,
+    users::User
+};
 use schema::comments;
 
 #[derive(Queryable, Identifiable, Serialize, Clone)]

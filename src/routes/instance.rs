@@ -1,14 +1,15 @@
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{request::Form, response::Redirect};
 use rocket_contrib::Template;
 use serde_json;
 
 use BASE_URL;
 use activity_pub::inbox::Inbox;
 use db_conn::DbConn;
-use models::posts::Post;
-use models::users::User;
-use models::instance::*;
+use models::{
+    posts::Post,
+    users::User,
+    instance::*
+};
 
 #[get("/")]
 fn index(conn: DbConn, user: Option<User>) -> Template {

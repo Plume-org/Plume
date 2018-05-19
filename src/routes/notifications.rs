@@ -1,8 +1,7 @@
 use rocket_contrib::Template;
 
 use db_conn::DbConn;
-use models::notifications::Notification;
-use models::users::User;
+use models::{notifications::Notification, users::User};
 
 #[get("/notifications")]
 fn notifications(conn: DbConn, user: User) -> Template {

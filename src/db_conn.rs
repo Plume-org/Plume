@@ -1,8 +1,8 @@
-use diesel::pg::PgConnection;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
-use rocket::{Request, State, Outcome};
-use rocket::http::Status;
-use rocket::request::{self, FromRequest};
+use diesel::{
+    pg::PgConnection,
+    r2d2::{ConnectionManager, Pool, PooledConnection}
+};
+use rocket::{Request, State, Outcome, http::Status, request::{self, FromRequest}};
 use std::ops::Deref;
 
 // From rocket documentation

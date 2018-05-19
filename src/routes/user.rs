@@ -2,19 +2,22 @@ use activitystreams_types::{
     activity::Follow,
     collection::OrderedCollection
 };
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{request::Form, response::Redirect};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId};
-use activity_pub::actor::Actor;
-use activity_pub::inbox::Inbox;
+use activity_pub::{
+    activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId,
+    actor::Actor,
+    object::Object
+};
 use db_conn::DbConn;
-use models::follows;
-use models::instance::Instance;
-use models::posts::Post;
-use models::users::*;
+use models::{
+    follows,
+    instance::Instance,
+    posts::Post,
+    users::*
+};
 
 #[get("/me")]
 fn me(user: User) -> Redirect {

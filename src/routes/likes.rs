@@ -2,9 +2,11 @@ use rocket::response::Redirect;
 
 use activity_pub::broadcast;
 use db_conn::DbConn;
-use models::likes;
-use models::posts::Post;
-use models::users::User;
+use models::{
+    likes,
+    posts::Post,
+    users::User
+};
 
 #[get("/~/<blog>/<slug>/like")]
 fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {

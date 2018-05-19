@@ -8,15 +8,19 @@ use diesel::PgConnection;
 use failure::Error;
 use serde_json;
 
-use activity_pub::{broadcast, Id, IntoId};
-use activity_pub::actor::Actor as APActor;
-use activity_pub::sign::*;
-use models::blogs::Blog;
-use models::comments::*;
-use models::follows;
-use models::likes;
-use models::posts::*;
-use models::users::User;
+use activity_pub::{
+    broadcast, Id, IntoId,
+    actor::Actor as APActor,
+    sign::*
+};
+use models::{
+    blogs::Blog,
+    comments::*,
+    follows,
+    likes,
+    posts::*,
+    users::User
+};
 
 #[derive(Fail, Debug)]
 enum InboxError {

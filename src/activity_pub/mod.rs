@@ -2,9 +2,11 @@ use activitystreams_traits::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use diesel::PgConnection;
 use reqwest::Client;
-use rocket::http::{ContentType, Status};
-use rocket::response::{Response, Responder, Content};
-use rocket::request::Request;
+use rocket::{
+    http::{ContentType, Status},
+    response::{Response, Responder, Content},
+    request::Request
+};
 use rocket_contrib::Json;
 use serde_json;
 

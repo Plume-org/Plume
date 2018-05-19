@@ -1,10 +1,12 @@
 use base64;
+use chrono::Utc;
 use diesel::PgConnection;
 use hex;
-use chrono::Utc;
-use openssl::pkey::PKey;
-use openssl::rsa::Rsa;
-use openssl::sha::sha256;
+use openssl::{
+    pkey::PKey,
+    rsa::Rsa,
+    sha::sha256
+};
 use serde_json;
 
 /// Returns (public key, private key)

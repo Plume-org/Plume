@@ -1,17 +1,20 @@
 use activitystreams_types::collection::OrderedCollection;
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{
+    request::Form,
+    response::Redirect
+};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{ActivityStream, ActivityPub};
-use activity_pub::actor::Actor;
+use activity_pub::{ActivityStream, ActivityPub, actor::Actor};
 use db_conn::DbConn;
-use models::blog_authors::*;
-use models::blogs::*;
-use models::instance::Instance;
-use models::posts::Post;
-use models::users::User;
+use models::{
+    blog_authors::*,
+    blogs::*,
+    instance::Instance,
+    posts::Post,
+    users::User
+};
 use utils;
 
 #[get("/~/<name>", rank = 2)]
