@@ -19,8 +19,15 @@ use utils;
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug).unwrap();
-    let comments = Comment::find_by_post(&*conn, post.id);    
+    let comments = Comment::find_by_post(&*conn, post.id);
+
     Template::render("posts/details", json!({
+        "author": ({
+            let author = &post.get_authors(&*conn)[0];
+            let mut json = serde_json::to_value(author).unwrap();
+            json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
+            json
+        }),
         "post": post,
         "blog": blog,
         "comments": comments.into_iter().map(|c| {
@@ -32,7 +39,8 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
         }).collect::<Vec<serde_json::Value>>(),
         "n_likes": post.get_likes(&*conn).len(),
         "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
-        "account": user
+        "account": user,
+        "date": &post.creation_date.timestamp()
     }))
 }
 
