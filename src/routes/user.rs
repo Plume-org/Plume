@@ -8,8 +8,8 @@ use serde_json;
 
 use activity_pub::{
     activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId,
-    actor::Actor,
-    object::Object
+    inbox::Inbox,
+    actor::Actor
 };
 use db_conn::DbConn;
 use models::{

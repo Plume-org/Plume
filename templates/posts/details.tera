@@ -9,11 +9,11 @@
 {% endblock header %}
 
 {% block content %}
-    <h1><a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></h1>
-    <div>
-      {{ date | date(format="%B %e, %Y") }}
-    </div>
-    <br/>
+    <p>
+        <b>Written by <a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></b>
+        &mdash;
+        <span>{{ date | date(format="%B %e, %Y") }}</span>
+    </p>
     <h1>{{ post.title }}</h1>
     <article>
         {{ post.content | safe }}
