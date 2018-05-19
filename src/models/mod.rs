@@ -7,4 +7,5 @@ pub mod likes;
 pub mod notifications;
 pub mod post_authors;
 pub mod posts;
+pub mod reshares;
 pub mod users;

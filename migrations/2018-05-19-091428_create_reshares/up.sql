@@ -1,0 +1,8 @@
+-- Your SQL goes here
+CREATE TABLE reshares (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE NOT NULL,
+    ap_url VARCHAR NOT NULL DEFAULT '',
+    creation_date TIMESTAMP NOT NULL DEFAULT now()
+)

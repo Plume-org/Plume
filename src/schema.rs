@@ -99,6 +99,16 @@ table! {
 }
 
 table! {
+    reshares (id) {
+        id -> Int4,
+        user_id -> Int4,
+        post_id -> Int4,
+        ap_url -> Varchar,
+        creation_date -> Timestamp,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
@@ -129,6 +139,8 @@ joinable!(notifications -> users (user_id));
 joinable!(post_authors -> posts (post_id));
 joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
+joinable!(reshares -> posts (post_id));
+joinable!(reshares -> users (user_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
@@ -141,5 +153,6 @@ allow_tables_to_appear_in_same_query!(
     notifications,
     post_authors,
     posts,
+    reshares,
     users,
 );
