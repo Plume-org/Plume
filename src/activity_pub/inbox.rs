@@ -1,7 +1,7 @@
 use activitystreams_traits::Actor;
 use activitystreams_types::{
     actor::Person,
-    activity::{Accept, Create, Follow, Like, Undo},
+    activity::{Accept, Announce, Create, Follow, Like, Undo},
     object::{Article, Note}
 };
 use diesel::PgConnection;
@@ -19,6 +19,7 @@ use models::{
     follows,
     likes,
     posts::*,
+    reshares::*,
     users::User
 };
 
@@ -94,10 +95,22 @@ pub trait Inbox {
         Ok(())
     }
 
+    fn announce(&self, conn: &PgConnection, announce: Announce) -> Result<(), Error> {
+        let user = User::from_url(conn, announce.actor.as_str().unwrap().to_string());
+        let post = Post::find_by_ap_url(conn, announce.object.as_str().unwrap().to_string());
+        Reshare::insert(conn, NewReshare {
+            post_id: post.unwrap().id,
+            user_id: user.unwrap().id,
+            ap_url: announce.object_props.id_string()?
+        });
+        Ok(())
+    }
+
     fn save(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
         match act["type"].as_str() {
             Some(t) => {
                 match t {
+                    "Announce" => self.announce(conn, serde_json::from_value(act.clone())?),
                     "Create" => {
                         let act: Create = serde_json::from_value(act.clone())?;
                         match act.object["type"].as_str().unwrap() {
