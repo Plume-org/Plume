@@ -21,7 +21,7 @@ use models::{
 
 #[get("/me")]
 fn me(user: User) -> Redirect {
-    Redirect::to(format!("/@/{}", user.username).as_ref())
+    Redirect::to(format!("/@/{}/", user.username).as_ref())
 }
 
 #[get("/@/<name>", rank = 2)]
@@ -64,7 +64,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
     broadcast(&*conn, &user, act, vec![target]);
-    Redirect::to(format!("/@/{}", name).as_ref())
+    Redirect::to(format!("/@/{}/", name).as_ref())
 }
 
 #[get("/@/<name>/followers", rank = 2)]
@@ -155,7 +155,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
             User::hash_pass(form.password.to_string()),
             inst.id
         )).update_boxes(&*conn);
-        Ok(Redirect::to(format!("/@/{}", data.get().username).as_str()))        
+        Ok(Redirect::to(format!("/@/{}/", data.get().username).as_str()))
     } else {
         Err(String::from("Passwords don't match"))
     }
