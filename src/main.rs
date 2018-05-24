@@ -10,6 +10,7 @@ extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
 extern crate chrono;
+extern crate comrak;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;

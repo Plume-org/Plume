@@ -1,3 +1,4 @@
+use comrak::{markdown_to_html, ComrakOptions};
 use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::Redirect;
@@ -80,11 +81,26 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
+
+    let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
+        smart: true,
+        safe: true,
+        ext_strikethrough: true,
+        ext_tagfilter: true,
+        ext_table: true,
+        ext_autolink: true,
+        ext_tasklist: true,
+        ext_superscript: true,
+        ext_header_ids: Some("title".to_string()),
+        ext_footnotes: true,
+        ..ComrakOptions::default()
+    });
+
     let post = Post::insert(&*conn, NewPost {
         blog_id: blog.id,
         slug: slug.to_string(),
         title: form.title.to_string(),
-        content: form.content.to_string(),
+        content: content,
         published: true,
         license: form.license.to_string(),
         ap_url: "".to_string()
