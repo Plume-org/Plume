@@ -16,6 +16,7 @@ use models::{
     follows,
     instance::Instance,
     posts::Post,
+    reshares::Reshare,
     users::*
 };
 
@@ -28,6 +29,7 @@ fn me(user: User) -> Redirect {
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
     let recents = Post::get_recents_for_author(&*conn, &user, 5);
+    let reshares = Reshare::get_recents_for_author(&*conn, &user, 5);
     let user_id = user.id.clone();
     let n_followers = user.get_followers(&*conn).len();
 
@@ -35,6 +37,20 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
         "user": serde_json::to_value(user).unwrap(),
         "account": account,
         "recents": recents.into_iter().map(|p| {
+            json!({
+                "post": p,
+                "author": ({
+                    let author = &p.get_authors(&*conn)[0];
+                    let mut json = serde_json::to_value(author).unwrap();
+                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
+                    json
+                }),
+                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
+                "date": p.creation_date.timestamp()
+            })
+        }).collect::<Vec<serde_json::Value>>(),
+        "reshares": reshares.into_iter().map(|r| {
+            let p = r.get_post(&*conn).unwrap();
             json!({
                 "post": p,
                 "author": ({

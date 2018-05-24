@@ -68,6 +68,18 @@ impl Reshare {
             .into_iter().nth(0)
     }
 
+    pub fn get_recents_for_author(conn: &PgConnection, user: &User, limit: i64) -> Vec<Reshare> {
+        reshares::table.filter(reshares::user_id.eq(user.id))
+            .order(reshares::creation_date.desc())
+            .limit(limit)
+            .load::<Reshare>(conn)
+            .expect("Error loading recent reshares for user")
+    }
+
+    pub fn get_post(&self, conn: &PgConnection) -> Option<Post> {
+        Post::get(conn, self.post_id)
+    }
+
     pub fn delete(&self, conn: &PgConnection) -> activity::Undo {
         diesel::delete(self).execute(conn).unwrap();
 

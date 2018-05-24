@@ -37,4 +37,11 @@
             {{ macros::post_card(article=article) }}
         {% endfor %}
     </div>
+
+    <h2>Recently reshared</h2>
+    <div class="cards">
+        {% for article in reshares %}
+            {{ macros::post_card(article=article) }}
+        {% endfor %}
+    </div>
 {% endblock content %}
