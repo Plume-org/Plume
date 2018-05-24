@@ -114,8 +114,8 @@ pub trait Inbox {
                     "Create" => {
                         let act: Create = serde_json::from_value(act.clone())?;
                         match act.object["type"].as_str().unwrap() {
-                            "Article" => self.new_article(conn, act.object_object().unwrap()),
-                            "Note" => self.new_comment(conn, act.object_object().unwrap(), act.actor_object::<Person>()?.object_props.id_string()?),
+                            "Article" => self.new_article(conn, act.object_object()?),
+                            "Note" => self.new_comment(conn, act.object_object()?, act.actor_object::<Person>()?.object_props.id_string()?),
                             _ => Err(InboxError::InvalidType)?
                         }
                     },

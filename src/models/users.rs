@@ -439,7 +439,7 @@ impl WithInbox for User {
 impl Inbox for User {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
         if let Err(err) = self.save(conn, act.clone()) {
-            println!("Inbox error:\n{}\n{}", err.cause(), err.backtrace());
+            println!("Inbox error:\n{}\n{}\n\nActivity was: {}", err.cause(), err.backtrace(), act.to_string());
         }
 
         // Notifications
