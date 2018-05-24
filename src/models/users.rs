@@ -444,6 +444,16 @@ impl Inbox for User {
 
         // Notifications
         match act["type"].as_str().unwrap() {
+            "Announce" => {
+                let actor = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
+                let post = Post::find_by_ap_url(conn, act["object"].as_str().unwrap().to_string()).unwrap();                
+                Notification::insert(conn, NewNotification {
+                    title: format!("{} reshared your article", actor.display_name.clone()),
+                    content: Some(post.title),
+                    link: Some(post.ap_url),
+                    user_id: self.id
+                });
+            },
             "Follow" => {
                 let follower = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
                 Notification::insert(conn, NewNotification {
