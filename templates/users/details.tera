@@ -31,17 +31,21 @@
         {{ user.summary | safe }}
     </div>
 
-    <h2>Latest articles</h2>
-    <div class="cards">
-        {% for article in recents %}
-            {{ macros::post_card(article=article) }}
-        {% endfor %}
-    </div>
+    {% if recents | length != 0 %}    
+        <h2>Latest articles</h2>
+        <div class="cards">
+            {% for article in recents %}
+                {{ macros::post_card(article=article) }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
-    <h2>Recently reshared</h2>
-    <div class="cards">
-        {% for article in reshares %}
-            {{ macros::post_card(article=article) }}
-        {% endfor %}
-    </div>
+    {% if reshares | length != 0 %}
+        <h2>Recently reshared</h2>
+        <div class="cards">
+            {% for article in reshares %}
+                {{ macros::post_card(article=article) }}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock content %}
