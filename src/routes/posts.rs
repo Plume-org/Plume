@@ -1,7 +1,7 @@
 use comrak::{markdown_to_html, ComrakOptions};
 use heck::KebabCase;
 use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
@@ -57,9 +57,9 @@ fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
     activity_pub(act)
 }
 
-#[get("/~/<_blog>/new", rank = 2)]
-fn new_auth(_blog: String) -> Redirect {
-    utils::requires_login()
+#[get("/~/<blog>/new", rank = 2)]
+fn new_auth(blog: String) -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to write a new post", &format!("/~/{}/new",blog))
 }
 
 #[get("/~/<_blog>/new", rank = 1)]

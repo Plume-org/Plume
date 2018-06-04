@@ -1,4 +1,4 @@
-use rocket::response::Redirect;
+use rocket::response::{Redirect, Flash};
 
 use activity_pub::broadcast;
 use db_conn::DbConn;
@@ -7,6 +7,8 @@ use models::{
     reshares::*,
     users::User
 };
+
+use utils;
 
 #[get("/~/<blog>/<slug>/reshare")]
 fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
@@ -28,4 +30,9 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
     }
 
     Redirect::to(format!("/~/{}/{}/", blog, slug).as_ref())
+}
+
+#[get("/~/<blog>/<slug>/reshare", rank=1)]
+fn create_auth(blog: String, slug: String) -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to reshare a post", &format!("/~/{}/{}/reshare",blog, slug))
 }
