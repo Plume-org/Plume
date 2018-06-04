@@ -1,7 +1,7 @@
 use rocket::{
     http::{Cookie, Cookies},
     response::{Redirect, status::NotFound},
-    request::Form
+    request::{Form,FlashMessage}
 };
 use rocket_contrib::Template;
 
@@ -16,13 +16,27 @@ fn new(user: Option<User>) -> Template {
 }
 
 #[derive(FromForm)]
+struct Message {
+	m: String
+}
+
+#[get("/login?<message>")]
+fn new_message(user: Option<User>, message: Message) -> Template {
+    Template::render("session/login", json!({
+        "account": user,
+        "message": message.m
+    }))
+}
+
+
+#[derive(FromForm)]
 struct LoginForm {
     email_or_name: String,
     password: String
 }
 
 #[post("/login", data = "<data>")]
-fn create(conn: DbConn, data: Form<LoginForm>, mut cookies: Cookies) -> Result<Redirect, NotFound<String>> {
+fn create(conn: DbConn, data: Form<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, NotFound<String>> {
     let form = data.get();
     let user = match User::find_by_email(&*conn, form.email_or_name.to_string()) {
         Some(usr) => Ok(usr),
@@ -31,12 +45,14 @@ fn create(conn: DbConn, data: Form<LoginForm>, mut cookies: Cookies) -> Result<R
             None => Err("Invalid username or password")
         }
     };
-
     match user {
         Ok(usr) => {
             if usr.auth(form.password.to_string()) {
                 cookies.add_private(Cookie::new(AUTH_COOKIE, usr.id.to_string()));
-                Ok(Redirect::to("/"))
+                Ok(Redirect::to(&flash
+                    .and_then(|f| if f.name()=="callback" { Some(f.msg().to_owned()) } else { None })
+                    .unwrap_or("/".to_owned()))
+                )
             } else {
                 Err(NotFound(String::from("Invalid username or password")))
             }

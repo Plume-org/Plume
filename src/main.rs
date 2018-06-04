@@ -94,6 +94,7 @@ fn main() {
             routes::reshares::create,
 
             routes::session::new,
+            routes::session::new_message,
             routes::session::create,
             routes::session::delete,
 
