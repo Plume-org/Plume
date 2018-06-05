@@ -1,4 +1,7 @@
-use rocket::{ request::Form, response::Redirect};
+use rocket::{
+    request::Form,
+    response::{Redirect, Flash}
+};
 use rocket_contrib::Template;
 
 use activity_pub::broadcast;
@@ -9,6 +12,8 @@ use models::{
     users::User
 };
 
+use utils;
+
 #[get("/~/<_blog>/<slug>/comment")]
 fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
     let post = Post::find_by_slug(&*conn, slug).unwrap();
@@ -16,6 +21,11 @@ fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
         "post": post,
         "account": user
     }))
+}
+
+#[get("/~/<blog>/<slug>/comment", rank=2)]
+fn new_auth(blog: String, slug: String) -> Flash<Redirect>{
+    utils::requires_login("You need to be logged in order to post a comment", &format!("~/{}/{}/comment", blog, slug))
 }
 
 #[derive(FromForm)]

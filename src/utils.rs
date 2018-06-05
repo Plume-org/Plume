@@ -1,5 +1,5 @@
 use heck::CamelCase;
-use rocket::response::Redirect;
+use rocket::response::{Redirect, Flash};
 
 /// Remove non alphanumeric characters and CamelCase a string
 pub fn make_actor_id(name: String) -> String {
@@ -11,6 +11,6 @@ pub fn make_actor_id(name: String) -> String {
         .collect()
 }
 
-pub fn requires_login() -> Redirect {
-    Redirect::to("/login")
+pub fn requires_login(message: &str, url: &str) -> Flash<Redirect> {
+    Flash::new(Redirect::to(&format!("/login?m={}", message)), "callback", url)
 }

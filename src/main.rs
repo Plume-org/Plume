@@ -71,9 +71,11 @@ fn main() {
             routes::blogs::activity_details,            
             routes::blogs::outbox,            
             routes::blogs::new,
+            routes::blogs::new_auth,
             routes::blogs::create,
 
             routes::comments::new,
+            routes::comments::new_auth,
             routes::comments::create,
 
             routes::instance::index,
@@ -82,8 +84,10 @@ fn main() {
             routes::instance::shared_inbox,
 
             routes::likes::create,
+            routes::likes::create_auth,
 
             routes::notifications::notifications,
+            routes::notifications::notifications_auth,
 
             routes::posts::details,
             routes::posts::activity_details,
@@ -92,8 +96,10 @@ fn main() {
             routes::posts::create,
 
             routes::reshares::create,
+            routes::reshares::create_auth,
 
             routes::session::new,
+            routes::session::new_message,
             routes::session::create,
             routes::session::delete,
 

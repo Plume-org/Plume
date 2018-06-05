@@ -6,6 +6,9 @@ Login
 
 {% block content %}
 <h1>Login</h1>
+{% if message %}
+<p>{{ message | escape }}</p>
+{% endif %}
 <form method="post">
     <label for="email_or_name">Username or email</label>
     <input name="email_or_name">

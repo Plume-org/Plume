@@ -1,7 +1,7 @@
 use activitystreams_types::collection::OrderedCollection;
 use rocket::{
     request::Form,
-    response::Redirect
+    response::{Redirect, Flash}
 };
 use rocket_contrib::Template;
 use serde_json;
@@ -51,6 +51,11 @@ fn new(user: User) -> Template {
     Template::render("blogs/new", json!({
         "account": user
     }))
+}
+
+#[get("/blogs/new", rank = 2)]
+fn new_auth() -> Flash<Redirect>{
+    utils::requires_login("You need to be logged in order to create a new blog", "/blogs/new")
 }
 
 #[derive(FromForm)]
