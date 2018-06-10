@@ -12,15 +12,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "activitystreams"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "activitystreams-types 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "activitystreams-derive"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -964,9 +955,6 @@ name = "plume"
 version = "0.1.0"
 dependencies = [
  "activitypub 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "activitystreams 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "activitystreams-types 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "array_tool 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1840,7 +1828,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [metadata]
 "checksum activitypub 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c87040997a45d9da90327a11191bda4f2b1812d8c3e2062ea8d539eb8e2bfde7"
-"checksum activitystreams 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "638541e5169c839f6581302c50e38876312389475cd911ecc7c446c7491004cc"
 "checksum activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "48db826c588a009960d74530e7c215e21fae130f585362504dc6b6357e5ce86b"
 "checksum activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "670ef03168e704b0cae242e7a5d8b40506772b339687e01a3496fc4afe2e8542"
 "checksum activitystreams-types 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "aff9aa0c3412fe4da72a1f6e4b1c2e9792bfdf1308b709389192f17aa8e2b3cd"
