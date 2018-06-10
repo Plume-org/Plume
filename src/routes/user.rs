@@ -34,8 +34,8 @@ fn me(user: Option<User>) -> Result<Redirect,Flash<Redirect>> {
 #[get("/@/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
-    let recents = Post::get_recents_for_author(&*conn, &user, 5);
-    let reshares = Reshare::get_recents_for_author(&*conn, &user, 5);
+    let recents = Post::get_recents_for_author(&*conn, &user, 6);
+    let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
     let user_id = user.id.clone();
     let n_followers = user.get_followers(&*conn).len();
 

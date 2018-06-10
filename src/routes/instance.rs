@@ -15,7 +15,7 @@ use models::{
 fn index(conn: DbConn, user: Option<User>) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
-            let recents = Post::get_recents(&*conn, 5);
+            let recents = Post::get_recents(&*conn, 6);
 
             Template::render("instance/index", json!({
                 "instance": inst,
