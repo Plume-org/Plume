@@ -55,7 +55,7 @@ pub trait Inbox {
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
         Comment::insert(conn, NewComment {
             content: note.object_props.content_string().unwrap(),
-            spoiler_text: note.object_props.summary_string().unwrap(),
+            spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
             ap_url: note.object_props.id_string().ok(),
             in_response_to_id: previous_comment.clone().map(|c| c.id),
             post_id: previous_comment
