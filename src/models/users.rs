@@ -1,9 +1,8 @@
-use activitystreams_traits::{Actor, Object, Link};
-use activitystreams_types::{
-    actor::Person,
+use activitypub::{
+    Actor, Object,
+    actor::{Person, properties::ApActorProperties},
     collection::OrderedCollection,
-    object::properties::ObjectProperties,
-    CustomObject
+    object::properties::ObjectProperties
 };
 use bcrypt;
 use chrono::NaiveDateTime;
@@ -302,7 +301,7 @@ impl User {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> CustomObject<ApProps, Person> {
+    pub fn into_activity(&self, conn: &PgConnection) -> Person {
         let mut actor = Person::default();
         actor.object_props = ObjectProperties {
             id: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
@@ -311,32 +310,20 @@ impl User {
             url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
             ..ObjectProperties::default()
         };
-
-        CustomObject::new(actor, ApProps {
-            inbox: Some(serde_json::to_value(self.compute_inbox(conn)).unwrap()),
-            outbox: Some(serde_json::to_value(self.compute_outbox(conn)).unwrap()),
+        actor.ap_actor_props = ApActorProperties {
+            inbox: serde_json::to_value(self.compute_inbox(conn)).unwrap(),
+            outbox: serde_json::to_value(self.compute_outbox(conn)).unwrap(),
             preferred_username: Some(serde_json::to_value(self.get_actor_id()).unwrap()),
             endpoints: Some(json!({
                 "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
-            }))
-        })
+            })),
+            followers: None,
+            following: None,
+            liked: None,
+            streams: None
+        };
+        actor
     }
-}
-
-#[derive(Serialize, Deserialize, Default, Properties)]
-#[serde(rename_all = "camelCase")]
-pub struct ApProps {
-    #[activitystreams(ab(Object, Link))]
-    inbox: Option<serde_json::Value>,
-
-    #[activitystreams(ab(Object, Link))]
-    outbox: Option<serde_json::Value>,
-
-    #[activitystreams(ab(Object, Link))]
-    preferred_username: Option<serde_json::Value>,
-
-    #[activitystreams(ab(Object))]
-    endpoints: Option<serde_json::Value>
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {

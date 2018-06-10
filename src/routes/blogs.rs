@@ -1,4 +1,4 @@
-use activitystreams_types::collection::OrderedCollection;
+use activitypub::collection::OrderedCollection;
 use rocket::{
     request::Form,
     response::{Redirect, Flash}

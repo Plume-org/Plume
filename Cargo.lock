@@ -1,4 +1,17 @@
 [[package]]
+name = "activitypub"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-types 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.43 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "activitystreams"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -30,6 +43,20 @@ dependencies = [
 [[package]]
 name = "activitystreams-types"
 version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mime 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.43 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "activitystreams-types"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -936,6 +963,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "plume"
 version = "0.1.0"
 dependencies = [
+ "activitypub 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "activitystreams 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1811,10 +1839,12 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [metadata]
+"checksum activitypub 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c87040997a45d9da90327a11191bda4f2b1812d8c3e2062ea8d539eb8e2bfde7"
 "checksum activitystreams 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "638541e5169c839f6581302c50e38876312389475cd911ecc7c446c7491004cc"
 "checksum activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "48db826c588a009960d74530e7c215e21fae130f585362504dc6b6357e5ce86b"
 "checksum activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "670ef03168e704b0cae242e7a5d8b40506772b339687e01a3496fc4afe2e8542"
 "checksum activitystreams-types 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "aff9aa0c3412fe4da72a1f6e4b1c2e9792bfdf1308b709389192f17aa8e2b3cd"
+"checksum activitystreams-types 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "14806b3c88c439e1670fdc99d9b18bf1a47d4fa7152fe8a3bd7da08b6ced3e95"
 "checksum adler32 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6cbd0b9af8587c72beadc9f72d35b9fbb070982c9e6203e46e93f10df25f8f45"
 "checksum aho-corasick 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)" = "d6531d44de723825aa81398a6415283229725a00fa30713812ab9323faa82fc4"
 "checksum ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ee49baf6cb617b853aa8d93bf420db2383fab46d314482ca2803b40d5fde979b"

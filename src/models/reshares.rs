@@ -1,4 +1,4 @@
-use activitystreams_types::activity;
+use activitypub::activity;
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
@@ -84,15 +84,15 @@ impl Reshare {
         diesel::delete(self).execute(conn).unwrap();
 
         let mut act = activity::Undo::default();
-        act.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
-        act.set_object_object(self.into_activity(conn)).unwrap();
+        act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
+        act.undo_props.set_object_object(self.into_activity(conn)).unwrap();
         act
     }
 
     pub fn into_activity(&self, conn: &PgConnection) -> activity::Announce {
         let mut act = activity::Announce::default();
-        act.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
-        act.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
+        act.announce_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
+        act.announce_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
         act.object_props.set_id_string(self.ap_url.clone()).unwrap();
 
         act

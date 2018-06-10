@@ -1,4 +1,4 @@
-use activitystreams_types::{
+use activitypub::{
     activity::Create,
     object::{Note, properties::ObjectProperties}
 };
@@ -105,8 +105,8 @@ impl Comment {
 
     pub fn create_activity(&self, conn: &PgConnection) -> Create {
         let mut act = Create::default();
-        act.set_actor_link(self.get_author(conn).into_id()).unwrap();
-        act.set_object_object(self.into_activity(conn)).unwrap();
+        act.create_props.set_actor_link(self.get_author(conn).into_id()).unwrap();
+        act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).unwrap();
         act
     }

@@ -3,6 +3,7 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
+activitypub = "0.1"
 activitystreams = "0.1"
 activitystreams-derive = "0.1"
 activitystreams-traits = "0.1"

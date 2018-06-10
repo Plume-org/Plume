@@ -1,4 +1,4 @@
-use activitystreams_traits::{Activity, Actor, Object, Link};
+use activitypub::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use diesel::PgConnection;
 use reqwest::Client;

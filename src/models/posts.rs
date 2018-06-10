@@ -1,7 +1,5 @@
-use activitystreams_types::{
-    activity::Create,
-    object::{Article, properties::ObjectProperties}
-};
+use activitypub::activity::Create;
+use activitystreams_types::object::{Article, properties::ObjectProperties};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
 use diesel::dsl::any;
@@ -177,8 +175,8 @@ impl Post {
     pub fn create_activity(&self, conn: &PgConnection) -> Create {
         let mut act = Create::default();
         act.object_props.set_id_string(format!("{}/activity", self.ap_url)).unwrap();
-        act.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
-        act.set_object_object(self.into_activity(conn)).unwrap();
+        act.create_props.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
+        act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act
     }
 }

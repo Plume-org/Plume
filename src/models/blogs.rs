@@ -1,5 +1,4 @@
-use activitystreams_traits::{Actor, Object};
-use activitystreams_types::collection::OrderedCollection;
+use activitypub::{Actor, Object, collection::OrderedCollection};
 use reqwest::{
     Client,
     header::{Accept, qitem},

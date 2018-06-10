@@ -1,4 +1,4 @@
-use activitystreams_types::{
+use activitypub::{
     activity::Follow,
     collection::OrderedCollection
 };
@@ -82,8 +82,8 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
         following_id: target.id
     });
     let mut act = Follow::default();
-    act.set_actor_link::<Id>(user.clone().into_id()).unwrap();
-    act.set_object_object(user.into_activity(&*conn)).unwrap();
+    act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
+    act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
     broadcast(&*conn, &user, act, vec![target]);
     Redirect::to(format!("/@/{}/", name).as_ref())
