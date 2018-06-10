@@ -15,6 +15,7 @@ use activity_pub::{
 };
 use db_conn::DbConn;
 use models::{
+    blogs::Blog,
     follows,
     instance::Instance,
     posts::Post,
@@ -74,6 +75,20 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     }))
 }
 
+#[get("/dashboard")]
+fn dashboard(user: User, conn: DbConn) -> Template {
+    let blogs = Blog::find_for_author(&*conn, user.id);
+    Template::render("users/dashboard", json!({
+        "account": user,
+        "blogs": blogs
+    }))
+}
+
+#[get("/dashboard", rank = 2)]
+fn dashboard_auth() -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to access your dashboard", "/dashboard")
+}
+
 #[get("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
@@ -91,7 +106,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
 
 #[get("/@/<name>/follow", rank = 2)]
 fn follow_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to belogged in order to follow someone", &format!("/@/{}/follow", name))
+    utils::requires_login("You need to be logged in order to follow someone", &format!("/@/{}/follow", name))
 }
 
 #[get("/@/<name>/followers", rank = 2)]

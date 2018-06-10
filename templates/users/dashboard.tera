@@ -1,0 +1,25 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+Dashboard
+{% endblock title %}
+
+{% block content %}
+    <h1>Your Dashboard</h1>
+
+    <section>
+        <h2>Your Blogs</h2>
+        {% if blogs | length < 1 %}
+            <p>You don't have any blog yet. Create your own, or ask to join one.</p>
+        {% endif %}
+        <a class="button inline-block" href="/blogs/new">Start a new blog</a>
+        <div class="list">
+            {% for blog in blogs %}
+                <div class="card">
+                    <h3><a href="/~/{{ blog.actor_id }}/">{{ blog.title }}</a></h3>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock content %}

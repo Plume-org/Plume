@@ -16,6 +16,7 @@
             </nav>
             <nav>
                 {% if account %}
+                    <a href="/dashboard">Dashboard</a>
                     <a href="/notifications">Notifications</a>
                     <a href="/me">My account</a>
                     <a href="/logout">Log Out</a>

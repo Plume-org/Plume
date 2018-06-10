@@ -1,6 +1,5 @@
 use activitypub::{
     Actor,
-    actor::Person,
     activity::{Accept, Announce, Create, Follow, Like, Undo},
     object::Note
 };

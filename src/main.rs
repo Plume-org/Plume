@@ -104,6 +104,8 @@ fn main() {
 
             routes::user::me,
             routes::user::details,
+            routes::user::dashboard,
+            routes::user::dashboard_auth,
             routes::user::followers,            
             routes::user::edit,
             routes::user::edit_auth,

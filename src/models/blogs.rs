@@ -7,7 +7,7 @@ use reqwest::{
 use serde_json;
 use url::Url;
 use chrono::NaiveDateTime;
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection, dsl::any};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -69,6 +69,14 @@ impl Blog {
             .load::<Blog>(conn)
             .expect("Error loading blog by id")
             .into_iter().nth(0)
+    }
+
+    pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
+        use schema::blog_authors;
+        let author_ids = blog_authors::table.filter(blog_authors::author_id.eq(author_id)).select(blog_authors::blog_id);
+        blogs::table.filter(blogs::id.eq(any(author_ids)))
+            .load::<Blog>(conn)
+            .expect("Couldn't load blogs ")
     }
 
     pub fn find_by_name(conn: &PgConnection, name: String, instance_id: i32) -> Option<Blog> {
