@@ -35,6 +35,8 @@ use activity_pub::{
 };
 use db_conn::DbConn;
 use models::{
+    blogs::Blog,
+    blog_authors::BlogAuthor,
     comments::Comment,
     follows::Follow,
     instance::Instance,
@@ -294,6 +296,15 @@ impl User {
             .filter(reshares::user_id.eq(self.id))
             .load::<Reshare>(conn)
             .expect("Couldn't load reshares")
+            .len() > 0
+    }
+
+    pub fn is_author_in(&self, conn: &PgConnection, blog: Blog) -> bool {
+        use schema::blog_authors;
+        blog_authors::table.filter(blog_authors::author_id.eq(self.id))
+            .filter(blog_authors::blog_id.eq(blog.id))
+            .load::<BlogAuthor>(conn)
+            .expect("Couldn't load blog/author relationship")
             .len() > 0
     }
 

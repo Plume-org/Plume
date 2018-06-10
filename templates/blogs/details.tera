@@ -9,10 +9,18 @@
     <h1>{{ blog.title }} (~{{ blog.actor_id }})</h1>
     <p>{{ blog.summary }}</p>
 
-    <h2>Latest articles</h2>
-    <div class="cards">
-        {% for article in recents %}
-            {{ macros::post_card(article=article) }}
-        {% endfor %}
-    </div>
+    <section>
+        <h2>Latest articles</h2>
+        {% if recents | length < 1 %}
+            <p>No posts to see here yet.</p>
+        {% endif %}
+        {% if is_author %}
+            <a href="new" class="button inline-block">New article</a>
+        {% endif %}
+        <div class="cards">
+            {% for article in recents %}
+                {{ macros::post_card(article=article) }}
+            {% endfor %}
+        </div>
+    </section>
 {% endblock content %}
