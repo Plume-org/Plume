@@ -6,6 +6,18 @@ use activity_pub::{ap_url, webfinger::Webfinger};
 use db_conn::DbConn;
 use models::{blogs::Blog, users::User};
 
+#[get("/.well-known/nodeinfo")]
+fn nodeinfo() -> Content<String> {
+    Content(ContentType::new("application", "jrd+json"), json!({
+        "links": [
+            {
+                "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0",
+                "href": ap_url(format!("{domain}/nodeinfo", domain = BASE_URL.as_str()))
+            }
+        ]
+    }).to_string())
+}
+
 #[get("/.well-known/host-meta", format = "application/xml")]
 fn host_meta() -> String {
     format!(r#"

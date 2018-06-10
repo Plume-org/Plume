@@ -3,7 +3,7 @@ use activitypub::{
     object::{Note, properties::ObjectProperties}
 };
 use chrono;
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
 use serde_json;
 
 use activity_pub::{
@@ -12,6 +12,7 @@ use activity_pub::{
     object::Object
 };
 use models::{
+    instance::Instance,
     posts::Post,
     users::User
 };
@@ -109,6 +110,15 @@ impl Comment {
         act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).unwrap();
         act
+    }
+
+    pub fn count_local(conn: &PgConnection) -> usize {
+        use schema::users;
+        let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
+        comments::table.filter(comments::author_id.eq(any(local_authors)))
+            .load::<Comment>(conn)
+            .expect("Couldn't load local comments")
+            .len()
     }
 }
 

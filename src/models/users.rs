@@ -119,6 +119,13 @@ impl User {
             .into_iter().nth(0)
     }
 
+    pub fn count_local(conn: &PgConnection) -> usize {
+        users::table.filter(users::instance_id.eq(Instance::local_id(conn)))
+            .load::<User>(conn)
+            .expect("Couldn't load local users")
+            .len()
+    }
+
     pub fn find_by_email(conn: &PgConnection, email: String) -> Option<User> {
         users::table.filter(users::email.eq(email))
             .limit(1)

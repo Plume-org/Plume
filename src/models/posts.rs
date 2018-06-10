@@ -1,8 +1,7 @@
 use activitypub::activity::Create;
 use activitystreams_types::object::{Article, properties::ObjectProperties};
 use chrono::NaiveDateTime;
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
-use diesel::dsl::any;
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use serde_json;
 
 use BASE_URL;
@@ -13,6 +12,7 @@ use activity_pub::{
 };
 use models::{
     blogs::Blog,
+    instance::Instance,
     likes::Like,
     post_authors::PostAuthor,
     reshares::Reshare,
@@ -59,6 +59,17 @@ impl Post {
             .load::<Post>(conn)
             .expect("Error loading post by id")
             .into_iter().nth(0)
+    }
+
+    pub fn count_local(conn: &PgConnection) -> usize {
+        use schema::post_authors;
+        use schema::users;
+        let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
+        let local_posts_id = post_authors::table.filter(post_authors::author_id.eq(any(local_authors))).select(post_authors::post_id);
+        posts::table.filter(posts::id.eq(any(local_posts_id)))
+            .load::<Post>(conn)
+            .expect("Couldn't load local posts")
+            .len()
     }
 
     pub fn find_by_slug(conn: &PgConnection, slug: String) -> Option<Post> {

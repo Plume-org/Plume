@@ -79,6 +79,7 @@ fn main() {
             routes::instance::configure,
             routes::instance::post_config,
             routes::instance::shared_inbox,
+            routes::instance::nodeinfo,
 
             routes::likes::create,
             routes::likes::create_auth,
@@ -120,6 +121,7 @@ fn main() {
             routes::user::create,
 
             routes::well_known::host_meta,
+            routes::well_known::nodeinfo,
             routes::well_known::webfinger
         ])
         .manage(init_pool())

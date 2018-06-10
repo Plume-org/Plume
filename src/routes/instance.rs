@@ -1,11 +1,12 @@
 use rocket::{request::Form, response::Redirect};
-use rocket_contrib::Template;
+use rocket_contrib::{Json, Template};
 use serde_json;
 
 use BASE_URL;
 use activity_pub::inbox::Inbox;
 use db_conn::DbConn;
 use models::{
+    comments::Comment,
     posts::Post,
     users::User,
     instance::*
@@ -74,4 +75,29 @@ fn shared_inbox(conn: DbConn, data: String) -> String {
     let instance = Instance::get_local(&*conn).unwrap();
     instance.received(&*conn, act);
     String::from("")
+}
+
+#[get("/nodeinfo")]
+fn nodeinfo(conn: DbConn) -> Json {
+    Json(json!({
+        "version": "2.0",
+        "software": {
+            "name": "Plume",
+            "version": "0.1.0"
+        },
+        "protocols": ["activitypub"],
+        "services": {
+            "inbound": [],
+            "outbound": []
+        },
+        "openRegistrations": true,
+        "usage": {
+            "users": {
+                "total": User::count_local(&*conn)
+            },
+            "localPosts": Post::count_local(&*conn),
+            "localComments": Comment::count_local(&*conn)
+        },
+        "metadata": {}
+    }))
 }
