@@ -476,13 +476,17 @@ impl Inbox for User {
             "Create" => {
                 match act["object"]["type"].as_str().unwrap() {
                     "Note" => {
-                        let comment = Comment::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()).unwrap();
-                        Notification::insert(conn, NewNotification {
-                            title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
-                            content: Some(comment.get_post(conn).title),
-                            link: comment.ap_url,
-                            user_id: self.id
-                        });
+                        match Comment::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()) {
+                            Some(comment) => {
+                                Notification::insert(conn, NewNotification {
+                                    title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
+                                    content: Some(comment.get_post(conn).title),
+                                    link: comment.ap_url,
+                                    user_id: self.id
+                                });
+                            },
+                            None => println!("Couldn't find comment by AP id, to create a new notification")
+                        };
                     }
                     _ => {}
                 }
