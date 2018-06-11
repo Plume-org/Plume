@@ -3,8 +3,7 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
-activitypub = "0.1"
-activitystreams-types = "0.1"
+activitypub = "0.1.1"
 array_tool = "1.0"
 base64 = "0.9"
 bcrypt = "0.2"

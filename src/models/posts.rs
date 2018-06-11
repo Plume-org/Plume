@@ -1,5 +1,7 @@
-use activitypub::activity::Create;
-use activitystreams_types::object::{Article, properties::ObjectProperties};
+use activitypub::{
+    activity::Create,
+    object::{Article, properties::ObjectProperties}
+};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use serde_json;

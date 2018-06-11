@@ -1,9 +1,8 @@
 use activitypub::{
     Actor,
     activity::{Accept, Announce, Create, Follow, Like, Undo},
-    object::Note
+    object::{Article, Note}
 };
-use activitystreams_types::object::Article;
 use diesel::PgConnection;
 use failure::Error;
 use serde_json;

@@ -2,7 +2,6 @@
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
-extern crate activitystreams_types;
 extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
