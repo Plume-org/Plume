@@ -15,6 +15,7 @@ use models::{
     users::User
 };
 use utils;
+use safe_string::SafeString;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
@@ -100,7 +101,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         blog_id: blog.id,
         slug: slug.to_string(),
         title: form.title.to_string(),
-        content: content,
+        content: SafeString::new(&content),
         published: true,
         license: form.license.to_string(),
         ap_url: "".to_string()

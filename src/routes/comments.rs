@@ -13,6 +13,7 @@ use models::{
 };
 
 use utils;
+use safe_string::SafeString;
 
 #[get("/~/<_blog>/<slug>/comment")]
 fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
@@ -43,7 +44,7 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
     let post = Post::find_by_slug(&*conn, slug.clone()).unwrap();
     let form = data.get();
     let comment = Comment::insert(&*conn, NewComment {
-        content: form.content.clone(),
+        content: SafeString::new(&form.content.clone()),
         in_response_to_id: query.responding_to,
         post_id: post.id,
         author_id: user.id,
