@@ -19,6 +19,7 @@ use models::{
     users::User
 };
 use schema::posts;
+use safe_string::SafeString;
 
 #[derive(Queryable, Identifiable, Serialize)]
 pub struct Post {
@@ -26,7 +27,7 @@ pub struct Post {
     pub blog_id: i32,
     pub slug: String,
     pub title: String,
-    pub content: String,
+    pub content: SafeString,
     pub published: bool,
     pub license: String,
     pub creation_date: NaiveDateTime,
@@ -39,7 +40,7 @@ pub struct NewPost {
     pub blog_id: i32,    
     pub slug: String,
     pub title: String,
-    pub content: String,
+    pub content: SafeString,
     pub published: bool,
     pub license: String,
     pub ap_url: String

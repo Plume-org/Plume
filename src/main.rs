@@ -30,6 +30,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 extern crate url;
+extern crate ammonia;
 
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
@@ -42,6 +43,7 @@ mod models;
 mod schema;
 mod routes;
 mod utils;
+mod safe_string;
 
 lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")

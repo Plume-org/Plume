@@ -22,6 +22,7 @@ use models::{
     reshares::*,
     users::User
 };
+use safe_string::SafeString;
 
 #[derive(Fail, Debug)]
 enum InboxError {
@@ -41,7 +42,7 @@ pub trait Inbox {
             blog_id: 0, // TODO
             slug: String::from(""), // TODO
             title: article.object_props.name_string().unwrap(),
-            content: article.object_props.content_string().unwrap(),
+            content: SafeString::new(&article.object_props.content_string().unwrap()),
             published: true,
             license: String::from("CC-0"),
             ap_url: article.object_props.url_string()?
@@ -53,7 +54,7 @@ pub trait Inbox {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
         Comment::insert(conn, NewComment {
-            content: note.object_props.content_string().unwrap(),
+            content: SafeString::new(&note.object_props.content_string().unwrap()),
             spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
             ap_url: note.object_props.id_string().ok(),
             in_response_to_id: previous_comment.clone().map(|c| c.id),
