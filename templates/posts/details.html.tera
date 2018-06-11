@@ -15,7 +15,7 @@
     {% set name = author.username %}
 {% endif %}
     <p>
-        <b>Written by <a href="/@/{{ author.fqn }}/">{{name }}</a></b>
+        <b>Written by <a href="/@/{{ author.fqn }}/">{{ name }}</a></b>
         &mdash;
         <span>{{ date | date(format="%B %e, %Y") }}</span>
     </p>
