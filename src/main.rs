@@ -42,6 +42,7 @@ mod models;
 mod schema;
 mod routes;
 mod utils;
+mod safe_string;
 
 lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")
