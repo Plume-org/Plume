@@ -28,7 +28,7 @@
     </div>
 
     <div>
-        {{ user.summary }}
+        {{ user.summary | safe }}
     </div>
 
     {% if recents | length != 0 %}    
