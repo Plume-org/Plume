@@ -9,8 +9,13 @@
 {% endblock header %}
 
 {% block content %}
+{% if author.display_name %}
+    {% set name = author.display_name %}
+{% else %}
+    {% set name = author.username %}
+{% endif %}
     <p>
-        <b>Written by <a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></b>
+        <b>Written by <a href="/@/{{ author.fqn }}/">{{name }}</a></b>
         &mdash;
         <span>{{ date | date(format="%B %e, %Y") }}</span>
     </p>
@@ -49,8 +54,13 @@
         <h2>Comments</h2>
         <div class="list">
             {% for comment in comments %}
+                {% if comment.author.display_name %}
+                    {% set commentAuthorName = comment.author.display_name %}
+                {% else %}
+                    {% set commentAuthorName = comment.author.username %}
+                {% endif %}
                 <div class="card" id="comment-{{ comment.id }}">
-                    <b>{{ comment.author.display_name }}</b>
+                    <b>{{ name }}</b>
                     <div>{{ comment.content | safe }}</div>
                     <a href="comment?responding_to={{ comment.id }}">Respond</a>
                 </div>
