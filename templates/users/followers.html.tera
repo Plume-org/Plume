@@ -1,12 +1,12 @@
 {% extends "base" %}
 
+{% block title %}
 {% if user.display_name %}
     {% set name = user.display_name %}
 {% else %}
     {% set name = user.username %}
 {% endif %}
 
-{% block title %}
 {{ name }}'s Followers
 {% endblock title %}
 

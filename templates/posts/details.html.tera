@@ -8,13 +8,13 @@
     <a href="../">{{ blog.title }}</a>
 {% endblock header %}
 
-{% if author.display_name %}
-    {% set name = author.display_name %}
-{% else %}
-    {% set name = author.username %}
-{% endif %}
-
 {% block content %}
+    {% if author.display_name %}
+        {% set name = author.display_name %}
+    {% else %}
+        {% set name = author.username %}
+    {% endif %}
+
     <p>
         <b>Written by <a href="/@/{{ author.fqn }}/">{{ name }}</a></b>
         &mdash;
@@ -61,7 +61,7 @@
                     {% set comment_author_name = comment.author.username %}
                 {% endif %}
                 <div class="card" id="comment-{{ comment.id }}">
-                    <b>{{ comment_author_name }}</b>
+                    <a href="/@/{{ comment.author.fqn }}/"><b>{{ comment_author_name }}</b></a>
                     <div>{{ comment.content | safe }}</div>
                     <a href="comment?responding_to={{ comment.id }}">Respond</a>
                 </div>

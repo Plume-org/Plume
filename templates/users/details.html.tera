@@ -1,13 +1,13 @@
 {% extends "base" %}
 {% import "macros" as macros %}
 
+{% block title %}
 {% if user.display_name %}
     {% set name = user.display_name %}
 {% else %}
     {% set name = user.username %}
 {% endif %}
 
-{% block title %}
 {{ name }}
 {% endblock title %}
 
@@ -30,7 +30,7 @@
     </div>
 
     <div>
-        <a href="followers">{{ n_followers }} follower{{ n_followers | pluralize }}</a>
+        <a href="followers/">{{ n_followers }} follower{{ n_followers | pluralize }}</a>
     </div>
 
     <div>
