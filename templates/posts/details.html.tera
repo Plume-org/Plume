@@ -8,9 +8,15 @@
     <a href="../">{{ blog.title }}</a>
 {% endblock header %}
 
+{% if author.display_name %}
+    {% set name = author.display_name %}
+{% else %}
+    {% set name = author.username %}
+{% endif %}
+
 {% block content %}
     <p>
-        <b>Written by <a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></b>
+        <b>Written by <a href="/@/{{ author.fqn }}/">{{ name }}</a></b>
         &mdash;
         <span>{{ date | date(format="%B %e, %Y") }}</span>
     </p>
@@ -49,8 +55,13 @@
         <h2>Comments</h2>
         <div class="list">
             {% for comment in comments %}
+                {% if comment.author.display_name %}
+                    {% set comment_author_name = comment.author.display_name %}
+                {% else %}
+                    {% set comment_author_name = comment.author.username %}
+                {% endif %}
                 <div class="card" id="comment-{{ comment.id }}">
-                    <b>{{ comment.author.display_name }}</b>
+                    <b>{{ comment_author_name }}</b>
                     <div>{{ comment.content | safe }}</div>
                     <a href="comment?responding_to={{ comment.id }}">Respond</a>
                 </div>

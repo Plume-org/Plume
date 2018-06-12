@@ -45,6 +45,7 @@ use models::{
     posts::Post
 };
 use schema::users;
+use safe_string::SafeString;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
@@ -56,7 +57,7 @@ pub struct User {
     pub outbox_url: String,
     pub inbox_url: String,
     pub is_admin: bool,
-    pub summary: String,
+    pub summary: SafeString,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
@@ -75,7 +76,7 @@ pub struct NewUser {
     pub outbox_url: String,
     pub inbox_url: String,
     pub is_admin: bool,
-    pub summary: String,
+    pub summary: SafeString,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
@@ -200,7 +201,7 @@ impl User {
             outbox_url: acct["outbox"].as_str().unwrap().to_string(),
             inbox_url: acct["inbox"].as_str().unwrap().to_string(),
             is_admin: false,
-            summary: acct["summary"].as_str().unwrap().to_string(),
+            summary: SafeString::new(&acct["summary"].as_str().unwrap().to_string()),
             email: None,
             hashed_password: None,
             instance_id: instance.id,
@@ -371,7 +372,7 @@ impl APActor for User {
     }
 
     fn get_summary(&self) -> String {
-        self.summary.clone()
+        self.summary.get().clone()
     }
 
     fn get_instance(&self, conn: &PgConnection) -> Instance {
@@ -561,7 +562,7 @@ impl NewUser {
             outbox_url: String::from(""),
             inbox_url: String::from(""),
             is_admin: is_admin,
-            summary: summary,
+            summary: SafeString::new(&summary),
             email: Some(email),
             hashed_password: Some(password),
             instance_id: instance_id,
