@@ -1,9 +1,9 @@
 {% macro post_card(article) %}
-{% if article.author.display_name %}
-    {% set name = article.author.display_name %}
-{% else %}
-    {% set name = article.author.username %}
-{% endif %}
+    {% if article.author.display_name %}
+        {% set name = article.author.display_name %}
+    {% else %}
+        {% set name = article.author.username %}
+    {% endif %}
     <div class="card">
         <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
         <main><p>{{ article.post.content | striptags | truncate(length=200) }}</p></main>

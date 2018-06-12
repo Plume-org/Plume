@@ -8,12 +8,13 @@
     <a href="../">{{ blog.title }}</a>
 {% endblock header %}
 
-{% block content %}
 {% if author.display_name %}
     {% set name = author.display_name %}
 {% else %}
     {% set name = author.username %}
 {% endif %}
+
+{% block content %}
     <p>
         <b>Written by <a href="/@/{{ author.fqn }}/">{{ name }}</a></b>
         &mdash;
