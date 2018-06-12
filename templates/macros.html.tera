@@ -1,7 +1,12 @@
 {% macro post_card(article) %}
+    {% if article.author.display_name %}
+        {% set name = article.author.display_name %}
+    {% else %}
+        {% set name = article.author.username %}
+    {% endif %}
     <div class="card">
         <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
         <main><p>{{ article.post.content | striptags | truncate(length=200) }}</p></main>
-        <p>By <a href="/@/{{ article.author.fqn }}/">{{ article.author.display_name }}</a> ⋅ {{ article.date | date(format="%B %e") }}</p>
+        <p>By <a href="/@/{{ article.author.fqn }}/">{{ name }}</a> ⋅ {{ article.date | date(format="%B %e") }}</p>
     </div>
 {% endmacro post_card %}
