@@ -2,8 +2,8 @@
 {% import "macros" as macros %}
 
 {% block title %}
-{% if author.display_name %}
-    {% set name = author.display_name %}
+{% if user.display_name %}
+    {% set name = user.display_name %}
 {% else %}
     {% set name = user.username %}
 {% endif %}
