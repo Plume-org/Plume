@@ -1,15 +1,12 @@
 #![feature(plugin, custom_derive, iterator_find_map)]
 #![plugin(rocket_codegen)]
 
-extern crate activitystreams;
-#[macro_use]
-extern crate activitystreams_derive;
-extern crate activitystreams_traits;
-extern crate activitystreams_types;
+extern crate activitypub;
 extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
 extern crate chrono;
+extern crate comrak;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
@@ -32,6 +29,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 extern crate url;
+extern crate ammonia;
 
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
@@ -44,6 +42,7 @@ mod models;
 mod schema;
 mod routes;
 mod utils;
+mod safe_string;
 
 lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")
@@ -70,19 +69,24 @@ fn main() {
             routes::blogs::activity_details,            
             routes::blogs::outbox,            
             routes::blogs::new,
+            routes::blogs::new_auth,
             routes::blogs::create,
 
             routes::comments::new,
+            routes::comments::new_auth,
             routes::comments::create,
 
             routes::instance::index,
             routes::instance::configure,
             routes::instance::post_config,
             routes::instance::shared_inbox,
+            routes::instance::nodeinfo,
 
             routes::likes::create,
+            routes::likes::create_auth,
 
             routes::notifications::notifications,
+            routes::notifications::notifications_auth,
 
             routes::posts::details,
             routes::posts::activity_details,
@@ -90,7 +94,11 @@ fn main() {
             routes::posts::new_auth,
             routes::posts::create,
 
+            routes::reshares::create,
+            routes::reshares::create_auth,
+
             routes::session::new,
+            routes::session::new_message,
             routes::session::create,
             routes::session::delete,
 
@@ -98,10 +106,14 @@ fn main() {
 
             routes::user::me,
             routes::user::details,
+            routes::user::dashboard,
+            routes::user::dashboard_auth,
             routes::user::followers,            
             routes::user::edit,
+            routes::user::edit_auth,
             routes::user::update,
             routes::user::follow,
+            routes::user::follow_auth,
             routes::user::activity_details,
             routes::user::outbox,
             routes::user::inbox,
@@ -110,6 +122,7 @@ fn main() {
             routes::user::create,
 
             routes::well_known::host_meta,
+            routes::well_known::nodeinfo,
             routes::well_known::webfinger
         ])
         .manage(init_pool())

@@ -1,7 +1,6 @@
-use activitystreams_traits::Actor;
-use activitystreams_types::{
-    actor::Person,
-    activity::{Accept, Create, Follow, Like, Undo},
+use activitypub::{
+    Actor,
+    activity::{Accept, Announce, Create, Follow, Like, Undo},
     object::{Article, Note}
 };
 use diesel::PgConnection;
@@ -19,8 +18,10 @@ use models::{
     follows,
     likes,
     posts::*,
+    reshares::*,
     users::User
 };
+use safe_string::SafeString;
 
 #[derive(Fail, Debug)]
 enum InboxError {
@@ -40,7 +41,7 @@ pub trait Inbox {
             blog_id: 0, // TODO
             slug: String::from(""), // TODO
             title: article.object_props.name_string().unwrap(),
-            content: article.object_props.content_string().unwrap(),
+            content: SafeString::new(&article.object_props.content_string().unwrap()),
             published: true,
             license: String::from("CC-0"),
             ap_url: article.object_props.url_string()?
@@ -52,8 +53,8 @@ pub trait Inbox {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
         Comment::insert(conn, NewComment {
-            content: note.object_props.content_string().unwrap(),
-            spoiler_text: note.object_props.summary_string().unwrap(),
+            content: SafeString::new(&note.object_props.content_string().unwrap()),
+            spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
             ap_url: note.object_props.id_string().ok(),
             in_response_to_id: previous_comment.clone().map(|c| c.id),
             post_id: previous_comment
@@ -66,11 +67,11 @@ pub trait Inbox {
     }
 
     fn follow(&self, conn: &PgConnection, follow: Follow) -> Result<(), Error> {
-        let from = User::from_url(conn, follow.actor.as_str().unwrap().to_string()).unwrap();
-        match User::from_url(conn, follow.object.as_str().unwrap().to_string()) {
+        let from = User::from_url(conn, follow.follow_props.actor.as_str().unwrap().to_string()).unwrap();
+        match User::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()) {
             Some(u) => self.accept_follow(conn, &from, &u, follow, from.id, u.id),
             None => {
-                let blog = Blog::from_url(conn, follow.object.as_str().unwrap().to_string()).unwrap();
+                let blog = Blog::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()).unwrap();
                 self.accept_follow(conn, &from, &blog, follow, from.id, blog.id)
             }
         };
@@ -78,8 +79,8 @@ pub trait Inbox {
     }
 
     fn like(&self, conn: &PgConnection, like: Like) -> Result<(), Error> {
-        let liker = User::from_url(conn, like.actor.as_str().unwrap().to_string());
-        let post = Post::find_by_ap_url(conn, like.object.as_str().unwrap().to_string());
+        let liker = User::from_url(conn, like.like_props.actor.as_str().unwrap().to_string());
+        let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().unwrap().to_string());
         likes::Like::insert(conn, likes::NewLike {
             post_id: post.unwrap().id,
             user_id: liker.unwrap().id,
@@ -89,8 +90,19 @@ pub trait Inbox {
     }
 
     fn unlike(&self, conn: &PgConnection, undo: Undo) -> Result<(), Error> {
-        let like = likes::Like::find_by_ap_url(conn, undo.object_object::<Like>()?.object_props.id_string()?).unwrap();
+        let like = likes::Like::find_by_ap_url(conn, undo.undo_props.object_object::<Like>()?.object_props.id_string()?).unwrap();
         like.delete(conn);
+        Ok(())
+    }
+
+    fn announce(&self, conn: &PgConnection, announce: Announce) -> Result<(), Error> {
+        let user = User::from_url(conn, announce.announce_props.actor.as_str().unwrap().to_string());
+        let post = Post::find_by_ap_url(conn, announce.announce_props.object.as_str().unwrap().to_string());
+        Reshare::insert(conn, NewReshare {
+            post_id: post.unwrap().id,
+            user_id: user.unwrap().id,
+            ap_url: announce.object_props.id_string()?
+        });
         Ok(())
     }
 
@@ -98,11 +110,12 @@ pub trait Inbox {
         match act["type"].as_str() {
             Some(t) => {
                 match t {
+                    "Announce" => self.announce(conn, serde_json::from_value(act.clone())?),
                     "Create" => {
                         let act: Create = serde_json::from_value(act.clone())?;
-                        match act.object["type"].as_str().unwrap() {
-                            "Article" => self.new_article(conn, act.object_object().unwrap()),
-                            "Note" => self.new_comment(conn, act.object_object().unwrap(), act.actor_object::<Person>()?.object_props.id_string()?),
+                        match act.create_props.object["type"].as_str().unwrap() {
+                            "Article" => self.new_article(conn, act.create_props.object_object()?),
+                            "Note" => self.new_comment(conn, act.create_props.object_object()?, act.create_props.actor_link::<Id>()?.0),
                             _ => Err(InboxError::InvalidType)?
                         }
                     },
@@ -110,7 +123,7 @@ pub trait Inbox {
                     "Like" => self.like(conn, serde_json::from_value(act.clone())?),
                     "Undo" => {
                         let act: Undo = serde_json::from_value(act.clone())?;
-                        match act.object["type"].as_str().unwrap() {
+                        match act.undo_props.object["type"].as_str().unwrap() {
                             "Like" => self.unlike(conn, act),
                             _ => Err(InboxError::CantUndo)?
                         }
@@ -137,8 +150,8 @@ pub trait Inbox {
         });
 
         let mut accept = Accept::default();
-        accept.set_actor_link::<Id>(from.clone().into_id()).unwrap();
-        accept.set_object_object(follow).unwrap();
+        accept.accept_props.set_actor_link::<Id>(from.clone().into_id()).unwrap();
+        accept.accept_props.set_object_object(follow).unwrap();
         broadcast(conn, &*from, accept, vec![target.clone()]);
     }
 }

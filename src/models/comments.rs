@@ -1,9 +1,9 @@
-use activitystreams_types::{
+use activitypub::{
     activity::Create,
     object::{Note, properties::ObjectProperties}
 };
 use chrono;
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
 use serde_json;
 
 use activity_pub::{
@@ -12,15 +12,17 @@ use activity_pub::{
     object::Object
 };
 use models::{
+    instance::Instance,
     posts::Post,
     users::User
 };
 use schema::comments;
+use safe_string::SafeString;
 
 #[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Comment {
     pub id: i32,
-    pub content: String,
+    pub content: SafeString,
     pub in_response_to_id: Option<i32>,
     pub post_id: i32,
     pub author_id: i32,
@@ -33,7 +35,7 @@ pub struct Comment {
 #[derive(Insertable)]
 #[table_name = "comments"]
 pub struct NewComment {
-    pub content: String,
+    pub content: SafeString,
     pub in_response_to_id: Option<i32>,
     pub post_id: i32,
     pub author_id: i32,
@@ -105,10 +107,19 @@ impl Comment {
 
     pub fn create_activity(&self, conn: &PgConnection) -> Create {
         let mut act = Create::default();
-        act.set_actor_link(self.get_author(conn).into_id()).unwrap();
-        act.set_object_object(self.into_activity(conn)).unwrap();
+        act.create_props.set_actor_link(self.get_author(conn).into_id()).unwrap();
+        act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).unwrap();
         act
+    }
+
+    pub fn count_local(conn: &PgConnection) -> usize {
+        use schema::users;
+        let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
+        comments::table.filter(comments::author_id.eq(any(local_authors)))
+            .load::<Comment>(conn)
+            .expect("Couldn't load local comments")
+            .len()
     }
 }
 

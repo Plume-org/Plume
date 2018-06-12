@@ -1,4 +1,7 @@
-use rocket::{ request::Form, response::Redirect};
+use rocket::{
+    request::Form,
+    response::{Redirect, Flash}
+};
 use rocket_contrib::Template;
 
 use activity_pub::broadcast;
@@ -9,6 +12,9 @@ use models::{
     users::User
 };
 
+use utils;
+use safe_string::SafeString;
+
 #[get("/~/<_blog>/<slug>/comment")]
 fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
     let post = Post::find_by_slug(&*conn, slug).unwrap();
@@ -16,6 +22,11 @@ fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
         "post": post,
         "account": user
     }))
+}
+
+#[get("/~/<blog>/<slug>/comment", rank=2)]
+fn new_auth(blog: String, slug: String) -> Flash<Redirect>{
+    utils::requires_login("You need to be logged in order to post a comment", &format!("~/{}/{}/comment", blog, slug))
 }
 
 #[derive(FromForm)]
@@ -33,7 +44,7 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
     let post = Post::find_by_slug(&*conn, slug.clone()).unwrap();
     let form = data.get();
     let comment = Comment::insert(&*conn, NewComment {
-        content: form.content.clone(),
+        content: SafeString::new(&form.content.clone()),
         in_response_to_id: query.responding_to,
         post_id: post.id,
         author_id: user.id,

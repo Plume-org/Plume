@@ -26,11 +26,23 @@
             <p>
                 {{ n_likes }} like{{ n_likes | pluralize }}
             </p>
+
             {% if has_liked %}
                 <a class="button liked" href="like">I don't like this anymore</a>
             {% else %}
                 <a class="button" href="like">Like</a>
             {% endif %}
+
+            <p>
+                {{ n_reshares }} reshare{{ n_reshares | pluralize }}
+            </p>
+            <a class="button" href="reshare">
+                {% if has_reshared %}
+                    I don't want to reshare this anymore
+                {% else %}
+                    Reshare
+                {% endif %}
+            </a>
         </div>
 
         <div class="comments">

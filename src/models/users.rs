@@ -1,9 +1,8 @@
-use activitystreams_traits::{Actor, Object, Link};
-use activitystreams_types::{
-    actor::Person,
+use activitypub::{
+    Actor, Object,
+    actor::{Person, properties::ApActorProperties},
     collection::OrderedCollection,
-    object::properties::ObjectProperties,
-    CustomObject
+    object::properties::ObjectProperties
 };
 use bcrypt;
 use chrono::NaiveDateTime;
@@ -36,6 +35,8 @@ use activity_pub::{
 };
 use db_conn::DbConn;
 use models::{
+    blogs::Blog,
+    blog_authors::BlogAuthor,
     comments::Comment,
     follows::Follow,
     instance::Instance,
@@ -44,6 +45,7 @@ use models::{
     posts::Post
 };
 use schema::users;
+use safe_string::SafeString;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
@@ -55,7 +57,7 @@ pub struct User {
     pub outbox_url: String,
     pub inbox_url: String,
     pub is_admin: bool,
-    pub summary: String,
+    pub summary: SafeString,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
@@ -74,7 +76,7 @@ pub struct NewUser {
     pub outbox_url: String,
     pub inbox_url: String,
     pub is_admin: bool,
-    pub summary: String,
+    pub summary: SafeString,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
@@ -116,6 +118,13 @@ impl User {
             .load::<User>(conn)
             .expect("Error loading user by id")
             .into_iter().nth(0)
+    }
+
+    pub fn count_local(conn: &PgConnection) -> usize {
+        users::table.filter(users::instance_id.eq(Instance::local_id(conn)))
+            .load::<User>(conn)
+            .expect("Couldn't load local users")
+            .len()
     }
 
     pub fn find_by_email(conn: &PgConnection, email: String) -> Option<User> {
@@ -192,7 +201,7 @@ impl User {
             outbox_url: acct["outbox"].as_str().unwrap().to_string(),
             inbox_url: acct["inbox"].as_str().unwrap().to_string(),
             is_admin: false,
-            summary: acct["summary"].as_str().unwrap().to_string(),
+            summary: SafeString::new(&acct["summary"].as_str().unwrap().to_string()),
             email: None,
             hashed_password: None,
             instance_id: instance.id,
@@ -287,11 +296,31 @@ impl User {
             .len() > 0
     }
 
+    pub fn has_reshared(&self, conn: &PgConnection, post: &Post) -> bool {
+        use schema::reshares;
+        use models::reshares::Reshare;
+        reshares::table
+            .filter(reshares::post_id.eq(post.id))
+            .filter(reshares::user_id.eq(self.id))
+            .load::<Reshare>(conn)
+            .expect("Couldn't load reshares")
+            .len() > 0
+    }
+
+    pub fn is_author_in(&self, conn: &PgConnection, blog: Blog) -> bool {
+        use schema::blog_authors;
+        blog_authors::table.filter(blog_authors::author_id.eq(self.id))
+            .filter(blog_authors::blog_id.eq(blog.id))
+            .load::<BlogAuthor>(conn)
+            .expect("Couldn't load blog/author relationship")
+            .len() > 0
+    }
+
     pub fn get_keypair(&self) -> PKey<Private> {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> CustomObject<ApProps, Person> {
+    pub fn into_activity(&self, conn: &PgConnection) -> Person {
         let mut actor = Person::default();
         actor.object_props = ObjectProperties {
             id: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
@@ -300,32 +329,20 @@ impl User {
             url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
             ..ObjectProperties::default()
         };
-
-        CustomObject::new(actor, ApProps {
-            inbox: Some(serde_json::to_value(self.compute_inbox(conn)).unwrap()),
-            outbox: Some(serde_json::to_value(self.compute_outbox(conn)).unwrap()),
+        actor.ap_actor_props = ApActorProperties {
+            inbox: serde_json::to_value(self.compute_inbox(conn)).unwrap(),
+            outbox: serde_json::to_value(self.compute_outbox(conn)).unwrap(),
             preferred_username: Some(serde_json::to_value(self.get_actor_id()).unwrap()),
             endpoints: Some(json!({
                 "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
-            }))
-        })
+            })),
+            followers: None,
+            following: None,
+            liked: None,
+            streams: None
+        };
+        actor
     }
-}
-
-#[derive(Serialize, Deserialize, Default, Properties)]
-#[serde(rename_all = "camelCase")]
-pub struct ApProps {
-    #[activitystreams(ab(Object, Link))]
-    inbox: Option<serde_json::Value>,
-
-    #[activitystreams(ab(Object, Link))]
-    outbox: Option<serde_json::Value>,
-
-    #[activitystreams(ab(Object, Link))]
-    preferred_username: Option<serde_json::Value>,
-
-    #[activitystreams(ab(Object))]
-    endpoints: Option<serde_json::Value>
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -355,7 +372,7 @@ impl APActor for User {
     }
 
     fn get_summary(&self) -> String {
-        self.summary.clone()
+        self.summary.get().clone()
     }
 
     fn get_instance(&self, conn: &PgConnection) -> Instance {
@@ -427,10 +444,22 @@ impl WithInbox for User {
 
 impl Inbox for User {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone()).unwrap();
+        if let Err(err) = self.save(conn, act.clone()) {
+            println!("Inbox error:\n{}\n{}\n\nActivity was: {}", err.cause(), err.backtrace(), act.to_string());
+        }
 
         // Notifications
         match act["type"].as_str().unwrap() {
+            "Announce" => {
+                let actor = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
+                let post = Post::find_by_ap_url(conn, act["object"].as_str().unwrap().to_string()).unwrap();                
+                Notification::insert(conn, NewNotification {
+                    title: format!("{} reshared your article", actor.display_name.clone()),
+                    content: Some(post.title),
+                    link: Some(post.ap_url),
+                    user_id: self.id
+                });
+            },
             "Follow" => {
                 let follower = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
                 Notification::insert(conn, NewNotification {
@@ -453,13 +482,17 @@ impl Inbox for User {
             "Create" => {
                 match act["object"]["type"].as_str().unwrap() {
                     "Note" => {
-                        let comment = Comment::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()).unwrap();
-                        Notification::insert(conn, NewNotification {
-                            title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
-                            content: Some(comment.get_post(conn).title),
-                            link: comment.ap_url,
-                            user_id: self.id
-                        });
+                        match Comment::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()) {
+                            Some(comment) => {
+                                Notification::insert(conn, NewNotification {
+                                    title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
+                                    content: Some(comment.get_post(conn).title),
+                                    link: comment.ap_url,
+                                    user_id: self.id
+                                });
+                            },
+                            None => println!("Couldn't find comment by AP id, to create a new notification")
+                        };
                     }
                     _ => {}
                 }
@@ -529,7 +562,7 @@ impl NewUser {
             outbox_url: String::from(""),
             inbox_url: String::from(""),
             is_admin: is_admin,
-            summary: summary,
+            summary: SafeString::new(&summary),
             email: Some(email),
             hashed_password: Some(password),
             instance_id: instance_id,

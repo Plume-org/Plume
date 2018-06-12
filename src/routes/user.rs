@@ -1,8 +1,10 @@
-use activitystreams_types::{
+use activitypub::{
     activity::Follow,
     collection::OrderedCollection
 };
-use rocket::{request::Form, response::Redirect};
+use rocket::{request::Form,
+    response::{Redirect, Flash}
+};
 use rocket_contrib::Template;
 use serde_json;
 
@@ -13,21 +15,28 @@ use activity_pub::{
 };
 use db_conn::DbConn;
 use models::{
+    blogs::Blog,
     follows,
     instance::Instance,
     posts::Post,
+    reshares::Reshare,
     users::*
 };
+use utils;
 
 #[get("/me")]
-fn me(user: User) -> Redirect {
-    Redirect::to(format!("/@/{}", user.username).as_ref())
+fn me(user: Option<User>) -> Result<Redirect,Flash<Redirect>> {
+    match user {
+        Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username).as_ref())),
+        None => Err(utils::requires_login("", "/me"))
+    }
 }
 
 #[get("/@/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name).unwrap();
-    let recents = Post::get_recents_for_author(&*conn, &user, 5);
+    let recents = Post::get_recents_for_author(&*conn, &user, 6);
+    let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
     let user_id = user.id.clone();
     let n_followers = user.get_followers(&*conn).len();
 
@@ -47,9 +56,37 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
                 "date": p.creation_date.timestamp()
             })
         }).collect::<Vec<serde_json::Value>>(),
+        "reshares": reshares.into_iter().map(|r| {
+            let p = r.get_post(&*conn).unwrap();
+            json!({
+                "post": p,
+                "author": ({
+                    let author = &p.get_authors(&*conn)[0];
+                    let mut json = serde_json::to_value(author).unwrap();
+                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
+                    json
+                }),
+                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
+                "date": p.creation_date.timestamp()
+            })
+        }).collect::<Vec<serde_json::Value>>(),
         "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
         "n_followers": n_followers
     }))
+}
+
+#[get("/dashboard")]
+fn dashboard(user: User, conn: DbConn) -> Template {
+    let blogs = Blog::find_for_author(&*conn, user.id);
+    Template::render("users/dashboard", json!({
+        "account": user,
+        "blogs": blogs
+    }))
+}
+
+#[get("/dashboard", rank = 2)]
+fn dashboard_auth() -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to access your dashboard", "/dashboard")
 }
 
 #[get("/@/<name>/follow")]
@@ -60,11 +97,16 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
         following_id: target.id
     });
     let mut act = Follow::default();
-    act.set_actor_link::<Id>(user.clone().into_id()).unwrap();
-    act.set_object_object(user.into_activity(&*conn)).unwrap();
+    act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
+    act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
     broadcast(&*conn, &user, act, vec![target]);
-    Redirect::to(format!("/@/{}", name).as_ref())
+    Redirect::to(format!("/@/{}/", name).as_ref())
+}
+
+#[get("/@/<name>/follow", rank = 2)]
+fn follow_auth(name: String) -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to follow someone", &format!("/@/{}/follow", name))
 }
 
 #[get("/@/<name>/followers", rank = 2)]
@@ -107,6 +149,11 @@ fn edit(name: String, user: User) -> Option<Template> {
     } else {
         None
     }
+}
+
+#[get("/@/<name>/edit", rank = 2)]
+fn edit_auth(name: String) -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to edit your profile", &format!("/@/{}/edit", name))
 }
 
 #[derive(FromForm)]
@@ -155,7 +202,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
             User::hash_pass(form.password.to_string()),
             inst.id
         )).update_boxes(&*conn);
-        Ok(Redirect::to(format!("/@/{}", data.get().username).as_str()))        
+        Ok(Redirect::to(format!("/@/{}/", data.get().username).as_str()))
     } else {
         Err(String::from("Passwords don't match"))
     }

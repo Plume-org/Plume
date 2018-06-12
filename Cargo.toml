@@ -3,13 +3,11 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
-activitystreams = "0.1"
-activitystreams-derive = "0.1"
-activitystreams-traits = "0.1"
-activitystreams-types = "0.1"
+activitypub = "0.1.1"
 array_tool = "1.0"
 base64 = "0.9"
 bcrypt = "0.2"
+comrak = "0.2"
 dotenv = "*"
 failure = "0.1"
 failure_derive = "0.1"
@@ -25,6 +23,7 @@ serde = "*"
 serde_derive = "1.0"
 serde_json = "1.0"
 url = "1.7"
+ammonia = "1.1.0"
 
 [dependencies.chrono]
 features = ["serde"]

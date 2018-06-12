@@ -73,6 +73,7 @@ table! {
         content -> Nullable<Text>,
         link -> Nullable<Varchar>,
         user_id -> Int4,
+        creation_date -> Timestamp,
     }
 }
 

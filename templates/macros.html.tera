@@ -1,0 +1,11 @@
+{% macro post_card(article) %}
+    <div class="card">
+        <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
+        <main
+            <p>{{ article.post.content | striptags | truncate(length=200) }}</p>
+        </main>
+        <p class="author">
+        	By <a href="/@/{{ article.author.fqn }}/">{{ article.author.display_name }}</a> ⋅ {{ article.date | date(format="%B %e") }}
+        </p>
+    </div>
+{% endmacro post_card %}

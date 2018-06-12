@@ -1,10 +1,9 @@
-use activitystreams_types::{
+use activitypub::{
     activity::Create,
     object::{Article, properties::ObjectProperties}
 };
 use chrono::NaiveDateTime;
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
-use diesel::dsl::any;
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use serde_json;
 
 use BASE_URL;
@@ -15,11 +14,14 @@ use activity_pub::{
 };
 use models::{
     blogs::Blog,
+    instance::Instance,
     likes::Like,
     post_authors::PostAuthor,
+    reshares::Reshare,
     users::User
 };
 use schema::posts;
+use safe_string::SafeString;
 
 #[derive(Queryable, Identifiable, Serialize)]
 pub struct Post {
@@ -27,7 +29,7 @@ pub struct Post {
     pub blog_id: i32,
     pub slug: String,
     pub title: String,
-    pub content: String,
+    pub content: SafeString,
     pub published: bool,
     pub license: String,
     pub creation_date: NaiveDateTime,
@@ -40,7 +42,7 @@ pub struct NewPost {
     pub blog_id: i32,    
     pub slug: String,
     pub title: String,
-    pub content: String,
+    pub content: SafeString,
     pub published: bool,
     pub license: String,
     pub ap_url: String
@@ -60,6 +62,17 @@ impl Post {
             .load::<Post>(conn)
             .expect("Error loading post by id")
             .into_iter().nth(0)
+    }
+
+    pub fn count_local(conn: &PgConnection) -> usize {
+        use schema::post_authors;
+        use schema::users;
+        let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
+        let local_posts_id = post_authors::table.filter(post_authors::author_id.eq(any(local_authors))).select(post_authors::post_id);
+        posts::table.filter(posts::id.eq(any(local_posts_id)))
+            .load::<Post>(conn)
+            .expect("Couldn't load local posts")
+            .len()
     }
 
     pub fn find_by_slug(conn: &PgConnection, slug: String) -> Option<Post> {
@@ -127,6 +140,13 @@ impl Post {
             .expect("Couldn't load likes associted to post")
     }
 
+    pub fn get_reshares(&self, conn: &PgConnection) -> Vec<Reshare> {
+        use schema::reshares;
+        reshares::table.filter(reshares::post_id.eq(self.id))
+            .load::<Reshare>(conn)
+            .expect("Couldn't load reshares associted to post")
+    }
+
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {
             diesel::update(self)
@@ -169,8 +189,8 @@ impl Post {
     pub fn create_activity(&self, conn: &PgConnection) -> Create {
         let mut act = Create::default();
         act.object_props.set_id_string(format!("{}/activity", self.ap_url)).unwrap();
-        act.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
-        act.set_object_object(self.into_activity(conn)).unwrap();
+        act.create_props.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
+        act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act
     }
 }
@@ -183,7 +203,7 @@ impl IntoId for Post {
 
 impl Object for Post {
     fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/~/{}/{}", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
+        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
     }
 
     fn serialize(&self, conn: &PgConnection) -> serde_json::Value {

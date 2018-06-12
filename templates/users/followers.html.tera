@@ -22,8 +22,8 @@
     <div class="cards">
     {% for follower in followers %}
         <div class="card">
-            <h3><a href="{{ follower.ap_url }}">{{ follower.display_name }}</a> &mdash; @{{ follower.fqn }}</h3>
-            <main><p>{{ follower.summary }}</p></main>
+            <h3><a href="{{ follower.ap_url }}/">{{ follower.display_name }}</a> &mdash; @{{ follower.fqn }}</h3>
+            <main><p>{{ follower.summary | safe }}</p></main>
         </div>
     {% endfor %}
     </div>

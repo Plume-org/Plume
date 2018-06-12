@@ -7,6 +7,7 @@ pub mod instance;
 pub mod likes;
 pub mod notifications;
 pub mod posts;
+pub mod reshares;
 pub mod session;
 pub mod user;
 pub mod well_known;

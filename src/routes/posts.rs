@@ -1,6 +1,7 @@
+use comrak::{markdown_to_html, ComrakOptions};
 use heck::KebabCase;
 use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
@@ -14,6 +15,7 @@ use models::{
     users::User
 };
 use utils;
+use safe_string::SafeString;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
@@ -39,6 +41,8 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
         }).collect::<Vec<serde_json::Value>>(),
         "n_likes": post.get_likes(&*conn).len(),
         "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
+        "n_reshares": post.get_reshares(&*conn).len(),
+        "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
         "account": user,
         "date": &post.creation_date.timestamp()
     }))
@@ -54,9 +58,9 @@ fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
     activity_pub(act)
 }
 
-#[get("/~/<_blog>/new", rank = 2)]
-fn new_auth(_blog: String) -> Redirect {
-    utils::requires_login()
+#[get("/~/<blog>/new", rank = 2)]
+fn new_auth(blog: String) -> Flash<Redirect> {
+    utils::requires_login("You need to be logged in order to write a new post", &format!("/~/{}/new",blog))
 }
 
 #[get("/~/<_blog>/new", rank = 1)]
@@ -78,11 +82,26 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
+
+    let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
+        smart: true,
+        safe: true,
+        ext_strikethrough: true,
+        ext_tagfilter: true,
+        ext_table: true,
+        ext_autolink: true,
+        ext_tasklist: true,
+        ext_superscript: true,
+        ext_header_ids: Some("title".to_string()),
+        ext_footnotes: true,
+        ..ComrakOptions::default()
+    });
+
     let post = Post::insert(&*conn, NewPost {
         blog_id: blog.id,
         slug: slug.to_string(),
         title: form.title.to_string(),
-        content: form.content.to_string(),
+        content: SafeString::new(&content),
         published: true,
         license: form.license.to_string(),
         ap_url: "".to_string()
@@ -96,5 +115,5 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     let act = post.create_activity(&*conn);
     broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
-    Redirect::to(format!("/~/{}/{}", blog_name, slug).as_str())
+    Redirect::to(format!("/~/{}/{}/", blog_name, slug).as_str())
 }
