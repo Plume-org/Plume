@@ -10,6 +10,7 @@ use BASE_URL;
 use activity_pub::{
     PUBLIC_VISIBILTY, ap_url, Id, IntoId,
     actor::Actor,
+    inbox::FromActivity,
     object::Object
 };
 use models::{
@@ -192,6 +193,20 @@ impl Post {
         act.create_props.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
         act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act
+    }
+}
+
+impl FromActivity<Article> for Post {
+    fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
+        Post::insert(conn, NewPost {
+            blog_id: 0, // TODO
+            slug: String::from(""), // TODO
+            title: article.object_props.name_string().unwrap(),
+            content: SafeString::new(&article.object_props.content_string().unwrap()),
+            published: true,
+            license: String::from("CC-0"),
+            ap_url: article.object_props.url_string().unwrap_or(String::from(""))
+        })
     }
 }
 

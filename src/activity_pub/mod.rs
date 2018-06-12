@@ -111,6 +111,12 @@ impl Id {
     }
 }
 
+impl Into<String> for Id {
+    fn into(self) -> String {
+        self.0.clone()
+    }
+}
+
 pub trait IntoId {
     fn into_id(self) -> Id;
 }
