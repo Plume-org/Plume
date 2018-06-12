@@ -2,13 +2,17 @@
 {% import "macros" as macros %}
 
 {% block title %}
-{{ user.display_name }}
+{% if author.display_name %}
+    {% set name = author.display_name %}
+{% else %}
+    {% set name = user.username %}
+{% endif %}
 {% endblock title %}
 
 {% block content %}
     <div>
         <h1>
-            {{ user.display_name }}
+            {{ name }}
             {% if user.is_admin %}
                 <span class="badge">Admin</span>
             {% endif %}

@@ -55,12 +55,12 @@
         <div class="list">
             {% for comment in comments %}
                 {% if comment.author.display_name %}
-                    {% set commentAuthorName = comment.author.display_name %}
+                    {% set comment_author_name = comment.author.display_name %}
                 {% else %}
-                    {% set commentAuthorName = comment.author.username %}
+                    {% set comment_author_name = comment.author.username %}
                 {% endif %}
                 <div class="card" id="comment-{{ comment.id }}">
-                    <b>{{ name }}</b>
+                    <b>{{ comment_author_name }}</b>
                     <div>{{ comment.content | safe }}</div>
                     <a href="comment?responding_to={{ comment.id }}">Respond</a>
                 </div>
