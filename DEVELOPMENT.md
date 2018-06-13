@@ -59,7 +59,7 @@ To run Plume locally, make sure you are once again in the Plume directory, such 
 cargo run
 ```
 #### Configuration
-Now Plume should be running on your machine at [http://localhost:8000](http://localhost:8000). The first time you run the application, you'll want to configure your blog name on the [http://localhost:8000/configuration](http://localhost:8000/configuration) page. You'll be able to change this name later.
+Now Plume should be running on your machine at [http://localhost:8000](http://localhost:8000). The first time you run the application, you'll want to configure your blog name on the [http://localhost:8000/configure](http://localhost:8000/configure) page. You'll be able to change this name later.
 #### Testing the federation
 
 To test the federation, you'll need to setup another database (see "Setup the database"),
