@@ -27,6 +27,10 @@
         {% if is_self %}
             <a href="edit" class="button inline-block">Edit your profile</a>
         {% endif %}
+
+        {% if is_remote %}
+            <a class="inline-block button" href="{{ user.ap_url }}">Open on {{ instance_url }}</a>
+        {% endif %}
     </div>
 
     <div>

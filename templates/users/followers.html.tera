@@ -22,6 +22,10 @@
                 <span class="badge">It is you</span>
             {% endif %}
         </h1>
+
+        {% if is_remote %}
+            <a class="inline-block button" href="{{ user.ap_url }}">Open on {{ instance_url }}</a>
+        {% endif %}
     </div>
 
     <h2>Followers</h2>
@@ -33,7 +37,7 @@
             {% set follower_name = follower.username %}
         {% endif %}
         <div class="card">
-            <h3><a href="{{ follower.ap_url }}/">{{ follower_name }}</a> &mdash; @{{ follower.fqn }}</h3>
+            <h3><a href="/@/{{ follower.fqn }}/">{{ follower_name }}</a> &mdash; @{{ follower.fqn }}</h3>
             <main><p>{{ follower.summary | safe }}</p></main>
         </div>
     {% endfor %}

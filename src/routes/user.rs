@@ -41,7 +41,9 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
     let n_followers = user.get_followers(&*conn).len();
 
     Template::render("users/details", json!({
-        "user": serde_json::to_value(user).unwrap(),
+        "user": serde_json::to_value(user.clone()).unwrap(),
+        "instance_url": user.get_instance(&*conn).public_domain,
+        "is_remote": user.instance_id != Instance::local_id(&*conn),
         "account": account,
         "recents": recents.into_iter().map(|p| {
             json!({
@@ -116,6 +118,8 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
     
     Template::render("users/followers", json!({
         "user": serde_json::to_value(user.clone()).unwrap(),
+        "instance_url": user.get_instance(&*conn).public_domain,
+        "is_remote": user.instance_id != Instance::local_id(&*conn),
         "followers": user.get_followers(&*conn).into_iter().map(|f| {
             let fqn = f.get_fqn(&*conn);
             let mut json = serde_json::to_value(f).unwrap();
