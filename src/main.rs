@@ -39,6 +39,7 @@ use std::env;
 
 mod activity_pub;
 mod db_conn;
+mod i18n;
 mod models;
 mod schema;
 mod routes;
@@ -128,5 +129,6 @@ fn main() {
         ])
         .manage(init_pool())
         .attach(Template::fairing())
+        .attach(i18n::I18n::new("plume"))
         .launch();
 }
