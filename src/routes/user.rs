@@ -116,7 +116,7 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name.clone()).unwrap();
     let user_id = user.id.clone();
-    
+
     Template::render("users/followers", json!({
         "user": serde_json::to_value(user.clone()).unwrap(),
         "instance_url": user.get_instance(&*conn).public_domain,

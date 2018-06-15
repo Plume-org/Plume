@@ -10,6 +10,7 @@ extern crate comrak;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
+extern crate gettextrs;
 extern crate heck;
 extern crate hex;
 #[macro_use]
