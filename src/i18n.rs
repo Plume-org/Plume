@@ -1,5 +1,7 @@
 use gettextrs::*;
 use rocket::{Data, Request, Rocket, fairing::{Fairing, Info, Kind}};
+use std::fs;
+use std::path::PathBuf;
 
 const ACCEPT_LANG: &'static str = "Accept-Language";
 
@@ -24,7 +26,7 @@ impl Fairing for I18n {
     }
 
     fn on_attach(&self, rocket: Rocket) -> Result<Rocket, Rocket> {
-        bindtextdomain(self.domain, "/usr/local/share/locale");
+        bindtextdomain(self.domain, fs::canonicalize(&PathBuf::from("./translations")).unwrap().to_str().unwrap());
         textdomain(self.domain);
         Ok(rocket)
     }
