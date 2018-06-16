@@ -2,6 +2,7 @@ use gettextrs::*;
 use rocket::{Data, Request, Rocket, fairing::{Fairing, Info, Kind}};
 use serde_json;
 use std::collections::HashMap;
+use std::env;
 use std::fs;
 use std::path::PathBuf;
 use tera::{Tera, Error as TeraError};
@@ -29,7 +30,7 @@ impl Fairing for I18n {
     }
 
     fn on_attach(&self, rocket: Rocket) -> Result<Rocket, Rocket> {
-        bindtextdomain(self.domain, fs::canonicalize(&PathBuf::from("./translations")).unwrap().to_str().unwrap());
+        bindtextdomain(self.domain, fs::canonicalize(&PathBuf::from("./translations/")).unwrap().to_str().unwrap());
         textdomain(self.domain);
         Ok(rocket)
     }
@@ -42,14 +43,21 @@ impl Fairing for I18n {
             .split(",")
             .nth(0)
             .unwrap_or("en");
-        setlocale(LocaleCategory::LcAll, format!("{}.UTF-8", lang.replace("-", "_")));
+        
+        // We can't use setlocale(LocaleCategory::LcAll, lang), because it only accepts system-wide installed
+        // locales (and most of the time there are only a few of them).
+        // But, when we set the LANGUAGE environment variable, and an empty string as a second parameter to
+        // setlocale, gettext will be smart enough to find a matching locale in the locally installed ones.
+        env::set_var("LANGUAGE", lang);
+        setlocale(LocaleCategory::LcAll, "");
     }
 }
 
 fn tera_gettext(ctx: HashMap<String, serde_json::Value>) -> Result<serde_json::Value, TeraError> {
-    Ok(serde_json::Value::String(String::from("")))
+    let trans = gettext(ctx.get("t").unwrap().as_str().unwrap());
+    Ok(serde_json::Value::String(Tera::one_off(trans.as_ref(), &ctx, false).unwrap_or(String::from(""))))
 }
 
 pub fn tera(t: &mut Tera) {
-    t.register_global_function("gettext", Box::new(tera_gettext))
+    t.register_global_function("_", Box::new(tera_gettext))
 }

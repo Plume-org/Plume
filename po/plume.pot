@@ -12,5 +12,5 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-msgid "Welcome on %s"
+msgid "Welcome on {{ instance_name }}"
 msgstr ""
