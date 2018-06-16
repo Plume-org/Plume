@@ -19,7 +19,7 @@ pub mod request;
 pub mod sign;
 pub mod webfinger;
 
-pub type ActivityPub = Content<Json>;
+pub type ActivityPub = Content<Json<serde_json::Value>>;
 
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";

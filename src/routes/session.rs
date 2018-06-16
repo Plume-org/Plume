@@ -1,5 +1,5 @@
 use rocket::{
-    http::{Cookie, Cookies},
+    http::{Cookie, Cookies, uri::Uri},
     response::{Redirect, status::NotFound},
     request::{Form,FlashMessage}
 };
@@ -49,10 +49,10 @@ fn create(conn: DbConn, data: Form<LoginForm>, flash: Option<FlashMessage>, mut 
         Ok(usr) => {
             if usr.auth(form.password.to_string()) {
                 cookies.add_private(Cookie::new(AUTH_COOKIE, usr.id.to_string()));
-                Ok(Redirect::to(&flash
-                    .and_then(|f| if f.name()=="callback" { Some(f.msg().to_owned()) } else { None })
+                Ok(Redirect::to(Uri::new(flash
+                    .and_then(|f| if f.name() == "callback" { Some(f.msg().to_owned()) } else { None })
                     .unwrap_or("/".to_owned()))
-                )
+                ))
             } else {
                 Err(NotFound(String::from("Invalid username or password")))
             }

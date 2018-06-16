@@ -55,5 +55,5 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
 
     broadcast(&*conn, &user, comment.create_activity(&*conn), user.get_followers(&*conn));
 
-    Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id).as_ref())
+    Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id))
 }

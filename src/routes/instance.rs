@@ -78,7 +78,7 @@ fn shared_inbox(conn: DbConn, data: String) -> String {
 }
 
 #[get("/nodeinfo")]
-fn nodeinfo(conn: DbConn) -> Json {
+fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
     Json(json!({
         "version": "2.0",
         "software": {

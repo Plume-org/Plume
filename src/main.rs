@@ -1,7 +1,8 @@
-#![feature(plugin, custom_derive, iterator_find_map)]
+#![feature(plugin, custom_derive, decl_macro, iterator_find_map)]
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
+extern crate ammonia;
 extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
@@ -29,8 +30,8 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate tera;
 extern crate url;
-extern crate ammonia;
 
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
@@ -128,7 +129,9 @@ fn main() {
             routes::well_known::webfinger
         ])
         .manage(init_pool())
-        .attach(Template::fairing())
+        .attach(Template::custom(|engines| {
+            i18n::tera(&mut engines.tera);
+        }))
         .attach(i18n::I18n::new("plume"))
         .launch();
 }

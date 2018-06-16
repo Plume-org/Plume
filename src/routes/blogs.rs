@@ -83,7 +83,7 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
         is_owner: true
     });
     
-    Redirect::to(format!("/~/{}/", slug).as_str())
+    Redirect::to(format!("/~/{}/", slug))
 }
 
 #[get("/~/<name>/outbox")]

@@ -27,7 +27,7 @@ use utils;
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect,Flash<Redirect>> {
     match user {
-        Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username).as_ref())),
+        Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username))),
         None => Err(utils::requires_login("", "/me"))
     }
 }
@@ -104,7 +104,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
     broadcast(&*conn, &user, act, vec![target]);
-    Redirect::to(format!("/@/{}/", name).as_ref())
+    Redirect::to(format!("/@/{}/", name))
 }
 
 #[get("/@/<name>/follow", rank = 2)]
@@ -208,7 +208,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
             User::hash_pass(form.password.to_string()),
             inst.id
         )).update_boxes(&*conn);
-        Ok(Redirect::to(format!("/@/{}/", data.get().username).as_str()))
+        Ok(Redirect::to(format!("/@/{}/", data.get().username)))
     } else {
         Err(String::from("Passwords don't match"))
     }
