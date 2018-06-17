@@ -48,4 +48,4 @@ rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
 
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"
-rev = "457b88c59ec31905a9193df43df58bee55b4b83d"
+rev = "5b4225d5bed5769482dc926a7e6d6b79f1217be6"
