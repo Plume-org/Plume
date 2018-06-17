@@ -10,6 +10,6 @@
     <label for="title">{{ "Title" | _ }}</label>
     <input name="title">
 
-    <input type="submit" value="{{ "Create blog"}}"/>            
+    <input type="submit" value="{{ "Create blog" | _ }}"/>            
 </form>
- | _ {% endblock content %}
+{% endblock content %}

@@ -249,3 +249,5 @@ msgstr ""
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
+msgstr ""
