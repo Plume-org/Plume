@@ -9,7 +9,6 @@
 <form method="post">
     <label for="title">{{ "Title" | _ }}</label>
     <input type="text" id="title" name="title" />
-
-    <input type="submit" value="{{ "Create blog"}}" />
+    <input type="submit" value="{{ "Create blog" | _ }}"/>
 </form>
- | _ {% endblock content %}
+{% endblock content %}

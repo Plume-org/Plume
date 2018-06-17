@@ -11,7 +11,8 @@ pub struct Notification {
     pub content: Option<String>,
     pub link: Option<String>,
     pub user_id: i32,
-    pub creation_date: NaiveDateTime
+    pub creation_date: NaiveDateTime,
+    pub data: Option<String>
 }
 
 #[derive(Insertable)]
@@ -20,7 +21,8 @@ pub struct NewNotification {
     pub title: String,
     pub content: Option<String>,
     pub link: Option<String>,
-    pub user_id: i32
+    pub user_id: i32,
+    pub data: Option<String>
 }
 
 impl Notification {

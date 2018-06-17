@@ -249,3 +249,17 @@ msgstr ""
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
+msgstr ""
+
+msgid "{{ data }} reshared your article"
+msgstr ""
+
+msgid "{{ data }} started following you"
+msgstr ""
+
+msgid "{{ data }} liked your article"
+msgstr ""
+
+msgid "{{ data }} commented your article"
+msgstr ""

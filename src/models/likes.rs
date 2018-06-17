@@ -118,7 +118,8 @@ impl Notify<activity::Like> for Like {
         for author in post.get_authors(conn) {
             let post = post.clone();
             Notification::insert(conn, NewNotification {
-                title: format!("{} liked your article", liker.display_name.clone()),
+                title: "{{ data }} liked your article".to_string(),
+                data: Some(liker.display_name.clone()),
                 content: Some(post.title),
                 link: Some(post.ap_url),
                 user_id: author.id

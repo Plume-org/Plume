@@ -10,7 +10,14 @@
             <p>{{ article.post.content | striptags | truncate(length=200) }}</p>
         </main>
         <p class="author">
-        	By <a href="/@/{{ article.author.fqn }}/">{{ name }}</a> ⋅ {{ article.date | date(format="%B %e") }}
+        	{{ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}" | _(
+                link_1='<a href="/@/',
+                link_2=article.author.fqn,
+                link_3='/">',
+                name=name,
+                link_4="</a>")
+            }}
+            ⋅ {{ article.date | date(format="%B %e") }}
         </p>
     </div>
 {% endmacro post_card %}
