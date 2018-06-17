@@ -42,7 +42,7 @@
     </div>
 
     <div>
-        <a href="followers/">{{ n_followers }} follower{{ n_followers | pluralize }}</a>
+        <a href="followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
     </div>
 
     <div>

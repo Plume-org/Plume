@@ -14,8 +14,3 @@ msgstr ""
 
 msgid "Welcome on {{ instance_name }}"
 msgstr "Bienvenue sur {{ instance_name }}"
-
-msgid "One follower"
-msgid_plural "{{ count }} followers"
-msgstr[0] "{{ count }} abonné⋅e"
-msgstr[1] "{{ count }} abonné⋅e⋅s"

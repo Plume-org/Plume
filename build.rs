@@ -17,6 +17,7 @@ fn update_po() {
             println!("Updating {}", lang.clone());
             // Update it
             Command::new("msgmerge")
+                .arg("-U")
                 .arg(po_path.to_str().unwrap())
                 .arg(pot_path.to_str().unwrap())
                 .spawn()

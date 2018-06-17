@@ -58,6 +58,16 @@ fn tera_gettext(msg: serde_json::Value, ctx: HashMap<String, serde_json::Value>)
     Ok(serde_json::Value::String(Tera::one_off(trans.as_ref(), &ctx, false).unwrap_or(String::from(""))))
 }
 
+fn tera_ngettext(msg: serde_json::Value, ctx: HashMap<String, serde_json::Value>) -> Result<serde_json::Value, TeraError> {
+    let trans = ngettext(
+        ctx.get("singular").unwrap().as_str().unwrap(),
+        msg.as_str().unwrap(),
+        ctx.get("count").unwrap().as_u64().unwrap() as u32
+    );
+    Ok(serde_json::Value::String(Tera::one_off(trans.as_ref(), &ctx, false).unwrap_or(String::from(""))))
+}
+
 pub fn tera(t: &mut Tera) {
-    t.register_filter("_", tera_gettext)
+    t.register_filter("_", tera_gettext);
+    t.register_filter("_n", tera_ngettext);
 }
