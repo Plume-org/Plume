@@ -45,3 +45,7 @@ rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
 features = ["tera_templates", "json"]
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
+
+[dependencies.rocket_i18n]
+git = "https://github.com/BaptisteGelez/rocket_i18n"
+rev = "457b88c59ec31905a9193df43df58bee55b4b83d"

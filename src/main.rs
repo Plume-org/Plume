@@ -25,6 +25,7 @@ extern crate openssl;
 extern crate reqwest;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate rocket_i18n;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -40,7 +41,6 @@ use std::env;
 
 mod activity_pub;
 mod db_conn;
-mod i18n;
 mod models;
 mod schema;
 mod routes;
@@ -130,8 +130,8 @@ fn main() {
         ])
         .manage(init_pool())
         .attach(Template::custom(|engines| {
-            i18n::tera(&mut engines.tera);
+            rocket_i18n::tera(&mut engines.tera);
         }))
-        .attach(i18n::I18n::new("plume"))
+        .attach(rocket_i18n::I18n::new("plume"))
         .launch();
 }
