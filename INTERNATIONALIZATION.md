@@ -33,3 +33,7 @@ Then you should fill the two `msgstr` field, one with the singular form, the sec
 ## Interpolation
 
 Strings you translate may contain data from Plume (a username for instance). To tell Plume where to put these data, surround their identifier by `{{` and `}}`. The identifier is also present in this form in the English string to translate (this what you can see above, with the `{{ count }} posts` message).
+
+## Note
+
+When translating, please try to be as inclusive as possible.
