@@ -1,4 +1,4 @@
-<div>
+<div class="user">
     <h1>
         {{ name }}
         {% if user.is_admin %}

@@ -9,7 +9,6 @@
 {% endblock header %}
 
 {% block content %}
-<<<<<<< HEAD
     <h1 class="article">{{ post.title }}</h1>
     <p class="article-info">
 
@@ -47,17 +46,16 @@
             {% else %}
                 <a class="button" href="like">{{ "Add yours" | _ }}</a>
             {% endif %}
-
+        </div>
+        <div class="reshares">
             <p>
                 {{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}
             </p>
-            <a class="button" href="reshare">
-                {% if has_reshared %}
-                    {{ "I don't want to reshare this anymore" | _ }}
-                {% else %}
-                    {{ "Reshare" | _ }}
-                {% endif %}
-            </a>
+            {% if has_reshared %}
+                <a class="button reshared" href="reshare">{{ "I don't want to reshare this anymore" | _ }}</a>
+            {% else %}
+                <a class="button" href="reshare">{{ "Reshare" | _ }}</a>
+            {% endif %}
         </div>
 
         <div class="comments">
