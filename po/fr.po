@@ -68,22 +68,22 @@ msgstr "Bienvenue sur {{ instance_name }}"
 msgid "Notifications"
 msgstr "Notifications"
 
-msgid "Written by {{ link_start }}{{ name }}{{ link_end }}"
-msgstr "Écrit par {{ link_start}}{{ name }}{{ link_end }}"
+msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Cet article est placé sous la licence {{ license }}"
 
 msgid "One like"
 msgid_plural "{{ count }} likes"
-msgstr[0] "{{ count }} abonné⋅e"
-msgstr[1] "{{ count }} abonné⋅e⋅s"
+msgstr[0] "{{ count }} personne aime cet article"
+msgstr[1] "{{ count }} personnes aiment cet article"
 
 msgid "I don't like this anymore"
 msgstr "Je n'aime plus"
 
 msgid "Add yours"
-msgstr "Ajoutez le votre"
+msgstr "J'aime"
 
 msgid "One reshare"
 msgid_plural "{{ count }} reshares"
@@ -159,7 +159,7 @@ msgid "Unfollow"
 msgstr "Se désabonner"
 
 msgid "Recently reshared"
-msgstr "Récemment repartagés"
+msgstr "Récemment repartagé"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"

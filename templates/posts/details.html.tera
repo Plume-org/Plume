@@ -16,7 +16,14 @@
     {% endif %}
 
     <p>
-        <b>{{ "Written by {{ link_start }}{{ name }}{{ link_end }}" | _(link_start='<a href="/@/{{ author.fqn }}/">', name=name, link_end="</a>")}}</b>
+        <b>{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}" | _(
+            link_1='<a href="/@/',
+            url=author.fqn,
+            link_2='/">',
+            name=name,
+            link_3="</a>"
+            )
+        }}</b>
         &mdash;
         <span>{{ date | date(format="%B %e, %Y") }}</span>
     </p>

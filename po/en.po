@@ -66,7 +66,7 @@ msgstr "Welcome on {{ instance_name }}"
 msgid "Notifications"
 msgstr ""
 
-msgid "Written by {{ link_start }}{{ name }}{{ link_end }}"
+msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
 msgstr ""
 
 msgid "This article is under the {{ license }} license."
