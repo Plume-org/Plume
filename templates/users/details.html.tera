@@ -12,38 +12,7 @@
 {% endblock title %}
 
 {% block content %}
-    <div>
-        <h1>
-            {{ name }}
-            {% if user.is_admin %}
-                <span class="badge">{{ "Admin" | _ }}</span>
-            {% endif %}
-            
-            {% if is_self %}
-                <span class="badge">{{ "It is you" | _ }}</span>
-            {% endif %}
-        </h1>
-
-        {% if is_self %}
-            <a href="edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
-        {% endif %}
-
-        {% if is_remote %}
-            <a class="inline-block button" href="{{ user.ap_url }}">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
-        {% endif %}
-
-        {% if not is_self and account %}
-            {% if follows %}
-                <a href="follow/" class="inline-block button">{{ "Follow" | _ }}</a>
-            {% else %}
-                <a href="follow/" class="inline-block button">{{ "Unfollow" | _ }}</a>
-            {% endif %}
-        {% endif %}
-    </div>
-
-    <div>
-        <a href="followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
-    </div>
+    {% include "users/header" %}
 
     <div>
         {{ user.summary | safe }}
