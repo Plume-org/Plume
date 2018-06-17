@@ -224,31 +224,31 @@ msgid "Register"
 msgstr "S'inscrire"
 
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Vous devez vous connecter pour créer un nouveau blog"
 
 msgid "You need to be logged in order to post a comment"
-msgstr ""
+msgstr "Vous devez vous connecter pour commenter"
 
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "Vous devez vous connecter pour aimer un article"
 
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Vous devez vous connecter pour voir vos notifications"
 
 msgid "You need to be logged in order to write a new post"
-msgstr ""
+msgstr "Vous devez vous connecter pour écrire un article"
 
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Vous devez vous connecter pour repartager un article"
 
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Nom d'utilisateur ou mot de passe invalide"
 
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "Vous devez vous connecter pour accéder à votre tableau de bord"
 
 msgid "You need to be logged in order to follow someone"
-msgstr ""
+msgstr "Vous devez vous connecter pour suivre quelqu'un"
 
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Vous devez vous connecter pour modifier votre profil"
