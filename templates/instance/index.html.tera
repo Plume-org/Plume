@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <h1>{{ _(t="Welcome on {{ instance_name }}", instance_name=instance.name) }}</h1>
+    <h1>{{ "Welcome on {{ instance_name }}" | _(instance_name=instance.name) }}</h1>
 
     <h2>Latest articles</h2>
     <div class="cards">

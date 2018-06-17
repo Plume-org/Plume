@@ -53,11 +53,11 @@ impl Fairing for I18n {
     }
 }
 
-fn tera_gettext(ctx: HashMap<String, serde_json::Value>) -> Result<serde_json::Value, TeraError> {
-    let trans = gettext(ctx.get("t").unwrap().as_str().unwrap());
+fn tera_gettext(msg: serde_json::Value, ctx: HashMap<String, serde_json::Value>) -> Result<serde_json::Value, TeraError> {
+    let trans = gettext(msg.as_str().unwrap());
     Ok(serde_json::Value::String(Tera::one_off(trans.as_ref(), &ctx, false).unwrap_or(String::from(""))))
 }
 
 pub fn tera(t: &mut Tera) {
-    t.register_global_function("_", Box::new(tera_gettext))
+    t.register_filter("_", tera_gettext)
 }
