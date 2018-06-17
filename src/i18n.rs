@@ -32,8 +32,8 @@ impl Fairing for I18n {
     }
 
     fn on_attach(&self, rocket: Rocket) -> Result<Rocket, Rocket> {
-        update_po();
-        compile_po();
+        update_po(self.domain);
+        compile_po(self.domain);
 
         bindtextdomain(self.domain, fs::canonicalize(&PathBuf::from("./translations/")).unwrap().to_str().unwrap());
         textdomain(self.domain);
@@ -58,9 +58,8 @@ impl Fairing for I18n {
     }
 }
 
-
-fn update_po() {
-    let pot_path = Path::new("po").join("plume.pot");
+fn update_po(domain: &str) {
+    let pot_path = Path::new("po").join(format!("{}.pot", domain));
 
     for lang in get_locales() {
         let po_path = Path::new("po").join(format!("{}.po", lang.clone()));
@@ -88,14 +87,14 @@ fn update_po() {
     }
 }
 
-fn compile_po() {
+fn compile_po(domain: &str) {
     for lang in get_locales() {
         let po_path = Path::new("po").join(format!("{}.po", lang.clone()));
         let mo_dir = Path::new("translations")
             .join(lang.clone())
             .join("LC_MESSAGES");
         fs::create_dir_all(mo_dir.clone()).expect("Couldn't create MO directory");
-        let mo_path = mo_dir.join("plume.mo");
+        let mo_path = mo_dir.join(format!("{}.mo", domain));
 
         Command::new("msgfmt")
             .arg(format!("--output-file={}", mo_path.to_str().unwrap()))
