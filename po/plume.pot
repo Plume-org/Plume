@@ -109,15 +109,6 @@ msgstr ""
 msgid "Create a post"
 msgstr ""
 
-msgid "Title"
-msgstr ""
-
-msgid "Content"
-msgstr ""
-
-msgid "License"
-msgstr ""
-
 msgid "Publish"
 msgstr ""
 
@@ -204,12 +195,6 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-msgid "Email"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
 msgid "Password confirmation"
 msgstr ""
 
@@ -220,12 +205,6 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
-
-msgid "Dashboard"
-msgstr ""
-
-msgid "Notifications"
 msgstr ""
 
 msgid "My account"

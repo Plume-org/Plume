@@ -15,10 +15,211 @@ msgstr ""
 msgid "Latest articles"
 msgstr ""
 
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "New article"
+msgstr ""
+
+msgid "New blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "Comment \"{{ post }}\""
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "Submit comment"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Configure your instance"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Let's go!"
+msgstr ""
+
 msgid "Welcome on {{ instance_name }}"
 msgstr "Welcome on {{ instance_name }}"
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Written by {{ link_start }}{{ name }}{{ link_end }}"
+msgstr ""
+
+msgid "This article is under the {{ license }} license."
+msgstr ""
+
+#, fuzzy
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] "One follower"
+msgstr[1] "{{ count }} followers"
+
+msgid "I don't like this anymore"
+msgstr ""
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't want to reshare this anymore"
+msgstr ""
+
+msgid "Reshare"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "Respond"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "New post"
+msgstr ""
+
+msgid "Create a post"
+msgstr ""
+
+msgid "Publish"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Username or email"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Your Dashboard"
+msgstr ""
+
+msgid "Your Blogs"
+msgstr ""
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+
+msgid "Start a new blog"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr ""
+
+#, fuzzy
+msgid "Open on {{ instance_url }}"
+msgstr "Welcome on {{ instance_name }}"
+
+msgid "Follow"
+msgstr ""
+
+#, fuzzy
+msgid "Unfollow"
+msgstr "One follower"
+
+msgid "Recently reshared"
+msgstr ""
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
 msgstr[0] "One follower"
 msgstr[1] "{{ count }} followers"
+
+msgid "Edit your account"
+msgstr ""
+
+msgid "Your Profile"
+msgstr ""
+
+msgid "Display Name"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Update account"
+msgstr ""
+
+#, fuzzy
+msgid "{{ name }}'s followers"
+msgstr "One follower"
+
+#, fuzzy
+msgid "Followers"
+msgstr "One follower"
+
+msgid "New Account"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password confirmation"
+msgstr ""
+
+msgid "Create account"
+msgstr ""
+
+msgid "Plume"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "My account"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "Log In"
+msgstr ""
+
+msgid "Register"
+msgstr ""
