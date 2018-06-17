@@ -129,7 +129,8 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
             json
         }).collect::<Vec<serde_json::Value>>(),
         "account": account,
-        "is_self": account.map(|a| a.id == user_id).unwrap_or(false)
+        "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
+        "n_followers": user.get_followers(&*conn).len()
     }))
 }
 
