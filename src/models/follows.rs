@@ -78,7 +78,8 @@ impl Notify<FollowAct> for Follow {
     fn notify(conn: &PgConnection, follow: FollowAct, actor: Id) {
         let follower = User::from_url(conn, actor.into()).unwrap();
         Notification::insert(conn, NewNotification {
-            title: format!("{} started following you", follower.display_name.clone()),
+            title: "{{ data }} started following you".to_string(),
+            data: Some(follower.display_name.clone()),
             content: None,
             link: Some(follower.ap_url),
             user_id: User::from_url(conn, follow.follow_props.object_link::<Id>().unwrap().into()).unwrap().id

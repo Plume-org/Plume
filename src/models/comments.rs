@@ -152,7 +152,8 @@ impl Notify<Note> for Comment {
                 for author in comment.clone().get_post(conn).get_authors(conn) {
                     let comment = comment.clone();
                     Notification::insert(conn, NewNotification {
-                        title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
+                        title: "{{ data }} commented your article".to_string(),
+                        data: Some(comment.get_author(conn).display_name.clone()),
                         content: Some(comment.get_post(conn).title),
                         link: comment.ap_url,
                         user_id: author.id

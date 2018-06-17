@@ -120,7 +120,8 @@ impl Notify<Announce> for Reshare {
         for author in post.get_authors(conn) {
             let post = post.clone();
             Notification::insert(conn, NewNotification {
-                title: format!("{} reshared your article", actor.display_name.clone()),
+                title: "{{ data }} reshared your article".to_string(),
+                data: Some(actor.display_name.clone()),
                 content: Some(post.title),
                 link: Some(post.ap_url),
                 user_id: author.id
