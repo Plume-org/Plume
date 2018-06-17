@@ -16,150 +16,146 @@ msgid "Latest articles"
 msgstr "Derniers articles"
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Aucun article pour le moment"
 
-#, fuzzy
 msgid "New article"
 msgstr "Derniers articles"
 
 msgid "New blog"
-msgstr ""
+msgstr "Nouveau blog"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Créer un blog"
 
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Créer le blog"
 
 msgid "Comment \"{{ post }}\""
-msgstr ""
+msgstr "Commenter « {{ post }} »"
 
 msgid "Content"
-msgstr ""
+msgstr "Contenu"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Envoyer le commentaire"
 
 msgid "Something broke on our side."
-msgstr ""
+msgstr "Nous avons cassé quelque chose"
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
+msgstr "Nous sommes désolé⋅e⋅s. Si vous pensez que c'est un bogue, merci de le rapporter."
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuration"
 
 msgid "Configure your instance"
-msgstr ""
+msgstr "Configurez votre instance"
 
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 msgid "Let's go!"
-msgstr ""
+msgstr "C'est parti !"
 
 msgid "Welcome on {{ instance_name }}"
 msgstr "Bienvenue sur {{ instance_name }}"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notifications"
 
 msgid "Written by {{ link_start }}{{ name }}{{ link_end }}"
-msgstr ""
+msgstr "Écrit par {{ link_start}}{{ name }}{{ link_end }}"
 
 msgid "This article is under the {{ license }} license."
-msgstr ""
+msgstr "Cet article est placé sous la licence {{ license }}"
 
-#, fuzzy
 msgid "One like"
 msgid_plural "{{ count }} likes"
 msgstr[0] "{{ count }} abonné⋅e"
 msgstr[1] "{{ count }} abonné⋅e⋅s"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Je n'aime plus"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Ajoutez le votre"
 
 msgid "One reshare"
 msgid_plural "{{ count }} reshares"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{{ count }} repartage"
+msgstr[1] "{{ count }} repartages"
 
 msgid "I don't want to reshare this anymore"
-msgstr ""
+msgstr "Je ne veux plus repartager"
 
 msgid "Reshare"
-msgstr ""
+msgstr "Repartagez"
 
 msgid "Comments"
-msgstr ""
+msgstr "Commentaires"
 
 msgid "Respond"
-msgstr ""
+msgstr "Répondre"
 
 msgid "Comment"
-msgstr ""
+msgstr "Commentez"
 
 msgid "New post"
-msgstr ""
+msgstr "Nouvel article"
 
 msgid "Create a post"
-msgstr ""
+msgstr "Créer un article"
 
 msgid "Publish"
-msgstr ""
+msgstr "Publier"
 
 msgid "Login"
-msgstr ""
+msgstr "Se connecter"
 
 msgid "Username or email"
-msgstr ""
+msgstr "Nom d'utilisateur ou email"
 
 msgid "Password"
-msgstr ""
+msgstr "Mot de passe"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Tableau de bord"
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "Votre tableau de bord"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Vos blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Vous n'avez pas encore de blog. Créez le votre, ou demandez à en rejoindre un."
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "Commencez un nouveau blog"
 
 msgid "Admin"
-msgstr ""
+msgstr "Administrateur"
 
 msgid "It is you"
-msgstr ""
+msgstr "C'est vous"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Éditez votre profil"
 
-#, fuzzy
 msgid "Open on {{ instance_url }}"
 msgstr "Bienvenue sur {{ instance_name }}"
 
 msgid "Follow"
-msgstr ""
+msgstr "S'abonner"
 
-#, fuzzy
 msgid "Unfollow"
-msgstr "{{ count }} abonné⋅e"
+msgstr "Se désabonner"
 
 msgid "Recently reshared"
-msgstr ""
+msgstr "Récemment repartagés"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
@@ -167,60 +163,58 @@ msgstr[0] "{{ count }} abonné⋅e"
 msgstr[1] "{{ count }} abonné⋅e⋅s"
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Éditer votre compte"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Votre profil"
 
 msgid "Display Name"
-msgstr ""
+msgstr "Nom affiché"
 
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Summary"
-msgstr ""
+msgstr "Description"
 
 msgid "Update account"
-msgstr ""
+msgstr "Mettre à jour mes informations"
 
-#, fuzzy
 msgid "{{ name }}'s followers"
 msgstr "{{ count }} abonné⋅e"
 
-#, fuzzy
 msgid "Followers"
 msgstr "{{ count }} abonné⋅e"
 
 msgid "New Account"
-msgstr ""
+msgstr "Nouveau compte"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Créer un compte"
 
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 msgid "Password confirmation"
-msgstr ""
+msgstr "Confirmation du mot de passe"
 
 msgid "Create account"
-msgstr ""
+msgstr "Créer mon compte"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menu"
 
 msgid "My account"
-msgstr ""
+msgstr "Mon compte"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Se déconnecter"
 
 msgid "Log In"
-msgstr ""
+msgstr "Se connecter"
 
 msgid "Register"
-msgstr ""
+msgstr "S'inscrire"
