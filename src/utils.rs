@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use heck::CamelCase;
 use rocket::{
     http::uri::Uri,
@@ -15,5 +16,5 @@ pub fn make_actor_id(name: String) -> String {
 }
 
 pub fn requires_login(message: &str, url: &str) -> Flash<Redirect> {
-    Flash::new(Redirect::to(Uri::new(format!("/login?m={}", message))), "callback", url)
+    Flash::new(Redirect::to(Uri::new(format!("/login?m={}", gettext(message.to_string())))), "callback", url)
 }

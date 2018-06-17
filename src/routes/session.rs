@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use rocket::{
     http::{Cookie, Cookies, uri::Uri},
     response::{Redirect, status::NotFound},
@@ -42,7 +43,7 @@ fn create(conn: DbConn, data: Form<LoginForm>, flash: Option<FlashMessage>, mut 
         Some(usr) => Ok(usr),
         None => match User::find_local(&*conn, form.email_or_name.to_string()) {
             Some(usr) => Ok(usr),
-            None => Err("Invalid username or password")
+            None => Err(gettext("Invalid username or password"))
         }
     };
     match user {
@@ -54,7 +55,7 @@ fn create(conn: DbConn, data: Form<LoginForm>, flash: Option<FlashMessage>, mut 
                     .unwrap_or("/".to_owned()))
                 ))
             } else {
-                Err(NotFound(String::from("Invalid username or password")))
+                Err(NotFound(gettext("Invalid username or password")))
             }
         },
         Err(e) => Err(NotFound(String::from(e)))

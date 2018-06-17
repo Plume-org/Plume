@@ -223,3 +223,33 @@ msgstr ""
 
 msgid "Register"
 msgstr ""
+
+msgid "You need to be logged in order to create a new blog"
+msgstr ""
+
+msgid "You need to be logged in order to post a comment"
+msgstr ""
+
+msgid "You need to be logged in order to like a post"
+msgstr ""
+
+msgid "You need to be logged in order to see your notifications"
+msgstr ""
+
+msgid "You need to be logged in order to write a new post"
+msgstr ""
+
+msgid "You need to be logged in order to reshare a post"
+msgstr ""
+
+msgid "Invalid username or password"
+msgstr ""
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr ""
+
+msgid "You need to be logged in order to follow someone"
+msgstr ""
+
+msgid "You need to be logged in order to edit your profile"
+msgstr ""

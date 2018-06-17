@@ -4,3 +4,4 @@ rls
 **/*.rs.bk
 rls
 translations
+po/*.po~

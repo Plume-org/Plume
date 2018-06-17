@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use rocket::{request::Form, response::Redirect};
 use rocket_contrib::{Json, Template};
 use serde_json;
@@ -38,7 +39,7 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
         }
         None => {
             Template::render("errors/500", json!({
-                "error_message": "You need to configure your instance before using it."
+                "error_message": gettext("You need to configure your instance before using it.".to_string())
             }))
         }
     }
