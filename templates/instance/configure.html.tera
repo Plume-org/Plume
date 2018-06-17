@@ -1,15 +1,15 @@
 {% extends "base" %}
 
 {% block title %}
-Configuration
+{{ "Configuration" | _ }}
 {% endblock title %}
 
 {% block content %}
-<h1>Configure your instance</h1>
+<h1>{{ "Configure your instance" | _ }}</h1>
 <form method="post">
-    <label for="name">Name</label>
+    <label for="name">{{ "Name" | _ }}</label>
     <input name="name">
 
-    <input type="submit" value="Let's go!"/>            
+    <input type="submit" value="{{ "Let's go!" | _ }}"/>            
 </form>
 {% endblock content %}

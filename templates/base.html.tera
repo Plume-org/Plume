@@ -2,27 +2,27 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>{% block title %}{% endblock title %} ⋅ Plume</title>
+        <title>{% block title %}{% endblock title %} ⋅ {{ "Plume" | _ }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">        
         <link rel="stylesheet" href="/static/main.css">
     </head>
     <body>
         <header>
-            <nav id="menu"><a href="#">Menu</a></nav>
+            <nav id="menu"><a href="#">{{ "Menu" | _ }}</a></nav>
             <nav>
-                <a href="/">Plume</a>
+                <a href="/">{{ "Plume" | _ }}</a>
                 {% block header %}
                 {% endblock header %}
             </nav>
             <nav>
                 {% if account %}
-                    <a href="/dashboard">Dashboard</a>
-                    <a href="/notifications">Notifications</a>
-                    <a href="/me">My account</a>
-                    <a href="/logout">Log Out</a>
+                    <a href="/dashboard">{{ "Dashboard" | _ }}</a>
+                    <a href="/notifications">{{ "Notifications" | _ }}</a>
+                    <a href="/me">{{ "My account" | _ }}</a>
+                    <a href="/logout">{{ "Log Out" | _ }}</a>
                 {% else %}
-                    <a href="/login">Log In</a>
-                    <a href="/users/new">Register</a>
+                    <a href="/login">{{ "Log In" | _ }}</a>
+                    <a href="/users/new">{{ "Register" | _ }}</a>
                 {% endif %}
             </nav>
         </header>

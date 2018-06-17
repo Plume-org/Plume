@@ -12,6 +12,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Latest articles"
+msgstr ""
+
 msgid "Welcome on {{ instance_name }}"
 msgstr "Welcome on {{ instance_name }}"
 

@@ -69,8 +69,8 @@ fn main() {
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::details,
-            routes::blogs::activity_details,            
-            routes::blogs::outbox,            
+            routes::blogs::activity_details,
+            routes::blogs::outbox,
             routes::blogs::new,
             routes::blogs::new_auth,
             routes::blogs::create,
@@ -111,7 +111,7 @@ fn main() {
             routes::user::details,
             routes::user::dashboard,
             routes::user::dashboard_auth,
-            routes::user::followers,            
+            routes::user::followers,
             routes::user::edit,
             routes::user::edit_auth,
             routes::user::update,

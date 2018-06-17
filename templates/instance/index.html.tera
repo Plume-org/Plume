@@ -8,7 +8,7 @@
 {% block content %}
     <h1>{{ "Welcome on {{ instance_name }}" | _(instance_name=instance.name) }}</h1>
 
-    <h2>Latest articles</h2>
+    <h2>{{ "Latest articles" }}</h2>
     <div class="cards">
         {% for article in recents %}
             {{ macros::post_card(article=article) }}
