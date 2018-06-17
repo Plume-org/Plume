@@ -1,21 +1,21 @@
 {% extends "base" %}
 
 {% block title %}
-New post
+{{ "New post" | _ }}
 {% endblock title %}
 
 {% block content %}
-<h1>Create a post</h1>
+<h1>{{ "Create a post" | _ }}</h1>
 <form method="post">
-    <label for="title">Title</label>
+    <label for="title">{{ "Title" | _ }}</label>
     <input name="title">
 
-    <label for="content">Content</label>
+    <label for="content">{{ "Content" | _ }}</label>
     <textarea name="content"></textarea>
 
-    <label for="license">License</label>
+    <label for="license">{{ "License" | _ }}</label>
     <input name="license">
 
-    <input type="submit" value="Publish"/>            
+    <input type="submit" value="{{ "Publish" | _ }}"/>            
 </form>
 {% endblock content %}

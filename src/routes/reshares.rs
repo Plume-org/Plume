@@ -29,7 +29,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
         broadcast(&*conn, &user, delete_act, user.get_followers(&*conn));
     }
 
-    Redirect::to(format!("/~/{}/{}/", blog, slug).as_ref())
+    Redirect::to(format!("/~/{}/{}/", blog, slug))
 }
 
 #[get("/~/<blog>/<slug>/reshare", rank=1)]

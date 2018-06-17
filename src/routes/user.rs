@@ -27,7 +27,7 @@ use utils;
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect,Flash<Redirect>> {
     match user {
-        Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username).as_ref())),
+        Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username))),
         None => Err(utils::requires_login("", "/me"))
     }
 }
@@ -104,7 +104,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
     broadcast(&*conn, &user, act, vec![target]);
-    Redirect::to(format!("/@/{}/", name).as_ref())
+    Redirect::to(format!("/@/{}/", name))
 }
 
 #[get("/@/<name>/follow", rank = 2)]
@@ -116,7 +116,7 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
     let user = User::find_by_fqn(&*conn, name.clone()).unwrap();
     let user_id = user.id.clone();
-    
+
     Template::render("users/followers", json!({
         "user": serde_json::to_value(user.clone()).unwrap(),
         "instance_url": user.get_instance(&*conn).public_domain,
@@ -208,7 +208,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
             User::hash_pass(form.password.to_string()),
             inst.id
         )).update_boxes(&*conn);
-        Ok(Redirect::to(format!("/@/{}/", data.get().username).as_str()))
+        Ok(Redirect::to(format!("/@/{}/", data.get().username)))
     } else {
         Err(String::from("Passwords don't match"))
     }

@@ -16,33 +16,33 @@
         <h1>
             {{ name }}
             {% if user.is_admin %}
-                <span class="badge">Admin</span>
+                <span class="badge">{{ "Admin" | _ }}</span>
             {% endif %}
             
             {% if is_self %}
-                <span class="badge">It is you</span>
+                <span class="badge">{{ "It is you" | _ }}</span>
             {% endif %}
         </h1>
 
         {% if is_self %}
-            <a href="edit" class="button inline-block">Edit your profile</a>
+            <a href="edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
         {% endif %}
 
         {% if is_remote %}
-            <a class="inline-block button" href="{{ user.ap_url }}">Open on {{ instance_url }}</a>
+            <a class="inline-block button" href="{{ user.ap_url }}">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
         {% endif %}
 
         {% if not is_self and account %}
             {% if follows %}
-                <a href="follow/" class="inline-block button">Follow</a>
+                <a href="follow/" class="inline-block button">{{ "Follow" | _ }}</a>
             {% else %}
-                <a href="follow/" class="inline-block button">Unfollow</a>
+                <a href="follow/" class="inline-block button">{{ "Unfollow" | _ }}</a>
             {% endif %}
         {% endif %}
     </div>
 
     <div>
-        <a href="followers/">{{ n_followers }} follower{{ n_followers | pluralize }}</a>
+        <a href="followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
     </div>
 
     <div>
@@ -50,7 +50,7 @@
     </div>
 
     {% if recents | length != 0 %}    
-        <h2>Latest articles</h2>
+        <h2>{{ "Latest articles" | _ }}</h2>
         <div class="cards">
             {% for article in recents %}
                 {{ macros::post_card(article=article) }}
@@ -59,7 +59,7 @@
     {% endif %}
 
     {% if reshares | length != 0 %}
-        <h2>Recently reshared</h2>
+        <h2>{{ "Recently reshared" | _ }}</h2>
         <div class="cards">
             {% for article in reshares %}
                 {{ macros::post_card(article=article) }}

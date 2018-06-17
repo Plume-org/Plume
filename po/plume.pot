@@ -1,0 +1,251 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Latest articles"
+msgstr ""
+
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "New article"
+msgstr ""
+
+msgid "New blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "Comment \"{{ post }}\""
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "Submit comment"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Configure your instance"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Let's go!"
+msgstr ""
+
+msgid "Welcome on {{ instance_name }}"
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr ""
+
+msgid "This article is under the {{ license }} license."
+msgstr ""
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't like this anymore"
+msgstr ""
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't want to reshare this anymore"
+msgstr ""
+
+msgid "Reshare"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "Respond"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "New post"
+msgstr ""
+
+msgid "Create a post"
+msgstr ""
+
+msgid "Publish"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Username or email"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Your Dashboard"
+msgstr ""
+
+msgid "Your Blogs"
+msgstr ""
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+
+msgid "Start a new blog"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr ""
+
+msgid "Open on {{ instance_url }}"
+msgstr ""
+
+msgid "Follow"
+msgstr ""
+
+msgid "Unfollow"
+msgstr ""
+
+msgid "Recently reshared"
+msgstr ""
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Edit your account"
+msgstr ""
+
+msgid "Your Profile"
+msgstr ""
+
+msgid "Display Name"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Update account"
+msgstr ""
+
+msgid "{{ name }}'s followers"
+msgstr ""
+
+msgid "Followers"
+msgstr ""
+
+msgid "New Account"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password confirmation"
+msgstr ""
+
+msgid "Create account"
+msgstr ""
+
+msgid "Plume"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "My account"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "Log In"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "You need to be logged in order to create a new blog"
+msgstr ""
+
+msgid "You need to be logged in order to post a comment"
+msgstr ""
+
+msgid "You need to be logged in order to like a post"
+msgstr ""
+
+msgid "You need to be logged in order to see your notifications"
+msgstr ""
+
+msgid "You need to be logged in order to write a new post"
+msgstr ""
+
+msgid "You need to be logged in order to reshare a post"
+msgstr ""
+
+msgid "Invalid username or password"
+msgstr ""
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr ""
+
+msgid "You need to be logged in order to follow someone"
+msgstr ""
+
+msgid "You need to be logged in order to edit your profile"
+msgstr ""
+

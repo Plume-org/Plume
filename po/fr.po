@@ -1,0 +1,254 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-06-15 16:33-0700\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Latest articles"
+msgstr "Derniers articles"
+
+msgid "No posts to see here yet."
+msgstr "Aucun article pour le moment"
+
+msgid "New article"
+msgstr "Derniers articles"
+
+msgid "New blog"
+msgstr "Nouveau blog"
+
+msgid "Create a blog"
+msgstr "Créer un blog"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Create blog"
+msgstr "Créer le blog"
+
+msgid "Comment \"{{ post }}\""
+msgstr "Commenter « {{ post }} »"
+
+msgid "Content"
+msgstr "Contenu"
+
+msgid "Submit comment"
+msgstr "Envoyer le commentaire"
+
+msgid "Something broke on our side."
+msgstr "Nous avons cassé quelque chose"
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Nous sommes désolé⋅e⋅s. Si vous pensez que c'est un bogue, merci de le "
+"rapporter."
+
+msgid "Configuration"
+msgstr "Configuration"
+
+msgid "Configure your instance"
+msgstr "Configurez votre instance"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Let's go!"
+msgstr "C'est parti !"
+
+msgid "Welcome on {{ instance_name }}"
+msgstr "Bienvenue sur {{ instance_name }}"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+
+msgid "This article is under the {{ license }} license."
+msgstr "Cet article est placé sous la licence {{ license }}"
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] "{{ count }} personne aime cet article"
+msgstr[1] "{{ count }} personnes aiment cet article"
+
+msgid "I don't like this anymore"
+msgstr "Je n'aime plus"
+
+msgid "Add yours"
+msgstr "J'aime"
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] "{{ count }} repartage"
+msgstr[1] "{{ count }} repartages"
+
+msgid "I don't want to reshare this anymore"
+msgstr "Je ne veux plus repartager"
+
+msgid "Reshare"
+msgstr "Repartagez"
+
+msgid "Comments"
+msgstr "Commentaires"
+
+msgid "Respond"
+msgstr "Répondre"
+
+msgid "Comment"
+msgstr "Commentez"
+
+msgid "New post"
+msgstr "Nouvel article"
+
+msgid "Create a post"
+msgstr "Créer un article"
+
+msgid "Publish"
+msgstr "Publier"
+
+msgid "Login"
+msgstr "Se connecter"
+
+msgid "Username or email"
+msgstr "Nom d'utilisateur ou email"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Your Dashboard"
+msgstr "Votre tableau de bord"
+
+msgid "Your Blogs"
+msgstr "Vos blogs"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Vous n'avez pas encore de blog. Créez le votre, ou demandez à en rejoindre "
+"un."
+
+msgid "Start a new blog"
+msgstr "Commencez un nouveau blog"
+
+msgid "Admin"
+msgstr "Administrateur"
+
+msgid "It is you"
+msgstr "C'est vous"
+
+msgid "Edit your profile"
+msgstr "Éditez votre profil"
+
+msgid "Open on {{ instance_url }}"
+msgstr "Bienvenue sur {{ instance_name }}"
+
+msgid "Follow"
+msgstr "S'abonner"
+
+msgid "Unfollow"
+msgstr "Se désabonner"
+
+msgid "Recently reshared"
+msgstr "Récemment repartagé"
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] "{{ count }} abonné⋅e"
+msgstr[1] "{{ count }} abonné⋅e⋅s"
+
+msgid "Edit your account"
+msgstr "Éditer votre compte"
+
+msgid "Your Profile"
+msgstr "Votre profil"
+
+msgid "Display Name"
+msgstr "Nom affiché"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Summary"
+msgstr "Description"
+
+msgid "Update account"
+msgstr "Mettre à jour mes informations"
+
+msgid "{{ name }}'s followers"
+msgstr "{{ count }} abonné⋅e"
+
+msgid "Followers"
+msgstr "{{ count }} abonné⋅e"
+
+msgid "New Account"
+msgstr "Nouveau compte"
+
+msgid "Create an account"
+msgstr "Créer un compte"
+
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+msgid "Password confirmation"
+msgstr "Confirmation du mot de passe"
+
+msgid "Create account"
+msgstr "Créer mon compte"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "My account"
+msgstr "Mon compte"
+
+msgid "Log Out"
+msgstr "Se déconnecter"
+
+msgid "Log In"
+msgstr "Se connecter"
+
+msgid "Register"
+msgstr "S'inscrire"
+
+msgid "You need to be logged in order to create a new blog"
+msgstr "Vous devez vous connecter pour créer un nouveau blog"
+
+msgid "You need to be logged in order to post a comment"
+msgstr "Vous devez vous connecter pour commenter"
+
+msgid "You need to be logged in order to like a post"
+msgstr "Vous devez vous connecter pour aimer un article"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Vous devez vous connecter pour voir vos notifications"
+
+msgid "You need to be logged in order to write a new post"
+msgstr "Vous devez vous connecter pour écrire un article"
+
+msgid "You need to be logged in order to reshare a post"
+msgstr "Vous devez vous connecter pour repartager un article"
+
+msgid "Invalid username or password"
+msgstr "Nom d'utilisateur ou mot de passe invalide"
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Vous devez vous connecter pour accéder à votre tableau de bord"
+
+msgid "You need to be logged in order to follow someone"
+msgstr "Vous devez vous connecter pour suivre quelqu'un"
+
+msgid "You need to be logged in order to edit your profile"
+msgstr "Vous devez vous connecter pour modifier votre profil"

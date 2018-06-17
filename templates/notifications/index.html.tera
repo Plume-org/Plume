@@ -1,11 +1,11 @@
 {% extends "base" %}
 
 {% block title %}
-Notifications
+{{ "Notifications" | _ }}
 {% endblock title %}
 
 {% block content %}
-    <h1>Notifications</h1>
+    <h1>{{ "Notifications" | _ }}</h1>
     <div class="list">
         {% for notification in notifications %}
             <div class="card">
