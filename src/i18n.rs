@@ -4,7 +4,9 @@ use serde_json;
 use std::collections::HashMap;
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::io::{BufRead, BufReader};
+use std::path::{Path, PathBuf};
+use std::process::Command;
 use tera::{Tera, Error as TeraError};
 
 const ACCEPT_LANG: &'static str = "Accept-Language";
@@ -30,6 +32,9 @@ impl Fairing for I18n {
     }
 
     fn on_attach(&self, rocket: Rocket) -> Result<Rocket, Rocket> {
+        update_po();
+        compile_po();
+
         bindtextdomain(self.domain, fs::canonicalize(&PathBuf::from("./translations/")).unwrap().to_str().unwrap());
         textdomain(self.domain);
         Ok(rocket)
@@ -51,6 +56,59 @@ impl Fairing for I18n {
         env::set_var("LANGUAGE", lang);
         setlocale(LocaleCategory::LcAll, "");
     }
+}
+
+
+fn update_po() {
+    let pot_path = Path::new("po").join("plume.pot");
+
+    for lang in get_locales() {
+        let po_path = Path::new("po").join(format!("{}.po", lang.clone()));
+        if po_path.exists() && po_path.is_file() {
+            println!("Updating {}", lang.clone());
+            // Update it
+            Command::new("msgmerge")
+                .arg("-U")
+                .arg(po_path.to_str().unwrap())
+                .arg(pot_path.to_str().unwrap())
+                .spawn()
+                .expect("Couldn't update PO file");
+        } else {
+            println!("Creating {}", lang.clone());
+            // Create it from the template
+            Command::new("msginit")
+                .arg(format!("--input={}", pot_path.to_str().unwrap()))
+                .arg(format!("--output-file={}", po_path.to_str().unwrap()))
+                .arg("-l")
+                .arg(lang)
+                .arg("--no-translator")
+                .spawn()
+                .expect("Couldn't init PO file");
+        }
+    }
+}
+
+fn compile_po() {
+    for lang in get_locales() {
+        let po_path = Path::new("po").join(format!("{}.po", lang.clone()));
+        let mo_dir = Path::new("translations")
+            .join(lang.clone())
+            .join("LC_MESSAGES");
+        fs::create_dir_all(mo_dir.clone()).expect("Couldn't create MO directory");
+        let mo_path = mo_dir.join("plume.mo");
+
+        Command::new("msgfmt")
+            .arg(format!("--output-file={}", mo_path.to_str().unwrap()))
+            .arg(po_path)
+            .spawn()
+            .expect("Couldn't compile translations");
+    }
+}
+
+fn get_locales() -> Vec<String> {
+    let linguas_file = fs::File::open(Path::new("po").join("LINGUAS")).expect("Couldn't find po/LINGUAS file");
+    let linguas = BufReader::new(&linguas_file);
+    linguas.lines().map(Result::unwrap).collect()
 }
 
 fn tera_gettext(msg: serde_json::Value, ctx: HashMap<String, serde_json::Value>) -> Result<serde_json::Value, TeraError> {
