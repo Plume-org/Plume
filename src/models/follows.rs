@@ -1,9 +1,12 @@
 use activitypub::{Actor, activity::{Accept, Follow as FollowAct}};
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use activity_pub::{broadcast, Id, IntoId, actor::Actor as ApActor, inbox::{FromActivity, WithInbox}, sign::Signer};
-use models::blogs::Blog;
-use models::users::User;
+use activity_pub::{broadcast, Id, IntoId, actor::Actor as ApActor, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
+use models::{
+    blogs::Blog,
+    notifications::*,
+    users::User
+};
 use schema::follows;
 
 #[derive(Queryable, Identifiable, Associations)]
@@ -68,5 +71,17 @@ impl FromActivity<FollowAct> for Follow {
                 Follow::accept_follow(conn, &from, &blog, follow, from.id, blog.id)
             }
         }
+    }
+}
+
+impl Notify<FollowAct> for Follow {
+    fn notify(conn: &PgConnection, follow: FollowAct, actor: Id) {
+        let follower = User::from_url(conn, actor.into()).unwrap();
+        Notification::insert(conn, NewNotification {
+            title: format!("{} started following you", follower.display_name.clone()),
+            content: None,
+            link: Some(follower.ap_url),
+            user_id: User::from_url(conn, follow.follow_props.object_link::<Id>().unwrap().into()).unwrap().id
+        });
     }
 }

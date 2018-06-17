@@ -1,0 +1,254 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-06-17 20:57+0200\n"
+"Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
+"Language-Team: none\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 " "|| n%100>=20) ? 1 : 2);\n"
+
+msgid "Latest articles"
+msgstr "Najnowsze artykuły"
+
+msgid "No posts to see here yet."
+msgstr "Brak wpisów do wyświetlenia."
+
+msgid "New article"
+msgstr "Nowy artykuł"
+
+msgid "New blog"
+msgstr "Nowy blog"
+
+msgid "Create a blog"
+msgstr "Utwórz blog"
+
+msgid "Title"
+msgstr "Tytuł"
+
+msgid "Create blog"
+msgstr "Utwórz blog"
+
+msgid "Comment \"{{ post }}\""
+msgstr "Komentarz „{{ post }}”"
+
+msgid "Content"
+msgstr "Zawartość"
+
+msgid "Submit comment"
+msgstr "Wyślij komentarz"
+
+msgid "Something broke on our side."
+msgstr "Coś poszło nie tak."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Przepraszamy. Jeżeli uważasz że wystąpił błąd, prosimy o zgłoszenie go."
+
+msgid "Configuration"
+msgstr "Konfiguracja"
+
+msgid "Configure your instance"
+msgstr "Skonfiguruj swoją instancję"
+
+msgid "Name"
+msgstr "Nazwa"
+
+msgid "Let's go!"
+msgstr "Przejdźmy dalej!"
+
+msgid "Welcome on {{ instance_name }}"
+msgstr "Witamy na {{ instance_name }}"
+
+msgid "Notifications"
+msgstr "Powiadomienia"
+
+msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+
+msgid "This article is under the {{ license }} license."
+msgstr "Ten artykuł został opublikowany na licencji {{ license }}."
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] "Jedno polubienie"
+msgstr[1] "{{ count }} polubienia"
+msgstr[2] "{{ count }} polubień"
+
+msgid "I don't like this anymore"
+msgstr "Już tego nie lubię"
+
+msgid "Add yours"
+msgstr "Dodaj swoje"
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] "Jedno udostępnienie"
+msgstr[1] "{{ count }} udostępnienia"
+msgstr[2] "{{ count }} udostępnień"
+
+msgid "I don't want to reshare this anymore"
+msgstr "Cofnij udostępnienie"
+
+msgid "Reshare"
+msgstr "Udostępnij"
+
+msgid "Comments"
+msgstr "Komentarze"
+
+msgid "Respond"
+msgstr "Odpowiedz"
+
+msgid "Comment"
+msgstr "Skomentuj"
+
+msgid "New post"
+msgstr "Nowy wpis"
+
+msgid "Create a post"
+msgstr "Utwórz wpis"
+
+msgid "Publish"
+msgstr "Opublikuj"
+
+msgid "Logowanie"
+msgstr "Zaloguj się"
+
+msgid "Username or email"
+msgstr "Nazwa użytkownika lub adres e-mail"
+
+msgid "Password"
+msgstr "Hasło"
+
+msgid "Dashboard"
+msgstr "Panel"
+
+msgid "Your Dashboard"
+msgstr "Twój panel"
+
+msgid "Your Blogs"
+msgstr "Twoje blogi"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Nie posiadasz żadnego bloga. Utwórz własny, lub poproś o dołączanie do istniejącego."
+
+msgid "Start a new blog"
+msgstr "Utwórz nowy blog"
+
+msgid "Admin"
+msgstr "Administrator"
+
+msgid "It is you"
+msgstr "To Ty"
+
+msgid "Edit your profile"
+msgstr "Edytuj swój profil"
+
+msgid "Open on {{ instance_url }}"
+msgstr "Otwórz na {{ instance_url }}"
+
+msgid "Follow"
+msgstr "Obserwuj"
+
+msgid "Unfollow"
+msgstr "Przestań obserwować"
+
+msgid "Recently reshared"
+msgstr "Ostatnio udostępniono"
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] "Jeden obserwujący"
+msgstr[1] "{{ count }} obserwujących"
+msgstr[2] "{{ count }} obserwujących"
+
+msgid "Edit your account"
+msgstr "Edytuj swoje konto"
+
+msgid "Your Profile"
+msgstr "Twój profil"
+
+msgid "Display Name"
+msgstr "Nazwa wyświetlana"
+
+msgid "Email"
+msgstr "Adres e-mail"
+
+msgid "Summary"
+msgstr "Opis"
+
+msgid "Update account"
+msgstr "Aktualizuj konto"
+
+msgid "{{ name }}'s followers"
+msgstr "Osoby śledzące {{ name }}"
+
+msgid "Followers"
+msgstr "Śledzący"
+
+msgid "New Account"
+msgstr "Nowe konto"
+
+msgid "Create an account"
+msgstr "Utwórz nowe konto"
+
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+msgid "Password confirmation"
+msgstr "Potwierdzenie hasła"
+
+msgid "Create account"
+msgstr "Utwórz konto"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "My account"
+msgstr "Moje konto"
+
+msgid "Log Out"
+msgstr "Wyloguj się"
+
+msgid "Log In"
+msgstr "Zaloguj się"
+
+msgid "Register"
+msgstr "Zarejestruj się"
+
+msgid "You need to be logged in order to create a new blog"
+msgstr "Musisz się zalogować, aby utworzyć nowy blog"
+
+msgid "You need to be logged in order to post a comment"
+msgstr "Musisz się zalogować, aby umieścić komentarz"
+
+msgid "You need to be logged in order to like a post"
+msgstr "Musisz się zalogować, aby polubić wpis"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
+
+msgid "You need to be logged in order to write a new post"
+msgstr "Musisz się zalogować, aby utworzyć wpis"
+
+msgid "You need to be logged in order to reshare a post"
+msgstr "Musisz się zalogować, aby udostępnić wpis"
+
+msgid "Invalid username or password"
+msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
+
+msgid "You need to be logged in order to follow someone"
+msgstr "Musisz się zalogować, aby zacząć obserwować innych"
+
+msgid "You need to be logged in order to edit your profile"
+msgstr "Musisz się zalogować , aby móc edytować swój profil"
+

@@ -1,5 +1,5 @@
 use activitypub::{
-    Activity, Object,
+    Object,
     activity::{Create, Like, Undo}
 };
 use diesel::PgConnection;
@@ -40,7 +40,7 @@ pub trait FromActivity<T: Object>: Sized {
     }
 }
 
-pub trait Notify<T: Activity> {
+pub trait Notify<T: Object> {
     fn notify(conn: &PgConnection, act: T, actor: Id);
 }
 
