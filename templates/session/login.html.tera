@@ -1,21 +1,21 @@
 {% extends "base" %}
 
 {% block title %}
-Login
+{{ "Login" | _ }}
 {% endblock title %}
 
 {% block content %}
-<h1>Login</h1>
+<h1>{{ "Login" | _ }}</h1>
 {% if message %}
 <p>{{ message }}</p>
 {% endif %}
 <form method="post">
-    <label for="email_or_name">Username or email</label>
+    <label for="email_or_name">{{ "Username or email" | _ }}</label>
     <input type="text" id="email_or_name" name="email_or_name" />
 
-    <label for="password">Password</label>
+    <label for="password">{{ "Password" | _ }}</label>
     <input type="password" id="password" name="password" />
 
-    <input type="submit" value="Login" />            
+    <input type="submit" value="{{ "Login" | _ }}" />
 </form>
 {% endblock content %}

@@ -285,6 +285,16 @@ impl User {
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 
+    pub fn is_following(&self, conn: &PgConnection, other_id: i32) -> bool {
+        use schema::follows;
+        follows::table
+            .filter(follows::follower_id.eq(other_id))
+            .filter(follows::following_id.eq(self.id))
+            .load::<Follow>(conn)
+            .expect("Couldn't load follow relationship")
+            .len() > 0
+    }
+
     pub fn has_liked(&self, conn: &PgConnection, post: &Post) -> bool {
         use schema::likes;
         use models::likes::Like;

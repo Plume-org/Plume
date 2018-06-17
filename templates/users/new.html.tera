@@ -1,24 +1,24 @@
 {% extends "base" %}
 
 {% block title %}
-New Account
+{{ "New Account" | _ }}
 {% endblock title %}
 
 {% block content %}
-<h1>Create an account</h1>
+<h1>{{ "Create an account" | _ }}</h1>
 <form method="post">
-    <label for="username">Username</label>
+    <label for="username">{{ "Username" | _ }}</label>
     <input type="text" id="username" name="username" />
 
-    <label for="email">Email</label>
+    <label for="email">{{ "Email" | _ }}</label>
     <input type="email" id="email" name="email" />
 
-    <label for="password">Password</label>
+    <label for="password">{{ "Password" | _ }}</label>
     <input type="password" id="password" name="password" />
 
-    <label for="password_confirmation">Password confirmation</label>
+    <label for="password_confirmation">{{ "Password confirmation" | _ }}</label>
     <input type="password" id="password_confirmation" name="password_confirmation" />
 
-    <input type="submit" value="Create account" />            
+    <input type="submit" value="{{ "Create account" | _ }}" />
 </form>
 {% endblock content %}

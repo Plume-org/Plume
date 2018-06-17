@@ -4,8 +4,10 @@ use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 use serde_json;
 
 use activity_pub::{
+    Id,
     IntoId,
     actor::Actor,
+    inbox::{FromActivity, Deletable},
     object::Object
 };
 use models::{
@@ -91,6 +93,29 @@ impl Like {
         )).unwrap();
 
         act
+    }
+}
+
+impl FromActivity<activity::Like> for Like {
+    fn from_activity(conn: &PgConnection, like: activity::Like, _actor: Id) -> Like {
+        let liker = User::from_url(conn, like.like_props.actor.as_str().unwrap().to_string());
+        let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().unwrap().to_string());
+        Like::insert(conn, NewLike {
+            post_id: post.unwrap().id,
+            user_id: liker.unwrap().id,
+            ap_url: like.object_props.id_string().unwrap_or(String::from(""))
+        })
+    }
+}
+
+impl Deletable for Like {
+    fn delete_activity(conn: &PgConnection, id: Id) -> bool {
+        if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
+            like.delete(conn);
+            true
+        } else {
+            false
+        }
     }
 }
 

@@ -2,18 +2,18 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Dashboard
+{{ "Dashboard" | _ }}
 {% endblock title %}
 
 {% block content %}
-    <h1>Your Dashboard</h1>
+    <h1>{{ "Your Dashboard" | _ }}</h1>
 
     <section>
-        <h2>Your Blogs</h2>
+        <h2>{{ "Your Blogs" | _ }}</h2>
         {% if blogs | length < 1 %}
-            <p>You don't have any blog yet. Create your own, or ask to join one.</p>
+            <p>{{ "You don't have any blog yet. Create your own, or ask to join one." | _ }}</p>
         {% endif %}
-        <a class="button inline-block" href="/blogs/new">Start a new blog</a>
+        <a class="button inline-block" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
         <div class="list">
             {% for blog in blogs %}
                 <div class="card">

@@ -1,28 +1,28 @@
 {% extends "base" %}
 
 {% block title %}
-{{ user.display_name }}'s Followers
+{% if user.display_name %}
+    {% set name = user.display_name %}
+{% else %}
+    {% set name = user.username %}
+{% endif %}
+
+{{ "{{ name }}'s followers" | _(name=name) }}
 {% endblock title %}
 
 {% block content %}
-    <div>
-        <h1>
-            {{ user.display_name }}
-            {% if user.is_admin %}
-                <span class="badge">Admin</span>
-            {% endif %}
-            
-            {% if is_self %}
-                <span class="badge">It is you</span>
-            {% endif %}
-        </h1>
-    </div>
+    {% include "users/header" %}
 
-    <h2>Followers</h2>
+    <h2>{{ "Followers" | _ }}</h2>
     <div class="cards">
     {% for follower in followers %}
+        {% if follower.display_name %}
+            {% set follower_name = follower.display_name %}
+        {% else %}
+            {% set follower_name = follower.username %}
+        {% endif %}
         <div class="card">
-            <h3><a href="{{ follower.ap_url }}/">{{ follower.display_name }}</a> &mdash; @{{ follower.fqn }}</h3>
+            <h3><a href="/@/{{ follower.fqn }}/">{{ follower_name }}</a> &mdash; @{{ follower.fqn }}</h3>
             <main><p>{{ follower.summary | safe }}</p></main>
         </div>
     {% endfor %}

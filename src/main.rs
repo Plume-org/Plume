@@ -1,7 +1,8 @@
-#![feature(plugin, custom_derive, iterator_find_map)]
+#![feature(plugin, custom_derive, decl_macro, iterator_find_map)]
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
+extern crate ammonia;
 extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
@@ -10,6 +11,7 @@ extern crate comrak;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
+extern crate gettextrs;
 extern crate heck;
 extern crate hex;
 #[macro_use]
@@ -23,13 +25,14 @@ extern crate openssl;
 extern crate reqwest;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate rocket_i18n;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate tera;
 extern crate url;
-extern crate ammonia;
 
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
@@ -66,8 +69,8 @@ fn main() {
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::details,
-            routes::blogs::activity_details,            
-            routes::blogs::outbox,            
+            routes::blogs::activity_details,
+            routes::blogs::outbox,
             routes::blogs::new,
             routes::blogs::new_auth,
             routes::blogs::create,
@@ -108,7 +111,7 @@ fn main() {
             routes::user::details,
             routes::user::dashboard,
             routes::user::dashboard_auth,
-            routes::user::followers,            
+            routes::user::followers,
             routes::user::edit,
             routes::user::edit_auth,
             routes::user::update,
@@ -126,6 +129,9 @@ fn main() {
             routes::well_known::webfinger
         ])
         .manage(init_pool())
-        .attach(Template::fairing())
+        .attach(Template::custom(|engines| {
+            rocket_i18n::tera(&mut engines.tera);
+        }))
+        .attach(rocket_i18n::I18n::new("plume"))
         .launch();
 }

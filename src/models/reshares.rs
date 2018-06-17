@@ -1,8 +1,8 @@
-use activitypub::activity;
+use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{IntoId, actor::Actor, object::Object};
+use activity_pub::{Id, IntoId, actor::Actor, inbox::FromActivity, object::Object};
 use models::{posts::Post, users::User};
 use schema::reshares;
 
@@ -80,21 +80,33 @@ impl Reshare {
         Post::get(conn, self.post_id)
     }
 
-    pub fn delete(&self, conn: &PgConnection) -> activity::Undo {
+    pub fn delete(&self, conn: &PgConnection) -> Undo {
         diesel::delete(self).execute(conn).unwrap();
 
-        let mut act = activity::Undo::default();
+        let mut act = Undo::default();
         act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
         act.undo_props.set_object_object(self.into_activity(conn)).unwrap();
         act
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> activity::Announce {
-        let mut act = activity::Announce::default();
+    pub fn into_activity(&self, conn: &PgConnection) -> Announce {
+        let mut act = Announce::default();
         act.announce_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
         act.announce_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
         act.object_props.set_id_string(self.ap_url.clone()).unwrap();
 
         act
+    }
+}
+
+impl FromActivity<Announce> for Reshare {
+    fn from_activity(conn: &PgConnection, announce: Announce, _actor: Id) -> Reshare {
+        let user = User::from_url(conn, announce.announce_props.actor.as_str().unwrap().to_string());
+        let post = Post::find_by_ap_url(conn, announce.announce_props.object.as_str().unwrap().to_string());
+        Reshare::insert(conn, NewReshare {
+            post_id: post.unwrap().id,
+            user_id: user.unwrap().id,
+            ap_url: announce.object_props.id_string().unwrap_or(String::from(""))
+        })
     }
 }

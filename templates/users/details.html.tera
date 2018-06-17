@@ -2,37 +2,24 @@
 {% import "macros" as macros %}
 
 {% block title %}
-{{ user.display_name }}
+{% if user.display_name %}
+    {% set name = user.display_name %}
+{% else %}
+    {% set name = user.username %}
+{% endif %}
+
+{{ name }}
 {% endblock title %}
 
 {% block content %}
-    <div>
-        <h1>
-            {{ user.display_name }}
-            {% if user.is_admin %}
-                <span class="badge">Admin</span>
-            {% endif %}
-            
-            {% if is_self %}
-                <span class="badge">It is you</span>
-            {% endif %}
-        </h1>
-
-        {% if is_self %}
-            <a href="edit" class="button inline-block">Edit your profile</a>
-        {% endif %}
-    </div>
-
-    <div>
-        <a href="followers">{{ n_followers }} follower{{ n_followers | pluralize }}</a>
-    </div>
+    {% include "users/header" %}
 
     <div>
         {{ user.summary | safe }}
     </div>
 
     {% if recents | length != 0 %}    
-        <h2>Latest articles</h2>
+        <h2>{{ "Latest articles" | _ }}</h2>
         <div class="cards">
             {% for article in recents %}
                 {{ macros::post_card(article=article) }}
@@ -41,7 +28,7 @@
     {% endif %}
 
     {% if reshares | length != 0 %}
-        <h2>Recently reshared</h2>
+        <h2>{{ "Recently reshared" | _ }}</h2>
         <div class="cards">
             {% for article in reshares %}
                 {{ macros::post_card(article=article) }}

@@ -1,15 +1,15 @@
 {% extends "base" %}
 
 {% block title %}
-Comment "{{ post.title }}"
+{{ 'Comment "{{ post }}"' | _(post=post.title) }}
 {% endblock title %}
 
 {% block content %}
-<h1>Comment "{{ post.title }}"</h1>
+<h1>{{ 'Comment "{{ post }}"' | _(post=post.title) }}</h1>
 <form method="post">
-    <label for="content">Content</label>
+    <label for="content">{{ "Content" | _ }}</label>
     <textarea id="content" name="content"></textarea>
-    <input type="submit" value="Comment" />
+    <input type="submit" value="{{ "Submit comment" | _ }}" />
 </form>
 {% endblock content %}
 

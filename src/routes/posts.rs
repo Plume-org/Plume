@@ -36,7 +36,12 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
             json!({
                 "id": c.id,
                 "content": c.content,
-                "author": c.get_author(&*conn)
+                "author": ({
+                    let author = &c.get_author(&*conn);
+                    let mut json = serde_json::to_value(author).unwrap();
+                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
+                    json
+                })
             })
         }).collect::<Vec<serde_json::Value>>(),
         "n_likes": post.get_likes(&*conn).len(),
@@ -115,5 +120,5 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     let act = post.create_activity(&*conn);
     broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
-    Redirect::to(format!("/~/{}/{}/", blog_name, slug).as_str())
+    Redirect::to(format!("/~/{}/{}/", blog_name, slug))
 }

@@ -7,8 +7,9 @@ use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::
 use serde_json;
 
 use activity_pub::{
-    ap_url, IntoId, PUBLIC_VISIBILTY,
+    ap_url, Id, IntoId, PUBLIC_VISIBILTY,
     actor::Actor,
+    inbox::FromActivity,
     object::Object
 };
 use models::{
@@ -120,6 +121,24 @@ impl Comment {
             .load::<Comment>(conn)
             .expect("Couldn't load local comments")
             .len()
+    }
+}
+
+impl FromActivity<Note> for Comment {
+    fn from_activity(conn: &PgConnection, note: Note, actor: Id) -> Comment {
+        let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
+        let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
+        Comment::insert(conn, NewComment {
+            content: SafeString::new(&note.object_props.content_string().unwrap()),
+            spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
+            ap_url: note.object_props.id_string().ok(),
+            in_response_to_id: previous_comment.clone().map(|c| c.id),
+            post_id: previous_comment
+                .map(|c| c.post_id)
+                .unwrap_or_else(|| Post::find_by_ap_url(conn, previous_url).unwrap().id),
+            author_id: User::from_url(conn, actor.into()).unwrap().id,
+            sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
+        })
     }
 }
 

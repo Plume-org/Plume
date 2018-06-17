@@ -9,9 +9,24 @@
 {% endblock header %}
 
 {% block content %}
+<<<<<<< HEAD
     <h1 class="article">{{ post.title }}</h1>
     <p class="article-info">
-        <span class="author">Written by <a href="/@/{{ author.fqn }}/">{{ author.display_name }}</a></span>
+
+    {% if author.display_name %}
+        {% set name = author.display_name %}
+    {% else %}
+        {% set name = author.username %}
+    {% endif %}
+
+        <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}" | _(
+            link_1='<a href="/@/',
+            url=author.fqn,
+            link_2='/">',
+            name=name,
+            link_3="</a>"
+            )
+        }}</a></span>
         &mdash;
         <span class="date">{{ date | date(format="%B %e, %Y") }}</span>
     </p>
@@ -20,43 +35,49 @@
     </article>
 
     <div class="article-meta">
-        <p>This article is under the {{ post.license }} license.</p>
+        <p>{{ "This article is under the {{ license }} license." | _(license=post.license) }}</p>
 
         <div class="likes">
             <p>
-                {{ n_likes }} like{{ n_likes | pluralize }}
+                {{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}
             </p>
 
             {% if has_liked %}
-                <a class="button liked" href="like">I don't like this anymore</a>
+                <a class="button liked" href="like">{{ "I don't like this anymore" | _ }}</a>
             {% else %}
-                <a class="button" href="like">Like</a>
+                <a class="button" href="like">{{ "Add yours" | _ }}</a>
             {% endif %}
 
             <p>
-                {{ n_reshares }} reshare{{ n_reshares | pluralize }}
+                {{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}
             </p>
             <a class="button" href="reshare">
                 {% if has_reshared %}
-                    I don't want to reshare this anymore
+                    {{ "I don't want to reshare this anymore" | _ }}
                 {% else %}
-                    Reshare
+                    {{ "Reshare" | _ }}
                 {% endif %}
             </a>
         </div>
 
         <div class="comments">
-            <h2>Comments</h2>
-            <a class="button" href="comment?">Comment</a>
+            <h2>{{ "Comments" | _ }}</h2>
+            <a class="button" href="comment?">{{ "Comment" | _ }}</a>
             <div class="list">
                 {% for comment in comments %}
+                    {% if comment.author.display_name %}
+                        {% set comment_author_name = comment.author.display_name %}
+                    {% else %}
+                        {% set comment_author_name = comment.author.username %}
+                    {% endif %}
+
                     <div class="comment" id="comment-{{ comment.id }}">
                         <a class="author" href="{{ comment.author.ap_url }}">
                             <span class="display-name">{{ comment.author.display_name }}</span>
                             <span class="username">@{{ comment.author.username }}</span>
                         </a>
                         <div class="text">{{ comment.content | safe }}</div>
-                        <a class="button" href="comment?responding_to={{ comment.id }}">Respond</a>
+                        <a class="button" href="comment?responding_to={{ comment.id }}">{{ "Respond" | _ }}</a>
                     </div>
                 {% endfor %}
             </div>

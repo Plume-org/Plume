@@ -1,5 +1,9 @@
+use gettextrs::gettext;
 use heck::CamelCase;
-use rocket::response::{Redirect, Flash};
+use rocket::{
+    http::uri::Uri,
+    response::{Redirect, Flash}
+};
 
 /// Remove non alphanumeric characters and CamelCase a string
 pub fn make_actor_id(name: String) -> String {
@@ -12,5 +16,5 @@ pub fn make_actor_id(name: String) -> String {
 }
 
 pub fn requires_login(message: &str, url: &str) -> Flash<Redirect> {
-    Flash::new(Redirect::to(&format!("/login?m={}", message)), "callback", url)
+    Flash::new(Redirect::to(Uri::new(format!("/login?m={}", gettext(message.to_string())))), "callback", url)
 }
