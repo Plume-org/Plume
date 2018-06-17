@@ -7,10 +7,11 @@ use activity_pub::{
     Id,
     IntoId,
     actor::Actor,
-    inbox::{FromActivity, Deletable},
+    inbox::{FromActivity, Deletable, Notify},
     object::Object
 };
 use models::{
+    notifications::*,
     posts::Post,
     users::User
 };
@@ -97,14 +98,32 @@ impl Like {
 }
 
 impl FromActivity<activity::Like> for Like {
-    fn from_activity(conn: &PgConnection, like: activity::Like, _actor: Id) -> Like {
+    fn from_activity(conn: &PgConnection, like: activity::Like, actor: Id) -> Like {
         let liker = User::from_url(conn, like.like_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().unwrap().to_string());
-        Like::insert(conn, NewLike {
+        let res = Like::insert(conn, NewLike {
             post_id: post.unwrap().id,
             user_id: liker.unwrap().id,
             ap_url: like.object_props.id_string().unwrap_or(String::from(""))
-        })
+        });
+        Like::notify(conn, like, actor);
+        res
+    }
+}
+
+impl Notify<activity::Like> for Like {
+    fn notify(conn: &PgConnection, like: activity::Like, actor: Id) {
+        let liker = User::from_url(conn, actor.into()).unwrap();
+        let post = Post::find_by_ap_url(conn, like.like_props.object_link::<Id>().unwrap().into()).unwrap();
+        for author in post.get_authors(conn) {
+            let post = post.clone();
+            Notification::insert(conn, NewNotification {
+                title: format!("{} liked your article", liker.display_name.clone()),
+                content: Some(post.title),
+                link: Some(post.ap_url),
+                user_id: author.id
+            });
+        }
     }
 }
 

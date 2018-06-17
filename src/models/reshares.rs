@@ -2,8 +2,8 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, actor::Actor, inbox::FromActivity, object::Object};
-use models::{posts::Post, users::User};
+use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify}, object::Object};
+use models::{notifications::*, posts::Post, users::User};
 use schema::reshares;
 
 #[derive(Serialize, Deserialize, Queryable, Identifiable)]
@@ -100,13 +100,31 @@ impl Reshare {
 }
 
 impl FromActivity<Announce> for Reshare {
-    fn from_activity(conn: &PgConnection, announce: Announce, _actor: Id) -> Reshare {
+    fn from_activity(conn: &PgConnection, announce: Announce, actor: Id) -> Reshare {
         let user = User::from_url(conn, announce.announce_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, announce.announce_props.object.as_str().unwrap().to_string());
-        Reshare::insert(conn, NewReshare {
+        let reshare = Reshare::insert(conn, NewReshare {
             post_id: post.unwrap().id,
             user_id: user.unwrap().id,
             ap_url: announce.object_props.id_string().unwrap_or(String::from(""))
-        })
+        });
+        Reshare::notify(conn, announce, actor);
+        reshare
+    }
+}
+
+impl Notify<Announce> for Reshare {
+    fn notify(conn: &PgConnection, announce: Announce, actor: Id) {
+        let actor = User::from_url(conn, actor.into()).unwrap();
+        let post = Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>().unwrap().into()).unwrap();
+        for author in post.get_authors(conn) {
+            let post = post.clone();
+            Notification::insert(conn, NewNotification {
+                title: format!("{} reshared your article", actor.display_name.clone()),
+                content: Some(post.title),
+                link: Some(post.ap_url),
+                user_id: author.id
+            });
+        }
     }
 }

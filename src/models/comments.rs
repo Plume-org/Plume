@@ -9,11 +9,12 @@ use serde_json;
 use activity_pub::{
     ap_url, Id, IntoId, PUBLIC_VISIBILTY,
     actor::Actor,
-    inbox::FromActivity,
+    inbox::{FromActivity, Notify},
     object::Object
 };
 use models::{
     instance::Instance,
+    notifications::*,
     posts::Post,
     users::User
 };
@@ -128,7 +129,7 @@ impl FromActivity<Note> for Comment {
     fn from_activity(conn: &PgConnection, note: Note, actor: Id) -> Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
-        Comment::insert(conn, NewComment {
+        let comm = Comment::insert(conn, NewComment {
             content: SafeString::new(&note.object_props.content_string().unwrap()),
             spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
             ap_url: note.object_props.id_string().ok(),
@@ -136,9 +137,30 @@ impl FromActivity<Note> for Comment {
             post_id: previous_comment
                 .map(|c| c.post_id)
                 .unwrap_or_else(|| Post::find_by_ap_url(conn, previous_url).unwrap().id),
-            author_id: User::from_url(conn, actor.into()).unwrap().id,
+            author_id: User::from_url(conn, actor.clone().into()).unwrap().id,
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
-        })
+        });
+        Comment::notify(conn, note, actor);
+        comm
+    }
+}
+
+impl Notify<Note> for Comment {
+    fn notify(conn: &PgConnection, note: Note, _actor: Id) {
+        match Comment::find_by_ap_url(conn, note.object_props.id_string().unwrap()) {
+            Some(comment) => {
+                for author in comment.clone().get_post(conn).get_authors(conn) {
+                    let comment = comment.clone();
+                    Notification::insert(conn, NewNotification {
+                        title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
+                        content: Some(comment.get_post(conn).title),
+                        link: comment.ap_url,
+                        user_id: author.id
+                    });
+                }
+            },
+            None => println!("Couldn't find comment by AP id, to create a new notification")
+        };
     }
 }
 

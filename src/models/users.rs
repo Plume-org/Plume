@@ -37,10 +37,8 @@ use db_conn::DbConn;
 use models::{
     blogs::Blog,
     blog_authors::BlogAuthor,
-    comments::Comment,
     follows::Follow,
     instance::Instance,
-    notifications::*,
     post_authors::PostAuthor,
     posts::Post
 };
@@ -456,58 +454,6 @@ impl Inbox for User {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
         if let Err(err) = self.save(conn, act.clone()) {
             println!("Inbox error:\n{}\n{}\n\nActivity was: {}", err.cause(), err.backtrace(), act.to_string());
-        }
-
-        // Notifications
-        match act["type"].as_str().unwrap() {
-            "Announce" => {
-                let actor = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
-                let post = Post::find_by_ap_url(conn, act["object"].as_str().unwrap().to_string()).unwrap();                
-                Notification::insert(conn, NewNotification {
-                    title: format!("{} reshared your article", actor.display_name.clone()),
-                    content: Some(post.title),
-                    link: Some(post.ap_url),
-                    user_id: self.id
-                });
-            },
-            "Follow" => {
-                let follower = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
-                Notification::insert(conn, NewNotification {
-                    title: format!("{} started following you", follower.display_name.clone()),
-                    content: None,
-                    link: Some(follower.ap_url),
-                    user_id: self.id
-                });
-            }
-            "Like" => {
-                let liker = User::from_url(conn, act["actor"].as_str().unwrap().to_string()).unwrap();
-                let post = Post::find_by_ap_url(conn, act["object"].as_str().unwrap().to_string()).unwrap();
-                Notification::insert(conn, NewNotification {
-                    title: format!("{} liked your article", liker.display_name.clone()),
-                    content: Some(post.title),
-                    link: Some(post.ap_url),
-                    user_id: self.id
-                });
-            },
-            "Create" => {
-                match act["object"]["type"].as_str().unwrap() {
-                    "Note" => {
-                        match Comment::find_by_ap_url(conn, act["object"]["id"].as_str().unwrap().to_string()) {
-                            Some(comment) => {
-                                Notification::insert(conn, NewNotification {
-                                    title: format!("{} commented your article", comment.get_author(conn).display_name.clone()),
-                                    content: Some(comment.get_post(conn).title),
-                                    link: comment.ap_url,
-                                    user_id: self.id
-                                });
-                            },
-                            None => println!("Couldn't find comment by AP id, to create a new notification")
-                        };
-                    }
-                    _ => {}
-                }
-            }
-            _ => {}
         }
 
         // TODO: add to stream, or whatever needs to be done

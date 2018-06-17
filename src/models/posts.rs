@@ -24,7 +24,7 @@ use models::{
 use schema::posts;
 use safe_string::SafeString;
 
-#[derive(Queryable, Identifiable, Serialize)]
+#[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Post {
     pub id: i32,
     pub blog_id: i32,
