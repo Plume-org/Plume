@@ -168,6 +168,15 @@ impl Post {
         act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act
     }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        json!({
+            "post": self,
+            "author": self.get_authors(conn)[0].to_json(conn),
+            "url": format!("/~/{}/{}/", self.get_blog(conn).actor_id, self.slug),
+            "date": self.creation_date.timestamp()
+        })
+    }
 }
 
 impl FromActivity<Article> for Post {

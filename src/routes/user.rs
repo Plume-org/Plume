@@ -46,33 +46,8 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
         "is_remote": user.instance_id != Instance::local_id(&*conn),
         "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
         "account": account,
-        "recents": recents.into_iter().map(|p| {
-            json!({
-                "post": p,
-                "author": ({
-                    let author = &p.get_authors(&*conn)[0];
-                    let mut json = serde_json::to_value(author).unwrap();
-                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                    json
-                }),
-                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
-                "date": p.creation_date.timestamp()
-            })
-        }).collect::<Vec<serde_json::Value>>(),
-        "reshares": reshares.into_iter().map(|r| {
-            let p = r.get_post(&*conn).unwrap();
-            json!({
-                "post": p,
-                "author": ({
-                    let author = &p.get_authors(&*conn)[0];
-                    let mut json = serde_json::to_value(author).unwrap();
-                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                    json
-                }),
-                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
-                "date": p.creation_date.timestamp()
-            })
-        }).collect::<Vec<serde_json::Value>>(),
+        "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+        "reshares": reshares.into_iter().map(|r| r.get_post(&*conn).unwrap().to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
         "n_followers": n_followers
     }))
@@ -124,12 +99,7 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
         "instance_url": user.get_instance(&*conn).public_domain,
         "is_remote": user.instance_id != Instance::local_id(&*conn),
         "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-        "followers": user.get_followers(&*conn).into_iter().map(|f| {
-            let fqn = f.get_fqn(&*conn);
-            let mut json = serde_json::to_value(f).unwrap();
-            json["fqn"] = serde_json::Value::String(fqn);
-            json
-        }).collect::<Vec<serde_json::Value>>(),
+        "followers": user.get_followers(&*conn).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         "account": account,
         "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
         "n_followers": user.get_followers(&*conn).len()

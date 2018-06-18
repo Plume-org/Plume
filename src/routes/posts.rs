@@ -24,26 +24,10 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
     let comments = Comment::find_by_post(&*conn, post.id);
 
     Template::render("posts/details", json!({
-        "author": ({
-            let author = &post.get_authors(&*conn)[0];
-            let mut json = serde_json::to_value(author).unwrap();
-            json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-            json
-        }),
+        "author": post.get_authors(&*conn)[0].to_json(&*conn),
         "post": post,
         "blog": blog,
-        "comments": comments.into_iter().map(|c| {
-            json!({
-                "id": c.id,
-                "content": c.content,
-                "author": ({
-                    let author = &c.get_author(&*conn);
-                    let mut json = serde_json::to_value(author).unwrap();
-                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                    json
-                })
-            })
-        }).collect::<Vec<serde_json::Value>>(),
+        "comments": comments.into_iter().map(|c| c.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         "n_likes": post.get_likes(&*conn).len(),
         "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
         "n_reshares": post.get_reshares(&*conn).len(),

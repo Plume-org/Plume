@@ -330,6 +330,12 @@ impl User {
         };
         actor
     }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let mut json = serde_json::to_value(self).unwrap();
+        json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
+        json
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {

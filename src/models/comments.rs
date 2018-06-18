@@ -99,6 +99,12 @@ impl Comment {
             .expect("Couldn't load local comments")
             .len()
     }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let mut json = serde_json::to_value(self).unwrap();
+        json["author"] = self.get_author(conn).to_json(conn);
+        json
+    }
 }
 
 impl FromActivity<Note> for Comment {
