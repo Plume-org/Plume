@@ -76,18 +76,18 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     }
 }
 
-pub fn broadcast<A: Activity + Clone, S: sign::Signer, T: inbox::WithInbox + Actor>(conn: &PgConnection, sender: &S, act: A, to: Vec<T>) {
+pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(conn: &PgConnection, sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
         .collect::<Vec<String>>()
         .unique();
+
+    let mut act = serde_json::to_value(act).unwrap();
+    act["@context"] = context();
+    let signed = act.sign(sender, conn);
+
     for inbox in boxes {
         // TODO: run it in Sidekiq or something like that
-        
-        let mut act = serde_json::to_value(act.clone()).unwrap();
-        act["@context"] = context();
-        let signed = act.sign(sender, conn);
-
         let res = Client::new()
             .post(&inbox[..])
             .headers(request::headers())
