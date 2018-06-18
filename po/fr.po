@@ -252,3 +252,25 @@ msgstr "Vous devez vous connecter pour suivre quelqu'un"
 
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
+
+#, fuzzy
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
+msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+
+msgid "{{ data }} reshared your article"
+msgstr ""
+
+msgid "{{ data }} started following you"
+msgstr ""
+
+msgid "{{ data }} liked your article"
+msgstr ""
+
+msgid "{{ data }} commented your article"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""

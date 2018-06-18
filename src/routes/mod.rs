@@ -9,7 +9,7 @@ macro_rules! may_fail {
                 let $res = res.unwrap();
                 $block
             } else {
-                Template::render(concat!("errors/", stringify!($template)), json!({
+                Template::render(concat!("errors/", $template), json!({
                     "error_message": $msg
                 }))
             }
