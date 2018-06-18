@@ -24,6 +24,7 @@ use rocket::{
 };
 use serde_json;
 use url::Url;
+use webfinger::*;
 
 use BASE_URL;
 use activity_pub::{
@@ -31,7 +32,7 @@ use activity_pub::{
     actor::{ActorType, Actor as APActor},
     inbox::{Inbox, WithInbox},
     sign::{Signer, gen_keypair},
-    webfinger::{Webfinger, resolve}
+    webfinger::{resolve}
 };
 use db_conn::DbConn;
 use models::{
@@ -336,6 +337,30 @@ impl User {
         json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
         json
     }
+
+    pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
+        Webfinger {
+            subject: format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain),
+            aliases: vec![self.compute_id(conn)],
+            links: vec![
+                Link {
+                    rel: String::from("http://webfinger.net/rel/profile-page"),
+                    mime_type: None,
+                    href: self.compute_id(conn)
+                },
+                Link {
+                    rel: String::from("http://schemas.google.com/g/2010#updates-from"),
+                    mime_type: Some(String::from("application/atom+xml")),
+                    href: self.compute_box(conn, "feed.atom")
+                },
+                Link {
+                    rel: String::from("self"),
+                    mime_type: Some(String::from("application/activity+json")),
+                    href: self.compute_id(conn)
+                }
+            ]
+        }
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -442,33 +467,6 @@ impl Inbox for User {
         }
 
         // TODO: add to stream, or whatever needs to be done
-    }
-}
-
-impl Webfinger for User {
-    fn webfinger_subject(&self, conn: &PgConnection) -> String {
-        format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain)
-    }
-    fn webfinger_aliases(&self, conn: &PgConnection) -> Vec<String> {
-        vec![self.compute_id(conn)]
-    }
-    fn webfinger_links(&self, conn: &PgConnection) -> Vec<Vec<(String, String)>> {
-        vec![
-            vec![
-                (String::from("rel"), String::from("http://webfinger.net/rel/profile-page")),
-                (String::from("href"), self.compute_id(conn))
-            ],
-            vec![
-                (String::from("rel"), String::from("http://schemas.google.com/g/2010#updates-from")),
-                (String::from("type"), String::from("application/atom+xml")),
-                (String::from("href"), self.compute_box(conn, "feed.atom"))
-            ],
-            vec![
-                (String::from("rel"), String::from("self")),
-                (String::from("type"), String::from("application/activity+json")),
-                (String::from("href"), self.compute_id(conn))
-            ]
-        ]
     }
 }
 

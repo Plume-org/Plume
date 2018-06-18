@@ -33,6 +33,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate tera;
 extern crate url;
+extern crate webfinger;
 
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;

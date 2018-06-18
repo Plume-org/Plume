@@ -1,8 +1,10 @@
 use rocket::http::ContentType;
 use rocket::response::Content;
+use serde_json;
+use webfinger::*;
 
 use BASE_URL;
-use activity_pub::{ap_url, webfinger::Webfinger};
+use activity_pub::ap_url;
 use db_conn::DbConn;
 use models::{blogs::Blog, users::User};
 
@@ -33,29 +35,32 @@ struct WebfingerQuery {
     resource: String
 }
 
-#[get("/.well-known/webfinger?<query>")]
-fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<Result<String, &'static str>> {
-    let mut parsed_query = query.resource.splitn(2, ":");
-    let res_type = parsed_query.next().unwrap();
-    let res = parsed_query.next().unwrap();
-    if res_type == "acct" {
-        let mut parsed_res = res.split("@");
-        let user = parsed_res.next().unwrap();
-        let res_dom = parsed_res.next().unwrap();
+struct WebfingerResolver;
 
-        if res_dom == BASE_URL.as_str() {
-            let res = match User::find_local(&*conn, String::from(user)) {
-                Some(usr) => Ok(usr.webfinger(&*conn)),
-                None => match Blog::find_local(&*conn, String::from(user)) {
-                    Some(blog) => Ok(blog.webfinger(&*conn)),
-                    None => Err("Requested actor not found")
-                }
-            };
-            Content(ContentType::new("application", "jrd+json"), res)            
-        } else {
-            Content(ContentType::new("text", "plain"), Err("Invalid instance"))
+impl Resolver<DbConn> for WebfingerResolver {
+    fn instance_domain<'a>() -> &'a str {
+        BASE_URL.as_str()
+    }
+
+    fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
+        match User::find_local(&*conn, acct.clone()) {
+            Some(usr) => Ok(usr.webfinger(&*conn)),
+            None => match Blog::find_local(&*conn, acct) {
+                Some(blog) => Ok(blog.webfinger(&*conn)),
+                None => Err(ResolverError::NotFound)
+            }
         }
-    } else {
-        Content(ContentType::new("text", "plain"), Err("Invalid resource type. Only acct is supported"))
+    }
+}
+
+#[get("/.well-known/webfinger?<query>")]
+fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<String> {
+    match WebfingerResolver::endpoint(query.resource, conn).and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound)) {
+        Ok(wf) => Content(ContentType::new("application", "jrd+json"), wf),
+        Err(err) => Content(ContentType::new("text", "plain"), String::from(match err {
+            ResolverError::InvalidResource => "Invalid resource. Make sure to request an acct: URI",
+            ResolverError::NotFound => "Requested resource was not found",
+            ResolverError::WrongInstance => "This is not the instance of the requested resource"
+        }))
     }
 }
