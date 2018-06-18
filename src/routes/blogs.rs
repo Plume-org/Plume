@@ -19,14 +19,16 @@ use utils;
 
 #[get("/~/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
-    let blog = Blog::find_by_fqn(&*conn, name).unwrap();
-    let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
-    Template::render("blogs/details", json!({
-        "blog": blog,
-        "account": user,
-        "is_author": user.map(|x| x.is_author_in(&*conn, blog)),
-        "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
-    }))
+    may_fail!(Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
+        let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
+
+        Template::render("blogs/details", json!({
+            "blog": blog,
+            "account": user,
+            "is_author": user.map(|x| x.is_author_in(&*conn, blog)),
+            "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+        }))
+    })    
 }
 
 #[get("/~/<name>", format = "application/activity+json", rank = 1)]

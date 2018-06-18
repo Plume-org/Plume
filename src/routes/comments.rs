@@ -17,11 +17,12 @@ use safe_string::SafeString;
 
 #[get("/~/<_blog>/<slug>/comment")]
 fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
-    let post = Post::find_by_slug(&*conn, slug).unwrap();
-    Template::render("comments/new", json!({
-        "post": post,
-        "account": user
-    }))
+    may_fail!(Post::find_by_slug(&*conn, slug), "Couldn't find this post", |post| {
+        Template::render("comments/new", json!({
+            "post": post,
+            "account": user
+        }))
+    })
 }
 
 #[get("/~/<blog>/<slug>/comment", rank=2)]
