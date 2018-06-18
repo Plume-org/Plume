@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 pub mod blogs;
 pub mod comments;
+pub mod errors;
 pub mod instance;
 pub mod likes;
 pub mod notifications;

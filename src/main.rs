@@ -128,6 +128,10 @@ fn main() {
             routes::well_known::nodeinfo,
             routes::well_known::webfinger
         ])
+        .catch(catchers![
+            routes::errors::not_found,
+            routes::errors::server_error
+        ])
         .manage(init_pool())
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);

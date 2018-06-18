@@ -263,3 +263,9 @@ msgstr ""
 
 msgid "{{ data }} commented your article"
 msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
