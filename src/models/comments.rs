@@ -49,7 +49,6 @@ pub struct NewComment {
 impl Comment {
     insert!(comments, NewComment);
     get!(comments);
-
     find_by!(comments, find_by_post, post_id as i32);
     find_by!(comments, find_by_ap_url, ap_url as String);
 

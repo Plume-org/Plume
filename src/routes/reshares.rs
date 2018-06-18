@@ -25,7 +25,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
         Reshare::notify(&*conn, reshare.into_activity(&*conn), user.clone().into_id());
         broadcast(&*conn, &user, reshare.into_activity(&*conn), user.get_followers(&*conn));
     } else {
-        let reshare = Reshare::find_by_user_on_post(&*conn, &user, &post).unwrap();
+        let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id).unwrap();
         let delete_act = reshare.delete(&*conn);
         broadcast(&*conn, &user, delete_act, user.get_followers(&*conn));
     }

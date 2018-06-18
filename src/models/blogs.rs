@@ -67,14 +67,7 @@ impl Blog {
             .expect("Couldn't load blogs ")
     }
 
-    pub fn find_by_name(conn: &PgConnection, name: String, instance_id: i32) -> Option<Blog> {
-        blogs::table.filter(blogs::actor_id.eq(name))
-            .filter(blogs::instance_id.eq(instance_id))
-            .limit(1)
-            .load::<Blog>(conn)
-            .expect("Error loading blog by name")
-            .into_iter().nth(0)
-    }
+    find_by!(blogs, find_by_name, ap_url as String, instance_id as i32);
 
     pub fn find_local(conn: &PgConnection, name: String) -> Option<Blog> {
         Blog::find_by_name(conn, name, Instance::local_id(conn))

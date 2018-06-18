@@ -115,15 +115,7 @@ impl User {
     }
 
     find_by!(users, find_by_email, email as String);
-
-    pub fn find_by_name(conn: &PgConnection, username: String, instance_id: i32) -> Option<User> {
-        users::table.filter(users::username.eq(username))
-            .filter(users::instance_id.eq(instance_id))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by name")
-            .into_iter().nth(0)
-    }
+    find_by!(users, find_by_name, username as String, instance_id as i32);
 
     pub fn find_local(conn: &PgConnection, username: String) -> Option<User> {
         User::find_by_name(conn, username, Instance::local_id(conn))

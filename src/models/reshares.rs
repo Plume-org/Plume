@@ -26,6 +26,8 @@ pub struct NewReshare {
 impl Reshare {
     insert!(reshares, NewReshare);
     get!(reshares);
+    find_by!(reshares, find_by_ap_url, ap_url as String);
+    find_by!(reshares, find_by_user_on_post, user_id as i32, post_id as i32);
 
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {
@@ -37,17 +39,6 @@ impl Reshare {
                 )))
                 .get_result::<Reshare>(conn).expect("Couldn't update AP URL");
         }
-    }
-
-    find_by!(reshares, find_by_ap_url, ap_url as String);
-
-    pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Reshare> {
-        reshares::table.filter(reshares::post_id.eq(post.id))
-            .filter(reshares::user_id.eq(user.id))
-            .limit(1)
-            .load::<Reshare>(conn)
-            .expect("Error loading reshare for user and post")
-            .into_iter().nth(0)
     }
 
     pub fn get_recents_for_author(conn: &PgConnection, user: &User, limit: i64) -> Vec<Reshare> {

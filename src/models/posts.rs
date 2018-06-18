@@ -52,6 +52,8 @@ pub struct NewPost {
 impl Post {
     insert!(posts, NewPost);
     get!(posts);
+    find_by!(posts, find_by_slug, slug as String);
+    find_by!(posts, find_by_ap_url, ap_url as String);
 
     pub fn count_local(conn: &PgConnection) -> usize {
         use schema::post_authors;
@@ -63,9 +65,6 @@ impl Post {
             .expect("Couldn't load local posts")
             .len()
     }
-
-    find_by!(posts, find_by_slug, slug as String);
-    find_by!(posts, find_by_ap_url, ap_url as String);
 
     pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())

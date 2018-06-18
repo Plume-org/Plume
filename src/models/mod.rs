@@ -1,9 +1,9 @@
-// TODO: support multiple columns (see Like::find_by_user_on_post)
 macro_rules! find_by {
-    ($table:ident, $fn:ident, $col:ident as $type:ident) => {
+    ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &PgConnection, val: $type) -> Option<Self> {
-            $table::table.filter($table::$col.eq(val))
+        pub fn $fn(conn: &PgConnection, $($col: $type),+) -> Option<Self> {
+            $table::table
+                $(.filter($table::$col.eq($col)))+
                 .limit(1)
                 .load::<Self>(conn)
                 .expect("Error loading $table by $col")
