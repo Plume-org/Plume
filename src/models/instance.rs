@@ -44,19 +44,8 @@ impl Instance {
         Instance::get_local(conn).unwrap().id
     }
 
-    pub fn insert<'a>(conn: &PgConnection, pub_dom: String, name: String, local: bool) -> Instance {
-        diesel::insert_into(instances::table)
-            .values(NewInstance {
-                public_domain: pub_dom,
-                name: name,
-                local: local
-            })
-            .get_result(conn)
-            .expect("Error saving new instance")
-    }
-
+    insert!(instances, NewInstance);
     get!(instances);
-
     find_by!(instances, find_by_domain, public_domain as String);
 
     pub fn block(&self) {

@@ -24,13 +24,7 @@ pub struct NewReshare {
 }
 
 impl Reshare {
-    pub fn insert(conn: &PgConnection, new: NewReshare) -> Reshare {
-        diesel::insert_into(reshares::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Couldn't save reshare")
-    }
-
+    insert!(reshares, NewReshare);
     get!(reshares);
 
     pub fn update_ap_url(&self, conn: &PgConnection) {

@@ -50,13 +50,7 @@ pub struct NewPost {
 }
 
 impl Post {
-    pub fn insert(conn: &PgConnection, new: NewPost) -> Post {
-        diesel::insert_into(posts::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new post")
-    }
-
+    insert!(posts, NewPost);
     get!(posts);
 
     pub fn count_local(conn: &PgConnection) -> usize {

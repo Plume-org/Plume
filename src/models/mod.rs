@@ -24,6 +24,17 @@ macro_rules! get {
     };
 }
 
+macro_rules! insert {
+    ($table:ident, $from:ident) => {
+        pub fn insert(conn: &PgConnection, new: $from) -> Self {
+            diesel::insert_into($table::table)
+                .values(new)
+                .get_result(conn)
+                .expect("Error saving new $table")
+        }
+    };
+}
+
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;

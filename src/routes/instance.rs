@@ -58,11 +58,11 @@ struct NewInstanceForm {
 #[post("/configure", data = "<data>")]
 fn post_config(conn: DbConn, data: Form<NewInstanceForm>) -> Redirect {
     let form = data.get();
-    let inst = Instance::insert(
-        &*conn,
-        BASE_URL.as_str().to_string(),
-        form.name.to_string(),
-        true);
+    let inst = Instance::insert(&*conn, NewInstance {
+        public_domain: BASE_URL.as_str().to_string(),
+        name: form.name.to_string(),
+        local: true
+    });
     if inst.has_admin(&*conn) {
         Redirect::to("/")
     } else {

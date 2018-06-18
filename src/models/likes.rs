@@ -35,12 +35,9 @@ pub struct NewLike {
 }
 
 impl Like {
-    pub fn insert(conn: &PgConnection, new: NewLike) -> Like {
-        diesel::insert_into(likes::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Unable to insert new like")
-    }
+    insert!(likes, NewLike);
+    get!(likes);
+    find_by!(likes, find_by_ap_url, ap_url as String);
 
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {
@@ -49,10 +46,6 @@ impl Like {
                 .get_result::<Like>(conn).expect("Couldn't update AP URL");
         }
     }
-
-    get!(likes);
-
-    find_by!(likes, find_by_ap_url, ap_url as String);
 
     pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Like> {
         likes::table.filter(likes::post_id.eq(post.id))

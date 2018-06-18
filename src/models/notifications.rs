@@ -26,13 +26,7 @@ pub struct NewNotification {
 }
 
 impl Notification {
-    pub fn insert(conn: &PgConnection, new: NewNotification) -> Notification {
-        diesel::insert_into(notifications::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Couldn't save notification")
-    }
-
+    insert!(notifications, NewNotification);
     get!(notifications);
 
     pub fn find_for_user(conn: &PgConnection, user: &User) -> Vec<Notification> {

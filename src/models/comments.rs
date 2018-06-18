@@ -47,13 +47,7 @@ pub struct NewComment {
 }
 
 impl Comment {
-    pub fn insert (conn: &PgConnection, new: NewComment) -> Comment {
-        diesel::insert_into(comments::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new comment")
-    }
-
+    insert!(comments, NewComment);
     get!(comments);
 
     find_by!(comments, find_by_post, post_id as i32);

@@ -22,7 +22,7 @@ use activity_pub::{
     sign,
     webfinger::*
 };
-use models::instance::Instance;
+use models::instance::*;
 use schema::blogs;
 
 
@@ -56,13 +56,7 @@ pub struct NewBlog {
 }
 
 impl Blog {
-    pub fn insert (conn: &PgConnection, new: NewBlog) -> Blog {
-        diesel::insert_into(blogs::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new blog")
-    }
-
+    insert!(blogs, NewBlog);
     get!(blogs);
 
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
@@ -130,7 +124,11 @@ impl Blog {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
-                Instance::insert(conn, inst.clone(), inst.clone(), false)
+                Instance::insert(conn, NewInstance {
+                    public_domain: inst.clone(),
+                    name: inst.clone(),
+                    local: false
+                })
             }
         };
         Blog::insert(conn, NewBlog {

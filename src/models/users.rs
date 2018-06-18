@@ -38,7 +38,7 @@ use models::{
     blogs::Blog,
     blog_authors::BlogAuthor,
     follows::Follow,
-    instance::Instance,
+    instance::*,
     post_authors::PostAuthor,
     posts::Post
 };
@@ -85,18 +85,13 @@ pub struct NewUser {
 }
 
 impl User {
+    insert!(users, NewUser);
+
     pub fn grant_admin_rights(&self, conn: &PgConnection) {
         diesel::update(self)
             .set(users::is_admin.eq(true))
             .load::<User>(conn)
             .expect("Couldn't grant admin rights");
-    }
-
-    pub fn insert(conn: &PgConnection, new: NewUser) -> User {
-        diesel::insert_into(users::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new user")
     }
 
     pub fn update(&self, conn: &PgConnection, name: String, email: String, summary: String) -> User {
@@ -178,7 +173,11 @@ impl User {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
-                Instance::insert(conn, inst.clone(), inst.clone(), false)
+                Instance::insert(conn, NewInstance {
+                    name: inst.clone(),
+                    public_domain: inst.clone(),
+                    local: false
+                })
             }
         };
         User::insert(conn, NewUser {

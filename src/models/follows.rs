@@ -25,13 +25,7 @@ pub struct NewFollow {
 }
 
 impl Follow {
-    pub fn insert(conn: &PgConnection, new: NewFollow) -> Follow {
-        diesel::insert_into(follows::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Unable to insert new follow")
-    }
-
+    insert!(follows, NewFollow);
     get!(follows);
 
     pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor>(
