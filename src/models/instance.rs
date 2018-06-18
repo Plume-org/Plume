@@ -86,7 +86,7 @@ impl Instance {
 
 impl Inbox for Instance {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone()).unwrap();
+        self.save(conn, act.clone()).expect("Shared Inbox: Couldn't save activity");
 
         // TODO: add to stream, or whatever needs to be done
     }

@@ -4,7 +4,7 @@ use rocket::{
 };
 use rocket_contrib::Template;
 
-use activity_pub::broadcast;
+use activity_pub::{broadcast, IntoId, inbox::Notify};
 use db_conn::DbConn;
 use models::{
     comments::*,
@@ -53,6 +53,7 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
         spoiler_text: "".to_string()
     });
 
+    Comment::notify(&*conn, comment.into_activity(&*conn), user.clone().into_id());
     broadcast(&*conn, &user, comment.create_activity(&*conn), user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id))

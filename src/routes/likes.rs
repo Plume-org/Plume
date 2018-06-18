@@ -1,6 +1,6 @@
 use rocket::response::{Redirect, Flash};
 
-use activity_pub::broadcast;
+use activity_pub::{broadcast, IntoId, inbox::Notify};
 use db_conn::DbConn;
 use models::{
     likes,
@@ -16,12 +16,13 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
 
     if !user.has_liked(&*conn, &post) {
         let like = likes::Like::insert(&*conn, likes::NewLike {
-                post_id: post.id,
-                user_id: user.id,
-                ap_url: "".to_string()
+            post_id: post.id,
+            user_id: user.id,
+            ap_url: "".to_string()
         });
         like.update_ap_url(&*conn);
 
+        likes::Like::notify(&*conn, like.into_activity(&*conn), user.clone().into_id());
         broadcast(&*conn, &user, like.into_activity(&*conn), user.get_followers(&*conn));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, &user, &post).unwrap();

@@ -10,7 +10,7 @@ use serde_json;
 
 use activity_pub::{
     activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId,
-    inbox::Inbox,
+    inbox::{Inbox, Notify},
     actor::Actor
 };
 use db_conn::DbConn;
@@ -103,6 +103,8 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
+
+    follows::Follow::notify(&*conn, act.clone(), user.clone().into_id());
     broadcast(&*conn, &user, act, vec![target]);
     Redirect::to(format!("/@/{}/", name))
 }
