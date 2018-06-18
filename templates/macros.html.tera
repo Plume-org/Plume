@@ -6,7 +6,7 @@
     {% endif %}
     <div class="card">
         <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
-        <main><p>{{ article.post.content | striptags | truncate(length=200) }}</p></main>
+        <main><p>{{ article.post.content | safe | striptags | truncate(length=200) }}</p></main>
         <p>
             {{ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}" | _(
                 link_1='<a href="/@/',
