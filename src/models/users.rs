@@ -110,13 +110,7 @@ impl User {
             .into_iter().nth(0).unwrap()
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<User> {
-        users::table.filter(users::id.eq(id))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by id")
-            .into_iter().nth(0)
-    }
+    get!(users);
 
     pub fn count_local(conn: &PgConnection) -> usize {
         users::table.filter(users::instance_id.eq(Instance::local_id(conn)))

@@ -63,13 +63,7 @@ impl Blog {
             .expect("Error saving new blog")
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Blog> {
-        blogs::table.filter(blogs::id.eq(id))
-            .limit(1)
-            .load::<Blog>(conn)
-            .expect("Error loading blog by id")
-            .into_iter().nth(0)
-    }
+    get!(blogs);
 
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;

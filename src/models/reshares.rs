@@ -31,13 +31,7 @@ impl Reshare {
             .expect("Couldn't save reshare")
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Reshare> {
-        reshares::table.filter(reshares::id.eq(id))
-            .limit(1)
-            .load::<Reshare>(conn)
-            .expect("Could'nt load reshare")
-            .into_iter().nth(0)
-    }
+    get!(reshares);
 
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {

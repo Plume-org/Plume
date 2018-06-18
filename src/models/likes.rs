@@ -50,13 +50,7 @@ impl Like {
         }
     }
 
-     pub fn get(conn: &PgConnection, id: i32) -> Option<Like> {
-        likes::table.filter(likes::id.eq(id))
-            .limit(1)
-            .load::<Like>(conn)
-            .expect("Error loading like by ID")
-            .into_iter().nth(0)
-    }
+    get!(likes);
 
     find_by!(likes, find_by_ap_url, ap_url as String);
 

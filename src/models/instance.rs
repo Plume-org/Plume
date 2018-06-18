@@ -55,13 +55,7 @@ impl Instance {
             .expect("Error saving new instance")
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Instance> {
-        instances::table.filter(instances::id.eq(id))
-            .limit(1)
-            .load::<Instance>(conn)
-            .expect("Error loading local instance infos")
-            .into_iter().nth(0)
-    }
+    get!(instances);
 
     find_by!(instances, find_by_domain, public_domain as String);
 

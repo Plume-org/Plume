@@ -33,13 +33,7 @@ impl Notification {
             .expect("Couldn't save notification")
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Notification> {
-        notifications::table.filter(notifications::id.eq(id))
-            .limit(1)
-            .load::<Notification>(conn)
-            .expect("Couldn't load notification by ID")
-            .into_iter().nth(0)
-    }
+    get!(notifications);
 
     pub fn find_for_user(conn: &PgConnection, user: &User) -> Vec<Notification> {
         notifications::table.filter(notifications::user_id.eq(user.id))

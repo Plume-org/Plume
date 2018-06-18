@@ -12,6 +12,18 @@ macro_rules! find_by {
     };
 }
 
+macro_rules! get {
+    ($table:ident) => {
+        pub fn get(conn: &PgConnection, id: i32) -> Option<Self> {
+            $table::table.filter($table::id.eq(id))
+                .limit(1)
+                .load::<Self>(conn)
+                .expect("Error loading $table by id")
+                .into_iter().nth(0)
+        }
+    };
+}
+
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;

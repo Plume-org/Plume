@@ -54,13 +54,7 @@ impl Comment {
             .expect("Error saving new comment")
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Comment> {
-        comments::table.filter(comments::id.eq(id))
-            .limit(1)
-            .load::<Comment>(conn)
-            .expect("Error loading comment by id")
-            .into_iter().nth(0)
-    }
+    get!(comments);
 
     find_by!(comments, find_by_post, post_id as i32);
     find_by!(comments, find_by_ap_url, ap_url as String);

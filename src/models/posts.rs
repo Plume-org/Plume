@@ -57,13 +57,7 @@ impl Post {
             .expect("Error saving new post")
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Post> {
-        posts::table.filter(posts::id.eq(id))
-            .limit(1)
-            .load::<Post>(conn)
-            .expect("Error loading post by id")
-            .into_iter().nth(0)
-    }
+    get!(posts);
 
     pub fn count_local(conn: &PgConnection) -> usize {
         use schema::post_authors;
