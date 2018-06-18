@@ -62,19 +62,8 @@ impl Comment {
             .into_iter().nth(0)
     }
 
-    pub fn find_by_post(conn: &PgConnection, post_id: i32) -> Vec<Comment> {
-        comments::table.filter(comments::post_id.eq(post_id))
-            .load::<Comment>(conn)
-            .expect("Error loading comment by post id")
-    }
-
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Comment> {
-        comments::table.filter(comments::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Comment>(conn)
-            .expect("Error loading comment by AP URL")
-            .into_iter().nth(0)
-    }
+    find_by!(comments, find_by_post, post_id as i32);
+    find_by!(comments, find_by_ap_url, ap_url as String);
 
     pub fn get_author(&self, conn: &PgConnection) -> User {
         User::get(conn, self.author_id).unwrap()

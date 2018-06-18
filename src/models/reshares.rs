@@ -51,13 +51,7 @@ impl Reshare {
         }
     }
 
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Reshare> {
-        reshares::table.filter(reshares::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Reshare>(conn)
-            .expect("Error loading reshare by AP URL")
-            .into_iter().nth(0)
-    }
+    find_by!(reshares, find_by_ap_url, ap_url as String);
 
     pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Reshare> {
         reshares::table.filter(reshares::post_id.eq(post.id))

@@ -58,13 +58,7 @@ impl Like {
             .into_iter().nth(0)
     }
 
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Like> {
-        likes::table.filter(likes::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Like>(conn)
-            .expect("Error loading like by AP URL")
-            .into_iter().nth(0)
-    }
+    find_by!(likes, find_by_ap_url, ap_url as String);
 
     pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Like> {
         likes::table.filter(likes::post_id.eq(post.id))

@@ -125,13 +125,7 @@ impl User {
             .len()
     }
 
-    pub fn find_by_email(conn: &PgConnection, email: String) -> Option<User> {
-        users::table.filter(users::email.eq(email))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by email")
-            .into_iter().nth(0)
-    }
+    find_by!(users, find_by_email, email as String);
 
     pub fn find_by_name(conn: &PgConnection, username: String, instance_id: i32) -> Option<User> {
         users::table.filter(users::username.eq(username))

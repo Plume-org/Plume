@@ -76,21 +76,8 @@ impl Post {
             .len()
     }
 
-    pub fn find_by_slug(conn: &PgConnection, slug: String) -> Option<Post> {
-        posts::table.filter(posts::slug.eq(slug))
-            .limit(1)
-            .load::<Post>(conn)
-            .expect("Error loading post by slug")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Post> {
-        posts::table.filter(posts::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Post>(conn)
-            .expect("Error loading post by AP URL")
-            .into_iter().nth(0)
-    }
+    find_by!(posts, find_by_slug, slug as String);
+    find_by!(posts, find_by_ap_url, ap_url as String);
 
     pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
