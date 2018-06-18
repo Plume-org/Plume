@@ -31,8 +31,7 @@ use activity_pub::{
     ap_url, ActivityStream, Id, IntoId,
     actor::{ActorType, Actor as APActor},
     inbox::{Inbox, WithInbox},
-    sign::{Signer, gen_keypair},
-    webfinger::{resolve}
+    sign::{Signer, gen_keypair}
 };
 use db_conn::DbConn;
 use models::{
@@ -140,9 +139,9 @@ impl User {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
         match resolve(acct.clone()) {
-            Ok(url) => User::fetch_from_url(conn, url),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href)),
             Err(details) => {
-                println!("{}", details);
+                println!("{:?}", details);
                 None
             }
         }

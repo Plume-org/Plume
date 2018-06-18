@@ -17,7 +17,6 @@ pub mod inbox;
 pub mod object;
 pub mod request;
 pub mod sign;
-pub mod webfinger;
 
 pub type ActivityPub = Content<Json<serde_json::Value>>;
 
