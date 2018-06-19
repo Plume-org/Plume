@@ -1,9 +1,7 @@
 use gettextrs::gettext;
-use rocket::{request::Form, response::Redirect};
 use rocket_contrib::{Json, Template};
 use serde_json;
 
-use BASE_URL;
 use activity_pub::inbox::Inbox;
 use db_conn::DbConn;
 use models::{
