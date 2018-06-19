@@ -1,12 +1,13 @@
 use colored::Colorize;
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
+use std::fs;
 use std::io;
 use std::process::{exit, Command};
 
 use DB_URL;
 use db_conn::DbConn;
-use models::instance::Instance;
+use models::instance::*;
 
 type PgPool = Pool<ConnectionManager<PgConnection>>;
 
@@ -24,19 +25,19 @@ pub fn check() -> PgPool {
             Ok(conn) => {
                 let db_conn = DbConn(conn);
                 if Instance::get_local(&*db_conn).is_none() {
-                    run_setup();
+                    run_setup(Some(db_conn));
                 }
             }
             Err(_) => panic!("Couldn't connect to database")
         }
         pool
     } else {
-        run_setup();
+        run_setup(None);
         init_pool().unwrap()
     }
 }
 
-fn run_setup() {
+fn run_setup(conn: Option<DbConn>) {
     println!("\n\n");
     println!("{}\n{}\n{}\n\n{}",
         "Welcome in the Plume setup tool.".magenta(),
@@ -46,7 +47,48 @@ fn run_setup() {
     );
     read_line();
     check_native_deps();
+    setup_type(conn.expect("Couldn't connect to the Plume database"));
 }
+
+fn setup_type(conn: DbConn) {
+    println!("\nDo you prefer a simple setup, or to customize everything?\n");
+    println!("  1 - Simple setup");
+    println!("  2 - Complete setup");
+    match read_line().as_ref() {
+        "Simple" | "simple" | "s" | "S" |
+        "1" => quick_setup(conn),
+        "Complete" | "complete" | "c" | "C" |
+        "2" => complete_setup(conn),
+        x => {
+            println!("Invalid choice. Choose between '1' or '2'. {}", x);
+            setup_type(conn);
+        }
+    }
+}
+
+fn quick_setup(conn: DbConn) {
+    println!("What is your instance domain?");
+    let domain = read_line();
+    write_to_dotenv("BASE_URL", domain);
+
+    println!("\nWhat is your instance name?");
+    let name = read_line();
+
+    let inst = Instance::insert(&*conn, NewInstance {
+        public_domain: domain,
+        name: name,
+        local: true
+    });
+
+    create_admin();
+}
+
+fn complete_setup(conn: DbConn) {
+    // TODO
+    quick_setup(conn);
+}
+
+fn create_admin() {}
 
 fn check_native_deps() {
     let mut not_found = Vec::new();
@@ -68,7 +110,7 @@ fn check_native_deps() {
         println!("\nRetry once you have installed them.");
         exit(1);
     } else {
-        println!("{}", "✔️ All native dependencies are present".green())
+        println!("{}", "  ✔️ All native dependencies are present.".green())
     }
 }
 
@@ -81,5 +123,10 @@ fn try_run(command: &'static str) -> bool {
 fn read_line() -> String {
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("Unable to read line");
+    input.retain(|c| c != '\n');
     input
+}
+
+fn write_to_dotenv(var: &'static str, val: String) {
+    fs::write(".env", format!("{}\n{}={}", fs::read_to_string(".env").expect("Unable to read .env"), var, val)).expect("Unable to write .env");
 }
