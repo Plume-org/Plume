@@ -51,7 +51,7 @@ fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityPub {
 
 #[get("/~/<blog>/new", rank = 2)]
 fn new_auth(blog: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to write a new post", &format!("/~/{}/new",blog))
+    utils::requires_login("You need to be logged in order to write a new post", uri!(new: blog = blog))
 }
 
 #[get("/~/<blog>/new", rank = 1)]
@@ -110,6 +110,6 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         let act = post.create_activity(&*conn);
         broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
-        Redirect::to(format!("/~/{}/{}/", blog_name, slug))
+        Redirect::to(uri!(details: blog = blog_name, slug = slug))
     }
 }

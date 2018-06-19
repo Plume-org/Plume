@@ -30,7 +30,7 @@ fn new(blog: String, slug: String, user: User, conn: DbConn) -> Template {
 
 #[get("/~/<blog>/<slug>/comment", rank=2)]
 fn new_auth(blog: String, slug: String) -> Flash<Redirect>{
-    utils::requires_login("You need to be logged in order to post a comment", &format!("~/{}/{}/comment", blog, slug))
+    utils::requires_login("You need to be logged in order to post a comment", uri!(new: blog = blog, slug = slug))
 }
 
 #[derive(FromForm)]

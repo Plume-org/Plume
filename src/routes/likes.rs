@@ -32,10 +32,10 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
         broadcast(&*conn, &user, delete_act, user.get_followers(&*conn));
     }
 
-    Redirect::to(format!("/~/{}/{}/", blog, slug))
+    Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))
 }
 
 #[get("/~/<blog>/<slug>/like", rank = 2)]
 fn create_auth(blog: String, slug: String) -> Flash<Redirect>{
-    utils::requires_login("You need to be logged in order to like a post", &format!("/~/{}/{}/like", blog, slug))
+    utils::requires_login("You need to be logged in order to like a post", uri!(create: blog = blog, slug = slug))
 }

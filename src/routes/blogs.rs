@@ -46,7 +46,7 @@ fn new(user: User) -> Template {
 
 #[get("/blogs/new", rank = 2)]
 fn new_auth() -> Flash<Redirect>{
-    utils::requires_login("You need to be logged in order to create a new blog", "/blogs/new")
+    utils::requires_login("You need to be logged in order to create a new blog", uri!(new))
 }
 
 #[derive(FromForm)]
@@ -58,10 +58,8 @@ struct NewBlogForm {
 fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
-    if slug.len() == 0 {
-        return Redirect::to("/blogs/new")
-    }
-    if Blog::find_local(&*conn, slug.clone()).is_some() {
+
+    if Blog::find_local(&*conn, slug.clone()).is_some() || slug.len() == 0 {
         Redirect::to(uri!(new))
     } else {
         let blog = Blog::insert(&*conn, NewBlog::new_local(
@@ -78,7 +76,7 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
             is_owner: true
         });
 
-        Redirect::to(format!("/~/{}/", slug))
+        Redirect::to(uri!(details: name = slug))
     }
 }
 

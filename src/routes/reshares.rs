@@ -32,10 +32,10 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
         broadcast(&*conn, &user, delete_act, user.get_followers(&*conn));
     }
 
-    Redirect::to(format!("/~/{}/{}/", blog, slug))
+    Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))
 }
 
 #[get("/~/<blog>/<slug>/reshare", rank=1)]
 fn create_auth(blog: String, slug: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to reshare a post", &format!("/~/{}/{}/reshare",blog, slug))
+    utils::requires_login("You need to be logged in order to reshare a post", uri!(create: blog = blog, slug = slug))
 }
