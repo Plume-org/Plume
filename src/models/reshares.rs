@@ -2,7 +2,7 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify}, object::Object};
+use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify, Deletable}, object::Object};
 use models::{notifications::*, posts::Post, users::User};
 use schema::reshares;
 
@@ -99,6 +99,17 @@ impl Notify<Announce> for Reshare {
                 link: Some(post.ap_url),
                 user_id: author.id
             });
+        }
+    }
+}
+
+impl Deletable for Reshare {
+    fn delete_activity(conn: &PgConnection, id: Id) -> bool {
+        if let Some(reshare) = Reshare::find_by_ap_url(conn, id.into()) {
+            reshare.delete(conn);
+            true
+        } else {
+            false
         }
     }
 }
