@@ -47,34 +47,10 @@ pub struct NewComment {
 }
 
 impl Comment {
-    pub fn insert (conn: &PgConnection, new: NewComment) -> Comment {
-        diesel::insert_into(comments::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new comment")
-    }
-
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Comment> {
-        comments::table.filter(comments::id.eq(id))
-            .limit(1)
-            .load::<Comment>(conn)
-            .expect("Error loading comment by id")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_post(conn: &PgConnection, post_id: i32) -> Vec<Comment> {
-        comments::table.filter(comments::post_id.eq(post_id))
-            .load::<Comment>(conn)
-            .expect("Error loading comment by post id")
-    }
-
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Comment> {
-        comments::table.filter(comments::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Comment>(conn)
-            .expect("Error loading comment by AP URL")
-            .into_iter().nth(0)
-    }
+    insert!(comments, NewComment);
+    get!(comments);
+    find_by!(comments, find_by_post, post_id as i32);
+    find_by!(comments, find_by_ap_url, ap_url as String);
 
     pub fn get_author(&self, conn: &PgConnection) -> User {
         User::get(conn, self.author_id).unwrap()
@@ -122,6 +98,12 @@ impl Comment {
             .load::<Comment>(conn)
             .expect("Couldn't load local comments")
             .len()
+    }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let mut json = serde_json::to_value(self).unwrap();
+        json["author"] = self.get_author(conn).to_json(conn);
+        json
     }
 }
 

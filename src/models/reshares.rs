@@ -2,7 +2,7 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify}, object::Object};
+use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify, Deletable}, object::Object};
 use models::{notifications::*, posts::Post, users::User};
 use schema::reshares;
 
@@ -24,20 +24,10 @@ pub struct NewReshare {
 }
 
 impl Reshare {
-    pub fn insert(conn: &PgConnection, new: NewReshare) -> Reshare {
-        diesel::insert_into(reshares::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Couldn't save reshare")
-    }
-
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Reshare> {
-        reshares::table.filter(reshares::id.eq(id))
-            .limit(1)
-            .load::<Reshare>(conn)
-            .expect("Could'nt load reshare")
-            .into_iter().nth(0)
-    }
+    insert!(reshares, NewReshare);
+    get!(reshares);
+    find_by!(reshares, find_by_ap_url, ap_url as String);
+    find_by!(reshares, find_by_user_on_post, user_id as i32, post_id as i32);
 
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {
@@ -49,23 +39,6 @@ impl Reshare {
                 )))
                 .get_result::<Reshare>(conn).expect("Couldn't update AP URL");
         }
-    }
-
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Reshare> {
-        reshares::table.filter(reshares::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Reshare>(conn)
-            .expect("Error loading reshare by AP URL")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Reshare> {
-        reshares::table.filter(reshares::post_id.eq(post.id))
-            .filter(reshares::user_id.eq(user.id))
-            .limit(1)
-            .load::<Reshare>(conn)
-            .expect("Error loading reshare for user and post")
-            .into_iter().nth(0)
     }
 
     pub fn get_recents_for_author(conn: &PgConnection, user: &User, limit: i64) -> Vec<Reshare> {
@@ -126,6 +99,17 @@ impl Notify<Announce> for Reshare {
                 link: Some(post.ap_url),
                 user_id: author.id
             });
+        }
+    }
+}
+
+impl Deletable for Reshare {
+    fn delete_activity(conn: &PgConnection, id: Id) -> bool {
+        if let Some(reshare) = Reshare::find_by_ap_url(conn, id.into()) {
+            reshare.delete(conn);
+            true
+        } else {
+            false
         }
     }
 }

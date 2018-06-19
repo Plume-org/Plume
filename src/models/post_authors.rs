@@ -23,18 +23,6 @@ pub struct NewPostAuthor {
 }
 
 impl PostAuthor {
-    pub fn insert (conn: &PgConnection, new: NewPostAuthor) -> PostAuthor {
-        diesel::insert_into(post_authors::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new blog author")
-    }
-
-    pub fn get(conn: &PgConnection, id: i32) -> Option<PostAuthor> {
-        post_authors::table.filter(post_authors::id.eq(id))
-            .limit(1)
-            .load::<PostAuthor>(conn)
-            .expect("Error loading blog author by id")
-            .into_iter().nth(0)
-    }
+    insert!(post_authors, NewPostAuthor);
+    get!(post_authors);
 }

@@ -44,32 +44,9 @@ impl Instance {
         Instance::get_local(conn).unwrap().id
     }
 
-    pub fn insert<'a>(conn: &PgConnection, pub_dom: String, name: String, local: bool) -> Instance {
-        diesel::insert_into(instances::table)
-            .values(NewInstance {
-                public_domain: pub_dom,
-                name: name,
-                local: local
-            })
-            .get_result(conn)
-            .expect("Error saving new instance")
-    }
-
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Instance> {
-        instances::table.filter(instances::id.eq(id))
-            .limit(1)
-            .load::<Instance>(conn)
-            .expect("Error loading local instance infos")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_domain(conn: &PgConnection, domain: String) -> Option<Instance> {
-        instances::table.filter(instances::public_domain.eq(domain))
-            .limit(1)
-            .load::<Instance>(conn)
-            .expect("Couldn't load instance by domain")
-            .into_iter().nth(0)
-    }
+    insert!(instances, NewInstance);
+    get!(instances);
+    find_by!(instances, find_by_domain, public_domain as String);
 
     pub fn block(&self) {
         unimplemented!()
@@ -86,7 +63,7 @@ impl Instance {
 
 impl Inbox for Instance {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone()).unwrap();
+        self.save(conn, act.clone()).expect("Shared Inbox: Couldn't save activity");
 
         // TODO: add to stream, or whatever needs to be done
     }

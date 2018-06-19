@@ -10,7 +10,7 @@ use serde_json;
 
 use activity_pub::{
     activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId,
-    inbox::Inbox,
+    inbox::{Inbox, Notify},
     actor::Actor
 };
 use db_conn::DbConn;
@@ -25,7 +25,7 @@ use models::{
 use utils;
 
 #[get("/me")]
-fn me(user: Option<User>) -> Result<Redirect,Flash<Redirect>> {
+fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
         Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username))),
         None => Err(utils::requires_login("", "/me"))
@@ -34,48 +34,24 @@ fn me(user: Option<User>) -> Result<Redirect,Flash<Redirect>> {
 
 #[get("/@/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
-    let user = User::find_by_fqn(&*conn, name).unwrap();
-    let recents = Post::get_recents_for_author(&*conn, &user, 6);
-    let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
-    let user_id = user.id.clone();
-    let n_followers = user.get_followers(&*conn).len();
+    may_fail!(User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
+        let recents = Post::get_recents_for_author(&*conn, &user, 6);
+        let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
+        let user_id = user.id.clone();
+        let n_followers = user.get_followers(&*conn).len();
 
-    Template::render("users/details", json!({
-        "user": serde_json::to_value(user.clone()).unwrap(),
-        "instance_url": user.get_instance(&*conn).public_domain,
-        "is_remote": user.instance_id != Instance::local_id(&*conn),
-        "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-        "account": account,
-        "recents": recents.into_iter().map(|p| {
-            json!({
-                "post": p,
-                "author": ({
-                    let author = &p.get_authors(&*conn)[0];
-                    let mut json = serde_json::to_value(author).unwrap();
-                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                    json
-                }),
-                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
-                "date": p.creation_date.timestamp()
-            })
-        }).collect::<Vec<serde_json::Value>>(),
-        "reshares": reshares.into_iter().map(|r| {
-            let p = r.get_post(&*conn).unwrap();
-            json!({
-                "post": p,
-                "author": ({
-                    let author = &p.get_authors(&*conn)[0];
-                    let mut json = serde_json::to_value(author).unwrap();
-                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                    json
-                }),
-                "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
-                "date": p.creation_date.timestamp()
-            })
-        }).collect::<Vec<serde_json::Value>>(),
-        "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-        "n_followers": n_followers
-    }))
+        Template::render("users/details", json!({
+            "user": serde_json::to_value(user.clone()).unwrap(),
+            "instance_url": user.get_instance(&*conn).public_domain,
+            "is_remote": user.instance_id != Instance::local_id(&*conn),
+            "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+            "account": account,
+            "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            "reshares": reshares.into_iter().map(|r| r.get_post(&*conn).unwrap().to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
+            "n_followers": n_followers
+        }))
+    })
 }
 
 #[get("/dashboard")]
@@ -103,6 +79,8 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
+
+    follows::Follow::notify(&*conn, act.clone(), user.clone().into_id());
     broadcast(&*conn, &user, act, vec![target]);
     Redirect::to(format!("/@/{}/", name))
 }
@@ -114,24 +92,20 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 
 #[get("/@/<name>/followers", rank = 2)]
 fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
-    let user = User::find_by_fqn(&*conn, name.clone()).unwrap();
-    let user_id = user.id.clone();
+    may_fail!(User::find_by_fqn(&*conn, name.clone()), "Couldn't find requested user", |user| {
+        let user_id = user.id.clone();
 
-    Template::render("users/followers", json!({
-        "user": serde_json::to_value(user.clone()).unwrap(),
-        "instance_url": user.get_instance(&*conn).public_domain,
-        "is_remote": user.instance_id != Instance::local_id(&*conn),
-        "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-        "followers": user.get_followers(&*conn).into_iter().map(|f| {
-            let fqn = f.get_fqn(&*conn);
-            let mut json = serde_json::to_value(f).unwrap();
-            json["fqn"] = serde_json::Value::String(fqn);
-            json
-        }).collect::<Vec<serde_json::Value>>(),
-        "account": account,
-        "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-        "n_followers": user.get_followers(&*conn).len()
-    }))
+        Template::render("users/followers", json!({
+            "user": serde_json::to_value(user.clone()).unwrap(),
+            "instance_url": user.get_instance(&*conn).public_domain,
+            "is_remote": user.instance_id != Instance::local_id(&*conn),
+            "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+            "followers": user.get_followers(&*conn).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            "account": account,
+            "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
+            "n_followers": user.get_followers(&*conn).len()
+        }))
+    })
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]

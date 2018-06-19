@@ -33,6 +33,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate tera;
 extern crate url;
+extern crate webfinger;
 
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
@@ -127,6 +128,10 @@ fn main() {
             routes::well_known::host_meta,
             routes::well_known::nodeinfo,
             routes::well_known::webfinger
+        ])
+        .catch(catchers![
+            routes::errors::not_found,
+            routes::errors::server_error
         ])
         .manage(init_pool())
         .attach(Template::custom(|engines| {

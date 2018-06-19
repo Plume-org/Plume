@@ -35,12 +35,10 @@ pub struct NewLike {
 }
 
 impl Like {
-    pub fn insert(conn: &PgConnection, new: NewLike) -> Like {
-        diesel::insert_into(likes::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Unable to insert new like")
-    }
+    insert!(likes, NewLike);
+    get!(likes);
+    find_by!(likes, find_by_ap_url, ap_url as String);
+    find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {
@@ -48,31 +46,6 @@ impl Like {
                 .set(likes::ap_url.eq(self.compute_id(conn)))
                 .get_result::<Like>(conn).expect("Couldn't update AP URL");
         }
-    }
-
-     pub fn get(conn: &PgConnection, id: i32) -> Option<Like> {
-        likes::table.filter(likes::id.eq(id))
-            .limit(1)
-            .load::<Like>(conn)
-            .expect("Error loading like by ID")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Like> {
-        likes::table.filter(likes::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Like>(conn)
-            .expect("Error loading like by AP URL")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_user_on_post(conn: &PgConnection, user: &User, post: &Post) -> Option<Like> {
-        likes::table.filter(likes::post_id.eq(post.id))
-            .filter(likes::user_id.eq(user.id))
-            .limit(1)
-            .load::<Like>(conn)
-            .expect("Error loading like for user and post")
-            .into_iter().nth(0)
     }
 
     pub fn delete(&self, conn: &PgConnection) -> activity::Undo {

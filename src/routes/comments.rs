@@ -4,7 +4,7 @@ use rocket::{
 };
 use rocket_contrib::Template;
 
-use activity_pub::broadcast;
+use activity_pub::{broadcast, IntoId, inbox::Notify};
 use db_conn::DbConn;
 use models::{
     comments::*,
@@ -17,11 +17,12 @@ use safe_string::SafeString;
 
 #[get("/~/<_blog>/<slug>/comment")]
 fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
-    let post = Post::find_by_slug(&*conn, slug).unwrap();
-    Template::render("comments/new", json!({
-        "post": post,
-        "account": user
-    }))
+    may_fail!(Post::find_by_slug(&*conn, slug), "Couldn't find this post", |post| {
+        Template::render("comments/new", json!({
+            "post": post,
+            "account": user
+        }))
+    })
 }
 
 #[get("/~/<blog>/<slug>/comment", rank=2)]
@@ -53,6 +54,7 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
         spoiler_text: "".to_string()
     });
 
+    Comment::notify(&*conn, comment.into_activity(&*conn), user.clone().into_id());
     broadcast(&*conn, &user, comment.create_activity(&*conn), user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id))

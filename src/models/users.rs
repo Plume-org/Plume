@@ -24,21 +24,21 @@ use rocket::{
 };
 use serde_json;
 use url::Url;
+use webfinger::*;
 
 use BASE_URL;
 use activity_pub::{
     ap_url, ActivityStream, Id, IntoId,
     actor::{ActorType, Actor as APActor},
     inbox::{Inbox, WithInbox},
-    sign::{Signer, gen_keypair},
-    webfinger::{Webfinger, resolve}
+    sign::{Signer, gen_keypair}
 };
 use db_conn::DbConn;
 use models::{
     blogs::Blog,
     blog_authors::BlogAuthor,
     follows::Follow,
-    instance::Instance,
+    instance::*,
     post_authors::PostAuthor,
     posts::Post
 };
@@ -85,18 +85,13 @@ pub struct NewUser {
 }
 
 impl User {
+    insert!(users, NewUser);
+
     pub fn grant_admin_rights(&self, conn: &PgConnection) {
         diesel::update(self)
             .set(users::is_admin.eq(true))
             .load::<User>(conn)
             .expect("Couldn't grant admin rights");
-    }
-
-    pub fn insert(conn: &PgConnection, new: NewUser) -> User {
-        diesel::insert_into(users::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new user")
     }
 
     pub fn update(&self, conn: &PgConnection, name: String, email: String, summary: String) -> User {
@@ -110,13 +105,7 @@ impl User {
             .into_iter().nth(0).unwrap()
     }
 
-    pub fn get(conn: &PgConnection, id: i32) -> Option<User> {
-        users::table.filter(users::id.eq(id))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by id")
-            .into_iter().nth(0)
-    }
+    get!(users);
 
     pub fn count_local(conn: &PgConnection) -> usize {
         users::table.filter(users::instance_id.eq(Instance::local_id(conn)))
@@ -125,22 +114,8 @@ impl User {
             .len()
     }
 
-    pub fn find_by_email(conn: &PgConnection, email: String) -> Option<User> {
-        users::table.filter(users::email.eq(email))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by email")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_name(conn: &PgConnection, username: String, instance_id: i32) -> Option<User> {
-        users::table.filter(users::username.eq(username))
-            .filter(users::instance_id.eq(instance_id))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by name")
-            .into_iter().nth(0)
-    }
+    find_by!(users, find_by_email, email as String);
+    find_by!(users, find_by_name, username as String, instance_id as i32);
 
     pub fn find_local(conn: &PgConnection, username: String) -> Option<User> {
         User::find_by_name(conn, username, Instance::local_id(conn))
@@ -164,9 +139,9 @@ impl User {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
         match resolve(acct.clone()) {
-            Ok(url) => User::fetch_from_url(conn, url),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href)),
             Err(details) => {
-                println!("{}", details);
+                println!("{:?}", details);
                 None
             }
         }
@@ -190,7 +165,11 @@ impl User {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
-                Instance::insert(conn, inst.clone(), inst.clone(), false)
+                Instance::insert(conn, NewInstance {
+                    name: inst.clone(),
+                    public_domain: inst.clone(),
+                    local: false
+                })
             }
         };
         User::insert(conn, NewUser {
@@ -351,6 +330,36 @@ impl User {
         };
         actor
     }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let mut json = serde_json::to_value(self).unwrap();
+        json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
+        json
+    }
+
+    pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
+        Webfinger {
+            subject: format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain),
+            aliases: vec![self.compute_id(conn)],
+            links: vec![
+                Link {
+                    rel: String::from("http://webfinger.net/rel/profile-page"),
+                    mime_type: None,
+                    href: self.compute_id(conn)
+                },
+                Link {
+                    rel: String::from("http://schemas.google.com/g/2010#updates-from"),
+                    mime_type: Some(String::from("application/atom+xml")),
+                    href: self.compute_box(conn, "feed.atom")
+                },
+                Link {
+                    rel: String::from("self"),
+                    mime_type: Some(String::from("application/activity+json")),
+                    href: self.compute_id(conn)
+                }
+            ]
+        }
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -457,33 +466,6 @@ impl Inbox for User {
         }
 
         // TODO: add to stream, or whatever needs to be done
-    }
-}
-
-impl Webfinger for User {
-    fn webfinger_subject(&self, conn: &PgConnection) -> String {
-        format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain)
-    }
-    fn webfinger_aliases(&self, conn: &PgConnection) -> Vec<String> {
-        vec![self.compute_id(conn)]
-    }
-    fn webfinger_links(&self, conn: &PgConnection) -> Vec<Vec<(String, String)>> {
-        vec![
-            vec![
-                (String::from("rel"), String::from("http://webfinger.net/rel/profile-page")),
-                (String::from("href"), self.compute_id(conn))
-            ],
-            vec![
-                (String::from("rel"), String::from("http://schemas.google.com/g/2010#updates-from")),
-                (String::from("type"), String::from("application/atom+xml")),
-                (String::from("href"), self.compute_box(conn, "feed.atom"))
-            ],
-            vec![
-                (String::from("rel"), String::from("self")),
-                (String::from("type"), String::from("application/activity+json")),
-                (String::from("href"), self.compute_id(conn))
-            ]
-        ]
     }
 }
 

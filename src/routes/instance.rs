@@ -22,19 +22,7 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
             Template::render("instance/index", json!({
                 "instance": inst,
                 "account": user,
-                "recents": recents.into_iter().map(|p| {
-                    json!({
-                        "post": p,
-                        "author": ({
-                            let author = &p.get_authors(&*conn)[0];
-                            let mut json = serde_json::to_value(author).unwrap();
-                            json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                            json
-                        }),
-                        "url": format!("/~/{}/{}/", p.get_blog(&*conn).actor_id, p.slug),
-                        "date": p.creation_date.timestamp()
-                    })
-                }).collect::<Vec<serde_json::Value>>()
+                "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
             }))
         }
         None => {
@@ -58,11 +46,11 @@ struct NewInstanceForm {
 #[post("/configure", data = "<data>")]
 fn post_config(conn: DbConn, data: Form<NewInstanceForm>) -> Redirect {
     let form = data.get();
-    let inst = Instance::insert(
-        &*conn,
-        BASE_URL.as_str().to_string(),
-        form.name.to_string(),
-        true);
+    let inst = Instance::insert(&*conn, NewInstance {
+        public_domain: BASE_URL.as_str().to_string(),
+        name: form.name.to_string(),
+        local: true
+    });
     if inst.has_admin(&*conn) {
         Redirect::to("/")
     } else {

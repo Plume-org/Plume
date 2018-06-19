@@ -1,8 +1,35 @@
 use rocket::response::NamedFile;
 use std::path::{Path, PathBuf};
 
+macro_rules! may_fail {
+    ($expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
+        {
+            let res = $expr;
+            if res.is_some() {
+                let $res = res.unwrap();
+                $block
+            } else {
+                Template::render(concat!("errors/", $template), json!({
+                    "error_message": $msg
+                }))
+            }
+        }
+    };
+    ($expr:expr, $msg:expr, | $res:ident | $block:block) => {
+        may_fail!($expr, "404", $msg, |$res| {
+            $block
+        })
+    };
+    ($expr:expr, | $res:ident | $block:block) => {
+        may_fail!($expr, "", |$res| {
+            $block
+        })
+    };
+}
+
 pub mod blogs;
 pub mod comments;
+pub mod errors;
 pub mod instance;
 pub mod likes;
 pub mod notifications;

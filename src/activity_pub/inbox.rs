@@ -1,6 +1,6 @@
 use activitypub::{
     Object,
-    activity::{Create, Like, Undo}
+    activity::{Announce, Create, Like, Undo}
 };
 use diesel::PgConnection;
 use failure::Error;
@@ -90,6 +90,10 @@ pub trait Inbox {
                                 likes::Like::delete_activity(conn, Id::new(act.undo_props.object_object::<Like>()?.object_props.id_string()?));
                                 Ok(())
                             },
+                            "Announce" => {
+                                Reshare::delete_activity(conn, Id::new(act.undo_props.object_object::<Announce>()?.object_props.id_string()?));
+                                Ok(())
+                            }
                             _ => Err(InboxError::CantUndo)?
                         }
                     }

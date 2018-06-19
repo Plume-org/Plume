@@ -50,20 +50,10 @@ pub struct NewPost {
 }
 
 impl Post {
-    pub fn insert(conn: &PgConnection, new: NewPost) -> Post {
-        diesel::insert_into(posts::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new post")
-    }
-
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Post> {
-        posts::table.filter(posts::id.eq(id))
-            .limit(1)
-            .load::<Post>(conn)
-            .expect("Error loading post by id")
-            .into_iter().nth(0)
-    }
+    insert!(posts, NewPost);
+    get!(posts);
+    find_by!(posts, find_by_slug, slug as String);
+    find_by!(posts, find_by_ap_url, ap_url as String);
 
     pub fn count_local(conn: &PgConnection) -> usize {
         use schema::post_authors;
@@ -74,22 +64,6 @@ impl Post {
             .load::<Post>(conn)
             .expect("Couldn't load local posts")
             .len()
-    }
-
-    pub fn find_by_slug(conn: &PgConnection, slug: String) -> Option<Post> {
-        posts::table.filter(posts::slug.eq(slug))
-            .limit(1)
-            .load::<Post>(conn)
-            .expect("Error loading post by slug")
-            .into_iter().nth(0)
-    }
-
-    pub fn find_by_ap_url(conn: &PgConnection, ap_url: String) -> Option<Post> {
-        posts::table.filter(posts::ap_url.eq(ap_url))
-            .limit(1)
-            .load::<Post>(conn)
-            .expect("Error loading post by AP URL")
-            .into_iter().nth(0)
     }
 
     pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
@@ -193,6 +167,15 @@ impl Post {
         act.create_props.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
         act.create_props.set_object_object(self.into_activity(conn)).unwrap();
         act
+    }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        json!({
+            "post": self,
+            "author": self.get_authors(conn)[0].to_json(conn),
+            "url": format!("/~/{}/{}/", self.get_blog(conn).actor_id, self.slug),
+            "date": self.creation_date.timestamp()
+        })
     }
 }
 

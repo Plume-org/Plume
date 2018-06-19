@@ -19,38 +19,24 @@ use safe_string::SafeString;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
-    let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
-    let post = Post::find_by_slug(&*conn, slug).unwrap();
-    let comments = Comment::find_by_post(&*conn, post.id);
+    may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
+        may_fail!(Post::find_by_slug(&*conn, slug), "Couldn't find this post", |post| {
+            let comments = Comment::find_by_post(&*conn, post.id);
 
-    Template::render("posts/details", json!({
-        "author": ({
-            let author = &post.get_authors(&*conn)[0];
-            let mut json = serde_json::to_value(author).unwrap();
-            json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-            json
-        }),
-        "post": post,
-        "blog": blog,
-        "comments": comments.into_iter().map(|c| {
-            json!({
-                "id": c.id,
-                "content": c.content,
-                "author": ({
-                    let author = &c.get_author(&*conn);
-                    let mut json = serde_json::to_value(author).unwrap();
-                    json["fqn"] = serde_json::Value::String(author.get_fqn(&*conn));
-                    json
-                })
-            })
-        }).collect::<Vec<serde_json::Value>>(),
-        "n_likes": post.get_likes(&*conn).len(),
-        "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
-        "n_reshares": post.get_reshares(&*conn).len(),
-        "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
-        "account": user,
-        "date": &post.creation_date.timestamp()
-    }))
+            Template::render("posts/details", json!({
+                "author": post.get_authors(&*conn)[0].to_json(&*conn),
+                "post": post,
+                "blog": blog,
+                "comments": comments.into_iter().map(|c| c.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "n_likes": post.get_likes(&*conn).len(),
+                "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
+                "n_reshares": post.get_reshares(&*conn).len(),
+                "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
+                "account": user,
+                "date": &post.creation_date.timestamp()
+            }))
+        })
+    })
 }
 
 #[get("/~/<_blog>/<slug>", rank = 3, format = "application/activity+json")]

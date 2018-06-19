@@ -14,15 +14,15 @@ use openssl::{
     rsa::Rsa,
     sign::Signer
 };
+use webfinger::*;
 
 use activity_pub::{
     ActivityStream, Id, IntoId,
     actor::{Actor as APActor, ActorType},
     inbox::WithInbox,
-    sign,
-    webfinger::*
+    sign
 };
-use models::instance::Instance;
+use models::instance::*;
 use schema::blogs;
 
 
@@ -56,20 +56,8 @@ pub struct NewBlog {
 }
 
 impl Blog {
-    pub fn insert (conn: &PgConnection, new: NewBlog) -> Blog {
-        diesel::insert_into(blogs::table)
-            .values(new)
-            .get_result(conn)
-            .expect("Error saving new blog")
-    }
-
-    pub fn get(conn: &PgConnection, id: i32) -> Option<Blog> {
-        blogs::table.filter(blogs::id.eq(id))
-            .limit(1)
-            .load::<Blog>(conn)
-            .expect("Error loading blog by id")
-            .into_iter().nth(0)
-    }
+    insert!(blogs, NewBlog);
+    get!(blogs);
 
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;
@@ -79,14 +67,7 @@ impl Blog {
             .expect("Couldn't load blogs ")
     }
 
-    pub fn find_by_name(conn: &PgConnection, name: String, instance_id: i32) -> Option<Blog> {
-        blogs::table.filter(blogs::actor_id.eq(name))
-            .filter(blogs::instance_id.eq(instance_id))
-            .limit(1)
-            .load::<Blog>(conn)
-            .expect("Error loading blog by name")
-            .into_iter().nth(0)
-    }
+    find_by!(blogs, find_by_name, actor_id as String, instance_id as i32);
 
     pub fn find_local(conn: &PgConnection, name: String) -> Option<Blog> {
         Blog::find_by_name(conn, name, Instance::local_id(conn))
@@ -110,9 +91,9 @@ impl Blog {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<Blog> {
         match resolve(acct.clone()) {
-            Ok(url) => Blog::fetch_from_url(conn, url),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href)),
             Err(details) => {
-                println!("{}", details);
+                println!("{:?}", details);
                 None
             }
         }
@@ -136,7 +117,11 @@ impl Blog {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
-                Instance::insert(conn, inst.clone(), inst.clone(), false)
+                Instance::insert(conn, NewInstance {
+                    public_domain: inst.clone(),
+                    name: inst.clone(),
+                    local: false
+                })
             }
         };
         Blog::insert(conn, NewBlog {
@@ -185,6 +170,30 @@ impl Blog {
 
     pub fn get_keypair(&self) -> PKey<Private> {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
+    }
+
+    pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
+        Webfinger {
+            subject: format!("acct:{}@{}", self.actor_id, self.get_instance(conn).public_domain),
+            aliases: vec![self.compute_id(conn)],
+            links: vec![
+                Link {
+                    rel: String::from("http://webfinger.net/rel/profile-page"),
+                    mime_type: None,
+                    href: self.compute_id(conn)
+                },
+                Link {
+                    rel: String::from("http://schemas.google.com/g/2010#updates-from"),
+                    mime_type: Some(String::from("application/atom+xml")),
+                    href: self.compute_box(conn, "feed.atom")
+                },
+                Link {
+                    rel: String::from("self"),
+                    mime_type: Some(String::from("application/activity+json")),
+                    href: self.compute_id(conn)
+                }
+            ]
+        }
     }
 }
 
@@ -246,33 +255,6 @@ impl APActor for Blog {
             .load::<Blog>(conn)
             .expect("Error loading blog from url")
             .into_iter().nth(0)
-    }
-}
-
-impl Webfinger for Blog {
-    fn webfinger_subject(&self, conn: &PgConnection) -> String {
-        format!("acct:{}@{}", self.actor_id, self.get_instance(conn).public_domain)
-    }
-    fn webfinger_aliases(&self, conn: &PgConnection) -> Vec<String> {
-        vec![self.compute_id(conn)]
-    }
-    fn webfinger_links(&self, conn: &PgConnection) -> Vec<Vec<(String, String)>> {
-        vec![
-            vec![
-                (String::from("rel"), String::from("http://webfinger.net/rel/profile-page")),
-                (String::from("href"), self.compute_id(conn))
-            ],
-            vec![
-                (String::from("rel"), String::from("http://schemas.google.com/g/2010#updates-from")),
-                (String::from("type"), String::from("application/atom+xml")),
-                (String::from("href"), self.compute_box(conn, "feed.atom"))
-            ],
-            vec![
-                (String::from("rel"), String::from("self")),
-                (String::from("type"), String::from("application/activity+json")),
-                (String::from("href"), self.compute_id(conn))
-            ]
-        ]
     }
 }
 
