@@ -1,5 +1,6 @@
 @import url('/static/fonts/Route159/Route159.css');
-@import url('https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i|Playfair+Display:400,400i,700,700i,900,900i&subset=cyrillic,cyrillic-ext,latin-ext,vietnamese');
+@import url('/static/fonts/Lora/Lora.css');
+@import url('/static/fonts/Playfair_Display/PlayfairDisplay.css');
 
 /*
  * == Global ==
@@ -30,7 +31,7 @@ header
 	display: flex;
 	align-content: center;
 	justify-content: space-between;
-	padding: 4em 2em 2em;
+	background: #ECECEC;
 }
 
 header #menu
@@ -44,6 +45,14 @@ header nav
 	flex-direction: row;
 	align-items: center;
 }
+header nav hr
+{
+	height: 100%;
+	width: 0.2em;
+	background: #7765E3;
+	border: none;
+	transform: skewX(-15deg);
+}
 header nav a
 {
 	display: block;
@@ -52,11 +61,9 @@ header nav a
 }
 header nav a.title
 {
-	margin: 0 0 0 -1em;
-	padding: 0;
-	width: calc(20vw);
+	margin: 0;
+	padding: 0.5em 2em;
 	font-size: 1.75em;
-	border-right: solid #7765E3 0.1em;
 	text-align: center;
 }
 
@@ -114,7 +121,7 @@ main .article-info .author a
 main article
 {
 	max-width: 40rem;
-	margin: auto;
+	margin: 2.5em auto;
 	font-family: "Lora", serif;
 	font-size: 1.2em;
 	line-height: 1.7em;
@@ -320,7 +327,7 @@ textarea
 	padding: 1em;
 	box-sizing: border-box;
 
-	background: #F4F4F4;
+	background: #ECECEC;
 	color: #242424;
 	border: none;
 	resize: vertical;
@@ -437,7 +444,12 @@ form.new-post input[type="submit"]
 	background: #E3E3E3;
 }
 .list .card
-{ min-height: 0; }
+{ /* TODO */
+	background: 0;
+	margin: 0;
+	padding: 0;
+	min-height: 0;
+}
 
 /* ~ Card content ~ */
 
@@ -504,6 +516,21 @@ form.new-post input[type="submit"]
 		display: flex;
 		flex-direction: column;
 	}
+
+	body > main > *
+	{
+		padding: 0 5%;
+	}
+	main .article-meta > *
+	{ margin: 0 5%; }
+
+	main .article-meta > p
+	{
+		margin: 2em 5%;
+		font-size: 0.9em;
+	}
+	main .article-meta .comments > *
+	{ margin-left: 5%; margin-right: 5%; }
 
 	.card
 	{

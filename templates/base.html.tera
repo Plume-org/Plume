@@ -12,6 +12,7 @@
             <nav id="menu"><a href="#">{{ "Menu" | _ }}</a></nav>
             <nav>
                 <a href="/" class="title">{{ "Plume" | _ }}</a>
+                <hr/>
                 {% block header %}
                 {% endblock header %}
             </nav>
