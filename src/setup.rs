@@ -4,10 +4,12 @@ use dotenv::dotenv;
 use std::fs;
 use std::io;
 use std::process::{exit, Command};
+use rpassword;
 
 use DB_URL;
 use db_conn::DbConn;
 use models::instance::*;
+use models::users::*;
 
 type PgPool = Pool<ConnectionManager<PgConnection>>;
 
@@ -48,6 +50,12 @@ fn run_setup(conn: Option<DbConn>) {
     read_line();
     check_native_deps();
     setup_type(conn.expect("Couldn't connect to the Plume database"));
+
+    println!("{}\n{}\n{}",
+        "Your Plume instance is now ready to be used.".magenta(),
+        "We hope you will enjoy it.".magenta(),
+        "If you ever encounter a problem, feel free to report it at https://github.com/Plume-org/Plume/issues/".magenta(),
+    );
 }
 
 fn setup_type(conn: DbConn) {
@@ -69,18 +77,20 @@ fn setup_type(conn: DbConn) {
 fn quick_setup(conn: DbConn) {
     println!("What is your instance domain?");
     let domain = read_line();
-    write_to_dotenv("BASE_URL", domain);
+    write_to_dotenv("BASE_URL", domain.clone());
 
     println!("\nWhat is your instance name?");
     let name = read_line();
 
-    let inst = Instance::insert(&*conn, NewInstance {
+    let instance = Instance::insert(&*conn, NewInstance {
         public_domain: domain,
         name: name,
         local: true
     });
 
-    create_admin();
+    println!("{}\n", "  ✔️ Your instance was succesfully created!".green());
+
+    create_admin(instance, conn);
 }
 
 fn complete_setup(conn: DbConn) {
@@ -88,7 +98,30 @@ fn complete_setup(conn: DbConn) {
     quick_setup(conn);
 }
 
-fn create_admin() {}
+fn create_admin(instance: Instance, conn: DbConn) {
+    println!("{}\n\n", "You are now about to create your admin account".magenta());
+
+    println!("What is your username? (default: admin)");
+    let name = read_line_or("admin");
+
+    println!("What is your email?");
+    let email = read_line();
+
+    println!("What is your password?");
+    let password = rpassword::read_password().expect("Couldn't read your password.");
+
+    User::insert(&*conn, NewUser::new_local(
+        name.clone(),
+        name,
+        true,
+        format!("Admin of {}", instance.name),
+        email,
+        User::hash_pass(password),
+        instance.id
+    )).update_boxes(&*conn);
+
+    println!("{}\n", "  ✔️ Your account was succesfully created!".green());
+}
 
 fn check_native_deps() {
     let mut not_found = Vec::new();
@@ -125,6 +158,15 @@ fn read_line() -> String {
     io::stdin().read_line(&mut input).expect("Unable to read line");
     input.retain(|c| c != '\n');
     input
+}
+
+fn read_line_or(or: &str) -> String {
+    let input = read_line();
+    if input.len() == 0 {
+        or.to_string()
+    } else {
+        input
+    }
 }
 
 fn write_to_dotenv(var: &'static str, val: String) {
