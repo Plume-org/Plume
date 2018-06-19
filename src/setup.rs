@@ -1,8 +1,9 @@
 use colored::Colorize;
 use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
 use dotenv::dotenv;
-use std::fs;
+use std::fs::{self, File};
 use std::io;
+use std::path::Path;
 use std::process::{exit, Command};
 use rpassword;
 
@@ -32,6 +33,7 @@ pub fn check() -> PgPool {
             }
             Err(_) => panic!("Couldn't connect to database")
         }
+        migrate();
         pool
     } else {
         run_setup(None);
@@ -49,13 +51,72 @@ fn run_setup(conn: Option<DbConn>) {
     );
     read_line();
     check_native_deps();
-    setup_type(conn.expect("Couldn't connect to the Plume database"));
+    let conn = setup_db(conn);
+    setup_type(conn);
 
     println!("{}\n{}\n{}",
         "Your Plume instance is now ready to be used.".magenta(),
         "We hope you will enjoy it.".magenta(),
         "If you ever encounter a problem, feel free to report it at https://github.com/Plume-org/Plume/issues/".magenta(),
     );
+}
+
+fn setup_db(conn: Option<DbConn>) -> DbConn {
+    match conn {
+        Some(conn) => conn,
+        None => {
+            println!("\n{}\n", "We are going to setup the database.".magenta());
+            println!("{}\n", "About to create a new PostgreSQL user named 'plume'".blue());
+            Command::new("createuser")
+                .arg("-d")
+                .arg("-P")
+                .arg("plume")
+                .status()
+                .map(|s| {
+                    if s.success() {
+                        println!("{}\n", "  ✔️ Done".green());
+                    }
+                })
+                .expect("Couldn't create new user");
+            
+            println!("{}\n", "About to create a new PostgreSQL table named 'plume'".blue());
+            Command::new("createdb")
+                .arg("-O")
+                .arg("plume")
+                .arg("plume")
+                .status()
+                .map(|s| {
+                    if s.success() {
+                        println!("{}\n", "  ✔️ Done".green());
+                    }
+                })
+                .expect("Couldn't create new table");
+
+            migrate();
+
+            init_pool()
+                .expect("Couldn't init DB pool")
+                .get()
+                .map(|c| DbConn(c))
+                .expect("Couldn't connect to the database")
+        }
+    }
+}
+
+fn migrate() {
+    println!("{}\n", "Running migrations…".blue());
+    Command::new("diesel")
+        .arg("migration")
+        .arg("run")
+        .arg("--database-url")
+        .arg(DB_URL.as_str())
+        .status()
+        .map(|s| {
+            if s.success() {
+                println!("{}\n", "  ✔️ Done".green());
+            }
+        })
+        .expect("Couldn't run migrations");
 }
 
 fn setup_type(conn: DbConn) {
@@ -170,5 +231,9 @@ fn read_line_or(or: &str) -> String {
 }
 
 fn write_to_dotenv(var: &'static str, val: String) {
+    if !Path::new(".env").exists() {
+        File::create(".env").expect("Error while creating .env file");
+    }
+
     fs::write(".env", format!("{}\n{}={}", fs::read_to_string(".env").expect("Unable to read .env"), var, val)).expect("Unable to write .env");
 }
