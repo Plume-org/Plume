@@ -52,7 +52,7 @@ pub struct NewPost {
 impl Post {
     insert!(posts, NewPost);
     get!(posts);
-    find_by!(posts, find_by_slug, slug as String);
+    find_by!(posts, find_by_slug, slug as String, blog_id as i32);
     find_by!(posts, find_by_ap_url, ap_url as String);
 
     pub fn count_local(conn: &PgConnection) -> usize {

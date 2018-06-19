@@ -20,7 +20,7 @@ use safe_string::SafeString;
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
     may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
-        may_fail!(Post::find_by_slug(&*conn, slug), "Couldn't find this post", |post| {
+        may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             let comments = Comment::find_by_post(&*conn, post.id);
 
             Template::render("posts/details", json!({
@@ -39,10 +39,10 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
     })
 }
 
-#[get("/~/<_blog>/<slug>", rank = 3, format = "application/activity+json")]
-fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
-    // FIXME: posts in different blogs may have the same slug
-    let post = Post::find_by_slug(&*conn, slug).unwrap();
+#[get("/~/<blog>/<slug>", rank = 3, format = "application/activity+json")]
+fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityPub {
+    let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
+    let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
 
     let mut act = post.serialize(&*conn);
     act["@context"] = context();
@@ -51,11 +51,12 @@ fn activity_details(_blog: String, slug: String, conn: DbConn) -> ActivityPub {
 
 #[get("/~/<blog>/new", rank = 2)]
 fn new_auth(blog: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to write a new post", &format!("/~/{}/new",blog))
+    utils::requires_login("You need to be logged in order to write a new post", uri!(new: blog = blog))
 }
 
-#[get("/~/<_blog>/new", rank = 1)]
-fn new(_blog: String, user: User) -> Template {
+#[get("/~/<blog>/new", rank = 1)]
+#[allow(unused_variables)]
+fn new(blog: String, user: User) -> Template {
     Template::render("posts/new", json!({
         "account": user
     }))
@@ -74,37 +75,41 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
 
-    let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
-        smart: true,
-        safe: true,
-        ext_strikethrough: true,
-        ext_tagfilter: true,
-        ext_table: true,
-        ext_autolink: true,
-        ext_tasklist: true,
-        ext_superscript: true,
-        ext_header_ids: Some("title".to_string()),
-        ext_footnotes: true,
-        ..ComrakOptions::default()
-    });
+    if slug == "new" || Post::find_by_slug(&*conn, slug.clone(), blog.id).is_some() {
+        Redirect::to(uri!(new: blog = blog_name))
+    } else {
+        let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
+            smart: true,
+            safe: true,
+            ext_strikethrough: true,
+            ext_tagfilter: true,
+            ext_table: true,
+            ext_autolink: true,
+            ext_tasklist: true,
+            ext_superscript: true,
+            ext_header_ids: Some("title".to_string()),
+            ext_footnotes: true,
+            ..ComrakOptions::default()
+        });
 
-    let post = Post::insert(&*conn, NewPost {
-        blog_id: blog.id,
-        slug: slug.to_string(),
-        title: form.title.to_string(),
-        content: SafeString::new(&content),
-        published: true,
-        license: form.license.to_string(),
-        ap_url: "".to_string()
-    });
-    post.update_ap_url(&*conn);
-    PostAuthor::insert(&*conn, NewPostAuthor {
-        post_id: post.id,
-        author_id: user.id
-    });
+        let post = Post::insert(&*conn, NewPost {
+            blog_id: blog.id,
+            slug: slug.to_string(),
+            title: form.title.to_string(),
+            content: SafeString::new(&content),
+            published: true,
+            license: form.license.to_string(),
+            ap_url: "".to_string()
+        });
+        post.update_ap_url(&*conn);
+        PostAuthor::insert(&*conn, NewPostAuthor {
+            post_id: post.id,
+            author_id: user.id
+        });
 
-    let act = post.create_activity(&*conn);
-    broadcast(&*conn, &user, act, user.get_followers(&*conn));
+        let act = post.create_activity(&*conn);
+        broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
-    Redirect::to(format!("/~/{}/{}/", blog_name, slug))
+        Redirect::to(uri!(details: blog = blog_name, slug = slug))
+    }
 }

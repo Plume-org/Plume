@@ -27,8 +27,8 @@ use utils;
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
-        Some(user) => Ok(Redirect::to(format!("/@/{}/", user.username))),
-        None => Err(utils::requires_login("", "/me"))
+        Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
+        None => Err(utils::requires_login("", uri!(me)))
     }
 }
 
@@ -65,7 +65,7 @@ fn dashboard(user: User, conn: DbConn) -> Template {
 
 #[get("/dashboard", rank = 2)]
 fn dashboard_auth() -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to access your dashboard", "/dashboard")
+    utils::requires_login("You need to be logged in order to access your dashboard", uri!(dashboard))
 }
 
 #[get("/@/<name>/follow")]
@@ -82,12 +82,12 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
 
     follows::Follow::notify(&*conn, act.clone(), user.clone().into_id());
     broadcast(&*conn, &user, act, vec![target]);
-    Redirect::to(format!("/@/{}/", name))
+    Redirect::to(uri!(details: name = name))
 }
 
 #[get("/@/<name>/follow", rank = 2)]
 fn follow_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to follow someone", &format!("/@/{}/follow", name))
+    utils::requires_login("You need to be logged in order to follow someone", uri!(follow: name = name))
 }
 
 #[get("/@/<name>/followers", rank = 2)]
@@ -134,7 +134,7 @@ fn edit(name: String, user: User) -> Option<Template> {
 
 #[get("/@/<name>/edit", rank = 2)]
 fn edit_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to edit your profile", &format!("/@/{}/edit", name))
+    utils::requires_login("You need to be logged in order to edit your profile", uri!(edit: name = name))
 }
 
 #[derive(FromForm)]
@@ -151,7 +151,7 @@ fn update(_name: String, conn: DbConn, user: User, data: Form<UpdateUserForm>) -
         data.get().email.clone().unwrap_or(user.email.clone().unwrap()).to_string(),
         data.get().summary.clone().unwrap_or(user.summary.to_string())
     );
-    Redirect::to("/me")
+    Redirect::to(uri!(me))
 }
 
 #[derive(FromForm)]
@@ -182,7 +182,7 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
             form.email.to_string(),
             User::hash_pass(form.password.to_string())
         ).update_boxes(&*conn);
-        Ok(Redirect::to(format!("/@/{}/", data.get().username)))
+        Ok(Redirect::to(uri!(super::session::new)))
     } else {
         Err(String::from("Passwords don't match"))
     }
