@@ -7,6 +7,7 @@ use rocket_contrib::Template;
 use activity_pub::{broadcast, IntoId, inbox::Notify};
 use db_conn::DbConn;
 use models::{
+    blogs::Blog,
     comments::*,
     posts::Post,
     users::User
@@ -15,13 +16,15 @@ use models::{
 use utils;
 use safe_string::SafeString;
 
-#[get("/~/<_blog>/<slug>/comment")]
-fn new(_blog: String, slug: String, user: User, conn: DbConn) -> Template {
-    may_fail!(Post::find_by_slug(&*conn, slug), "Couldn't find this post", |post| {
-        Template::render("comments/new", json!({
-            "post": post,
-            "account": user
-        }))
+#[get("/~/<blog>/<slug>/comment")]
+fn new(blog: String, slug: String, user: User, conn: DbConn) -> Template {
+    may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
+        may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
+            Template::render("comments/new", json!({
+                "post": post,
+                "account": user
+            }))
+        })
     })
 }
 
@@ -40,9 +43,10 @@ struct NewCommentForm {
     pub content: String
 }
 
-#[post("/~/<blog>/<slug>/comment?<query>", data = "<data>")]
-fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
-    let post = Post::find_by_slug(&*conn, slug.clone()).unwrap();
+#[post("/~/<blog_name>/<slug>/comment?<query>", data = "<data>")]
+fn create(blog_name: String, slug: String, query: CommentQuery, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
+    let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).unwrap();
+    let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).unwrap();
     let form = data.get();
     let comment = Comment::insert(&*conn, NewComment {
         content: SafeString::new(&form.content.clone()),
@@ -57,5 +61,5 @@ fn create(blog: String, slug: String, query: CommentQuery, data: Form<NewComment
     Comment::notify(&*conn, comment.into_activity(&*conn), user.clone().into_id());
     broadcast(&*conn, &user, comment.create_activity(&*conn), user.get_followers(&*conn));
 
-    Redirect::to(format!("/~/{}/{}/#comment-{}", blog, slug, comment.id))
+    Redirect::to(format!("/~/{}/{}/#comment-{}", blog_name, slug, comment.id))
 }

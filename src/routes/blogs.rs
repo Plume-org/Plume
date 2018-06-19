@@ -75,7 +75,7 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
             author_id: user.id,
             is_owner: true
         });
-        
+
         Redirect::to(format!("/~/{}/", slug))
     }
 }

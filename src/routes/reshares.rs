@@ -3,6 +3,7 @@ use rocket::response::{Redirect, Flash};
 use activity_pub::{broadcast, IntoId, inbox::Notify};
 use db_conn::DbConn;
 use models::{
+    blogs::Blog,
     posts::Post,
     reshares::*,
     users::User
@@ -12,7 +13,8 @@ use utils;
 
 #[get("/~/<blog>/<slug>/reshare")]
 fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
-    let post = Post::find_by_slug(&*conn, slug.clone()).unwrap();
+    let b = Blog::find_by_fqn(&*conn, blog.clone()).unwrap();
+    let post = Post::find_by_slug(&*conn, slug.clone(), b.id).unwrap();
 
     if !user.has_reshared(&*conn, &post) {
         let reshare = Reshare::insert(&*conn, NewReshare {
