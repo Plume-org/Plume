@@ -73,8 +73,6 @@ fn main() {
             routes::comments::create,
 
             routes::instance::index,
-            routes::instance::configure,
-            routes::instance::post_config,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
 

@@ -193,15 +193,15 @@ fn create_admin(instance: Instance, conn: DbConn) {
     println!("What is your password?");
     let password = rpassword::read_password().expect("Couldn't read your password.");
 
-    User::insert(&*conn, NewUser::new_local(
+    NewUser::new_local(
+        &*conn,
         name.clone(),
         name,
         true,
         format!("Admin of {}", instance.name),
         email,
         User::hash_pass(password),
-        instance.id
-    )).update_boxes(&*conn);
+    ).update_boxes(&*conn);
 
     println!("{}\n", "  ✔️ Your account was succesfully created!".green());
 }

@@ -33,31 +33,6 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
     }
 }
 
-#[get("/configure")]
-fn configure() -> Template {
-    Template::render("instance/configure", json!({}))
-}
-
-#[derive(FromForm)]
-struct NewInstanceForm {
-    name: String
-}
-
-#[post("/configure", data = "<data>")]
-fn post_config(conn: DbConn, data: Form<NewInstanceForm>) -> Redirect {
-    let form = data.get();
-    let inst = Instance::insert(&*conn, NewInstance {
-        public_domain: BASE_URL.as_str().to_string(),
-        name: form.name.to_string(),
-        local: true
-    });
-    if inst.has_admin(&*conn) {
-        Redirect::to("/")
-    } else {
-        Redirect::to("/users/new")
-    }
-}
-
 #[post("/inbox", data = "<data>")]
 fn shared_inbox(conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
