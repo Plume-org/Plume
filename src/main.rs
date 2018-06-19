@@ -7,6 +7,7 @@ extern crate array_tool;
 extern crate base64;
 extern crate bcrypt;
 extern crate chrono;
+extern crate colored;
 extern crate comrak;
 extern crate failure;
 #[macro_use]
@@ -35,18 +36,17 @@ extern crate tera;
 extern crate url;
 extern crate webfinger;
 
-use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
-use dotenv::dotenv;
 use rocket_contrib::Template;
 use std::env;
 
 mod activity_pub;
 mod db_conn;
 mod models;
+mod safe_string;
 mod schema;
+mod setup;
 mod routes;
 mod utils;
-mod safe_string;
 
 lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")
@@ -56,17 +56,8 @@ lazy_static! {
         .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
 }
 
-type PgPool = Pool<ConnectionManager<PgConnection>>;
-
-/// Initializes a database pool.
-fn init_pool() -> PgPool {
-    dotenv().ok();
-
-    let manager = ConnectionManager::<PgConnection>::new(DB_URL.as_str());
-    Pool::new(manager).expect("DB pool error")
-}
-
 fn main() {
+    let pool = setup::check();
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::details,
@@ -133,7 +124,7 @@ fn main() {
             routes::errors::not_found,
             routes::errors::server_error
         ])
-        .manage(init_pool())
+        .manage(pool)
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);
         }))
