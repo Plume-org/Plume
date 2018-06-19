@@ -58,7 +58,9 @@ struct NewBlogForm {
 fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
-
+    if slug.len() == 0 {
+        return Redirect::to("/blogs/new")
+    }
     if Blog::find_local(&*conn, slug.clone()).is_some() {
         Redirect::to(uri!(new))
     } else {
