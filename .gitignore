@@ -5,3 +5,4 @@ rls
 rls
 translations
 po/*.po~
+.env

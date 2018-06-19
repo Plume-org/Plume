@@ -53,15 +53,20 @@ fn run_setup(conn: Option<DbConn>) {
     check_native_deps();
     let conn = setup_db(conn);
     setup_type(conn);
+    dotenv().ok();
 
     println!("{}\n{}\n{}",
         "Your Plume instance is now ready to be used.".magenta(),
         "We hope you will enjoy it.".magenta(),
         "If you ever encounter a problem, feel free to report it at https://github.com/Plume-org/Plume/issues/".magenta(),
     );
+
+    println!("\nPress Enter to start it.\n");
 }
 
 fn setup_db(conn: Option<DbConn>) -> DbConn {
+    write_to_dotenv("DB_URL", DB_URL.as_str().to_string());
+
     match conn {
         Some(conn) => conn,
         None => {
@@ -78,7 +83,7 @@ fn setup_db(conn: Option<DbConn>) -> DbConn {
                     }
                 })
                 .expect("Couldn't create new user");
-            
+
             println!("{}\n", "About to create a new PostgreSQL table named 'plume'".blue());
             Command::new("createdb")
                 .arg("-O")
@@ -151,12 +156,29 @@ fn quick_setup(conn: DbConn) {
 
     println!("{}\n", "  ✔️ Your instance was succesfully created!".green());
 
+    // Generate Rocket secret key.
+    let key = Command::new("openssl")
+        .arg("rand")
+        .arg("-base64")
+        .arg("32")
+        .output()
+        .map(|o| String::from_utf8(o.stdout).expect("Invalid output from openssl"))
+        .expect("Couldn't generate secret key.");
+    write_to_dotenv("ROCKET_SECRET_KEY", key);    
+
     create_admin(instance, conn);
 }
 
 fn complete_setup(conn: DbConn) {
-    // TODO
     quick_setup(conn);
+
+    println!("\nOn which port should Plume listen? (default: 7878)");
+    let port = read_line_or("7878");
+    write_to_dotenv("ROCKET_PORT", port);
+
+    println!("\nOn which port should Plume listen? (default: 0.0.0.0)");
+    let address = read_line_or("0.0.0.0");
+    write_to_dotenv("ROCKET_ADDRESS", address);
 }
 
 fn create_admin(instance: Instance, conn: DbConn) {
