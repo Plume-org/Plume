@@ -59,21 +59,25 @@ fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
 
-    let blog = Blog::insert(&*conn, NewBlog::new_local(
-        slug.to_string(),
-        form.title.to_string(),
-        String::from(""),
-        Instance::local_id(&*conn)
-    ));
-    blog.update_boxes(&*conn);
+    if Blog::find_local(&*conn, slug.clone()).is_some() {
+        Redirect::to(uri!(new))
+    } else {
+        let blog = Blog::insert(&*conn, NewBlog::new_local(
+            slug.to_string(),
+            form.title.to_string(),
+            String::from(""),
+            Instance::local_id(&*conn)
+        ));
+        blog.update_boxes(&*conn);
 
-    BlogAuthor::insert(&*conn, NewBlogAuthor {
-        blog_id: blog.id,
-        author_id: user.id,
-        is_owner: true
-    });
-    
-    Redirect::to(format!("/~/{}/", slug))
+        BlogAuthor::insert(&*conn, NewBlogAuthor {
+            blog_id: blog.id,
+            author_id: user.id,
+            is_owner: true
+        });
+        
+        Redirect::to(format!("/~/{}/", slug))
+    }
 }
 
 #[get("/~/<name>/outbox")]
