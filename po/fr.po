@@ -19,7 +19,7 @@ msgid "No posts to see here yet."
 msgstr "Aucun article pour le moment"
 
 msgid "New article"
-msgstr "Derniers articles"
+msgstr "Nouvel articles"
 
 msgid "New blog"
 msgstr "Nouveau blog"
