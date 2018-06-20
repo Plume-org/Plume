@@ -1,4 +1,4 @@
-#![feature(plugin, custom_derive, decl_macro, iterator_find_map)]
+#![feature(plugin, custom_derive, decl_macro, iterator_find_map, iterator_flatten)]
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;

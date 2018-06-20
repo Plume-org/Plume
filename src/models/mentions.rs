@@ -33,6 +33,7 @@ impl Mention {
     get!(mentions);
     find_by!(mentions, find_by_ap_url, ap_url as String);
     list_by!(mentions, list_for_user, mentioned_id as i32);
+    list_by!(mentions, list_for_post, post_id as i32);
 
     pub fn get_mentioned(&self, conn: &PgConnection) -> Option<User> {
         User::get(conn, self.mentioned_id)
@@ -44,6 +45,14 @@ impl Mention {
 
     pub fn get_comment(&self, conn: &PgConnection) -> Option<Comment> {
         self.post_id.and_then(|id| Comment::get(conn, id))
+    }
+
+    pub fn build_activity(conn: &PgConnection, ment: String) -> link::Mention {
+        let user = User::find_by_fqn(conn, ment.clone());
+        let mut mention = link::Mention::default();
+        mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
+        mention.link_props.set_name_string(format!("@{}", ment)).expect("Error setting mention's name");
+        mention
     }
 
     pub fn to_activity(&self, conn: &PgConnection) -> link::Mention {

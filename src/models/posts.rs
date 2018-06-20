@@ -145,6 +145,8 @@ impl Post {
         let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
+        let mentions = Mention::list_for_post(conn, self.id).into_iter().map(|m| m.to_activity(conn)).collect::<Vec<link::Mention>>();
+
         let mut article = Article::default();
         article.object_props = ObjectProperties {
             name: Some(serde_json::to_value(self.title.clone()).unwrap()),
@@ -152,11 +154,11 @@ impl Post {
             attributed_to: Some(serde_json::to_value(self.get_authors(conn).into_iter().map(|x| x.ap_url).collect::<Vec<String>>()).unwrap()),
             content: Some(serde_json::to_value(self.content.clone()).unwrap()),
             published: Some(serde_json::to_value(self.creation_date).unwrap()),
-            tag: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
+            tag: Some(serde_json::to_value(mentions).unwrap()),
             url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
             to: Some(serde_json::to_value(to).unwrap()),
             cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
-            ..ObjectProperties::default()                
+            ..ObjectProperties::default()
         };
         article
     }
