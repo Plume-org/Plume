@@ -8,7 +8,6 @@ extern crate base64;
 extern crate bcrypt;
 extern crate chrono;
 extern crate colored;
-extern crate comrak;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
@@ -23,6 +22,7 @@ extern crate dotenv;
 #[macro_use]
 extern crate lazy_static;
 extern crate openssl;
+extern crate pulldown_cmark;
 extern crate reqwest;
 extern crate rocket;
 extern crate rocket_contrib;
