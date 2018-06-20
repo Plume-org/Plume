@@ -13,7 +13,7 @@
         {% if blogs | length < 1 %}
             <p>{{ "You don't have any blog yet. Create your own, or ask to join one." | _ }}</p>
         {% endif %}
-        <a class="button inline-block" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
+        <a class="button" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
         <div class="list">
             {% for blog in blogs %}
                 <div class="card">

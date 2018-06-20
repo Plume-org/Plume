@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('PlayfairDisplay-Bold.eot');
+    src: url('PlayfairDisplay-Bold.eot?#iefix') format('embedded-opentype'),
+        url('PlayfairDisplay-Bold.woff2') format('woff2'),
+        url('PlayfairDisplay-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('PlayfairDisplay-Black.eot');
+    src: url('PlayfairDisplay-Black.eot?#iefix') format('embedded-opentype'),
+        url('PlayfairDisplay-Black.woff2') format('woff2'),
+        url('PlayfairDisplay-Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('PlayfairDisplay-BoldItalic.eot');
+    src: url('PlayfairDisplay-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('PlayfairDisplay-BoldItalic.woff2') format('woff2'),
+        url('PlayfairDisplay-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('PlayfairDisplay-BlackItalic.eot');
+    src: url('PlayfairDisplay-BlackItalic.eot?#iefix') format('embedded-opentype'),
+        url('PlayfairDisplay-BlackItalic.woff2') format('woff2'),
+        url('PlayfairDisplay-BlackItalic.woff') format('woff');
+    font-weight: 900;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('PlayfairDisplay-Italic.eot');
+    src: url('PlayfairDisplay-Italic.eot?#iefix') format('embedded-opentype'),
+        url('PlayfairDisplay-Italic.woff2') format('woff2'),
+        url('PlayfairDisplay-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('PlayfairDisplay-Regular.eot');
+    src: url('PlayfairDisplay-Regular.eot?#iefix') format('embedded-opentype'),
+        url('PlayfairDisplay-Regular.woff2') format('woff2'),
+        url('PlayfairDisplay-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
