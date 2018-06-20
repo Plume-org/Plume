@@ -26,12 +26,13 @@ pub fn md_to_html(md: &str) -> String {
     let parser = parser.flat_map(|evt| match evt {
         Event::Text(txt) => txt.chars().fold((vec![], false, String::new(), 0), |(mut events, in_mention, text_acc, n), c| {
             if in_mention {
-                if c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_' {
+                if (c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_') && (n < (txt.chars().count() - 1)) {
                     (events, in_mention, text_acc + c.to_string().as_ref(), n + 1)
                 } else {
-                    let short_mention = text_acc.clone();
+                    let mention = text_acc + c.to_string().as_ref();
+                    let short_mention = mention.clone();
                     let short_mention = short_mention.splitn(1, '@').nth(0).unwrap_or("");
-                    let link = Tag::Link(format!("/@/{}/", text_acc).into(), short_mention.to_string().into());
+                    let link = Tag::Link(format!("/@/{}/", mention).into(), short_mention.to_string().into());
 
                     events.push(Event::Start(link.clone()));
                     events.push(Event::Text(format!("@{}", short_mention).into()));
@@ -44,7 +45,7 @@ pub fn md_to_html(md: &str) -> String {
                     events.push(Event::Text(text_acc.into()));
                     (events, true, String::new(), n + 1)
                 } else {
-                    if n >= (txt.len() - 1) { // Add the text after at the end, even if it is not followed by a mention.
+                    if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
                         events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
                     }
                     (events, in_mention, text_acc + c.to_string().as_ref(), n + 1)
