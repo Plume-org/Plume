@@ -89,7 +89,7 @@ impl User {
     get!(users);
     find_by!(users, find_by_email, email as String);
     find_by!(users, find_by_name, username as String, instance_id as i32);
-
+    find_by!(users, find_by_ap_url, ap_url as String);
 
     pub fn grant_admin_rights(&self, conn: &PgConnection) {
         diesel::update(self)
@@ -419,23 +419,15 @@ impl APActor for User {
     }
 
     fn from_url(conn: &PgConnection, url: String) -> Option<User> {
-        let in_db = users::table.filter(users::ap_url.eq(url.clone()))
-            .limit(1)
-            .load::<User>(conn)
-            .expect("Error loading user by AP url")
-            .into_iter().nth(0);
-        match in_db {
-            Some(u) => Some(u),
-            None => {
-                // The requested user was not in the DB
-                // We try to fetch it if it is remote
-                if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
-                    Some(User::fetch_from_url(conn, url).unwrap())
-                } else {
-                    None
-                }
+        User::find_by_ap_url(conn, url.clone()).or_else(|| {
+            // The requested user was not in the DB
+            // We try to fetch it if it is remote
+            if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
+                Some(User::fetch_from_url(conn, url).unwrap())
+            } else {
+                None
             }
-        }
+        })
     }
 }
 

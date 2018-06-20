@@ -40,7 +40,7 @@ pub trait FromActivity<T: Object>: Sized {
     }
 }
 
-pub trait Notify<T: Object> {
+pub trait Notify<T> {
     fn notify(conn: &PgConnection, act: T, actor: Id);
 }
 
