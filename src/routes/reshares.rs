@@ -1,6 +1,6 @@
 use rocket::response::{Redirect, Flash};
 
-use activity_pub::{broadcast, IntoId, inbox::Notify};
+use activity_pub::{broadcast, inbox::Notify};
 use db_conn::DbConn;
 use models::{
     blogs::Blog,
@@ -23,8 +23,8 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
             ap_url: "".to_string()
         });
         reshare.update_ap_url(&*conn);
+        reshare.notify(&*conn);
 
-        Reshare::notify(&*conn, reshare.into_activity(&*conn), user.clone().into_id());
         broadcast(&*conn, &user, reshare.into_activity(&*conn), user.get_followers(&*conn));
     } else {
         let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id).unwrap();

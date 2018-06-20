@@ -49,6 +49,7 @@ impl Mention {
 
     pub fn build_activity(conn: &PgConnection, ment: String) -> link::Mention {
         let user = User::find_by_fqn(conn, ment.clone());
+        println!("building act : {} -> {:?}", ment, user);
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
         mention.link_props.set_name_string(format!("@{}", ment)).expect("Error setting mention's name");
@@ -64,27 +65,28 @@ impl Mention {
     }
 
     pub fn from_activity(conn: &PgConnection, ment: link::Mention, inside: Id) -> Option<Self> {
-        let mentioned = User::find_by_ap_url(conn, ment.link_props.href_string().unwrap()).unwrap();
+        let ap_url = ment.link_props.href_string().unwrap();
+        let mentioned = User::find_by_ap_url(conn, ap_url).unwrap();
 
         if let Some(post) = Post::find_by_ap_url(conn, inside.clone().into()) {
-            let res = Some(Mention::insert(conn, NewMention {
+            let res = Mention::insert(conn, NewMention {
                 mentioned_id: mentioned.id,
                 post_id: Some(post.id),
                 comment_id: None,
                 ap_url: ment.link_props.href_string().unwrap_or(String::new())
-            }));
-            Mention::notify(conn, ment, Id::new(String::new()));
-            res
+            });
+            res.notify(conn);
+            Some(res)
         } else {
             if let Some(comment) = Comment::find_by_ap_url(conn, inside.into()) {
-                let res =Some(Mention::insert(conn, NewMention {
+                let res = Mention::insert(conn, NewMention {
                     mentioned_id: mentioned.id,
                     post_id: None,
                     comment_id: Some(comment.id),
                     ap_url: ment.link_props.href_string().unwrap_or(String::new())
-                }));
-                Mention::notify(conn, ment, Id::new(String::new()));
-                res
+                });
+                res.notify(conn);
+                Some(res)
             } else {
                 None
             }
@@ -92,25 +94,20 @@ impl Mention {
     }
 }
 
-impl Notify<link::Mention> for Mention {
-    fn notify(conn: &PgConnection, ment: link::Mention, _actor: Id) {
-        match Mention::find_by_ap_url(conn, ment.link_props.href_string().unwrap()) {
-            Some(mention) => {
-                let author = mention.get_comment(conn)
-                    .map(|c| c.get_author(conn).display_name.clone())
-                    .unwrap_or(mention.get_post(conn).unwrap().get_authors(conn)[0].display_name.clone());
+impl Notify for Mention {
+    fn notify(&self, conn: &PgConnection) {
+        let author = self.get_comment(conn)
+            .map(|c| c.get_author(conn).display_name.clone())
+            .unwrap_or(self.get_post(conn).unwrap().get_authors(conn)[0].display_name.clone());
 
-                mention.get_mentioned(conn).map(|m| {
-                    Notification::insert(conn, NewNotification {
-                        title: "{{ data }} mentioned you.".to_string(),
-                        data: Some(author),
-                        content: None,
-                        link: Some(mention.get_post(conn).map(|p| p.ap_url).unwrap_or(mention.get_comment(conn).unwrap().ap_url.unwrap_or(String::new()))),
-                        user_id: m.id
-                    });
-                });
-            },
-            None => println!("Couldn't find mention by AP URL, to create a new notification")
-        };
+        self.get_mentioned(conn).map(|m| {
+            Notification::insert(conn, NewNotification {
+                title: "{{ data }} mentioned you.".to_string(),
+                data: Some(author),
+                content: None,
+                link: Some(self.get_post(conn).map(|p| p.ap_url).unwrap_or_else(|| self.get_comment(conn).unwrap().ap_url.unwrap_or(String::new()))),
+                user_id: m.id
+            });
+        });
     }
 }

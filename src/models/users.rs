@@ -47,7 +47,7 @@ use safe_string::SafeString;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, Debug)]
 pub struct User {
     pub id: i32,
     pub username: String,

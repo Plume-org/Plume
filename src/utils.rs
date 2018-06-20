@@ -60,7 +60,7 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>) {
         _ => (vec![evt], vec![])
     }).unzip();
     let parser = parser.into_iter().flatten();
-    let mentions = mentions.into_iter().flatten();
+    let mentions = mentions.into_iter().flatten().map(|m| String::from(m.trim()));
 
     // TODO: fetch mentionned profiles in background, if needed
 

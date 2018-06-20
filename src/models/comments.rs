@@ -137,27 +137,21 @@ impl FromActivity<Note> for Comment {
             author_id: User::from_url(conn, actor.clone().into()).unwrap().id,
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
         });
-        Comment::notify(conn, note, actor);
+        comm.notify(conn);
         comm
     }
 }
 
-impl Notify<Note> for Comment {
-    fn notify(conn: &PgConnection, note: Note, _actor: Id) {
-        match Comment::find_by_ap_url(conn, note.object_props.id_string().unwrap()) {
-            Some(comment) => {
-                for author in comment.clone().get_post(conn).get_authors(conn) {
-                    let comment = comment.clone();
-                    Notification::insert(conn, NewNotification {
-                        title: "{{ data }} commented your article".to_string(),
-                        data: Some(comment.get_author(conn).display_name.clone()),
-                        content: Some(comment.get_post(conn).title),
-                        link: comment.ap_url,
-                        user_id: author.id
-                    });
-                }
-            },
-            None => println!("Couldn't find comment by AP id, to create a new notification")
-        };
+impl Notify for Comment {
+    fn notify(&self, conn: &PgConnection) {
+        for author in self.get_post(conn).get_authors(conn) {
+            Notification::insert(conn, NewNotification {
+                title: "{{ data }} commented your article".to_string(),
+                data: Some(self.get_author(conn).display_name.clone()),
+                content: Some(self.get_post(conn).title),
+                link: self.ap_url.clone(),
+                user_id: author.id
+            });
+        }
     }
 }

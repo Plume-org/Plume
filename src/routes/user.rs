@@ -71,16 +71,17 @@ fn dashboard_auth() -> Flash<Redirect> {
 #[get("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
-    follows::Follow::insert(&*conn, follows::NewFollow {
+    let f = follows::Follow::insert(&*conn, follows::NewFollow {
         follower_id: user.id,
         following_id: target.id
     });
+    f.notify(&*conn);
+
     let mut act = Follow::default();
     act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
 
-    follows::Follow::notify(&*conn, act.clone(), user.clone().into_id());
     broadcast(&*conn, &user, act, vec![target]);
     Redirect::to(uri!(details: name = name))
 }
