@@ -164,7 +164,6 @@ struct NewUserForm {
 
 #[post("/users/new", data = "<data>")]
 fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
-    let inst = Instance::get_local(&*conn).unwrap();
     let form = data.get();
 
     if form.username.clone().len() < 1 {
@@ -174,15 +173,15 @@ fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
     } else if form.password.clone().len() < 8 {
         Err(String::from("Password should be at least 8 characters long"))
     } else if form.password == form.password_confirmation {
-        User::insert(&*conn, NewUser::new_local(
+        NewUser::new_local(
+            &*conn,
             form.username.to_string(),
             form.username.to_string(),
-            !inst.has_admin(&*conn),
+            false,
             String::from(""),
             form.email.to_string(),
-            User::hash_pass(form.password.to_string()),
-            inst.id
-        )).update_boxes(&*conn);
+            User::hash_pass(form.password.to_string())
+        ).update_boxes(&*conn);
         Ok(Redirect::to(uri!(super::session::new)))
     } else {
         Err(String::from("Passwords don't match"))

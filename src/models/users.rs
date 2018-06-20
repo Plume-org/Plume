@@ -484,16 +484,16 @@ impl Signer for User {
 impl NewUser {
     /// Creates a new local user
     pub fn new_local(
+        conn: &PgConnection,
         username: String,
         display_name: String,
         is_admin: bool,
         summary: String,
         email: String,
-        password: String,
-        instance_id: i32
-    ) -> NewUser {
+        password: String
+    ) -> User {
         let (pub_key, priv_key) = gen_keypair();
-        NewUser {
+        User::insert(conn, NewUser {
             username: username,
             display_name: display_name,
             outbox_url: String::from(""),
@@ -502,11 +502,11 @@ impl NewUser {
             summary: SafeString::new(&summary),
             email: Some(email),
             hashed_password: Some(password),
-            instance_id: instance_id,
+            instance_id: Instance::local_id(conn),
             ap_url: String::from(""),
             public_key: String::from_utf8(pub_key).unwrap(),
             private_key: Some(String::from_utf8(priv_key).unwrap()),
             shared_inbox_url: None
-        }
+        })
     }
 }
