@@ -84,7 +84,7 @@ fn setup_db(conn: Option<DbConn>) -> DbConn {
                 })
                 .expect("Couldn't create new user");
 
-            println!("{}\n", "About to create a new PostgreSQL table named 'plume'".blue());
+            println!("{}\n", "About to create a new PostgreSQL database named 'plume'".blue());
             Command::new("createdb")
                 .arg("-O")
                 .arg("plume")
@@ -176,7 +176,7 @@ fn complete_setup(conn: DbConn) {
     let port = read_line_or("7878");
     write_to_dotenv("ROCKET_PORT", port);
 
-    println!("\nOn which port should Plume listen? (default: 0.0.0.0)");
+    println!("\nOn which address should Plume listen? (default: 0.0.0.0)");
     let address = read_line_or("0.0.0.0");
     write_to_dotenv("ROCKET_ADDRESS", address);
 }
