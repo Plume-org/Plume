@@ -60,7 +60,7 @@ msgstr "Skonfiguruj swoją instancję"
 msgid "Name"
 msgstr "Nazwa"
 
-msgid "Let's go!"
+msgid "Let&#x27;s go!"
 msgstr "Przejdźmy dalej!"
 
 msgid "Welcome on {{ instance_name }}"
@@ -81,7 +81,7 @@ msgstr[0] "Jedno polubienie"
 msgstr[1] "{{ count }} polubienia"
 msgstr[2] "{{ count }} polubień"
 
-msgid "I don't like this anymore"
+msgid "I don&#x27;t like this anymore"
 msgstr "Już tego nie lubię"
 
 msgid "Add yours"
@@ -93,7 +93,7 @@ msgstr[0] "Jedno udostępnienie"
 msgstr[1] "{{ count }} udostępnienia"
 msgstr[2] "{{ count }} udostępnień"
 
-msgid "I don't want to reshare this anymore"
+msgid "I don&#x27;t want to reshare this anymore"
 msgstr "Cofnij udostępnienie"
 
 msgid "Reshare"
@@ -135,7 +135,7 @@ msgstr "Twój panel"
 msgid "Your Blogs"
 msgstr "Twoje blogi"
 
-msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
 msgstr ""
 "Nie posiadasz żadnego bloga. Utwórz własny, lub poproś o dołączanie do "
 "istniejącego."
@@ -273,7 +273,7 @@ msgstr "{{ data }} polubił Twój artykuł"
 msgid "{{ data }} commented your article"
 msgstr "{{ data }} skomentował Twój artykuł"
 
-msgid "We couldn't find this page."
+msgid "We couldn&#x27;t find this page."
 msgstr "Nie udało się odnaleźć tej strony."
 
 msgid "The link that led you here may be broken."
