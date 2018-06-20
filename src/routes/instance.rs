@@ -1,9 +1,7 @@
 use gettextrs::gettext;
-use rocket::{request::Form, response::Redirect};
 use rocket_contrib::{Json, Template};
 use serde_json;
 
-use BASE_URL;
 use activity_pub::inbox::Inbox;
 use db_conn::DbConn;
 use models::{
@@ -30,31 +28,6 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
                 "error_message": gettext("You need to configure your instance before using it.".to_string())
             }))
         }
-    }
-}
-
-#[get("/configure")]
-fn configure() -> Template {
-    Template::render("instance/configure", json!({}))
-}
-
-#[derive(FromForm)]
-struct NewInstanceForm {
-    name: String
-}
-
-#[post("/configure", data = "<data>")]
-fn post_config(conn: DbConn, data: Form<NewInstanceForm>) -> Redirect {
-    let form = data.get();
-    let inst = Instance::insert(&*conn, NewInstance {
-        public_domain: BASE_URL.as_str().to_string(),
-        name: form.name.to_string(),
-        local: true
-    });
-    if inst.has_admin(&*conn) {
-        Redirect::to("/")
-    } else {
-        Redirect::to("/users/new")
     }
 }
 

@@ -42,44 +42,14 @@ Now, you can use the following command to start Postgres on a one-time basis.
 pg_ctl -D /usr/local/var/postgres start
 ```
 
-After starting Postgres, we need to enter [PSQL](http://postgresguide.com/utilities/psql.html), the interactive terminal for running postgres queries. We'll be running this as the user `postgres` which is an admin-type postgres user.
-
-```
-psql postgres
-```
-
-Now that you are in psql, enter the following queries to prepare the database for Plume.
-
-```
-CREATE DATABASE plume;
-CREATE USER plume WITH PASSWORD 'plume';
-GRANT ALL PRIVILEGES ON DATABASE plume to plume;
-\q
-```
-
-The final command `\q` lets us exit psql and returns us to the Terminal. Now, we will open psql again, this time as the `plume` user we just created. Then we'll give all privileges on all tables and sequences to our `plume` user. This is for local development use only and it's not recommend to give complete access to this user in a production environment.
-
-```
-psql plume
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO plume;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO plume;
-\q
-```
+When you will launch Plume for the first time, it will setup the database by itself.
 
 #### Database Migration
 
-Now that the Postgres database is set up and the `plume` user has the privileges it  needs, we can set up the database using the diesel CLI. If this was your time installing Rust, you 
-will probably need to run that using `cargo`. `cargo` is installed with `rustc` so if you followed the earlier instructions it will already be available.
+To run migrations and correctly setup the database, Plume use the `diesel` CLI tool under the hood. Therefore you should install it before running Plume. If this was your time installing Rust, you will probably need to run that using `cargo`. `cargo` is installed with `rustc` so if you followed the earlier instructions it will already be available.
 
 ```
 cargo install diesel_cli
-```
-
-The first time you run this, you can run setup. After that, every time you pull the repository you will want to run the migration command in case there were any migrations. Those commands are
-
-```
-diesel setup --database-url='postgres://localhost/plume'
-diesel migration run --database-url='postgres://localhost/plume'
 ```
 
 #### Running Plume
@@ -92,7 +62,7 @@ cargo run
 
 #### Configuration
 
-Now Plume should be running on your machine at [http://localhost:8000](http://localhost:8000). The first time you run the application, you'll want to configure your blog name on the [http://localhost:8000/configure](http://localhost:8000/configure) page. You'll be able to change this name later.
+The first time you'll run Plume, it will help you setup your instance through an interactive tool. Once you'll have answered all its question, your instance will start.
 
 #### Testing the federation
 
