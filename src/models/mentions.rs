@@ -25,7 +25,7 @@ pub struct NewMention {
 impl Mention {
     insert!(mentions, NewMention);
     get!(mentions);
-    find_by!(mentions, find_for_user, mentioned_id as i32);
+    list_by!(mentions, list_for_user, mentioned_id as i32);
 
     pub fn get_post(&self, conn: &PgConnection) -> Option<Post> {
         self.post_id.and_then(|id| Post::get(conn, id))
