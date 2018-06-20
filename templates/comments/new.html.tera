@@ -8,8 +8,8 @@
 <h1>{{ 'Comment "{{ post }}"' | _(post=post.title) }}</h1>
 <form method="post">
     <label for="content">{{ "Content" | _ }}</label>
-    <textarea name="content"></textarea>
-    <input type="submit" value="{{ "Submit comment" | _ }}"/>            
+    <textarea id="content" name="content"></textarea>
+    <input type="submit" value="{{ "Submit comment" | _ }}" />
 </form>
 {% endblock content %}
 

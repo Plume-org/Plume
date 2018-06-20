@@ -2,5 +2,5 @@
 
 {% block error %}
     <h1>{{ "Something broke on our side." | _ }}</h1>
-    <h2>{{ "Sorry about that. If you think this is a bug, please report it." | _ }}</h2>
+    <p>{{ "Sorry about that. If you think this is a bug, please report it." | _ }}</p>
 {% endblock error %}

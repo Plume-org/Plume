@@ -19,7 +19,7 @@ msgid "No posts to see here yet."
 msgstr "Aucun article pour le moment"
 
 msgid "New article"
-msgstr "Nouvel articles"
+msgstr "Nouvel article"
 
 msgid "New blog"
 msgstr "Nouveau blog"
@@ -59,7 +59,7 @@ msgstr "Configurez votre instance"
 msgid "Name"
 msgstr "Nom"
 
-msgid "Let's go!"
+msgid "Let&#x27;s go!"
 msgstr "C'est parti !"
 
 msgid "Welcome on {{ instance_name }}"
@@ -79,7 +79,7 @@ msgid_plural "{{ count }} likes"
 msgstr[0] "{{ count }} personne aime cet article"
 msgstr[1] "{{ count }} personnes aiment cet article"
 
-msgid "I don't like this anymore"
+msgid "I don&#x27;t like this anymore"
 msgstr "Je n'aime plus"
 
 msgid "Add yours"
@@ -90,7 +90,7 @@ msgid_plural "{{ count }} reshares"
 msgstr[0] "{{ count }} repartage"
 msgstr[1] "{{ count }} repartages"
 
-msgid "I don't want to reshare this anymore"
+msgid "I don&#x27;t want to reshare this anymore"
 msgstr "Je ne veux plus repartager"
 
 msgid "Reshare"
@@ -132,7 +132,7 @@ msgstr "Votre tableau de bord"
 msgid "Your Blogs"
 msgstr "Vos blogs"
 
-msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
 msgstr ""
 "Vous n'avez pas encore de blog. Créez le votre, ou demandez à en rejoindre "
 "un."
@@ -253,33 +253,32 @@ msgstr "Vous devez vous connecter pour suivre quelqu'un"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
-#, fuzzy
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
-msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr "De {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
-msgstr ""
+msgstr "{{ data }} a repartagé votre article"
 
 msgid "{{ data }} started following you"
-msgstr ""
+msgstr "{{ data }} vous suit"
 
 msgid "{{ data }} liked your article"
-msgstr ""
+msgstr "{{ data }} a aimé votre article"
 
 msgid "{{ data }} commented your article"
-msgstr ""
+msgstr "{{ data }} a commenté votre article"
 
-msgid "We couldn't find this page."
-msgstr ""
+msgid "We couldn&#x27;t find this page."
+msgstr "Page introuvable."
 
 msgid "The link that led you here may be broken."
-msgstr ""
+msgstr "Le lien que vous avez suivi est cassé."
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Vous n'avez pas les droits."
 
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "Vous n'êtes pas auteur dans ce blog."
 
 msgid "{{ data }} mentioned you."
 msgstr ""

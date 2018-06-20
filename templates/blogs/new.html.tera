@@ -8,8 +8,7 @@
 <h1>{{ "Create a blog" | _ }}</h1>
 <form method="post">
     <label for="title">{{ "Title" | _ }}</label>
-    <input name="title">
-
-    <input type="submit" value="{{ "Create blog" | _ }}"/>            
+    <input type="text" id="title" name="title" />
+    <input type="submit" value="{{ "Create blog" | _ }}"/>
 </form>
 {% endblock content %}

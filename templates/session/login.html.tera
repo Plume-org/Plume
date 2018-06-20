@@ -11,11 +11,11 @@
 {% endif %}
 <form method="post">
     <label for="email_or_name">{{ "Username or email" | _ }}</label>
-    <input name="email_or_name">
+    <input type="text" id="email_or_name" name="email_or_name" />
 
     <label for="password">{{ "Password" | _ }}</label>
-    <input type="password" name="password">
+    <input type="password" id="password" name="password" />
 
-    <input type="submit" value="{{ "Login" | _ }}"/>            
+    <input type="submit" value="{{ "Login" | _ }}" />
 </form>
 {% endblock content %}

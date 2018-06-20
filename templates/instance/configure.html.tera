@@ -8,8 +8,8 @@
 <h1>{{ "Configure your instance" | _ }}</h1>
 <form method="post">
     <label for="name">{{ "Name" | _ }}</label>
-    <input name="name">
+    <input type="text" id="name" name="name" />
 
-    <input type="submit" value="{{ "Let's go!" | _ }}"/>            
+    <input type="submit" value="{{ "Let's go!" | _ }}" />
 </form>
 {% endblock content %}
