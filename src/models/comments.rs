@@ -1,5 +1,6 @@
 use activitypub::{
     activity::Create,
+    link,
     object::{Note, properties::ObjectProperties}
 };
 use chrono;
@@ -13,6 +14,7 @@ use activity_pub::{
 };
 use models::{
     instance::Instance,
+    mentions::Mention,
     notifications::*,
     posts::Post,
     users::User
@@ -114,6 +116,16 @@ impl FromActivity<Note> for Comment {
     fn from_activity(conn: &PgConnection, note: Note, actor: Id) -> Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
+
+        // save mentions
+        if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
+            for tag in tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag)
+                    .map(|m| Mention::from_activity(conn, m, Id::new(note.clone().object_props.clone().url_string().unwrap_or(String::from("")))))
+                    .ok();
+            }
+        }
+
         let comm = Comment::insert(conn, NewComment {
             content: SafeString::new(&note.object_props.content_string().unwrap()),
             spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),

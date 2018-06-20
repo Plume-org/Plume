@@ -1,5 +1,6 @@
 use activitypub::{
     activity::Create,
+    link,
     object::{Article, properties::ObjectProperties}
 };
 use chrono::NaiveDateTime;
@@ -9,13 +10,13 @@ use serde_json;
 use BASE_URL;
 use activity_pub::{
     PUBLIC_VISIBILTY, ap_url, Id, IntoId,
-    actor::Actor,
     inbox::FromActivity
 };
 use models::{
     blogs::Blog,
     instance::Instance,
     likes::Like,
+    mentions::Mention,
     post_authors::PostAuthor,
     reshares::Reshare,
     users::User
@@ -184,6 +185,15 @@ impl Post {
 
 impl FromActivity<Article> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
+        // save mentions
+        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+            for tag in tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag)
+                    .map(|m| Mention::from_activity(conn, m, Id::new(article.clone().object_props.clone().url_string().unwrap_or(String::from("")))))
+                    .ok();
+            }
+        }
+
         Post::insert(conn, NewPost {
             blog_id: 0, // TODO
             slug: String::from(""), // TODO
