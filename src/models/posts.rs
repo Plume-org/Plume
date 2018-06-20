@@ -10,8 +10,7 @@ use BASE_URL;
 use activity_pub::{
     PUBLIC_VISIBILTY, ap_url, Id, IntoId,
     actor::Actor,
-    inbox::FromActivity,
-    object::Object
+    inbox::FromActivity
 };
 use models::{
     blogs::Blog,
@@ -177,6 +176,10 @@ impl Post {
             "date": self.creation_date.timestamp()
         })
     }
+
+    pub fn compute_id(&self, conn: &PgConnection) -> String {
+        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
+    }
 }
 
 impl FromActivity<Article> for Post {
@@ -196,35 +199,5 @@ impl FromActivity<Article> for Post {
 impl IntoId for Post {
     fn into_id(self) -> Id {
         Id::new(self.ap_url.clone())
-    }
-}
-
-impl Object for Post {
-    fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
-    }
-
-    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
-        let mut to = self.get_receivers_urls(conn);
-        to.push(PUBLIC_VISIBILTY.to_string());
-
-        json!({
-            "type": "Article",
-            "id": self.compute_id(conn),
-            "attributedTo": self.get_authors(conn)[0].compute_id(conn),
-            "name": self.title,
-            "content": self.content,
-            "actor": self.get_authors(conn)[0].compute_id(conn),
-            "published": self.creation_date,
-            // TODO: "image": "image",
-            // TODO: "preview": "preview",
-            // TODO: "replies": "replies",
-            // TODO: "summary": "summary",
-            "tag": [],
-            // TODO: "updated": "updated",
-            "url": self.compute_id(conn),
-            "to": to,
-            "cc": []
-        })
     }
 }

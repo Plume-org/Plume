@@ -1,14 +1,12 @@
 use activitypub::activity;
 use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
-use serde_json;
 
 use activity_pub::{
     Id,
     IntoId,
     actor::Actor,
-    inbox::{FromActivity, Deletable, Notify},
-    object::Object
+    inbox::{FromActivity, Deletable, Notify}
 };
 use models::{
     notifications::*,
@@ -68,6 +66,14 @@ impl Like {
 
         act
     }
+
+    pub fn compute_id(&self, conn: &PgConnection) -> String {
+        format!(
+            "{}/like/{}",
+            User::get(conn, self.user_id).unwrap().compute_id(conn),
+            Post::get(conn, self.post_id).unwrap().compute_id(conn)
+        )
+    }
 }
 
 impl FromActivity<activity::Like> for Like {
@@ -109,21 +115,5 @@ impl Deletable for Like {
         } else {
             false
         }
-    }
-}
-
-impl Object for Like {
-    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
-        json!({
-            "id": self.compute_id(conn)
-        })
-    }
-
-    fn compute_id(&self, conn: &PgConnection) -> String {
-        format!(
-            "{}/like/{}",
-            User::get(conn, self.user_id).unwrap().compute_id(conn),
-            Post::get(conn, self.post_id).unwrap().compute_id(conn)
-        )
     }
 }

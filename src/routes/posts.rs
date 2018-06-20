@@ -5,7 +5,7 @@ use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub, object::Object};
+use activity_pub::{broadcast, context, activity_pub, ActivityPub};
 use db_conn::DbConn;
 use models::{
     blogs::*,
@@ -44,7 +44,7 @@ fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityPub {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
 
-    let mut act = post.serialize(&*conn);
+    let mut act = serde_json::to_value(post.into_activity(&*conn)).unwrap();
     act["@context"] = context();
     activity_pub(act)
 }

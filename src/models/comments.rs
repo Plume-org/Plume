@@ -9,8 +9,7 @@ use serde_json;
 use activity_pub::{
     ap_url, Id, IntoId, PUBLIC_VISIBILTY,
     actor::Actor,
-    inbox::{FromActivity, Notify},
-    object::Object
+    inbox::{FromActivity, Notify}
 };
 use models::{
     instance::Instance,
@@ -105,6 +104,10 @@ impl Comment {
         json["author"] = self.get_author(conn).to_json(conn);
         json
     }
+
+    pub fn compute_id(&self, conn: &PgConnection) -> String {
+        ap_url(format!("{}#comment-{}", self.get_post(conn).compute_id(conn), self.id))
+    }
 }
 
 impl FromActivity<Note> for Comment {
@@ -144,33 +147,5 @@ impl Notify<Note> for Comment {
             },
             None => println!("Couldn't find comment by AP id, to create a new notification")
         };
-    }
-}
-
-impl Object for Comment {
-    fn serialize(&self, conn: &PgConnection) -> serde_json::Value {
-        let mut to = self.get_author(conn).get_followers(conn).into_iter().map(|f| f.ap_url).collect::<Vec<String>>();
-        to.append(&mut self.get_post(conn).get_receivers_urls(conn));
-        to.push(PUBLIC_VISIBILTY.to_string());
-
-        json!({
-            "id": self.compute_id(conn),
-            "type": "Note",
-            "summary": self.spoiler_text,
-            "content": self.content,
-            "inReplyTo": self.in_response_to_id.map_or_else(|| self.get_post(conn).ap_url, |id| {
-                let comm = Comment::get(conn, id).unwrap();
-                comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
-            }),
-            "published": self.creation_date,
-            "attributedTo": self.get_author(conn).compute_id(conn),
-            "to": to,
-            "cc": [],
-            "sensitive": self.sensitive,
-        })
-    }
-
-    fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}#comment-{}", self.get_post(conn).compute_id(conn), self.id))
     }
 }

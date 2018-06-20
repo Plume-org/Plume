@@ -14,7 +14,6 @@ use self::sign::Signable;
 
 pub mod actor;
 pub mod inbox;
-pub mod object;
 pub mod request;
 pub mod sign;
 
