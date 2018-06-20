@@ -13,8 +13,8 @@ use models::{
     posts::*,
     users::User
 };
-use utils;
 use safe_string::SafeString;
+use utils;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {

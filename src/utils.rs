@@ -23,6 +23,7 @@ pub fn requires_login(message: &str, url: Uri) -> Flash<Redirect> {
 
 pub fn md_to_html(md: &str) -> String {
     let parser = Parser::new_ext(md, Options::all());
+
     let parser = parser.flat_map(|evt| match evt {
         Event::Text(txt) => txt.chars().fold((vec![], false, String::new(), 0), |(mut events, in_mention, text_acc, n), c| {
             if in_mention {
@@ -54,21 +55,10 @@ pub fn md_to_html(md: &str) -> String {
         }).0,
         _ => vec![evt]
     });
+
+    // TODO: fetch mentionned profiles in background, if needed
+
     let mut buf = String::new();
     html::push_html(&mut buf, parser);
     buf
-
-    // let root = parse_document(&arena, md, &ComrakOptions{
-    //     smart: true,
-    //     safe: true,
-    //     ext_strikethrough: true,
-    //     ext_tagfilter: true,
-    //     ext_table: true,
-    //     // ext_autolink: true,
-    //     ext_tasklist: true,
-    //     ext_superscript: true,
-    //     ext_header_ids: Some("title".to_string()),
-    //     ext_footnotes: true,
-    //     ..ComrakOptions::default()
-    // });
 }
