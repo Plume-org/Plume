@@ -6,8 +6,7 @@
  * == Global ==
  */
 
-html, body
-{
+html, body {
 	margin: 0;
 	padding: 0;
 	background: #F4F4F4;
@@ -15,8 +14,7 @@ html, body
 	font-family: "Route159", serif;
 }
 
-a, a:visited
-{
+a, a:visited {
 	color: #7765E3;
 	text-decoration: none;
 	outline: none;
@@ -26,41 +24,35 @@ a, a:visited
  * == Header ==
  */
 
-header
-{
+header {
 	display: flex;
 	align-content: center;
 	justify-content: space-between;
 	background: #ECECEC;
 }
 
-header #menu
-{
+header #menu {
 	display: none;
 }
 
-header nav
-{
+header nav {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 }
-header nav hr
-{
+header nav hr {
 	height: 100%;
 	width: 0.2em;
 	background: #7765E3;
 	border: none;
 	transform: skewX(-15deg);
 }
-header nav a
-{
+header nav a {
 	display: block;
 	margin: 0 2em;
 	font-size: 1em;
 }
-header nav a.title
-{
+header nav a.title {
 	margin: 0;
 	padding: 0.5em 2em;
 	font-size: 1.75em;
@@ -71,19 +63,16 @@ header nav a.title
  * == Main ==
  */
 
-body > main > *
-{
+body > main > * {
 	padding: 0 20%;
 }
 
-main h1
-{
+main h1 {
 	font-family: "Route159";
 	font-size: 2.5em;
 	font-weight: 300;
 }
-main h1.article
-{
+main h1.article {
 	max-width: 40rem;
 	margin: 1em auto 0.5em;
 	font-family: "Playfair Display", serif;
@@ -91,8 +80,7 @@ main h1.article
 	font-weight: normal;
 }
 
-main h2
-{
+main h2 {
 	font-family: "Route159";
 	font-size: 1.75em;
 	font-weight: 300;
@@ -104,22 +92,18 @@ main h2
 
 /* Author */
 
-main .article-info
-{
+main .article-info {
 	max-width: 40rem;
 	margin: 0 auto 3em;
 	font-size: 0.95em;
 	font-weight: 400;
 }
-main .article-info .author
-{ font-weight: 600; }
-main .article-info .author a
-{ font-weight: 600; }
+main .article-info .author { font-weight: 600; }
+main .article-info .author a { font-weight: 600; }
 
 /* Article */
 
-main article
-{
+main article {
 	max-width: 40rem;
 	margin: 2.5em auto;
 	font-family: "Lora", serif;
@@ -130,16 +114,13 @@ main article
 
 /* Article.Meta */
 
-main .article-meta
-{
+main .article-meta {
 	padding: 0;
 	font-size: 1.1em;
 }
-main .article-meta > *
-{ margin: 0 20%; }
+main .article-meta > * { margin: 0 20%; }
 
-main .article-meta > p
-{
+main .article-meta > p {
 	margin: 2em 20%;
 	font-size: 0.9em;
 }
@@ -147,27 +128,23 @@ main .article-meta > p
 /* ~ Likes ~ */
 
 main .article-meta .likes p,
-main .article-meta .reshares p
-{ display: inline-block; margin: 0; }
+main .article-meta .reshares p { display: inline-block; margin: 0; }
 
 /* Like / Reshare button */
 
 main .article-meta .likes,
-main .article-meta .reshares
-{
+main .article-meta .reshares {
 	padding: 0.5em 0;
 }
 
-main .article-meta .likes a.button:before
-{
+main .article-meta .likes a.button:before {
 	content: "";
 	margin-right: 0.5em;
 	color: #E92F2F;
 	font-family: "Font Awesome 5 Free";
 	font-weight: 400;
 }
-main .article-meta .reshares a.button:before
-{
+main .article-meta .reshares a.button:before {
 	content: "";
 	margin-right: 0.5em;
 	color: #7765E3;
@@ -175,11 +152,9 @@ main .article-meta .reshares a.button:before
 	font-weight: 600;
 }
 main .article-meta .likes a.button.liked:before,
-main .article-meta .reshares a.button.reshared:before
-{ font-weight: 900; }
+main .article-meta .reshares a.button.reshared:before { font-weight: 900; }
 main .article-meta .likes a.button,
-main .article-meta .reshares a.button
-{
+main .article-meta .reshares a.button {
 	display: inline-block;
 	margin: 0 1em;
 	padding: 0;
@@ -188,21 +163,16 @@ main .article-meta .reshares a.button
 	border: none;
 }
 main .article-meta .likes a.button:hover,
-main .article-meta .likes a.button.liked
-{ color: #E92F2F; }
+main .article-meta .likes a.button.liked { color: #E92F2F; }
 main .article-meta .reshares a.button:hover,
-main .article-meta .reshares a.button.reshared
-{ color: #7765E3; }
+main .article-meta .reshares a.button.reshared { color: #7765E3; }
 
 /* ~ Comments ~ */
 
-main .article-meta .comments
-{ margin: 0; }
-main .article-meta .comments > *
-{ margin-left: 20%; margin-right: 20%; }
+main .article-meta .comments { margin: 0; }
+main .article-meta .comments > * { margin-left: 20%; margin-right: 20%; }
 
-.comments h2
-{
+.comments h2 {
 	color: #7765E3;
 	font-size: 1.5em;
 	font-weight: 600;
@@ -210,76 +180,63 @@ main .article-meta .comments > *
 
 /* Comment / Respond button */
 
-main .article-meta .comments a.button:before
-{
+main .article-meta .comments a.button:before {
 	content: "";
 	margin-right: 0.5em;
 	color: #7765E3;
 	font-family: "Font Awesome 5 Free";
 	font-weight: 400;
 }
-main .article-meta .comments a.button.liked:before
-{ font-weight: 900; }
-main .article-meta .comments a.button
-{
+main .article-meta .comments a.button.liked:before { font-weight: 900; }
+main .article-meta .comments a.button {
 	display: inline-block;
 	padding: 0;
 	background: none;
 	color: #242424;
 	border: none;
 }
-main .article-meta .comments a.button:hover
-{ color: #7765E3; }
+main .article-meta .comments a.button:hover { color: #7765E3; }
 
 /* Comment button only */
-main .article-meta .comments > a.button
-{ margin-bottom: 1em; }
+main .article-meta .comments > a.button { margin-bottom: 1em; }
 
 /* == List == */
 
-main .article-meta .comments .list
-{
+main .article-meta .comments .list {
 	display: grid;
 	margin: 0;
 }
 
 /* ~ Comment ~ */
 
-.comments .list .comment
-{
+.comments .list .comment {
 	background: #ECECEC;
 	padding: 2em 20%;
 	font-size: 1em;
 }
 
-.comments .list .comment .author
-{
+.comments .list .comment .author {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	align-content: center;
 }
 
-.comments .list .comment .author .display-name
-{
+.comments .list .comment .author .display-name {
 	transition: color 0.1s ease-in;
 	color: #242424;
 }
-.comments .list .comment .author:hover .display-name
-{ color: #7765E3; }
+.comments .list .comment .author:hover .display-name { color: #7765E3; }
 
-.comments .list .comment .author .username
-{
+.comments .list .comment .author .username {
 	transition: color 0.1s ease-in;
 	margin-left: 1em;
 	color: #777777;
 	font-size: 0.9em;
 }
-.comments .list .comment .author:hover .username
-{ color: #444444; }
+.comments .list .comment .author:hover .username { color: #444444; }
 
-.comments .list .comment .text
-{
+.comments .list .comment .text {
 	padding: 1.25em 0;
 	font-family: "Lora", serif;
 	font-size: 1.1em;
@@ -291,13 +248,11 @@ main .article-meta .comments .list
  * == Form ==
  */
 
-label
-{
+label {
 	display: block;
 	margin: 1em 0;
 }
-input
-{
+input {
 	transition: all 0.1s ease-in;
 	display: block;
 	width: 100%;
@@ -310,16 +265,13 @@ input
 	border: none;
 	border-bottom: solid #DADADA 2px;
 }
-input[type="submit"]
-{ margin: 2em auto; }
-input:focus
-{
+input[type="submit"] { margin: 2em auto; }
+input:focus {
 	background: #FAFAFA;
 	border-bottom-color: #7765E3;
 }
 
-textarea
-{
+textarea {
 	display: block;
 	width: 100%;
 	min-height: 4em;
@@ -340,8 +292,7 @@ textarea
 
 /* Button & Submit */
 
-.button, input[type="submit"]
-{
+.button, input[type="submit"] {
 	transition: all 0.1s ease-in;
 	display: inline-block;
 
@@ -355,8 +306,7 @@ textarea
 
 	cursor: pointer;
 }
-.button:hover, input[type="submit"]:hover
-{
+.button:hover, input[type="submit"]:hover {
 	background: #7765E399;
 	color: white;
 }
@@ -365,8 +315,7 @@ textarea
  * == New post ==
  */
 
-form.new-post .title
-{
+form.new-post .title {
 	padding: 0.75em 0;
 
 	background: none;
@@ -375,14 +324,12 @@ form.new-post .title
 	font-family: "Playfair Display", serif;
 	font-size: 2em;
 }
-form.new-post textarea
-{
+form.new-post textarea {
 	min-height: 8em;
 	padding: 0;
 	background: none;
 }
-form.new-post input[type="submit"]
-{
+form.new-post input[type="submit"] {
 	display: block;
 	margin: 1em auto;
 	width: 60%;
@@ -399,15 +346,13 @@ form.new-post input[type="submit"]
  * == User ==
  */
 
-.user h1
-{
+.user h1 {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 0;
 }
-.badge
-{
+.badge {
 	margin-left: 1em;
 	padding: 0.35em 1em;
 
@@ -423,14 +368,12 @@ form.new-post input[type="submit"]
  * == Blog index ==
  */
 
-.cards
-{
+.cards {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 }
-.card
-{
+.card {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -443,8 +386,8 @@ form.new-post input[type="submit"]
 
 	background: #E3E3E3;
 }
-.list .card
-{ /* TODO */
+.list .card {
+/* TODO */
 	background: 0;
 	margin: 0;
 	padding: 0;
@@ -455,22 +398,18 @@ form.new-post input[type="submit"]
 
 /* Title */
 
-.card h3
-{
+.card h3 {
 	margin: 0.75em 0;
 	font-family: "Playfair Display", serif;
 	font-size: 1.75em;
 	font-weight: normal;
 }
-.card h3 a
-{ transition: color 0.1s ease-in; color: #242424; }
-.card h3 a:hover
-{ color: #7765E3; }
+.card h3 a { transition: color 0.1s ease-in; color: #242424; }
+.card h3 a:hover { color: #7765E3; }
 
 /* Content */
 
-.card main
-{
+.card main {
 	flex: 1;
 
 	font-family: "Lora", serif;
@@ -483,57 +422,45 @@ form.new-post input[type="submit"]
  *   Small Screens   *
  * ================= */
 
-@media screen and (max-width: 500px)
-{
-	header
-	{
+@media screen and (max-width: 500px) {
+	header {	
 		padding: 1em;
 		flex-direction: column;
 	}
 
-	header #menu
-	{
+	header #menu {	
 		display: flex;
 	}
 
-	header > nav
-	{
+	header > nav {	
 		display: none;
 		text-align: center;
 	}
-	header nav a, header nav a.title
-	{ padding: 0.5em; }
-	header nav a.title
-	{
+	header nav a, header nav a.title { padding: 0.5em; }
+	header nav a.title {	
 		width: 100vw;
 		margin: 0;
 		border: none;
 		font-size: 1.75em;
 	}
 
-	header:focus-within > nav
-	{
+	header:focus-within > nav {	
 		display: flex;
 		flex-direction: column;
 	}
 
-	body > main > *
-	{
+	body > main > * {	
 		padding: 0 5%;
 	}
-	main .article-meta > *
-	{ margin: 0 5%; }
+	main .article-meta > * { margin: 0 5%; }
 
-	main .article-meta > p
-	{
+	main .article-meta > p {	
 		margin: 2em 5%;
 		font-size: 0.9em;
 	}
-	main .article-meta .comments > *
-	{ margin-left: 5%; margin-right: 5%; }
+	main .article-meta .comments > * { margin-left: 5%; margin-right: 5%; }
 
-	.card
-	{
+	.card {	
 		min-width: 80%;
 		min-height: 80%;
 	}
