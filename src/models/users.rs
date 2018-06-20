@@ -86,6 +86,10 @@ pub struct NewUser {
 
 impl User {
     insert!(users, NewUser);
+    get!(users);
+    find_by!(users, find_by_email, email as String);
+    find_by!(users, find_by_name, username as String, instance_id as i32);
+
 
     pub fn grant_admin_rights(&self, conn: &PgConnection) {
         diesel::update(self)
@@ -105,17 +109,12 @@ impl User {
             .into_iter().nth(0).unwrap()
     }
 
-    get!(users);
-
     pub fn count_local(conn: &PgConnection) -> usize {
         users::table.filter(users::instance_id.eq(Instance::local_id(conn)))
             .load::<User>(conn)
             .expect("Couldn't load local users")
             .len()
     }
-
-    find_by!(users, find_by_email, email as String);
-    find_by!(users, find_by_name, username as String, instance_id as i32);
 
     pub fn find_local(conn: &PgConnection, username: String) -> Option<User> {
         User::find_by_name(conn, username, Instance::local_id(conn))

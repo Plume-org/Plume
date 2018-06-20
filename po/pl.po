@@ -279,5 +279,11 @@ msgstr "Nie udało się odnaleźć tej strony."
 msgid "The link that led you here may be broken."
 msgstr "Odnośnik który Cię tu zaprowadził może być uszkodzony."
 
+msgid "You are not authorized."
+msgstr ""
+
+msgid "You are not author in this blog."
+msgstr ""
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

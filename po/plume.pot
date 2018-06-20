@@ -269,3 +269,9 @@ msgstr ""
 
 msgid "The link that led you here may be broken."
 msgstr ""
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "You are not author in this blog."
+msgstr ""

@@ -55,11 +55,18 @@ fn new_auth(blog: String) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-#[allow(unused_variables)]
-fn new(blog: String, user: User) -> Template {
-    Template::render("posts/new", json!({
-        "account": user
-    }))
+fn new(blog: String, user: User, conn: DbConn) -> Template {
+    let b = Blog::find_by_fqn(&*conn, blog.to_string()).unwrap();
+
+    if !user.is_author_in(&*conn, b.clone()) {
+        Template::render("errors/403", json!({
+            "error_message": "You are not author in this blog."
+        }))
+    } else {
+        Template::render("posts/new", json!({
+            "account": user
+        }))
+    }
 }
 
 #[derive(FromForm)]
@@ -75,41 +82,45 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
 
-    if slug == "new" || Post::find_by_slug(&*conn, slug.clone(), blog.id).is_some() {
-        Redirect::to(uri!(new: blog = blog_name))
+    if !user.is_author_in(&*conn, blog.clone()) {
+        Redirect::to(uri!(super::blogs::details: name = blog_name))
     } else {
-        let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
-            smart: true,
-            safe: true,
-            ext_strikethrough: true,
-            ext_tagfilter: true,
-            ext_table: true,
-            ext_autolink: true,
-            ext_tasklist: true,
-            ext_superscript: true,
-            ext_header_ids: Some("title".to_string()),
-            ext_footnotes: true,
-            ..ComrakOptions::default()
-        });
+        if slug == "new" || Post::find_by_slug(&*conn, slug.clone(), blog.id).is_some() {
+            Redirect::to(uri!(new: blog = blog_name))
+        } else {
+            let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
+                smart: true,
+                safe: true,
+                ext_strikethrough: true,
+                ext_tagfilter: true,
+                ext_table: true,
+                ext_autolink: true,
+                ext_tasklist: true,
+                ext_superscript: true,
+                ext_header_ids: Some("title".to_string()),
+                ext_footnotes: true,
+                ..ComrakOptions::default()
+            });
 
-        let post = Post::insert(&*conn, NewPost {
-            blog_id: blog.id,
-            slug: slug.to_string(),
-            title: form.title.to_string(),
-            content: SafeString::new(&content),
-            published: true,
-            license: form.license.to_string(),
-            ap_url: "".to_string()
-        });
-        post.update_ap_url(&*conn);
-        PostAuthor::insert(&*conn, NewPostAuthor {
-            post_id: post.id,
-            author_id: user.id
-        });
+            let post = Post::insert(&*conn, NewPost {
+                blog_id: blog.id,
+                slug: slug.to_string(),
+                title: form.title.to_string(),
+                content: SafeString::new(&content),
+                published: true,
+                license: form.license.to_string(),
+                ap_url: "".to_string()
+            });
+            post.update_ap_url(&*conn);
+            PostAuthor::insert(&*conn, NewPostAuthor {
+                post_id: post.id,
+                author_id: user.id
+            });
 
-        let act = post.create_activity(&*conn);
-        broadcast(&*conn, &user, act, user.get_followers(&*conn));
+            let act = post.create_activity(&*conn);
+            broadcast(&*conn, &user, act, user.get_followers(&*conn));
 
-        Redirect::to(uri!(details: blog = blog_name, slug = slug))
+            Redirect::to(uri!(details: blog = blog_name, slug = slug))
+        }
     }
 }
