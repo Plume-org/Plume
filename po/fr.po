@@ -280,3 +280,6 @@ msgstr ""
 
 msgid "You are not author in this blog."
 msgstr ""
+
+msgid "{{ data }} mentioned you."
+msgstr ""

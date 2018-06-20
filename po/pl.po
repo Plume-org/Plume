@@ -285,5 +285,9 @@ msgstr ""
 msgid "You are not author in this blog."
 msgstr ""
 
+#, fuzzy
+msgid "{{ data }} mentioned you."
+msgstr "{{ data }} skomentował Twój artykuł"
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"
