@@ -70,8 +70,8 @@ impl Like {
     pub fn compute_id(&self, conn: &PgConnection) -> String {
         format!(
             "{}/like/{}",
-            User::get(conn, self.user_id).unwrap().compute_id(conn),
-            Post::get(conn, self.post_id).unwrap().compute_id(conn)
+            User::get(conn, self.user_id).unwrap().ap_url,
+            Post::get(conn, self.post_id).unwrap().ap_url
         )
     }
 }

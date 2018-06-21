@@ -175,12 +175,12 @@ impl Blog {
     pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
         Webfinger {
             subject: format!("acct:{}@{}", self.actor_id, self.get_instance(conn).public_domain),
-            aliases: vec![self.compute_id(conn)],
+            aliases: vec![self.ap_url.clone()],
             links: vec![
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.compute_id(conn)
+                    href: self.ap_url.clone()
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
@@ -190,7 +190,7 @@ impl Blog {
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.compute_id(conn)
+                    href: self.ap_url.clone()
                 }
             ]
         }
@@ -259,8 +259,8 @@ impl APActor for Blog {
 }
 
 impl sign::Signer for Blog {
-    fn get_key_id(&self, conn: &PgConnection) -> String {
-        format!("{}#main-key", self.compute_id(conn))
+    fn get_key_id(&self, _conn: &PgConnection) -> String {
+        format!("{}#main-key", self.ap_url)
     }
 
     fn sign(&self, to_sign: String) -> Vec<u8> {

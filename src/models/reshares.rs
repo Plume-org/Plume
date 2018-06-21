@@ -34,8 +34,8 @@ impl Reshare {
             diesel::update(self)
                 .set(reshares::ap_url.eq(format!(
                     "{}/reshare/{}",
-                    User::get(conn, self.user_id).unwrap().compute_id(conn),
-                    Post::get(conn, self.post_id).unwrap().compute_id(conn)
+                    User::get(conn, self.user_id).unwrap().ap_url,
+                    Post::get(conn, self.post_id).unwrap().ap_url
                 )))
                 .get_result::<Reshare>(conn).expect("Couldn't update AP URL");
         }

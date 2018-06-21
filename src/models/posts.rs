@@ -155,7 +155,7 @@ impl Post {
             content: Some(serde_json::to_value(self.content.clone()).unwrap()),
             published: Some(serde_json::to_value(self.creation_date).unwrap()),
             tag: Some(serde_json::to_value(mentions).unwrap()),
-            url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            url: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
             to: Some(serde_json::to_value(to).unwrap()),
             cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
             ..ObjectProperties::default()

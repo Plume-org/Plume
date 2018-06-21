@@ -84,7 +84,7 @@ impl Comment {
     }
 
     pub fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}#comment-{}", self.get_post(conn).compute_id(conn), self.id))
+        ap_url(format!("{}#comment-{}", self.get_post(conn).ap_url, self.id))
     }
 }
 

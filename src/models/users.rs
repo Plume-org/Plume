@@ -309,10 +309,10 @@ impl User {
     pub fn into_activity(&self, conn: &PgConnection) -> Person {
         let mut actor = Person::default();
         actor.object_props = ObjectProperties {
-            id: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            id: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
             name: Some(serde_json::to_value(self.get_display_name()).unwrap()),
             summary: Some(serde_json::to_value(self.get_summary()).unwrap()),
-            url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            url: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
             ..ObjectProperties::default()
         };
         actor.ap_actor_props = ApActorProperties {
@@ -339,12 +339,12 @@ impl User {
     pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
         Webfinger {
             subject: format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain),
-            aliases: vec![self.compute_id(conn)],
+            aliases: vec![self.ap_url.clone()],
             links: vec![
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.compute_id(conn)
+                    href: self.ap_url.clone()
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
@@ -354,7 +354,7 @@ impl User {
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.compute_id(conn)
+                    href: self.ap_url.clone()
                 }
             ]
         }
@@ -411,7 +411,7 @@ impl APActor for User {
         let mut res = serde_json::Map::new();
         res.insert("publicKey".to_string(), json!({
             "id": self.get_key_id(conn),
-            "owner": self.compute_id(conn),
+            "owner": self.ap_url,
             "publicKeyPem": self.public_key
         }));
         res.insert("followers".to_string(), serde_json::Value::String(self.compute_box(conn, "followers")));
@@ -461,8 +461,8 @@ impl Inbox for User {
 }
 
 impl Signer for User {
-    fn get_key_id(&self, conn: &PgConnection) -> String {
-        format!("{}#main-key", self.compute_id(conn))
+    fn get_key_id(&self, _conn: &PgConnection) -> String {
+        format!("{}#main-key", self.ap_url)
     }
 
     fn sign(&self, to_sign: String) -> Vec<u8> {

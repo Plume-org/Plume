@@ -206,7 +206,7 @@ fn inbox(name: String, conn: DbConn, data: String) -> String {
 #[get("/@/<name>/followers", format = "application/activity+json")]
 fn ap_followers(name: String, conn: DbConn) -> ActivityPub {
     let user = User::find_local(&*conn, name).unwrap();
-    let followers = user.get_followers(&*conn).into_iter().map(|f| f.compute_id(&*conn)).collect::<Vec<String>>();
+    let followers = user.get_followers(&*conn).into_iter().map(|f| f.ap_url).collect::<Vec<String>>();
     
     let json = json!({
         "@context": context(),
