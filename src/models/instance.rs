@@ -1,6 +1,5 @@
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
-use serde_json;
 use std::iter::Iterator;
 
 use activity_pub::inbox::Inbox;
@@ -61,10 +60,4 @@ impl Instance {
     }
 }
 
-impl Inbox for Instance {
-    fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone()).expect("Shared Inbox: Couldn't save activity");
-
-        // TODO: add to stream, or whatever needs to be done
-    }
-}
+impl Inbox for Instance {}

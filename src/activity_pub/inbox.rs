@@ -50,9 +50,7 @@ pub trait Deletable {
 }
 
 pub trait Inbox {
-    fn received(&self, conn: &PgConnection, act: serde_json::Value);
-
-    fn save(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
+    fn received(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
         let actor_id = Id::new(act["actor"].as_str().unwrap());
         match act["type"].as_str() {
             Some(t) => {

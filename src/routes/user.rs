@@ -199,8 +199,13 @@ fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
 fn inbox(name: String, conn: DbConn, data: String) -> String {
     let user = User::find_local(&*conn, name).unwrap();
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
-    user.received(&*conn, act);
-    String::from("")
+    match user.received(&*conn, act) {
+        Ok(_) => String::new(),
+        Err(e) => {
+            println!("User inbox error: {}\n{}", e.cause(), e.backtrace());
+            format!("Error: {}", e.cause())
+        }
+    }
 }
 
 #[get("/@/<name>/followers", format = "application/activity+json")]

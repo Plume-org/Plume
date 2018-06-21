@@ -441,15 +441,7 @@ impl WithInbox for User {
     }
 }
 
-impl Inbox for User {
-    fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        if let Err(err) = self.save(conn, act.clone()) {
-            println!("Inbox error:\n{}\n{}\n\nActivity was: {}", err.cause(), err.backtrace(), act.to_string());
-        }
-
-        // TODO: add to stream, or whatever needs to be done
-    }
-}
+impl Inbox for User {}
 
 impl Signer for User {
     fn get_key_id(&self) -> String {

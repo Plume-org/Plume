@@ -35,8 +35,13 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
 fn shared_inbox(conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
     let instance = Instance::get_local(&*conn).unwrap();
-    instance.received(&*conn, act);
-    String::from("")
+    match instance.received(&*conn, act) {
+        Ok(_) => String::new(),
+        Err(e) => {
+            println!("Shared inbox error: {}\n{}", e.cause(), e.backtrace());
+            format!("Error: {}", e.cause())
+        }
+    }
 }
 
 #[get("/nodeinfo")]

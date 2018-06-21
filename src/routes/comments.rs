@@ -44,7 +44,8 @@ fn create_response(blog_name: String, slug: String, query: Option<CommentQuery>,
         .create(&*conn);
 
     let instance = Instance::get_local(&*conn).unwrap();
-    instance.received(&*conn, serde_json::to_value(new_comment.clone()).expect("JSON serialization error"));
+    instance.received(&*conn, serde_json::to_value(new_comment.clone()).expect("JSON serialization error"))
+        .expect("We are not compatible with ourselve: local broadcast failed (new comment)");
     broadcast(&user, new_comment, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}/#comment-{}", blog_name, slug, id))
