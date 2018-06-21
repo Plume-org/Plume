@@ -279,3 +279,6 @@ msgstr "Vous n'avez pas les droits."
 
 msgid "You are not author in this blog."
 msgstr "Vous n'êtes pas auteur dans ce blog."
+
+msgid "{{ data }} mentioned you."
+msgstr ""

@@ -77,7 +77,7 @@ impl Like {
 }
 
 impl FromActivity<activity::Like> for Like {
-    fn from_activity(conn: &PgConnection, like: activity::Like, actor: Id) -> Like {
+    fn from_activity(conn: &PgConnection, like: activity::Like, _actor: Id) -> Like {
         let liker = User::from_url(conn, like.like_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().unwrap().to_string());
         let res = Like::insert(conn, NewLike {
@@ -85,15 +85,15 @@ impl FromActivity<activity::Like> for Like {
             user_id: liker.unwrap().id,
             ap_url: like.object_props.id_string().unwrap_or(String::from(""))
         });
-        Like::notify(conn, like, actor);
+        res.notify(conn);
         res
     }
 }
 
-impl Notify<activity::Like> for Like {
-    fn notify(conn: &PgConnection, like: activity::Like, actor: Id) {
-        let liker = User::from_url(conn, actor.into()).unwrap();
-        let post = Post::find_by_ap_url(conn, like.like_props.object_link::<Id>().unwrap().into()).unwrap();
+impl Notify for Like {
+    fn notify(&self, conn: &PgConnection) {
+        let liker = User::get(conn, self.user_id).unwrap();
+        let post = Post::get(conn, self.post_id).unwrap();
         for author in post.get_authors(conn) {
             let post = post.clone();
             Notification::insert(conn, NewNotification {
