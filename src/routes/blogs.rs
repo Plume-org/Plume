@@ -1,4 +1,4 @@
-use activitypub::{actor::Group, collection::OrderedCollection};
+use activitypub::collection::OrderedCollection;
 use rocket::{
     request::Form,
     response::{Redirect, Flash}
@@ -32,7 +32,7 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
 }
 
 #[get("/~/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityStream<Group> {
+fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomGroup> {
     let blog = Blog::find_local(&*conn, name).unwrap();
     ActivityStream::new(blog.into_activity(&*conn))
 }
