@@ -8,7 +8,7 @@ All commands are run in the Mac Terminal or terminal emulator of your choice, su
 
 ### Linux
 
-Similar to Mac OSX all commands should be run from a terminal (a.k.a command line). First, you will need [Git](https://git-scm.com/download/mac), [Rust](https://www.rust-lang.org/en-US/), and [Postgres](https://www.postgresql.org/).  Step-by-step instructions are also available here:  [Installing Prerequisites](No Such URL yet)
+Similar to Mac OSX all commands should be run from a terminal (a.k.a command line). First, you will need [Git](https://git-scm.com/download/mac), [Rust](https://www.rust-lang.org/en-US/), and [Postgres](https://www.postgresql.org/).  Step-by-step instructions are also available here:  [Installing Prerequisites](/doc/PREREQUISITES.md)
 
 #### Download the Repository
 
