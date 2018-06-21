@@ -2,11 +2,10 @@ use activitypub::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
-    http::{ContentType, Status},
-    response::{Response, Responder, Content},
+    http::Status,
+    response::{Response, Responder},
     request::Request
 };
-use rocket_contrib::Json;
 use serde_json;
 
 use self::sign::Signable;
@@ -15,8 +14,6 @@ pub mod actor;
 pub mod inbox;
 pub mod request;
 pub mod sign;
-
-pub type ActivityPub = Content<Json<serde_json::Value>>;
 
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
@@ -55,10 +52,6 @@ pub fn context() -> serde_json::Value {
     ])
 }
 
-pub fn activity_pub(json: serde_json::Value) -> ActivityPub {
-    Content(ContentType::new("application", "activity+json"), Json(json))
-}
-
 pub struct ActivityStream<T> (T);
 
 impl<T> ActivityStream<T> {
@@ -69,7 +62,7 @@ impl<T> ActivityStream<T> {
 
 impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     fn respond_to(self, request: &Request) -> Result<Response<'r>, Status> {
-        let mut json = serde_json::to_value(&self.0).map_err(|e| Status::InternalServerError)?;
+        let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();
         serde_json::to_string(&json).respond_to(request).map(|r| Response::build_from(r)
             .raw_header("Content-Type", "application/activity+json")

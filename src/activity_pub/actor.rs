@@ -1,8 +1,7 @@
 use diesel::PgConnection;
 use serde_json;
 
-use BASE_URL;
-use activity_pub::{activity_pub, ActivityPub, context, ap_url};
+use activity_pub::ap_url;
 use models::instance::Instance;
 
 pub enum ActorType {
@@ -38,27 +37,6 @@ pub trait Actor: Sized {
 
     fn custom_props(&self, _conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
         serde_json::Map::new()
-    }
-
-    fn as_activity_pub (&self, conn: &PgConnection) -> ActivityPub {
-        let mut repr = json!({
-            "@context": context(),
-            "id": self.compute_id(conn),
-            "type": Self::get_actor_type().to_string(),
-            "inbox": self.compute_inbox(conn),
-            "outbox": self.compute_outbox(conn),
-            "preferredUsername": self.get_actor_id(),
-            "name": self.get_display_name(),
-            "summary": self.get_summary(),
-            "url": self.compute_id(conn),
-            "endpoints": {
-                "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
-            }
-        });
-
-        self.custom_props(conn).iter().for_each(|p| repr[p.0] = p.1.clone());
-
-        activity_pub(repr)
     }
 
     fn compute_outbox(&self, conn: &PgConnection) -> String {

@@ -1,10 +1,11 @@
+use activitypub::object::Article;
 use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub};
+use activity_pub::{broadcast, ActivityStream};
 use db_conn::DbConn;
 use models::{
     blogs::*,
@@ -49,13 +50,11 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
 }
 
 #[get("/~/<blog>/<slug>", rank = 3, format = "application/activity+json")]
-fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityPub {
+fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityStream<Article> {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
 
-    let mut act = serde_json::to_value(post.into_activity(&*conn)).unwrap();
-    act["@context"] = context();
-    activity_pub(act)
+    ActivityStream::new(post.into_activity(&*conn))
 }
 
 #[get("/~/<blog>/new", rank = 2)]

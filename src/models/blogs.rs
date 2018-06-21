@@ -1,4 +1,4 @@
-use activitypub::{Actor, Object, collection::OrderedCollection};
+use activitypub::{Actor, Object, actor::Group, collection::OrderedCollection};
 use reqwest::{
     Client,
     header::{Accept, qitem},
@@ -135,6 +135,10 @@ impl Blog {
             public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap_or("").to_string(),
             private_key: None
         })
+    }
+
+    pub fn into_activity(&self, _conn: &PgConnection) -> Group {
+        Group::default() // TODO
     }
 
     pub fn update_boxes(&self, conn: &PgConnection) {

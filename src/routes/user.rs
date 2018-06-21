@@ -1,5 +1,6 @@
 use activitypub::{
     activity::Follow,
+    actor::Person,
     collection::OrderedCollection
 };
 use rocket::{request::Form,
@@ -9,7 +10,7 @@ use rocket_contrib::Template;
 use serde_json;
 
 use activity_pub::{
-    activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId,
+    ActivityStream, broadcast, Id, IntoId,
     inbox::{Inbox, Notify},
     actor::Actor
 };
@@ -110,9 +111,9 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityPub {
+fn activity_details(name: String, conn: DbConn) -> ActivityStream<Person> {
     let user = User::find_local(&*conn, name).unwrap();
-    user.as_activity_pub(&*conn)
+    ActivityStream::new(user.into_activity(&*conn))
 }
 
 #[get("/users/new")]
@@ -209,16 +210,13 @@ fn inbox(name: String, conn: DbConn, data: String) -> String {
 }
 
 #[get("/@/<name>/followers", format = "application/activity+json")]
-fn ap_followers(name: String, conn: DbConn) -> ActivityPub {
+fn ap_followers(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
     let user = User::find_local(&*conn, name).unwrap();
-    let followers = user.get_followers(&*conn).into_iter().map(|f| f.ap_url).collect::<Vec<String>>();
-    
-    let json = json!({
-        "@context": context(),
-        "id": user.compute_box(&*conn, "followers"),
-        "type": "OrderedCollection",
-        "totalItems": followers.len(),
-        "orderedItems": followers
-    });
-    activity_pub(json)
+    let followers = user.get_followers(&*conn).into_iter().map(|f| Id::new(f.ap_url)).collect::<Vec<Id>>();
+
+    let mut coll = OrderedCollection::default();
+    coll.object_props.set_id_string(format!("{}/followers", user.ap_url)).expect("Follower collection: id error");
+    coll.collection_props.set_total_items_u64(followers.len() as u64).expect("Follower collection: totalItems error");
+    coll.collection_props.set_items_link_vec(followers).expect("Follower collection: items error");
+    ActivityStream::new(coll)
 }
