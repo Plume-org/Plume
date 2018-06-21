@@ -4,6 +4,8 @@ name = "plume"
 version = "0.1.0"
 [dependencies]
 activitypub = "0.1.1"
+activitystreams-derive = "0.1.0"
+activitystreams-traits = "0.1.0"
 ammonia = "1.1.0"
 array_tool = "1.0"
 base64 = "0.9"
@@ -18,7 +20,6 @@ hex = "0.3"
 hyper = "*"
 lazy_static = "*"
 openssl = "0.10.6"
-pulldown-cmark = { version = "0.1.2", default-features = false }
 reqwest = "0.8"
 rpassword = "2.0"
 serde = "*"
@@ -35,6 +36,10 @@ version = "0.4"
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]
 version = "*"
+
+[dependencies.pulldown-cmark]
+default-features = false
+version = "0.1.2"
 
 [dependencies.rocket]
 git = "https://github.com/SergioBenitez/Rocket"

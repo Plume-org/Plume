@@ -949,6 +949,8 @@ name = "plume"
 version = "0.1.0"
 dependencies = [
  "activitypub 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "ammonia 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "array_tool 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",

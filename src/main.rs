@@ -2,6 +2,9 @@
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
+#[macro_use]
+extern crate activitystreams_derive;
+extern crate activitystreams_traits;
 extern crate ammonia;
 extern crate array_tool;
 extern crate base64;

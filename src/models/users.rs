@@ -1,5 +1,5 @@
 use activitypub::{
-    Actor, Object, Endpoint,
+    Actor, Object, Endpoint, CustomObject,
     actor::Person,
     collection::OrderedCollection
 };
@@ -27,7 +27,7 @@ use webfinger::*;
 
 use BASE_URL;
 use activity_pub::{
-    ap_url, ActivityStream, Id, IntoId,
+    ap_url, ActivityStream, Id, IntoId, ApSignature,
     inbox::{Inbox, WithInbox},
     sign::{Signer, gen_keypair}
 };
@@ -44,6 +44,8 @@ use schema::users;
 use safe_string::SafeString;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
+
+pub type CustomPerson = CustomObject<ApSignature, Person>;
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, Debug)]
 pub struct User {
@@ -157,14 +159,14 @@ impl User {
             .send();
         match req {
             Ok(mut res) => {
-                let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
+                let json: CustomPerson = serde_json::from_str(&res.text().unwrap()).unwrap();
                 Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
             Err(_) => None
         }
     }
 
-    fn from_activity(conn: &PgConnection, acct: serde_json::Value, inst: String) -> User {
+    fn from_activity(conn: &PgConnection, acct: CustomPerson, inst: String) -> User {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
@@ -176,19 +178,21 @@ impl User {
             }
         };
         User::insert(conn, NewUser {
-            username: acct["preferredUsername"].as_str().unwrap().to_string(),
-            display_name: acct["name"].as_str().unwrap().to_string(),
-            outbox_url: acct["outbox"].as_str().unwrap().to_string(),
-            inbox_url: acct["inbox"].as_str().unwrap().to_string(),
+            username: acct.object.ap_actor_props.preferred_username_string().expect("User::from_activity: preferredUsername error"),
+            display_name: acct.object.object_props.name_string().expect("User::from_activity: name error"),
+            outbox_url: acct.object.ap_actor_props.outbox_string().expect("User::from_activity: outbox error"),
+            inbox_url: acct.object.ap_actor_props.inbox_string().expect("User::from_activity: inbox error"),
             is_admin: false,
-            summary: SafeString::new(&acct["summary"].as_str().unwrap().to_string()),
+            summary: SafeString::new(&acct.object.object_props.summary_string().expect("User::from_activity: summary error")),
             email: None,
             hashed_password: None,
             instance_id: instance.id,
-            ap_url: acct["id"].as_str().unwrap().to_string(),
-            public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap().to_string(),
+            ap_url: acct.object.object_props.id_string().expect("User::from_activity: id error"),
+            public_key: acct.custom_props.public_key_publickey().expect("User::from_activity: publicKey error")
+                .public_key_pem_string().expect("User::from_activity: publicKey.publicKeyPem error"),
             private_key: None,
-            shared_inbox_url: acct["endpoints"]["sharedInbox"].as_str().map(|s| s.to_string())
+            shared_inbox_url: acct.object.ap_actor_props.endpoints_endpoint()
+                .and_then(|e| e.shared_inbox_string()).ok()
         })
     }
 
