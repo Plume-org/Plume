@@ -14,11 +14,18 @@ use models::{
     posts::*,
     users::User
 };
+use routes::comments::CommentQuery;
 use safe_string::SafeString;
 use utils;
 
+// See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
+    details_response(blog, slug, conn, user, None)
+}
+
+#[get("/~/<blog>/<slug>?<query>")]
+fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
     may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
         may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             let comments = Comment::list_by_post(&*conn, post.id);
@@ -33,7 +40,9 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
                 "account": user,
-                "date": &post.creation_date.timestamp()
+                "date": &post.creation_date.timestamp(),
+                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn))),
+                "user_fqn": user.map(|u| u.get_fqn(&*conn)).unwrap_or(String::new())
             }))
         })
     })

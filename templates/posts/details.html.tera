@@ -84,7 +84,7 @@
                             <span class="username">@{{ comment.author.username }}</span>
                         </a>
                         <div class="text">{{ comment.content | safe }}</div>
-                        <a class="button" href="comment?responding_to={{ comment.id }}">{{ "Respond" | _ }}</a>
+                        <a class="button" href="?responding_to={{ comment.id }}">{{ "Respond" | _ }}</a>
                     </div>
                 {% endfor %}
             </div>

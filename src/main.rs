@@ -68,9 +68,6 @@ fn main() {
             routes::blogs::new_auth,
             routes::blogs::create,
 
-            routes::comments::new,
-            routes::comments::new_response,
-            routes::comments::new_auth,
             routes::comments::create,
             routes::comments::create_response,
 
@@ -85,6 +82,7 @@ fn main() {
             routes::notifications::notifications_auth,
 
             routes::posts::details,
+            routes::posts::details_response,
             routes::posts::activity_details,
             routes::posts::new,
             routes::posts::new_auth,
