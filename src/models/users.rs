@@ -27,7 +27,7 @@ use webfinger::*;
 
 use BASE_URL;
 use activity_pub::{
-    ap_url, ActivityStream, Id, IntoId, ApSignature,
+    ap_url, ActivityStream, Id, IntoId, ApSignature, PublicKey,
     inbox::{Inbox, WithInbox},
     sign::{Signer, gen_keypair}
 };
@@ -315,7 +315,7 @@ impl User {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn into_activity(&self, _conn: &PgConnection) -> Person {
+    pub fn into_activity(&self, _conn: &PgConnection) -> CustomPerson {
         let mut actor = Person::default();
         actor.object_props.set_id_string(self.ap_url.clone()).expect("User::into_activity: id error");
         actor.object_props.set_name_string(self.display_name.clone()).expect("User::into_activity: name error");
@@ -328,7 +328,15 @@ impl User {
         let mut endpoints = Endpoint::default();
         endpoints.set_shared_inbox_string(ap_url(format!("{}/inbox/", BASE_URL.as_str()))).expect("User::into_activity: endpoints.sharedInbox error");
         actor.ap_actor_props.set_endpoints_endpoint(endpoints).expect("User::into_activity: endpoints error");
-        actor
+
+        let mut public_key = PublicKey::default();
+        public_key.set_id_string(format!("{}#main-key", self.ap_url)).expect("Blog::into_activity: publicKey.id error");
+        public_key.set_owner_string(self.ap_url.clone()).expect("Blog::into_activity: publicKey.owner error");
+        public_key.set_public_key_pem_string(self.public_key.clone()).expect("Blog::into_activity: publicKey.publicKeyPem error");
+        let mut ap_signature = ApSignature::default();
+        ap_signature.set_public_key_publickey(public_key).expect("Blog::into_activity: publicKey error");
+
+        CustomPerson::new(actor, ap_signature)
     }
 
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {

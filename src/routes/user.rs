@@ -1,6 +1,5 @@
 use activitypub::{
     activity::Follow,
-    actor::Person,
     collection::OrderedCollection
 };
 use rocket::{request::Form,
@@ -110,7 +109,7 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityStream<Person> {
+fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomPerson> {
     let user = User::find_local(&*conn, name).unwrap();
     ActivityStream::new(user.into_activity(&*conn))
 }
