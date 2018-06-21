@@ -22,6 +22,7 @@ use models::{
 };
 use schema::comments;
 use safe_string::SafeString;
+use utils;
 
 #[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Comment {
@@ -159,6 +160,8 @@ impl NewComment {
         self.sensitive = false;
         self.spoiler_text = String::new();
 
+        let (html, mentions) = utils::md_to_html(self.content.get().as_ref());
+
         let author = User::get(conn, self.author_id).unwrap();
         let mut note = Note::default();
         let mut to = author.get_followers(conn).into_iter().map(User::into_id).collect::<Vec<Id>>();
@@ -172,7 +175,7 @@ impl NewComment {
 
         note.object_props.set_id_string(self.ap_url.clone().unwrap_or(String::new())).expect("NewComment::create: note.id error");
         note.object_props.set_summary_string(self.spoiler_text.clone()).expect("NewComment::create: note.summary error");
-        note.object_props.set_content_string(self.content.get().clone()).expect("NewComment::create: note.content error");
+        note.object_props.set_content_string(html).expect("NewComment::create: note.content error");
         note.object_props.set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(|| Post::get(conn, self.post_id).unwrap().ap_url, |id| {
             let comm = Comment::get(conn, id).unwrap();
             comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
@@ -180,6 +183,8 @@ impl NewComment {
         note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("NewComment::create: note.published error");
         note.object_props.set_attributed_to_link(author.clone().into_id()).expect("NewComment::create: note.attributed_to error");
         note.object_props.set_to_link_vec(to).expect("NewComment::create: note.to error");
+        note.object_props.set_tag_link_vec(mentions.into_iter().map(|m| Mention::build_activity(conn, m)).collect::<Vec<link::Mention>>())
+            .expect("NewComment::create: note.tag error");
 
         let mut act = Create::default();
         act.create_props.set_actor_link(author.into_id()).expect("NewComment::create: actor error");

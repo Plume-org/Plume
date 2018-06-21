@@ -49,7 +49,6 @@ impl Mention {
 
     pub fn build_activity(conn: &PgConnection, ment: String) -> link::Mention {
         let user = User::find_by_fqn(conn, ment.clone());
-        println!("building act : {} -> {:?}", ment, user);
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
         mention.link_props.set_name_string(format!("@{}", ment)).expect("Error setting mention's name");
