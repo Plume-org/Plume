@@ -1,5 +1,6 @@
 use activitypub::{
     activity::Create,
+    link,
     object::{Article, properties::ObjectProperties}
 };
 use chrono::NaiveDateTime;
@@ -9,13 +10,13 @@ use serde_json;
 use BASE_URL;
 use activity_pub::{
     PUBLIC_VISIBILTY, ap_url, Id, IntoId,
-    actor::Actor,
     inbox::FromActivity
 };
 use models::{
     blogs::Blog,
     instance::Instance,
     likes::Like,
+    mentions::Mention,
     post_authors::PostAuthor,
     reshares::Reshare,
     users::User
@@ -144,6 +145,8 @@ impl Post {
         let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
+        let mentions = Mention::list_for_post(conn, self.id).into_iter().map(|m| m.to_activity(conn)).collect::<Vec<link::Mention>>();
+
         let mut article = Article::default();
         article.object_props = ObjectProperties {
             name: Some(serde_json::to_value(self.title.clone()).unwrap()),
@@ -151,11 +154,11 @@ impl Post {
             attributed_to: Some(serde_json::to_value(self.get_authors(conn).into_iter().map(|x| x.ap_url).collect::<Vec<String>>()).unwrap()),
             content: Some(serde_json::to_value(self.content.clone()).unwrap()),
             published: Some(serde_json::to_value(self.creation_date).unwrap()),
-            tag: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
+            tag: Some(serde_json::to_value(mentions).unwrap()),
             url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
             to: Some(serde_json::to_value(to).unwrap()),
             cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
-            ..ObjectProperties::default()                
+            ..ObjectProperties::default()
         };
         article
     }
@@ -184,6 +187,15 @@ impl Post {
 
 impl FromActivity<Article> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
+        // save mentions
+        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+            for tag in tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag)
+                    .map(|m| Mention::from_activity(conn, m, Id::new(article.clone().object_props.clone().url_string().unwrap_or(String::from("")))))
+                    .ok();
+            }
+        }
+
         Post::insert(conn, NewPost {
             blog_id: 0, // TODO
             slug: String::from(""), // TODO
