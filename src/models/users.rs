@@ -83,6 +83,8 @@ pub struct NewUser {
     pub shared_inbox_url: Option<String>    
 }
 
+const USER_PREFIX: &'static str = "@";
+
 impl User {
     insert!(users, NewUser);
     get!(users);
@@ -196,21 +198,22 @@ impl User {
     }
 
     pub fn update_boxes(&self, conn: &PgConnection) {
+        let instance = self.get_instance(conn);
         if self.outbox_url.len() == 0 {
             diesel::update(self)
-                .set(users::outbox_url.eq(self.compute_outbox(conn)))
-                .get_result::<User>(conn).expect("Couldn't update outbox URL");                
+                .set(users::outbox_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "outbox")))
+                .get_result::<User>(conn).expect("Couldn't update outbox URL");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
-                .set(users::inbox_url.eq(self.compute_inbox(conn)))
+                .set(users::inbox_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "inbox")))
                 .get_result::<User>(conn).expect("Couldn't update inbox URL");                
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
-                .set(users::ap_url.eq(self.compute_id(conn)))
+                .set(users::ap_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "")))
                 .get_result::<User>(conn).expect("Couldn't update AP URL");
         }
 
@@ -340,7 +343,7 @@ impl User {
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.compute_box(conn, "feed.atom")
+                    href: self.get_instance(conn).compute_box(USER_PREFIX, self.username.clone(), "feed.atom")
                 },
                 Link {
                     rel: String::from("self"),

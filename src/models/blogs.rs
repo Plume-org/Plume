@@ -55,6 +55,8 @@ pub struct NewBlog {
     pub public_key: String
 }
 
+const BLOG_PREFIX: &'static str = "~";
+
 impl Blog {
     insert!(blogs, NewBlog);
     get!(blogs);
@@ -142,21 +144,22 @@ impl Blog {
     }
 
     pub fn update_boxes(&self, conn: &PgConnection) {
+        let instance = self.get_instance(conn);
         if self.outbox_url.len() == 0 {
             diesel::update(self)
-                .set(blogs::outbox_url.eq(self.compute_outbox(conn)))
+                .set(blogs::outbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "outbox")))
                 .get_result::<Blog>(conn).expect("Couldn't update outbox URL");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
-                .set(blogs::inbox_url.eq(self.compute_inbox(conn)))
+                .set(blogs::inbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "inbox")))
                 .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
-                .set(blogs::ap_url.eq(self.compute_id(conn)))
+                .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "")))
                 .get_result::<Blog>(conn).expect("Couldn't update AP URL");
         }
     }
@@ -189,7 +192,7 @@ impl Blog {
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.compute_box(conn, "feed.atom")
+                    href: self.get_instance(conn).compute_box(BLOG_PREFIX, self.actor_id.clone(), "feed.atom")
                 },
                 Link {
                     rel: String::from("self"),

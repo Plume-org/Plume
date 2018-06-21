@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
 
-use activity_pub::inbox::Inbox;
+use activity_pub::{ap_url, inbox::Inbox};
 use models::users::User;
 use schema::{instances, users};
 
@@ -57,6 +57,16 @@ impl Instance {
             .load::<User>(conn)
             .expect("Couldn't load admins")
             .len() > 0
+    }
+
+    pub fn compute_box(&self, prefix: &'static str, name: String, box_name: &'static str) -> String {
+        ap_url(format!(
+            "{instance}/{prefix}/{name}/{box_name}",
+            instance = self.public_domain,
+            prefix = prefix,
+            name = name,
+            box_name = box_name
+        ))
     }
 }
 
