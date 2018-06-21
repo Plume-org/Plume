@@ -10,7 +10,8 @@ seek out documentation from your distribution package or from [the `doc` folder]
 ## Installing Requirements
 
 ### Installing PostgreSQL
-In order to run the Aardwolf backend, you will need to have access to a
+
+In order to run the Plume backend, you will need to have access to a
 [PostgreSQL](https://www.postgresql.org/) database. There are a few options for doing this, but for
 this guide we’re going to assume you are running the database on your
 development machine.
