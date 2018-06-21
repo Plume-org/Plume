@@ -4,7 +4,7 @@ use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub, Id};
+use activity_pub::{broadcast, context, activity_pub, ActivityPub};
 use db_conn::DbConn;
 use models::{
     blogs::*,
@@ -106,7 +106,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
             });
 
             for m in mentions.into_iter() {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), Id::new(post.compute_id(&*conn)));
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true);
             }
 
             let act = post.create_activity(&*conn);

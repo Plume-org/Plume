@@ -75,6 +75,11 @@ impl Comment {
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["author"] = self.get_author(conn).to_json(conn);
+        let mentions = Mention::list_for_comment(conn, self.id).into_iter()
+            .map(|m| m.get_mentioned(conn).map(|u| u.get_fqn(conn)).unwrap_or(String::new()))
+            .collect::<Vec<String>>();
+        println!("{:?}", mentions);
+        json["mentions"] = serde_json::to_value(mentions).unwrap();
         json
     }
 
@@ -88,15 +93,6 @@ impl FromActivity<Note> for Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
 
-        // save mentions
-        if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
-            for tag in tags.into_iter() {
-                serde_json::from_value::<link::Mention>(tag)
-                    .map(|m| Mention::from_activity(conn, m, Id::new(note.clone().object_props.clone().url_string().unwrap_or(String::from("")))))
-                    .ok();
-            }
-        }
-
         let comm = Comment::insert(conn, NewComment {
             content: SafeString::new(&note.object_props.content_string().unwrap()),
             spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
@@ -108,6 +104,16 @@ impl FromActivity<Note> for Comment {
             author_id: User::from_url(conn, actor.clone().into()).unwrap().id,
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
         });
+
+        // save mentions
+        if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
+            for tag in tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag)
+                    .map(|m| Mention::from_activity(conn, m, comm.id, false))
+                    .ok();
+            }
+        }
+
         comm.notify(conn);
         comm
     }

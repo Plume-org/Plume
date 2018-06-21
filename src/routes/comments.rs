@@ -19,17 +19,25 @@ use utils;
 
 #[get("/~/<blog>/<slug>/comment")]
 fn new(blog: String, slug: String, user: User, conn: DbConn) -> Template {
-    may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
+    new_response(blog, slug, None, user, conn)
+}
+
+// See: https://github.com/SergioBenitez/Rocket/pull/454
+#[get("/~/<blog_name>/<slug>/comment?<query>")]
+fn new_response(blog_name: String, slug: String, query: Option<CommentQuery>, user: User, conn: DbConn) -> Template {
+    may_fail!(Blog::find_by_fqn(&*conn, blog_name), "Couldn't find this blog", |blog| {
         may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             Template::render("comments/new", json!({
                 "post": post,
-                "account": user
+                "account": user,
+                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn))),
+                "user_fqn": user.get_fqn(&*conn)
             }))
         })
     })
 }
 
-#[get("/~/<blog>/<slug>/comment", rank=2)]
+#[get("/~/<blog>/<slug>/comment", rank = 2)]
 fn new_auth(blog: String, slug: String) -> Flash<Redirect>{
     utils::requires_login("You need to be logged in order to post a comment", uri!(new: blog = blog, slug = slug))
 }

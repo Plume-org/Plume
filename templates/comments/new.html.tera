@@ -8,7 +8,8 @@
 <h1>{{ 'Comment "{{ post }}"' | _(post=post.title) }}</h1>
 <form method="post">
     <label for="content">{{ "Content" | _ }}</label>
-    <textarea id="content" name="content"></textarea>
+    {# Ugly, but we don't have the choice if we don't want weird paddings #}
+    <textarea id="content" name="content">{% filter trim %}{% if previous %}{% if previous.author.fqn != user_fqn %}@{{ previous.author.fqn }} {% endif %}{% for mention in previous.mentions %}{% if mention != user_fqn %}@{{ mention }} {% endif %}{% endfor %}{% endif %}{% endfilter %}</textarea>
     <input type="submit" value="{{ "Submit comment" | _ }}" />
 </form>
 {% endblock content %}

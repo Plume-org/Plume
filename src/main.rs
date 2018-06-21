@@ -69,6 +69,7 @@ fn main() {
             routes::blogs::create,
 
             routes::comments::new,
+            routes::comments::new_response,
             routes::comments::new_auth,
             routes::comments::create,
             routes::comments::create_response,
