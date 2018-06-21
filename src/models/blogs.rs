@@ -259,7 +259,7 @@ impl APActor for Blog {
 }
 
 impl sign::Signer for Blog {
-    fn get_key_id(&self, _conn: &PgConnection) -> String {
+    fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 

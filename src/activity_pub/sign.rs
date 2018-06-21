@@ -17,7 +17,7 @@ pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
 }
 
 pub trait Signer {
-    fn get_key_id(&self, conn: &PgConnection) -> String;
+    fn get_key_id(&self) -> String;
     
     /// Sign some data with the signer keypair
     fn sign(&self, to_sign: String) -> Vec<u8>;

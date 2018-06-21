@@ -452,7 +452,7 @@ impl Inbox for User {
 }
 
 impl Signer for User {
-    fn get_key_id(&self, _conn: &PgConnection) -> String {
+    fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 
