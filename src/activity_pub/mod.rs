@@ -10,7 +10,6 @@ use serde_json;
 
 use self::sign::Signable;
 
-pub mod actor;
 pub mod inbox;
 pub mod request;
 pub mod sign;

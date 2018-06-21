@@ -18,7 +18,6 @@ use webfinger::*;
 
 use activity_pub::{
     ActivityStream, Id, IntoId,
-    actor::{Actor as APActor},
     inbox::WithInbox,
     sign
 };
@@ -60,6 +59,10 @@ const BLOG_PREFIX: &'static str = "~";
 impl Blog {
     insert!(blogs, NewBlog);
     get!(blogs);
+
+    pub fn get_instance(&self, conn: &PgConnection) -> Instance {
+        Instance::get(conn, self.instance_id).expect("Couldn't find instance")
+    }
 
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;
@@ -229,20 +232,6 @@ impl WithInbox for Blog {
 
     fn get_shared_inbox_url(&self) -> Option<String> {
         None
-    }
-}
-
-impl APActor for Blog {
-    fn get_box_prefix() -> &'static str {
-        "~"
-    }
-
-    fn get_actor_id(&self) -> String {
-        self.actor_id.to_string()
-    }
-
-    fn get_instance(&self, conn: &PgConnection) -> Instance {
-        Instance::get(conn, self.instance_id).unwrap()
     }
 }
 

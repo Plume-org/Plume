@@ -11,8 +11,7 @@ use serde_json;
 
 use activity_pub::{
     ActivityStream, broadcast, Id, IntoId,
-    inbox::{Inbox, Notify},
-    actor::Actor
+    inbox::{Inbox, Notify}
 };
 use db_conn::DbConn;
 use models::{

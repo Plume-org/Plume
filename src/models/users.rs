@@ -28,7 +28,6 @@ use webfinger::*;
 use BASE_URL;
 use activity_pub::{
     ap_url, ActivityStream, Id, IntoId,
-    actor::{Actor as APActor},
     inbox::{Inbox, WithInbox},
     sign::{Signer, gen_keypair}
 };
@@ -91,6 +90,10 @@ impl User {
     find_by!(users, find_by_email, email as String);
     find_by!(users, find_by_name, username as String, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as String);
+
+    pub fn get_instance(&self, conn: &PgConnection) -> Instance {
+        Instance::get(conn, self.instance_id).expect("Couldn't find instance")
+    }
 
     pub fn grant_admin_rights(&self, conn: &PgConnection) {
         diesel::update(self)
@@ -316,7 +319,7 @@ impl User {
         actor.object_props.set_url_string(self.ap_url.clone()).expect("User::into_activity: url error");
         actor.ap_actor_props.set_inbox_string(self.inbox_url.clone()).expect("User::into_activity: inbox error");
         actor.ap_actor_props.set_outbox_string(self.outbox_url.clone()).expect("User::into_activity: outbox error");
-        actor.ap_actor_props.set_preferred_username_string(self.get_actor_id()).expect("User::into_activity: preferredUsername error");
+        actor.ap_actor_props.set_preferred_username_string(self.username.clone()).expect("User::into_activity: preferredUsername error");
 
         let mut endpoints = Endpoint::default();
         endpoints.set_shared_inbox_string(ap_url(format!("{}/inbox/", BASE_URL.as_str()))).expect("User::into_activity: endpoints.sharedInbox error");
@@ -377,20 +380,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             .and_then(|cookie| cookie.value().parse().ok())
             .map(|id| User::get(&*conn, id).unwrap())
             .or_forward(())
-    }
-}
-
-impl APActor for User {
-    fn get_box_prefix() -> &'static str {
-        "@"
-    }
-
-    fn get_actor_id(&self) -> String {
-        self.username.to_string()
-    }
-
-    fn get_instance(&self, conn: &PgConnection) -> Instance {
-        Instance::get(conn, self.instance_id).unwrap()
     }
 }
 
