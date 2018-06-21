@@ -117,6 +117,7 @@ main article {
 main .article-meta {
 	padding: 0;
 	font-size: 1.1em;
+	margin-top: 10%;
 }
 main .article-meta > * { margin: 0 20%; }
 
