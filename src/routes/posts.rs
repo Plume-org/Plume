@@ -21,7 +21,7 @@ use safe_string::SafeString;
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
     may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
         may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
-            let comments = Comment::find_by_post(&*conn, post.id);
+            let comments = Comment::list_by_post(&*conn, post.id);
 
             Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),

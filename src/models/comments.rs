@@ -1,6 +1,6 @@
 use activitypub::{
     activity::Create,
-    object::{Note, properties::ObjectProperties}
+    object::Note
 };
 use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
@@ -12,6 +12,7 @@ use activity_pub::{
     inbox::{FromActivity, Notify}
 };
 use models::{
+    get_next_id,
     instance::Instance,
     notifications::*,
     posts::Post,
@@ -33,7 +34,7 @@ pub struct Comment {
     pub spoiler_text: String
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Default)]
 #[table_name = "comments"]
 pub struct NewComment {
     pub content: SafeString,
@@ -57,37 +58,6 @@ impl Comment {
 
     pub fn get_post(&self, conn: &PgConnection) -> Post {
         Post::get(conn, self.post_id).unwrap()        
-    }
-
-    pub fn into_activity(&self, conn: &PgConnection) -> Note {
-        let mut to = self.get_author(conn).get_followers(conn).into_iter().map(|f| f.ap_url).collect::<Vec<String>>();
-        to.append(&mut self.get_post(conn).get_receivers_urls(conn));
-        to.push(PUBLIC_VISIBILTY.to_string());
-
-        let mut comment = Note::default();
-        comment.object_props = ObjectProperties {
-            id: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
-            summary: Some(serde_json::to_value(self.spoiler_text.clone()).unwrap()),
-            content: Some(serde_json::to_value(self.content.clone()).unwrap()),
-            in_reply_to: Some(serde_json::to_value(self.in_response_to_id.map_or_else(|| self.get_post(conn).ap_url, |id| {
-                let comm = Comment::get(conn, id).unwrap();
-                comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
-            })).unwrap()),
-            published: Some(serde_json::to_value(self.creation_date).unwrap()),
-            attributed_to: Some(serde_json::to_value(self.get_author(conn).compute_id(conn)).unwrap()),
-            to: Some(serde_json::to_value(to).unwrap()),
-            cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
-            ..ObjectProperties::default()
-        };
-        comment
-    }
-
-    pub fn create_activity(&self, conn: &PgConnection) -> Create {
-        let mut act = Create::default();
-        act.create_props.set_actor_link(self.get_author(conn).into_id()).unwrap();
-        act.create_props.set_object_object(self.into_activity(conn)).unwrap();
-        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).unwrap();
-        act
     }
 
     pub fn count_local(conn: &PgConnection) -> usize {
@@ -147,5 +117,68 @@ impl Notify<Note> for Comment {
             },
             None => println!("Couldn't find comment by AP id, to create a new notification")
         };
+    }
+}
+
+impl NewComment {
+    pub fn build() -> Self {
+        NewComment::default()
+    }
+
+    pub fn content<T: AsRef<str>>(mut self, val: T) -> Self {
+        self.content = SafeString::new(val.as_ref());
+        self
+    }
+
+    pub fn in_response_to_id(mut self, val: Option<i32>) -> Self {
+        self.in_response_to_id = val;
+        self
+    }
+
+    pub fn post(mut self, post: Post) -> Self {
+        self.post_id = post.id;
+        self
+    }
+
+    pub fn author(mut self, author: User) -> Self {
+        self.author_id = author.id;
+        self
+    }
+
+    pub fn create(mut self, conn: &PgConnection) -> (Create, i32) {
+        let post = Post::get(conn, self.post_id).unwrap();
+        // We have to manually compute it since the new comment haven't been inserted yet, and it needs the activity we are building to be created
+        let next_id = get_next_id(conn, "comments_id_seq");
+        self.ap_url = Some(format!("{}#comment-{}", post.ap_url, next_id));
+        self.sensitive = false;
+        self.spoiler_text = String::new();
+
+        let author = User::get(conn, self.author_id).unwrap();
+        let mut note = Note::default();
+        let mut to = author.get_followers(conn).into_iter().map(User::into_id).collect::<Vec<Id>>();
+        to.append(&mut post
+            .get_authors(conn)
+            .into_iter()
+            .flat_map(|a| a.get_followers(conn))
+            .map(User::into_id)
+            .collect::<Vec<Id>>());
+        to.push(Id::new(PUBLIC_VISIBILTY.to_string()));
+
+        note.object_props.set_id_string(self.ap_url.clone().unwrap_or(String::new())).expect("NewComment::create: note.id error");
+        note.object_props.set_summary_string(self.spoiler_text.clone()).expect("NewComment::create: note.summary error");
+        note.object_props.set_content_string(self.content.get().clone()).expect("NewComment::create: note.content error");
+        note.object_props.set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(|| Post::get(conn, self.post_id).unwrap().ap_url, |id| {
+            let comm = Comment::get(conn, id).unwrap();
+            comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
+        }))).expect("NewComment::create: note.in_reply_to error");
+        note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("NewComment::create: note.published error");
+        note.object_props.set_attributed_to_link(author.clone().into_id()).expect("NewComment::create: note.attributed_to error");
+        note.object_props.set_to_link_vec(to).expect("NewComment::create: note.to error");
+
+        let mut act = Create::default();
+        act.create_props.set_actor_link(author.into_id()).expect("NewComment::create: actor error");
+        act.create_props.set_object_object(note).expect("NewComment::create: object error");
+        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).expect("NewComment::create: id error");
+        (act, next_id)
     }
 }
