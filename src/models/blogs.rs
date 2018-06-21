@@ -18,7 +18,7 @@ use webfinger::*;
 
 use activity_pub::{
     ActivityStream, Id, IntoId,
-    actor::{Actor as APActor, ActorType},
+    actor::{Actor as APActor},
     inbox::WithInbox,
     sign
 };
@@ -199,6 +199,15 @@ impl Blog {
             ]
         }
     }
+
+    // FIXME: see User::from_url for correct behavior
+    pub fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
+        blogs::table.filter(blogs::ap_url.eq(url))
+            .limit(1)
+            .load::<Blog>(conn)
+            .expect("Error loading blog from url")
+            .into_iter().nth(0)
+    }
 }
 
 impl IntoId for Blog {
@@ -229,36 +238,8 @@ impl APActor for Blog {
         self.actor_id.to_string()
     }
 
-    fn get_display_name(&self) -> String {
-        self.title.clone()
-    }
-
-    fn get_summary(&self) -> String {
-        self.summary.clone()
-    }
-
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
-    }
-
-    fn get_actor_type () -> ActorType {
-        ActorType::Blog
-    }
-
-    fn get_inbox_url(&self) -> String {
-        self.inbox_url.clone()
-    }
-
-    fn get_shared_inbox_url(&self) -> Option<String> {
-        None
-    }
-
-    fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
-        blogs::table.filter(blogs::ap_url.eq(url))
-            .limit(1)
-            .load::<Blog>(conn)
-            .expect("Error loading blog from url")
-            .into_iter().nth(0)
     }
 }
 

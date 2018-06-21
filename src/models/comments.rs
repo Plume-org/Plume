@@ -9,7 +9,6 @@ use serde_json;
 
 use activity_pub::{
     ap_url, Id, IntoId, PUBLIC_VISIBILTY,
-    actor::Actor,
     inbox::{FromActivity, Notify}
 };
 use models::{

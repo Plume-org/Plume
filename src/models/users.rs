@@ -28,7 +28,7 @@ use webfinger::*;
 use BASE_URL;
 use activity_pub::{
     ap_url, ActivityStream, Id, IntoId,
-    actor::{ActorType, Actor as APActor},
+    actor::{Actor as APActor},
     inbox::{Inbox, WithInbox},
     sign::{Signer, gen_keypair}
 };
@@ -308,8 +308,8 @@ impl User {
     pub fn into_activity(&self, _conn: &PgConnection) -> Person {
         let mut actor = Person::default();
         actor.object_props.set_id_string(self.ap_url.clone()).expect("User::into_activity: id error");
-        actor.object_props.set_name_string(self.get_display_name()).expect("User::into_activity: name error");
-        actor.object_props.set_summary_string(self.get_summary()).expect("User::into_activity: summary error");
+        actor.object_props.set_name_string(self.display_name.clone()).expect("User::into_activity: name error");
+        actor.object_props.set_summary_string(self.summary.get().clone()).expect("User::into_activity: summary error");
         actor.object_props.set_url_string(self.ap_url.clone()).expect("User::into_activity: url error");
         actor.ap_actor_props.set_inbox_string(self.inbox_url.clone()).expect("User::into_activity: inbox error");
         actor.ap_actor_props.set_outbox_string(self.outbox_url.clone()).expect("User::into_activity: outbox error");
@@ -350,6 +350,18 @@ impl User {
             ]
         }
     }
+
+    pub fn from_url(conn: &PgConnection, url: String) -> Option<User> {
+        User::find_by_ap_url(conn, url.clone()).or_else(|| {
+            // The requested user was not in the DB
+            // We try to fetch it if it is remote
+            if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
+                Some(User::fetch_from_url(conn, url).unwrap())
+            } else {
+                None
+            }
+        })
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -374,51 +386,8 @@ impl APActor for User {
         self.username.to_string()
     }
 
-    fn get_display_name(&self) -> String {
-        self.display_name.clone()
-    }
-
-    fn get_summary(&self) -> String {
-        self.summary.get().clone()
-    }
-
     fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).unwrap()
-    }
-
-    fn get_actor_type() -> ActorType {
-        ActorType::Person
-    }
-
-    fn get_inbox_url(&self) -> String {
-        self.inbox_url.clone()
-    }
-
-    fn get_shared_inbox_url(&self) -> Option<String> {
-       self.shared_inbox_url.clone()
-    }
-
-    fn custom_props(&self, conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
-        let mut res = serde_json::Map::new();
-        res.insert("publicKey".to_string(), json!({
-            "id": self.get_key_id(),
-            "owner": self.ap_url,
-            "publicKeyPem": self.public_key
-        }));
-        res.insert("followers".to_string(), serde_json::Value::String(self.compute_box(conn, "followers")));
-        res
-    }
-
-    fn from_url(conn: &PgConnection, url: String) -> Option<User> {
-        User::find_by_ap_url(conn, url.clone()).or_else(|| {
-            // The requested user was not in the DB
-            // We try to fetch it if it is remote
-            if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
-                Some(User::fetch_from_url(conn, url).unwrap())
-            } else {
-                None
-            }
-        })
     }
 }
 

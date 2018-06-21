@@ -1,7 +1,7 @@
 use activitypub::{Actor, activity::{Accept, Follow as FollowAct}};
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use activity_pub::{broadcast, Id, IntoId, actor::Actor as ApActor, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
+use activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
 use models::{
     blogs::Blog,
     notifications::*,

@@ -2,7 +2,7 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify, Deletable}};
+use activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}};
 use models::{notifications::*, posts::Post, users::User};
 use schema::reshares;
 

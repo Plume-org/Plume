@@ -5,7 +5,6 @@ use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 use activity_pub::{
     Id,
     IntoId,
-    actor::Actor,
     inbox::{FromActivity, Deletable, Notify}
 };
 use models::{
