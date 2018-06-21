@@ -82,7 +82,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
 
-    broadcast(&*conn, &user, act, vec![target]);
+    broadcast(&user, act, vec![target]);
     Redirect::to(uri!(details: name = name))
 }
 

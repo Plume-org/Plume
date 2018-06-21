@@ -44,7 +44,7 @@ impl Follow {
         let mut accept = Accept::default();
         accept.accept_props.set_actor_link::<Id>(from.clone().into_id()).unwrap();
         accept.accept_props.set_object_object(follow).unwrap();
-        broadcast(conn, &*from, accept, vec![target.clone()]);
+        broadcast(&*from, accept, vec![target.clone()]);
         res
     }
 }

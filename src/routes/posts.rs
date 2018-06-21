@@ -119,7 +119,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
             }
 
             let act = post.create_activity(&*conn);
-            broadcast(&*conn, &user, act, user.get_followers(&*conn));
+            broadcast(&user, act, user.get_followers(&*conn));
 
             Redirect::to(uri!(details: blog = blog_name, slug = slug))
         }

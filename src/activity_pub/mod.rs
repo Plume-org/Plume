@@ -1,6 +1,5 @@
 use activitypub::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
-use diesel::PgConnection;
 use reqwest::Client;
 use rocket::{
     http::{ContentType, Status},
@@ -74,7 +73,7 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     }
 }
 
-pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(conn: &PgConnection, sender: &S, act: A, to: Vec<T>) {
+pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
         .collect::<Vec<String>>()
@@ -82,14 +81,14 @@ pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(conn
 
     let mut act = serde_json::to_value(act).unwrap();
     act["@context"] = context();
-    let signed = act.sign(sender, conn);
+    let signed = act.sign(sender);
 
     for inbox in boxes {
         // TODO: run it in Sidekiq or something like that
         let res = Client::new()
             .post(&inbox[..])
             .headers(request::headers())
-            .header(request::signature(sender, request::headers(), conn))
+            .header(request::signature(sender, request::headers()))
             .header(request::digest(signed.to_string()))
             .body(signed.to_string())
             .send();

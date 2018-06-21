@@ -401,7 +401,7 @@ impl APActor for User {
     fn custom_props(&self, conn: &PgConnection) -> serde_json::Map<String, serde_json::Value> {
         let mut res = serde_json::Map::new();
         res.insert("publicKey".to_string(), json!({
-            "id": self.get_key_id(conn),
+            "id": self.get_key_id(),
             "owner": self.ap_url,
             "publicKeyPem": self.public_key
         }));

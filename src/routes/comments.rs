@@ -45,7 +45,7 @@ fn create_response(blog_name: String, slug: String, query: Option<CommentQuery>,
 
     let instance = Instance::get_local(&*conn).unwrap();
     instance.received(&*conn, serde_json::to_value(new_comment.clone()).expect("JSON serialization error"));
-    broadcast(&*conn, &user, new_comment, user.get_followers(&*conn));
+    broadcast(&user, new_comment, user.get_followers(&*conn));
 
     Redirect::to(format!("/~/{}/{}/#comment-{}", blog_name, slug, id))
 }
