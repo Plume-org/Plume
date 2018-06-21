@@ -155,7 +155,7 @@ impl Post {
             content: Some(serde_json::to_value(self.content.clone()).unwrap()),
             published: Some(serde_json::to_value(self.creation_date).unwrap()),
             tag: Some(serde_json::to_value(mentions).unwrap()),
-            url: Some(serde_json::to_value(self.compute_id(conn)).unwrap()),
+            url: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
             to: Some(serde_json::to_value(to).unwrap()),
             cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
             ..ObjectProperties::default()
@@ -187,16 +187,7 @@ impl Post {
 
 impl FromActivity<Article> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
-        // save mentions
-        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
-            for tag in tags.into_iter() {
-                serde_json::from_value::<link::Mention>(tag)
-                    .map(|m| Mention::from_activity(conn, m, Id::new(article.clone().object_props.clone().url_string().unwrap_or(String::from("")))))
-                    .ok();
-            }
-        }
-
-        Post::insert(conn, NewPost {
+        let post = Post::insert(conn, NewPost {
             blog_id: 0, // TODO
             slug: String::from(""), // TODO
             title: article.object_props.name_string().unwrap(),
@@ -204,7 +195,17 @@ impl FromActivity<Article> for Post {
             published: true,
             license: String::from("CC-0"),
             ap_url: article.object_props.url_string().unwrap_or(String::from(""))
-        })
+        });
+
+        // save mentions
+        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+            for tag in tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag)
+                    .map(|m| Mention::from_activity(conn, m, post.id, true))
+                    .ok();
+            }
+        }
+        post
     }
 }
 

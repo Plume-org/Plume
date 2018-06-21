@@ -1,9 +1,8 @@
 use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
-use serde_json;
 use std::iter::Iterator;
 
-use activity_pub::inbox::Inbox;
+use activity_pub::{ap_url, inbox::Inbox};
 use models::users::User;
 use schema::{instances, users};
 
@@ -59,12 +58,16 @@ impl Instance {
             .expect("Couldn't load admins")
             .len() > 0
     }
-}
 
-impl Inbox for Instance {
-    fn received(&self, conn: &PgConnection, act: serde_json::Value) {
-        self.save(conn, act.clone()).expect("Shared Inbox: Couldn't save activity");
-
-        // TODO: add to stream, or whatever needs to be done
+    pub fn compute_box(&self, prefix: &'static str, name: String, box_name: &'static str) -> String {
+        ap_url(format!(
+            "{instance}/{prefix}/{name}/{box_name}",
+            instance = self.public_domain,
+            prefix = prefix,
+            name = name,
+            box_name = box_name
+        ))
     }
 }
+
+impl Inbox for Instance {}

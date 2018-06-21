@@ -2,6 +2,9 @@
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
+#[macro_use]
+extern crate activitystreams_derive;
+extern crate activitystreams_traits;
 extern crate ammonia;
 extern crate array_tool;
 extern crate base64;
@@ -68,9 +71,8 @@ fn main() {
             routes::blogs::new_auth,
             routes::blogs::create,
 
-            routes::comments::new,
-            routes::comments::new_auth,
             routes::comments::create,
+            routes::comments::create_response,
 
             routes::instance::index,
             routes::instance::shared_inbox,
@@ -83,6 +85,7 @@ fn main() {
             routes::notifications::notifications_auth,
 
             routes::posts::details,
+            routes::posts::details_response,
             routes::posts::activity_details,
             routes::posts::new,
             routes::posts::new_auth,

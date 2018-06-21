@@ -2,7 +2,7 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, actor::Actor, inbox::{FromActivity, Notify, Deletable}};
+use activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}};
 use models::{notifications::*, posts::Post, users::User};
 use schema::reshares;
 
@@ -34,8 +34,8 @@ impl Reshare {
             diesel::update(self)
                 .set(reshares::ap_url.eq(format!(
                     "{}/reshare/{}",
-                    User::get(conn, self.user_id).unwrap().compute_id(conn),
-                    Post::get(conn, self.post_id).unwrap().compute_id(conn)
+                    User::get(conn, self.user_id).unwrap().ap_url,
+                    Post::get(conn, self.post_id).unwrap().ap_url
                 )))
                 .get_result::<Reshare>(conn).expect("Couldn't update AP URL");
         }

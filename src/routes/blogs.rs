@@ -6,7 +6,7 @@ use rocket::{
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{ActivityStream, ActivityPub, actor::Actor};
+use activity_pub::ActivityStream;
 use db_conn::DbConn;
 use models::{
     blog_authors::*,
@@ -32,9 +32,9 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
 }
 
 #[get("/~/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityPub {
+fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomGroup> {
     let blog = Blog::find_local(&*conn, name).unwrap();
-    blog.as_activity_pub(&*conn)
+    ActivityStream::new(blog.into_activity(&*conn))
 }
 
 #[get("/blogs/new")]

@@ -60,7 +60,16 @@
 
         <div class="comments">
             <h2>{{ "Comments" | _ }}</h2>
-            <a class="button" href="comment?">{{ "Comment" | _ }}</a>
+
+            {% if account %}
+                <form method="post" action="/~/{{ blog.actor_id }}/{{ post.slug }}/comment">
+                    <label for="content">{{ "Your comment" | _ }}</label>
+                    {# Ugly, but we don't have the choice if we don't want weird paddings #}
+                    <textarea id="content" name="content">{% filter trim %}{% if previous %}{% if previous.author.fqn != user_fqn %}@{{ previous.author.fqn }} {% endif %}{% for mention in previous.mentions %}{% if mention != user_fqn %}@{{ mention }} {% endif %}{% endfor %}{% endif %}{% endfilter %}</textarea>
+                    <input type="submit" value="{{ "Submit comment" | _ }}" />
+                </form>
+            {%  endif %}
+
             <div class="list">
                 {% for comment in comments %}
                     {% if comment.author.display_name %}
@@ -75,7 +84,7 @@
                             <span class="username">@{{ comment.author.username }}</span>
                         </a>
                         <div class="text">{{ comment.content | safe }}</div>
-                        <a class="button" href="comment?responding_to={{ comment.id }}">{{ "Respond" | _ }}</a>
+                        <a class="button" href="?responding_to={{ comment.id }}">{{ "Respond" | _ }}</a>
                     </div>
                 {% endfor %}
             </div>

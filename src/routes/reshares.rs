@@ -25,11 +25,11 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
         reshare.update_ap_url(&*conn);
         reshare.notify(&*conn);
 
-        broadcast(&*conn, &user, reshare.into_activity(&*conn), user.get_followers(&*conn));
+        broadcast(&user, reshare.into_activity(&*conn), user.get_followers(&*conn));
     } else {
         let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id).unwrap();
         let delete_act = reshare.delete(&*conn);
-        broadcast(&*conn, &user, delete_act, user.get_followers(&*conn));
+        broadcast(&user, delete_act, user.get_followers(&*conn));
     }
 
     Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))

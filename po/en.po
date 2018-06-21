@@ -283,3 +283,6 @@ msgstr ""
 
 msgid "{{ data }} mentioned you."
 msgstr ""
+
+msgid "Your comment"
+msgstr ""

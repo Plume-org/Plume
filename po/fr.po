@@ -282,3 +282,7 @@ msgstr "Vous n'êtes pas auteur dans ce blog."
 
 msgid "{{ data }} mentioned you."
 msgstr ""
+
+#, fuzzy
+msgid "Your comment"
+msgstr "Envoyer le commentaire"

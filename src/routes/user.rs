@@ -9,9 +9,8 @@ use rocket_contrib::Template;
 use serde_json;
 
 use activity_pub::{
-    activity_pub, ActivityPub, ActivityStream, context, broadcast, Id, IntoId,
-    inbox::{Inbox, Notify},
-    actor::Actor
+    ActivityStream, broadcast, Id, IntoId,
+    inbox::{Inbox, Notify}
 };
 use db_conn::DbConn;
 use models::{
@@ -82,7 +81,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
 
-    broadcast(&*conn, &user, act, vec![target]);
+    broadcast(&user, act, vec![target]);
     Redirect::to(uri!(details: name = name))
 }
 
@@ -110,9 +109,9 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
 }
 
 #[get("/@/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityPub {
+fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomPerson> {
     let user = User::find_local(&*conn, name).unwrap();
-    user.as_activity_pub(&*conn)
+    ActivityStream::new(user.into_activity(&*conn))
 }
 
 #[get("/users/new")]
@@ -199,21 +198,23 @@ fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
 fn inbox(name: String, conn: DbConn, data: String) -> String {
     let user = User::find_local(&*conn, name).unwrap();
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
-    user.received(&*conn, act);
-    String::from("")
+    match user.received(&*conn, act) {
+        Ok(_) => String::new(),
+        Err(e) => {
+            println!("User inbox error: {}\n{}", e.cause(), e.backtrace());
+            format!("Error: {}", e.cause())
+        }
+    }
 }
 
 #[get("/@/<name>/followers", format = "application/activity+json")]
-fn ap_followers(name: String, conn: DbConn) -> ActivityPub {
+fn ap_followers(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
     let user = User::find_local(&*conn, name).unwrap();
-    let followers = user.get_followers(&*conn).into_iter().map(|f| f.compute_id(&*conn)).collect::<Vec<String>>();
-    
-    let json = json!({
-        "@context": context(),
-        "id": user.compute_box(&*conn, "followers"),
-        "type": "OrderedCollection",
-        "totalItems": followers.len(),
-        "orderedItems": followers
-    });
-    activity_pub(json)
+    let followers = user.get_followers(&*conn).into_iter().map(|f| Id::new(f.ap_url)).collect::<Vec<Id>>();
+
+    let mut coll = OrderedCollection::default();
+    coll.object_props.set_id_string(format!("{}/followers", user.ap_url)).expect("Follower collection: id error");
+    coll.collection_props.set_total_items_u64(followers.len() as u64).expect("Follower collection: totalItems error");
+    coll.collection_props.set_items_link_vec(followers).expect("Follower collection: items error");
+    ActivityStream::new(coll)
 }

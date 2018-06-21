@@ -1,3 +1,5 @@
+use diesel::{PgConnection, RunQueryDsl, select};
+
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
@@ -45,6 +47,16 @@ macro_rules! insert {
                 .expect("Error saving new $table")
         }
     };
+}
+
+sql_function!(nextval, nextval_t, (seq: ::diesel::sql_types::Text) -> ::diesel::sql_types::BigInt);
+sql_function!(setval, setval_t, (seq: ::diesel::sql_types::Text, val: ::diesel::sql_types::BigInt) -> ::diesel::sql_types::BigInt);
+
+fn get_next_id(conn: &PgConnection, seq: &str) -> i32 {
+    // We cant' use currval because it may fail if nextval have never been called before
+    let next = select(nextval(seq)).get_result::<i64>(conn).expect("Next ID fail");
+    select(setval(seq, next - 1)).get_result::<i64>(conn).expect("Reset ID fail");
+    next as i32
 }
 
 pub mod blog_authors;

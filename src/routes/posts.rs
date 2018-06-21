@@ -1,10 +1,11 @@
+use activitypub::object::Article;
 use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub, Id};
+use activity_pub::{broadcast, ActivityStream};
 use db_conn::DbConn;
 use models::{
     blogs::*,
@@ -14,14 +15,21 @@ use models::{
     posts::*,
     users::User
 };
+use routes::comments::CommentQuery;
 use safe_string::SafeString;
 use utils;
 
+// See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
+    details_response(blog, slug, conn, user, None)
+}
+
+#[get("/~/<blog>/<slug>?<query>")]
+fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
     may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
         may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
-            let comments = Comment::find_by_post(&*conn, post.id);
+            let comments = Comment::list_by_post(&*conn, post.id);
 
             Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),
@@ -33,20 +41,20 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
                 "account": user,
-                "date": &post.creation_date.timestamp()
+                "date": &post.creation_date.timestamp(),
+                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn))),
+                "user_fqn": user.map(|u| u.get_fqn(&*conn)).unwrap_or(String::new())
             }))
         })
     })
 }
 
 #[get("/~/<blog>/<slug>", rank = 3, format = "application/activity+json")]
-fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityPub {
+fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityStream<Article> {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
 
-    let mut act = serde_json::to_value(post.into_activity(&*conn)).unwrap();
-    act["@context"] = context();
-    activity_pub(act)
+    ActivityStream::new(post.into_activity(&*conn))
 }
 
 #[get("/~/<blog>/new", rank = 2)]
@@ -106,11 +114,11 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
             });
 
             for m in mentions.into_iter() {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), Id::new(post.compute_id(&*conn)));
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true);
             }
 
             let act = post.create_activity(&*conn);
-            broadcast(&*conn, &user, act, user.get_followers(&*conn));
+            broadcast(&user, act, user.get_followers(&*conn));
 
             Redirect::to(uri!(details: blog = blog_name, slug = slug))
         }

@@ -1,5 +1,4 @@
 use base64;
-use diesel::PgConnection;
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::header::{Date, Headers, UserAgent};
 use std::time::SystemTime;
@@ -23,7 +22,7 @@ pub fn headers() -> Headers {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: Headers, conn: &PgConnection) -> Signature {
+pub fn signature<S: Signer>(signer: &S, headers: Headers) -> Signature {
     let signed_string = headers.iter().map(|h| format!("{}: {}", h.name().to_lowercase(), h.value_string())).collect::<Vec<String>>().join("\n");
     let signed_headers = headers.iter().map(|h| h.name().to_string()).collect::<Vec<String>>().join(" ").to_lowercase();
     
@@ -32,7 +31,7 @@ pub fn signature<S: Signer>(signer: &S, headers: Headers, conn: &PgConnection) -
 
     Signature(format!(
         "keyId=\"{key_id}\",algorithm=\"rsa-sha256\",headers=\"{signed_headers}\",signature=\"{signature}\"",
-        key_id = signer.get_key_id(conn),
+        key_id = signer.get_key_id(),
         signed_headers = signed_headers,
         signature = sign
     ))

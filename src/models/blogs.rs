@@ -1,4 +1,4 @@
-use activitypub::{Actor, Object, collection::OrderedCollection};
+use activitypub::{Actor, Object, CustomObject, actor::Group, collection::OrderedCollection};
 use reqwest::{
     Client,
     header::{Accept, qitem},
@@ -16,15 +16,16 @@ use openssl::{
 };
 use webfinger::*;
 
+use BASE_URL;
 use activity_pub::{
-    ActivityStream, Id, IntoId,
-    actor::{Actor as APActor, ActorType},
+    ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
     sign
 };
 use models::instance::*;
 use schema::blogs;
 
+pub type CustomGroup = CustomObject<ApSignature, Group>;
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct Blog {
@@ -55,9 +56,17 @@ pub struct NewBlog {
     pub public_key: String
 }
 
+const BLOG_PREFIX: &'static str = "~";
+
 impl Blog {
     insert!(blogs, NewBlog);
     get!(blogs);
+    find_by!(blogs, find_by_ap_url, ap_url as String);
+    find_by!(blogs, find_by_name, actor_id as String, instance_id as i32);
+
+    pub fn get_instance(&self, conn: &PgConnection) -> Instance {
+        Instance::get(conn, self.instance_id).expect("Couldn't find instance")
+    }
 
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;
@@ -66,8 +75,6 @@ impl Blog {
             .load::<Blog>(conn)
             .expect("Couldn't load blogs ")
     }
-
-    find_by!(blogs, find_by_name, actor_id as String, instance_id as i32);
 
     pub fn find_local(conn: &PgConnection, name: String) -> Option<Blog> {
         Blog::find_by_name(conn, name, Instance::local_id(conn))
@@ -106,14 +113,14 @@ impl Blog {
             .send();
         match req {
             Ok(mut res) => {
-                let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
+                let json = serde_json::from_str(&res.text().unwrap()).unwrap();
                 Some(Blog::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
             Err(_) => None
         }
     }
 
-    fn from_activity(conn: &PgConnection, acct: serde_json::Value, inst: String) -> Blog {
+    fn from_activity(conn: &PgConnection, acct: CustomGroup, inst: String) -> Blog {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
@@ -125,34 +132,55 @@ impl Blog {
             }
         };
         Blog::insert(conn, NewBlog {
-            actor_id: acct["preferredUsername"].as_str().unwrap().to_string(),
-            title: acct["name"].as_str().unwrap().to_string(),
-            outbox_url: acct["outbox"].as_str().unwrap().to_string(),
-            inbox_url: acct["inbox"].as_str().unwrap().to_string(),
-            summary: acct["summary"].as_str().unwrap().to_string(),
+            actor_id: acct.object.ap_actor_props.preferred_username_string().expect("Blog::from_activity: preferredUsername error"),
+            title: acct.object.object_props.name_string().expect("Blog::from_activity: name error"),
+            outbox_url: acct.object.ap_actor_props.outbox_string().expect("Blog::from_activity: outbox error"),
+            inbox_url: acct.object.ap_actor_props.inbox_string().expect("Blog::from_activity: inbox error"),
+            summary: acct.object.object_props.summary_string().expect("Blog::from_activity: summary error"),
             instance_id: instance.id,
-            ap_url: acct["id"].as_str().unwrap().to_string(),
-            public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap_or("").to_string(),
+            ap_url: acct.object.object_props.id_string().expect("Blog::from_activity: id error"),
+            public_key: acct.custom_props.public_key_publickey().expect("Blog::from_activity: publicKey error")
+                .public_key_pem_string().expect("Blog::from_activity: publicKey.publicKeyPem error"),
             private_key: None
         })
     }
 
+    pub fn into_activity(&self, _conn: &PgConnection) -> CustomGroup {
+        let mut blog = Group::default();
+        blog.ap_actor_props.set_preferred_username_string(self.actor_id.clone()).expect("Blog::into_activity: preferredUsername error");
+        blog.object_props.set_name_string(self.title.clone()).expect("Blog::into_activity: name error");
+        blog.ap_actor_props.set_outbox_string(self.outbox_url.clone()).expect("Blog::into_activity: outbox error");
+        blog.ap_actor_props.set_inbox_string(self.inbox_url.clone()).expect("Blog::into_activity: inbox error");
+        blog.object_props.set_summary_string(self.summary.clone()).expect("Blog::into_activity: summary error");
+        blog.object_props.set_id_string(self.ap_url.clone()).expect("Blog::into_activity: id error");
+
+        let mut public_key = PublicKey::default();
+        public_key.set_id_string(format!("{}#main-key", self.ap_url)).expect("Blog::into_activity: publicKey.id error");
+        public_key.set_owner_string(self.ap_url.clone()).expect("Blog::into_activity: publicKey.owner error");
+        public_key.set_public_key_pem_string(self.public_key.clone()).expect("Blog::into_activity: publicKey.publicKeyPem error");
+        let mut ap_signature = ApSignature::default();
+        ap_signature.set_public_key_publickey(public_key).expect("Blog::into_activity: publicKey error");
+
+        CustomGroup::new(blog, ap_signature)
+    }
+
     pub fn update_boxes(&self, conn: &PgConnection) {
+        let instance = self.get_instance(conn);
         if self.outbox_url.len() == 0 {
             diesel::update(self)
-                .set(blogs::outbox_url.eq(self.compute_outbox(conn)))
+                .set(blogs::outbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "outbox")))
                 .get_result::<Blog>(conn).expect("Couldn't update outbox URL");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
-                .set(blogs::inbox_url.eq(self.compute_inbox(conn)))
+                .set(blogs::inbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "inbox")))
                 .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
-                .set(blogs::ap_url.eq(self.compute_id(conn)))
+                .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "")))
                 .get_result::<Blog>(conn).expect("Couldn't update AP URL");
         }
     }
@@ -175,25 +203,37 @@ impl Blog {
     pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
         Webfinger {
             subject: format!("acct:{}@{}", self.actor_id, self.get_instance(conn).public_domain),
-            aliases: vec![self.compute_id(conn)],
+            aliases: vec![self.ap_url.clone()],
             links: vec![
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.compute_id(conn)
+                    href: self.ap_url.clone()
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.compute_box(conn, "feed.atom")
+                    href: self.get_instance(conn).compute_box(BLOG_PREFIX, self.actor_id.clone(), "feed.atom")
                 },
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.compute_id(conn)
+                    href: self.ap_url.clone()
                 }
             ]
         }
+    }
+
+    pub fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
+        Blog::find_by_ap_url(conn, url.clone()).or_else(|| {
+            // The requested user was not in the DB
+            // We try to fetch it if it is remote
+            if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
+                Some(Blog::fetch_from_url(conn, url).unwrap())
+            } else {
+                None
+            }
+        })
     }
 }
 
@@ -216,51 +256,9 @@ impl WithInbox for Blog {
     }
 }
 
-impl APActor for Blog {
-    fn get_box_prefix() -> &'static str {
-        "~"
-    }
-
-    fn get_actor_id(&self) -> String {
-        self.actor_id.to_string()
-    }
-
-    fn get_display_name(&self) -> String {
-        self.title.clone()
-    }
-
-    fn get_summary(&self) -> String {
-        self.summary.clone()
-    }
-
-    fn get_instance(&self, conn: &PgConnection) -> Instance {
-        Instance::get(conn, self.instance_id).unwrap()
-    }
-
-    fn get_actor_type () -> ActorType {
-        ActorType::Blog
-    }
-
-    fn get_inbox_url(&self) -> String {
-        self.inbox_url.clone()
-    }
-
-    fn get_shared_inbox_url(&self) -> Option<String> {
-        None
-    }
-
-    fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
-        blogs::table.filter(blogs::ap_url.eq(url))
-            .limit(1)
-            .load::<Blog>(conn)
-            .expect("Error loading blog from url")
-            .into_iter().nth(0)
-    }
-}
-
 impl sign::Signer for Blog {
-    fn get_key_id(&self, conn: &PgConnection) -> String {
-        format!("{}#main-key", self.compute_id(conn))
+    fn get_key_id(&self) -> String {
+        format!("{}#main-key", self.ap_url)
     }
 
     fn sign(&self, to_sign: String) -> Vec<u8> {

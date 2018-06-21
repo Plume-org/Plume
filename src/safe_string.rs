@@ -9,7 +9,7 @@ use diesel::{self, deserialize::Queryable,
     sql_types::Text,
     serialize::{self, Output}};
 
-#[derive(Debug,Clone,AsExpression,FromSqlRow)]
+#[derive(Debug, Clone, AsExpression, FromSqlRow, Default)]
 #[sql_type = "Text"]
 pub struct SafeString{
     value: String,
