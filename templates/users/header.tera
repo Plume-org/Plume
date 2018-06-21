@@ -11,7 +11,7 @@
     </h1>
 
     {% if is_self %}
-        <a href="{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
+        <a href="/@/{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
     {% endif %}
 
     {% if is_remote %}
