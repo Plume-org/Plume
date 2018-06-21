@@ -6,6 +6,10 @@
 
 All commands are run in the Mac Terminal or terminal emulator of your choice, such as iTerm2. First, you will need [Git](https://git-scm.com/download/mac), [Homebrew](https://brew.sh/), [Rust](https://www.rust-lang.org/en-US/), and [Postgres](https://www.postgresql.org/). Follow the instructions to install Homebrew before continuing if you don't already have it.
 
+### Linux
+
+Similar to Mac OSX all commands should be run from a terminal (a.k.a command line). First, you will need [Git](https://git-scm.com/download/mac), [Rust](https://www.rust-lang.org/en-US/), and [Postgres](https://www.postgresql.org/).  Step-by-step instructions are also available here:  [Installing Prerequisites](/doc/PREREQUISITES.md)
+
 #### Download the Repository
 
 Navigate to the directory on your machine where you would like to install the repository, such as in `~/dev` by running `cd dev`. Now, clone the remote repository by running `git clone https://github.com/Plume-org/Plume.git`. This will install the codebase to the `Plume` subdirectory. Navigate into that directory by running `cd Plume`.
