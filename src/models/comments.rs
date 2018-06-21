@@ -1,6 +1,7 @@
 use activitypub::{
     activity::Create,
-    object::Note
+    link,
+    object::{Note, properties::ObjectProperties}
 };
 use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
@@ -14,6 +15,7 @@ use activity_pub::{
 use models::{
     get_next_id,
     instance::Instance,
+    mentions::Mention,
     notifications::*,
     posts::Post,
     users::User
@@ -84,6 +86,16 @@ impl FromActivity<Note> for Comment {
     fn from_activity(conn: &PgConnection, note: Note, actor: Id) -> Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
+
+        // save mentions
+        if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
+            for tag in tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag)
+                    .map(|m| Mention::from_activity(conn, m, Id::new(note.clone().object_props.clone().url_string().unwrap_or(String::from("")))))
+                    .ok();
+            }
+        }
+
         let comm = Comment::insert(conn, NewComment {
             content: SafeString::new(&note.object_props.content_string().unwrap()),
             spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
@@ -95,28 +107,22 @@ impl FromActivity<Note> for Comment {
             author_id: User::from_url(conn, actor.clone().into()).unwrap().id,
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
         });
-        Comment::notify(conn, note, actor);
+        comm.notify(conn);
         comm
     }
 }
 
-impl Notify<Note> for Comment {
-    fn notify(conn: &PgConnection, note: Note, _actor: Id) {
-        match Comment::find_by_ap_url(conn, note.object_props.id_string().unwrap()) {
-            Some(comment) => {
-                for author in comment.clone().get_post(conn).get_authors(conn) {
-                    let comment = comment.clone();
-                    Notification::insert(conn, NewNotification {
-                        title: "{{ data }} commented your article".to_string(),
-                        data: Some(comment.get_author(conn).display_name.clone()),
-                        content: Some(comment.get_post(conn).title),
-                        link: comment.ap_url,
-                        user_id: author.id
-                    });
-                }
-            },
-            None => println!("Couldn't find comment by AP id, to create a new notification")
-        };
+impl Notify for Comment {
+    fn notify(&self, conn: &PgConnection) {
+        for author in self.get_post(conn).get_authors(conn) {
+            Notification::insert(conn, NewNotification {
+                title: "{{ data }} commented your article".to_string(),
+                data: Some(self.get_author(conn).display_name.clone()),
+                content: Some(self.get_post(conn).title),
+                link: self.ap_url.clone(),
+                user_id: author.id
+            });
+        }
     }
 }
 

@@ -73,7 +73,7 @@ impl Reshare {
 }
 
 impl FromActivity<Announce> for Reshare {
-    fn from_activity(conn: &PgConnection, announce: Announce, actor: Id) -> Reshare {
+    fn from_activity(conn: &PgConnection, announce: Announce, _actor: Id) -> Reshare {
         let user = User::from_url(conn, announce.announce_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, announce.announce_props.object.as_str().unwrap().to_string());
         let reshare = Reshare::insert(conn, NewReshare {
@@ -81,15 +81,15 @@ impl FromActivity<Announce> for Reshare {
             user_id: user.unwrap().id,
             ap_url: announce.object_props.id_string().unwrap_or(String::from(""))
         });
-        Reshare::notify(conn, announce, actor);
+        reshare.notify(conn);
         reshare
     }
 }
 
-impl Notify<Announce> for Reshare {
-    fn notify(conn: &PgConnection, announce: Announce, actor: Id) {
-        let actor = User::from_url(conn, actor.into()).unwrap();
-        let post = Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>().unwrap().into()).unwrap();
+impl Notify for Reshare {
+    fn notify(&self, conn: &PgConnection) {
+        let actor = User::get(conn, self.user_id).unwrap();
+        let post = self.get_post(conn).unwrap();
         for author in post.get_authors(conn) {
             let post = post.clone();
             Notification::insert(conn, NewNotification {

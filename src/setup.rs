@@ -12,7 +12,7 @@ use db_conn::DbConn;
 use models::instance::*;
 use models::users::*;
 
-type PgPool = Pool<ConnectionManager<PgConnection>>;
+pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 
 /// Initializes a database pool.
 fn init_pool() -> Option<PgPool> {

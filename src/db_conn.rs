@@ -1,9 +1,11 @@
 use diesel::{
     pg::PgConnection,
-    r2d2::{ConnectionManager, Pool, PooledConnection}
+    r2d2::{ConnectionManager, PooledConnection}
 };
 use rocket::{Request, State, Outcome, http::Status, request::{self, FromRequest}};
 use std::ops::Deref;
+
+use setup::PgPool;
 
 // From rocket documentation
 
@@ -17,7 +19,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-        let pool = request.guard::<State<Pool<ConnectionManager<PgConnection>>>>()?;
+        let pool = request.guard::<State<PgPool>>()?;
         match pool.get() {
             Ok(conn) => Outcome::Success(DbConn(conn)),
             Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))

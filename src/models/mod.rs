@@ -14,6 +14,18 @@ macro_rules! find_by {
     };
 }
 
+macro_rules! list_by {
+    ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
+        /// Try to find a $table with a given $col
+        pub fn $fn(conn: &PgConnection, $($col: $type),+) -> Vec<Self> {
+            $table::table
+                $(.filter($table::$col.eq($col)))+
+                .load::<Self>(conn)
+                .expect("Error loading $table by $col")
+        }
+    };
+}
+
 macro_rules! get {
     ($table:ident) => {
         pub fn get(conn: &PgConnection, id: i32) -> Option<Self> {
@@ -53,6 +65,7 @@ pub mod comments;
 pub mod follows;
 pub mod instance;
 pub mod likes;
+pub mod mentions;
 pub mod notifications;
 pub mod post_authors;
 pub mod posts;

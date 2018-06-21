@@ -40,8 +40,8 @@ pub trait FromActivity<T: Object>: Sized {
     }
 }
 
-pub trait Notify<T: Object> {
-    fn notify(conn: &PgConnection, act: T, actor: Id);
+pub trait Notify {
+    fn notify(&self, conn: &PgConnection);
 }
 
 pub trait Deletable {

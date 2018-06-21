@@ -1,21 +1,21 @@
-use comrak::{markdown_to_html, ComrakOptions};
 use heck::KebabCase;
 use rocket::request::Form;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, context, activity_pub, ActivityPub};
+use activity_pub::{broadcast, context, activity_pub, ActivityPub, Id};
 use db_conn::DbConn;
 use models::{
     blogs::*,
     comments::Comment,
+    mentions::Mention,
     post_authors::*,
     posts::*,
     users::User
 };
-use utils;
 use safe_string::SafeString;
+use utils;
 
 #[get("/~/<blog>/<slug>", rank = 4)]
 fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
@@ -88,19 +88,7 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
         if slug == "new" || Post::find_by_slug(&*conn, slug.clone(), blog.id).is_some() {
             Redirect::to(uri!(new: blog = blog_name))
         } else {
-            let content = markdown_to_html(form.content.to_string().as_ref(), &ComrakOptions{
-                smart: true,
-                safe: true,
-                ext_strikethrough: true,
-                ext_tagfilter: true,
-                ext_table: true,
-                ext_autolink: true,
-                ext_tasklist: true,
-                ext_superscript: true,
-                ext_header_ids: Some("title".to_string()),
-                ext_footnotes: true,
-                ..ComrakOptions::default()
-            });
+            let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
 
             let post = Post::insert(&*conn, NewPost {
                 blog_id: blog.id,
@@ -116,6 +104,10 @@ fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) 
                 post_id: post.id,
                 author_id: user.id
             });
+
+            for m in mentions.into_iter() {
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), Id::new(post.compute_id(&*conn)));
+            }
 
             let act = post.create_activity(&*conn);
             broadcast(&*conn, &user, act, user.get_followers(&*conn));
