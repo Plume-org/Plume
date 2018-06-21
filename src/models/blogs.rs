@@ -1,4 +1,4 @@
-use activitypub::{Actor, Object, actor::Group, collection::OrderedCollection};
+use activitypub::{Actor, Object, CustomObject, actor::Group, collection::OrderedCollection};
 use reqwest::{
     Client,
     header::{Accept, qitem},
@@ -17,13 +17,14 @@ use openssl::{
 use webfinger::*;
 
 use activity_pub::{
-    ActivityStream, Id, IntoId,
+    ApSignature, ActivityStream, Id, IntoId,
     inbox::WithInbox,
     sign
 };
 use models::instance::*;
 use schema::blogs;
 
+pub type CustomGroup = CustomObject<ApSignature, Group>;
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct Blog {
@@ -111,14 +112,14 @@ impl Blog {
             .send();
         match req {
             Ok(mut res) => {
-                let json: serde_json::Value = serde_json::from_str(&res.text().unwrap()).unwrap();
+                let json = serde_json::from_str(&res.text().unwrap()).unwrap();
                 Some(Blog::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
             Err(_) => None
         }
     }
 
-    fn from_activity(conn: &PgConnection, acct: serde_json::Value, inst: String) -> Blog {
+    fn from_activity(conn: &PgConnection, acct: CustomGroup, inst: String) -> Blog {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
@@ -130,14 +131,15 @@ impl Blog {
             }
         };
         Blog::insert(conn, NewBlog {
-            actor_id: acct["preferredUsername"].as_str().unwrap().to_string(),
-            title: acct["name"].as_str().unwrap().to_string(),
-            outbox_url: acct["outbox"].as_str().unwrap().to_string(),
-            inbox_url: acct["inbox"].as_str().unwrap().to_string(),
-            summary: acct["summary"].as_str().unwrap().to_string(),
+            actor_id: acct.object.ap_actor_props.preferred_username_string().expect("Blog::from_activity: preferredUsername error"),
+            title: acct.object.object_props.name_string().expect("Blog::from_activity: name error"),
+            outbox_url: acct.object.ap_actor_props.outbox_string().expect("Blog::from_activity: outbox error"),
+            inbox_url: acct.object.ap_actor_props.inbox_string().expect("Blog::from_activity: inbox error"),
+            summary: acct.object.object_props.summary_string().expect("Blog::from_activity: summary error"),
             instance_id: instance.id,
-            ap_url: acct["id"].as_str().unwrap().to_string(),
-            public_key: acct["publicKey"]["publicKeyPem"].as_str().unwrap_or("").to_string(),
+            ap_url: acct.object.object_props.id_string().expect("Blog::from_activity: id error"),
+            public_key: acct.custom_props.public_key_publickey().expect("Blog::from_activity: publicKey error")
+                .public_key_pem_string().expect("Blog::from_activity: publicKey.publicKeyPem error"),
             private_key: None
         })
     }
