@@ -2,7 +2,7 @@ use rocket::response::NamedFile;
 use std::path::{Path, PathBuf};
 
 macro_rules! may_fail {
-    ($expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
+    ($account:expr, $expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
         {
             let res = $expr;
             if res.is_some() {
@@ -10,18 +10,19 @@ macro_rules! may_fail {
                 $block
             } else {
                 Template::render(concat!("errors/", $template), json!({
-                    "error_message": $msg
+                    "error_message": $msg,
+                    "account": $account
                 }))
             }
         }
     };
-    ($expr:expr, $msg:expr, | $res:ident | $block:block) => {
-        may_fail!($expr, "404", $msg, |$res| {
+    ($account:expr, $expr:expr, $msg:expr, | $res:ident | $block:block) => {
+        may_fail!($account, $expr, "404", $msg, |$res| {
             $block
         })
     };
-    ($expr:expr, | $res:ident | $block:block) => {
-        may_fail!($expr, "", |$res| {
+    ($account:expr, $expr:expr, | $res:ident | $block:block) => {
+        may_fail!($account, $expr, "", |$res| {
             $block
         })
     };

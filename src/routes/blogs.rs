@@ -19,7 +19,7 @@ use utils;
 
 #[get("/~/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
-    may_fail!(Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
+    may_fail!(user, Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
         let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
 
         Template::render("blogs/details", json!({
