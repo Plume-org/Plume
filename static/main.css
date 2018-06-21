@@ -257,7 +257,7 @@ input {
 	transition: all 0.1s ease-in;
 	display: block;
 	width: 100%;
-	margin: auto;
+	margin: auto auto 5em;
 	padding: 0.5em;
 	box-sizing: border-box;
 
@@ -266,7 +266,7 @@ input {
 	border: none;
 	border-bottom: solid #DADADA 2px;
 }
-input[type="submit"] { margin: 2em auto; }
+form input[type="submit"] { margin: 2em auto; }
 input:focus {
 	background: #FAFAFA;
 	border-bottom-color: #7765E3;
