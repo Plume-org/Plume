@@ -52,12 +52,6 @@ pub trait Deletable {
 pub trait Inbox {
     fn received(&self, conn: &PgConnection, act: serde_json::Value);
 
-    fn unlike(&self, conn: &PgConnection, undo: Undo) -> Result<(), Error> {
-        let like = likes::Like::find_by_ap_url(conn, undo.undo_props.object_object::<Like>()?.object_props.id_string()?).unwrap();
-        like.delete(conn);
-        Ok(())
-    }
-
     fn save(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
         let actor_id = Id::new(act["actor"].as_str().unwrap());
         match act["type"].as_str() {
