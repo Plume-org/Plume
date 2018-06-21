@@ -69,7 +69,9 @@ impl<T> ActivityStream<T> {
 
 impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     fn respond_to(self, request: &Request) -> Result<Response<'r>, Status> {
-        serde_json::to_string(&self.0).respond_to(request)
+        serde_json::to_string(&self.0).respond_to(request).map(|r| Response::build_from(r)
+            .raw_header("Content-Type", "application/activity+json")
+            .finalize())
     }
 }
 
