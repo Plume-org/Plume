@@ -1,8 +1,7 @@
 use activitypub::{
-    Actor, Object,
-    actor::{Person, properties::ApActorProperties},
-    collection::OrderedCollection,
-    object::properties::ObjectProperties
+    Actor, Object, Endpoint,
+    actor::Person,
+    collection::OrderedCollection
 };
 use bcrypt;
 use chrono::NaiveDateTime;
@@ -306,27 +305,19 @@ impl User {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> Person {
+    pub fn into_activity(&self, _conn: &PgConnection) -> Person {
         let mut actor = Person::default();
-        actor.object_props = ObjectProperties {
-            id: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
-            name: Some(serde_json::to_value(self.get_display_name()).unwrap()),
-            summary: Some(serde_json::to_value(self.get_summary()).unwrap()),
-            url: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
-            ..ObjectProperties::default()
-        };
-        actor.ap_actor_props = ApActorProperties {
-            inbox: serde_json::to_value(self.compute_inbox(conn)).unwrap(),
-            outbox: serde_json::to_value(self.compute_outbox(conn)).unwrap(),
-            preferred_username: Some(serde_json::to_value(self.get_actor_id()).unwrap()),
-            endpoints: Some(json!({
-                "sharedInbox": ap_url(format!("{}/inbox", BASE_URL.as_str()))
-            })),
-            followers: None,
-            following: None,
-            liked: None,
-            streams: None
-        };
+        actor.object_props.set_id_string(self.ap_url.clone()).expect("User::into_activity: id error");
+        actor.object_props.set_name_string(self.get_display_name()).expect("User::into_activity: name error");
+        actor.object_props.set_summary_string(self.get_summary()).expect("User::into_activity: summary error");
+        actor.object_props.set_url_string(self.ap_url.clone()).expect("User::into_activity: url error");
+        actor.ap_actor_props.set_inbox_string(self.inbox_url.clone()).expect("User::into_activity: inbox error");
+        actor.ap_actor_props.set_outbox_string(self.outbox_url.clone()).expect("User::into_activity: outbox error");
+        actor.ap_actor_props.set_preferred_username_string(self.get_actor_id()).expect("User::into_activity: preferredUsername error");
+
+        let mut endpoints = Endpoint::default();
+        endpoints.set_shared_inbox_string(ap_url(format!("{}/inbox/", BASE_URL.as_str()))).expect("User::into_activity: endpoints.sharedInbox error");
+        actor.ap_actor_props.set_endpoints_endpoint(endpoints).expect("User::into_activity: endpoints error");
         actor
     }
 
