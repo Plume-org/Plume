@@ -23,7 +23,7 @@ pub struct Like {
     pub ap_url: String
 }
 
-#[derive(Insertable)]
+#[derive(Default, Insertable)]
 #[table_name = "likes"]
 pub struct NewLike {
     pub user_id: i32,

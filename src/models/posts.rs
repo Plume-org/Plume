@@ -1,9 +1,9 @@
 use activitypub::{
     activity::Create,
     link,
-    object::{Article, properties::ObjectProperties}
+    object::Article
 };
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use serde_json;
 
@@ -150,18 +150,14 @@ impl Post {
         let mentions = Mention::list_for_post(conn, self.id).into_iter().map(|m| m.to_activity(conn)).collect::<Vec<link::Mention>>();
 
         let mut article = Article::default();
-        article.object_props = ObjectProperties {
-            name: Some(serde_json::to_value(self.title.clone()).unwrap()),
-            id: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
-            attributed_to: Some(serde_json::to_value(self.get_authors(conn).into_iter().map(|x| x.ap_url).collect::<Vec<String>>()).unwrap()),
-            content: Some(serde_json::to_value(self.content.clone()).unwrap()),
-            published: Some(serde_json::to_value(self.creation_date).unwrap()),
-            tag: Some(serde_json::to_value(mentions).unwrap()),
-            url: Some(serde_json::to_value(self.ap_url.clone()).unwrap()),
-            to: Some(serde_json::to_value(to).unwrap()),
-            cc: Some(serde_json::to_value(Vec::<serde_json::Value>::new()).unwrap()),
-            ..ObjectProperties::default()
-        };
+        article.object_props.set_name_string(self.title.clone()).expect("Article::intro activity: name error");
+        article.object_props.set_id_string(self.ap_url.clone()).expect("Article::intro activity: id error");
+        article.object_props.set_attributed_to_link_vec::<Id>(self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect()).expect("Article::intro activity: attributedTo error");
+        article.object_props.set_content_string(self.content.get().clone()).expect("Article::intro activity: content error");
+        article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::intro activity: published error");
+        article.object_props.set_tag_link_vec(mentions).expect("Article::intro activity: tag error");
+        article.object_props.set_url_string(self.ap_url.clone()).expect("Article::intro activity: url error");
+        article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Article::intro activity: to error");
         article
     }
 
