@@ -27,8 +27,8 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
 
 #[get("/~/<blog>/<slug>?<query>")]
 fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
-    may_fail!(Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
-        may_fail!(Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
+    may_fail!(user, Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
+        may_fail!(user, Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             let comments = Comment::list_by_post(&*conn, post.id);
 
             Template::render("posts/details", json!({

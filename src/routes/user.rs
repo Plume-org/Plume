@@ -33,7 +33,7 @@ fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 
 #[get("/@/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
-    may_fail!(User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
+    may_fail!(account, User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
         let recents = Post::get_recents_for_author(&*conn, &user, 6);
         let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
         let user_id = user.id.clone();
@@ -92,7 +92,7 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 
 #[get("/@/<name>/followers", rank = 2)]
 fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
-    may_fail!(User::find_by_fqn(&*conn, name.clone()), "Couldn't find requested user", |user| {
+    may_fail!(account, User::find_by_fqn(&*conn, name.clone()), "Couldn't find requested user", |user| {
         let user_id = user.id.clone();
 
         Template::render("users/followers", json!({
