@@ -119,7 +119,6 @@ impl Link for Id {}
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
 #[serde(rename_all = "camelCase")]
 pub struct ApSignature {
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[activitystreams(concrete(PublicKey), functional)]
     pub public_key: Option<serde_json::Value>
 }
@@ -127,15 +126,12 @@ pub struct ApSignature {
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
 #[serde(rename_all = "camelCase")]
 pub struct PublicKey {
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[activitystreams(concrete(String), functional)]
     pub id: Option<serde_json::Value>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[activitystreams(concrete(String), functional)]
     pub owner: Option<serde_json::Value>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[activitystreams(concrete(String), functional)]
     pub public_key_pem: Option<serde_json::Value>
 }

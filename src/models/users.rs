@@ -159,7 +159,10 @@ impl User {
             .send();
         match req {
             Ok(mut res) => {
-                let json: CustomPerson = serde_json::from_str(&res.text().unwrap()).unwrap();
+                let text = &res.text().unwrap();
+                let ap_sign: ApSignature = serde_json::from_str(text).unwrap();
+                let mut json: CustomPerson = serde_json::from_str(text).unwrap();
+                json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
                 Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
             Err(_) => None
@@ -177,6 +180,7 @@ impl User {
                 })
             }
         };
+        println!("User from act : {:?}", acct.custom_props);
         User::insert(conn, NewUser {
             username: acct.object.ap_actor_props.preferred_username_string().expect("User::from_activity: preferredUsername error"),
             display_name: acct.object.object_props.name_string().expect("User::from_activity: name error"),
@@ -330,11 +334,11 @@ impl User {
         actor.ap_actor_props.set_endpoints_endpoint(endpoints).expect("User::into_activity: endpoints error");
 
         let mut public_key = PublicKey::default();
-        public_key.set_id_string(format!("{}#main-key", self.ap_url)).expect("Blog::into_activity: publicKey.id error");
-        public_key.set_owner_string(self.ap_url.clone()).expect("Blog::into_activity: publicKey.owner error");
-        public_key.set_public_key_pem_string(self.public_key.clone()).expect("Blog::into_activity: publicKey.publicKeyPem error");
+        public_key.set_id_string(format!("{}#main-key", self.ap_url)).expect("User::into_activity: publicKey.id error");
+        public_key.set_owner_string(self.ap_url.clone()).expect("User::into_activity: publicKey.owner error");
+        public_key.set_public_key_pem_string(self.public_key.clone()).expect("User::into_activity: publicKey.publicKeyPem error");
         let mut ap_signature = ApSignature::default();
-        ap_signature.set_public_key_publickey(public_key).expect("Blog::into_activity: publicKey error");
+        ap_signature.set_public_key_publickey(public_key).expect("User::into_activity: publicKey error");
 
         CustomPerson::new(actor, ap_signature)
     }

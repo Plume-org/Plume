@@ -122,11 +122,13 @@ impl Post {
             .expect("Couldn't load reshares associted to post")
     }
 
-    pub fn update_ap_url(&self, conn: &PgConnection) {
+    pub fn update_ap_url(&self, conn: &PgConnection) -> Post {
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(posts::ap_url.eq(self.compute_id(conn)))
-                .get_result::<Post>(conn).expect("Couldn't update AP URL");
+                .get_result::<Post>(conn).expect("Couldn't update AP URL")
+        } else {
+            self.clone()
         }
     }
 

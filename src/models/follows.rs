@@ -28,10 +28,12 @@ impl Follow {
     insert!(follows, NewFollow);
     get!(follows);
 
+    /// from -> The one sending the follow request
+    /// target -> The target of the request, responding with Accept
     pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor>(
         conn: &PgConnection,
-        from: &A,
-        target: &B,
+        from: &B,
+        target: &A,
         follow: FollowAct,
         from_id: i32,
         target_id: i32
@@ -42,9 +44,9 @@ impl Follow {
         });
 
         let mut accept = Accept::default();
-        accept.accept_props.set_actor_link::<Id>(from.clone().into_id()).unwrap();
+        accept.accept_props.set_actor_link::<Id>(target.clone().into_id()).unwrap();
         accept.accept_props.set_object_object(follow).unwrap();
-        broadcast(&*from, accept, vec![target.clone()]);
+        broadcast(&*target, accept, vec![from.clone()]);
         res
     }
 }
@@ -53,7 +55,7 @@ impl FromActivity<FollowAct> for Follow {
     fn from_activity(conn: &PgConnection, follow: FollowAct, _actor: Id) -> Follow {
         let from = User::from_url(conn, follow.follow_props.actor.as_str().unwrap().to_string()).unwrap();
         match User::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()) {
-            Some(u) => Follow::accept_follow(conn, &from, &u, follow, from.id, u.id),
+            Some(user) => Follow::accept_follow(conn, &from, &user, follow, from.id, user.id),
             None => {
                 let blog = Blog::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()).unwrap();
                 Follow::accept_follow(conn, &from, &blog, follow, from.id, blog.id)
