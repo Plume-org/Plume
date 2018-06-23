@@ -59,6 +59,10 @@ impl Reshare {
         let mut act = Undo::default();
         act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
         act.undo_props.set_object_object(self.into_activity(conn)).unwrap();
+        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Reshare::delete: id error");
+        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Reshare::delete: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Reshare::delete: cc error");
+
         act
     }
 
