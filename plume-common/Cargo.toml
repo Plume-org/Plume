@@ -7,36 +7,23 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 activitypub = "0.1.1"
 activitystreams-derive = "0.1.0"
 activitystreams-traits = "0.1.0"
-# ammonia = "1.1.0"
 array_tool = "1.0"
 base64 = "0.9"
-# bcrypt = "0.2"
-# colored = "1.6"
-# dotenv = "*"
 failure = "0.1"
 failure_derive = "0.1"
 gettext-rs = "0.4"
 heck = "0.3.0"
 hex = "0.3"
 hyper = "*"
-# lazy_static = "*"
 openssl = "0.10.6"
 reqwest = "0.8"
-# rpassword = "2.0"
 serde = "*"
 serde_derive = "1.0"
 serde_json = "1.0"
-# tera = "0.11"
-# url = "1.7"
-# webfinger = "0.1"
-# 
+
 [dependencies.chrono]
 features = ["serde"]
 version = "0.4"
-# 
-# [dependencies.diesel]
-# features = ["postgres", "r2d2", "chrono"]
-# version = "*"
 
 [dependencies.pulldown-cmark]
 default-features = false
@@ -45,17 +32,3 @@ version = "0.1.2"
 [dependencies.rocket]
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
-# 
-# [dependencies.rocket_codegen]
-# git = "https://github.com/SergioBenitez/Rocket"
-# rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
-# 
-# [dependencies.rocket_contrib]
-# features = ["tera_templates", "json"]
-# git = "https://github.com/SergioBenitez/Rocket"
-# rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
-# 
-# [dependencies.rocket_i18n]
-# git = "https://github.com/BaptisteGelez/rocket_i18n"
-# rev = "5b4225d5bed5769482dc926a7e6d6b79f1217be6"
-# 
