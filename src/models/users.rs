@@ -378,7 +378,7 @@ impl User {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
             if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
-                Some(User::fetch_from_url(conn, url).unwrap())
+                User::fetch_from_url(conn, url)
             } else {
                 None
             }

@@ -5,6 +5,7 @@ use activitypub::{
 };
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
+use heck::KebabCase;
 use serde_json;
 
 use BASE_URL;
@@ -17,7 +18,7 @@ use models::{
     instance::Instance,
     likes::Like,
     mentions::Mention,
-    post_authors::PostAuthor,
+    post_authors::*,
     reshares::Reshare,
     users::User
 };
@@ -185,15 +186,38 @@ impl Post {
 
 impl FromActivity<Article> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
+        let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
+            .expect("Post::from_activity: attributedTo error")
+            .into_iter()
+            .fold((None, vec![]), |(blog, mut authors), link| {
+                let url: String = link.into();
+                match User::from_url(conn, url.clone()) {
+                    Some(user) => {
+                        authors.push(user);
+                        (blog, authors)
+                    },
+                    None => (blog.or_else(|| Blog::from_url(conn, url)), authors)
+                }
+            });
+
+        let title = article.object_props.name_string().expect("Post::from_activity: title error");
         let post = Post::insert(conn, NewPost {
-            blog_id: 0, // TODO
-            slug: String::from(""), // TODO
-            title: article.object_props.name_string().unwrap(),
-            content: SafeString::new(&article.object_props.content_string().unwrap()),
+            blog_id: blog.expect("Received a new Article without a blog").id,
+            slug: title.to_kebab_case(),
+            title: title,
+            content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),
             published: true,
-            license: String::from("CC-0"),
-            ap_url: article.object_props.url_string().unwrap_or(String::from(""))
+            license: String::from("CC-0"), // TODO
+            // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+            ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error"))
         });
+
+        for author in authors.into_iter() {
+            PostAuthor::insert(conn, NewPostAuthor {
+                post_id: post.id,
+                author_id: author.id
+            });
+        }
 
         // save mentions
         if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {

@@ -229,7 +229,7 @@ impl Blog {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
             if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
-                Some(Blog::fetch_from_url(conn, url).unwrap())
+                Blog::fetch_from_url(conn, url)
             } else {
                 None
             }
