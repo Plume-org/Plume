@@ -2,7 +2,7 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}};
+use activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}, PUBLIC_VISIBILTY};
 use models::{notifications::*, posts::Post, users::User};
 use schema::reshares;
 
@@ -67,6 +67,8 @@ impl Reshare {
         act.announce_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
         act.announce_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
         act.object_props.set_id_string(self.ap_url.clone()).unwrap();
+        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Reshare::into_activity: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Reshare::into_activity: cc error");
 
         act
     }
