@@ -113,7 +113,10 @@ impl Blog {
             .send();
         match req {
             Ok(mut res) => {
-                let json = serde_json::from_str(&res.text().unwrap()).unwrap();
+                let text = &res.text().unwrap();
+                let ap_sign: ApSignature = serde_json::from_str(text).unwrap();
+                let mut json: CustomGroup = serde_json::from_str(text).unwrap();
+                json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
                 Some(Blog::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
             Err(_) => None
