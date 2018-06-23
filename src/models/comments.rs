@@ -187,7 +187,7 @@ impl NewComment {
         }))).expect("NewComment::create: note.in_reply_to error");
         note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("NewComment::create: note.published error");
         note.object_props.set_attributed_to_link(author.clone().into_id()).expect("NewComment::create: note.attributed_to error");
-        note.object_props.set_to_link_vec(to).expect("NewComment::create: note.to error");
+        note.object_props.set_to_link_vec(to.clone()).expect("NewComment::create: note.to error");
         note.object_props.set_tag_link_vec(mentions.into_iter().map(|m| Mention::build_activity(conn, m)).collect::<Vec<link::Mention>>())
             .expect("NewComment::create: note.tag error");
 
@@ -195,6 +195,8 @@ impl NewComment {
         act.create_props.set_actor_link(author.into_id()).expect("NewComment::create: actor error");
         act.create_props.set_object_object(note).expect("NewComment::create: object error");
         act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).expect("NewComment::create: id error");
+        act.object_props.set_to_link_vec(to).expect("NewComment::create: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("NewComment::create: cc error");
         (act, next_id)
     }
 }
