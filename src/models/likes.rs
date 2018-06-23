@@ -3,6 +3,7 @@ use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use activity_pub::{
+    PUBLIC_VISIBILTY,
     Id,
     IntoId,
     inbox::{FromActivity, Deletable, Notify}
@@ -56,12 +57,14 @@ impl Like {
 
     pub fn into_activity(&self, conn: &PgConnection) -> activity::Like {
         let mut act = activity::Like::default();
-        act.like_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
-        act.like_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
+        act.like_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).expect("Like::into_activity: actor error");
+        act.like_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).expect("Like::into_activity: object error");
+        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Like::into_activity: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Like::into_activity: cc error");
         act.object_props.set_id_string(format!("{}/like/{}",
             User::get(conn, self.user_id).unwrap().ap_url,
             Post::get(conn, self.post_id).unwrap().ap_url
-        )).unwrap();
+        )).expect("Like::into_activity: id error");
 
         act
     }
