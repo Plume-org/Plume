@@ -1,7 +1,13 @@
 use base64;
 use openssl::hash::{Hasher, MessageDigest};
-use reqwest::header::{Date, Headers, UserAgent};
-use std::time::SystemTime;
+use reqwest::{
+    mime::Mime,
+    header::{ContentType, Date, Headers, UserAgent}
+};
+use std::{
+    str::FromStr,
+    time::SystemTime
+};
 
 use activity_pub::sign::Signer;
 
@@ -19,6 +25,7 @@ pub fn headers() -> Headers {
     let mut headers = Headers::new();
     headers.set(UserAgent::new(USER_AGENT));
     headers.set(Date(SystemTime::now().into()));
+    headers.set(ContentType(Mime::from_str("application/activity+json").unwrap()));
     headers
 }
 
