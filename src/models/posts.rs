@@ -151,22 +151,28 @@ impl Post {
         let mentions = Mention::list_for_post(conn, self.id).into_iter().map(|m| m.to_activity(conn)).collect::<Vec<link::Mention>>();
 
         let mut article = Article::default();
-        article.object_props.set_name_string(self.title.clone()).expect("Article::intro activity: name error");
-        article.object_props.set_id_string(self.ap_url.clone()).expect("Article::intro activity: id error");
-        article.object_props.set_attributed_to_link_vec::<Id>(self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect()).expect("Article::intro activity: attributedTo error");
-        article.object_props.set_content_string(self.content.get().clone()).expect("Article::intro activity: content error");
-        article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::intro activity: published error");
-        article.object_props.set_tag_link_vec(mentions).expect("Article::intro activity: tag error");
-        article.object_props.set_url_string(self.ap_url.clone()).expect("Article::intro activity: url error");
-        article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Article::intro activity: to error");
+        article.object_props.set_name_string(self.title.clone()).expect("Article::into_activity: name error");
+        article.object_props.set_id_string(self.ap_url.clone()).expect("Article::into_activity: id error");
+        article.object_props.set_attributed_to_link_vec::<Id>(self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect()).expect("Article::into_activity: attributedTo error");
+        article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
+        article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
+        article.object_props.set_tag_link_vec(mentions).expect("Article::into_activity: tag error");
+        article.object_props.set_url_string(self.ap_url.clone()).expect("Article::into_activity: url error");
+        article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Article::into_activity: to error");
+        article.object_props.set_cc_link_vec::<Id>(vec![]).expect("Article::into_activity: cc error");
         article
     }
 
     pub fn create_activity(&self, conn: &PgConnection) -> Create {
+        let article = self.into_activity(conn);
         let mut act = Create::default();
-        act.object_props.set_id_string(format!("{}/activity", self.ap_url)).unwrap();
-        act.create_props.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).unwrap();
-        act.create_props.set_object_object(self.into_activity(conn)).unwrap();
+        act.object_props.set_id_string(format!("{}/activity", self.ap_url)).expect("Article::create_activity: id error");
+        act.object_props.set_to_link_vec::<Id>(article.object_props.to_link_vec().expect("Article::create_activity: Couldn't copy 'to'"))
+            .expect("Article::create_activity: to error");
+        act.object_props.set_cc_link_vec::<Id>(article.object_props.cc_link_vec().expect("Article::create_activity: Couldn't copy 'cc'"))
+            .expect("Article::create_activity: cc error");
+        act.create_props.set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url)).expect("Article::create_activity: actor error");
+        act.create_props.set_object_object(article).expect("Article::create_activity: object error");
         act
     }
 
