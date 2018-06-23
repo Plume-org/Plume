@@ -80,6 +80,8 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
     act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
     act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
+    act.object_props.set_to_link(target.clone().into_id()).expect("New Follow error while setting 'to'");
+    act.object_props.set_cc_link_vec::<Id>(vec![]).expect("New Follow error while setting 'cc'");
 
     broadcast(&user, act, vec![target]);
     Redirect::to(uri!(details: name = name))
