@@ -30,7 +30,7 @@ impl Follow {
 
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
-    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor>(
+    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor + IntoId>(
         conn: &PgConnection,
         from: &B,
         target: &A,
@@ -44,6 +44,10 @@ impl Follow {
         });
 
         let mut accept = Accept::default();
+        let accept_id = format!("{}#accept", follow.object_props.id_string().unwrap_or(String::new()));
+        accept.object_props.set_id_string(accept_id).expect("accept_follow: id error");
+        accept.object_props.set_to_link(from.clone().into_id()).expect("accept_follow: to error");
+        accept.object_props.set_cc_link_vec::<Id>(vec![]).expect("accept_follow: cc error");
         accept.accept_props.set_actor_link::<Id>(target.clone().into_id()).unwrap();
         accept.accept_props.set_object_object(follow).unwrap();
         broadcast(&*target, accept, vec![from.clone()]);
