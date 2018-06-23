@@ -8,20 +8,21 @@ use rocket::{request::Form,
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{
+use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId,
-    inbox::{Inbox, Notify}
+    inbox::{Notify}
 };
-use db_conn::DbConn;
-use models::{
+use plume_common::utils;
+use plume_models::{
     blogs::Blog,
+    db_conn::DbConn,
     follows,
     instance::Instance,
     posts::Post,
     reshares::Reshare,
     users::*
 };
-use utils;
+use inbox::Inbox;
 
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {

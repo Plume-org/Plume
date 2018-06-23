@@ -2,17 +2,15 @@ use activitypub::activity;
 use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{
+use plume_common::activity_pub::{
     PUBLIC_VISIBILTY,
     Id,
     IntoId,
     inbox::{FromActivity, Deletable, Notify}
 };
-use models::{
-    notifications::*,
-    posts::Post,
-    users::User
-};
+use notifications::*;
+use posts::Post;
+use users::User;
 use schema::likes;
 
 #[derive(Queryable, Identifiable)]
@@ -75,7 +73,7 @@ impl Like {
     }
 }
 
-impl FromActivity<activity::Like> for Like {
+impl FromActivity<activity::Like, PgConnection> for Like {
     fn from_activity(conn: &PgConnection, like: activity::Like, _actor: Id) -> Like {
         let liker = User::from_url(conn, like.like_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().unwrap().to_string());
@@ -89,7 +87,7 @@ impl FromActivity<activity::Like> for Like {
     }
 }
 
-impl Notify for Like {
+impl Notify<PgConnection> for Like {
     fn notify(&self, conn: &PgConnection) {
         let liker = User::get(conn, self.user_id).unwrap();
         let post = Post::get(conn, self.post_id).unwrap();
@@ -106,7 +104,7 @@ impl Notify for Like {
     }
 }
 
-impl Deletable for Like {
+impl Deletable<PgConnection> for Like {
     fn delete_activity(conn: &PgConnection, id: Id) -> bool {
         if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
             like.delete(conn);

@@ -2,8 +2,8 @@ use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
 
-use activity_pub::{ap_url, inbox::Inbox};
-use models::users::User;
+use plume_common::activity_pub::ap_url;
+use users::User;
 use schema::{instances, users};
 
 #[derive(Identifiable, Queryable, Serialize)]
@@ -69,5 +69,3 @@ impl Instance {
         ))
     }
 }
-
-impl Inbox for Instance {}

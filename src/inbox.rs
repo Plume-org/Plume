@@ -1,53 +1,18 @@
-use activitypub::{
-    Object,
-    activity::{Announce, Create, Like, Undo}
-};
+use activitypub::activity::{Announce, Create, Like, Undo};
 use diesel::PgConnection;
 use failure::Error;
 use serde_json;
 
-use activity_pub::{
-    Id
-};
-use models::{
-    comments::*,
+use plume_common::activity_pub::{Id, inbox::{Deletable, FromActivity, InboxError}};
+use plume_models::{
+    comments::Comment,
     follows::Follow,
+    instance::Instance,
     likes,
-    posts::*,
-    reshares::*
+    reshares::Reshare,
+    posts::Post,
+    users::User
 };
-
-#[derive(Fail, Debug)]
-enum InboxError {
-    #[fail(display = "The `type` property is required, but was not present")]
-    NoType,
-    #[fail(display = "Invalid activity type")]
-    InvalidType,
-    #[fail(display = "Couldn't undo activity")]
-    CantUndo
-}
-
-pub trait FromActivity<T: Object>: Sized {
-    fn from_activity(conn: &PgConnection, obj: T, actor: Id) -> Self;
-
-    fn try_from_activity(conn: &PgConnection, act: Create) -> bool {
-        if let Ok(obj) = act.create_props.object_object() {
-            Self::from_activity(conn, obj, act.create_props.actor_link::<Id>().unwrap());
-            true
-        } else {
-            false
-        }
-    }
-}
-
-pub trait Notify {
-    fn notify(&self, conn: &PgConnection);
-}
-
-pub trait Deletable {
-    /// true if success
-    fn delete_activity(conn: &PgConnection, id: Id) -> bool;
-}
 
 pub trait Inbox {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
@@ -97,8 +62,5 @@ pub trait Inbox {
     }
 }
 
-pub trait WithInbox {
-    fn get_inbox_url(&self) -> String;
-
-    fn get_shared_inbox_url(&self) -> Option<String>;
-}
+impl Inbox for Instance {}
+impl Inbox for User {}

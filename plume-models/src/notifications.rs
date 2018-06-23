@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
 
-use models::users::User;
+use users::User;
 use schema::notifications;
 
 #[derive(Queryable, Identifiable, Serialize)]

@@ -949,35 +949,66 @@ name = "plume"
 version = "0.1.0"
 dependencies = [
  "activitypub 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "ammonia 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "array_tool 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "base64 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "colored 1.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext-rs 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "heck 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "plume-common 0.1.0",
+ "plume-models 0.1.0",
+ "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
+ "rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
+ "rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
+ "rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=5b4225d5bed5769482dc926a7e6d6b79f1217be6)",
+ "rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
+ "webfinger 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "plume-common"
+version = "0.1.0"
+dependencies = [
+ "activitypub 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "activitystreams-traits 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "array_tool 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "base64 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure_derive 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "gettext-rs 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.11.25 (registry+https://github.com/rust-lang/crates.io-index)",
- "lazy_static 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "pulldown-cmark 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.8.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
- "rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
- "rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
- "rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=5b4225d5bed5769482dc926a7e6d6b79f1217be6)",
- "rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.43 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
- "tera 0.11.7 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "plume-models"
+version = "0.1.0"
+dependencies = [
+ "activitypub 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ammonia 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "diesel 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "heck 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "plume-common 0.1.0",
+ "reqwest 0.8.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
+ "serde 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.43 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 1.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "webfinger 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

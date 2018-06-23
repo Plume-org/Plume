@@ -1,13 +1,11 @@
 use activitypub::link;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::inbox::Notify;
-use models::{
-    comments::Comment,
-    notifications::*,
-    posts::Post,
-    users::User
-};
+use plume_common::activity_pub::inbox::Notify;
+use comments::Comment;
+use notifications::*;
+use posts::Post;
+use users::User;
 use schema::mentions;
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize)]
@@ -94,7 +92,7 @@ impl Mention {
     }
 }
 
-impl Notify for Mention {
+impl Notify<PgConnection> for Mention {
     fn notify(&self, conn: &PgConnection) {
         let author = self.get_comment(conn)
             .map(|c| c.get_author(conn).display_name.clone())

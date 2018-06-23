@@ -5,19 +5,19 @@ use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::{broadcast, ActivityStream};
-use db_conn::DbConn;
-use models::{
+use plume_common::activity_pub::{broadcast, ActivityStream};
+use plume_common::utils;
+use plume_models::{
     blogs::*,
+    db_conn::DbConn,
     comments::Comment,
     mentions::Mention,
     post_authors::*,
     posts::*,
+    safe_string::SafeString,
     users::User
 };
 use routes::comments::CommentQuery;
-use safe_string::SafeString;
-use utils;
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 4)]

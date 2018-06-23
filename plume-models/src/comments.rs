@@ -7,21 +7,19 @@ use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
 use serde_json;
 
-use activity_pub::{
+use plume_common::activity_pub::{
     ap_url, Id, IntoId, PUBLIC_VISIBILTY,
     inbox::{FromActivity, Notify}
 };
-use models::{
-    get_next_id,
-    instance::Instance,
-    mentions::Mention,
-    notifications::*,
-    posts::Post,
-    users::User
-};
+use plume_common::utils;
+use get_next_id;
+use instance::Instance;
+use mentions::Mention;
+use notifications::*;
+use posts::Post;
+use users::User;
 use schema::comments;
 use safe_string::SafeString;
-use utils;
 
 #[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Comment {
@@ -87,7 +85,7 @@ impl Comment {
     }
 }
 
-impl FromActivity<Note> for Comment {
+impl FromActivity<Note, PgConnection> for Comment {
     fn from_activity(conn: &PgConnection, note: Note, actor: Id) -> Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
@@ -118,7 +116,7 @@ impl FromActivity<Note> for Comment {
     }
 }
 
-impl Notify for Comment {
+impl Notify<PgConnection> for Comment {
     fn notify(&self, conn: &PgConnection) {
         for author in self.get_post(conn).get_authors(conn) {
             Notification::insert(conn, NewNotification {

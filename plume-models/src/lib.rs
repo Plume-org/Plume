@@ -1,4 +1,26 @@
+extern crate activitypub;
+extern crate ammonia;
+extern crate bcrypt;
+extern crate chrono;
+#[macro_use]
+extern crate diesel;
+extern crate heck;
+#[macro_use]
+extern crate lazy_static;
+extern crate openssl;
+extern crate plume_common;
+extern crate reqwest;
+extern crate rocket;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate serde_json;
+extern crate url;
+extern crate webfinger;
+
 use diesel::{PgConnection, RunQueryDsl, select};
+use std::env;
 
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
@@ -59,9 +81,19 @@ fn get_next_id(conn: &PgConnection, seq: &str) -> i32 {
     next as i32
 }
 
+
+lazy_static! {
+    pub static ref BASE_URL: String = env::var("BASE_URL")
+        .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
+    
+    pub static ref DB_URL: String = env::var("DB_URL")
+        .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
+}
+
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;
+pub mod db_conn;
 pub mod follows;
 pub mod instance;
 pub mod likes;
@@ -70,4 +102,6 @@ pub mod notifications;
 pub mod post_authors;
 pub mod posts;
 pub mod reshares;
+pub mod safe_string;
+pub mod schema;
 pub mod users;

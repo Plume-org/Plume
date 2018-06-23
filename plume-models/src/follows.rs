@@ -1,12 +1,10 @@
 use activitypub::{Actor, activity::{Accept, Follow as FollowAct}};
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
-use models::{
-    blogs::Blog,
-    notifications::*,
-    users::User
-};
+use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
+use blogs::Blog;
+use notifications::*;
+use users::User;
 use schema::follows;
 
 #[derive(Queryable, Identifiable, Associations)]
@@ -55,7 +53,7 @@ impl Follow {
     }
 }
 
-impl FromActivity<FollowAct> for Follow {
+impl FromActivity<FollowAct, PgConnection> for Follow {
     fn from_activity(conn: &PgConnection, follow: FollowAct, _actor: Id) -> Follow {
         let from = User::from_url(conn, follow.follow_props.actor.as_str().unwrap().to_string()).unwrap();
         match User::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()) {
@@ -68,7 +66,7 @@ impl FromActivity<FollowAct> for Follow {
     }
 }
 
-impl Notify for Follow {
+impl Notify<PgConnection> for Follow {
     fn notify(&self, conn: &PgConnection) {
         let follower = User::get(conn, self.follower_id).unwrap();
         Notification::insert(conn, NewNotification {

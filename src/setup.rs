@@ -7,12 +7,12 @@ use std::path::Path;
 use std::process::{exit, Command};
 use rpassword;
 
-use DB_URL;
-use db_conn::DbConn;
-use models::instance::*;
-use models::users::*;
-
-pub type PgPool = Pool<ConnectionManager<PgConnection>>;
+use plume_models::{
+    DB_URL,
+    db_conn::{DbConn, PgPool},
+    instance::*,
+    users::*
+};
 
 /// Initializes a database pool.
 fn init_pool() -> Option<PgPool> {

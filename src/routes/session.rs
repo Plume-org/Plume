@@ -6,8 +6,10 @@ use rocket::{
 };
 use rocket_contrib::Template;
 
-use db_conn::DbConn;
-use models::users::{User, AUTH_COOKIE};
+use plume_models::{
+    db_conn::DbConn,
+    users::{User, AUTH_COOKIE}
+};
 
 #[get("/login")]
 fn new(user: Option<User>) -> Template {

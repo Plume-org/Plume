@@ -4,15 +4,16 @@ use rocket::{
 };
 use serde_json;
 
-use activity_pub::{broadcast, inbox::Inbox};
-use db_conn::DbConn;
-use models::{
+use plume_common::activity_pub::broadcast;
+use plume_models::{
     blogs::Blog,
     comments::*,
+    db_conn::DbConn,
     instance::Instance,
     posts::Post,
     users::User
 };
+use inbox::Inbox;
 
 #[derive(FromForm)]
 pub struct CommentQuery {

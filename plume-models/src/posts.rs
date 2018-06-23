@@ -9,19 +9,17 @@ use heck::KebabCase;
 use serde_json;
 
 use BASE_URL;
-use activity_pub::{
+use plume_common::activity_pub::{
     PUBLIC_VISIBILTY, ap_url, Id, IntoId,
     inbox::FromActivity
 };
-use models::{
-    blogs::Blog,
-    instance::Instance,
-    likes::Like,
-    mentions::Mention,
-    post_authors::*,
-    reshares::Reshare,
-    users::User
-};
+use blogs::Blog;
+use instance::Instance;
+use likes::Like;
+use mentions::Mention;
+use post_authors::*;
+use reshares::Reshare;
+use users::User;
 use schema::posts;
 use safe_string::SafeString;
 
@@ -190,7 +188,7 @@ impl Post {
     }
 }
 
-impl FromActivity<Article> for Post {
+impl FromActivity<Article, PgConnection> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
         let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
             .expect("Post::from_activity: attributedTo error")

@@ -2,8 +2,10 @@ use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
-use activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}, PUBLIC_VISIBILTY};
-use models::{notifications::*, posts::Post, users::User};
+use plume_common::activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}, PUBLIC_VISIBILTY};
+use notifications::*;
+use posts::Post;
+use  users::User;
 use schema::reshares;
 
 #[derive(Serialize, Deserialize, Queryable, Identifiable)]
@@ -78,7 +80,7 @@ impl Reshare {
     }
 }
 
-impl FromActivity<Announce> for Reshare {
+impl FromActivity<Announce, PgConnection> for Reshare {
     fn from_activity(conn: &PgConnection, announce: Announce, _actor: Id) -> Reshare {
         let user = User::from_url(conn, announce.announce_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, announce.announce_props.object.as_str().unwrap().to_string());
@@ -92,7 +94,7 @@ impl FromActivity<Announce> for Reshare {
     }
 }
 
-impl Notify for Reshare {
+impl Notify<PgConnection> for Reshare {
     fn notify(&self, conn: &PgConnection) {
         let actor = User::get(conn, self.user_id).unwrap();
         let post = self.get_post(conn).unwrap();
@@ -109,7 +111,7 @@ impl Notify for Reshare {
     }
 }
 
-impl Deletable for Reshare {
+impl Deletable<PgConnection> for Reshare {
     fn delete_activity(conn: &PgConnection, id: Id) -> bool {
         if let Some(reshare) = Reshare::find_by_ap_url(conn, id.into()) {
             reshare.delete(conn);

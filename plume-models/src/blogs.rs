@@ -17,12 +17,12 @@ use openssl::{
 use webfinger::*;
 
 use BASE_URL;
-use activity_pub::{
+use plume_common::activity_pub::{
     ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
     sign
 };
-use models::instance::*;
+use instance::*;
 use schema::blogs;
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;

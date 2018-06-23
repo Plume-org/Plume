@@ -1,10 +1,8 @@
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 
-use db_conn::DbConn;
-use models::{notifications::Notification, users::User};
-
-use utils;
+use plume_common::utils;
+use plume_models::{db_conn::DbConn, notifications::Notification, users::User};
 
 #[get("/notifications")]
 fn notifications(conn: DbConn, user: User) -> Template {

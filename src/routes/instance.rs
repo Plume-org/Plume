@@ -2,14 +2,14 @@ use gettextrs::gettext;
 use rocket_contrib::{Json, Template};
 use serde_json;
 
-use activity_pub::inbox::Inbox;
-use db_conn::DbConn;
-use models::{
+use plume_models::{
     comments::Comment,
+    db_conn::DbConn,
     posts::Post,
     users::User,
     instance::*
 };
+use inbox::Inbox;
 
 #[get("/")]
 fn index(conn: DbConn, user: Option<User>) -> Template {

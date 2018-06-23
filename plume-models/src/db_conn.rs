@@ -1,11 +1,11 @@
 use diesel::{
     pg::PgConnection,
-    r2d2::{ConnectionManager, PooledConnection}
+    r2d2::{ConnectionManager, Pool, PooledConnection}
 };
 use rocket::{Request, State, Outcome, http::Status, request::{self, FromRequest}};
 use std::ops::Deref;
 
-use setup::PgPool;
+pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 
 // From rocket documentation
 

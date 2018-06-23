@@ -1,7 +1,7 @@
 use rocket_contrib::Template;
 use rocket::Request;
 use rocket::request::FromRequest;
-use models::users::User;
+use plume_models::users::User;
 
 #[catch(404)]
 fn not_found(req: &Request) -> Template {

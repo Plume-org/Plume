@@ -12,6 +12,11 @@ use openssl::{
     rsa::Rsa,
     sign
 };
+use plume_common::activity_pub::{
+    ap_url, ActivityStream, Id, IntoId, ApSignature, PublicKey,
+    inbox::WithInbox,
+    sign::{Signer, gen_keypair}
+};
 use reqwest::{
     Client,
     header::{Accept, qitem},
@@ -26,22 +31,17 @@ use url::Url;
 use webfinger::*;
 
 use BASE_URL;
-use activity_pub::{
-    ap_url, ActivityStream, Id, IntoId, ApSignature, PublicKey,
-    inbox::{Inbox, WithInbox},
-    sign::{Signer, gen_keypair}
-};
 use db_conn::DbConn;
-use models::{
-    blogs::Blog,
-    blog_authors::BlogAuthor,
-    follows::Follow,
-    instance::*,
-    post_authors::PostAuthor,
-    posts::Post
-};
-use schema::users;
+use blogs::Blog;
+use blog_authors::BlogAuthor;
+use follows::Follow;
+use instance::*;
+use likes::Like;
+use post_authors::PostAuthor;
+use posts::Post;
+use reshares::Reshare;
 use safe_string::SafeString;
+use schema::users;
 
 pub const AUTH_COOKIE: &'static str = "user_id";
 
@@ -286,7 +286,6 @@ impl User {
 
     pub fn has_liked(&self, conn: &PgConnection, post: &Post) -> bool {
         use schema::likes;
-        use models::likes::Like;
         likes::table
             .filter(likes::post_id.eq(post.id))
             .filter(likes::user_id.eq(self.id))
@@ -297,7 +296,6 @@ impl User {
 
     pub fn has_reshared(&self, conn: &PgConnection, post: &Post) -> bool {
         use schema::reshares;
-        use models::reshares::Reshare;
         reshares::table
             .filter(reshares::post_id.eq(post.id))
             .filter(reshares::user_id.eq(self.id))
@@ -417,8 +415,6 @@ impl WithInbox for User {
        self.shared_inbox_url.clone()
     }
 }
-
-impl Inbox for User {}
 
 impl Signer for User {
     fn get_key_id(&self) -> String {

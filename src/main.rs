@@ -1,64 +1,28 @@
-#![feature(plugin, custom_derive, decl_macro, iterator_find_map, iterator_flatten)]
+#![feature(custom_derive, decl_macro, plugin)]
 #![plugin(rocket_codegen)]
-
+ 
 extern crate activitypub;
-#[macro_use]
-extern crate activitystreams_derive;
-extern crate activitystreams_traits;
-extern crate ammonia;
-extern crate array_tool;
-extern crate base64;
-extern crate bcrypt;
-extern crate chrono;
 extern crate colored;
-extern crate failure;
-#[macro_use]
-extern crate failure_derive;
-extern crate gettextrs;
-extern crate heck;
-extern crate hex;
-#[macro_use]
-extern crate hyper;
-#[macro_use]
 extern crate diesel;
 extern crate dotenv;
-#[macro_use]
-extern crate lazy_static;
-extern crate openssl;
-extern crate pulldown_cmark;
-extern crate reqwest;
+extern crate failure;
+extern crate gettextrs;
+extern crate heck;
+extern crate plume_common;
+extern crate plume_models;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_i18n;
 extern crate rpassword;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
-extern crate tera;
-extern crate url;
 extern crate webfinger;
 
 use rocket_contrib::Template;
-use std::env;
 
-mod activity_pub;
-mod db_conn;
-mod models;
-mod safe_string;
-mod schema;
+mod inbox;
 mod setup;
 mod routes;
-mod utils;
-
-lazy_static! {
-    pub static ref BASE_URL: String = env::var("BASE_URL")
-        .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
-    
-    pub static ref DB_URL: String = env::var("DB_URL")
-        .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
-}
 
 fn main() {
     let pool = setup::check();

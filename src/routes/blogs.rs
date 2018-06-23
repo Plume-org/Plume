@@ -6,16 +6,16 @@ use rocket::{
 use rocket_contrib::Template;
 use serde_json;
 
-use activity_pub::ActivityStream;
-use db_conn::DbConn;
-use models::{
+use plume_common::activity_pub::ActivityStream;
+use plume_common::utils;
+use plume_models::{
     blog_authors::*,
     blogs::*,
+    db_conn::DbConn,
     instance::Instance,
     posts::Post,
     users::User
 };
-use utils;
 
 #[get("/~/<name>", rank = 2)]
 fn details(name: String, conn: DbConn, user: Option<User>) -> Template {

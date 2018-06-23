@@ -3,10 +3,8 @@ use rocket::response::Content;
 use serde_json;
 use webfinger::*;
 
-use BASE_URL;
-use activity_pub::ap_url;
-use db_conn::DbConn;
-use models::{blogs::Blog, users::User};
+use plume_common::activity_pub::ap_url;
+use plume_models::{BASE_URL, db_conn::DbConn, blogs::Blog, users::User};
 
 #[get("/.well-known/nodeinfo")]
 fn nodeinfo() -> Content<String> {
