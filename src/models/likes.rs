@@ -41,7 +41,11 @@ impl Like {
     pub fn update_ap_url(&self, conn: &PgConnection) {
         if self.ap_url.len() == 0 {
             diesel::update(self)
-                .set(likes::ap_url.eq(self.compute_id(conn)))
+                .set(likes::ap_url.eq(format!(
+                    "{}/like/{}",
+                    User::get(conn, self.user_id).unwrap().ap_url,
+                    Post::get(conn, self.post_id).unwrap().ap_url
+                )))
                 .get_result::<Like>(conn).expect("Couldn't update AP URL");
         }
     }
@@ -65,20 +69,9 @@ impl Like {
         act.like_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).expect("Like::into_activity: object error");
         act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Like::into_activity: to error");
         act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Like::into_activity: cc error");
-        act.object_props.set_id_string(format!("{}/like/{}",
-            User::get(conn, self.user_id).unwrap().ap_url,
-            Post::get(conn, self.post_id).unwrap().ap_url
-        )).expect("Like::into_activity: id error");
+        act.object_props.set_id_string(self.ap_url.clone()).expect("Like::into_activity: id error");
 
         act
-    }
-
-    pub fn compute_id(&self, conn: &PgConnection) -> String {
-        format!(
-            "{}/like/{}",
-            User::get(conn, self.user_id).unwrap().ap_url,
-            Post::get(conn, self.post_id).unwrap().ap_url
-        )
     }
 }
 
