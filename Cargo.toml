@@ -36,6 +36,10 @@ features = ["tera_templates", "json"]
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
 
+[dependencies.rocket_csrf]
+git = "https://github.com/fdb-hiroshima/rocket_csrf"
+rev = "80687a64a8b9d44e4983e63cca6d707498e92fc7"
+
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"
 rev = "5b4225d5bed5769482dc926a7e6d6b79f1217be6"

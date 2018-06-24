@@ -2,7 +2,7 @@ use activitypub::{
     activity::Follow,
     collection::OrderedCollection
 };
-use rocket::{request::Form,
+use rocket::{request::LenientForm,
     response::{Redirect, Flash}
 };
 use rocket_contrib::Template;
@@ -148,7 +148,7 @@ struct UpdateUserForm {
 }
 
 #[put("/@/<_name>/edit", data = "<data>")]
-fn update(_name: String, conn: DbConn, user: User, data: Form<UpdateUserForm>) -> Redirect {
+fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserForm>) -> Redirect {
     user.update(&*conn,
         data.get().display_name.clone().unwrap_or(user.display_name.to_string()).to_string(),
         data.get().email.clone().unwrap_or(user.email.clone().unwrap()).to_string(),
@@ -166,7 +166,7 @@ struct NewUserForm {
 }
 
 #[post("/users/new", data = "<data>")]
-fn create(conn: DbConn, data: Form<NewUserForm>) -> Result<Redirect, String> {
+fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, String> {
     let form = data.get();
 
     if form.username.clone().len() < 1 {

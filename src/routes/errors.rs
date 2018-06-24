@@ -20,3 +20,18 @@ fn server_error(req: &Request) -> Template {
         "account": user
     }))
 }
+
+#[derive(FromForm)]
+pub struct Uri {
+    target: String,
+}
+
+#[post("/csrf-violation?<uri>")]
+fn csrf_violation(uri: Option<Uri>) -> Template {
+    if let Some(uri) = uri {
+        eprintln!("Csrf violation while acceding \"{}\"", uri.target)
+    }
+    Template::render("errors/csrf", json!({
+        "error_message":""
+    }))
+}

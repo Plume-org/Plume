@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use rocket::{
     http::{Cookie, Cookies, uri::Uri},
     response::{Redirect, status::NotFound},
-    request::{Form,FlashMessage}
+    request::{LenientForm,FlashMessage}
 };
 use rocket_contrib::Template;
 
@@ -39,7 +39,7 @@ struct LoginForm {
 }
 
 #[post("/login", data = "<data>")]
-fn create(conn: DbConn, data: Form<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, NotFound<String>> {
+fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, NotFound<String>> {
     let form = data.get();
     let user = match User::find_by_email(&*conn, form.email_or_name.to_string()) {
         Some(usr) => Ok(usr),
