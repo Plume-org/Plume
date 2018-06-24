@@ -991,7 +991,7 @@ dependencies = [
  "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
  "rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
  "rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)",
- "rocket_csrf 0.1.0",
+ "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=80687a64a8b9d44e4983e63cca6d707498e92fc7)",
  "rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=5b4225d5bed5769482dc926a7e6d6b79f1217be6)",
  "rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1299,6 +1299,7 @@ dependencies = [
 [[package]]
 name = "rocket_csrf"
 version = "0.1.0"
+source = "git+https://github.com/fdb-hiroshima/rocket_csrf?rev=80687a64a8b9d44e4983e63cca6d707498e92fc7#80687a64a8b9d44e4983e63cca6d707498e92fc7"
 dependencies = [
  "csrf 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "data-encoding 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2136,6 +2137,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)" = "<none>"
 "checksum rocket_codegen_next 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)" = "<none>"
 "checksum rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)" = "<none>"
+"checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=80687a64a8b9d44e4983e63cca6d707498e92fc7)" = "<none>"
 "checksum rocket_http 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=df7111143e466c18d1f56377a8d9530a5a306aba)" = "<none>"
 "checksum rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=5b4225d5bed5769482dc926a7e6d6b79f1217be6)" = "<none>"
 "checksum rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d127299b02abda51634f14025aec43ae87a7aa7a95202b6a868ec852607d1451"
