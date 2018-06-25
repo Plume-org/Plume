@@ -205,7 +205,11 @@ impl User {
     }
 
     pub fn auth(&self, pass: String) -> bool {
-        bcrypt::verify(pass.as_str(), self.hashed_password.clone().unwrap().as_str()).is_ok()
+        if let Ok(valid) = bcrypt::verify(pass.as_str(), self.hashed_password.clone().unwrap().as_str()) {
+            valid
+        } else {
+            false
+        }
     }
 
     pub fn update_boxes(&self, conn: &PgConnection) {
