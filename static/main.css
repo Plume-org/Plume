@@ -112,6 +112,10 @@ main article {
 	text-align: justify;
 }
 
+article img {
+	max-width: 100%;
+}
+
 /* Article.Meta */
 
 main .article-meta {
