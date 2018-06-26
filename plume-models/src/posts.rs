@@ -8,11 +8,11 @@ use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, Belon
 use heck::KebabCase;
 use serde_json;
 
-use BASE_URL;
 use plume_common::activity_pub::{
-    PUBLIC_VISIBILTY, ap_url, Id, IntoId,
+    PUBLIC_VISIBILTY, Id, IntoId,
     inbox::FromActivity
 };
+use {BASE_URL, ap_url};
 use blogs::Blog;
 use instance::Instance;
 use likes::Like;

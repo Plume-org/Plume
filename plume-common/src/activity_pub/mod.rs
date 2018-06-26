@@ -17,16 +17,6 @@ pub mod sign;
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
 
-#[cfg(debug_assertions)]
-pub fn ap_url(url: String) -> String {
-    format!("http://{}", url)
-}
-
-#[cfg(not(debug_assertions))]
-pub fn ap_url(url: String) -> String {
-    format!("https://{}", url)
-}
-
 pub fn context() -> serde_json::Value {
     json!([
         CONTEXT_URL,

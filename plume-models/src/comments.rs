@@ -8,11 +8,11 @@ use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::
 use serde_json;
 
 use plume_common::activity_pub::{
-    ap_url, Id, IntoId, PUBLIC_VISIBILTY,
+    Id, IntoId, PUBLIC_VISIBILTY,
     inbox::{FromActivity, Notify}
 };
 use plume_common::utils;
-use get_next_id;
+use {get_next_id, ap_url};
 use instance::Instance;
 use mentions::Mention;
 use notifications::*;

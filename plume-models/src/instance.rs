@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
 
-use plume_common::activity_pub::ap_url;
+use ap_url;
 use users::User;
 use schema::{instances, users};
 

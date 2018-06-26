@@ -13,7 +13,7 @@ use openssl::{
     sign
 };
 use plume_common::activity_pub::{
-    ap_url, ActivityStream, Id, IntoId, ApSignature, PublicKey,
+    ActivityStream, Id, IntoId, ApSignature, PublicKey,
     inbox::WithInbox,
     sign::{Signer, gen_keypair}
 };
@@ -30,7 +30,7 @@ use serde_json;
 use url::Url;
 use webfinger::*;
 
-use {BASE_URL, USE_HTTPS};
+use {BASE_URL, USE_HTTPS, ap_url};
 use db_conn::DbConn;
 use blogs::Blog;
 use blog_authors::BlogAuthor;

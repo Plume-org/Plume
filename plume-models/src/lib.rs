@@ -92,6 +92,15 @@ lazy_static! {
     pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
 }
 
+pub fn ap_url(url: &str) -> String {
+    let scheme = if *USE_HTTPS {
+        "https"
+    } else {
+        "http"
+    };
+    format!("{}://{}", scheme, url)
+}
+
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;
