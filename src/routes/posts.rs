@@ -17,7 +17,11 @@ use plume_models::{
     safe_string::SafeString,
     users::User
 };
-use routes::comments::CommentQuery;
+
+#[derive(FromForm)]
+struct CommentQuery {
+    responding_to: Option<i32>
+}
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 4)]

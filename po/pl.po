@@ -63,13 +63,16 @@ msgstr "Nazwa"
 msgid "Let&#x27;s go!"
 msgstr "Przejdźmy dalej!"
 
-msgid "Welcome on {{ instance_name }}"
+#, fuzzy
+msgid "Welcome on {{ instance_name | escape }}"
 msgstr "Witamy na {{ instance_name }}"
 
 msgid "Notifications"
 msgstr "Powiadomienia"
 
-msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+#, fuzzy
+msgid ""
+"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 msgstr "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
@@ -188,7 +191,8 @@ msgstr "Opis"
 msgid "Update account"
 msgstr "Aktualizuj konto"
 
-msgid "{{ name }}'s followers"
+#, fuzzy
+msgid "{{ name | escape }}'s followers"
 msgstr "Osoby śledzące {{ name }}"
 
 msgid "Followers"
@@ -258,7 +262,7 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Musisz się zalogować , aby móc edytować swój profil"
 
 #, fuzzy
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 msgstr "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
 
 msgid "{{ data }} reshared your article"

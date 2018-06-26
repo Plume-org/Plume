@@ -38,7 +38,6 @@ fn main() {
             routes::blogs::create,
 
             routes::comments::create,
-            routes::comments::create_response,
 
             routes::instance::index,
             routes::instance::shared_inbox,

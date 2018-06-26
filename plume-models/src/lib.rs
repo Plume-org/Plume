@@ -77,7 +77,9 @@ sql_function!(setval, setval_t, (seq: ::diesel::sql_types::Text, val: ::diesel::
 fn get_next_id(conn: &PgConnection, seq: &str) -> i32 {
     // We cant' use currval because it may fail if nextval have never been called before
     let next = select(nextval(seq)).get_result::<i64>(conn).expect("Next ID fail");
-    select(setval(seq, next - 1)).get_result::<i64>(conn).expect("Reset ID fail");
+    if next > 1 {
+        select(setval(seq, next - 1)).get_result::<i64>(conn).expect("Reset ID fail");        
+    }
     next as i32
 }
 

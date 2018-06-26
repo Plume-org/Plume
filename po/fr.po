@@ -62,13 +62,16 @@ msgstr "Nom"
 msgid "Let&#x27;s go!"
 msgstr "C'est parti !"
 
-msgid "Welcome on {{ instance_name }}"
+#, fuzzy
+msgid "Welcome on {{ instance_name | escape }}"
 msgstr "Bienvenue sur {{ instance_name }}"
 
 msgid "Notifications"
 msgstr "Notifications"
 
-msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+#, fuzzy
+msgid ""
+"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
@@ -184,7 +187,8 @@ msgstr "Description"
 msgid "Update account"
 msgstr "Mettre à jour mes informations"
 
-msgid "{{ name }}'s followers"
+#, fuzzy
+msgid "{{ name | escape }}'s followers"
 msgstr "{{ count }} abonné⋅e"
 
 msgid "Followers"
@@ -253,7 +257,8 @@ msgstr "Vous devez vous connecter pour suivre quelqu'un"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
+#, fuzzy
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 msgstr "De {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
