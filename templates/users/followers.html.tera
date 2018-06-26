@@ -7,7 +7,7 @@
     {% set name = user.username %}
 {% endif %}
 
-{{ "{{ name }}'s followers" | _(name=name) }}
+{{ "{{ name | escape }}'s followers" | _(name=name) }}
 {% endblock title %}
 
 {% block content %}

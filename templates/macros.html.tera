@@ -10,7 +10,7 @@
             <p>{{ article.post.content | safe | striptags | truncate(length=200) }}</p>
         </main>
         <p class="author">
-        	{{ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}" | _(
+        	{{ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}" | _(
                 link_1='<a href="/@/',
                 link_2=article.author.fqn,
                 link_3='/">',

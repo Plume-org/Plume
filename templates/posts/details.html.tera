@@ -18,7 +18,7 @@
         {% set name = author.username %}
     {% endif %}
 
-        <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}" | _(
+        <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}" | _(
             link_1='<a href="/@/',
             url=author.fqn,
             link_2='/">',
