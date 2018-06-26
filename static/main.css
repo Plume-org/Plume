@@ -137,40 +137,94 @@ main .article-meta .reshares p { display: inline-block; margin: 0; }
 
 /* Like / Reshare button */
 
+main .article-meta .actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
 main .article-meta .likes,
 main .article-meta .reshares {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	padding: 0.5em 0;
 }
 
-main .article-meta .likes a.button:before {
-	content: "";
-	margin-right: 0.5em;
-	color: #E92F2F;
-	font-family: "Font Awesome 5 Free";
-	font-weight: 400;
+main .article-meta .likes > p,
+main .article-meta .reshares > p {
+	font-size: 1.5em;
 }
-main .article-meta .reshares a.button:before {
-	content: "";
-	margin-right: 0.5em;
-	color: #7765E3;
-	font-family: "Font Awesome 5 Free";
-	font-weight: 600;
-}
-main .article-meta .likes a.button.liked:before,
-main .article-meta .reshares a.button.reshared:before { font-weight: 900; }
+
 main .article-meta .likes a.button,
 main .article-meta .reshares a.button {
-	display: inline-block;
-	margin: 0 1em;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
 	padding: 0;
 	background: none;
 	color: #242424;
 	border: none;
 }
-main .article-meta .likes a.button:hover,
-main .article-meta .likes a.button.liked { color: #E92F2F; }
-main .article-meta .reshares a.button:hover,
-main .article-meta .reshares a.button.reshared { color: #7765E3; }
+
+main .article-meta .likes > p,
+main .article-meta .likes a.button:hover { color: #E92F2F; }
+main .article-meta .reshares > p,
+main .article-meta .reshares a.button:hover { color: #7765E3; }
+
+main .article-meta .likes a.button:before,
+main .article-meta .reshares a.button:before {
+	transition: background 0.1s ease-in;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	margin: 0.5em 0;
+	width: 2.5em;
+	height: 2.5em;
+
+	border-radius: 50%;
+	font-family: "Font Awesome 5 Free";
+}
+
+main .article-meta .likes a.button:before {
+	content: "";
+	color: #E92F2F;
+	border: solid #E92F2F thin;
+	font-weight: 400;
+}
+main .article-meta .likes a.button:hover:before {
+	background: rgba(233, 47, 47, 0.15);
+}
+
+main .article-meta .reshares a.button:before {
+	content: "";
+	color: #7765E3;
+	border: solid #7765E3 thin;
+	font-weight: 600;
+}
+main .article-meta .reshares a.button:hover:before {
+	background: rgba(119, 101, 227, 0.15);
+}
+
+main .article-meta .likes a.button.liked:before { background: #E92F2F; }
+main .article-meta .likes a.button.liked:hover:before {
+	background: rgba(233, 47, 47, 0.25);
+	color: #E92F2F;
+}
+main .article-meta .reshares a.button.reshared:before { background: #7765E3; }
+main .article-meta .reshares a.button.reshared:hover:before {
+	background: rgba(119, 101, 227, 0.25);
+	color: #7765E3;
+}
+
+main .article-meta .likes a.button.liked:before,
+main .article-meta .reshares a.button.reshared:before {
+	color: #F4F4F4;
+	font-weight: 900;
+}
 
 /* ~ Comments ~ */
 
@@ -377,6 +431,7 @@ form.new-post input[type="submit"] {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	padding: 0 5%;
 }
 .card {
 	flex: 1;
@@ -421,6 +476,7 @@ form.new-post input[type="submit"] {
 	font-size: 1em;
 	line-height: 1.25em;
 	text-align: left;
+	overflow: hidden;
 }
 
 /* ================= *

@@ -36,26 +36,25 @@
     <div class="article-meta">
         <p>{{ "This article is under the {{ license }} license." | _(license=post.license) }}</p>
 
-        <div class="likes">
-            <p>
-                {{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}
-            </p>
+        <div class="actions">
+            <div class="likes">
+                <p aria-label="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}" title="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}">{{ n_likes }}</p>
 
-            {% if has_liked %}
-                <a class="button liked" href="like">{{ "I don't like this anymore" | _ }}</a>
-            {% else %}
-                <a class="button" href="like">{{ "Add yours" | _ }}</a>
-            {% endif %}
-        </div>
-        <div class="reshares">
-            <p>
-                {{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}
-            </p>
-            {% if has_reshared %}
-                <a class="button reshared" href="reshare">{{ "I don't want to reshare this anymore" | _ }}</a>
-            {% else %}
-                <a class="button" href="reshare">{{ "Reshare" | _ }}</a>
-            {% endif %}
+                {% if has_liked %}
+                    <a class="button liked" href="like">{{ "I don't like this anymore" | _ }}</a>
+                {% else %}
+                    <a class="button" href="like">{{ "Add yours" | _ }}</a>
+                {% endif %}
+            </div>
+            <div class="reshares">
+                <p aria-label="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}" title="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}">{{ n_reshares }}</p>
+
+                {% if has_reshared %}
+                    <a class="button reshared" href="reshare">{{ "I don't want to reshare this anymore" | _ }}</a>
+                {% else %}
+                    <a class="button" href="reshare">{{ "Reshare" | _ }}</a>
+                {% endif %}
+            </div>
         </div>
 
         <div class="comments">
