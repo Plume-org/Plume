@@ -87,6 +87,12 @@ To run this other instance, you'll need to give two environment variables:
 ROCKET_PORT=3033 DB_NAME=my_other_plume_db cargo run
 ```
 
+If you don't want to setup HTTPS locally, you can also disable it by running your instance with `USE_HTTPS=0` set.
+
+```
+USE_HTTPS=0 cargo run
+```
+
 #### Making a Pull Request
 To create an upstream fork of the repository in GitHub, click "Fork" in the top right button on the main page of the [Plume repository](https://github.com/Plume-org/Plume). Now, in the command line, set another remote for the repository by running the following command, replacing `myname` with the name under which you forked the repo. You can use another name besides `upstream` if you prefer. Using [SSH](https://help.github.com/articles/connecting-to-github-with-ssh/) is recommended.
 
