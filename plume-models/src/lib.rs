@@ -88,6 +88,8 @@ lazy_static! {
     
     pub static ref DB_URL: String = env::var("DB_URL")
         .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
+
+    pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
 }
 
 pub mod blog_authors;

@@ -30,7 +30,7 @@ use serde_json;
 use url::Url;
 use webfinger::*;
 
-use BASE_URL;
+use {BASE_URL, USE_HTTPS};
 use db_conn::DbConn;
 use blogs::Blog;
 use blog_authors::BlogAuthor;
@@ -143,7 +143,7 @@ impl User {
     }
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
-        match resolve(acct.clone()) {
+        match resolve(acct.clone(), *USE_HTTPS) {
             Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href)),
             Err(details) => {
                 println!("{:?}", details);
@@ -165,7 +165,10 @@ impl User {
                 json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
                 Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
-            Err(_) => None
+            Err(e) => {
+                println!("{:?}", e);
+                None
+            }
         }
     }
 

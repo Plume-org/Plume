@@ -16,7 +16,7 @@ use openssl::{
 };
 use webfinger::*;
 
-use BASE_URL;
+use {BASE_URL, USE_HTTPS};
 use plume_common::activity_pub::{
     ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
@@ -97,7 +97,7 @@ impl Blog {
     }
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<Blog> {
-        match resolve(acct.clone()) {
+        match resolve(acct.clone(), *USE_HTTPS) {
             Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href)),
             Err(details) => {
                 println!("{:?}", details);
