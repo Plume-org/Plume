@@ -1,6 +1,6 @@
 use activitypub::object::Article;
 use heck::KebabCase;
-use rocket::request::Form;
+use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
@@ -85,7 +85,7 @@ struct NewPostForm {
 }
 
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: Form<NewPostForm>, user: User, conn: DbConn) -> Redirect {
+fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn) -> Redirect {
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();

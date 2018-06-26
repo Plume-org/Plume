@@ -1,5 +1,5 @@
 use rocket::{
-    request::Form,
+    request::LenientForm,
     response::Redirect
 };
 use serde_json;
@@ -27,12 +27,12 @@ struct NewCommentForm {
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
-fn create(blog_name: String, slug: String, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
+fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
     create_response(blog_name, slug, None, data, user, conn)
 }
 
 #[post("/~/<blog_name>/<slug>/comment?<query>", data = "<data>")]
-fn create_response(blog_name: String, slug: String, query: Option<CommentQuery>, data: Form<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
+fn create_response(blog_name: String, slug: String, query: Option<CommentQuery>, data: LenientForm<NewCommentForm>, user: User, conn: DbConn) -> Redirect {
     let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).unwrap();
     let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).unwrap();
     let form = data.get();

@@ -12,6 +12,7 @@ extern crate plume_common;
 extern crate plume_models;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate rocket_csrf;
 extern crate rocket_i18n;
 extern crate rpassword;
 #[macro_use]
@@ -19,6 +20,7 @@ extern crate serde_json;
 extern crate webfinger;
 
 use rocket_contrib::Template;
+use rocket_csrf::CsrfFairingBuilder;
 
 mod inbox;
 mod setup;
@@ -84,7 +86,9 @@ fn main() {
 
             routes::well_known::host_meta,
             routes::well_known::nodeinfo,
-            routes::well_known::webfinger
+            routes::well_known::webfinger,
+
+            routes::errors::csrf_violation
         ])
         .catch(catchers![
             routes::errors::not_found,
@@ -95,5 +99,13 @@ fn main() {
             rocket_i18n::tera(&mut engines.tera);
         }))
         .attach(rocket_i18n::I18n::new("plume"))
+        .attach(CsrfFairingBuilder::new()
+                .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
+                .add_exceptions(vec![
+                    ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
+                    ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
+
+                ])
+                .finalize().unwrap())
         .launch();
 }

@@ -1,6 +1,6 @@
 use activitypub::collection::OrderedCollection;
 use rocket::{
-    request::Form,
+    request::LenientForm,
     response::{Redirect, Flash}
 };
 use rocket_contrib::Template;
@@ -55,7 +55,7 @@ struct NewBlogForm {
 }
 
 #[post("/blogs/new", data = "<data>")]
-fn create(conn: DbConn, data: Form<NewBlogForm>, user: User) -> Redirect {
+fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Redirect {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
 
