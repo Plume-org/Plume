@@ -49,7 +49,7 @@ impl Signable for serde_json::Value {
 
         let signature = base64::encode(&creator.sign(to_be_signed));
 
-        options["signaureValue"] = serde_json::Value::String(signature);
+        options["signatureValue"] = serde_json::Value::String(signature);
         self["signature"] = options;
         self
     }
