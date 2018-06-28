@@ -45,7 +45,8 @@ For Gentoo (eselect-postgresql is optional),
 
 For Fedora/CentOS/RHEL, do
 
-    # dnf install postgresql-server postgresql-contrib
+    # dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel
+
 
 #### Windows Instructions
 
