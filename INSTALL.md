@@ -18,11 +18,13 @@ cargo run # this will configure and launch Plume on the server.
 
 ## If you want to run Plume with a remote DB this time ( Postgresql is not installed on the same server/container):
 * On the DB server:
+service postgresql start
 su - postgres
 createuser -d -P plume
 createdb -O plume plume
 
 * On the Plume server:
+cd /home/plume/Plume
 diesel migration run --database-url postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume
 DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume cargo run # the first launch will ask questions to configure the instance. A second launch will not need the DB_URL.
 
