@@ -25,3 +25,19 @@ createdb -O plume plume
 * On the Plume server:
 diesel migration run --database-url postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume
 DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume cargo run # the first launch will ask questions to configure the instance. A second launch will not need the DB_URL.
+
+## Plume is now accessible as seen on your console. You can have fun now, or configure an nginx proxy with the following excerpt:
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $http_host;
+
+        proxy_pass http://localhost:8000;
+
+        client_max_body_size 16m;
+    }
+
+# Caveats:
+* Pgbouncer is not yet supported ( named transactions are used ).
