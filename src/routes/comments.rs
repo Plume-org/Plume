@@ -3,6 +3,7 @@ use rocket::{
     response::Redirect
 };
 use serde_json;
+use validator::Validate;
 
 use plume_common::activity_pub::broadcast;
 use plume_models::{
@@ -15,9 +16,10 @@ use plume_models::{
 };
 use inbox::Inbox;
 
-#[derive(FromForm, Debug)]
+#[derive(FromForm, Debug, Validate)]
 struct NewCommentForm {
     pub responding_to: Option<i32>,
+    #[validate(length(min = "1"))]
     pub content: String
 }
 
@@ -26,7 +28,6 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
     let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).unwrap();
     let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).unwrap();
     let form = data.get();
-    println!("form: {:?}", form);
 
     let (new_comment, id) = NewComment::build()
         .content(form.content.clone())

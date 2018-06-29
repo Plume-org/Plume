@@ -4,6 +4,7 @@ use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
+use validator::{Validate, ValidationError};
 
 use plume_common::activity_pub::{broadcast, ActivityStream};
 use plume_common::utils;
@@ -81,11 +82,21 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
     }
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate)]
 struct NewPostForm {
+    #[validate(custom = "valid_slug")]
     pub title: String,
     pub content: String,
     pub license: String
+}
+
+fn valid_slug(title: &str) -> Result<(), ValidationError> {
+    let slug = title.to_string().to_kebab_case();
+    if slug.len() == 0 {
+        Err(ValidationError::new("empty_slug"))
+    } else {
+        Ok(())
+    }
 }
 
 #[post("/~/<blog_name>/new", data = "<data>")]

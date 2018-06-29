@@ -5,6 +5,7 @@ use rocket::{
 };
 use rocket_contrib::Template;
 use serde_json;
+use validator::{Validate, ValidationError};
 
 use plume_common::activity_pub::ActivityStream;
 use plume_common::utils;
@@ -49,9 +50,19 @@ fn new_auth() -> Flash<Redirect>{
     utils::requires_login("You need to be logged in order to create a new blog", uri!(new))
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate)]
 struct NewBlogForm {
+    #[validate(custom = "valid_slug")]
     pub title: String
+}
+
+fn valid_slug(title: &str) -> Result<(), ValidationError> {
+    let slug = utils::make_actor_id(title.to_string());
+    if slug.len() == 0 {
+        Err(ValidationError::new("empty_slug"))
+    } else {
+        Ok(())
+    }
 }
 
 #[post("/blogs/new", data = "<data>")]

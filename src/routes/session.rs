@@ -5,6 +5,7 @@ use rocket::{
     request::{LenientForm,FlashMessage}
 };
 use rocket_contrib::Template;
+use validator::{Validate, ValidationError};
 
 use plume_models::{
     db_conn::DbConn,
@@ -32,9 +33,11 @@ fn new_message(user: Option<User>, message: Message) -> Template {
 }
 
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate)]
 struct LoginForm {
+    #[validate(length(min = "1"))]
     email_or_name: String,
+    #[validate(length(min = "8"))]
     password: String
 }
 

@@ -7,6 +7,7 @@ use rocket::{request::LenientForm,
 };
 use rocket_contrib::Template;
 use serde_json;
+use validator::{Validate, ValidationError};
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId,
@@ -157,12 +158,25 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
     Redirect::to(uri!(me))
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate)]
+#[validate(schema(function = "passwords_match", skip_on_field_errors = "false"))]
 struct NewUserForm {
+    #[validate(length(min = "1"))]
     username: String,
+    #[validate(email)]
     email: String,
+    #[validate(length(min = "8"))]
     password: String,
+    #[validate(length(min = "8"))]
     password_confirmation: String
+}
+
+fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
+    if form.password != form.password_confirmation {
+        Err(ValidationError::new("password_match"))
+    } else {
+        Ok(())
+    }
 }
 
 #[post("/users/new", data = "<data>")]
