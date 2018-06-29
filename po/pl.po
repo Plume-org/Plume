@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-06-19 21:15+0200\n"
+"PO-Revision-Date: 2018-06-29 23:02+0200\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -63,17 +63,17 @@ msgstr "Nazwa"
 msgid "Let&#x27;s go!"
 msgstr "Przejdźmy dalej!"
 
-#, fuzzy
 msgid "Welcome on {{ instance_name | escape }}"
-msgstr "Witamy na {{ instance_name }}"
+msgstr "Witamy na {{ instance_name | escape }}"
 
 msgid "Notifications"
 msgstr "Powiadomienia"
 
-#, fuzzy
 msgid ""
 "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr ""
+"Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
+"{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Ten artykuł został opublikowany na licencji {{ license }}."
@@ -191,9 +191,8 @@ msgstr "Opis"
 msgid "Update account"
 msgstr "Aktualizuj konto"
 
-#, fuzzy
 msgid "{{ name | escape }}'s followers"
-msgstr "Osoby śledzące {{ name }}"
+msgstr "Osoby śledzące {{ name | escape }}"
 
 msgid "Followers"
 msgstr "Śledzący"
@@ -261,9 +260,10 @@ msgstr "Musisz się zalogować, aby zacząć obserwować innych"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Musisz się zalogować , aby móc edytować swój profil"
 
-#, fuzzy
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr ""
+"Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
+"{{ link_3 }}"
 
 msgid "{{ data }} reshared your article"
 msgstr "{{ data }} udostępnił Twój artykuł"
@@ -284,18 +284,16 @@ msgid "The link that led you here may be broken."
 msgstr "Odnośnik który Cię tu zaprowadził może być uszkodzony."
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Nie jesteś zalogowany."
 
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "Nie jesteś autorem tego bloga."
 
-#, fuzzy
 msgid "{{ data }} mentioned you."
-msgstr "{{ data }} skomentował Twój artykuł"
+msgstr "{{ data }} wspomniał o Tobie."
 
-#, fuzzy
 msgid "Your comment"
-msgstr "Wyślij komentarz"
+msgstr "Twój komentarz"
 
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"
