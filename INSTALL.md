@@ -1,6 +1,8 @@
 # How to install Plume on a Debian stretch:
 
 ## Basic setup:
+
+```bash
 apt update
 apt install gettext postgresql postgresql-contrib libpq-dev
 adduser plume
@@ -12,21 +14,32 @@ cd Plume
 rustup toolchain install nightly
 rustup override set nightly-2018-05-15 # this seems to be needed for compilation
 cargo install diesel_cli --no-default-features --features postgres # we dont need to compile anything else than pgsql
+```
 
 ## Now, if you want to run postgresql on the same server:
+
+```bash
 cargo run # this will configure and launch Plume on the server.
+```
 
 ## If you want to run Plume with a remote DB this time ( Postgresql is not installed on the same server/container):
+
 * On the DB server:
+
+```bash
 service postgresql start
 su - postgres
 createuser -d -P plume
 createdb -O plume plume
+```
 
 * On the Plume server:
+
+```bash
 cd /home/plume/Plume
 diesel migration run --database-url postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume
 DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume cargo run # the first launch will ask questions to configure the instance. A second launch will not need the DB_URL.
+```
 
 ## Plume is now accessible as seen on your console. You can have fun now, or configure an nginx proxy with the following excerpt:
 
@@ -42,4 +55,5 @@ DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume cargo run # the first l
     }
 
 # Caveats:
+
 * Pgbouncer is not yet supported ( named transactions are used ).
