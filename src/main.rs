@@ -17,6 +17,9 @@ extern crate rocket_i18n;
 extern crate rpassword;
 #[macro_use]
 extern crate serde_json;
+extern crate validator;
+#[macro_use]
+extern crate validator_derive;
 extern crate webfinger;
 
 use rocket_contrib::Template;
