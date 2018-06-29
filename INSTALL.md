@@ -12,7 +12,8 @@ git clone https://github.com/Plume-org/Plume.git
 curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path --default-toolchain nightly
 cd Plume
 rustup toolchain install nightly
-rustup override set nightly-2018-05-15 # this seems to be needed for compilation
+rustup toolchain default nightly
+rustup update
 cargo install diesel_cli --no-default-features --features postgres # we dont need to compile anything else than pgsql
 ```
 
@@ -57,3 +58,13 @@ DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume cargo run # the first l
 # Caveats:
 
 * Pgbouncer is not yet supported ( named transactions are used ).
+* Rust nightly is a moving target, dependancies can break and sometimes you need to check a few versions to find the one working.
+
+```bash
+cd /home/plume/Plume
+rustup override set nightly-2018-05-15 # this could be needed for compilation. If errors, try 2018-05-31.
+# rustup override unset # remove the override for this directory.
+```
+
+* Rust nightly 2018-06-28 is known to be failing to compile diesel 1.3.2
+
