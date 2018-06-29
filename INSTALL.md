@@ -9,7 +9,7 @@ adduser plume
 su - plume
 cd /home/plume
 git clone https://github.com/Plume-org/Plume.git
-curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path --default-toolchain nightly
+curl https://sh.rustup.rs -sSf | sh 
 cd Plume
 rustup toolchain install nightly
 rustup toolchain default nightly
@@ -20,6 +20,7 @@ cargo install diesel_cli --no-default-features --features postgres # we dont nee
 ## Now, if you want to run postgresql on the same server:
 
 ```bash
+service postgresql start
 cargo run # this will configure and launch Plume on the server.
 ```
 
@@ -58,6 +59,7 @@ DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume cargo run # the first l
 # Caveats:
 
 * Pgbouncer is not yet supported ( named transactions are used ).
+
 * Rust nightly is a moving target, dependancies can break and sometimes you need to check a few versions to find the one working.
 
 ```bash
