@@ -1,0 +1,284 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-07-05 21:25+0200\n"
+"Last-Translator: cookie <git@bitkeks.eu>\n"
+"Language-Team: none\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.8\n"
+
+msgid "Latest articles"
+msgstr "Neueste Artikel"
+
+msgid "No posts to see here yet."
+msgstr "Bisher keine Artikel vorhanden."
+
+msgid "New article"
+msgstr "Neuer Artikel"
+
+msgid "New blog"
+msgstr "Neuer Blog"
+
+msgid "Create a blog"
+msgstr "Erstelle einen Blog"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Create blog"
+msgstr "Blog erstellen"
+
+msgid "Comment \"{{ post }}\""
+msgstr "Kommentar \"{{ post }}\""
+
+msgid "Content"
+msgstr "Inhalt"
+
+msgid "Submit comment"
+msgstr "Kommentar abschicken"
+
+msgid "Something broke on our side."
+msgstr "Bei dir ist etwas schief gegangen."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen gerne melden."
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Configure your instance"
+msgstr "Konfiguriere deine Instanz"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Let&#x27;s go!"
+msgstr "Los geht's!"
+
+msgid "Welcome on {{ instance_name | escape }}"
+msgstr "Willkommen auf {{ instance_name | escape }}"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr "Geschrieben von {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+
+msgid "This article is under the {{ license }} license."
+msgstr "Dieser Artikel steht unter der {{ license }} Lizenz."
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] "Ein Like"
+msgstr[1] "{{ count }} Likes"
+
+msgid "I don&#x27;t like this anymore"
+msgstr "Nicht mehr Liken"
+
+msgid "Add yours"
+msgstr "Like"
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] "Ein Reshare"
+msgstr[1] "{{ count }} Reshares"
+
+msgid "I don&#x27;t want to reshare this anymore"
+msgstr "Nicht mehr Resharen"
+
+msgid "Reshare"
+msgstr "Resharen"
+
+msgid "Comments"
+msgstr "Kommentare"
+
+msgid "Respond"
+msgstr "Antworten"
+
+msgid "Comment"
+msgstr "Kommentar"
+
+msgid "New post"
+msgstr "Neuer Beitrag"
+
+msgid "Create a post"
+msgstr "Beitrag erstellen"
+
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Username or email"
+msgstr "Nutzername oder E-Mail"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Your Dashboard"
+msgstr "Dein Dashboard"
+
+msgid "Your Blogs"
+msgstr "Deine Blogs"
+
+msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
+msgstr "Du hast bisher keinen Blog. Erstelle deinen eigenen oder tritt einem Blog bei."
+
+msgid "Start a new blog"
+msgstr "Starte einen neuen Blog"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "It is you"
+msgstr "Das bist du"
+
+msgid "Edit your profile"
+msgstr "Ändere dein Profil"
+
+msgid "Open on {{ instance_url }}"
+msgstr "Öffnen auf {{ instance_url }}"
+
+msgid "Follow"
+msgstr "Folgen"
+
+msgid "Unfollow"
+msgstr "Entfolgen"
+
+msgid "Recently reshared"
+msgstr "Vor Kurzem Reshared"
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] "Ein Follower"
+msgstr[1] "{{ count }} Followers"
+
+msgid "Edit your account"
+msgstr "Ändere deinen Account"
+
+msgid "Your Profile"
+msgstr "Dein Profil"
+
+msgid "Display Name"
+msgstr "Anzeigename"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+msgid "Update account"
+msgstr "Account aktualisieren"
+
+msgid "{{ name | escape }}'s followers"
+msgstr "{{ name | escape }}s Follower"
+
+msgid "Followers"
+msgstr "Follower"
+
+msgid "New Account"
+msgstr "Neuer Account"
+
+msgid "Create an account"
+msgstr "Erstelle einen Account"
+
+msgid "Username"
+msgstr "Nutzername"
+
+msgid "Password confirmation"
+msgstr "Passwort Wiederholung"
+
+msgid "Create account"
+msgstr "Account erstellen"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "My account"
+msgstr "Mein Account"
+
+msgid "Log Out"
+msgstr "Ausloggen"
+
+msgid "Log In"
+msgstr "Einloggen"
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "You need to be logged in order to create a new blog"
+msgstr "Du musst eingeloggt sein, um einen neuen Blog zu erstellen"
+
+msgid "You need to be logged in order to post a comment"
+msgstr "Du musst eingeloggt sein, um einen Kommentar zu schreiben"
+
+msgid "You need to be logged in order to like a post"
+msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
+
+msgid "You need to be logged in order to write a new post"
+msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
+
+msgid "You need to be logged in order to reshare a post"
+msgstr "Du musst eingeloggt sein, um einen Beitrag zu resharen"
+
+msgid "Invalid username or password"
+msgstr "Nutzername oder Passwort ungültig"
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Du musst eingeloggt sein, um dein Dashboard zu sehen"
+
+msgid "You need to be logged in order to follow someone"
+msgstr "Du musst eingeloggt sein, um jemandem zu folgen"
+
+msgid "You need to be logged in order to edit your profile"
+msgstr "Du musst eingeloggt sein, um dein Profil zu editieren"
+
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr "Von {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+
+msgid "{{ data }} reshared your article"
+msgstr "{{ data }} hat deinen Artikel reshared"
+
+msgid "{{ data }} started following you"
+msgstr "{{ data }} folgt dir nun"
+
+msgid "{{ data }} liked your article"
+msgstr "{{ data }} hat deinen Artikel geliked"
+
+msgid "{{ data }} commented your article"
+msgstr "{{ data }} hat deinen Artikel kommentiert"
+
+msgid "We couldn&#x27;t find this page."
+msgstr "Wir konnten diese Seite nicht finden."
+
+msgid "The link that led you here may be broken."
+msgstr "Der Link, welcher dich hier her führte, ist wohl kaputt."
+
+msgid "You are not authorized."
+msgstr "Nicht berechtigt."
+
+msgid "You are not author in this blog."
+msgstr "Du bist kein Autor in diesem Blog."
+
+msgid "{{ data }} mentioned you."
+msgstr "{{ data }} hat dich erwähnt."
+
+msgid "Your comment"
+msgstr "Dein Kommentar"
