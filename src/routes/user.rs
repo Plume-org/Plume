@@ -121,7 +121,9 @@ fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomPerson> 
 #[get("/users/new")]
 fn new(user: Option<User>) -> Template {
     Template::render("users/new", json!({
-        "account": user
+        "account": user,
+        "errors": null,
+        "form": null
     }))
 }
 
@@ -158,16 +160,16 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
     Redirect::to(uri!(me))
 }
 
-#[derive(FromForm, Validate)]
+#[derive(FromForm, Serialize, Validate)]
 #[validate(schema(function = "passwords_match", skip_on_field_errors = "false"))]
 struct NewUserForm {
-    #[validate(length(min = "1"))]
+    #[validate(length(min = "1", message = "Username can't be empty"))]
     username: String,
-    #[validate(email)]
+    #[validate(email(message = "Invalid email"))]
     email: String,
-    #[validate(length(min = "8"))]
+    #[validate(length(min = "8", message = "Password should be at least 8 characters long"))]
     password: String,
-    #[validate(length(min = "8"))]
+    #[validate(length(min = "8", message = "Password should be at least 8 characters long"))]
     password_confirmation: String
 }
 
@@ -196,7 +198,8 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
             Redirect::to(uri!(super::session::new))
         })
         .map_err(|e| Template::render("users/new", json!({
-            "errors": e.inner()
+            "errors": e.inner(),
+            "form": form
         })))
 }
 

@@ -77,12 +77,14 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
         }))
     } else {
         Template::render("posts/new", json!({
-            "account": user
+            "account": user,
+            "errors": null,
+            "form": null
         }))
     }
 }
 
-#[derive(FromForm, Validate)]
+#[derive(FromForm, Validate, Serialize)]
 struct NewPostForm {
     #[validate(custom = "valid_slug")]
     pub title: String,
@@ -113,7 +115,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         Err(e) => e
     };
     if let Err(e) = slug_taken_err {
-        errors.add("title", e)
+        errors.add("title", e);
     }
 
     if errors.is_empty() {
@@ -150,7 +152,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
     } else {
         Err(Template::render("posts/new", json!({
             "account": user,
-            "errors": errors.inner()
+            "errors": errors.inner(),
+            "form": form
         })))
     }
 }

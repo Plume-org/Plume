@@ -14,7 +14,9 @@ use plume_models::{
 #[get("/login")]
 fn new(user: Option<User>) -> Template {
     Template::render("session/login", json!({
-        "account": user
+        "account": user,
+        "errors": null, 
+        "form": null
     }))
 }
 
@@ -27,7 +29,9 @@ struct Message {
 fn new_message(user: Option<User>, message: Message) -> Template {
     Template::render("session/login", json!({
         "account": user,
-        "message": message.m
+        "message": message.m,
+        "errors": null,
+        "form": null
     }))
 }
 
@@ -66,7 +70,8 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
     } else {
         Err(Template::render("session/login", json!({
             "account": user,
-            "errors": errors.inner()
+            "errors": errors.inner(),
+            "form": form
         })))
     }
 }

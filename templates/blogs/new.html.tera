@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ "New blog" | _ }}
@@ -7,8 +8,8 @@
 {% block content %}
 <h1>{{ "Create a blog" | _ }}</h1>
 <form method="post">
-    <label for="title">{{ "Title" | _ }}</label>
-    <input type="text" id="title" name="title" />
+    {{ macros::input(name="title", label="Title", errors=errors, form=form) }}
+
     <input type="submit" value="{{ "Create blog" | _ }}"/>
 </form>
 {% endblock content %}

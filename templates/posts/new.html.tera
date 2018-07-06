@@ -7,11 +7,18 @@
 {% block content %}
 <h1>{{ "Create a post" | _ }}</h1>
 <form class="new-post" method="post">
-    <input type="text" class="title" name="title" placeholder="{{ "Title" | _ }}">
-    <textarea name="content" placeholder="{{ "Content" | _ }}"></textarea>
+    {{ macros::input(name="title", label="Title", errors=errors, form=form) }}
 
-    <label for="license">{{ "License" | _ }}</label>
-    <input type="text" id="licence" name="license" />
+    <label for="{{ name }}">{{ label | _ }}</label>
+    {% if errors is defined and errors.content %}
+        {% for err in errors.content %}
+            <p class="error">{{ err.message | _ }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <textarea name="content" placeholder="{{ "Content" | _ }}" value="{{ form.content | default(value="") }}"></textarea>
+
+    {{ macros::input(name="license", label="License", errors=errors, form=form) }}
 
     <input type="submit" value="{{ "Publish" | _ }}" />
 </form>

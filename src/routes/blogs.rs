@@ -41,7 +41,9 @@ fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomGroup> {
 #[get("/blogs/new")]
 fn new(user: User) -> Template {
     Template::render("blogs/new", json!({
-        "account": user
+        "account": user,
+        "errors": null,
+        "form": null
     }))
 }
 
@@ -50,7 +52,7 @@ fn new_auth() -> Flash<Redirect>{
     utils::requires_login("You need to be logged in order to create a new blog", uri!(new))
 }
 
-#[derive(FromForm, Validate)]
+#[derive(FromForm, Validate, Serialize)]
 struct NewBlogForm {
     #[validate(custom = "valid_slug")]
     pub title: String
@@ -98,7 +100,8 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
     } else {
         Err(Template::render("blogs/new", json!({
             "account": user,
-            "errors": errors.inner()
+            "errors": errors.inner(),
+            "form": form
         })))
     }
 }
