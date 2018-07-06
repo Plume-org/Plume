@@ -1,11 +1,10 @@
-use gettextrs::gettext;
 use rocket::{
     http::{Cookie, Cookies, uri::Uri},
-    response::{Redirect, status::NotFound},
+    response::Redirect,
     request::{LenientForm,FlashMessage}
 };
 use rocket_contrib::Template;
-use validator::{Validate, ValidationError};
+use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_models::{
     db_conn::DbConn,
@@ -42,28 +41,33 @@ struct LoginForm {
 }
 
 #[post("/login", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, NotFound<String>> {
+fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, Template> {
     let form = data.get();
-    let user = match User::find_by_email(&*conn, form.email_or_name.to_string()) {
-        Some(usr) => Ok(usr),
-        None => match User::find_local(&*conn, form.email_or_name.to_string()) {
-            Some(usr) => Ok(usr),
-            None => Err(gettext("Invalid username or password"))
-        }
+    let user = User::find_by_email(&*conn, form.email_or_name.to_string())
+        .map(|u| Ok(u))
+        .unwrap_or_else(|| User::find_local(&*conn, form.email_or_name.to_string()).map(|u| Ok(u)).unwrap_or(Err(())));
+    
+    let mut errors = match form.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(e) => e
     };
-    match user {
-        Ok(usr) => {
-            if usr.auth(form.password.to_string()) {
-                cookies.add_private(Cookie::new(AUTH_COOKIE, usr.id.to_string()));
-                Ok(Redirect::to(Uri::new(flash
-                    .and_then(|f| if f.name() == "callback" { Some(f.msg().to_owned()) } else { None })
-                    .unwrap_or("/".to_owned()))
-                ))
-            } else {
-                Err(NotFound(gettext("Invalid username or password")))
-            }
-        },
-        Err(e) => Err(NotFound(String::from(e)))
+    if let Err(_) = user.clone() {
+        errors.add("email_or_name", ValidationError::new("invalid_login"))
+    } else if !user.clone().expect("User not found").auth(form.password.clone()) {
+        errors.add("email_or_name", ValidationError::new("invalid_login"))
+    }
+    
+    if errors.is_empty() {
+        cookies.add_private(Cookie::new(AUTH_COOKIE, user.unwrap().id.to_string()));
+        Ok(Redirect::to(Uri::new(flash
+            .and_then(|f| if f.name() == "callback" { Some(f.msg().to_owned()) } else { None })
+            .unwrap_or("/".to_owned()))
+        ))
+    } else {
+        Err(Template::render("session/login", json!({
+            "account": user,
+            "errors": errors.inner()
+        })))
     }
 }
 

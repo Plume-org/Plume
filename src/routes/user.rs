@@ -180,29 +180,24 @@ fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
 }
 
 #[post("/users/new", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, String> {
+fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Template> {
     let form = data.get();
-
-    if form.username.clone().len() < 1 {
-        Err(String::from("Username is required"))
-    } else if form.email.clone().len() < 1 {
-        Err(String::from("Email is required"))
-    } else if form.password.clone().len() < 8 {
-        Err(String::from("Password should be at least 8 characters long"))
-    } else if form.password == form.password_confirmation {
-        NewUser::new_local(
-            &*conn,
-            form.username.to_string(),
-            form.username.to_string(),
-            false,
-            String::from(""),
-            form.email.to_string(),
-            User::hash_pass(form.password.to_string())
-        ).update_boxes(&*conn);
-        Ok(Redirect::to(uri!(super::session::new)))
-    } else {
-        Err(String::from("Passwords don't match"))
-    }
+    form.validate()
+        .map(|_| {
+             NewUser::new_local(
+                &*conn,
+                form.username.to_string(),
+                form.username.to_string(),
+                false,
+                String::from(""),
+                form.email.to_string(),
+                User::hash_pass(form.password.to_string())
+            ).update_boxes(&*conn);
+            Redirect::to(uri!(super::session::new))
+        })
+        .map_err(|e| Template::render("users/new", json!({
+            "errors": e.inner()
+        })))
 }
 
 #[get("/@/<name>/outbox")]

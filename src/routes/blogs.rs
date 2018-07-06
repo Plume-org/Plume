@@ -5,7 +5,7 @@ use rocket::{
 };
 use rocket_contrib::Template;
 use serde_json;
-use validator::{Validate, ValidationError};
+use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::ActivityStream;
 use plume_common::utils;
@@ -66,15 +66,22 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Redirect {
+fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Redirect, Template> {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
+    let slug_taken_err = Blog::find_local(&*conn, slug.clone()).ok_or(ValidationError::new("existing_slug"));
 
-    if Blog::find_local(&*conn, slug.clone()).is_some() || slug.len() == 0 {
-        Redirect::to(uri!(new))
-    } else {
+    let mut errors = match form.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(e) => e
+    };
+    if let Err(e) = slug_taken_err {
+        errors.add("title", e)
+    }
+
+    if errors.is_empty() {
         let blog = Blog::insert(&*conn, NewBlog::new_local(
-            slug.to_string(),
+            slug.clone(),
             form.title.to_string(),
             String::from(""),
             Instance::local_id(&*conn)
@@ -87,7 +94,12 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Redirect 
             is_owner: true
         });
 
-        Redirect::to(uri!(details: name = slug))
+        Ok(Redirect::to(uri!(details: name = slug.clone())))
+    } else {
+        Err(Template::render("blogs/new", json!({
+            "account": user,
+            "errors": errors.inner()
+        })))
     }
 }
 
