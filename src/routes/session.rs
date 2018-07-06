@@ -36,7 +36,7 @@ fn new_message(user: Option<User>, message: Message) -> Template {
 }
 
 
-#[derive(FromForm, Validate)]
+#[derive(FromForm, Validate, Serialize)]
 struct LoginForm {
     #[validate(length(min = "1"))]
     email_or_name: String,
