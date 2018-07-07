@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ "New post" | _ }}
@@ -9,14 +10,13 @@
 <form class="new-post" method="post">
     {{ macros::input(name="title", label="Title", errors=errors, form=form) }}
 
-    <label for="{{ name }}">{{ label | _ }}</label>
     {% if errors is defined and errors.content %}
         {% for err in errors.content %}
-            <p class="error">{{ err.message | _ }}</p>
+            <p class="error">{{ err.message | default(value="Unknown error") | _ }}</p>
         {% endfor %}
     {% endif %}
 
-    <textarea name="content" placeholder="{{ "Content" | _ }}" value="{{ form.content | default(value="") }}"></textarea>
+    <textarea id="content" name="content" placeholder="{{ "Content" | _ }}" value="{{ form.content | default(value="") }}"></textarea>
 
     {{ macros::input(name="license", label="License", errors=errors, form=form) }}
 

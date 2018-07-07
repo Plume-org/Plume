@@ -161,7 +161,7 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
 }
 
 #[derive(FromForm, Serialize, Validate)]
-#[validate(schema(function = "passwords_match", skip_on_field_errors = "false"))]
+#[validate(schema(function = "passwords_match", skip_on_field_errors = "false", message = "Passwords are not matching"))]
 struct NewUserForm {
     #[validate(length(min = "1", message = "Username can't be empty"))]
     username: String,

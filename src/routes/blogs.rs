@@ -5,6 +5,7 @@ use rocket::{
 };
 use rocket_contrib::Template;
 use serde_json;
+use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::ActivityStream;
@@ -54,7 +55,7 @@ fn new_auth() -> Flash<Redirect>{
 
 #[derive(FromForm, Validate, Serialize)]
 struct NewBlogForm {
-    #[validate(custom = "valid_slug")]
+    #[validate(custom(function = "valid_slug", message = "Invalid name"))]
     pub title: String
 }
 
@@ -71,14 +72,17 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Redirect, Template> {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
-    let slug_taken_err = Blog::find_local(&*conn, slug.clone()).ok_or(ValidationError::new("existing_slug"));
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Err(e) = slug_taken_err {
-        errors.add("title", e)
+    if let Some(_) = Blog::find_local(&*conn, slug.clone()) {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A blog with the same name already exists.")),
+            params: HashMap::new()
+        });
     }
 
     if errors.is_empty() {
@@ -98,6 +102,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
 
         Ok(Redirect::to(uri!(details: name = slug.clone())))
     } else {
+        println!("{:?}", errors);
         Err(Template::render("blogs/new", json!({
             "account": user,
             "errors": errors.inner(),

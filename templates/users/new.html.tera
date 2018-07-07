@@ -8,10 +8,10 @@
 {% block content %}
 <h1>{{ "Create an account" | _ }}</h1>
 <form method="post">
-    {{ macros::input(name="username", label="Username", errors=errors, form=form) }}
+    {{ macros::input(name="username", label="Username", errors=errors, form=form, props='minlenght="1"') }}
     {{ macros::input(name="email", label="Email", errors=errors, form=form, type="email") }}
-    {{ macros::input(name="password", label="Password", errors=errors, form=form, type="password") }}
-    {{ macros::input(name="password_confirmation", label="Password confirmation", errors=errors, form=form, type="password") }}
+    {{ macros::input(name="password", label="Password", errors=errors, form=form, type="password", props='minlenght="8"') }}
+    {{ macros::input(name="password_confirmation", label="Password confirmation", errors=errors, form=form, type="password", props='minlenght="8"') }}
 
     <input type="submit" value="{{ "Create account" | _ }}" />
 </form>

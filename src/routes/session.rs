@@ -38,9 +38,9 @@ fn new_message(user: Option<User>, message: Message) -> Template {
 
 #[derive(FromForm, Validate, Serialize)]
 struct LoginForm {
-    #[validate(length(min = "1"))]
+    #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
     email_or_name: String,
-    #[validate(length(min = "8"))]
+    #[validate(length(min = "8", message = "Your password should be at least 8 characters long"))]
     password: String
 }
 

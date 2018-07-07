@@ -4,6 +4,7 @@ use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
+use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{broadcast, ActivityStream};
@@ -86,7 +87,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
 
 #[derive(FromForm, Validate, Serialize)]
 struct NewPostForm {
-    #[validate(custom = "valid_slug")]
+    #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,
     pub content: String,
     pub license: String
@@ -108,14 +109,17 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
-    let slug_taken_err = Blog::find_local(&*conn, slug.clone()).ok_or(ValidationError::new("existing_slug"));
     
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Err(e) = slug_taken_err {
-        errors.add("title", e);
+    if let Some(_) = Post::find_by_slug(&*conn, slug.clone(), blog.id) {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A post with the same title already exists.")),
+            params: HashMap::new()
+        });
     }
 
     if errors.is_empty() {

@@ -21,12 +21,12 @@
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text") %}
+{% macro input(name, label, errors, form, type="text", props="") %}
     <label for="{{ name }}">{{ label | _ }}</label>
     {% if errors is defined and errors[name] %}
         {% for err in errors[name] %}
-            <p class="error">{{ err.message | _ }}</p>
+            <p class="error">{{ err.message | default(value="Unknown error") }}</p>
         {% endfor %}
     {% endif %}
-    <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value="") }}"/>
+    <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value="") }}" {{ props | safe }}/>
 {% endmacro input %}
