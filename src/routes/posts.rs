@@ -4,6 +4,8 @@ use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
+use std::{collections::HashMap, borrow::Cow};
+use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{broadcast, ActivityStream};
 use plume_common::utils;
@@ -76,29 +78,54 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
         }))
     } else {
         Template::render("posts/new", json!({
-            "account": user
+            "account": user,
+            "errors": null,
+            "form": null
         }))
     }
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate, Serialize)]
 struct NewPostForm {
+    #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,
     pub content: String,
     pub license: String
 }
 
+fn valid_slug(title: &str) -> Result<(), ValidationError> {
+    let slug = title.to_string().to_kebab_case();
+    if slug.len() == 0 {
+        Err(ValidationError::new("empty_slug"))
+    } else if slug == "new" {
+        Err(ValidationError::new("invalid_slug"))
+    } else {
+        Ok(())
+    }
+}
+
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn) -> Redirect {
+fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn) -> Result<Redirect, Template> {
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
+    
+    let mut errors = match form.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(e) => e
+    };
+    if let Some(_) = Post::find_by_slug(&*conn, slug.clone(), blog.id) {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A post with the same title already exists.")),
+            params: HashMap::new()
+        });
+    }
 
-    if !user.is_author_in(&*conn, blog.clone()) {
-        Redirect::to(uri!(super::blogs::details: name = blog_name))
-    } else {
-        if slug == "new" || Post::find_by_slug(&*conn, slug.clone(), blog.id).is_some() {
-            Redirect::to(uri!(new: blog = blog_name))
+    if errors.is_empty() {
+        if !user.is_author_in(&*conn, blog.clone()) {
+            // actually it's not "Ok"…
+            Ok(Redirect::to(uri!(super::blogs::details: name = blog_name)))
         } else {
             let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
 
@@ -124,7 +151,13 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             let act = post.create_activity(&*conn);
             broadcast(&user, act, user.get_followers(&*conn));
 
-            Redirect::to(uri!(details: blog = blog_name, slug = slug))
+            Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
+    } else {
+        Err(Template::render("posts/new", json!({
+            "account": user,
+            "errors": errors.inner(),
+            "form": form
+        })))
     }
 }

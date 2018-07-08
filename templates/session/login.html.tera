@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ "Login" | _ }}
@@ -10,11 +11,8 @@
 <p>{{ message }}</p>
 {% endif %}
 <form method="post">
-    <label for="email_or_name">{{ "Username or email" | _ }}</label>
-    <input type="text" id="email_or_name" name="email_or_name" />
-
-    <label for="password">{{ "Password" | _ }}</label>
-    <input type="password" id="password" name="password" />
+    {{ macros::input(name="email_or_name", label="Username or email", errors=errors, form=form, props='minlenght="1"') }}
+    {{ macros::input(name="password", label="Password", errors=errors, form=form, type="password", props='minlenght="8"') }}
 
     <input type="submit" value="{{ "Login" | _ }}" />
 </form>

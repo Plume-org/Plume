@@ -5,6 +5,8 @@ use rocket::{
 };
 use rocket_contrib::Template;
 use serde_json;
+use std::{collections::HashMap, borrow::Cow};
+use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::ActivityStream;
 use plume_common::utils;
@@ -40,7 +42,9 @@ fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomGroup> {
 #[get("/blogs/new")]
 fn new(user: User) -> Template {
     Template::render("blogs/new", json!({
-        "account": user
+        "account": user,
+        "errors": null,
+        "form": null
     }))
 }
 
@@ -49,21 +53,41 @@ fn new_auth() -> Flash<Redirect>{
     utils::requires_login("You need to be logged in order to create a new blog", uri!(new))
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate, Serialize)]
 struct NewBlogForm {
+    #[validate(custom(function = "valid_slug", message = "Invalid name"))]
     pub title: String
 }
 
+fn valid_slug(title: &str) -> Result<(), ValidationError> {
+    let slug = utils::make_actor_id(title.to_string());
+    if slug.len() == 0 {
+        Err(ValidationError::new("empty_slug"))
+    } else {
+        Ok(())
+    }
+}
+
 #[post("/blogs/new", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Redirect {
+fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Redirect, Template> {
     let form = data.get();
     let slug = utils::make_actor_id(form.title.to_string());
 
-    if Blog::find_local(&*conn, slug.clone()).is_some() || slug.len() == 0 {
-        Redirect::to(uri!(new))
-    } else {
+    let mut errors = match form.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(e) => e
+    };
+    if let Some(_) = Blog::find_local(&*conn, slug.clone()) {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A blog with the same name already exists.")),
+            params: HashMap::new()
+        });
+    }
+
+    if errors.is_empty() {
         let blog = Blog::insert(&*conn, NewBlog::new_local(
-            slug.to_string(),
+            slug.clone(),
             form.title.to_string(),
             String::from(""),
             Instance::local_id(&*conn)
@@ -76,7 +100,14 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Redirect 
             is_owner: true
         });
 
-        Redirect::to(uri!(details: name = slug))
+        Ok(Redirect::to(uri!(details: name = slug.clone())))
+    } else {
+        println!("{:?}", errors);
+        Err(Template::render("blogs/new", json!({
+            "account": user,
+            "errors": errors.inner(),
+            "form": form
+        })))
     }
 }
 

@@ -10,18 +10,22 @@ failure = "0.1"
 gettext-rs = "0.4"
 heck = "0.3.0"
 rpassword = "2.0"
+serde = "1.0"
+serde_derive = "1.0"
 serde_json = "1.0"
+validator = "0.7"
+validator_derive = "0.7"
 webfinger = "0.2"
 
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]
 version = "*"
 
-[dependencies.plume-models]
-path = "plume-models"
-
 [dependencies.plume-common]
 path = "plume-common"
+
+[dependencies.plume-models]
+path = "plume-models"
 
 [dependencies.rocket]
 git = "https://github.com/SergioBenitez/Rocket"
@@ -45,4 +49,4 @@ git = "https://github.com/BaptisteGelez/rocket_i18n"
 rev = "5b4225d5bed5769482dc926a7e6d6b79f1217be6"
 
 [workspace]
-members = ['plume-models', 'plume-common']
+members = ["plume-models", "plume-common"]
