@@ -1,4 +1,4 @@
-l-- Your SQL goes here
+-- Your SQL goes here
 CREATE TABLE instances (
     id SERIAL PRIMARY KEY,
     local_domain VARCHAR NOT NULL,
