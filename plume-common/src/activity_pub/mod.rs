@@ -2,9 +2,10 @@ use activitypub::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
+    Outcome,
     http::Status,
     response::{Response, Responder},
-    request::Request
+    request::{FromRequest, Request}
 };
 use serde_json;
 
@@ -56,6 +57,25 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
         serde_json::to_string(&json).respond_to(request).map(|r| Response::build_from(r)
             .raw_header("Content-Type", "application/activity+json")
             .finalize())
+    }
+}
+
+pub struct ApRequest;
+impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
+        request.headers().get_one("Content-Type").map(|header| header.split(",").map(|ct| match ct {
+            "application/ld+json; profile=\"w3.org/ns/activitystreams\"" |
+            "application/ld+json;profile=\"w3.org/ns/activitystreams\"" |
+            "application/activity+json" |
+            "application/ld+json" => Outcome::Success(ApRequest),
+            _ => Outcome::Forward(())
+        }).fold(Outcome::Forward(()), |out, ct| if out.is_success() {
+                out
+            } else {
+                ct
+        })).unwrap_or(Outcome::Forward(()))
     }
 }
 
