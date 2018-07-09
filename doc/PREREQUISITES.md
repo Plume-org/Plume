@@ -85,3 +85,12 @@ Once you have `rustup` installed, make sure you have the `nightly` rust
 toolchain installed:
 
     $ rustup toolchain install nightly
+
+### Installing GetText
+
+GetText is the tool we use to manage translations. It will be needed at runtime, since we only compile
+translation files when starting Plume.
+
+#### Ubuntu-like Linux
+
+    $ sudo apt-get install gettext
