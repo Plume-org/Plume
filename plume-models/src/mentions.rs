@@ -63,8 +63,8 @@ impl Mention {
     }
 
     pub fn from_activity(conn: &PgConnection, ment: link::Mention, inside: i32, in_post: bool) -> Option<Self> {
-        let ap_url = ment.link_props.href_string().unwrap();
-        let mentioned = User::find_by_ap_url(conn, ap_url).unwrap();
+        let ap_url = ment.link_props.href_string().ok()?;
+        let mentioned = User::find_by_ap_url(conn, ap_url)?;
 
         if in_post {
             Post::get(conn, inside.clone().into()).map(|post| {
