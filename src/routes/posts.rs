@@ -7,7 +7,7 @@ use serde_json;
 use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use plume_common::activity_pub::{broadcast, ActivityStream};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
     blogs::*,
@@ -55,8 +55,8 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
     })
 }
 
-#[get("/~/<blog>/<slug>", rank = 3, format = "application/activity+json")]
-fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityStream<Article> {
+#[get("/~/<blog>/<slug>", rank = 3)]
+fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<Article> {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
 

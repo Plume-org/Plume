@@ -295,5 +295,42 @@ msgstr "{{ data }} wspomniał o Tobie."
 msgid "Your comment"
 msgstr "Twój komentarz"
 
+msgid "Unknown error"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid name"
+msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
+
+msgid "A blog with the same name already exists."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment can't be empty"
+msgstr "Twój komentarz"
+
+msgid "A post with the same title already exists."
+msgstr ""
+
+msgid "We need an email or a username to identify you"
+msgstr ""
+
+msgid "Your password should be at least 8 characters long"
+msgstr ""
+
+#, fuzzy
+msgid "Passwords are not matching"
+msgstr "Potwierdzenie hasła"
+
+#, fuzzy
+msgid "Username can't be empty"
+msgstr "Nazwa użytkownika lub adres e-mail"
+
+msgid "Invalid email"
+msgstr ""
+
+msgid "Password should be at least 8 characters long"
+msgstr ""
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

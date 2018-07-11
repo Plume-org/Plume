@@ -8,7 +8,7 @@ use serde_json;
 use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use plume_common::activity_pub::ActivityStream;
+use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
     blog_authors::*,
@@ -33,8 +33,8 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
     })    
 }
 
-#[get("/~/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomGroup> {
+#[get("/~/<name>", rank = 1)]
+fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<CustomGroup> {
     let blog = Blog::find_local(&*conn, name).unwrap();
     ActivityStream::new(blog.into_activity(&*conn))
 }

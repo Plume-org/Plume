@@ -47,7 +47,9 @@ msgid "Something broke on our side."
 msgstr "Bei dir ist etwas schief gegangen."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen gerne melden."
+msgstr ""
+"Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen "
+"gerne melden."
 
 msgid "Configuration"
 msgstr "Konfiguration"
@@ -67,8 +69,11 @@ msgstr "Willkommen auf {{ instance_name | escape }}"
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "Geschrieben von {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgid ""
+"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr ""
+"Geschrieben von {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
+"{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Dieser Artikel steht unter der {{ license }} Lizenz."
@@ -132,7 +137,9 @@ msgid "Your Blogs"
 msgstr "Deine Blogs"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
-msgstr "Du hast bisher keinen Blog. Erstelle deinen eigenen oder tritt einem Blog bei."
+msgstr ""
+"Du hast bisher keinen Blog. Erstelle deinen eigenen oder tritt einem Blog "
+"bei."
 
 msgid "Start a new blog"
 msgstr "Starte einen neuen Blog"
@@ -251,7 +258,8 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Du musst eingeloggt sein, um dein Profil zu editieren"
 
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "Von {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr ""
+"Von {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
 msgstr "{{ data }} hat deinen Artikel reshared"
@@ -282,3 +290,40 @@ msgstr "{{ data }} hat dich erwähnt."
 
 msgid "Your comment"
 msgstr "Dein Kommentar"
+
+msgid "Unknown error"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid name"
+msgstr "Nutzername oder Passwort ungültig"
+
+msgid "A blog with the same name already exists."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment can't be empty"
+msgstr "Dein Kommentar"
+
+msgid "A post with the same title already exists."
+msgstr ""
+
+msgid "We need an email or a username to identify you"
+msgstr ""
+
+msgid "Your password should be at least 8 characters long"
+msgstr ""
+
+#, fuzzy
+msgid "Passwords are not matching"
+msgstr "Passwort Wiederholung"
+
+#, fuzzy
+msgid "Username can't be empty"
+msgstr "Nutzername oder E-Mail"
+
+msgid "Invalid email"
+msgstr ""
+
+msgid "Password should be at least 8 characters long"
+msgstr ""

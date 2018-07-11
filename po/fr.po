@@ -291,3 +291,40 @@ msgstr ""
 #, fuzzy
 msgid "Your comment"
 msgstr "Envoyer le commentaire"
+
+msgid "Unknown error"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid name"
+msgstr "Nom d'utilisateur ou mot de passe invalide"
+
+msgid "A blog with the same name already exists."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment can't be empty"
+msgstr "Envoyer le commentaire"
+
+msgid "A post with the same title already exists."
+msgstr ""
+
+msgid "We need an email or a username to identify you"
+msgstr ""
+
+msgid "Your password should be at least 8 characters long"
+msgstr ""
+
+#, fuzzy
+msgid "Passwords are not matching"
+msgstr "Confirmation du mot de passe"
+
+#, fuzzy
+msgid "Username can't be empty"
+msgstr "Nom d'utilisateur ou email"
+
+msgid "Invalid email"
+msgstr ""
+
+msgid "Password should be at least 8 characters long"
+msgstr ""

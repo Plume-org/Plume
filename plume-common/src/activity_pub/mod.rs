@@ -60,22 +60,25 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     }
 }
 
+#[derive(Clone)]
 pub struct ApRequest;
 impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
-        request.headers().get_one("Content-Type").map(|header| header.split(",").map(|ct| match ct {
-            "application/ld+json; profile=\"w3.org/ns/activitystreams\"" |
-            "application/ld+json;profile=\"w3.org/ns/activitystreams\"" |
+        request.headers().get_one("Accept").map(|header| header.split(",").map(|ct| match ct.trim() {
+            // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
+            "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"" |
+            "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"" |
             "application/activity+json" |
             "application/ld+json" => Outcome::Success(ApRequest),
-            _ => Outcome::Forward(())
-        }).fold(Outcome::Forward(()), |out, ct| if out.is_success() {
+            "text/html" => Outcome::Forward(true),
+            _ => Outcome::Forward(false)
+        }).fold(Outcome::Forward(false), |out, ct| if out.is_success() || (out.is_forward() && out.clone().forwarded().unwrap()) {
                 out
             } else {
                 ct
-        })).unwrap_or(Outcome::Forward(()))
+        }).map_forward(|_| ())).unwrap_or(Outcome::Forward(()))
     }
 }
 

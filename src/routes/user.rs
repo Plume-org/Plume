@@ -10,7 +10,7 @@ use serde_json;
 use validator::{Validate, ValidationError};
 
 use plume_common::activity_pub::{
-    ActivityStream, broadcast, Id, IntoId,
+    ActivityStream, broadcast, Id, IntoId, ApRequest,
     inbox::{Notify}
 };
 use plume_common::utils;
@@ -112,8 +112,8 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
     })
 }
 
-#[get("/@/<name>", format = "application/activity+json", rank = 1)]
-fn activity_details(name: String, conn: DbConn) -> ActivityStream<CustomPerson> {
+#[get("/@/<name>", rank = 1)]
+fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<CustomPerson> {
     let user = User::find_local(&*conn, name).unwrap();
     ActivityStream::new(user.into_activity(&*conn))
 }
@@ -222,8 +222,8 @@ fn inbox(name: String, conn: DbConn, data: String) -> String {
     }
 }
 
-#[get("/@/<name>/followers", format = "application/activity+json")]
-fn ap_followers(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
+#[get("/@/<name>/followers")]
+fn ap_followers(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<OrderedCollection> {
     let user = User::find_local(&*conn, name).unwrap();
     let followers = user.get_followers(&*conn).into_iter().map(|f| Id::new(f.ap_url)).collect::<Vec<Id>>();
 

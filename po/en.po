@@ -288,3 +288,36 @@ msgstr ""
 
 msgid "Your comment"
 msgstr ""
+
+msgid "Unknown error"
+msgstr ""
+
+msgid "Invalid name"
+msgstr ""
+
+msgid "A blog with the same name already exists."
+msgstr ""
+
+msgid "Your comment can't be empty"
+msgstr ""
+
+msgid "A post with the same title already exists."
+msgstr ""
+
+msgid "We need an email or a username to identify you"
+msgstr ""
+
+msgid "Your password should be at least 8 characters long"
+msgstr ""
+
+msgid "Passwords are not matching"
+msgstr ""
+
+msgid "Username can't be empty"
+msgstr ""
+
+msgid "Invalid email"
+msgstr ""
+
+msgid "Password should be at least 8 characters long"
+msgstr ""
