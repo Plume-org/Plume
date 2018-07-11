@@ -118,7 +118,7 @@ article img {
 
 /* Article.Meta */
 
-main .article-meta {
+main .article-meta, main .article-meta button {
 	padding: 0;
 	font-size: 1.1em;
 	margin-top: 10%;
@@ -156,8 +156,8 @@ main .article-meta .reshares > p {
 	font-size: 1.5em;
 }
 
-main .article-meta .likes a.button,
-main .article-meta .reshares a.button {
+main .article-meta .likes button,
+main .article-meta .reshares button {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -170,12 +170,12 @@ main .article-meta .reshares a.button {
 }
 
 main .article-meta .likes > p,
-main .article-meta .likes a.button:hover { color: #E92F2F; }
+main .article-meta .likes button:hover { color: #E92F2F; }
 main .article-meta .reshares > p,
-main .article-meta .reshares a.button:hover { color: #7765E3; }
+main .article-meta .reshares button:hover { color: #7765E3; }
 
-main .article-meta .likes a.button:before,
-main .article-meta .reshares a.button:before {
+main .article-meta .likes button i,
+main .article-meta .reshares button i {
 	transition: background 0.1s ease-in;
 	display: flex;
 	align-items: center;
@@ -186,42 +186,39 @@ main .article-meta .reshares a.button:before {
 	height: 2.5em;
 
 	border-radius: 50%;
-	font-family: "Font Awesome 5 Free";
 }
 
-main .article-meta .likes a.button:before {
-	content: "";
+main .article-meta .likes button i {
 	color: #E92F2F;
 	border: solid #E92F2F thin;
 	font-weight: 400;
 }
-main .article-meta .likes a.button:hover:before {
+main .article-meta .likes button:hover i {
 	background: rgba(233, 47, 47, 0.15);
 }
 
-main .article-meta .reshares a.button:before {
-	content: "";
+main .article-meta .reshares button i {
 	color: #7765E3;
 	border: solid #7765E3 thin;
 	font-weight: 600;
 }
-main .article-meta .reshares a.button:hover:before {
+main .article-meta .reshares button:hover i {
 	background: rgba(119, 101, 227, 0.15);
 }
 
-main .article-meta .likes a.button.liked:before { background: #E92F2F; }
-main .article-meta .likes a.button.liked:hover:before {
+main .article-meta .likes button.liked i { background: #E92F2F; }
+main .article-meta .likes button.liked:hover i {
 	background: rgba(233, 47, 47, 0.25);
 	color: #E92F2F;
 }
-main .article-meta .reshares a.button.reshared:before { background: #7765E3; }
-main .article-meta .reshares a.button.reshared:hover:before {
+main .article-meta .reshares button.reshared i { background: #7765E3; }
+main .article-meta .reshares button.reshared:hover i {
 	background: rgba(119, 101, 227, 0.25);
 	color: #7765E3;
 }
 
-main .article-meta .likes a.button.liked:before,
-main .article-meta .reshares a.button.reshared:before {
+main .article-meta .likes button.liked i,
+main .article-meta .reshares button.reshared i {
 	color: #F4F4F4;
 	font-weight: 900;
 }
@@ -351,7 +348,7 @@ textarea {
 
 /* Button & Submit */
 
-.button, input[type="submit"] {
+.button, input[type="submit"], button {
 	transition: all 0.1s ease-in;
 	display: inline-block;
 

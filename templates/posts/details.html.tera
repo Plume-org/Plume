@@ -37,24 +37,24 @@
         <p>{{ "This article is under the {{ license }} license." | _(license=post.license) }}</p>
 
         <div class="actions">
-            <div class="likes">
+            <form class="likes" action="like" method="POST">
                 <p aria-label="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}" title="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}">{{ n_likes }}</p>
 
                 {% if has_liked %}
-                    <a class="button liked" href="like">{{ "I don't like this anymore" | _ }}</a>
+                    <button type="submit" class="liked"><i class="far fa-heart"></i>{{ "I don't like this anymore" | _ }}</button>
                 {% else %}
-                    <a class="button" href="like">{{ "Add yours" | _ }}</a>
+                    <button type="submit"><i class="fa fa-heart"></i>{{ "Add yours" | _ }}</button>
                 {% endif %}
-            </div>
-            <div class="reshares">
+            </form>
+            <form class="reshares" action="reshare" method="POST">
                 <p aria-label="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}" title="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}">{{ n_reshares }}</p>
 
                 {% if has_reshared %}
-                    <a class="button reshared" href="reshare">{{ "I don't want to reshare this anymore" | _ }}</a>
+                    <button type="submit" class="reshared"><i class="far fa-retweet">{{ "I don't want to reshare this anymore" | _ }}</button>
                 {% else %}
-                    <a class="button" href="reshare">{{ "Reshare" | _ }}</a>
+                    <button type="submit"><i class="fa fa-retweet"></i>{{ "Reshare" | _ }}</button>
                 {% endif %}
-            </div>
+            </form>
         </div>
 
         <div class="comments">

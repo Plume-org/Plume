@@ -10,7 +10,7 @@ use plume_models::{
     users::User
 };
 
-#[get("/~/<blog>/<slug>/reshare")]
+#[post("/~/<blog>/<slug>/reshare")]
 fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
     let b = Blog::find_by_fqn(&*conn, blog.clone()).unwrap();
     let post = Post::find_by_slug(&*conn, slug.clone(), b.id).unwrap();
@@ -34,7 +34,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn) -> Redirect {
     Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))
 }
 
-#[get("/~/<blog>/<slug>/reshare", rank=1)]
+#[post("/~/<blog>/<slug>/reshare", rank=1)]
 fn create_auth(blog: String, slug: String) -> Flash<Redirect> {
     utils::requires_login("You need to be logged in order to reshare a post", uri!(create: blog = blog, slug = slug))
 }
