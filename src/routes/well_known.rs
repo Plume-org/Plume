@@ -17,7 +17,7 @@ fn nodeinfo() -> Content<String> {
     }).to_string())
 }
 
-#[get("/.well-known/host-meta", format = "application/xml")]
+#[get("/.well-known/host-meta")]
 fn host_meta() -> String {
     format!(r#"
     <?xml version="1.0"?>
