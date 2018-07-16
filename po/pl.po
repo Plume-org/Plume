@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-06-29 23:02+0200\n"
+"PO-Revision-Date: 2018-07-16 11:26+0200\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.0.8\n"
+"X-Generator: Poedit 2.0.9\n"
 
 msgid "Latest articles"
 msgstr "Najnowsze artykuły"
@@ -296,41 +296,38 @@ msgid "Your comment"
 msgstr "Twój komentarz"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "Nieznany błąd"
 
-#, fuzzy
 msgid "Invalid name"
-msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
+msgstr "Nieprawidłowa nazwa"
 
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Blog o tej nazwie już istnieje."
 
-#, fuzzy
 msgid "Your comment can't be empty"
-msgstr "Twój komentarz"
+msgstr "Twój komentarz nie może być pusty"
 
 msgid "A post with the same title already exists."
-msgstr ""
+msgstr "Wpis o tym tytule już istnieje."
 
 msgid "We need an email or a username to identify you"
 msgstr ""
+"Potrzebujemy nazwy użytkownika lub adresu e-mail, aby Cię zidentyfikować"
 
 msgid "Your password should be at least 8 characters long"
-msgstr ""
+msgstr "Twoje hasło musi składać się przynajmniej z 8 znaków"
 
-#, fuzzy
 msgid "Passwords are not matching"
-msgstr "Potwierdzenie hasła"
+msgstr "Hasła nie pasują do siebie"
 
-#, fuzzy
 msgid "Username can't be empty"
-msgstr "Nazwa użytkownika lub adres e-mail"
+msgstr "Nazwa użytkownika nie może być pusta"
 
 msgid "Invalid email"
-msgstr ""
+msgstr "Nieprawidłowy adres e-mail"
 
 msgid "Password should be at least 8 characters long"
-msgstr ""
+msgstr "Hasło musi składać się z przynajmniej 8 znaków"
 
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"
