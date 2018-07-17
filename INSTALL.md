@@ -14,7 +14,7 @@ cd Plume
 rustup toolchain install nightly
 rustup toolchain default nightly
 rustup update
-cargo install diesel_cli --no-default-features --features postgres # we dont need to compile anything else than pgsql
+cargo install diesel_cli --no-default-features --features postgres --version '=1.2.0' # we dont need to compile anything else than pgsql
 ```
 
 ## Now, if you want to run postgresql on the same server:
