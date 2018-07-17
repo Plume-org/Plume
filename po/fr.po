@@ -151,7 +151,7 @@ msgid "Edit your profile"
 msgstr "Éditez votre profil"
 
 msgid "Open on {{ instance_url }}"
-msgstr "Bienvenue sur {{ instance_name }}"
+msgstr "Ouvrir sur {{ instance_url }}"
 
 msgid "Follow"
 msgstr "S'abonner"
