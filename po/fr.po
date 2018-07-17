@@ -62,17 +62,15 @@ msgstr "Nom"
 msgid "Let&#x27;s go!"
 msgstr "C'est parti !"
 
-#, fuzzy
 msgid "Welcome on {{ instance_name | escape }}"
-msgstr "Bienvenue sur {{ instance_name }}"
+msgstr "Bienvenue sur {{ instance_name | escape }}"
 
 msgid "Notifications"
 msgstr "Notifications"
 
-#, fuzzy
 msgid ""
 "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name }}{{ link_3 }}"
+msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Cet article est placé sous la licence {{ license }}"
@@ -187,12 +185,11 @@ msgstr "Description"
 msgid "Update account"
 msgstr "Mettre à jour mes informations"
 
-#, fuzzy
 msgid "{{ name | escape }}'s followers"
-msgstr "{{ count }} abonné⋅e"
+msgstr "Les abonné⋅e⋅s de {{ name | escape }}"
 
 msgid "Followers"
-msgstr "{{ count }} abonné⋅e"
+msgstr "Abonné⋅e⋅s"
 
 msgid "New Account"
 msgstr "Nouveau compte"
@@ -257,9 +254,8 @@ msgstr "Vous devez vous connecter pour suivre quelqu'un"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
-#, fuzzy
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "De {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name }}{{ link_4 }}"
+msgstr "De {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
 msgstr "{{ data }} a repartagé votre article"
@@ -286,45 +282,40 @@ msgid "You are not author in this blog."
 msgstr "Vous n'êtes pas auteur dans ce blog."
 
 msgid "{{ data }} mentioned you."
-msgstr ""
+msgstr "{{ data }} vous a mentionné."
 
-#, fuzzy
 msgid "Your comment"
-msgstr "Envoyer le commentaire"
+msgstr "Votre commentaire"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "Erreur inconnue"
 
-#, fuzzy
 msgid "Invalid name"
-msgstr "Nom d'utilisateur ou mot de passe invalide"
+msgstr "Nom invalide"
 
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Un blog avec le même nom existe déjà."
 
-#, fuzzy
 msgid "Your comment can't be empty"
-msgstr "Envoyer le commentaire"
+msgstr "Votre commentaire ne peux pas être vide"
 
 msgid "A post with the same title already exists."
-msgstr ""
+msgstr "Un article avec le même titre existe déjà."
 
 msgid "We need an email or a username to identify you"
-msgstr ""
+msgstr "Nous avons besoin d'une adresse mail ou d'un nom d'utilisateur pour vous identifier."
 
 msgid "Your password should be at least 8 characters long"
-msgstr ""
+msgstr "Votre mot de passe doit faire au moins 8 caractères."
 
-#, fuzzy
 msgid "Passwords are not matching"
-msgstr "Confirmation du mot de passe"
+msgstr "Les mots de passe ne correspondent pas."
 
-#, fuzzy
 msgid "Username can't be empty"
-msgstr "Nom d'utilisateur ou email"
+msgstr "Le nom d'utilisateur ne peut pas être vide."
 
 msgid "Invalid email"
-msgstr ""
+msgstr "Adresse mail invalide"
 
 msgid "Password should be at least 8 characters long"
-msgstr ""
+msgstr "Le mot de passe doit faire au moins 8 caractères."
