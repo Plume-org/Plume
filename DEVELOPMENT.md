@@ -53,7 +53,7 @@ When you will launch Plume for the first time, it will setup the database by its
 To run migrations and correctly setup the database, Plume use the `diesel` CLI tool under the hood. Therefore you should install it before running Plume. If this was your time installing Rust, you will probably need to run that using `cargo`. `cargo` is installed with `rustc` so if you followed the earlier instructions it will already be available.
 
 ```
-cargo install diesel_cli
+cargo install diesel_cli --version '=1.2.0'
 ```
 
 #### Running Plume
