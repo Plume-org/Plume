@@ -111,7 +111,6 @@ main article {
 	font-family: "Lora", serif;
 	font-size: 1.2em;
 	line-height: 1.7em;
-	text-align: justify;
 }
 
 article img {
@@ -347,7 +346,6 @@ textarea {
  	font-family: "Lora", serif;
  	font-size: 1.1em;
  	line-height: 1.5em;
- 	text-align: justify;
 }
  
 /* Button & Submit */
