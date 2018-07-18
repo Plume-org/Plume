@@ -13,7 +13,7 @@ use openssl::{
     sign
 };
 use plume_common::activity_pub::{
-    AP_ACCEPT_HEADER, ActivityStream, Id, IntoId, ApSignature, PublicKey,
+    ap_accept_header, ActivityStream, Id, IntoId, ApSignature, PublicKey,
     inbox::WithInbox,
     sign::{Signer, gen_keypair}
 };
@@ -155,7 +155,7 @@ impl User {
     fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
         let req = Client::new()
             .get(&url[..])
-            .header(Accept(vec![qitem(AP_ACCEPT_HEADER.parse::<Mime>().unwrap())]))
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
             .send();
         match req {
             Ok(mut res) => {
