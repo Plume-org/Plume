@@ -329,5 +329,12 @@ msgstr "Nieprawidłowy adres e-mail"
 msgid "Password should be at least 8 characters long"
 msgstr "Hasło musi składać się z przynajmniej 8 znaków"
 
+#, fuzzy
+msgid "One author in this blog: "
+msgid_plural "{{ count }} authors in this blog: "
+msgstr[0] "Nie jesteś autorem tego bloga."
+msgstr[1] "Nie jesteś autorem tego bloga."
+msgstr[2] "Nie jesteś autorem tego bloga."
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

@@ -23,6 +23,7 @@ use plume_common::activity_pub::{
     sign
 };
 use instance::*;
+use users::User;
 use schema::blogs;
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
@@ -66,6 +67,15 @@ impl Blog {
 
     pub fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).expect("Couldn't find instance")
+    }
+
+    pub fn list_authors(&self, conn: &PgConnection) -> Vec<User> {
+        use schema::blog_authors;
+        use schema::users;
+        let authors_ids = blog_authors::table.filter(blog_authors::blog_id.eq(self.id)).select(blog_authors::author_id);
+        users::table.filter(users::id.eq(any(authors_ids)))
+            .load::<User>(conn)
+            .expect("Couldn't load authors of a blog")
     }
 
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {

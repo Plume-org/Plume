@@ -321,3 +321,8 @@ msgstr ""
 
 msgid "Password should be at least 8 characters long"
 msgstr ""
+
+msgid "One author in this blog: "
+msgid_plural "{{ count }} authors in this blog: "
+msgstr[0] ""
+msgstr[1] ""

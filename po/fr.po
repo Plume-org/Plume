@@ -70,7 +70,8 @@ msgstr "Notifications"
 
 msgid ""
 "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr ""
+"Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Cet article est placé sous la licence {{ license }}"
@@ -303,7 +304,9 @@ msgid "A post with the same title already exists."
 msgstr "Un article avec le même titre existe déjà."
 
 msgid "We need an email or a username to identify you"
-msgstr "Nous avons besoin d'une adresse mail ou d'un nom d'utilisateur pour vous identifier."
+msgstr ""
+"Nous avons besoin d'une adresse mail ou d'un nom d'utilisateur pour vous "
+"identifier."
 
 msgid "Your password should be at least 8 characters long"
 msgstr "Votre mot de passe doit faire au moins 8 caractères."
@@ -319,3 +322,8 @@ msgstr "Adresse mail invalide"
 
 msgid "Password should be at least 8 characters long"
 msgstr "Le mot de passe doit faire au moins 8 caractères."
+
+msgid "One author in this blog: "
+msgid_plural "{{ count }} authors in this blog: "
+msgstr[0] "{{ count }} aut⋅eur⋅rice dans ce blog : "
+msgstr[1] "{{ count }} aut⋅eur⋅rice⋅s dans ce blog : "

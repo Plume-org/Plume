@@ -8,6 +8,17 @@
 {% block content %}
     <h1>{{ blog.title }} (~{{ blog.actor_id }})</h1>
     <p>{{ blog.summary }}</p>
+    <p>
+        {{ "{{ count }} authors in this blog: " | _n(singular="One author in this blog: ", count = n_authors) }}
+        {% for author in authors %}
+            {% if author.display_name %}
+                {% set name = author.display_name %}
+            {% else %}
+                {% set name = author.username %}
+            {% endif %}
+            <a class="author" href="/@/{{ author.fqn }}">{{ name }}</a>{% if not loop.last %},{% endif %}
+        {% endfor %}
+    </p>
 
     <section>
         <h2>{{ "Latest articles" | _ }}</h2>
