@@ -8,7 +8,7 @@
 {% block content %}
 <h1>{{ "Create a post" | _ }}</h1>
 <form class="new-post" method="post">
-    {{ macros::input(name="title", label="Title", errors=errors, form=form) }}
+    {{ macros::input(name="title", label="Title", errors=errors, form=form, props="required") }}
 
     {% if errors is defined and errors.content %}
         {% for err in errors.content %}

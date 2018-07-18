@@ -1,3 +1,5 @@
+/* color palette: https://coolors.co/23f0c7-ef767a-7765e3-6457a6-ffe347 */
+
 @import url('/static/fonts/Route159/Route159.css');
 @import url('/static/fonts/Lora/Lora.css');
 @import url('/static/fonts/Playfair_Display/PlayfairDisplay.css');
@@ -370,6 +372,15 @@ input[type="submit"] { display: block; }
 	color: white;
 }
 
+/* Errors */
+
+p.error {
+	color: #ef767a;
+	font-weight: bold;
+	max-width: 40rem;
+	margin: 1em auto;
+}
+
 /*
  * == New post ==
  */
@@ -389,10 +400,6 @@ form.new-post textarea {
 	min-height: 20em;
 }
 form.new-post input[type="submit"] {
-	/*transition: all 0.2s ease;
-	display: block;
-	margin: 1em auto;*/
-
 	background: #ECECEC;
 	color: #242424;
 	border: none;
