@@ -333,3 +333,6 @@ msgid "One author in this blog: "
 msgid_plural "{{ count }} authors in this blog: "
 msgstr[0] "Du bist kein Autor in diesem Blog."
 msgstr[1] "Du bist kein Autor in diesem Blog."
+
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""

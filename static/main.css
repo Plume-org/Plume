@@ -22,6 +22,13 @@ a, a:visited {
 	outline: none;
 }
 
+.center {
+	text-align: center;
+	font-weight: bold;
+	opacity: 0.6;
+	padding: 5em;
+}
+
 /*
  * == Header ==
  */

@@ -326,3 +326,6 @@ msgid "One author in this blog: "
 msgid_plural "{{ count }} authors in this blog: "
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
