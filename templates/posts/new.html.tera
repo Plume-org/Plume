@@ -16,7 +16,8 @@
         {% endfor %}
     {% endif %}
 
-    <textarea id="content" name="content" placeholder="{{ "Content" | _ }}" value="{{ form.content | default(value="") }}"></textarea>
+    <label for="content">{{ "Content" | _ }}</label>
+    <textarea id="content" name="content" value="{{ form.content | default(value="") }}"></textarea>
 
     {{ macros::input(name="license", label="License", errors=errors, form=form) }}
 

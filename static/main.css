@@ -311,11 +311,11 @@ main .article-meta .comments .list {
 
 label {
 	display: block;
-	margin: 1.5em auto;
+	margin: 2em auto 1em;
 	font-size: 1.2em;
-	text-align: center;
+	max-width: 40rem;
 }
-input {
+input, textarea {
 	transition: all 0.1s ease-in;
 	display: block;
 	width: 100%;
@@ -332,34 +332,22 @@ input {
 
 	font-size: 1.2em;
 	font-weight: 400;
-	text-align: center;
 }
 form input[type="submit"] { margin: 2em auto; }
-input:focus {
+input:focus, textarea:focus {
 	background: #FAFAFA;
 	border-color: #7765E3;
 }
 
 textarea {
-	display: block;
-	width: 100%;
-	max-width: 40rem;
-	min-height: 4em;
-	margin: auto;
-	padding: 1em;
-	box-sizing: border-box;
-
-	background: #ECECEC;
-	color: #242424;
-	border: none;
-	resize: vertical;
-
-	font-family: "Lora", serif;
-	font-size: 1.1em;
-	line-height: 1.5em;
-	text-align: justify;
+ 	resize: vertical;
+ 
+ 	font-family: "Lora", serif;
+ 	font-size: 1.1em;
+ 	line-height: 1.5em;
+ 	text-align: justify;
 }
-
+ 
 /* Button & Submit */
 
 .button, input[type="submit"], button {
@@ -376,8 +364,7 @@ textarea {
 
 	cursor: pointer;
 }
-input[type="submit"]
-{ display: block; }
+input[type="submit"] { display: block; }
 .button:hover, input[type="submit"]:hover {
 	background: #7765E399;
 	color: white;
@@ -399,14 +386,12 @@ form.new-post .title {
 	text-align: left;
 }
 form.new-post textarea {
-	min-height: 8em;
-	padding: 0;
-	background: none;
+	min-height: 20em;
 }
 form.new-post input[type="submit"] {
-	transition: all 0.2s ease;
+	/*transition: all 0.2s ease;
 	display: block;
-	margin: 1em auto;
+	margin: 1em auto;*/
 
 	background: #ECECEC;
 	color: #242424;
@@ -415,8 +400,7 @@ form.new-post input[type="submit"] {
 	font-family: "Playfair Display", serif;
 	font-size: 1.5em;
 }
-form.new-post input[type="submit"]:hover
-{ background: #DADADA; }
+form.new-post input[type="submit"]:hover { background: #DADADA; }
 
 /*
  * == User ==
