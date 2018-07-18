@@ -75,7 +75,6 @@ impl Comment {
         let mentions = Mention::list_for_comment(conn, self.id).into_iter()
             .map(|m| m.get_mentioned(conn).map(|u| u.get_fqn(conn)).unwrap_or(String::new()))
             .collect::<Vec<String>>();
-        println!("{:?}", mentions);
         json["mentions"] = serde_json::to_value(mentions).unwrap();
         json
     }
