@@ -84,6 +84,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
 
 pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
+        .filter(|u| !u.is_local())
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
         .collect::<Vec<String>>()
         .unique();

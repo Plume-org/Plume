@@ -421,6 +421,10 @@ impl WithInbox for User {
     fn get_shared_inbox_url(&self) -> Option<String> {
        self.shared_inbox_url.clone()
     }
+
+    fn is_local(&self) -> bool {
+        self.instance_id == 0
+    }
 }
 
 impl Signer for User {

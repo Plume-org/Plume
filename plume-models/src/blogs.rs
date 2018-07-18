@@ -257,6 +257,10 @@ impl WithInbox for Blog {
     fn get_shared_inbox_url(&self) -> Option<String> {
         None
     }
+
+    fn is_local(&self) -> bool {
+        self.instance_id == 0
+    }
 }
 
 impl sign::Signer for Blog {
