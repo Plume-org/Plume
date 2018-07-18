@@ -50,7 +50,7 @@
                 <p aria-label="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}" title="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}">{{ n_reshares }}</p>
 
                 {% if has_reshared %}
-                    <button type="submit" class="reshared"><i class="far fa-retweet">{{ "I don't want to reshare this anymore" | _ }}</button>
+                    <button type="submit" class="reshared"><i class="far fa-retweet"></i>{{ "I don't want to reshare this anymore" | _ }}</button>
                 {% else %}
                     <button type="submit"><i class="fa fa-retweet"></i>{{ "Reshare" | _ }}</button>
                 {% endif %}
