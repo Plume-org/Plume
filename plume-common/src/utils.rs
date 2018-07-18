@@ -68,3 +68,26 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>) {
     html::push_html(&mut buf, parser);
     (buf, mentions.collect())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mentions() {
+        let tests = vec![
+            ("nothing", vec![]),
+            ("@mention", vec!["mention"]),
+            ("@mention@instance.tld", vec!["mention@instance.tld"]),
+            ("@many @mentions", vec!["many", "mentions"]),
+            ("@start with a mentions", vec!["start"]),
+            ("mention at @end", vec!["end"]),
+            ("between parenthesis (@test)", vec!["test"]),
+            ("with some punctuation @test!", vec!["test"]),
+        ];
+
+        for (md, mentions) in tests {
+            assert_eq!(md_to_html(md).1, mentions.into_iter().map(|s| s.to_string()).collect::<Vec<String>>());
+        }
+    }
+}
