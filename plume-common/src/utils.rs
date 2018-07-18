@@ -31,7 +31,7 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>) {
                     if (c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_') && (n < (txt.chars().count() - 1)) {
                         (events, in_mention, text_acc + c.to_string().as_ref(), n + 1, mentions)
                     } else {
-                        let mention = text_acc + c.to_string().as_ref();
+                        let mention = text_acc;
                         let short_mention = mention.clone();
                         let short_mention = short_mention.splitn(1, '@').nth(0).unwrap_or("");
                         let link = Tag::Link(format!("/@/{}/", mention).into(), short_mention.to_string().into());
@@ -40,6 +40,10 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>) {
                         events.push(Event::Start(link.clone()));
                         events.push(Event::Text(format!("@{}", short_mention).into()));
                         events.push(Event::End(link));
+
+                        if n >= (txt.chars().count() - 1) {
+                            events.push(Event::Text(c.to_string().into()))
+                        }
 
                         (events, false, c.to_string(), n + 1, mentions)
                     }
