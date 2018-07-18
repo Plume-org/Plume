@@ -17,6 +17,7 @@ pub mod sign;
 
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
+pub const AP_ACCEPT_HEADER: &'static str = "application/ld+json; profile=\"https://w3.org/ns/activitystreams\", application/ld+json;profile=\"https://w3.org/ns/activitystreams\", application/activity+json, application/ld+json";
 
 pub fn context() -> serde_json::Value {
     json!([

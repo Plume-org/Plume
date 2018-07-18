@@ -18,7 +18,7 @@ use webfinger::*;
 
 use {BASE_URL, USE_HTTPS};
 use plume_common::activity_pub::{
-    ApSignature, ActivityStream, Id, IntoId, PublicKey,
+    AP_ACCEPT_HEADER, ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
     sign
 };
@@ -109,7 +109,7 @@ impl Blog {
     fn fetch_from_url(conn: &PgConnection, url: String) -> Option<Blog> {
         let req = Client::new()
             .get(&url[..])
-            .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
+            .header(Accept(vec![qitem(AP_ACCEPT_HEADER.parse::<Mime>().unwrap())]))
             .send();
         match req {
             Ok(mut res) => {
