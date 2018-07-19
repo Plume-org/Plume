@@ -190,7 +190,7 @@ impl User {
             outbox_url: acct.object.ap_actor_props.outbox_string().expect("User::from_activity: outbox error"),
             inbox_url: acct.object.ap_actor_props.inbox_string().expect("User::from_activity: inbox error"),
             is_admin: false,
-            summary: SafeString::new(&acct.object.object_props.summary_string().expect("User::from_activity: summary error")),
+            summary: SafeString::new(&acct.object.object_props.summary_string().unwrap_or(String::new())),
             email: None,
             hashed_password: None,
             instance_id: instance.id,
