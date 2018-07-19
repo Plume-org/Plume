@@ -22,6 +22,13 @@ a, a:visited {
 	outline: none;
 }
 
+small {
+	margin-left: 1em;
+	color: #242424;
+	opacity: 0.6;
+	font-size: 0.75em;
+}
+
 .center {
 	text-align: center;
 	font-weight: bold;
@@ -290,20 +297,14 @@ main .article-meta .comments .list {
 	align-items: center;
 	align-content: center;
 }
-
+.comments .list .comment .author * {
+	transition: all 0.1s ease-in;
+}
 .comments .list .comment .author .display-name {
-	transition: color 0.1s ease-in;
 	color: #242424;
 }
 .comments .list .comment .author:hover .display-name { color: #7765E3; }
-
-.comments .list .comment .author .username {
-	transition: color 0.1s ease-in;
-	margin-left: 1em;
-	color: #777777;
-	font-size: 0.9em;
-}
-.comments .list .comment .author:hover .username { color: #444444; }
+.comments .list .comment .author:hover small { opacity: 1; }
 
 .comments .list .comment .text {
 	padding: 1.25em 0;

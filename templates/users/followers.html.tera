@@ -22,7 +22,7 @@
             {% set follower_name = follower.username %}
         {% endif %}
         <div class="card">
-            <h3><a href="/@/{{ follower.fqn }}/">{{ follower_name }}</a> &mdash; @{{ follower.fqn }}</h3>
+            <h3><a href="/@/{{ follower.fqn }}/">{{ follower_name }}</a> <small>@{{ follower.fqn }}</small></h3>
             <main><p>{{ follower.summary | safe }}</p></main>
         </div>
     {% endfor %}
