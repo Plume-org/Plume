@@ -19,7 +19,7 @@
     <label for="content">{{ "Content" | _ }}</label>
     <textarea id="content" name="content" value="{{ form.content | default(value="") }}"></textarea>
 
-    {{ macros::input(name="license", label="License", errors=errors, form=form) }}
+    {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true) }}
 
     <input type="submit" value="{{ "Publish" | _ }}" />
 </form>

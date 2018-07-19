@@ -329,4 +329,9 @@ msgstr[0] "{{ count }} aut⋅eur⋅rice dans ce blog : "
 msgstr[1] "{{ count }} aut⋅eur⋅rice⋅s dans ce blog : "
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr "Connectez-vous ou utilisez votre compte sur le Fediverse pour interagir avec cet article"
+msgstr ""
+"Connectez-vous ou utilisez votre compte sur le Fediverse pour interagir avec "
+"cet article"
+
+msgid "Optional"
+msgstr "Optionnel"

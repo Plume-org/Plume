@@ -322,3 +322,6 @@ msgstr[1] ""
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
+
+msgid "Optional"
+msgstr ""

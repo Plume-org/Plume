@@ -336,3 +336,6 @@ msgstr[1] "Du bist kein Autor in diesem Blog."
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
+
+msgid "Optional"
+msgstr ""
