@@ -42,7 +42,7 @@ fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
         let n_followers = user.get_followers(&*conn).len();
 
         Template::render("users/details", json!({
-            "user": serde_json::to_value(user.clone()).unwrap(),
+            "user": user.to_json(&*conn),
             "instance_url": user.get_instance(&*conn).public_domain,
             "is_remote": user.instance_id != Instance::local_id(&*conn),
             "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
@@ -100,7 +100,7 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
         let user_id = user.id.clone();
 
         Template::render("users/followers", json!({
-            "user": serde_json::to_value(user.clone()).unwrap(),
+            "user": user.to_json(&*conn),
             "instance_url": user.get_instance(&*conn).public_domain,
             "is_remote": user.instance_id != Instance::local_id(&*conn),
             "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
