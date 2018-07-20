@@ -18,11 +18,12 @@
         <a class="inline-block button" href="{{ user.ap_url }}">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
     {% endif %}
 
-    {% if not is_self and account %}
+    {% set not_self = not is_self %}
+    {% if not_self and (account is defined) %}
         {% if follows %}
-            <a href="follow/" class="inline-block button">{{ "Follow" | _ }}</a>
-        {% else %}
             <a href="follow/" class="inline-block button">{{ "Unfollow" | _ }}</a>
+        {% else %}
+            <a href="follow/" class="inline-block button">{{ "Follow" | _ }}</a>
         {% endif %}
     {% endif %}
 </div>
