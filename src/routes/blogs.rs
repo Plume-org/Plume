@@ -18,22 +18,28 @@ use plume_models::{
     posts::Post,
     users::User
 };
+use routes::Page;
 
-#[get("/~/<name>", rank = 2)]
-fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
+#[get("/~/<name>?<page>", rank = 2)]
+fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {
     may_fail!(user, Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
-        let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
+        let posts = Post::blog_page(&*conn, &blog, page.limits());
         let authors = &blog.list_authors(&*conn);
 
         Template::render("blogs/details", json!({
             "blog": &blog,
             "account": user,
             "is_author": user.map(|x| x.is_author_in(&*conn, blog.clone())),
-            "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "n_authors": authors.len()
         }))
     })    
+}
+
+#[get("/~/<name>", rank = 3)]
+fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
+    paginated_details(name, conn, user, Page::first())
 }
 
 #[get("/~/<name>", rank = 1)]

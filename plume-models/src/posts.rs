@@ -91,6 +91,15 @@ impl Post {
             .expect("Error loading recent posts for blog")
     }
 
+    pub fn blog_page(conn: &PgConnection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
+        posts::table.filter(posts::blog_id.eq(blog.id))
+            .order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Post>(conn)
+            .expect("Error loading a page of posts for blog")
+    }
+
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;

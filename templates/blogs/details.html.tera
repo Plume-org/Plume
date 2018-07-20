@@ -22,14 +22,14 @@
 
     <section>
         <h2>{{ "Latest articles" | _ }}</h2>
-        {% if recents | length < 1 %}
+        {% if posts | length < 1 %}
             <p>{{ "No posts to see here yet." | _ }}</p>
         {% endif %}
         {% if is_author %}
             <a href="new" class="button inline-block">{{ "New article" | _ }}</a>
         {% endif %}
         <div class="cards">
-            {% for article in recents %}
+            {% for article in posts %}
                 {{ macros::post_card(article=article) }}
             {% endfor %}
         </div>

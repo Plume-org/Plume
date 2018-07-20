@@ -36,6 +36,7 @@ fn main() {
     let pool = setup::check();
     rocket::ignite()
         .mount("/", routes![
+            routes::blogs::paginated_details,
             routes::blogs::details,
             routes::blogs::activity_details,
             routes::blogs::outbox,
