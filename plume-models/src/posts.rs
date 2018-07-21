@@ -91,6 +91,12 @@ impl Post {
             .expect("Error loading recent posts for blog")
     }
 
+    pub fn get_for_blog(conn: &PgConnection, blog:&Blog) -> Vec<Post> {
+        posts::table.filter(posts::blog_id.eq(blog.id))
+            .load::<Post>(conn)
+            .expect("Error loading posts for blog")
+    }
+
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;

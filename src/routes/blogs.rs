@@ -23,6 +23,7 @@ use plume_models::{
 fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
     may_fail!(user, Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
         let recents = Post::get_recents_for_blog(&*conn, &blog, 5);
+        let articles = Post::get_for_blog(&*conn, &blog);
         let authors = &blog.list_authors(&*conn);
 
         Template::render("blogs/details", json!({
@@ -31,7 +32,8 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
             "is_author": user.map(|x| x.is_author_in(&*conn, blog.clone())),
             "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "n_authors": authors.len()
+            "n_authors": authors.len(),
+            "n_articles": articles.len()
         }))
     })    
 }
