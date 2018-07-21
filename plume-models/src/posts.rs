@@ -181,11 +181,14 @@ impl Post {
     }
 
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let blog = self.get_blog(conn);
         json!({
             "post": self,
             "author": self.get_authors(conn)[0].to_json(conn),
-            "url": format!("/~/{}/{}/", self.get_blog(conn).actor_id, self.slug),
-            "date": self.creation_date.timestamp()
+            "url": format!("/~/{}/{}/", blog.actor_id, self.slug),
+            "date": self.creation_date.timestamp(),
+            "blog": blog,
+            "blog_url": format!("/~/{}", blog.actor_id)
         })
     }
 

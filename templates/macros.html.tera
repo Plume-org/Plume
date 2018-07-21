@@ -18,6 +18,7 @@
                 link_4="</a>")
             }}
             ⋅ {{ article.date | date(format="%B %e") }}
+            ⋅ <a href="{{article.blog_url}}">{{article.blog.title}}</a>
         </p>
     </div>
 {% endmacro post_card %}
