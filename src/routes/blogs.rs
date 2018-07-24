@@ -24,6 +24,7 @@ use routes::Page;
 fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {
     may_fail!(user, Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
         let posts = Post::blog_page(&*conn, &blog, page.limits());
+        let articles = Post::get_for_blog(&*conn, &blog);
         let authors = &blog.list_authors(&*conn);
 
         Template::render("blogs/details", json!({
@@ -32,7 +33,8 @@ fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page)
             "is_author": user.map(|x| x.is_author_in(&*conn, blog.clone())),
             "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "n_authors": authors.len()
+            "n_authors": authors.len(),
+            "n_articles": articles.len()
         }))
     })    
 }

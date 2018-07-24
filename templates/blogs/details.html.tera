@@ -19,7 +19,10 @@
             <a class="author" href="/@/{{ author.fqn }}">{{ name }}</a>{% if not loop.last %},{% endif %}
         {% endfor %}
     </p>
-
+    <p>
+        {{ "{{ count }} articles in this blog" | _n(singular="One article in this blog", count = n_articles) }}
+    </p>
+ 
     <section>
         <h2>{{ "Latest articles" | _ }}</h2>
         {% if posts | length < 1 %}

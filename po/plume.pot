@@ -325,3 +325,8 @@ msgstr ""
 
 msgid "Optional"
 msgstr ""
+
+msgid "One article in this blog"
+msgid_plural "{{ count }} articles in this blog"
+msgstr[0] ""
+msgstr[1] ""
