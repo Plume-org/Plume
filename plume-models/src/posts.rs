@@ -187,8 +187,7 @@ impl Post {
             "author": self.get_authors(conn)[0].to_json(conn),
             "url": format!("/~/{}/{}/", blog.actor_id, self.slug),
             "date": self.creation_date.timestamp(),
-            "blog": blog,
-            "blog_url": format!("/~/{}", blog.actor_id)
+            "blog": blog.to_json(conn)
         })
     }
 
