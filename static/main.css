@@ -544,7 +544,6 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 /*== Pagination ==*/
 .pagination {
 	display: flex;
-	width: 100%;
 	justify-content: space-evenly;
 }
 

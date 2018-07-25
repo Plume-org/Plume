@@ -10,17 +10,20 @@ use plume_models::{
     instance::*
 };
 use inbox::Inbox;
+use routes::Page;
 
-#[get("/")]
-fn index(conn: DbConn, user: Option<User>) -> Template {
+#[get("/?<page>")]
+fn paginated_index(conn: DbConn, user: Option<User>, page: Page) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
-            let recents = Post::get_recents(&*conn, 6);
+            let recents = Post::get_recents_page(&*conn, page.limits());
 
             Template::render("instance/index", json!({
                 "instance": inst,
                 "account": user,
-                "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+                "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "page": page.page,
+                "n_pages": Page::total(Post::count(&*conn) as i32)
             }))
         }
         None => {
@@ -29,6 +32,11 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
             }))
         }
     }
+}
+
+#[get("/")]
+fn index(conn: DbConn, user: Option<User>) -> Template {
+    paginated_index(conn, user, Page::first())
 }
 
 #[post("/inbox", data = "<data>")]

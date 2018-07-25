@@ -350,5 +350,11 @@ msgstr[0] "Ten blog ma jednego autora: "
 msgstr[1] "Ten blog ma {{ count }} autorów: "
 msgstr[2] "Ten blog ma {{ count }} autorów: "
 
+msgid "Previous page"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

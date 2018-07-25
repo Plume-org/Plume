@@ -65,6 +65,10 @@ impl Post {
             .len()
     }
 
+    pub fn count(conn: &PgConnection) -> i64 {
+        posts::table.count().get_result(conn).expect("Couldn't count posts")
+    }
+
     pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
             .limit(limit)
@@ -104,6 +108,14 @@ impl Post {
             .limit((max - min).into())
             .load::<Post>(conn)
             .expect("Error loading a page of posts for blog")
+    }
+
+    pub fn get_recents_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Post> {
+        posts::table.order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Post>(conn)
+            .expect("Error loading recent posts page")
     }
 
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
