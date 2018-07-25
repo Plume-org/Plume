@@ -54,6 +54,7 @@ fn main() {
             routes::likes::create,
             routes::likes::create_auth,
 
+            routes::notifications::paginated_notifications,
             routes::notifications::notifications,
             routes::notifications::notifications_auth,
 

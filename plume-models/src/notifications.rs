@@ -35,4 +35,13 @@ impl Notification {
             .load::<Notification>(conn)
             .expect("Couldn't load user notifications")
     }
+
+    pub fn page_for_user(conn: &PgConnection, user: &User, (min, max): (i32, i32)) -> Vec<Notification> {
+        notifications::table.filter(notifications::user_id.eq(user.id))
+            .order_by(notifications::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Notification>(conn)
+            .expect("Couldn't load user notifications page")
+    }
 }
