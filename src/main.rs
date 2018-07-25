@@ -79,6 +79,7 @@ fn main() {
             routes::user::details,
             routes::user::dashboard,
             routes::user::dashboard_auth,
+            routes::user::followers_paginated,
             routes::user::followers,
             routes::user::edit,
             routes::user::edit_auth,

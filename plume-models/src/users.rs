@@ -275,6 +275,15 @@ impl User {
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 
+    pub fn get_followers_page(&self, conn: &PgConnection, (min, max): (i32, i32)) -> Vec<User> {
+        use schema::follows;
+        let follows = Follow::belonging_to(self).select(follows::follower_id);
+        users::table.filter(users::id.eq(any(follows)))
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<User>(conn).unwrap()
+    }
+
     pub fn get_following(&self, conn: &PgConnection) -> Vec<User> {
         use schema::follows;
         let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);

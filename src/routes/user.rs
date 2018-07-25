@@ -24,6 +24,7 @@ use plume_models::{
     users::*
 };
 use inbox::Inbox;
+use routes::Page;
 
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -94,23 +95,32 @@ fn follow_auth(name: String) -> Flash<Redirect> {
     utils::requires_login("You need to be logged in order to follow someone", uri!(follow: name = name))
 }
 
-#[get("/@/<name>/followers", rank = 2)]
-fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
+#[get("/@/<name>/followers?<page>")]
+fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
     may_fail!(account, User::find_by_fqn(&*conn, name.clone()), "Couldn't find requested user", |user| {
         let user_id = user.id.clone();
+        let followers_count = user.get_followers(&*conn).len();
 
         Template::render("users/followers", json!({
             "user": user.to_json(&*conn),
             "instance_url": user.get_instance(&*conn).public_domain,
             "is_remote": user.instance_id != Instance::local_id(&*conn),
             "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-            "followers": user.get_followers(&*conn).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            "followers": user.get_followers_page(&*conn, page.limits()).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "account": account,
             "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-            "n_followers": user.get_followers(&*conn).len()
+            "n_followers": followers_count,
+            "page": page.page,
+            "n_pages": Page::total(followers_count as i32)
         }))
     })
 }
+
+#[get("/@/<name>/followers", rank = 2)]
+fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
+    followers_paginated(name, conn, account, Page::first())
+}
+
 
 #[get("/@/<name>", rank = 1)]
 fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<CustomPerson> {
