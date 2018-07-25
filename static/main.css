@@ -540,3 +540,14 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 		min-height: 80%;
 	}
 }
+
+/*== Pagination ==*/
+.pagination {
+	display: flex;
+	width: 100%;
+	justify-content: space-evenly;
+}
+
+.pagination > * {
+	padding: 2em;
+}
