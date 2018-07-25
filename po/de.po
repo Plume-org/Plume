@@ -339,3 +339,9 @@ msgstr ""
 
 msgid "Optional"
 msgstr ""
+
+#, fuzzy
+msgid "One article in this blog"
+msgid_plural "{{ count }} articles in this blog"
+msgstr[0] "Du bist kein Autor in diesem Blog."
+msgstr[1] "Du bist kein Autor in diesem Blog."

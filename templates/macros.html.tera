@@ -35,3 +35,13 @@
     {% endif %}
     <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value="") }}" {{ props | safe }}/>
 {% endmacro input %}
+{% macro paginate(page, total, previous="Previous page", next="Next page") %}
+    <div class="pagination">
+        {% if page != 1 %}
+            <a href="?page={{ page - 1 }}">{{ previous | _ }}</a>
+        {% endif %}
+        {% if page < total %}
+            <a href="?page={{ page + 1 }}">{{ next | _ }}</a>
+        {% endif %}
+    </div>
+{% endmacro %}

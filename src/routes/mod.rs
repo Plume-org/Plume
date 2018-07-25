@@ -61,6 +61,15 @@ impl Page {
         }
     }
 
+    /// Computes the total number of pages needed to display n_items
+    pub fn total(n_items: i32) -> i32 {
+        if n_items % ITEMS_PER_PAGE == 0 {
+            n_items / ITEMS_PER_PAGE
+        } else {
+            (n_items / ITEMS_PER_PAGE) + 1
+        }
+    }
+
     pub fn limits(&self) -> (i32, i32) {
         ((self.page - 1) * ITEMS_PER_PAGE, self.page * ITEMS_PER_PAGE)
     }

@@ -34,7 +34,9 @@ fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page)
             "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "n_authors": authors.len(),
-            "n_articles": articles.len()
+            "n_articles": articles.len(),
+            "page": page.page,
+            "n_pages": Page::total(articles.len() as i32)
         }))
     })    
 }

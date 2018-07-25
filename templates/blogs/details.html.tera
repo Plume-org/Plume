@@ -36,5 +36,6 @@
                 {{ macros::post_card(article=article) }}
             {% endfor %}
         </div>
+        {{ macros::paginate(page=page, total=n_pages) }}
     </section>
 {% endblock content %}
