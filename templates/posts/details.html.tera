@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ post.title }}
@@ -78,20 +79,7 @@
 
             <div class="list">
                 {% for comment in comments %}
-                    {% if comment.author.display_name %}
-                        {% set comment_author_name = comment.author.display_name %}
-                    {% else %}
-                        {% set comment_author_name = comment.author.username %}
-                    {% endif %}
-
-                    <div class="comment" id="comment-{{ comment.id }}">
-                        <a class="author" href="{{ comment.author.ap_url }}">
-                            <span class="display-name">{{ comment.author.display_name }}</span>
-                            <small>@{{ comment.author.username }}</small>
-                        </a>
-                        <div class="text">{{ comment.content | safe }}</div>
-                        <a class="button" href="?responding_to={{ comment.id }}">{{ "Respond" | _ }}</a>
-                    </div>
+                    {{ macros::comment(comm=comment) }}
                 {% endfor %}
             </div>
         </div>

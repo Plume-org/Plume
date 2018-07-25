@@ -48,19 +48,20 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
         .map_err(|errors| {
             // TODO: de-duplicate this code
             let comments = Comment::list_by_post(&*conn, post.id);
+            let comms = comments.clone();
 
             Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),
                 "post": post,
                 "blog": blog,
-                "comments": comments.into_iter().map(|c| c.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "comments": &comments.into_iter().map(|c| c.to_json(&*conn, &comms)).collect::<Vec<serde_json::Value>>(),
                 "n_likes": post.get_likes(&*conn).len(),
                 "has_liked": user.has_liked(&*conn, &post),
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.has_reshared(&*conn, &post),
                 "account": user,
                 "date": &post.creation_date.timestamp(),
-                "previous": form.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn)),
+                "previous": form.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![])),
                 "user_fqn": user.get_fqn(&*conn),
                 "errors": errors
             }))

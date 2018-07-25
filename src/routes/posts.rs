@@ -36,19 +36,24 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
     may_fail!(user, Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
         may_fail!(user, Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             let comments = Comment::list_by_post(&*conn, post.id);
+            let comms = comments.clone();
 
             Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),
                 "post": post,
                 "blog": blog,
-                "comments": comments.into_iter().map(|c| c.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "comments": &comments.into_iter().filter_map(|c| if c.in_response_to_id.is_none() {
+                    Some(c.to_json(&*conn, &comms))
+                } else {
+                    None
+                }).collect::<Vec<serde_json::Value>>(),
                 "n_likes": post.get_likes(&*conn).len(),
                 "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
                 "account": user,
                 "date": &post.creation_date.timestamp(),
-                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn))),
+                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
                 "user_fqn": user.map(|u| u.get_fqn(&*conn)).unwrap_or(String::new())
             }))
         })

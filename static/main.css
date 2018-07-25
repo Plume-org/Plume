@@ -281,14 +281,19 @@ main .article-meta .comments > a.button { margin-bottom: 1em; }
 main .article-meta .comments .list {
 	display: grid;
 	margin: 0;
+	padding: 0 20%;
+	background: #ECECEC;
 }
 
 /* ~ Comment ~ */
 
 .comments .list .comment {
-	background: #ECECEC;
-	padding: 2em 20%;
+	padding: 2em;
 	font-size: 1em;
+}
+
+.comments .list > .comment {
+	border: none;
 }
 
 .comments .list .comment .author {

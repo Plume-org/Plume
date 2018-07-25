@@ -45,3 +45,16 @@
         {% endif %}
     </div>
 {% endmacro %}
+{% macro comment(comm) %}
+    <div class="comment" id="comment-{{ comm.id }}">
+        <a class="author" href="{{ comm.author.ap_url }}">
+            <span class="display-name">{{ comm.author.display_name | default(value=comm.author.username) }}</span>
+            <small>@{{ comm.author.username }}</small>
+        </a>
+        <div class="text">{{ comm.content | safe }}</div>
+        <a class="button" href="?responding_to={{ comm.id }}">{{ "Respond" | _ }}</a>
+        {% for res in comm.responses %}
+            {{ self::comment(comm=res) }}
+        {% endfor %}
+    </div>
+{% endmacro %}
