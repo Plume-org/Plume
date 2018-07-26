@@ -45,6 +45,7 @@ pub struct NewPost {
     pub content: SafeString,
     pub published: bool,
     pub license: String,
+    pub creation_date: Option<NaiveDateTime>,
     pub ap_url: String
 }
 
@@ -248,7 +249,8 @@ impl FromActivity<Article, PgConnection> for Post {
                 published: true,
                 license: String::from("CC-0"), // TODO
                 // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error"))
+                ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error")),
+                creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc())
             });
 
             for author in authors.into_iter() {

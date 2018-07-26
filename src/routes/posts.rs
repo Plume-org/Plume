@@ -142,7 +142,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 content: SafeString::new(&content),
                 published: true,
                 license: form.license.to_string(),
-                ap_url: "".to_string()
+                ap_url: "".to_string(),
+                creation_date: None
             });
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
