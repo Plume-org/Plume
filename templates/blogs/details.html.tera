@@ -28,7 +28,7 @@
             <p>{{ "No posts to see here yet." | _ }}</p>
         {% endif %}
         {% if is_author %}
-            <a href="new" class="button inline-block">{{ "New article" | _ }}</a>
+            <a href="/~/{{ blog.fqn }}/new/" class="button inline-block">{{ "New article" | _ }}</a>
         {% endif %}
         <div class="cards">
             {% for article in posts %}

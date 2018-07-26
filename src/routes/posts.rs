@@ -41,7 +41,7 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
 
             Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),
-                "post": post,
+                "article": post.to_json(&*conn),
                 "blog": blog,
                 "comments": &comments.into_iter().filter_map(|c| if c.in_response_to_id.is_none() {
                     Some(c.to_json(&*conn, &comms))

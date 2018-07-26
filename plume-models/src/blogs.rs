@@ -259,8 +259,7 @@ impl Blog {
 
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
-        let formatted = serde_json::Value::String(format!("/~/{}",self.get_fqn(conn)));
-        json["fqn"] = formatted;
+        json["fqn"] = json!(self.get_fqn(conn));
         json
     }
 }

@@ -13,7 +13,7 @@
                 link_4="</a>")
             }}
             ⋅ {{ article.date | date(format="%B %e") }}
-            ⋅ <a href="{{ article.blog.fqn }}">{{ article.blog.title }}</a>
+            ⋅ <a href="/~/{{ article.blog.fqn }}/">{{ article.blog.title }}</a>
         </p>
     </div>
 {% endmacro post_card %}

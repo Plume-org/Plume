@@ -32,5 +32,5 @@
 </div>
 
 <div>
-    <a href="followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
+    <a href="/@/{{ user.fqn }}/followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
 </div>
