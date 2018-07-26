@@ -1,6 +1,7 @@
 use activitypub::{
-    activity::Follow,
-    collection::OrderedCollection
+    activity::{Create, Follow},
+    collection::OrderedCollection,
+    object::Article
 };
 use rocket::{
     State,
@@ -14,7 +15,7 @@ use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
-    inbox::{Notify}
+    inbox::{FromActivity, Notify}
 };
 use plume_common::utils;
 use plume_models::{
@@ -38,12 +39,26 @@ fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 }
 
 #[get("/@/<name>", rank = 2)]
-fn details(name: String, conn: DbConn, account: Option<User>) -> Template {
+fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<Pool<ThunkWorker<()>>>, other_conn: DbConn) -> Template {
     may_fail!(account, User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
         let recents = Post::get_recents_for_author(&*conn, &user, 6);
         let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
         let user_id = user.id.clone();
         let n_followers = user.get_followers(&*conn).len();
+
+        // Fetch new articles
+        let user_clone = user.clone();
+        worker.execute(Thunk::of(move || {
+            for create_act in user_clone.fetch_outbox::<Create>() {
+                match create_act.create_props.object_object::<Article>() {
+                    Ok(article) => {
+                        Post::from_activity(&*other_conn, article, user_clone.clone().into_id());
+                        println!("Fetched article from remote user");
+                    }
+                    Err(e) => println!("Error while fetching articles in background: {:?}", e)
+                }
+            }
+        }));
 
         Template::render("users/details", json!({
             "user": user.to_json(&*conn),

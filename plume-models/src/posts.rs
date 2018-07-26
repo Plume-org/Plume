@@ -178,7 +178,10 @@ impl Post {
         let mut article = Article::default();
         article.object_props.set_name_string(self.title.clone()).expect("Article::into_activity: name error");
         article.object_props.set_id_string(self.ap_url.clone()).expect("Article::into_activity: id error");
-        article.object_props.set_attributed_to_link_vec::<Id>(self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect()).expect("Article::into_activity: attributedTo error");
+
+        let mut authors = self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect::<Vec<Id>>();
+        authors.push(self.get_blog(conn).into_id()); // add the blog URL here too
+        article.object_props.set_attributed_to_link_vec::<Id>(authors).expect("Article::into_activity: attributedTo error");
         article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
         article.object_props.set_tag_link_vec(mentions).expect("Article::into_activity: tag error");
@@ -219,6 +222,7 @@ impl Post {
 
 impl FromActivity<Article, PgConnection> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
+        println!("Article: {:?}", article);
         let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
             .expect("Post::from_activity: attributedTo error")
             .into_iter()

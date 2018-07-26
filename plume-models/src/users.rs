@@ -1,5 +1,5 @@
 use activitypub::{
-    Actor, Object, Endpoint, CustomObject,
+    Activity, Actor, Object, Endpoint, CustomObject,
     actor::Person,
     collection::OrderedCollection
 };
@@ -249,6 +249,28 @@ impl User {
         coll.collection_props.items = serde_json::to_value(acts).unwrap();
         coll.collection_props.set_total_items_u64(n_acts as u64).unwrap();
         ActivityStream::new(coll)
+    }
+
+    pub fn fetch_outbox<T: Activity>(&self) -> Vec<T> {
+        let req = Client::new()
+            .get(&self.outbox_url[..])
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .send();
+        match req {
+            Ok(mut res) => {
+                let text = &res.text().unwrap();
+                let json: serde_json::Value = serde_json::from_str(text).unwrap();
+                json["items"].as_array()
+                    .expect("Outbox.items is not an array")
+                    .into_iter()
+                    .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                    .collect::<Vec<T>>()
+            },
+            Err(e) => {
+                println!("User outbox fetch error: {:?}", e);
+                vec![]
+            }
+        }
     }
 
     fn get_activities(&self, conn: &PgConnection) -> Vec<serde_json::Value> {
