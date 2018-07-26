@@ -43,7 +43,7 @@
 {% endmacro %}
 {% macro comment(comm) %}
     <div class="comment" id="comment-{{ comm.id }}">
-        <a class="author" href="{{ comm.author.ap_url }}">
+        <a class="author" href="/@/{{ comm.author.fqn }}/">
             <span class="display-name">{{ comm.author.name }}</span>
             <small>@{{ comm.author.username }}</small>
         </a>
