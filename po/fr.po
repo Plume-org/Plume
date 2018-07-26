@@ -347,3 +347,23 @@ msgstr ""
 
 msgid "Next page"
 msgstr ""
+
+#, fuzzy
+msgid "{{ user }} mentioned you."
+msgstr "{{ data }} vous a mentionné."
+
+#, fuzzy
+msgid "{{ user }} commented your article."
+msgstr "{{ data }} a commenté votre article"
+
+#, fuzzy
+msgid "{{ user }} is now following you."
+msgstr "{{ data }} vous suit"
+
+#, fuzzy
+msgid "{{ user }} liked your article."
+msgstr "{{ data }} a aimé votre article"
+
+#, fuzzy
+msgid "{{ user }} reshared your article."
+msgstr "{{ data }} a repartagé votre article"

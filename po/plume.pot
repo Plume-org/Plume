@@ -349,5 +349,5 @@ msgstr ""
 msgid "{{ user }} liked your article."
 msgstr ""
 
-msgstr "{{ user }} reshare your article."
-msgid ""
+msgid "{{ user }} reshared your article."
+msgstr ""
