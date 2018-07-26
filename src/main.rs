@@ -24,9 +24,11 @@ extern crate validator;
 #[macro_use]
 extern crate validator_derive;
 extern crate webfinger;
+extern crate workerpool;
 
 use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
+use workerpool::{Pool, thunk::ThunkWorker};
 
 mod inbox;
 mod setup;
@@ -104,6 +106,7 @@ fn main() {
             routes::errors::server_error
         ])
         .manage(pool)
+        .manage(Pool::<ThunkWorker<()>>::new(4))
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);
         }))
