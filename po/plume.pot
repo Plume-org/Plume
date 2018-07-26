@@ -336,3 +336,18 @@ msgstr ""
 
 msgid "Next page"
 msgstr ""
+
+msgid "{{ user }} mentioned you."
+msgstr ""
+
+msgid "{{ user }} commented your article."
+msgstr ""
+
+msgid "{{ user }} is now following you."
+msgstr ""
+
+msgid "{{ user }} liked your article."
+msgstr ""
+
+msgstr "{{ user }} reshare your article."
+msgid ""

@@ -89,15 +89,11 @@ impl FromActivity<activity::Like, PgConnection> for Like {
 
 impl Notify<PgConnection> for Like {
     fn notify(&self, conn: &PgConnection) {
-        let liker = User::get(conn, self.user_id).unwrap();
         let post = Post::get(conn, self.post_id).unwrap();
         for author in post.get_authors(conn) {
-            let post = post.clone();
             Notification::insert(conn, NewNotification {
-                title: "{{ data }} liked your article".to_string(),
-                data: Some(liker.display_name.clone()),
-                content: Some(post.title),
-                link: Some(post.ap_url),
+                kind: notification_kind::LIKE.to_string(),
+                object_id: self.id,
                 user_id: author.id
             });
         }

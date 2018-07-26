@@ -123,10 +123,8 @@ impl Notify<PgConnection> for Comment {
     fn notify(&self, conn: &PgConnection) {
         for author in self.get_post(conn).get_authors(conn) {
             Notification::insert(conn, NewNotification {
-                title: "{{ data }} commented your article".to_string(),
-                data: Some(self.get_author(conn).display_name.clone()),
-                content: Some(self.get_post(conn).title),
-                link: self.ap_url.clone(),
+                kind: notification_kind::COMMENT.to_string(),
+                object_id: self.id,
                 user_id: author.id
             });
         }

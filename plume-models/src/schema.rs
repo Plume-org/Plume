@@ -79,12 +79,10 @@ table! {
 table! {
     notifications (id) {
         id -> Int4,
-        title -> Varchar,
-        content -> Nullable<Text>,
-        link -> Nullable<Varchar>,
         user_id -> Int4,
         creation_date -> Timestamp,
-        data -> Nullable<Varchar>,
+        kind -> Varchar,
+        object_id -> Int4,
     }
 }
 

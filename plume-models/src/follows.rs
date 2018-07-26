@@ -70,12 +70,9 @@ impl FromActivity<FollowAct, PgConnection> for Follow {
 
 impl Notify<PgConnection> for Follow {
     fn notify(&self, conn: &PgConnection) {
-        let follower = User::get(conn, self.follower_id).unwrap();
         Notification::insert(conn, NewNotification {
-            title: "{{ data }} started following you".to_string(),
-            data: Some(follower.display_name.clone()),
-            content: None,
-            link: Some(follower.ap_url),
+            kind: notification_kind::FOLLOW.to_string(),
+            object_id: self.id,
             user_id: self.following_id
         });
     }

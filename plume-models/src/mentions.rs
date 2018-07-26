@@ -46,6 +46,13 @@ impl Mention {
         self.comment_id.and_then(|id| Comment::get(conn, id))
     }
 
+    pub fn get_user(&self, conn: &PgConnection) -> Option<User> {
+        match self.get_post(conn) {
+            Some(p) => p.get_authors(conn).into_iter().next(),
+            None => self.get_comment(conn).map(|c| c.get_author(conn))
+        }
+    }
+
     pub fn build_activity(conn: &PgConnection, ment: String) -> link::Mention {
         let user = User::find_by_fqn(conn, ment.clone());
         let mut mention = link::Mention::default();
@@ -94,16 +101,10 @@ impl Mention {
 
 impl Notify<PgConnection> for Mention {
     fn notify(&self, conn: &PgConnection) {
-        let author = self.get_comment(conn)
-            .map(|c| c.get_author(conn).display_name.clone())
-            .unwrap_or_else(|| self.get_post(conn).unwrap().get_authors(conn)[0].display_name.clone());
-
         self.get_mentioned(conn).map(|m| {
             Notification::insert(conn, NewNotification {
-                title: "{{ data }} mentioned you.".to_string(),
-                data: Some(author),
-                content: None,
-                link: Some(self.get_post(conn).map(|p| p.ap_url).unwrap_or_else(|| self.get_comment(conn).unwrap().ap_url.unwrap_or(String::new()))),
+                kind: notification_kind::MENTION.to_string(),
+                object_id: self.id,
                 user_id: m.id
             });
         });

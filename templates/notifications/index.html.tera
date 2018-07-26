@@ -10,9 +10,34 @@
     <div class="list">
         {% for notification in notifications %}
             <div class="card">
-                <h3><a href="{% if notification.link %}{{ notification.link }}/{% else %}#{% endif %}">{{ notification.title | _(data=notification.data) }}</a></h3>
-                {% if notification.content %}
-                    <p>{{ notification.content }}</p>
+                {% if notification.kind == "COMMENT" %}
+                    <h3><a href="{{ notification.object.post.url }}#comment-{{ notification.object.id }}">
+                        {{ "{{ user }} commented your article." | _(user=notification.object.user.display_name) }}
+                    </a></h3>
+                    <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.title }}</a></p>
+
+                {% elif notification.kind == "FOLLOW" %}
+                    <h3><a href="/@/{{ notification.object.follower.fqn }}/">
+                        {{ "{{ user }} is now following you." | _(user=notification.object.follower.display_name) }}
+                    </a></h3>
+
+                {% elif notification.kind == "LIKE" %}
+                    <h3>
+                        {{ "{{ user }} liked your article." | _(user=notification.object.user.display_name) }}
+                    </h3>
+                    <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.title }}</a></p>
+
+                {% elif notification.kind == "MENTION" %}
+                    <h3><a href="{{ notification.object.url }}">
+                        {{ "{{ user }} mentioned you." | _(user=notification.object.user.display_name) }}
+                    </a></h3>
+
+                {% elif notification.kind == "RESHARE" %}
+                    <h3>
+                        {{ "{{ user }} reshare your article." | _(user=notification.object.user.display_name) }}
+                    </h3>
+                    <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.title }}</a></p>
+
                 {% endif %}
             </div>
         {% endfor %}
