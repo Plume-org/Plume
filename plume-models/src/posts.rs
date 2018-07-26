@@ -222,49 +222,52 @@ impl Post {
 
 impl FromActivity<Article, PgConnection> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
-        println!("Article: {:?}", article);
-        let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
-            .expect("Post::from_activity: attributedTo error")
-            .into_iter()
-            .fold((None, vec![]), |(blog, mut authors), link| {
-                let url: String = link.into();
-                match User::from_url(conn, url.clone()) {
-                    Some(user) => {
-                        authors.push(user);
-                        (blog, authors)
-                    },
-                    None => (blog.or_else(|| Blog::from_url(conn, url)), authors)
-                }
+        if let Some(post) = Post::find_by_ap_url(conn, article.object_props.id_string().unwrap_or(String::new())) {
+            post
+        } else {
+            let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
+                .expect("Post::from_activity: attributedTo error")
+                .into_iter()
+                .fold((None, vec![]), |(blog, mut authors), link| {
+                    let url: String = link.into();
+                    match User::from_url(conn, url.clone()) {
+                        Some(user) => {
+                            authors.push(user);
+                            (blog, authors)
+                        },
+                        None => (blog.or_else(|| Blog::from_url(conn, url)), authors)
+                    }
+                });
+
+            let title = article.object_props.name_string().expect("Post::from_activity: title error");
+            let post = Post::insert(conn, NewPost {
+                blog_id: blog.expect("Received a new Article without a blog").id,
+                slug: title.to_kebab_case(),
+                title: title,
+                content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),
+                published: true,
+                license: String::from("CC-0"), // TODO
+                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error"))
             });
 
-        let title = article.object_props.name_string().expect("Post::from_activity: title error");
-        let post = Post::insert(conn, NewPost {
-            blog_id: blog.expect("Received a new Article without a blog").id,
-            slug: title.to_kebab_case(),
-            title: title,
-            content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),
-            published: true,
-            license: String::from("CC-0"), // TODO
-            // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-            ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error"))
-        });
-
-        for author in authors.into_iter() {
-            PostAuthor::insert(conn, NewPostAuthor {
-                post_id: post.id,
-                author_id: author.id
-            });
-        }
-
-        // save mentions
-        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
-            for tag in tags.into_iter() {
-                serde_json::from_value::<link::Mention>(tag)
-                    .map(|m| Mention::from_activity(conn, m, post.id, true))
-                    .ok();
+            for author in authors.into_iter() {
+                PostAuthor::insert(conn, NewPostAuthor {
+                    post_id: post.id,
+                    author_id: author.id
+                });
             }
+
+            // save mentions
+            if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+                for tag in tags.into_iter() {
+                    serde_json::from_value::<link::Mention>(tag)
+                        .map(|m| Mention::from_activity(conn, m, post.id, true))
+                        .ok();
+                }
+            }
+            post
         }
-        post
     }
 }
 

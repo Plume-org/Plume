@@ -47,18 +47,20 @@ fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<
         let n_followers = user.get_followers(&*conn).len();
 
         // Fetch new articles
-        let user_clone = user.clone();
-        worker.execute(Thunk::of(move || {
-            for create_act in user_clone.fetch_outbox::<Create>() {
-                match create_act.create_props.object_object::<Article>() {
-                    Ok(article) => {
-                        Post::from_activity(&*other_conn, article, user_clone.clone().into_id());
-                        println!("Fetched article from remote user");
+        if !user.get_instance(&*conn).local {
+            let user_clone = user.clone();
+            worker.execute(Thunk::of(move || {
+                for create_act in user_clone.fetch_outbox::<Create>() {
+                    match create_act.create_props.object_object::<Article>() {
+                        Ok(article) => {
+                            Post::from_activity(&*other_conn, article, user_clone.clone().into_id());
+                            println!("Fetched article from remote user");
+                        }
+                        Err(e) => println!("Error while fetching articles in background: {:?}", e)
                     }
-                    Err(e) => println!("Error while fetching articles in background: {:?}", e)
                 }
-            }
-        }));
+            }));
+        }
 
         Template::render("users/details", json!({
             "user": user.to_json(&*conn),

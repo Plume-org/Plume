@@ -159,11 +159,14 @@ impl User {
             .send();
         match req {
             Ok(mut res) => {
-                let text = &res.text().unwrap();
-                let ap_sign: ApSignature = serde_json::from_str(text).unwrap();
-                let mut json: CustomPerson = serde_json::from_str(text).unwrap();
-                json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-                Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+                if let Ok(text) = &res.text() {
+                    if let Ok(ap_sign) = serde_json::from_str::<ApSignature>(text) {
+                        if let Ok(mut json) = serde_json::from_str::<CustomPerson>(text) {
+                            json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
+                            Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+                        } else { None }
+                    } else { None }
+                } else { None }
             },
             Err(e) => {
                 println!("User fetch error: {:?}", e);
