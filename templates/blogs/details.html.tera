@@ -11,12 +11,7 @@
     <p>
         {{ "{{ count }} authors in this blog: " | _n(singular="One author in this blog: ", count = n_authors) }}
         {% for author in authors %}
-            {% if author.display_name %}
-                {% set name = author.display_name %}
-            {% else %}
-                {% set name = author.username %}
-            {% endif %}
-            <a class="author" href="/@/{{ author.fqn }}">{{ name }}</a>{% if not loop.last %},{% endif %}
+            <a class="author" href="/@/{{ author.fqn }}">{{ author.name }}</a>{% if not loop.last %},{% endif %}
         {% endfor %}
     </p>
     <p>

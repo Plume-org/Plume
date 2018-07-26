@@ -1,6 +1,6 @@
 <div class="user">
     <h1>
-        {{ name }}
+        {{ user.name }}
         {% if user.is_admin %}
             <span class="badge">{{ "Admin" | _ }}</span>
         {% endif %}

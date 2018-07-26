@@ -14,7 +14,7 @@
                     <i class="fa fa-comment left-icon"></i>
                     <main class="grow">
                         <h3><a href="{{ notification.object.post.url }}#comment-{{ notification.object.id }}">
-                            {{ "{{ user }} commented your article." | _(user=notification.object.user.display_name | escape) }}
+                            {{ "{{ user }} commented your article." | _(user=notification.object.user.name | escape) }}
                         </a></h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>
@@ -24,7 +24,7 @@
                     <i class="fa fa-user-plus left-icon"></i>
                     <main class="grow">
                         <h3><a href="/@/{{ notification.object.follower.fqn }}/">
-                            {{ "{{ user }} is now following you." | _(user=notification.object.follower.display_name | escape) }}
+                            {{ "{{ user }} is now following you." | _(user=notification.object.follower.name | escape) }}
                         </a></h3>
                     </main>
                     <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
@@ -33,7 +33,7 @@
                     <i class="fa fa-heart left-icon"></i>
                     <main class="grow">
                         <h3>
-                            {{ "{{ user }} liked your article." | _(user=notification.object.user.display_name | escape) }}
+                            {{ "{{ user }} liked your article." | _(user=notification.object.user.name | escape) }}
                         </h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>
@@ -43,7 +43,7 @@
                     <i class="fa fa-at left-icon"></i>
                     <main class="grow">
                         <h3><a href="{{ notification.object.url }}">
-                            {{ "{{ user }} mentioned you." | _(user=notification.object.user.display_name | escape) }}
+                            {{ "{{ user }} mentioned you." | _(user=notification.object.user.name | escape) }}
                         </a></h3>
                     </main>
                     <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
@@ -52,7 +52,7 @@
                     <i class="fa fa-retweet left-icon"></i>
                     <main class="grow">
                         <h3>
-                            {{ "{{ user }} reshared your article." | _(user=notification.object.user.display_name | escape) }}
+                            {{ "{{ user }} reshared your article." | _(user=notification.object.user.name | escape) }}
                         </h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>

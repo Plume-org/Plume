@@ -12,18 +12,11 @@
 {% block content %}
     <h1 class="article">{{ post.title }}</h1>
     <p class="article-info">
-
-    {% if author.display_name %}
-        {% set name = author.display_name %}
-    {% else %}
-        {% set name = author.username %}
-    {% endif %}
-
         <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}" | _(
             link_1='<a href="/@/',
             url=author.fqn,
             link_2='/">',
-            name=name,
+            name=author.name,
             link_3="</a>"
             )
         }}</a></span>

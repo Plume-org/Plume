@@ -370,6 +370,11 @@ impl User {
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
+        json["name"] = if self.display_name.len() > 0 {
+            json!(self.display_name)
+        } else {
+            json!(self.get_fqn(conn))
+        };
         json
     }
 
