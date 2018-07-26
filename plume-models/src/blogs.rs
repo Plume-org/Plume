@@ -248,6 +248,21 @@ impl Blog {
             }
         })
     }
+
+    pub fn get_fqn(&self, conn: &PgConnection) -> String {
+        if self.instance_id == Instance::local_id(conn) {
+            self.actor_id.clone()
+        } else {
+            format!("{}@{}", self.actor_id, self.get_instance(conn).public_domain)
+        }
+    }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let mut json = serde_json::to_value(self).unwrap();
+        let formatted = serde_json::Value::String(format!("/~/{}",self.get_fqn(conn)));
+        json["fqn"] = formatted;
+        json
+    }
 }
 
 impl IntoId for Blog {
