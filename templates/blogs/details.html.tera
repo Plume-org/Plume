@@ -10,7 +10,7 @@
 {% endblock header %}
 
 {% block content %}
-    <h1>{{ blog.title }} <small>~{{ blog.actor_id }}</small></h1>
+    <h1>{{ blog.title }} <small>~{{ blog.fqn }}</small></h1>
     <p>{{ blog.summary }}</p>
     <p>
         {{ "{{ count }} authors in this blog: " | _n(singular="One author in this blog: ", count = n_authors) }}

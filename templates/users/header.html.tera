@@ -1,6 +1,9 @@
 <div class="user">
     <h1>
         {{ user.name }}
+
+        <small>@{{ user.fqn }}</small>
+
         {% if user.is_admin %}
             <span class="badge">{{ "Admin" | _ }}</span>
         {% endif %}
