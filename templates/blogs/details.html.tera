@@ -5,6 +5,10 @@
 {{ blog.title }}
 {% endblock title %}
 
+{% block header %}
+    <a href=".">{{ blog.title }}</a>
+{% endblock header %}
+
 {% block content %}
     <h1>{{ blog.title }} <small>~{{ blog.actor_id }}</small></h1>
     <p>{{ blog.summary }}</p>
