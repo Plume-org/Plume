@@ -1,11 +1,12 @@
 use activitypub::object::Article;
 use heck::KebabCase;
-use rocket::request::LenientForm;
+use rocket::{State, request::LenientForm};
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
+use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
 use plume_common::utils;
@@ -110,7 +111,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn) -> Result<Redirect, Template> {
+fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
@@ -154,7 +155,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             }
 
             let act = post.create_activity(&*conn);
-            broadcast(&user, act, user.get_followers(&*conn));
+            let followers = user.get_followers(&*conn);
+            worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
 
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
