@@ -2,12 +2,15 @@ use activitypub::{
     activity::Follow,
     collection::OrderedCollection
 };
-use rocket::{request::LenientForm,
+use rocket::{
+    State,
+    request::LenientForm,
     response::{Redirect, Flash}
 };
 use rocket_contrib::Template;
 use serde_json;
 use validator::{Validate, ValidationError};
+use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
@@ -71,7 +74,7 @@ fn dashboard_auth() -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/follow")]
-fn follow(name: String, conn: DbConn, user: User) -> Redirect {
+fn follow(name: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
     let f = follows::Follow::insert(&*conn, follows::NewFollow {
         follower_id: user.id,
@@ -86,7 +89,7 @@ fn follow(name: String, conn: DbConn, user: User) -> Redirect {
     act.object_props.set_to_link(target.clone().into_id()).expect("New Follow error while setting 'to'");
     act.object_props.set_cc_link_vec::<Id>(vec![]).expect("New Follow error while setting 'cc'");
 
-    broadcast(&user, act, vec![target]);
+    worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
     Redirect::to(uri!(details: name = name))
 }
 

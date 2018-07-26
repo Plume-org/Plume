@@ -1,10 +1,12 @@
 use rocket::{
+    State,
     request::LenientForm,
     response::Redirect
 };
 use rocket_contrib::Template;
 use serde_json;
 use validator::Validate;
+use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::broadcast;
 use plume_models::{
@@ -25,7 +27,7 @@ struct NewCommentForm {
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
-fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn) -> Result<Redirect, Template> {
+fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
     let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).unwrap();
     let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).unwrap();
     let form = data.get();
@@ -41,7 +43,9 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             let instance = Instance::get_local(&*conn).unwrap();
             instance.received(&*conn, serde_json::to_value(new_comment.clone()).expect("JSON serialization error"))
                 .expect("We are not compatible with ourselve: local broadcast failed (new comment)");
-            broadcast(&user, new_comment, user.get_followers(&*conn));
+            let followers = user.get_followers(&*conn);
+            let user_clone = user.clone();
+            worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, followers)));
 
             Redirect::to(format!("/~/{}/{}/#comment-{}", blog_name, slug, id))
         })
