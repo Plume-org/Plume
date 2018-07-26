@@ -15,7 +15,7 @@
     {% endif %}
 
     {% if is_remote %}
-        <a class="inline-block button" href="{{ user.ap_url }}">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
+        <a class="inline-block button" href="{{ user.ap_url }}" target="_blank">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
     {% endif %}
 
     {% set not_self = not is_self %}
