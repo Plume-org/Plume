@@ -206,14 +206,14 @@ impl Post {
         json!({
             "post": self,
             "author": self.get_authors(conn)[0].to_json(conn),
-            "url": format!("/~/{}/{}/", blog.actor_id, self.slug),
+            "url": format!("/~/{}/{}/", blog.get_fqn(conn), self.slug),
             "date": self.creation_date.timestamp(),
             "blog": blog.to_json(conn)
         })
     }
 
     pub fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
+        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).get_fqn(conn), self.slug))
     }
 }
 
