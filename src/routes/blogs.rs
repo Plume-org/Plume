@@ -28,7 +28,7 @@ fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page)
         let authors = &blog.list_authors(&*conn);
 
         Template::render("blogs/details", json!({
-            "blog": &blog,
+            "blog": &blog.to_json(&*conn),
             "account": user,
             "is_author": user.map(|x| x.is_author_in(&*conn, blog.clone())),
             "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
