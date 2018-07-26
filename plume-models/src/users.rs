@@ -144,9 +144,9 @@ impl User {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
         match resolve(acct.clone(), *USE_HTTPS) {
-            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href)),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
             Err(details) => {
-                println!("{:?}", details);
+                println!("WF Error: {:?}", details);
                 None
             }
         }
@@ -166,7 +166,7 @@ impl User {
                 Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
             },
             Err(e) => {
-                println!("{:?}", e);
+                println!("User fetch error: {:?}", e);
                 None
             }
         }
@@ -386,17 +386,20 @@ impl User {
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.get_instance(conn).compute_box(USER_PREFIX, self.username.clone(), "feed.atom")
+                    href: Some(self.get_instance(conn).compute_box(USER_PREFIX, self.username.clone(), "feed.atom")),
+                    template: None
                 },
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 }
             ]
         }

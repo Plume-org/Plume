@@ -108,7 +108,7 @@ impl Blog {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<Blog> {
         match resolve(acct.clone(), *USE_HTTPS) {
-            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href)),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
             Err(details) => {
                 println!("{:?}", details);
                 None
@@ -221,17 +221,20 @@ impl Blog {
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.get_instance(conn).compute_box(BLOG_PREFIX, self.actor_id.clone(), "feed.atom")
+                    href: Some(self.get_instance(conn).compute_box(BLOG_PREFIX, self.actor_id.clone(), "feed.atom")),
+                    template: None
                 },
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 }
             ]
         }

@@ -4,10 +4,7 @@ use reqwest::{
     mime::Mime,
     header::{Accept, Date, Headers, UserAgent, qitem}
 };
-use std::{
-    str::FromStr,
-    time::SystemTime
-};
+use std::time::SystemTime;
 
 use activity_pub::ap_accept_header;
 use activity_pub::sign::Signer;

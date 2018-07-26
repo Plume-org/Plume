@@ -38,7 +38,7 @@ fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page)
             "page": page.page,
             "n_pages": Page::total(articles.len() as i32)
         }))
-    })    
+    })
 }
 
 #[get("/~/<name>", rank = 3)]
