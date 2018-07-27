@@ -358,3 +358,9 @@ msgstr ""
 
 msgid "{{ user }} reshared your article."
 msgstr ""
+
+msgid "Source code"
+msgstr ""
+
+msgid "Matrix room"
+msgstr ""

@@ -371,3 +371,9 @@ msgstr "{{ data }} hat deinen Artikel geliked"
 #, fuzzy
 msgid "{{ user }} reshared your article."
 msgstr "{{ data }} hat deinen Artikel reshared"
+
+msgid "Source code"
+msgstr ""
+
+msgid "Matrix room"
+msgstr ""

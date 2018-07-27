@@ -376,5 +376,11 @@ msgstr "{{ data }} polubił Twój artykuł"
 msgid "{{ user }} reshared your article."
 msgstr "{{ data }} udostępnił Twój artykuł"
 
+msgid "Source code"
+msgstr ""
+
+msgid "Matrix room"
+msgstr ""
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

@@ -574,3 +574,17 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	margin: 1em;
 	margin-right: 2em;
 }
+
+/*== Footer ==*/
+body > footer {
+	display: flex;
+	align-content: center;
+	justify-content: space-between;
+	background: #ECECEC;
+	padding: 0 20%;
+	margin-top: 5em;
+}
+
+body > footer * {
+	margin: 5em 0;
+}
