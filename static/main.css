@@ -27,6 +27,8 @@ small {
 	color: #242424;
 	opacity: 0.6;
 	font-size: 0.75em;
+	word-wrap: break-word;
+	word-break: break-all;
 }
 
 .center {
@@ -464,6 +466,8 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	box-sizing: border-box;
 
 	background: #E3E3E3;
+
+	text-overflow: ellipsis;
 }
 .list .card {
 /* TODO */
