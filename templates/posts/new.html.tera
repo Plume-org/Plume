@@ -19,7 +19,8 @@
     <label for="content">{{ "Content" | _ }}</label>
     <textarea id="content" name="content" value="{{ form.content | default(value="") }}"></textarea>
 
-    {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true) }}
+    {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
+    {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
 
     <input type="submit" value="{{ "Publish" | _ }}" />
 </form>

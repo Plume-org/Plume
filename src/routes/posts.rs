@@ -14,6 +14,7 @@ use plume_models::{
     blogs::*,
     db_conn::DbConn,
     comments::Comment,
+    instance::Instance,
     mentions::Mention,
     post_authors::*,
     posts::*,
@@ -85,6 +86,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
     } else {
         Template::render("posts/new", json!({
             "account": user,
+            "instance": Instance::get_local(&*conn),
             "errors": null,
             "form": null
         }))
@@ -141,7 +143,11 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 title: form.title.to_string(),
                 content: SafeString::new(&content),
                 published: true,
-                license: form.license.to_string(),
+                license: if form.license.len() > 0 {
+                    form.license.to_string()
+                } else {
+                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
+                },
                 ap_url: "".to_string(),
                 creation_date: None
             });
@@ -164,6 +170,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
     } else {
         Err(Template::render("posts/new", json!({
             "account": user,
+            "instance": Instance::get_local(&*conn),            
             "errors": errors.inner(),
             "form": form
         })))

@@ -17,12 +17,13 @@
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text", props="", optional=false, default='') %}
+{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details='') %}
     <label for="{{ name }}">
         {{ label | _ }}
         {% if optional %}
             <small>{{ "Optional" | _ }}</small>
         {% endif %}
+        <small>{{ details }}</small>
     </label>
     {% if errors is defined and errors[name] %}
         {% for err in errors[name] %}

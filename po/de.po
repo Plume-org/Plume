@@ -383,3 +383,21 @@ msgstr ""
 
 msgid "Instance settings"
 msgstr ""
+
+msgid "Allow anyone to register"
+msgstr ""
+
+msgid "Short description"
+msgstr ""
+
+msgid "Markdown is supported"
+msgstr ""
+
+msgid "Long description"
+msgstr ""
+
+msgid "Default license"
+msgstr ""
+
+msgid "Save settings"
+msgstr ""

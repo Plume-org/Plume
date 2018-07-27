@@ -364,9 +364,6 @@ msgstr ""
 msgid "Instance settings"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
 msgid "Allow anyone to register"
 msgstr ""
 
