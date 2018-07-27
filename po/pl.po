@@ -406,5 +406,8 @@ msgstr ""
 msgid "Save settings"
 msgstr ""
 
+msgid "No comments yet. Be the first to react!"
+msgstr ""
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

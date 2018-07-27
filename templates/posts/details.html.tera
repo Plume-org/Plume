@@ -70,11 +70,15 @@
                 </form>
             {%  endif %}
 
-            <div class="list">
-                {% for comment in comments %}
-                    {{ macros::comment(comm=comment) }}
-                {% endfor %}
-            </div>
+            {% if comments | length > 0 %}
+                <div class="list">
+                    {% for comment in comments %}
+                        {{ macros::comment(comm=comment) }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="center">{{ "No comments yet. Be the first to react!" | _ }}</p>
+            {% endif %}
         </div>
     </div>
 {% endblock content %}
