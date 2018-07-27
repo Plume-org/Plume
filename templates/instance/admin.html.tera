@@ -1,0 +1,34 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+Administration of {{ instance.name }}
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ "Administration" | _ }}</h1>
+
+    <h2>{{ "Instance settings" | _ }}</h2>
+    <form method="post">
+        {{ macros::input(name="name", label="Name", errors=errors, form=form, props='minlenght="1"', default=instance) }}
+
+        <label for="open_registrations">
+            {% if instance.open_registrations %}
+                <input type="checkbox" name="open_registrations" id="open_registrations" checked>
+            {% else %}
+                <input type="checkbox" name="open_registrations" id="open_registrations">
+            {% endif %}
+            {{ "Allow anyone to register" | _ }}
+        </label>
+
+        <label for="short_description">{{ "Short description" | _ }}<small>{{ "Markdown is supported" }}</small></label>
+        <textarea id="short_description" name="short_description">{{ form.short_description | default(value=instance.short_description) }}</textarea>
+
+        <label for="long_description">{{ "Long description" | _ }}<small>{{ "Markdown is supported" }}</small></label>
+        <textarea id="long_description" name="long_description">{{ form.long_description | default(value=instance.long_description) }}</textarea>
+
+        {{ macros::input(name="default_license", label="Default license", errors=errors, form=form, props='minlenght="1"', default=instance) }}
+
+        <input type="submit" value="{{ "Save settings" | _ }}"/>
+    </form>
+{% endblock content %}

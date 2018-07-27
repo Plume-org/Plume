@@ -53,6 +53,10 @@ table! {
         local -> Bool,
         blocked -> Bool,
         creation_date -> Timestamp,
+        open_registrations -> Bool,
+        short_description -> Text,
+        long_description -> Text,
+        default_license -> Text,
     }
 }
 

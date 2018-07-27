@@ -50,6 +50,8 @@ fn main() {
 
             routes::instance::paginated_index,
             routes::instance::index,
+            routes::instance::admin,
+            routes::instance::update_settings,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
 

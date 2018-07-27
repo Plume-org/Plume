@@ -17,7 +17,7 @@
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text", props="", optional=false) %}
+{% macro input(name, label, errors, form, type="text", props="", optional=false, default='') %}
     <label for="{{ name }}">
         {{ label | _ }}
         {% if optional %}
@@ -29,7 +29,8 @@
             <p class="error">{{ err.message | default(value="Unknown error") | _ }}</p>
         {% endfor %}
     {% endif %}
-    <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value="") }}" {{ props | safe }}/>
+    {% set default = default[name] | default(value="") %}
+    <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value=default) }}" {{ props | safe }}/>
 {% endmacro input %}
 {% macro paginate(page, total, previous="Previous page", next="Next page") %}
     <div class="pagination">

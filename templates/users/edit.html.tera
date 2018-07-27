@@ -19,6 +19,6 @@
     <label for="summary">{{ "Summary" | _ }}</label>
     <input name="summary" value="{{ account.summary }}">
 
-    <input type="submit" value="{{ "Update account" | _ }}"/>            
+    <input type="submit" value="{{ "Update account" | _ }}"/>
 </form>
 {% endblock content %}

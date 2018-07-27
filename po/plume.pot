@@ -357,3 +357,9 @@ msgstr ""
 
 msgid "Matrix room"
 msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Instance settings"
+msgstr ""

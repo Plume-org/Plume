@@ -36,6 +36,11 @@
             <span>Plume 0.1.0</span>
             <a href="https://github.com/Plume-org/Plume">{{ "Source code" | _ }}</a>
             <a href="https://riot.im/app/#/room/#funkwhale-troubleshooting:matrix.org">{{ "Matrix room" | _ }}</a>
+            {% if account %}
+                {% if account.is_admin %}
+                    <a href="/admin">{{ "Administration" | _ }}</a>
+                {% endif %}
+            {% endif %}
         </footer>
     </body>
 </html>

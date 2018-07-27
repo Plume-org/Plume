@@ -140,7 +140,12 @@ impl Blog {
                 Instance::insert(conn, NewInstance {
                     public_domain: inst.clone(),
                     name: inst.clone(),
-                    local: false
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: String::new(),
+                    short_description: String::new(),
+                    default_license: String::new(),
+                    open_registrations: true
                 })
             }
         };

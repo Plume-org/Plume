@@ -1,8 +1,11 @@
 use gettextrs::gettext;
+use rocket::{request::LenientForm, response::Redirect};
 use rocket_contrib::{Json, Template};
 use serde_json;
+use validator::{Validate};
 
 use plume_models::{
+    admin::Admin,
     comments::Comment,
     db_conn::DbConn,
     posts::Post,
@@ -37,6 +40,48 @@ fn paginated_index(conn: DbConn, user: Option<User>, page: Page) -> Template {
 #[get("/")]
 fn index(conn: DbConn, user: Option<User>) -> Template {
     paginated_index(conn, user, Page::first())
+}
+
+#[get("/admin")]
+fn admin(conn: DbConn, admin: Admin) -> Template {
+    Template::render("instance/admin", json!({
+        "account": admin.0,
+        "instance": Instance::get_local(&*conn),
+        "errors": null,
+        "form": null
+    }))
+}
+
+#[derive(FromForm, Validate, Serialize)]
+struct InstanceSettingsForm {
+    #[validate(length(min = "1"))]
+    name: String,
+    open_registrations: bool,
+    short_description: String,
+    long_description: String,
+    #[validate(length(min = "1"))]
+    default_license: String
+}
+
+#[post("/admin", data = "<form>")]
+fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>) -> Result<Redirect, Template> {
+    let form = form.get();
+    form.validate()
+        .map(|_| {
+            let instance = Instance::get_local(&*conn).unwrap();
+            instance.update(&*conn,
+                form.name.clone(),
+                form.open_registrations,
+                form.short_description.clone(),
+                form.long_description.clone());
+            Redirect::to(uri!(admin))
+        })
+        .map_err(|e| Template::render("instance/admin", json!({
+            "account": admin.0,
+            "instance": Instance::get_local(&*conn),
+            "errors": e.inner(),
+            "form": form
+        })))
 }
 
 #[post("/inbox", data = "<data>")]

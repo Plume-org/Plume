@@ -362,7 +362,14 @@ textarea {
  	font-size: 1.1em;
  	line-height: 1.5em;
 }
- 
+
+input[type="checkbox"] {
+	display: inline;
+	margin: initial;
+	min-width: initial;
+	width: initial;
+}
+
 /* Button & Submit */
 
 .button, input[type="submit"], button {

@@ -13,7 +13,11 @@ pub struct Instance {
     pub name: String,
     pub local: bool,
     pub blocked: bool,
-    pub creation_date: NaiveDateTime    
+    pub creation_date: NaiveDateTime,
+    pub open_registrations: bool,
+    pub short_description: String,
+    pub long_description: String,
+    pub default_license : String
 }
 
 #[derive(Insertable)]
@@ -21,7 +25,11 @@ pub struct Instance {
 pub struct NewInstance {
     pub public_domain: String,
     pub name: String,
-    pub local: bool
+    pub local: bool,
+    pub open_registrations: bool,
+    pub short_description: String,
+    pub long_description: String,
+    pub default_license : String
 }
 
 impl Instance {
@@ -67,5 +75,16 @@ impl Instance {
             name = name,
             box_name = box_name
         ))
+    }
+
+    pub fn update(&self, conn: &PgConnection, name: String, open_registrations: bool, short_description: String, long_description: String) -> Instance {
+        diesel::update(self)
+            .set((
+                instances::name.eq(name),
+                instances::open_registrations.eq(open_registrations),
+                instances::short_description.eq(short_description),
+                instances::long_description.eq(long_description),
+            )).get_result::<Instance>(conn)
+            .expect("Couldn't update instance")
     }
 }

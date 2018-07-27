@@ -382,5 +382,11 @@ msgstr ""
 msgid "Matrix room"
 msgstr ""
 
+msgid "Administration"
+msgstr ""
+
+msgid "Instance settings"
+msgstr ""
+
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

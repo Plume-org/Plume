@@ -103,6 +103,7 @@ pub fn ap_url(url: String) -> String {
     format!("{}://{}", scheme, url)
 }
 
+pub mod admin;
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;
