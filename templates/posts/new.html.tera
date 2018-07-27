@@ -16,7 +16,7 @@
         {% endfor %}
     {% endif %}
 
-    <label for="content">{{ "Content" | _ }}</label>
+    <label for="content">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
     <textarea id="content" name="content" value="{{ form.content | default(value="") }}"></textarea>
 
     {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
