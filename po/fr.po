@@ -348,96 +348,90 @@ msgstr ""
 msgid "Next page"
 msgstr ""
 
-#, fuzzy
 msgid "{{ user }} mentioned you."
-msgstr "{{ data }} vous a mentionné."
+msgstr "{{ user }} vous a mentionné."
 
-#, fuzzy
 msgid "{{ user }} commented your article."
-msgstr "{{ data }} a commenté votre article"
+msgstr "{{ user }} a commenté votre article"
 
-#, fuzzy
 msgid "{{ user }} is now following you."
-msgstr "{{ data }} vous suit"
+msgstr "{{ user }} vous suit"
 
-#, fuzzy
 msgid "{{ user }} liked your article."
-msgstr "{{ data }} a aimé votre article"
+msgstr "{{ user }} a aimé votre article"
 
-#, fuzzy
 msgid "{{ user }} reshared your article."
-msgstr "{{ data }} a repartagé votre article"
+msgstr "{{ user }} a repartagé votre article"
 
 msgid "Source code"
-msgstr ""
+msgstr "Code source"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Salon Matrix"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administration"
 
 msgid "Instance settings"
-msgstr ""
+msgstr "Paramètres de l'instance"
 
 msgid "Allow anyone to register"
-msgstr ""
+msgstr "Autoriser les inscriptions"
 
 msgid "Short description"
-msgstr ""
+msgstr "Description courte"
 
 msgid "Markdown is supported"
-msgstr ""
+msgstr "Vous pouvez utiliser du Markdown"
 
 msgid "Long description"
-msgstr ""
+msgstr "Description longue"
 
 msgid "Default license"
-msgstr ""
+msgstr "License par défaut"
 
 msgid "Save settings"
-msgstr ""
+msgstr "Enregistrer les paramètres"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Pas encore de commentaires. Soyez læ premi⋅er⋅ère à réagir !"
 
 msgid "About this instance"
-msgstr ""
+msgstr "À propos de cette instance"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Qu'est-ce que Plume ?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume est un moteur de blog décentralisé."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "Les auteurs peuvent gérer différents blogs au sein d'un même site."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Les articles sont également visibles sur d'autres sites Plume et "
+"vous pouvez interagir avec eux directement depuis d'autres plateformes "
+"telles que Mastodon."
 
-#, fuzzy
 msgid "Create your account"
-msgstr "Créer mon compte"
+msgstr "Créer votre compte"
 
-#, fuzzy
 msgid "About {{ instance_name }}"
-msgstr "Ouvrir sur {{ instance_url }}"
+msgstr "À propos de {{ instance_name }}"
 
 msgid "Home to"
-msgstr ""
+msgstr "Accueille"
 
 msgid "people"
-msgstr ""
+msgstr "personnnes"
 
 msgid "Who wrote"
-msgstr ""
+msgstr "Qui ont écrit"
 
-#, fuzzy
 msgid "articles"
-msgstr "Nouvel article"
+msgstr "articles"
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Lisez le détail des règles"
