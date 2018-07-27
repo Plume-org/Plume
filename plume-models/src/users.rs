@@ -63,7 +63,8 @@ pub struct User {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
-    pub shared_inbox_url: Option<String>
+    pub shared_inbox_url: Option<String>,
+    pub followers_endpoint: String
 }
 
 #[derive(Insertable)]
@@ -81,7 +82,8 @@ pub struct NewUser {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
-    pub shared_inbox_url: Option<String>    
+    pub shared_inbox_url: Option<String>,
+    pub followers_endpoint: String
 }
 
 const USER_PREFIX: &'static str = "@";
@@ -152,7 +154,7 @@ impl User {
         }
     }
 
-    fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
+    pub fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
         let req = Client::new()
             .get(&url[..])
             .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
@@ -186,7 +188,6 @@ impl User {
                 })
             }
         };
-        println!("User from act : {:?}", acct.custom_props);
         User::insert(conn, NewUser {
             username: acct.object.ap_actor_props.preferred_username_string().expect("User::from_activity: preferredUsername error"),
             display_name: acct.object.object_props.name_string().expect("User::from_activity: name error"),
@@ -202,7 +203,8 @@ impl User {
                 .public_key_pem_string().expect("User::from_activity: publicKey.publicKeyPem error"),
             private_key: None,
             shared_inbox_url: acct.object.ap_actor_props.endpoints_endpoint()
-                .and_then(|e| e.shared_inbox_string()).ok()
+                .and_then(|e| e.shared_inbox_string()).ok(),
+            followers_endpoint: acct.object.ap_actor_props.followers_string().expect("User::from_activity: followers error")
         })
     }
 
@@ -243,6 +245,12 @@ impl User {
                 .set(users::shared_inbox_url.eq(ap_url(format!("{}/inbox", Instance::get_local(conn).unwrap().public_domain))))
                 .get_result::<User>(conn).expect("Couldn't update shared inbox URL");
         }
+
+        if self.followers_endpoint.len() == 0 {
+            diesel::update(self)
+                .set(users::followers_endpoint.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "followers")))
+                .get_result::<User>(conn).expect("Couldn't update followers endpoint");
+        }
     }
 
     pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
@@ -271,6 +279,28 @@ impl User {
             },
             Err(e) => {
                 println!("User outbox fetch error: {:?}", e);
+                vec![]
+            }
+        }
+    }
+
+    pub fn fetch_followers_ids(&self) -> Vec<String> {
+        let req = Client::new()
+            .get(&self.followers_endpoint[..])
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .send();
+        match req {
+            Ok(mut res) => {
+                let text = &res.text().unwrap();
+                let json: serde_json::Value = serde_json::from_str(text).unwrap();
+                json["items"].as_array()
+                    .expect("Followers.items is not an array")
+                    .into_iter()
+                    .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                    .collect::<Vec<String>>()
+            },
+            Err(e) => {
+                println!("User followers fetch error: {:?}", e);
                 vec![]
             }
         }
@@ -377,6 +407,7 @@ impl User {
         actor.ap_actor_props.set_inbox_string(self.inbox_url.clone()).expect("User::into_activity: inbox error");
         actor.ap_actor_props.set_outbox_string(self.outbox_url.clone()).expect("User::into_activity: outbox error");
         actor.ap_actor_props.set_preferred_username_string(self.username.clone()).expect("User::into_activity: preferredUsername error");
+        actor.ap_actor_props.set_followers_string(self.followers_endpoint.clone()).expect("User::into_activity: followers error");
 
         let mut endpoints = Endpoint::default();
         endpoints.set_shared_inbox_string(ap_url(format!("{}/inbox/", BASE_URL.as_str()))).expect("User::into_activity: endpoints.sharedInbox error");
@@ -517,7 +548,8 @@ impl NewUser {
             ap_url: String::from(""),
             public_key: String::from_utf8(pub_key).unwrap(),
             private_key: Some(String::from_utf8(priv_key).unwrap()),
-            shared_inbox_url: None
+            shared_inbox_url: None,
+            followers_endpoint: String::from("")
         })
     }
 }

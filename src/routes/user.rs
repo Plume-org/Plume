@@ -39,25 +39,38 @@ fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 }
 
 #[get("/@/<name>", rank = 2)]
-fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<Pool<ThunkWorker<()>>>, other_conn: DbConn) -> Template {
+fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<Pool<ThunkWorker<()>>>, fecth_articles_conn: DbConn, fecth_followers_conn: DbConn) -> Template {
     may_fail!(account, User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
         let recents = Post::get_recents_for_author(&*conn, &user, 6);
         let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
         let user_id = user.id.clone();
         let n_followers = user.get_followers(&*conn).len();
 
-        // Fetch new articles
         if !user.get_instance(&*conn).local {
+            // Fetch new articles
             let user_clone = user.clone();
             worker.execute(Thunk::of(move || {
                 for create_act in user_clone.fetch_outbox::<Create>() {
                     match create_act.create_props.object_object::<Article>() {
                         Ok(article) => {
-                            Post::from_activity(&*other_conn, article, user_clone.clone().into_id());
+                            Post::from_activity(&*fecth_articles_conn, article, user_clone.clone().into_id());
                             println!("Fetched article from remote user");
                         }
                         Err(e) => println!("Error while fetching articles in background: {:?}", e)
                     }
+                }
+            }));
+
+            // Fetch followers
+            let user_clone = user.clone();
+            worker.execute(Thunk::of(move || {
+                for user_id in user_clone.fetch_followers_ids() {
+                    let follower = User::find_by_ap_url(&*fecth_followers_conn, user_id.clone())
+                        .unwrap_or_else(|| User::fetch_from_url(&*fecth_followers_conn, user_id).expect("Couldn't fetch follower"));
+                    follows::Follow::insert(&*fecth_followers_conn, follows::NewFollow {
+                        follower_id: follower.id,
+                        following_id: user_clone.id
+                    });
                 }
             }));
         }
@@ -258,7 +271,7 @@ fn ap_followers(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<Or
     let followers = user.get_followers(&*conn).into_iter().map(|f| Id::new(f.ap_url)).collect::<Vec<Id>>();
 
     let mut coll = OrderedCollection::default();
-    coll.object_props.set_id_string(format!("{}/followers", user.ap_url)).expect("Follower collection: id error");
+    coll.object_props.set_id_string(user.followers_endpoint).expect("Follower collection: id error");
     coll.collection_props.set_total_items_u64(followers.len() as u64).expect("Follower collection: totalItems error");
     coll.collection_props.set_items_link_vec(followers).expect("Follower collection: items error");
     ActivityStream::new(coll)

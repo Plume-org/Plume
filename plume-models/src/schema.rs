@@ -135,6 +135,7 @@ table! {
         private_key -> Nullable<Text>,
         public_key -> Text,
         shared_inbox_url -> Nullable<Varchar>,
+        followers_endpoint -> Varchar,
     }
 }
 
