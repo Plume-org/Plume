@@ -38,6 +38,10 @@ small {
 	padding: 5em;
 }
 
+.spaced {
+	margin: 4rem 0;
+}
+
 /*
  * == Header ==
  */
@@ -507,6 +511,34 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	line-height: 1.25em;
 	text-align: left;
 	overflow: hidden;
+}
+
+/* Presentation */
+.presentation > h2, .presentation > a {
+	text-align: center;
+}
+
+.presentation > a {
+	font-size: 1.2em;
+	margin: 1em;
+}
+
+/* Stats */
+.stats {
+	display: flex;
+	justify-content: space-around;
+	margin: 2em;
+}
+
+.stats > div {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+
+.stats em {
+	text-align: center;
+	font-weight: bold;
 }
 
 /* ================= *

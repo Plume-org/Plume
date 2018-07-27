@@ -155,7 +155,9 @@ fn quick_setup(conn: DbConn) {
         long_description: String::new(),
         short_description: String::new(),
         default_license: String::from("CC-0"),
-        open_registrations: true
+        open_registrations: true,
+        short_description_html: String::new(),
+        long_description_html: String::new()
     });
 
     println!("{}\n", "  ✔️ Your instance was succesfully created!".green());

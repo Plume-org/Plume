@@ -145,7 +145,9 @@ impl Blog {
                     long_description: String::new(),
                     short_description: String::new(),
                     default_license: String::new(),
-                    open_registrations: true
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new()
                 })
             }
         };

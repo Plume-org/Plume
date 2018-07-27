@@ -57,6 +57,8 @@ table! {
         short_description -> Text,
         long_description -> Text,
         default_license -> Text,
+        long_description_html -> Varchar,
+        short_description_html -> Varchar,
     }
 }
 

@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
 
+use plume_common::utils::md_to_html;
 use ap_url;
 use users::User;
 use schema::{instances, users};
@@ -17,7 +18,9 @@ pub struct Instance {
     pub open_registrations: bool,
     pub short_description: String,
     pub long_description: String,
-    pub default_license : String
+    pub default_license : String,
+    pub long_description_html: String,
+    pub short_description_html: String
 }
 
 #[derive(Insertable)]
@@ -29,7 +32,9 @@ pub struct NewInstance {
     pub open_registrations: bool,
     pub short_description: String,
     pub long_description: String,
-    pub default_license : String
+    pub default_license : String,
+    pub long_description_html: String,
+    pub short_description_html: String
 }
 
 impl Instance {
@@ -78,12 +83,16 @@ impl Instance {
     }
 
     pub fn update(&self, conn: &PgConnection, name: String, open_registrations: bool, short_description: String, long_description: String) -> Instance {
+        let (sd, _) = md_to_html(short_description.as_ref());
+        let (ld, _) = md_to_html(long_description.as_ref());
         diesel::update(self)
             .set((
                 instances::name.eq(name),
                 instances::open_registrations.eq(open_registrations),
                 instances::short_description.eq(short_description),
                 instances::long_description.eq(long_description),
+                instances::short_description_html.eq(sd),
+                instances::long_description_html.eq(ld)
             )).get_result::<Instance>(conn)
             .expect("Couldn't update instance")
     }

@@ -404,3 +404,44 @@ msgstr ""
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
+
+msgid "About this instance"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage various blogs from an unique website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+
+#, fuzzy
+msgid "Create your account"
+msgstr "Account erstellen"
+
+#, fuzzy
+msgid "About {{ instance_name }}"
+msgstr "Öffnen auf {{ instance_url }}"
+
+msgid "Home to"
+msgstr ""
+
+msgid "people"
+msgstr ""
+
+msgid "Who wrote"
+msgstr ""
+
+#, fuzzy
+msgid "articles"
+msgstr "Neuer Artikel"
+
+msgid "Read the detailed rules"
+msgstr ""

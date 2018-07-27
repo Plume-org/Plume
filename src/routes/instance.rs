@@ -26,7 +26,9 @@ fn paginated_index(conn: DbConn, user: Option<User>, page: Page) -> Template {
                 "account": user,
                 "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
                 "page": page.page,
-                "n_pages": Page::total(Post::count(&*conn) as i32)
+                "n_pages": Page::total(Post::count(&*conn) as i32),
+                "n_users": User::count_local(&*conn),
+                "n_articles": Post::count_local(&*conn)
             }))
         }
         None => {

@@ -34,6 +34,7 @@
         </main>
         <footer>
             <span>Plume 0.1.0</span>
+            <a href="/about">{{ "About this instance" | _ }}</a>
             <a href="https://github.com/Plume-org/Plume">{{ "Source code" | _ }}</a>
             <a href="https://riot.im/app/#/room/#funkwhale-troubleshooting:matrix.org">{{ "Matrix room" | _ }}</a>
             {% if account %}
