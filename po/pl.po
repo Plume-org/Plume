@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-07-20 20:55+0200\n"
+"PO-Revision-Date: 2018-07-27 15:05+0200\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -343,44 +343,38 @@ msgstr ""
 msgid "Optional"
 msgstr "Nieobowiązkowe"
 
-#, fuzzy
 msgid "One article in this blog"
 msgid_plural "{{ count }} articles in this blog"
-msgstr[0] "Ten blog ma jednego autora: "
-msgstr[1] "Ten blog ma {{ count }} autorów: "
-msgstr[2] "Ten blog ma {{ count }} autorów: "
+msgstr[0] "Jeden artykuł na tym blogu"
+msgstr[1] "{{ count }} artykuły na tym blogu"
+msgstr[2] "{{ count }} artykułów na tym blogu"
 
 msgid "Previous page"
-msgstr ""
+msgstr "Poprzednia strona"
 
 msgid "Next page"
-msgstr ""
+msgstr "Następna strona"
 
-#, fuzzy
 msgid "{{ user }} mentioned you."
-msgstr "{{ data }} wspomniał o Tobie."
+msgstr "{{ user }} wspomniał o Tobie."
 
-#, fuzzy
 msgid "{{ user }} commented your article."
-msgstr "{{ data }} skomentował Twój artykuł"
+msgstr "{{ user }} skomentował Twój artykuł."
 
-#, fuzzy
 msgid "{{ user }} is now following you."
-msgstr "{{ data }} zaczął Cię obserwować"
+msgstr "{{ user }} zaczął Cię obserwować."
 
-#, fuzzy
 msgid "{{ user }} liked your article."
-msgstr "{{ data }} polubił Twój artykuł"
+msgstr "{{ user }} polubił Twój artykuł."
 
-#, fuzzy
 msgid "{{ user }} reshared your article."
-msgstr "{{ data }} udostępnił Twój artykuł"
+msgstr "{{ user }} udostępnił Twój artykuł."
 
 msgid "Source code"
-msgstr ""
+msgstr "Kod źródłowy"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Pokój Matrix.org"
 
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"
