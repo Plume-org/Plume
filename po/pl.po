@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-07-27 15:05+0200\n"
+"PO-Revision-Date: 2018-07-28 14:56+0200\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -377,72 +377,71 @@ msgid "Matrix room"
 msgstr "Pokój Matrix.org"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administracja"
 
 msgid "Instance settings"
-msgstr ""
+msgstr "Ustawienia instancji"
 
 msgid "Allow anyone to register"
-msgstr ""
+msgstr "Pozwól każdemu na rejestrację"
 
 msgid "Short description"
-msgstr ""
+msgstr "Krótki opis"
 
 msgid "Markdown is supported"
-msgstr ""
+msgstr "Markdown jest obsługiwany"
 
 msgid "Long description"
-msgstr ""
+msgstr "Szczegółowy opis"
 
 msgid "Default license"
-msgstr ""
+msgstr "Domyślna licencja"
 
 msgid "Save settings"
-msgstr ""
+msgstr "Zapisz ustawienia"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Brak komentarzy. Bądź pierwszy!"
 
 msgid "About this instance"
-msgstr ""
+msgstr "O tej instancji"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Czym jest Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume jest zdecentralizowanym silnikiem blogowym."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "Autorzy mogą zarządzać blogami ze specjalnej strony."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
+"Artykuły są widoczne na innych stronach Plume, możesz też wejść w interakcje "
+"z nimi na platformach takich jak Mastodon."
 
-#, fuzzy
 msgid "Create your account"
 msgstr "Utwórz konto"
 
-#, fuzzy
 msgid "About {{ instance_name }}"
-msgstr "Otwórz na {{ instance_url }}"
+msgstr "O {{ instance_name }}"
 
 msgid "Home to"
-msgstr ""
+msgstr "Dom dla"
 
 msgid "people"
-msgstr ""
+msgstr "osób"
 
 msgid "Who wrote"
-msgstr ""
+msgstr "Którzy napisali"
 
-#, fuzzy
 msgid "articles"
-msgstr "Nowy artykuł"
+msgstr "artykuły"
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Przeczytaj szczegółowe zasady"
 
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"
