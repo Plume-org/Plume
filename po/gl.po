@@ -1,0 +1,425 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-06-15 16:33-0700\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: gl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Latest articles"
+msgstr ""
+
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "New article"
+msgstr ""
+
+msgid "New blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "Comment \"{{ post }}\""
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "Submit comment"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Configure your instance"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Let&#x27;s go!"
+msgstr ""
+
+msgid "Welcome on {{ instance_name | escape }}"
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid ""
+"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr ""
+
+msgid "This article is under the {{ license }} license."
+msgstr ""
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don&#x27;t like this anymore"
+msgstr ""
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don&#x27;t want to reshare this anymore"
+msgstr ""
+
+msgid "Reshare"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "Respond"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "New post"
+msgstr ""
+
+msgid "Create a post"
+msgstr ""
+
+msgid "Publish"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Username or email"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Your Dashboard"
+msgstr ""
+
+msgid "Your Blogs"
+msgstr ""
+
+msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
+msgstr ""
+
+msgid "Start a new blog"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr ""
+
+msgid "Open on {{ instance_url }}"
+msgstr ""
+
+msgid "Follow"
+msgstr ""
+
+msgid "Unfollow"
+msgstr ""
+
+msgid "Recently reshared"
+msgstr ""
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Edit your account"
+msgstr ""
+
+msgid "Your Profile"
+msgstr ""
+
+msgid "Display Name"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Update account"
+msgstr ""
+
+msgid "{{ name | escape }}'s followers"
+msgstr ""
+
+msgid "Followers"
+msgstr ""
+
+msgid "New Account"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password confirmation"
+msgstr ""
+
+msgid "Create account"
+msgstr ""
+
+msgid "Plume"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "My account"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "Log In"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "You need to be logged in order to create a new blog"
+msgstr ""
+
+msgid "You need to be logged in order to post a comment"
+msgstr ""
+
+msgid "You need to be logged in order to like a post"
+msgstr ""
+
+msgid "You need to be logged in order to see your notifications"
+msgstr ""
+
+msgid "You need to be logged in order to write a new post"
+msgstr ""
+
+msgid "You need to be logged in order to reshare a post"
+msgstr ""
+
+msgid "Invalid username or password"
+msgstr ""
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr ""
+
+msgid "You need to be logged in order to follow someone"
+msgstr ""
+
+msgid "You need to be logged in order to edit your profile"
+msgstr ""
+
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr ""
+
+msgid "{{ data }} reshared your article"
+msgstr ""
+
+msgid "{{ data }} started following you"
+msgstr ""
+
+msgid "{{ data }} liked your article"
+msgstr ""
+
+msgid "{{ data }} commented your article"
+msgstr ""
+
+msgid "We couldn&#x27;t find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "You are not author in this blog."
+msgstr ""
+
+msgid "{{ data }} mentioned you."
+msgstr ""
+
+msgid "Your comment"
+msgstr ""
+
+msgid "Unknown error"
+msgstr ""
+
+msgid "Invalid name"
+msgstr ""
+
+msgid "A blog with the same name already exists."
+msgstr ""
+
+msgid "Your comment can't be empty"
+msgstr ""
+
+msgid "A post with the same title already exists."
+msgstr ""
+
+msgid "We need an email or a username to identify you"
+msgstr ""
+
+msgid "Your password should be at least 8 characters long"
+msgstr ""
+
+msgid "Passwords are not matching"
+msgstr ""
+
+msgid "Username can't be empty"
+msgstr ""
+
+msgid "Invalid email"
+msgstr ""
+
+msgid "Password should be at least 8 characters long"
+msgstr ""
+
+msgid "One author in this blog: "
+msgid_plural "{{ count }} authors in this blog: "
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
+
+msgid "Optional"
+msgstr ""
+
+msgid "One article in this blog"
+msgid_plural "{{ count }} articles in this blog"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "{{ user }} mentioned you."
+msgstr ""
+
+msgid "{{ user }} commented your article."
+msgstr ""
+
+msgid "{{ user }} is now following you."
+msgstr ""
+
+msgid "{{ user }} liked your article."
+msgstr ""
+
+msgid "{{ user }} reshared your article."
+msgstr ""
+
+msgid "Source code"
+msgstr ""
+
+msgid "Matrix room"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Instance settings"
+msgstr ""
+
+msgid "Allow anyone to register"
+msgstr ""
+
+msgid "Short description"
+msgstr ""
+
+msgid "Markdown is supported"
+msgstr ""
+
+msgid "Long description"
+msgstr ""
+
+msgid "Default license"
+msgstr ""
+
+msgid "Save settings"
+msgstr ""
+
+msgid "No comments yet. Be the first to react!"
+msgstr ""
+
+msgid "About this instance"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage various blogs from an unique website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Create your account"
+msgstr ""
+
+msgid "About {{ instance_name }}"
+msgstr ""
+
+msgid "Home to"
+msgstr ""
+
+msgid "people"
+msgstr ""
+
+msgid "Who wrote"
+msgstr ""
+
+msgid "articles"
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
