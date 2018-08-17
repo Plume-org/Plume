@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-07-05 21:25+0200\n"
+"PO-Revision-Date: 2018-08-01 13:50+0200\n"
 "Last-Translator: cookie <git@bitkeks.eu>\n"
 "Language-Team: none\n"
 "Language: de\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.8\n"
+"X-Generator: Poedit 2.0.9\n"
 
 msgid "Latest articles"
 msgstr "Neueste Artikel"
@@ -292,156 +292,147 @@ msgid "Your comment"
 msgstr "Dein Kommentar"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "Unbekannter Fehler"
 
-#, fuzzy
 msgid "Invalid name"
-msgstr "Nutzername oder Passwort ungültig"
+msgstr "Ungültiger Name"
 
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Ein Blog mit demselben Namen existiert bereits."
 
-#, fuzzy
 msgid "Your comment can't be empty"
-msgstr "Dein Kommentar"
+msgstr "Dein Kommentar kann nicht leer sein"
 
 msgid "A post with the same title already exists."
-msgstr ""
+msgstr "Ein Beitrag mit demselben Titel existiert bereits."
 
 msgid "We need an email or a username to identify you"
 msgstr ""
+"Wir brauchen eine E-Mail oder einen Nutzernamen um dich zu identifizieren"
 
 msgid "Your password should be at least 8 characters long"
-msgstr ""
+msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"
 
-#, fuzzy
 msgid "Passwords are not matching"
-msgstr "Passwort Wiederholung"
+msgstr "Passwörter stimmen nicht überein"
 
-#, fuzzy
 msgid "Username can't be empty"
-msgstr "Nutzername oder E-Mail"
+msgstr "Nutzername kann nicht leer sein"
 
 msgid "Invalid email"
-msgstr ""
+msgstr "Ungültige E-Mail"
 
 msgid "Password should be at least 8 characters long"
-msgstr ""
+msgstr "Passwort sollte mindestens 8 Zeichen lang sein"
 
-#, fuzzy
 msgid "One author in this blog: "
 msgid_plural "{{ count }} authors in this blog: "
-msgstr[0] "Du bist kein Autor in diesem Blog."
-msgstr[1] "Du bist kein Autor in diesem Blog."
+msgstr[0] "Ein Autor in diesem Blog: "
+msgstr[1] "{{ count }} Autoren in diesem Blog: "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
+"Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
+"interagieren"
 
 msgid "Optional"
-msgstr ""
+msgstr "Optional"
 
-#, fuzzy
 msgid "One article in this blog"
 msgid_plural "{{ count }} articles in this blog"
-msgstr[0] "Du bist kein Autor in diesem Blog."
-msgstr[1] "Du bist kein Autor in diesem Blog."
+msgstr[0] "Ein Artikel in diesem Blog"
+msgstr[1] "{{ count }} Artikel in diesem Blog"
 
 msgid "Previous page"
-msgstr ""
+msgstr "Vorherige Seite"
 
 msgid "Next page"
-msgstr ""
+msgstr "Nächste Seite"
 
-#, fuzzy
 msgid "{{ user }} mentioned you."
-msgstr "{{ data }} hat dich erwähnt."
+msgstr "{{ user }} hat dich erwähnt."
 
-#, fuzzy
 msgid "{{ user }} commented your article."
-msgstr "{{ data }} hat deinen Artikel kommentiert"
+msgstr "{{ user }} hat deinen Artikel kommentiert."
 
-#, fuzzy
 msgid "{{ user }} is now following you."
-msgstr "{{ data }} folgt dir nun"
+msgstr "{{ user }} folgt dir nun."
 
-#, fuzzy
 msgid "{{ user }} liked your article."
-msgstr "{{ data }} hat deinen Artikel geliked"
+msgstr "{{ user }} hat deinen Artikel geliked."
 
-#, fuzzy
 msgid "{{ user }} reshared your article."
-msgstr "{{ data }} hat deinen Artikel reshared"
+msgstr "{{ user }} hat deinen Artikel reshared."
 
 msgid "Source code"
-msgstr ""
+msgstr "Quellcode"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Matrix-Raum"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administration"
 
 msgid "Instance settings"
-msgstr ""
+msgstr "Instanz-Einstellungen"
 
 msgid "Allow anyone to register"
-msgstr ""
+msgstr "Erlaube jedem die Registrierung"
 
 msgid "Short description"
-msgstr ""
+msgstr "Kurze Beschreibung"
 
 msgid "Markdown is supported"
-msgstr ""
+msgstr "Markdown wird unterstützt"
 
 msgid "Long description"
-msgstr ""
+msgstr "Lange Beschreibung"
 
 msgid "Default license"
-msgstr ""
+msgstr "Voreingestellte Lizenz"
 
 msgid "Save settings"
-msgstr ""
+msgstr "Einstellungen speichern"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Bisher keine Kommentare. Schreibe die erste Reaktion!"
 
 msgid "About this instance"
-msgstr ""
+msgstr "Über diese Instanz"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Was ist Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume ist eine dezentrale Blogging-Engine."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "Autoren können verschiedene Blogs von einer Website aus verwalten."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
+"Artikel sind auch auf anderen Plume-Websites sichtbar und es ist möglich aus "
+"anderen Plattformen wie Mastodon mit diesen zu interagieren."
 
-#, fuzzy
 msgid "Create your account"
-msgstr "Account erstellen"
+msgstr "Eigenen Account erstellen"
 
-#, fuzzy
 msgid "About {{ instance_name }}"
-msgstr "Öffnen auf {{ instance_url }}"
+msgstr "Über {{ instance_name }}"
 
 msgid "Home to"
-msgstr ""
+msgstr "Heimat von"
 
 msgid "people"
-msgstr ""
+msgstr "Menschen"
 
 msgid "Who wrote"
-msgstr ""
+msgstr "Die"
 
-#, fuzzy
 msgid "articles"
-msgstr "Neuer Artikel"
+msgstr "Artikel geschrieben haben"
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Lies die detailierten Regeln"
