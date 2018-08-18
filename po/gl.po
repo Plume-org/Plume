@@ -84,15 +84,15 @@ msgstr ""
 msgid "Add yours"
 msgstr ""
 
-msgid "One reshare"
-msgid_plural "{{ count }} reshares"
+msgid "One Boost"
+msgid_plural "{{ count }} Boosts"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "I don&#x27;t want to reshare this anymore"
+msgid "I don&#x27;t want to boost this anymore"
 msgstr ""
 
-msgid "Reshare"
+msgid "Boost"
 msgstr ""
 
 msgid "Comments"
@@ -155,7 +155,7 @@ msgstr ""
 msgid "Unfollow"
 msgstr ""
 
-msgid "Recently reshared"
+msgid "Recently boosted"
 msgstr ""
 
 msgid "One follower"
@@ -235,7 +235,7 @@ msgstr ""
 msgid "You need to be logged in order to write a new post"
 msgstr ""
 
-msgid "You need to be logged in order to reshare a post"
+msgid "You need to be logged in order to boost a post"
 msgstr ""
 
 msgid "Invalid username or password"
@@ -253,7 +253,7 @@ msgstr ""
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 msgstr ""
 
-msgid "{{ data }} reshared your article"
+msgid "{{ data }} boosted your article"
 msgstr ""
 
 msgid "{{ data }} started following you"
@@ -350,7 +350,7 @@ msgstr ""
 msgid "{{ user }} liked your article."
 msgstr ""
 
-msgid "{{ user }} reshared your article."
+msgid "{{ user }} boosted your article."
 msgstr ""
 
 msgid "Source code"

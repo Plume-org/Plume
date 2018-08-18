@@ -87,16 +87,17 @@ msgstr "Jeg liker ikke dette lengre"
 msgid "Add yours"
 msgstr "Legg til din"
 
-msgid "One reshare"
-msgid_plural "{{ count }} reshares"
-msgstr[0] "Én deling"
-msgstr[1] "{{ count }} delinger"
+msgid "One Boost"
+msgid_plural "{{ count }} Boosts"
+msgstr[0] ""
+msgstr[1] ""
 
-msgid "I don&#x27;t want to reshare this anymore"
+#, fuzzy
+msgid "I don&#x27;t want to boost this anymore"
 msgstr "Jeg ønsker ikke å dele dette lengre"
 
-msgid "Reshare"
-msgstr "Del"
+msgid "Boost"
+msgstr ""
 
 msgid "Comments"
 msgstr "Kommetarer"
@@ -160,7 +161,8 @@ msgstr "Følg"
 msgid "Unfollow"
 msgstr "Slutt å følge"
 
-msgid "Recently reshared"
+#, fuzzy
+msgid "Recently boosted"
 msgstr "Nylig delt"
 
 msgid "One follower"
@@ -240,8 +242,9 @@ msgstr "Du må være logget inn for å se meldingene dine"
 msgid "You need to be logged in order to write a new post"
 msgstr "Du må være logget inn for å skrive et nytt innlegg"
 
-msgid "You need to be logged in order to reshare a post"
-msgstr "Du må være logget inn for å dele et innlegg"
+#, fuzzy
+msgid "You need to be logged in order to boost a post"
+msgstr "Du må være logget inn for å like et innlegg"
 
 msgid "Invalid username or password"
 msgstr "Ugyldig brukernavn eller passord"
@@ -258,8 +261,9 @@ msgstr "Du må være logget inn for å redigere profilen din"
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 msgstr "Av {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
-msgid "{{ data }} reshared your article"
-msgstr "{{ data }} delte din artikkel"
+#, fuzzy
+msgid "{{ data }} boosted your article"
+msgstr "{{ data }} la inn en kommentar til artikkelen din"
 
 msgid "{{ data }} started following you"
 msgstr "{{ data }} har begynt å følge deg"
@@ -357,8 +361,9 @@ msgstr "{{ user }} har nå begynt å følge deg."
 msgid "{{ user }} liked your article."
 msgstr "{{ user }} likte artikkelen din."
 
-msgid "{{ user }} reshared your article."
-msgstr "{{ user }} delte artikkelen din med sine følgere."
+#, fuzzy
+msgid "{{ user }} boosted your article."
+msgstr "{{ user }} la igjen en kommentar til artikkelen din."
 
 msgid "Source code"
 msgstr "Kildekode"
@@ -432,6 +437,23 @@ msgstr "artikler"
 
 msgid "Read the detailed rules"
 msgstr "Les reglene"
+
+#~ msgid "One reshare"
+#~ msgid_plural "{{ count }} reshares"
+#~ msgstr[0] "Én deling"
+#~ msgstr[1] "{{ count }} delinger"
+
+#~ msgid "Reshare"
+#~ msgstr "Del"
+
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Du må være logget inn for å dele et innlegg"
+
+#~ msgid "{{ data }} reshared your article"
+#~ msgstr "{{ data }} delte din artikkel"
+
+#~ msgid "{{ user }} reshared your article."
+#~ msgstr "{{ user }} delte artikkelen din med sine følgere."
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Passordet ditt må bestå av minst åtte tegn"
