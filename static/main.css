@@ -126,11 +126,19 @@ main .article-info .author a { font-weight: 600; }
 /* Article */
 
 main article {
-	max-width: 40rem;
-	margin: 2.5em auto;
-	font-family: "Lora", serif;
-	font-size: 1.2em;
-	line-height: 1.7em;
+        max-width: 40rem;
+        margin: 2.5em auto;
+        font-family: "Lora", serif;
+        font-size: 1.2em;
+        line-height: 1.7em;
+}
+
+main a:hover {
+        text-decoration: underline;
+}
+
+main article .fa, main article .fas {
+        font-size: 10pt;
 }
 
 article img {
