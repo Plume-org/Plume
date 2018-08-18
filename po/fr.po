@@ -308,8 +308,9 @@ msgstr ""
 "Nous avons besoin d'une adresse mail ou d'un nom d'utilisateur pour vous "
 "identifier."
 
-msgid "Your password should be at least 8 characters long"
-msgstr "Votre mot de passe doit faire au moins 8 caractères."
+#, fuzzy
+msgid "Your password can't be empty"
+msgstr "Votre commentaire ne peux pas être vide"
 
 msgid "Passwords are not matching"
 msgstr "Les mots de passe ne correspondent pas."
@@ -411,9 +412,10 @@ msgstr "Les auteurs peuvent gérer différents blogs au sein d'un même site."
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr "Les articles sont également visibles sur d'autres sites Plume et "
-"vous pouvez interagir avec eux directement depuis d'autres plateformes "
-"telles que Mastodon."
+msgstr ""
+"Les articles sont également visibles sur d'autres sites Plume et vous pouvez "
+"interagir avec eux directement depuis d'autres plateformes telles que "
+"Mastodon."
 
 msgid "Create your account"
 msgstr "Créer votre compte"
@@ -435,3 +437,6 @@ msgstr "articles"
 
 msgid "Read the detailed rules"
 msgstr "Lisez le détail des règles"
+
+#~ msgid "Your password should be at least 8 characters long"
+#~ msgstr "Votre mot de passe doit faire au moins 8 caractères."

@@ -314,8 +314,9 @@ msgid "We need an email or a username to identify you"
 msgstr ""
 "Potrzebujemy nazwy użytkownika lub adresu e-mail, aby Cię zidentyfikować"
 
-msgid "Your password should be at least 8 characters long"
-msgstr "Twoje hasło musi składać się przynajmniej z 8 znaków"
+#, fuzzy
+msgid "Your password can't be empty"
+msgstr "Twój komentarz nie może być pusty"
 
 msgid "Passwords are not matching"
 msgstr "Hasła nie pasują do siebie"
@@ -442,6 +443,9 @@ msgstr "artykuły"
 
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
+
+#~ msgid "Your password should be at least 8 characters long"
+#~ msgstr "Twoje hasło musi składać się przynajmniej z 8 znaków"
 
 #~ msgid "Logowanie"
 #~ msgstr "Zaloguj się"

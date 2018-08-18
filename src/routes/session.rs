@@ -4,6 +4,7 @@ use rocket::{
     request::{LenientForm,FlashMessage}
 };
 use rocket_contrib::Template;
+use std::borrow::Cow;
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_models::{
@@ -40,7 +41,7 @@ fn new_message(user: Option<User>, message: Message) -> Template {
 struct LoginForm {
     #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
     email_or_name: String,
-    #[validate(length(min = "8", message = "Your password should be at least 8 characters long"))]
+    #[validate(length(min = "1", message = "Your password can't be empty"))]
     password: String
 }
 
@@ -50,17 +51,21 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
     let user = User::find_by_email(&*conn, form.email_or_name.to_string())
         .map(|u| Ok(u))
         .unwrap_or_else(|| User::find_local(&*conn, form.email_or_name.to_string()).map(|u| Ok(u)).unwrap_or(Err(())));
-    
+
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
     if let Err(_) = user.clone() {
-        errors.add("email_or_name", ValidationError::new("invalid_login"))
+        let mut err = ValidationError::new("invalid_login");
+        err.message = Some(Cow::from("Invalid username or password"));
+        errors.add("email_or_name", err)
     } else if !user.clone().expect("User not found").auth(form.password.clone()) {
-        errors.add("email_or_name", ValidationError::new("invalid_login"))
+        let mut err = ValidationError::new("invalid_login");
+        err.message = Some(Cow::from("Invalid username or password"));
+        errors.add("email_or_name", err)
     }
-    
+
     if errors.is_empty() {
         cookies.add_private(Cookie::new(AUTH_COOKIE, user.unwrap().id.to_string()));
         Ok(Redirect::to(Uri::new(flash
@@ -68,8 +73,9 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
             .unwrap_or("/".to_owned()))
         ))
     } else {
+        println!("{:?}", errors);
         Err(Template::render("session/login", json!({
-            "account": user,
+            "account": null,
             "errors": errors.inner(),
             "form": form
         })))

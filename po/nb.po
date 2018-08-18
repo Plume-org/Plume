@@ -46,7 +46,9 @@ msgid "Something broke on our side."
 msgstr "Noe gikk feil i vår ende."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Beklager så mye. Dersom du tror dette er en bug, vær grei å rapportér det til oss."
+msgstr ""
+"Beklager så mye. Dersom du tror dette er en bug, vær grei å rapportér det "
+"til oss."
 
 msgid "Configuration"
 msgstr "Oppsett"
@@ -68,7 +70,8 @@ msgstr "Meldinger"
 
 msgid ""
 "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "Skrevet av {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape}}{{ link_3 }}"
+msgstr ""
+"Skrevet av {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape}}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Denne artikkelen er publisert med lisensen {{ license }}"
@@ -132,7 +135,9 @@ msgid "Your Blogs"
 msgstr "Dine blogger"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
-msgstr "Du har ingen blogger enda. Lag din egen, eller be om å få bli med på en annen."
+msgstr ""
+"Du har ingen blogger enda. Lag din egen, eller be om å få bli med på en "
+"annen."
 
 msgid "Start a new blog"
 msgstr "Start en ny blogg"
@@ -301,8 +306,9 @@ msgstr "Et innlegg med samme navn finnes allerede."
 msgid "We need an email or a username to identify you"
 msgstr "Vi trenger en epost eller et brukernavn for å identifisere deg"
 
-msgid "Your password should be at least 8 characters long"
-msgstr "Passordet ditt må bestå av minst åtte tegn"
+#, fuzzy
+msgid "Your password can't be empty"
+msgstr "Kommentaren din kan ikke være tom"
 
 msgid "Passwords are not matching"
 msgstr "Passordene stemmer ikke overens"
@@ -322,7 +328,8 @@ msgstr[0] "Én forfatter av denne bloggen: "
 msgstr[1] "{{ count }} forfattere av denne bloggen: "
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr "Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
+msgstr ""
+"Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
 
 msgid "Optional"
 msgstr "Valgfritt"
@@ -425,3 +432,6 @@ msgstr "artikler"
 
 msgid "Read the detailed rules"
 msgstr "Les reglene"
+
+#~ msgid "Your password should be at least 8 characters long"
+#~ msgstr "Passordet ditt må bestå av minst åtte tegn"

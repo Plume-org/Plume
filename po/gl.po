@@ -301,7 +301,7 @@ msgstr ""
 msgid "We need an email or a username to identify you"
 msgstr ""
 
-msgid "Your password should be at least 8 characters long"
+msgid "Your password can't be empty"
 msgstr ""
 
 msgid "Passwords are not matching"
