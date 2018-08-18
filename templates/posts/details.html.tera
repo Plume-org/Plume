@@ -36,7 +36,7 @@
         {% endif %}
     </div>
     <article>
-        {{ article.post.content | safe }}
+        {{ article.post.content | safe | replace(from="</a>", to=" <i class='fas fa-external-link-alt'></i></a>") }}
     </article>
 
     <div class="article-meta">
