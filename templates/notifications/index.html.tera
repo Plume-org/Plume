@@ -18,7 +18,7 @@
                         </a></h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>
-                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "FOLLOW" %}
                     <i class="fa fa-user-plus left-icon"></i>
@@ -27,7 +27,7 @@
                             {{ "{{ user }} is now following you." | _(user=notification.object.follower.name | escape) }}
                         </a></h3>
                     </main>
-                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "LIKE" %}
                     <i class="fa fa-heart left-icon"></i>
@@ -37,7 +37,7 @@
                         </h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>
-                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "MENTION" %}
                     <i class="fa fa-at left-icon"></i>
@@ -46,7 +46,7 @@
                             {{ "{{ user }} mentioned you." | _(user=notification.object.user.name | escape) }}
                         </a></h3>
                     </main>
-                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "RESHARE" %}
                     <i class="fa fa-retweet left-icon"></i>
@@ -56,7 +56,7 @@
                         </h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>
-                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%m") }}</small></p>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% endif %}
             </div>
