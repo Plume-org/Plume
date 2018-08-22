@@ -78,7 +78,7 @@ msgstr "Cet article est placé sous la licence {{ license }}"
 
 msgid "One like"
 msgid_plural "{{ count }} likes"
-msgstr[0] "Une personne aime cet article"
+msgstr[0] "{{ count }} personne aime cet article"
 msgstr[1] "{{ count }} personnes aiment cet article"
 
 msgid "I don&#x27;t like this anymore"
@@ -165,7 +165,7 @@ msgstr "Récemment repartagé"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
-msgstr[0] "Un⋅e abonné⋅e"
+msgstr[0] "{{ count }} abonné⋅e"
 msgstr[1] "{{ count }} abonné⋅e⋅s"
 
 msgid "Edit your account"
@@ -326,7 +326,7 @@ msgstr "Le mot de passe doit faire au moins 8 caractères."
 
 msgid "One author in this blog: "
 msgid_plural "{{ count }} authors in this blog: "
-msgstr[0] "Un⋅e auteur⋅ice dans ce blog : "
+msgstr[0] "{{ count }} auteur⋅ice dans ce blog : "
 msgstr[1] "{{ count }} auteur⋅ice⋅s dans ce blog : "
 
 msgid "Login or use your Fediverse account to interact with this article"
@@ -340,7 +340,7 @@ msgstr "Optionnel"
 #, fuzzy
 msgid "One article in this blog"
 msgid_plural "{{ count }} articles in this blog"
-msgstr[0] "Un article dans ce blog"
+msgstr[0] "{{ count }} article dans ce blog"
 msgstr[1] "{{ count }} articles dans ce blog"
 
 msgid "Previous page"
