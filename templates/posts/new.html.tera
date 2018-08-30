@@ -17,11 +17,12 @@
     {% endif %}
 
     <label for="content">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
-    <textarea id="content" name="content" value="{{ form.content | default(value="") }}"></textarea>
+    <textarea id="content" name="content" value="{{ form.content | default(value="") }}" rows="20"></textarea>
 
     {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
     {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
 
     <input type="submit" value="{{ "Publish" | _ }}" />
 </form>
+<script src="/static/js/autoExpand.js"></script>
 {% endblock content %}

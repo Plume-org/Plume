@@ -422,6 +422,9 @@ form.new-post .title {
 }
 form.new-post textarea {
 	min-height: 20em;
+	overflow-y: hidden;
+	resize: none;
+	box-sizing: content-box;
 }
 form.new-post input[type="submit"] {
 	background: #ECECEC;
