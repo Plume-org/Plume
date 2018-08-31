@@ -43,18 +43,18 @@ msgid "Submit comment"
 msgstr "Envoyer le commentaire"
 
 msgid "Something broke on our side."
-msgstr "Nous avons cassé quelque chose"
+msgstr "Nous avons cassé quelque chose."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 "Nous sommes désolé⋅e⋅s. Si vous pensez que c'est un bogue, merci de le "
-"rapporter."
+"signaler."
 
 msgid "Configuration"
 msgstr "Configuration"
 
 msgid "Configure your instance"
-msgstr "Configurez votre instance"
+msgstr "Configurer votre instance"
 
 msgid "Name"
 msgstr "Nom"
@@ -93,10 +93,10 @@ msgstr[0] "{{ count }} repartage"
 msgstr[1] "{{ count }} repartages"
 
 msgid "I don&#x27;t want to reshare this anymore"
-msgstr "Je ne veux plus repartager"
+msgstr "Je ne veux plus repartager ceci"
 
 msgid "Reshare"
-msgstr "Repartagez"
+msgstr "Repartager"
 
 msgid "Comments"
 msgstr "Commentaires"
@@ -105,7 +105,7 @@ msgid "Respond"
 msgstr "Répondre"
 
 msgid "Comment"
-msgstr "Commentez"
+msgstr "Commenter"
 
 msgid "New post"
 msgstr "Nouvel article"
@@ -140,7 +140,7 @@ msgstr ""
 "un."
 
 msgid "Start a new blog"
-msgstr "Commencez un nouveau blog"
+msgstr "Commencer un nouveau blog"
 
 msgid "Admin"
 msgstr "Administrateur"
@@ -149,7 +149,7 @@ msgid "It is you"
 msgstr "C'est vous"
 
 msgid "Edit your profile"
-msgstr "Éditez votre profil"
+msgstr "Éditer votre profil"
 
 msgid "Open on {{ instance_url }}"
 msgstr "Ouvrir sur {{ instance_url }}"
@@ -256,7 +256,7 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "De {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr "Par {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
 msgstr "{{ data }} a repartagé votre article"
@@ -274,13 +274,13 @@ msgid "We couldn&#x27;t find this page."
 msgstr "Page introuvable."
 
 msgid "The link that led you here may be broken."
-msgstr "Le lien que vous avez suivi est cassé."
+msgstr "Vous avez probablement suivi un lien cassé."
 
 msgid "You are not authorized."
 msgstr "Vous n'avez pas les droits."
 
 msgid "You are not author in this blog."
-msgstr "Vous n'êtes pas auteur dans ce blog."
+msgstr "Vous n'êtes pas auteur⋅ice dans ce blog."
 
 msgid "{{ data }} mentioned you."
 msgstr "{{ data }} vous a mentionné."
@@ -298,7 +298,7 @@ msgid "A blog with the same name already exists."
 msgstr "Un blog avec le même nom existe déjà."
 
 msgid "Your comment can't be empty"
-msgstr "Votre commentaire ne peux pas être vide"
+msgstr "Votre commentaire ne peut pas être vide."
 
 msgid "A post with the same title already exists."
 msgstr "Un article avec le même titre existe déjà."
@@ -310,7 +310,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Your password can't be empty"
-msgstr "Votre commentaire ne peux pas être vide"
+msgstr "Votre mot de passe ne peut pas être vide."
 
 msgid "Passwords are not matching"
 msgstr "Les mots de passe ne correspondent pas."
@@ -319,15 +319,15 @@ msgid "Username can't be empty"
 msgstr "Le nom d'utilisateur ne peut pas être vide."
 
 msgid "Invalid email"
-msgstr "Adresse mail invalide"
+msgstr "Adresse mail invalide."
 
 msgid "Password should be at least 8 characters long"
 msgstr "Le mot de passe doit faire au moins 8 caractères."
 
 msgid "One author in this blog: "
 msgid_plural "{{ count }} authors in this blog: "
-msgstr[0] "{{ count }} aut⋅eur⋅rice dans ce blog : "
-msgstr[1] "{{ count }} aut⋅eur⋅rice⋅s dans ce blog : "
+msgstr[0] "{{ count }} auteur⋅ice dans ce blog : "
+msgstr[1] "{{ count }} auteur⋅ice⋅s dans ce blog : "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
@@ -340,14 +340,14 @@ msgstr "Optionnel"
 #, fuzzy
 msgid "One article in this blog"
 msgid_plural "{{ count }} articles in this blog"
-msgstr[0] "{{ count }} aut⋅eur⋅rice dans ce blog : "
-msgstr[1] "{{ count }} aut⋅eur⋅rice⋅s dans ce blog : "
+msgstr[0] "{{ count }} article dans ce blog"
+msgstr[1] "{{ count }} articles dans ce blog"
 
 msgid "Previous page"
-msgstr ""
+msgstr "Page précédente"
 
 msgid "Next page"
-msgstr ""
+msgstr "Page suivante"
 
 msgid "{{ user }} mentioned you."
 msgstr "{{ user }} vous a mentionné."
@@ -395,7 +395,7 @@ msgid "Save settings"
 msgstr "Enregistrer les paramètres"
 
 msgid "No comments yet. Be the first to react!"
-msgstr "Pas encore de commentaires. Soyez læ premi⋅er⋅ère à réagir !"
+msgstr "Pas encore de commentaires. Soyez læ premier⋅ère à réagir !"
 
 msgid "About this instance"
 msgstr "À propos de cette instance"
@@ -407,15 +407,14 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume est un moteur de blog décentralisé."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr "Les auteurs peuvent gérer différents blogs au sein d'un même site."
+msgstr "Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d'un même site."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
-"Les articles sont également visibles sur d'autres sites Plume et vous pouvez "
-"interagir avec eux directement depuis d'autres plateformes telles que "
-"Mastodon."
+"Les articles sont également visibles sur d'autres sites Plume, et vous pouvez "
+"interagir avec directement depuis d'autres plateformes telles que Mastodon."
 
 msgid "Create your account"
 msgstr "Créer votre compte"
@@ -427,16 +426,16 @@ msgid "Home to"
 msgstr "Accueille"
 
 msgid "people"
-msgstr "personnnes"
+msgstr "personnes"
 
 msgid "Who wrote"
-msgstr "Qui ont écrit"
+msgstr "Ayant écrit"
 
 msgid "articles"
 msgstr "articles"
 
 msgid "Read the detailed rules"
-msgstr "Lisez le détail des règles"
+msgstr "Lire les règles détaillées"
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Votre mot de passe doit faire au moins 8 caractères."
