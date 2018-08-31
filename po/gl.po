@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
 "PO-Revision-Date: 2018-06-15 16:33-0700\n"
-"Last-Translator: Automatically generated\n"
+"Last-Translator: Xosé M. <correo@xmgz.eu>\n"
 "Language-Team: none\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
@@ -13,413 +13,414 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Últimos artigos"
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Aínda non hai entradas publicadas"
 
 msgid "New article"
-msgstr ""
+msgstr "Novo artigo"
 
 msgid "New blog"
-msgstr ""
+msgstr "Novo blog"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Crear un blog"
 
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Crear blog"
 
 msgid "Comment \"{{ post }}\""
-msgstr ""
+msgstr "Comentar \"{{ post }}\""
 
 msgid "Content"
-msgstr ""
+msgstr "Contido"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Enviar comentario"
 
 msgid "Something broke on our side."
-msgstr ""
+msgstr "Algo fallou pola nosa parte"
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
+msgstr "Lamentálmolo. Si cree que é un bug, infórmenos por favor."
 
 msgid "Configuration"
-msgstr ""
+msgstr "Axustes"
 
 msgid "Configure your instance"
-msgstr ""
+msgstr "Configure a súa instancia"
 
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgid "Let&#x27;s go!"
-msgstr ""
+msgstr "Imos!"
 
 msgid "Welcome on {{ instance_name | escape }}"
-msgstr ""
+msgstr "Ben vida a {{ instance_name | escape }}"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notificacións"
 
 msgid ""
 "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr ""
+msgstr "Escrito por {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
-msgstr ""
+msgstr "Este artigo ten licenza {{ license }}"
 
 msgid "One like"
 msgid_plural "{{ count }} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un gústame"
+msgstr[1] "{{ count }} gústame"
 
 msgid "I don&#x27;t like this anymore"
-msgstr ""
+msgstr "Xa non me gusta"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Engada os seus"
 
 msgid "One reshare"
 msgid_plural "{{ count }} reshares"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Compartido unha vez"
+msgstr[1] "Compartido {{ count }} veces"
 
 msgid "I don&#x27;t want to reshare this anymore"
-msgstr ""
+msgstr "Xa non quero compartir esto"
 
 msgid "Reshare"
-msgstr ""
+msgstr "Compartir"
 
 msgid "Comments"
-msgstr ""
+msgstr "Comentarios"
 
 msgid "Respond"
-msgstr ""
+msgstr "Respostar"
 
 msgid "Comment"
-msgstr ""
+msgstr "Comentar"
 
 msgid "New post"
-msgstr ""
+msgstr "Nova entrada"
 
 msgid "Create a post"
-msgstr ""
+msgstr "Crear unha entrada"
 
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
 msgid "Login"
-msgstr ""
+msgstr "Conectar"
 
 msgid "Username or email"
-msgstr ""
+msgstr "Usuaria ou correo-e"
 
 msgid "Password"
-msgstr ""
+msgstr "Contrasinal"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Taboleiro"
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "O seu taboleiro"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Os seus Blogs"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Aínda non ten blogs. Publique un, ou solicita unirse a un."
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "Iniciar un blog"
 
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 msgid "It is you"
-msgstr ""
+msgstr "É vosted"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Edite o seu perfil"
 
 msgid "Open on {{ instance_url }}"
-msgstr ""
+msgstr "Abrir en {{ instance_url }}"
 
 msgid "Follow"
-msgstr ""
+msgstr "Seguir"
 
 msgid "Unfollow"
-msgstr ""
+msgstr "Deixar de seguir"
 
 msgid "Recently reshared"
-msgstr ""
+msgstr "Compartido recentemente"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Unha seguidora"
+msgstr[1] "{{ count }} seguidoras"
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Edite a súa conta"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "O seu perfil"
 
 msgid "Display Name"
-msgstr ""
+msgstr "Nome mostrado"
 
 msgid "Email"
-msgstr ""
+msgstr "Correo-e"
 
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 msgid "Update account"
-msgstr ""
+msgstr "Actualizar conta"
 
 msgid "{{ name | escape }}'s followers"
-msgstr ""
+msgstr "Seguidoras de {{ name | escape }}"
 
 msgid "Followers"
-msgstr ""
+msgstr "Seguidoras"
 
 msgid "New Account"
-msgstr ""
+msgstr "Nova conta"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Crear unha conta"
 
 msgid "Username"
-msgstr ""
+msgstr "Nome de usuaria"
 
 msgid "Password confirmation"
-msgstr ""
+msgstr "Confirmación do contrasinal"
 
 msgid "Create account"
-msgstr ""
+msgstr "Crear conta"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menú"
 
 msgid "My account"
-msgstr ""
+msgstr "A miña conta"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Desconectar"
 
 msgid "Log In"
-msgstr ""
+msgstr "Conectar"
 
 msgid "Register"
-msgstr ""
+msgstr "Rexistrar"
 
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Debe estar conectada para crear un novo blog"
 
 msgid "You need to be logged in order to post a comment"
-msgstr ""
+msgstr "Debe estar conectada para publicar un comentario"
 
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "Debe estar conectada para gustar unha entrada"
 
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Debe estar conectada para ver as súas notificacións"
 
 msgid "You need to be logged in order to write a new post"
-msgstr ""
+msgstr "Debe estar conectada para escribir unha nova entrada"
 
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Debe estar conectada para compartir unha entrada"
 
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Usuaria ou Contrasinal incorrectos"
 
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "Debe estar conectada para acceder ao seu taboleiro"
 
 msgid "You need to be logged in order to follow someone"
-msgstr ""
+msgstr "Debe estar conectada para seguir a alguén"
 
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Debe estar conectada para editar o seu perfil"
 
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr ""
+msgstr "Por {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
-msgstr ""
+msgstr "{{ data }} comparteu o seu artigo"
 
 msgid "{{ data }} started following you"
-msgstr ""
+msgstr "{{ data }} comezou a seguila"
 
 msgid "{{ data }} liked your article"
-msgstr ""
+msgstr "{{ data }} gustou do seu artigo"
 
 msgid "{{ data }} commented your article"
-msgstr ""
+msgstr "{{ data }} comentou o seu artigo"
 
 msgid "We couldn&#x27;t find this page."
-msgstr ""
+msgstr "Non atopamos esta páxina"
 
 msgid "The link that led you here may be broken."
-msgstr ""
+msgstr "A ligazón que a trouxo aquí podería estar quebrado"
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Non ten permiso."
 
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "Vostede non é autora en este blog."
 
 msgid "{{ data }} mentioned you."
-msgstr ""
+msgstr "{{ data }} mencionouna."
 
 msgid "Your comment"
-msgstr ""
+msgstr "O seu comentario"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "Fallo descoñecido"
 
 msgid "Invalid name"
-msgstr ""
+msgstr "Nome non válido"
 
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Xa existe un blog co mismo nome."
 
 msgid "Your comment can't be empty"
-msgstr ""
+msgstr "O seu comentario non pode estar baldeiro"
 
 msgid "A post with the same title already exists."
-msgstr ""
+msgstr "Xa existe unha entrada co mismo nome."
 
 msgid "We need an email or a username to identify you"
-msgstr ""
+msgstr "Precisamos un correo-e ou un nome de usuaria para identificala"
 
 msgid "Your password can't be empty"
-msgstr ""
+msgstr "O contrasinal non pode estar baldeiro"
 
 msgid "Passwords are not matching"
-msgstr ""
+msgstr "Con coinciden os contrasinais"
 
 msgid "Username can't be empty"
-msgstr ""
+msgstr "O nome de usuaria non pode estar baldeiro"
 
 msgid "Invalid email"
-msgstr ""
+msgstr "Correo-e non válido"
 
 msgid "Password should be at least 8 characters long"
-msgstr ""
+msgstr "O contrasinal debe ter ao menos 8 caracteres"
 
 msgid "One author in this blog: "
 msgid_plural "{{ count }} authors in this blog: "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Unha autora en este blog: "
+msgstr[1] "{{ count }} autoras en este blog: "
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Conéctese ou utilice a súa conta no fediverso para interactuar con este artigo"
 
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 msgid "One article in this blog"
 msgid_plural "{{ count }} articles in this blog"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un artigo en este blog"
+msgstr[1] "{{ count }} artigos en este blog"
 
 msgid "Previous page"
-msgstr ""
+msgstr "Páxina anterior"
 
 msgid "Next page"
-msgstr ""
+msgstr "Páxina seguinte"
 
 msgid "{{ user }} mentioned you."
-msgstr ""
+msgstr "{{ user }} mencionouna."
 
 msgid "{{ user }} commented your article."
-msgstr ""
+msgstr "{{ user }} comentou o artigo."
 
 msgid "{{ user }} is now following you."
-msgstr ""
+msgstr "{{ user }} está a seguila."
 
 msgid "{{ user }} liked your article."
-msgstr ""
+msgstr "{{ user }} gustou do seu artigo."
 
 msgid "{{ user }} reshared your article."
-msgstr ""
+msgstr "{{ user }} comparteu o seu artigo."
 
 msgid "Source code"
-msgstr ""
+msgstr "Código fonte"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Sala Matrix"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administración"
 
 msgid "Instance settings"
-msgstr ""
+msgstr "Axustes da instancia"
 
 msgid "Allow anyone to register"
-msgstr ""
+msgstr "Permitir o rexistro aberto"
 
 msgid "Short description"
-msgstr ""
+msgstr "Descrición curta"
 
 msgid "Markdown is supported"
-msgstr ""
+msgstr "Escritura Markdown activada"
 
 msgid "Long description"
-msgstr ""
+msgstr "Descrición longa"
 
 msgid "Default license"
-msgstr ""
+msgstr "Licenza por omisión"
 
 msgid "Save settings"
-msgstr ""
+msgstr "Gardar axustes"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Sin comentarios. Sexa a primeira e comentar!"
 
 msgid "About this instance"
-msgstr ""
+msgstr "Sobre esta instancia"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Qué é Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume é un motor de publicación descentralizada."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Os artigos son visibles tamén en outros sitios Plume, e pode interactuar con"
+"eles desde outras plataformas como Mastadon."
 
 msgid "Create your account"
-msgstr ""
+msgstr "Cree a súa conta"
 
 msgid "About {{ instance_name }}"
-msgstr ""
+msgstr "Acerca de {{ instance_name }}"
 
 msgid "Home to"
-msgstr ""
+msgstr "Fogar de"
 
 msgid "people"
-msgstr ""
+msgstr "persoas"
 
 msgid "Who wrote"
-msgstr ""
+msgstr "Que escribiron"
 
 msgid "articles"
-msgstr ""
+msgstr "artigos"
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Lea o detalle das normas"
