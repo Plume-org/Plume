@@ -48,19 +48,6 @@ impl Like {
         }
     }
 
-    pub fn delete(&self, conn: &PgConnection) -> activity::Undo {
-        diesel::delete(self).execute(conn).unwrap();
-
-        let mut act = activity::Undo::default();
-        act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).expect("Like::delete: actor error");
-        act.undo_props.set_object_object(self.into_activity(conn)).expect("Like::delete: object error");
-        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Like::delete: id error");
-        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Like::delete: to error");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Like::delete: cc error");
-
-        act
-    }
-
     pub fn into_activity(&self, conn: &PgConnection) -> activity::Like {
         let mut act = activity::Like::default();
         act.like_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).expect("Like::into_activity: actor error");
@@ -100,13 +87,23 @@ impl Notify<PgConnection> for Like {
     }
 }
 
-impl Deletable<PgConnection> for Like {
-    fn delete_activity(conn: &PgConnection, id: Id) -> bool {
+impl Deletable<PgConnection, activity::Undo> for Like {
+    fn delete(&self, conn: &PgConnection) -> activity::Undo {
+        diesel::delete(self).execute(conn).unwrap();
+
+        let mut act = activity::Undo::default();
+        act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).expect("Like::delete: actor error");
+        act.undo_props.set_object_object(self.into_activity(conn)).expect("Like::delete: object error");
+        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Like::delete: id error");
+        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Like::delete: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Like::delete: cc error");
+
+        act
+    }
+    
+    fn delete_id(id: String, conn: &PgConnection) {
         if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
             like.delete(conn);
-            true
-        } else {
-            false
         }
     }
 }

@@ -420,3 +420,6 @@ msgstr ""
 
 msgid "Read the detailed rules"
 msgstr ""
+
+msgid "Delete this article"
+msgstr ""

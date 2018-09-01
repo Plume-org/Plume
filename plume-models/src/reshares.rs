@@ -59,19 +59,6 @@ impl Reshare {
         User::get(conn, self.user_id)
     }
 
-    pub fn delete(&self, conn: &PgConnection) -> Undo {
-        diesel::delete(self).execute(conn).unwrap();
-
-        let mut act = Undo::default();
-        act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
-        act.undo_props.set_object_object(self.into_activity(conn)).unwrap();
-        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Reshare::delete: id error");
-        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Reshare::delete: to error");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Reshare::delete: cc error");
-
-        act
-    }
-
     pub fn into_activity(&self, conn: &PgConnection) -> Announce {
         let mut act = Announce::default();
         act.announce_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
@@ -111,13 +98,23 @@ impl Notify<PgConnection> for Reshare {
     }
 }
 
-impl Deletable<PgConnection> for Reshare {
-    fn delete_activity(conn: &PgConnection, id: Id) -> bool {
-        if let Some(reshare) = Reshare::find_by_ap_url(conn, id.into()) {
+impl Deletable<PgConnection, Undo> for Reshare {
+    fn delete(&self, conn: &PgConnection) -> Undo {
+        diesel::delete(self).execute(conn).unwrap();
+
+        let mut act = Undo::default();
+        act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
+        act.undo_props.set_object_object(self.into_activity(conn)).unwrap();
+        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Reshare::delete: id error");
+        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Reshare::delete: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Reshare::delete: cc error");
+
+        act
+    }
+
+    fn delete_id(id: String, conn: &PgConnection) {
+        if let Some(reshare) = Reshare::find_by_ap_url(conn, id) {
             reshare.delete(conn);
-            true
-        } else {
-            false
         }
     }
 }

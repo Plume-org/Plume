@@ -68,6 +68,7 @@ fn main() {
             routes::posts::new,
             routes::posts::new_auth,
             routes::posts::create,
+            routes::posts::delete,
 
             routes::reshares::create,
             routes::reshares::create_auth,

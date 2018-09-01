@@ -1,7 +1,7 @@
 use activitypub::{
-    activity::Create,
+    activity::{Create, Delete},
     link,
-    object::Article
+    object::{Article, Tombstone}
 };
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
@@ -10,7 +10,7 @@ use serde_json;
 
 use plume_common::activity_pub::{
     PUBLIC_VISIBILTY, Id, IntoId,
-    inbox::FromActivity
+    inbox::{Deletable, FromActivity}
 };
 use {BASE_URL, ap_url};
 use blogs::Blog;
@@ -270,6 +270,27 @@ impl FromActivity<Article, PgConnection> for Post {
             }
             post
         }
+    }
+}
+
+impl Deletable<PgConnection, Delete> for Post {
+    fn delete(&self, conn: &PgConnection) -> Delete {
+        let mut act = Delete::default();
+        act.delete_props.set_actor_link(self.get_authors(conn)[0].clone().into_id()).expect("Post::delete: actor error");
+
+        let mut tombstone = Tombstone::default();
+        tombstone.object_props.set_id_string(self.ap_url.clone()).expect("Post::delete: object.id error");
+        act.delete_props.set_object_object(tombstone).expect("Post::delete: object error");
+
+        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Post::delete: id error");
+        act.object_props.set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)]).expect("Post::delete: to error");
+
+        diesel::delete(self).execute(conn).expect("Post::delete: DB error");
+        act
+    }
+
+    fn delete_id(id: String, conn: &PgConnection) {
+        Post::find_by_ap_url(conn, id).map(|p| p.delete(conn));
     }
 }
 

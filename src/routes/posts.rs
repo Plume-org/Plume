@@ -8,7 +8,7 @@ use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 use workerpool::{Pool, thunk::*};
 
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Deletable};
 use plume_common::utils;
 use plume_models::{
     blogs::*,
@@ -53,10 +53,11 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                 "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
-                "account": user,
+                "account": &user,
                 "date": &post.creation_date.timestamp(),
                 "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
-                "user_fqn": user.map(|u| u.get_fqn(&*conn)).unwrap_or(String::new())
+                "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
+                "is_author": user.map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false)
             }))
         })
     })
@@ -174,5 +175,25 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             "errors": errors.inner(),
             "form": form
         })))
+    }
+}
+
+#[post("/~/<blog_name>/<slug>/delete")]
+fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
+    let post = Blog::find_by_fqn(&*conn, blog_name.clone())
+        .and_then(|blog| Post::find_by_slug(&*conn, slug.clone(), blog.id));
+
+    if let Some(post) = post {
+        if !post.get_authors(&*conn).into_iter().any(|a| a.id == user.id) {
+            Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone()))
+        } else {
+            let audience = user.get_followers(&*conn);
+            let delete_activity = post.delete(&*conn);
+            worker.execute(Thunk::of(move || broadcast(&user, delete_activity, audience)));
+
+            Redirect::to(uri!(super::blogs::details: name = blog_name))
+        }
+    } else {
+        Redirect::to(uri!(super::blogs::details: name = blog_name))
     }
 }

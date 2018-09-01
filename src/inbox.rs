@@ -1,4 +1,4 @@
-use activitypub::activity::{Announce, Create, Like, Undo};
+use activitypub::{activity::{Announce, Create, Delete, Like, Undo}, object::Tombstone};
 use diesel::PgConnection;
 use failure::Error;
 use serde_json;
@@ -32,6 +32,11 @@ pub trait Inbox {
                             Err(InboxError::InvalidType)?
                         }
                     },
+                    "Delete" => {
+                        let act: Delete = serde_json::from_value(act.clone())?;
+                        Post::delete_id(act.delete_props.object_object::<Tombstone>()?.object_props.id_string()?, conn);
+                        Ok(())
+                    },
                     "Follow" => {
                         Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id);
                         Ok(())
@@ -44,11 +49,11 @@ pub trait Inbox {
                         let act: Undo = serde_json::from_value(act.clone())?;
                         match act.undo_props.object["type"].as_str().unwrap() {
                             "Like" => {
-                                likes::Like::delete_activity(conn, Id::new(act.undo_props.object_object::<Like>()?.object_props.id_string()?));
+                                likes::Like::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, conn);
                                 Ok(())
                             },
                             "Announce" => {
-                                Reshare::delete_activity(conn, Id::new(act.undo_props.object_object::<Announce>()?.object_props.id_string()?));
+                                Reshare::delete_id(act.undo_props.object_object::<Announce>()?.object_props.id_string()?, conn);
                                 Ok(())
                             }
                             _ => Err(InboxError::CantUndo)?

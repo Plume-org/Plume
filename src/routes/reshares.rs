@@ -1,7 +1,7 @@
 use rocket::{State, response::{Redirect, Flash}};
 use workerpool::{Pool, thunk::*};
 
-use plume_common::activity_pub::{broadcast, inbox::Notify};
+use plume_common::activity_pub::{broadcast, inbox::{Deletable, Notify}};
 use plume_common::utils;
 use plume_models::{
     blogs::Blog,

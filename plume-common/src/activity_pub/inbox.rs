@@ -1,4 +1,4 @@
-use activitypub::{Object, activity::Create};
+use activitypub::{Object, activity::{Create, Delete}};
 
 use activity_pub::Id;
 
@@ -29,9 +29,10 @@ pub trait Notify<C> {
     fn notify(&self, conn: &C);
 }
 
-pub trait Deletable<C> {
-    /// true if success
-    fn delete_activity(conn: &C, id: Id) -> bool;
+pub trait Deletable<C, A> {
+    fn delete(&self, conn: &C) -> A;
+    fn delete_id(id: String, conn: &C);
+
 }
 
 pub trait WithInbox {
