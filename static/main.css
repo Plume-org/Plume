@@ -593,7 +593,7 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 		}
 	}
 
-	header #content.opened, header:focus-within #content {
+	header:focus-within #content {
 		position: fixed;
 		display: flex;
 		flex-direction: column;
@@ -607,7 +607,7 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 
 		animation: 0.2s menuOpening;
 	}
-	header #content.opened::before, header:focus-within #content::before {
+	header:focus-within #content::before {
 		content: "";
 		position: absolute;
 		transform: skewX(-10deg);
@@ -620,21 +620,21 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 
 		background: #7765E3;
 	}
-	header #content.opened > nav, header:focus-within #content > nav {
+	header:focus-within #content > nav {
 		flex-direction: column;
 		align-items: flex-start;
 	}
-	header #content.opened > nav a, header:focus-within #content > nav a {
+	header:focus-within #content > nav a {
 		margin: 0;
 		padding: 1rem 1.5rem;
 		color: #F4F4F4;
 		font-size: 1.4em;
 		font-weight: 300;
 	}
-	header #content.opened > nav a.title, header:focus-within #content > nav a.title {
+	header:focus-within #content > nav a.title {
 		font-size: 1.8em;
 	}
-	header #content.opened > nav hr, header:focus-within #content > nav hr {
+	header:focus-within #content > nav hr {
 		display: block;
 		margin: 0;
 		width: 100%;
