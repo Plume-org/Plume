@@ -163,7 +163,7 @@ Description=plume
 Type=simple
 User=plume
 WorkingDirectory=/home/plume/Plume
-ExecStart=/home/dev/.cargo/bin/cargo run
+ExecStart=/home/plume/.cargo/bin/cargo run
 TimeoutSec=30
 Restart=always
 
