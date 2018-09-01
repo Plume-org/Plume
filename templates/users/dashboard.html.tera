@@ -13,13 +13,13 @@
         {% if blogs | length < 1 %}
             <p>{{ "You don't have any blog yet. Create your own, or ask to join one." | _ }}</p>
         {% endif %}
-        <a class="button" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
-        <div class="list">
+        <div class="cards">
             {% for blog in blogs %}
                 <div class="card">
                     <h3><a href="/~/{{ blog.actor_id }}/">{{ blog.title }}</a></h3>
                 </div>
             {% endfor %}
         </div>
+        <a class="button" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
     </section>
 {% endblock content %}

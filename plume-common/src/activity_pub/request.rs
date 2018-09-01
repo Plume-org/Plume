@@ -2,13 +2,11 @@ use base64;
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::{
     mime::Mime,
-    header::{ContentType, Date, Headers, UserAgent}
+    header::{Accept, Date, Headers, UserAgent, qitem}
 };
-use std::{
-    str::FromStr,
-    time::SystemTime
-};
+use std::time::SystemTime;
 
+use activity_pub::ap_accept_header;
 use activity_pub::sign::Signer;
 
 const USER_AGENT: &'static str = "Plume/0.1.0";
@@ -25,7 +23,7 @@ pub fn headers() -> Headers {
     let mut headers = Headers::new();
     headers.set(UserAgent::new(USER_AGENT));
     headers.set(Date(SystemTime::now().into()));
-    headers.set(ContentType(Mime::from_str("application/activity+json").unwrap()));
+    headers.set(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()));
     headers
 }
 

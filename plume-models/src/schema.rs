@@ -53,6 +53,12 @@ table! {
         local -> Bool,
         blocked -> Bool,
         creation_date -> Timestamp,
+        open_registrations -> Bool,
+        short_description -> Text,
+        long_description -> Text,
+        default_license -> Text,
+        long_description_html -> Varchar,
+        short_description_html -> Varchar,
     }
 }
 
@@ -79,12 +85,10 @@ table! {
 table! {
     notifications (id) {
         id -> Int4,
-        title -> Varchar,
-        content -> Nullable<Text>,
-        link -> Nullable<Varchar>,
         user_id -> Int4,
         creation_date -> Timestamp,
-        data -> Nullable<Varchar>,
+        kind -> Varchar,
+        object_id -> Int4,
     }
 }
 
@@ -137,6 +141,7 @@ table! {
         private_key -> Nullable<Text>,
         public_key -> Text,
         shared_inbox_url -> Nullable<Varchar>,
+        followers_endpoint -> Varchar,
     }
 }
 

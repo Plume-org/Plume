@@ -16,7 +16,7 @@ use plume_models::{
 
 pub trait Inbox {
     fn received(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
-        let actor_id = Id::new(act["actor"].as_str().unwrap());
+        let actor_id = Id::new(act["actor"].as_str().unwrap_or_else(|| act["actor"]["id"].as_str().expect("No actor ID for incoming activity")));
         match act["type"].as_str() {
             Some(t) => {
                 match t {

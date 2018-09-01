@@ -38,4 +38,6 @@ pub trait WithInbox {
     fn get_inbox_url(&self) -> String;
 
     fn get_shared_inbox_url(&self) -> Option<String>;
+
+    fn is_local(&self) -> bool;
 }

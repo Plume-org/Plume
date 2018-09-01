@@ -45,6 +45,7 @@ pub struct NewPost {
     pub content: SafeString,
     pub published: bool,
     pub license: String,
+    pub creation_date: Option<NaiveDateTime>,
     pub ap_url: String
 }
 
@@ -63,6 +64,10 @@ impl Post {
             .load::<Post>(conn)
             .expect("Couldn't load local posts")
             .len()
+    }
+
+    pub fn count(conn: &PgConnection) -> i64 {
+        posts::table.count().get_result(conn).expect("Couldn't count posts")
     }
 
     pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
@@ -89,6 +94,29 @@ impl Post {
             .limit(limit)
             .load::<Post>(conn)
             .expect("Error loading recent posts for blog")
+    }
+
+    pub fn get_for_blog(conn: &PgConnection, blog:&Blog) -> Vec<Post> {
+        posts::table.filter(posts::blog_id.eq(blog.id))
+            .load::<Post>(conn)
+            .expect("Error loading posts for blog")
+    }
+
+    pub fn blog_page(conn: &PgConnection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
+        posts::table.filter(posts::blog_id.eq(blog.id))
+            .order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Post>(conn)
+            .expect("Error loading a page of posts for blog")
+    }
+
+    pub fn get_recents_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Post> {
+        posts::table.order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Post>(conn)
+            .expect("Error loading recent posts page")
     }
 
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
@@ -151,7 +179,10 @@ impl Post {
         let mut article = Article::default();
         article.object_props.set_name_string(self.title.clone()).expect("Article::into_activity: name error");
         article.object_props.set_id_string(self.ap_url.clone()).expect("Article::into_activity: id error");
-        article.object_props.set_attributed_to_link_vec::<Id>(self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect()).expect("Article::into_activity: attributedTo error");
+
+        let mut authors = self.get_authors(conn).into_iter().map(|x| Id::new(x.ap_url)).collect::<Vec<Id>>();
+        authors.push(self.get_blog(conn).into_id()); // add the blog URL here too
+        article.object_props.set_attributed_to_link_vec::<Id>(authors).expect("Article::into_activity: attributedTo error");
         article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
         article.object_props.set_tag_link_vec(mentions).expect("Article::into_activity: tag error");
@@ -175,63 +206,70 @@ impl Post {
     }
 
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let blog = self.get_blog(conn);
         json!({
             "post": self,
             "author": self.get_authors(conn)[0].to_json(conn),
-            "url": format!("/~/{}/{}/", self.get_blog(conn).actor_id, self.slug),
-            "date": self.creation_date.timestamp()
+            "url": format!("/~/{}/{}/", blog.get_fqn(conn), self.slug),
+            "date": self.creation_date.timestamp(),
+            "blog": blog.to_json(conn)
         })
     }
 
     pub fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).actor_id, self.slug))
+        ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).get_fqn(conn), self.slug))
     }
 }
 
 impl FromActivity<Article, PgConnection> for Post {
     fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
-        let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
-            .expect("Post::from_activity: attributedTo error")
-            .into_iter()
-            .fold((None, vec![]), |(blog, mut authors), link| {
-                let url: String = link.into();
-                match User::from_url(conn, url.clone()) {
-                    Some(user) => {
-                        authors.push(user);
-                        (blog, authors)
-                    },
-                    None => (blog.or_else(|| Blog::from_url(conn, url)), authors)
-                }
+        if let Some(post) = Post::find_by_ap_url(conn, article.object_props.id_string().unwrap_or(String::new())) {
+            post
+        } else {
+            let (blog, authors) = article.object_props.attributed_to_link_vec::<Id>()
+                .expect("Post::from_activity: attributedTo error")
+                .into_iter()
+                .fold((None, vec![]), |(blog, mut authors), link| {
+                    let url: String = link.into();
+                    match User::from_url(conn, url.clone()) {
+                        Some(user) => {
+                            authors.push(user);
+                            (blog, authors)
+                        },
+                        None => (blog.or_else(|| Blog::from_url(conn, url)), authors)
+                    }
+                });
+
+            let title = article.object_props.name_string().expect("Post::from_activity: title error");
+            let post = Post::insert(conn, NewPost {
+                blog_id: blog.expect("Received a new Article without a blog").id,
+                slug: title.to_kebab_case(),
+                title: title,
+                content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),
+                published: true,
+                license: String::from("CC-0"), // TODO
+                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error")),
+                creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc())
             });
 
-        let title = article.object_props.name_string().expect("Post::from_activity: title error");
-        let post = Post::insert(conn, NewPost {
-            blog_id: blog.expect("Received a new Article without a blog").id,
-            slug: title.to_kebab_case(),
-            title: title,
-            content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),
-            published: true,
-            license: String::from("CC-0"), // TODO
-            // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-            ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error"))
-        });
-
-        for author in authors.into_iter() {
-            PostAuthor::insert(conn, NewPostAuthor {
-                post_id: post.id,
-                author_id: author.id
-            });
-        }
-
-        // save mentions
-        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
-            for tag in tags.into_iter() {
-                serde_json::from_value::<link::Mention>(tag)
-                    .map(|m| Mention::from_activity(conn, m, post.id, true))
-                    .ok();
+            for author in authors.into_iter() {
+                PostAuthor::insert(conn, NewPostAuthor {
+                    post_id: post.id,
+                    author_id: author.id
+                });
             }
+
+            // save mentions
+            if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+                for tag in tags.into_iter() {
+                    serde_json::from_value::<link::Mention>(tag)
+                        .map(|m| Mention::from_activity(conn, m, post.id, true))
+                        .ok();
+                }
+            }
+            post
         }
-        post
     }
 }
 

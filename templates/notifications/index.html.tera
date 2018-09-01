@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ "Notifications" | _ }}
@@ -8,12 +9,58 @@
     <h1>{{ "Notifications" | _ }}</h1>
     <div class="list">
         {% for notification in notifications %}
-            <div class="card">
-                <h3><a href="{% if notification.link %}{{ notification.link }}/{% else %}#{% endif %}">{{ notification.title | _(data=notification.data) }}</h3>
-                {% if notification.content %}
-                    <p>{{ notification.content }}</p>
+            <div class="card flex">
+                {% if notification.kind == "COMMENT" %}
+                    <i class="fa fa-comment left-icon"></i>
+                    <main class="grow">
+                        <h3><a href="{{ notification.object.post.url }}#comment-{{ notification.object.id }}">
+                            {{ "{{ user }} commented your article." | _(user=notification.object.user.name | escape) }}
+                        </a></h3>
+                        <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
+                    </main>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
+
+                {% elif notification.kind == "FOLLOW" %}
+                    <i class="fa fa-user-plus left-icon"></i>
+                    <main class="grow">
+                        <h3><a href="/@/{{ notification.object.follower.fqn }}/">
+                            {{ "{{ user }} is now following you." | _(user=notification.object.follower.name | escape) }}
+                        </a></h3>
+                    </main>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
+
+                {% elif notification.kind == "LIKE" %}
+                    <i class="fa fa-heart left-icon"></i>
+                    <main class="grow">
+                        <h3>
+                            {{ "{{ user }} liked your article." | _(user=notification.object.user.name | escape) }}
+                        </h3>
+                        <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
+                    </main>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
+
+                {% elif notification.kind == "MENTION" %}
+                    <i class="fa fa-at left-icon"></i>
+                    <main class="grow">
+                        <h3><a href="{{ notification.object.url }}">
+                            {{ "{{ user }} mentioned you." | _(user=notification.object.user.name | escape) }}
+                        </a></h3>
+                    </main>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
+
+                {% elif notification.kind == "RESHARE" %}
+                    <i class="fa fa-retweet left-icon"></i>
+                    <main class="grow">
+                        <h3>
+                            {{ "{{ user }} reshared your article." | _(user=notification.object.user.name | escape) }}
+                        </h3>
+                        <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
+                    </main>
+                    <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
+
                 {% endif %}
             </div>
         {% endfor %}
     </div>
+    {{ macros::paginate(page=page, total=n_pages) }}
 {% endblock content %}

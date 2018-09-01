@@ -151,7 +151,13 @@ fn quick_setup(conn: DbConn) {
     let instance = Instance::insert(&*conn, NewInstance {
         public_domain: domain,
         name: name,
-        local: true
+        local: true,
+        long_description: String::new(),
+        short_description: String::new(),
+        default_license: String::from("CC-0"),
+        open_registrations: true,
+        short_description_html: String::new(),
+        long_description_html: String::new()
     });
 
     println!("{}\n", "  ✔️ Your instance was succesfully created!".green());

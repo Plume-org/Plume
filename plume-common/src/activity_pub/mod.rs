@@ -2,9 +2,10 @@ use activitypub::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
+    Outcome,
     http::Status,
     response::{Response, Responder},
-    request::Request
+    request::{FromRequest, Request}
 };
 use serde_json;
 
@@ -16,6 +17,15 @@ pub mod sign;
 
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
+
+pub fn ap_accept_header() -> Vec<&'static str> {
+    vec![
+        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"",
+        "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"",
+        "application/activity+json",
+        "application/ld+json"
+    ]
+}
 
 pub fn context() -> serde_json::Value {
     json!([
@@ -59,8 +69,31 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     }
 }
 
+#[derive(Clone)]
+pub struct ApRequest;
+impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
+        request.headers().get_one("Accept").map(|header| header.split(",").map(|ct| match ct.trim() {
+            // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
+            "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"" |
+            "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"" |
+            "application/activity+json" |
+            "application/ld+json" => Outcome::Success(ApRequest),
+            "text/html" => Outcome::Forward(true),
+            _ => Outcome::Forward(false)
+        }).fold(Outcome::Forward(false), |out, ct| if out.is_success() || (out.is_forward() && out.clone().forwarded().unwrap()) {
+                out
+            } else {
+                ct
+        }).map_forward(|_| ())).unwrap_or(Outcome::Forward(()))
+    }
+}
+
 pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
+        .filter(|u| !u.is_local())
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
         .collect::<Vec<String>>()
         .unique();

@@ -1,5 +1,5 @@
 use activitypub::{
-    Actor, Object, Endpoint, CustomObject,
+    Activity, Actor, Object, Endpoint, CustomObject,
     actor::Person,
     collection::OrderedCollection
 };
@@ -13,7 +13,7 @@ use openssl::{
     sign
 };
 use plume_common::activity_pub::{
-    ActivityStream, Id, IntoId, ApSignature, PublicKey,
+    ap_accept_header, ActivityStream, Id, IntoId, ApSignature, PublicKey,
     inbox::WithInbox,
     sign::{Signer, gen_keypair}
 };
@@ -63,7 +63,8 @@ pub struct User {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
-    pub shared_inbox_url: Option<String>
+    pub shared_inbox_url: Option<String>,
+    pub followers_endpoint: String
 }
 
 #[derive(Insertable)]
@@ -81,7 +82,8 @@ pub struct NewUser {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
-    pub shared_inbox_url: Option<String>    
+    pub shared_inbox_url: Option<String>,
+    pub followers_endpoint: String
 }
 
 const USER_PREFIX: &'static str = "@";
@@ -144,29 +146,32 @@ impl User {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
         match resolve(acct.clone(), *USE_HTTPS) {
-            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href)),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
             Err(details) => {
-                println!("{:?}", details);
+                println!("WF Error: {:?}", details);
                 None
             }
         }
     }
 
-    fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
+    pub fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
         let req = Client::new()
             .get(&url[..])
-            .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
             .send();
         match req {
             Ok(mut res) => {
-                let text = &res.text().unwrap();
-                let ap_sign: ApSignature = serde_json::from_str(text).unwrap();
-                let mut json: CustomPerson = serde_json::from_str(text).unwrap();
-                json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-                Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+                if let Ok(text) = &res.text() {
+                    if let Ok(ap_sign) = serde_json::from_str::<ApSignature>(text) {
+                        if let Ok(mut json) = serde_json::from_str::<CustomPerson>(text) {
+                            json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
+                            Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+                        } else { None }
+                    } else { None }
+                } else { None }
             },
             Err(e) => {
-                println!("{:?}", e);
+                println!("User fetch error: {:?}", e);
                 None
             }
         }
@@ -179,18 +184,24 @@ impl User {
                 Instance::insert(conn, NewInstance {
                     name: inst.clone(),
                     public_domain: inst.clone(),
-                    local: false
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: String::new(),
+                    short_description: String::new(),
+                    default_license: String::new(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new()
                 })
             }
         };
-        println!("User from act : {:?}", acct.custom_props);
         User::insert(conn, NewUser {
             username: acct.object.ap_actor_props.preferred_username_string().expect("User::from_activity: preferredUsername error"),
             display_name: acct.object.object_props.name_string().expect("User::from_activity: name error"),
             outbox_url: acct.object.ap_actor_props.outbox_string().expect("User::from_activity: outbox error"),
             inbox_url: acct.object.ap_actor_props.inbox_string().expect("User::from_activity: inbox error"),
             is_admin: false,
-            summary: SafeString::new(&acct.object.object_props.summary_string().expect("User::from_activity: summary error")),
+            summary: SafeString::new(&acct.object.object_props.summary_string().unwrap_or(String::new())),
             email: None,
             hashed_password: None,
             instance_id: instance.id,
@@ -199,7 +210,8 @@ impl User {
                 .public_key_pem_string().expect("User::from_activity: publicKey.publicKeyPem error"),
             private_key: None,
             shared_inbox_url: acct.object.ap_actor_props.endpoints_endpoint()
-                .and_then(|e| e.shared_inbox_string()).ok()
+                .and_then(|e| e.shared_inbox_string()).ok(),
+            followers_endpoint: acct.object.ap_actor_props.followers_string().expect("User::from_activity: followers error")
         })
     }
 
@@ -240,6 +252,12 @@ impl User {
                 .set(users::shared_inbox_url.eq(ap_url(format!("{}/inbox", Instance::get_local(conn).unwrap().public_domain))))
                 .get_result::<User>(conn).expect("Couldn't update shared inbox URL");
         }
+
+        if self.followers_endpoint.len() == 0 {
+            diesel::update(self)
+                .set(users::followers_endpoint.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "followers")))
+                .get_result::<User>(conn).expect("Couldn't update followers endpoint");
+        }
     }
 
     pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
@@ -249,6 +267,50 @@ impl User {
         coll.collection_props.items = serde_json::to_value(acts).unwrap();
         coll.collection_props.set_total_items_u64(n_acts as u64).unwrap();
         ActivityStream::new(coll)
+    }
+
+    pub fn fetch_outbox<T: Activity>(&self) -> Vec<T> {
+        let req = Client::new()
+            .get(&self.outbox_url[..])
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .send();
+        match req {
+            Ok(mut res) => {
+                let text = &res.text().unwrap();
+                let json: serde_json::Value = serde_json::from_str(text).unwrap();
+                json["items"].as_array()
+                    .expect("Outbox.items is not an array")
+                    .into_iter()
+                    .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                    .collect::<Vec<T>>()
+            },
+            Err(e) => {
+                println!("User outbox fetch error: {:?}", e);
+                vec![]
+            }
+        }
+    }
+
+    pub fn fetch_followers_ids(&self) -> Vec<String> {
+        let req = Client::new()
+            .get(&self.followers_endpoint[..])
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .send();
+        match req {
+            Ok(mut res) => {
+                let text = &res.text().unwrap();
+                let json: serde_json::Value = serde_json::from_str(text).unwrap();
+                json["items"].as_array()
+                    .expect("Followers.items is not an array")
+                    .into_iter()
+                    .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                    .collect::<Vec<String>>()
+            },
+            Err(e) => {
+                println!("User followers fetch error: {:?}", e);
+                vec![]
+            }
+        }
     }
 
     fn get_activities(&self, conn: &PgConnection) -> Vec<serde_json::Value> {
@@ -275,17 +337,36 @@ impl User {
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 
+    pub fn get_followers_page(&self, conn: &PgConnection, (min, max): (i32, i32)) -> Vec<User> {
+        use schema::follows;
+        let follows = Follow::belonging_to(self).select(follows::follower_id);
+        users::table.filter(users::id.eq(any(follows)))
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<User>(conn).unwrap()
+    }
+
     pub fn get_following(&self, conn: &PgConnection) -> Vec<User> {
         use schema::follows;
         let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 
-    pub fn is_following(&self, conn: &PgConnection, other_id: i32) -> bool {
+    pub fn is_followed_by(&self, conn: &PgConnection, other_id: i32) -> bool {
         use schema::follows;
         follows::table
             .filter(follows::follower_id.eq(other_id))
             .filter(follows::following_id.eq(self.id))
+            .load::<Follow>(conn)
+            .expect("Couldn't load follow relationship")
+            .len() > 0
+    }
+
+    pub fn is_following(&self, conn: &PgConnection, other_id: i32) -> bool {
+        use schema::follows;
+        follows::table
+            .filter(follows::follower_id.eq(self.id))
+            .filter(follows::following_id.eq(other_id))
             .load::<Follow>(conn)
             .expect("Couldn't load follow relationship")
             .len() > 0
@@ -333,6 +414,7 @@ impl User {
         actor.ap_actor_props.set_inbox_string(self.inbox_url.clone()).expect("User::into_activity: inbox error");
         actor.ap_actor_props.set_outbox_string(self.outbox_url.clone()).expect("User::into_activity: outbox error");
         actor.ap_actor_props.set_preferred_username_string(self.username.clone()).expect("User::into_activity: preferredUsername error");
+        actor.ap_actor_props.set_followers_string(self.followers_endpoint.clone()).expect("User::into_activity: followers error");
 
         let mut endpoints = Endpoint::default();
         endpoints.set_shared_inbox_string(ap_url(format!("{}/inbox/", BASE_URL.as_str()))).expect("User::into_activity: endpoints.sharedInbox error");
@@ -351,6 +433,11 @@ impl User {
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
+        json["name"] = if self.display_name.len() > 0 {
+            json!(self.display_name)
+        } else {
+            json!(self.get_fqn(conn))
+        };
         json
     }
 
@@ -362,17 +449,20 @@ impl User {
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.get_instance(conn).compute_box(USER_PREFIX, self.username.clone(), "feed.atom")
+                    href: Some(self.get_instance(conn).compute_box(USER_PREFIX, self.username.clone(), "feed.atom")),
+                    template: None
                 },
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 }
             ]
         }
@@ -421,6 +511,10 @@ impl WithInbox for User {
     fn get_shared_inbox_url(&self) -> Option<String> {
        self.shared_inbox_url.clone()
     }
+
+    fn is_local(&self) -> bool {
+        self.instance_id == 0
+    }
 }
 
 impl Signer for User {
@@ -461,7 +555,8 @@ impl NewUser {
             ap_url: String::from(""),
             public_key: String::from_utf8(pub_key).unwrap(),
             private_key: Some(String::from_utf8(priv_key).unwrap()),
-            shared_inbox_url: None
+            shared_inbox_url: None,
+            followers_endpoint: String::from("")
         })
     }
 }

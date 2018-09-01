@@ -5,7 +5,7 @@ use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 use plume_common::activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}, PUBLIC_VISIBILTY};
 use notifications::*;
 use posts::Post;
-use  users::User;
+use users::User;
 use schema::reshares;
 
 #[derive(Serialize, Deserialize, Queryable, Identifiable)]
@@ -55,6 +55,10 @@ impl Reshare {
         Post::get(conn, self.post_id)
     }
 
+    pub fn get_user(&self, conn: &PgConnection) -> Option<User> {
+        User::get(conn, self.user_id)
+    }
+
     pub fn delete(&self, conn: &PgConnection) -> Undo {
         diesel::delete(self).execute(conn).unwrap();
 
@@ -96,15 +100,11 @@ impl FromActivity<Announce, PgConnection> for Reshare {
 
 impl Notify<PgConnection> for Reshare {
     fn notify(&self, conn: &PgConnection) {
-        let actor = User::get(conn, self.user_id).unwrap();
         let post = self.get_post(conn).unwrap();
         for author in post.get_authors(conn) {
-            let post = post.clone();
             Notification::insert(conn, NewNotification {
-                title: "{{ data }} reshared your article".to_string(),
-                data: Some(actor.display_name.clone()),
-                content: Some(post.title),
-                link: Some(post.ap_url),
+                kind: notification_kind::RESHARE.to_string(),
+                object_id: self.id,
                 user_id: author.id
             });
         }

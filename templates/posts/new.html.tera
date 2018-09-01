@@ -1,4 +1,5 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
 {{ "New post" | _ }}
@@ -7,12 +8,21 @@
 {% block content %}
 <h1>{{ "Create a post" | _ }}</h1>
 <form class="new-post" method="post">
-    <input type="text" class="title" name="title" placeholder="{{ "Title" | _ }}">
-    <textarea name="content" placeholder="{{ "Content" | _ }}"></textarea>
+    {{ macros::input(name="title", label="Title", errors=errors, form=form, props="required") }}
 
-    <label for="license">{{ "License" | _ }}</label>
-    <input type="text" id="licence" name="license" />
+    {% if errors is defined and errors.content %}
+        {% for err in errors.content %}
+            <p class="error">{{ err.message | default(value="Unknown error") | _ }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <label for="content">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
+    <textarea id="content" name="content" value="{{ form.content | default(value="") }}" rows="20"></textarea>
+
+    {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
+    {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
 
     <input type="submit" value="{{ "Publish" | _ }}" />
 </form>
+<script src="/static/js/autoExpand.js"></script>
 {% endblock content %}

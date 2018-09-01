@@ -1,16 +1,20 @@
 use activitypub::object::Article;
 use heck::KebabCase;
-use rocket::request::LenientForm;
+use rocket::{State, request::LenientForm};
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
+use std::{collections::HashMap, borrow::Cow};
+use validator::{Validate, ValidationError, ValidationErrors};
+use workerpool::{Pool, thunk::*};
 
-use plume_common::activity_pub::{broadcast, ActivityStream};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
     blogs::*,
     db_conn::DbConn,
     comments::Comment,
+    instance::Instance,
     mentions::Mention,
     post_authors::*,
     posts::*,
@@ -34,27 +38,32 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
     may_fail!(user, Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
         may_fail!(user, Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             let comments = Comment::list_by_post(&*conn, post.id);
+            let comms = comments.clone();
 
             Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),
-                "post": post,
-                "blog": blog,
-                "comments": comments.into_iter().map(|c| c.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "article": post.to_json(&*conn),
+                "blog": blog.to_json(&*conn),
+                "comments": &comments.into_iter().filter_map(|c| if c.in_response_to_id.is_none() {
+                    Some(c.to_json(&*conn, &comms))
+                } else {
+                    None
+                }).collect::<Vec<serde_json::Value>>(),
                 "n_likes": post.get_likes(&*conn).len(),
                 "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
                 "account": user,
                 "date": &post.creation_date.timestamp(),
-                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn))),
+                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
                 "user_fqn": user.map(|u| u.get_fqn(&*conn)).unwrap_or(String::new())
             }))
         })
     })
 }
 
-#[get("/~/<blog>/<slug>", rank = 3, format = "application/activity+json")]
-fn activity_details(blog: String, slug: String, conn: DbConn) -> ActivityStream<Article> {
+#[get("/~/<blog>/<slug>", rank = 3)]
+fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<Article> {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
 
@@ -76,29 +85,55 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
         }))
     } else {
         Template::render("posts/new", json!({
-            "account": user
+            "account": user,
+            "instance": Instance::get_local(&*conn),
+            "errors": null,
+            "form": null
         }))
     }
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Validate, Serialize)]
 struct NewPostForm {
+    #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,
     pub content: String,
     pub license: String
 }
 
+fn valid_slug(title: &str) -> Result<(), ValidationError> {
+    let slug = title.to_string().to_kebab_case();
+    if slug.len() == 0 {
+        Err(ValidationError::new("empty_slug"))
+    } else if slug == "new" {
+        Err(ValidationError::new("invalid_slug"))
+    } else {
+        Ok(())
+    }
+}
+
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn) -> Redirect {
+fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
+    
+    let mut errors = match form.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(e) => e
+    };
+    if let Some(_) = Post::find_by_slug(&*conn, slug.clone(), blog.id) {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A post with the same title already exists.")),
+            params: HashMap::new()
+        });
+    }
 
-    if !user.is_author_in(&*conn, blog.clone()) {
-        Redirect::to(uri!(super::blogs::details: name = blog_name))
-    } else {
-        if slug == "new" || Post::find_by_slug(&*conn, slug.clone(), blog.id).is_some() {
-            Redirect::to(uri!(new: blog = blog_name))
+    if errors.is_empty() {
+        if !user.is_author_in(&*conn, blog.clone()) {
+            // actually it's not "Ok"…
+            Ok(Redirect::to(uri!(super::blogs::details: name = blog_name)))
         } else {
             let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
 
@@ -108,8 +143,13 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 title: form.title.to_string(),
                 content: SafeString::new(&content),
                 published: true,
-                license: form.license.to_string(),
-                ap_url: "".to_string()
+                license: if form.license.len() > 0 {
+                    form.license.to_string()
+                } else {
+                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
+                },
+                ap_url: "".to_string(),
+                creation_date: None
             });
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
@@ -122,9 +162,17 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             }
 
             let act = post.create_activity(&*conn);
-            broadcast(&user, act, user.get_followers(&*conn));
+            let followers = user.get_followers(&*conn);
+            worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
 
-            Redirect::to(uri!(details: blog = blog_name, slug = slug))
+            Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
+    } else {
+        Err(Template::render("posts/new", json!({
+            "account": user,
+            "instance": Instance::get_local(&*conn),            
+            "errors": errors.inner(),
+            "form": form
+        })))
     }
 }

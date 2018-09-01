@@ -1,6 +1,9 @@
 <div class="user">
     <h1>
-        {{ name }}
+        {{ user.name }}
+
+        <small>@{{ user.fqn }}</small>
+
         {% if user.is_admin %}
             <span class="badge">{{ "Admin" | _ }}</span>
         {% endif %}
@@ -15,18 +18,19 @@
     {% endif %}
 
     {% if is_remote %}
-        <a class="inline-block button" href="{{ user.ap_url }}">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
+        <a class="inline-block button" href="{{ user.ap_url }}" target="_blank">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
     {% endif %}
 
-    {% if not is_self and account %}
+    {% set not_self = not is_self %}
+    {% if not_self and (account is defined) %}
         {% if follows %}
-            <a href="follow/" class="inline-block button">{{ "Follow" | _ }}</a>
+            <a href="/@/{{ user.fqn }}/follow/" class="inline-block button">{{ "Unfollow" | _ }}</a>
         {% else %}
-            <a href="follow/" class="inline-block button">{{ "Unfollow" | _ }}</a>
+            <a href="/@/{{ user.fqn }}/follow/" class="inline-block button">{{ "Follow" | _ }}</a>
         {% endif %}
     {% endif %}
 </div>
 
 <div>
-    <a href="followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
+    <a href="/@/{{ user.fqn }}/followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
 </div>

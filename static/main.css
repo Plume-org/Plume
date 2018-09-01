@@ -1,3 +1,5 @@
+/* color palette: https://coolors.co/23f0c7-ef767a-7765e3-6457a6-ffe347 */
+
 @import url('/static/fonts/Route159/Route159.css');
 @import url('/static/fonts/Lora/Lora.css');
 @import url('/static/fonts/Playfair_Display/PlayfairDisplay.css');
@@ -18,6 +20,26 @@ a, a:visited {
 	color: #7765E3;
 	text-decoration: none;
 	outline: none;
+}
+
+small {
+	margin-left: 1em;
+	color: #242424;
+	opacity: 0.6;
+	font-size: 0.75em;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+.center {
+	text-align: center;
+	font-weight: bold;
+	opacity: 0.6;
+	padding: 5em;
+}
+
+.spaced {
+	margin: 4rem 0;
 }
 
 /*
@@ -126,7 +148,6 @@ main article {
 	font-family: "Lora", serif;
 	font-size: 1.2em;
 	line-height: 1.7em;
-	text-align: justify;
 }
 
 article img {
@@ -135,7 +156,7 @@ article img {
 
 /* Article.Meta */
 
-main .article-meta {
+main .article-meta, main .article-meta button {
 	padding: 0;
 	font-size: 1.1em;
 	margin-top: 10%;
@@ -173,8 +194,8 @@ main .article-meta .reshares > p {
 	font-size: 1.5em;
 }
 
-main .article-meta .likes a.button,
-main .article-meta .reshares a.button {
+main .article-meta .likes button,
+main .article-meta .reshares button {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -187,12 +208,12 @@ main .article-meta .reshares a.button {
 }
 
 main .article-meta .likes > p,
-main .article-meta .likes a.button:hover { color: #E92F2F; }
+main .article-meta .likes button:hover { color: #E92F2F; }
 main .article-meta .reshares > p,
-main .article-meta .reshares a.button:hover { color: #7765E3; }
+main .article-meta .reshares button:hover { color: #7765E3; }
 
-main .article-meta .likes a.button:before,
-main .article-meta .reshares a.button:before {
+main .article-meta .likes button i,
+main .article-meta .reshares button i {
 	transition: background 0.1s ease-in;
 	display: flex;
 	align-items: center;
@@ -203,42 +224,39 @@ main .article-meta .reshares a.button:before {
 	height: 2.5em;
 
 	border-radius: 50%;
-	font-family: "Font Awesome 5 Free";
 }
 
-main .article-meta .likes a.button:before {
-	content: "";
+main .article-meta .likes button i {
 	color: #E92F2F;
 	border: solid #E92F2F thin;
 	font-weight: 400;
 }
-main .article-meta .likes a.button:hover:before {
+main .article-meta .likes button:hover i {
 	background: rgba(233, 47, 47, 0.15);
 }
 
-main .article-meta .reshares a.button:before {
-	content: "";
+main .article-meta .reshares button i {
 	color: #7765E3;
 	border: solid #7765E3 thin;
 	font-weight: 600;
 }
-main .article-meta .reshares a.button:hover:before {
+main .article-meta .reshares button:hover i {
 	background: rgba(119, 101, 227, 0.15);
 }
 
-main .article-meta .likes a.button.liked:before { background: #E92F2F; }
-main .article-meta .likes a.button.liked:hover:before {
+main .article-meta .likes button.liked i { background: #E92F2F; }
+main .article-meta .likes button.liked:hover i {
 	background: rgba(233, 47, 47, 0.25);
 	color: #E92F2F;
 }
-main .article-meta .reshares a.button.reshared:before { background: #7765E3; }
-main .article-meta .reshares a.button.reshared:hover:before {
+main .article-meta .reshares button.reshared i { background: #7765E3; }
+main .article-meta .reshares button.reshared:hover i {
 	background: rgba(119, 101, 227, 0.25);
 	color: #7765E3;
 }
 
-main .article-meta .likes a.button.liked:before,
-main .article-meta .reshares a.button.reshared:before {
+main .article-meta .likes button.liked i,
+main .article-meta .reshares button.reshared i {
 	color: #F4F4F4;
 	font-weight: 900;
 }
@@ -253,6 +271,11 @@ main .article-meta .comments > * { margin-left: 20%; margin-right: 20%; }
 	font-size: 1.5em;
 	font-weight: 600;
 }
+
+/* New comment */
+
+main .article-meta .comments form input[type="submit"]
+{ font-size: 1em; }
 
 /* Comment / Respond button */
 
@@ -281,14 +304,19 @@ main .article-meta .comments > a.button { margin-bottom: 1em; }
 main .article-meta .comments .list {
 	display: grid;
 	margin: 0;
+	padding: 0 20%;
+	background: #ECECEC;
 }
 
 /* ~ Comment ~ */
 
 .comments .list .comment {
-	background: #ECECEC;
-	padding: 2em 20%;
+	padding: 2em;
 	font-size: 1em;
+}
+
+.comments .list > .comment {
+	border: none;
 }
 
 .comments .list .comment .author {
@@ -297,20 +325,14 @@ main .article-meta .comments .list {
 	align-items: center;
 	align-content: center;
 }
-
+.comments .list .comment .author * {
+	transition: all 0.1s ease-in;
+}
 .comments .list .comment .author .display-name {
-	transition: color 0.1s ease-in;
 	color: #242424;
 }
 .comments .list .comment .author:hover .display-name { color: #7765E3; }
-
-.comments .list .comment .author .username {
-	transition: color 0.1s ease-in;
-	margin-left: 1em;
-	color: #777777;
-	font-size: 0.9em;
-}
-.comments .list .comment .author:hover .username { color: #444444; }
+.comments .list .comment .author:hover small { opacity: 1; }
 
 .comments .list .comment .text {
 	padding: 1.25em 0;
@@ -326,54 +348,57 @@ main .article-meta .comments .list {
 
 label {
 	display: block;
-	margin: 1em 0;
+	margin: 2em auto 1em;
+	font-size: 1.2em;
+	max-width: 40rem;
 }
-input {
+input, textarea {
 	transition: all 0.1s ease-in;
 	display: block;
 	width: 100%;
-	margin: auto auto 5em;
-	padding: 0.5em;
+	max-width: 40rem;
+	margin: auto;
+	padding: 1em;
 	box-sizing: border-box;
 
 	background: #F4F4F4;
 	color: #242424;
 	border: none;
-	border-bottom: solid #DADADA 2px;
+	border: solid #DADADA thin;
+	border-radius: 0.5em;
+
+	font-size: 1.2em;
+	font-weight: 400;
 }
 form input[type="submit"] { margin: 2em auto; }
-input:focus {
+input:focus, textarea:focus {
 	background: #FAFAFA;
-	border-bottom-color: #7765E3;
+	border-color: #7765E3;
 }
 
 textarea {
-	display: block;
-	width: 100%;
-	min-height: 4em;
-	margin: auto;
-	padding: 1em;
-	box-sizing: border-box;
+ 	resize: vertical;
+ 
+ 	font-family: "Lora", serif;
+ 	font-size: 1.1em;
+ 	line-height: 1.5em;
+}
 
-	background: #ECECEC;
-	color: #242424;
-	border: none;
-	resize: vertical;
-
-	font-family: "Lora", serif;
-	font-size: 1.1em;
-	line-height: 1.5em;
-	text-align: justify;
+input[type="checkbox"] {
+	display: inline;
+	margin: initial;
+	min-width: initial;
+	width: initial;
 }
 
 /* Button & Submit */
 
-.button, input[type="submit"] {
+.button, input[type="submit"], button {
 	transition: all 0.1s ease-in;
 	display: inline-block;
 
 	border-radius: 0.5em;
-	margin: 0.5em 0;
+	margin: 0.5em auto;
 	padding: 0.75em 1em;
 
 	background: transparent;
@@ -382,9 +407,19 @@ textarea {
 
 	cursor: pointer;
 }
+input[type="submit"] { display: block; }
 .button:hover, input[type="submit"]:hover {
 	background: #7765E399;
 	color: white;
+}
+
+/* Errors */
+
+p.error {
+	color: #ef767a;
+	font-weight: bold;
+	max-width: 40rem;
+	margin: 1em auto;
 }
 
 /*
@@ -392,6 +427,7 @@ textarea {
  */
 
 form.new-post .title {
+	margin: 0 auto;
 	padding: 0.75em 0;
 
 	background: none;
@@ -399,24 +435,23 @@ form.new-post .title {
 
 	font-family: "Playfair Display", serif;
 	font-size: 2em;
+	text-align: left;
 }
 form.new-post textarea {
-	min-height: 8em;
-	padding: 0;
-	background: none;
+	min-height: 20em;
+	overflow-y: hidden;
+	resize: none;
+	box-sizing: content-box;
 }
 form.new-post input[type="submit"] {
-	display: block;
-	margin: 1em auto;
-	width: 60%;
-
-	background: #DADADA;
+	background: #ECECEC;
 	color: #242424;
 	border: none;
 
 	font-family: "Playfair Display", serif;
 	font-size: 1.5em;
 }
+form.new-post input[type="submit"]:hover { background: #DADADA; }
 
 /*
  * == User ==
@@ -462,11 +497,13 @@ form.new-post input[type="submit"] {
 	box-sizing: border-box;
 
 	background: #E3E3E3;
+
+	text-overflow: ellipsis;
 }
 .list .card {
 /* TODO */
 	background: 0;
-	margin: 0;
+	margin: 2em 0;
 	padding: 0;
 	min-height: 0;
 }
@@ -494,6 +531,34 @@ form.new-post input[type="submit"] {
 	line-height: 1.25em;
 	text-align: left;
 	overflow: hidden;
+}
+
+/* Presentation */
+.presentation > h2, .presentation > a {
+	text-align: center;
+}
+
+.presentation > a {
+	font-size: 1.2em;
+	margin: 1em;
+}
+
+/* Stats */
+.stats {
+	display: flex;
+	justify-content: space-around;
+	margin: 2em;
+}
+
+.stats > div {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+
+.stats em {
+	text-align: center;
+	font-weight: bold;
 }
 
 /* ================= *
@@ -591,4 +656,47 @@ form.new-post input[type="submit"] {
 		min-width: 80%;
 		min-height: 80%;
 	}
+}
+
+/*== Pagination ==*/
+.pagination {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.pagination > * {
+	padding: 2em;
+}
+
+/*== Flex boxes ==*/
+.flex {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex .grow {
+	flex: 1;
+}
+
+.left-icon {
+	align-self: center;
+	padding: 1em;
+	background: #DADADA;
+	border-radius: 50px;
+	margin: 1em;
+	margin-right: 2em;
+}
+
+/*== Footer ==*/
+body > footer {
+	display: flex;
+	align-content: center;
+	justify-content: space-between;
+	background: #ECECEC;
+	padding: 0 20%;
+	margin-top: 5em;
+}
+
+body > footer * {
+	margin: 5em 0;
 }

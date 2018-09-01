@@ -5,22 +5,36 @@
 {{ blog.title }}
 {% endblock title %}
 
-{% block content %}
-    <h1>{{ blog.title }} (~{{ blog.actor_id }})</h1>
-    <p>{{ blog.summary }}</p>
+{% block header %}
+    <a href=".">{{ blog.title }}</a>
+{% endblock header %}
 
+{% block content %}
+    <h1>{{ blog.title }} <small>~{{ blog.fqn }}</small></h1>
+    <p>{{ blog.summary }}</p>
+    <p>
+        {{ "{{ count }} authors in this blog: " | _n(singular="One author in this blog: ", count = n_authors) }}
+        {% for author in authors %}
+            <a class="author" href="/@/{{ author.fqn }}">{{ author.name }}</a>{% if not loop.last %},{% endif %}
+        {% endfor %}
+    </p>
+    <p>
+        {{ "{{ count }} articles in this blog" | _n(singular="One article in this blog", count = n_articles) }}
+    </p>
+ 
     <section>
         <h2>{{ "Latest articles" | _ }}</h2>
-        {% if recents | length < 1 %}
+        {% if posts | length < 1 %}
             <p>{{ "No posts to see here yet." | _ }}</p>
         {% endif %}
         {% if is_author %}
-            <a href="new" class="button inline-block">{{ "New article" | _ }}</a>
+            <a href="/~/{{ blog.fqn }}/new/" class="button inline-block">{{ "New article" | _ }}</a>
         {% endif %}
         <div class="cards">
-            {% for article in recents %}
+            {% for article in posts %}
                 {{ macros::post_card(article=article) }}
             {% endfor %}
         </div>
+        {{ macros::paginate(page=page, total=n_pages) }}
     </section>
 {% endblock content %}

@@ -18,11 +18,12 @@ use webfinger::*;
 
 use {BASE_URL, USE_HTTPS};
 use plume_common::activity_pub::{
-    ApSignature, ActivityStream, Id, IntoId, PublicKey,
+    ap_accept_header, ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
     sign
 };
 use instance::*;
+use users::User;
 use schema::blogs;
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
@@ -68,6 +69,15 @@ impl Blog {
         Instance::get(conn, self.instance_id).expect("Couldn't find instance")
     }
 
+    pub fn list_authors(&self, conn: &PgConnection) -> Vec<User> {
+        use schema::blog_authors;
+        use schema::users;
+        let authors_ids = blog_authors::table.filter(blog_authors::blog_id.eq(self.id)).select(blog_authors::author_id);
+        users::table.filter(users::id.eq(any(authors_ids)))
+            .load::<User>(conn)
+            .expect("Couldn't load authors of a blog")
+    }
+
     pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;
         let author_ids = blog_authors::table.filter(blog_authors::author_id.eq(author_id)).select(blog_authors::blog_id);
@@ -98,7 +108,7 @@ impl Blog {
 
     fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<Blog> {
         match resolve(acct.clone(), *USE_HTTPS) {
-            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href)),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
             Err(details) => {
                 println!("{:?}", details);
                 None
@@ -109,7 +119,7 @@ impl Blog {
     fn fetch_from_url(conn: &PgConnection, url: String) -> Option<Blog> {
         let req = Client::new()
             .get(&url[..])
-            .header(Accept(vec![qitem("application/activity+json".parse::<Mime>().unwrap())]))
+            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
             .send();
         match req {
             Ok(mut res) => {
@@ -130,7 +140,14 @@ impl Blog {
                 Instance::insert(conn, NewInstance {
                     public_domain: inst.clone(),
                     name: inst.clone(),
-                    local: false
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: String::new(),
+                    short_description: String::new(),
+                    default_license: String::new(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new()
                 })
             }
         };
@@ -211,17 +228,20 @@ impl Blog {
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
                     mime_type: None,
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 },
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: self.get_instance(conn).compute_box(BLOG_PREFIX, self.actor_id.clone(), "feed.atom")
+                    href: Some(self.get_instance(conn).compute_box(BLOG_PREFIX, self.actor_id.clone(), "feed.atom")),
+                    template: None
                 },
                 Link {
                     rel: String::from("self"),
                     mime_type: Some(String::from("application/activity+json")),
-                    href: self.ap_url.clone()
+                    href: Some(self.ap_url.clone()),
+                    template: None
                 }
             ]
         }
@@ -237,6 +257,20 @@ impl Blog {
                 None
             }
         })
+    }
+
+    pub fn get_fqn(&self, conn: &PgConnection) -> String {
+        if self.instance_id == Instance::local_id(conn) {
+            self.actor_id.clone()
+        } else {
+            format!("{}@{}", self.actor_id, self.get_instance(conn).public_domain)
+        }
+    }
+
+    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+        let mut json = serde_json::to_value(self).unwrap();
+        json["fqn"] = json!(self.get_fqn(conn));
+        json
     }
 }
 
@@ -256,6 +290,10 @@ impl WithInbox for Blog {
 
     fn get_shared_inbox_url(&self) -> Option<String> {
         None
+    }
+
+    fn is_local(&self) -> bool {
+        self.instance_id == 0
     }
 }
 

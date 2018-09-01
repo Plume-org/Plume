@@ -15,12 +15,20 @@ extern crate rocket_contrib;
 extern crate rocket_csrf;
 extern crate rocket_i18n;
 extern crate rpassword;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate validator;
+#[macro_use]
+extern crate validator_derive;
 extern crate webfinger;
+extern crate workerpool;
 
 use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
+use workerpool::{Pool, thunk::ThunkWorker};
 
 mod inbox;
 mod setup;
@@ -30,6 +38,7 @@ fn main() {
     let pool = setup::check();
     rocket::ignite()
         .mount("/", routes![
+            routes::blogs::paginated_details,
             routes::blogs::details,
             routes::blogs::activity_details,
             routes::blogs::outbox,
@@ -39,13 +48,17 @@ fn main() {
 
             routes::comments::create,
 
+            routes::instance::paginated_index,
             routes::instance::index,
+            routes::instance::admin,
+            routes::instance::update_settings,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
 
             routes::likes::create,
             routes::likes::create_auth,
 
+            routes::notifications::paginated_notifications,
             routes::notifications::notifications,
             routes::notifications::notifications_auth,
 
@@ -70,6 +83,7 @@ fn main() {
             routes::user::details,
             routes::user::dashboard,
             routes::user::dashboard_auth,
+            routes::user::followers_paginated,
             routes::user::followers,
             routes::user::edit,
             routes::user::edit_auth,
@@ -94,6 +108,7 @@ fn main() {
             routes::errors::server_error
         ])
         .manage(pool)
+        .manage(Pool::<ThunkWorker<()>>::new(4))
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);
         }))

@@ -1,4 +1,4 @@
-use activitypub::{Actor, activity::{Accept, Follow as FollowAct}};
+use activitypub::{Actor, activity::{Accept, Follow as FollowAct}, actor::Person};
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
@@ -55,7 +55,9 @@ impl Follow {
 
 impl FromActivity<FollowAct, PgConnection> for Follow {
     fn from_activity(conn: &PgConnection, follow: FollowAct, _actor: Id) -> Follow {
-        let from = User::from_url(conn, follow.follow_props.actor.as_str().unwrap().to_string()).unwrap();
+        let from_id = follow.follow_props.actor_link::<Id>().map(|l| l.into())
+            .unwrap_or_else(|_| follow.follow_props.actor_object::<Person>().expect("No actor object (nor ID) on Follow").object_props.id_string().expect("No ID on actor on Follow"));
+        let from = User::from_url(conn, from_id).unwrap();
         match User::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()) {
             Some(user) => Follow::accept_follow(conn, &from, &user, follow, from.id, user.id),
             None => {
@@ -68,12 +70,9 @@ impl FromActivity<FollowAct, PgConnection> for Follow {
 
 impl Notify<PgConnection> for Follow {
     fn notify(&self, conn: &PgConnection) {
-        let follower = User::get(conn, self.follower_id).unwrap();
         Notification::insert(conn, NewNotification {
-            title: "{{ data }} started following you".to_string(),
-            data: Some(follower.display_name.clone()),
-            content: None,
-            link: Some(follower.ap_url),
+            kind: notification_kind::FOLLOW.to_string(),
+            object_id: self.id,
             user_id: self.following_id
         });
     }

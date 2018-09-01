@@ -1,0 +1,437 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-06-15 16:33-0700\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Latest articles"
+msgstr "Siste artikler"
+
+msgid "No posts to see here yet."
+msgstr "Ingen innlegg å vise enda."
+
+msgid "New article"
+msgstr "Ny artikkel"
+
+msgid "New blog"
+msgstr "Ny blogg"
+
+msgid "Create a blog"
+msgstr "Lag en ny blogg"
+
+msgid "Title"
+msgstr "Tittel"
+
+msgid "Create blog"
+msgstr "Opprett blogg"
+
+msgid "Comment \"{{ post }}\""
+msgstr "Kommentér \"{{ post }}\""
+
+msgid "Content"
+msgstr "Innhold"
+
+msgid "Submit comment"
+msgstr "Send kommentar"
+
+msgid "Something broke on our side."
+msgstr "Noe gikk feil i vår ende."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Beklager så mye. Dersom du tror dette er en bug, vær grei å rapportér det "
+"til oss."
+
+msgid "Configuration"
+msgstr "Oppsett"
+
+msgid "Configure your instance"
+msgstr "Sett opp din instans"
+
+msgid "Name"
+msgstr "Navn"
+
+msgid "Let&#x27;s go!"
+msgstr "Kjør på!"
+
+msgid "Welcome on {{ instance_name | escape }}"
+msgstr "Velkommen til {{ instance_name | escape }}"
+
+msgid "Notifications"
+msgstr "Meldinger"
+
+msgid ""
+"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr ""
+"Skrevet av {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape}}{{ link_3 }}"
+
+msgid "This article is under the {{ license }} license."
+msgstr "Denne artikkelen er publisert med lisensen {{ license }}"
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] "Ett hjerte"
+msgstr[1] "{{ count }} hjerter"
+
+msgid "I don&#x27;t like this anymore"
+msgstr "Jeg liker ikke dette lengre"
+
+msgid "Add yours"
+msgstr "Legg til din"
+
+msgid "One reshare"
+msgid_plural "{{ count }} reshares"
+msgstr[0] "Én deling"
+msgstr[1] "{{ count }} delinger"
+
+msgid "I don&#x27;t want to reshare this anymore"
+msgstr "Jeg ønsker ikke å dele dette lengre"
+
+msgid "Reshare"
+msgstr "Del"
+
+msgid "Comments"
+msgstr "Kommetarer"
+
+msgid "Respond"
+msgstr "Svar"
+
+msgid "Comment"
+msgstr "Kommentér"
+
+msgid "New post"
+msgstr "Nytt innlegg"
+
+msgid "Create a post"
+msgstr "Lag et nytt innlegg"
+
+msgid "Publish"
+msgstr "Publisér"
+
+msgid "Login"
+msgstr "Logg inn"
+
+msgid "Username or email"
+msgstr "Brukernavn eller epost"
+
+msgid "Password"
+msgstr "Passord"
+
+msgid "Dashboard"
+msgstr "Oversikt"
+
+msgid "Your Dashboard"
+msgstr "Din oversikt"
+
+msgid "Your Blogs"
+msgstr "Dine blogger"
+
+msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Du har ingen blogger enda. Lag din egen, eller be om å få bli med på en "
+"annen."
+
+msgid "Start a new blog"
+msgstr "Start en ny blogg"
+
+msgid "Admin"
+msgstr "Administrator"
+
+msgid "It is you"
+msgstr "Dette er deg"
+
+msgid "Edit your profile"
+msgstr "Rediger profilen din"
+
+msgid "Open on {{ instance_url }}"
+msgstr "Åpne hos {{ instance_url }}"
+
+msgid "Follow"
+msgstr "Følg"
+
+msgid "Unfollow"
+msgstr "Slutt å følge"
+
+msgid "Recently reshared"
+msgstr "Nylig delt"
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] "Én følger"
+msgstr[1] "{{ count }} følgere"
+
+msgid "Edit your account"
+msgstr "Rediger kontoen din"
+
+msgid "Your Profile"
+msgstr "Din profil"
+
+msgid "Display Name"
+msgstr "Visningsnavn"
+
+msgid "Email"
+msgstr "Epost"
+
+msgid "Summary"
+msgstr "Sammendrag"
+
+msgid "Update account"
+msgstr "Oppdater konto"
+
+msgid "{{ name | escape }}'s followers"
+msgstr "{{ name | escape}} sine følgere"
+
+msgid "Followers"
+msgstr "Følgere"
+
+msgid "New Account"
+msgstr "Ny konto"
+
+msgid "Create an account"
+msgstr "Lag en ny konto"
+
+msgid "Username"
+msgstr "Brukernavn"
+
+msgid "Password confirmation"
+msgstr "Passordbekreftelse"
+
+msgid "Create account"
+msgstr "Opprett konto"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Meny"
+
+msgid "My account"
+msgstr "Min konto"
+
+msgid "Log Out"
+msgstr "Logg ut"
+
+msgid "Log In"
+msgstr "Logg inn"
+
+msgid "Register"
+msgstr "Registrér deg"
+
+msgid "You need to be logged in order to create a new blog"
+msgstr "Du må være logget inn for å lage en ny blogg"
+
+msgid "You need to be logged in order to post a comment"
+msgstr "Du må være logget inn for å legge inn en kommentar"
+
+msgid "You need to be logged in order to like a post"
+msgstr "Du må være logget inn for å like et innlegg"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Du må være logget inn for å se meldingene dine"
+
+msgid "You need to be logged in order to write a new post"
+msgstr "Du må være logget inn for å skrive et nytt innlegg"
+
+msgid "You need to be logged in order to reshare a post"
+msgstr "Du må være logget inn for å dele et innlegg"
+
+msgid "Invalid username or password"
+msgstr "Ugyldig brukernavn eller passord"
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Du må være logget inn for å få tilgang til oversikten din"
+
+msgid "You need to be logged in order to follow someone"
+msgstr "Du må være logget inn for å følge noen"
+
+msgid "You need to be logged in order to edit your profile"
+msgstr "Du må være logget inn for å redigere profilen din"
+
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr "Av {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+
+msgid "{{ data }} reshared your article"
+msgstr "{{ data }} delte din artikkel"
+
+msgid "{{ data }} started following you"
+msgstr "{{ data }} har begynt å følge deg"
+
+msgid "{{ data }} liked your article"
+msgstr "{{ data }} likte artikkelen din"
+
+msgid "{{ data }} commented your article"
+msgstr "{{ data }} la inn en kommentar til artikkelen din"
+
+msgid "We couldn&#x27;t find this page."
+msgstr "Den siden fant vi ikke."
+
+msgid "The link that led you here may be broken."
+msgstr "Kanhende lenken som førte deg hit er ødelagt."
+
+msgid "You are not authorized."
+msgstr "Det har du har ikke tilgang til."
+
+msgid "You are not author in this blog."
+msgstr "Du er ikke denne bloggens forfatter."
+
+msgid "{{ data }} mentioned you."
+msgstr "{{ data }} nevnte deg."
+
+msgid "Your comment"
+msgstr "Din kommentar"
+
+msgid "Unknown error"
+msgstr "Ukjent feil"
+
+msgid "Invalid name"
+msgstr "Ugyldig navn"
+
+msgid "A blog with the same name already exists."
+msgstr "En blogg med det navnet eksisterer allerede."
+
+msgid "Your comment can't be empty"
+msgstr "Kommentaren din kan ikke være tom"
+
+msgid "A post with the same title already exists."
+msgstr "Et innlegg med samme navn finnes allerede."
+
+msgid "We need an email or a username to identify you"
+msgstr "Vi trenger en epost eller et brukernavn for å identifisere deg"
+
+#, fuzzy
+msgid "Your password can't be empty"
+msgstr "Kommentaren din kan ikke være tom"
+
+msgid "Passwords are not matching"
+msgstr "Passordene stemmer ikke overens"
+
+msgid "Username can't be empty"
+msgstr "Brukernavnet kan ikke være tomt"
+
+msgid "Invalid email"
+msgstr "Ugyldig epost"
+
+msgid "Password should be at least 8 characters long"
+msgstr "Passord må bestå av minst åtte tegn"
+
+msgid "One author in this blog: "
+msgid_plural "{{ count }} authors in this blog: "
+msgstr[0] "Én forfatter av denne bloggen: "
+msgstr[1] "{{ count }} forfattere av denne bloggen: "
+
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
+"Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
+
+msgid "Optional"
+msgstr "Valgfritt"
+
+msgid "One article in this blog"
+msgid_plural "{{ count }} articles in this blog"
+msgstr[0] "Én artikkel i denne bloggen"
+msgstr[1] "{{ count }} artikler i denne bloggen"
+
+msgid "Previous page"
+msgstr "Forrige side"
+
+msgid "Next page"
+msgstr "Neste side"
+
+msgid "{{ user }} mentioned you."
+msgstr "{{ user }} nevnte deg."
+
+msgid "{{ user }} commented your article."
+msgstr "{{ user }} la igjen en kommentar til artikkelen din."
+
+msgid "{{ user }} is now following you."
+msgstr "{{ user }} har nå begynt å følge deg."
+
+msgid "{{ user }} liked your article."
+msgstr "{{ user }} likte artikkelen din."
+
+msgid "{{ user }} reshared your article."
+msgstr "{{ user }} delte artikkelen din med sine følgere."
+
+msgid "Source code"
+msgstr "Kildekode"
+
+msgid "Matrix room"
+msgstr "Snakkerom"
+
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "Instance settings"
+msgstr "Instillinger for instansen"
+
+msgid "Allow anyone to register"
+msgstr "Tillat at hvem som helst registrerer seg"
+
+msgid "Short description"
+msgstr "Kort beskrivelse"
+
+msgid "Markdown is supported"
+msgstr "Du kan bruke markdown"
+
+msgid "Long description"
+msgstr "Lang beskrivelse"
+
+msgid "Default license"
+msgstr "Standardlisens"
+
+msgid "Save settings"
+msgstr "Lagre innstillingene"
+
+msgid "No comments yet. Be the first to react!"
+msgstr "Ingen kommentarer enda. Vær den første!"
+
+msgid "About this instance"
+msgstr "Om denne instansen"
+
+msgid "What is Plume?"
+msgstr "Hva er Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume er et desentralisert bloggsystem."
+
+msgid "Authors can manage various blogs from an unique website."
+msgstr "Forfattere kan administrere forskjellige blogger fra en unik webside."
+
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+"Artiklene er også synlige på andre websider som kjører Plume, og du kan "
+"interagere med dem direkte fra andre plattformer som f.eks. Mastodon."
+
+msgid "Create your account"
+msgstr "Opprett din konto"
+
+msgid "About {{ instance_name }}"
+msgstr "Om {{ instance_name }}"
+
+msgid "Home to"
+msgstr "Hjem for"
+
+msgid "people"
+msgstr "personer"
+
+msgid "Who wrote"
+msgstr "Som har skrevet"
+
+msgid "articles"
+msgstr "artikler"
+
+msgid "Read the detailed rules"
+msgstr "Les reglene"
+
+#~ msgid "Your password should be at least 8 characters long"
+#~ msgstr "Passordet ditt må bestå av minst åtte tegn"

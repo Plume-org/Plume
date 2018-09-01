@@ -69,14 +69,17 @@ impl Comment {
             .len()
     }
 
-    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+    pub fn to_json(&self, conn: &PgConnection, others: &Vec<Comment>) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["author"] = self.get_author(conn).to_json(conn);
         let mentions = Mention::list_for_comment(conn, self.id).into_iter()
             .map(|m| m.get_mentioned(conn).map(|u| u.get_fqn(conn)).unwrap_or(String::new()))
             .collect::<Vec<String>>();
-        println!("{:?}", mentions);
         json["mentions"] = serde_json::to_value(mentions).unwrap();
+        json["responses"] = json!(others.into_iter()
+            .filter(|c| c.in_response_to_id.map(|id| id == self.id).unwrap_or(false))
+            .map(|c| c.to_json(conn, others))
+            .collect::<Vec<_>>());
         json
     }
 
@@ -120,10 +123,8 @@ impl Notify<PgConnection> for Comment {
     fn notify(&self, conn: &PgConnection) {
         for author in self.get_post(conn).get_authors(conn) {
             Notification::insert(conn, NewNotification {
-                title: "{{ data }} commented your article".to_string(),
-                data: Some(self.get_author(conn).display_name.clone()),
-                content: Some(self.get_post(conn).title),
-                link: self.ap_url.clone(),
+                kind: notification_kind::COMMENT.to_string(),
+                object_id: self.id,
                 user_id: author.id
             });
         }

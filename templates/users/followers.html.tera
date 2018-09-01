@@ -1,13 +1,8 @@
 {% extends "base" %}
+{% import "macros" as macros %}
 
 {% block title %}
-{% if user.display_name %}
-    {% set name = user.display_name %}
-{% else %}
-    {% set name = user.username %}
-{% endif %}
-
-{{ "{{ name | escape }}'s followers" | _(name=name) }}
+{{ "{{ name | escape }}'s followers" | _(name=user.name) }}
 {% endblock title %}
 
 {% block content %}
@@ -16,15 +11,11 @@
     <h2>{{ "Followers" | _ }}</h2>
     <div class="cards">
     {% for follower in followers %}
-        {% if follower.display_name %}
-            {% set follower_name = follower.display_name %}
-        {% else %}
-            {% set follower_name = follower.username %}
-        {% endif %}
         <div class="card">
-            <h3><a href="/@/{{ follower.fqn }}/">{{ follower_name }}</a> &mdash; @{{ follower.fqn }}</h3>
+            <h3><a href="/@/{{ follower.fqn }}/">{{ follower.name }}</a> <small>@{{ follower.fqn }}</small></h3>
             <main><p>{{ follower.summary | safe }}</p></main>
         </div>
     {% endfor %}
     </div>
+    {{ macros::paginate(page=page, total=n_pages) }}
 {% endblock content %}

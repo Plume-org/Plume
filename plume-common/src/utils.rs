@@ -28,10 +28,15 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>) {
         Event::Text(txt) => {
             let (evts, _, _, _, new_mentions) = txt.chars().fold((vec![], false, String::new(), 0, vec![]), |(mut events, in_mention, text_acc, n, mut mentions), c| {
                 if in_mention {
-                    if (c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_') && (n < (txt.chars().count() - 1)) {
+                    let char_matches = c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_';
+                    if char_matches && (n < (txt.chars().count() - 1)) {
                         (events, in_mention, text_acc + c.to_string().as_ref(), n + 1, mentions)
                     } else {
-                        let mention = text_acc + c.to_string().as_ref();
+                        let mention = if char_matches {
+                            text_acc + c.to_string().as_ref()
+                        } else {
+                            text_acc
+                        };
                         let short_mention = mention.clone();
                         let short_mention = short_mention.splitn(1, '@').nth(0).unwrap_or("");
                         let link = Tag::Link(format!("/@/{}/", mention).into(), short_mention.to_string().into());
@@ -67,4 +72,28 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>) {
     let mut buf = String::new();
     html::push_html(&mut buf, parser);
     (buf, mentions.collect())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mentions() {
+        let tests = vec![
+            ("nothing", vec![]),
+            ("@mention", vec!["mention"]),
+            ("@mention@instance.tld", vec!["mention@instance.tld"]),
+            ("@many @mentions", vec!["many", "mentions"]),
+            ("@start with a mentions", vec!["start"]),
+            ("mention at @end", vec!["end"]),
+            ("between parenthesis (@test)", vec!["test"]),
+            ("with some punctuation @test!", vec!["test"]),
+            ("      @spaces     ", vec!["spaces"]),
+        ];
+
+        for (md, mentions) in tests {
+            assert_eq!(md_to_html(md).1, mentions.into_iter().map(|s| s.to_string()).collect::<Vec<String>>());
+        }
+    }
 }
