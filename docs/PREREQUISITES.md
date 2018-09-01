@@ -5,7 +5,7 @@ As such, this notification should be updated once verified for Plume installs.
 
 > NOTE: These instructions may help in installing a production version, but are
 intended for developers to be able to build and test their changes. If in doubt,
-seek out documentation from your distribution package or from [the `doc` folder](doc).
+seek out documentation from your distribution package or from [the `docs` folder](docs).
 
 ## Installing Requirements
 

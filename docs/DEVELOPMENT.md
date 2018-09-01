@@ -1,74 +1,10 @@
 # Development Guide
 
-## Running Plume locally
+## Installing the development environment
 
-### Mac OSX
+Please refer to the [installation guide](INSTALL.md).
 
-All commands are run in the Mac Terminal or terminal emulator of your choice, such as iTerm2. First, you will need [Git](https://git-scm.com/download/mac), [Homebrew](https://brew.sh/), [Rust](https://www.rust-lang.org/en-US/), and [Postgres](https://www.postgresql.org/). Follow the instructions to install Homebrew before continuing if you don't already have it.
-
-### Linux
-
-Similar to Mac OSX all commands should be run from a terminal (a.k.a command line). First, you will need [Git](https://git-scm.com/download/mac), [Rust](https://www.rust-lang.org/en-US/), and [Postgres](https://www.postgresql.org/).  Step-by-step instructions are also available here:  [Installing Prerequisites](/doc/PREREQUISITES.md)
-
-#### Download the Repository
-
-Navigate to the directory on your machine where you would like to install the repository, such as in `~/dev` by running `cd dev`. Now, clone the remote repository by running `git clone https://github.com/Plume-org/Plume.git`. This will install the codebase to the `Plume` subdirectory. Navigate into that directory by running `cd Plume`.
-
-#### Rust
-
-If you think you might already have rust on your machine, you can check by running 
-
-```
-rustc --version
-# Should output something like
-# rustc 1.28.0-nightly (a805a2a5e 2018-06-10)
-```
-
-If you don't already have Rust, install it by running
-
-```
-curl https://sh.rustup.rs -sSf | sh
-```
-
-In the interactive installation, choose the option of the nightly toolchain. Restart your console so that the `rustc` CLI tool is available.
-
-#### Postgres
-
-Now we will use Homebrew to install Postgres. If you think you might already have it, try running `brew info postgres`. If it is not available, continue to install Postgres by running the following:
-
-```
-brew install postgres
-```
-
-Now, you can use the following command to start Postgres on a one-time basis. 
-
-```
-pg_ctl -D /usr/local/var/postgres start
-```
-
-When you will launch Plume for the first time, it will setup the database by itself.
-
-#### Database Migration
-
-To run migrations and correctly setup the database, Plume use the `diesel` CLI tool under the hood. Therefore you should install it before running Plume. If this was your time installing Rust, you will probably need to run that using `cargo`. `cargo` is installed with `rustc` so if you followed the earlier instructions it will already be available.
-
-```
-cargo install diesel_cli --version '=1.2.0'
-```
-
-#### Running Plume
-
-To run Plume locally, make sure you are once again in the Plume directory, such as `~/dev/Plume`. Now you will be able to run the application using the command
-
-```
-cargo run
-```
-
-#### Configuration
-
-The first time you'll run Plume, it will help you setup your instance through an interactive tool. Once you'll have answered all its question, your instance will start.
-
-#### Testing the federation
+## Testing the federation
 
 To test the federation, you'll need to setup another database (see "Setup the database"),
 also owned by the "plume" user, but with a different name. Then, you'll need to run the
@@ -93,7 +29,7 @@ If you don't want to setup HTTPS locally, you can also disable it by running you
 USE_HTTPS=0 cargo run
 ```
 
-#### Making a Pull Request
+## Making a Pull Request
 To create an upstream fork of the repository in GitHub, click "Fork" in the top right button on the main page of the [Plume repository](https://github.com/Plume-org/Plume). Now, in the command line, set another remote for the repository by running the following command, replacing `myname` with the name under which you forked the repo. You can use another name besides `upstream` if you prefer. Using [SSH](https://help.github.com/articles/connecting-to-github-with-ssh/) is recommended.
 
 ```
@@ -105,7 +41,7 @@ Now, make any changes to the code you want. After committing your changes, push 
 
 The project maintainers may suggest further changes to improve the pull request even more. After implementing this locally, you can push to your upstream fork again and the changes will immediately show up in the pull request after pushing. Once all the suggested changes are made, the pull request may be accepted. Thanks for contributing.
 
-#### When working with Tera templates
+## When working with Tera templates
 
 When working with the interface, or any message that will be displayed to the final user, keep in mind that Plume is an internationalized software. To make sure that the parts of the interface you are changing are translatable, you should:
 
