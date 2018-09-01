@@ -1,0 +1,40 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+About {{ instance.name }}
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ "About {{ instance_name }}" | _(instance_name=instance.name) }}</h1>
+    <section>
+        {{ instance.short_description_html | safe }}        
+    </section>
+    <div class="banner">
+        <section class="stats">
+            <div>
+                <p>{{ "Home to" | _ }}</p>
+                <em>{{ n_users }}</em>
+                <p>{{ "people" | _ }}</p>
+            </div>
+            <div>
+                <p>{{ "Who wrote" | _ }}</p>
+                <em>{{ n_articles }}</em>
+                <p>{{ "articles" | _ }}</p>
+            </div>
+            <div>
+                <p>{{ "And connected to" | _ }}</p>
+                <em>{{ n_instances }}</em>
+                <p>{{ "other instances" | _ }}</p>
+            </div>
+            <div>
+                <p>{{ "Administred by" | _ }}</p>
+                <p><a href="/@/{{ admin.fqn }}">{{ admin.name }}</a><small>(@{{ admin.fqn }})</small></p>
+            </div>
+        </section>
+        <p>{{ "Runs Plume {{ version }}" | _(version=version) }}
+    </div>
+    <section>
+        {{ instance.long_description_html | safe }}        
+    </section>
+{% endblock content %}

@@ -42,6 +42,13 @@ small {
 	margin: 4rem 0;
 }
 
+.banner {
+	background: #DADADA;
+	padding-top: 2em;
+	padding-bottom: 1em;
+	margin: 3em 0px;
+}
+
 /*
  * == Header ==
  */

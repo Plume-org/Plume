@@ -256,7 +256,8 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "Par {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr ""
+"Par {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
 msgstr "{{ data }} a repartagé votre article"
@@ -407,14 +408,16 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume est un moteur de blog décentralisé."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr "Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d'un même site."
+msgstr ""
+"Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d'un même site."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
-"Les articles sont également visibles sur d'autres sites Plume, et vous pouvez "
-"interagir avec directement depuis d'autres plateformes telles que Mastodon."
+"Les articles sont également visibles sur d'autres sites Plume, et vous "
+"pouvez interagir avec directement depuis d'autres plateformes telles que "
+"Mastodon."
 
 msgid "Create your account"
 msgstr "Créer votre compte"
@@ -436,6 +439,24 @@ msgstr "articles"
 
 msgid "Read the detailed rules"
 msgstr "Lire les règles détaillées"
+
+#, fuzzy
+msgid "Delete this article"
+msgstr "Derniers articles"
+
+msgid "And connected to"
+msgstr ""
+
+#, fuzzy
+msgid "other instances"
+msgstr "À propos de cette instance"
+
+#, fuzzy
+msgid "Administred by"
+msgstr "Administration"
+
+msgid "Runs Plume {{ version }}"
+msgstr ""
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Votre mot de passe doit faire au moins 8 caractères."

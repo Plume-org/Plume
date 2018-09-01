@@ -72,6 +72,14 @@ impl Instance {
             .len() > 0
     }
 
+    pub fn main_admin(&self, conn: &PgConnection) -> User {
+        users::table.filter(users::instance_id.eq(self.id))
+            .filter(users::is_admin.eq(true))
+            .limit(1)
+            .get_result::<User>(conn)
+            .expect("Couldn't load admins")
+    }
+
     pub fn compute_box(&self, prefix: &'static str, name: String, box_name: &'static str) -> String {
         ap_url(format!(
             "{instance}/{prefix}/{name}/{box_name}",
@@ -95,5 +103,9 @@ impl Instance {
                 instances::long_description_html.eq(ld)
             )).get_result::<Instance>(conn)
             .expect("Couldn't update instance")
+    }
+
+    pub fn count(conn: &PgConnection) -> i64 {
+        instances::table.count().get_result(conn).expect("Couldn't count instances")
     }
 }

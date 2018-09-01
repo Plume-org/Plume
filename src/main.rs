@@ -54,6 +54,7 @@ fn main() {
             routes::instance::update_settings,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
+            routes::instance::about,
 
             routes::likes::create,
             routes::likes::create_auth,

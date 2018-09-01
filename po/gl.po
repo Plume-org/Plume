@@ -68,7 +68,8 @@ msgstr "Notificacións"
 
 msgid ""
 "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "Escrito por {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr ""
+"Escrito por {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 
 msgid "This article is under the {{ license }} license."
 msgstr "Este artigo ten licenza {{ license }}"
@@ -251,7 +252,8 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Debe estar conectada para editar o seu perfil"
 
 msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "Por {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr ""
+"Por {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} reshared your article"
 msgstr "{{ data }} comparteu o seu artigo"
@@ -322,7 +324,9 @@ msgstr[0] "Unha autora en este blog: "
 msgstr[1] "{{ count }} autoras en este blog: "
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr "Conéctese ou utilice a súa conta no fediverso para interactuar con este artigo"
+msgstr ""
+"Conéctese ou utilice a súa conta no fediverso para interactuar con este "
+"artigo"
 
 msgid "Optional"
 msgstr "Opcional"
@@ -401,8 +405,9 @@ msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr "Os artigos son visibles tamén en outros sitios Plume, e pode interactuar con"
-"eles desde outras plataformas como Mastadon."
+msgstr ""
+"Os artigos son visibles tamén en outros sitios Plume, e pode interactuar "
+"coneles desde outras plataformas como Mastadon."
 
 msgid "Create your account"
 msgstr "Cree a súa conta"
@@ -424,3 +429,21 @@ msgstr "artigos"
 
 msgid "Read the detailed rules"
 msgstr "Lea o detalle das normas"
+
+#, fuzzy
+msgid "Delete this article"
+msgstr "Últimos artigos"
+
+msgid "And connected to"
+msgstr ""
+
+#, fuzzy
+msgid "other instances"
+msgstr "Sobre esta instancia"
+
+#, fuzzy
+msgid "Administred by"
+msgstr "Administración"
+
+msgid "Runs Plume {{ version }}"
+msgstr ""

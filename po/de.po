@@ -438,5 +438,23 @@ msgstr "Artikel geschrieben haben"
 msgid "Read the detailed rules"
 msgstr "Lies die detailierten Regeln"
 
+#, fuzzy
+msgid "Delete this article"
+msgstr "Neueste Artikel"
+
+msgid "And connected to"
+msgstr ""
+
+#, fuzzy
+msgid "other instances"
+msgstr "Über diese Instanz"
+
+#, fuzzy
+msgid "Administred by"
+msgstr "Administration"
+
+msgid "Runs Plume {{ version }}"
+msgstr ""
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"
