@@ -66,7 +66,7 @@ You can install it on **GNU/Linux** and **Mac OS X** with:
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-On **Windows**, you'll need, if you don't already have them, to download and install the [Visual C++ 2015 Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools). Then, download the [rustup installer](https://www.rust-lang.org/en-US/install.html) and run it.
+On **Windows**, you'll need, if you don't already have them, to download and install the [Visual C++ 2015 Build Tools](https://www.microsoft.com/en-us/download/details.aspx?id=48159). Then, download the [rustup installer](https://www.rust-lang.org/en-US/install.html) and run it.
 
 ## Getting and compiling the Plume source code
 
