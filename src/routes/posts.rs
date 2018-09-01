@@ -178,7 +178,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
     }
 }
 
-#[post("/~/<blog_name>/<slug>/delete")]
+#[get("/~/<blog_name>/<slug>/delete")]
 fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
     let post = Blog::find_by_fqn(&*conn, blog_name.clone())
         .and_then(|blog| Post::find_by_slug(&*conn, slug.clone(), blog.id));
