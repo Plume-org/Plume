@@ -75,3 +75,13 @@ msgstr[1] ""
 ```
 
 And that's it! Once these new messages will have been translated, they will correctly be displayed in the requested locale!
+
+## Code Style
+
+For Rust, use the standard style. `rustfmt` can help you keeping your code clean.
+
+For CSS, the only rule is to use One True Brace Style.
+
+For JavaScript, we use [the JavaScript Standard Style](https://standardjs.com/).
+
+For HTML/Tera templates, we use HTML5 syntax.
