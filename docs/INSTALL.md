@@ -136,19 +136,106 @@ cargo run
 
 ## Configuring Nginx
 
-Here is a sample Nginx configuration for a Plume instance:
+Here is a sample Nginx configuration for a Plume instance (replace `blog.example.com` with your domain name):
 
 ```nginx
-location / {
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_set_header Host $http_host;
+server {
+    listen 80;
+    server_name blog.example.com;
 
-    proxy_pass http://localhost:7878;
-
-    client_max_body_size 16m;
+    location /.well-known/acme-challenge {}
+    location / {
+        return 301 https://$host$request_uri;
+    }
 }
+
+server {
+    server_name blog.example.org;
+    access_log  /var/log/nginx/access.log;
+
+    listen [::]:443 ssl; # managed by Certbot
+    SSLCertificateFile /etc/letsencrypt/live/blog.example.com/cert.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/blog.example.com/privkey.pem
+    SSLCertificateChainFile /etc/letsencrypt/live/blog.example.com/chain.pem
+
+    # for ssl conf: https://cipherli.st/
+	ssl_protocols TLSv1.2 TLSv1.3;# Requires nginx >= 1.13.0 else use TLSv1.2
+	ssl_prefer_server_ciphers on; 
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;# openssl dhparam -out /etc/letsencrypt/ssl-dhparam.pem 4096
+	ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+	ssl_ecdh_curve secp384r1; # Requires nginx >= 1.1.0
+	ssl_session_timeout  10m;
+	ssl_session_cache shared:SSL:10m;
+	ssl_session_tickets off; # Requires nginx >= 1.5.9
+	ssl_stapling on; # Requires nginx >= 1.3.7
+	ssl_stapling_verify on; # Requires nginx => 1.3.7
+	resolver 9.9.9.9 80.67.169.12 valid=300s;
+	resolver_timeout 5s; 
+	add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+	add_header X-Frame-Options DENY;
+	add_header X-Content-Type-Options nosniff;
+	add_header X-XSS-Protection "1; mode=block";
+	add_header Content-Security-Policy "default-src 'self';";
+	add_header Content-Security-Policy "frame-ancestors 'self'";
+
+    location ~*  \.(jpg|jpeg|png|gif|ico|js|pdf)$ {
+        add_header Cache-Control "public";
+        expires 7d;
+    }
+
+    location / {
+        proxy_pass http://localhost:8000/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        client_max_body_size 10m;
+    }
+}
+```
+
+## Configuring Apache
+
+If you prefer Apache, you can use this configuration (here too replace `blog.example.com` with your domain):
+
+```apache
+<VirtualHost *:80>
+    ServerName blog.example.com
+    Redirect / https://blog.example.com/
+</VirtualHost>
+
+<VirtualHost *:443>
+   ServerAdmin admin@example.com
+   ServerName blog.example.com
+
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Strict-Transport-Security "max-age=31536000"
+    SSLEngine on
+
+    # for cipher conf: https://cipherli.st/
+    SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+    SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+    SSLHonorCipherOrder On
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    Header always set X-Frame-Options DENY
+    Header always set X-Content-Type-Options nosniff
+    SSLCompression off
+    SSLUseStapling on
+    SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+
+    # Requires Apache >= 2.4.11
+    SSLSessionTickets Off
+
+    SSLCertificateFile /etc/letsencrypt/live/blog.example.com/cert.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/blog.example.com/privkey.pem
+    SSLCertificateChainFile /etc/letsencrypt/live/blog.example.com/chain.pem
+
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "https"
+
+    ProxyPass / http://127.0.0.1:7878/
+    ProxyPassReverse / http://127.0.0.1:7878/
+</VirtualHost>
 ```
 
 ## Systemd integration
@@ -179,4 +266,4 @@ WantedBy=multi-user.target
 
 ## Acknowledgements
 
-Most of this documentation have been written by *gled-rs*. The systemd unit file have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).
+Most of this documentation have been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).
