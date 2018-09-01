@@ -103,8 +103,6 @@ createuser -d -P plume
 createdb -O plume plume
 ```
 
-```bash
-```
 
 ## Running migrations
 
@@ -160,7 +158,7 @@ server {
 
     # for ssl conf: https://cipherli.st/
 	ssl_protocols TLSv1.2 TLSv1.3;# Requires nginx >= 1.13.0 else use TLSv1.2
-	ssl_prefer_server_ciphers on; 
+	ssl_prefer_server_ciphers on;
 	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;# openssl dhparam -out /etc/letsencrypt/ssl-dhparam.pem 4096
 	ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
 	ssl_ecdh_curve secp384r1; # Requires nginx >= 1.1.0
@@ -170,7 +168,7 @@ server {
 	ssl_stapling on; # Requires nginx >= 1.3.7
 	ssl_stapling_verify on; # Requires nginx => 1.3.7
 	resolver 9.9.9.9 80.67.169.12 valid=300s;
-	resolver_timeout 5s; 
+	resolver_timeout 5s;
 	add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
 	add_header X-Frame-Options DENY;
 	add_header X-Content-Type-Options nosniff;
@@ -184,7 +182,7 @@ server {
     }
 
     location / {
-        proxy_pass http://localhost:8000/;
+        proxy_pass http://localhost:7878/;
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -240,7 +238,7 @@ If you prefer Apache, you can use this configuration (here too replace `blog.exa
 
 ## Systemd integration
 
-If you want to manage your Plume instance with systemd, you can use the following unit file (to be saved in `/lib/systemd/system/plume.service`):
+If you want to manage your Plume instance with systemd, you can use the following unit file (to be saved in `/etc/systemd/system/plume.service`):
 
 ```toml
 [Unit]
@@ -256,6 +254,62 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
+```
+
+## SysVinit integration
+
+This script can also be useful if you are using SysVinit.
+
+```bash
+#!/bin/bash
+#
+# chkconfig: 35 90 12
+# description: Plume
+#
+
+# Get function from functions library
+. /etc/init.d/functions
+
+# Start Plume
+start() {
+        initlog -c "echo -n Démarrage de Plume: "
+        cd /home/plume/Plume & cargo run
+        ### Create the lock file ###
+        touch /var/lock/subsys/plume
+        success $"Plume est prêt !"
+        echo
+}
+
+# Restart Plume
+stop() {
+        initlog -c "echo -n Arrêt de Plume: "
+        killproc cargo run
+        ### Now, delete the lock file ###
+        rm -f /var/lock/subsys/plume
+        echo
+}
+
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status FOO
+        ;;
+  restart|reload|condrestart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+
+exit 0
 ```
 
 ## Caveats:

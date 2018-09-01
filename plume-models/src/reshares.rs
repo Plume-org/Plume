@@ -73,8 +73,8 @@ impl Reshare {
 
 impl FromActivity<Announce, PgConnection> for Reshare {
     fn from_activity(conn: &PgConnection, announce: Announce, _actor: Id) -> Reshare {
-        let user = User::from_url(conn, announce.announce_props.actor.as_str().unwrap().to_string());
-        let post = Post::find_by_ap_url(conn, announce.announce_props.object.as_str().unwrap().to_string());
+        let user = User::from_url(conn, announce.announce_props.actor_link::<Id>().expect("Reshare::from_activity: actor error").into());
+        let post = Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>().expect("Reshare::from_activity: object error").into());
         let reshare = Reshare::insert(conn, NewReshare {
             post_id: post.unwrap().id,
             user_id: user.unwrap().id,
