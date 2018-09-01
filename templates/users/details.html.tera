@@ -19,7 +19,10 @@
     </div>
 
     {% if recents | length != 0 %}    
-        <h2>{{ "Latest articles" | _ }}</h2>
+        <h2>
+            {{ "Latest articles" | _ }}
+            <small><a href="/@/{{ user.fqn }}/atom.xml"><i title="Atom feed" class="fa fa-rss"></i></a></small>
+        </h2>
         <div class="cards">
             {% for article in recents %}
                 {{ macros::post_card(article=article) }}

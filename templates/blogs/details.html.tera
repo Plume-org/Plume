@@ -23,7 +23,10 @@
     </p>
  
     <section>
-        <h2>{{ "Latest articles" | _ }}</h2>
+        <h2>
+            {{ "Latest articles" | _ }}
+            <small><a href="/@/{{ blog.fqn }}/atom.xml"><i title="Atom feed" class="fa fa-rss"></i></a></small>
+        </h2>
         {% if posts | length < 1 %}
             <p>{{ "No posts to see here yet." | _ }}</p>
         {% endif %}

@@ -22,8 +22,8 @@
         }}</a></span>
         &mdash;
         <span class="date">{{ date | date(format="%B %e, %Y") }}</span>
-        &mdash;
         {% if is_author %}
+            &mdash;
             <a href="{{ article.url}}delete">{{ "Delete this article" | _ }}</a>
         {% endif %}
     </p>
