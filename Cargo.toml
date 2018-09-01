@@ -4,6 +4,7 @@ name = "plume"
 version = "0.1.0"
 [dependencies]
 activitypub = "0.1.1"
+atom_syndication = "0.6"
 colored = "1.6"
 dotenv = "*"
 failure = "0.1"

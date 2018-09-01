@@ -2,6 +2,7 @@
 #![plugin(rocket_codegen)]
  
 extern crate activitypub;
+extern crate atom_syndication;
 extern crate colored;
 extern crate diesel;
 extern crate dotenv;
@@ -45,6 +46,7 @@ fn main() {
             routes::blogs::new,
             routes::blogs::new_auth,
             routes::blogs::create,
+            routes::blogs::atom_feed,
 
             routes::comments::create,
 
@@ -98,6 +100,7 @@ fn main() {
             routes::user::ap_followers,
             routes::user::new,
             routes::user::create,
+            routes::user::atom_feed,
 
             routes::well_known::host_meta,
             routes::well_known::nodeinfo,

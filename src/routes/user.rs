@@ -3,10 +3,12 @@ use activitypub::{
     collection::OrderedCollection,
     object::Article
 };
+use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     State,
     request::LenientForm,
-    response::{Redirect, Flash}
+    response::{Redirect, Flash, Content},
+    http::ContentType
 };
 use rocket_contrib::Template;
 use serde_json;
@@ -275,4 +277,19 @@ fn ap_followers(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<Or
     coll.collection_props.set_total_items_u64(followers.len() as u64).expect("Follower collection: totalItems error");
     coll.collection_props.set_items_link_vec(followers).expect("Follower collection: items error");
     ActivityStream::new(coll)
+}
+
+#[get("/@/<name>/atom.xml")]
+fn atom_feed(name: String, conn: DbConn) -> Content<String> {
+    let author = User::find_by_fqn(&*conn, name.clone()).expect("Unable to find author");
+    let feed = FeedBuilder::default()
+        .title(author.display_name.clone())
+        .id(Instance::get_local(&*conn).unwrap().compute_box("~", name, "atom.xml"))
+        .entries(Post::get_recents_for_author(&*conn, &author, 15)
+            .into_iter()
+            .map(|p| super::post_to_atom(p, &*conn))
+            .collect::<Vec<Entry>>())
+        .build()
+        .expect("Error building Atom feed");
+    Content(ContentType::new("application", "atom+xml"), feed.to_string())
 }

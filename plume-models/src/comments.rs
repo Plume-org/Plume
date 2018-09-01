@@ -105,7 +105,7 @@ impl FromActivity<Note, PgConnection> for Comment {
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
         });
 
-        // save mentions
+        // save mentionsd
         if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
             for tag in tags.into_iter() {
                 serde_json::from_value::<link::Mention>(tag)

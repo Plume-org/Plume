@@ -1,4 +1,4 @@
-use activitypub::{Object, activity::{Create, Delete}};
+use activitypub::{Object, activity::Create};
 
 use activity_pub::Id;
 

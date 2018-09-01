@@ -1,3 +1,5 @@
+use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
+use diesel::PgConnection;
 use rocket::{
     http::uri::{FromUriParam, UriDisplay},
     response::NamedFile
@@ -6,6 +8,8 @@ use std::{
     fmt,
     path::{Path, PathBuf}
 };
+
+use plume_models::posts::Post;
 
 macro_rules! may_fail {
     ($account:expr, $expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
@@ -73,6 +77,25 @@ impl Page {
     pub fn limits(&self) -> (i32, i32) {
         ((self.page - 1) * ITEMS_PER_PAGE, self.page * ITEMS_PER_PAGE)
     }
+}
+
+pub fn post_to_atom(post: Post, conn: &PgConnection) -> Entry {
+    EntryBuilder::default()
+        .title(post.title.clone())
+        .content(ContentBuilder::default()
+            .value(format!("<![CDATA[{}]]>", *post.content.get()))
+            .src(post.ap_url.clone())
+            .content_type("html".to_string())
+            .build().expect("Atom feed: content error"))
+        .authors(post.get_authors(&*conn)
+            .into_iter()
+            .map(|a| PersonBuilder::default()
+                .name(a.display_name)
+                .uri(a.ap_url)
+                .build().expect("Atom feed: author error"))
+            .collect::<Vec<Person>>())
+        .links(vec![LinkBuilder::default().href(post.ap_url).build().expect("Atom feed: link error")])
+        .build().expect("Atom feed: entry error")
 }
 
 pub mod blogs;
