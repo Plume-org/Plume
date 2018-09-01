@@ -24,8 +24,7 @@ a, a:visited {
 
 small {
 	margin-left: 1em;
-	color: #242424;
-	opacity: 0.6;
+	color: rgba(36, 36, 36, 0.6);
 	font-size: 0.75em;
 	word-wrap: break-word;
 	word-break: break-all;
@@ -462,6 +461,7 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 0;
+	z-index: -20;
 }
 .badge {
 	margin-left: 1em;
