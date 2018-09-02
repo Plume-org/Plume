@@ -27,8 +27,8 @@ apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make op
 On **Fedora**, **CentOS** or **RHEL**:
 
 ```bash
-dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl libssl-dev 
-# TODO: GetText + Git install
+dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel 
+# TODO: GetText
 ```
 
 On **Gentoo**:
