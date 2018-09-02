@@ -6,10 +6,11 @@ In order to be installed and to work correctly, Plume needs:
 
 - *Git* (to get the code)
 - *Curl* (for RustUp, the Rust installer)
-- *GCC* (to compile C dependencies)
+- *GCC* and *make*  (to compile C dependencies)
 - *PostgreSQL* (for the database)
 - *GetText* (to manage translations)
 - *Rust* and *Cargo* (to build the code)
+- *OpenSSL* and *OpenSSL librairies* (for security)
 
 All the following instructions will need a terminal.
 
@@ -20,13 +21,13 @@ On **Debian**:
 
 ```bash
 apt update
-apt install gettext postgresql postgresql-contrib libpq-dev git
+apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev 
 ```
 
 On **Fedora**, **CentOS** or **RHEL**:
 
 ```bash
-dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel
+dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl libssl-dev 
 # TODO: GetText + Git install
 ```
 
