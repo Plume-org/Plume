@@ -27,24 +27,21 @@ apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make op
 On **Fedora**, **CentOS** or **RHEL**:
 
 ```bash
-dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel 
-# TODO: GetText
+dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext
 ```
 
 On **Gentoo**:
 
 ```bash
 emerge --sync
-emerge -av postgresql eselect-postgresql
-# TODO: GetText + Git install
+emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
 ```
 
 On **Mac OS X**, with [Homebrew](https://brew.sh/):
 
 ```bash
 brew update
-brew install postgres
-# TODO: GetText + Git install
+brew install postgres gettext git
 ```
 
 ## Creating a new user (optional)
