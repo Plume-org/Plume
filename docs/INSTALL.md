@@ -4,10 +4,12 @@
 
 In order to be installed and to work correctly, Plume needs:
 
-- Git
-- PostgreSQL
-- GetText
-- Rust and Cargo
+- *Git* (to get the code)
+- *Curl* (for RustUp, the Rust installer)
+- *GCC* (to compile C dependencies)
+- *PostgreSQL* (for the database)
+- *GetText* (to manage translations)
+- *Rust* and *Cargo* (to build the code)
 
 All the following instructions will need a terminal.
 
@@ -64,6 +66,14 @@ You can install it on **GNU/Linux** and **Mac OS X** with:
 
 ```bash
 curl https://sh.rustup.rs -sSf | sh
+```
+
+When asked, choose the *"1) Proceed with installation (default)"* option.
+
+Then run this command to be able to run cargo in the current session:
+
+```bash
+export PATH="$PATH:/home/plume/.cargo/bin:/home/plume/.local/bin:/usr/local/sbin"
 ```
 
 On **Windows**, you'll need, if you don't already have them, to download and install the [Visual C++ 2015 Build Tools](https://www.microsoft.com/en-us/download/details.aspx?id=48159). Then, download the [rustup installer](https://www.rust-lang.org/en-US/install.html) and run it.
