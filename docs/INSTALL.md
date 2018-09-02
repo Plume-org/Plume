@@ -6,10 +6,11 @@ In order to be installed and to work correctly, Plume needs:
 
 - *Git* (to get the code)
 - *Curl* (for RustUp, the Rust installer)
-- *GCC* (to compile C dependencies)
+- *GCC* and *make*  (to compile C dependencies)
 - *PostgreSQL* (for the database)
 - *GetText* (to manage translations)
 - *Rust* and *Cargo* (to build the code)
+- *OpenSSL* and *OpenSSL librairies* (for security)
 
 All the following instructions will need a terminal.
 
@@ -20,30 +21,27 @@ On **Debian**:
 
 ```bash
 apt update
-apt install gettext postgresql postgresql-contrib libpq-dev git
+apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev 
 ```
 
 On **Fedora**, **CentOS** or **RHEL**:
 
 ```bash
-dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel
-# TODO: GetText + Git install
+dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext
 ```
 
 On **Gentoo**:
 
 ```bash
 emerge --sync
-emerge -av postgresql eselect-postgresql
-# TODO: GetText + Git install
+emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
 ```
 
 On **Mac OS X**, with [Homebrew](https://brew.sh/):
 
 ```bash
 brew update
-brew install postgres
-# TODO: GetText + Git install
+brew install postgres gettext git
 ```
 
 ## Creating a new user (optional)
@@ -271,55 +269,107 @@ WantedBy=multi-user.target
 This script can also be useful if you are using SysVinit.
 
 ```bash
-#!/bin/bash
-#
-# chkconfig: 35 90 12
-# description: Plume
-#
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Federated blogging
+# Based on https://raw.githubusercontent.com/fhd/init-script-template/master/template
+### END INIT INFO
 
-# Get function from functions library
-. /etc/init.d/functions
+dir="/home/plume/Plume"
+cmd="/home/plume/.cargo/bin/cargo run"
+user="plume"
 
-# Start Plume
-start() {
-        initlog -c "echo -n Démarrage de Plume: "
-        cd /home/plume/Plume & cargo run
-        ### Create the lock file ###
-        touch /var/lock/subsys/plume
-        success $"Plume est prêt !"
-        echo
+name=`basename $0`
+pid_file="/var/run/$name.pid"
+stdout_log="/home/plume/Plume/plume.log"
+stderr_log="/home/plume/Plume/plume.err"
+
+get_pid() {
+    cat "$pid_file"
 }
 
-# Restart Plume
-stop() {
-        initlog -c "echo -n Arrêt de Plume: "
-        killproc cargo run
-        ### Now, delete the lock file ###
-        rm -f /var/lock/subsys/plume
-        echo
+is_running() {
+    [ -f "$pid_file" ] && ps -p `get_pid` > /dev/null 2>&1
 }
 
-### main logic ###
 case "$1" in
-  start)
-        start
-        ;;
-  stop)
-        stop
-        ;;
-  status)
-        status FOO
-        ;;
-  restart|reload|condrestart)
-        stop
-        start
-        ;;
-  *)
-        echo $"Usage: $0 {start|stop|restart|reload|status}"
+    start)
+    if is_running; then
+        echo "Already started"
+    else
+        echo "Starting $name"
+        cd "$dir"
+        if [ -z "$user" ]; then
+            sudo $cmd >> "$stdout_log" 2>> "$stderr_log" &
+        else
+            sudo -u "$user" $cmd >> "$stdout_log" 2>> "$stderr_log" &
+        fi
+        echo $! > "$pid_file"
+        if ! is_running; then
+            echo "Unable to start, see $stdout_log and $stderr_log"
+            exit 1
+        fi
+    fi
+    ;;
+    stop)
+    if is_running; then
+        echo -n "Stopping $name.."
+        kill `get_pid`
+        for i in 1 2 3 4 5 6 7 8 9 10
+        # for i in `seq 10`
+        do
+            if ! is_running; then
+                break
+            fi
+
+            echo -n "."
+            sleep 1
+        done
+        echo
+
+        if is_running; then
+            echo "Not stopped; may still be shutting down or shutdown may have failed"
+            exit 1
+        else
+            echo "Stopped"
+            if [ -f "$pid_file" ]; then
+                rm "$pid_file"
+            fi
+        fi
+    else
+        echo "Not running"
+    fi
+    ;;
+    restart)
+    $0 stop
+    if is_running; then
+        echo "Unable to stop, will not attempt to start"
         exit 1
+    fi
+    $0 start
+    ;;
+    status)
+    if is_running; then
+        echo "Running"
+    else
+        echo "Stopped"
+        exit 1
+    fi
+    ;;
+    *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+    ;;
 esac
 
 exit 0
+
 ```
 
 ## Caveats:
