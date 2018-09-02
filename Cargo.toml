@@ -9,7 +9,9 @@ colored = "1.6"
 dotenv = "*"
 failure = "0.1"
 gettext-rs = "0.4"
+guid-create = "0.1"
 heck = "0.3.0"
+multipart = "0.15"
 rpassword = "2.0"
 serde = "1.0"
 serde_derive = "1.0"
@@ -43,8 +45,8 @@ git = "https://github.com/SergioBenitez/Rocket"
 rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
 
 [dependencies.rocket_csrf]
-branch = "plume"
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
+rev = "0fbacab1bc6a32419a18edb600586c5c02fdac4d"
 
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"

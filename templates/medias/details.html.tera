@@ -1,0 +1,24 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+Your medias
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ "Media details" }}</h1>
+    <section>
+        <a href="/medias">Go back to the gallery</a>
+    </section>
+
+    <section>
+        <figure class="media">
+            {{ media.html | safe }}
+            <figcaption>{{ media.alt_text }}</figcaption>
+        </figure>
+        <div>
+            <a href="/medias/{{ media.id }}/avatar" class="button inline-block">Use as avatar</a>
+            <a href="/medias/{{ media.id }}/delete" class="button inline-block">Delete</a>
+        </div>
+    </section>
+{% endblock content %}

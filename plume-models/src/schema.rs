@@ -81,6 +81,7 @@ table! {
         remote_url -> Nullable<Text>,
         sensitive -> Bool,
         content_warning -> Nullable<Text>,
+        owner_id -> Int4,
     }
 }
 
@@ -164,6 +165,7 @@ joinable!(comments -> posts (post_id));
 joinable!(comments -> users (author_id));
 joinable!(likes -> posts (post_id));
 joinable!(likes -> users (user_id));
+joinable!(medias -> users (owner_id));
 joinable!(mentions -> comments (comment_id));
 joinable!(mentions -> posts (post_id));
 joinable!(mentions -> users (mentioned_id));

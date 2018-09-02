@@ -7,3 +7,4 @@ translations
 po/*.po~
 .env
 Rocket.toml
+media

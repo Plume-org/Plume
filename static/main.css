@@ -384,7 +384,7 @@ input:focus, textarea:focus {
 
 textarea {
  	resize: vertical;
- 
+
  	font-family: "Lora", serif;
  	font-size: 1.1em;
  	line-height: 1.5em;
@@ -577,7 +577,7 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 		flex-direction: column;
 	}
 
-	header nav#menu {	
+	header nav#menu {
 		display: inline-flex;
 	}
 
@@ -648,18 +648,18 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 		border: solid #F4F4F4 0.1rem;
 	}
 
-	body > main > * {	
+	body > main > * {
 		padding: 0 5%;
 	}
 	main .article-meta > * { margin: 0 5%; }
 
-	main .article-meta > p {	
+	main .article-meta > p {
 		margin: 2em 5%;
 		font-size: 0.9em;
 	}
 	main .article-meta .comments > * { margin-left: 5%; margin-right: 5%; }
 
-	.card {	
+	.card {
 		min-width: 80%;
 		min-height: 80%;
 	}
@@ -678,7 +678,8 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 /*== Flex boxes ==*/
 .flex {
 	display: flex;
-	flex-direction: row;
+    flex-direction: row;
+    align-items: center;
 }
 
 .flex .grow {
@@ -706,4 +707,31 @@ body > footer {
 
 body > footer * {
 	margin: 5em 0;
+}
+
+/** Medias **/
+
+figure {
+    text-align: center;
+    margin: 2em;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+}
+
+figure > * {
+    width: 100%;
+}
+
+figcaption {
+    padding: 1em;
+}
+
+.preview {
+    display: block;
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    margin-right: 20px;
 }

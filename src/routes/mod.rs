@@ -103,6 +103,7 @@ pub mod comments;
 pub mod errors;
 pub mod instance;
 pub mod likes;
+pub mod medias;
 pub mod notifications;
 pub mod posts;
 pub mod reshares;
@@ -110,7 +111,7 @@ pub mod session;
 pub mod user;
 pub mod well_known;
 
-#[get("/static/<file..>")]
+#[get("/static/<file..>", rank = 2)]
 fn static_files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
 }
