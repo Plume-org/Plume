@@ -1,11 +1,12 @@
 use diesel::{self, PgConnection, QueryDsl, ExpressionMethods, RunQueryDsl};
 use serde_json;
+use std::fs;
 
 use ap_url;
 use instance::Instance;
 use schema::medias;
 
-#[derive(Queryable, Serialize)]
+#[derive(Identifiable, Queryable, Serialize)]
 pub struct Media {
     pub id: i32,
     pub file_path: String,
@@ -58,5 +59,10 @@ impl Media {
 
     pub fn url(&self, conn: &PgConnection) -> String {
         ap_url(format!("{}/static/{}", Instance::get_local(conn).unwrap().public_domain, self.file_path))
+    }
+
+    pub fn delete(&self, conn: &PgConnection) {
+        fs::remove_file(self.file_path.as_str()).expect("Couldn't delete media from disk");
+        diesel::delete(self).execute(conn).expect("Couldn't remove media from DB");
     }
 }

@@ -97,6 +97,13 @@ fn details(id: i32, user: User, conn: DbConn) -> Template {
     }))
 }
 
+#[get("/medias/<id>/delete")]
+fn delete(id: i32, _user: User, conn: DbConn) -> Redirect {
+    let media = Media::get(&*conn, id).expect("Media to delete not found");
+    media.delete(&*conn);
+    Redirect::to(uri!(list))
+}
+
 #[get("/static/media/<file..>", rank = 1)]
 fn static_files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("media/").join(file)).ok()

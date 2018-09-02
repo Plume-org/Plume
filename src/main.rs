@@ -67,6 +67,7 @@ fn main() {
             routes::medias::new,
             routes::medias::upload,
             routes::medias::details,
+            routes::medias::delete,
             routes::medias::static_files,
 
             routes::notifications::paginated_notifications,
