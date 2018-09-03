@@ -42,7 +42,7 @@ fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 
 #[get("/@/<name>", rank = 2)]
 fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<Pool<ThunkWorker<()>>>, fecth_articles_conn: DbConn, fecth_followers_conn: DbConn) -> Template {
-    may_fail!(account, User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
+    may_fail!(account.map(|a| a.to_json(&*conn)), User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
         let recents = Post::get_recents_for_author(&*conn, &user, 6);
         let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
         let user_id = user.id.clone();
@@ -82,7 +82,7 @@ fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<
             "instance_url": user.get_instance(&*conn).public_domain,
             "is_remote": user.instance_id != Instance::local_id(&*conn),
             "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-            "account": account,
+            "account": account.clone().map(|a| a.to_json(&*conn)),
             "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "reshares": reshares.into_iter().map(|r| r.get_post(&*conn).unwrap().to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
@@ -95,7 +95,7 @@ fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<
 fn dashboard(user: User, conn: DbConn) -> Template {
     let blogs = Blog::find_for_author(&*conn, user.id);
     Template::render("users/dashboard", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "blogs": blogs
     }))
 }
@@ -132,7 +132,7 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 
 #[get("/@/<name>/followers?<page>")]
 fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
-    may_fail!(account, User::find_by_fqn(&*conn, name.clone()), "Couldn't find requested user", |user| {
+    may_fail!(account.map(|a| a.to_json(&*conn)), User::find_by_fqn(&*conn, name.clone()), "Couldn't find requested user", |user| {
         let user_id = user.id.clone();
         let followers_count = user.get_followers(&*conn).len();
 
@@ -142,7 +142,7 @@ fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: 
             "is_remote": user.instance_id != Instance::local_id(&*conn),
             "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
             "followers": user.get_followers_page(&*conn, page.limits()).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "account": account,
+            "account": account.clone().map(|a| a.to_json(&*conn)),
             "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
             "n_followers": followers_count,
             "page": page.page,
@@ -164,19 +164,19 @@ fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStrea
 }
 
 #[get("/users/new")]
-fn new(user: Option<User>) -> Template {
+fn new(user: Option<User>, conn: DbConn) -> Template {
     Template::render("users/new", json!({
-        "account": user,
+        "account": user.map(|u| u.to_json(&*conn)),
         "errors": null,
         "form": null
     }))
 }
 
 #[get("/@/<name>/edit")]
-fn edit(name: String, user: User) -> Option<Template> {
+fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
     if user.username == name && !name.contains("@") {
         Some(Template::render("users/edit", json!({
-            "account": user
+            "account": user.to_json(&*conn)
         })))
     } else {
         None

@@ -23,7 +23,7 @@ fn paginated_index(conn: DbConn, user: Option<User>, page: Page) -> Template {
 
             Template::render("instance/index", json!({
                 "instance": inst,
-                "account": user,
+                "account": user.map(|u| u.to_json(&*conn)),
                 "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
                 "page": page.page,
                 "n_pages": Page::total(Post::count(&*conn) as i32),
@@ -47,7 +47,7 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
 #[get("/admin")]
 fn admin(conn: DbConn, admin: Admin) -> Template {
     Template::render("instance/admin", json!({
-        "account": admin.0,
+        "account": admin.0.to_json(&*conn),
         "instance": Instance::get_local(&*conn),
         "errors": null,
         "form": null
@@ -79,7 +79,7 @@ fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSetting
             Redirect::to(uri!(admin))
         })
         .map_err(|e| Template::render("instance/admin", json!({
-            "account": admin.0,
+            "account": admin.0.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "errors": e.inner(),
             "form": form
@@ -127,7 +127,7 @@ fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
 #[get("/about")]
 fn about(user: User, conn: DbConn) -> Template {
     Template::render("instance/about", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "instance": Instance::get_local(&*conn),
         "admin": Instance::get_local(&*conn).map(|i| i.main_admin(&*conn).to_json(&*conn)),
         "version": "0.1.0",

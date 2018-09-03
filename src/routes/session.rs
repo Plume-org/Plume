@@ -13,10 +13,10 @@ use plume_models::{
 };
 
 #[get("/login")]
-fn new(user: Option<User>) -> Template {
+fn new(user: Option<User>, conn: DbConn) -> Template {
     Template::render("session/login", json!({
-        "account": user,
-        "errors": null, 
+        "account": user.map(|u| u.to_json(&*conn)),
+        "errors": null,
         "form": null
     }))
 }
@@ -27,9 +27,9 @@ struct Message {
 }
 
 #[get("/login?<message>")]
-fn new_message(user: Option<User>, message: Message) -> Template {
+fn new_message(user: Option<User>, message: Message, conn: DbConn) -> Template {
     Template::render("session/login", json!({
-        "account": user,
+        "account": user.map(|u| u.to_json(&*conn)),
         "message": message.m,
         "errors": null,
         "form": null

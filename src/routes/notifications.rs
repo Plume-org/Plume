@@ -8,7 +8,7 @@ use routes::Page;
 #[get("/notifications?<page>")]
 fn paginated_notifications(conn: DbConn, user: User, page: Page) -> Template {
     Template::render("notifications/index", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "notifications": Notification::page_for_user(&*conn, &user, page.limits()).into_iter().map(|n| n.to_json(&*conn)).collect::<Vec<_>>(),
         "page": page.page,
         "n_pages": Page::total(Notification::find_for_user(&*conn, &user).len() as i32)

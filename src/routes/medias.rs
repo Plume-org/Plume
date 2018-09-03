@@ -10,15 +10,15 @@ use plume_models::{db_conn::DbConn, medias::*, users::User};
 fn list(user: User, conn: DbConn) -> Template {
     let medias = Media::for_user(&*conn, user.id);
     Template::render("medias/index", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
     }))
 }
 
 #[get("/medias/new")]
-fn new(user: User) -> Template {
+fn new(user: User, conn: DbConn) -> Template {
     Template::render("medias/new", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "form": {},
         "errors": {}
     }))
@@ -92,7 +92,7 @@ fn read(data: &SavedData) -> String {
 fn details(id: i32, user: User, conn: DbConn) -> Template {
     let media = Media::get(&*conn, id);
     Template::render("medias/details", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "media": media.map(|m| m.to_json(&*conn))
     }))
 }

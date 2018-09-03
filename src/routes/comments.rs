@@ -63,7 +63,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "has_liked": user.has_liked(&*conn, &post),
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.has_reshared(&*conn, &post),
-                "account": user,
+                "account": user.to_json(&*conn),
                 "date": &post.creation_date.timestamp(),
                 "previous": form.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![])),
                 "user_fqn": user.get_fqn(&*conn),

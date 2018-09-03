@@ -572,6 +572,10 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
  *   Small Screens   *
  * ================= */
 
+.mobile-label {
+    display: none;
+}
+
 @media screen and (max-width: 900px) {
 	header {
 		flex-direction: column;
@@ -662,7 +666,11 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	.card {
 		min-width: 80%;
 		min-height: 80%;
-	}
+    }
+
+    .mobile-label {
+        display: initial;
+    }
 }
 
 /*== Pagination ==*/
@@ -734,4 +742,20 @@ figcaption {
     width: auto;
     height: auto;
     margin-right: 20px;
+}
+
+/** Avatars **/
+
+.avatar {
+    border-radius: 100%;
+}
+
+.avatar.small {
+    width: 50px;
+    height: 50px;
+}
+
+.avatar.medium {
+    width: 100px;
+    height: 100px;
 }

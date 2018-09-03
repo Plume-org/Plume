@@ -24,14 +24,14 @@ use routes::Page;
 
 #[get("/~/<name>?<page>", rank = 2)]
 fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {
-    may_fail!(user, Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
+    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
         let posts = Post::blog_page(&*conn, &blog, page.limits());
         let articles = Post::get_for_blog(&*conn, &blog);
         let authors = &blog.list_authors(&*conn);
 
         Template::render("blogs/details", json!({
             "blog": &blog.to_json(&*conn),
-            "account": user,
+            "account": user.clone().map(|u| u.to_json(&*conn)),
             "is_author": user.map(|x| x.is_author_in(&*conn, blog.clone())),
             "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
@@ -55,9 +55,9 @@ fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStrea
 }
 
 #[get("/blogs/new")]
-fn new(user: User) -> Template {
+fn new(user: User, conn: DbConn) -> Template {
     Template::render("blogs/new", json!({
-        "account": user,
+        "account": user.to_json(&*conn),
         "errors": null,
         "form": null
     }))
@@ -119,7 +119,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
     } else {
         println!("{:?}", errors);
         Err(Template::render("blogs/new", json!({
-            "account": user,
+            "account": user.to_json(&*conn),
             "errors": errors.inner(),
             "form": form
         })))

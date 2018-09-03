@@ -1,6 +1,6 @@
 <div class="user">
     <div>
-        <img src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
+        <img class="avatar medium" src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
     </div>
 
     <h1>

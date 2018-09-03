@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <title>{% block title %}{% endblock title %} ⋅ {{ "Plume" | _ }}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />        
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/static/main.css" />
         <link rel="stylesheet" href="/static/fontawesome-5.0.10/css/fontawesome-all.min.css" />
     </head>
@@ -21,10 +21,22 @@
                 </nav>
                 <nav>
                     {% if account %}
-                        <a href="/dashboard">{{ "Dashboard" | _ }}</a>
-                        <a href="/notifications">{{ "Notifications" | _ }}</a>
-                        <a href="/me">{{ "My account" | _ }}</a>
-                        <a href="/logout">{{ "Log Out" | _ }}</a>
+                        <a href="/dashboard">
+                            <i class="fa fa-home" aria-label="{{ "Dashboard" | _ }}"></i>
+                            <span class="mobile-label">{{ "Dashboard" | _ }}</span>
+                        </a>
+                        <a href="/notifications">
+                            <i class="fa fa-bell" aria-label="{{ "Notifications" | _ }}"></i>
+                            <span class="mobile-label">{{ "Notifications" | _ }}</span>
+                        </a>
+                        <a href="/logout">
+                            <i class="fa fa-sign-out-alt aria-label="{{ "Log Out" | _ }}"></i>
+                            <span class="mobile-label">{{ "Log Out" | _ }}</span>
+                        </a>
+                        <a href="/me">
+                            <img class="avatar small" src="{{ account.avatar }}" alt="{{ "My account" | _ }}">
+                            <span class="mobile-label">{{ "My account" | _ }}</span>
+                        </a>
                     {% else %}
                         <a href="/login">{{ "Log In" | _ }}</a>
                         <a href="/users/new">{{ "Register" | _ }}</a>

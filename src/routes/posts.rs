@@ -35,8 +35,8 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
 
 #[get("/~/<blog>/<slug>?<query>")]
 fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
-    may_fail!(user, Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
-        may_fail!(user, Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
+    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
+        may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
             let comments = Comment::list_by_post(&*conn, post.id);
             let comms = comments.clone();
 
@@ -53,7 +53,7 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                 "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
                 "n_reshares": post.get_reshares(&*conn).len(),
                 "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
-                "account": &user,
+                "account": &user.clone().map(|u| u.to_json(&*conn)),
                 "date": &post.creation_date.timestamp(),
                 "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
                 "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
@@ -86,7 +86,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
         }))
     } else {
         Template::render("posts/new", json!({
-            "account": user,
+            "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "errors": null,
             "form": null
@@ -118,7 +118,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
     let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
-    
+
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
@@ -170,8 +170,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         }
     } else {
         Err(Template::render("posts/new", json!({
-            "account": user,
-            "instance": Instance::get_local(&*conn),            
+            "account": user.to_json(&*conn),
+            "instance": Instance::get_local(&*conn),
             "errors": errors.inner(),
             "form": form
         })))
