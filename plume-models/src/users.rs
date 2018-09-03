@@ -228,7 +228,7 @@ impl User {
     }
 
     pub fn hash_pass(pass: String) -> String {
-        bcrypt::hash(pass.as_str(), bcrypt::DEFAULT_COST).unwrap()
+        bcrypt::hash(pass.as_str(), 10).unwrap()
     }
 
     pub fn auth(&self, pass: String) -> bool {
