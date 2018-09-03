@@ -38,7 +38,7 @@ impl Media {
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         let (preview, html) = match self.file_path.rsplitn(2, '.').next().unwrap() {
-            "png" | "jpg" | "jpeg" | "gif" => (
+            "png" | "jpg" | "jpeg" | "gif" | "svg" => (
                 format!("<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">", self.url(conn), self.alt_text, self.alt_text),
                 format!("<img src=\"{}\" alt=\"{}\" title=\"{}\">", self.url(conn), self.alt_text, self.alt_text)
             ),
