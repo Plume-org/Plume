@@ -2,13 +2,13 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Your medias
+{{ "Media details" | _ }}
 {% endblock title %}
 
 {% block content %}
     <h1>{{ "Media details" }}</h1>
     <section>
-        <a href="/medias">Go back to the gallery</a>
+        <a href="/medias">{{ "Go back to the gallery" | _ }}</a>
     </section>
 
     <section>
@@ -24,8 +24,8 @@ Your medias
             <code>{{ media.md }}</code>
         </div>
         <div>
-            <a href="/medias/{{ media.id }}/avatar" class="button inline-block">Use as avatar</a>
-            <a href="/medias/{{ media.id }}/delete" class="button inline-block">Delete</a>
+            <a href="/medias/{{ media.id }}/avatar" class="button inline-block">{{ "Use as avatar" | _ }}</a>
+            <a href="/medias/{{ media.id }}/delete" class="button inline-block">{{ "Delete" | _ }}</a>
         </div>
     </section>
 {% endblock content %}

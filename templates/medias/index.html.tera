@@ -2,11 +2,11 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Your medias
+{{ "Your media" | _ }}
 {% endblock title %}
 
 {% block content %}
-    <h1>{{ "Your medias" }}</h1>
+    <h1>{{ "Your media" | _ }}</h1>
     <div>
         <a href="/medias/new" class="inline-block button">Upload</a>
     </div>
@@ -22,10 +22,10 @@ Your medias
                     <main class="grow">
                         <p><a href="/medias/{{ media.id }}">{{ media.alt_text }}</a></p>
                     </main>
-                    <a href="/medias/{{ media.id }}/delete">Delete</a>
+                    <a href="/medias/{{ media.id }}/delete">{{ "Delete" | _ }}</a>
                 </div>
             {% endfor %}
         </div>
-        {# macros::paginate(page=page, total=n_pages) #}
+        {# TODO: macros::paginate(page=page, total=n_pages) #}
     </section>
 {% endblock content %}
