@@ -46,8 +46,9 @@
 {% macro comment(comm) %}
     <div class="comment" id="comment-{{ comm.id }}">
         <a class="author" href="/@/{{ comm.author.fqn }}/">
+            <img class="avatar small padded" src="{{ comm.author.avatar }}" alt="{{ comm.author.name }}">
             <span class="display-name">{{ comm.author.name }}</span>
-            <small>@{{ comm.author.username }}</small>
+            <small>@{{ comm.author.fqn }}</small>
         </a>
         <div class="text">{{ comm.content | safe }}</div>
         <a class="button" href="?responding_to={{ comm.id }}">{{ "Respond" | _ }}</a>

@@ -760,3 +760,7 @@ figcaption {
     height: 100px;
     margin: 20px;
 }
+
+.avatar.padded {
+    margin-right: 1em;
+}
