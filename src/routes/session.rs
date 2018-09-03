@@ -57,6 +57,10 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
         Err(e) => e
     };
     if let Err(_) = user.clone() {
+        // Fake password verification, only to avoid different login times
+        // that could be used to see if an email adress is registered or not
+        User::get(&*conn, 1).map(|u| u.auth(form.password.clone()));
+
         let mut err = ValidationError::new("invalid_login");
         err.message = Some(Cow::from("Invalid username or password"));
         errors.add("email_or_name", err)
