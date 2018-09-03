@@ -37,23 +37,29 @@ impl Media {
 
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
-        let (preview, html) = match self.file_path.rsplitn(2, '.').next().unwrap() {
+        let url = self.url(conn);
+        let (preview, html, md) = match self.file_path.rsplitn(2, '.').next().unwrap() {
             "png" | "jpg" | "jpeg" | "gif" | "svg" => (
-                format!("<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">", self.url(conn), self.alt_text, self.alt_text),
-                format!("<img src=\"{}\" alt=\"{}\" title=\"{}\">", self.url(conn), self.alt_text, self.alt_text)
+                format!("<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">", url, self.alt_text, self.alt_text),
+                format!("<img src=\"{}\" alt=\"{}\" title=\"{}\">", url, self.alt_text, self.alt_text),
+                format!("![{}]({})", self.alt_text, url),
             ),
             "mp3" | "wav" | "flac" => (
-                format!("<audio src=\"{}\" title=\"{}\" class=\"preview\"></audio>", self.url(conn), self.alt_text),
-                format!("<audio src=\"{}\" title=\"{}\"></audio>", self.url(conn), self.alt_text)
+                format!("<audio src=\"{}\" title=\"{}\" class=\"preview\"></audio>", url, self.alt_text),
+                format!("<audio src=\"{}\" title=\"{}\"></audio>", url, self.alt_text),
+                format!("<audio src=\"{}\" title=\"{}\"></audio>", url, self.alt_text),
             ),
             "mp4" | "avi" | "webm" | "mov" => (
-                format!("<video src=\"{}\" title=\"{}\" class=\"preview\"></video>", self.url(conn), self.alt_text),
-                format!("<video src=\"{}\" title=\"{}\"></video>", self.url(conn), self.alt_text)
+                format!("<video src=\"{}\" title=\"{}\" class=\"preview\"></video>", url, self.alt_text),
+                format!("<video src=\"{}\" title=\"{}\"></video>", url, self.alt_text),
+                format!("<video src=\"{}\" title=\"{}\"></video>", url, self.alt_text),
             ),
-            _ => (String::new(), String::new())
+            _ => (String::new(), String::new(), String::new())
         };
         json["html_preview"] = json!(preview);
         json["html"] = json!(html);
+        json["url"] = json!(url);
+        json["md"] = json!(md);
         json
     }
 

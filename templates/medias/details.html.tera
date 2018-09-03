@@ -17,6 +17,13 @@ Your medias
             <figcaption>{{ media.alt_text }}</figcaption>
         </figure>
         <div>
+            <p>
+                {{ "Markdown code" | _ }}
+                <small>{{ "Copy it in your articles to insert this media." }}</small>
+            </p>
+            <code>{{ media.md }}</code>
+        </div>
+        <div>
             <a href="/medias/{{ media.id }}/avatar" class="button inline-block">Use as avatar</a>
             <a href="/medias/{{ media.id }}/delete" class="button inline-block">Delete</a>
         </div>
