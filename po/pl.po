@@ -90,17 +90,18 @@ msgstr "Już tego nie lubię"
 msgid "Add yours"
 msgstr "Dodaj swoje"
 
-msgid "One reshare"
-msgid_plural "{{ count }} reshares"
-msgstr[0] "Jedno udostępnienie"
-msgstr[1] "{{ count }} udostępnienia"
-msgstr[2] "{{ count }} udostępnień"
+msgid "One Boost"
+msgid_plural "{{ count }} Boosts"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
-msgid "I don&#x27;t want to reshare this anymore"
+#, fuzzy
+msgid "I don&#x27;t want to boost this anymore"
 msgstr "Cofnij udostępnienie"
 
-msgid "Reshare"
-msgstr "Udostępnij"
+msgid "Boost"
+msgstr ""
 
 msgid "Comments"
 msgstr "Komentarze"
@@ -164,7 +165,8 @@ msgstr "Obserwuj"
 msgid "Unfollow"
 msgstr "Przestań obserwować"
 
-msgid "Recently reshared"
+#, fuzzy
+msgid "Recently boosted"
 msgstr "Ostatnio udostępniono"
 
 msgid "One follower"
@@ -245,8 +247,9 @@ msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
 msgid "You need to be logged in order to write a new post"
 msgstr "Musisz się zalogować, aby utworzyć wpis"
 
-msgid "You need to be logged in order to reshare a post"
-msgstr "Musisz się zalogować, aby udostępnić wpis"
+#, fuzzy
+msgid "You need to be logged in order to boost a post"
+msgstr "Musisz się zalogować, aby polubić wpis"
 
 msgid "Invalid username or password"
 msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
@@ -265,8 +268,9 @@ msgstr ""
 "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
 "{{ link_3 }}"
 
-msgid "{{ data }} reshared your article"
-msgstr "{{ data }} udostępnił Twój artykuł"
+#, fuzzy
+msgid "{{ data }} boosted your article"
+msgstr "{{ data }} skomentował Twój artykuł"
 
 msgid "{{ data }} started following you"
 msgstr "{{ data }} zaczął Cię obserwować"
@@ -368,8 +372,9 @@ msgstr "{{ user }} zaczął Cię obserwować."
 msgid "{{ user }} liked your article."
 msgstr "{{ user }} polubił Twój artykuł."
 
-msgid "{{ user }} reshared your article."
-msgstr "{{ user }} udostępnił Twój artykuł."
+#, fuzzy
+msgid "{{ user }} boosted your article."
+msgstr "{{ user }} skomentował Twój artykuł."
 
 msgid "Source code"
 msgstr "Kod źródłowy"
@@ -461,6 +466,24 @@ msgstr "Administracja"
 
 msgid "Runs Plume {{ version }}"
 msgstr ""
+
+#~ msgid "One reshare"
+#~ msgid_plural "{{ count }} reshares"
+#~ msgstr[0] "Jedno udostępnienie"
+#~ msgstr[1] "{{ count }} udostępnienia"
+#~ msgstr[2] "{{ count }} udostępnień"
+
+#~ msgid "Reshare"
+#~ msgstr "Udostępnij"
+
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Musisz się zalogować, aby udostępnić wpis"
+
+#~ msgid "{{ data }} reshared your article"
+#~ msgstr "{{ data }} udostępnił Twój artykuł"
+
+#~ msgid "{{ user }} reshared your article."
+#~ msgstr "{{ user }} udostępnił Twój artykuł."
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Twoje hasło musi składać się przynajmniej z 8 znaków"

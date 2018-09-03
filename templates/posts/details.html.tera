@@ -46,12 +46,12 @@
                     {% endif %}
                 </form>
                 <form class="reshares" action="{{ article.url }}reshare" method="POST">
-                    <p aria-label="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}" title="{{ "{{ count }} reshares" | _n(singular="One reshare", count=n_reshares) }}">{{ n_reshares }}</p>
+                    <p aria-label="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}" title="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}">{{ n_reshares }}</p>
 
                     {% if has_reshared %}
-                        <button type="submit" class="reshared"><i class="far fa-retweet"></i>{{ "I don't want to reshare this anymore" | _ }}</button>
+                        <button type="submit" class="reshared"><i class="far fa-retweet"></i>{{ "I don't want to boost this anymore" | _ }}</button>
                     {% else %}
-                        <button type="submit"><i class="fa fa-retweet"></i>{{ "Reshare" | _ }}</button>
+                        <button type="submit"><i class="fa fa-retweet"></i>{{ "Boost" | _ }}</button>
                     {% endif %}
                 </form>
             </div>

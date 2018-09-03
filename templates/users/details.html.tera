@@ -31,7 +31,7 @@
     {% endif %}
 
     {% if reshares | length != 0 %}
-        <h2>{{ "Recently reshared" | _ }}</h2>
+        <h2>{{ "Recently boosted" | _ }}</h2>
         <div class="cards">
             {% for article in reshares %}
                 {{ macros::post_card(article=article) }}

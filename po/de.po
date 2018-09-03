@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-08-01 13:50+0200\n"
+"PO-Revision-Date: 2018-08-19 00:49+0200\n"
 "Last-Translator: cookie <git@bitkeks.eu>\n"
 "Language-Team: none\n"
 "Language: de\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 2.1.1\n"
 
 msgid "Latest articles"
 msgstr "Neueste Artikel"
@@ -89,16 +89,16 @@ msgstr "Nicht mehr Liken"
 msgid "Add yours"
 msgstr "Like"
 
-msgid "One reshare"
-msgid_plural "{{ count }} reshares"
-msgstr[0] "Ein Reshare"
-msgstr[1] "{{ count }} Reshares"
+msgid "One Boost"
+msgid_plural "{{ count }} Boosts"
+msgstr[0] "Ein Boost"
+msgstr[1] "{{ count }} Boosts"
 
-msgid "I don&#x27;t want to reshare this anymore"
-msgstr "Nicht mehr Resharen"
+msgid "I don&#x27;t want to boost this anymore"
+msgstr "Nicht mehr boosten"
 
-msgid "Reshare"
-msgstr "Resharen"
+msgid "Boost"
+msgstr "Boosten"
 
 msgid "Comments"
 msgstr "Kommentare"
@@ -162,8 +162,8 @@ msgstr "Folgen"
 msgid "Unfollow"
 msgstr "Entfolgen"
 
-msgid "Recently reshared"
-msgstr "Vor Kurzem Reshared"
+msgid "Recently boosted"
+msgstr "Kürzlich geboostet"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
@@ -242,8 +242,8 @@ msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
 msgid "You need to be logged in order to write a new post"
 msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
-msgid "You need to be logged in order to reshare a post"
-msgstr "Du musst eingeloggt sein, um einen Beitrag zu resharen"
+msgid "You need to be logged in order to boost a post"
+msgstr "Du musst eingeloggt sein, um einen Beitrag zu boosten"
 
 msgid "Invalid username or password"
 msgstr "Nutzername oder Passwort ungültig"
@@ -261,8 +261,8 @@ msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 msgstr ""
 "Von {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
-msgid "{{ data }} reshared your article"
-msgstr "{{ data }} hat deinen Artikel reshared"
+msgid "{{ data }} boosted your article"
+msgstr "{{ data }} hat deinen Artikel geboostet"
 
 msgid "{{ data }} started following you"
 msgstr "{{ data }} folgt dir nun"
@@ -310,9 +310,8 @@ msgid "We need an email or a username to identify you"
 msgstr ""
 "Wir brauchen eine E-Mail oder einen Nutzernamen um dich zu identifizieren"
 
-#, fuzzy
 msgid "Your password can't be empty"
-msgstr "Dein Kommentar kann nicht leer sein"
+msgstr "Dein Passwort kann nicht leer sein"
 
 msgid "Passwords are not matching"
 msgstr "Passwörter stimmen nicht überein"
@@ -362,8 +361,8 @@ msgstr "{{ user }} folgt dir nun."
 msgid "{{ user }} liked your article."
 msgstr "{{ user }} hat deinen Artikel geliked."
 
-msgid "{{ user }} reshared your article."
-msgstr "{{ user }} hat deinen Artikel reshared."
+msgid "{{ user }} boosted your article."
+msgstr "{{ user }} hat deinen Artikel geboostet."
 
 msgid "Source code"
 msgstr "Quellcode"
@@ -438,23 +437,20 @@ msgstr "Artikel geschrieben haben"
 msgid "Read the detailed rules"
 msgstr "Lies die detailierten Regeln"
 
-#, fuzzy
 msgid "Delete this article"
-msgstr "Neueste Artikel"
+msgstr "Artikel löschen"
 
 msgid "And connected to"
-msgstr ""
+msgstr "Verbunden mit"
 
-#, fuzzy
 msgid "other instances"
-msgstr "Über diese Instanz"
+msgstr "anderen Instanzen"
 
-#, fuzzy
 msgid "Administred by"
-msgstr "Administration"
+msgstr "Administriert von"
 
 msgid "Runs Plume {{ version }}"
-msgstr ""
+msgstr "Verwendet Plume {{ version }}"
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"
