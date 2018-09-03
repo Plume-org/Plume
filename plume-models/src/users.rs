@@ -1,7 +1,8 @@
 use activitypub::{
     Activity, Actor, Object, Endpoint, CustomObject,
     actor::Person,
-    collection::OrderedCollection
+    collection::OrderedCollection,
+    object::Image,
 };
 use bcrypt;
 use chrono::NaiveDateTime;
@@ -416,7 +417,7 @@ impl User {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn into_activity(&self, _conn: &PgConnection) -> CustomPerson {
+    pub fn into_activity(&self, conn: &PgConnection) -> CustomPerson {
         let mut actor = Person::default();
         actor.object_props.set_id_string(self.ap_url.clone()).expect("User::into_activity: id error");
         actor.object_props.set_name_string(self.display_name.clone()).expect("User::into_activity: name error");
@@ -437,6 +438,11 @@ impl User {
         public_key.set_public_key_pem_string(self.public_key.clone()).expect("User::into_activity: publicKey.publicKeyPem error");
         let mut ap_signature = ApSignature::default();
         ap_signature.set_public_key_publickey(public_key).expect("User::into_activity: publicKey error");
+
+        let mut avatar = Image::default();
+        avatar.object_props.set_url_string(self.avatar_id.and_then(|id| Media::get(conn, id).map(|m| m.url(conn))).unwrap_or(String::new()))
+            .expect("User::into_activity: icon.url error");
+        actor.object_props.set_icon_object(avatar).expect("User::into_activity: icon error");
 
         CustomPerson::new(actor, ap_signature)
     }
