@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:10.5
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data"
+  plume:
+    build: .
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - "./data/plume/static/media:/app/media"
+      - "./.env:/app/.env"
+    ports:
+      - "127.0.0.1:7878:7878"

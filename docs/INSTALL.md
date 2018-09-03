@@ -17,6 +17,9 @@ All the following instructions will need a terminal.
 Here are the commands to install PostgreSQL and GetText on various operating systems.
 Some of them may need root permissions.
 
+You can also install the project using Docker and docker-compose, please refer
+to the `Docker install` section.
+
 On **Debian**:
 
 ```bash
@@ -142,7 +145,35 @@ mkdir media
 
 # Actually start Plume
 cargo run
+
+## Docker install
+
+You can use Docker and docker-compose in order to manage your Plume instance and
+have it isolated from your host:
+
 ```
+git clone git@github.com:Plume-org/Plume.git
+cd Plume
+cp docs/docker-compose.sample.yml docker-compose.yml
+cp docs/docker.sample.env .env
+# build the containers
+docker-compose build
+# launch the database
+docker-compose up -d postgres
+# run the migrations
+docker-compose run --rm plume diesel migration run
+# run interactive setup
+docker-compose run --rm plume bash
+cargo run
+# copy the env file and paste it in your host .env file
+cat .env
+# leave the container
+exit
+# launch your instance for good
+docker-compose up -d
+```
+
+Then, you can configure your reverse proxy.
 
 ## Configuring Nginx
 
