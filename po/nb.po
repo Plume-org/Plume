@@ -438,6 +438,24 @@ msgstr "artikler"
 msgid "Read the detailed rules"
 msgstr "Les reglene"
 
+#, fuzzy
+msgid "Delete this article"
+msgstr "Siste artikler"
+
+msgid "And connected to"
+msgstr ""
+
+#, fuzzy
+msgid "other instances"
+msgstr "Om denne instansen"
+
+#, fuzzy
+msgid "Administred by"
+msgstr "Administrasjon"
+
+msgid "Runs Plume {{ version }}"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"
@@ -454,6 +472,7 @@ msgstr "Les reglene"
 
 #~ msgid "{{ user }} reshared your article."
 #~ msgstr "{{ user }} delte artikkelen din med sine følgere."
+
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Passordet ditt må bestå av minst åtte tegn"

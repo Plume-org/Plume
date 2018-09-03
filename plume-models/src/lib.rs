@@ -78,7 +78,7 @@ fn get_next_id(conn: &PgConnection, seq: &str) -> i32 {
     // We cant' use currval because it may fail if nextval have never been called before
     let next = select(nextval(seq)).get_result::<i64>(conn).expect("Next ID fail");
     if next > 1 {
-        select(setval(seq, next - 1)).get_result::<i64>(conn).expect("Reset ID fail");        
+        select(setval(seq, next - 1)).get_result::<i64>(conn).expect("Reset ID fail");
     }
     next as i32
 }
@@ -87,7 +87,7 @@ fn get_next_id(conn: &PgConnection, seq: &str) -> i32 {
 lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")
         .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
-    
+
     pub static ref DB_URL: String = env::var("DB_URL")
         .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
 
@@ -111,6 +111,7 @@ pub mod db_conn;
 pub mod follows;
 pub mod instance;
 pub mod likes;
+pub mod medias;
 pub mod mentions;
 pub mod notifications;
 pub mod post_authors;

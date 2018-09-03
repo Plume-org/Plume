@@ -1,0 +1,31 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+Your medias
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ "Your medias" }}</h1>
+    <div>
+        <a href="/medias/new" class="inline-block button">Upload</a>
+    </div>
+
+    <section>
+        {% if medias | length < 1 %}
+            <p>{{ "You don't have any media yet." | _ }}</p>
+        {% endif %}
+        <div class="list">
+            {% for media in medias %}
+                <div class="card flex">
+                    {{ media.html_preview | safe }}
+                    <main class="grow">
+                        <p><a href="/medias/{{ media.id }}">{{ media.alt_text }}</a></p>
+                    </main>
+                    <a href="/medias/{{ media.id }}/delete">Delete</a>
+                </div>
+            {% endfor %}
+        </div>
+        {# macros::paginate(page=page, total=n_pages) #}
+    </section>
+{% endblock content %}

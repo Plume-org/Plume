@@ -449,6 +449,24 @@ msgstr "artykuły"
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
 
+#, fuzzy
+msgid "Delete this article"
+msgstr "Najnowsze artykuły"
+
+msgid "And connected to"
+msgstr ""
+
+#, fuzzy
+msgid "other instances"
+msgstr "O tej instancji"
+
+#, fuzzy
+msgid "Administred by"
+msgstr "Administracja"
+
+msgid "Runs Plume {{ version }}"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

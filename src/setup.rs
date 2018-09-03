@@ -215,7 +215,7 @@ fn create_admin(instance: Instance, conn: DbConn) {
 fn check_native_deps() {
     let mut not_found = Vec::new();
     if !try_run("psql") {
-        not_found.push(("PostgreSQL", "sudo apt install postgres"));
+        not_found.push(("PostgreSQL", "sudo apt install postgresql"));
     }
     if !try_run("gettext") {
         not_found.push(("GetText", "sudo apt install gettext"))

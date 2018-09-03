@@ -1,3 +1,5 @@
+use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
+use diesel::PgConnection;
 use rocket::{
     http::uri::{FromUriParam, UriDisplay},
     response::NamedFile
@@ -6,6 +8,8 @@ use std::{
     fmt,
     path::{Path, PathBuf}
 };
+
+use plume_models::posts::Post;
 
 macro_rules! may_fail {
     ($account:expr, $expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
@@ -75,11 +79,31 @@ impl Page {
     }
 }
 
+pub fn post_to_atom(post: Post, conn: &PgConnection) -> Entry {
+    EntryBuilder::default()
+        .title(post.title.clone())
+        .content(ContentBuilder::default()
+            .value(format!("<![CDATA[{}]]>", *post.content.get()))
+            .src(post.ap_url.clone())
+            .content_type("html".to_string())
+            .build().expect("Atom feed: content error"))
+        .authors(post.get_authors(&*conn)
+            .into_iter()
+            .map(|a| PersonBuilder::default()
+                .name(a.display_name)
+                .uri(a.ap_url)
+                .build().expect("Atom feed: author error"))
+            .collect::<Vec<Person>>())
+        .links(vec![LinkBuilder::default().href(post.ap_url).build().expect("Atom feed: link error")])
+        .build().expect("Atom feed: entry error")
+}
+
 pub mod blogs;
 pub mod comments;
 pub mod errors;
 pub mod instance;
 pub mod likes;
+pub mod medias;
 pub mod notifications;
 pub mod posts;
 pub mod reshares;
@@ -87,7 +111,7 @@ pub mod session;
 pub mod user;
 pub mod well_known;
 
-#[get("/static/<file..>")]
+#[get("/static/<file..>", rank = 2)]
 fn static_files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
 }

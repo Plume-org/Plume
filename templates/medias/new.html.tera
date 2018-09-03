@@ -1,0 +1,17 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+{{ "Media upload" | _ }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ "Media upload" | _ }}</h1>
+<form method="post" enctype="multipart/form-data">
+    {{ macros::input(name="alt", label="Description", errors=errors, form=form, props='required minlength="1"', details='Useful for visually impaired people and licensing') }}
+    {{ macros::input(name="cw", label="Content warning", errors=errors, form=form, details='Let it empty if there is none') }}
+    {{ macros::input(name="file", type='file', label="File", errors=errors, form=form, props='required') }}
+
+    <input type="submit" value="{{ "Send" | _ }}"/>
+</form>
+{% endblock content %}

@@ -1,7 +1,9 @@
 use activitypub::collection::OrderedCollection;
+use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     request::LenientForm,
-    response::{Redirect, Flash}
+    response::{Redirect, Flash, content::Content},
+    http::ContentType
 };
 use rocket_contrib::Template;
 use serde_json;
@@ -128,4 +130,19 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
 fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
     let blog = Blog::find_local(&*conn, name).unwrap();
     blog.outbox(&*conn)
+}
+
+#[get("/~/<name>/atom.xml")]
+fn atom_feed(name: String, conn: DbConn) -> Content<String> {
+    let blog = Blog::find_by_fqn(&*conn, name.clone()).expect("Unable to find blog");
+    let feed = FeedBuilder::default()
+        .title(blog.title.clone())
+        .id(Instance::get_local(&*conn).unwrap().compute_box("~", name, "atom.xml"))
+        .entries(Post::get_recents_for_blog(&*conn, &blog, 15)
+            .into_iter()
+            .map(|p| super::post_to_atom(p, &*conn))
+            .collect::<Vec<Entry>>())
+        .build()
+        .expect("Error building Atom feed");
+    Content(ContentType::new("application", "atom+xml"), feed.to_string())
 }

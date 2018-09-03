@@ -420,3 +420,18 @@ msgstr ""
 
 msgid "Read the detailed rules"
 msgstr ""
+
+msgid "Delete this article"
+msgstr ""
+
+msgid "And connected to"
+msgstr ""
+
+msgid "other instances"
+msgstr ""
+
+msgid "Administred by"
+msgstr ""
+
+msgid "Runs Plume {{ version }}"
+msgstr ""

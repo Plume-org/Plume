@@ -24,8 +24,7 @@ a, a:visited {
 
 small {
 	margin-left: 1em;
-	color: #242424;
-	opacity: 0.6;
+	color: rgba(36, 36, 36, 0.6);
 	font-size: 0.75em;
 	word-wrap: break-word;
 	word-break: break-all;
@@ -42,19 +41,43 @@ small {
 	margin: 4rem 0;
 }
 
+.banner {
+	background: #DADADA;
+	padding-top: 2em;
+	padding-bottom: 1em;
+	margin: 3em 0px;
+}
+
 /*
  * == Header ==
  */
 
 header {
+	background: #ECECEC;
+}
+header #content {
 	display: flex;
 	align-content: center;
 	justify-content: space-between;
-	background: #ECECEC;
 }
 
-header #menu {
+header nav#menu {
+	position: relative;
 	display: none;
+	transform: skewX(-15deg);
+	left: -1em;
+	padding: 1em 1em 1em 2em;
+	background: #7765E3;
+	align-self: flex-start;
+}
+header nav#menu a {
+	transform: skewX(15deg);
+	width: 1.75em;
+	height: 1.75em;
+	margin: 0;
+	padding: 0;
+	background: url("/static/images/boxicon-menu.svg") no-repeat center;
+	background-size: contain;
 }
 
 header nav {
@@ -361,7 +384,7 @@ input:focus, textarea:focus {
 
 textarea {
  	resize: vertical;
- 
+
  	font-family: "Lora", serif;
  	font-size: 1.1em;
  	line-height: 1.5em;
@@ -422,6 +445,9 @@ form.new-post .title {
 }
 form.new-post textarea {
 	min-height: 20em;
+	overflow-y: hidden;
+	resize: none;
+	box-sizing: content-box;
 }
 form.new-post input[type="submit"] {
 	background: #ECECEC;
@@ -442,6 +468,7 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 0;
+	z-index: -20;
 }
 .badge {
 	margin-left: 1em;
@@ -545,45 +572,94 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
  *   Small Screens   *
  * ================= */
 
-@media screen and (max-width: 500px) {
-	header {	
-		padding: 1em;
+@media screen and (max-width: 900px) {
+	header {
 		flex-direction: column;
 	}
 
-	header #menu {	
-		display: flex;
+	header nav#menu {
+		display: inline-flex;
 	}
 
-	header > nav {	
+	header #content {
 		display: none;
 		text-align: center;
 	}
-	header nav a, header nav a.title { padding: 0.5em; }
-	header nav a.title {	
-		width: 100vw;
-		margin: 0;
-		border: none;
-		font-size: 1.75em;
+
+	@keyframes menuOpening {
+		from {
+			transform: scaleX(0);
+			transform-origin: left;
+			opacity: 0;
+		}
+
+		to {
+			transform: scaleX(1);
+			transform-origin: left;
+			opacity: 1;
+		}
 	}
 
-	header:focus-within > nav {	
+	header:focus-within #content {
+		position: fixed;
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-start;
+
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+
+		animation: 0.2s menuOpening;
+	}
+	header:focus-within #content::before {
+		content: "";
+		position: absolute;
+		transform: skewX(-10deg);
+		top: 0;
+		left: -20%;
+		width: 100%;
+		height: 100%;
+
+		z-index: -10;
+
+		background: #7765E3;
+	}
+	header:focus-within #content > nav {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	header:focus-within #content > nav a {
+		margin: 0;
+		padding: 1rem 1.5rem;
+		color: #F4F4F4;
+		font-size: 1.4em;
+		font-weight: 300;
+	}
+	header:focus-within #content > nav a.title {
+		font-size: 1.8em;
+	}
+	header:focus-within #content > nav hr {
+		display: block;
+		margin: 0;
+		width: 100%;
+		border: solid #F4F4F4 0.1rem;
 	}
 
-	body > main > * {	
+	body > main > * {
 		padding: 0 5%;
 	}
 	main .article-meta > * { margin: 0 5%; }
 
-	main .article-meta > p {	
+	main .article-meta > p {
 		margin: 2em 5%;
 		font-size: 0.9em;
 	}
 	main .article-meta .comments > * { margin-left: 5%; margin-right: 5%; }
 
-	.card {	
+	.card {
 		min-width: 80%;
 		min-height: 80%;
 	}
@@ -602,7 +678,8 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 /*== Flex boxes ==*/
 .flex {
 	display: flex;
-	flex-direction: row;
+    flex-direction: row;
+    align-items: center;
 }
 
 .flex .grow {
@@ -630,4 +707,31 @@ body > footer {
 
 body > footer * {
 	margin: 5em 0;
+}
+
+/** Medias **/
+
+figure {
+    text-align: center;
+    margin: 2em;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+}
+
+figure > * {
+    max-width: 100%;
+}
+
+figcaption {
+    padding: 1em;
+}
+
+.preview {
+    display: block;
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    margin-right: 20px;
 }

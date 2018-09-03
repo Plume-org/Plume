@@ -98,7 +98,7 @@ msgid "I don&#x27;t want to boost this anymore"
 msgstr "Nicht mehr boosten"
 
 msgid "Boost"
-msgstr "Boost"
+msgstr "Boosten"
 
 msgid "Comments"
 msgstr "Kommentare"
@@ -437,22 +437,20 @@ msgstr "Artikel geschrieben haben"
 msgid "Read the detailed rules"
 msgstr "Lies die detailierten Regeln"
 
-#~ msgid "One reshare"
-#~ msgid_plural "{{ count }} reshares"
-#~ msgstr[0] "Ein Reshare"
-#~ msgstr[1] "{{ count }} Reshares"
+msgid "Delete this article"
+msgstr "Artikel löschen"
 
-#~ msgid "Reshare"
-#~ msgstr "Resharen"
+msgid "And connected to"
+msgstr "Verbunden mit"
 
-#~ msgid "You need to be logged in order to reshare a post"
-#~ msgstr "Du musst eingeloggt sein, um einen Beitrag zu resharen"
+msgid "other instances"
+msgstr "anderen Instanzen"
 
-#~ msgid "{{ data }} reshared your article"
-#~ msgstr "{{ data }} hat deinen Artikel reshared"
+msgid "Administred by"
+msgstr "Administriert von"
 
-#~ msgid "{{ user }} reshared your article."
-#~ msgstr "{{ user }} hat deinen Artikel reshared."
+msgid "Runs Plume {{ version }}"
+msgstr "Verwendet Plume {{ version }}"
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

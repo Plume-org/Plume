@@ -1,13 +1,16 @@
 #![feature(custom_derive, decl_macro, plugin)]
 #![plugin(rocket_codegen)]
- 
+
 extern crate activitypub;
+extern crate atom_syndication;
 extern crate colored;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
 extern crate gettextrs;
+extern crate guid_create;
 extern crate heck;
+extern crate multipart;
 extern crate plume_common;
 extern crate plume_models;
 extern crate rocket;
@@ -45,6 +48,7 @@ fn main() {
             routes::blogs::new,
             routes::blogs::new_auth,
             routes::blogs::create,
+            routes::blogs::atom_feed,
 
             routes::comments::create,
 
@@ -54,9 +58,17 @@ fn main() {
             routes::instance::update_settings,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
+            routes::instance::about,
 
             routes::likes::create,
             routes::likes::create_auth,
+
+            routes::medias::list,
+            routes::medias::new,
+            routes::medias::upload,
+            routes::medias::details,
+            routes::medias::delete,
+            routes::medias::static_files,
 
             routes::notifications::paginated_notifications,
             routes::notifications::notifications,
@@ -68,6 +80,7 @@ fn main() {
             routes::posts::new,
             routes::posts::new_auth,
             routes::posts::create,
+            routes::posts::delete,
 
             routes::reshares::create,
             routes::reshares::create_auth,
@@ -96,6 +109,7 @@ fn main() {
             routes::user::ap_followers,
             routes::user::new,
             routes::user::create,
+            routes::user::atom_feed,
 
             routes::well_known::host_meta,
             routes::well_known::nodeinfo,
@@ -118,7 +132,7 @@ fn main() {
                 .add_exceptions(vec![
                     ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
                     ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
-
+                    ("/medias/new".to_owned(), "/medias/new".to_owned(), rocket::http::Method::Post), // not compatible with multipart/form-data
                 ])
                 .finalize().unwrap())
         .launch();
