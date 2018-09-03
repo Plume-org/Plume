@@ -8,7 +8,7 @@ About {{ instance.name }}
 {% block content %}
     <h1>{{ "About {{ instance_name }}" | _(instance_name=instance.name) }}</h1>
     <section>
-        {{ instance.short_description_html | safe }}        
+        {{ instance.short_description_html | safe }}
     </section>
     <div class="banner">
         <section class="stats">
@@ -29,12 +29,13 @@ About {{ instance.name }}
             </div>
             <div>
                 <p>{{ "Administred by" | _ }}</p>
+                <img class="avatar small" src="{{ admin.avatar }}" alt="{{ admin.name }}">
                 <p><a href="/@/{{ admin.fqn }}">{{ admin.name }}</a><small>(@{{ admin.fqn }})</small></p>
             </div>
         </section>
         <p>{{ "Runs Plume {{ version }}" | _(version=version) }}
     </div>
     <section>
-        {{ instance.long_description_html | safe }}        
+        {{ instance.long_description_html | safe }}
     </section>
 {% endblock content %}

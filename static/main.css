@@ -559,7 +559,8 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 .stats > div {
 	display: flex;
 	flex-direction: column;
-	text-align: center;
+	justify-content: center;
+    align-items: center;
 }
 
 .stats em {
