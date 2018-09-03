@@ -104,8 +104,14 @@ fn delete(id: i32, _user: User, conn: DbConn) -> Redirect {
     Redirect::to(uri!(list))
 }
 
+#[get("/medias/<id>/avatar")]
+fn set_avatar(id: i32, user: User, conn: DbConn) -> Redirect {
+    let media = Media::get(&*conn, id).expect("Media to delete not found");
+    user.set_avatar(&*conn, media.id);
+    Redirect::to(uri!(details: id = id))
+}
+
 #[get("/static/media/<file..>", rank = 1)]
 fn static_files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("media/").join(file)).ok()
 }
-

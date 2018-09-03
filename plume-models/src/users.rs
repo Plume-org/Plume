@@ -491,6 +491,13 @@ impl User {
             }
         })
     }
+
+    pub fn set_avatar(&self, conn: &PgConnection, id: i32) {
+        diesel::update(self)
+            .set(users::avatar_id.eq(id))
+            .execute(conn)
+            .expect("Couldn't update user avatar");
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {

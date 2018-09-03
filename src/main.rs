@@ -68,6 +68,7 @@ fn main() {
             routes::medias::upload,
             routes::medias::details,
             routes::medias::delete,
+            routes::medias::set_avatar,
             routes::medias::static_files,
 
             routes::notifications::paginated_notifications,
