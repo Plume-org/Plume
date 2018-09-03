@@ -447,3 +447,55 @@ msgstr "Administración"
 
 msgid "Runs Plume {{ version }}"
 msgstr ""
+
+#, fuzzy
+msgid "Your media"
+msgstr "O seu comentario"
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "{{ name}}'s avatar'"
+msgstr ""
+
+msgid "Media details"
+msgstr ""
+
+msgid "Go back to the gallery"
+msgstr ""
+
+#, fuzzy
+msgid "Markdown code"
+msgstr "Escritura Markdown activada"
+
+msgid "Copy it in your articles to insert this media."
+msgstr ""
+
+msgid "Use as avatar"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Media upload"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Descrición longa"
+
+#, fuzzy
+msgid "Content warning"
+msgstr "Contido"
+
+msgid "File"
+msgstr ""
+
+msgid "Send"
+msgstr ""

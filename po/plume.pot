@@ -463,9 +463,6 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-msgid "Your media"
-msgstr ""
-
 msgid "Upload"
 msgstr ""
 

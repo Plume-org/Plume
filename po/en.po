@@ -445,3 +445,51 @@ msgstr ""
 
 msgid "Runs Plume {{ version }}"
 msgstr ""
+
+msgid "Your media"
+msgstr ""
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "{{ name}}'s avatar'"
+msgstr ""
+
+msgid "Media details"
+msgstr ""
+
+msgid "Go back to the gallery"
+msgstr ""
+
+msgid "Markdown code"
+msgstr ""
+
+msgid "Copy it in your articles to insert this media."
+msgstr ""
+
+msgid "Use as avatar"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Media upload"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Content warning"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Send"
+msgstr ""

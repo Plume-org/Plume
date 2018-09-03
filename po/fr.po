@@ -461,5 +461,57 @@ msgstr "Administration"
 msgid "Runs Plume {{ version }}"
 msgstr ""
 
+#, fuzzy
+msgid "Your media"
+msgstr "Votre commentaire"
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "{{ name}}'s avatar'"
+msgstr ""
+
+msgid "Media details"
+msgstr ""
+
+msgid "Go back to the gallery"
+msgstr ""
+
+#, fuzzy
+msgid "Markdown code"
+msgstr "Vous pouvez utiliser du Markdown"
+
+msgid "Copy it in your articles to insert this media."
+msgstr ""
+
+msgid "Use as avatar"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Media upload"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Description longue"
+
+#, fuzzy
+msgid "Content warning"
+msgstr "Contenu"
+
+msgid "File"
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Votre mot de passe doit faire au moins 8 caractères."
