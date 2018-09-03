@@ -125,9 +125,9 @@ fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
 }
 
 #[get("/about")]
-fn about(user: User, conn: DbConn) -> Template {
+fn about(user: Option<User>, conn: DbConn) -> Template {
     Template::render("instance/about", json!({
-        "account": user.to_json(&*conn),
+        "account": user.map(|u| u.to_json(&*conn)),
         "instance": Instance::get_local(&*conn),
         "admin": Instance::get_local(&*conn).map(|i| i.main_admin(&*conn).to_json(&*conn)),
         "version": "0.1.0",
