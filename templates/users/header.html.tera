@@ -1,21 +1,21 @@
 <div class="user">
-    <div>
+    <div class="flex">
         <img class="avatar medium" src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
+
+        <h1 class="grow">
+            {{ user.name }}
+
+            <small>@{{ user.fqn }}</small>
+
+            {% if user.is_admin %}
+                <span class="badge">{{ "Admin" | _ }}</span>
+            {% endif %}
+
+            {% if is_self %}
+                <span class="badge">{{ "It is you" | _ }}</span>
+            {% endif %}
+        </h1>
     </div>
-
-    <h1>
-        {{ user.name }}
-
-        <small>@{{ user.fqn }}</small>
-
-        {% if user.is_admin %}
-            <span class="badge">{{ "Admin" | _ }}</span>
-        {% endif %}
-
-        {% if is_self %}
-            <span class="badge">{{ "It is you" | _ }}</span>
-        {% endif %}
-    </h1>
 
     {% if is_self %}
         <a href="/@/{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>

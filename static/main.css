@@ -468,7 +468,6 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 0;
-	z-index: -20;
 }
 .badge {
 	margin-left: 1em;
@@ -758,4 +757,5 @@ figcaption {
 .avatar.medium {
     width: 100px;
     height: 100px;
+    margin: 20px;
 }
