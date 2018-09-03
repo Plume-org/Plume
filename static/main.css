@@ -126,19 +126,15 @@ main .article-info .author a { font-weight: 600; }
 /* Article */
 
 main article {
-        max-width: 40rem;
-        margin: 2.5em auto;
-        font-family: "Lora", serif;
-        font-size: 1.2em;
-        line-height: 1.7em;
+	max-width: 40rem;
+	margin: 2.5em auto;
+	font-family: "Lora", serif;
+	font-size: 1.2em;
+	line-height: 1.7em;
 }
 
 main a:hover {
-        text-decoration: underline;
-}
-
-main article .fa, main article .fas {
-        font-size: 10pt;
+	text-decoration: underline;
 }
 
 article img {
@@ -369,7 +365,7 @@ input:focus, textarea:focus {
 
 textarea {
  	resize: vertical;
- 
+
  	font-family: "Lora", serif;
  	font-size: 1.1em;
  	line-height: 1.5em;
@@ -554,44 +550,44 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
  * ================= */
 
 @media screen and (max-width: 500px) {
-	header {	
+	header {
 		padding: 1em;
 		flex-direction: column;
 	}
 
-	header #menu {	
+	header #menu {
 		display: flex;
 	}
 
-	header > nav {	
+	header > nav {
 		display: none;
 		text-align: center;
 	}
 	header nav a, header nav a.title { padding: 0.5em; }
-	header nav a.title {	
+	header nav a.title {
 		width: 100vw;
 		margin: 0;
 		border: none;
 		font-size: 1.75em;
 	}
 
-	header:focus-within > nav {	
+	header:focus-within > nav {
 		display: flex;
 		flex-direction: column;
 	}
 
-	body > main > * {	
+	body > main > * {
 		padding: 0 5%;
 	}
 	main .article-meta > * { margin: 0 5%; }
 
-	main .article-meta > p {	
+	main .article-meta > p {
 		margin: 2em 5%;
 		font-size: 0.9em;
 	}
 	main .article-meta .comments > * { margin-left: 5%; margin-right: 5%; }
 
-	.card {	
+	.card {
 		min-width: 80%;
 		min-height: 80%;
 	}
