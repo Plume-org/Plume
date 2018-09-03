@@ -22,4 +22,9 @@
         </div>
         <a class="button" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
     </section>
+
+    <section>
+        <h2>{{ "Your media" | _ }}</h2>
+        <a class="button" href="/medias">{{ "Go to your gallery" | _ }}</a>
+    </section>
 {% endblock content %}
