@@ -37,6 +37,7 @@ use blog_authors::BlogAuthor;
 use follows::Follow;
 use instance::*;
 use likes::Like;
+use medias::Media;
 use post_authors::PostAuthor;
 use posts::Post;
 use reshares::Reshare;
@@ -64,7 +65,8 @@ pub struct User {
     pub private_key: Option<String>,
     pub public_key: String,
     pub shared_inbox_url: Option<String>,
-    pub followers_endpoint: String
+    pub followers_endpoint: String,
+    pub avatar_id: Option<i32>,
 }
 
 #[derive(Insertable)]
@@ -83,7 +85,8 @@ pub struct NewUser {
     pub private_key: Option<String>,
     pub public_key: String,
     pub shared_inbox_url: Option<String>,
-    pub followers_endpoint: String
+    pub followers_endpoint: String,
+    pub avatar_id: Option<i32>,
 }
 
 const USER_PREFIX: &'static str = "@";
@@ -195,7 +198,11 @@ impl User {
                 })
             }
         };
-        User::insert(conn, NewUser {
+
+        let avatar = Media::save_remote(conn, acct.object.object_props.icon_image().expect("User::from_activity: icon error")
+            .object_props.url_string().expect("User::from_activity: icon.url error"));
+
+        let user = User::insert(conn, NewUser {
             username: acct.object.ap_actor_props.preferred_username_string().expect("User::from_activity: preferredUsername error"),
             display_name: acct.object.object_props.name_string().expect("User::from_activity: name error"),
             outbox_url: acct.object.ap_actor_props.outbox_string().expect("User::from_activity: outbox error"),
@@ -211,8 +218,12 @@ impl User {
             private_key: None,
             shared_inbox_url: acct.object.ap_actor_props.endpoints_endpoint()
                 .and_then(|e| e.shared_inbox_string()).ok(),
-            followers_endpoint: acct.object.ap_actor_props.followers_string().expect("User::from_activity: followers error")
-        })
+            followers_endpoint: acct.object.ap_actor_props.followers_string().expect("User::from_activity: followers error"),
+            avatar_id: Some(avatar.id)
+        });
+        avatar.set_owner(conn, user.id);
+
+        user
     }
 
     pub fn hash_pass(pass: String) -> String {
@@ -238,7 +249,7 @@ impl User {
         if self.inbox_url.len() == 0 {
             diesel::update(self)
                 .set(users::inbox_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "inbox")))
-                .get_result::<User>(conn).expect("Couldn't update inbox URL");                
+                .get_result::<User>(conn).expect("Couldn't update inbox URL");
         }
 
         if self.ap_url.len() == 0 {
@@ -438,6 +449,7 @@ impl User {
         } else {
             json!(self.get_fqn(conn))
         };
+        json["avatar"] = json!(self.avatar_id.and_then(|id| Media::get(conn, id).map(|m| m.url(conn))).unwrap_or("/static/default-avatar.png".to_string()));
         json
     }
 
@@ -556,7 +568,8 @@ impl NewUser {
             public_key: String::from_utf8(pub_key).unwrap(),
             private_key: Some(String::from_utf8(priv_key).unwrap()),
             shared_inbox_url: None,
-            followers_endpoint: String::from("")
+            followers_endpoint: String::from(""),
+            avatar_id: None
         })
     }
 }

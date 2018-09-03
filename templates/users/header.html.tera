@@ -1,4 +1,8 @@
 <div class="user">
+    <div>
+        <img src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
+    </div>
+
     <h1>
         {{ user.name }}
 
@@ -7,7 +11,7 @@
         {% if user.is_admin %}
             <span class="badge">{{ "Admin" | _ }}</span>
         {% endif %}
-        
+
         {% if is_self %}
             <span class="badge">{{ "It is you" | _ }}</span>
         {% endif %}

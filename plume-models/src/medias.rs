@@ -64,11 +64,34 @@ impl Media {
     }
 
     pub fn url(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}/static/{}", Instance::get_local(conn).unwrap().public_domain, self.file_path))
+        if self.is_remote {
+            self.remote_url.clone().unwrap_or(String::new())
+        } else {
+            ap_url(format!("{}/static/{}", Instance::get_local(conn).unwrap().public_domain, self.file_path))
+        }
     }
 
     pub fn delete(&self, conn: &PgConnection) {
         fs::remove_file(self.file_path.as_str()).expect("Couldn't delete media from disk");
         diesel::delete(self).execute(conn).expect("Couldn't remove media from DB");
+    }
+
+    pub fn save_remote(conn: &PgConnection, url: String) -> Media {
+        Media::insert(conn, NewMedia {
+            file_path: String::new(),
+            alt_text: String::new(),
+            is_remote: true,
+            remote_url: Some(url),
+            sensitive: false,
+            content_warning: None,
+            owner_id: 1 // It will be owned by the admin during an instant, but set_owner will be called just after
+        })
+    }
+
+    pub fn set_owner(&self, conn: &PgConnection, id: i32) {
+        diesel::update(self)
+            .set(medias::owner_id.eq(id))
+            .execute(conn)
+            .expect("Couldn't update Media.owner_id");
     }
 }
