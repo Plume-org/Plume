@@ -52,7 +52,7 @@
                     <i class="fa fa-retweet left-icon"></i>
                     <main class="grow">
                         <h3>
-                            {{ "{{ user }} reshared your article." | _(user=notification.object.user.name | escape) }}
+                            {{ "{{ user }} boosted your article." | _(user=notification.object.user.name | escape) }}
                         </h3>
                         <p><a href="{{ notification.object.post.url }}">{{ notification.object.post.post.title }}</a></p>
                     </main>
