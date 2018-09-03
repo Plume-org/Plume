@@ -21,7 +21,7 @@ On **Debian**:
 
 ```bash
 apt update
-apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev 
+apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev
 ```
 
 On **Fedora**, **CentOS** or **RHEL**:
@@ -137,6 +137,10 @@ When you launch Plume for the first time, it will ask you a few questions to set
 # postgres://plume:plume@localhost/plume
 export DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume
 
+# Create the media directory, where uploads will be stored
+mkdir media
+
+# Actually start Plume
 cargo run
 ```
 
