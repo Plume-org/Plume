@@ -1,0 +1,2 @@
+-- Your SQL goes here
+ALTER TABLE users ADD COLUMN last_fetched_date TIMESTAMP NOT NULL DEFAULT '2000-01-01 00:00:01';

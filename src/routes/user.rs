@@ -5,7 +5,6 @@ use activitypub::{
 };
 use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
-    State,
     request::LenientForm,
     response::{Redirect, Flash, Content},
     http::ContentType
@@ -13,7 +12,7 @@ use rocket::{
 use rocket_contrib::Template;
 use serde_json;
 use validator::{Validate, ValidationError};
-use workerpool::{Pool, thunk::*};
+use workerpool::thunk::*;
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
@@ -31,6 +30,7 @@ use plume_models::{
 };
 use inbox::Inbox;
 use routes::Page;
+use Worker;
 
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -41,7 +41,7 @@ fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 }
 
 #[get("/@/<name>", rank = 2)]
-fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<Pool<ThunkWorker<()>>>, fecth_articles_conn: DbConn, fecth_followers_conn: DbConn) -> Template {
+fn details(name: String, conn: DbConn, account: Option<User>, worker: Worker, fecth_articles_conn: DbConn, fecth_followers_conn: DbConn, update_conn: DbConn) -> Template {
     may_fail!(account.map(|a| a.to_json(&*conn)), User::find_by_fqn(&*conn, name), "Couldn't find requested user", |user| {
         let recents = Post::get_recents_for_author(&*conn, &user, 6);
         let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
@@ -75,6 +75,14 @@ fn details<'r>(name: String, conn: DbConn, account: Option<User>, worker: State<
                     });
                 }
             }));
+
+            // Update profile information if needed
+            let user_clone = user.clone();
+            if user.needs_update() {
+                worker.execute(Thunk::of(move || {
+                    user_clone.refetch(&*update_conn);
+                }))
+            }
         }
 
         Template::render("users/details", json!({
@@ -106,7 +114,7 @@ fn dashboard_auth() -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/follow")]
-fn follow(name: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
+fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
     let f = follows::Follow::insert(&*conn, follows::NewFollow {
         follower_id: user.id,

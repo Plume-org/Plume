@@ -156,6 +156,7 @@ table! {
         shared_inbox_url -> Nullable<Varchar>,
         followers_endpoint -> Varchar,
         avatar_id -> Nullable<Int4>,
+        last_fetched_date -> Timestamp,
     }
 }
 

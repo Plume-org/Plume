@@ -5,7 +5,7 @@ use activitypub::{
     object::Image,
 };
 use bcrypt;
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection, dsl::any};
 use openssl::{
     hash::MessageDigest,
@@ -68,6 +68,7 @@ pub struct User {
     pub shared_inbox_url: Option<String>,
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
+    pub last_fetched_date: NaiveDateTime
 }
 
 #[derive(Insertable)]
@@ -158,7 +159,7 @@ impl User {
         }
     }
 
-    pub fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
+    fn fetch(url: String) -> Option<CustomPerson> {
         let req = Client::new()
             .get(&url[..])
             .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
@@ -169,7 +170,7 @@ impl User {
                     if let Ok(ap_sign) = serde_json::from_str::<ApSignature>(text) {
                         if let Ok(mut json) = serde_json::from_str::<CustomPerson>(text) {
                             json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-                            Some(User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+                            Some(json)
                         } else { None }
                     } else { None }
                 } else { None }
@@ -179,6 +180,10 @@ impl User {
                 None
             }
         }
+    }
+
+    pub fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
+        User::fetch(url.clone()).map(|json| (User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string())))
     }
 
     fn from_activity(conn: &PgConnection, acct: CustomPerson, inst: String) -> User {
@@ -225,6 +230,26 @@ impl User {
         avatar.set_owner(conn, user.id);
 
         user
+    }
+
+    pub fn refetch(&self, conn: &PgConnection) {
+        User::fetch(self.ap_url.clone()).map(|json| {
+            let avatar = Media::save_remote(conn, json.object.object_props.icon_image().expect("User::refetch: icon error")
+                .object_props.url_string().expect("User::refetch: icon.url error"));
+
+            diesel::update(self)
+                .set((
+                    users::username.eq(json.object.ap_actor_props.preferred_username_string().expect("User::refetch: preferredUsername error")),
+                    users::display_name.eq(json.object.object_props.name_string().expect("User::refetch: name error")),
+                    users::outbox_url.eq(json.object.ap_actor_props.outbox_string().expect("User::refetch: outbox error")),
+                    users::inbox_url.eq(json.object.ap_actor_props.inbox_string().expect("User::refetch: inbox error")),
+                    users::summary.eq(SafeString::new(&json.object.object_props.summary_string().unwrap_or(String::new()))),
+                    users::followers_endpoint.eq(json.object.ap_actor_props.followers_string().expect("User::refetch: followers error")),
+                    users::avatar_id.eq(Some(avatar.id)),
+                    users::last_fetched_date.eq(Utc::now().naive_utc())
+                )).execute(conn)
+                .expect("Couldn't update user")
+        });
     }
 
     pub fn hash_pass(pass: String) -> String {
@@ -503,6 +528,10 @@ impl User {
             .set(users::avatar_id.eq(id))
             .execute(conn)
             .expect("Couldn't update user avatar");
+    }
+
+    pub fn needs_update(&self) -> bool {
+        (Utc::now().naive_utc() - self.last_fetched_date).num_days() > 1
     }
 }
 

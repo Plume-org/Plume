@@ -29,6 +29,7 @@ extern crate validator_derive;
 extern crate webfinger;
 extern crate workerpool;
 
+use rocket::State;
 use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
 use workerpool::{Pool, thunk::ThunkWorker};
@@ -36,6 +37,8 @@ use workerpool::{Pool, thunk::ThunkWorker};
 mod inbox;
 mod setup;
 mod routes;
+
+type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
 
 fn main() {
     let pool = setup::check();
