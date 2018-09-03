@@ -160,9 +160,8 @@ msgstr "S'abonner"
 msgid "Unfollow"
 msgstr "Se désabonner"
 
-#, fuzzy
 msgid "Recently boosted"
-msgstr "Récemment repartagé"
+msgstr "Récemment partagé"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
@@ -241,9 +240,8 @@ msgstr "Vous devez vous connecter pour voir vos notifications"
 msgid "You need to be logged in order to write a new post"
 msgstr "Vous devez vous connecter pour écrire un article"
 
-#, fuzzy
 msgid "You need to be logged in order to boost a post"
-msgstr "Vous devez vous connecter pour aimer un article"
+msgstr "Vous devez vous connecter pour partager un article"
 
 msgid "Invalid username or password"
 msgstr "Nom d'utilisateur ou mot de passe invalide"
@@ -261,9 +259,8 @@ msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 msgstr ""
 "Par {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
-#, fuzzy
 msgid "{{ data }} boosted your article"
-msgstr "{{ data }} a commenté votre article"
+msgstr "{{ data }} a partagé votre article"
 
 msgid "{{ data }} started following you"
 msgstr "{{ data }} vous suit"
@@ -312,7 +309,6 @@ msgstr ""
 "Nous avons besoin d'une adresse mail ou d'un nom d'utilisateur pour vous "
 "identifier."
 
-#, fuzzy
 msgid "Your password can't be empty"
 msgstr "Votre mot de passe ne peut pas être vide."
 
@@ -341,7 +337,6 @@ msgstr ""
 msgid "Optional"
 msgstr "Optionnel"
 
-#, fuzzy
 msgid "One article in this blog"
 msgid_plural "{{ count }} articles in this blog"
 msgstr[0] "{{ count }} article dans ce blog"
@@ -443,75 +438,65 @@ msgstr "articles"
 msgid "Read the detailed rules"
 msgstr "Lire les règles détaillées"
 
-#, fuzzy
 msgid "Delete this article"
-msgstr "Derniers articles"
+msgstr "Supprimer cet article"
 
 msgid "And connected to"
-msgstr ""
+msgstr "Et connectée à"
 
-#, fuzzy
 msgid "other instances"
-msgstr "À propos de cette instance"
+msgstr "autres instances"
 
-#, fuzzy
 msgid "Administred by"
-msgstr "Administration"
+msgstr "Administré par"
 
 msgid "Runs Plume {{ version }}"
-msgstr ""
+msgstr "Propulsé par Plume {{ version }}"
 
-#, fuzzy
 msgid "Your media"
-msgstr "Votre commentaire"
+msgstr "Vos média"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Aller à votre galerie"
 
 msgid "{{ name}}'s avatar'"
-msgstr ""
+msgstr "Avatar de {{ name }}"
 
 msgid "Media details"
-msgstr ""
+msgstr "Détails du média"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Retourner à la galerie"
 
-#, fuzzy
 msgid "Markdown code"
-msgstr "Vous pouvez utiliser du Markdown"
+msgstr "Code Markdown"
 
 msgid "Copy it in your articles to insert this media."
-msgstr ""
+msgstr "Copiez-le dans vos articles pour insérer ce média."
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Utiliser comme avatar"
 
 msgid "Delete"
-msgstr ""
+msgstr "Supprimer"
 
 msgid "Upload"
-msgstr ""
+msgstr "Téléverser"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Vous n'avez pas encore de média."
 
 msgid "Media upload"
-msgstr ""
+msgstr "Téléversement de média"
 
-#, fuzzy
 msgid "Description"
-msgstr "Description longue"
+msgstr "Description"
 
-#, fuzzy
 msgid "Content warning"
-msgstr "Contenu"
+msgstr "Avertissement"
 
 msgid "File"
-msgstr ""
+msgstr "Fichier"
 
 msgid "Send"
-msgstr ""
-
-#~ msgid "Your password should be at least 8 characters long"
-#~ msgstr "Votre mot de passe doit faire au moins 8 caractères."
+msgstr "Envoyer"
