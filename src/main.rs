@@ -132,7 +132,6 @@ fn main() {
                 .add_exceptions(vec![
                     ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
                     ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
-                    ("/medias/new".to_owned(), "/medias/new".to_owned(), rocket::http::Method::Post), // not compatible with multipart/form-data
                 ])
                 .finalize().unwrap())
         .launch();
