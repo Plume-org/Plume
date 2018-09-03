@@ -504,5 +504,9 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
+msgid ""
+"Sorry, but registrations are closed on this instance. Try to find another one"
+msgstr ""
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

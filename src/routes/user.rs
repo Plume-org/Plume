@@ -166,6 +166,7 @@ fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStrea
 #[get("/users/new")]
 fn new(user: Option<User>, conn: DbConn) -> Template {
     Template::render("users/new", json!({
+        "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
         "account": user.map(|u| u.to_json(&*conn)),
         "errors": null,
         "form": null
@@ -228,6 +229,10 @@ fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
 
 #[post("/users/new", data = "<data>")]
 fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Template> {
+    if !Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true) {
+        return Ok(Redirect::to(uri!(new))); // Actually, it is an error
+    }
+
     let form = data.get();
     form.validate()
         .map(|_| {

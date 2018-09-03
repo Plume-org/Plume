@@ -519,6 +519,10 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
+msgid ""
+"Sorry, but registrations are closed on this instance. Try to find another one"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"
