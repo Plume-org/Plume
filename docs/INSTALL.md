@@ -162,6 +162,7 @@ server {
 server {
     server_name blog.example.org;
     access_log  /var/log/nginx/access.log;
+    root /home/plume/Plume/ ;
 
     listen [::]:443 ssl; # managed by Certbot
     SSLCertificateFile /etc/letsencrypt/live/blog.example.com/cert.pem
@@ -217,7 +218,7 @@ If you prefer Apache, you can use this configuration (here too replace `blog.exa
 <VirtualHost *:443>
    ServerAdmin admin@example.com
    ServerName blog.example.com
-
+<Directory "/home/plume/Plume">
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Strict-Transport-Security "max-age=31536000"
     SSLEngine on
