@@ -55,18 +55,18 @@
                     <p aria-label="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}" title="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}">{{ n_likes }}</p>
 
                     {% if has_liked %}
-                        <button type="submit" class="action liked"><i class="far fa-heart"></i>{{ "I don't like this anymore" | _ }}</button>
+                        <button type="submit" class="action liked">{{ macros::feather(name="heart") }}{{ "I don't like this anymore" | _ }}</button>
                     {% else %}
-                        <button type="submit" class="action"><i class="fa fa-heart"></i>{{ "Add yours" | _ }}</button>
+                        <button type="submit" class="action">{{ macros::feather(name="heart") }}{{ "Add yours" | _ }}</button>
                     {% endif %}
                 </form>
                 <form class="reshares" action="{{ article.url }}reshare" method="POST">
                     <p aria-label="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}" title="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}">{{ n_reshares }}</p>
 
                     {% if has_reshared %}
-                        <button type="submit" class="action reshared"><i class="fa fa-retweet"></i>{{ "I don't want to boost this anymore" | _ }}</button>
+                        <button type="submit" class="action reshared"><i class="icon icon-repeat"></i>{{ "I don't want to boost this anymore" | _ }}</button>
                     {% else %}
-                        <button type="submit" class="action"><i class="fa fa-retweet"></i>{{ "Boost" | _ }}</button>
+                        <button type="submit" class="action"><i class="icon icon-repeat"></i>{{ "Boost" | _ }}</button>
                     {% endif %}
                 </form>
             </div>
@@ -75,12 +75,12 @@
             <div class="actions">
                 <div class="likes">
                     <p aria-label="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}" title="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}">{{ n_likes }}</p>
-                    <a href="/login?m=Login%20to%20like" type="submit" class="action"><i class="fa fa-heart"></i>{{ "Add yours" | _ }}</a>
+                    <a href="/login?m=Login%20to%20like" class="action">{{ macros::feather(name="heart") }}{{ "Add yours" | _ }}</a>
                 </div>
 
                 <div class="reshares">
                     <p aria-label="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}" title="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}">{{ n_reshares }}</p>
-                    <a href="/login?m=Login%20to%20boost" type="submit" class="action"><i class="fa fa-retweet"></i>{{ "Boost" | _ }}</a>
+                    <a href="/login?m=Login%20to%20boost" class="action"><i class="icon icon-repeat"></i>{{ "Boost" | _ }}</a>
                 </div>
             </div>
         {% endif %}

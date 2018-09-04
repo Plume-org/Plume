@@ -4,13 +4,13 @@
         <meta charset="utf-8" />
         <title>{% block title %}{% endblock title %} ⋅ {{ "Plume" | _ }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="/static/main.css" />
-        <link rel="stylesheet" href="/static/fontawesome-5.0.10/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="/static/css/main.css" />
+        <link rel="stylesheet" href="/static/css/feather.css" />
     </head>
     <body>
         <header>
             <nav id="menu">
-                <a href="#" aria-label="{{ "Menu" | _ }}" title="{{ "Menu" | _ }}"></a>
+                <a href="#" aria-label="{{ "Menu" | _ }}" title="{{ "Menu" | _ }}"><i class="icon icon-menu"></i></a>
             </nav>
             <div id="content">
                 <nav>
@@ -22,15 +22,15 @@
                 <nav>
                     {% if account %}
                         <a href="/dashboard">
-                            <i class="fa fa-home" aria-label="{{ "Dashboard" | _ }}"></i>
+                            <i class="icon icon-home" aria-label="{{ "Dashboard" | _ }}"></i>
                             <span class="mobile-label">{{ "Dashboard" | _ }}</span>
                         </a>
                         <a href="/notifications">
-                            <i class="fa fa-bell" aria-label="{{ "Notifications" | _ }}"></i>
+                            <i class="icon icon-bell" aria-label="{{ "Notifications" | _ }}"></i>
                             <span class="mobile-label">{{ "Notifications" | _ }}</span>
                         </a>
                         <a href="/logout">
-                            <i class="fa fa-sign-out-alt" aria-label="{{ "Log Out" | _ }}"></i>
+                            <i class="icon icon-log-out" aria-label="{{ "Log Out" | _ }}"></i>
                             <span class="mobile-label">{{ "Log Out" | _ }}</span>
                         </a>
                         <a href="/me">
@@ -38,8 +38,14 @@
                             <span class="mobile-label">{{ "My account" | _ }}</span>
                         </a>
                     {% else %}
-                        <a href="/login">{{ "Log In" | _ }}</a>
-                        <a href="/users/new">{{ "Register" | _ }}</a>
+                        <a href="/login">
+                            <i class="icon icon-log-in"></i>
+                            <span class="mobile-label">{{ "Log In" | _ }}</span>
+                        </a>
+                        <a href="/users/new">
+                            <i class="icon icon-user-plus"></i>
+                            <span class="mobile-label">{{ "Register" | _ }}</span>
+                        </a>
                     {% endif %}
                 </nav>
             </div>
