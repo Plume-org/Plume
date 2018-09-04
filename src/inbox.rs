@@ -55,6 +55,10 @@ pub trait Inbox {
                             "Announce" => {
                                 Reshare::delete_id(act.undo_props.object_object::<Announce>()?.object_props.id_string()?, conn);
                                 Ok(())
+                            },
+                            "Follow" => {
+                                Follow::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, conn);
+                                Ok(())
                             }
                             _ => Err(InboxError::CantUndo)?
                         }
