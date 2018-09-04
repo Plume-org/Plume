@@ -500,3 +500,9 @@ msgstr ""
 
 msgid "Subtitle"
 msgstr ""
+
+msgid "Login to like"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""

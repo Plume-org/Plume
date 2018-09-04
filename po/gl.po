@@ -502,3 +502,9 @@ msgstr ""
 #, fuzzy
 msgid "Subtitle"
 msgstr "Título"
+
+msgid "Login to like"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""

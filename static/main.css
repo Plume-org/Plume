@@ -207,8 +207,8 @@ main .article-meta .reshares > p {
 	font-size: 1.5em;
 }
 
-main .article-meta .likes button,
-main .article-meta .reshares button {
+main .article-meta .likes .action,
+main .article-meta .reshares .action {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -221,12 +221,12 @@ main .article-meta .reshares button {
 }
 
 main .article-meta .likes > p,
-main .article-meta .likes button:hover { color: #E92F2F; }
+main .article-meta .likes .action:hover { color: #E92F2F; }
 main .article-meta .reshares > p,
-main .article-meta .reshares button:hover { color: #7765E3; }
+main .article-meta .reshares .action:hover { color: #7765E3; }
 
-main .article-meta .likes button i,
-main .article-meta .reshares button i {
+main .article-meta .likes .action i,
+main .article-meta .reshares .action i {
 	transition: background 0.1s ease-in;
 	display: flex;
 	align-items: center;
@@ -239,37 +239,37 @@ main .article-meta .reshares button i {
 	border-radius: 50%;
 }
 
-main .article-meta .likes button i {
+main .article-meta .likes .action i {
 	color: #E92F2F;
 	border: solid #E92F2F thin;
 	font-weight: 400;
 }
-main .article-meta .likes button:hover i {
+main .article-meta .likes .action:hover i {
 	background: rgba(233, 47, 47, 0.15);
 }
 
-main .article-meta .reshares button i {
+main .article-meta .reshares .action i {
 	color: #7765E3;
 	border: solid #7765E3 thin;
 	font-weight: 600;
 }
-main .article-meta .reshares button:hover i {
+main .article-meta .reshares .action:hover i {
 	background: rgba(119, 101, 227, 0.15);
 }
 
-main .article-meta .likes button.liked i { background: #E92F2F; }
-main .article-meta .likes button.liked:hover i {
+main .article-meta .likes .action.liked i { background: #E92F2F; }
+main .article-meta .likes .action.liked:hover i {
 	background: rgba(233, 47, 47, 0.25);
 	color: #E92F2F;
 }
-main .article-meta .reshares button.reshared i { background: #7765E3; }
-main .article-meta .reshares button.reshared:hover i {
+main .article-meta .reshares .action.reshared i { background: #7765E3; }
+main .article-meta .reshares .action.reshared:hover i {
 	background: rgba(119, 101, 227, 0.25);
 	color: #7765E3;
 }
 
-main .article-meta .likes button.liked i,
-main .article-meta .reshares button.reshared i {
+main .article-meta .likes .action.liked i,
+main .article-meta .reshares .action.reshared i {
 	color: #F4F4F4;
 	font-weight: 900;
 }

@@ -516,6 +516,12 @@ msgstr ""
 msgid "Subtitle"
 msgstr "Tittel"
 
+msgid "Login to like"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

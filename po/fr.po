@@ -510,3 +510,9 @@ msgstr ""
 #, fuzzy
 msgid "Subtitle"
 msgstr "Titre"
+
+msgid "Login to like"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""
