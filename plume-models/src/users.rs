@@ -567,7 +567,7 @@ impl WithInbox for User {
     }
 
     fn is_local(&self) -> bool {
-        self.instance_id == 0
+        self.instance_id == 1
     }
 }
 
