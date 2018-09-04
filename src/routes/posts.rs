@@ -57,7 +57,8 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                 "date": &post.creation_date.timestamp(),
                 "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
                 "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
-                "is_author": user.map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false)
+                "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
+                "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false)
             }))
         })
     })
