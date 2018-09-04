@@ -30,7 +30,7 @@
                             <span class="mobile-label">{{ "Notifications" | _ }}</span>
                         </a>
                         <a href="/logout">
-                            <i class="fa fa-sign-out-alt aria-label="{{ "Log Out" | _ }}"></i>
+                            <i class="fa fa-sign-out-alt" aria-label="{{ "Log Out" | _ }}"></i>
                             <span class="mobile-label">{{ "Log Out" | _ }}</span>
                         </a>
                         <a href="/me">
