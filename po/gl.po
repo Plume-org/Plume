@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-09-04 07:04-0700\n"
 "Last-Translator: Xosé M. <correo@xmgz.eu>\n"
 "Language-Team: none\n"
 "Language: gl\n"
@@ -87,14 +87,14 @@ msgstr "Engada os seus"
 
 msgid "One Boost"
 msgid_plural "{{ count }} Boosts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Unha promoción"
+msgstr[1] "{{ count }} promocións"
 
 msgid "I don&#x27;t want to boost this anymore"
-msgstr ""
+msgstr "Xa non quero promover esto"
 
 msgid "Boost"
-msgstr ""
+msgstr "Promover"
 
 msgid "Comments"
 msgstr "Comentarios"
@@ -142,7 +142,7 @@ msgid "Admin"
 msgstr "Admin"
 
 msgid "It is you"
-msgstr "É vosted"
+msgstr "É vostede"
 
 msgid "Edit your profile"
 msgstr "Edite o seu perfil"
@@ -157,7 +157,7 @@ msgid "Unfollow"
 msgstr "Deixar de seguir"
 
 msgid "Recently boosted"
-msgstr ""
+msgstr "Promocionada recentemente"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
@@ -237,7 +237,7 @@ msgid "You need to be logged in order to write a new post"
 msgstr "Debe estar conectada para escribir unha nova entrada"
 
 msgid "You need to be logged in order to boost a post"
-msgstr ""
+msgstr "Precisa estar conectada para promover un artigo"
 
 msgid "Invalid username or password"
 msgstr "Usuaria ou Contrasinal incorrectos"
@@ -256,7 +256,7 @@ msgstr ""
 "Por {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} boosted your article"
-msgstr ""
+msgstr "{{ data }} promoveron o seu artigo"
 
 msgid "{{ data }} started following you"
 msgstr "{{ data }} comezou a seguila"
@@ -355,7 +355,7 @@ msgid "{{ user }} liked your article."
 msgstr "{{ user }} gustou do seu artigo."
 
 msgid "{{ user }} boosted your article."
-msgstr ""
+msgstr "{{ user }} promoveu o seu artigo."
 
 msgid "Source code"
 msgstr "Código fonte"
@@ -430,76 +430,70 @@ msgstr "artigos"
 msgid "Read the detailed rules"
 msgstr "Lea o detalle das normas"
 
-#, fuzzy
 msgid "Delete this article"
-msgstr "Últimos artigos"
+msgstr "Borrar este artigo"
 
 msgid "And connected to"
-msgstr ""
+msgstr "E contactada a"
 
-#, fuzzy
 msgid "other instances"
-msgstr "Sobre esta instancia"
+msgstr "outras instancias"
 
-#, fuzzy
 msgid "Administred by"
-msgstr "Administración"
+msgstr "Administrada por"
 
 msgid "Runs Plume {{ version }}"
-msgstr ""
+msgstr "Plume {{ version }}"
 
-#, fuzzy
 msgid "Your media"
-msgstr "O seu comentario"
+msgstr "Os seus medios"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Ir a súa galería"
 
 msgid "{{ name}}'s avatar'"
-msgstr ""
+msgstr "avatar de {{ name}}"
 
 msgid "Media details"
-msgstr ""
+msgstr "Detalles dos medios"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Voltar a galería"
 
-#, fuzzy
 msgid "Markdown code"
-msgstr "Escritura Markdown activada"
+msgstr "Código markdown"
 
 msgid "Copy it in your articles to insert this media."
-msgstr ""
+msgstr "Copiar nos seus artigos para incrustar estos medios"
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Utilizar como avatar"
 
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 msgid "Upload"
-msgstr ""
+msgstr "Subir"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Aínd non subeu medios"
 
 msgid "Media upload"
-msgstr ""
+msgstr "Subir medios"
 
-#, fuzzy
 msgid "Description"
-msgstr "Descrición longa"
+msgstr "Descrición"
 
-#, fuzzy
 msgid "Content warning"
-msgstr "Contido"
+msgstr "Aviso sobre o contido"
 
 msgid "File"
-msgstr ""
+msgstr "Ficheiro"
 
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
+"Lamentámolo, pero o rexistro en esta instancia está pechado. Inténteo en outra instancia"
