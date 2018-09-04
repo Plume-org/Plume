@@ -1,5 +1,5 @@
 use activitypub::{
-    activity::{Create, Follow},
+    activity::Create,
     collection::OrderedCollection,
     object::Article
 };
@@ -16,7 +16,7 @@ use workerpool::thunk::*;
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
-    inbox::{FromActivity, Notify}
+    inbox::{FromActivity, Notify, Deletable}
 };
 use plume_common::utils;
 use plume_models::{
@@ -71,7 +71,8 @@ fn details(name: String, conn: DbConn, account: Option<User>, worker: Worker, fe
                         .unwrap_or_else(|| User::fetch_from_url(&*fecth_followers_conn, user_id).expect("Couldn't fetch follower"));
                     follows::Follow::insert(&*fecth_followers_conn, follows::NewFollow {
                         follower_id: follower.id,
-                        following_id: user_clone.id
+                        following_id: user_clone.id,
+                        ap_url: format!("{}/follow/{}", follower.ap_url, user_clone.ap_url),
                     });
                 }
             }));
