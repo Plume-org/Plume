@@ -72,12 +72,16 @@ header nav#menu {
 }
 header nav#menu a {
 	transform: skewX(15deg);
-	width: 1.75em;
-	height: 1.75em;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 1.4em;
+	height: 1.4em;
 	margin: 0;
 	padding: 0;
-	background: url("/static/images/boxicon-menu.svg") no-repeat center;
-	background-size: contain;
+	color: #ECECEC;
+	font-size: 1.33em;
 }
 
 header nav {
@@ -102,6 +106,9 @@ header nav a.title {
 	padding: 0.5em 2em;
 	font-size: 1.75em;
 	text-align: center;
+}
+header nav i {
+	font-size: 1.2em;
 }
 
 /*
@@ -218,7 +225,7 @@ main .article-meta .likes button:hover { color: #E92F2F; }
 main .article-meta .reshares > p,
 main .article-meta .reshares button:hover { color: #7765E3; }
 
-main .article-meta .likes button i,
+main .article-meta .likes button svg.feather,
 main .article-meta .reshares button i {
 	transition: background 0.1s ease-in;
 	display: flex;
@@ -232,12 +239,14 @@ main .article-meta .reshares button i {
 	border-radius: 50%;
 }
 
-main .article-meta .likes button i {
+main .article-meta .likes button svg.feather {
+	padding: 0.7em;
+	box-sizing: border-box;
 	color: #E92F2F;
+	fill: none;
 	border: solid #E92F2F thin;
-	font-weight: 400;
 }
-main .article-meta .likes button:hover i {
+main .article-meta .likes button:hover svg.feather {
 	background: rgba(233, 47, 47, 0.15);
 }
 
@@ -250,8 +259,8 @@ main .article-meta .reshares button:hover i {
 	background: rgba(119, 101, 227, 0.15);
 }
 
-main .article-meta .likes button.liked i { background: #E92F2F; }
-main .article-meta .likes button.liked:hover i {
+main .article-meta .likes button.liked svg.feather { background: #E92F2F; fill: currentColor; }
+main .article-meta .likes button.liked:hover svg.feather {
 	background: rgba(233, 47, 47, 0.25);
 	color: #E92F2F;
 }
@@ -261,7 +270,7 @@ main .article-meta .reshares button.reshared:hover i {
 	color: #7765E3;
 }
 
-main .article-meta .likes button.liked i,
+main .article-meta .likes button.liked svg.feather,
 main .article-meta .reshares button.reshared i {
 	color: #F4F4F4;
 	font-weight: 900;
@@ -286,13 +295,9 @@ main .article-meta .comments form input[type="submit"]
 /* Comment / Respond button */
 
 main .article-meta .comments a.button:before {
-	content: "";
-	margin-right: 0.5em;
 	color: #7765E3;
-	font-family: "Font Awesome 5 Free";
-	font-weight: 400;
+	padding: 0.5em;
 }
-main .article-meta .comments a.button.liked:before { font-weight: 900; }
 main .article-meta .comments a.button {
 	display: inline-block;
 	padding: 0;
@@ -573,7 +578,7 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
  * ================= */
 
 .mobile-label {
-    display: none;
+	display: none;
 }
 
 @media screen and (max-width: 900px) {
@@ -636,12 +641,18 @@ form.new-post input[type="submit"]:hover { background: #DADADA; }
 		align-items: flex-start;
 	}
 	header:focus-within #content > nav a {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 		margin: 0;
 		padding: 1rem 1.5rem;
 		color: #F4F4F4;
 		font-size: 1.4em;
 		font-weight: 300;
 	}
+	header:focus-within #content > nav a > *:first-child { width: 3rem; }
+	header:focus-within #content > nav a > img:first-child { height: 3rem; }
+	header:focus-within #content > nav a > *:last-child { margin-left: 1rem; }
 	header:focus-within #content > nav a.title {
 		font-size: 1.8em;
 	}
