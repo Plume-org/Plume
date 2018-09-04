@@ -42,6 +42,7 @@ table! {
         id -> Int4,
         follower_id -> Int4,
         following_id -> Int4,
+        ap_url -> Text,
     }
 }
 

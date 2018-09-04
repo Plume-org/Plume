@@ -1,7 +1,7 @@
-use activitypub::{Actor, activity::{Accept, Follow as FollowAct}, actor::Person};
+use activitypub::{Actor, activity::{Accept, Follow as FollowAct, Undo}, actor::Person};
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox}, sign::Signer};
+use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox, Deletable}, sign::Signer};
 use blogs::Blog;
 use notifications::*;
 use users::User;
@@ -12,19 +12,42 @@ use schema::follows;
 pub struct Follow {
     pub id: i32,
     pub follower_id: i32,
-    pub following_id: i32
+    pub following_id: i32,
+    pub ap_url: String,
 }
 
 #[derive(Insertable)]
 #[table_name = "follows"]
 pub struct NewFollow {
     pub follower_id: i32,
-    pub following_id: i32
+    pub following_id: i32,
+    pub ap_url: String,
 }
 
 impl Follow {
     insert!(follows, NewFollow);
     get!(follows);
+    find_by!(follows, find_by_ap_url, ap_url as String);
+
+    pub fn find(conn: &PgConnection, from: i32, to: i32) -> Option<Follow> {
+        follows::table.filter(follows::follower_id.eq(from))
+            .filter(follows::following_id.eq(to))
+            .get_result(conn)
+            .ok()
+    }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> FollowAct {
+        let user = User::get(conn, self.follower_id).unwrap();
+        let target = User::get(conn, self.following_id).unwrap();
+
+        let mut act = FollowAct::default();
+        act.follow_props.set_actor_link::<Id>(user.clone().into_id()).expect("Follow::into_activity: actor error");
+        act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
+        act.object_props.set_id_string(self.ap_url.clone()).unwrap();
+        act.object_props.set_to_link(target.clone().into_id()).expect("New Follow error while setting 'to'");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("New Follow error while setting 'cc'");
+        act
+    }
 
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
@@ -36,9 +59,12 @@ impl Follow {
         from_id: i32,
         target_id: i32
     ) -> Follow {
+        let from_url: String = from.clone().into_id().into();
+        let target_url: String = target.clone().into_id().into();
         let res = Follow::insert(conn, NewFollow {
             follower_id: from_id,
-            following_id: target_id
+            following_id: target_id,
+            ap_url: format!("{}/follow/{}", from_url, target_url),
         });
 
         let mut accept = Accept::default();
@@ -75,5 +101,23 @@ impl Notify<PgConnection> for Follow {
             object_id: self.id,
             user_id: self.following_id
         });
+    }
+}
+
+impl Deletable<PgConnection, Undo> for Follow {
+    fn delete(&self, conn: &PgConnection) -> Undo {
+        diesel::delete(self).execute(conn).expect("Coudn't delete follow");
+
+        let mut undo = Undo::default();
+        undo.undo_props.set_actor_link(User::get(conn, self.follower_id).unwrap().into_id()).expect("Follow::delete: actor error");
+        undo.object_props.set_id_string(format!("{}/undo", self.ap_url)).expect("Follow::delete: id error");
+        undo.undo_props.set_object_object(self.into_activity(conn)).expect("Follow::delete: object error");
+        undo
+    }
+
+    fn delete_id(id: String, conn: &PgConnection) {
+        if let Some(follow) = Follow::find_by_ap_url(conn, id) {
+            follow.delete(conn);
+        }
     }
 }
