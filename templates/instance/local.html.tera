@@ -1,0 +1,17 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+{{ "Articles from {{ instance.name }}" | _(instance=instance) }}
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ "Articles from {{ instance.name }}" | _(instance=instance) }}</h1>
+
+    <div class="cards">
+        {% for article in articles %}
+            {{ macros::post_card(article=article) }}
+        {% endfor %}
+    </div>
+    {{ macros::paginate(page=page, total=n_pages) }}
+{% endblock content %}

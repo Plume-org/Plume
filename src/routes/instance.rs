@@ -44,6 +44,24 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
     paginated_index(conn, user, Page::first())
 }
 
+#[get("/local?<page>")]
+fn paginated_local(conn: DbConn, user: Option<User>, page: Page) -> Template {
+    let instance = Instance::get_local(&*conn).unwrap();
+    let articles = Post::get_instance_page(&*conn, instance.id, page.limits());
+    Template::render("instance/local", json!({
+        "account": user.map(|u| u.to_json(&*conn)),
+        "instance": instance,
+        "page": page.page,
+        "n_pages": Page::total(Post::count_local(&*conn) as i32),
+        "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+    }))
+}
+
+#[get("/local")]
+fn local(conn: DbConn, user: Option<User>) -> Template {
+    paginated_local(conn, user, Page::first())
+}
+
 #[get("/admin")]
 fn admin(conn: DbConn, admin: Admin) -> Template {
     Template::render("instance/admin", json!({

@@ -113,12 +113,27 @@ impl Post {
             .expect("Error loading a page of posts for blog")
     }
 
+    /// Give a page of all the recent posts known to this instance (= federated timeline)
     pub fn get_recents_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
             .expect("Error loading recent posts page")
+    }
+
+    /// Give a page of posts from a specific instance
+    pub fn get_instance_page(conn: &PgConnection, instance_id: i32, (min, max): (i32, i32)) -> Vec<Post> {
+        use schema::blogs;
+
+        let blog_ids = blogs::table.filter(blogs::instance_id.eq(instance_id)).select(blogs::id);
+
+        posts::table.order(posts::creation_date.desc())
+            .filter(posts::blog_id.eq(any(blog_ids)))
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Post>(conn)
+            .expect("Error loading local posts page")
     }
 
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
