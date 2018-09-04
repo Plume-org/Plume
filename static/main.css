@@ -167,6 +167,13 @@ article img {
 	max-width: 100%;
 }
 
+article pre {
+    background: #DADADA;
+    padding: 1em;
+    overflow: auto;
+    border-radius: 5px;
+}
+
 /* Article.Meta */
 
 main .article-meta, main .article-meta button {
