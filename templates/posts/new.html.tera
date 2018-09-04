@@ -9,6 +9,7 @@
 <h1>{{ "Create a post" | _ }}</h1>
 <form class="new-post" method="post">
     {{ macros::input(name="title", label="Title", errors=errors, form=form, props="required") }}
+    {{ macros::input(name="subtitle", label="Subtitle", errors=errors, form=form, optional=true) }}
 
     {% if errors is defined and errors.content %}
         {% for err in errors.content %}

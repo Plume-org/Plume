@@ -192,7 +192,16 @@
  }
 
  article img {
+ 	display: block;
+ 	margin: 3em auto;
  	max-width: 100%;
+ }
+
+ article pre {
+ 	padding: 1em;
+ 	background: #DADADA;
+ 	overflow: auto;
+ 	border-radius: 5px;
  }
 
  /* Article.Meta */
@@ -235,8 +244,8 @@
  	font-size: 1.5em;
  }
 
- main .article-meta .likes button,
- main .article-meta .reshares button {
+ main .article-meta .likes .action,
+ main .article-meta .reshares .action {
  	display: flex;
  	flex-direction: column;
  	align-items: center;
@@ -246,15 +255,16 @@
  	background: none;
  	color: #242424;
  	border: none;
+ 	font-size: 1.1em;
  }
 
  main .article-meta .likes > p,
- main .article-meta .likes button:hover { color: #E92F2F; }
+ main .article-meta .likes .action:hover { color: #E92F2F; }
  main .article-meta .reshares > p,
- main .article-meta .reshares button:hover { color: #7765E3; }
+ main .article-meta .reshares .action:hover { color: #7765E3; }
 
- main .article-meta .likes button svg.feather,
- main .article-meta .reshares button i {
+ main .article-meta .likes .action svg.feather,
+ main .article-meta .reshares .action i {
  	transition: background 0.1s ease-in;
  	display: flex;
  	align-items: center;
@@ -267,39 +277,39 @@
  	border-radius: 50%;
  }
 
- main .article-meta .likes button svg.feather {
+ main .article-meta .likes .action svg.feather {
  	padding: 0.7em;
  	box-sizing: border-box;
  	color: #E92F2F;
  	fill: none;
  	border: solid #E92F2F thin;
  }
- main .article-meta .likes button:hover svg.feather {
+ main .article-meta .likes .action:hover svg.feather {
  	background: rgba(233, 47, 47, 0.15);
  }
 
- main .article-meta .reshares button i {
+ main .article-meta .reshares .action i {
  	color: #7765E3;
  	border: solid #7765E3 thin;
  	font-weight: 600;
  }
- main .article-meta .reshares button:hover i {
+ main .article-meta .reshares .action:hover i {
  	background: rgba(119, 101, 227, 0.15);
  }
 
- main .article-meta .likes button.liked svg.feather { background: #E92F2F; fill: currentColor; }
- main .article-meta .likes button.liked:hover svg.feather {
+ main .article-meta .likes .action.liked svg.feather { background: #E92F2F; fill: currentColor; }
+ main .article-meta .likes .action.liked:hover svg.feather {
  	background: rgba(233, 47, 47, 0.25);
  	color: #E92F2F;
  }
- main .article-meta .reshares button.reshared i { background: #7765E3; }
- main .article-meta .reshares button.reshared:hover i {
+ main .article-meta .reshares .action.reshared i { background: #7765E3; }
+ main .article-meta .reshares .action.reshared:hover i {
  	background: rgba(119, 101, 227, 0.25);
  	color: #7765E3;
  }
 
- main .article-meta .likes button.liked svg.feather,
- main .article-meta .reshares button.reshared i {
+ main .article-meta .likes .action.liked svg.feather,
+ main .article-meta .reshares .action.reshared i {
  	color: #F4F4F4;
  	font-weight: 900;
  }
@@ -796,5 +806,5 @@
  }
 
  .avatar.padded {
- 	margin-right: 1em;
+ 	margin-right: 2rem;
  }

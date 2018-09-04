@@ -497,3 +497,12 @@ msgstr ""
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
+
+msgid "Subtitle"
+msgstr ""
+
+msgid "Login to like"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""

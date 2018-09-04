@@ -496,4 +496,15 @@ msgstr "Enviar"
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
-"Lamentámolo, pero o rexistro en esta instancia está pechado. Inténteo en outra instancia"
+"Lamentámolo, pero o rexistro en esta instancia está pechado. Inténteo en "
+"outra instancia"
+
+#, fuzzy
+msgid "Subtitle"
+msgstr "Título"
+
+msgid "Login to like"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""

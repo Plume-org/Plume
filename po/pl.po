@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-07-28 14:56+0200\n"
+"PO-Revision-Date: 2018-09-04 17:35+0200\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 2.1.1\n"
 
 msgid "Latest articles"
 msgstr "Najnowsze artykuły"
@@ -92,16 +92,15 @@ msgstr "Dodaj swoje"
 
 msgid "One Boost"
 msgid_plural "{{ count }} Boosts"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Jedno podbicie"
+msgstr[1] "{{ count }} podbicia"
+msgstr[2] "{{ count }} podbić"
 
-#, fuzzy
 msgid "I don&#x27;t want to boost this anymore"
-msgstr "Cofnij udostępnienie"
+msgstr "Cofnij podbicie"
 
 msgid "Boost"
-msgstr ""
+msgstr "Podbij"
 
 msgid "Comments"
 msgstr "Komentarze"
@@ -165,9 +164,8 @@ msgstr "Obserwuj"
 msgid "Unfollow"
 msgstr "Przestań obserwować"
 
-#, fuzzy
 msgid "Recently boosted"
-msgstr "Ostatnio udostępniono"
+msgstr "Ostatnio podbite"
 
 msgid "One follower"
 msgid_plural "{{ count }} followers"
@@ -247,9 +245,8 @@ msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
 msgid "You need to be logged in order to write a new post"
 msgstr "Musisz się zalogować, aby utworzyć wpis"
 
-#, fuzzy
 msgid "You need to be logged in order to boost a post"
-msgstr "Musisz się zalogować, aby polubić wpis"
+msgstr "Musisz się zalogować, aby podbić wpis"
 
 msgid "Invalid username or password"
 msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
@@ -268,18 +265,17 @@ msgstr ""
 "Napisano przez {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
 "{{ link_3 }}"
 
-#, fuzzy
 msgid "{{ data }} boosted your article"
-msgstr "{{ data }} skomentował Twój artykuł"
+msgstr "{{ data }} podbił(a) Twój artykuł"
 
 msgid "{{ data }} started following you"
-msgstr "{{ data }} zaczął Cię obserwować"
+msgstr "{{ data }} zaczął(-ęła) Cię obserwować"
 
 msgid "{{ data }} liked your article"
-msgstr "{{ data }} polubił Twój artykuł"
+msgstr "{{ data }} polubił(a) Twój artykuł"
 
 msgid "{{ data }} commented your article"
-msgstr "{{ data }} skomentował Twój artykuł"
+msgstr "{{ data }} skomentował(a) Twój artykuł"
 
 msgid "We couldn&#x27;t find this page."
 msgstr "Nie udało się odnaleźć tej strony."
@@ -294,7 +290,7 @@ msgid "You are not author in this blog."
 msgstr "Nie jesteś autorem tego bloga."
 
 msgid "{{ data }} mentioned you."
-msgstr "{{ data }} wspomniał o Tobie."
+msgstr "{{ data }} wspomniał(a) o Tobie."
 
 msgid "Your comment"
 msgstr "Twój komentarz"
@@ -318,9 +314,8 @@ msgid "We need an email or a username to identify you"
 msgstr ""
 "Potrzebujemy nazwy użytkownika lub adresu e-mail, aby Cię zidentyfikować"
 
-#, fuzzy
 msgid "Your password can't be empty"
-msgstr "Twój komentarz nie może być pusty"
+msgstr "Twoje hasło nie może być puste"
 
 msgid "Passwords are not matching"
 msgstr "Hasła nie pasują do siebie"
@@ -361,20 +356,19 @@ msgid "Next page"
 msgstr "Następna strona"
 
 msgid "{{ user }} mentioned you."
-msgstr "{{ user }} wspomniał o Tobie."
+msgstr "{{ user }} wspomniał(a) o Tobie."
 
 msgid "{{ user }} commented your article."
-msgstr "{{ user }} skomentował Twój artykuł."
+msgstr "{{ user }} skomentował(a) Twój artykuł."
 
 msgid "{{ user }} is now following you."
-msgstr "{{ user }} zaczął Cię obserwować."
+msgstr "{{ user }} zaczął(-ęła) Cię obserwować."
 
 msgid "{{ user }} liked your article."
-msgstr "{{ user }} polubił Twój artykuł."
+msgstr "{{ user }} polubił(a) Twój artykuł."
 
-#, fuzzy
 msgid "{{ user }} boosted your article."
-msgstr "{{ user }} skomentował Twój artykuł."
+msgstr "{{ user }} podbił(a) Twój artykuł."
 
 msgid "Source code"
 msgstr "Kod źródłowy"
@@ -441,7 +435,7 @@ msgid "people"
 msgstr "osób"
 
 msgid "Who wrote"
-msgstr "Którzy napisali"
+msgstr "Które napisały"
 
 msgid "articles"
 msgstr "artykuły"
@@ -449,79 +443,83 @@ msgstr "artykuły"
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
 
-#, fuzzy
 msgid "Delete this article"
-msgstr "Najnowsze artykuły"
+msgstr "Usuń ten artykuł"
 
 msgid "And connected to"
-msgstr ""
+msgstr "Połączony z"
 
-#, fuzzy
 msgid "other instances"
-msgstr "O tej instancji"
+msgstr "innych instancji"
 
-#, fuzzy
 msgid "Administred by"
-msgstr "Administracja"
+msgstr "Administrowany przez"
 
 msgid "Runs Plume {{ version }}"
-msgstr ""
+msgstr "Działa na Plume {{ version }}"
 
-#, fuzzy
 msgid "Your media"
-msgstr "Twój komentarz"
+msgstr "Twoja zawartość multimedialna"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Przejdź do swojej galerii"
 
 msgid "{{ name}}'s avatar'"
-msgstr ""
+msgstr "Awatar {{name}}"
 
 msgid "Media details"
-msgstr ""
+msgstr "Szczegóły zawartości multimedialnej"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Powróć do galerii"
 
-#, fuzzy
 msgid "Markdown code"
-msgstr "Markdown jest obsługiwany"
+msgstr "Kod Markdown"
 
 msgid "Copy it in your articles to insert this media."
-msgstr ""
+msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialną."
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Użyj jako awataru"
 
 msgid "Delete"
-msgstr ""
+msgstr "Usuń"
 
 msgid "Upload"
-msgstr ""
+msgstr "Wyślij"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Nie masz żadnej zawartości multimedialnej."
 
 msgid "Media upload"
-msgstr ""
+msgstr "Wysyłanie zawartości multimedialnej"
 
-#, fuzzy
 msgid "Description"
-msgstr "Szczegółowy opis"
+msgstr "Opis"
 
-#, fuzzy
 msgid "Content warning"
-msgstr "Zawartość"
+msgstr "Ostrzeżenie o zawartości"
 
 msgid "File"
-msgstr ""
+msgstr "Plik"
 
 msgid "Send"
-msgstr ""
+msgstr "Wyślij"
 
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
+"Przepraszamy, rejestracja jest zamknięta na tej instancji. Spróbuj znaleźć "
+"inną"
+
+msgid "Subtitle"
+msgstr "Podtytuł"
+
+msgid "Login to like"
+msgstr "Zaloguj się aby polubić"
+
+msgid "Login to boost"
+msgstr "Zaloguj się aby podbić"
 
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"

@@ -57,7 +57,8 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                 "date": &post.creation_date.timestamp(),
                 "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
                 "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
-                "is_author": user.map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false)
+                "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
+                "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false)
             }))
         })
     })
@@ -98,6 +99,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
 struct NewPostForm {
     #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,
+    pub subtitle: String,
     pub content: String,
     pub license: String
 }
@@ -150,7 +152,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                     Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
                 },
                 ap_url: "".to_string(),
-                creation_date: None
+                creation_date: None,
+                subtitle: form.subtitle.clone()
             });
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
