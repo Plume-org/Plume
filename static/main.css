@@ -164,7 +164,9 @@ main article {
 }
 
 article img {
-	max-width: 100%;
+    max-width: 100%;
+    margin: 3em auto;
+    display: block;
 }
 
 article pre {
