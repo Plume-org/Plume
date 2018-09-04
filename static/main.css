@@ -131,6 +131,13 @@ main h2 {
 	font-weight: 300;
 }
 
+main h2.article {
+    max-width: 40rem;
+    margin: 0.5em auto 1em;
+    color: rgba(36, 36, 36, 0.6);
+    font-size: 1.25em;
+}
+
 /*
  * == Article ==
  */

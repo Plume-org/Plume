@@ -33,20 +33,22 @@ pub struct Post {
     pub published: bool,
     pub license: String,
     pub creation_date: NaiveDateTime,
-    pub ap_url: String
+    pub ap_url: String,
+    pub subtitle: String,
 }
 
 #[derive(Insertable)]
 #[table_name = "posts"]
 pub struct NewPost {
-    pub blog_id: i32,    
+    pub blog_id: i32,
     pub slug: String,
     pub title: String,
     pub content: SafeString,
     pub published: bool,
     pub license: String,
     pub creation_date: Option<NaiveDateTime>,
-    pub ap_url: String
+    pub ap_url: String,
+    pub subtitle: String,
 }
 
 impl Post {
@@ -185,6 +187,7 @@ impl Post {
         article.object_props.set_attributed_to_link_vec::<Id>(authors).expect("Article::into_activity: attributedTo error");
         article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
+        article.object_props.set_summary_string(self.subtitle.clone()).expect("Article::into_activity: summary error");
         article.object_props.set_tag_link_vec(mentions).expect("Article::into_activity: tag error");
         article.object_props.set_url_string(self.ap_url.clone()).expect("Article::into_activity: url error");
         article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Article::into_activity: to error");
@@ -250,7 +253,8 @@ impl FromActivity<Article, PgConnection> for Post {
                 license: String::from("CC-0"), // TODO
                 // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
                 ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error")),
-                creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc())
+                creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc()),
+                subtitle: article.object_props.summary_string().expect("Post::from_activity: summary error")
             });
 
             for author in authors.into_iter() {

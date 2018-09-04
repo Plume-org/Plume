@@ -512,6 +512,10 @@ msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
 
+#, fuzzy
+msgid "Subtitle"
+msgstr "Tittel"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

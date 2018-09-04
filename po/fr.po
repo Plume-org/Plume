@@ -503,4 +503,10 @@ msgstr "Envoyer"
 
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
-msgstr "Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d'en trouver une autre."
+msgstr ""
+"Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d'en "
+"trouver une autre."
+
+#, fuzzy
+msgid "Subtitle"
+msgstr "Titre"

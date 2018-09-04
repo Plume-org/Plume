@@ -11,6 +11,7 @@
 
 {% block content %}
     <h1 class="article">{{ article.post.title }}</h1>
+    <h2 class="article">{{ article.post.subtitle }}</h2>
     <p class="article-info">
         <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}" | _(
             link_1='<a href="/@/',

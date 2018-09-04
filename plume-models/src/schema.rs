@@ -125,6 +125,7 @@ table! {
         license -> Varchar,
         creation_date -> Timestamp,
         ap_url -> Varchar,
+        subtitle -> Text,
     }
 }
 

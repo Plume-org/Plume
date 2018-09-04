@@ -98,6 +98,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
 struct NewPostForm {
     #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,
+    pub subtitle: String,
     pub content: String,
     pub license: String
 }
@@ -150,7 +151,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                     Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
                 },
                 ap_url: "".to_string(),
-                creation_date: None
+                creation_date: None,
+                subtitle: form.subtitle.clone()
             });
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
