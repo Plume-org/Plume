@@ -136,6 +136,20 @@ impl Post {
             .expect("Error loading local posts page")
     }
 
+    /// Give a page of customized user feed, based on a list of followed users
+    pub fn user_feed_page(conn: &PgConnection, followed: Vec<i32>, (min, max): (i32, i32)) -> Vec<Post> {
+        use schema::post_authors;
+        let post_ids = post_authors::table.filter(post_authors::author_id.eq(any(followed)))
+            .select(post_authors::post_id);
+
+        posts::table.order(posts::creation_date.desc())
+            .filter(posts::id.eq(any(post_ids)))
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Post>(conn)
+            .expect("Error loading user feed page")
+    }
+
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;

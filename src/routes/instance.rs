@@ -62,6 +62,23 @@ fn local(conn: DbConn, user: Option<User>) -> Template {
     paginated_local(conn, user, Page::first())
 }
 
+#[get("/feed")]
+fn feed(conn: DbConn, user: User) -> Template {
+    paginated_feed(conn, user, Page::first())
+}
+
+#[get("/feed?<page>")]
+fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {
+    let followed = user.get_following(&*conn);
+    let articles = Post::user_feed_page(&*conn, followed.into_iter().map(|u| u.id).collect(), page.limits());
+    Template::render("instance/feed", json!({
+        "account": user.to_json(&*conn),
+        "page": page.page,
+        "n_pages": Page::total(Post::count_local(&*conn) as i32),
+        "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+    }))
+}
+
 #[get("/admin")]
 fn admin(conn: DbConn, admin: Admin) -> Template {
     Template::render("instance/admin", json!({

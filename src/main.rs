@@ -59,6 +59,8 @@ fn main() {
             routes::instance::index,
             routes::instance::paginated_local,
             routes::instance::local,
+            routes::instance::paginated_feed,
+            routes::instance::feed,
             routes::instance::admin,
             routes::instance::update_settings,
             routes::instance::shared_inbox,
