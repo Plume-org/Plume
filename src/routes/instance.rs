@@ -79,6 +79,22 @@ fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {
     }))
 }
 
+#[get("/federated")]
+fn federated(conn: DbConn, user: Option<User>) -> Template {
+    paginated_federated(conn, user, Page::first())
+}
+
+#[get("/federated?<page>")]
+fn paginated_federated(conn: DbConn, user: Option<User>, page: Page) -> Template {
+    let articles = Post::get_recents_page(&*conn, page.limits());
+    Template::render("instance/federated", json!({
+        "account": user.map(|u| u.to_json(&*conn)),
+        "page": page.page,
+        "n_pages": Page::total(Post::count_local(&*conn) as i32),
+        "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+    }))
+}
+
 #[get("/admin")]
 fn admin(conn: DbConn, admin: Admin) -> Template {
     Template::render("instance/admin", json!({
