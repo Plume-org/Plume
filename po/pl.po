@@ -521,6 +521,30 @@ msgstr "Zaloguj się aby polubić"
 msgid "Login to boost"
 msgstr "Zaloguj się aby podbić"
 
+#, fuzzy
+msgid "Your feed"
+msgstr "Twoja zawartość multimedialna"
+
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr ""
+
+#, fuzzy
+msgid "Articles"
+msgstr "artykuły"
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+#, fuzzy
+msgid "Articles from {{ instance.name }}"
+msgstr "O {{ instance_name }}"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

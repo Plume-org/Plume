@@ -507,12 +507,32 @@ msgstr ""
 "Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d'en "
 "trouver une autre."
 
-#, fuzzy
 msgid "Subtitle"
-msgstr "Titre"
+msgstr "Sous-titre"
 
 msgid "Login to like"
-msgstr ""
+msgstr "Connectez-vous pour aimer."
 
 msgid "Login to boost"
-msgstr ""
+msgstr "Connectez-vous pour booster."
+
+msgid "Your feed"
+msgstr "Votre flux"
+
+msgid "Federated feed"
+msgstr "Flux fédéré"
+
+msgid "Local feed"
+msgstr "Flux local"
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr "Rien par ici pour le moment. Essayez de suivre plus de monde."
+
+msgid "Articles"
+msgstr "Articles"
+
+msgid "All the articles of the Fediverse"
+msgstr "Tous les articles de la Fédiverse"
+
+msgid "Articles from {{ instance.name }}"
+msgstr "Articles de {{ instance_name }}"

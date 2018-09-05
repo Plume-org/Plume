@@ -518,5 +518,29 @@ msgstr ""
 msgid "Login to boost"
 msgstr ""
 
+#, fuzzy
+msgid "Your feed"
+msgstr "Dein Kommentar"
+
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr ""
+
+#, fuzzy
+msgid "Articles"
+msgstr "Artikel geschrieben haben"
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+#, fuzzy
+msgid "Articles from {{ instance.name }}"
+msgstr "Über {{ instance_name }}"
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

@@ -522,6 +522,30 @@ msgstr ""
 msgid "Login to boost"
 msgstr ""
 
+#, fuzzy
+msgid "Your feed"
+msgstr "Din kommentar"
+
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr ""
+
+#, fuzzy
+msgid "Articles"
+msgstr "artikler"
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+#, fuzzy
+msgid "Articles from {{ instance.name }}"
+msgstr "Om {{ instance_name }}"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

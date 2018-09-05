@@ -506,3 +506,25 @@ msgstr ""
 
 msgid "Login to boost"
 msgstr ""
+
+msgid "Your feed"
+msgstr ""
+
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr ""
+
+msgid "Articles"
+msgstr ""
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+#, fuzzy
+msgid "Articles from {{ instance.name }}"
+msgstr "Welcome on {{ instance_name }}"
