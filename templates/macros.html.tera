@@ -70,6 +70,7 @@
             <a href="{{ link }}" {% if loop.index == selected %}class="selected"{% endif %}>{{ titles[idx] | _ }}</a>
         {% endfor %}
     </div>
+{% endmacro %}
 {% macro feather(name) %}
 <svg class="feather">
     <use xlink:href="/static/images/feather-sprite.svg#{{ name }}"/>
