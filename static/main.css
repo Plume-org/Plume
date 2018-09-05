@@ -780,3 +780,22 @@ figcaption {
 .avatar.padded {
     margin-right: 2rem;
 }
+
+/** Tabs **/
+
+.tabs {
+    border-bottom: 1px solid #DADADA;
+    padding: 0px;
+    margin: auto 20% 2em;
+}
+
+.tabs a {
+    display: inline-block;
+    color: #242424;
+    padding: 1em;
+}
+
+.tabs a.selected {
+    color: #7765E3;
+    border-bottom: 1px solid #7765E3;
+}

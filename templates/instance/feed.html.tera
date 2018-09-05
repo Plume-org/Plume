@@ -10,6 +10,8 @@
         {{ "Your feed" | _ }}
     </h1>
 
+    {{ macros::tabs(links=['/', '/feed', '/federated', '/local'], titles=['Latest articles', 'Your feed', 'Federated feed', 'Local feed'], selected=2) }}
+
     {% if articles | length > 0 %}
         <div class="cards">
             {% for article in articles %}

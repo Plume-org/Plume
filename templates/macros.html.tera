@@ -63,3 +63,11 @@
         {% endfor %}
     </div>
 {% endmacro %}
+{% macro tabs(links, titles, selected) %}
+    <div class="tabs">
+        {% for link in links %}
+            {% set idx = loop.index0 %}
+            <a href="{{ link }}" {% if loop.index == selected %}class="selected"{% endif %}>{{ titles[idx] | _ }}</a>
+        {% endfor %}
+    </div>
+{% endmacro %}
