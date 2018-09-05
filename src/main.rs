@@ -55,7 +55,6 @@ fn main() {
 
             routes::comments::create,
 
-            routes::instance::paginated_index,
             routes::instance::index,
             routes::instance::paginated_local,
             routes::instance::local,

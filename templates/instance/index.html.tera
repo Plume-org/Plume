@@ -10,47 +10,16 @@
 
     {% if account %}
         {{ macros::tabs(links=['/', '/feed', '/federated', '/local'], titles=['Latest articles', 'Your feed', 'Federated feed', 'Local feed'], selected=1) }}
+
+        {{ macros::home_feed(title='Your feed', link='/feed', articles=user_feed) }}
+        {{ macros::home_feed(title='Federated feed', link='/federated', articles=federated) }}
+        {{ macros::home_feed(title='Local feed', link='/local', articles=local) }}
+        {% include "instance/description" %}
     {% else %}
         {{ macros::tabs(links=['/', '/federated', '/local'], titles=['Latest articles', 'Federated feed', 'Local feed'], selected=1) }}
+
+        {{ macros::home_feed(title='Federated feed', link='/federated', articles=federated) }}
+        {% include "instance/description" %}
+        {{ macros::home_feed(title='Local feed', link='/local', articles=local) }}
     {% endif %}
-
-    <div class="cards">
-        {% for article in recents %}
-            {{ macros::post_card(article=article) }}
-        {% endfor %}
-    </div>
-    {{ macros::paginate(page=page, total=n_pages) }}
-
-    <section class="spaced">
-        <div class="cards">
-            <div class="presentation card">
-                <h2>{{ "What is Plume?" | _ }}</h2>
-                <main>
-                    <p>{{ "Plume is a decentralized blogging engine." | _ }}</p>
-                    <p>{{ "Authors can manage various blogs from an unique website." | _ }}</p>
-                    <p>{{ "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon." | _ }}</p>
-                </main>
-                <a href="/users/new">{{ "Create your account" | _ }}</a>
-            </div>
-            <div class="presentation card">
-                <h2>{{ "About {{ instance_name }}" | _(instance_name=instance.name) }}</h2>
-                <main>
-                    {{ instance.short_description_html | safe }}
-                    <section class="stats">
-                        <div>
-                            <p>{{ "Home to" | _ }}</p>
-                            <em>{{ n_users }}</em>
-                            <p>{{ "people" | _ }}</p>
-                        </div>
-                        <div>
-                            <p>{{ "Who wrote" | _ }}</p>
-                            <em>{{ n_articles }}</em>
-                            <p>{{ "articles" | _ }}</p>
-                        </div>
-                    </section>
-                </main>
-                <a href="/about">{{ "Read the detailed rules" | _ }}</a>
-            </div>
-        </div>
-    </section>
 {% endblock content %}

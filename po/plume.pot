@@ -516,3 +516,6 @@ msgstr ""
 
 msgid "Articles from {{ instance.name }}"
 msgstr ""
+
+msgid "View all"
+msgstr ""

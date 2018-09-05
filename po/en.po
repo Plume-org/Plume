@@ -528,3 +528,6 @@ msgstr ""
 #, fuzzy
 msgid "Articles from {{ instance.name }}"
 msgstr "Welcome on {{ instance_name }}"
+
+msgid "View all"
+msgstr ""

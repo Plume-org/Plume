@@ -76,3 +76,11 @@
     <use xlink:href="/static/images/feather-sprite.svg#{{ name }}"/>
 </svg>
 {% endmacro %}
+{% macro home_feed(title, link, articles) %}
+    <h2>{{ title | _ }} &mdash; <a href="{{ link }}">{{ "View all" | _ }}</a></h2>
+    <div class="cards spaced">
+        {% for article in articles %}
+            {{ macros::post_card(article=article) }}
+        {% endfor %}
+    </div>
+{% endmacro %}

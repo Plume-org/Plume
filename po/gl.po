@@ -532,3 +532,6 @@ msgstr ""
 #, fuzzy
 msgid "Articles from {{ instance.name }}"
 msgstr "Acerca de {{ instance_name }}"
+
+msgid "View all"
+msgstr ""

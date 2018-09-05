@@ -545,6 +545,9 @@ msgstr ""
 msgid "Articles from {{ instance.name }}"
 msgstr "O {{ instance_name }}"
 
+msgid "View all"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

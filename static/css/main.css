@@ -41,6 +41,10 @@
  	margin: 4rem 0;
  }
 
+ .cards.spaced {
+     margin: 1rem 0 5rem;
+ }
+
  .banner {
  	background: #DADADA;
  	padding-top: 2em;

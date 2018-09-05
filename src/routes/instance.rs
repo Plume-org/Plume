@@ -15,18 +15,23 @@ use plume_models::{
 use inbox::Inbox;
 use routes::Page;
 
-#[get("/?<page>")]
-fn paginated_index(conn: DbConn, user: Option<User>, page: Page) -> Template {
+#[get("/")]
+fn index(conn: DbConn, user: Option<User>) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
-            let recents = Post::get_recents_page(&*conn, page.limits());
+            let federated = Post::get_recents_page(&*conn, Page::first().limits());
+            let local = Post::get_instance_page(&*conn, inst.id, Page::first().limits());
+            let user_feed = user.clone().map(|user| {
+                let followed = user.get_following(&*conn);
+                Post::user_feed_page(&*conn, followed.into_iter().map(|u| u.id).collect(), Page::first().limits())
+            });
 
             Template::render("instance/index", json!({
                 "instance": inst,
                 "account": user.map(|u| u.to_json(&*conn)),
-                "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-                "page": page.page,
-                "n_pages": Page::total(Post::count(&*conn) as i32),
+                "federated": federated.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "local": local.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                "user_feed": user_feed.map(|f| f.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()),
                 "n_users": User::count_local(&*conn),
                 "n_articles": Post::count_local(&*conn)
             }))
@@ -37,11 +42,6 @@ fn paginated_index(conn: DbConn, user: Option<User>, page: Page) -> Template {
             }))
         }
     }
-}
-
-#[get("/")]
-fn index(conn: DbConn, user: Option<User>) -> Template {
-    paginated_index(conn, user, Page::first())
 }
 
 #[get("/local?<page>")]

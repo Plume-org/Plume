@@ -542,5 +542,8 @@ msgstr ""
 msgid "Articles from {{ instance.name }}"
 msgstr "Über {{ instance_name }}"
 
+msgid "View all"
+msgstr ""
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

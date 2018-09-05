@@ -536,3 +536,6 @@ msgstr "Tous les articles de la Fédiverse"
 
 msgid "Articles from {{ instance.name }}"
 msgstr "Articles de {{ instance.name }}"
+
+msgid "View all"
+msgstr "Tout afficher"
