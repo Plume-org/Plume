@@ -57,7 +57,7 @@
             <small>@{{ comm.author.fqn }}</small>
         </a>
         <div class="text">{{ comm.content | safe }}</div>
-        <a class="button" href="?responding_to={{ comm.id }}">{{ "Respond" | _ }}</a>
+        <a class="button icon icon-message-circle" href="?responding_to={{ comm.id }}">{{ "Respond" | _ }}</a>
         {% for res in comm.responses %}
             {{ self::comment(comm=res) }}
         {% endfor %}
@@ -70,4 +70,8 @@
             <a href="{{ link }}" {% if loop.index == selected %}class="selected"{% endif %}>{{ titles[idx] | _ }}</a>
         {% endfor %}
     </div>
+{% macro feather(name) %}
+<svg class="feather">
+    <use xlink:href="/static/images/feather-sprite.svg#{{ name }}"/>
+</svg>
 {% endmacro %}
