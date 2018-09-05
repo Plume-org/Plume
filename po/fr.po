@@ -535,4 +535,4 @@ msgid "All the articles of the Fediverse"
 msgstr "Tous les articles de la Fédiverse"
 
 msgid "Articles from {{ instance.name }}"
-msgstr "Articles de {{ instance_name }}"
+msgstr "Articles de {{ instance.name }}"
