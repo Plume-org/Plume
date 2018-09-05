@@ -140,6 +140,15 @@ table! {
 }
 
 table! {
+    tags (id) {
+        id -> Int4,
+        tag -> Text,
+        is_hastag -> Bool,
+        post_id -> Int4,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
@@ -178,6 +187,7 @@ joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
 joinable!(reshares -> posts (post_id));
 joinable!(reshares -> users (user_id));
+joinable!(tags -> posts (post_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
@@ -193,5 +203,6 @@ allow_tables_to_appear_in_same_query!(
     post_authors,
     posts,
     reshares,
+    tags,
     users,
 );

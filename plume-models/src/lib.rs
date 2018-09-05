@@ -119,4 +119,5 @@ pub mod posts;
 pub mod reshares;
 pub mod safe_string;
 pub mod schema;
+pub mod tags;
 pub mod users;
