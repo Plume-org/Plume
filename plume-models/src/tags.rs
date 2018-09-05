@@ -1,7 +1,7 @@
 use diesel::{self, PgConnection, ExpressionMethods, RunQueryDsl, QueryDsl};
 use schema::tags;
 
-#[derive(Queryable)]
+#[derive(Serialize, Queryable)]
 pub struct Tag {
     pub id: i32,
     pub tag: String,
@@ -20,4 +20,5 @@ pub struct NewTag {
 impl Tag {
     insert!(tags, NewTag);
     get!(tags);
+    list_by!(tags, for_post, post_id as i32);
 }

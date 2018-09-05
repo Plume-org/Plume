@@ -217,10 +217,27 @@
  }
  main .article-meta > * { margin: 0 20%; }
 
- main .article-meta > p {
- 	margin: 2em 20%;
+main .article-meta > p {
+    margin: 2em 20%;
  	font-size: 0.9em;
- }
+}
+
+/** Tags **/
+
+main .article-meta .tags {
+    list-style: none;
+    display: inline-block;
+    padding: 0px;
+    margin-bottom: 2em;
+}
+
+main .article-meta .tags li {
+    display: inline;
+    background: #DADADA;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 3px;
+}
 
  /* ~ Likes ~ */
 

@@ -34,6 +34,11 @@
 
     <div class="article-meta">
         <p>{{ "This article is under the {{ license }} license." | _(license=article.post.license) }}</p>
+        <ul class="tags">
+            {% for tag in article.tags %}
+                <li>{{ tag.tag }}</li>
+            {% endfor %}
+        </ul>
         <div class="flex">
             <img src="{{ author.avatar }}" alt="{{ author.name }}" class="avatar medium padded">
             <div class="grow">

@@ -19,6 +19,7 @@ use likes::Like;
 use mentions::Mention;
 use post_authors::*;
 use reshares::Reshare;
+use tags::Tag;
 use users::User;
 use schema::posts;
 use safe_string::SafeString;
@@ -244,7 +245,8 @@ impl Post {
             "author": self.get_authors(conn)[0].to_json(conn),
             "url": format!("/~/{}/{}/", blog.get_fqn(conn), self.slug),
             "date": self.creation_date.timestamp(),
-            "blog": blog.to_json(conn)
+            "blog": blog.to_json(conn),
+            "tags": Tag::for_post(&*conn, self.id)
         })
     }
 

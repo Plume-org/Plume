@@ -1,5 +1,5 @@
 use activitypub::object::Article;
-use heck::KebabCase;
+use heck::{CamelCase, KebabCase};
 use rocket::{State, request::LenientForm};
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
@@ -19,6 +19,7 @@ use plume_models::{
     post_authors::*,
     posts::*,
     safe_string::SafeString,
+    tags::*,
     users::User
 };
 
@@ -101,6 +102,7 @@ struct NewPostForm {
     pub title: String,
     pub subtitle: String,
     pub content: String,
+    pub tags: String,
     pub license: String
 }
 
@@ -163,6 +165,15 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
 
             for m in mentions.into_iter() {
                 Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true);
+            }
+
+            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0);
+            for tag in tags {
+                Tag::insert(&*conn, NewTag {
+                    tag: tag,
+                    is_hastag: false,
+                    post_id: post.id
+                });
             }
 
             let act = post.create_activity(&*conn);
