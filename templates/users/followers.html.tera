@@ -8,7 +8,10 @@
 {% block content %}
     {% include "users/header" %}
 
-    <h2>{{ "Followers" | _ }}</h2>
+    {% set user_link = ['/@', user.fqn] %}
+    {% set followers_link = ['/@', user.fqn, 'followers'] %}
+    {{ macros::tabs(links=[ user_link | join(sep='/'), followers_link | join(sep='/')], titles=['Articles', 'Followers'], selected=2) }}
+
     <div class="cards">
     {% for follower in followers %}
         <div class="card">

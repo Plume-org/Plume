@@ -799,3 +799,7 @@ figcaption {
     color: #7765E3;
     border-bottom: 1px solid #7765E3;
 }
+
+.user-summary {
+    margin: 2em 0px;
+}
