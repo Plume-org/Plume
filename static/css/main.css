@@ -835,9 +835,16 @@ figcaption {
  	.card {
  		min-width: 80%;
  		min-height: 80%;
-     }
+    }
 
-     .tabs {
-         margin: auto 0px 2em;
-     }
+    .tabs {
+        margin: auto 0px 2em;
+    }
+
+    .stats { flex-direction: column; }
+    body > footer {
+        flex-direction: column;
+        align-items: center;
+    }
+    body > footer * { margin: 1em auto; }
  }
