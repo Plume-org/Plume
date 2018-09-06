@@ -9,7 +9,7 @@ use heck::KebabCase;
 use serde_json;
 
 use plume_common::activity_pub::{
-    Hashtag,
+    Hashtag, Source,
     PUBLIC_VISIBILTY, Id, IntoId,
     inbox::{Deletable, FromActivity}
 };
@@ -37,6 +37,7 @@ pub struct Post {
     pub creation_date: NaiveDateTime,
     pub ap_url: String,
     pub subtitle: String,
+    pub source: String,
 }
 
 #[derive(Insertable)]
@@ -51,6 +52,7 @@ pub struct NewPost {
     pub creation_date: Option<NaiveDateTime>,
     pub ap_url: String,
     pub subtitle: String,
+    pub source: String,
 }
 
 impl Post {
@@ -239,6 +241,10 @@ impl Post {
         authors.push(self.get_blog(conn).into_id()); // add the blog URL here too
         article.object_props.set_attributed_to_link_vec::<Id>(authors).expect("Article::into_activity: attributedTo error");
         article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
+        article.ap_object_props.set_source_object(Source {
+            content: self.source.clone(),
+            media_type: String::from("text/markdown"),
+        }).expect("Article::into_activity: source error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
         article.object_props.set_summary_string(self.subtitle.clone()).expect("Article::into_activity: summary error");
         article.object_props.tag = Some(json!(mentions_json.append(&mut tags_json)));
@@ -308,7 +314,8 @@ impl FromActivity<Article, PgConnection> for Post {
                 // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
                 ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error")),
                 creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc()),
-                subtitle: article.object_props.summary_string().expect("Post::from_activity: summary error")
+                subtitle: article.object_props.summary_string().expect("Post::from_activity: summary error"),
+                source: article.ap_object_props.source_object::<Source>().expect("Post::from_activity: source error").content
             });
 
             for author in authors.into_iter() {

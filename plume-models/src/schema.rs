@@ -126,6 +126,7 @@ table! {
         creation_date -> Timestamp,
         ap_url -> Varchar,
         subtitle -> Text,
+        source -> Text,
     }
 }
 

@@ -175,3 +175,13 @@ pub struct Hashtag {
     #[activitystreams(concrete(String), functional)]
     pub name: Option<serde_json::Value>,
 }
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Source {
+    pub media_type: String,
+
+    pub content: String,
+}
+
+impl Object for Source {}
