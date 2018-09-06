@@ -1,7 +1,7 @@
 {% macro post_card(article) %}
     <div class="card">
         <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
-        <main
+        <main>
             <p>
                 {% if article.post.subtitle | length > 0 %}
                     {{ article.post.subtitle }}
