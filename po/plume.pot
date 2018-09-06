@@ -519,3 +519,6 @@ msgstr ""
 
 msgid "View all"
 msgstr ""
+
+msgid "Articles tagged \"{{ tag }}\""
+msgstr ""

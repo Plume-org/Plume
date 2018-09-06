@@ -5,7 +5,7 @@ use ap_url;
 use instance::Instance;
 use schema::tags;
 
-#[derive(Serialize, Queryable)]
+#[derive(Serialize, Queryable, Clone)]
 pub struct Tag {
     pub id: i32,
     pub tag: String,
@@ -24,12 +24,13 @@ pub struct NewTag {
 impl Tag {
     insert!(tags, NewTag);
     get!(tags);
+    find_by!(tags, find_by_name, tag as String);
     list_by!(tags, for_post, post_id as i32);
 
     pub fn into_activity(&self, conn: &PgConnection) -> Hashtag {
-        let ht = Hashtag::default();
+        let mut ht = Hashtag::default();
         ht.set_href_string(ap_url(format!("{}/tag/{}", Instance::get_local(conn).unwrap().public_domain, self.tag))).expect("Tag::into_activity: href error");
-        ht.set_name_string(self.tag).expect("Tag::into_activity: name error");
+        ht.set_name_string(self.tag.clone()).expect("Tag::into_activity: name error");
         ht
     }
 

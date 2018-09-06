@@ -548,6 +548,10 @@ msgstr "O {{ instance_name }}"
 msgid "View all"
 msgstr ""
 
+#, fuzzy
+msgid "Articles tagged \"{{ tag }}\""
+msgstr "O {{ instance_name }}"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

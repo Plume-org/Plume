@@ -101,6 +101,9 @@ fn main() {
 
             routes::static_files,
 
+            routes::tags::tag,
+            routes::tags::paginated_tag,
+
             routes::user::me,
             routes::user::details,
             routes::user::dashboard,

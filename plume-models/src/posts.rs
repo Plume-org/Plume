@@ -59,6 +59,27 @@ impl Post {
     find_by!(posts, find_by_slug, slug as String, blog_id as i32);
     find_by!(posts, find_by_ap_url, ap_url as String);
 
+    pub fn list_by_tag(conn: &PgConnection, tag: String, (min, max): (i32, i32)) -> Vec<Post> {
+        use schema::tags;
+
+        let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
+        posts::table.filter(posts::id.eq(any(ids)))
+            .order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .get_results::<Post>(conn)
+            .expect("Error loading posts by tag")
+    }
+
+    pub fn count_for_tag(conn: &PgConnection, tag: String) -> i64 {
+        use schema::tags;
+        let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
+        posts::table.filter(posts::id.eq(any(ids)))
+            .count()
+            .get_result(conn)
+            .expect("Error counting posts by tag")
+    }
+
     pub fn count_local(conn: &PgConnection) -> usize {
         use schema::post_authors;
         use schema::users;
@@ -220,7 +241,7 @@ impl Post {
         article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
         article.object_props.set_summary_string(self.subtitle.clone()).expect("Article::into_activity: summary error");
-        article.object_props.tag = json!(mentions_json.append(&mut tags_json));
+        article.object_props.tag = Some(json!(mentions_json.append(&mut tags_json)));
         article.object_props.set_url_string(self.ap_url.clone()).expect("Article::into_activity: url error");
         article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Article::into_activity: to error");
         article.object_props.set_cc_link_vec::<Id>(vec![]).expect("Article::into_activity: cc error");
@@ -300,11 +321,11 @@ impl FromActivity<Article, PgConnection> for Post {
             // save mentions and tags
             if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
                 for tag in tags.into_iter() {
-                    serde_json::from_value::<link::Mention>(tag)
+                    serde_json::from_value::<link::Mention>(tag.clone())
                         .map(|m| Mention::from_activity(conn, m, post.id, true))
                         .ok();
 
-                    serde_json::from_value::<Hashtag>(tag)
+                    serde_json::from_value::<Hashtag>(tag.clone())
                         .map(|t| Tag::from_activity(conn, t, post.id))
                         .ok();
                 }
