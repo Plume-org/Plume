@@ -71,6 +71,17 @@ macro_rules! insert {
     };
 }
 
+macro_rules! update {
+    ($table:ident) => {
+        pub fn update(&self, conn: &PgConnection) -> Self {
+            diesel::update(self)
+                .set(self)
+                .get_result(conn)
+                .expect(concat!("Error updating ", stringify!($table)))
+        }
+    };
+}
+
 sql_function!(nextval, nextval_t, (seq: ::diesel::sql_types::Text) -> ::diesel::sql_types::BigInt);
 sql_function!(setval, setval_t, (seq: ::diesel::sql_types::Text, val: ::diesel::sql_types::BigInt) -> ::diesel::sql_types::BigInt);
 

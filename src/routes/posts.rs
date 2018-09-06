@@ -90,9 +90,113 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
         Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
+            "editing": false,
             "errors": null,
             "form": null
         }))
+    }
+}
+
+#[get("/~/<blog>/<slug>/edit")]
+fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
+    let b = Blog::find_by_fqn(&*conn, blog.to_string());
+    let post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug, blog.id)).expect("Post to edit not found");
+
+    if !user.is_author_in(&*conn, b.clone().unwrap()) {
+        Template::render("errors/403", json!({
+            "error_message": "You are not author in this blog."
+        }))
+    } else {
+        Template::render("posts/new", json!({
+            "account": user.to_json(&*conn),
+            "instance": Instance::get_local(&*conn),
+            "editing": true,
+            "errors": null,
+            "form": NewPostForm {
+                title: post.title.clone(),
+                subtitle: post.subtitle.clone(),
+                content: post.source.clone(),
+                tags: Tag::for_post(&*conn, post.id)
+                    .into_iter()
+                    .map(|t| t.tag)
+                    .collect::<Vec<String>>()
+                    .join(", "),
+                license: post.license.clone(),
+            }
+        }))
+    }
+}
+
+#[post("/~/<blog>/<slug>/edit", data = "<data>")]
+fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
+    let b = Blog::find_by_fqn(&*conn, blog.to_string());
+    let mut post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug, blog.id)).expect("Post to update not found");
+
+    let form = data.get();
+    let new_slug = form.title.to_string().to_kebab_case();
+
+    let mut errors = match form.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(e) => e
+    };
+    if let Some(_) = Post::find_by_slug(&*conn, new_slug.clone(), b.unwrap().id) {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A post with the same title already exists.")),
+            params: HashMap::new()
+        });
+    }
+
+    if errors.is_empty() {
+        if !user.is_author_in(&*conn, b.clone().unwrap()) {
+            // actually it's not "Ok"…
+            Ok(Redirect::to(uri!(super::blogs::details: name = blog)))
+        } else {
+            let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
+
+            let license = if form.license.len() > 0 {
+                form.license.to_string()
+            } else {
+                Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
+            };
+
+            post.slug = new_slug.clone();
+            post.title = form.title.clone();
+            post.subtitle = form.subtitle.clone();
+            post.content = SafeString::new(&content);
+            post.source = form.content.clone();
+            post.license = license;
+            post.update(&*conn);
+            let post = post.update_ap_url(&*conn);
+
+            for m in mentions.into_iter() {
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true);
+            }
+
+            let old_tags = Tag::for_post(&*conn, post.id).into_iter().map(|t| t.tag).collect::<Vec<_>>();
+            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0 && !old_tags.contains(t));
+            for tag in tags {
+                Tag::insert(&*conn, NewTag {
+                    tag: tag,
+                    is_hastag: false,
+                    post_id: post.id
+                });
+            }
+
+            let act = post.update_activity(&*conn);
+            let followers = user.get_followers(&*conn);
+            worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
+
+            Ok(Redirect::to(uri!(details: blog = blog, slug = slug)))
+        }
+    } else {
+        Err(Template::render("posts/new", json!({
+            "account": user.to_json(&*conn),
+            "instance": Instance::get_local(&*conn),
+            "editing": false,
+            "errors": errors.inner(),
+            "form": form
+        })))
     }
 }
 
@@ -187,11 +291,13 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         Err(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
+            "editing": false,
             "errors": errors.inner(),
             "form": form
         })))
     }
 }
+
 
 #[get("/~/<blog_name>/<slug>/delete")]
 fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
