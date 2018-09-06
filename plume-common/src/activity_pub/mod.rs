@@ -158,3 +158,20 @@ pub struct PublicKey {
     #[activitystreams(concrete(String), functional)]
     pub public_key_pem: Option<serde_json::Value>
 }
+
+#[derive(Clone, Debug, Default, UnitString)]
+#[activitystreams(Hashtag)]
+pub struct HashtagType;
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
+#[serde(rename_all = "camelCase")]
+pub struct Hashtag {
+    #[serde(rename = "type")]
+    kind: HashtagType,
+
+    #[activitystreams(concrete(String), functional)]
+    pub href: Option<serde_json::Value>,
+
+    #[activitystreams(concrete(String), functional)]
+    pub name: Option<serde_json::Value>,
+}

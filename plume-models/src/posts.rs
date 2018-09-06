@@ -9,6 +9,7 @@ use heck::KebabCase;
 use serde_json;
 
 use plume_common::activity_pub::{
+    Hashtag,
     PUBLIC_VISIBILTY, Id, IntoId,
     inbox::{Deletable, FromActivity}
 };
@@ -206,7 +207,8 @@ impl Post {
         let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
-        let mentions = Mention::list_for_post(conn, self.id).into_iter().map(|m| m.to_activity(conn)).collect::<Vec<link::Mention>>();
+        let mut mentions_json = Mention::list_for_post(conn, self.id).into_iter().map(|m| json!(m.to_activity(conn))).collect::<Vec<serde_json::Value>>();
+        let mut tags_json = Tag::for_post(conn, self.id).into_iter().map(|t| json!(t.into_activity(conn))).collect::<Vec<serde_json::Value>>();
 
         let mut article = Article::default();
         article.object_props.set_name_string(self.title.clone()).expect("Article::into_activity: name error");
@@ -218,7 +220,7 @@ impl Post {
         article.object_props.set_content_string(self.content.get().clone()).expect("Article::into_activity: content error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Article::into_activity: published error");
         article.object_props.set_summary_string(self.subtitle.clone()).expect("Article::into_activity: summary error");
-        article.object_props.set_tag_link_vec(mentions).expect("Article::into_activity: tag error");
+        article.object_props.tag = json!(mentions_json.append(&mut tags_json));
         article.object_props.set_url_string(self.ap_url.clone()).expect("Article::into_activity: url error");
         article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Article::into_activity: to error");
         article.object_props.set_cc_link_vec::<Id>(vec![]).expect("Article::into_activity: cc error");
@@ -295,11 +297,15 @@ impl FromActivity<Article, PgConnection> for Post {
                 });
             }
 
-            // save mentions
+            // save mentions and tags
             if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
                 for tag in tags.into_iter() {
                     serde_json::from_value::<link::Mention>(tag)
                         .map(|m| Mention::from_activity(conn, m, post.id, true))
+                        .ok();
+
+                    serde_json::from_value::<Hashtag>(tag)
+                        .map(|t| Tag::from_activity(conn, t, post.id))
                         .ok();
                 }
             }
