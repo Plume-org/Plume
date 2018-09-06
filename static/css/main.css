@@ -232,12 +232,24 @@ main .article-meta .tags {
 }
 
 main .article-meta .tags li {
-    display: inline;
+    display: inline-block;
     background: #DADADA;
-    padding: 10px 20px;
+    padding: 0px;
     margin-right: 10px;
     border-radius: 3px;
+    transition: all 0.2s ease-in;
 }
+
+main .article-meta .tags li:hover {
+    background: #BBB;
+}
+
+main .article-meta .tags li a {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #242424;
+}
+
 
  /* ~ Likes ~ */
 
