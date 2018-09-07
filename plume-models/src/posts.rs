@@ -233,6 +233,7 @@ impl Post {
 
         let mut mentions_json = Mention::list_for_post(conn, self.id).into_iter().map(|m| json!(m.to_activity(conn))).collect::<Vec<serde_json::Value>>();
         let mut tags_json = Tag::for_post(conn, self.id).into_iter().map(|t| json!(t.into_activity(conn))).collect::<Vec<serde_json::Value>>();
+        mentions_json.append(&mut tags_json);
 
         let mut article = Article::default();
         article.object_props.set_name_string(self.title.clone()).expect("Post::into_activity: name error");
@@ -248,7 +249,7 @@ impl Post {
         }).expect("Post::into_activity: source error");
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Post::into_activity: published error");
         article.object_props.set_summary_string(self.subtitle.clone()).expect("Post::into_activity: summary error");
-        article.object_props.tag = Some(json!(mentions_json.append(&mut tags_json)));
+        article.object_props.tag = Some(json!(mentions_json));
         article.object_props.set_url_string(self.ap_url.clone()).expect("Post::into_activity: url error");
         article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Post::into_activity: to error");
         article.object_props.set_cc_link_vec::<Id>(vec![]).expect("Post::into_activity: cc error");
@@ -258,7 +259,7 @@ impl Post {
     pub fn create_activity(&self, conn: &PgConnection) -> Create {
         let article = self.into_activity(conn);
         let mut act = Create::default();
-        act.object_props.set_id_string(format!("{}/activity", self.ap_url)).expect("Post::create_activity: id error");
+        act.object_props.set_id_string(format!("{}activity", self.ap_url)).expect("Post::create_activity: id error");
         act.object_props.set_to_link_vec::<Id>(article.object_props.to_link_vec().expect("Post::create_activity: Couldn't copy 'to'"))
             .expect("Post::create_activity: to error");
         act.object_props.set_cc_link_vec::<Id>(article.object_props.cc_link_vec().expect("Post::create_activity: Couldn't copy 'cc'"))
