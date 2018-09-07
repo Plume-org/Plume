@@ -86,6 +86,8 @@ fn main() {
             routes::posts::details,
             routes::posts::details_response,
             routes::posts::activity_details,
+            routes::posts::edit,
+            routes::posts::update,
             routes::posts::new,
             routes::posts::new_auth,
             routes::posts::create,

@@ -2,11 +2,21 @@
 {% import "macros" as macros %}
 
 {% block title %}
-{{ "New post" | _ }}
+    {% if editing %}
+        {{ "Edit {{ post }}" | _(post=form.title) }}
+    {% else %}
+        {{ "New post" | _ }}
+    {% endif %}
 {% endblock title %}
 
 {% block content %}
-<h1>{{ "Create a post" | _ }}</h1>
+<h1>
+    {% if editing %}
+        {{ "Edit {{ post }}" | _(post=form.title) }}
+    {% else %}
+        {{ "Create a post" | _ }}
+    {% endif %}
+</h1>
 <form class="new-post" method="post">
     {{ macros::input(name="title", label="Title", errors=errors, form=form, props="required") }}
     {{ macros::input(name="subtitle", label="Subtitle", errors=errors, form=form, optional=true) }}
@@ -18,14 +28,18 @@
     {% endif %}
 
     <label for="content">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
-    <textarea id="content" name="content" value="{{ form.content | default(value="") }}" rows="20"></textarea>
+    <textarea id="content" name="content" rows="20">{{ form.content | default(value="") }}</textarea>
 
     {{ macros::input(name="tags", label="Tags, separated by commas", errors=errors, form=form, optional=true) }}
 
     {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
     {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
 
-    <input type="submit" value="{{ "Publish" | _ }}" />
+    {% if editing %}
+        <input type="submit" value="{{ "Update" | _ }}" />
+    {% else %}
+        <input type="submit" value="{{ "Publish" | _ }}" />
+    {% endif %}
 </form>
 <script src="/static/js/autoExpand.js"></script>
 {% endblock content %}

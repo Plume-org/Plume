@@ -281,29 +281,32 @@ impl Post {
         act
     }
 
-    pub fn handle_update(&mut self, conn: &PgConnection, updated: Article) {
+    pub fn handle_update(conn: &PgConnection, updated: Article) {
+        let id = updated.object_props.id_string().expect("Post::handle_update: id error");
+        let mut post = Post::find_by_ap_url(conn, id).unwrap();
+
         if let Ok(title) = updated.object_props.name_string() {
-            self.slug = title.to_kebab_case();
-            self.title = title;
+            post.slug = title.to_kebab_case();
+            post.title = title;
         }
 
         if let Ok(content) = updated.object_props.content_string() {
-            self.content = SafeString::new(&content);
+            post.content = SafeString::new(&content);
         }
 
         if let Ok(subtitle) = updated.object_props.summary_string() {
-            self.subtitle = subtitle;
+            post.subtitle = subtitle;
         }
 
         if let Ok(ap_url) = updated.object_props.url_string() {
-            self.ap_url = ap_url;
+            post.ap_url = ap_url;
         }
 
         if let Ok(source) = updated.ap_object_props.source_object::<Source>() {
-            self.source = source.content;
+            post.source = source.content;
         }
 
-        self.update(conn);
+        post.update(conn);
     }
 
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {

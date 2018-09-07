@@ -522,3 +522,6 @@ msgstr ""
 
 msgid "Articles tagged \"{{ tag }}\""
 msgstr ""
+
+msgid "Edit"
+msgstr ""

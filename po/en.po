@@ -535,3 +535,6 @@ msgstr ""
 #, fuzzy
 msgid "Articles tagged \"{{ tag }}\""
 msgstr "Welcome on {{ instance_name }}"
+
+msgid "Edit"
+msgstr ""

@@ -553,6 +553,9 @@ msgstr ""
 msgid "Articles tagged \"{{ tag }}\""
 msgstr "Om {{ instance_name }}"
 
+msgid "Edit"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

@@ -107,6 +107,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
             "error_message": "You are not author in this blog."
         }))
     } else {
+        println!("Source: {}", post.source.clone());
         Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
@@ -130,7 +131,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
 #[post("/~/<blog>/<slug>/edit", data = "<data>")]
 fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
     let b = Blog::find_by_fqn(&*conn, blog.to_string());
-    let mut post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug, blog.id)).expect("Post to update not found");
+    let mut post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug.clone(), blog.id)).expect("Post to update not found");
 
     let form = data.get();
     let new_slug = form.title.to_string().to_kebab_case();
@@ -139,12 +140,15 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Some(_) = Post::find_by_slug(&*conn, new_slug.clone(), b.unwrap().id) {
-        errors.add("title", ValidationError {
-            code: Cow::from("existing_slug"),
-            message: Some(Cow::from("A post with the same title already exists.")),
-            params: HashMap::new()
-        });
+
+    if new_slug != slug {
+        if let Some(_) = Post::find_by_slug(&*conn, new_slug.clone(), b.clone().unwrap().id) {
+            errors.add("title", ValidationError {
+                code: Cow::from("existing_slug"),
+                message: Some(Cow::from("A post with the same title already exists.")),
+                params: HashMap::new()
+            });
+        }
     }
 
     if errors.is_empty() {
@@ -187,13 +191,13 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             let followers = user.get_followers(&*conn);
             worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
 
-            Ok(Redirect::to(uri!(details: blog = blog, slug = slug)))
+            Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
         }
     } else {
         Err(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
-            "editing": false,
+            "editing": true,
             "errors": errors.inner(),
             "form": form
         })))

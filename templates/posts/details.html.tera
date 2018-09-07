@@ -25,6 +25,8 @@
         <span class="date">{{ date | date(format="%B %e, %Y") }}</span>
         {% if is_author %}
             &mdash;
+            <a href="{{ article.url}}edit">{{ "Edit" | _ }}</a>
+            &mdash;
             <a href="{{ article.url}}delete" onclick="return confirm('Are you sure you?')">{{ "Delete this article" | _ }}</a>
         {% endif %}
     </p>

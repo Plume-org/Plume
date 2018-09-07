@@ -543,3 +543,6 @@ msgstr "Tout afficher"
 #, fuzzy
 msgid "Articles tagged \"{{ tag }}\""
 msgstr "Articles de {{ instance.name }}"
+
+msgid "Edit"
+msgstr ""
