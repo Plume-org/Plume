@@ -540,9 +540,14 @@ msgstr "Articles de {{ instance.name }}"
 msgid "View all"
 msgstr "Tout afficher"
 
-#, fuzzy
 msgid "Articles tagged \"{{ tag }}\""
-msgstr "Articles de {{ instance.name }}"
+msgstr "Articles taggués « {{ instance.name }} »"
 
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
+
+msgid "Edit {{ post }}"
+msgstr "Modifier « {{ post }} »"
+
+msgid "Update"
+msgstr "Mettre à jour"

@@ -525,3 +525,9 @@ msgstr ""
 
 msgid "Edit"
 msgstr ""
+
+msgid "Edit {{ post }}"
+msgstr ""
+
+msgid "Update"
+msgstr ""

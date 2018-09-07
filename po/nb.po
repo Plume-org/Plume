@@ -556,6 +556,14 @@ msgstr "Om {{ instance_name }}"
 msgid "Edit"
 msgstr ""
 
+#, fuzzy
+msgid "Edit {{ post }}"
+msgstr "Kommentér \"{{ post }}\""
+
+#, fuzzy
+msgid "Update"
+msgstr "Oppdater konto"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

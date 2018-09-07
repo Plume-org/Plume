@@ -552,5 +552,13 @@ msgstr "Über {{ instance_name }}"
 msgid "Edit"
 msgstr ""
 
+#, fuzzy
+msgid "Edit {{ post }}"
+msgstr "Kommentar \"{{ post }}\""
+
+#, fuzzy
+msgid "Update"
+msgstr "Account aktualisieren"
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

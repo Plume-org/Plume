@@ -542,3 +542,11 @@ msgstr "Acerca de {{ instance_name }}"
 
 msgid "Edit"
 msgstr ""
+
+#, fuzzy
+msgid "Edit {{ post }}"
+msgstr "Comentar \"{{ post }}\""
+
+#, fuzzy
+msgid "Update"
+msgstr "Actualizar conta"
