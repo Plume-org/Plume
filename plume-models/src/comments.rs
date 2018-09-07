@@ -57,7 +57,7 @@ impl Comment {
     }
 
     pub fn get_post(&self, conn: &PgConnection) -> Post {
-        Post::get(conn, self.post_id).unwrap()        
+        Post::get(conn, self.post_id).unwrap()
     }
 
     pub fn count_local(conn: &PgConnection) -> usize {

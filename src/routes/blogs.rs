@@ -65,7 +65,10 @@ fn new(user: User, conn: DbConn) -> Template {
 
 #[get("/blogs/new", rank = 2)]
 fn new_auth() -> Flash<Redirect>{
-    utils::requires_login("You need to be logged in order to create a new blog", uri!(new))
+    utils::requires_login(
+        "You need to be logged in order to create a new blog",
+        uri!(new).into()
+    )
 }
 
 #[derive(FromForm, Validate, Serialize)]

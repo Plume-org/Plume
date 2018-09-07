@@ -22,5 +22,8 @@ fn notifications(conn: DbConn, user: User) -> Template {
 
 #[get("/notifications", rank = 2)]
 fn notifications_auth() -> Flash<Redirect>{
-    utils::requires_login("You need to be logged in order to see your notifications", uri!(notifications))
+    utils::requires_login(
+        "You need to be logged in order to see your notifications",
+        uri!(notifications).into()
+    )
 }

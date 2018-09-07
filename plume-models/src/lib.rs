@@ -1,3 +1,5 @@
+#![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
+
 extern crate activitypub;
 extern crate ammonia;
 extern crate bcrypt;
