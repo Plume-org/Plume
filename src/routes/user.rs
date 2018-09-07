@@ -257,6 +257,7 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
             Redirect::to(uri!(super::session::new))
         })
         .map_err(|e| Template::render("users/new", json!({
+            "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
             "errors": e.inner(),
             "form": form
         })))
