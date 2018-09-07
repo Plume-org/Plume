@@ -57,7 +57,7 @@ impl Comment {
     }
 
     pub fn get_post(&self, conn: &PgConnection) -> Post {
-        Post::get(conn, self.post_id).unwrap()        
+        Post::get(conn, self.post_id).unwrap()
     }
 
     pub fn count_local(conn: &PgConnection) -> usize {
@@ -105,7 +105,7 @@ impl FromActivity<Note, PgConnection> for Comment {
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
         });
 
-        // save mentionsd
+        // save mentions
         if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
             for tag in tags.into_iter() {
                 serde_json::from_value::<link::Mention>(tag)

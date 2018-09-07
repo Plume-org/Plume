@@ -108,6 +108,11 @@ impl Deletable<PgConnection, Undo> for Follow {
     fn delete(&self, conn: &PgConnection) -> Undo {
         diesel::delete(self).execute(conn).expect("Coudn't delete follow");
 
+        // delete associated notification if any
+        if let Some(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
+            diesel::delete(&notif).execute(conn).expect("Couldn't delete follow notification");
+        }
+
         let mut undo = Undo::default();
         undo.undo_props.set_actor_link(User::get(conn, self.follower_id).unwrap().into_id()).expect("Follow::delete: actor error");
         undo.object_props.set_id_string(format!("{}/undo", self.ap_url)).expect("Follow::delete: id error");

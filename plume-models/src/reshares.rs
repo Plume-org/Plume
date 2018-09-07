@@ -102,6 +102,11 @@ impl Deletable<PgConnection, Undo> for Reshare {
     fn delete(&self, conn: &PgConnection) -> Undo {
         diesel::delete(self).execute(conn).unwrap();
 
+        // delete associated notification if any
+        if let Some(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
+            diesel::delete(&notif).execute(conn).expect("Couldn't delete reshare notification");
+        }
+
         let mut act = Undo::default();
         act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
         act.undo_props.set_object_object(self.into_activity(conn)).unwrap();
