@@ -36,7 +36,7 @@ use Worker;
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
         Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
-        None => Err(utils::requires_login("", uri!(me)))
+        None => Err(utils::requires_login("", uri!(me).into()))
     }
 }
 
@@ -111,7 +111,10 @@ fn dashboard(user: User, conn: DbConn) -> Template {
 
 #[get("/dashboard", rank = 2)]
 fn dashboard_auth() -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to access your dashboard", uri!(dashboard))
+    utils::requires_login(
+        "You need to be logged in order to access your dashboard",
+        uri!(dashboard).into()
+    )
 }
 
 #[get("/@/<name>/follow")]
@@ -136,7 +139,10 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
 
 #[get("/@/<name>/follow", rank = 2)]
 fn follow_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to follow someone", uri!(follow: name = name))
+    utils::requires_login(
+        "You need to be logged in order to follow someone",
+        uri!(follow: name = name).into()
+    )
 }
 
 #[get("/@/<name>/followers?<page>")]
@@ -195,7 +201,10 @@ fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
 
 #[get("/@/<name>/edit", rank = 2)]
 fn edit_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to edit your profile", uri!(edit: name = name))
+    utils::requires_login(
+        "You need to be logged in order to edit your profile",
+        uri!(edit: name = name).into()
+    )
 }
 
 #[derive(FromForm)]
@@ -276,8 +285,8 @@ fn inbox(name: String, conn: DbConn, data: String) -> String {
     match user.received(&*conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
-            println!("User inbox error: {}\n{}", e.cause(), e.backtrace());
-            format!("Error: {}", e.cause())
+            println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());
+            format!("Error: {}", e.as_fail())
         }
     }
 }

@@ -17,7 +17,7 @@ pub fn make_actor_id(name: String) -> String {
 }
 
 pub fn requires_login(message: &str, url: Uri) -> Flash<Redirect> {
-    Flash::new(Redirect::to(Uri::new(format!("/login?m={}", gettext(message.to_string())))), "callback", url.as_str())
+    Flash::new(Redirect::to(format!("/login?m={}", gettext(message.to_string()))), "callback", url.to_string())
 }
 
 /// Returns (HTML, mentions)

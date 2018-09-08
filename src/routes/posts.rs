@@ -75,7 +75,10 @@ fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) ->
 
 #[get("/~/<blog>/new", rank = 2)]
 fn new_auth(blog: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to write a new post", uri!(new: blog = blog))
+    utils::requires_login(
+        "You need to be logged in order to write a new post",
+        uri!(new: blog = blog).into()
+    )
 }
 
 #[get("/~/<blog>/new", rank = 1)]

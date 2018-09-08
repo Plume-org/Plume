@@ -4,6 +4,7 @@ use rocket::{
     request::{LenientForm,FlashMessage}
 };
 use rocket_contrib::Template;
+use rocket::http::ext::IntoOwned;
 use std::borrow::Cow;
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -72,10 +73,26 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
 
     if errors.is_empty() {
         cookies.add_private(Cookie::new(AUTH_COOKIE, user.unwrap().id.to_string()));
-        Ok(Redirect::to(Uri::new(flash
-            .and_then(|f| if f.name() == "callback" { Some(f.msg().to_owned()) } else { None })
-            .unwrap_or("/".to_owned()))
-        ))
+
+        let destination = flash
+            .and_then(|f| if f.name() == "callback" {
+                Some(f.msg().to_owned())
+            } else {
+                None
+            })
+            .unwrap_or("/".to_owned());
+
+        let uri = Uri::parse(&destination)
+            .map(|x| x.into_owned())
+            .map_err(|_| {
+            Template::render("session/login", json!({
+                "account": null,
+                "errors": errors.inner(),
+                "form": form
+            }))
+        })?;
+
+        Ok(Redirect::to(uri))
     } else {
         println!("{:?}", errors);
         Err(Template::render("session/login", json!({
