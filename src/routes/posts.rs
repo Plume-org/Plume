@@ -107,7 +107,12 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
             "error_message": "You are not author in this blog."
         }))
     } else {
-        println!("Source: {}", post.source.clone());
+        let source = if post.source.clone().len() > 0 {
+            post.source.clone()
+        } else {
+            post.content.clone().get().clone() // fallback to HTML if the markdown was not stored
+        };
+
         Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
@@ -116,7 +121,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
             "form": NewPostForm {
                 title: post.title.clone(),
                 subtitle: post.subtitle.clone(),
-                content: post.source.clone(),
+                content: source,
                 tags: Tag::for_post(&*conn, post.id)
                     .into_iter()
                     .map(|t| t.tag)
