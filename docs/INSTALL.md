@@ -182,6 +182,7 @@ Here is a sample Nginx configuration for a Plume instance (replace `blog.example
 ```nginx
 server {
     listen 80;
+    listen [::]:80;
     server_name blog.example.com;
 
     location /.well-known/acme-challenge {}
@@ -191,11 +192,13 @@ server {
 }
 
 server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name blog.example.org;
+    
     access_log  /var/log/nginx/access.log;
     root /home/plume/Plume/ ;
 
-    listen [::]:443 ssl; # managed by Certbot
     SSLCertificateFile /etc/letsencrypt/live/blog.example.com/cert.pem
     SSLCertificateKeyFile /etc/letsencrypt/live/blog.example.com/privkey.pem
     SSLCertificateChainFile /etc/letsencrypt/live/blog.example.com/chain.pem
