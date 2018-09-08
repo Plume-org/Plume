@@ -109,8 +109,11 @@ impl FromActivity<Note, PgConnection> for Comment {
         if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
             for tag in tags.into_iter() {
                 serde_json::from_value::<link::Mention>(tag)
-                    .map(|m| Mention::from_activity(conn, m, comm.id, false))
-                    .ok();
+                    .map(|m| {
+                        let author = &Post::get(conn, comm.post_id).unwrap().get_authors(conn)[0];
+                        let not_author = m.link_props.href_string().expect("Comment mention: no href") != author.ap_url.clone();
+                        Mention::from_activity(conn, m, comm.id, false, not_author)
+                    }).ok();
             }
         }
 

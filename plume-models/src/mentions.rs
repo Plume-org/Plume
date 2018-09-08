@@ -69,7 +69,7 @@ impl Mention {
         mention
     }
 
-    pub fn from_activity(conn: &PgConnection, ment: link::Mention, inside: i32, in_post: bool) -> Option<Self> {
+    pub fn from_activity(conn: &PgConnection, ment: link::Mention, inside: i32, in_post: bool, notify: bool) -> Option<Self> {
         let ap_url = ment.link_props.href_string().ok()?;
         let mentioned = User::find_by_ap_url(conn, ap_url)?;
 
@@ -81,7 +81,9 @@ impl Mention {
                     comment_id: None,
                     ap_url: ment.link_props.href_string().unwrap_or(String::new())
                 });
-                res.notify(conn);
+                if notify {
+                    res.notify(conn);
+                }
                 res
             })
         } else {
@@ -92,7 +94,9 @@ impl Mention {
                     comment_id: Some(comment.id),
                     ap_url: ment.link_props.href_string().unwrap_or(String::new())
                 });
-                res.notify(conn);
+                if notify {
+                    res.notify(conn);
+                }
                 res
             })
         }

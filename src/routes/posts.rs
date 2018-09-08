@@ -179,7 +179,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             let post = post.update_ap_url(&*conn);
 
             for m in mentions.into_iter() {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true);
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
             }
 
             let old_tags = Tag::for_post(&*conn, post.id).into_iter().map(|t| t.tag).collect::<Vec<_>>();
@@ -278,7 +278,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             });
 
             for m in mentions.into_iter() {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true);
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
             }
 
             let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0);

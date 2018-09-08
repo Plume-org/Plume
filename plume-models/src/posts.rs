@@ -372,7 +372,7 @@ impl FromActivity<Article, PgConnection> for Post {
             if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
                 for tag in tags.into_iter() {
                     serde_json::from_value::<link::Mention>(tag.clone())
-                        .map(|m| Mention::from_activity(conn, m, post.id, true))
+                        .map(|m| Mention::from_activity(conn, m, post.id, true, true))
                         .ok();
 
                     serde_json::from_value::<Hashtag>(tag.clone())
