@@ -155,7 +155,7 @@ fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template
 }
 
 #[get("/admin/instances/<id>/block")]
-fn toggle_block(admin: Admin, conn: DbConn, id: i32) -> Redirect {
+fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     if let Some(inst) = Instance::get(&*conn, id) {
         inst.toggle_block(&*conn);
     }
@@ -166,6 +166,13 @@ fn toggle_block(admin: Admin, conn: DbConn, id: i32) -> Redirect {
 #[post("/inbox", data = "<data>")]
 fn shared_inbox(conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+
+    let activity = act.clone();
+    let actor_id = activity["actor"].as_str()
+        .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("No actor ID for incoming activity, blocks by panicking"));
+    if Instance::is_blocked(&*conn, actor_id.to_string()) {
+        return String::new();
+    }
     let instance = Instance::get_local(&*conn).unwrap();
     match instance.received(&*conn, act) {
         Ok(_) => String::new(),

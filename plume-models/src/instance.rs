@@ -75,6 +75,19 @@ impl Instance {
             .expect("Couldn't block/unblock instance");
     }
 
+    /// id: AP object id
+    pub fn is_blocked(conn: &PgConnection, id: String) -> bool {
+        for block in instances::table.filter(instances::blocked.eq(true))
+            .get_results::<Instance>(conn)
+            .expect("Error listing blocked instances") {
+            if id.starts_with(format!("https://{}", block.public_domain).as_str()) {
+                return true;
+            }
+        }
+
+        false
+    }
+
     pub fn has_admin(&self, conn: &PgConnection) -> bool {
         users::table.filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))

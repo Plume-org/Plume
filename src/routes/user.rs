@@ -282,6 +282,13 @@ fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
 fn inbox(name: String, conn: DbConn, data: String) -> String {
     let user = User::find_local(&*conn, name).unwrap();
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+
+    let activity = act.clone();
+    let actor_id = activity["actor"].as_str()
+        .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("User: No actor ID for incoming activity, blocks by panicking"));
+    if Instance::is_blocked(&*conn, actor_id.to_string()) {
+        return String::new();
+    }
     match user.received(&*conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
