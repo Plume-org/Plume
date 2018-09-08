@@ -1,4 +1,4 @@
-#![feature(custom_derive, decl_macro, plugin)]
+#![feature(custom_derive, plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
@@ -13,6 +13,7 @@ extern crate heck;
 extern crate multipart;
 extern crate plume_common;
 extern crate plume_models;
+#[macro_use]
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;

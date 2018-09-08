@@ -170,8 +170,8 @@ fn shared_inbox(conn: DbConn, data: String) -> String {
     match instance.received(&*conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
-            println!("Shared inbox error: {}\n{}", e.cause(), e.backtrace());
-            format!("Error: {}", e.cause())
+            println!("Shared inbox error: {}\n{}", e.as_fail(), e.backtrace());
+            format!("Error: {}", e.as_fail())
         }
     }
 }
