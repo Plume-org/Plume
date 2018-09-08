@@ -17,13 +17,15 @@ Administration of {{ instance.name }}
                     <a href="https://{{ instance.public_domain }}">{{ instance.name }}</a>
                     <small>{{ instance.public_domain }}</small>
                 </p>
-                <a href="/admin/instances/{{ instance.id }}/block">
-                    {% if instance.blocked %}
-                        Unblock
-                    {% else %}
-                        Block
-                    {% endif %}
-                </a>
+                {% if not instance.local %}
+                    <a href="/admin/instances/{{ instance.id }}/block">
+                        {% if instance.blocked %}
+                            Unblock
+                        {% else %}
+                            Block
+                        {% endif %}
+                    </a>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

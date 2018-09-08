@@ -68,8 +68,11 @@ impl Instance {
     get!(instances);
     find_by!(instances, find_by_domain, public_domain as String);
 
-    pub fn block(&self) {
-        unimplemented!()
+    pub fn toggle_block(&self, conn: &PgConnection) {
+        diesel::update(self)
+            .set(instances::blocked.eq(!self.blocked))
+            .get_result::<Instance>(conn)
+            .expect("Couldn't block/unblock instance");
     }
 
     pub fn has_admin(&self, conn: &PgConnection) -> bool {

@@ -154,6 +154,15 @@ fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template
     }))
 }
 
+#[get("/admin/instances/<id>/block")]
+fn toggle_block(admin: Admin, conn: DbConn, id: i32) -> Redirect {
+    if let Some(inst) = Instance::get(&*conn, id) {
+        inst.toggle_block(&*conn);
+    }
+
+    Redirect::to(uri!(admin_instances))
+}
+
 #[post("/inbox", data = "<data>")]
 fn shared_inbox(conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
