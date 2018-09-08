@@ -63,6 +63,8 @@ fn main() {
             routes::instance::paginated_federated,
             routes::instance::federated,
             routes::instance::admin,
+            routes::instance::admin_instances,
+            routes::instance::admin_instances_paginated,
             routes::instance::update_settings,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,

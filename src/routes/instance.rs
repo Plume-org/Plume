@@ -137,6 +137,23 @@ fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSetting
         })))
 }
 
+#[get("/admin/instances")]
+fn admin_instances(admin: Admin, conn: DbConn) -> Template {
+    admin_instances_paginated(admin, conn, Page::first())
+}
+
+#[get("/admin/instances?<page>")]
+fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
+    let instances = Instance::page(&*conn, page.limits());
+    Template::render("instance/list", json!({
+        "account": admin.0.to_json(&*conn),
+        "instances": instances,
+        "instance": Instance::get_local(&*conn),
+        "page": page.page,
+        "n_pages": Page::total(Instance::count(&*conn) as i32),
+    }))
+}
+
 #[post("/inbox", data = "<data>")]
 fn shared_inbox(conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();

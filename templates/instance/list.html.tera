@@ -1,0 +1,31 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+Administration of {{ instance.name }}
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ "Instances" | _ }}</h1>
+
+    {{ macros::tabs(links=['/admin', '/admin/instances'], titles=['Configuration', 'Instances'], selected=2) }}
+
+    <div class="list">
+        {% for instance in instances %}
+            <div class="flex">
+                <p class="grow">
+                    <a href="https://{{ instance.public_domain }}">{{ instance.name }}</a>
+                    <small>{{ instance.public_domain }}</small>
+                </p>
+                <a href="/admin/instances/{{ instance.id }}/block">
+                    {% if instance.blocked %}
+                        Unblock
+                    {% else %}
+                        Block
+                    {% endif %}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    {{ macros::paginate(page=page, total=n_pages) }}
+{% endblock content %}

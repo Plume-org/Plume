@@ -52,6 +52,14 @@ impl Instance {
             .expect("Error loading remote instances infos")
     }
 
+    pub fn page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Instance> {
+        instances::table.order(instances::public_domain.asc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Instance>(conn)
+            .expect("Error loading a page of instances")
+    }
+
     pub fn local_id(conn: &PgConnection) -> i32 {
         Instance::get_local(conn).unwrap().id
     }
