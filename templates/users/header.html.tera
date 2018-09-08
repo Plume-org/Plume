@@ -1,12 +1,13 @@
 <div class="user">
-    <div class="flex">
+    <div class="flex wrap">
         <img class="avatar medium" src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
 
-        <h1 class="grow">
+        <h1 class="grow flex vertical">
             {{ user.name }}
-
             <small>@{{ user.fqn }}</small>
+        </h1>
 
+        <p>
             {% if user.is_admin %}
                 <span class="badge">{{ "Admin" | _ }}</span>
             {% endif %}
@@ -14,10 +15,11 @@
             {% if is_self %}
                 <span class="badge">{{ "It is you" | _ }}</span>
             {% endif %}
-        </h1>
-        {% if is_self %}
-            <a href="/@/{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
-        {% endif %}
+
+            {% if is_self %}
+                <a href="/@/{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
+            {% endif %}
+        </p>
     </div>
 
     {% if is_remote %}

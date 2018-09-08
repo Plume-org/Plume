@@ -542,10 +542,10 @@ main .article-meta .tags li a {
  	display: flex;
  	flex-direction: row;
  	align-items: center;
- 	margin-bottom: 0;
+    margin: 0px;
  }
  .badge {
- 	margin-left: 1em;
+ 	margin-right: 1em;
  	padding: 0.35em 1em;
 
  	background: #F4F4F4;
@@ -664,6 +664,16 @@ main .article-meta .tags li a {
     flex: 1;
 }
 
+.flex.vertical {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.flex.vertical small {
+    margin: initial;
+}
+
 .left-icon {
     align-self: center;
     padding: 1em;
@@ -718,6 +728,7 @@ figcaption {
 
 .avatar {
     border-radius: 100%;
+    text-align: center; /* for alt-text */
 }
 
 .avatar.small {
@@ -875,4 +886,6 @@ figcaption {
         align-items: center;
     }
     body > footer * { margin: 1em auto; }
+
+    .flex.wrap { flex-direction: column; }
  }
