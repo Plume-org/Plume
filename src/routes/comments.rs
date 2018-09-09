@@ -43,9 +43,9 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             let instance = Instance::get_local(&*conn).unwrap();
             instance.received(&*conn, serde_json::to_value(new_comment.clone()).expect("JSON serialization error"))
                 .expect("We are not compatible with ourselve: local broadcast failed (new comment)");
-            let followers = user.get_followers(&*conn);
+            let dest = User::one_by_instance(&*conn);
             let user_clone = user.clone();
-            worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, followers)));
+            worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, dest)));
 
             Redirect::to(format!(uri!(super::posts::details: blog_name = blog_name, slug = slug))
         })

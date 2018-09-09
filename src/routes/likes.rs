@@ -25,14 +25,14 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
         like.update_ap_url(&*conn);
         like.notify(&*conn);
 
-        let followers = user.get_followers(&*conn);
+        let dest = User::one_by_instance(&*conn);
         let act = like.into_activity(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
+        worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id).unwrap();
         let delete_act = like.delete(&*conn);
-        let followers = user.get_followers(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, delete_act, followers)));
+        let dest = User::one_by_instance(&*conn);
+        worker.execute(Thunk::of(move || broadcast(&user, delete_act, dest)));
     }
 
     Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))

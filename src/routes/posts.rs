@@ -196,8 +196,8 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             }
 
             let act = post.update_activity(&*conn);
-            let followers = user.get_followers(&*conn);
-            worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
+            let dest = User::one_by_instance(&*conn);
+            worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
 
             Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
         }
@@ -294,8 +294,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             }
 
             let act = post.create_activity(&*conn);
-            let followers = user.get_followers(&*conn);
-            worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
+            let dest = User::one_by_instance(&*conn);
+            worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
 
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
@@ -320,9 +320,9 @@ fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Sta
         if !post.get_authors(&*conn).into_iter().any(|a| a.id == user.id) {
             Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone()))
         } else {
-            let audience = user.get_followers(&*conn);
+            let dest = User::one_by_instance(&*conn);
             let delete_activity = post.delete(&*conn);
-            worker.execute(Thunk::of(move || broadcast(&user, delete_activity, audience)));
+            worker.execute(Thunk::of(move || broadcast(&user, delete_activity, dest)));
 
             Redirect::to(uri!(super::blogs::details: name = blog_name))
         }
