@@ -12,7 +12,6 @@ use plume_common::activity_pub::{
     inbox::{FromActivity, Notify}
 };
 use plume_common::utils;
-use ap_url;
 use instance::Instance;
 use mentions::Mention;
 use notifications::*;
