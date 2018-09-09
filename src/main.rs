@@ -123,6 +123,7 @@ fn main() {
             routes::user::edit,
             routes::user::edit_auth,
             routes::user::update,
+            routes::user::delete,
             routes::user::follow,
             routes::user::follow_auth,
             routes::user::activity_details,

@@ -494,6 +494,16 @@ main .article-meta .tags li a {
  	color: white;
  }
 
+.button.destructive {
+    color: #ef767a;
+    border-color: #ef767a;
+}
+
+.button.destructive:hover {
+    background: #ef767a99;
+    color: white;
+}
+
  /* Errors */
 
  p.error {

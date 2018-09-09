@@ -7,7 +7,7 @@ use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     request::LenientForm,
     response::{Redirect, Flash, Content},
-    http::ContentType
+    http::{ContentType, Cookies}
 };
 use rocket_contrib::Template;
 use serde_json;
@@ -222,6 +222,21 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
         data.get().summary.clone().unwrap_or(user.summary.to_string())
     );
     Redirect::to(uri!(me))
+}
+
+#[get("/@/<name>/delete")]
+fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Redirect {
+    let account = User::find_by_fqn(&*conn, name.clone()).unwrap();
+    if user.id == account.id {
+        account.delete(&*conn);
+
+        let cookie = cookies.get_private(AUTH_COOKIE).unwrap();
+        cookies.remove_private(cookie);
+
+        Redirect::to(uri!(super::instance::index))
+    } else {
+        Redirect::to(uri!(edit: name = name))
+    }
 }
 
 #[derive(FromForm, Serialize, Validate)]

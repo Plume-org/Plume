@@ -8,7 +8,7 @@
 <h1>{{ "Your Profile" | _ }}</h1>
 <form method="post">
     <!-- Rocket hack to use various HTTP methods -->
-    <input type=hidden name="_method" value="put">    
+    <input type=hidden name="_method" value="put">
 
     <label for="display_name">{{ "Display Name" | _ }}</label>
     <input name="display_name" value="{{ account.display_name }}">
@@ -21,4 +21,12 @@
 
     <input type="submit" value="{{ "Update account" | _ }}"/>
 </form>
+
+<h2>{{ "Danger zone" | _ }}</h2>
+<p>{{ "Be very careful, any action taken here can't be cancelled." | _ }}
+{% if not account.is_admin %}
+    <p><a class="inline-block button destructive" href="/@/{{ account.fqn }}/delete">{{ "Delete your account" | _ }}</a></p>
+{% else %}
+    <p>{{ "Sorry, but as an admin, you can't leave your instance." | _ }}</p>
+{% endif %}
 {% endblock content %}
