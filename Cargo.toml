@@ -47,7 +47,7 @@ rev = "55459db7732b9a240826a5c120c650f87e3372ce"
 
 [dependencies.rocket_csrf]
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "6fc55d26f91f057a20e89ece71d4443e797e7d21"
+rev = "90a4aeca839c7de914bf10e5cd1288a8054a069a"
 
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"

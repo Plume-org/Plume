@@ -145,13 +145,13 @@ fn main() {
             rocket_i18n::tera(&mut engines.tera);
         }))
         .attach(rocket_i18n::I18n::new("plume"))
-        // .attach(CsrfFairingBuilder::new()
-        //         .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
-        //         .add_exceptions(vec![
-        //             ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
-        //             ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
-        //             ("/~/<blog>/<slug>".to_owned(), "/~/<blog>/<slug>".to_owned(), rocket::http::Method::Post),
-        //         ])
-        //         .finalize().unwrap())
+        .attach(CsrfFairingBuilder::new()
+                .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
+                .add_exceptions(vec![
+                    ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
+                    ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
+                    ("/~/<blog>/<slug>".to_owned(), "/~/<blog>/<slug>".to_owned(), rocket::http::Method::Post),
+                ])
+                .finalize().unwrap())
         .launch();
 }
