@@ -8,7 +8,7 @@ Administration of {{ instance.name }}
 {% block content %}
     <h1>{{ "Instances" | _ }}</h1>
 
-    {{ macros::tabs(links=['/admin', '/admin/instances'], titles=['Configuration', 'Instances'], selected=2) }}
+    {{ macros::tabs(links=['/admin', '/admin/instances', '/admin/users'], titles=['Configuration', 'Instances', 'Users'], selected=2) }}
 
     <div class="list">
         {% for instance in instances %}

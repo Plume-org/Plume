@@ -163,6 +163,30 @@ fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     Redirect::to(uri!(admin_instances))
 }
 
+#[get("/admin/users")]
+fn admin_users(admin: Admin, conn: DbConn) -> Template {
+    admin_users_paginated(admin, conn, Page::first())
+}
+
+#[get("/admin/users?<page>")]
+fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
+    let users = User::get_local_page(&*conn, page.limits()).into_iter()
+        .map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>();
+
+    Template::render("instance/users", json!({
+        "account": admin.0.to_json(&*conn),
+        "users": users,
+        "page": page.page,
+        "n_pages": Page::total(User::count_local(&*conn) as i32)
+    }))
+}
+
+#[get("/admin/users/<id>/ban")]
+fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
+    User::get(&*conn, id).map(|u| u.delete(&*conn));
+    Redirect::to(uri!(admin_users))
+}
+
 #[post("/inbox", data = "<data>")]
 fn shared_inbox(conn: DbConn, data: String) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();

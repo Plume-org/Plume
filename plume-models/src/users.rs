@@ -100,6 +100,10 @@ impl User {
     find_by!(users, find_by_name, username as String, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as String);
 
+    pub fn delete(&self, conn: &PgConnection) {
+        diesel::delete(self).execute(conn).expect("Couldn't remove user from DB");
+    }
+
     pub fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).expect("Couldn't find instance")
     }
@@ -295,6 +299,15 @@ impl User {
                 .set(users::followers_endpoint.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "followers")))
                 .get_result::<User>(conn).expect("Couldn't update followers endpoint");
         }
+    }
+
+    pub fn get_local_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<User> {
+        users::table.filter(users::instance_id.eq(1))
+            .order(users::username.asc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<User>(conn)
+            .expect("Error getting local users page")
     }
 
     pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
