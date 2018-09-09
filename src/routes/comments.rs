@@ -33,7 +33,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
     let form = data.get();
     form.validate()
         .map(|_| {
-            let (new_comment, id) = NewComment::build()
+            let (new_comment, _) = NewComment::build()
                 .content(form.content.clone())
                 .in_response_to_id(form.responding_to.clone())
                 .post(post.clone())
@@ -47,7 +47,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             let user_clone = user.clone();
             worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, dest)));
 
-            Redirect::to(format!(uri!(super::posts::details: blog_name = blog_name, slug = slug))
+            Redirect::to(uri!(super::posts::details: blog = blog_name, slug = slug))
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code

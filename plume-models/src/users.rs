@@ -100,7 +100,7 @@ impl User {
     find_by!(users, find_by_name, username as String, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as String);
 
-    pub fn one_by_instance(&self, conn: &PgConnection) -> Vec<User> {
+    pub fn one_by_instance(conn: &PgConnection) -> Vec<User> {
         users::table.distinct_on(users::instance_id)
             .get_results::<User>(conn)
             .expect("Error in User::on_by_instance")
