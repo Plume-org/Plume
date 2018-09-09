@@ -13,7 +13,7 @@ Users
     <div class="list">
         {% for user in users %}
             <div class="flex">
-                <img src="{{ user.avatar }}" class="avatar small" alt="{{ user.name }}">
+                <img src="{{ user.avatar }}" class="avatar small padded" alt="{{ user.name }}">
                 <p class="grow">
                     <a href="/@/{{ user.fqn }}">{{ user.name }}</a>
                     <small>@{{ user.username }}</small>
