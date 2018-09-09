@@ -12,7 +12,7 @@ use plume_common::activity_pub::{
     inbox::{FromActivity, Notify}
 };
 use plume_common::utils;
-use {get_next_id, ap_url};
+use ap_url;
 use instance::Instance;
 use mentions::Mention;
 use notifications::*;
@@ -83,8 +83,54 @@ impl Comment {
         json
     }
 
+    pub fn update_ap_url(&self, conn: &PgConnection) -> Comment {
+        if self.ap_url.is_none() {
+            diesel::update(self)
+                .set(comments::ap_url.eq(self.compute_id(conn)))
+                .get_result(conn)
+                .expect("Failed to update comment AP URL")
+        } else {
+            self.clone()
+        }
+    }
+
     pub fn compute_id(&self, conn: &PgConnection) -> String {
-        ap_url(format!("{}#comment-{}", self.get_post(conn).ap_url, self.id))
+        ap_url(format!("{}comment/{}", self.get_post(conn).ap_url, self.id))
+    }
+
+    pub fn into_activity(&self, conn: &PgConnection) -> Note {
+        let (html, mentions) = utils::md_to_html(self.content.get().as_ref());
+
+        let author = User::get(conn, self.author_id).unwrap();
+        let mut note = Note::default();
+        let to = vec![Id::new(PUBLIC_VISIBILTY.to_string())];
+
+        note.object_props.set_id_string(self.ap_url.clone().unwrap_or(String::new())).expect("NewComment::create: note.id error");
+        note.object_props.set_summary_string(self.spoiler_text.clone()).expect("NewComment::create: note.summary error");
+        note.object_props.set_content_string(html).expect("NewComment::create: note.content error");
+        note.object_props.set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(|| Post::get(conn, self.post_id).unwrap().ap_url, |id| {
+            let comm = Comment::get(conn, id).unwrap();
+            comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
+        }))).expect("NewComment::create: note.in_reply_to error");
+        note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("NewComment::create: note.published error");
+        note.object_props.set_attributed_to_link(author.clone().into_id()).expect("NewComment::create: note.attributed_to error");
+        note.object_props.set_to_link_vec(to.clone()).expect("NewComment::create: note.to error");
+        note.object_props.set_tag_link_vec(mentions.into_iter().map(|m| Mention::build_activity(conn, m)).collect::<Vec<link::Mention>>())
+            .expect("NewComment::create: note.tag error");
+        note
+    }
+
+    pub fn create_activity(&self, conn: &PgConnection) -> Create {
+        let author = User::get(conn, self.author_id).unwrap();
+
+        let note = self.into_activity(conn);
+        let mut act = Create::default();
+        act.create_props.set_actor_link(author.into_id()).expect("NewComment::create_acitivity: actor error");
+        act.create_props.set_object_object(note.clone()).expect("NewComment::create_acitivity: object error");
+        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).expect("NewComment::create_acitivity: id error");
+        act.object_props.set_to_link_vec(note.object_props.to_link_vec::<Id>().expect("WTF")).expect("NewComment::create_acitivity: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("NewComment::create_acitivity: cc error");
+        act
     }
 }
 
@@ -131,74 +177,5 @@ impl Notify<PgConnection> for Comment {
                 user_id: author.id
             });
         }
-    }
-}
-
-impl NewComment {
-    pub fn build() -> Self {
-        NewComment::default()
-    }
-
-    pub fn content<T: AsRef<str>>(mut self, val: T) -> Self {
-        self.content = SafeString::new(val.as_ref());
-        self
-    }
-
-    pub fn in_response_to_id(mut self, val: Option<i32>) -> Self {
-        self.in_response_to_id = val;
-        self
-    }
-
-    pub fn post(mut self, post: Post) -> Self {
-        self.post_id = post.id;
-        self
-    }
-
-    pub fn author(mut self, author: User) -> Self {
-        self.author_id = author.id;
-        self
-    }
-
-    pub fn create(mut self, conn: &PgConnection) -> (Create, i32) {
-        let post = Post::get(conn, self.post_id).unwrap();
-        // We have to manually compute it since the new comment haven't been inserted yet, and it needs the activity we are building to be created
-        let next_id = get_next_id(conn, "comments_id_seq");
-        self.ap_url = Some(format!("{}#comment-{}", post.ap_url, next_id));
-        self.sensitive = false;
-        self.spoiler_text = String::new();
-
-        let (html, mentions) = utils::md_to_html(self.content.get().as_ref());
-
-        let author = User::get(conn, self.author_id).unwrap();
-        let mut note = Note::default();
-        let mut to = author.get_followers(conn).into_iter().map(User::into_id).collect::<Vec<Id>>();
-        to.append(&mut post
-            .get_authors(conn)
-            .into_iter()
-            .flat_map(|a| a.get_followers(conn))
-            .map(User::into_id)
-            .collect::<Vec<Id>>());
-        to.push(Id::new(PUBLIC_VISIBILTY.to_string()));
-
-        note.object_props.set_id_string(self.ap_url.clone().unwrap_or(String::new())).expect("NewComment::create: note.id error");
-        note.object_props.set_summary_string(self.spoiler_text.clone()).expect("NewComment::create: note.summary error");
-        note.object_props.set_content_string(html).expect("NewComment::create: note.content error");
-        note.object_props.set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(|| Post::get(conn, self.post_id).unwrap().ap_url, |id| {
-            let comm = Comment::get(conn, id).unwrap();
-            comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
-        }))).expect("NewComment::create: note.in_reply_to error");
-        note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("NewComment::create: note.published error");
-        note.object_props.set_attributed_to_link(author.clone().into_id()).expect("NewComment::create: note.attributed_to error");
-        note.object_props.set_to_link_vec(to.clone()).expect("NewComment::create: note.to error");
-        note.object_props.set_tag_link_vec(mentions.into_iter().map(|m| Mention::build_activity(conn, m)).collect::<Vec<link::Mention>>())
-            .expect("NewComment::create: note.tag error");
-
-        let mut act = Create::default();
-        act.create_props.set_actor_link(author.into_id()).expect("NewComment::create: actor error");
-        act.create_props.set_object_object(note).expect("NewComment::create: object error");
-        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).expect("NewComment::create: id error");
-        act.object_props.set_to_link_vec(to).expect("NewComment::create: to error");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("NewComment::create: cc error");
-        (act, next_id)
     }
 }

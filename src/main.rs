@@ -55,6 +55,7 @@ fn main() {
             routes::blogs::atom_feed,
 
             routes::comments::create,
+            routes::comments::activity_pub,
 
             routes::instance::index,
             routes::instance::paginated_local,
