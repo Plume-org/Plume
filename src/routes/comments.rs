@@ -47,7 +47,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             let user_clone = user.clone();
             worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, followers)));
 
-            Redirect::to(format!("/~/{}/{}/#comment-{}", blog_name, slug, id))
+            Redirect::to(format!(uri!(super::posts::details: blog_name = blog_name, slug = slug))
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code
@@ -69,5 +69,5 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "user_fqn": user.get_fqn(&*conn),
                 "errors": errors
             }))
-        })    
+        })
 }
