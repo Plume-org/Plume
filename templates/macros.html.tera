@@ -52,7 +52,7 @@
 {% macro comment(comm) %}
     <div class="comment" id="comment-{{ comm.id }}">
         <a class="author" href="/@/{{ comm.author.fqn }}/">
-            <img class="avatar small padded" src="{{ comm.author.avatar }}" alt="{{ comm.author.name }}">
+            {{ macros::avatar(user=comm.author, pad=true) }}
             <span class="display-name">{{ comm.author.name }}</span>
             <small>@{{ comm.author.fqn }}</small>
         </a>
@@ -85,4 +85,12 @@
             {% endfor %}
         </div>
     {% endif %}
+{% endmacro %}
+{% macro avatar(user, size="small", pad=true) %}
+    <img
+        class="avatar {{ size }} {% if pad %}padded{% endif %}"
+        style="background-image: url('{{ user.avatar }}');"
+        title="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
+        aria-label="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
+    >
 {% endmacro %}

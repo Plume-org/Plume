@@ -42,7 +42,7 @@
             {% endfor %}
         </ul>
         <div class="flex">
-            <img src="{{ author.avatar }}" alt="{{ author.name }}" class="avatar medium padded">
+            {{ macros::avatar(user=author, pad=true, size="medium") }}
             <div class="grow">
                 <h2><a href="/@/{{ author.fqn }}">{{ author.name }}</a></h2>
                 <p>{{ author.summary | safe }}</h2>

@@ -1,3 +1,5 @@
+{% import "macros" as macros %}
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -33,8 +35,8 @@
                             <i class="icon icon-log-out" aria-label="{{ "Log Out" | _ }}"></i>
                             <span class="mobile-label">{{ "Log Out" | _ }}</span>
                         </a>
-                        <a href="/me">
-                            <img class="avatar small" src="{{ account.avatar }}" alt="{{ "My account" | _ }}">
+                        <a href="/me" title="{{ "My account" | _ }}">
+                            {{ macros::avatar(user=account) }}
                             <span class="mobile-label">{{ "My account" | _ }}</span>
                         </a>
                     {% else %}

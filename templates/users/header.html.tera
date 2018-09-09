@@ -1,6 +1,6 @@
 <div class="user">
     <div class="flex wrap">
-        <img class="avatar medium" src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
+        {{ macros::avatar(user=user, size="medium") }}
 
         <h1 class="grow flex vertical">
             {{ user.name }}

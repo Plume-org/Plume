@@ -737,8 +737,9 @@ figcaption {
 /** Avatars **/
 
 .avatar {
+    background-position: center;
+    background-size: cover;
     border-radius: 100%;
-    text-align: center; /* for alt-text */
 }
 
 .avatar.small {

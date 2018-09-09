@@ -29,7 +29,7 @@ About {{ instance.name }}
             </div>
             <div>
                 <p>{{ "Administred by" | _ }}</p>
-                <img class="avatar small" src="{{ admin.avatar }}" alt="{{ admin.name }}">
+                {{ macros::avatar(user=admin) }}
                 <p><a href="/@/{{ admin.fqn }}">{{ admin.name }}</a><small>(@{{ admin.fqn }})</small></p>
             </div>
         </section>
