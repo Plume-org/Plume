@@ -564,6 +564,68 @@ msgstr "Kommentér \"{{ post }}\""
 msgid "Update"
 msgstr "Oppdater konto"
 
+#, fuzzy
+msgid "We couldn't find this page."
+msgstr "Den siden fant vi ikke."
+
+msgid "Invalid CSRF token."
+msgstr ""
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+#, fuzzy
+msgid "Administration of {{ instance.name }}"
+msgstr "Om {{ instance_name }}"
+
+#, fuzzy
+msgid "Instances"
+msgstr "Instillinger for instansen"
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Ban"
+msgstr ""
+
+msgid "Useful for visually impaired people and licensing"
+msgstr ""
+
+msgid "Let it empty if there is none"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "This is a draft, don't publish it yet."
+msgstr ""
+
+msgid "Update or publish"
+msgstr ""
+
+#, fuzzy
+msgid "Your Drafts"
+msgstr "Din oversikt"
+
+msgid "Danger zone"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+
+#, fuzzy
+msgid "Delete your account"
+msgstr "Opprett din konto"
+
+msgid "Sorry, but as an admin, you can't leave your instance."
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

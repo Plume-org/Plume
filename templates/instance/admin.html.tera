@@ -2,7 +2,7 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Administration of {{ instance.name }}
+{{ "Administration of {{ instance.name }}" | _(instance=instance) }}
 {% endblock title %}
 
 {% block content %}

@@ -2,7 +2,7 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Administration of {{ instance.name }}
+{{ "Administration of {{ instance.name }}" | _(instance=instance) }}
 {% endblock title %}
 
 {% block content %}
@@ -20,9 +20,9 @@ Administration of {{ instance.name }}
                 {% if not instance.local %}
                     <a href="/admin/instances/{{ instance.id }}/block">
                         {% if instance.blocked %}
-                            Unblock
+                            {{ "Unblock" | _ }}
                         {% else %}
-                            Block
+                            {{ "Block" | _ }}
                         {% endif %}
                     </a>
                 {% endif %}

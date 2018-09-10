@@ -20,7 +20,7 @@ Users
                 </p>
                 {% if not user.is_admin %}
                     <a href="/admin/users/{{ user.id }}/ban">
-                        Ban
+                        {{ "Ban" | _ }}
                     </a>
                 {% endif %}
             </div>

@@ -531,3 +531,57 @@ msgstr ""
 
 msgid "Update"
 msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "Invalid CSRF token."
+msgstr ""
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr ""
+
+msgid  "Administration of {{ instance.name }}"
+msgstr ""
+
+msgid "Instances"
+msgstr ""
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Ban"
+msgstr ""
+
+msgid "Useful for visually impaired people and licensing"
+msgstr ""
+
+msgid "Let it empty if there is none"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "This is a draft, don't publish it yet."
+msgstr ""
+
+msgid "Update or publish"
+msgstr ""
+
+msgid "Your Drafts"
+msgstr ""
+
+msgid "Danger zone"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+
+msgid "Delete your account"
+msgstr ""
+
+msgid "Sorry, but as an admin, you can't leave your instance."
+msgstr ""
