@@ -247,7 +247,7 @@ fn about(user: Option<User>, conn: DbConn) -> Template {
 
 #[get("/manifest.json")]
 fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
-    let instance = Instance::get_local(&*conn);
+    let instance = Instance::get_local(&*conn).unwrap();
     Json(json!({
         "name": &instance.name,
         "description": &instance.short_description,
