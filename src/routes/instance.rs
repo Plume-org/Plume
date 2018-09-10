@@ -244,3 +244,17 @@ fn about(user: Option<User>, conn: DbConn) -> Template {
         "n_instances": Instance::count(&*conn) - 1
     }))
 }
+
+#[get("/manifest.json")]
+fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
+    let instance = Instance::get_local(&*conn);
+    Json(json!({
+        "name": &instance.name,
+        "description": &instance.short_description,
+        "start_url": String::from("/"),
+        "scope": String::from("/"),
+        "display": String::from("standalone"),
+        "background_color": String::from("#f4f4f4"),
+        "theme_color": String::from("#7765e3")
+    }))
+}

@@ -75,6 +75,7 @@ fn main() {
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
             routes::instance::about,
+            routes::instance::web_manifest,
 
             routes::likes::create,
             routes::likes::create_auth,
