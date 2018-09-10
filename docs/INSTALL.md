@@ -61,7 +61,7 @@ Creating a new user will let you use systemd to manage Plume if you want (see th
 
 ## Installing Rust and Cargo
 
-We said that Plume needed Rust and Cargo to work, but we didn't installed them at the same time as PostgreSQL and GetText, because there is an universal installation method called RustUp.
+We said that Plume needed Rust and Cargo to work, but we didn't install them at the same time as PostgreSQL and GetText, because there is an universal installation method called RustUp.
 
 You can install it on **GNU/Linux** and **Mac OS X** with:
 
@@ -93,7 +93,7 @@ cd Plume
 cargo build
 ```
 
-We may provide precompiled packages and Docker images in the future (if you have experience in these fields and want to help, you're welcome).
+We may provide precompiled packages and Docker images in the future; if you have experience in these fields and want to help, feel free to discuss this in issues and to propose pull-requests!
 
 ## Configuring PostgreSQL
 
@@ -105,7 +105,7 @@ In the first case, just run this command after the PostgreSQL installation, to s
 service postgresql start
 ```
 
-If you want to have two separate machines, run these commands on the database server after you installed the dependencies mentionned above on both servers:
+If you want to have two separate machines, run these commands on the database server once you've installed the dependencies mentioned above on both servers:
 
 ```bash
 service postgresql start
@@ -117,13 +117,13 @@ createdb -O plume plume
 
 ## Running migrations
 
-Migrations are scripts to update the database. They are run by a tool called Diesel, which can be installed with:
+Migrations are scripts used to update the database. They are run by a tool called Diesel, which can be installed with:
 
 ```bash
 cargo install diesel_cli --no-default-features --features postgres --version '=1.2.0'
 ```
 
-Plume should normally run migrations for you when needed, but if you want to run them manually, the command is:
+Plume should normally run migrations on your behalf as needed, but if you want to run them manually, use the following command:
 
 ```bash
 diesel migration run --database-url postgres://USER:PASSWORD@IP:PORT/plume
@@ -145,10 +145,11 @@ mkdir media
 
 # Actually start Plume
 cargo run
+```
 
 ## Docker install
 
-You can use Docker and docker-compose in order to manage your Plume instance and
+You can use `docker` and `docker-compose` in order to manage your Plume instance and
 have it isolated from your host:
 
 ```
@@ -241,7 +242,7 @@ server {
 
 ## Configuring Apache
 
-If you prefer Apache, you can use this configuration (here too replace `blog.example.com` with your domain):
+If you prefer Apache, you can use this configuration (here too, replace `blog.example.com` with your domain):
 
 ```apache
 <VirtualHost *:80>
@@ -413,10 +414,10 @@ exit 0
 
 ## Caveats:
 
-- Pgbouncer is not yet supported (named transactions are used).
+- Pgbouncer is not supported yet (named transactions are used).
 - Rust nightly is a moving target, dependancies can break and sometimes you need to check a few versions to find the one working (run `rustup override set nightly-2018-05-15` or `rustup override set nightly-2018-05-31` in the Plume directory if you have issues during the compilation)
 - Rust nightly 2018-06-28 is known to be failing to compile diesel 1.3.2
 
 ## Acknowledgements
 
-Most of this documentation have been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).
+Most of this documentation has been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).
