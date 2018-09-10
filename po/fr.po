@@ -552,64 +552,61 @@ msgstr "Modifier « {{ post }} »"
 msgid "Update"
 msgstr "Mettre à jour"
 
-#, fuzzy
 msgid "We couldn't find this page."
 msgstr "Page introuvable."
 
 msgid "Invalid CSRF token."
-msgstr ""
+msgstr "Jeton CSRF invalide."
 
 msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
-msgstr ""
+msgstr "Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les cookies"
+"sont activés dans votre navigateur, et essayez de recharger cette page. Si vous"
+"continuez à voir cette erreur, merci de la signaler."
 
-#, fuzzy
 msgid "Administration of {{ instance.name }}"
-msgstr "Articles de {{ instance.name }}"
+msgstr "Administration de {{ instance.name }}"
 
-#, fuzzy
 msgid "Instances"
-msgstr "Paramètres de l'instance"
+msgstr "Instances"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Débloquer"
 
 msgid "Block"
-msgstr ""
+msgstr "Bloquer"
 
 msgid "Ban"
-msgstr ""
+msgstr "Bannir"
 
 msgid "Useful for visually impaired people and licensing"
-msgstr ""
+msgstr "Utile pour les personnes malvoyantes et les informations de Copyright."
 
 msgid "Let it empty if there is none"
-msgstr ""
+msgstr "Laisser vide si il n'y en a pas"
 
 msgid "Draft"
-msgstr ""
+msgstr "Brouillon"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "Cet article est un brouillon, il sera publié plus tard."
 
 msgid "Update or publish"
-msgstr ""
+msgstr "Mettre à jour ou publier"
 
-#, fuzzy
 msgid "Your Drafts"
-msgstr "Votre tableau de bord"
+msgstr "Vos brouillons"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Zone à risque"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Faites très attention, aucune action entreprise ici ne pourra être annulée."
 
-#, fuzzy
 msgid "Delete your account"
-msgstr "Créer votre compte"
+msgstr "Supprimer votre compte"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
-msgstr ""
+msgstr "Désolé, mais en tant qu'administrateur, vous ne pouvez pas quitter votre instance."
