@@ -67,6 +67,7 @@ impl Post {
 
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
         posts::table.filter(posts::id.eq(any(ids)))
+            .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .offset(min.into())
             .limit((max - min).into())
@@ -78,6 +79,7 @@ impl Post {
         use schema::tags;
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
         posts::table.filter(posts::id.eq(any(ids)))
+            .filter(posts::published.eq(true))
             .count()
             .get_result(conn)
             .expect("Error counting posts by tag")
@@ -89,17 +91,19 @@ impl Post {
         let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
         let local_posts_id = post_authors::table.filter(post_authors::author_id.eq(any(local_authors))).select(post_authors::post_id);
         posts::table.filter(posts::id.eq(any(local_posts_id)))
+            .filter(posts::published.eq(true))
             .load::<Post>(conn)
             .expect("Couldn't load local posts")
             .len()
     }
 
     pub fn count(conn: &PgConnection) -> i64 {
-        posts::table.count().get_result(conn).expect("Couldn't count posts")
+        posts::table.filter(posts::published.eq(true)).count().get_result(conn).expect("Couldn't count posts")
     }
 
     pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
+            .filter(posts::published.eq(true))
             .limit(limit)
             .load::<Post>(conn)
             .expect("Error loading recent posts")
@@ -110,6 +114,7 @@ impl Post {
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
         posts::table.filter(posts::id.eq(any(posts)))
+            .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .limit(limit)
             .load::<Post>(conn)
@@ -118,6 +123,7 @@ impl Post {
 
     pub fn get_recents_for_blog(conn: &PgConnection, blog: &Blog, limit: i64) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
+            .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .limit(limit)
             .load::<Post>(conn)
@@ -126,12 +132,14 @@ impl Post {
 
     pub fn get_for_blog(conn: &PgConnection, blog:&Blog) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
+            .filter(posts::published.eq(true))
             .load::<Post>(conn)
             .expect("Error loading posts for blog")
     }
 
     pub fn blog_page(conn: &PgConnection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
+            .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .offset(min.into())
             .limit((max - min).into())
@@ -142,6 +150,7 @@ impl Post {
     /// Give a page of all the recent posts known to this instance (= federated timeline)
     pub fn get_recents_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
+            .filter(posts::published.eq(true))
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
@@ -155,6 +164,7 @@ impl Post {
         let blog_ids = blogs::table.filter(blogs::instance_id.eq(instance_id)).select(blogs::id);
 
         posts::table.order(posts::creation_date.desc())
+            .filter(posts::published.eq(true))
             .filter(posts::blog_id.eq(any(blog_ids)))
             .offset(min.into())
             .limit((max - min).into())
@@ -169,11 +179,23 @@ impl Post {
             .select(post_authors::post_id);
 
         posts::table.order(posts::creation_date.desc())
+            .filter(posts::published.eq(true))
             .filter(posts::id.eq(any(post_ids)))
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
             .expect("Error loading user feed page")
+    }
+
+    pub fn drafts_by_author(conn: &PgConnection, author: &User) -> Vec<Post> {
+        use schema::post_authors;
+
+        let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
+        posts::table.order(posts::creation_date.desc())
+            .filter(posts::published.eq(false))
+            .filter(posts::id.eq(any(posts)))
+            .load::<Post>(conn)
+            .expect("Error listing drafts")
     }
 
     pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {

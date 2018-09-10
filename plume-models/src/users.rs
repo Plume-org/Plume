@@ -373,7 +373,10 @@ impl User {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
-        let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
+        let posts = posts::table
+            .filter(posts::published.eq(true))
+            .filter(posts::id.eq(any(posts_by_self)))
+            .load::<Post>(conn).unwrap();
         posts.into_iter().map(|p| {
             serde_json::to_value(p.create_activity(conn)).unwrap()
         }).collect::<Vec<serde_json::Value>>()

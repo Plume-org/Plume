@@ -105,7 +105,8 @@ fn dashboard(user: User, conn: DbConn) -> Template {
     let blogs = Blog::find_for_author(&*conn, user.id);
     Template::render("users/dashboard", json!({
         "account": user.to_json(&*conn),
-        "blogs": blogs
+        "blogs": blogs,
+        "drafts": Post::drafts_by_author(&*conn, &user).into_iter().map(|a| a.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
     }))
 }
 

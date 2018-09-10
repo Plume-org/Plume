@@ -23,6 +23,17 @@
         <a class="button" href="/blogs/new">{{ "Start a new blog" | _ }}</a>
     </section>
 
+    {% if drafts | length > 0 %}
+        <section>
+            <h2>{{ "Your Drafts" | _ }}</h2>
+            <div class="cards">
+                {% for draft in drafts %}
+                    {{ macros::post_card(article=draft) }}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
     <section>
         <h2>{{ "Your media" | _ }}</h2>
         <a class="button" href="/medias">{{ "Go to your gallery" | _ }}</a>
