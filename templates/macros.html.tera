@@ -18,8 +18,9 @@
                 name=article.author.name,
                 link_4="</a>")
             }}
-            ⋅ {{ article.date | date(format="%B %e") }}
+            {% if article.post.published %}⋅ {{ article.date | date(format="%B %e") }}{% endif %}
             ⋅ <a href="/~/{{ article.blog.fqn }}/">{{ article.blog.title }}</a>
+            {% if not article.post.published %}⋅ {{ "Draft" | _ }}{% endif %}
         </p>
     </div>
 {% endmacro post_card %}

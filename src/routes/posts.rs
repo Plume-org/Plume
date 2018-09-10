@@ -1,4 +1,5 @@
 use activitypub::object::Article;
+use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::{State, request::LenientForm};
 use rocket::response::{Redirect, Flash};
@@ -95,7 +96,8 @@ fn new(blog: String, user: User, conn: DbConn) -> Template {
             "instance": Instance::get_local(&*conn),
             "editing": false,
             "errors": null,
-            "form": null
+            "form": null,
+            "is_draft": true,
         }))
     }
 }
@@ -131,7 +133,9 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
                     .collect::<Vec<String>>()
                     .join(", "),
                 license: post.license.clone(),
-            }
+                draft: true,
+            },
+            "is_draft": !post.published
         }))
     }
 }
@@ -172,6 +176,12 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
             };
 
+            // update publication date if when this article is no longer a draft
+            if !post.published && !form.draft {
+                post.published = true;
+                post.creation_date = Utc::now().naive_utc();
+            }
+
             post.slug = new_slug.clone();
             post.title = form.title.clone();
             post.subtitle = form.subtitle.clone();
@@ -195,9 +205,11 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 });
             }
 
-            let act = post.update_activity(&*conn);
-            let dest = User::one_by_instance(&*conn);
-            worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+            if post.published {
+                let act = post.update_activity(&*conn);
+                let dest = User::one_by_instance(&*conn);
+                worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+            }
 
             Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
         }
@@ -207,7 +219,8 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             "instance": Instance::get_local(&*conn),
             "editing": true,
             "errors": errors.inner(),
-            "form": form
+            "form": form,
+            "is_draft": form.draft,
         })))
     }
 }
@@ -219,7 +232,8 @@ struct NewPostForm {
     pub subtitle: String,
     pub content: String,
     pub tags: String,
-    pub license: String
+    pub license: String,
+    pub draft: bool,
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
@@ -263,7 +277,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 slug: slug.to_string(),
                 title: form.title.to_string(),
                 content: SafeString::new(&content),
-                published: true,
+                published: !form.draft,
                 license: if form.license.len() > 0 {
                     form.license.to_string()
                 } else {
@@ -280,10 +294,6 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 author_id: user.id
             });
 
-            for m in mentions.into_iter() {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
-            }
-
             let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0);
             for tag in tags {
                 Tag::insert(&*conn, NewTag {
@@ -293,9 +303,15 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 });
             }
 
-            let act = post.create_activity(&*conn);
-            let dest = User::one_by_instance(&*conn);
-            worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+            if post.published {
+                for m in mentions.into_iter() {
+                    Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
+                }
+
+                let act = post.create_activity(&*conn);
+                let dest = User::one_by_instance(&*conn);
+                worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+            }
 
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
@@ -305,7 +321,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             "instance": Instance::get_local(&*conn),
             "editing": false,
             "errors": errors.inner(),
-            "form": form
+            "form": form,
+            "is_draft": form.draft
         })))
     }
 }

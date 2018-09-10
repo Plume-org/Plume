@@ -3,6 +3,7 @@
 
 extern crate activitypub;
 extern crate atom_syndication;
+extern crate chrono;
 extern crate colored;
 extern crate diesel;
 extern crate dotenv;

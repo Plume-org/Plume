@@ -29,6 +29,9 @@
             &mdash;
             <a href="{{ article.url}}delete" onclick="return confirm('Are you sure you?')">{{ "Delete this article" | _ }}</a>
         {% endif %}
+        {%  if not article.post.published %}
+            <span class="badge">{{ "Draft" }}</span>
+        {% endif %}
     </p>
     <article>
         {{ article.post.content | safe }}

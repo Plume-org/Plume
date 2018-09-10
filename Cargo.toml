@@ -22,6 +22,10 @@ validator_derive = "0.7"
 webfinger = "0.3"
 workerpool = "1.1"
 
+[dependencies.chrono]
+features = ["serde"]
+version = "0.4"
+
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]
 version = "*"

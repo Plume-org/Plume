@@ -35,10 +35,21 @@
     {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
     {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
 
+    {% if is_draft %}
+        <label for="draft">
+            <input type="checkbox" name="draft" id="draft" checked>
+            {{ "This is a draft, don't publish it yet." | _ }}
+        </label>
+    {% endif %}
+
     {% if editing %}
         <input type="submit" value="{{ "Update" | _ }}" />
     {% else %}
-        <input type="submit" value="{{ "Publish" | _ }}" />
+        {% if is_draft %}
+            <input type="submit" value="{{ "Update or publish" | _ }}" />
+        {% else %}
+            <input type="submit" value="{{ "Publish" | _ }}" />
+        {% endif %}
     {% endif %}
 </form>
 <script src="/static/js/autoExpand.js"></script>
