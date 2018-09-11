@@ -30,7 +30,7 @@
         {% if optional %}
             <small>{{ "Optional" | _ }}</small>
         {% endif %}
-        <small>{{ details }}</small>
+        <small>{{ details | _ }}</small>
     </label>
     {% if errors is defined and errors[name] %}
         {% for err in errors[name] %}
