@@ -1,6 +1,6 @@
 [package]
 name = "plume-models"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Baptiste Gelez <baptiste@gelez.xyz>"]
 
 [dependencies]

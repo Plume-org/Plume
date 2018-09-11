@@ -9,7 +9,7 @@ use std::time::SystemTime;
 use activity_pub::ap_accept_header;
 use activity_pub::sign::Signer;
 
-const USER_AGENT: &'static str = "Plume/0.1.0";
+const USER_AGENT: &'static str = "Plume/0.2.0";
 
 header! {
     (Signature, "Signature") => [String]
@@ -30,7 +30,7 @@ pub fn headers() -> Headers {
 pub fn signature<S: Signer>(signer: &S, headers: Headers) -> Signature {
     let signed_string = headers.iter().map(|h| format!("{}: {}", h.name().to_lowercase(), h.value_string())).collect::<Vec<String>>().join("\n");
     let signed_headers = headers.iter().map(|h| h.name().to_string()).collect::<Vec<String>>().join(" ").to_lowercase();
-    
+
     let data = signer.sign(signed_string);
     let sign = base64::encode(&data[..]);
 
