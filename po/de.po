@@ -622,5 +622,9 @@ msgstr "Eigenen Account erstellen"
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
 
+#, fuzzy
+msgid "Users"
+msgstr "Nutzername"
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

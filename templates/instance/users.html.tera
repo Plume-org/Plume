@@ -2,7 +2,7 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Users
+{{ "Users" | _ }}
 {% endblock title %}
 
 {% block content %}

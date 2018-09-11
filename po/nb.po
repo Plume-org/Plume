@@ -626,6 +626,10 @@ msgstr "Opprett din konto"
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
 
+#, fuzzy
+msgid "Users"
+msgstr "Brukernavn"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

@@ -625,6 +625,10 @@ msgstr "Utwórz konto"
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
 
+#, fuzzy
+msgid "Users"
+msgstr "Nazwa użytkownika"
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

@@ -602,3 +602,6 @@ msgstr ""
 
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
+
+msgid "Users"
+msgstr ""
