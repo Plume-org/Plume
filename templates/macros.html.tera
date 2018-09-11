@@ -24,7 +24,7 @@
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details='') %}
+{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details=' ') %}
     <label for="{{ name }}">
         {{ label | _ }}
         {% if optional %}
