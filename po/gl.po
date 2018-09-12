@@ -87,14 +87,14 @@ msgstr "Engada os seus"
 
 msgid "One Boost"
 msgid_plural "{{ count }} Boosts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Unha promoción"
+msgstr[1] "{{ count }} promocións"
 
 msgid "I don&#x27;t want to boost this anymore"
-msgstr ""
+msgstr "Quero retirar a promoción do artigo"
 
 msgid "Boost"
-msgstr ""
+msgstr "Promocionar"
 
 msgid "Comments"
 msgstr "Comentarios"
@@ -142,7 +142,7 @@ msgid "Admin"
 msgstr "Admin"
 
 msgid "It is you"
-msgstr "É vosted"
+msgstr "É vostede"
 
 msgid "Edit your profile"
 msgstr "Edite o seu perfil"
@@ -234,10 +234,10 @@ msgid "You need to be logged in order to see your notifications"
 msgstr "Debe estar conectada para ver as súas notificacións"
 
 msgid "You need to be logged in order to write a new post"
-msgstr "Debe estar conectada para escribir unha nova entrada"
+msgstr "Debe estar conectada para escribir un novo artigo"
 
 msgid "You need to be logged in order to boost a post"
-msgstr ""
+msgstr "Debe estar conectada para promocionar un artigo"
 
 msgid "Invalid username or password"
 msgstr "Usuaria ou Contrasinal incorrectos"
@@ -256,7 +256,7 @@ msgstr ""
 "Por {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
 
 msgid "{{ data }} boosted your article"
-msgstr ""
+msgstr "{{ data }} promocionou o seu artigo"
 
 msgid "{{ data }} started following you"
 msgstr "{{ data }} comezou a seguila"
@@ -325,8 +325,7 @@ msgstr[1] "{{ count }} autoras en este blog: "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
-"Conéctese ou utilice a súa conta no fediverso para interactuar con este "
-"artigo"
+"Conéctese ou utilice a súa conta no fediverso para interactuar con este artigo"
 
 msgid "Optional"
 msgstr "Opcional"
@@ -355,7 +354,7 @@ msgid "{{ user }} liked your article."
 msgstr "{{ user }} gustou do seu artigo."
 
 msgid "{{ user }} boosted your article."
-msgstr ""
+msgstr "{{ user }} promocionou o seu artigo"
 
 msgid "Source code"
 msgstr "Código fonte"
@@ -388,7 +387,7 @@ msgid "Save settings"
 msgstr "Gardar axustes"
 
 msgid "No comments yet. Be the first to react!"
-msgstr "Sin comentarios. Sexa a primeira e comentar!"
+msgstr "Sen comentarios. Sexa a primeira e comentar!"
 
 msgid "About this instance"
 msgstr "Sobre esta instancia"
@@ -430,76 +429,71 @@ msgstr "artigos"
 msgid "Read the detailed rules"
 msgstr "Lea o detalle das normas"
 
-#, fuzzy
 msgid "Delete this article"
-msgstr "Últimos artigos"
+msgstr "Borrar este artigo"
 
 msgid "And connected to"
-msgstr ""
+msgstr "E conectada a"
 
-#, fuzzy
 msgid "other instances"
-msgstr "Sobre esta instancia"
+msgstr "outras instancias"
 
-#, fuzzy
 msgid "Administred by"
-msgstr "Administración"
+msgstr "Administrada por"
 
 msgid "Runs Plume {{ version }}"
-msgstr ""
+msgstr "Versión Plume {{ version }}"
 
-#, fuzzy
 msgid "Your media"
-msgstr "O seu comentario"
+msgstr "Os seus medios"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Ir a súa galería"
 
 msgid "{{ name}}'s avatar'"
-msgstr ""
+msgstr "Avatar de {{ name}}"
 
 msgid "Media details"
-msgstr ""
+msgstr "Detalles dos medios"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Voltar a galería"
 
-#, fuzzy
 msgid "Markdown code"
-msgstr "Escritura Markdown activada"
+msgstr "Código markdown"
 
 msgid "Copy it in your articles to insert this media."
-msgstr ""
+msgstr "Copie para incrustar este contido nos seus artigos"
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Utilizar como avatar"
 
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 msgid "Upload"
-msgstr ""
+msgstr "Subir"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Aínda non ten medios"
 
 msgid "Media upload"
-msgstr ""
+msgstr "Subir medios"
 
-#, fuzzy
 msgid "Description"
-msgstr "Descrición longa"
+msgstr "Descrición"
 
-#, fuzzy
 msgid "Content warning"
-msgstr "Contido"
+msgstr "Aviso de contido"
 
 msgid "File"
-msgstr ""
+msgstr "Ficheiro"
 
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
+"Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar outra"
+
