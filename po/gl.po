@@ -91,7 +91,10 @@ msgstr[0] "Unha promoción"
 msgstr[1] "{{ count }} promocións"
 
 msgid "I don&#x27;t want to boost this anymore"
-msgstr "Xa non quero promover esto"
+msgstr "Quero retirar a pomoción realizada"
+
+msgid "Boost"
+msgstr "Promover"
 
 msgid "Boost"
 msgstr "Promover"
@@ -234,7 +237,7 @@ msgid "You need to be logged in order to see your notifications"
 msgstr "Debe estar conectada para ver as súas notificacións"
 
 msgid "You need to be logged in order to write a new post"
-msgstr "Debe estar conectada para escribir unha nova entrada"
+msgstr "Debe estar conectada para escribir un novo artigo"
 
 msgid "You need to be logged in order to boost a post"
 msgstr "Precisa estar conectada para promover un artigo"
@@ -325,8 +328,7 @@ msgstr[1] "{{ count }} autoras en este blog: "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
-"Conéctese ou utilice a súa conta no fediverso para interactuar con este "
-"artigo"
+"Conéctese ou utilice a súa conta no fediverso para interactuar con este artigo"
 
 msgid "Optional"
 msgstr "Opcional"
@@ -388,7 +390,7 @@ msgid "Save settings"
 msgstr "Gardar axustes"
 
 msgid "No comments yet. Be the first to react!"
-msgstr "Sin comentarios. Sexa a primeira e comentar!"
+msgstr "Sen comentarios. Sexa a primeira e comentar!"
 
 msgid "About this instance"
 msgstr "Sobre esta instancia"
@@ -434,7 +436,7 @@ msgid "Delete this article"
 msgstr "Borrar este artigo"
 
 msgid "And connected to"
-msgstr "E contactada a"
+msgstr "E conectada a"
 
 msgid "other instances"
 msgstr "outras instancias"
@@ -443,7 +445,7 @@ msgid "Administred by"
 msgstr "Administrada por"
 
 msgid "Runs Plume {{ version }}"
-msgstr "Plume {{ version }}"
+msgstr "Versión Plume {{ version }}"
 
 msgid "Your media"
 msgstr "Os seus medios"
@@ -452,7 +454,7 @@ msgid "Go to your gallery"
 msgstr "Ir a súa galería"
 
 msgid "{{ name}}'s avatar'"
-msgstr "avatar de {{ name}}"
+msgstr "Avatar de {{ name}}"
 
 msgid "Media details"
 msgstr "Detalles dos medios"
@@ -464,7 +466,7 @@ msgid "Markdown code"
 msgstr "Código markdown"
 
 msgid "Copy it in your articles to insert this media."
-msgstr "Copiar nos seus artigos para incrustar estos medios"
+msgstr "Copie para incrustar este contido nos seus artigos"
 
 msgid "Use as avatar"
 msgstr "Utilizar como avatar"
@@ -476,7 +478,7 @@ msgid "Upload"
 msgstr "Subir"
 
 msgid "You don't have any media yet."
-msgstr "Aínd non subeu medios"
+msgstr "Aínda non ten medios"
 
 msgid "Media upload"
 msgstr "Subir medios"
@@ -487,6 +489,7 @@ msgstr "Descrición"
 msgid "Content warning"
 msgstr "Aviso sobre o contido"
 
+
 msgid "File"
 msgstr "Ficheiro"
 
@@ -496,4 +499,5 @@ msgstr "Enviar"
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
-"Lamentámolo, pero o rexistro en esta instancia está pechado. Inténteo en outra instancia"
+"Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar outra"
+
