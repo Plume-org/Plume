@@ -1,4 +1,4 @@
-use activitypub::{activity::{Announce, Create, Delete, Like, Undo}, object::Tombstone};
+use activitypub::{activity::{Announce, Create, Delete, Like, Undo, Update}, object::Tombstone};
 use diesel::PgConnection;
 use failure::Error;
 use serde_json;
@@ -55,9 +55,18 @@ pub trait Inbox {
                             "Announce" => {
                                 Reshare::delete_id(act.undo_props.object_object::<Announce>()?.object_props.id_string()?, conn);
                                 Ok(())
+                            },
+                            "Follow" => {
+                                Follow::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, conn);
+                                Ok(())
                             }
                             _ => Err(InboxError::CantUndo)?
                         }
+                    }
+                    "Update" => {
+                        let act: Update = serde_json::from_value(act.clone())?;
+                        Post::handle_update(conn, act.update_props.object_object()?);
+                        Ok(())
                     }
                     _ => Err(InboxError::InvalidType)?
                 }

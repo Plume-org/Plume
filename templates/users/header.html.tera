@@ -1,12 +1,13 @@
 <div class="user">
-    <div class="flex">
-        <img class="avatar medium" src="{{ user.avatar }}" alt="{{ "{{ name}}'s avatar'" | _(name=user.name) }}">
+    <div class="flex wrap">
+        {{ macros::avatar(user=user, size="medium") }}
 
-        <h1 class="grow">
+        <h1 class="grow flex vertical">
             {{ user.name }}
-
             <small>@{{ user.fqn }}</small>
+        </h1>
 
+        <p>
             {% if user.is_admin %}
                 <span class="badge">{{ "Admin" | _ }}</span>
             {% endif %}
@@ -14,12 +15,12 @@
             {% if is_self %}
                 <span class="badge">{{ "It is you" | _ }}</span>
             {% endif %}
-        </h1>
-    </div>
 
-    {% if is_self %}
-        <a href="/@/{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
-    {% endif %}
+            {% if is_self %}
+                <a href="/@/{{ user.username }}/edit" class="button inline-block">{{ "Edit your profile" | _ }}</a>
+            {% endif %}
+        </p>
+    </div>
 
     {% if is_remote %}
         <a class="inline-block button" href="{{ user.ap_url }}" target="_blank">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
@@ -35,6 +36,7 @@
     {% endif %}
 </div>
 
-<div>
-    <a href="/@/{{ user.fqn }}/followers/">{{ "{{ count }} followers" | _n(singular="One follower", count=n_followers) }}</a>
+
+<div class="user-summary">
+    {{ user.summary | safe }}
 </div>

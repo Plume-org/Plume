@@ -56,6 +56,13 @@ impl Notification {
             .expect("Couldn't load user notifications page")
     }
 
+    pub fn find<S: Into<String>>(conn: &PgConnection, kind: S, obj: i32) -> Option<Notification> {
+        notifications::table.filter(notifications::kind.eq(kind.into()))
+            .filter(notifications::object_id.eq(obj))
+            .get_result::<Notification>(conn)
+            .ok()
+    }
+
     pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
         let mut json = json!(self);
         json["object"] = json!(match self.kind.as_ref() {

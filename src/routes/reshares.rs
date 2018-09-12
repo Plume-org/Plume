@@ -25,14 +25,14 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
         reshare.update_ap_url(&*conn);
         reshare.notify(&*conn);
 
-        let followers = user.get_followers(&*conn);
+        let dest = User::one_by_instance(&*conn);
         let act = reshare.into_activity(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, act, followers)));
+        worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
     } else {
         let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id).unwrap();
         let delete_act = reshare.delete(&*conn);
-        let followers = user.get_followers(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, delete_act, followers)));
+        let dest = User::one_by_instance(&*conn);
+        worker.execute(Thunk::of(move || broadcast(&user, delete_act, dest)));
     }
 
     Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))
@@ -40,5 +40,8 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
 
 #[post("/~/<blog>/<slug>/reshare", rank=1)]
 fn create_auth(blog: String, slug: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to reshare a post", uri!(create: blog = blog, slug = slug))
+    utils::requires_login(
+        "You need to be logged in order to reshare a post",
+        uri!(create: blog = blog, slug = slug).into()
+    )
 }

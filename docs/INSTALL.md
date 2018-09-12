@@ -17,6 +17,9 @@ All the following instructions will need a terminal.
 Here are the commands to install PostgreSQL and GetText on various operating systems.
 Some of them may need root permissions.
 
+You can also install the project using Docker and docker-compose, please refer
+to the `Docker install` section.
+
 On **Debian**:
 
 ```bash
@@ -58,7 +61,7 @@ Creating a new user will let you use systemd to manage Plume if you want (see th
 
 ## Installing Rust and Cargo
 
-We said that Plume needed Rust and Cargo to work, but we didn't installed them at the same time as PostgreSQL and GetText, because there is an universal installation method called RustUp.
+We said that Plume needed Rust and Cargo to work, but we didn't install them at the same time as PostgreSQL and GetText, because there is an universal installation method called RustUp.
 
 You can install it on **GNU/Linux** and **Mac OS X** with:
 
@@ -90,7 +93,7 @@ cd Plume
 cargo build
 ```
 
-We may provide precompiled packages and Docker images in the future (if you have experience in these fields and want to help, you're welcome).
+We may provide precompiled packages and Docker images in the future; if you have experience in these fields and want to help, feel free to discuss this in issues and to propose pull-requests!
 
 ## Configuring PostgreSQL
 
@@ -102,7 +105,7 @@ In the first case, just run this command after the PostgreSQL installation, to s
 service postgresql start
 ```
 
-If you want to have two separate machines, run these commands on the database server after you installed the dependencies mentionned above on both servers:
+If you want to have two separate machines, run these commands on the database server once you've installed the dependencies mentioned above on both servers:
 
 ```bash
 service postgresql start
@@ -114,13 +117,13 @@ createdb -O plume plume
 
 ## Running migrations
 
-Migrations are scripts to update the database. They are run by a tool called Diesel, which can be installed with:
+Migrations are scripts used to update the database. They are run by a tool called Diesel, which can be installed with:
 
 ```bash
 cargo install diesel_cli --no-default-features --features postgres --version '=1.2.0'
 ```
 
-Plume should normally run migrations for you when needed, but if you want to run them manually, the command is:
+Plume should normally run migrations on your behalf as needed, but if you want to run them manually, use the following command:
 
 ```bash
 diesel migration run --database-url postgres://USER:PASSWORD@IP:PORT/plume
@@ -144,6 +147,35 @@ mkdir media
 cargo run
 ```
 
+## Docker install
+
+You can use `docker` and `docker-compose` in order to manage your Plume instance and
+have it isolated from your host:
+
+```
+git clone git@github.com:Plume-org/Plume.git
+cd Plume
+cp docs/docker-compose.sample.yml docker-compose.yml
+cp docs/docker.sample.env .env
+# build the containers
+docker-compose build
+# launch the database
+docker-compose up -d postgres
+# run the migrations
+docker-compose run --rm plume diesel migration run
+# run interactive setup
+docker-compose run --rm plume bash
+cargo run
+# copy the env file and paste it in your host .env file
+cat .env
+# leave the container
+exit
+# launch your instance for good
+docker-compose up -d
+```
+
+Then, you can configure your reverse proxy.
+
 ## Configuring Nginx
 
 Here is a sample Nginx configuration for a Plume instance (replace `blog.example.com` with your domain name):
@@ -151,6 +183,7 @@ Here is a sample Nginx configuration for a Plume instance (replace `blog.example
 ```nginx
 server {
     listen 80;
+    listen [::]:80;
     server_name blog.example.com;
 
     location /.well-known/acme-challenge {}
@@ -160,11 +193,13 @@ server {
 }
 
 server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name blog.example.org;
+    
     access_log  /var/log/nginx/access.log;
     root /home/plume/Plume/ ;
 
-    listen [::]:443 ssl; # managed by Certbot
     SSLCertificateFile /etc/letsencrypt/live/blog.example.com/cert.pem
     SSLCertificateKeyFile /etc/letsencrypt/live/blog.example.com/privkey.pem
     SSLCertificateChainFile /etc/letsencrypt/live/blog.example.com/chain.pem
@@ -207,7 +242,7 @@ server {
 
 ## Configuring Apache
 
-If you prefer Apache, you can use this configuration (here too replace `blog.example.com` with your domain):
+If you prefer Apache, you can use this configuration (here too, replace `blog.example.com` with your domain):
 
 ```apache
 <VirtualHost *:80>
@@ -379,10 +414,10 @@ exit 0
 
 ## Caveats:
 
-- Pgbouncer is not yet supported (named transactions are used).
+- Pgbouncer is not supported yet (named transactions are used).
 - Rust nightly is a moving target, dependancies can break and sometimes you need to check a few versions to find the one working (run `rustup override set nightly-2018-05-15` or `rustup override set nightly-2018-05-31` in the Plume directory if you have issues during the compilation)
 - Rust nightly 2018-06-28 is known to be failing to compile diesel 1.3.2
 
 ## Acknowledgements
 
-Most of this documentation have been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).
+Most of this documentation has been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).

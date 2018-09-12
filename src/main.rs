@@ -1,8 +1,9 @@
-#![feature(custom_derive, decl_macro, plugin)]
+#![feature(custom_derive, plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
 extern crate activitypub;
 extern crate atom_syndication;
+extern crate chrono;
 extern crate colored;
 extern crate diesel;
 extern crate dotenv;
@@ -13,6 +14,7 @@ extern crate heck;
 extern crate multipart;
 extern crate plume_common;
 extern crate plume_models;
+#[macro_use]
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
@@ -54,14 +56,27 @@ fn main() {
             routes::blogs::atom_feed,
 
             routes::comments::create,
+            routes::comments::activity_pub,
 
-            routes::instance::paginated_index,
             routes::instance::index,
+            routes::instance::paginated_local,
+            routes::instance::local,
+            routes::instance::paginated_feed,
+            routes::instance::feed,
+            routes::instance::paginated_federated,
+            routes::instance::federated,
             routes::instance::admin,
+            routes::instance::admin_instances,
+            routes::instance::admin_instances_paginated,
+            routes::instance::admin_users,
+            routes::instance::admin_users_paginated,
+            routes::instance::ban,
+            routes::instance::toggle_block,
             routes::instance::update_settings,
             routes::instance::shared_inbox,
             routes::instance::nodeinfo,
             routes::instance::about,
+            routes::instance::web_manifest,
 
             routes::likes::create,
             routes::likes::create_auth,
@@ -81,6 +96,8 @@ fn main() {
             routes::posts::details,
             routes::posts::details_response,
             routes::posts::activity_details,
+            routes::posts::edit,
+            routes::posts::update,
             routes::posts::new,
             routes::posts::new_auth,
             routes::posts::create,
@@ -96,6 +113,9 @@ fn main() {
 
             routes::static_files,
 
+            routes::tags::tag,
+            routes::tags::paginated_tag,
+
             routes::user::me,
             routes::user::details,
             routes::user::dashboard,
@@ -105,6 +125,7 @@ fn main() {
             routes::user::edit,
             routes::user::edit_auth,
             routes::user::update,
+            routes::user::delete,
             routes::user::follow,
             routes::user::follow_auth,
             routes::user::activity_details,
@@ -136,6 +157,7 @@ fn main() {
                 .add_exceptions(vec![
                     ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
                     ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
+                    ("/~/<blog>/<slug>".to_owned(), "/~/<blog>/<slug>".to_owned(), rocket::http::Method::Post),
                 ])
                 .finalize().unwrap())
         .launch();

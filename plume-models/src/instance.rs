@@ -52,6 +52,14 @@ impl Instance {
             .expect("Error loading remote instances infos")
     }
 
+    pub fn page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Instance> {
+        instances::table.order(instances::public_domain.asc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Instance>(conn)
+            .expect("Error loading a page of instances")
+    }
+
     pub fn local_id(conn: &PgConnection) -> i32 {
         Instance::get_local(conn).unwrap().id
     }
@@ -60,8 +68,24 @@ impl Instance {
     get!(instances);
     find_by!(instances, find_by_domain, public_domain as String);
 
-    pub fn block(&self) {
-        unimplemented!()
+    pub fn toggle_block(&self, conn: &PgConnection) {
+        diesel::update(self)
+            .set(instances::blocked.eq(!self.blocked))
+            .get_result::<Instance>(conn)
+            .expect("Couldn't block/unblock instance");
+    }
+
+    /// id: AP object id
+    pub fn is_blocked(conn: &PgConnection, id: String) -> bool {
+        for block in instances::table.filter(instances::blocked.eq(true))
+            .get_results::<Instance>(conn)
+            .expect("Error listing blocked instances") {
+            if id.starts_with(format!("https://{}", block.public_domain).as_str()) {
+                return true;
+            }
+        }
+
+        false
     }
 
     pub fn has_admin(&self, conn: &PgConnection) -> bool {

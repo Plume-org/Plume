@@ -42,6 +42,7 @@ table! {
         id -> Int4,
         follower_id -> Int4,
         following_id -> Int4,
+        ap_url -> Text,
     }
 }
 
@@ -124,6 +125,8 @@ table! {
         license -> Varchar,
         creation_date -> Timestamp,
         ap_url -> Varchar,
+        subtitle -> Text,
+        source -> Text,
     }
 }
 
@@ -134,6 +137,15 @@ table! {
         post_id -> Int4,
         ap_url -> Varchar,
         creation_date -> Timestamp,
+    }
+}
+
+table! {
+    tags (id) {
+        id -> Int4,
+        tag -> Text,
+        is_hastag -> Bool,
+        post_id -> Int4,
     }
 }
 
@@ -176,6 +188,7 @@ joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
 joinable!(reshares -> posts (post_id));
 joinable!(reshares -> users (user_id));
+joinable!(tags -> posts (post_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
@@ -191,5 +204,6 @@ allow_tables_to_appear_in_same_query!(
     post_authors,
     posts,
     reshares,
+    tags,
     users,
 );

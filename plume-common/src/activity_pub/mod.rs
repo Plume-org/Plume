@@ -91,7 +91,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
     }
 }
 
-pub fn broadcast<A: Activity, S: sign::Signer, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
+pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
         .filter(|u| !u.is_local())
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
@@ -158,3 +158,30 @@ pub struct PublicKey {
     #[activitystreams(concrete(String), functional)]
     pub public_key_pem: Option<serde_json::Value>
 }
+
+#[derive(Clone, Debug, Default, UnitString)]
+#[activitystreams(Hashtag)]
+pub struct HashtagType;
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
+#[serde(rename_all = "camelCase")]
+pub struct Hashtag {
+    #[serde(rename = "type")]
+    kind: HashtagType,
+
+    #[activitystreams(concrete(String), functional)]
+    pub href: Option<serde_json::Value>,
+
+    #[activitystreams(concrete(String), functional)]
+    pub name: Option<serde_json::Value>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Source {
+    pub media_type: String,
+
+    pub content: String,
+}
+
+impl Object for Source {}

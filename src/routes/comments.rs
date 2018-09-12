@@ -1,3 +1,4 @@
+use activitypub::object::Note;
 use rocket::{
     State,
     request::LenientForm,
@@ -8,16 +9,16 @@ use serde_json;
 use validator::Validate;
 use workerpool::{Pool, thunk::*};
 
-use plume_common::activity_pub::broadcast;
+use plume_common::{utils, activity_pub::{broadcast, ApRequest, ActivityStream}};
 use plume_models::{
     blogs::Blog,
     comments::*,
     db_conn::DbConn,
-    instance::Instance,
+    mentions::Mention,
     posts::Post,
+    safe_string::SafeString,
     users::User
 };
-use inbox::Inbox;
 
 #[derive(FromForm, Debug, Validate)]
 struct NewCommentForm {
@@ -33,21 +34,29 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
     let form = data.get();
     form.validate()
         .map(|_| {
-            let (new_comment, id) = NewComment::build()
-                .content(form.content.clone())
-                .in_response_to_id(form.responding_to.clone())
-                .post(post.clone())
-                .author(user.clone())
-                .create(&*conn);
+            let (html, mentions) = utils::md_to_html(form.content.as_ref());
+            let comm = Comment::insert(&*conn, NewComment {
+                content: SafeString::new(html.as_ref()),
+                in_response_to_id: form.responding_to.clone(),
+                post_id: post.id,
+                author_id: user.id,
+                ap_url: None,
+                sensitive: false,
+                spoiler_text: String::new()
+            }).update_ap_url(&*conn);
+            let new_comment = comm.create_activity(&*conn);
 
-            let instance = Instance::get_local(&*conn).unwrap();
-            instance.received(&*conn, serde_json::to_value(new_comment.clone()).expect("JSON serialization error"))
-                .expect("We are not compatible with ourselve: local broadcast failed (new comment)");
-            let followers = user.get_followers(&*conn);
+            // save mentions
+            for ment in mentions {
+                Mention::from_activity(&*conn, Mention::build_activity(&*conn, ment), post.id, true, true);
+            }
+
+            // federate
+            let dest = User::one_by_instance(&*conn);
             let user_clone = user.clone();
-            worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, followers)));
+            worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, dest)));
 
-            Redirect::to(format!("/~/{}/{}/#comment-{}", blog_name, slug, id))
+            Redirect::to(uri!(super::posts::details: blog = blog_name, slug = slug))
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code
@@ -69,5 +78,10 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "user_fqn": user.get_fqn(&*conn),
                 "errors": errors
             }))
-        })    
+        })
+}
+
+#[get("/~/<_blog>/<_slug>/comment/<id>")]
+fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Option<ActivityStream<Note>> {
+    Comment::get(&*conn, id).map(|c| ActivityStream::new(c.into_activity(&*conn)))
 }

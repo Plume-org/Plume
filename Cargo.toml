@@ -3,10 +3,10 @@ authors = ["Bat' <baptiste@gelez.xyz>"]
 name = "plume"
 version = "0.1.0"
 [dependencies]
-activitypub = "0.1.1"
+activitypub = "0.1.3"
 atom_syndication = "0.6"
 colored = "1.6"
-dotenv = "*"
+dotenv = "0.13"
 failure = "0.1"
 gettext-rs = "0.4"
 guid-create = "0.1"
@@ -16,10 +16,15 @@ rpassword = "2.0"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
+tera = "0.11"
 validator = "0.7"
 validator_derive = "0.7"
 webfinger = "0.3"
 workerpool = "1.1"
+
+[dependencies.chrono]
+features = ["serde"]
+version = "0.4"
 
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]
@@ -33,24 +38,24 @@ path = "plume-models"
 
 [dependencies.rocket]
 git = "https://github.com/SergioBenitez/Rocket"
-rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
+rev = "55459db7732b9a240826a5c120c650f87e3372ce"
 
 [dependencies.rocket_codegen]
 git = "https://github.com/SergioBenitez/Rocket"
-rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
+rev = "55459db7732b9a240826a5c120c650f87e3372ce"
 
 [dependencies.rocket_contrib]
 features = ["tera_templates", "json"]
 git = "https://github.com/SergioBenitez/Rocket"
-rev = "df7111143e466c18d1f56377a8d9530a5a306aba"
+rev = "55459db7732b9a240826a5c120c650f87e3372ce"
 
 [dependencies.rocket_csrf]
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "896fcaf14bd85b3f8266c0201e5f61937d05aec9"
+rev = "5d23ba4c6c2ee4c41040d428d24344db3d29997f"
 
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"
-rev = "5b4225d5bed5769482dc926a7e6d6b79f1217be6"
+rev = "75a3bfd7b847324c078a355a7f101f8241a9f59b"
 
 [workspace]
 members = ["plume-models", "plume-common"]

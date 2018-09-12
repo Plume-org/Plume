@@ -170,7 +170,7 @@ fn quick_setup(conn: DbConn) {
         .output()
         .map(|o| String::from_utf8(o.stdout).expect("Invalid output from openssl"))
         .expect("Couldn't generate secret key.");
-    write_to_dotenv("ROCKET_SECRET_KEY", key);    
+    write_to_dotenv("ROCKET_SECRET_KEY", key);
 
     create_admin(instance, conn);
 }

@@ -2,13 +2,14 @@
 {% import "macros" as macros %}
 
 {% block title %}
-Administration of {{ instance.name }}
+{{ "Administration of {{ instance.name }}" | _(instance=instance) }}
 {% endblock title %}
 
 {% block content %}
     <h1>{{ "Administration" | _ }}</h1>
 
-    <h2>{{ "Instance settings" | _ }}</h2>
+    {{ macros::tabs(links=['/admin', '/admin/instances', '/admin/users'], titles=['Configuration', 'Instances', 'Users'], selected=1) }}
+
     <form method="post">
         {{ macros::input(name="name", label="Name", errors=errors, form=form, props='minlenght="1"', default=instance) }}
 

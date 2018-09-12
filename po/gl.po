@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-09-04 07:04-0700\n"
+"PO-Revision-Date: 2018-09-12 07:04-0700\n"
 "Last-Translator: Xosé M. <correo@xmgz.eu>\n"
 "Language-Team: none\n"
 "Language: gl\n"
@@ -501,3 +501,109 @@ msgid ""
 msgstr ""
 "Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar outra"
 
+msgid "Subtitle"
+msgstr "Subtítulo"
+
+msgid "Login to like"
+msgstr "Conéctese para gostar"
+
+msgid "Login to boost"
+msgstr "Conéctese para promover"
+
+msgid "Your feed"
+msgstr "Para vostede"
+
+msgid "Federated feed"
+msgstr "Artigos federados"
+
+msgid "Local feed"
+msgstr "Artigos locais"
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr "Nada que ler por aquí. Intente seguir a máis xente."
+
+msgid "Articles"
+msgstr "Artigos"
+
+msgid "All the articles of the Fediverse"
+msgstr "Todos os artigos do Fediverso"
+
+msgid "Articles from {{ instance.name }}"
+msgstr "Artigos desde {{ instance_name }}"
+
+msgid "View all"
+msgstr "Ver todos"
+
+msgid "Articles tagged \"{{ tag }}\""
+msgstr "Artigos etiquetados con {{ instance_name }}"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Edit {{ post }}"
+msgstr "Editar \"{{ post }}\""
+
+msgid "Update"
+msgstr "Actualizar"
+
+msgid "We couldn't find this page."
+msgstr "Non atopamos esta páxina"
+
+msgid "Invalid CSRF token."
+msgstr "Testemuño CSRF non válido"
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr "Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas "
+"no navegador, e recargue a páxina. Si persiste o aviso de este fallo, "
+" informe por favor."
+
+msgid "Administration of {{ instance.name }}"
+msgstr "Administración de {{ instance_name }}"
+
+msgid "Instances"
+msgstr "Instancias"
+
+msgid "Unblock"
+msgstr "Desbloquear"
+
+msgid "Block"
+msgstr "Bloquear"
+
+msgid "Ban"
+msgstr "Prohibir"
+
+msgid "Useful for visually impaired people and licensing"
+msgstr "Útil para xente con problemas visuais e licenzas"
+
+msgid "Let it empty if there is none"
+msgstr "Deixar baldeiro si non hai ningunha"
+
+msgid "Draft"
+msgstr "Borrador"
+
+msgid "This is a draft, don't publish it yet."
+msgstr "Esto é un borrador, non publicar por agora."
+
+msgid "Update or publish"
+msgstr "Actualizar ou publicar"
+
+msgid "Your Drafts"
+msgstr "O seus Borradores"
+
+msgid "Danger zone"
+msgstr "Zona perigosa"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Sexa coidadosa, as accións tomadas non se poden restablecer."
+
+msgid "Delete your account"
+msgstr "Eliminar a súa conta"
+
+msgid "Sorry, but as an admin, you can't leave your instance."
+msgstr "Lamentámolo, pero como administradora, non pode deixar a súa instancia."
+
+msgid "Users"
+msgstr "Usuarias"

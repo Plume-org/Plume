@@ -11,6 +11,7 @@
 
 {% block content %}
     <h1 class="article">{{ article.post.title }}</h1>
+    <h2 class="article">{{ article.post.subtitle }}</h2>
     <p class="article-info">
         <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}" | _(
             link_1='<a href="/@/',
@@ -24,7 +25,12 @@
         <span class="date">{{ date | date(format="%B %e, %Y") }}</span>
         {% if is_author %}
             &mdash;
+            <a href="{{ article.url}}edit">{{ "Edit" | _ }}</a>
+            &mdash;
             <a href="{{ article.url}}delete" onclick="return confirm('Are you sure you?')">{{ "Delete this article" | _ }}</a>
+        {% endif %}
+        {%  if not article.post.published %}
+            <span class="badge">{{ "Draft" }}</span>
         {% endif %}
     </p>
     <article>
@@ -33,6 +39,25 @@
 
     <div class="article-meta">
         <p>{{ "This article is under the {{ license }} license." | _(license=article.post.license) }}</p>
+        <ul class="tags">
+            {% for tag in article.tags %}
+                <li><a href="/tag/{{ tag.tag }}">{{ tag.tag }}</a></li>
+            {% endfor %}
+        </ul>
+        <div class="flex">
+            {{ macros::avatar(user=author, pad=true, size="medium") }}
+            <div class="grow">
+                <h2><a href="/@/{{ author.fqn }}">{{ author.name }}</a></h2>
+                <p>{{ author.summary | safe }}</h2>
+            </div>
+            <a href="/@/{{ author.fqn }}/follow" class="button">
+                {% if is_following %}
+                    {{ "Unfollow" | _ }}
+                {% else %}
+                    {{ "Follow" | _ }}
+                {% endif %}
+            </a>
+        </div>
 
         {% if account %}
             <div class="actions">
@@ -40,23 +65,34 @@
                     <p aria-label="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}" title="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}">{{ n_likes }}</p>
 
                     {% if has_liked %}
-                        <button type="submit" class="liked"><i class="far fa-heart"></i>{{ "I don't like this anymore" | _ }}</button>
+                        <button type="submit" class="action liked">{{ macros::feather(name="heart") }}{{ "I don't like this anymore" | _ }}</button>
                     {% else %}
-                        <button type="submit"><i class="fa fa-heart"></i>{{ "Add yours" | _ }}</button>
+                        <button type="submit" class="action">{{ macros::feather(name="heart") }}{{ "Add yours" | _ }}</button>
                     {% endif %}
                 </form>
                 <form class="reshares" action="{{ article.url }}reshare" method="POST">
                     <p aria-label="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}" title="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}">{{ n_reshares }}</p>
 
                     {% if has_reshared %}
-                        <button type="submit" class="reshared"><i class="far fa-retweet"></i>{{ "I don't want to boost this anymore" | _ }}</button>
+                        <button type="submit" class="action reshared"><i class="icon icon-repeat"></i>{{ "I don't want to boost this anymore" | _ }}</button>
                     {% else %}
-                        <button type="submit"><i class="fa fa-retweet"></i>{{ "Boost" | _ }}</button>
+                        <button type="submit" class="action"><i class="icon icon-repeat"></i>{{ "Boost" | _ }}</button>
                     {% endif %}
                 </form>
             </div>
         {% else %}
             <p class="center">{{ "Login or use your Fediverse account to interact with this article" | _ }}</p>
+            <div class="actions">
+                <div class="likes">
+                    <p aria-label="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}" title="{{ "{{ count }} likes" | _n(singular="One like", count=n_likes) }}">{{ n_likes }}</p>
+                    <a href="/login?m=Login%20to%20like" class="action">{{ macros::feather(name="heart") }}{{ "Add yours" | _ }}</a>
+                </div>
+
+                <div class="reshares">
+                    <p aria-label="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}" title="{{ "{{ count }} Boosts" | _n(singular="One Boost", count=n_reshares) }}">{{ n_reshares }}</p>
+                    <a href="/login?m=Login%20to%20boost" class="action"><i class="icon icon-repeat"></i>{{ "Boost" | _ }}</a>
+                </div>
+            </div>
         {% endif %}
 
         <div class="comments">

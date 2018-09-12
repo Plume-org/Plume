@@ -100,6 +100,16 @@ impl User {
     find_by!(users, find_by_name, username as String, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as String);
 
+    pub fn one_by_instance(conn: &PgConnection) -> Vec<User> {
+        users::table.distinct_on(users::instance_id)
+            .get_results::<User>(conn)
+            .expect("Error in User::on_by_instance")
+    }
+
+    pub fn delete(&self, conn: &PgConnection) {
+        diesel::delete(self).execute(conn).expect("Couldn't remove user from DB");
+    }
+
     pub fn get_instance(&self, conn: &PgConnection) -> Instance {
         Instance::get(conn, self.instance_id).expect("Couldn't find instance")
     }
@@ -297,6 +307,15 @@ impl User {
         }
     }
 
+    pub fn get_local_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<User> {
+        users::table.filter(users::instance_id.eq(1))
+            .order(users::username.asc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<User>(conn)
+            .expect("Error getting local users page")
+    }
+
     pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
         let acts = self.get_activities(conn);
         let n_acts = acts.len();
@@ -354,7 +373,10 @@ impl User {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
-        let posts = posts::table.filter(posts::id.eq(any(posts_by_self))).load::<Post>(conn).unwrap();
+        let posts = posts::table
+            .filter(posts::published.eq(true))
+            .filter(posts::id.eq(any(posts_by_self)))
+            .load::<Post>(conn).unwrap();
         posts.into_iter().map(|p| {
             serde_json::to_value(p.create_activity(conn)).unwrap()
         }).collect::<Vec<serde_json::Value>>()
@@ -567,7 +589,7 @@ impl WithInbox for User {
     }
 
     fn is_local(&self) -> bool {
-        self.instance_id == 0
+        self.instance_id == 1
     }
 }
 

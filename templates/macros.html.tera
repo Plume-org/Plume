@@ -1,8 +1,14 @@
 {% macro post_card(article) %}
     <div class="card">
         <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
-        <main
-            <p>{{ article.post.content | safe | striptags | truncate(length=200) }}</p>
+        <main>
+            <p>
+                {% if article.post.subtitle | length > 0 %}
+                    {{ article.post.subtitle }}
+                {% else %}
+                    {{ article.post.content | safe | striptags | truncate(length=200) }}
+                {% endif %}
+            </p>
         </main>
         <p class="author">
         	{{ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}" | _(
@@ -12,18 +18,19 @@
                 name=article.author.name,
                 link_4="</a>")
             }}
-            ⋅ {{ article.date | date(format="%B %e") }}
+            {% if article.post.published %}⋅ {{ article.date | date(format="%B %e") }}{% endif %}
             ⋅ <a href="/~/{{ article.blog.fqn }}/">{{ article.blog.title }}</a>
+            {% if not article.post.published %}⋅ {{ "Draft" | _ }}{% endif %}
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details='') %}
+{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details=' ') %}
     <label for="{{ name }}">
         {{ label | _ }}
         {% if optional %}
             <small>{{ "Optional" | _ }}</small>
         {% endif %}
-        <small>{{ details }}</small>
+        <small>{{ details | _ }}</small>
     </label>
     {% if errors is defined and errors[name] %}
         {% for err in errors[name] %}
@@ -46,14 +53,45 @@
 {% macro comment(comm) %}
     <div class="comment" id="comment-{{ comm.id }}">
         <a class="author" href="/@/{{ comm.author.fqn }}/">
-            <img class="avatar small padded" src="{{ comm.author.avatar }}" alt="{{ comm.author.name }}">
+            {{ macros::avatar(user=comm.author, pad=true) }}
             <span class="display-name">{{ comm.author.name }}</span>
             <small>@{{ comm.author.fqn }}</small>
         </a>
         <div class="text">{{ comm.content | safe }}</div>
-        <a class="button" href="?responding_to={{ comm.id }}">{{ "Respond" | _ }}</a>
+        <a class="button icon icon-message-circle" href="?responding_to={{ comm.id }}">{{ "Respond" | _ }}</a>
         {% for res in comm.responses %}
             {{ self::comment(comm=res) }}
         {% endfor %}
     </div>
+{% endmacro %}
+{% macro tabs(links, titles, selected) %}
+    <div class="tabs">
+        {% for link in links %}
+            {% set idx = loop.index0 %}
+            <a href="{{ link }}" {% if loop.index == selected %}class="selected"{% endif %}>{{ titles[idx] | _ }}</a>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro feather(name) %}
+<svg class="feather">
+    <use xlink:href="/static/images/feather-sprite.svg#{{ name }}"/>
+</svg>
+{% endmacro %}
+{% macro home_feed(title, link, articles) %}
+    {% if articles | length > 0 %}
+        <h2>{{ title | _ }} &mdash; <a href="{{ link }}">{{ "View all" | _ }}</a></h2>
+        <div class="cards spaced">
+            {% for article in articles %}
+                {{ macros::post_card(article=article) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}
+{% macro avatar(user, size="small", pad=true) %}
+    <img
+        class="avatar {{ size }} {% if pad %}padded{% endif %}"
+        style="background-image: url('{{ user.avatar }}');"
+        title="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
+        aria-label="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
+    >
 {% endmacro %}

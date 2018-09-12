@@ -1,5 +1,5 @@
 use activitypub::{
-    activity::{Create, Follow},
+    activity::Create,
     collection::OrderedCollection,
     object::Article
 };
@@ -7,7 +7,7 @@ use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     request::LenientForm,
     response::{Redirect, Flash, Content},
-    http::ContentType
+    http::{ContentType, Cookies}
 };
 use rocket_contrib::Template;
 use serde_json;
@@ -16,7 +16,7 @@ use workerpool::thunk::*;
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
-    inbox::{FromActivity, Notify}
+    inbox::{FromActivity, Notify, Deletable}
 };
 use plume_common::utils;
 use plume_models::{
@@ -36,7 +36,7 @@ use Worker;
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
         Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
-        None => Err(utils::requires_login("", uri!(me)))
+        None => Err(utils::requires_login("", uri!(me).into()))
     }
 }
 
@@ -71,7 +71,8 @@ fn details(name: String, conn: DbConn, account: Option<User>, worker: Worker, fe
                         .unwrap_or_else(|| User::fetch_from_url(&*fecth_followers_conn, user_id).expect("Couldn't fetch follower"));
                     follows::Follow::insert(&*fecth_followers_conn, follows::NewFollow {
                         follower_id: follower.id,
-                        following_id: user_clone.id
+                        following_id: user_clone.id,
+                        ap_url: format!("{}/follow/{}", follower.ap_url, user_clone.ap_url),
                     });
                 }
             }));
@@ -104,38 +105,45 @@ fn dashboard(user: User, conn: DbConn) -> Template {
     let blogs = Blog::find_for_author(&*conn, user.id);
     Template::render("users/dashboard", json!({
         "account": user.to_json(&*conn),
-        "blogs": blogs
+        "blogs": blogs,
+        "drafts": Post::drafts_by_author(&*conn, &user).into_iter().map(|a| a.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
     }))
 }
 
 #[get("/dashboard", rank = 2)]
 fn dashboard_auth() -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to access your dashboard", uri!(dashboard))
+    utils::requires_login(
+        "You need to be logged in order to access your dashboard",
+        uri!(dashboard).into()
+    )
 }
 
 #[get("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
-    let f = follows::Follow::insert(&*conn, follows::NewFollow {
-        follower_id: user.id,
-        following_id: target.id
-    });
-    f.notify(&*conn);
+    if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
+        let delete_act = follow.delete(&*conn);
+        worker.execute(Thunk::of(move || broadcast(&user, delete_act, vec![target])));
+    } else {
+        let f = follows::Follow::insert(&*conn, follows::NewFollow {
+            follower_id: user.id,
+            following_id: target.id,
+            ap_url: format!("{}/follow/{}", user.ap_url, target.ap_url),
+        });
+        f.notify(&*conn);
 
-    let mut act = Follow::default();
-    act.follow_props.set_actor_link::<Id>(user.clone().into_id()).unwrap();
-    act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
-    act.object_props.set_id_string(format!("{}/follow/{}", user.ap_url, target.ap_url)).unwrap();
-    act.object_props.set_to_link(target.clone().into_id()).expect("New Follow error while setting 'to'");
-    act.object_props.set_cc_link_vec::<Id>(vec![]).expect("New Follow error while setting 'cc'");
-
-    worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
+        let act = f.into_activity(&*conn);
+        worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
+    }
     Redirect::to(uri!(details: name = name))
 }
 
 #[get("/@/<name>/follow", rank = 2)]
 fn follow_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to follow someone", uri!(follow: name = name))
+    utils::requires_login(
+        "You need to be logged in order to follow someone",
+        uri!(follow: name = name).into()
+    )
 }
 
 #[get("/@/<name>/followers?<page>")]
@@ -194,7 +202,10 @@ fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
 
 #[get("/@/<name>/edit", rank = 2)]
 fn edit_auth(name: String) -> Flash<Redirect> {
-    utils::requires_login("You need to be logged in order to edit your profile", uri!(edit: name = name))
+    utils::requires_login(
+        "You need to be logged in order to edit your profile",
+        uri!(edit: name = name).into()
+    )
 }
 
 #[derive(FromForm)]
@@ -212,6 +223,21 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
         data.get().summary.clone().unwrap_or(user.summary.to_string())
     );
     Redirect::to(uri!(me))
+}
+
+#[get("/@/<name>/delete")]
+fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Redirect {
+    let account = User::find_by_fqn(&*conn, name.clone()).unwrap();
+    if user.id == account.id {
+        account.delete(&*conn);
+
+        let cookie = cookies.get_private(AUTH_COOKIE).unwrap();
+        cookies.remove_private(cookie);
+
+        Redirect::to(uri!(super::instance::index))
+    } else {
+        Redirect::to(uri!(edit: name = name))
+    }
 }
 
 #[derive(FromForm, Serialize, Validate)]
@@ -256,6 +282,7 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
             Redirect::to(uri!(super::session::new))
         })
         .map_err(|e| Template::render("users/new", json!({
+            "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
             "errors": e.inner(),
             "form": form
         })))
@@ -271,11 +298,18 @@ fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
 fn inbox(name: String, conn: DbConn, data: String) -> String {
     let user = User::find_local(&*conn, name).unwrap();
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+
+    let activity = act.clone();
+    let actor_id = activity["actor"].as_str()
+        .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("User: No actor ID for incoming activity, blocks by panicking"));
+    if Instance::is_blocked(&*conn, actor_id.to_string()) {
+        return String::new();
+    }
     match user.received(&*conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
-            println!("User inbox error: {}\n{}", e.cause(), e.backtrace());
-            format!("Error: {}", e.cause())
+            println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());
+            format!("Error: {}", e.as_fail())
         }
     }
 }

@@ -91,6 +91,11 @@ impl Deletable<PgConnection, activity::Undo> for Like {
     fn delete(&self, conn: &PgConnection) -> activity::Undo {
         diesel::delete(self).execute(conn).unwrap();
 
+        // delete associated notification if any
+        if let Some(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
+            diesel::delete(&notif).execute(conn).expect("Couldn't delete like notification");
+        }
+
         let mut act = activity::Undo::default();
         act.undo_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).expect("Like::delete: actor error");
         act.undo_props.set_object_object(self.into_activity(conn)).expect("Like::delete: object error");
@@ -100,7 +105,7 @@ impl Deletable<PgConnection, activity::Undo> for Like {
 
         act
     }
-    
+
     fn delete_id(id: String, conn: &PgConnection) {
         if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
             like.delete(conn);

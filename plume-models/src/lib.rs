@@ -1,3 +1,5 @@
+#![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
+
 extern crate activitypub;
 extern crate ammonia;
 extern crate bcrypt;
@@ -19,7 +21,6 @@ extern crate serde_json;
 extern crate url;
 extern crate webfinger;
 
-use diesel::{PgConnection, RunQueryDsl, select};
 use std::env;
 
 macro_rules! find_by {
@@ -71,18 +72,16 @@ macro_rules! insert {
     };
 }
 
-sql_function!(nextval, nextval_t, (seq: ::diesel::sql_types::Text) -> ::diesel::sql_types::BigInt);
-sql_function!(setval, setval_t, (seq: ::diesel::sql_types::Text, val: ::diesel::sql_types::BigInt) -> ::diesel::sql_types::BigInt);
-
-fn get_next_id(conn: &PgConnection, seq: &str) -> i32 {
-    // We cant' use currval because it may fail if nextval have never been called before
-    let next = select(nextval(seq)).get_result::<i64>(conn).expect("Next ID fail");
-    if next > 1 {
-        select(setval(seq, next - 1)).get_result::<i64>(conn).expect("Reset ID fail");
-    }
-    next as i32
+macro_rules! update {
+    ($table:ident) => {
+        pub fn update(&self, conn: &PgConnection) -> Self {
+            diesel::update(self)
+                .set(self)
+                .get_result(conn)
+                .expect(concat!("Error updating ", stringify!($table)))
+        }
+    };
 }
-
 
 lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")
@@ -119,4 +118,5 @@ pub mod posts;
 pub mod reshares;
 pub mod safe_string;
 pub mod schema;
+pub mod tags;
 pub mod users;

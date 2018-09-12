@@ -11,7 +11,7 @@
         {% for notification in notifications %}
             <div class="card flex">
                 {% if notification.kind == "COMMENT" %}
-                    <i class="fa fa-comment left-icon"></i>
+                    <i class="icon icon-message-circle left-icon"></i>
                     <main class="grow">
                         <h3><a href="{{ notification.object.post.url }}#comment-{{ notification.object.id }}">
                             {{ "{{ user }} commented your article." | _(user=notification.object.user.name | escape) }}
@@ -21,7 +21,7 @@
                     <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "FOLLOW" %}
-                    <i class="fa fa-user-plus left-icon"></i>
+                    <i class="icon icon-user-plus left-icon"></i>
                     <main class="grow">
                         <h3><a href="/@/{{ notification.object.follower.fqn }}/">
                             {{ "{{ user }} is now following you." | _(user=notification.object.follower.name | escape) }}
@@ -30,7 +30,7 @@
                     <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "LIKE" %}
-                    <i class="fa fa-heart left-icon"></i>
+                    <i class="icon icon-heart left-icon"></i>
                     <main class="grow">
                         <h3>
                             {{ "{{ user }} liked your article." | _(user=notification.object.user.name | escape) }}
@@ -40,7 +40,7 @@
                     <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "MENTION" %}
-                    <i class="fa fa-at left-icon"></i>
+                    <i class="icon icon-at-sign left-icon"></i>
                     <main class="grow">
                         <h3><a href="{{ notification.object.url }}">
                             {{ "{{ user }} mentioned you." | _(user=notification.object.user.name | escape) }}
@@ -49,7 +49,7 @@
                     <p><small>{{ notification.creation_date | date(format="%B %e, %H:%M") }}</small></p>
 
                 {% elif notification.kind == "RESHARE" %}
-                    <i class="fa fa-retweet left-icon"></i>
+                    <i class="icon icon-repeat left-icon"></i>
                     <main class="grow">
                         <h3>
                             {{ "{{ user }} boosted your article." | _(user=notification.object.user.name | escape) }}

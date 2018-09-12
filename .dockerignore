@@ -1,0 +1,5 @@
+docs
+data
+Dockerfile
+docker-compose.yml
+.env

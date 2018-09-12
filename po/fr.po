@@ -503,4 +503,117 @@ msgstr "Envoyer"
 
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
-msgstr "Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d'en trouver une autre."
+msgstr ""
+"Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d'en "
+"trouver une autre."
+
+msgid "Subtitle"
+msgstr "Sous-titre"
+
+msgid "Login to like"
+msgstr "Connectez-vous pour aimer."
+
+msgid "Login to boost"
+msgstr "Connectez-vous pour booster."
+
+msgid "Your feed"
+msgstr "Votre flux"
+
+msgid "Federated feed"
+msgstr "Flux fédéré"
+
+msgid "Local feed"
+msgstr "Flux local"
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr "Rien par ici pour le moment. Essayez de suivre plus de monde."
+
+msgid "Articles"
+msgstr "Articles"
+
+msgid "All the articles of the Fediverse"
+msgstr "Tous les articles de la Fédiverse"
+
+msgid "Articles from {{ instance.name }}"
+msgstr "Articles de {{ instance.name }}"
+
+msgid "View all"
+msgstr "Tout afficher"
+
+msgid "Articles tagged \"{{ tag }}\""
+msgstr "Articles taggués « {{ instance.name }} »"
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Edit {{ post }}"
+msgstr "Modifier « {{ post }} »"
+
+msgid "Update"
+msgstr "Mettre à jour"
+
+msgid "We couldn't find this page."
+msgstr "Page introuvable."
+
+msgid "Invalid CSRF token."
+msgstr "Jeton CSRF invalide."
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les "
+"cookiessont activés dans votre navigateur, et essayez de recharger cette "
+"page. Si vouscontinuez à voir cette erreur, merci de la signaler."
+
+msgid "Administration of {{ instance.name }}"
+msgstr "Administration de {{ instance.name }}"
+
+msgid "Instances"
+msgstr "Instances"
+
+msgid "Unblock"
+msgstr "Débloquer"
+
+msgid "Block"
+msgstr "Bloquer"
+
+msgid "Ban"
+msgstr "Bannir"
+
+msgid "Useful for visually impaired people and licensing"
+msgstr "Utile pour les personnes malvoyantes et les informations de Copyright."
+
+msgid "Let it empty if there is none"
+msgstr "Laisser vide si il n'y en a pas"
+
+msgid "Draft"
+msgstr "Brouillon"
+
+msgid "This is a draft, don't publish it yet."
+msgstr "Cet article est un brouillon, il sera publié plus tard."
+
+msgid "Update or publish"
+msgstr "Mettre à jour ou publier"
+
+msgid "Your Drafts"
+msgstr "Vos brouillons"
+
+msgid "Danger zone"
+msgstr "Zone à risque"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+"Faites très attention, aucune action entreprise ici ne pourra être annulée."
+
+msgid "Delete your account"
+msgstr "Supprimer votre compte"
+
+msgid "Sorry, but as an admin, you can't leave your instance."
+msgstr ""
+"Désolé, mais en tant qu'administrateur, vous ne pouvez pas quitter votre "
+"instance."
+
+msgid "Users"
+msgstr "Utilisateurs"

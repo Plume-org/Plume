@@ -14,11 +14,11 @@
 {% block content %}
     {% include "users/header" %}
 
-    <div>
-        {{ user.summary | safe }}
-    </div>
+    {% set user_link = ['/@', user.fqn] %}
+    {% set followers_link = ['/@', user.fqn, 'followers'] %}
+    {{ macros::tabs(links=[ user_link | join(sep='/'), followers_link | join(sep='/')], titles=['Articles', 'Followers'], selected=1) }}
 
-    {% if recents | length != 0 %}    
+    {% if recents | length != 0 %}
         <h2>
             {{ "Latest articles" | _ }}
             <small><a href="/@/{{ user.fqn }}/atom.xml"><i title="Atom feed" class="fa fa-rss"></i></a></small>
