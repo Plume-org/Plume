@@ -626,5 +626,8 @@ msgstr ""
 msgid "Users"
 msgstr "Nutzername"
 
+msgid "This post isn't published yet."
+msgstr ""
+
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"

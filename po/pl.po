@@ -629,6 +629,9 @@ msgstr ""
 msgid "Users"
 msgstr "Nazwa użytkownika"
 
+msgid "This post isn't published yet."
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

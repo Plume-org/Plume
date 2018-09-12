@@ -605,3 +605,6 @@ msgstr ""
 
 msgid "Users"
 msgstr ""
+
+msgid "This post isn't published yet."
+msgstr ""

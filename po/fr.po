@@ -617,3 +617,7 @@ msgstr ""
 
 msgid "Users"
 msgstr "Utilisateurs"
+
+#, fuzzy
+msgid "This post isn't published yet."
+msgstr "Cet article est un brouillon, il sera publié plus tard."

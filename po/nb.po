@@ -630,6 +630,9 @@ msgstr ""
 msgid "Users"
 msgstr "Brukernavn"
 
+msgid "This post isn't published yet."
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

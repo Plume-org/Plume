@@ -39,39 +39,48 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
 fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
     may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
         may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
-            let comments = Comment::list_by_post(&*conn, post.id);
-            let comms = comments.clone();
+            if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
+                let comments = Comment::list_by_post(&*conn, post.id);
+                let comms = comments.clone();
 
-            Template::render("posts/details", json!({
-                "author": post.get_authors(&*conn)[0].to_json(&*conn),
-                "article": post.to_json(&*conn),
-                "blog": blog.to_json(&*conn),
-                "comments": &comments.into_iter().filter_map(|c| if c.in_response_to_id.is_none() {
-                    Some(c.to_json(&*conn, &comms))
-                } else {
-                    None
-                }).collect::<Vec<serde_json::Value>>(),
-                "n_likes": post.get_likes(&*conn).len(),
-                "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
-                "n_reshares": post.get_reshares(&*conn).len(),
-                "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
-                "account": &user.clone().map(|u| u.to_json(&*conn)),
-                "date": &post.creation_date.timestamp(),
-                "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
-                "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
-                "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
-                "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false)
-            }))
+                Template::render("posts/details", json!({
+                    "author": post.get_authors(&*conn)[0].to_json(&*conn),
+                    "article": post.to_json(&*conn),
+                    "blog": blog.to_json(&*conn),
+                    "comments": &comments.into_iter().filter_map(|c| if c.in_response_to_id.is_none() {
+                        Some(c.to_json(&*conn, &comms))
+                    } else {
+                        None
+                    }).collect::<Vec<serde_json::Value>>(),
+                    "n_likes": post.get_likes(&*conn).len(),
+                    "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
+                    "n_reshares": post.get_reshares(&*conn).len(),
+                    "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
+                    "account": &user.clone().map(|u| u.to_json(&*conn)),
+                    "date": &post.creation_date.timestamp(),
+                    "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
+                    "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
+                    "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
+                    "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false)
+                }))
+            } else {
+                Template::render("errors/403", json!({
+                    "error_message": "This post isn't published yet."
+                }))
+            }
         })
     })
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<Article> {
+fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, String> {
     let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
     let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
-
-    ActivityStream::new(post.into_activity(&*conn))
+    if post.published {
+        Ok(ActivityStream::new(post.into_activity(&*conn)))
+    } else {
+        Err(String::from("Not published yet."))
+    }
 }
 
 #[get("/~/<blog>/new", rank = 2)]
@@ -326,7 +335,6 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         })))
     }
 }
-
 
 #[get("/~/<blog_name>/<slug>/delete")]
 fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
