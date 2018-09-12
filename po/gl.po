@@ -96,9 +96,6 @@ msgstr "Quero retirar a pomoción realizada"
 msgid "Boost"
 msgstr "Promover"
 
-msgid "Boost"
-msgstr "Promover"
-
 msgid "Comments"
 msgstr "Comentarios"
 
