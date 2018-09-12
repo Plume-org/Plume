@@ -200,8 +200,10 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             post.update(&*conn);
             let post = post.update_ap_url(&*conn);
 
-            for m in mentions.into_iter() {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
+            if post.published {
+                for m in mentions.into_iter() {
+                    Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
+                }
             }
 
             let old_tags = Tag::for_post(&*conn, post.id).into_iter().map(|t| t.tag).collect::<Vec<_>>();
