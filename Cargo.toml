@@ -29,7 +29,7 @@ features = ["serde"]
 version = "0.4"
 
 [dependencies.diesel]
-features = ["postgres", "r2d2", "chrono"]
+features = ["postgres", "sqlite", "r2d2", "chrono"]
 version = "*"
 
 [dependencies.plume-api]
