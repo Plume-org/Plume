@@ -8,3 +8,4 @@ po/*.po~
 .env
 Rocket.toml
 media
+docker-compose.yml
