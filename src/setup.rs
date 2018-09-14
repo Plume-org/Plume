@@ -6,6 +6,7 @@ use std::io;
 use std::path::Path;
 use std::process::{exit, Command};
 use rpassword;
+use plume_models::safe_string::SafeString;
 
 use plume_models::{
     DB_URL,
@@ -152,8 +153,8 @@ fn quick_setup(conn: DbConn) {
         public_domain: domain,
         name: name,
         local: true,
-        long_description: String::new(),
-        short_description: String::new(),
+        long_description: SafeString::new(""),
+        short_description: SafeString::new(""),
         default_license: String::from("CC-0"),
         open_registrations: true,
         short_description_html: String::new(),

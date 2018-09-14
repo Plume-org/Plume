@@ -205,8 +205,8 @@ impl User {
                     public_domain: inst.clone(),
                     local: false,
                     // We don't really care about all the following for remote instances
-                    long_description: String::new(),
-                    short_description: String::new(),
+                    long_description: SafeString::new(""),
+                    short_description: SafeString::new(""),
                     default_license: String::new(),
                     open_registrations: true,
                     short_description_html: String::new(),

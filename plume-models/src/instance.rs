@@ -3,6 +3,7 @@ use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
 use std::iter::Iterator;
 
 use plume_common::utils::md_to_html;
+use safe_string::SafeString;
 use ap_url;
 use users::User;
 use schema::{instances, users};
@@ -16,8 +17,8 @@ pub struct Instance {
     pub blocked: bool,
     pub creation_date: NaiveDateTime,
     pub open_registrations: bool,
-    pub short_description: String,
-    pub long_description: String,
+    pub short_description: SafeString,
+    pub long_description: SafeString,
     pub default_license : String,
     pub long_description_html: String,
     pub short_description_html: String
@@ -30,8 +31,8 @@ pub struct NewInstance {
     pub name: String,
     pub local: bool,
     pub open_registrations: bool,
-    pub short_description: String,
-    pub long_description: String,
+    pub short_description: SafeString,
+    pub long_description: SafeString,
     pub default_license : String,
     pub long_description_html: String,
     pub short_description_html: String
@@ -114,7 +115,7 @@ impl Instance {
         ))
     }
 
-    pub fn update(&self, conn: &PgConnection, name: String, open_registrations: bool, short_description: String, long_description: String) -> Instance {
+    pub fn update(&self, conn: &PgConnection, name: String, open_registrations: bool, short_description: SafeString, long_description: SafeString) -> Instance {
         let (sd, _) = md_to_html(short_description.as_ref());
         let (ld, _) = md_to_html(long_description.as_ref());
         diesel::update(self)

@@ -101,3 +101,15 @@ impl AsRef<str> for SafeString {
         &self.value
     }
 }
+
+use rocket::request::FromFormValue;
+use rocket::http::RawStr;
+
+impl<'v> FromFormValue<'v> for SafeString {
+    type Error = &'v RawStr;
+
+    fn from_form_value(form_value: &'v RawStr) -> Result<SafeString, &'v RawStr> {
+        let val = String::from_form_value(form_value)?;
+        Ok(SafeString::new(&val))
+    }
+}
