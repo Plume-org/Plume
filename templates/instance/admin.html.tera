@@ -23,10 +23,10 @@
         </label>
 
         <label for="short_description">{{ "Short description" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
-        <textarea id="short_description" name="short_description">{{ form.short_description | default(value=instance.short_description) }}</textarea>
+        <textarea id="short_description" name="short_description">{{ form.short_description | default(value=instance.short_description | safe) }}</textarea>
 
         <label for="long_description">{{ "Long description" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
-        <textarea id="long_description" name="long_description">{{ form.long_description | default(value=instance.long_description) }}</textarea>
+        <textarea id="long_description" name="long_description">{{ form.long_description | default(value=instance.long_description | safe) }}</textarea>
 
         {{ macros::input(name="default_license", label="Default license", errors=errors, form=form, props='minlenght="1"', default=instance) }}
 
