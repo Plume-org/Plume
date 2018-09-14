@@ -115,7 +115,7 @@ impl Instance {
         ))
     }
 
-    pub fn update(&self, conn: &PgConnection, name: String, open_registrations: bool, short_description: String, long_description: String) -> Instance {
+    pub fn update(&self, conn: &PgConnection, name: String, open_registrations: bool, short_description: SafeString, long_description: SafeString) -> Instance {
         let (sd, _) = md_to_html(short_description.as_ref());
         let (ld, _) = md_to_html(long_description.as_ref());
         diesel::update(self)

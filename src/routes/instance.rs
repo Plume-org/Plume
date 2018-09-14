@@ -10,7 +10,9 @@ use plume_models::{
     db_conn::DbConn,
     posts::Post,
     users::User,
+    safe_string::SafeString,
     instance::*
+
 };
 use inbox::Inbox;
 use routes::Page;
@@ -110,8 +112,8 @@ struct InstanceSettingsForm {
     #[validate(length(min = "1"))]
     name: String,
     open_registrations: bool,
-    short_description: String,
-    long_description: String,
+    short_description: SafeString,
+    long_description: SafeString,
     #[validate(length(min = "1"))]
     default_license: String
 }
