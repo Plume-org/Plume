@@ -110,8 +110,6 @@ impl<'v> FromFormValue<'v> for SafeString {
 
     fn from_form_value(form_value: &'v RawStr) -> Result<SafeString, &'v RawStr> {
         let val = String::from_form_value(form_value)?;
-        Ok(SafeString {
-          value: val,
-        })
+        Ok(SafeString::new(&val))
     }
 }
