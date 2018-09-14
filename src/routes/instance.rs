@@ -125,8 +125,8 @@ fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSetting
             instance.update(&*conn,
                 form.name.clone(),
                 form.open_registrations,
-                form.short_description.clone().to_string(),
-                form.long_description.clone().to_string());
+                form.short_description.clone(),
+                form.long_description.clone());
             Redirect::to(uri!(admin))
         })
         .map_err(|e| Template::render("instance/admin", json!({
