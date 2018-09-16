@@ -16,7 +16,7 @@ table! {
         outbox_url -> Text,
         inbox_url -> Text,
         instance_id -> Integer,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
         ap_url -> Text,
         private_key -> Nullable<Text>,
         public_key -> Text,
@@ -30,7 +30,7 @@ table! {
         in_response_to_id -> Nullable<Integer>,
         post_id -> Integer,
         author_id -> Integer,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
         ap_url -> Nullable<Text>,
         sensitive -> Bool,
         spoiler_text -> Text,
@@ -53,7 +53,7 @@ table! {
         name -> Text,
         local -> Bool,
         blocked -> Bool,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
         open_registrations -> Bool,
         short_description -> Text,
         long_description -> Text,
@@ -69,7 +69,7 @@ table! {
         user_id -> Integer,
         post_id -> Integer,
         ap_url -> Text,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
     }
 }
 
@@ -100,7 +100,7 @@ table! {
     notifications (id) {
         id -> Nullable<Integer>,
         user_id -> Integer,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
         kind -> Text,
         object_id -> Integer,
     }
@@ -123,7 +123,7 @@ table! {
         content -> Text,
         published -> Bool,
         license -> Text,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
         ap_url -> Text,
         subtitle -> Text,
         source -> Text,
@@ -136,7 +136,7 @@ table! {
         user_id -> Integer,
         post_id -> Integer,
         ap_url -> Text,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
     }
 }
 
@@ -161,7 +161,7 @@ table! {
         email -> Nullable<Text>,
         hashed_password -> Nullable<Text>,
         instance_id -> Integer,
-        creation_date -> Integer,
+        creation_date -> Timestamp,
         ap_url -> Text,
         private_key -> Nullable<Text>,
         public_key -> Text,

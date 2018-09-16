@@ -7,7 +7,7 @@ CREATE TABLE blogs (
     outbox_url VARCHAR NOT NULL,
     inbox_url VARCHAR NOT NULL,
     instance_id INTEGER REFERENCES instances(id) ON DELETE CASCADE NOT NULL,
-    creation_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ap_url text not null default '',
     private_key TEXT,
     public_key TEXT NOT NULL DEFAULT ''

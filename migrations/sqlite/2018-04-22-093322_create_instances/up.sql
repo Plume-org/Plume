@@ -5,7 +5,7 @@ CREATE TABLE instances (
     name VARCHAR NOT NULL,
     local BOOLEAN NOT NULL DEFAULT 'f',
     blocked BOOLEAN NOT NULL DEFAULT 'f',
-    creation_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     open_registrations BOOLEAN NOT NULL DEFAULT 't',
     short_description TEXT NOT NULL DEFAULT '',
     long_description TEXT NOT NULL DEFAULT '',

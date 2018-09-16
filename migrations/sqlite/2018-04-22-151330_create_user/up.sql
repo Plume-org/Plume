@@ -11,7 +11,7 @@ CREATE TABLE users (
     email TEXT,
     hashed_password TEXT,
     instance_id INTEGER REFERENCES instances(id) ON DELETE CASCADE NOT NULL,
-    creation_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ap_url TEXT NOT NULL default '',
     private_key TEXT,
     public_key TEXT NOT NULL DEFAULT '',
