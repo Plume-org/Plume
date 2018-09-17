@@ -1,6 +1,6 @@
 table! {
     blog_authors (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         blog_id -> Integer,
         author_id -> Integer,
         is_owner -> Bool,
@@ -9,7 +9,7 @@ table! {
 
 table! {
     blogs (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         actor_id -> Text,
         title -> Text,
         summary -> Text,
@@ -25,7 +25,7 @@ table! {
 
 table! {
     comments (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         content -> Text,
         in_response_to_id -> Nullable<Integer>,
         post_id -> Integer,
@@ -39,7 +39,7 @@ table! {
 
 table! {
     follows (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         follower_id -> Integer,
         following_id -> Integer,
         ap_url -> Text,
@@ -48,7 +48,7 @@ table! {
 
 table! {
     instances (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         public_domain -> Text,
         name -> Text,
         local -> Bool,
@@ -65,7 +65,7 @@ table! {
 
 table! {
     likes (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         user_id -> Integer,
         post_id -> Integer,
         ap_url -> Text,
@@ -75,7 +75,7 @@ table! {
 
 table! {
     medias (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         file_path -> Text,
         alt_text -> Text,
         is_remote -> Bool,
@@ -88,7 +88,7 @@ table! {
 
 table! {
     mentions (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         mentioned_id -> Integer,
         post_id -> Nullable<Integer>,
         comment_id -> Nullable<Integer>,
@@ -98,7 +98,7 @@ table! {
 
 table! {
     notifications (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         user_id -> Integer,
         creation_date -> Timestamp,
         kind -> Text,
@@ -108,7 +108,7 @@ table! {
 
 table! {
     post_authors (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         post_id -> Integer,
         author_id -> Integer,
     }
@@ -116,7 +116,7 @@ table! {
 
 table! {
     posts (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         blog_id -> Integer,
         slug -> Text,
         title -> Text,
@@ -132,7 +132,7 @@ table! {
 
 table! {
     reshares (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         user_id -> Integer,
         post_id -> Integer,
         ap_url -> Text,
@@ -142,7 +142,7 @@ table! {
 
 table! {
     tags (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         tag -> Text,
         is_hastag -> Bool,
         post_id -> Integer,
@@ -151,7 +151,7 @@ table! {
 
 table! {
     users (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         username -> Text,
         display_name -> Text,
         outbox_url -> Text,

@@ -1,7 +1,7 @@
 -- Your SQL goes here
 PRAGMA foreign_keys = ON;
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     username VARCHAR NOT NULL,
     display_name VARCHAR NOT NULL DEFAULT '',
     outbox_url VARCHAR NOT NULL,
