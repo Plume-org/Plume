@@ -126,7 +126,7 @@ cargo install diesel_cli --no-default-features --features postgres --version '=1
 Plume should normally run migrations on your behalf as needed, but if you want to run them manually, use the following command:
 
 ```bash
-diesel migration run --database-url postgres://USER:PASSWORD@IP:PORT/plume
+diesel migration run --database-url postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
 ```
 
 This command may be useful if you decided to use a separate database server.
@@ -138,7 +138,7 @@ When you launch Plume for the first time, it will ask you a few questions to set
 ```
 # Optional, only do it if the database URL is not
 # postgres://plume:plume@localhost/plume
-export DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/plume
+export DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/DATABASE_NAME
 
 # Create the media directory, where uploads will be stored
 mkdir media
