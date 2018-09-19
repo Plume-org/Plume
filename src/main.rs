@@ -36,6 +36,7 @@ use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
 use workerpool::{Pool, thunk::ThunkWorker};
 
+mod api;
 mod inbox;
 mod setup;
 mod routes;
@@ -141,6 +142,9 @@ fn main() {
             routes::well_known::webfinger,
 
             routes::errors::csrf_violation
+        ])
+        .mount("/api/v1", routes![
+            api::posts::get
         ])
         .catch(catchers![
             routes::errors::not_found,

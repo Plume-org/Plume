@@ -3,11 +3,13 @@ use activitypub::{
     link,
     object::{Article, Tombstone}
 };
+use canapi::{Error, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any, Expression, BoolExpressionMethods};
 use heck::KebabCase;
 use serde_json;
 
+use plume_api::posts::PostEndpoint;
 use plume_common::activity_pub::{
     Hashtag, Source,
     PUBLIC_VISIBILTY, Id, IntoId,
@@ -53,6 +55,56 @@ pub struct NewPost {
     pub ap_url: String,
     pub subtitle: String,
     pub source: String,
+}
+
+impl Provider<PgConnection> for Post {
+    type Data = PostEndpoint;
+
+    fn get(conn: &PgConnection, id: i32) -> Result<PostEndpoint, Error> {
+        Post::get(conn, id).map(|p| Ok(PostEndpoint {
+            id: Some(p.id),
+            title: Some(p.title.clone()),
+            subtitle: Some(p.subtitle.clone()),
+            content: Some(p.content.get().clone())
+        })).unwrap_or(Err(Error::NotFound("Get Post".to_string())))
+    }
+
+    fn list(conn: &PgConnection, filter: PostEndpoint) -> Vec<PostEndpoint> {
+        let mut filters = Vec::new();
+        if let Some(title) = filter.title {
+            filters.push(posts::title.eq(title));
+        }
+
+        let filters = filters.into_iter();
+        let res = if let Some(first_filter) = filters.next() {
+            posts::table.filter(filters.fold(first_filter, |q, f| q.and(f)))
+                .get_results::<Post>(conn)
+        } else {
+            posts::table.get_results::<Post>(conn)
+        };
+
+        res.map(|ps| ps.into_iter()
+            .map(|p| PostEndpoint {
+                id: Some(p.id),
+                title: Some(p.title.clone()),
+                subtitle: Some(p.subtitle.clone()),
+                content: Some(p.content.get().clone())
+            })
+            .collect()
+        ).unwrap_or(vec![])
+    }
+
+    fn create(conn: &PgConnection, query: PostEndpoint) -> Result<PostEndpoint, Error> {
+
+    }
+
+    fn update(conn: &PgConnection, id: i32, new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
+
+    }
+
+    fn delete(conn: &PgConnection, id: i32) {
+        Post::get(conn, id).map(|p| p.delete(conn));
+    }
 }
 
 impl Post {

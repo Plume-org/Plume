@@ -1,4 +1,5 @@
 use activitypub::activity;
+use canapi::Provider;
 use chrono;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 

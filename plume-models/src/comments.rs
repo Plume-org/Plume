@@ -3,6 +3,7 @@ use activitypub::{
     link,
     object::{Note}
 };
+use canapi::Provider;
 use chrono;
 use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
 use serde_json;
