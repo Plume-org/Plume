@@ -118,7 +118,7 @@ fn dashboard_auth() -> Flash<Redirect> {
     )
 }
 
-#[get("/@/<name>/follow")]
+#[post("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
     let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
@@ -138,7 +138,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
     Redirect::to(uri!(details: name = name))
 }
 
-#[get("/@/<name>/follow", rank = 2)]
+#[post("/@/<name>/follow", rank = 2)]
 fn follow_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to follow someone",
@@ -225,7 +225,7 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
     Redirect::to(uri!(me))
 }
 
-#[get("/@/<name>/delete")]
+#[post("/@/<name>/delete")]
 fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Redirect {
     let account = User::find_by_fqn(&*conn, name.clone()).unwrap();
     if user.id == account.id {

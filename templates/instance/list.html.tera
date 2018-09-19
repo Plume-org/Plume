@@ -18,13 +18,13 @@
                     <small>{{ instance.public_domain }}</small>
                 </p>
                 {% if not instance.local %}
-                    <a href="/admin/instances/{{ instance.id }}/block">
+                    <form class="inline" method="post" action="/admin/instances/{{ instance.id }}/block">
                         {% if instance.blocked %}
-                            {{ "Unblock" | _ }}
+                            <input type="submit" value="{{ 'Unblock' | _ }}">
                         {% else %}
-                            {{ "Block" | _ }}
+                            <input type="submit" value="{{ 'Block' | _ }}">
                         {% endif %}
-                    </a>
+                    </form>
                 {% endif %}
             </div>
         {% endfor %}

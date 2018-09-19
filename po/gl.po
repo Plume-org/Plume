@@ -325,7 +325,8 @@ msgstr[1] "{{ count }} autoras en este blog: "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
-"Conéctese ou utilice a súa conta no fediverso para interactuar con este artigo"
+"Conéctese ou utilice a súa conta no fediverso para interactuar con este "
+"artigo"
 
 msgid "Optional"
 msgstr "Opcional"
@@ -486,7 +487,6 @@ msgstr "Descrición"
 msgid "Content warning"
 msgstr "Aviso sobre o contido"
 
-
 msgid "File"
 msgstr "Ficheiro"
 
@@ -496,7 +496,8 @@ msgstr "Enviar"
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
-"Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar outra"
+"Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar "
+"outra"
 
 msgid "Subtitle"
 msgstr "Subtítulo"
@@ -553,9 +554,10 @@ msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
-msgstr "Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas "
-"no navegador, e recargue a páxina. Si persiste o aviso de este fallo, "
-" informe por favor."
+msgstr ""
+"Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas "
+"no navegador, e recargue a páxina. Si persiste o aviso de este fallo,  "
+"informe por favor."
 
 msgid "Administration of {{ instance.name }}"
 msgstr "Administración de {{ instance_name }}"
@@ -600,7 +602,12 @@ msgid "Delete your account"
 msgstr "Eliminar a súa conta"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
-msgstr "Lamentámolo, pero como administradora, non pode deixar a súa instancia."
+msgstr ""
+"Lamentámolo, pero como administradora, non pode deixar a súa instancia."
 
 msgid "Users"
 msgstr "Usuarias"
+
+#, fuzzy
+msgid "This post isn't published yet."
+msgstr "Esto é un borrador, non publicar por agora."

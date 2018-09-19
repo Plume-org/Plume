@@ -24,8 +24,12 @@
             <code>{{ media.md }}</code>
         </div>
         <div>
-            <a href="/medias/{{ media.id }}/avatar" class="button inline-block">{{ "Use as avatar" | _ }}</a>
-            <a href="/medias/{{ media.id }}/delete" class="button inline-block">{{ "Delete" | _ }}</a>
+            <form class="inline" method="post" action="/medias/{{ media.id }}/avatar">
+                <input class="button" type="submit" value="{{ 'Use as avatar' | _ }}">
+            </form>
+            <form class="inline" method="post" action="/medias/{{ media.id }}/delete">
+                <input class="button" type="submit" value="{{ 'Delete' | _ }}">
+            </form>
         </div>
     </section>
 {% endblock content %}

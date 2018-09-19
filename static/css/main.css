@@ -472,6 +472,33 @@ main .article-meta .tags li a {
  	width: initial;
  }
 
+/** Inline forms (containing only CSRF token and a <submit>, for protected links) **/
+
+form.inline {
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+    width: auto;
+}
+
+form.inline input[type="submit"] {
+    display: inline-block;
+    color: #7765E3;
+    cursor: pointer;
+    font-size: 1em;
+    width: auto;
+}
+
+form.inline input[type="submit"]:not(.button) {
+    margin: 0;
+    border: none;
+}
+
+form.inline input[type="submit"]:not(.button) {
+    background: transparent;
+    color: #7765E3;
+}
+
  /* Button & Submit */
 
  .button, input[type="submit"], button {

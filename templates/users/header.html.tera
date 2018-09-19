@@ -23,16 +23,18 @@
     </div>
 
     {% if is_remote %}
-        <a class="inline-block button" href="{{ user.ap_url }}" target="_blank">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
+        <a class="inline-block" href="{{ user.ap_url }}" target="_blank">{{ "Open on {{ instance_url }}" | _(instance_url=instance_url) }}</a>
     {% endif %}
 
     {% set not_self = not is_self %}
     {% if not_self and (account is defined) %}
+        <form class="inline" method="post" action="/@/{{ user.fqn }}/follow/">
         {% if follows %}
-            <a href="/@/{{ user.fqn }}/follow/" class="inline-block button">{{ "Unfollow" | _ }}</a>
+            <input type="submit" value="{{ 'Unfollow' | _ }}">
         {% else %}
-            <a href="/@/{{ user.fqn }}/follow/" class="inline-block button">{{ "Follow" | _ }}</a>
+            <input type="submit" value="{{ 'Follow' | _ }}">
         {% endif %}
+        </form>
     {% endif %}
 </div>
 
