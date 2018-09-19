@@ -1,13 +1,38 @@
-use ammonia::clean;
+use ammonia::{Builder, UrlRelative};
 use serde::{self, Serialize, Deserialize,
     Serializer, Deserializer, de::Visitor};
 use std::{fmt::{self, Display},
-    borrow::Borrow, io::Write,
-    ops::Deref};
+    borrow::{Borrow, Cow}, io::Write,
+    iter, ops::Deref};
 use diesel::{self, deserialize::Queryable,
     types::ToSql,
     sql_types::Text,
     serialize::{self, Output}};
+
+lazy_static! {
+    static ref CLEAN: Builder<'static> = {
+        let mut b = Builder::new();
+        b.add_generic_attributes(iter::once("id"))
+            .add_tags(iter::once("iframe"))
+            .id_prefix(Some("postcontent-"))
+            .url_relative(UrlRelative::Custom(Box::new(url_add_prefix)))
+            .add_tag_attributes("iframe",
+                                ["width", "height", "src", "frameborder"]
+                                    .iter()
+                                    .map(|&v| v));
+        b
+    };
+}
+
+fn url_add_prefix(url: &str) -> Option<Cow<str>> {
+    if url.starts_with('#') && ! url.starts_with("#postcontent-") {//if start with an #
+        let mut new_url = "#postcontent-".to_owned();//change to valid id
+        new_url.push_str(&url[1..]);
+        Some(Cow::Owned(new_url))
+    } else {
+        Some(Cow::Borrowed(url))
+    }
+}
 
 #[derive(Debug, Clone, AsExpression, FromSqlRow, Default)]
 #[sql_type = "Text"]
@@ -18,11 +43,11 @@ pub struct SafeString{
 impl SafeString{
 pub fn new(value: &str) -> Self {
     SafeString{
-            value: clean(&value),
+            value: CLEAN.clean(&value).to_string(),
         }
     }
     pub fn set(&mut self, value: &str) {
-        self.value = clean(value);
+        self.value = CLEAN.clean(value).to_string();
     }
     pub fn get(&self) -> &String {
         &self.value
