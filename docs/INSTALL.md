@@ -303,6 +303,24 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
+Now you need to enable all of these services:
+
+```bash
+systemctl enable /etc/systemd/system/plume.service
+```
+
+Now start the services:
+
+```bash
+systemctl start plume.service
+```
+
+Check that they are properly running:
+
+```bash
+systemctl status plume.service
+```
+
 ## SysVinit integration
 
 This script can also be useful if you are using SysVinit.
