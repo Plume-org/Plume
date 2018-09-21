@@ -25,7 +25,9 @@
 <h2>{{ "Danger zone" | _ }}</h2>
 <p>{{ "Be very careful, any action taken here can't be cancelled." | _ }}
 {% if not account.is_admin %}
-    <p><a class="inline-block button destructive" href="/@/{{ account.fqn }}/delete">{{ "Delete your account" | _ }}</a></p>
+    <form method="post" action="/@/{{ account.fqn }}/delete">
+        <input type="submit" class="inline-block button destructive" value="{{ 'Delete your account' | _ }}">
+    </form>
 {% else %}
     <p>{{ "Sorry, but as an admin, you can't leave your instance." | _ }}</p>
 {% endif %}

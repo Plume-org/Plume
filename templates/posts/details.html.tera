@@ -12,7 +12,7 @@
 {% block content %}
     <h1 class="article">{{ article.post.title }}</h1>
     <h2 class="article">{{ article.post.subtitle }}</h2>
-    <p class="article-info">
+    <div class="article-info">
         <span class="author">{{ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}" | _(
             link_1='<a href="/@/',
             url=author.fqn,
@@ -20,19 +20,21 @@
             name=author.name,
             link_3="</a>"
             )
-        }}</a></span>
+        }}</span>
         &mdash;
         <span class="date">{{ date | date(format="%B %e, %Y") }}</span>
         {% if is_author %}
             &mdash;
             <a href="{{ article.url}}edit">{{ "Edit" | _ }}</a>
             &mdash;
-            <a href="{{ article.url}}delete" onclick="return confirm('Are you sure you?')">{{ "Delete this article" | _ }}</a>
+            <form class="inline" method="post" action="{{ article.url}}delete">
+                <input onclick="return confirm('Are you sure you?')" type="submit" value="{{ 'Delete this article' | _ }}">
+            </form>
         {% endif %}
         {%  if not article.post.published %}
             <span class="badge">{{ "Draft" }}</span>
         {% endif %}
-    </p>
+    </div>
     <article>
         {{ article.post.content | safe }}
     </article>

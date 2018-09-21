@@ -19,9 +19,9 @@
                     <small>@{{ user.username }}</small>
                 </p>
                 {% if not user.is_admin %}
-                    <a href="/admin/users/{{ user.id }}/ban">
-                        {{ "Ban" | _ }}
-                    </a>
+                    <form class="inline" method="post" href="/admin/users/{{ user.id }}/ban">
+                        <input type="submit" value="{{ 'Ban' | _ }}">
+                    </form>
                 {% endif %}
             </div>
         {% endfor %}

@@ -156,7 +156,7 @@ fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template
     }))
 }
 
-#[get("/admin/instances/<id>/block")]
+#[post("/admin/instances/<id>/block")]
 fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     if let Some(inst) = Instance::get(&*conn, id) {
         inst.toggle_block(&*conn);
@@ -183,7 +183,7 @@ fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
     }))
 }
 
-#[get("/admin/users/<id>/ban")]
+#[post("/admin/users/<id>/ban")]
 fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     User::get(&*conn, id).map(|u| u.delete(&*conn));
     Redirect::to(uri!(admin_users))

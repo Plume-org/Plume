@@ -97,14 +97,14 @@ fn details(id: i32, user: User, conn: DbConn) -> Template {
     }))
 }
 
-#[get("/medias/<id>/delete")]
+#[post("/medias/<id>/delete")]
 fn delete(id: i32, _user: User, conn: DbConn) -> Redirect {
     let media = Media::get(&*conn, id).expect("Media to delete not found");
     media.delete(&*conn);
     Redirect::to(uri!(list))
 }
 
-#[get("/medias/<id>/avatar")]
+#[post("/medias/<id>/avatar")]
 fn set_avatar(id: i32, user: User, conn: DbConn) -> Redirect {
     let media = Media::get(&*conn, id).expect("Media to delete not found");
     user.set_avatar(&*conn, media.id);
