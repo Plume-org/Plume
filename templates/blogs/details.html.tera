@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block header %}
-    <a href=".">{{ blog.title }}</a>
+    <a href="/~/{{ blog.fqn }}">{{ blog.title }}</a>
 {% endblock header %}
 
 {% block content %}
