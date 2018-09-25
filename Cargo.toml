@@ -5,6 +5,7 @@ version = "0.2.0"
 [dependencies]
 activitypub = "0.1.3"
 atom_syndication = "0.6"
+canapi = "0.1"
 colored = "1.6"
 dotenv = "0.13"
 failure = "0.1"
@@ -29,6 +30,9 @@ version = "0.4"
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]
 version = "*"
+
+[dependencies.plume-api]
+path = "plume-api"
 
 [dependencies.plume-common]
 path = "plume-common"
