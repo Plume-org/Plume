@@ -5,7 +5,7 @@ use activitypub::{
 };
 use canapi::{Error, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any, Expression, BoolExpressionMethods};
+use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use heck::KebabCase;
 use serde_json;
 
@@ -70,20 +70,18 @@ impl Provider<PgConnection> for Post {
     }
 
     fn list(conn: &PgConnection, filter: PostEndpoint) -> Vec<PostEndpoint> {
-        let mut filters = Vec::new();
+        let mut query = posts::table.into_boxed();
         if let Some(title) = filter.title {
-            filters.push(posts::title.eq(title));
+            query = query.filter(posts::title.eq(title));
+        }
+        if let Some(subtitle) = filter.subtitle {
+            query = query.filter(posts::subtitle.eq(subtitle));
+        }
+        if let Some(content) = filter.content {
+            query = query.filter(posts::content.eq(content));
         }
 
-        let filters = filters.into_iter();
-        let res = if let Some(first_filter) = filters.next() {
-            posts::table.filter(filters.fold(first_filter, |q, f| q.and(f)))
-                .get_results::<Post>(conn)
-        } else {
-            posts::table.get_results::<Post>(conn)
-        };
-
-        res.map(|ps| ps.into_iter()
+        query.get_results::<Post>(conn).map(|ps| ps.into_iter()
             .map(|p| PostEndpoint {
                 id: Some(p.id),
                 title: Some(p.title.clone()),
@@ -94,12 +92,12 @@ impl Provider<PgConnection> for Post {
         ).unwrap_or(vec![])
     }
 
-    fn create(conn: &PgConnection, query: PostEndpoint) -> Result<PostEndpoint, Error> {
-
+    fn create(_conn: &PgConnection, _query: PostEndpoint) -> Result<PostEndpoint, Error> {
+        unimplemented!()
     }
 
-    fn update(conn: &PgConnection, id: i32, new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
-
+    fn update(_conn: &PgConnection, _id: i32, _new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
+        unimplemented!()
     }
 
     fn delete(conn: &PgConnection, id: i32) {
