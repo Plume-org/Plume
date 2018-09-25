@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-08-19 00:49+0200\n"
-"Last-Translator: cookie <git@bitkeks.eu>\n"
+"PO-Revision-Date: 2018-09-25 16:25+0200\n"
+"Last-Translator: Rhonda D'Vine <rhonda@deb.at>\n"
 "Language-Team: none\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -479,7 +479,7 @@ msgid "Use as avatar"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 msgid "Upload"
 msgstr ""
@@ -490,16 +490,15 @@ msgstr ""
 msgid "Media upload"
 msgstr ""
 
-#, fuzzy
 msgid "Description"
-msgstr "Lange Beschreibung"
+msgstr "Beschreibung"
 
 #, fuzzy
 msgid "Content warning"
 msgstr "Inhalt"
 
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 msgid "Send"
 msgstr ""
@@ -508,9 +507,8 @@ msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
 
-#, fuzzy
 msgid "Subtitle"
-msgstr "Titel"
+msgstr "Untertitel"
 
 msgid "Login to like"
 msgstr ""
@@ -531,36 +529,30 @@ msgstr ""
 msgid "Nothing to see here yet. Try to follow more people."
 msgstr ""
 
-#, fuzzy
 msgid "Articles"
-msgstr "Artikel geschrieben haben"
+msgstr "Artikel"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Alle Artikel des Fediverse"
 
-#, fuzzy
 msgid "Articles from {{ instance.name }}"
-msgstr "Über {{ instance_name }}"
+msgstr "Artikel von {{ instance.name }}"
 
 msgid "View all"
 msgstr ""
 
-#, fuzzy
 msgid "Articles tagged \"{{ tag }}\""
-msgstr "Über {{ instance_name }}"
+msgstr "Mit \"{{ tag }}\" markierte Artikel"
 
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
-#, fuzzy
 msgid "Edit {{ post }}"
-msgstr "Kommentar \"{{ post }}\""
+msgstr "{{ post }} bearbeiten"
 
-#, fuzzy
 msgid "Update"
-msgstr "Account aktualisieren"
+msgstr "Aktualisieren"
 
-#, fuzzy
 msgid "We couldn't find this page."
 msgstr "Wir konnten diese Seite nicht finden."
 
@@ -573,13 +565,11 @@ msgid ""
 "message, please report it."
 msgstr ""
 
-#, fuzzy
 msgid "Administration of {{ instance.name }}"
-msgstr "Über {{ instance_name }}"
+msgstr "Administration von {{ instance.name }}"
 
-#, fuzzy
 msgid "Instances"
-msgstr "Instanz-Einstellungen"
+msgstr "Instanzen"
 
 msgid "Unblock"
 msgstr ""
@@ -597,17 +587,16 @@ msgid "Let it empty if there is none"
 msgstr ""
 
 msgid "Draft"
-msgstr ""
+msgstr "Entwurf"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "Dies ist ein Entwurf, noch nicht veröffentlichen."
 
 msgid "Update or publish"
 msgstr ""
 
-#, fuzzy
 msgid "Your Drafts"
-msgstr "Dein Dashboard"
+msgstr "Deine Entwürfe"
 
 msgid "Danger zone"
 msgstr ""
@@ -615,19 +604,17 @@ msgstr ""
 msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
-#, fuzzy
 msgid "Delete your account"
-msgstr "Eigenen Account erstellen"
+msgstr "Eigenen Account löschen"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
 
-#, fuzzy
 msgid "Users"
-msgstr "Nutzername"
+msgstr "Nutzende"
 
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Dieser Beitrag ist noch nicht veröffentlicht."
 
 #~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "Das Passwort sollte mindestens 8 Zeichen lang sein"
