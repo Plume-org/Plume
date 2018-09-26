@@ -1,4 +1,10 @@
 language: rust
+env:
+  matrix:
+  - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
+  - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
 rust:
   - nightly
 cache: cargo
+script:
+ - cargo build --no-default-features --features="${FEATURES}"
