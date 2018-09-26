@@ -62,5 +62,10 @@ rev = "b326a9893a1849c9abdb39cab9fd7c4a52eb9674"
 git = "https://github.com/BaptisteGelez/rocket_i18n"
 rev = "75a3bfd7b847324c078a355a7f101f8241a9f59b"
 
+[features]
+default = ["postgres"]
+postgres = ["plume-models/postgres"]
+sqlite = ["plume-models/sqlite"]
+
 [workspace]
 members = ["plume-api", "plume-models", "plume-common"]

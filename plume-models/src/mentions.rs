@@ -2,6 +2,7 @@ use activitypub::link;
 use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use plume_common::activity_pub::inbox::Notify;
+use Connection;
 use comments::Comment;
 use notifications::*;
 use posts::Post;
@@ -34,26 +35,26 @@ impl Mention {
     list_by!(mentions, list_for_post, post_id as i32);
     list_by!(mentions, list_for_comment, comment_id as i32);
 
-    pub fn get_mentioned(&self, conn: &PgConnection) -> Option<User> {
+    pub fn get_mentioned(&self, conn: &Connection) -> Option<User> {
         User::get(conn, self.mentioned_id)
     }
 
-    pub fn get_post(&self, conn: &PgConnection) -> Option<Post> {
+    pub fn get_post(&self, conn: &Connection) -> Option<Post> {
         self.post_id.and_then(|id| Post::get(conn, id))
     }
 
-    pub fn get_comment(&self, conn: &PgConnection) -> Option<Comment> {
+    pub fn get_comment(&self, conn: &Connection) -> Option<Comment> {
         self.comment_id.and_then(|id| Comment::get(conn, id))
     }
 
-    pub fn get_user(&self, conn: &PgConnection) -> Option<User> {
+    pub fn get_user(&self, conn: &Connection) -> Option<User> {
         match self.get_post(conn) {
             Some(p) => p.get_authors(conn).into_iter().next(),
             None => self.get_comment(conn).map(|c| c.get_author(conn))
         }
     }
 
-    pub fn build_activity(conn: &PgConnection, ment: String) -> link::Mention {
+    pub fn build_activity(conn: &Connection, ment: String) -> link::Mention {
         let user = User::find_by_fqn(conn, ment.clone());
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
@@ -61,7 +62,7 @@ impl Mention {
         mention
     }
 
-    pub fn to_activity(&self, conn: &PgConnection) -> link::Mention {
+    pub fn to_activity(&self, conn: &Connection) -> link::Mention {
         let user = self.get_mentioned(conn);
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
@@ -69,7 +70,7 @@ impl Mention {
         mention
     }
 
-    pub fn from_activity(conn: &PgConnection, ment: link::Mention, inside: i32, in_post: bool, notify: bool) -> Option<Self> {
+    pub fn from_activity(conn: &Connection, ment: link::Mention, inside: i32, in_post: bool, notify: bool) -> Option<Self> {
         let ap_url = ment.link_props.href_string().ok()?;
         let mentioned = User::find_by_ap_url(conn, ap_url)?;
 
@@ -104,7 +105,7 @@ impl Mention {
 }
 
 impl Notify<PgConnection> for Mention {
-    fn notify(&self, conn: &PgConnection) {
+    fn notify(&self, conn: &Connection) {
         self.get_mentioned(conn).map(|m| {
             Notification::insert(conn, NewNotification {
                 kind: notification_kind::MENTION.to_string(),

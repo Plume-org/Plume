@@ -5,7 +5,7 @@ use activitypub::{
 };
 use canapi::{Error, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
+use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use heck::KebabCase;
 use serde_json;
 
@@ -15,7 +15,7 @@ use plume_common::activity_pub::{
     PUBLIC_VISIBILTY, Id, IntoId,
     inbox::{Deletable, FromActivity}
 };
-use {BASE_URL, ap_url};
+use {BASE_URL, ap_url, Connection, SqlDateTime};
 use blogs::Blog;
 use instance::Instance;
 use likes::Like;
@@ -36,7 +36,7 @@ pub struct Post {
     pub content: SafeString,
     pub published: bool,
     pub license: String,
-    pub creation_date: NaiveDateTime,
+    pub creation_date: SqlDateTime,
     pub ap_url: String,
     pub subtitle: String,
     pub source: String,
@@ -112,7 +112,7 @@ impl Post {
     find_by!(posts, find_by_slug, slug as String, blog_id as i32);
     find_by!(posts, find_by_ap_url, ap_url as String);
 
-    pub fn list_by_tag(conn: &PgConnection, tag: String, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Vec<Post> {
         use schema::tags;
 
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
@@ -125,7 +125,7 @@ impl Post {
             .expect("Error loading posts by tag")
     }
 
-    pub fn count_for_tag(conn: &PgConnection, tag: String) -> i64 {
+    pub fn count_for_tag(conn: &Connection, tag: String) -> i64 {
         use schema::tags;
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
         posts::table.filter(posts::id.eq(any(ids)))
@@ -135,7 +135,7 @@ impl Post {
             .expect("Error counting posts by tag")
     }
 
-    pub fn count_local(conn: &PgConnection) -> usize {
+    pub fn count_local(conn: &Connection) -> usize {
         use schema::post_authors;
         use schema::users;
         let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
@@ -147,11 +147,11 @@ impl Post {
             .len()
     }
 
-    pub fn count(conn: &PgConnection) -> i64 {
+    pub fn count(conn: &Connection) -> i64 {
         posts::table.filter(posts::published.eq(true)).count().get_result(conn).expect("Couldn't count posts")
     }
 
-    pub fn get_recents(conn: &PgConnection, limit: i64) -> Vec<Post> {
+    pub fn get_recents(conn: &Connection, limit: i64) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
             .filter(posts::published.eq(true))
             .limit(limit)
@@ -159,7 +159,7 @@ impl Post {
             .expect("Error loading recent posts")
     }
 
-    pub fn get_recents_for_author(conn: &PgConnection, author: &User, limit: i64) -> Vec<Post> {
+    pub fn get_recents_for_author(conn: &Connection, author: &User, limit: i64) -> Vec<Post> {
         use schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
@@ -171,7 +171,7 @@ impl Post {
             .expect("Error loading recent posts for author")
     }
 
-    pub fn get_recents_for_blog(conn: &PgConnection, blog: &Blog, limit: i64) -> Vec<Post> {
+    pub fn get_recents_for_blog(conn: &Connection, blog: &Blog, limit: i64) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
@@ -180,14 +180,14 @@ impl Post {
             .expect("Error loading recent posts for blog")
     }
 
-    pub fn get_for_blog(conn: &PgConnection, blog:&Blog) -> Vec<Post> {
+    pub fn get_for_blog(conn: &Connection, blog:&Blog) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .load::<Post>(conn)
             .expect("Error loading posts for blog")
     }
 
-    pub fn blog_page(conn: &PgConnection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn blog_page(conn: &Connection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
@@ -198,7 +198,7 @@ impl Post {
     }
 
     /// Give a page of all the recent posts known to this instance (= federated timeline)
-    pub fn get_recents_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn get_recents_page(conn: &Connection, (min, max): (i32, i32)) -> Vec<Post> {
         posts::table.order(posts::creation_date.desc())
             .filter(posts::published.eq(true))
             .offset(min.into())
@@ -208,7 +208,7 @@ impl Post {
     }
 
     /// Give a page of posts from a specific instance
-    pub fn get_instance_page(conn: &PgConnection, instance_id: i32, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn get_instance_page(conn: &Connection, instance_id: i32, (min, max): (i32, i32)) -> Vec<Post> {
         use schema::blogs;
 
         let blog_ids = blogs::table.filter(blogs::instance_id.eq(instance_id)).select(blogs::id);
@@ -223,7 +223,7 @@ impl Post {
     }
 
     /// Give a page of customized user feed, based on a list of followed users
-    pub fn user_feed_page(conn: &PgConnection, followed: Vec<i32>, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn user_feed_page(conn: &Connection, followed: Vec<i32>, (min, max): (i32, i32)) -> Vec<Post> {
         use schema::post_authors;
         let post_ids = post_authors::table.filter(post_authors::author_id.eq(any(followed)))
             .select(post_authors::post_id);
@@ -237,7 +237,7 @@ impl Post {
             .expect("Error loading user feed page")
     }
 
-    pub fn drafts_by_author(conn: &PgConnection, author: &User) -> Vec<Post> {
+    pub fn drafts_by_author(conn: &Connection, author: &User) -> Vec<Post> {
         use schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
@@ -248,14 +248,14 @@ impl Post {
             .expect("Error listing drafts")
     }
 
-    pub fn get_authors(&self, conn: &PgConnection) -> Vec<User> {
+    pub fn get_authors(&self, conn: &Connection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
         users::table.filter(users::id.eq(any(author_list))).load::<User>(conn).unwrap()
     }
 
-    pub fn get_blog(&self, conn: &PgConnection) -> Blog {
+    pub fn get_blog(&self, conn: &Connection) -> Blog {
         use schema::blogs;
         blogs::table.filter(blogs::id.eq(self.blog_id))
             .limit(1)
@@ -264,21 +264,21 @@ impl Post {
             .into_iter().nth(0).unwrap()
     }
 
-    pub fn get_likes(&self, conn: &PgConnection) -> Vec<Like> {
+    pub fn get_likes(&self, conn: &Connection) -> Vec<Like> {
         use schema::likes;
         likes::table.filter(likes::post_id.eq(self.id))
             .load::<Like>(conn)
             .expect("Couldn't load likes associted to post")
     }
 
-    pub fn get_reshares(&self, conn: &PgConnection) -> Vec<Reshare> {
+    pub fn get_reshares(&self, conn: &Connection) -> Vec<Reshare> {
         use schema::reshares;
         reshares::table.filter(reshares::post_id.eq(self.id))
             .load::<Reshare>(conn)
             .expect("Couldn't load reshares associted to post")
     }
 
-    pub fn update_ap_url(&self, conn: &PgConnection) -> Post {
+    pub fn update_ap_url(&self, conn: &Connection) -> Post {
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(posts::ap_url.eq(self.compute_id(conn)))
@@ -288,7 +288,7 @@ impl Post {
         }
     }
 
-    pub fn get_receivers_urls(&self, conn: &PgConnection) -> Vec<String> {
+    pub fn get_receivers_urls(&self, conn: &Connection) -> Vec<String> {
         let followers = self.get_authors(conn).into_iter().map(|a| a.get_followers(conn)).collect::<Vec<Vec<User>>>();
         let to = followers.into_iter().fold(vec![], |mut acc, f| {
             for x in f {
@@ -299,7 +299,7 @@ impl Post {
         to
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> Article {
+    pub fn into_activity(&self, conn: &Connection) -> Article {
         let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
@@ -328,7 +328,7 @@ impl Post {
         article
     }
 
-    pub fn create_activity(&self, conn: &PgConnection) -> Create {
+    pub fn create_activity(&self, conn: &Connection) -> Create {
         let article = self.into_activity(conn);
         let mut act = Create::default();
         act.object_props.set_id_string(format!("{}activity", self.ap_url)).expect("Post::create_activity: id error");
@@ -341,7 +341,7 @@ impl Post {
         act
     }
 
-    pub fn update_activity(&self, conn: &PgConnection) -> Update {
+    pub fn update_activity(&self, conn: &Connection) -> Update {
         let article = self.into_activity(conn);
         let mut act = Update::default();
         act.object_props.set_id_string(format!("{}/update-{}", self.ap_url, Utc::now().timestamp())).expect("Post::update_activity: id error");
@@ -354,7 +354,7 @@ impl Post {
         act
     }
 
-    pub fn handle_update(conn: &PgConnection, updated: Article) {
+    pub fn handle_update(conn: &Connection, updated: Article) {
         let id = updated.object_props.id_string().expect("Post::handle_update: id error");
         let mut post = Post::find_by_ap_url(conn, id).unwrap();
 
@@ -382,7 +382,7 @@ impl Post {
         post.update(conn);
     }
 
-    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let blog = self.get_blog(conn);
         json!({
             "post": self,
@@ -394,13 +394,13 @@ impl Post {
         })
     }
 
-    pub fn compute_id(&self, conn: &PgConnection) -> String {
+    pub fn compute_id(&self, conn: &Connection) -> String {
         ap_url(format!("{}/~/{}/{}/", BASE_URL.as_str(), self.get_blog(conn).get_fqn(conn), self.slug))
     }
 }
 
-impl FromActivity<Article, PgConnection> for Post {
-    fn from_activity(conn: &PgConnection, article: Article, _actor: Id) -> Post {
+impl FromActivity<Article, Connection> for Post {
+    fn from_activity(conn: &Connection, article: Article, _actor: Id) -> Post {
         if let Some(post) = Post::find_by_ap_url(conn, article.object_props.id_string().unwrap_or(String::new())) {
             post
         } else {
@@ -457,8 +457,8 @@ impl FromActivity<Article, PgConnection> for Post {
     }
 }
 
-impl Deletable<PgConnection, Delete> for Post {
-    fn delete(&self, conn: &PgConnection) -> Delete {
+impl Deletable<Connection, Delete> for Post {
+    fn delete(&self, conn: &Connection) -> Delete {
         let mut act = Delete::default();
         act.delete_props.set_actor_link(self.get_authors(conn)[0].clone().into_id()).expect("Post::delete: actor error");
 
@@ -473,7 +473,7 @@ impl Deletable<PgConnection, Delete> for Post {
         act
     }
 
-    fn delete_id(id: String, conn: &PgConnection) {
+    fn delete_id(id: String, conn: &Connection) {
         Post::find_by_ap_url(conn, id).map(|p| p.delete(conn));
     }
 }

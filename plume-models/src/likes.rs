@@ -1,6 +1,6 @@
 use activitypub::activity;
-use chrono;
-use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use chrono::NaiveDateTime;
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use plume_common::activity_pub::{
     PUBLIC_VISIBILTY,
@@ -8,6 +8,7 @@ use plume_common::activity_pub::{
     IntoId,
     inbox::{FromActivity, Deletable, Notify}
 };
+use Connection;
 use notifications::*;
 use posts::Post;
 use users::User;
@@ -18,7 +19,7 @@ pub struct Like {
     pub id: i32,
     pub user_id: i32,
     pub post_id: i32,
-    pub creation_date: chrono::NaiveDateTime,
+    pub creation_date: NaiveDateTime,
     pub ap_url: String
 }
 
@@ -36,7 +37,7 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as String);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn update_ap_url(&self, conn: &PgConnection) {
+    pub fn update_ap_url(&self, conn: &Connection) {
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(likes::ap_url.eq(format!(
@@ -48,7 +49,7 @@ impl Like {
         }
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> activity::Like {
+    pub fn into_activity(&self, conn: &Connection) -> activity::Like {
         let mut act = activity::Like::default();
         act.like_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).expect("Like::into_activity: actor error");
         act.like_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).expect("Like::into_activity: object error");
@@ -60,8 +61,8 @@ impl Like {
     }
 }
 
-impl FromActivity<activity::Like, PgConnection> for Like {
-    fn from_activity(conn: &PgConnection, like: activity::Like, _actor: Id) -> Like {
+impl FromActivity<activity::Like, Connection> for Like {
+    fn from_activity(conn: &Connection, like: activity::Like, _actor: Id) -> Like {
         let liker = User::from_url(conn, like.like_props.actor.as_str().unwrap().to_string());
         let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().unwrap().to_string());
         let res = Like::insert(conn, NewLike {
@@ -74,8 +75,8 @@ impl FromActivity<activity::Like, PgConnection> for Like {
     }
 }
 
-impl Notify<PgConnection> for Like {
-    fn notify(&self, conn: &PgConnection) {
+impl Notify<Connection> for Like {
+    fn notify(&self, conn: &Connection) {
         let post = Post::get(conn, self.post_id).unwrap();
         for author in post.get_authors(conn) {
             Notification::insert(conn, NewNotification {
@@ -87,8 +88,8 @@ impl Notify<PgConnection> for Like {
     }
 }
 
-impl Deletable<PgConnection, activity::Undo> for Like {
-    fn delete(&self, conn: &PgConnection) -> activity::Undo {
+impl Deletable<Connection, activity::Undo> for Like {
+    fn delete(&self, conn: &Connection) -> activity::Undo {
         diesel::delete(self).execute(conn).unwrap();
 
         // delete associated notification if any
@@ -106,7 +107,7 @@ impl Deletable<PgConnection, activity::Undo> for Like {
         act
     }
 
-    fn delete_id(id: String, conn: &PgConnection) {
+    fn delete_id(id: String, conn: &Connection) {
         if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
             like.delete(conn);
         }

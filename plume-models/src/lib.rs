@@ -1,4 +1,5 @@
 #![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
+#![feature(crate_in_paths)]
 
 extern crate activitypub;
 extern crate ammonia;
@@ -28,7 +29,7 @@ use std::env;
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &PgConnection, $($col: $type),+) -> Option<Self> {
+        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Option<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .limit(1)
@@ -42,7 +43,7 @@ macro_rules! find_by {
 macro_rules! list_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &PgConnection, $($col: $type),+) -> Vec<Self> {
+        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Vec<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .load::<Self>(conn)
@@ -53,7 +54,7 @@ macro_rules! list_by {
 
 macro_rules! get {
     ($table:ident) => {
-        pub fn get(conn: &PgConnection, id: i32) -> Option<Self> {
+        pub fn get(conn: &crate::Connection, id: i32) -> Option<Self> {
             $table::table.filter($table::id.eq(id))
                 .limit(1)
                 .load::<Self>(conn)
@@ -65,7 +66,7 @@ macro_rules! get {
 
 macro_rules! insert {
     ($table:ident, $from:ident) => {
-        pub fn insert(conn: &PgConnection, new: $from) -> Self {
+        pub fn insert(conn: &crate::Connection, new: $from) -> Self {
             diesel::insert_into($table::table)
                 .values(new)
                 .get_result(conn)
@@ -76,7 +77,7 @@ macro_rules! insert {
 
 macro_rules! update {
     ($table:ident) => {
-        pub fn update(&self, conn: &PgConnection) -> Self {
+        pub fn update(&self, conn: &crate::Connection) -> Self {
             diesel::update(self)
                 .set(self)
                 .get_result(conn)
@@ -103,6 +104,18 @@ pub fn ap_url(url: String) -> String {
     };
     format!("{}://{}", scheme, url)
 }
+
+#[cfg(all(not(feature = "postgres"), feature = "sqlite"))]
+pub type SqlDateTime = chrono::NaiveDateTime;
+
+#[cfg(all(not(feature = "postgres"), feature = "sqlite"))]
+pub type Connection = diesel::SqliteConnection;
+
+#[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
+pub type SqlDateTime = chrono::NaiveDateTime;
+
+#[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
+pub type Connection = diesel::PgConnection;
 
 pub mod admin;
 pub mod blog_authors;

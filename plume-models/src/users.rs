@@ -5,8 +5,8 @@ use activitypub::{
     object::Image,
 };
 use bcrypt;
-use chrono::{NaiveDateTime, Utc};
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, PgConnection, dsl::any};
+use chrono::{Utc, NaiveDateTime};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -31,7 +31,7 @@ use serde_json;
 use url::Url;
 use webfinger::*;
 
-use {BASE_URL, USE_HTTPS, ap_url};
+use {BASE_URL, USE_HTTPS, ap_url, Connection};
 use db_conn::DbConn;
 use blogs::Blog;
 use blog_authors::BlogAuthor;
@@ -100,28 +100,28 @@ impl User {
     find_by!(users, find_by_name, username as String, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as String);
 
-    pub fn one_by_instance(conn: &PgConnection) -> Vec<User> {
+    pub fn one_by_instance(conn: &Connection) -> Vec<User> {
         users::table.distinct_on(users::instance_id)
             .get_results::<User>(conn)
             .expect("Error in User::on_by_instance")
     }
 
-    pub fn delete(&self, conn: &PgConnection) {
+    pub fn delete(&self, conn: &Connection) {
         diesel::delete(self).execute(conn).expect("Couldn't remove user from DB");
     }
 
-    pub fn get_instance(&self, conn: &PgConnection) -> Instance {
+    pub fn get_instance(&self, conn: &Connection) -> Instance {
         Instance::get(conn, self.instance_id).expect("Couldn't find instance")
     }
 
-    pub fn grant_admin_rights(&self, conn: &PgConnection) {
+    pub fn grant_admin_rights(&self, conn: &Connection) {
         diesel::update(self)
             .set(users::is_admin.eq(true))
             .load::<User>(conn)
             .expect("Couldn't grant admin rights");
     }
 
-    pub fn update(&self, conn: &PgConnection, name: String, email: String, summary: String) -> User {
+    pub fn update(&self, conn: &Connection, name: String, email: String, summary: String) -> User {
         diesel::update(self)
             .set((
                 users::display_name.eq(name),
@@ -132,18 +132,18 @@ impl User {
             .into_iter().nth(0).unwrap()
     }
 
-    pub fn count_local(conn: &PgConnection) -> usize {
+    pub fn count_local(conn: &Connection) -> usize {
         users::table.filter(users::instance_id.eq(Instance::local_id(conn)))
             .load::<User>(conn)
             .expect("Couldn't load local users")
             .len()
     }
 
-    pub fn find_local(conn: &PgConnection, username: String) -> Option<User> {
+    pub fn find_local(conn: &Connection, username: String) -> Option<User> {
         User::find_by_name(conn, username, Instance::local_id(conn))
     }
 
-    pub fn find_by_fqn(conn: &PgConnection, fqn: String) -> Option<User> {
+    pub fn find_by_fqn(conn: &Connection, fqn: String) -> Option<User> {
         if fqn.contains("@") { // remote user
             match Instance::find_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
                 Some(instance) => {
@@ -159,7 +159,7 @@ impl User {
         }
     }
 
-    fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<User> {
+    fn fetch_from_webfinger(conn: &Connection, acct: String) -> Option<User> {
         match resolve(acct.clone(), *USE_HTTPS) {
             Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| User::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
             Err(details) => {
@@ -192,11 +192,11 @@ impl User {
         }
     }
 
-    pub fn fetch_from_url(conn: &PgConnection, url: String) -> Option<User> {
+    pub fn fetch_from_url(conn: &Connection, url: String) -> Option<User> {
         User::fetch(url.clone()).map(|json| (User::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string())))
     }
 
-    fn from_activity(conn: &PgConnection, acct: CustomPerson, inst: String) -> User {
+    fn from_activity(conn: &Connection, acct: CustomPerson, inst: String) -> User {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
@@ -242,7 +242,7 @@ impl User {
         user
     }
 
-    pub fn refetch(&self, conn: &PgConnection) {
+    pub fn refetch(&self, conn: &Connection) {
         User::fetch(self.ap_url.clone()).map(|json| {
             let avatar = Media::save_remote(conn, json.object.object_props.icon_image().expect("User::refetch: icon error")
                 .object_props.url_string().expect("User::refetch: icon.url error"));
@@ -274,7 +274,7 @@ impl User {
         }
     }
 
-    pub fn update_boxes(&self, conn: &PgConnection) {
+    pub fn update_boxes(&self, conn: &Connection) {
         let instance = self.get_instance(conn);
         if self.outbox_url.len() == 0 {
             diesel::update(self)
@@ -307,7 +307,7 @@ impl User {
         }
     }
 
-    pub fn get_local_page(conn: &PgConnection, (min, max): (i32, i32)) -> Vec<User> {
+    pub fn get_local_page(conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
         users::table.filter(users::instance_id.eq(1))
             .order(users::username.asc())
             .offset(min.into())
@@ -316,7 +316,7 @@ impl User {
             .expect("Error getting local users page")
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
+    pub fn outbox(&self, conn: &Connection) -> ActivityStream<OrderedCollection> {
         let acts = self.get_activities(conn);
         let n_acts = acts.len();
         let mut coll = OrderedCollection::default();
@@ -369,7 +369,7 @@ impl User {
         }
     }
 
-    fn get_activities(&self, conn: &PgConnection) -> Vec<serde_json::Value> {
+    fn get_activities(&self, conn: &Connection) -> Vec<serde_json::Value> {
         use schema::posts;
         use schema::post_authors;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
@@ -382,7 +382,7 @@ impl User {
         }).collect::<Vec<serde_json::Value>>()
     }
 
-    pub fn get_fqn(&self, conn: &PgConnection) -> String {
+    pub fn get_fqn(&self, conn: &Connection) -> String {
         if self.instance_id == Instance::local_id(conn) {
             self.username.clone()
         } else {
@@ -390,13 +390,13 @@ impl User {
         }
     }
 
-    pub fn get_followers(&self, conn: &PgConnection) -> Vec<User> {
+    pub fn get_followers(&self, conn: &Connection) -> Vec<User> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 
-    pub fn get_followers_page(&self, conn: &PgConnection, (min, max): (i32, i32)) -> Vec<User> {
+    pub fn get_followers_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
         users::table.filter(users::id.eq(any(follows)))
@@ -405,13 +405,13 @@ impl User {
             .load::<User>(conn).unwrap()
     }
 
-    pub fn get_following(&self, conn: &PgConnection) -> Vec<User> {
+    pub fn get_following(&self, conn: &Connection) -> Vec<User> {
         use schema::follows;
         let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);
         users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
     }
 
-    pub fn is_followed_by(&self, conn: &PgConnection, other_id: i32) -> bool {
+    pub fn is_followed_by(&self, conn: &Connection, other_id: i32) -> bool {
         use schema::follows;
         follows::table
             .filter(follows::follower_id.eq(other_id))
@@ -421,7 +421,7 @@ impl User {
             .len() > 0
     }
 
-    pub fn is_following(&self, conn: &PgConnection, other_id: i32) -> bool {
+    pub fn is_following(&self, conn: &Connection, other_id: i32) -> bool {
         use schema::follows;
         follows::table
             .filter(follows::follower_id.eq(self.id))
@@ -431,7 +431,7 @@ impl User {
             .len() > 0
     }
 
-    pub fn has_liked(&self, conn: &PgConnection, post: &Post) -> bool {
+    pub fn has_liked(&self, conn: &Connection, post: &Post) -> bool {
         use schema::likes;
         likes::table
             .filter(likes::post_id.eq(post.id))
@@ -441,7 +441,7 @@ impl User {
             .len() > 0
     }
 
-    pub fn has_reshared(&self, conn: &PgConnection, post: &Post) -> bool {
+    pub fn has_reshared(&self, conn: &Connection, post: &Post) -> bool {
         use schema::reshares;
         reshares::table
             .filter(reshares::post_id.eq(post.id))
@@ -451,7 +451,7 @@ impl User {
             .len() > 0
     }
 
-    pub fn is_author_in(&self, conn: &PgConnection, blog: Blog) -> bool {
+    pub fn is_author_in(&self, conn: &Connection, blog: Blog) -> bool {
         use schema::blog_authors;
         blog_authors::table.filter(blog_authors::author_id.eq(self.id))
             .filter(blog_authors::blog_id.eq(blog.id))
@@ -464,7 +464,7 @@ impl User {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> CustomPerson {
+    pub fn into_activity(&self, conn: &Connection) -> CustomPerson {
         let mut actor = Person::default();
         actor.object_props.set_id_string(self.ap_url.clone()).expect("User::into_activity: id error");
         actor.object_props.set_name_string(self.display_name.clone()).expect("User::into_activity: name error");
@@ -494,7 +494,7 @@ impl User {
         CustomPerson::new(actor, ap_signature)
     }
 
-    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
         json["name"] = if self.display_name.len() > 0 {
@@ -506,7 +506,7 @@ impl User {
         json
     }
 
-    pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
+    pub fn webfinger(&self, conn: &Connection) -> Webfinger {
         Webfinger {
             subject: format!("acct:{}@{}", self.username, self.get_instance(conn).public_domain),
             aliases: vec![self.ap_url.clone()],
@@ -533,7 +533,7 @@ impl User {
         }
     }
 
-    pub fn from_url(conn: &PgConnection, url: String) -> Option<User> {
+    pub fn from_url(conn: &Connection, url: String) -> Option<User> {
         User::find_by_ap_url(conn, url.clone()).or_else(|| {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
@@ -545,7 +545,7 @@ impl User {
         })
     }
 
-    pub fn set_avatar(&self, conn: &PgConnection, id: i32) {
+    pub fn set_avatar(&self, conn: &Connection, id: i32) {
         diesel::update(self)
             .set(users::avatar_id.eq(id))
             .execute(conn)
@@ -609,7 +609,7 @@ impl Signer for User {
 impl NewUser {
     /// Creates a new local user
     pub fn new_local(
-        conn: &PgConnection,
+        conn: &Connection,
         username: String,
         display_name: String,
         is_admin: bool,

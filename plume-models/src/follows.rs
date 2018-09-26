@@ -2,6 +2,7 @@ use activitypub::{Actor, activity::{Accept, Follow as FollowAct, Undo}, actor::P
 use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox, Deletable}, sign::Signer};
+use Connection;
 use blogs::Blog;
 use notifications::*;
 use users::User;
@@ -29,14 +30,14 @@ impl Follow {
     get!(follows);
     find_by!(follows, find_by_ap_url, ap_url as String);
 
-    pub fn find(conn: &PgConnection, from: i32, to: i32) -> Option<Follow> {
+    pub fn find(conn: &Connection, from: i32, to: i32) -> Option<Follow> {
         follows::table.filter(follows::follower_id.eq(from))
             .filter(follows::following_id.eq(to))
             .get_result(conn)
             .ok()
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> FollowAct {
+    pub fn into_activity(&self, conn: &Connection) -> FollowAct {
         let user = User::get(conn, self.follower_id).unwrap();
         let target = User::get(conn, self.following_id).unwrap();
 
@@ -52,7 +53,7 @@ impl Follow {
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
     pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor + IntoId>(
-        conn: &PgConnection,
+        conn: &Connection,
         from: &B,
         target: &A,
         follow: FollowAct,
@@ -80,7 +81,7 @@ impl Follow {
 }
 
 impl FromActivity<FollowAct, PgConnection> for Follow {
-    fn from_activity(conn: &PgConnection, follow: FollowAct, _actor: Id) -> Follow {
+    fn from_activity(conn: &Connection, follow: FollowAct, _actor: Id) -> Follow {
         let from_id = follow.follow_props.actor_link::<Id>().map(|l| l.into())
             .unwrap_or_else(|_| follow.follow_props.actor_object::<Person>().expect("No actor object (nor ID) on Follow").object_props.id_string().expect("No ID on actor on Follow"));
         let from = User::from_url(conn, from_id).unwrap();
@@ -95,7 +96,7 @@ impl FromActivity<FollowAct, PgConnection> for Follow {
 }
 
 impl Notify<PgConnection> for Follow {
-    fn notify(&self, conn: &PgConnection) {
+    fn notify(&self, conn: &Connection) {
         Notification::insert(conn, NewNotification {
             kind: notification_kind::FOLLOW.to_string(),
             object_id: self.id,
@@ -105,7 +106,7 @@ impl Notify<PgConnection> for Follow {
 }
 
 impl Deletable<PgConnection, Undo> for Follow {
-    fn delete(&self, conn: &PgConnection) -> Undo {
+    fn delete(&self, conn: &Connection) -> Undo {
         diesel::delete(self).execute(conn).expect("Coudn't delete follow");
 
         // delete associated notification if any
@@ -120,7 +121,7 @@ impl Deletable<PgConnection, Undo> for Follow {
         undo
     }
 
-    fn delete_id(id: String, conn: &PgConnection) {
+    fn delete_id(id: String, conn: &Connection) {
         if let Some(follow) = Follow::find_by_ap_url(conn, id) {
             follow.delete(conn);
         }

@@ -1,4 +1,4 @@
-use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use posts::Post;
 use users::User;

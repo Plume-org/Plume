@@ -1,4 +1,4 @@
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use schema::blog_authors;
 

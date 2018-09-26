@@ -12,6 +12,7 @@ use plume_common::activity_pub::{
     inbox::{FromActivity, Notify}
 };
 use plume_common::utils;
+use {Connection, SqlDateTime};
 use instance::Instance;
 use mentions::Mention;
 use notifications::*;
@@ -27,7 +28,7 @@ pub struct Comment {
     pub in_response_to_id: Option<i32>,
     pub post_id: i32,
     pub author_id: i32,
-    pub creation_date: chrono::NaiveDateTime,
+    pub creation_date: SqlDateTime,
     pub ap_url: Option<String>,
     pub sensitive: bool,
     pub spoiler_text: String
@@ -51,15 +52,15 @@ impl Comment {
     list_by!(comments, list_by_post, post_id as i32);
     find_by!(comments, find_by_ap_url, ap_url as String);
 
-    pub fn get_author(&self, conn: &PgConnection) -> User {
+    pub fn get_author(&self, conn: &Connection) -> User {
         User::get(conn, self.author_id).unwrap()
     }
 
-    pub fn get_post(&self, conn: &PgConnection) -> Post {
+    pub fn get_post(&self, conn: &Connection) -> Post {
         Post::get(conn, self.post_id).unwrap()
     }
 
-    pub fn count_local(conn: &PgConnection) -> usize {
+    pub fn count_local(conn: &Connection) -> usize {
         use schema::users;
         let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
         comments::table.filter(comments::author_id.eq(any(local_authors)))
@@ -68,7 +69,7 @@ impl Comment {
             .len()
     }
 
-    pub fn to_json(&self, conn: &PgConnection, others: &Vec<Comment>) -> serde_json::Value {
+    pub fn to_json(&self, conn: &Connection, others: &Vec<Comment>) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["author"] = self.get_author(conn).to_json(conn);
         let mentions = Mention::list_for_comment(conn, self.id).into_iter()
@@ -82,7 +83,7 @@ impl Comment {
         json
     }
 
-    pub fn update_ap_url(&self, conn: &PgConnection) -> Comment {
+    pub fn update_ap_url(&self, conn: &Connection) -> Comment {
         if self.ap_url.is_none() {
             diesel::update(self)
                 .set(comments::ap_url.eq(self.compute_id(conn)))
@@ -93,11 +94,11 @@ impl Comment {
         }
     }
 
-    pub fn compute_id(&self, conn: &PgConnection) -> String {
+    pub fn compute_id(&self, conn: &Connection) -> String {
         format!("{}comment/{}", self.get_post(conn).ap_url, self.id)
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> Note {
+    pub fn into_activity(&self, conn: &Connection) -> Note {
         let (html, mentions) = utils::md_to_html(self.content.get().as_ref());
 
         let author = User::get(conn, self.author_id).unwrap();
@@ -119,7 +120,7 @@ impl Comment {
         note
     }
 
-    pub fn create_activity(&self, conn: &PgConnection) -> Create {
+    pub fn create_activity(&self, conn: &Connection) -> Create {
         let author = User::get(conn, self.author_id).unwrap();
 
         let note = self.into_activity(conn);
@@ -134,7 +135,7 @@ impl Comment {
 }
 
 impl FromActivity<Note, PgConnection> for Comment {
-    fn from_activity(conn: &PgConnection, note: Note, actor: Id) -> Comment {
+    fn from_activity(conn: &Connection, note: Note, actor: Id) -> Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
 
@@ -168,7 +169,7 @@ impl FromActivity<Note, PgConnection> for Comment {
 }
 
 impl Notify<PgConnection> for Comment {
-    fn notify(&self, conn: &PgConnection) {
+    fn notify(&self, conn: &Connection) {
         for author in self.get_post(conn).get_authors(conn) {
             Notification::insert(conn, NewNotification {
                 kind: notification_kind::COMMENT.to_string(),
