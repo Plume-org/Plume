@@ -37,6 +37,5 @@ git = "https://github.com/SergioBenitez/Rocket"
 rev = "55459db7732b9a240826a5c120c650f87e3372ce"
 
 [features]
-default = ["postgres"]
 postgres = ["diesel/postgres"]
 sqlite = ["diesel/sqlite"]

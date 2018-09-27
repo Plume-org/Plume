@@ -1,20 +1,21 @@
 use activitypub::activity::{Announce, Undo};
-use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use chrono::NaiveDateTime;
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use plume_common::activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}, PUBLIC_VISIBILTY};
-use {Connection, SqlDateTime};
+use Connection;
 use notifications::*;
 use posts::Post;
 use users::User;
 use schema::reshares;
 
-#[derive(Serialize, Deserialize, Queryable, Identifiable)]
+#[derive(Clone, Serialize, Deserialize, Queryable, Identifiable)]
 pub struct Reshare {
     pub id: i32,
     pub user_id: i32,
     pub post_id: i32,
     pub ap_url: String,
-    pub creation_date: SqlDateTime
+    pub creation_date: NaiveDateTime
 }
 
 #[derive(Insertable)]
@@ -39,7 +40,7 @@ impl Reshare {
                     User::get(conn, self.user_id).unwrap().ap_url,
                     Post::get(conn, self.post_id).unwrap().ap_url
                 )))
-                .get_result::<Reshare>(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Couldn't update AP URL");
         }
     }
 
@@ -71,7 +72,7 @@ impl Reshare {
     }
 }
 
-impl FromActivity<Announce, PgConnection> for Reshare {
+impl FromActivity<Announce, Connection> for Reshare {
     fn from_activity(conn: &Connection, announce: Announce, _actor: Id) -> Reshare {
         let user = User::from_url(conn, announce.announce_props.actor_link::<Id>().expect("Reshare::from_activity: actor error").into());
         let post = Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>().expect("Reshare::from_activity: object error").into());
@@ -85,7 +86,7 @@ impl FromActivity<Announce, PgConnection> for Reshare {
     }
 }
 
-impl Notify<PgConnection> for Reshare {
+impl Notify<Connection> for Reshare {
     fn notify(&self, conn: &Connection) {
         let post = self.get_post(conn).unwrap();
         for author in post.get_authors(conn) {
@@ -98,7 +99,7 @@ impl Notify<PgConnection> for Reshare {
     }
 }
 
-impl Deletable<PgConnection, Undo> for Reshare {
+impl Deletable<Connection, Undo> for Reshare {
     fn delete(&self, conn: &Connection) -> Undo {
         diesel::delete(self).execute(conn).unwrap();
 

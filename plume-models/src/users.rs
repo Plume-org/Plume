@@ -6,7 +6,7 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{Utc, NaiveDateTime};
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, BelongingToDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -101,8 +101,8 @@ impl User {
     find_by!(users, find_by_ap_url, ap_url as String);
 
     pub fn one_by_instance(conn: &Connection) -> Vec<User> {
-        users::table.distinct_on(users::instance_id)
-            .get_results::<User>(conn)
+        users::table.filter(users::instance_id.eq_any(users::table.select(users::instance_id).distinct()))
+            .load::<User>(conn)
             .expect("Error in User::on_by_instance")
     }
 
@@ -117,7 +117,7 @@ impl User {
     pub fn grant_admin_rights(&self, conn: &Connection) {
         diesel::update(self)
             .set(users::is_admin.eq(true))
-            .load::<User>(conn)
+            .execute(conn)
             .expect("Couldn't grant admin rights");
     }
 
@@ -127,9 +127,9 @@ impl User {
                 users::display_name.eq(name),
                 users::email.eq(email),
                 users::summary.eq(summary),
-            )).load::<User>(conn)
-            .expect("Couldn't update user")
-            .into_iter().nth(0).unwrap()
+            )).execute(conn)
+            .expect("Couldn't update user");
+        User::get(conn, self.id).unwrap()
     }
 
     pub fn count_local(conn: &Connection) -> usize {
@@ -279,31 +279,31 @@ impl User {
         if self.outbox_url.len() == 0 {
             diesel::update(self)
                 .set(users::outbox_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "outbox")))
-                .get_result::<User>(conn).expect("Couldn't update outbox URL");
+                .execute(conn).expect("Couldn't update outbox URL");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
                 .set(users::inbox_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "inbox")))
-                .get_result::<User>(conn).expect("Couldn't update inbox URL");
+                .execute(conn).expect("Couldn't update inbox URL");
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(users::ap_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "")))
-                .get_result::<User>(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Couldn't update AP URL");
         }
 
         if self.shared_inbox_url.is_none() {
             diesel::update(self)
                 .set(users::shared_inbox_url.eq(ap_url(format!("{}/inbox", Instance::get_local(conn).unwrap().public_domain))))
-                .get_result::<User>(conn).expect("Couldn't update shared inbox URL");
+                .execute(conn).expect("Couldn't update shared inbox URL");
         }
 
         if self.followers_endpoint.len() == 0 {
             diesel::update(self)
                 .set(users::followers_endpoint.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "followers")))
-                .get_result::<User>(conn).expect("Couldn't update followers endpoint");
+                .execute(conn).expect("Couldn't update followers endpoint");
         }
     }
 
@@ -375,7 +375,7 @@ impl User {
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table
             .filter(posts::published.eq(true))
-            .filter(posts::id.eq(any(posts_by_self)))
+            .filter(posts::id.eq_any(posts_by_self))
             .load::<Post>(conn).unwrap();
         posts.into_iter().map(|p| {
             serde_json::to_value(p.create_activity(conn)).unwrap()
@@ -393,22 +393,22 @@ impl User {
     pub fn get_followers(&self, conn: &Connection) -> Vec<User> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
-        users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
+        users::table.filter(users::id.eq_any(follows)).load::<User>(conn).unwrap()
     }
 
     pub fn get_followers_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
-        users::table.filter(users::id.eq(any(follows)))
+        users::table.filter(users::id.eq_any(follows))
             .offset(min.into())
             .limit((max - min).into())
             .load::<User>(conn).unwrap()
     }
 
     pub fn get_following(&self, conn: &Connection) -> Vec<User> {
-        use schema::follows;
-        let follows = follows::table.filter(follows::follower_id.eq(self.id)).select(follows::following_id);
-        users::table.filter(users::id.eq(any(follows))).load::<User>(conn).unwrap()
+        use schema::follows::dsl::*;
+        let f = follows.filter(follower_id.eq(self.id)).select(following_id);
+        users::table.filter(users::id.eq_any(f)).load::<User>(conn).unwrap()
     }
 
     pub fn is_followed_by(&self, conn: &Connection, other_id: i32) -> bool {

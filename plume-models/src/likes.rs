@@ -14,7 +14,7 @@ use posts::Post;
 use users::User;
 use schema::likes;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Clone, Queryable, Identifiable)]
 pub struct Like {
     pub id: i32,
     pub user_id: i32,
@@ -45,7 +45,7 @@ impl Like {
                     User::get(conn, self.user_id).unwrap().ap_url,
                     Post::get(conn, self.post_id).unwrap().ap_url
                 )))
-                .get_result::<Like>(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Couldn't update AP URL");
         }
     }
 

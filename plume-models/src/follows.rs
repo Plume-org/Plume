@@ -1,5 +1,5 @@
 use activitypub::{Actor, activity::{Accept, Follow as FollowAct, Undo}, actor::Person};
-use diesel::{self, PgConnection, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox, Deletable}, sign::Signer};
 use Connection;
@@ -8,7 +8,7 @@ use notifications::*;
 use users::User;
 use schema::follows;
 
-#[derive(Queryable, Identifiable, Associations)]
+#[derive(Clone, Queryable, Identifiable, Associations)]
 #[belongs_to(User, foreign_key = "following_id")]
 pub struct Follow {
     pub id: i32,
@@ -80,7 +80,7 @@ impl Follow {
     }
 }
 
-impl FromActivity<FollowAct, PgConnection> for Follow {
+impl FromActivity<FollowAct, Connection> for Follow {
     fn from_activity(conn: &Connection, follow: FollowAct, _actor: Id) -> Follow {
         let from_id = follow.follow_props.actor_link::<Id>().map(|l| l.into())
             .unwrap_or_else(|_| follow.follow_props.actor_object::<Person>().expect("No actor object (nor ID) on Follow").object_props.id_string().expect("No ID on actor on Follow"));
@@ -95,7 +95,7 @@ impl FromActivity<FollowAct, PgConnection> for Follow {
     }
 }
 
-impl Notify<PgConnection> for Follow {
+impl Notify<Connection> for Follow {
     fn notify(&self, conn: &Connection) {
         Notification::insert(conn, NewNotification {
             kind: notification_kind::FOLLOW.to_string(),
@@ -105,7 +105,7 @@ impl Notify<PgConnection> for Follow {
     }
 }
 
-impl Deletable<PgConnection, Undo> for Follow {
+impl Deletable<Connection, Undo> for Follow {
     fn delete(&self, conn: &Connection) -> Undo {
         diesel::delete(self).execute(conn).expect("Coudn't delete follow");
 

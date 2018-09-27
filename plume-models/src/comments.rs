@@ -3,8 +3,8 @@ use activitypub::{
     link,
     object::{Note}
 };
-use chrono;
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods, dsl::any};
+use chrono::{self, NaiveDateTime};
+use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods};
 use serde_json;
 
 use plume_common::activity_pub::{
@@ -12,7 +12,7 @@ use plume_common::activity_pub::{
     inbox::{FromActivity, Notify}
 };
 use plume_common::utils;
-use {Connection, SqlDateTime};
+use Connection;
 use instance::Instance;
 use mentions::Mention;
 use notifications::*;
@@ -28,7 +28,7 @@ pub struct Comment {
     pub in_response_to_id: Option<i32>,
     pub post_id: i32,
     pub author_id: i32,
-    pub creation_date: SqlDateTime,
+    pub creation_date: NaiveDateTime,
     pub ap_url: Option<String>,
     pub sensitive: bool,
     pub spoiler_text: String
@@ -63,7 +63,7 @@ impl Comment {
     pub fn count_local(conn: &Connection) -> usize {
         use schema::users;
         let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
-        comments::table.filter(comments::author_id.eq(any(local_authors)))
+        comments::table.filter(comments::author_id.eq_any(local_authors))
             .load::<Comment>(conn)
             .expect("Couldn't load local comments")
             .len()
@@ -87,8 +87,9 @@ impl Comment {
         if self.ap_url.is_none() {
             diesel::update(self)
                 .set(comments::ap_url.eq(self.compute_id(conn)))
-                .get_result(conn)
-                .expect("Failed to update comment AP URL")
+                .execute(conn)
+                .expect("Failed to update comment AP URL");
+            Comment::get(conn, self.id).expect("Couldn't get the updated comment")
         } else {
             self.clone()
         }
@@ -134,7 +135,7 @@ impl Comment {
     }
 }
 
-impl FromActivity<Note, PgConnection> for Comment {
+impl FromActivity<Note, Connection> for Comment {
     fn from_activity(conn: &Connection, note: Note, actor: Id) -> Comment {
         let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
@@ -168,7 +169,7 @@ impl FromActivity<Note, PgConnection> for Comment {
     }
 }
 
-impl Notify<PgConnection> for Comment {
+impl Notify<Connection> for Comment {
     fn notify(&self, conn: &Connection) {
         for author in self.get_post(conn).get_authors(conn) {
             Notification::insert(conn, NewNotification {

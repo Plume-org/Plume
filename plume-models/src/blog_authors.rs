@@ -2,7 +2,7 @@ use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use schema::blog_authors;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Clone, Queryable, Identifiable)]
 pub struct BlogAuthor {
     pub id: i32,
     pub blog_id: i32,

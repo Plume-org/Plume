@@ -26,6 +26,12 @@ extern crate webfinger;
 
 use std::env;
 
+#[cfg(all(feature = "sqlite", not(feature = "postgres")))]
+pub type Connection = diesel::SqliteConnection;
+
+#[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
+pub type Connection = diesel::PgConnection;
+
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
@@ -66,11 +72,14 @@ macro_rules! get {
 
 macro_rules! insert {
     ($table:ident, $from:ident) => {
+        last!($table);
+
         pub fn insert(conn: &crate::Connection, new: $from) -> Self {
             diesel::insert_into($table::table)
                 .values(new)
-                .get_result(conn)
-                .expect("Error saving new $table")
+                .execute(conn)
+                .expect("Error saving new $table");
+            Self::last(conn)
         }
     };
 }
@@ -80,8 +89,24 @@ macro_rules! update {
         pub fn update(&self, conn: &crate::Connection) -> Self {
             diesel::update(self)
                 .set(self)
-                .get_result(conn)
-                .expect(concat!("Error updating ", stringify!($table)))
+                .execute(conn)
+                .expect(concat!("Error updating ", stringify!($table)));
+            Self::get(conn, self.id)
+                .expect(concat!(stringify!($table), " we just updated doesn't exist anymore???"))
+        }
+    };
+}
+
+macro_rules! last {
+    ($table:ident) => {
+        pub fn last(conn: &crate::Connection) -> Self {
+            $table::table.order_by($table::id.desc())
+                .limit(1)
+                .load::<Self>(conn)
+                .expect(concat!("Error getting last ", stringify!($table)))
+                .iter().next()
+                .expect(concat!("No last ", stringify!($table)))
+                .clone()
         }
     };
 }
@@ -104,18 +129,6 @@ pub fn ap_url(url: String) -> String {
     };
     format!("{}://{}", scheme, url)
 }
-
-#[cfg(all(not(feature = "postgres"), feature = "sqlite"))]
-pub type SqlDateTime = chrono::NaiveDateTime;
-
-#[cfg(all(not(feature = "postgres"), feature = "sqlite"))]
-pub type Connection = diesel::SqliteConnection;
-
-#[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
-pub type SqlDateTime = chrono::NaiveDateTime;
-
-#[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
-pub type Connection = diesel::PgConnection;
 
 pub mod admin;
 pub mod blog_authors;

@@ -1,5 +1,5 @@
 use activitypub::link;
-use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use plume_common::activity_pub::inbox::Notify;
 use Connection;
@@ -9,7 +9,7 @@ use posts::Post;
 use users::User;
 use schema::mentions;
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize)]
+#[derive(Clone, Queryable, Identifiable, Serialize, Deserialize)]
 pub struct Mention {
     pub id: i32,
     pub mentioned_id: i32,
@@ -104,7 +104,7 @@ impl Mention {
     }
 }
 
-impl Notify<PgConnection> for Mention {
+impl Notify<Connection> for Mention {
     fn notify(&self, conn: &Connection) {
         self.get_mentioned(conn).map(|m| {
             Notification::insert(conn, NewNotification {

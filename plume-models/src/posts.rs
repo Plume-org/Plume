@@ -5,7 +5,7 @@ use activitypub::{
 };
 use canapi::{Error, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl, dsl::any};
+use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
 use heck::KebabCase;
 use serde_json;
 
@@ -15,7 +15,7 @@ use plume_common::activity_pub::{
     PUBLIC_VISIBILTY, Id, IntoId,
     inbox::{Deletable, FromActivity}
 };
-use {BASE_URL, ap_url, Connection, SqlDateTime};
+use {BASE_URL, ap_url, Connection};
 use blogs::Blog;
 use instance::Instance;
 use likes::Like;
@@ -36,7 +36,7 @@ pub struct Post {
     pub content: SafeString,
     pub published: bool,
     pub license: String,
-    pub creation_date: SqlDateTime,
+    pub creation_date: NaiveDateTime,
     pub ap_url: String,
     pub subtitle: String,
     pub source: String,
@@ -116,31 +116,32 @@ impl Post {
         use schema::tags;
 
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
-        posts::table.filter(posts::id.eq(any(ids)))
+        posts::table.filter(posts::id.eq_any(ids))
             .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .offset(min.into())
             .limit((max - min).into())
-            .get_results::<Post>(conn)
+            .load(conn)
             .expect("Error loading posts by tag")
     }
 
     pub fn count_for_tag(conn: &Connection, tag: String) -> i64 {
         use schema::tags;
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
-        posts::table.filter(posts::id.eq(any(ids)))
+        *posts::table.filter(posts::id.eq_any(ids))
             .filter(posts::published.eq(true))
             .count()
-            .get_result(conn)
+            .load(conn)
             .expect("Error counting posts by tag")
+            .iter().next().unwrap()
     }
 
     pub fn count_local(conn: &Connection) -> usize {
         use schema::post_authors;
         use schema::users;
         let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
-        let local_posts_id = post_authors::table.filter(post_authors::author_id.eq(any(local_authors))).select(post_authors::post_id);
-        posts::table.filter(posts::id.eq(any(local_posts_id)))
+        let local_posts_id = post_authors::table.filter(post_authors::author_id.eq_any(local_authors)).select(post_authors::post_id);
+        posts::table.filter(posts::id.eq_any(local_posts_id))
             .filter(posts::published.eq(true))
             .load::<Post>(conn)
             .expect("Couldn't load local posts")
@@ -163,7 +164,7 @@ impl Post {
         use schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
-        posts::table.filter(posts::id.eq(any(posts)))
+        posts::table.filter(posts::id.eq_any(posts))
             .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .limit(limit)
@@ -215,7 +216,7 @@ impl Post {
 
         posts::table.order(posts::creation_date.desc())
             .filter(posts::published.eq(true))
-            .filter(posts::blog_id.eq(any(blog_ids)))
+            .filter(posts::blog_id.eq_any(blog_ids))
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
@@ -225,12 +226,13 @@ impl Post {
     /// Give a page of customized user feed, based on a list of followed users
     pub fn user_feed_page(conn: &Connection, followed: Vec<i32>, (min, max): (i32, i32)) -> Vec<Post> {
         use schema::post_authors;
-        let post_ids = post_authors::table.filter(post_authors::author_id.eq(any(followed)))
+        let post_ids = post_authors::table
+            .filter(post_authors::author_id.eq_any(followed))
             .select(post_authors::post_id);
 
         posts::table.order(posts::creation_date.desc())
             .filter(posts::published.eq(true))
-            .filter(posts::id.eq(any(post_ids)))
+            .filter(posts::id.eq_any(post_ids))
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
@@ -243,7 +245,7 @@ impl Post {
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
         posts::table.order(posts::creation_date.desc())
             .filter(posts::published.eq(false))
-            .filter(posts::id.eq(any(posts)))
+            .filter(posts::id.eq_any(posts))
             .load::<Post>(conn)
             .expect("Error listing drafts")
     }
@@ -252,7 +254,7 @@ impl Post {
         use schema::users;
         use schema::post_authors;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
-        users::table.filter(users::id.eq(any(author_list))).load::<User>(conn).unwrap()
+        users::table.filter(users::id.eq_any(author_list)).load::<User>(conn).unwrap()
     }
 
     pub fn get_blog(&self, conn: &Connection) -> Blog {
@@ -282,7 +284,8 @@ impl Post {
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(posts::ap_url.eq(self.compute_id(conn)))
-                .get_result::<Post>(conn).expect("Couldn't update AP URL")
+                .execute(conn).expect("Couldn't update AP URL");
+            Post::get(conn, self.id).unwrap()
         } else {
             self.clone()
         }

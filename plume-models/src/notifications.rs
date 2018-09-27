@@ -1,7 +1,8 @@
+use chrono::NaiveDateTime;
 use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods};
 use serde_json;
 
-use {Connection, SqlDateTime};
+use Connection;
 use comments::Comment;
 use follows::Follow;
 use likes::Like;
@@ -19,11 +20,11 @@ pub mod notification_kind {
     pub const RESHARE: &'static str = "RESHARE";
 }
 
-#[derive(Queryable, Identifiable, Serialize)]
+#[derive(Clone, Queryable, Identifiable, Serialize)]
 pub struct Notification {
     pub id: i32,
     pub user_id: i32,
-    pub creation_date: SqlDateTime,
+    pub creation_date: NaiveDateTime,
     pub kind: String,
     pub object_id: i32
 }

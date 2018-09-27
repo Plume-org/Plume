@@ -1,5 +1,4 @@
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
-use diesel::PgConnection;
 use rocket::{
     http::uri::{FromUriParam, UriDisplay},
     response::NamedFile
@@ -9,7 +8,7 @@ use std::{
     path::{Path, PathBuf}
 };
 
-use plume_models::posts::Post;
+use plume_models::{Connection, posts::Post};
 
 macro_rules! may_fail {
     ($account:expr, $expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
@@ -79,7 +78,7 @@ impl Page {
     }
 }
 
-pub fn post_to_atom(post: Post, conn: &PgConnection) -> Entry {
+pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
     EntryBuilder::default()
         .title(post.title.clone())
         .content(ContentBuilder::default()

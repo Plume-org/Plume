@@ -1,4 +1,5 @@
 use activitypub::{Actor, Object, CustomObject, actor::Group, collection::OrderedCollection};
+use chrono::NaiveDateTime;
 use reqwest::{
     Client,
     header::{Accept, qitem},
@@ -6,7 +7,7 @@ use reqwest::{
 };
 use serde_json;
 use url::Url;
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, dsl::any};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -15,7 +16,7 @@ use openssl::{
 };
 use webfinger::*;
 
-use {BASE_URL, USE_HTTPS, Connection, SqlDateTime};
+use {BASE_URL, USE_HTTPS, Connection};
 use plume_common::activity_pub::{
     ap_accept_header, ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
@@ -37,7 +38,7 @@ pub struct Blog {
     pub outbox_url: String,
     pub inbox_url: String,
     pub instance_id: i32,
-    pub creation_date: SqlDateTime,
+    pub creation_date: NaiveDateTime,
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String
@@ -73,7 +74,7 @@ impl Blog {
         use schema::blog_authors;
         use schema::users;
         let authors_ids = blog_authors::table.filter(blog_authors::blog_id.eq(self.id)).select(blog_authors::author_id);
-        users::table.filter(users::id.eq(any(authors_ids)))
+        users::table.filter(users::id.eq_any(authors_ids))
             .load::<User>(conn)
             .expect("Couldn't load authors of a blog")
     }
@@ -81,7 +82,7 @@ impl Blog {
     pub fn find_for_author(conn: &Connection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;
         let author_ids = blog_authors::table.filter(blog_authors::author_id.eq(author_id)).select(blog_authors::blog_id);
-        blogs::table.filter(blogs::id.eq(any(author_ids)))
+        blogs::table.filter(blogs::id.eq_any(author_ids))
             .load::<Blog>(conn)
             .expect("Couldn't load blogs ")
     }
@@ -189,19 +190,19 @@ impl Blog {
         if self.outbox_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::outbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "outbox")))
-                .get_result::<Blog>(conn).expect("Couldn't update outbox URL");
+                .execute(conn).expect("Couldn't update outbox URL");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::inbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "inbox")))
-                .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
+                .execute(conn).expect("Couldn't update inbox URL");
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "")))
-                .get_result::<Blog>(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Couldn't update AP URL");
         }
     }
 

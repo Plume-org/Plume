@@ -6,7 +6,7 @@ use {ap_url, Connection};
 use instance::Instance;
 use schema::medias;
 
-#[derive(Identifiable, Queryable, Serialize)]
+#[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Media {
     pub id: i32,
     pub file_path: String,

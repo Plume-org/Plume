@@ -1,21 +1,22 @@
+use chrono::NaiveDateTime;
 use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 use std::iter::Iterator;
 
 use plume_common::utils::md_to_html;
-use {Connection, SqlDateTime};
+use Connection;
 use safe_string::SafeString;
 use ap_url;
 use users::User;
 use schema::{instances, users};
 
-#[derive(Identifiable, Queryable, Serialize)]
+#[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Instance {
     pub id: i32,
     pub public_domain: String,
     pub name: String,
     pub local: bool,
     pub blocked: bool,
-    pub creation_date: SqlDateTime,
+    pub creation_date: NaiveDateTime,
     pub open_registrations: bool,
     pub short_description: SafeString,
     pub long_description: SafeString,
@@ -72,7 +73,7 @@ impl Instance {
     pub fn toggle_block(&self, conn: &Connection) {
         diesel::update(self)
             .set(instances::blocked.eq(!self.blocked))
-            .get_result::<Instance>(conn)
+            .execute(conn)
             .expect("Couldn't block/unblock instance");
     }
 
@@ -115,7 +116,7 @@ impl Instance {
         ))
     }
 
-    pub fn update(&self, conn: &Connection, name: String, open_registrations: bool, short_description: SafeString, long_description: SafeString) -> Instance {
+    pub fn update(&self, conn: &Connection, name: String, open_registrations: bool, short_description: SafeString, long_description: SafeString) {
         let (sd, _) = md_to_html(short_description.as_ref());
         let (ld, _) = md_to_html(long_description.as_ref());
         diesel::update(self)
@@ -126,8 +127,8 @@ impl Instance {
                 instances::long_description.eq(long_description),
                 instances::short_description_html.eq(sd),
                 instances::long_description_html.eq(ld)
-            )).get_result::<Instance>(conn)
-            .expect("Couldn't update instance")
+            )).execute(conn)
+            .expect("Couldn't update instance");
     }
 
     pub fn count(conn: &Connection) -> i64 {
