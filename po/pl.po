@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-09-04 17:35+0200\n"
+"PO-Revision-Date: 2018-09-27 12:33+0200\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -521,116 +521,107 @@ msgstr "Zaloguj się aby polubić"
 msgid "Login to boost"
 msgstr "Zaloguj się aby podbić"
 
-#, fuzzy
 msgid "Your feed"
-msgstr "Twoja zawartość multimedialna"
+msgstr "Twój strumień"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Strumień federacji"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Lokalny strumień"
 
 msgid "Nothing to see here yet. Try to follow more people."
-msgstr ""
+msgstr "Nie ma tutaj niczego. Spróbuj zacząć śledzić więcej osób."
 
-#, fuzzy
 msgid "Articles"
-msgstr "artykuły"
+msgstr "Artykuły"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Wszystkie artykuły w Fediwersum"
 
-#, fuzzy
 msgid "Articles from {{ instance.name }}"
-msgstr "O {{ instance_name }}"
+msgstr "Artykuły z {{ instance.name }}"
 
 msgid "View all"
-msgstr ""
+msgstr "Zobacz wszystko"
 
-#, fuzzy
 msgid "Articles tagged \"{{ tag }}\""
-msgstr "O {{ instance_name }}"
+msgstr "Artykuły oznaczone „{{ tag }}”"
 
 msgid "Edit"
-msgstr ""
+msgstr "Edytuj"
 
-#, fuzzy
 msgid "Edit {{ post }}"
-msgstr "Komentarz „{{ post }}”"
+msgstr "Edytuj {{ post }}"
 
-#, fuzzy
 msgid "Update"
-msgstr "Aktualizuj konto"
+msgstr "Aktualizuj"
 
-#, fuzzy
 msgid "We couldn't find this page."
 msgstr "Nie udało się odnaleźć tej strony."
 
 msgid "Invalid CSRF token."
-msgstr ""
+msgstr "Nieprawidłowy token CSRF."
 
 msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
+"Coś poszło nie tak z tokenem CSRF. Upewnij się, że w przeglądarce są "
+"włączone pliki cookies i spróbuj odświeżyć stronę. Jeżeli wciąż widzisz tę "
+"wiadomość, zgłoś to."
 
-#, fuzzy
 msgid "Administration of {{ instance.name }}"
-msgstr "O {{ instance_name }}"
+msgstr "Administracja {{ instance.name }}"
 
-#, fuzzy
 msgid "Instances"
-msgstr "Ustawienia instancji"
+msgstr "Instancje"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokuj"
 
 msgid "Block"
-msgstr ""
+msgstr "Zablikuj"
 
 msgid "Ban"
-msgstr ""
+msgstr "Zbanuj"
 
 msgid "Useful for visually impaired people and licensing"
-msgstr ""
+msgstr "Przydatny dla osób z problemami ze wzrokiem i na informacje o licencji"
 
 msgid "Let it empty if there is none"
-msgstr ""
+msgstr "Pozostaw puste, jeżeli niepotrzebne"
 
 msgid "Draft"
-msgstr ""
+msgstr "Szkic"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "To jest szkic, nie publikuj go jeszcze."
 
 msgid "Update or publish"
-msgstr ""
+msgstr "Aktualizuj lub publikuj"
 
-#, fuzzy
 msgid "Your Drafts"
-msgstr "Twój panel"
+msgstr "Twoje szkice"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Niebezpieczna strefa"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
 
-#, fuzzy
 msgid "Delete your account"
-msgstr "Utwórz konto"
+msgstr "Usuń swoje konto"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
-msgstr ""
+msgstr "Przepraszamy, jako administrator nie możesz opuścić swojej instancji."
 
-#, fuzzy
 msgid "Users"
-msgstr "Nazwa użytkownika"
+msgstr "Użytkownicy"
 
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Ten wpis nie został jeszcze opublikowany."
 
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
