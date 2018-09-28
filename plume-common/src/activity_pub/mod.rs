@@ -104,11 +104,12 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(send
 
     for inbox in boxes {
         // TODO: run it in Sidekiq or something like that
+        let mut headers = request::headers();
+        headers.set(request::digest(signed.to_string()));
         let res = Client::new()
             .post(&inbox[..])
-            .headers(request::headers())
-            .header(request::signature(sender, request::headers()))
-            .header(request::digest(signed.to_string()))
+            .headers(headers.clone())
+            .header(request::signature(sender, headers))
             .body(signed.to_string())
             .send();
         match res {
