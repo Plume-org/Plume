@@ -604,6 +604,13 @@ impl Signer for User {
         signer.update(to_sign.as_bytes()).unwrap();
         signer.sign_to_vec().unwrap()
     }
+
+    fn verify(&self, data: String, signature: Vec<u8>) -> bool {
+        let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap()).unwrap();
+       let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+        verifier.update(data.as_bytes()).unwrap();
+        verifier.verify(&signature).unwrap()
+    }
 }
 
 impl NewUser {

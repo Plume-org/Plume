@@ -20,6 +20,8 @@ pub trait Signer {
     
     /// Sign some data with the signer keypair
     fn sign(&self, to_sign: String) -> Vec<u8>;
+    /// Verify if the signature is valid
+    fn verify(&self, data: String, signature: Vec<u8>) -> bool;
 }
 
 pub trait Signable {
