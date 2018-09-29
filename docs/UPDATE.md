@@ -5,11 +5,11 @@ To update your instance, run these commands with `plume` user if you created it,
 ```
 git pull origin master
 
-# If you are not using systemd
-cargo run
+# If you are using sysvinit
+sudo service plume restart
 
-# If you are using systemd
-service plume restart
+# If you are using systemd 
+sudo systemctl restart plume
 ```
 
 That's it!
