@@ -88,10 +88,10 @@
     {% endif %}
 {% endmacro %}
 {% macro avatar(user, size="small", pad=true) %}
-    <img
+    <div
         class="avatar {{ size }} {% if pad %}padded{% endif %}"
         style="background-image: url('{{ user.avatar }}');"
         title="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
         aria-label="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
-    >
+    ></div>
 {% endmacro %}
