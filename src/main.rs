@@ -27,6 +27,7 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate serde_qs;
 extern crate validator;
 #[macro_use]
 extern crate validator_derive;
@@ -147,7 +148,7 @@ fn main() {
         ])
         .mount("/api/v1", routes![
             api::posts::get,
-            api::posts::list
+            api::posts::list,
         ])
         .catch(catchers![
             routes::errors::not_found,
