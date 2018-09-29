@@ -15,7 +15,7 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     ap_accept_header, ActivityStream, Id, IntoId, ApSignature, PublicKey,
-    inbox::WithInbox,
+    inbox::{Deletable, WithInbox},
     sign::{Signer, gen_keypair}
 };
 use reqwest::{
@@ -107,6 +107,26 @@ impl User {
     }
 
     pub fn delete(&self, conn: &Connection) {
+        use schema::post_authors;
+
+        // delete the posts if they is the only author
+        let all_their_posts_ids: Vec<i32> = post_authors::table
+            .filter(post_authors::author_id.eq(self.id))
+            .select(post_authors::post_id)
+            .load(conn)
+            .expect("Couldn't load posts IDs");
+        for post_id in all_their_posts_ids {
+            let has_other_authors = post_authors::table
+                .filter(post_authors::post_id.eq(post_id))
+                .filter(post_authors::author_id.ne(self.id))
+                .count()
+                .load(conn)
+                .expect("Couldn't count other authors").iter().next().unwrap_or(&0) > &0;
+            if !has_other_authors {
+                Post::get(conn, post_id).expect("Post is already gone").delete(conn);
+            }
+        }
+
         diesel::delete(self).execute(conn).expect("Couldn't remove user from DB");
     }
 
