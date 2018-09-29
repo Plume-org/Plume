@@ -32,6 +32,19 @@ pub type Connection = diesel::SqliteConnection;
 #[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
 pub type Connection = diesel::PgConnection;
 
+/// Adds a function to a model, that returns the first
+/// matching row for a given list of fields.
+///
+/// Usage:
+///
+/// ```rust
+/// impl Model {
+///     find_by!(model_table, name_of_the_function, field1 as String, field2 as i32);
+/// }
+///
+/// // Get the Model with field1 == "", and field2 == 0
+/// Model::name_of_the_function(connection, String::new(), 0);
+/// ```
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
@@ -46,6 +59,18 @@ macro_rules! find_by {
     };
 }
 
+/// List all rows of a model, with field-based filtering.
+///
+/// Usage:
+///
+/// ```rust
+/// impl Model {
+///     list_by!(model_table, name_of_the_function, field1 as String);
+/// }
+///
+/// // To get all Models with field1 == ""
+/// Model::name_of_the_function(connection, String::new());
+/// ```
 macro_rules! list_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
@@ -58,6 +83,18 @@ macro_rules! list_by {
     };
 }
 
+/// Adds a function to a model to retrieve a row by ID
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     get!(model_table);
+/// }
+///
+/// // Get the Model with ID 1
+/// Model::get(connection, 1);
+/// ```
 macro_rules! get {
     ($table:ident) => {
         pub fn get(conn: &crate::Connection, id: i32) -> Option<Self> {
@@ -70,6 +107,18 @@ macro_rules! get {
     };
 }
 
+/// Adds a function to a model to insert a new row
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     insert!(model_table, NewModelType);
+/// }
+///
+/// // Insert a new row
+/// Model::insert(connection, NewModelType::new());
+/// ```
 macro_rules! insert {
     ($table:ident, $from:ident) => {
         last!($table);
@@ -84,6 +133,21 @@ macro_rules! insert {
     };
 }
 
+/// Adds a function to a model to save changes to a model.
+/// The model should derive diesel::AsChangeset.
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     update!(model_table);
+/// }
+///
+/// // Update and save changes
+/// let m = Model::get(connection, 1);
+/// m.foo = 42;
+/// m.update(connection);
+/// ```
 macro_rules! update {
     ($table:ident) => {
         pub fn update(&self, conn: &crate::Connection) -> Self {
@@ -97,6 +161,18 @@ macro_rules! update {
     };
 }
 
+/// Returns the last row of a table.
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     last!(model_table);
+/// }
+///
+/// // Get the last Model
+/// Model::last(connection)
+/// ```
 macro_rules! last {
     ($table:ident) => {
         pub fn last(conn: &crate::Connection) -> Self {
