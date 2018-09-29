@@ -57,10 +57,10 @@ pub struct NewPost {
     pub source: String,
 }
 
-impl Provider<PgConnection> for Post {
+impl Provider<Connection> for Post {
     type Data = PostEndpoint;
 
-    fn get(conn: &PgConnection, id: i32) -> Result<PostEndpoint, Error> {
+    fn get(conn: &Connection, id: i32) -> Result<PostEndpoint, Error> {
         Post::get(conn, id).map(|p| Ok(PostEndpoint {
             id: Some(p.id),
             title: Some(p.title.clone()),
@@ -69,7 +69,7 @@ impl Provider<PgConnection> for Post {
         })).unwrap_or(Err(Error::NotFound("Get Post".to_string())))
     }
 
-    fn list(conn: &PgConnection, filter: PostEndpoint) -> Vec<PostEndpoint> {
+    fn list(conn: &Connection, filter: PostEndpoint) -> Vec<PostEndpoint> {
         let mut query = posts::table.into_boxed();
         if let Some(title) = filter.title {
             query = query.filter(posts::title.eq(title));
@@ -92,15 +92,15 @@ impl Provider<PgConnection> for Post {
         ).unwrap_or(vec![])
     }
 
-    fn create(_conn: &PgConnection, _query: PostEndpoint) -> Result<PostEndpoint, Error> {
+    fn create(_conn: &Connection, _query: PostEndpoint) -> Result<PostEndpoint, Error> {
         unimplemented!()
     }
 
-    fn update(_conn: &PgConnection, _id: i32, _new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
+    fn update(_conn: &Connection, _id: i32, _new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
         unimplemented!()
     }
 
-    fn delete(conn: &PgConnection, id: i32) {
+    fn delete(conn: &Connection, id: i32) {
         Post::get(conn, id).map(|p| p.delete(conn));
     }
 }
