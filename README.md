@@ -11,3 +11,7 @@ Feel free to join our Matrix room: `#plume:disroot.org` to discuss about the pro
 If you are interested in coding, check out the [development guide](https://github.com/Plume-org/Plume/blob/master/docs/DEVELOPMENT.md). You can also help by reporting issues, suggesting features, or writing documentation for instance.
 
 If you would like to help by translating Plume, we also have [a guide for you](https://github.com/Plume-org/Plume/blob/master/docs/INTERNATIONALIZATION.md)!
+
+## Debate and vote on features
+
+Join our [Loomio grou](https://framavox.org/g/WK40YHMA/plume) to take part in Plume's decision process.
