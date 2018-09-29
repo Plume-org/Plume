@@ -9,7 +9,8 @@ git pull origin master
 [See section: Sysvinit integration](https://github.com/Plume-org/Plume/blob/master/docs/INSTALL.md#sysvinit-integration).
 sudo service plume restart
 
-# If you are using systemd [See section: Systemd integration](https://github.com/Plume-org/Plume/blob/master/docs/INSTALL.md#systemd-integration) .
+# If you are using systemd 
+[See section: Systemd integration](https://github.com/Plume-org/Plume/blob/master/docs/INSTALL.md#systemd-integration) .
 sudo systemctl restart plume
 ```
 
