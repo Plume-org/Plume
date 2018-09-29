@@ -1,0 +1,45 @@
+openapi: "3.0"
+info:
+  version: "1.0.0"
+  title: "Plume REST API"
+
+servers:
+  - url: http://localhost:7878/api/v1
+    description: Your local instance
+  - url: https://baptiste.gelez.xyz/api/v1
+    description: Demo instance
+
+paths:
+  /posts/{id}:
+    get:
+      description:
+        Retrieves a post by its ID.
+      responses:
+        '200':
+          The post was found
+        '403':
+          The post exists, but you don't have the rights to fetch it (it is probably a private draft)
+        '404':
+          The post was not found
+  /posts/:
+    get:
+      description:
+        List posts.
+
+definitions:
+  Post:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        example: "Hello, world!"
+      id:
+        type: "integer"
+        format: "int64"
+        example: 42
+      subtitle:
+        type: "string"
+        example: "My first post."
+      content:
+        type: "string"
+        format: "<p>This is my first post. Thanks for reading.</p>"

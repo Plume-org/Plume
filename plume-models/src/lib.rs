@@ -3,6 +3,7 @@
 extern crate activitypub;
 extern crate ammonia;
 extern crate bcrypt;
+extern crate canapi;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
@@ -10,6 +11,7 @@ extern crate heck;
 #[macro_use]
 extern crate lazy_static;
 extern crate openssl;
+extern crate plume_api;
 extern crate plume_common;
 extern crate reqwest;
 extern crate rocket;

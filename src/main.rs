@@ -3,6 +3,7 @@
 
 extern crate activitypub;
 extern crate atom_syndication;
+extern crate canapi;
 extern crate chrono;
 extern crate colored;
 extern crate diesel;
@@ -12,6 +13,7 @@ extern crate gettextrs;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
+extern crate plume_api;
 extern crate plume_common;
 extern crate plume_models;
 #[macro_use]
@@ -25,6 +27,7 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate serde_qs;
 extern crate validator;
 #[macro_use]
 extern crate validator_derive;
@@ -36,6 +39,7 @@ use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
 use workerpool::{Pool, thunk::ThunkWorker};
 
+mod api;
 mod inbox;
 mod setup;
 mod routes;
@@ -141,6 +145,10 @@ fn main() {
             routes::well_known::webfinger,
 
             routes::errors::csrf_violation
+        ])
+        .mount("/api/v1", routes![
+            api::posts::get,
+            api::posts::list,
         ])
         .catch(catchers![
             routes::errors::not_found,
