@@ -1,5 +1,5 @@
 use rocket::{
-    http::{Cookie, Cookies, uri::Uri},
+    http::{Cookie, Cookies, SameSite, uri::Uri},
     response::Redirect,
     request::{LenientForm,FlashMessage}
 };
@@ -72,7 +72,9 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
     }
 
     if errors.is_empty() {
-        cookies.add_private(Cookie::new(AUTH_COOKIE, user.unwrap().id.to_string()));
+        cookies.add_private(Cookie::build(AUTH_COOKIE, user.unwrap().id.to_string())
+                                            .same_site(SameSite::Lax)
+                                            .finish());
 
         let destination = flash
             .and_then(|f| if f.name() == "callback" {

@@ -165,7 +165,7 @@ fn main() {
                 .add_exceptions(vec![
                     ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
                     ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
-                    ("/~/<blog>/<slug>".to_owned(), "/~/<blog>/<slug>".to_owned(), rocket::http::Method::Post),
+                    ("/login".to_owned(), "/login".to_owned(), rocket::http::Method::Post),
                 ])
                 .finalize().unwrap())
         .launch();
