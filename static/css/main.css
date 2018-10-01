@@ -194,6 +194,10 @@
  	line-height: 1.7em;
  }
 
+ main a:hover {
+         text-decoration: underline;
+ }
+
  article img {
  	display: block;
  	margin: 3em auto;
