@@ -166,6 +166,7 @@ fn main() {
                     ("/inbox".to_owned(), "/inbox".to_owned(), rocket::http::Method::Post),
                     ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
                     ("/login".to_owned(), "/login".to_owned(), rocket::http::Method::Post),
+                    ("/users/new".to_owned(), "/users/new".to_owned(), rocket::http::Method::Post),
                 ])
                 .finalize().unwrap())
         .launch();
