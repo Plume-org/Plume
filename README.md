@@ -14,4 +14,4 @@ If you would like to help by translating Plume, we also have [a guide for you](h
 
 ## Debate and vote on features
 
-Join our [Loomio grou](https://framavox.org/g/WK40YHMA/plume) to take part in Plume's decision process.
+Join our [Loomio group](https://framavox.org/g/WK40YHMA/plume) to take part in Plume's decision process.
