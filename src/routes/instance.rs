@@ -1,16 +1,15 @@
 use gettextrs::gettext;
-use rocket::{http::HeaderMap, Outcome,
-    request::{self, FromRequest, LenientForm, Request},
-    response::Redirect};
+use rocket::{request::LenientForm, response::Redirect};
 use rocket_contrib::{Json, Template};
 use serde_json;
 use validator::{Validate};
 
-use plume_common::activity_pub::{verify_http_headers, SignatureValidity};
+use plume_common::activity_pub::verify_http_headers;
 use plume_models::{
     admin::Admin,
     comments::Comment,
     db_conn::DbConn,
+    headers::Headers,
     posts::Post,
     users::User,
     safe_string::SafeString,
@@ -191,22 +190,6 @@ fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     Redirect::to(uri!(admin_users))
 }
 
-struct Headers<'r> {
-    headers: HeaderMap<'r>,
-}
-
-impl<'a, 'r> FromRequest<'a, 'r> for Headers<'r> {
-    type Error = ();
-
-    fn from_request(request: &'a Request<'r>) ->request::Outcome<Self, ()> {
-        let mut headers = HeaderMap::new();
-        for header in request.headers().clone().into_iter() {
-            headers.add(header);
-        }
-        Outcome::Success(Headers{headers})
-    }
-}
-
 #[post("/inbox", data = "<data>")]
 fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
@@ -215,14 +198,9 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> String {
     let actor_id = activity["actor"].as_str()
         .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("No actor ID for incoming activity, blocks by panicking"));
 
-    let sig = match verify_http_headers(&User::from_url(&conn, actor_id.to_owned()).unwrap(), headers.headers, data) {
-        SignatureValidity::Valid => true,
-        _ => {
-            // TODO verify json signature
-            false
-        }
-    };
+    let sig = verify_http_headers(&User::from_url(&conn, actor_id.to_owned()).unwrap(), headers.0, data).is_secure();
     if !sig {
+        // TODO check for valid json-ld signature
         return "invalid signature".to_owned();
     }
 

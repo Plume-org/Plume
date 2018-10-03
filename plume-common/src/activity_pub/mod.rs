@@ -128,6 +128,15 @@ pub enum SignatureValidity {
     Absent,
 }
 
+impl SignatureValidity {
+    pub fn is_secure(&self) -> bool {
+        match self {
+            SignatureValidity::Valid => true,
+            _ => false,
+        }
+    }
+}
+
 pub fn verify_http_headers<S: sign::Signer+::std::fmt::Debug>(sender: &S, all_headers: HeaderMap, data: String) -> SignatureValidity{
     if let Some(sig_header) = all_headers.get_one("Signature") {
         let mut _key_id = None;

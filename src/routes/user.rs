@@ -16,13 +16,14 @@ use workerpool::thunk::*;
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
-    inbox::{FromActivity, Notify, Deletable}
+    verify_http_headers, inbox::{FromActivity, Notify, Deletable}
 };
 use plume_common::utils;
 use plume_models::{
     blogs::Blog,
     db_conn::DbConn,
     follows,
+    headers::Headers,
     instance::Instance,
     posts::Post,
     reshares::Reshare,
@@ -295,13 +296,20 @@ fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
 }
 
 #[post("/@/<name>/inbox", data = "<data>")]
-fn inbox(name: String, conn: DbConn, data: String) -> String {
+fn inbox(name: String, conn: DbConn, data: String, headers: Headers) -> String {
     let user = User::find_local(&*conn, name).unwrap();
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
 
     let activity = act.clone();
     let actor_id = activity["actor"].as_str()
         .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("User: No actor ID for incoming activity, blocks by panicking"));
+
+    let sig = verify_http_headers(&User::from_url(&conn, actor_id.to_owned()).unwrap(), headers.0, data).is_secure();
+    if !sig {
+        // TODO check for json-ld signature
+        return "invalid signature".to_owned();
+    }
+
     if Instance::is_blocked(&*conn, actor_id.to_string()) {
         return String::new();
     }
