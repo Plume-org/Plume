@@ -4,6 +4,7 @@ use reqwest::{
     mime::Mime,
     header::{Accept, Date, Headers, UserAgent, qitem}
 };
+use std::ops::Deref;
 use std::time::SystemTime;
 
 use activity_pub::ap_accept_header;
@@ -17,6 +18,48 @@ header! {
 
 header! {
     (Digest, "Digest") => [String]
+}
+
+impl Digest {
+    pub fn digest(body: String) -> Self {
+        let mut hasher = Hasher::new(MessageDigest::sha256()).unwrap();
+        hasher.update(&body.into_bytes()[..]).unwrap();
+        let res = base64::encode(&hasher.finish().unwrap());
+        Digest(format!("SHA-256={}", res))
+    }
+
+    pub fn verify(&self, body: String) -> bool {
+        if self.algorithm()=="SHA-256" {
+            let mut hasher = Hasher::new(MessageDigest::sha256()).unwrap();
+            hasher.update(&body.into_bytes()).unwrap();
+            self.value().deref()==hasher.finish().unwrap().deref()
+        } else {
+            false //algorithm not supported
+        }
+    }
+
+    pub fn algorithm(&self) -> &str {
+        let pos = self.0.find('=').unwrap();
+        &self.0[..pos]
+    }
+
+    pub fn value(&self) -> Vec<u8> {
+        let pos = self.0.find('=').unwrap()+1;
+        base64::decode(&self.0[pos..]).unwrap()
+    }
+
+    pub fn from_header(dig: &str) -> Result<Self, ()> {
+        if let Some(pos) = dig.find('=') {
+            let pos = pos+1;
+            if let Ok(_) = base64::decode(&dig[pos..]) {
+                Ok(Digest(dig.to_owned()))
+            } else {
+                Err(())
+            }
+        } else {
+            Err(())
+        }
+    }
 }
 
 pub fn headers() -> Headers {
@@ -40,11 +83,4 @@ pub fn signature<S: Signer>(signer: &S, headers: Headers) -> Signature {
         signed_headers = signed_headers,
         signature = sign
     ))
-}
-
-pub fn digest(body: String) -> Digest {
-    let mut hasher = Hasher::new(MessageDigest::sha256()).unwrap();
-    hasher.update(&body.into_bytes()[..]).unwrap();
-    let res = base64::encode(&hasher.finish().unwrap());
-    Digest(format!("SHA-256={}", res))
 }
