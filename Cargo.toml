@@ -24,6 +24,10 @@ validator_derive = "0.7"
 webfinger = "0.3"
 workerpool = "1.1"
 
+[[bin]]
+name = "plume"
+path = "src/main.rs"
+
 [dependencies.chrono]
 features = ["serde"]
 version = "0.4"
@@ -68,4 +72,4 @@ postgres = ["plume-models/postgres"]
 sqlite = ["plume-models/sqlite"]
 
 [workspace]
-members = ["plume-api", "plume-models", "plume-common"]
+members = ["plume-api", "plume-cli", "plume-models", "plume-common"]
