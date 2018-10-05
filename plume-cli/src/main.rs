@@ -5,7 +5,7 @@ extern crate plume_models;
 
 use clap::App;
 use diesel::{Connection, PgConnection};
-use std::io::{self, Write};
+use std::io::{self, prelude::*};
 use plume_models::DB_URL;
 
 mod instance;
@@ -28,8 +28,8 @@ fn main() {
 }
 
 pub fn ask_for(something: &str) -> String {
-    write!(io::stdout(), "{}", something).ok();
-    write!(io::stdout(), ": ").ok();
+    print!("{}: ", something);
+    io::stdout().flush().expect("Couldn't flush STDOUT");
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("Unable to read line");
     input.retain(|c| c != '\n');

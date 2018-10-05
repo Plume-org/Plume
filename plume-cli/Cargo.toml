@@ -1,10 +1,11 @@
 [package]
 name = "plume-cli"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Bat' <baptiste@gelez.xyz>"]
 
 [[bin]]
 name = "plm"
+path = "src/main.rs"
 
 [dependencies]
 clap = "2.32"
