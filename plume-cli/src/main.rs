@@ -2,6 +2,7 @@ extern crate clap;
 extern crate diesel;
 extern crate dotenv;
 extern crate plume_models;
+extern crate rpassword;
 
 use clap::App;
 use diesel::{Connection, PgConnection};
@@ -9,13 +10,15 @@ use std::io::{self, prelude::*};
 use plume_models::DB_URL;
 
 mod instance;
+mod users;
 
 fn main() {
     let mut app = App::new("Plume CLI")
         .bin_name("plm")
         .version("0.2.0")
         .about("Collection of tools to manage your Plume instance.")
-        .subcommand(instance::command());
+        .subcommand(instance::command())
+        .subcommand(users::command());
     let matches = app.clone().get_matches();
 
     dotenv::dotenv().ok();
@@ -23,6 +26,7 @@ fn main() {
 
     match matches.subcommand() {
         ("instance", Some(args)) => instance::run(args, &conn.expect("Couldn't connect to the database.")),
+        ("users", Some(args)) => users::run(args, &conn.expect("Couldn't connect to the database.")),
         _ => app.print_help().unwrap()
     };
 }

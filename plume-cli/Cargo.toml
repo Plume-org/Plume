@@ -10,6 +10,7 @@ path = "src/main.rs"
 [dependencies]
 clap = "2.32"
 dotenv = "0.13"
+rpassword = "2.0"
 
 [dependencies.diesel]
 features = ["postgres", "r2d2", "chrono"]
