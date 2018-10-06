@@ -1,5 +1,5 @@
 use colored::Colorize;
-use diesel::{pg::PgConnection, r2d2::{ConnectionManager, Pool}};
+use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use std::fs::{self, File};
 use std::io;
@@ -9,21 +9,22 @@ use rpassword;
 use plume_models::safe_string::SafeString;
 
 use plume_models::{
+    Connection,
     DB_URL,
-    db_conn::{DbConn, PgPool},
+    db_conn::{DbConn, DbPool},
     instance::*,
     users::*
 };
 
 /// Initializes a database pool.
-fn init_pool() -> Option<PgPool> {
+fn init_pool() -> Option<DbPool> {
     dotenv().ok();
 
-    let manager = ConnectionManager::<PgConnection>::new(DB_URL.as_str());
+    let manager = ConnectionManager::<Connection>::new(DB_URL.as_str());
     Pool::new(manager).ok()
 }
 
-pub fn check() -> PgPool {
+pub fn check() -> DbPool {
     if let Some(pool) = init_pool() {
         match pool.get() {
             Ok(conn) => {

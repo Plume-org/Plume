@@ -29,7 +29,7 @@ features = ["serde"]
 version = "0.4"
 
 [dependencies.diesel]
-features = ["postgres", "r2d2", "chrono"]
+features = ["postgres", "sqlite", "r2d2", "chrono"]
 version = "*"
 
 [dependencies.plume-api]
@@ -61,6 +61,11 @@ rev = "2805ce5dbae4a6441208484426440885a5640a6a"
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"
 rev = "75a3bfd7b847324c078a355a7f101f8241a9f59b"
+
+[features]
+default = ["postgres"]
+postgres = ["plume-models/postgres"]
+sqlite = ["plume-models/sqlite"]
 
 [workspace]
 members = ["plume-api", "plume-models", "plume-common"]

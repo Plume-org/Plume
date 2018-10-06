@@ -1,4 +1,5 @@
 #![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
+#![feature(crate_in_paths)]
 
 extern crate activitypub;
 extern crate ammonia;
@@ -25,10 +26,29 @@ extern crate webfinger;
 
 use std::env;
 
+#[cfg(all(feature = "sqlite", not(feature = "postgres")))]
+pub type Connection = diesel::SqliteConnection;
+
+#[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
+pub type Connection = diesel::PgConnection;
+
+/// Adds a function to a model, that returns the first
+/// matching row for a given list of fields.
+///
+/// Usage:
+///
+/// ```rust
+/// impl Model {
+///     find_by!(model_table, name_of_the_function, field1 as String, field2 as i32);
+/// }
+///
+/// // Get the Model with field1 == "", and field2 == 0
+/// Model::name_of_the_function(connection, String::new(), 0);
+/// ```
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &PgConnection, $($col: $type),+) -> Option<Self> {
+        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Option<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .limit(1)
@@ -39,10 +59,22 @@ macro_rules! find_by {
     };
 }
 
+/// List all rows of a model, with field-based filtering.
+///
+/// Usage:
+///
+/// ```rust
+/// impl Model {
+///     list_by!(model_table, name_of_the_function, field1 as String);
+/// }
+///
+/// // To get all Models with field1 == ""
+/// Model::name_of_the_function(connection, String::new());
+/// ```
 macro_rules! list_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &PgConnection, $($col: $type),+) -> Vec<Self> {
+        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Vec<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .load::<Self>(conn)
@@ -51,9 +83,21 @@ macro_rules! list_by {
     };
 }
 
+/// Adds a function to a model to retrieve a row by ID
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     get!(model_table);
+/// }
+///
+/// // Get the Model with ID 1
+/// Model::get(connection, 1);
+/// ```
 macro_rules! get {
     ($table:ident) => {
-        pub fn get(conn: &PgConnection, id: i32) -> Option<Self> {
+        pub fn get(conn: &crate::Connection, id: i32) -> Option<Self> {
             $table::table.filter($table::id.eq(id))
                 .limit(1)
                 .load::<Self>(conn)
@@ -63,24 +107,82 @@ macro_rules! get {
     };
 }
 
+/// Adds a function to a model to insert a new row
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     insert!(model_table, NewModelType);
+/// }
+///
+/// // Insert a new row
+/// Model::insert(connection, NewModelType::new());
+/// ```
 macro_rules! insert {
     ($table:ident, $from:ident) => {
-        pub fn insert(conn: &PgConnection, new: $from) -> Self {
+        last!($table);
+
+        pub fn insert(conn: &crate::Connection, new: $from) -> Self {
             diesel::insert_into($table::table)
                 .values(new)
-                .get_result(conn)
-                .expect("Error saving new $table")
+                .execute(conn)
+                .expect("Error saving new $table");
+            Self::last(conn)
         }
     };
 }
 
+/// Adds a function to a model to save changes to a model.
+/// The model should derive diesel::AsChangeset.
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     update!(model_table);
+/// }
+///
+/// // Update and save changes
+/// let m = Model::get(connection, 1);
+/// m.foo = 42;
+/// m.update(connection);
+/// ```
 macro_rules! update {
     ($table:ident) => {
-        pub fn update(&self, conn: &PgConnection) -> Self {
+        pub fn update(&self, conn: &crate::Connection) -> Self {
             diesel::update(self)
                 .set(self)
-                .get_result(conn)
-                .expect(concat!("Error updating ", stringify!($table)))
+                .execute(conn)
+                .expect(concat!("Error updating ", stringify!($table)));
+            Self::get(conn, self.id)
+                .expect(concat!(stringify!($table), " we just updated doesn't exist anymore???"))
+        }
+    };
+}
+
+/// Returns the last row of a table.
+///
+/// # Usage
+///
+/// ```rust
+/// impl Model {
+///     last!(model_table);
+/// }
+///
+/// // Get the last Model
+/// Model::last(connection)
+/// ```
+macro_rules! last {
+    ($table:ident) => {
+        pub fn last(conn: &crate::Connection) -> Self {
+            $table::table.order_by($table::id.desc())
+                .limit(1)
+                .load::<Self>(conn)
+                .expect(concat!("Error getting last ", stringify!($table)))
+                .iter().next()
+                .expect(concat!("No last ", stringify!($table)))
+                .clone()
         }
     };
 }

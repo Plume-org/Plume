@@ -1,14 +1,15 @@
 use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
-use diesel::{self, PgConnection, QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 
 use plume_common::activity_pub::{Id, IntoId, inbox::{FromActivity, Notify, Deletable}, PUBLIC_VISIBILTY};
+use Connection;
 use notifications::*;
 use posts::Post;
 use users::User;
 use schema::reshares;
 
-#[derive(Serialize, Deserialize, Queryable, Identifiable)]
+#[derive(Clone, Serialize, Deserialize, Queryable, Identifiable)]
 pub struct Reshare {
     pub id: i32,
     pub user_id: i32,
@@ -31,7 +32,7 @@ impl Reshare {
     find_by!(reshares, find_by_ap_url, ap_url as String);
     find_by!(reshares, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn update_ap_url(&self, conn: &PgConnection) {
+    pub fn update_ap_url(&self, conn: &Connection) {
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(reshares::ap_url.eq(format!(
@@ -39,11 +40,11 @@ impl Reshare {
                     User::get(conn, self.user_id).unwrap().ap_url,
                     Post::get(conn, self.post_id).unwrap().ap_url
                 )))
-                .get_result::<Reshare>(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Couldn't update AP URL");
         }
     }
 
-    pub fn get_recents_for_author(conn: &PgConnection, user: &User, limit: i64) -> Vec<Reshare> {
+    pub fn get_recents_for_author(conn: &Connection, user: &User, limit: i64) -> Vec<Reshare> {
         reshares::table.filter(reshares::user_id.eq(user.id))
             .order(reshares::creation_date.desc())
             .limit(limit)
@@ -51,15 +52,15 @@ impl Reshare {
             .expect("Error loading recent reshares for user")
     }
 
-    pub fn get_post(&self, conn: &PgConnection) -> Option<Post> {
+    pub fn get_post(&self, conn: &Connection) -> Option<Post> {
         Post::get(conn, self.post_id)
     }
 
-    pub fn get_user(&self, conn: &PgConnection) -> Option<User> {
+    pub fn get_user(&self, conn: &Connection) -> Option<User> {
         User::get(conn, self.user_id)
     }
 
-    pub fn into_activity(&self, conn: &PgConnection) -> Announce {
+    pub fn into_activity(&self, conn: &Connection) -> Announce {
         let mut act = Announce::default();
         act.announce_props.set_actor_link(User::get(conn, self.user_id).unwrap().into_id()).unwrap();
         act.announce_props.set_object_link(Post::get(conn, self.post_id).unwrap().into_id()).unwrap();
@@ -71,8 +72,8 @@ impl Reshare {
     }
 }
 
-impl FromActivity<Announce, PgConnection> for Reshare {
-    fn from_activity(conn: &PgConnection, announce: Announce, _actor: Id) -> Reshare {
+impl FromActivity<Announce, Connection> for Reshare {
+    fn from_activity(conn: &Connection, announce: Announce, _actor: Id) -> Reshare {
         let user = User::from_url(conn, announce.announce_props.actor_link::<Id>().expect("Reshare::from_activity: actor error").into());
         let post = Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>().expect("Reshare::from_activity: object error").into());
         let reshare = Reshare::insert(conn, NewReshare {
@@ -85,8 +86,8 @@ impl FromActivity<Announce, PgConnection> for Reshare {
     }
 }
 
-impl Notify<PgConnection> for Reshare {
-    fn notify(&self, conn: &PgConnection) {
+impl Notify<Connection> for Reshare {
+    fn notify(&self, conn: &Connection) {
         let post = self.get_post(conn).unwrap();
         for author in post.get_authors(conn) {
             Notification::insert(conn, NewNotification {
@@ -98,8 +99,8 @@ impl Notify<PgConnection> for Reshare {
     }
 }
 
-impl Deletable<PgConnection, Undo> for Reshare {
-    fn delete(&self, conn: &PgConnection) -> Undo {
+impl Deletable<Connection, Undo> for Reshare {
+    fn delete(&self, conn: &Connection) -> Undo {
         diesel::delete(self).execute(conn).unwrap();
 
         // delete associated notification if any
@@ -117,7 +118,7 @@ impl Deletable<PgConnection, Undo> for Reshare {
         act
     }
 
-    fn delete_id(id: String, conn: &PgConnection) {
+    fn delete_id(id: String, conn: &Connection) {
         if let Some(reshare) = Reshare::find_by_ap_url(conn, id) {
             reshare.delete(conn);
         }

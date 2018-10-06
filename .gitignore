@@ -9,3 +9,6 @@ po/*.po~
 Rocket.toml
 media
 docker-compose.yml
+*.db
+*.sqlite
+*.sqlite3

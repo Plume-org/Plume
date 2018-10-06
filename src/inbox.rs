@@ -1,10 +1,10 @@
 use activitypub::{activity::{Announce, Create, Delete, Like, Undo, Update}, object::Tombstone};
-use diesel::PgConnection;
 use failure::Error;
 use serde_json;
 
 use plume_common::activity_pub::{Id, inbox::{Deletable, FromActivity, InboxError}};
 use plume_models::{
+    Connection,
     comments::Comment,
     follows::Follow,
     instance::Instance,
@@ -15,7 +15,7 @@ use plume_models::{
 };
 
 pub trait Inbox {
-    fn received(&self, conn: &PgConnection, act: serde_json::Value) -> Result<(), Error> {
+    fn received(&self, conn: &Connection, act: serde_json::Value) -> Result<(), Error> {
         let actor_id = Id::new(act["actor"].as_str().unwrap_or_else(|| act["actor"]["id"].as_str().expect("No actor ID for incoming activity")));
         match act["type"].as_str() {
             Some(t) => {

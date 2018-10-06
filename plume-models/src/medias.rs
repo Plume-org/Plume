@@ -1,12 +1,12 @@
-use diesel::{self, PgConnection, QueryDsl, ExpressionMethods, RunQueryDsl};
+use diesel::{self, QueryDsl, ExpressionMethods, RunQueryDsl};
 use serde_json;
 use std::fs;
 
-use ap_url;
+use {ap_url, Connection};
 use instance::Instance;
 use schema::medias;
 
-#[derive(Identifiable, Queryable, Serialize)]
+#[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Media {
     pub id: i32,
     pub file_path: String,
@@ -35,7 +35,7 @@ impl Media {
     get!(medias);
     list_by!(medias, for_user, owner_id as i32);
 
-    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         let url = self.url(conn);
         let (preview, html, md) = match self.file_path.rsplitn(2, '.').next().unwrap() {
@@ -63,7 +63,7 @@ impl Media {
         json
     }
 
-    pub fn url(&self, conn: &PgConnection) -> String {
+    pub fn url(&self, conn: &Connection) -> String {
         if self.is_remote {
             self.remote_url.clone().unwrap_or(String::new())
         } else {
@@ -71,12 +71,12 @@ impl Media {
         }
     }
 
-    pub fn delete(&self, conn: &PgConnection) {
+    pub fn delete(&self, conn: &Connection) {
         fs::remove_file(self.file_path.as_str()).expect("Couldn't delete media from disk");
         diesel::delete(self).execute(conn).expect("Couldn't remove media from DB");
     }
 
-    pub fn save_remote(conn: &PgConnection, url: String) -> Media {
+    pub fn save_remote(conn: &Connection, url: String) -> Media {
         Media::insert(conn, NewMedia {
             file_path: String::new(),
             alt_text: String::new(),
@@ -88,7 +88,7 @@ impl Media {
         })
     }
 
-    pub fn set_owner(&self, conn: &PgConnection, id: i32) {
+    pub fn set_owner(&self, conn: &Connection, id: i32) {
         diesel::update(self)
             .set(medias::owner_id.eq(id))
             .execute(conn)

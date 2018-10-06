@@ -1,4 +1,5 @@
 use activitypub::{Actor, Object, CustomObject, actor::Group, collection::OrderedCollection};
+use chrono::NaiveDateTime;
 use reqwest::{
     Client,
     header::{Accept, qitem},
@@ -6,8 +7,7 @@ use reqwest::{
 };
 use serde_json;
 use url::Url;
-use chrono::NaiveDateTime;
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods, PgConnection, dsl::any};
+use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -16,7 +16,7 @@ use openssl::{
 };
 use webfinger::*;
 
-use {BASE_URL, USE_HTTPS};
+use {BASE_URL, USE_HTTPS, Connection};
 use plume_common::activity_pub::{
     ap_accept_header, ApSignature, ActivityStream, Id, IntoId, PublicKey,
     inbox::WithInbox,
@@ -66,32 +66,32 @@ impl Blog {
     find_by!(blogs, find_by_ap_url, ap_url as String);
     find_by!(blogs, find_by_name, actor_id as String, instance_id as i32);
 
-    pub fn get_instance(&self, conn: &PgConnection) -> Instance {
+    pub fn get_instance(&self, conn: &Connection) -> Instance {
         Instance::get(conn, self.instance_id).expect("Couldn't find instance")
     }
 
-    pub fn list_authors(&self, conn: &PgConnection) -> Vec<User> {
+    pub fn list_authors(&self, conn: &Connection) -> Vec<User> {
         use schema::blog_authors;
         use schema::users;
         let authors_ids = blog_authors::table.filter(blog_authors::blog_id.eq(self.id)).select(blog_authors::author_id);
-        users::table.filter(users::id.eq(any(authors_ids)))
+        users::table.filter(users::id.eq_any(authors_ids))
             .load::<User>(conn)
             .expect("Couldn't load authors of a blog")
     }
 
-    pub fn find_for_author(conn: &PgConnection, author_id: i32) -> Vec<Blog> {
+    pub fn find_for_author(conn: &Connection, author_id: i32) -> Vec<Blog> {
         use schema::blog_authors;
         let author_ids = blog_authors::table.filter(blog_authors::author_id.eq(author_id)).select(blog_authors::blog_id);
-        blogs::table.filter(blogs::id.eq(any(author_ids)))
+        blogs::table.filter(blogs::id.eq_any(author_ids))
             .load::<Blog>(conn)
             .expect("Couldn't load blogs ")
     }
 
-    pub fn find_local(conn: &PgConnection, name: String) -> Option<Blog> {
+    pub fn find_local(conn: &Connection, name: String) -> Option<Blog> {
         Blog::find_by_name(conn, name, Instance::local_id(conn))
     }
 
-    pub fn find_by_fqn(conn: &PgConnection, fqn: String) -> Option<Blog> {
+    pub fn find_by_fqn(conn: &Connection, fqn: String) -> Option<Blog> {
         if fqn.contains("@") { // remote blog
             match Instance::find_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
                 Some(instance) => {
@@ -107,7 +107,7 @@ impl Blog {
         }
     }
 
-    fn fetch_from_webfinger(conn: &PgConnection, acct: String) -> Option<Blog> {
+    fn fetch_from_webfinger(conn: &Connection, acct: String) -> Option<Blog> {
         match resolve(acct.clone(), *USE_HTTPS) {
             Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
             Err(details) => {
@@ -117,7 +117,7 @@ impl Blog {
         }
     }
 
-    fn fetch_from_url(conn: &PgConnection, url: String) -> Option<Blog> {
+    fn fetch_from_url(conn: &Connection, url: String) -> Option<Blog> {
         let req = Client::new()
             .get(&url[..])
             .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
@@ -134,7 +134,7 @@ impl Blog {
         }
     }
 
-    fn from_activity(conn: &PgConnection, acct: CustomGroup, inst: String) -> Blog {
+    fn from_activity(conn: &Connection, acct: CustomGroup, inst: String) -> Blog {
         let instance = match Instance::find_by_domain(conn, inst.clone()) {
             Some(instance) => instance,
             None => {
@@ -166,7 +166,7 @@ impl Blog {
         })
     }
 
-    pub fn into_activity(&self, _conn: &PgConnection) -> CustomGroup {
+    pub fn into_activity(&self, _conn: &Connection) -> CustomGroup {
         let mut blog = Group::default();
         blog.ap_actor_props.set_preferred_username_string(self.actor_id.clone()).expect("Blog::into_activity: preferredUsername error");
         blog.object_props.set_name_string(self.title.clone()).expect("Blog::into_activity: name error");
@@ -185,35 +185,35 @@ impl Blog {
         CustomGroup::new(blog, ap_signature)
     }
 
-    pub fn update_boxes(&self, conn: &PgConnection) {
+    pub fn update_boxes(&self, conn: &Connection) {
         let instance = self.get_instance(conn);
         if self.outbox_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::outbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "outbox")))
-                .get_result::<Blog>(conn).expect("Couldn't update outbox URL");
+                .execute(conn).expect("Couldn't update outbox URL");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::inbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "inbox")))
-                .get_result::<Blog>(conn).expect("Couldn't update inbox URL");
+                .execute(conn).expect("Couldn't update inbox URL");
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "")))
-                .get_result::<Blog>(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Couldn't update AP URL");
         }
     }
 
-    pub fn outbox(&self, conn: &PgConnection) -> ActivityStream<OrderedCollection> {
+    pub fn outbox(&self, conn: &Connection) -> ActivityStream<OrderedCollection> {
         let mut coll = OrderedCollection::default();
         coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).unwrap();
         coll.collection_props.set_total_items_u64(self.get_activities(conn).len() as u64).unwrap();
         ActivityStream::new(coll)
     }
 
-    fn get_activities(&self, _conn: &PgConnection) -> Vec<serde_json::Value> {
+    fn get_activities(&self, _conn: &Connection) -> Vec<serde_json::Value> {
         vec![]
     }
 
@@ -221,7 +221,7 @@ impl Blog {
         PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
     }
 
-    pub fn webfinger(&self, conn: &PgConnection) -> Webfinger {
+    pub fn webfinger(&self, conn: &Connection) -> Webfinger {
         Webfinger {
             subject: format!("acct:{}@{}", self.actor_id, self.get_instance(conn).public_domain),
             aliases: vec![self.ap_url.clone()],
@@ -248,7 +248,7 @@ impl Blog {
         }
     }
 
-    pub fn from_url(conn: &PgConnection, url: String) -> Option<Blog> {
+    pub fn from_url(conn: &Connection, url: String) -> Option<Blog> {
         Blog::find_by_ap_url(conn, url.clone()).or_else(|| {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
@@ -260,7 +260,7 @@ impl Blog {
         })
     }
 
-    pub fn get_fqn(&self, conn: &PgConnection) -> String {
+    pub fn get_fqn(&self, conn: &Connection) -> String {
         if self.instance_id == Instance::local_id(conn) {
             self.actor_id.clone()
         } else {
@@ -268,7 +268,7 @@ impl Blog {
         }
     }
 
-    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).unwrap();
         json["fqn"] = json!(self.get_fqn(conn));
         json

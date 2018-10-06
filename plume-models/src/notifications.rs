@@ -1,7 +1,8 @@
 use chrono::NaiveDateTime;
-use diesel::{self, PgConnection, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods};
 use serde_json;
 
+use Connection;
 use comments::Comment;
 use follows::Follow;
 use likes::Like;
@@ -19,7 +20,7 @@ pub mod notification_kind {
     pub const RESHARE: &'static str = "RESHARE";
 }
 
-#[derive(Queryable, Identifiable, Serialize)]
+#[derive(Clone, Queryable, Identifiable, Serialize)]
 pub struct Notification {
     pub id: i32,
     pub user_id: i32,
@@ -40,14 +41,14 @@ impl Notification {
     insert!(notifications, NewNotification);
     get!(notifications);
 
-    pub fn find_for_user(conn: &PgConnection, user: &User) -> Vec<Notification> {
+    pub fn find_for_user(conn: &Connection, user: &User) -> Vec<Notification> {
         notifications::table.filter(notifications::user_id.eq(user.id))
             .order_by(notifications::creation_date.desc())
             .load::<Notification>(conn)
             .expect("Couldn't load user notifications")
     }
 
-    pub fn page_for_user(conn: &PgConnection, user: &User, (min, max): (i32, i32)) -> Vec<Notification> {
+    pub fn page_for_user(conn: &Connection, user: &User, (min, max): (i32, i32)) -> Vec<Notification> {
         notifications::table.filter(notifications::user_id.eq(user.id))
             .order_by(notifications::creation_date.desc())
             .offset(min.into())
@@ -56,14 +57,14 @@ impl Notification {
             .expect("Couldn't load user notifications page")
     }
 
-    pub fn find<S: Into<String>>(conn: &PgConnection, kind: S, obj: i32) -> Option<Notification> {
+    pub fn find<S: Into<String>>(conn: &Connection, kind: S, obj: i32) -> Option<Notification> {
         notifications::table.filter(notifications::kind.eq(kind.into()))
             .filter(notifications::object_id.eq(obj))
             .get_result::<Notification>(conn)
             .ok()
     }
 
-    pub fn to_json(&self, conn: &PgConnection) -> serde_json::Value {
+    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let mut json = json!(self);
         json["object"] = json!(match self.kind.as_ref() {
             notification_kind::COMMENT => Comment::get(conn, self.object_id).map(|comment|

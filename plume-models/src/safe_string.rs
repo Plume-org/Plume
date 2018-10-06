@@ -92,6 +92,13 @@ impl Queryable<Text, diesel::pg::Pg> for SafeString {
     }
 }
 
+impl Queryable<Text, diesel::sqlite::Sqlite> for SafeString {
+    type Row = String;
+    fn build(value: Self::Row) -> Self {
+        SafeString::new(&value)
+    }
+}
+
 impl<DB> ToSql<diesel::sql_types::Text, DB> for SafeString
 where
     DB: diesel::backend::Backend,
