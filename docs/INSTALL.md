@@ -7,7 +7,7 @@ In order to be installed and to work correctly, Plume needs:
 - *Git* (to get the code)
 - *Curl* (for RustUp, the Rust installer)
 - *GCC* and *make*  (to compile C dependencies)
-- *PostgreSQL* (for the database)
+- *PostgreSQL* or *Sqlite3* (for the database)
 - *GetText* (to manage translations)
 - *Rust* and *Cargo* (to build the code)
 - *OpenSSL* and *OpenSSL librairies* (for security)
@@ -24,20 +24,20 @@ On **Debian**:
 
 ```bash
 apt update
-apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev
+apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev sqlite3 libsqlite3-dev
 ```
 
 On **Fedora**, **CentOS** or **RHEL**:
 
 ```bash
-dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext
+dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext sqlite3 libsqlite3-dev
 ```
 
 On **Gentoo**:
 
 ```bash
 emerge --sync
-emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
+emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git && emerge -pv sqlite3 libsqlite3-dev
 ```
 
 On **Mac OS X**, with [Homebrew](https://brew.sh/):
