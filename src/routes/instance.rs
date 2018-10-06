@@ -4,7 +4,8 @@ use rocket_contrib::{Json, Template};
 use serde_json;
 use validator::{Validate};
 
-use plume_common::activity_pub::verify_http_headers;
+use plume_common::activity_pub::sign::{Signable,
+    verify_http_headers};
 use plume_models::{
     admin::Admin,
     comments::Comment,
@@ -198,9 +199,9 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> String {
     let actor_id = activity["actor"].as_str()
         .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("No actor ID for incoming activity, blocks by panicking"));
 
-    let sig = verify_http_headers(&User::from_url(&conn, actor_id.to_owned()).unwrap(), headers.0, data).is_secure();
-    if !sig {
-        // TODO check for valid json-ld signature
+    let actor = User::from_url(&conn, actor_id.to_owned()).unwrap();
+    if !verify_http_headers(&actor, headers.0, data).is_secure() &&
+        !act.clone().verify(&actor) {
         return "invalid signature".to_owned();
     }
 

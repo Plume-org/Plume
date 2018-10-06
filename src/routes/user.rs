@@ -16,7 +16,8 @@ use workerpool::thunk::*;
 
 use plume_common::activity_pub::{
     ActivityStream, broadcast, Id, IntoId, ApRequest,
-    verify_http_headers, inbox::{FromActivity, Notify, Deletable}
+    inbox::{FromActivity, Notify, Deletable},
+    sign::{Signable, verify_http_headers}
 };
 use plume_common::utils;
 use plume_models::{
@@ -304,9 +305,9 @@ fn inbox(name: String, conn: DbConn, data: String, headers: Headers) -> String {
     let actor_id = activity["actor"].as_str()
         .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("User: No actor ID for incoming activity, blocks by panicking"));
 
-    let sig = verify_http_headers(&User::from_url(&conn, actor_id.to_owned()).unwrap(), headers.0, data).is_secure();
-    if !sig {
-        // TODO check for json-ld signature
+    let actor = User::from_url(&conn, actor_id.to_owned()).unwrap();
+    if !verify_http_headers(&actor, headers.0, data).is_secure() &&
+        !act.clone().verify(&actor) {
         return "invalid signature".to_owned();
     }
 
