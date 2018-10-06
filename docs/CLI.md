@@ -20,7 +20,7 @@ plm instance new --private --domain plu.me --name 'My Plume Instance' -l 'CC-BY'
 
 - `--domain`, `-d`: the domain name on which your instance will be available.
 - `--name`, `-n`: The name of your instance. It will be displayed on the homepage.
-- `--default-license`, `-l`: the license to use for articles written on this instance, if no other license is explicitely specified. Optional, defaults to CC-0.
+- `--default-license`, `-l`: the license to use for articles written on this instance, if no other license is explicitely specified. Optional, defaults to CC-BY-SA.
 - `--private`, `-p`: if this argument is present, registering on this instance won't be possible. Optional, off by default.
 
 **Environment variables:**

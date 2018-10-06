@@ -428,7 +428,7 @@ impl FromActivity<Article, Connection> for Post {
                 title: title,
                 content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),
                 published: true,
-                license: String::from("CC-0"), // TODO
+                license: String::from("CC-BY-SA"), // TODO
                 // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
                 ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error")),
                 creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc()),
