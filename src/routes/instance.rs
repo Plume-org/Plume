@@ -25,7 +25,9 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
             let local = Post::get_instance_page(&*conn, inst.id, Page::first().limits());
             let user_feed = user.clone().map(|user| {
                 let followed = user.get_following(&*conn);
-                Post::user_feed_page(&*conn, followed.into_iter().map(|u| u.id).collect(), Page::first().limits())
+                let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
+                in_feed.push(user.id);
+                Post::user_feed_page(&*conn, in_feed, Page::first().limits())
             });
 
             Template::render("instance/index", json!({
@@ -72,7 +74,9 @@ fn feed(conn: DbConn, user: User) -> Template {
 #[get("/feed?<page>")]
 fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {
     let followed = user.get_following(&*conn);
-    let articles = Post::user_feed_page(&*conn, followed.into_iter().map(|u| u.id).collect(), page.limits());
+    let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
+    in_feed.push(user.id);
+    let articles = Post::user_feed_page(&*conn, in_feed, page.limits());
     Template::render("instance/feed", json!({
         "account": user.to_json(&*conn),
         "page": page.page,
