@@ -7,7 +7,7 @@ In order to be installed and to work correctly, Plume needs:
 - *Git* (to get the code)
 - *Curl* (for RustUp, the Rust installer)
 - *GCC* and *make*  (to compile C dependencies)
-- *PostgreSQL* (for the database)
+- *PostgreSQL* or *SQlite development files* (for the database)
 - *GetText* (to manage translations)
 - *Rust* and *Cargo* (to build the code)
 - *OpenSSL* and *OpenSSL librairies* (for security)
@@ -24,27 +24,57 @@ On **Debian**:
 
 ```bash
 apt update
+
+# If you want PostgreSQL
 apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev
+
+# If you want SQlite
+apt install gettext libsqlite3-dev git curl gcc make openssl libssl-dev
 ```
 
 On **Fedora**, **CentOS** or **RHEL**:
 
 ```bash
-dnf install postgresql-server postgresql-contrib mariadb-devel libsq3-devel libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext
+# If you want PostgreSQL
+dnf install postgresql-server postgresql-contrib libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext
+
+# If you want SQLite
+dnf install libsq3-devel git curl gcc make openssl openssl-devel gettext
 ```
 
 On **Gentoo**:
 
 ```bash
 emerge --sync
+
+# If you want PostgreSQL
 emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
 ```
 
-On **Mac OS X**, with [Homebrew](https://brew.sh/):
+On **Mac OS X**, for PostgreSQL (SQlite is already present), with [Homebrew](https://brew.sh/):
 
 ```bash
 brew update
 brew install postgres gettext git
+```
+
+## Configuring PostgreSQL
+
+You can either run PostgreSQL from the machine that runs Plume, or from another server. We recommend you to use the first setup for development environments, or in production for small instances.
+
+In the first case, just run this command after the PostgreSQL installation, to start it:
+
+```
+service postgresql start
+```
+
+If you want to have two separate machines, run these commands on the database server once you've installed the dependencies mentioned above on both servers:
+
+```bash
+service postgresql start
+su - postgres
+createuser -d -P plume
+createdb -O plume plume
 ```
 
 ## Creating a new user (optional)
@@ -79,61 +109,39 @@ export PATH="$PATH:/home/plume/.cargo/bin:/home/plume/.local/bin:/usr/local/sbin
 
 On **Windows**, you'll need, if you don't already have them, to download and install the [Visual C++ 2015 Build Tools](https://www.microsoft.com/en-us/download/details.aspx?id=48159). Then, download the [rustup installer](https://www.rust-lang.org/en-US/install.html) and run it.
 
-## Getting and compiling the Plume source code
+## Getting Plume's source code
 
-Plume needs to be compiled from source.
+Plume needs to be compiled from source. To download the code, run:
 
 ```bash
 git clone https://github.com/Plume-org/Plume.git
 cd Plume
-
-# This may take some time as RustUp will download all
-# the required Rust components, and Cargo will download
-# and compile all dependencies.
-cargo build
 ```
-
-We may provide precompiled packages and Docker images in the future; if you have experience in these fields and want to help, feel free to discuss this in issues and to propose pull-requests!
-
-## Configuring PostgreSQL
-
-You can either run PostgreSQL from the machine that runs Plume, or from another server. We recommend you to use the first setup for development environments, or in production for small instances.
-
-In the first case, just run this command after the PostgreSQL installation, to start it:
-
-```
-service postgresql start
-```
-
-If you want to have two separate machines, run these commands on the database server once you've installed the dependencies mentioned above on both servers:
-
-```bash
-service postgresql start
-su - postgres
-createuser -d -P plume
-createdb -O plume plume
-```
-
 
 ## Running migrations
 
 Migrations are scripts used to update the database. They are run by a tool called Diesel, which can be installed with:
 
 ```bash
-cargo install diesel_cli --no-default-features --features postgres --version '=1.2.0'
+cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
 ```
 
-Plume should normally run migrations on your behalf as needed, but if you want to run them manually, use the following command:
+To run the migrations, you can do:
 
 ```bash
+# For a PostgreSQL database
 diesel migration run --database-url postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
+
+# For a SQlite database
+diesel migration run --database-url ./plume.sqlite3
 ```
 
-This command may be useful if you decided to use a separate database server.
+Migrations should be run before using Plume or the `plm` CLI tool, and after each update.
+When in doubt, run them.
 
-## Starting Plume
+## Running Plume
 
-First, you'll need to install Plume and the CLI tools to manage your instance.
+Then, you'll need to install Plume and the CLI tools to manage your instance.
 
 ```
 cargo install && cargo install --path plume-cli
@@ -144,6 +152,8 @@ Before starting Plume, you'll need to create a configuration file, called `.env`
 ```bash
 # The address of the database
 # (replace USER, PASSWORD, PORT and DATABASE_NAME with your values)
+#
+# If you are using SQlite, use the path of the database file
 DB_URL=postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
 
 # The domain on which your instance will be available
@@ -176,6 +186,8 @@ Finally, you can start Plume with:
 ```bash
 plume
 ```
+
+We may provide precompiled packages in the future; if you have experience in these fields and want to help, feel free to discuss this in issues and to propose pull-requests!
 
 ## Docker install
 
