@@ -1,9 +1,9 @@
 use clap::{Arg, ArgMatches, App, SubCommand};
-use diesel::PgConnection;
 
 use rpassword;
 use std::io::{self, Write};
 use plume_models::{
+    Connection,
     users::*,
 };
 
@@ -45,7 +45,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
             ).about("Create a new user on this instance"))
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &PgConnection) {
+pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let conn = conn;
     match args.subcommand() {
         ("new", Some(x)) => new(x, conn),
@@ -53,7 +53,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &PgConnection) {
     }
 }
 
-fn new<'a>(args: &ArgMatches<'a>, conn: &PgConnection) {
+fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let username = args.value_of("name").map(String::from).unwrap_or_else(|| super::ask_for("Username"));
     let display_name = args.value_of("display-name").map(String::from).unwrap_or_else(|| super::ask_for("Display name"));
     let admin = args.is_present("admin");

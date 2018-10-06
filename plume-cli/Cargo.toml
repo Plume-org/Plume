@@ -18,3 +18,7 @@ version = "*"
 
 [dependencies.plume-models]
 path = "../plume-models"
+
+[features]
+postgres = ["plume-models/postgres"]
+sqlite = ["plume-models/sqlite"]

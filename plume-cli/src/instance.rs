@@ -1,8 +1,8 @@
 use clap::{Arg, ArgMatches, App, SubCommand};
-use diesel::PgConnection;
 
 use std::env;
 use plume_models::{
+    Connection,
     instance::*,
     safe_string::SafeString,
 };
@@ -33,7 +33,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
             ).about("Create a new local instance"))
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &PgConnection) {
+pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let conn = conn;
     match args.subcommand() {
         ("new", Some(x)) => new(x, conn),
@@ -41,7 +41,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &PgConnection) {
     }
 }
 
-fn new<'a>(args: &ArgMatches<'a>, conn: &PgConnection) {
+fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let domain = args.value_of("domain").map(String::from)
         .unwrap_or_else(|| env::var("BASE_URL")
             .unwrap_or_else(|_| super::ask_for("Domain name")));
