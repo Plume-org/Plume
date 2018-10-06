@@ -4,11 +4,12 @@ To update your instance, run these commands with `plume` user if you created it,
 
 ```
 git pull origin master
+cargo install --force && cargo install --path plume-cli --force
 
 # If you are using sysvinit
 sudo service plume restart
 
-# If you are using systemd 
+# If you are using systemd
 sudo systemctl restart plume
 ```
 

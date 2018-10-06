@@ -133,44 +133,73 @@ This command may be useful if you decided to use a separate database server.
 
 ## Starting Plume
 
-When you launch Plume for the first time, it will ask you a few questions to setup your instance before it actually launches. To start it, run these commands.
+First, you'll need to install Plume and the CLI tools to manage your instance.
 
 ```
-# Optional, only do it if the database URL is not
-# postgres://plume:plume@localhost/plume
-export DB_URL=postgres://plume:PASSWORD@DBSERVERIP:DBPORT/DATABASE_NAME
+cargo install && cargo install --path plume-cli
+```
 
-# Create the media directory, where uploads will be stored
+Before starting Plume, you'll need to create a configuration file, called `.env`. Here is a sample of what you should put inside.
+
+```bash
+# The address of the database
+# (replace USER, PASSWORD, PORT and DATABASE_NAME with your values)
+DB_URL=postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
+
+# The domain on which your instance will be available
+BASE_URL=plu.me
+
+# Secret key used for private cookies and CSRF protection
+# You can generate one with `openssl rand -base64 32`
+ROCKET_SECRET_KEY=
+```
+
+For more information about what you can put in your `.env`, see [the documentation about environment variables](ENV-VARS.md).
+
+After that, you'll need to setup your instance, and the admin's account.
+
+```
+plm instance new
+plm users new --admin
+```
+
+For more information about these commands, and the arguments you can give them, check out [their documentaion](CLI.md).
+
+After that, you are almost done, the last thing to do is to create the media directory, where uploads will be stored:
+
+```bash
 mkdir media
+```
 
-# Actually start Plume
-cargo run
+Finally, you can start Plume with:
+
+```bash
+plume
 ```
 
 ## Docker install
 
-You can use `docker` and `docker-compose` in order to manage your Plume instance and
-have it isolated from your host:
+You can use `docker` and `docker-compose` in order to manage your Plume instance and have it isolated from your host:
 
-```
+```bash
 git clone git@github.com:Plume-org/Plume.git
 cd Plume
 cp docs/docker-compose.sample.yml docker-compose.yml
 cp docs/docker.sample.env .env
-# build the containers
+
+# Build the containers
 docker-compose build
-# launch the database
+
+# Launch the database
 docker-compose up -d postgres
-# run the migrations
+# Run the migrations
 docker-compose run --rm plume diesel migration run
-# run interactive setup
-docker-compose run --rm plume bash
-cargo run
-# copy the env file and paste it in your host .env file
-cat .env
-# leave the container
-exit
-# launch your instance for good
+
+# Setup your instance
+docker-compose run --rm plume plume instance new
+docker-compose run --rm plume plume users new --admin
+
+# Launch your instance for good
 docker-compose up -d
 ```
 
@@ -196,7 +225,7 @@ server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
     server_name blog.example.org;
-    
+
     access_log  /var/log/nginx/access.log;
     root /home/plume/Plume/ ;
 
@@ -295,7 +324,7 @@ Description=plume
 Type=simple
 User=plume
 WorkingDirectory=/home/plume/Plume
-ExecStart=/home/plume/.cargo/bin/cargo run
+ExecStart=/home/plume/.cargo/bin/plume
 TimeoutSec=30
 Restart=always
 
@@ -339,7 +368,7 @@ This script can also be useful if you are using SysVinit.
 ### END INIT INFO
 
 dir="/home/plume/Plume"
-cmd="/home/plume/.cargo/bin/cargo run"
+cmd="/home/plume/.cargo/bin/plume"
 user="plume"
 
 name=`basename $0`
@@ -437,4 +466,4 @@ exit 0
 
 ## Acknowledgements
 
-Most of this documentation has been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf).
+Most of this documentation has been written by *gled-rs*. The systemd unit file, Nginx and Apache configurations have been written by *nonbinaryanargeek*. Some parts (especially the instructions to install native dependencies) are from the [Aardwolf project](https://github.com/Aardwolf-Social/aardwolf). The docker instructions, and files have been added by *Eliot Berriot*.

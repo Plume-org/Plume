@@ -1,0 +1,24 @@
+[package]
+name = "plume-cli"
+version = "0.2.0"
+authors = ["Bat' <baptiste@gelez.xyz>"]
+
+[[bin]]
+name = "plm"
+path = "src/main.rs"
+
+[dependencies]
+clap = "2.32"
+dotenv = "0.13"
+rpassword = "2.0"
+
+[dependencies.diesel]
+features = ["postgres", "r2d2", "chrono"]
+version = "*"
+
+[dependencies.plume-models]
+path = "../plume-models"
+
+[features]
+postgres = ["plume-models/postgres"]
+sqlite = ["plume-models/sqlite"]

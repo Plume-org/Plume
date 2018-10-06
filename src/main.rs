@@ -34,20 +34,29 @@ extern crate validator_derive;
 extern crate webfinger;
 extern crate workerpool;
 
+use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
+use plume_models::{DB_URL, Connection, db_conn::DbPool};
 use workerpool::{Pool, thunk::ThunkWorker};
 
 mod api;
 mod inbox;
-mod setup;
 mod routes;
 
 type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
 
+/// Initializes a database pool.
+fn init_pool() -> Option<DbPool> {
+    dotenv::dotenv().ok();
+
+    let manager = ConnectionManager::<Connection>::new(DB_URL.as_str());
+    DbPool::new(manager).ok()
+}
+
 fn main() {
-    let pool = setup::check();
+    let pool = init_pool();
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::paginated_details,
