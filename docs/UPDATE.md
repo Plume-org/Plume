@@ -7,7 +7,7 @@ git pull origin master
 cargo install --force && cargo install --path plume-cli --force
 
 # Run the migrations
-diesel migration run --database-url 'YOUR_DB_URL'
+diesel migration run
 
 # If you are using sysvinit
 sudo service plume restart
