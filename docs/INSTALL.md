@@ -7,7 +7,7 @@ In order to be installed and to work correctly, Plume needs:
 - *Git* (to get the code)
 - *Curl* (for RustUp, the Rust installer)
 - *GCC* and *make*  (to compile C dependencies)
-- *PostgreSQL* or *SQlite development files* (for the database)
+- *PostgreSQL* or *SQlite 3 development files* (for the database)
 - *GetText* (to manage translations)
 - *Rust* and *Cargo* (to build the code)
 - *OpenSSL* and *OpenSSL librairies* (for security)
@@ -29,7 +29,8 @@ apt update
 apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev
 
 # If you want SQlite
-apt install gettext libsqlite3-dev git curl gcc make openssl libssl-dev
+apt install gettext sqlite3 libsqlite3-dev git curl gcc make openssl libssl-dev
+
 ```
 
 On **Fedora**, **CentOS** or **RHEL**:
@@ -39,7 +40,7 @@ On **Fedora**, **CentOS** or **RHEL**:
 dnf install postgresql-server postgresql-contrib libpqxx libpqxx-devel git curl gcc make openssl openssl-devel gettext
 
 # If you want SQLite
-dnf install libsq3-devel git curl gcc make openssl openssl-devel gettext
+dnf install libsq3-devel sqlite3 libsqlite3-dev git curl gcc make openssl openssl-devel gettext
 ```
 
 On **Gentoo**:
@@ -49,6 +50,9 @@ emerge --sync
 
 # If you want PostgreSQL
 emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
+
+# If you want SQlite
+emerge -av gettext && emerge --ask dev-vcs/git && emerge -pv sqlite3 libsqlite3-dev
 ```
 
 On **Mac OS X**, for PostgreSQL (SQlite is already present), with [Homebrew](https://brew.sh/):
