@@ -9,7 +9,7 @@ use std::time::SystemTime;
 use activity_pub::ap_accept_header;
 use activity_pub::sign::Signer;
 
-const USER_AGENT: &'static str = "Plume/0.2.0";
+const USER_AGENT: &'static str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
 header! {
     (Signature, "Signature") => [String]

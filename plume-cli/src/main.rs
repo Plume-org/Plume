@@ -15,7 +15,7 @@ mod users;
 fn main() {
     let mut app = App::new("Plume CLI")
         .bin_name("plm")
-        .version("0.2.0")
+        .version(env!("CARGO_PKG_VERSION"))
         .about("Collection of tools to manage your Plume instance.")
         .subcommand(instance::command())
         .subcommand(users::command());

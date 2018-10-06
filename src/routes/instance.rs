@@ -219,7 +219,7 @@ fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
         "version": "2.0",
         "software": {
             "name": "Plume",
-            "version": "0.2.0"
+            "version": env!("CARGO_PKG_VERSION")
         },
         "protocols": ["activitypub"],
         "services": {
@@ -244,7 +244,7 @@ fn about(user: Option<User>, conn: DbConn) -> Template {
         "account": user.map(|u| u.to_json(&*conn)),
         "instance": Instance::get_local(&*conn),
         "admin": Instance::get_local(&*conn).map(|i| i.main_admin(&*conn).to_json(&*conn)),
-        "version": "0.2.0",
+        "version": env!("CARGO_PKG_VERSION"),
         "n_users": User::count_local(&*conn),
         "n_articles": Post::count_local(&*conn),
         "n_instances": Instance::count(&*conn) - 1
