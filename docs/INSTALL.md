@@ -55,11 +55,16 @@ emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
 emerge -av gettext && emerge --ask dev-vcs/git && emerge -pv sqlite3 libsqlite3-dev
 ```
 
-On **Mac OS X**, for PostgreSQL (SQlite is already present), with [Homebrew](https://brew.sh/):
+On **Mac OS X**, with [Homebrew](https://brew.sh/):
 
 ```bash
 brew update
+
+# For PostgreSQL
 brew install postgres gettext git
+
+# For SQlite (already present, so only GetText and Git are needed)
+brew install gettext git
 ```
 
 ## Configuring PostgreSQL
