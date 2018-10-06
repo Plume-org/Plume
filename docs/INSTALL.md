@@ -125,6 +125,12 @@ Plume needs to be compiled from source. To download the code, run:
 ```bash
 git clone https://github.com/Plume-org/Plume.git
 cd Plume
+
+# If you want PostgreSQL
+export FEATURES=postgres
+
+# If you want SQlite
+export FEATURES=sqlite
 ```
 
 ## Running migrations
@@ -132,7 +138,7 @@ cd Plume
 Migrations are scripts used to update the database. They are run by a tool called Diesel, which can be installed with:
 
 ```bash
-cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
+cargo install diesel_cli --no-default-features --features $FEATURES --version '=1.3.0'
 ```
 
 To run the migrations, you can do:
@@ -153,7 +159,8 @@ When in doubt, run them.
 Then, you'll need to install Plume and the CLI tools to manage your instance.
 
 ```
-cargo install && cargo install --path plume-cli
+cargo install --no-default-features --features $FEATURES
+cargo install --no-default-features --features $FEATURES --path plume-cli
 ```
 
 Before starting Plume, you'll need to create a configuration file, called `.env`. Here is a sample of what you should put inside.
