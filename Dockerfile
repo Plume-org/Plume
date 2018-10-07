@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
-RUN cargo install diesel_cli --no-default-features --features postgres --version '=1.2.0'
+RUN cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
 COPY . .
-RUN cargo install --force
-RUN cargo install --path plume-cli --force
+RUN cargo install --force --no-default-features --features postgres
+RUN cargo install --path plume-cli --force --no-default-features --features postgres
 RUN rm -rf target/debug/incremental
 CMD ["plume"]
 EXPOSE 7878
