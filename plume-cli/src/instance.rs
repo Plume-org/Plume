@@ -46,7 +46,7 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         .unwrap_or_else(|| env::var("BASE_URL")
             .unwrap_or_else(|_| super::ask_for("Domain name")));
     let name = args.value_of("name").map(String::from).unwrap_or_else(|| super::ask_for("Instance name"));
-    let license = args.value_of("default-license").map(String::from).unwrap_or(String::from("CC-0"));
+    let license = args.value_of("default-license").map(String::from).unwrap_or(String::from("CC-BY-SA"));
     let open_reg = !args.is_present("private");
 
     Instance::insert(conn, NewInstance {

@@ -182,7 +182,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             let license = if form.license.len() > 0 {
                 form.license.to_string()
             } else {
-                Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
+                Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-BY-SA"))
             };
 
             // update publication date if when this article is no longer a draft
@@ -292,7 +292,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 license: if form.license.len() > 0 {
                     form.license.to_string()
                 } else {
-                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-0"))
+                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-BY-SA"))
                 },
                 ap_url: "".to_string(),
                 creation_date: None,
