@@ -38,7 +38,7 @@ use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
-use plume_models::{DB_URL, Connection, db_conn::DbPool};
+use plume_models::{DATABASE_URL, Connection, db_conn::DbPool};
 use workerpool::{Pool, thunk::ThunkWorker};
 
 mod api;
@@ -51,7 +51,7 @@ type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
 fn init_pool() -> Option<DbPool> {
     dotenv::dotenv().ok();
 
-    let manager = ConnectionManager::<Connection>::new(DB_URL.as_str());
+    let manager = ConnectionManager::<Connection>::new(DATABASE_URL.as_str());
     DbPool::new(manager).ok()
 }
 

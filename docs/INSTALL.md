@@ -133,6 +133,31 @@ export FEATURES=postgres
 export FEATURES=sqlite
 ```
 
+## Configuring Plume
+
+Before starting Plume, you'll need to create a configuration file, called `.env`. Here is a sample of what you should put inside.
+
+```bash
+# The address of the database
+# (replace USER, PASSWORD, PORT and DATABASE_NAME with your values)
+#
+# If you are using SQlite, use the path of the database file (`plume.db` for instance)
+DATABASE_URL=postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
+
+# For PostgreSQL: migrations/postgres
+# For SQlite: migrations/sqlite
+MIGRATION_DIR=migrations/postgres
+
+# The domain on which your instance will be available
+BASE_URL=plu.me
+
+# Secret key used for private cookies and CSRF protection
+# You can generate one with `openssl rand -base64 32`
+ROCKET_SECRET_KEY=
+```
+
+For more information about what you can put in your `.env`, see [the documentation about environment variables](ENV-VARS.md).
+
 ## Running migrations
 
 Migrations are scripts used to update the database. They are run by a tool called Diesel, which can be installed with:
@@ -144,11 +169,7 @@ cargo install diesel_cli --no-default-features --features $FEATURES --version '=
 To run the migrations, you can do:
 
 ```bash
-# For a PostgreSQL database
-diesel migration run --database-url postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
-
-# For a SQlite database
-diesel migration run --database-url ./plume.sqlite3
+diesel migration run
 ```
 
 Migrations should be run before using Plume or the `plm` CLI tool, and after each update.
@@ -162,25 +183,6 @@ Then, you'll need to install Plume and the CLI tools to manage your instance.
 cargo install --no-default-features --features $FEATURES
 cargo install --no-default-features --features $FEATURES --path plume-cli
 ```
-
-Before starting Plume, you'll need to create a configuration file, called `.env`. Here is a sample of what you should put inside.
-
-```bash
-# The address of the database
-# (replace USER, PASSWORD, PORT and DATABASE_NAME with your values)
-#
-# If you are using SQlite, use the path of the database file
-DB_URL=postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
-
-# The domain on which your instance will be available
-BASE_URL=plu.me
-
-# Secret key used for private cookies and CSRF protection
-# You can generate one with `openssl rand -base64 32`
-ROCKET_SECRET_KEY=
-```
-
-For more information about what you can put in your `.env`, see [the documentation about environment variables](ENV-VARS.md).
 
 After that, you'll need to setup your instance, and the admin's account.
 
@@ -224,8 +226,8 @@ docker-compose up -d postgres
 docker-compose run --rm plume diesel migration run
 
 # Setup your instance
-docker-compose run --rm plume plume instance new
-docker-compose run --rm plume plume users new --admin
+docker-compose run --rm plume plm instance new
+docker-compose run --rm plume plm users new --admin
 
 # Launch your instance for good
 docker-compose up -d
@@ -489,8 +491,7 @@ exit 0
 ## Caveats:
 
 - Pgbouncer is not supported yet (named transactions are used).
-- Rust nightly is a moving target, dependancies can break and sometimes you need to check a few versions to find the one working (run `rustup override set nightly-2018-05-15` or `rustup override set nightly-2018-05-31` in the Plume directory if you have issues during the compilation)
-- Rust nightly 2018-06-28 is known to be failing to compile diesel 1.3.2
+- Rust nightly is a moving target, dependancies can break and sometimes you need to check a few versions to find the one working (run `rustup override set nightly-2018-07-17` in the Plume directory if you have issues during the compilation)
 
 ## Acknowledgements
 

@@ -191,10 +191,17 @@ lazy_static! {
     pub static ref BASE_URL: String = env::var("BASE_URL")
         .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
 
-    pub static ref DB_URL: String = env::var("DB_URL")
-        .unwrap_or(format!("postgres://plume:plume@localhost/{}", env::var("DB_NAME").unwrap_or(String::from("plume"))));
-
     pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
+}
+
+#[cfg(all(feature = "postgres", not(feature = "sqlite")))]
+lazy_static! {
+    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(String::from("postgres://plume:plume@localhost/plume"));
+}
+
+#[cfg(all(feature = "sqlite", not(feature = "postgres")))]
+lazy_static! {
+    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(String::from("plume.sqlite"));
 }
 
 pub fn ap_url(url: String) -> String {
