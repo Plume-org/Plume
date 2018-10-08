@@ -56,7 +56,7 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
-    let pool = init_pool();
+    let pool = init_pool().expect("Couldn't intialize database pool");
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::paginated_details,
