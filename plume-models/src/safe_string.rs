@@ -85,6 +85,7 @@ impl<'de> Deserialize<'de> for SafeString {
     }
 }
 
+#[cfg(all(feature = "postgres", not(feature = "sqlite")))]
 impl Queryable<Text, diesel::pg::Pg> for SafeString {
     type Row = String;
     fn build(value: Self::Row) -> Self {
@@ -92,12 +93,14 @@ impl Queryable<Text, diesel::pg::Pg> for SafeString {
     }
 }
 
+#[cfg(all(feature = "sqlite", not(feature = "postgres")))]
 impl Queryable<Text, diesel::sqlite::Sqlite> for SafeString {
     type Row = String;
     fn build(value: Self::Row) -> Self {
         SafeString::new(&value)
     }
 }
+
 
 impl<DB> ToSql<diesel::sql_types::Text, DB> for SafeString
 where
