@@ -1,22 +1,26 @@
+#
+# Yannick Armand <yannick.armand@protonmail.com>, 2018.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-06-15 16:33-0700\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2018-10-08 21:06+0200\n"
+"Last-Translator: Yannick Armand <yannick.armand@protonmail.com>\n"
+"Language-Team: français <>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 msgid "Latest articles"
 msgstr "Derniers articles"
 
 msgid "No posts to see here yet."
-msgstr "Aucun article pour le moment"
+msgstr "Aucun article pour le moment."
 
 msgid "New article"
 msgstr "Nouvel article"
@@ -34,7 +38,7 @@ msgid "Create blog"
 msgstr "Créer le blog"
 
 msgid "Comment \"{{ post }}\""
-msgstr "Commenter « {{ post }} »"
+msgstr "Commenter « {{ post }} »"
 
 msgid "Content"
 msgstr "Contenu"
@@ -47,7 +51,7 @@ msgstr "Nous avons cassé quelque chose."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
-"Nous sommes désolé⋅e⋅s. Si vous pensez que c'est un bogue, merci de le "
+"Nous sommes désolé⋅e⋅s. Si vous pensez que c’est un bogue, merci de le "
 "signaler."
 
 msgid "Configuration"
@@ -60,7 +64,7 @@ msgid "Name"
 msgstr "Nom"
 
 msgid "Let&#x27;s go!"
-msgstr "C'est parti !"
+msgstr "C’est parti !"
 
 msgid "Welcome on {{ instance_name | escape }}"
 msgstr "Bienvenue sur {{ instance_name | escape }}"
@@ -82,21 +86,21 @@ msgstr[0] "{{ count }} personne aime cet article"
 msgstr[1] "{{ count }} personnes aiment cet article"
 
 msgid "I don&#x27;t like this anymore"
-msgstr "Je n'aime plus"
+msgstr "Je n’aime plus"
 
 msgid "Add yours"
-msgstr "J'aime"
+msgstr "J’aime"
 
 msgid "One Boost"
 msgid_plural "{{ count }} Boosts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{{ count }} partage"
+msgstr[1] "{{ count }} partages"
 
 msgid "I don&#x27;t want to boost this anymore"
 msgstr "Je ne veux plus repartager ceci"
 
 msgid "Boost"
-msgstr ""
+msgstr "Partager"
 
 msgid "Comments"
 msgstr "Commentaires"
@@ -120,7 +124,7 @@ msgid "Login"
 msgstr "Se connecter"
 
 msgid "Username or email"
-msgstr "Nom d'utilisateur ou email"
+msgstr "Nom d’utilisateur ou adresse électronique"
 
 msgid "Password"
 msgstr "Mot de passe"
@@ -136,7 +140,7 @@ msgstr "Vos blogs"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
 msgstr ""
-"Vous n'avez pas encore de blog. Créez le votre, ou demandez à en rejoindre "
+"Vous n’avez pas encore de blog. Créez le votre, ou demandez à en rejoindre "
 "un."
 
 msgid "Start a new blog"
@@ -146,16 +150,16 @@ msgid "Admin"
 msgstr "Administrateur"
 
 msgid "It is you"
-msgstr "C'est vous"
+msgstr "C’est vous"
 
 msgid "Edit your profile"
-msgstr "Éditer votre profil"
+msgstr "Modifier votre profil"
 
 msgid "Open on {{ instance_url }}"
 msgstr "Ouvrir sur {{ instance_url }}"
 
 msgid "Follow"
-msgstr "S'abonner"
+msgstr "S’abonner"
 
 msgid "Unfollow"
 msgstr "Se désabonner"
@@ -169,7 +173,7 @@ msgstr[0] "{{ count }} abonné⋅e"
 msgstr[1] "{{ count }} abonné⋅e⋅s"
 
 msgid "Edit your account"
-msgstr "Éditer votre compte"
+msgstr "Modifier votre compte"
 
 msgid "Your Profile"
 msgstr "Votre profil"
@@ -178,7 +182,7 @@ msgid "Display Name"
 msgstr "Nom affiché"
 
 msgid "Email"
-msgstr "Email"
+msgstr "Adresse électronique"
 
 msgid "Summary"
 msgstr "Description"
@@ -199,7 +203,7 @@ msgid "Create an account"
 msgstr "Créer un compte"
 
 msgid "Username"
-msgstr "Nom d'utilisateur"
+msgstr "Nom d’utilisateur"
 
 msgid "Password confirmation"
 msgstr "Confirmation du mot de passe"
@@ -223,7 +227,7 @@ msgid "Log In"
 msgstr "Se connecter"
 
 msgid "Register"
-msgstr "S'inscrire"
+msgstr "S’inscrire"
 
 msgid "You need to be logged in order to create a new blog"
 msgstr "Vous devez vous connecter pour créer un nouveau blog"
@@ -244,13 +248,13 @@ msgid "You need to be logged in order to boost a post"
 msgstr "Vous devez vous connecter pour partager un article"
 
 msgid "Invalid username or password"
-msgstr "Nom d'utilisateur ou mot de passe invalide"
+msgstr "Nom d’utilisateur ou mot de passe invalide"
 
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Vous devez vous connecter pour accéder à votre tableau de bord"
 
 msgid "You need to be logged in order to follow someone"
-msgstr "Vous devez vous connecter pour suivre quelqu'un"
+msgstr "Vous devez vous connecter pour suivre quelqu’un"
 
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
@@ -278,10 +282,10 @@ msgid "The link that led you here may be broken."
 msgstr "Vous avez probablement suivi un lien cassé."
 
 msgid "You are not authorized."
-msgstr "Vous n'avez pas les droits."
+msgstr "Vous n’avez pas les droits."
 
 msgid "You are not author in this blog."
-msgstr "Vous n'êtes pas auteur⋅ice dans ce blog."
+msgstr "Vous n’êtes pas auteur⋅ice dans ce blog."
 
 msgid "{{ data }} mentioned you."
 msgstr "{{ data }} vous a mentionné."
@@ -306,8 +310,8 @@ msgstr "Un article avec le même titre existe déjà."
 
 msgid "We need an email or a username to identify you"
 msgstr ""
-"Nous avons besoin d'une adresse mail ou d'un nom d'utilisateur pour vous "
-"identifier."
+"Nous avons besoin d’une adresse électronique ou d’un nom d’utilisateur pour "
+"vous identifier"
 
 msgid "Your password can't be empty"
 msgstr "Votre mot de passe ne peut pas être vide."
@@ -316,10 +320,10 @@ msgid "Passwords are not matching"
 msgstr "Les mots de passe ne correspondent pas."
 
 msgid "Username can't be empty"
-msgstr "Le nom d'utilisateur ne peut pas être vide."
+msgstr "Le nom d’utilisateur ne peut pas être vide."
 
 msgid "Invalid email"
-msgstr "Adresse mail invalide."
+msgstr "Adresse électronique invalide"
 
 msgid "Password should be at least 8 characters long"
 msgstr "Le mot de passe doit faire au moins 8 caractères."
@@ -352,16 +356,16 @@ msgid "{{ user }} mentioned you."
 msgstr "{{ user }} vous a mentionné."
 
 msgid "{{ user }} commented your article."
-msgstr "{{ user }} a commenté votre article"
+msgstr "{{ user }} a commenté votre article."
 
 msgid "{{ user }} is now following you."
-msgstr "{{ user }} vous suit"
+msgstr "{{ user }} vous suit."
 
 msgid "{{ user }} liked your article."
-msgstr "{{ user }} a aimé votre article"
+msgstr "{{ user }} a aimé votre article."
 
 msgid "{{ user }} boosted your article."
-msgstr ""
+msgstr "{{ user }} a partagé votre article."
 
 msgid "Source code"
 msgstr "Code source"
@@ -373,7 +377,7 @@ msgid "Administration"
 msgstr "Administration"
 
 msgid "Instance settings"
-msgstr "Paramètres de l'instance"
+msgstr "Paramètres de l’instance"
 
 msgid "Allow anyone to register"
 msgstr "Autoriser les inscriptions"
@@ -388,7 +392,7 @@ msgid "Long description"
 msgstr "Description longue"
 
 msgid "Default license"
-msgstr "License par défaut"
+msgstr "Licence par défaut"
 
 msgid "Save settings"
 msgstr "Enregistrer les paramètres"
@@ -400,21 +404,21 @@ msgid "About this instance"
 msgstr "À propos de cette instance"
 
 msgid "What is Plume?"
-msgstr "Qu'est-ce que Plume ?"
+msgstr "Qu’est-ce que Plume ?"
 
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume est un moteur de blog décentralisé."
 
 msgid "Authors can manage various blogs from an unique website."
 msgstr ""
-"Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d'un même site."
+"Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d’un même site."
 
 msgid ""
 "Articles are also visible on other Plume websites, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
-"Les articles sont également visibles sur d'autres sites Plume, et vous "
-"pouvez interagir avec directement depuis d'autres plateformes telles que "
+"Les articles sont également visibles sur d’autres sites Plume, et vous "
+"pouvez interagir avec directement depuis d’autres plateformes telles que "
 "Mastodon."
 
 msgid "Create your account"
@@ -454,7 +458,7 @@ msgid "Runs Plume {{ version }}"
 msgstr "Propulsé par Plume {{ version }}"
 
 msgid "Your media"
-msgstr "Vos média"
+msgstr "Vos médias"
 
 msgid "Go to your gallery"
 msgstr "Aller à votre galerie"
@@ -484,7 +488,7 @@ msgid "Upload"
 msgstr "Téléverser"
 
 msgid "You don't have any media yet."
-msgstr "Vous n'avez pas encore de média."
+msgstr "Vous n’avez pas encore de média."
 
 msgid "Media upload"
 msgstr "Téléversement de média"
@@ -504,17 +508,17 @@ msgstr "Envoyer"
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
-"Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d'en "
+"Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d’en "
 "trouver une autre."
 
 msgid "Subtitle"
 msgstr "Sous-titre"
 
 msgid "Login to like"
-msgstr "Connectez-vous pour aimer."
+msgstr "Connectez-vous pour aimer"
 
 msgid "Login to boost"
-msgstr "Connectez-vous pour booster."
+msgstr "Connectez-vous pour partager"
 
 msgid "Your feed"
 msgstr "Votre flux"
@@ -547,7 +551,7 @@ msgid "Edit"
 msgstr "Modifier"
 
 msgid "Edit {{ post }}"
-msgstr "Modifier « {{ post }} »"
+msgstr "Modifier « {{ post }} »"
 
 msgid "Update"
 msgstr "Mettre à jour"
@@ -563,9 +567,9 @@ msgid ""
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
-"Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les "
-"cookiessont activés dans votre navigateur, et essayez de recharger cette "
-"page. Si vouscontinuez à voir cette erreur, merci de la signaler."
+"Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les cookies "
+"sont activés dans votre navigateur, et essayez de recharger cette page. Si "
+"vous continuez à voir cette erreur, merci de la signaler."
 
 msgid "Administration of {{ instance.name }}"
 msgstr "Administration de {{ instance.name }}"
@@ -583,10 +587,10 @@ msgid "Ban"
 msgstr "Bannir"
 
 msgid "Useful for visually impaired people and licensing"
-msgstr "Utile pour les personnes malvoyantes et les informations de Copyright."
+msgstr "Utile pour les personnes malvoyantes et les informations de copyright."
 
 msgid "Let it empty if there is none"
-msgstr "Laisser vide si il n'y en a pas"
+msgstr "Laisser vide s’il n’y en a pas"
 
 msgid "Draft"
 msgstr "Brouillon"
@@ -612,12 +616,11 @@ msgstr "Supprimer votre compte"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
-"Désolé, mais en tant qu'administrateur, vous ne pouvez pas quitter votre "
+"Désolé, mais en tant qu’administrateur, vous ne pouvez pas quitter votre "
 "instance."
 
 msgid "Users"
 msgstr "Utilisateurs"
 
-#, fuzzy
 msgid "This post isn't published yet."
-msgstr "Cet article est un brouillon, il sera publié plus tard."
+msgstr "Cet article n’est pas encore publié."
