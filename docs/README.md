@@ -5,3 +5,5 @@
 - [Useful Environment Variables](ENV-VARS.md)
 - [Development Guide](DEVELOPMENT.md)
 - [Making Plume available in your language](INTERNATIONALIZATION.md)
+- [REST API reference](API.md)
+- [`plm` CLI reference](CLI.md)
