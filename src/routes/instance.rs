@@ -261,6 +261,51 @@ fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
         "scope": String::from("/"),
         "display": String::from("standalone"),
         "background_color": String::from("#f4f4f4"),
-        "theme_color": String::from("#7765e3")
+        "theme_color": String::from("#7765e3"),
+        "icons": [
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather48.png",
+                "sizes": "48x48",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather72.png",
+                "sizes": "72x72",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather96.png",
+                "sizes": "96x96",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather144.png",
+                "sizes": "144x144",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather160.png",
+                "sizes": "160x160",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather256.png",
+                "sizes": "256x256",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather512.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/trwnh/feather/plumeFeather.svg"
+            }
+        ]
     }))
 }
