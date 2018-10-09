@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46667"
+   version="1.1"
+   id="svg4705"
+   inkscape:export-filename="D:\Graphics\PlumeLogo\plumeParagraphs16.png"
+   inkscape:export-xdpi="3.0000002"
+   inkscape:export-ydpi="3.0000002"
+   sodipodi:docname="plumeParagraphsBlack.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <title
+     id="title8">Plume Logo - Paragraphs (Black)</title>
+  <defs
+     id="defs4699" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="233.22289"
+     inkscape:cy="376.94728"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:window-width="1200"
+     inkscape:window-height="1577"
+     inkscape:window-x="3752"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4702">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Plume Logo - Paragraphs (Black)</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Abdullah Tarawneh (trwnh.com)</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:date>2018/10/07</dc:date>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>trwnh</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+        <dc:description>A Plume concept logo, with a stylized paragraph symbol and paragraph blocks. Black silhouette.</dc:description>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-161.53332)">
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:9.20874119;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 0 0 L 0 512 L 512 512 L 512 0 L 0 0 z M 65.900391 59.884766 L 148.45117 59.884766 C 295.92866 60.566214 294.70214 242.55078 144.52344 242.55078 L 146.70508 446.11523 L 69.175781 446.11523 L 65.900391 59.884766 z M 361.31055 117.31055 L 446.68945 117.31055 L 446.68945 202.68945 L 361.31055 202.68945 L 361.31055 117.31055 z M 297.87695 237.87695 L 446.12305 237.87695 L 446.12305 322.12305 L 297.87695 322.12305 L 297.87695 237.87695 z M 197.38672 357.38672 L 446.61328 357.38672 L 446.61328 442.61328 L 197.38672 442.61328 L 197.38672 357.38672 z "
+       transform="matrix(0.26458333,0,0,0.26458333,0,161.53332)"
+       id="rect1214" />
+  </g>
+</svg>
