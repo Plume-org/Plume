@@ -17,7 +17,10 @@
             </nav>
             <div id="content">
                 <nav>
-                    <a href="/" class="title">{{ "Plume" | _ }}</a>
+                    <a href="/" class="title">
+                        <img src="/static/icons/trwnh/feather/plumeFeather256.png">
+                        <p>{{ "Plume" | _ }}</p>
+                    </a>
                     <hr/>
                     {% block header %}
                     {% endblock header %}

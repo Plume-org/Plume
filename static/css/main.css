@@ -108,12 +108,21 @@
  	padding: 0 2em;
  	font-size: 1em;
  }
- header nav a.title {
- 	margin: 0;
- 	padding: 0.5em 2em;
- 	font-size: 1.75em;
- 	text-align: center;
- }
+header nav a.title {
+    margin: 0;
+    text-align: center;
+    padding: 0.5em 1em;
+    font-size: 1.75em;
+}
+header nav a.title img {
+    height: 1.75em;
+    width: 1.75em;
+}
+header nav a.title p {
+    margin: 0;
+    padding-left: 0.5em;
+}
+
  header nav a i { font-size: 1.2em; }
 
  /* Only enable label animations on normal screens. */
