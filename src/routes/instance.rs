@@ -200,8 +200,9 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> String {
         .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("No actor ID for incoming activity, blocks by panicking"));
 
     let actor = User::from_url(&conn, actor_id.to_owned()).unwrap();
-    if !verify_http_headers(&actor, headers.0, data).is_secure() &&
+    if !verify_http_headers(&actor, headers.0.clone(), data).is_secure() &&
         !act.clone().verify(&actor) {
+        println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
         return "invalid signature".to_owned();
     }
 

@@ -1,5 +1,5 @@
 use rocket::request::{self, FromRequest, Request};
-use rocket::{http::HeaderMap, Outcome};
+use rocket::{http::{Header, HeaderMap}, Outcome};
 
 
 pub struct Headers<'r>(pub HeaderMap<'r>);
@@ -12,6 +12,16 @@ impl<'a, 'r> FromRequest<'a, 'r> for Headers<'r> {
         for header in request.headers().clone().into_iter() {
             headers.add(header);
         }
+        let ori = request.uri();
+        let uri = if let Some(query) = ori.query() {
+            format!("{}?{}", ori.path(), query)
+        } else {
+            ori.path().to_owned()
+        };
+        headers.add(Header::new("(request-target)",
+                                format!("{} {}",
+                                        request.method().as_str().to_lowercase(),
+                                        uri.to_lowercase())));
         Outcome::Success(Headers(headers))
     }
 }
