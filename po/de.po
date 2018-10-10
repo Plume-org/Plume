@@ -311,16 +311,16 @@ msgstr ""
 "Wir brauchen eine E-Mail oder einen Nutzernamen um dich zu identifizieren"
 
 msgid "Your password can't be empty"
-msgstr "Dein Passwort kann nicht leer sein"
+msgstr "Dein Passwort darf nicht leer sein"
 
 msgid "Passwords are not matching"
 msgstr "Passwörter stimmen nicht überein"
 
 msgid "Username can't be empty"
-msgstr "Nutzername kann nicht leer sein"
+msgstr "Nutzername darf nicht leer sein"
 
 msgid "Invalid email"
-msgstr "Ungültige E-Mail"
+msgstr "Ungültige E-Mail Adresse"
 
 msgid "Password should be at least 8 characters long"
 msgstr "Passwort sollte mindestens 8 Zeichen lang sein"
@@ -429,10 +429,10 @@ msgid "people"
 msgstr "Menschen"
 
 msgid "Who wrote"
-msgstr "Die"
+msgstr "Wer schrieb"
 
 msgid "articles"
-msgstr "Artikel geschrieben haben"
+msgstr "Artikel"
 
 msgid "Read the detailed rules"
 msgstr "Lies die detailierten Regeln"
@@ -441,7 +441,7 @@ msgid "Delete this article"
 msgstr "Artikel löschen"
 
 msgid "And connected to"
-msgstr "Verbunden mit"
+msgstr "Und verbunden mit"
 
 msgid "other instances"
 msgstr "anderen Instanzen"
@@ -454,80 +454,81 @@ msgstr "Verwendet Plume {{ version }}"
 
 #, fuzzy
 msgid "Your media"
-msgstr "Dein Kommentar"
+msgstr "Deine Mediendateien"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Zu deiner Gallerie"
 
 msgid "{{ name}}'s avatar'"
-msgstr ""
+msgstr "{{ name}}'s Avatar'"
 
 msgid "Media details"
-msgstr ""
+msgstr "Mediendetails"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Zurück zur Gallerie"
 
 #, fuzzy
 msgid "Markdown code"
-msgstr "Markdown wird unterstützt"
+msgstr "Markdown Code"
 
 msgid "Copy it in your articles to insert this media."
-msgstr ""
+msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Als Avatar verwenden"
 
 msgid "Delete"
 msgstr "Löschen"
 
 msgid "Upload"
-msgstr ""
+msgstr "Hochladen"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Derzeit sind noch keine Mediendateien hochgeladen."
 
 msgid "Media upload"
-msgstr ""
+msgstr "Hochladen von Mediendateien"
 
 msgid "Description"
 msgstr "Beschreibung"
 
 #, fuzzy
 msgid "Content warning"
-msgstr "Inhalt"
+msgstr "Warnhinweis zum Inhalt"
 
 msgid "File"
 msgstr "Datei"
 
 msgid "Send"
-msgstr ""
+msgstr "Senden"
 
 msgid ""
 "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
+"Tut mir leid. Auf dieser Instanz sind Registrierungen derzeit nicht möglich. Es gibt aber noch andere"
 
 msgid "Subtitle"
 msgstr "Untertitel"
 
 msgid "Login to like"
-msgstr ""
+msgstr "Um zu liken, musst du eingeloggt sein"
 
 msgid "Login to boost"
-msgstr ""
+msgstr "Um zu boosten, musst du eingeloggt sein"
 
 #, fuzzy
 msgid "Your feed"
-msgstr "Dein Kommentar"
+msgstr "Dein Feed"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Föderativer Feed"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Lokaler Feed"
 
 msgid "Nothing to see here yet. Try to follow more people."
-msgstr ""
+msgstr "Hier gibts noch nichts. Versuche dich mehr Leuten anzuschließen."
 
 msgid "Articles"
 msgstr "Artikel"
@@ -539,7 +540,7 @@ msgid "Articles from {{ instance.name }}"
 msgstr "Artikel von {{ instance.name }}"
 
 msgid "View all"
-msgstr ""
+msgstr "Alles anzeigen"
 
 msgid "Articles tagged \"{{ tag }}\""
 msgstr "Mit \"{{ tag }}\" markierte Artikel"
@@ -557,13 +558,16 @@ msgid "We couldn't find this page."
 msgstr "Wir konnten diese Seite nicht finden."
 
 msgid "Invalid CSRF token."
-msgstr ""
+msgstr "Ungültiger CSRF token."
 
 msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
+"Irgendetwas stimmt mit deinem CSRF token nicht. Vergewissere dich, dass Cookies "
+"in deinem Browser aktiviert sind und versuche diese Seite neu zu laden. "
+"Bitte melde diesen Fehler, falls er erneut auftritt.
 
 msgid "Administration of {{ instance.name }}"
 msgstr "Administration von {{ instance.name }}"
@@ -572,19 +576,19 @@ msgid "Instances"
 msgstr "Instanzen"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Blockade aufheben"
 
 msgid "Block"
-msgstr ""
+msgstr "Blockade"
 
 msgid "Ban"
-msgstr ""
+msgstr "Sperre"
 
 msgid "Useful for visually impaired people and licensing"
-msgstr ""
+msgstr "Hilfreich für Sehbehinderte und zur Lizenziserung"
 
 msgid "Let it empty if there is none"
-msgstr ""
+msgstr "Falls es dies nicht gibt, lass es leer"
 
 msgid "Draft"
 msgstr "Entwurf"
@@ -593,22 +597,22 @@ msgid "This is a draft, don't publish it yet."
 msgstr "Dies ist ein Entwurf, noch nicht veröffentlichen."
 
 msgid "Update or publish"
-msgstr ""
+msgstr "Aktualisieren oder veröffentlichen"
 
 msgid "Your Drafts"
 msgstr "Deine Entwürfe"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Gefahrenbereich"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Sei umsichtig, jede ausgeführte Aktion kann hier nicht abgebrochen werden."
 
 msgid "Delete your account"
 msgstr "Eigenen Account löschen"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
-msgstr ""
+msgstr "Tut mir leid. Als Administrator kannst du deine Instanz leider nicht verlassen."
 
 msgid "Users"
 msgstr "Nutzende"
