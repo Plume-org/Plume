@@ -4,15 +4,17 @@ use rocket_contrib::{Json, Template};
 use serde_json;
 use validator::{Validate};
 
+use plume_common::activity_pub::sign::{Signable,
+    verify_http_headers};
 use plume_models::{
     admin::Admin,
     comments::Comment,
     db_conn::DbConn,
+    headers::Headers,
     posts::Post,
     users::User,
     safe_string::SafeString,
     instance::*
-
 };
 use inbox::Inbox;
 use routes::Page;
@@ -194,12 +196,20 @@ fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
 }
 
 #[post("/inbox", data = "<data>")]
-fn shared_inbox(conn: DbConn, data: String) -> String {
+fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> String {
     let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
 
     let activity = act.clone();
     let actor_id = activity["actor"].as_str()
         .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("No actor ID for incoming activity, blocks by panicking"));
+
+    let actor = User::from_url(&conn, actor_id.to_owned()).unwrap();
+    if !verify_http_headers(&actor, headers.0.clone(), data).is_secure() &&
+        !act.clone().verify(&actor) {
+        println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
+        return "invalid signature".to_owned();
+    }
+
     if Instance::is_blocked(&*conn, actor_id.to_string()) {
         return String::new();
     }

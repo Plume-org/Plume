@@ -219,6 +219,7 @@ pub mod blogs;
 pub mod comments;
 pub mod db_conn;
 pub mod follows;
+pub mod headers;
 pub mod instance;
 pub mod likes;
 pub mod medias;

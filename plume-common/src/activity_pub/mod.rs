@@ -2,8 +2,7 @@ use activitypub::{Activity, Actor, Object, Link};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
-    Outcome,
-    http::Status,
+    Outcome, http::Status,
     response::{Response, Responder},
     request::{FromRequest, Request}
 };
@@ -104,11 +103,12 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(send
 
     for inbox in boxes {
         // TODO: run it in Sidekiq or something like that
+        let mut headers = request::headers();
+        headers.set(request::Digest::digest(signed.to_string()));
         let res = Client::new()
             .post(&inbox[..])
-            .headers(request::headers())
-            .header(request::signature(sender, request::headers()))
-            .header(request::digest(signed.to_string()))
+            .headers(headers.clone())
+            .header(request::signature(sender, headers))
             .body(signed.to_string())
             .send();
         match res {
