@@ -21,7 +21,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Headers<'r> {
         headers.add(Header::new("(request-target)",
                                 format!("{} {}",
                                         request.method().as_str().to_lowercase(),
-                                        uri.to_lowercase())));
+                                        uri)));
         Outcome::Success(Headers(headers))
     }
 }
