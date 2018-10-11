@@ -155,7 +155,11 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
     let mut post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug.clone(), blog.id)).expect("Post to update not found");
 
     let form = data.get();
-    let new_slug = form.title.to_string().to_kebab_case();
+    let new_slug = if !post.published {
+        form.title.to_string().to_kebab_case()
+    } else {
+        post.slug
+    };
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
