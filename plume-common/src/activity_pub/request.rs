@@ -1,31 +1,23 @@
 use base64;
+use chrono::{DateTime, offset::Utc};
 use openssl::hash::{Hasher, MessageDigest};
-use reqwest::{
-    mime::Mime,
-    header::{Accept, Date, Headers, UserAgent, qitem}
-};
+use reqwest::header::{ACCEPT, DATE, HeaderMap, HeaderValue, USER_AGENT};
 use std::ops::Deref;
 use std::time::SystemTime;
 
 use activity_pub::ap_accept_header;
 use activity_pub::sign::Signer;
 
-const USER_AGENT: &'static str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
+const PLUME_USER_AGENT: &'static str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
-header! {
-    (Signature, "Signature") => [String]
-}
-
-header! {
-    (Digest, "Digest") => [String]
-}
+pub struct Digest(String);
 
 impl Digest {
-    pub fn digest(body: String) -> Self {
+    pub fn digest(body: String) -> HeaderValue {
         let mut hasher = Hasher::new(MessageDigest::sha256()).unwrap();
         hasher.update(&body.into_bytes()[..]).unwrap();
         let res = base64::encode(&hasher.finish().unwrap());
-        Digest(format!("SHA-256={}", res))
+        HeaderValue::from_str(&format!("SHA-256={}", res)).unwrap()
     }
 
     pub fn verify(&self, body: String) -> bool {
@@ -62,25 +54,28 @@ impl Digest {
     }
 }
 
-pub fn headers() -> Headers {
-    let mut headers = Headers::new();
-    headers.set(UserAgent::new(USER_AGENT));
-    headers.set(Date(SystemTime::now().into()));
-    headers.set(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()));
+pub fn headers() -> HeaderMap {
+    let date: DateTime<Utc> = SystemTime::now().into();
+    let date = format!("{}", date.format("%a, %d %b %Y %T %Z"));
+
+    let mut headers = HeaderMap::new();
+    headers.insert(USER_AGENT, HeaderValue::from_static(PLUME_USER_AGENT));
+    headers.insert(DATE, HeaderValue::from_str(&date).unwrap());
+    headers.insert(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).unwrap());
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: Headers) -> Signature {
-    let signed_string = headers.iter().map(|h| format!("{}: {}", h.name().to_lowercase(), h.value_string())).collect::<Vec<String>>().join("\n");
-    let signed_headers = headers.iter().map(|h| h.name().to_string()).collect::<Vec<String>>().join(" ").to_lowercase();
+pub fn signature<S: Signer>(signer: &S, headers: HeaderMap) -> HeaderValue {
+    let signed_string = headers.iter().map(|(h,v)| format!("{}: {}", h.as_str().to_lowercase(), v.to_str().unwrap())).collect::<Vec<String>>().join("\n");
+    let signed_headers = headers.iter().map(|(h,_)| h.as_str()).collect::<Vec<&str>>().join(" ").to_lowercase();
 
     let data = signer.sign(signed_string);
     let sign = base64::encode(&data[..]);
 
-    Signature(format!(
+    HeaderValue::from_str(&format!(
         "keyId=\"{key_id}\",algorithm=\"rsa-sha256\",headers=\"{signed_headers}\",signature=\"{signature}\"",
         key_id = signer.get_key_id(),
         signed_headers = signed_headers,
         signature = sign
-    ))
+    )).unwrap()
 }

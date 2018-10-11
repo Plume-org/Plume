@@ -20,8 +20,7 @@ use plume_common::activity_pub::{
 };
 use reqwest::{
     Client,
-    header::{Accept, qitem},
-    mime::Mime
+    header::{ACCEPT, HeaderValue}
 };
 use rocket::{
     request::{self, FromRequest, Request},
@@ -192,7 +191,7 @@ impl User {
     fn fetch(url: String) -> Option<CustomPerson> {
         let req = Client::new()
             .get(&url[..])
-            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .header(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).unwrap())
             .send();
         match req {
             Ok(mut res) => {
@@ -348,7 +347,7 @@ impl User {
     pub fn fetch_outbox<T: Activity>(&self) -> Vec<T> {
         let req = Client::new()
             .get(&self.outbox_url[..])
-            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .header(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).unwrap())
             .send();
         match req {
             Ok(mut res) => {
@@ -370,7 +369,7 @@ impl User {
     pub fn fetch_followers_ids(&self) -> Vec<String> {
         let req = Client::new()
             .get(&self.followers_endpoint[..])
-            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .header(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).unwrap())
             .send();
         match req {
             Ok(mut res) => {

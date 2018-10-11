@@ -21,7 +21,7 @@ serde_qs = "0.4"
 tera = "0.11"
 validator = "0.7"
 validator_derive = "0.7"
-webfinger = "0.3"
+webfinger = "0.3.1"
 workerpool = "1.1"
 
 [[bin]]

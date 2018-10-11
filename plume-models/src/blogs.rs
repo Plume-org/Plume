@@ -1,9 +1,7 @@
 use activitypub::{Actor, Object, CustomObject, actor::Group, collection::OrderedCollection};
 use chrono::NaiveDateTime;
-use reqwest::{
-    Client,
-    header::{Accept, qitem},
-    mime::Mime
+use reqwest::{Client,
+    header::{ACCEPT, HeaderValue}
 };
 use serde_json;
 use url::Url;
@@ -120,7 +118,7 @@ impl Blog {
     fn fetch_from_url(conn: &Connection, url: String) -> Option<Blog> {
         let req = Client::new()
             .get(&url[..])
-            .header(Accept(ap_accept_header().into_iter().map(|h| qitem(h.parse::<Mime>().expect("Invalid Content-Type"))).collect()))
+            .header(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).unwrap())
             .send();
         match req {
             Ok(mut res) => {
