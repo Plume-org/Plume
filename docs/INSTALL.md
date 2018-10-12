@@ -342,6 +342,18 @@ If you prefer Apache, you can use this configuration (here too, replace `blog.ex
 </VirtualHost>
 ```
 
+## Configuring Caddyserver
+
+If you prefer [Caddyserver](http://caddyserver.com), you can use this configuration (again, replacing `blog.example.com` with your domain):
+
+```
+blog.example.com {
+    proxy / localhost:7878 {
+        transparent
+    }
+}
+```
+
 ## Systemd integration
 
 If you want to manage your Plume instance with systemd, you can use the following unit file (to be saved in `/etc/systemd/system/plume.service`):
