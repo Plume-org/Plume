@@ -193,12 +193,6 @@ plm users new --admin
 
 For more information about these commands, and the arguments you can give them, check out [their documentaion](CLI.md).
 
-After that, you are almost done, the last thing to do is to create the media directory, where uploads will be stored:
-
-```bash
-mkdir media
-```
-
 Finally, you can start Plume with:
 
 ```bash

@@ -39,7 +39,7 @@ fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Redirect {
                 let ext = filename.rsplitn(2, ".")
                     .next()
                     .unwrap();
-                let dest = format!("media/{}.{}", GUID::rand().to_string(), ext);
+                let dest = format!("static/media/{}.{}", GUID::rand().to_string(), ext);
 
                 if let SavedData::Bytes(ref bytes) = fields[&"file".to_string()][0].data {
                     fs::write(&dest, bytes).expect("Couldn't save upload");
@@ -109,9 +109,4 @@ fn set_avatar(id: i32, user: User, conn: DbConn) -> Redirect {
     let media = Media::get(&*conn, id).expect("Media to delete not found");
     user.set_avatar(&*conn, media.id);
     Redirect::to(uri!(details: id = id))
-}
-
-#[get("/static/media/<file..>", rank = 1)]
-fn static_files(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("media/").join(file)).ok()
 }
