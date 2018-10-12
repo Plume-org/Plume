@@ -1,9 +1,9 @@
 use guid_create::GUID;
 use multipart::server::{Multipart, save::{SavedData, SaveResult}};
-use rocket::{Data, http::ContentType, response::{NamedFile, Redirect}};
+use rocket::{Data, http::ContentType, response::Redirect};
 use rocket_contrib::Template;
 use serde_json;
-use std::{fs, path::{Path, PathBuf}};
+use std::fs;
 use plume_models::{db_conn::DbConn, medias::*, users::User};
 
 #[get("/medias")]

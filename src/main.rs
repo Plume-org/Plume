@@ -100,7 +100,6 @@ fn main() {
             routes::medias::details,
             routes::medias::delete,
             routes::medias::set_avatar,
-            routes::medias::static_files,
 
             routes::notifications::paginated_notifications,
             routes::notifications::notifications,
