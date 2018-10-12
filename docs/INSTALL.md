@@ -216,8 +216,8 @@ docker-compose build
 
 # Launch the database
 docker-compose up -d postgres
-# Run the migrations
-docker-compose run --rm plume diesel migration run
+# Setup the database (create it and run migrations)
+docker-compose run --rm plume diesel database setup
 
 # Setup your instance
 docker-compose run --rm plume plm instance new
