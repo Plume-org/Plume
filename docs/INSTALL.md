@@ -301,13 +301,14 @@ If you prefer Apache, you can use this configuration (here too, replace `blog.ex
     ServerName blog.example.com
     Redirect / https://blog.example.com/
 </VirtualHost>
-
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
 <VirtualHost *:443>
    ServerAdmin admin@example.com
    ServerName blog.example.com
 <Directory "/home/plume/Plume">
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Strict-Transport-Security "max-age=31536000"
+    </Directory>
     SSLEngine on
 
     # for cipher conf: https://cipherli.st/
@@ -319,7 +320,6 @@ If you prefer Apache, you can use this configuration (here too, replace `blog.ex
     Header always set X-Content-Type-Options nosniff
     SSLCompression off
     SSLUseStapling on
-    SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
 
     # Requires Apache >= 2.4.11
     SSLSessionTickets Off
