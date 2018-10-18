@@ -61,8 +61,8 @@ msgid "Let&#x27;s go!"
 msgstr ""
 
 #, fuzzy
-msgid "Welcome on {{ instance_name | escape }}"
-msgstr "Welcome on {{ instance_name }}"
+msgid "Welcome to {{ instance_name | escape }}"
+msgstr "Welcome to {{ instance_name }}"
 
 msgid "Notifications"
 msgstr ""
@@ -150,7 +150,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Open on {{ instance_url }}"
-msgstr "Welcome on {{ instance_name }}"
+msgstr "Welcome to {{ instance_name }}"
 
 msgid "Follow"
 msgstr ""
@@ -414,7 +414,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About {{ instance_name }}"
-msgstr "Welcome on {{ instance_name }}"
+msgstr "Welcome to {{ instance_name }}"
 
 msgid "Home to"
 msgstr ""
@@ -527,14 +527,14 @@ msgstr ""
 
 #, fuzzy
 msgid "Articles from {{ instance.name }}"
-msgstr "Welcome on {{ instance_name }}"
+msgstr "Welcome to {{ instance_name }}"
 
 msgid "View all"
 msgstr ""
 
 #, fuzzy
 msgid "Articles tagged \"{{ tag }}\""
-msgstr "Welcome on {{ instance_name }}"
+msgstr "Welcome to {{ instance_name }}"
 
 msgid "Edit"
 msgstr ""
@@ -559,7 +559,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Administration of {{ instance.name }}"
-msgstr "Welcome on {{ instance_name }}"
+msgstr "Welcome to {{ instance_name }}"
 
 msgid "Instances"
 msgstr ""

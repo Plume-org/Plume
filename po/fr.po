@@ -66,7 +66,7 @@ msgstr "Nom"
 msgid "Let&#x27;s go!"
 msgstr "C’est parti !"
 
-msgid "Welcome on {{ instance_name | escape }}"
+msgid "Welcome to {{ instance_name | escape }}"
 msgstr "Bienvenue sur {{ instance_name | escape }}"
 
 msgid "Notifications"
