@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <h1>{{ "Welcome on {{ instance_name | escape }}" | _(instance_name=instance.name) }}</h1>
+    <h1>{{ "Welcome to {{ instance_name | escape }}" | _(instance_name=instance.name) }}</h1>
 
     {% if account %}
         {{ macros::tabs(links=['/', '/feed', '/federated', '/local'], titles=['Latest articles', 'Your feed', 'Federated feed', 'Local feed'], selected=1) }}
