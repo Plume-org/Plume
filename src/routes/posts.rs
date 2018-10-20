@@ -183,7 +183,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog)))
         } else {
-            let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
+            let (content, mentions, _hashtag) = utils::md_to_html(form.content.to_string().as_ref());//TODO do something with hashtags
 
             let license = if form.license.len() > 0 {
                 form.license.to_string()
@@ -294,7 +294,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog_name)))
         } else {
-            let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
+            let (content, mentions, _hashtag) = utils::md_to_html(form.content.to_string().as_ref());//TODO do something with hashtags
 
             let post = Post::insert(&*conn, NewPost {
                 blog_id: blog.id,

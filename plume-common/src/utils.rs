@@ -20,58 +20,117 @@ pub fn requires_login(message: &str, url: Uri) -> Flash<Redirect> {
     Flash::new(Redirect::to(format!("/login?m={}", gettext(message.to_string()))), "callback", url.to_string())
 }
 
-/// Returns (HTML, mentions)
-pub fn md_to_html(md: &str) -> (String, Vec<String>) {
+#[derive(Debug)]
+enum State {
+    Mention,
+    Hashtag,
+    Word,
+    Ready,
+}
+
+/// Returns (HTML, mentions, hashtags)
+pub fn md_to_html(md: &str) -> (String, Vec<String>, Vec<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
-    let (parser, mentions): (Vec<Vec<Event>>, Vec<Vec<String>>) = parser.map(|evt| match evt {
+    let (parser, mentions, hashtags): (Vec<Vec<Event>>, Vec<Vec<String>>, Vec<Vec<String>>) = parser.map(|evt| match evt {
         Event::Text(txt) => {
-            let (evts, _, _, _, new_mentions) = txt.chars().fold((vec![], false, String::new(), 0, vec![]), |(mut events, in_mention, text_acc, n, mut mentions), c| {
-                if in_mention {
-                    let char_matches = c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_';
-                    if char_matches && (n < (txt.chars().count() - 1)) {
-                        (events, in_mention, text_acc + c.to_string().as_ref(), n + 1, mentions)
-                    } else {
-                        let mention = if char_matches {
-                            text_acc + c.to_string().as_ref()
+            let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold((vec![], State::Ready, String::new(), 0, vec![], vec![]), |(mut events, state, text_acc, n, mut mentions, mut hashtags), c| {
+                match state {
+                    State::Mention => {
+                        let char_matches = c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_';
+                        if char_matches && (n < (txt.chars().count() - 1)) {
+                            (events, State::Mention, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
                         } else {
-                            text_acc
-                        };
-                        let short_mention = mention.clone();
-                        let short_mention = short_mention.splitn(1, '@').nth(0).unwrap_or("");
-                        let link = Tag::Link(format!("/@/{}/", mention).into(), short_mention.to_string().into());
+                            let mention = if char_matches {
+                                text_acc + c.to_string().as_ref()
+                            } else {
+                                text_acc
+                            };
+                            let short_mention = mention.clone();
+                            let short_mention = short_mention.splitn(1, '@').nth(0).unwrap_or("");
+                            let link = Tag::Link(format!("/@/{}/", mention).into(), short_mention.to_string().into());
 
-                        mentions.push(mention);
-                        events.push(Event::Start(link.clone()));
-                        events.push(Event::Text(format!("@{}", short_mention).into()));
-                        events.push(Event::End(link));
+                            mentions.push(mention);
+                            events.push(Event::Start(link.clone()));
+                            events.push(Event::Text(format!("@{}", short_mention).into()));
+                            events.push(Event::End(link));
 
-                        (events, false, c.to_string(), n + 1, mentions)
-                    }
-                } else {
-                    if c == '@' {
-                        events.push(Event::Text(text_acc.into()));
-                        (events, true, String::new(), n + 1, mentions)
-                    } else {
-                        if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
-                            events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                            (events, State::Ready, c.to_string(), n + 1, mentions, hashtags)
                         }
-                        (events, in_mention, text_acc + c.to_string().as_ref(), n + 1, mentions)
+                    }
+                    State::Hashtag => {
+                        let char_matches = c.is_alphanumeric();
+                        if char_matches && (n < (txt.chars().count() -1)) {
+                            (events, State::Hashtag, text_acc + c.to_string().as_ref(), n+1, mentions, hashtags)
+                        } else {
+                            let hashtag = if char_matches {
+                                text_acc + c.to_string().as_ref()
+                            } else {
+                                text_acc
+                            };
+                            let link = Tag::Link(format!("/tag/{}", hashtag).into(), hashtag.to_string().into());
+
+                            hashtags.push(hashtag.clone());
+                            events.push(Event::Start(link.clone()));
+                            events.push(Event::Text(format!("#{}", hashtag).into()));
+                            events.push(Event::End(link));
+
+                            (events, State::Ready, c.to_string(), n + 1, mentions, hashtags)
+                        }
+                    }
+                    State::Ready => {
+                        if c == '@' {
+                            events.push(Event::Text(text_acc.into()));
+                            (events, State::Mention, String::new(), n + 1, mentions, hashtags)
+                        } else if c == '#' {
+                            events.push(Event::Text(text_acc.into()));
+                            (events, State::Hashtag, String::new(), n + 1, mentions, hashtags)
+                        } else if c.is_alphanumeric() {
+                            if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
+                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                            }
+                            (events, State::Word, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                        } else {
+                            if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
+                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                            }
+                            (events, State::Ready, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                        }
+                    }
+                    State::Word => {
+                        if c.is_alphanumeric() {
+                            if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
+                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                            }
+                            (events, State::Word, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                        } else {
+                            if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
+                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                            }
+                            (events, State::Ready, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                        }
                     }
                 }
             });
-            (evts, new_mentions)
+            (evts, new_mentions, new_hashtags)
         },
-        _ => (vec![evt], vec![])
-    }).unzip();
+        _ => (vec![evt], vec![], vec![])
+    }).fold((vec![],vec![],vec![]), |(mut parser, mut mention, mut hashtag), (p, m, h)| {
+        parser.push(p);
+        mention.push(m);
+        hashtag.push(h);
+        (parser, mention, hashtag)
+    });
     let parser = parser.into_iter().flatten();
     let mentions = mentions.into_iter().flatten().map(|m| String::from(m.trim()));
+    let hashtags = hashtags.into_iter().flatten().map(|h| String::from(h.trim()));
 
     // TODO: fetch mentionned profiles in background, if needed
 
     let mut buf = String::new();
     html::push_html(&mut buf, parser);
-    (buf, mentions.collect())
+    let hashtags = hashtags.collect();
+    (buf, mentions.collect(), hashtags)
 }
 
 #[cfg(test)]
@@ -90,10 +149,30 @@ mod tests {
             ("between parenthesis (@test)", vec!["test"]),
             ("with some punctuation @test!", vec!["test"]),
             ("      @spaces     ", vec!["spaces"]),
+            ("not_a@mention", vec![]),
         ];
 
         for (md, mentions) in tests {
             assert_eq!(md_to_html(md).1, mentions.into_iter().map(|s| s.to_string()).collect::<Vec<String>>());
+        }
+    }
+
+    #[test]
+    fn test_hashtags() {
+        let tests = vec![
+            ("nothing", vec![]),
+            ("#hashtag", vec!["hashtag"]),
+            ("#many #hashtags", vec!["many", "hashtags"]),
+            ("#start with a hashtag", vec!["start"]),
+            ("hashtag at #end", vec!["end"]),
+            ("between parenthesis (#test)", vec!["test"]),
+            ("with some punctuation #test!", vec!["test"]),
+            ("      #spaces     ", vec!["spaces"]),
+            ("not_a#hashtag", vec![]),
+        ];
+
+        for (md, mentions) in tests {
+            assert_eq!(md_to_html(md).2, mentions.into_iter().map(|s| s.to_string()).collect::<Vec<String>>());
         }
     }
 }

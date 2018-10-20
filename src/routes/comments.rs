@@ -35,7 +35,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
     let form = data.get();
     form.validate()
         .map(|_| {
-            let (html, mentions) = utils::md_to_html(form.content.as_ref());
+            let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref());
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),
                 in_response_to_id: form.responding_to.clone(),
