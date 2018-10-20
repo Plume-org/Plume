@@ -50,22 +50,23 @@ struct LoginForm {
 fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, Template> {
     let form = data.get();
     let user = User::find_by_email(&*conn, form.email_or_name.to_string())
-        .map(|u| Ok(u))
-        .unwrap_or_else(|| User::find_local(&*conn, form.email_or_name.to_string()).map(|u| Ok(u)).unwrap_or(Err(())));
-
+        .or_else(|| User::find_local(&*conn, form.email_or_name.to_string()));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Err(_) = user.clone() {
+    
+    if let Some(user) = user.clone() {
+        if !user.auth(form.password.clone()) {
+            let mut err = ValidationError::new("invalid_login");
+            err.message = Some(Cow::from("Invalid username or password"));
+            errors.add("email_or_name", err)
+        }
+    } else {
         // Fake password verification, only to avoid different login times
         // that could be used to see if an email adress is registered or not
         User::get(&*conn, 1).map(|u| u.auth(form.password.clone()));
 
-        let mut err = ValidationError::new("invalid_login");
-        err.message = Some(Cow::from("Invalid username or password"));
-        errors.add("email_or_name", err)
-    } else if !user.clone().expect("User not found").auth(form.password.clone()) {
         let mut err = ValidationError::new("invalid_login");
         err.message = Some(Cow::from("Invalid username or password"));
         errors.add("email_or_name", err)
@@ -107,7 +108,6 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
 
 #[get("/logout")]
 fn delete(mut cookies: Cookies) -> Redirect {
-    let cookie = cookies.get_private(AUTH_COOKIE).unwrap();
-    cookies.remove_private(cookie);
+    cookies.get_private(AUTH_COOKIE).map(|cookie| cookies.remove_private(cookie));
     Redirect::to("/")
 }

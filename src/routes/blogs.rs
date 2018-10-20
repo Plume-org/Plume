@@ -1,9 +1,9 @@
 use activitypub::collection::OrderedCollection;
 use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
+    http::ContentType,
     request::LenientForm,
-    response::{Redirect, Flash, content::Content},
-    http::ContentType
+    response::{Redirect, Flash, content::Content}
 };
 use rocket_contrib::Template;
 use serde_json;
@@ -49,9 +49,9 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
 }
 
 #[get("/~/<name>", rank = 1)]
-fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<CustomGroup> {
-    let blog = Blog::find_local(&*conn, name).unwrap();
-    ActivityStream::new(blog.into_activity(&*conn))
+fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
+    let blog = Blog::find_local(&*conn, name)?;
+    Some(ActivityStream::new(blog.into_activity(&*conn)))
 }
 
 #[get("/blogs/new")]
@@ -130,22 +130,23 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
 }
 
 #[get("/~/<name>/outbox")]
-fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
-    let blog = Blog::find_local(&*conn, name).unwrap();
-    blog.outbox(&*conn)
+fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+    let blog = Blog::find_local(&*conn, name)?;
+    Some(blog.outbox(&*conn))
 }
 
 #[get("/~/<name>/atom.xml")]
-fn atom_feed(name: String, conn: DbConn) -> Content<String> {
-    let blog = Blog::find_by_fqn(&*conn, name.clone()).expect("Unable to find blog");
+fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
+    let blog = Blog::find_by_fqn(&*conn, name.clone())?;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
-        .id(Instance::get_local(&*conn).unwrap().compute_box("~", name, "atom.xml"))
+        .id(Instance::get_local(&*conn).expect("blogs::atom_feed: local instance not found error")
+            .compute_box("~", name, "atom.xml"))
         .entries(Post::get_recents_for_blog(&*conn, &blog, 15)
             .into_iter()
             .map(|p| super::post_to_atom(p, &*conn))
             .collect::<Vec<Entry>>())
         .build()
-        .expect("Error building Atom feed");
-    Content(ContentType::new("application", "atom+xml"), feed.to_string())
+        .expect("blogs::atom_feed: feed creation error");
+    Some(Content(ContentType::new("application", "atom+xml"), feed.to_string()))
 }

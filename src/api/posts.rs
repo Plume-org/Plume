@@ -19,7 +19,7 @@ fn get(id: i32, conn: DbConn) -> Json<serde_json::Value> {
 
 #[get("/posts")]
 fn list(conn: DbConn, uri: &Origin) -> Json<serde_json::Value> {
-    let query: PostEndpoint = serde_qs::from_str(uri.query().unwrap_or("")).expect("Invalid query string");
+    let query: PostEndpoint = serde_qs::from_str(uri.query().unwrap_or("")).expect("api::list: invalid query error");
     let post = <Post as Provider<Connection>>::list(&*conn, query);
     Json(json!(post))
 }

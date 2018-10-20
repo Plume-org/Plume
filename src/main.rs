@@ -56,7 +56,7 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
-    let pool = init_pool().expect("Couldn't intialize database pool");
+    let pool = init_pool().expect("main: database pool initialization error");
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::paginated_details,
@@ -176,6 +176,6 @@ fn main() {
                     ("/login".to_owned(), "/login".to_owned(), rocket::http::Method::Post),
                     ("/users/new".to_owned(), "/users/new".to_owned(), rocket::http::Method::Post),
                 ])
-                .finalize().unwrap())
+                .finalize().expect("main: csrf fairing creation error"))
         .launch();
 }
