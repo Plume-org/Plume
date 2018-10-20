@@ -608,3 +608,6 @@ msgstr ""
 
 msgid "This post isn't published yet."
 msgstr ""
+
+msgid "There is currently no article with that tag"
+msgstr ""

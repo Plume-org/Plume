@@ -623,6 +623,9 @@ msgstr "Użytkownicy"
 msgid "This post isn't published yet."
 msgstr "Ten wpis nie został jeszcze opublikowany."
 
+msgid "There is currently no article with that tag"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

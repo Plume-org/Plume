@@ -68,7 +68,7 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>, Vec<String>) {
                             } else {
                                 text_acc
                             };
-                            let link = Tag::Link(format!("/tag/{}", hashtag).into(), hashtag.to_string().into());
+                            let link = Tag::Link(format!("/tag/{}", hashtag.to_camel_case()).into(), hashtag.to_string().into());
 
                             hashtags.push(hashtag.clone());
                             events.push(Event::Start(link.clone()));

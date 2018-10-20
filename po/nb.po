@@ -633,6 +633,9 @@ msgstr "Brukernavn"
 msgid "This post isn't published yet."
 msgstr ""
 
+msgid "There is currently no article with that tag"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"
