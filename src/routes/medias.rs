@@ -1,6 +1,6 @@
 use guid_create::GUID;
 use multipart::server::{Multipart, save::{SavedData, SaveResult}};
-use rocket::{Data, http::ContentType, response::Redirect};
+use rocket::{Data, http::ContentType, response::{Redirect, status}};
 use rocket_contrib::Template;
 use serde_json;
 use std::fs;
@@ -25,30 +25,27 @@ fn new(user: User, conn: DbConn) -> Template {
 }
 
 #[post("/medias/new", data = "<data>")]
-fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Redirect {
+fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redirect, status::BadRequest<&'static str>> {
     if ct.is_form_data() {
-        let (_, boundary) = ct.params().find(|&(k, _)| k == "boundary").expect("No boundary");
+        let (_, boundary) = ct.params().find(|&(k, _)| k == "boundary").ok_or_else(|| status::BadRequest(Some("No boundary")))?;
 
         match Multipart::with_body(data.open(), boundary).save().temp() {
             SaveResult::Full(entries) => {
                 let fields = entries.fields;
 
-                let filename = fields.get(&"file".to_string()).unwrap().into_iter().next().unwrap().headers
-                    .filename.clone()
-                    .unwrap_or("x.png".to_string()); // PNG by default
-                let ext = filename.rsplitn(2, ".")
-                    .next()
-                    .unwrap();
+                let filename = fields.get(&"file".to_string()).and_then(|v| v.into_iter().next())
+                    .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
+                    .filename.clone();
+                let ext = filename.and_then(|f| f.rsplit('.').next().map(|ext| ext.to_owned()))
+                    .unwrap_or("png".to_owned());
                 let dest = format!("static/media/{}.{}", GUID::rand().to_string(), ext);
 
-                if let SavedData::Bytes(ref bytes) = fields[&"file".to_string()][0].data {
-                    fs::write(&dest, bytes).expect("Couldn't save upload");
-                } else {
-                    if let SavedData::File(ref path, _) = fields[&"file".to_string()][0].data {
-                        fs::copy(path, &dest).expect("Couldn't copy temp upload");
-                    } else {
-                        println!("not file");
-                        return Redirect::to(uri!(new));
+                match fields[&"file".to_string()][0].data {
+                    SavedData::Bytes(ref bytes) => fs::write(&dest, bytes).expect("media::upload: Couldn't save upload"),
+                    SavedData::File(ref path, _) => {fs::copy(path, &dest).expect("media::upload: Couldn't copy upload");},
+                    _ => {
+                        println!("not a file");
+                        return Ok(Redirect::to(uri!(new)));
                     }
                 }
 
@@ -67,16 +64,16 @@ fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Redirect {
                     owner_id: user.id
                 });
                 println!("ok");
-                Redirect::to(uri!(details: id = media.id))
+                Ok(Redirect::to(uri!(details: id = media.id)))
             },
             SaveResult::Partial(_, _) | SaveResult::Error(_) => {
                 println!("partial err");
-                Redirect::to(uri!(new))
+                Ok(Redirect::to(uri!(new)))
             }
         }
     } else {
         println!("not form data");
-        Redirect::to(uri!(new))
+        Ok(Redirect::to(uri!(new)))
     }
 }
 
@@ -98,15 +95,15 @@ fn details(id: i32, user: User, conn: DbConn) -> Template {
 }
 
 #[post("/medias/<id>/delete")]
-fn delete(id: i32, _user: User, conn: DbConn) -> Redirect {
-    let media = Media::get(&*conn, id).expect("Media to delete not found");
+fn delete(id: i32, _user: User, conn: DbConn) -> Option<Redirect> {
+    let media = Media::get(&*conn, id)?;
     media.delete(&*conn);
-    Redirect::to(uri!(list))
+    Some(Redirect::to(uri!(list)))
 }
 
 #[post("/medias/<id>/avatar")]
-fn set_avatar(id: i32, user: User, conn: DbConn) -> Redirect {
-    let media = Media::get(&*conn, id).expect("Media to delete not found");
+fn set_avatar(id: i32, user: User, conn: DbConn) -> Option<Redirect> {
+    let media = Media::get(&*conn, id)?;
     user.set_avatar(&*conn, media.id);
-    Redirect::to(uri!(details: id = id))
+    Some(Redirect::to(uri!(details: id = id)))
 }

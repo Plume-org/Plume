@@ -17,7 +17,7 @@ pub trait FromActivity<T: Object, C>: Sized {
 
     fn try_from_activity(conn: &C, act: Create) -> bool {
         if let Ok(obj) = act.create_props.object_object() {
-            Self::from_activity(conn, obj, act.create_props.actor_link::<Id>().unwrap());
+            Self::from_activity(conn, obj, act.create_props.actor_link::<Id>().expect("FromActivity::try_from_activity: id not found error"));
             true
         } else {
             false

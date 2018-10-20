@@ -58,7 +58,8 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                     "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
                     "account": &user.clone().map(|u| u.to_json(&*conn)),
                     "date": &post.creation_date.timestamp(),
-                    "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![]))),
+                    "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r)
+                                                                       .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &vec![]))),
                     "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
                     "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
                     "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false)
@@ -73,13 +74,13 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, String> {
-    let blog = Blog::find_by_fqn(&*conn, blog).unwrap();
-    let post = Post::find_by_slug(&*conn, slug, blog.id).unwrap();
+fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, Option<String>> {
+    let blog = Blog::find_by_fqn(&*conn, blog).ok_or(None)?;
+    let post = Post::find_by_slug(&*conn, slug, blog.id).ok_or(None)?;
     if post.published {
         Ok(ActivityStream::new(post.into_activity(&*conn)))
     } else {
-        Err(String::from("Not published yet."))
+        Err(Some(String::from("Not published yet.")))
     }
 }
 
@@ -92,42 +93,42 @@ fn new_auth(blog: String) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-fn new(blog: String, user: User, conn: DbConn) -> Template {
-    let b = Blog::find_by_fqn(&*conn, blog.to_string()).unwrap();
+fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
+    let b = Blog::find_by_fqn(&*conn, blog.to_string())?;
 
     if !user.is_author_in(&*conn, b.clone()) {
-        Template::render("errors/403", json!({
+        Some(Template::render("errors/403", json!({// TODO actually return 403 error code
             "error_message": "You are not author in this blog."
-        }))
+        })))
     } else {
-        Template::render("posts/new", json!({
+        Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": false,
             "errors": null,
             "form": null,
             "is_draft": true,
-        }))
+        })))
     }
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
-    let b = Blog::find_by_fqn(&*conn, blog.to_string());
-    let post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug, blog.id)).expect("Post to edit not found");
+fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template> {
+    let b = Blog::find_by_fqn(&*conn, blog.to_string())?;
+    let post = Post::find_by_slug(&*conn, slug, b.id)?;
 
-    if !user.is_author_in(&*conn, b.clone().unwrap()) {
-        Template::render("errors/403", json!({
+    if !user.is_author_in(&*conn, b) {
+        Some(Template::render("errors/403", json!({// TODO actually return 403 error code
             "error_message": "You are not author in this blog."
-        }))
+        })))
     } else {
-        let source = if post.source.clone().len() > 0 {
-            post.source.clone()
+        let source = if post.source.len() > 0 {
+            post.source
         } else {
-            post.content.clone().get().clone() // fallback to HTML if the markdown was not stored
+            post.content.get().clone() // fallback to HTML if the markdown was not stored
         };
 
-        Template::render("posts/new", json!({
+        Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": true,
@@ -145,14 +146,15 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Template {
                 draft: true,
             },
             "is_draft": !post.published
-        }))
+        })))
     }
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<data>")]
-fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
-    let b = Blog::find_by_fqn(&*conn, blog.to_string());
-    let mut post = b.clone().and_then(|blog| Post::find_by_slug(&*conn, slug.clone(), blog.id)).expect("Post to update not found");
+fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>)
+    -> Result<Redirect, Option<Template>> {
+    let b = Blog::find_by_fqn(&*conn, blog.to_string()).ok_or(None)?;
+    let mut post = Post::find_by_slug(&*conn, slug.clone(), b.id).ok_or(None)?;
 
     let form = data.get();
     let new_slug = if !post.published {
@@ -167,7 +169,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
     };
 
     if new_slug != slug {
-        if let Some(_) = Post::find_by_slug(&*conn, new_slug.clone(), b.clone().unwrap().id) {
+        if let Some(_) = Post::find_by_slug(&*conn, new_slug.clone(), b.id) {
             errors.add("title", ValidationError {
                 code: Cow::from("existing_slug"),
                 message: Some(Cow::from("A post with the same title already exists.")),
@@ -177,7 +179,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
     }
 
     if errors.is_empty() {
-        if !user.is_author_in(&*conn, b.clone().unwrap()) {
+        if !user.is_author_in(&*conn, b) {
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog)))
         } else {
@@ -229,14 +231,14 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
         }
     } else {
-        Err(Template::render("posts/new", json!({
+        Err(Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": true,
             "errors": errors.inner(),
             "form": form,
             "is_draft": form.draft,
-        })))
+        }))))
     }
 }
 
@@ -263,8 +265,8 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
-    let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).unwrap();
+fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Option<Template>> {
+    let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).ok_or(None)?;
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
 
@@ -331,14 +333,14 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
     } else {
-        Err(Template::render("posts/new", json!({
+        Err(Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": false,
             "errors": errors.inner(),
             "form": form,
             "is_draft": form.draft
-        })))
+        }))))
     }
 }
 

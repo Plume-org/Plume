@@ -29,7 +29,10 @@ impl Tag {
 
     pub fn into_activity(&self, conn: &Connection) -> Hashtag {
         let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(format!("{}/tag/{}", Instance::get_local(conn).unwrap().public_domain, self.tag))).expect("Tag::into_activity: href error");
+        ht.set_href_string(ap_url(format!("{}/tag/{}",
+                                          Instance::get_local(conn).expect("Tag::into_activity: local instance not found error").public_domain,
+                                          self.tag)
+                                  )).expect("Tag::into_activity: href error");
         ht.set_name_string(self.tag.clone()).expect("Tag::into_activity: name error");
         ht
     }

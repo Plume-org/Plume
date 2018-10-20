@@ -36,9 +36,9 @@ impl Media {
     list_by!(medias, for_user, owner_id as i32);
 
     pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).unwrap();
+        let mut json = serde_json::to_value(self).expect("Media::to_json: serialization error");
         let url = self.url(conn);
-        let (preview, html, md) = match self.file_path.rsplitn(2, '.').next().unwrap() {
+        let (preview, html, md) = match self.file_path.rsplitn(2, '.').next().expect("Media::to_json: extension error") {
             "png" | "jpg" | "jpeg" | "gif" | "svg" => (
                 format!("<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">", url, self.alt_text, self.alt_text),
                 format!("<img src=\"{}\" alt=\"{}\" title=\"{}\">", url, self.alt_text, self.alt_text),
@@ -67,13 +67,13 @@ impl Media {
         if self.is_remote {
             self.remote_url.clone().unwrap_or(String::new())
         } else {
-            ap_url(format!("{}/static/{}", Instance::get_local(conn).unwrap().public_domain, self.file_path))
+            ap_url(format!("{}/static/{}", Instance::get_local(conn).expect("Media::url: local instance not found error").public_domain, self.file_path))
         }
     }
 
     pub fn delete(&self, conn: &Connection) {
-        fs::remove_file(self.file_path.as_str()).expect("Couldn't delete media from disk");
-        diesel::delete(self).execute(conn).expect("Couldn't remove media from DB");
+        fs::remove_file(self.file_path.as_str()).expect("Media::delete: file deletion error");
+        diesel::delete(self).execute(conn).expect("Media::delete: database entry deletion error");
     }
 
     pub fn save_remote(conn: &Connection, url: String) -> Media {
@@ -92,6 +92,6 @@ impl Media {
         diesel::update(self)
             .set(medias::owner_id.eq(id))
             .execute(conn)
-            .expect("Couldn't update Media.owner_id");
+            .expect("Media::set_owner: owner update error");
     }
 }

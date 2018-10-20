@@ -38,15 +38,15 @@ impl Follow {
     }
 
     pub fn into_activity(&self, conn: &Connection) -> FollowAct {
-        let user = User::get(conn, self.follower_id).unwrap();
-        let target = User::get(conn, self.following_id).unwrap();
+        let user = User::get(conn, self.follower_id).expect("Follow::into_activity: actor not found error");
+        let target = User::get(conn, self.following_id).expect("Follow::into_activity: target not found error");
 
         let mut act = FollowAct::default();
         act.follow_props.set_actor_link::<Id>(user.clone().into_id()).expect("Follow::into_activity: actor error");
-        act.follow_props.set_object_object(user.into_activity(&*conn)).unwrap();
-        act.object_props.set_id_string(self.ap_url.clone()).unwrap();
-        act.object_props.set_to_link(target.clone().into_id()).expect("New Follow error while setting 'to'");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("New Follow error while setting 'cc'");
+        act.follow_props.set_object_object(user.into_activity(&*conn)).expect("Follow::into_activity: object error");
+        act.object_props.set_id_string(self.ap_url.clone()).expect("Follow::into_activity: id error");
+        act.object_props.set_to_link(target.clone().into_id()).expect("Follow::into_activity: target error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Follow::into_activity: cc error");
         act
     }
 
@@ -70,11 +70,11 @@ impl Follow {
 
         let mut accept = Accept::default();
         let accept_id = format!("{}#accept", follow.object_props.id_string().unwrap_or(String::new()));
-        accept.object_props.set_id_string(accept_id).expect("accept_follow: id error");
-        accept.object_props.set_to_link(from.clone().into_id()).expect("accept_follow: to error");
-        accept.object_props.set_cc_link_vec::<Id>(vec![]).expect("accept_follow: cc error");
-        accept.accept_props.set_actor_link::<Id>(target.clone().into_id()).unwrap();
-        accept.accept_props.set_object_object(follow).unwrap();
+        accept.object_props.set_id_string(accept_id).expect("Follow::accept_follow: id error");
+        accept.object_props.set_to_link(from.clone().into_id()).expect("Follow::accept_follow: to error");
+        accept.object_props.set_cc_link_vec::<Id>(vec![]).expect("Follow::accept_follow: cc error");
+        accept.accept_props.set_actor_link::<Id>(target.clone().into_id()).expect("Follow::accept_follow: actor error");
+        accept.accept_props.set_object_object(follow).expect("Follow::accept_follow: object error");
         broadcast(&*target, accept, vec![from.clone()]);
         res
     }
@@ -83,12 +83,13 @@ impl Follow {
 impl FromActivity<FollowAct, Connection> for Follow {
     fn from_activity(conn: &Connection, follow: FollowAct, _actor: Id) -> Follow {
         let from_id = follow.follow_props.actor_link::<Id>().map(|l| l.into())
-            .unwrap_or_else(|_| follow.follow_props.actor_object::<Person>().expect("No actor object (nor ID) on Follow").object_props.id_string().expect("No ID on actor on Follow"));
-        let from = User::from_url(conn, from_id).unwrap();
-        match User::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()) {
+            .unwrap_or_else(|_| follow.follow_props.actor_object::<Person>().expect("Follow::from_activity: actor not found error").object_props.id_string().expect("Follow::from_activity: actor not found error"));
+        let from = User::from_url(conn, from_id).expect("Follow::from_activity: actor not found error");
+        match User::from_url(conn, follow.follow_props.object.as_str().expect("Follow::from_activity: target url parsing error").to_string()) {
             Some(user) => Follow::accept_follow(conn, &from, &user, follow, from.id, user.id),
             None => {
-                let blog = Blog::from_url(conn, follow.follow_props.object.as_str().unwrap().to_string()).unwrap();
+                let blog = Blog::from_url(conn, follow.follow_props.object.as_str().expect("Follow::from_activity: target url parsing error").to_string())
+                    .expect("Follow::from_activity: target not found error");
                 Follow::accept_follow(conn, &from, &blog, follow, from.id, blog.id)
             }
         }
@@ -107,15 +108,15 @@ impl Notify<Connection> for Follow {
 
 impl Deletable<Connection, Undo> for Follow {
     fn delete(&self, conn: &Connection) -> Undo {
-        diesel::delete(self).execute(conn).expect("Coudn't delete follow");
+        diesel::delete(self).execute(conn).expect("Follow::delete: follow deletion error");
 
         // delete associated notification if any
         if let Some(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
-            diesel::delete(&notif).execute(conn).expect("Couldn't delete follow notification");
+            diesel::delete(&notif).execute(conn).expect("Follow::delete: notification deletion error");
         }
 
         let mut undo = Undo::default();
-        undo.undo_props.set_actor_link(User::get(conn, self.follower_id).unwrap().into_id()).expect("Follow::delete: actor error");
+        undo.undo_props.set_actor_link(User::get(conn, self.follower_id).expect("Follow::delete: actor error").into_id()).expect("Follow::delete: actor error");
         undo.object_props.set_id_string(format!("{}/undo", self.ap_url)).expect("Follow::delete: id error");
         undo.undo_props.set_object_object(self.into_activity(conn)).expect("Follow::delete: object error");
         undo

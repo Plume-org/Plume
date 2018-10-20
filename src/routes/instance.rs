@@ -1,5 +1,5 @@
 use gettextrs::gettext;
-use rocket::{request::LenientForm, response::Redirect};
+use rocket::{request::LenientForm, response::{status, Redirect}};
 use rocket_contrib::{Json, Template};
 use serde_json;
 use validator::{Validate};
@@ -52,7 +52,7 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
 
 #[get("/local?<page>")]
 fn paginated_local(conn: DbConn, user: Option<User>, page: Page) -> Template {
-    let instance = Instance::get_local(&*conn).unwrap();
+    let instance = Instance::get_local(&*conn).expect("instance::paginated_local: local instance not found error");
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits());
     Template::render("instance/local", json!({
         "account": user.map(|u| u.to_json(&*conn)),
@@ -129,7 +129,7 @@ fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSetting
     let form = form.get();
     form.validate()
         .map(|_| {
-            let instance = Instance::get_local(&*conn).unwrap();
+            let instance = Instance::get_local(&*conn).expect("instance::update_settings: local instance not found error");
             instance.update(&*conn,
                 form.name.clone(),
                 form.open_registrations,
@@ -196,31 +196,31 @@ fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
 }
 
 #[post("/inbox", data = "<data>")]
-fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> String {
-    let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, status::BadRequest<&'static str>> {
+    let act: serde_json::Value = serde_json::from_str(&data[..]).expect("instance::shared_inbox: deserialization error");
 
     let activity = act.clone();
     let actor_id = activity["actor"].as_str()
-        .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("No actor ID for incoming activity, blocks by panicking"));
+        .or_else(|| activity["actor"]["id"].as_str()).ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor = User::from_url(&conn, actor_id.to_owned()).unwrap();
+    let actor = User::from_url(&conn, actor_id.to_owned()).expect("instance::shared_inbox: user error");
     if !verify_http_headers(&actor, headers.0.clone(), data).is_secure() &&
         !act.clone().verify(&actor) {
         println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
-        return "invalid signature".to_owned();
+        return Err(status::BadRequest(Some("Invalid signature")));
     }
 
     if Instance::is_blocked(&*conn, actor_id.to_string()) {
-        return String::new();
+        return Ok(String::new());
     }
-    let instance = Instance::get_local(&*conn).unwrap();
-    match instance.received(&*conn, act) {
+    let instance = Instance::get_local(&*conn).expect("instance::shared_inbox: local instance not found error");
+    Ok(match instance.received(&*conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
             println!("Shared inbox error: {}\n{}", e.as_fail(), e.backtrace());
             format!("Error: {}", e.as_fail())
         }
-    }
+    })
 }
 
 #[get("/nodeinfo")]
@@ -263,7 +263,7 @@ fn about(user: Option<User>, conn: DbConn) -> Template {
 
 #[get("/manifest.json")]
 fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
-    let instance = Instance::get_local(&*conn).unwrap();
+    let instance = Instance::get_local(&*conn).expect("instance::web_manifest: local instance not found error");
     Json(json!({
         "name": &instance.name,
         "description": &instance.short_description,

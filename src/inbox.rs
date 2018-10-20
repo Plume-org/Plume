@@ -16,7 +16,7 @@ use plume_models::{
 
 pub trait Inbox {
     fn received(&self, conn: &Connection, act: serde_json::Value) -> Result<(), Error> {
-        let actor_id = Id::new(act["actor"].as_str().unwrap_or_else(|| act["actor"]["id"].as_str().expect("No actor ID for incoming activity")));
+        let actor_id = Id::new(act["actor"].as_str().unwrap_or_else(|| act["actor"]["id"].as_str().expect("Inbox::received: actor_id missing error")));
         match act["type"].as_str() {
             Some(t) => {
                 match t {
@@ -47,7 +47,7 @@ pub trait Inbox {
                     },
                     "Undo" => {
                         let act: Undo = serde_json::from_value(act.clone())?;
-                        match act.undo_props.object["type"].as_str().unwrap() {
+                        match act.undo_props.object["type"].as_str().expect("Inbox::received: undo without original type error") {
                             "Like" => {
                                 likes::Like::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, conn);
                                 Ok(())

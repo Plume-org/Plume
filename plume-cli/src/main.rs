@@ -27,7 +27,7 @@ fn main() {
     match matches.subcommand() {
         ("instance", Some(args)) => instance::run(args, &conn.expect("Couldn't connect to the database.")),
         ("users", Some(args)) => users::run(args, &conn.expect("Couldn't connect to the database.")),
-        _ => app.print_help().unwrap()
+        _ => app.print_help().expect("Couldn't print help")
     };
 }
 

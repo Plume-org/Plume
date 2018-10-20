@@ -53,7 +53,7 @@ macro_rules! find_by {
                 $(.filter($table::$col.eq($col)))+
                 .limit(1)
                 .load::<Self>(conn)
-                .expect("Error loading $table by $col")
+                .expect("macro::find_by: Error loading $table by $col")
                 .into_iter().nth(0)
         }
     };
@@ -78,7 +78,7 @@ macro_rules! list_by {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .load::<Self>(conn)
-                .expect("Error loading $table by $col")
+                .expect("macro::list_by: Error loading $table by $col")
         }
     };
 }
@@ -101,7 +101,7 @@ macro_rules! get {
             $table::table.filter($table::id.eq(id))
                 .limit(1)
                 .load::<Self>(conn)
-                .expect("Error loading $table by id")
+                .expect("macro::get: Error loading $table by id")
                 .into_iter().nth(0)
         }
     };
@@ -127,7 +127,7 @@ macro_rules! insert {
             diesel::insert_into($table::table)
                 .values(new)
                 .execute(conn)
-                .expect("Error saving new $table");
+                .expect("macro::insert: Error saving new $table");
             Self::last(conn)
         }
     };
@@ -154,9 +154,9 @@ macro_rules! update {
             diesel::update(self)
                 .set(self)
                 .execute(conn)
-                .expect(concat!("Error updating ", stringify!($table)));
+                .expect(concat!("macro::update: Error updating ", stringify!($table)));
             Self::get(conn, self.id)
-                .expect(concat!(stringify!($table), " we just updated doesn't exist anymore???"))
+                .expect(concat!("macro::update: ", stringify!($table), " we just updated doesn't exist anymore???"))
         }
     };
 }
@@ -179,9 +179,9 @@ macro_rules! last {
             $table::table.order_by($table::id.desc())
                 .limit(1)
                 .load::<Self>(conn)
-                .expect(concat!("Error getting last ", stringify!($table)))
+                .expect(concat!("macro::last: Error getting last ", stringify!($table)))
                 .iter().next()
-                .expect(concat!("No last ", stringify!($table)))
+                .expect(concat!("macro::last: No last ", stringify!($table)))
                 .clone()
         }
     };

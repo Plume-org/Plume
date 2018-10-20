@@ -12,9 +12,12 @@ use serde_json;
 
 /// Returns (public key, private key)
 pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
-    let keypair = Rsa::generate(2048).unwrap();
-    let keypair = PKey::from_rsa(keypair).unwrap();
-    (keypair.public_key_to_pem().unwrap(), keypair.private_key_to_pem_pkcs8().unwrap())
+    let keypair = Rsa::generate(2048).expect("sign::gen_keypair: key generation error");
+    let keypair = PKey::from_rsa(keypair).expect("sign::gen_keypair: parsing error");
+    (
+        keypair.public_key_to_pem().expect("sign::gen_keypair: public key encoding error"),
+        keypair.private_key_to_pem_pkcs8().expect("sign::gen_keypair: private key encoding error")
+    )
 }
 
 pub trait Signer {
@@ -101,7 +104,7 @@ pub fn verify_http_headers<S: Signer+::std::fmt::Debug>(sender: &S, all_headers:
     if sig_header.is_none() {
         return SignatureValidity::Absent
     }
-    let sig_header = sig_header.unwrap();
+    let sig_header = sig_header.expect("sign::verify_http_headers: unreachable");
 
     let mut _key_id = None;
     let mut _algorithm = None;
@@ -120,8 +123,8 @@ pub fn verify_http_headers<S: Signer+::std::fmt::Debug>(sender: &S, all_headers:
     if signature.is_none() || headers.is_none() {//missing part of the header
         return SignatureValidity::Invalid
     }
-    let headers = headers.unwrap().split_whitespace().collect::<Vec<_>>();
-    let signature = signature.unwrap();
+    let headers = headers.expect("sign::verify_http_headers: unreachable").split_whitespace().collect::<Vec<_>>();
+    let signature = signature.expect("sign::verify_http_headers: unreachable");
     let h = headers.iter()
         .map(|header| (header,all_headers.get_one(header)))
         .map(|(header, value)| format!("{}: {}", header.to_lowercase(), value.unwrap_or("")))

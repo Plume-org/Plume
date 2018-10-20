@@ -6,7 +6,7 @@ use activitypub::{
 use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     request::LenientForm,
-    response::{Redirect, Flash, Content},
+    response::{Content, Flash, Redirect, status},
     http::{ContentType, Cookies}
 };
 use rocket_contrib::Template;
@@ -70,7 +70,7 @@ fn details(name: String, conn: DbConn, account: Option<User>, worker: Worker, fe
             worker.execute(Thunk::of(move || {
                 for user_id in user_clone.fetch_followers_ids() {
                     let follower = User::find_by_ap_url(&*fecth_followers_conn, user_id.clone())
-                        .unwrap_or_else(|| User::fetch_from_url(&*fecth_followers_conn, user_id).expect("Couldn't fetch follower"));
+                        .unwrap_or_else(|| User::fetch_from_url(&*fecth_followers_conn, user_id).expect("user::details: Couldn't fetch follower"));
                     follows::Follow::insert(&*fecth_followers_conn, follows::NewFollow {
                         follower_id: follower.id,
                         following_id: user_clone.id,
@@ -121,8 +121,8 @@ fn dashboard_auth() -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
-    let target = User::find_by_fqn(&*conn, name.clone()).unwrap();
+fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redirect> {
+    let target = User::find_by_fqn(&*conn, name.clone())?;
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.delete(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, delete_act, vec![target])));
@@ -137,7 +137,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Redirect {
         let act = f.into_activity(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
     }
-    Redirect::to(uri!(details: name = name))
+    Some(Redirect::to(uri!(details: name = name)))
 }
 
 #[post("/@/<name>/follow", rank = 2)]
@@ -176,9 +176,9 @@ fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
 
 
 #[get("/@/<name>", rank = 1)]
-fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<CustomPerson> {
-    let user = User::find_local(&*conn, name).unwrap();
-    ActivityStream::new(user.into_activity(&*conn))
+fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomPerson>> {
+    let user = User::find_local(&*conn, name)?;
+    Some(ActivityStream::new(user.into_activity(&*conn)))
 }
 
 #[get("/users/new")]
@@ -228,17 +228,16 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
 }
 
 #[post("/@/<name>/delete")]
-fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Redirect {
-    let account = User::find_by_fqn(&*conn, name.clone()).unwrap();
+fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
+    let account = User::find_by_fqn(&*conn, name.clone())?;
     if user.id == account.id {
         account.delete(&*conn);
 
-        let cookie = cookies.get_private(AUTH_COOKIE).unwrap();
-        cookies.remove_private(cookie);
+        cookies.get_private(AUTH_COOKIE).map(|cookie| cookies.remove_private(cookie));
 
-        Redirect::to(uri!(super::instance::index))
+        Some(Redirect::to(uri!(super::instance::index)))
     } else {
-        Redirect::to(uri!(edit: name = name))
+        Some(Redirect::to(uri!(edit: name = name)))
     }
 }
 
@@ -291,54 +290,54 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
 }
 
 #[get("/@/<name>/outbox")]
-fn outbox(name: String, conn: DbConn) -> ActivityStream<OrderedCollection> {
-    let user = User::find_local(&*conn, name).unwrap();
-    user.outbox(&*conn)
+fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+    let user = User::find_local(&*conn, name)?;
+    Some(user.outbox(&*conn))
 }
 
 #[post("/@/<name>/inbox", data = "<data>")]
-fn inbox(name: String, conn: DbConn, data: String, headers: Headers) -> String {
-    let user = User::find_local(&*conn, name).unwrap();
-    let act: serde_json::Value = serde_json::from_str(&data[..]).unwrap();
+fn inbox(name: String, conn: DbConn, data: String, headers: Headers) -> Result<String, Option<status::BadRequest<&'static str>>> {
+    let user = User::find_local(&*conn, name).ok_or(None)?;
+    let act: serde_json::Value = serde_json::from_str(&data[..]).expect("user::inbox: deserialization error");
 
     let activity = act.clone();
     let actor_id = activity["actor"].as_str()
-        .unwrap_or_else(|| activity["actor"]["id"].as_str().expect("User: No actor ID for incoming activity, blocks by panicking"));
+        .or_else(|| activity["actor"]["id"].as_str()).ok_or(Some(status::BadRequest(Some("Missing actor id for activity"))))?;
 
-    let actor = User::from_url(&conn, actor_id.to_owned()).unwrap();
+    let actor = User::from_url(&conn, actor_id.to_owned()).expect("user::inbox: user error");
     if !verify_http_headers(&actor, headers.0.clone(), data).is_secure() &&
         !act.clone().verify(&actor) {
         println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
-        return "invalid signature".to_owned();
+        return Err(Some(status::BadRequest(Some("Invalid signature"))));
     }
 
     if Instance::is_blocked(&*conn, actor_id.to_string()) {
-        return String::new();
+        return Ok(String::new());
     }
-    match user.received(&*conn, act) {
+    Ok(match user.received(&*conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
             println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());
             format!("Error: {}", e.as_fail())
         }
-    }
+    })
 }
 
 #[get("/@/<name>/followers")]
-fn ap_followers(name: String, conn: DbConn, _ap: ApRequest) -> ActivityStream<OrderedCollection> {
-    let user = User::find_local(&*conn, name).unwrap();
+fn ap_followers(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<OrderedCollection>> {
+    let user = User::find_local(&*conn, name)?;
     let followers = user.get_followers(&*conn).into_iter().map(|f| Id::new(f.ap_url)).collect::<Vec<Id>>();
 
     let mut coll = OrderedCollection::default();
-    coll.object_props.set_id_string(user.followers_endpoint).expect("Follower collection: id error");
-    coll.collection_props.set_total_items_u64(followers.len() as u64).expect("Follower collection: totalItems error");
-    coll.collection_props.set_items_link_vec(followers).expect("Follower collection: items error");
-    ActivityStream::new(coll)
+    coll.object_props.set_id_string(user.followers_endpoint).expect("user::ap_followers: id error");
+    coll.collection_props.set_total_items_u64(followers.len() as u64).expect("user::ap_followers: totalItems error");
+    coll.collection_props.set_items_link_vec(followers).expect("user::ap_followers items error");
+    Some(ActivityStream::new(coll))
 }
 
 #[get("/@/<name>/atom.xml")]
-fn atom_feed(name: String, conn: DbConn) -> Content<String> {
-    let author = User::find_by_fqn(&*conn, name.clone()).expect("Unable to find author");
+fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
+    let author = User::find_by_fqn(&*conn, name.clone())?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
         .id(Instance::get_local(&*conn).unwrap().compute_box("~", name, "atom.xml"))
@@ -347,6 +346,6 @@ fn atom_feed(name: String, conn: DbConn) -> Content<String> {
             .map(|p| super::post_to_atom(p, &*conn))
             .collect::<Vec<Entry>>())
         .build()
-        .expect("Error building Atom feed");
-    Content(ContentType::new("application", "atom+xml"), feed.to_string())
+        .expect("user::atom_feed: Error building Atom feed");
+    Some(Content(ContentType::new("application", "atom+xml"), feed.to_string()))
 }

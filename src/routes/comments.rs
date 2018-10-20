@@ -28,9 +28,10 @@ struct NewCommentForm {
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
-fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Template> {
-    let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).unwrap();
-    let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).unwrap();
+fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>)
+    -> Result<Redirect, Option<Template>> {
+    let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).ok_or(None)?;
+    let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).ok_or(None)?;
     let form = data.get();
     form.validate()
         .map(|_| {
@@ -63,7 +64,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             let comments = Comment::list_by_post(&*conn, post.id);
             let comms = comments.clone();
 
-            Template::render("posts/details", json!({
+            Some(Template::render("posts/details", json!({
                 "author": post.get_authors(&*conn)[0].to_json(&*conn),
                 "post": post,
                 "blog": blog,
@@ -74,10 +75,10 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "has_reshared": user.has_reshared(&*conn, &post),
                 "account": user.to_json(&*conn),
                 "date": &post.creation_date.timestamp(),
-                "previous": form.responding_to.map(|r| Comment::get(&*conn, r).expect("Error retrieving previous comment").to_json(&*conn, &vec![])),
+                "previous": form.responding_to.and_then(|r| Comment::get(&*conn, r)).map(|r| r.to_json(&*conn, &vec![])),
                 "user_fqn": user.get_fqn(&*conn),
                 "errors": errors
-            }))
+            })))
         })
 }
 

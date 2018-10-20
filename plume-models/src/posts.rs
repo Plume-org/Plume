@@ -122,7 +122,7 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load(conn)
-            .expect("Error loading posts by tag")
+            .expect("Post::list_by_tag: loading error")
     }
 
     pub fn count_for_tag(conn: &Connection, tag: String) -> i64 {
@@ -132,8 +132,8 @@ impl Post {
             .filter(posts::published.eq(true))
             .count()
             .load(conn)
-            .expect("Error counting posts by tag")
-            .iter().next().unwrap()
+            .expect("Post::count_for_tag: counting error")
+            .iter().next().expect("Post::count_for_tag: no result error")
     }
 
     pub fn count_local(conn: &Connection) -> usize {
@@ -144,12 +144,15 @@ impl Post {
         posts::table.filter(posts::id.eq_any(local_posts_id))
             .filter(posts::published.eq(true))
             .load::<Post>(conn)
-            .expect("Couldn't load local posts")
-            .len()
+            .expect("Post::count_local: loading error")
+            .len()// TODO count in database?
     }
 
     pub fn count(conn: &Connection) -> i64 {
-        posts::table.filter(posts::published.eq(true)).count().get_result(conn).expect("Couldn't count posts")
+        posts::table.filter(posts::published.eq(true))
+            .count()
+            .get_result(conn)
+            .expect("Post::count: counting error")
     }
 
     pub fn get_recents(conn: &Connection, limit: i64) -> Vec<Post> {
@@ -157,7 +160,7 @@ impl Post {
             .filter(posts::published.eq(true))
             .limit(limit)
             .load::<Post>(conn)
-            .expect("Error loading recent posts")
+            .expect("Post::get_recents: loading error")
     }
 
     pub fn get_recents_for_author(conn: &Connection, author: &User, limit: i64) -> Vec<Post> {
@@ -169,7 +172,7 @@ impl Post {
             .order(posts::creation_date.desc())
             .limit(limit)
             .load::<Post>(conn)
-            .expect("Error loading recent posts for author")
+            .expect("Post::get_recents_for_author: loading error")
     }
 
     pub fn get_recents_for_blog(conn: &Connection, blog: &Blog, limit: i64) -> Vec<Post> {
@@ -178,14 +181,14 @@ impl Post {
             .order(posts::creation_date.desc())
             .limit(limit)
             .load::<Post>(conn)
-            .expect("Error loading recent posts for blog")
+            .expect("Post::get_recents_for_blog: loading error")
     }
 
     pub fn get_for_blog(conn: &Connection, blog:&Blog) -> Vec<Post> {
         posts::table.filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .load::<Post>(conn)
-            .expect("Error loading posts for blog")
+            .expect("Post::get_for_blog:: loading error")
     }
 
     pub fn blog_page(conn: &Connection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
@@ -195,7 +198,7 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Error loading a page of posts for blog")
+            .expect("Post::blog_page: loading error")
     }
 
     /// Give a page of all the recent posts known to this instance (= federated timeline)
@@ -205,7 +208,7 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Error loading recent posts page")
+            .expect("Post::get_recents_page: loading error")
     }
 
     /// Give a page of posts from a specific instance
@@ -220,7 +223,7 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Error loading local posts page")
+            .expect("Post::get_instance_page: loading error")
     }
 
     /// Give a page of customized user feed, based on a list of followed users
@@ -236,7 +239,7 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Error loading user feed page")
+            .expect("Post::user_feed_page: loading error")
     }
 
     pub fn drafts_by_author(conn: &Connection, author: &User) -> Vec<Post> {
@@ -247,14 +250,14 @@ impl Post {
             .filter(posts::published.eq(false))
             .filter(posts::id.eq_any(posts))
             .load::<Post>(conn)
-            .expect("Error listing drafts")
+            .expect("Post::drafts_by_author: loading error")
     }
 
     pub fn get_authors(&self, conn: &Connection) -> Vec<User> {
         use schema::users;
         use schema::post_authors;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
-        users::table.filter(users::id.eq_any(author_list)).load::<User>(conn).unwrap()
+        users::table.filter(users::id.eq_any(author_list)).load::<User>(conn).expect("Post::get_authors: loading error")
     }
 
     pub fn get_blog(&self, conn: &Connection) -> Blog {
@@ -262,30 +265,30 @@ impl Post {
         blogs::table.filter(blogs::id.eq(self.blog_id))
             .limit(1)
             .load::<Blog>(conn)
-            .expect("Couldn't load blog associted to post")
-            .into_iter().nth(0).unwrap()
+            .expect("Post::get_blog: loading error")
+            .into_iter().nth(0).expect("Post::get_blog: no result error")
     }
 
     pub fn get_likes(&self, conn: &Connection) -> Vec<Like> {
         use schema::likes;
         likes::table.filter(likes::post_id.eq(self.id))
             .load::<Like>(conn)
-            .expect("Couldn't load likes associted to post")
+            .expect("Post::get_likes: loading error")
     }
 
     pub fn get_reshares(&self, conn: &Connection) -> Vec<Reshare> {
         use schema::reshares;
         reshares::table.filter(reshares::post_id.eq(self.id))
             .load::<Reshare>(conn)
-            .expect("Couldn't load reshares associted to post")
+            .expect("Post::get_reshares: loading error")
     }
 
     pub fn update_ap_url(&self, conn: &Connection) -> Post {
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(posts::ap_url.eq(self.compute_id(conn)))
-                .execute(conn).expect("Couldn't update AP URL");
-            Post::get(conn, self.id).unwrap()
+                .execute(conn).expect("Post::update_ap_url: update error");
+            Post::get(conn, self.id).expect("Post::update_ap_url: get error")
         } else {
             self.clone()
         }
@@ -359,7 +362,7 @@ impl Post {
 
     pub fn handle_update(conn: &Connection, updated: Article) {
         let id = updated.object_props.id_string().expect("Post::handle_update: id error");
-        let mut post = Post::find_by_ap_url(conn, id).unwrap();
+        let mut post = Post::find_by_ap_url(conn, id).expect("Post::handle_update: finding error");
 
         if let Ok(title) = updated.object_props.name_string() {
             post.slug = title.to_kebab_case();
@@ -423,7 +426,7 @@ impl FromActivity<Article, Connection> for Post {
 
             let title = article.object_props.name_string().expect("Post::from_activity: title error");
             let post = Post::insert(conn, NewPost {
-                blog_id: blog.expect("Received a new Article without a blog").id,
+                blog_id: blog.expect("Post::from_activity: blog not found error").id,
                 slug: title.to_kebab_case(),
                 title: title,
                 content: SafeString::new(&article.object_props.content_string().expect("Post::from_activity: content error")),

@@ -12,9 +12,9 @@ use plume_models::{
 };
 
 #[post("/~/<blog>/<slug>/like")]
-fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
-    let b = Blog::find_by_fqn(&*conn, blog.clone()).unwrap();
-    let post = Post::find_by_slug(&*conn, slug.clone(), b.id).unwrap();
+fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Option<Redirect> {
+    let b = Blog::find_by_fqn(&*conn, blog.clone())?;
+    let post = Post::find_by_slug(&*conn, slug.clone(), b.id)?;
 
     if !user.has_liked(&*conn, &post) {
         let like = likes::Like::insert(&*conn, likes::NewLike {
@@ -29,13 +29,13 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
         let act = like.into_activity(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
     } else {
-        let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id).unwrap();
+        let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id).expect("likes::create: like exist but not found error");
         let delete_act = like.delete(&*conn);
         let dest = User::one_by_instance(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, delete_act, dest)));
     }
 
-    Redirect::to(uri!(super::posts::details: blog = blog, slug = slug))
+    Some(Redirect::to(uri!(super::posts::details: blog = blog, slug = slug)))
 }
 
 #[post("/~/<blog>/<slug>/like", rank = 2)]

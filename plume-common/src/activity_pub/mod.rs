@@ -82,14 +82,13 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             "application/ld+json" => Outcome::Success(ApRequest),
             "text/html" => Outcome::Forward(true),
             _ => Outcome::Forward(false)
-        }).fold(Outcome::Forward(false), |out, ct| if out.is_success() || (out.is_forward() && out.clone().forwarded().unwrap()) {
+        }).fold(Outcome::Forward(false), |out, ct| if out.clone().forwarded().unwrap_or(out.is_success()) {
                 out
             } else {
                 ct
         }).map_forward(|_| ())).unwrap_or(Outcome::Forward(()))
     }
 }
-
 pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
     let boxes = to.into_iter()
         .filter(|u| !u.is_local())
@@ -97,7 +96,8 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(send
         .collect::<Vec<String>>()
         .unique();
 
-    let mut act = serde_json::to_value(act).unwrap();
+
+    let mut act = serde_json::to_value(act).expect("activity_pub::broadcast: serialization error");
     act["@context"] = context();
     let signed = act.sign(sender);
 
@@ -112,7 +112,14 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(send
             .body(signed.to_string())
             .send();
         match res {
-            Ok(mut r) => println!("Successfully sent activity to inbox ({})\n\n{:?}", inbox, r.text().unwrap()),
+            Ok(mut r) => {
+                println!("Successfully sent activity to inbox ({})", inbox);
+                if let Ok(response) = r.text() {
+                    println!("Response: \"{:?}\"\n\n", response)
+                } else {
+                    println!("Error while reading response")
+                }
+            },
             Err(e) => println!("Error while sending to inbox ({:?})", e)
         }
     }
