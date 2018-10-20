@@ -43,7 +43,9 @@
         <p>{{ "This article is under the {{ license }} license." | _(license=article.post.license) }}</p>
         <ul class="tags">
             {% for tag in article.tags %}
-                <li><a href="/tag/{{ tag.tag }}">{{ tag.tag }}</a></li>
+		{% if not tag.is_hashtag %}
+                    <li><a href="/tag/{{ tag.tag }}">{{ tag.tag }}</a></li>
+                {% endif %}
             {% endfor %}
         </ul>
         <div class="flex">
