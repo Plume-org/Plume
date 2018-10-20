@@ -5,7 +5,7 @@ use {ap_url, Connection};
 use instance::Instance;
 use schema::tags;
 
-#[derive(Serialize, Queryable, Clone)]
+#[derive(Clone, Identifiable, Serialize, Queryable)]
 pub struct Tag {
     pub id: i32,
     pub tag: String,
@@ -43,5 +43,9 @@ impl Tag {
             is_hastag: false,
             post_id: post
         })
+    }
+
+    pub fn delete(&self, conn: &Connection) {
+        diesel::delete(self).execute(conn).expect("Tag::delete: database error");
     }
 }

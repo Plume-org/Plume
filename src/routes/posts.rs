@@ -212,14 +212,21 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 }
             }
 
-            let old_tags = Tag::for_post(&*conn, post.id).into_iter().map(|t| t.tag).collect::<Vec<_>>();
-            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0 && !old_tags.contains(t));
-            for tag in tags {
-                Tag::insert(&*conn, NewTag {
-                    tag: tag,
-                    is_hastag: false,
-                    post_id: post.id
-                });
+            let old_tags = Tag::for_post(&*conn, post.id).into_iter().collect::<Vec<_>>();
+            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<Vec<_>>();
+            for tag in tags.iter() {
+                if old_tags.iter().all(|ot| &ot.tag!=tag) {
+                    Tag::insert(&*conn, NewTag {
+                        tag: tag.clone(),
+                        is_hastag: false,
+                        post_id: post.id
+                    });
+                }
+            }
+            for ot in old_tags {
+                if !tags.contains(&ot.tag) {
+                    ot.delete(&conn);
+                }
             }
 
             if post.published {
