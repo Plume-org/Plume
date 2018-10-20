@@ -57,16 +57,16 @@ impl Mention {
     pub fn build_activity(conn: &Connection, ment: String) -> link::Mention {
         let user = User::find_by_fqn(conn, ment.clone());
         let mut mention = link::Mention::default();
-        mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
-        mention.link_props.set_name_string(format!("@{}", ment)).expect("Error setting mention's name");
+        mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Mention::build_activity: href error");
+        mention.link_props.set_name_string(format!("@{}", ment)).expect("Mention::build_activity: name error:");
         mention
     }
 
     pub fn to_activity(&self, conn: &Connection) -> link::Mention {
         let user = self.get_mentioned(conn);
         let mut mention = link::Mention::default();
-        mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Error setting mention's href");
-        mention.link_props.set_name_string(user.map(|u| format!("@{}", u.get_fqn(conn))).unwrap_or(String::new())).expect("Error setting mention's name");
+        mention.link_props.set_href_string(user.clone().map(|u| u.ap_url).unwrap_or(String::new())).expect("Mention::to_activity: href error");
+        mention.link_props.set_name_string(user.map(|u| format!("@{}", u.get_fqn(conn))).unwrap_or(String::new())).expect("Mention::to_activity: mention error");
         mention
     }
 

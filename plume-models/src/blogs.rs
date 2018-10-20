@@ -65,7 +65,7 @@ impl Blog {
     find_by!(blogs, find_by_name, actor_id as String, instance_id as i32);
 
     pub fn get_instance(&self, conn: &Connection) -> Instance {
-        Instance::get(conn, self.instance_id).expect("Couldn't find instance")
+        Instance::get(conn, self.instance_id).expect("Blog::get_instance: instance not found error")
     }
 
     pub fn list_authors(&self, conn: &Connection) -> Vec<User> {
@@ -74,7 +74,7 @@ impl Blog {
         let authors_ids = blog_authors::table.filter(blog_authors::blog_id.eq(self.id)).select(blog_authors::author_id);
         users::table.filter(users::id.eq_any(authors_ids))
             .load::<User>(conn)
-            .expect("Couldn't load authors of a blog")
+            .expect("Blog::list_authors: author loading error")
     }
 
     pub fn find_for_author(conn: &Connection, author_id: i32) -> Vec<Blog> {
@@ -82,7 +82,7 @@ impl Blog {
         let author_ids = blog_authors::table.filter(blog_authors::author_id.eq(author_id)).select(blog_authors::blog_id);
         blogs::table.filter(blogs::id.eq_any(author_ids))
             .load::<Blog>(conn)
-            .expect("Couldn't load blogs ")
+            .expect("Blog::find_for_author: blog loading error")
     }
 
     pub fn find_local(conn: &Connection, name: String) -> Option<Blog> {
@@ -91,9 +91,9 @@ impl Blog {
 
     pub fn find_by_fqn(conn: &Connection, fqn: String) -> Option<Blog> {
         if fqn.contains("@") { // remote blog
-            match Instance::find_by_domain(conn, String::from(fqn.split("@").last().unwrap())) {
+            match Instance::find_by_domain(conn, String::from(fqn.split("@").last().expect("Blog::find_by_fqn: unreachable"))) {
                 Some(instance) => {
-                    match Blog::find_by_name(conn, String::from(fqn.split("@").nth(0).unwrap()), instance.id) {
+                    match Blog::find_by_name(conn, String::from(fqn.split("@").nth(0).expect("Blog::find_by_fqn: unreachable")), instance.id) {
                         Some(u) => Some(u),
                         None => Blog::fetch_from_webfinger(conn, fqn)
                     }
@@ -107,7 +107,7 @@ impl Blog {
 
     fn fetch_from_webfinger(conn: &Connection, acct: String) -> Option<Blog> {
         match resolve(acct.clone(), *USE_HTTPS) {
-            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href.expect("No href for AP WF link"))),
+            Ok(wf) => wf.links.into_iter().find(|l| l.mime_type == Some(String::from("application/activity+json"))).and_then(|l| Blog::fetch_from_url(conn, l.href.expect("Blog::fetch_from_webfinger: href not found error"))),
             Err(details) => {
                 println!("{:?}", details);
                 None
@@ -118,15 +118,15 @@ impl Blog {
     fn fetch_from_url(conn: &Connection, url: String) -> Option<Blog> {
         let req = Client::new()
             .get(&url[..])
-            .header(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).unwrap())
+            .header(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).expect("Blog::fetch_from_url: accept_header generation error"))
             .send();
         match req {
             Ok(mut res) => {
-                let text = &res.text().unwrap();
-                let ap_sign: ApSignature = serde_json::from_str(text).unwrap();
-                let mut json: CustomGroup = serde_json::from_str(text).unwrap();
+                let text = &res.text().expect("Blog::fetch_from_url: body reading error");
+                let ap_sign: ApSignature = serde_json::from_str(text).expect("Blog::fetch_from_url: body parsing error");
+                let mut json: CustomGroup = serde_json::from_str(text).expect("Blog::fetch_from_url: body parsing error");
                 json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-                Some(Blog::from_activity(conn, json, Url::parse(url.as_ref()).unwrap().host_str().unwrap().to_string()))
+                Some(Blog::from_activity(conn, json, Url::parse(url.as_ref()).expect("Blog::fetch_from_url: url parsing error").host_str().expect("Blog::fetch_from_url: host extraction error").to_string()))
             },
             Err(_) => None
         }
@@ -188,26 +188,26 @@ impl Blog {
         if self.outbox_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::outbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "outbox")))
-                .execute(conn).expect("Couldn't update outbox URL");
+                .execute(conn).expect("Blog::update_boxes: outbox update error");
         }
 
         if self.inbox_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::inbox_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "inbox")))
-                .execute(conn).expect("Couldn't update inbox URL");
+                .execute(conn).expect("Blog::update_boxes: inbox update error");
         }
 
         if self.ap_url.len() == 0 {
             diesel::update(self)
                 .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "")))
-                .execute(conn).expect("Couldn't update AP URL");
+                .execute(conn).expect("Blog::update_boxes: ap_url update error");
         }
     }
 
     pub fn outbox(&self, conn: &Connection) -> ActivityStream<OrderedCollection> {
         let mut coll = OrderedCollection::default();
-        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).unwrap();
-        coll.collection_props.set_total_items_u64(self.get_activities(conn).len() as u64).unwrap();
+        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)).expect("Blog::outbox: activity serialization error");
+        coll.collection_props.set_total_items_u64(self.get_activities(conn).len() as u64).expect("Blog::outbox: count serialization error");
         ActivityStream::new(coll)
     }
 
@@ -216,7 +216,9 @@ impl Blog {
     }
 
     pub fn get_keypair(&self) -> PKey<Private> {
-        PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().unwrap().as_ref()).unwrap()).unwrap()
+        PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.clone().expect("Blog::get_keypair: private key not found error").as_ref())
+                       .expect("Blog::get_keypair: pem parsing error"))
+            .expect("Blog::get_keypair: private key deserialization error")
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Webfinger {
@@ -248,9 +250,9 @@ impl Blog {
 
     pub fn from_url(conn: &Connection, url: String) -> Option<Blog> {
         Blog::find_by_ap_url(conn, url.clone()).or_else(|| {
-            // The requested user was not in the DB
+            // The requested blog was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(url.as_ref()).unwrap().host_str().unwrap() != BASE_URL.as_str() {
+            if Url::parse(url.as_ref()).expect("Blog::from_url: ap_url parsing error").host_str().expect("Blog::from_url: host extraction error") != BASE_URL.as_str() {
                 Blog::fetch_from_url(conn, url)
             } else {
                 None
@@ -267,7 +269,7 @@ impl Blog {
     }
 
     pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).unwrap();
+        let mut json = serde_json::to_value(self).expect("Blog::to_json: serialization error");
         json["fqn"] = json!(self.get_fqn(conn));
         json
     }
@@ -303,16 +305,17 @@ impl sign::Signer for Blog {
 
     fn sign(&self, to_sign: String) -> Vec<u8> {
         let key = self.get_keypair();
-        let mut signer = Signer::new(MessageDigest::sha256(), &key).unwrap();
-        signer.update(to_sign.as_bytes()).unwrap();
-        signer.sign_to_vec().unwrap()
+        let mut signer = Signer::new(MessageDigest::sha256(), &key).expect("Blog::sign: initialization error");
+        signer.update(to_sign.as_bytes()).expect("Blog::sign: content insertion error");
+        signer.sign_to_vec().expect("Blog::sign: finalization error")
     }
 
     fn verify(&self, data: String, signature: Vec<u8>) -> bool {
-       let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap()).unwrap();
-       let mut verifier = Verifier::new(MessageDigest::sha256(), &key).unwrap();
-        verifier.update(data.as_bytes()).unwrap();
-        verifier.verify(&signature).unwrap()
+       let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).expect("Blog::verify: pem parsing error"))
+           .expect("Blog::verify: deserialization error");
+       let mut verifier = Verifier::new(MessageDigest::sha256(), &key).expect("Blog::verify: initialization error");
+        verifier.update(data.as_bytes()).expect("Blog::verify: content insertion error");
+        verifier.verify(&signature).expect("Blog::verify: finalization error")
     }
 }
 
@@ -332,8 +335,8 @@ impl NewBlog {
             inbox_url: String::from(""),
             instance_id: instance_id,
             ap_url: String::from(""),
-            public_key: String::from_utf8(pub_key).unwrap(),
-            private_key: Some(String::from_utf8(priv_key).unwrap())
+            public_key: String::from_utf8(pub_key).expect("NewBlog::new_local: public key error"),
+            private_key: Some(String::from_utf8(priv_key).expect("NewBlog::new_local: private key error"))
         }
     }
 }

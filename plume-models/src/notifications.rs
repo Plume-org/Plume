@@ -45,7 +45,7 @@ impl Notification {
         notifications::table.filter(notifications::user_id.eq(user.id))
             .order_by(notifications::creation_date.desc())
             .load::<Notification>(conn)
-            .expect("Couldn't load user notifications")
+            .expect("Notification::find_for_user: notification loading error")
     }
 
     pub fn page_for_user(conn: &Connection, user: &User, (min, max): (i32, i32)) -> Vec<Notification> {
@@ -54,7 +54,7 @@ impl Notification {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Notification>(conn)
-            .expect("Couldn't load user notifications page")
+            .expect("Notification::page_for_user: notification loading error")
     }
 
     pub fn find<S: Into<String>>(conn: &Connection, kind: S, obj: i32) -> Option<Notification> {
@@ -90,9 +90,9 @@ impl Notification {
                     "user": mention.get_user(conn).map(|u| u.to_json(conn)),
                     "url": mention.get_post(conn).map(|p| p.to_json(conn)["url"].clone())
                         .unwrap_or_else(|| {
-                            let comment = mention.get_comment(conn).expect("No comment nor post for mention");
+                            let comment = mention.get_comment(conn).expect("Notification::to_json: comment not found error");
                             let post = comment.get_post(conn).to_json(conn);
-                            json!(format!("{}#comment-{}", post["url"].as_str().unwrap(), comment.id))
+                            json!(format!("{}#comment-{}", post["url"].as_str().expect("Notification::to_json: post url error"), comment.id))
                         })
                 })
             ),

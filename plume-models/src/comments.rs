@@ -53,11 +53,11 @@ impl Comment {
     find_by!(comments, find_by_ap_url, ap_url as String);
 
     pub fn get_author(&self, conn: &Connection) -> User {
-        User::get(conn, self.author_id).unwrap()
+        User::get(conn, self.author_id).expect("Comment::get_author: author error")
     }
 
     pub fn get_post(&self, conn: &Connection) -> Post {
-        Post::get(conn, self.post_id).unwrap()
+        Post::get(conn, self.post_id).expect("Comment::get_post: post error")
     }
 
     pub fn count_local(conn: &Connection) -> usize {
@@ -65,17 +65,17 @@ impl Comment {
         let local_authors = users::table.filter(users::instance_id.eq(Instance::local_id(conn))).select(users::id);
         comments::table.filter(comments::author_id.eq_any(local_authors))
             .load::<Comment>(conn)
-            .expect("Couldn't load local comments")
-            .len()
+            .expect("Comment::count_local: loading error")
+            .len()// TODO count in database? 
     }
 
     pub fn to_json(&self, conn: &Connection, others: &Vec<Comment>) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).unwrap();
+        let mut json = serde_json::to_value(self).expect("Comment::to_json: serialization error");
         json["author"] = self.get_author(conn).to_json(conn);
         let mentions = Mention::list_for_comment(conn, self.id).into_iter()
             .map(|m| m.get_mentioned(conn).map(|u| u.get_fqn(conn)).unwrap_or(String::new()))
             .collect::<Vec<String>>();
-        json["mentions"] = serde_json::to_value(mentions).unwrap();
+        json["mentions"] = serde_json::to_value(mentions).expect("Comment::to_json: mention error");
         json["responses"] = json!(others.into_iter()
             .filter(|c| c.in_response_to_id.map(|id| id == self.id).unwrap_or(false))
             .map(|c| c.to_json(conn, others))
@@ -88,8 +88,8 @@ impl Comment {
             diesel::update(self)
                 .set(comments::ap_url.eq(self.compute_id(conn)))
                 .execute(conn)
-                .expect("Failed to update comment AP URL");
-            Comment::get(conn, self.id).expect("Couldn't get the updated comment")
+                .expect("Comment::update_ap_url: update error");
+            Comment::get(conn, self.id).expect("Comment::update_ap_url: get error")
         } else {
             self.clone()
         }
@@ -102,53 +102,53 @@ impl Comment {
     pub fn into_activity(&self, conn: &Connection) -> Note {
         let (html, mentions) = utils::md_to_html(self.content.get().as_ref());
 
-        let author = User::get(conn, self.author_id).unwrap();
+        let author = User::get(conn, self.author_id).expect("Comment::into_activity: author error");
         let mut note = Note::default();
         let to = vec![Id::new(PUBLIC_VISIBILTY.to_string())];
 
-        note.object_props.set_id_string(self.ap_url.clone().unwrap_or(String::new())).expect("NewComment::create: note.id error");
-        note.object_props.set_summary_string(self.spoiler_text.clone()).expect("NewComment::create: note.summary error");
-        note.object_props.set_content_string(html).expect("NewComment::create: note.content error");
-        note.object_props.set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(|| Post::get(conn, self.post_id).unwrap().ap_url, |id| {
-            let comm = Comment::get(conn, id).unwrap();
+        note.object_props.set_id_string(self.ap_url.clone().unwrap_or(String::new())).expect("Comment::into_activity: id error");
+        note.object_props.set_summary_string(self.spoiler_text.clone()).expect("Comment::into_activity: summary error");
+        note.object_props.set_content_string(html).expect("Comment::into_activity: content error");
+        note.object_props.set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(|| Post::get(conn, self.post_id).expect("Comment::into_activity: post error").ap_url, |id| {
+            let comm = Comment::get(conn, id).expect("Comment::into_activity: comment error");
             comm.ap_url.clone().unwrap_or(comm.compute_id(conn))
-        }))).expect("NewComment::create: note.in_reply_to error");
-        note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("NewComment::create: note.published error");
-        note.object_props.set_attributed_to_link(author.clone().into_id()).expect("NewComment::create: note.attributed_to error");
-        note.object_props.set_to_link_vec(to.clone()).expect("NewComment::create: note.to error");
+        }))).expect("Comment::into_activity: in_reply_to error");
+        note.object_props.set_published_string(chrono::Utc::now().to_rfc3339()).expect("Comment::into_activity: published error");
+        note.object_props.set_attributed_to_link(author.clone().into_id()).expect("Comment::into_activity: attributed_to error");
+        note.object_props.set_to_link_vec(to.clone()).expect("Comment::into_activity: to error");
         note.object_props.set_tag_link_vec(mentions.into_iter().map(|m| Mention::build_activity(conn, m)).collect::<Vec<link::Mention>>())
-            .expect("NewComment::create: note.tag error");
+            .expect("Comment::into_activity: tag error");
         note
     }
 
     pub fn create_activity(&self, conn: &Connection) -> Create {
-        let author = User::get(conn, self.author_id).unwrap();
+        let author = User::get(conn, self.author_id).expect("Comment::create_activity: author error");
 
         let note = self.into_activity(conn);
         let mut act = Create::default();
-        act.create_props.set_actor_link(author.into_id()).expect("NewComment::create_acitivity: actor error");
-        act.create_props.set_object_object(note.clone()).expect("NewComment::create_acitivity: object error");
-        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().unwrap())).expect("NewComment::create_acitivity: id error");
-        act.object_props.set_to_link_vec(note.object_props.to_link_vec::<Id>().expect("WTF")).expect("NewComment::create_acitivity: to error");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("NewComment::create_acitivity: cc error");
+        act.create_props.set_actor_link(author.into_id()).expect("Comment::create_activity: actor error");
+        act.create_props.set_object_object(note.clone()).expect("Comment::create_activity: object error");
+        act.object_props.set_id_string(format!("{}/activity", self.ap_url.clone().expect("Comment::create_activity: ap_url error"))).expect("Comment::create_activity: id error");
+        act.object_props.set_to_link_vec(note.object_props.to_link_vec::<Id>().expect("Comment::create_activity: id error")).expect("Comment::create_activity: to error");
+        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Comment::create_activity: cc error");
         act
     }
 }
 
 impl FromActivity<Note, Connection> for Comment {
     fn from_activity(conn: &Connection, note: Note, actor: Id) -> Comment {
-        let previous_url = note.object_props.in_reply_to.clone().unwrap().as_str().unwrap().to_string();
+        let previous_url = note.object_props.in_reply_to.clone().expect("Comment::from_activity: not an answer error").as_str().expect("Comment::from_activity: in_reply_to parsing error").to_string();
         let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
 
         let comm = Comment::insert(conn, NewComment {
-            content: SafeString::new(&note.object_props.content_string().unwrap()),
+            content: SafeString::new(&note.object_props.content_string().expect("Comment::from_activity: content deserialization error")),
             spoiler_text: note.object_props.summary_string().unwrap_or(String::from("")),
             ap_url: note.object_props.id_string().ok(),
             in_response_to_id: previous_comment.clone().map(|c| c.id),
             post_id: previous_comment
                 .map(|c| c.post_id)
-                .unwrap_or_else(|| Post::find_by_ap_url(conn, previous_url).unwrap().id),
-            author_id: User::from_url(conn, actor.clone().into()).unwrap().id,
+                .unwrap_or_else(|| Post::find_by_ap_url(conn, previous_url).expect("Comment::from_activity: post error").id),
+            author_id: User::from_url(conn, actor.clone().into()).expect("Comment::from_activity: author error").id,
             sensitive: false // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
         });
 
@@ -157,8 +157,8 @@ impl FromActivity<Note, Connection> for Comment {
             for tag in tags.into_iter() {
                 serde_json::from_value::<link::Mention>(tag)
                     .map(|m| {
-                        let author = &Post::get(conn, comm.post_id).unwrap().get_authors(conn)[0];
-                        let not_author = m.link_props.href_string().expect("Comment mention: no href") != author.ap_url.clone();
+                        let author = &Post::get(conn, comm.post_id).expect("Comment::from_activity: error").get_authors(conn)[0];
+                        let not_author = m.link_props.href_string().expect("Comment::from_activity: no href error") != author.ap_url.clone();
                         Mention::from_activity(conn, m, comm.id, false, not_author)
                     }).ok();
             }

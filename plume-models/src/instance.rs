@@ -44,14 +44,14 @@ impl Instance {
         instances::table.filter(instances::local.eq(true))
             .limit(1)
             .load::<Instance>(conn)
-            .expect("Error loading local instance infos")
+            .expect("Instance::get_local: loading error")
             .into_iter().nth(0)
     }
 
     pub fn get_remotes(conn: &Connection) -> Vec<Instance> {
         instances::table.filter(instances::local.eq(false))
             .load::<Instance>(conn)
-            .expect("Error loading remote instances infos")
+            .expect("Instance::get_remotes: loading error")
     }
 
     pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Vec<Instance> {
@@ -59,11 +59,11 @@ impl Instance {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Instance>(conn)
-            .expect("Error loading a page of instances")
+            .expect("Instance::page: loading error")
     }
 
     pub fn local_id(conn: &Connection) -> i32 {
-        Instance::get_local(conn).unwrap().id
+        Instance::get_local(conn).expect("Instance::local_id: local instance not found error").id
     }
 
     insert!(instances, NewInstance);
@@ -74,14 +74,14 @@ impl Instance {
         diesel::update(self)
             .set(instances::blocked.eq(!self.blocked))
             .execute(conn)
-            .expect("Couldn't block/unblock instance");
+            .expect("Instance::toggle_block: update error");
     }
 
     /// id: AP object id
     pub fn is_blocked(conn: &Connection, id: String) -> bool {
         for block in instances::table.filter(instances::blocked.eq(true))
             .get_results::<Instance>(conn)
-            .expect("Error listing blocked instances") {
+            .expect("Instance::is_blocked: loading error") {
             if id.starts_with(format!("https://{}", block.public_domain).as_str()) {
                 return true;
             }
@@ -94,7 +94,7 @@ impl Instance {
         users::table.filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
             .load::<User>(conn)
-            .expect("Couldn't load admins")
+            .expect("Instance::has_admin: loading error")
             .len() > 0
     }
 
@@ -103,7 +103,7 @@ impl Instance {
             .filter(users::is_admin.eq(true))
             .limit(1)
             .get_result::<User>(conn)
-            .expect("Couldn't load admins")
+            .expect("Instance::main_admin: loading error")
     }
 
     pub fn compute_box(&self, prefix: &'static str, name: String, box_name: &'static str) -> String {
@@ -128,10 +128,10 @@ impl Instance {
                 instances::short_description_html.eq(sd),
                 instances::long_description_html.eq(ld)
             )).execute(conn)
-            .expect("Couldn't update instance");
+            .expect("Instance::update: update error");
     }
 
     pub fn count(conn: &Connection) -> i64 {
-        instances::table.count().get_result(conn).expect("Couldn't count instances")
+        instances::table.count().get_result(conn).expect("Instance::count: counting error")
     }
 }
