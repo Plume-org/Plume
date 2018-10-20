@@ -40,4 +40,11 @@
         </div>
         {{ macros::paginate(page=page, total=n_pages) }}
     </section>
+    {% if is_author %}
+    <h2>{{ "Danger zone" | _ }}</h2>
+    <p>{{ "Be very careful, any action taken here can't be cancelled." | _ }}
+    <form method="post" action="/~/{{ blog.fqn }}/delete">
+	    <input type="submit" class="inline-block button destructive" value="{{ "Delete this blog" | _ }}">
+    </form>
+    {% endif %}
 {% endblock content %}

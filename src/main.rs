@@ -66,6 +66,7 @@ fn main() {
             routes::blogs::new,
             routes::blogs::new_auth,
             routes::blogs::create,
+            routes::blogs::delete,
             routes::blogs::atom_feed,
 
             routes::comments::create,
