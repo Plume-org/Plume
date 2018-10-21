@@ -446,6 +446,9 @@ msgstr "Przeczytaj szczegółowe zasady"
 msgid "Delete this article"
 msgstr "Usuń ten artykuł"
 
+msgid "Delete this blog"
+msgstr ""
+
 msgid "And connected to"
 msgstr "Połączony z"
 

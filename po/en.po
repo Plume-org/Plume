@@ -434,6 +434,9 @@ msgstr ""
 msgid "Delete this article"
 msgstr ""
 
+msgid "Delete this blog"
+msgstr ""
+
 msgid "And connected to"
 msgstr ""
 
