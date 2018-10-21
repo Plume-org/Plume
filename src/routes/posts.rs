@@ -139,7 +139,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
                 content: source,
                 tags: Tag::for_post(&*conn, post.id)
                     .into_iter()
-                    .map(|t| t.tag)
+                    .filter_map(|t| if !t.is_hashtag {Some(t.tag)} else {None})
                     .collect::<Vec<String>>()
                     .join(", "),
                 license: post.license.clone(),
@@ -183,7 +183,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog)))
         } else {
-            let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
+            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
 
             let license = if form.license.len() > 0 {
                 form.license.to_string()
@@ -215,16 +215,32 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             let old_tags = Tag::for_post(&*conn, post.id).into_iter().collect::<Vec<_>>();
             let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<Vec<_>>();
             for tag in tags.iter() {
-                if old_tags.iter().all(|ot| &ot.tag!=tag) {
+                if old_tags.iter().all(|ot| &ot.tag!=tag || ot.is_hashtag) {
                     Tag::insert(&*conn, NewTag {
                         tag: tag.clone(),
-                        is_hastag: false,
+                        is_hashtag: false,
                         post_id: post.id
                     });
                 }
             }
+            for ot in old_tags.iter() {
+                if !tags.contains(&ot.tag) && !ot.is_hashtag {
+                    ot.delete(&conn);
+                }
+            }
+
+            let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<Vec<_>>();
+            for hashtag in hashtags.iter() {
+                if old_tags.iter().all(|ot| &ot.tag!=hashtag || !ot.is_hashtag) {
+                    Tag::insert(&*conn, NewTag {
+                        tag: hashtag.clone(),
+                        is_hashtag: true,
+                        post_id: post.id,
+                    });
+                }
+            }
             for ot in old_tags {
-                if !tags.contains(&ot.tag) {
+                if !hashtags.contains(&ot.tag) && ot.is_hashtag {
                     ot.delete(&conn);
                 }
             }
@@ -294,7 +310,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog_name)))
         } else {
-            let (content, mentions) = utils::md_to_html(form.content.to_string().as_ref());
+            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
 
             let post = Post::insert(&*conn, NewPost {
                 blog_id: blog.id,
@@ -322,7 +338,14 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             for tag in tags {
                 Tag::insert(&*conn, NewTag {
                     tag: tag,
-                    is_hastag: false,
+                    is_hashtag: false,
+                    post_id: post.id
+                });
+            }
+            for hashtag in hashtags {
+                Tag::insert(&*conn, NewTag {
+                    tag: hashtag.to_camel_case(),
+                    is_hashtag: true,
                     post_id: post.id
                 });
             }

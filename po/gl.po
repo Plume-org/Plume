@@ -614,3 +614,6 @@ msgstr "Usuarias"
 #, fuzzy
 msgid "This post isn't published yet."
 msgstr "Esto é un borrador, non publicar por agora."
+
+msgid "There is currently no article with that tag"
+msgstr ""

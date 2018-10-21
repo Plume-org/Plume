@@ -627,3 +627,6 @@ msgstr "Utilisateurs"
 
 msgid "This post isn't published yet."
 msgstr "Cet article n’est pas encore publié."
+
+msgid "There is currently no article with that tag"
+msgstr "Il n'y a pas encore d'article avec ce tag"

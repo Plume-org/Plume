@@ -9,7 +9,7 @@ use schema::tags;
 pub struct Tag {
     pub id: i32,
     pub tag: String,
-    pub is_hastag: bool,
+    pub is_hashtag: bool,
     pub post_id: i32
 }
 
@@ -17,7 +17,7 @@ pub struct Tag {
 #[table_name = "tags"]
 pub struct NewTag {
     pub tag: String,
-    pub is_hastag: bool,
+    pub is_hashtag: bool,
     pub post_id: i32
 }
 
@@ -40,7 +40,7 @@ impl Tag {
     pub fn from_activity(conn: &Connection, tag: Hashtag, post: i32) -> Tag {
         Tag::insert(conn, NewTag {
             tag: tag.name_string().expect("Tag::from_activity: name error"),
-            is_hastag: false,
+            is_hashtag: false,
             post_id: post
         })
     }

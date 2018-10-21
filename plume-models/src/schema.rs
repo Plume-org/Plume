@@ -144,7 +144,7 @@ table! {
     tags (id) {
         id -> Int4,
         tag -> Text,
-        is_hastag -> Bool,
+        is_hashtag -> Bool,
         post_id -> Int4,
     }
 }

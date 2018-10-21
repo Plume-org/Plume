@@ -117,8 +117,8 @@ impl Instance {
     }
 
     pub fn update(&self, conn: &Connection, name: String, open_registrations: bool, short_description: SafeString, long_description: SafeString) {
-        let (sd, _) = md_to_html(short_description.as_ref());
-        let (ld, _) = md_to_html(long_description.as_ref());
+        let (sd, _, _) = md_to_html(short_description.as_ref());
+        let (ld, _, _) = md_to_html(long_description.as_ref());
         diesel::update(self)
             .set((
                 instances::name.eq(name),

@@ -100,7 +100,7 @@ impl Comment {
     }
 
     pub fn into_activity(&self, conn: &Connection) -> Note {
-        let (html, mentions) = utils::md_to_html(self.content.get().as_ref());
+        let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref());
 
         let author = User::get(conn, self.author_id).expect("Comment::into_activity: author error");
         let mut note = Note::default();
