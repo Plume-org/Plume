@@ -156,6 +156,8 @@ fn main() {
             routes::errors::csrf_violation
         ])
         .mount("/api/v1", routes![
+            api::apps::create,
+
             api::posts::get,
             api::posts::list,
         ])
@@ -176,6 +178,7 @@ fn main() {
                     ("/@/<name>/inbox".to_owned(), "/@/<name>/inbox".to_owned(), rocket::http::Method::Post),
                     ("/login".to_owned(), "/login".to_owned(), rocket::http::Method::Post),
                     ("/users/new".to_owned(), "/users/new".to_owned(), rocket::http::Method::Post),
+                    ("/api/v1/<endpoint>".to_owned(), "/api/v1/<endpoint>".to_owned(), rocket::http::Method::Post)
                 ])
                 .finalize().expect("main: csrf fairing creation error"))
         .launch();
