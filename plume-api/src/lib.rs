@@ -15,4 +15,5 @@ macro_rules! api {
     };
 }
 
+pub mod apps;
 pub mod posts;
