@@ -17,13 +17,14 @@ use webfinger::*;
 use {BASE_URL, USE_HTTPS, Connection};
 use plume_common::activity_pub::{
     ap_accept_header, ApSignature, ActivityStream, Id, IntoId, PublicKey,
-    inbox::WithInbox,
+    inbox::{Deletable, WithInbox},
     sign
 };
 use safe_string::SafeString;
 use instance::*;
-use users::User;
+use posts::Post;
 use schema::blogs;
+use users::User;
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -272,6 +273,13 @@ impl Blog {
         let mut json = serde_json::to_value(self).expect("Blog::to_json: serialization error");
         json["fqn"] = json!(self.get_fqn(conn));
         json
+    }
+
+    pub fn delete(&self, conn: &Connection) {
+        for post in Post::get_for_blog(conn, &self) {
+           post.delete(conn);
+        }
+        diesel::delete(self).execute(conn).expect("Blog::delete: blog deletion error");
     }
 }
 

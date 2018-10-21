@@ -442,6 +442,9 @@ msgstr "Les reglene"
 msgid "Delete this article"
 msgstr "Siste artikler"
 
+msgid "Delete this blog"
+msgstr ""
+
 msgid "And connected to"
 msgstr ""
 

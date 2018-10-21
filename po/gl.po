@@ -433,6 +433,9 @@ msgstr "Lea o detalle das normas"
 msgid "Delete this article"
 msgstr "Borrar este artigo"
 
+msgid "Delete this blog"
+msgstr "Borrar este blog"
+
 msgid "And connected to"
 msgstr "E conectada a"
 

@@ -129,6 +129,19 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
     }
 }
 
+#[post("/~/<name>/delete")]
+fn delete(conn: DbConn, name: String, user: Option<User>) -> Result<Redirect, Option<Template>>{
+    let blog = Blog::find_local(&*conn, name).ok_or(None)?;
+    if user.map(|u| u.is_author_in(&*conn, blog.clone())).unwrap_or(false) {
+        blog.delete(&conn);
+        Ok(Redirect::to(uri!(super::instance::index)))
+    } else {
+        Err(Some(Template::render("errors/403", json!({// TODO actually return 403 error code
+            "error_message": "You are not allowed to delete this blog."
+        }))))
+    }
+}
+
 #[get("/~/<name>/outbox")]
 fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
     let blog = Blog::find_local(&*conn, name)?;
