@@ -214,6 +214,7 @@ pub fn ap_url(url: String) -> String {
 }
 
 pub mod admin;
+pub mod apps;
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;

@@ -1,4 +1,16 @@
 table! {
+    apps (id) {
+        id -> Int4,
+        name -> Text,
+        client_id -> Text,
+        client_secret -> Text,
+        redirect_uri -> Nullable<Text>,
+        website -> Nullable<Text>,
+        creation_date -> Timestamp,
+    }
+}
+
+table! {
     blog_authors (id) {
         id -> Int4,
         blog_id -> Int4,
@@ -192,6 +204,7 @@ joinable!(tags -> posts (post_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
+    apps,
     blog_authors,
     blogs,
     comments,
