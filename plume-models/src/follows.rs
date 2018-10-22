@@ -122,9 +122,13 @@ impl Deletable<Connection, Undo> for Follow {
         undo
     }
 
-    fn delete_id(id: String, conn: &Connection) {
+    fn delete_id(id: String, actor_id: String, conn: &Connection) {
         if let Some(follow) = Follow::find_by_ap_url(conn, id) {
-            follow.delete(conn);
+            if let Some(user) = User::find_by_ap_url(conn, actor_id) {
+                if user.id == follow.follower_id {
+                    follow.delete(conn);
+                }
+            }
         }
     }
 }

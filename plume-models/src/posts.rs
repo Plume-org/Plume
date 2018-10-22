@@ -479,8 +479,15 @@ impl Deletable<Connection, Delete> for Post {
         act
     }
 
-    fn delete_id(id: String, conn: &Connection) {
-        Post::find_by_ap_url(conn, id).map(|p| p.delete(conn));
+    fn delete_id(id: String, actor_id: String, conn: &Connection) {
+        let actor = User::find_by_ap_url(conn, actor_id);
+        let post = Post::find_by_ap_url(conn, id);
+        let can_delete = actor.and_then(|act|
+            post.clone().map(|p| p.get_authors(conn).into_iter().any(|a| act.id == a.id))
+        ).unwrap_or(false);
+        if can_delete {
+            post.map(|p| p.delete(conn));
+        }
     }
 }
 

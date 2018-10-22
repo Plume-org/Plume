@@ -34,7 +34,7 @@ pub trait Inbox {
                     },
                     "Delete" => {
                         let act: Delete = serde_json::from_value(act.clone())?;
-                        Post::delete_id(act.delete_props.object_object::<Tombstone>()?.object_props.id_string()?, conn);
+                        Post::delete_id(act.delete_props.object_object::<Tombstone>()?.object_props.id_string()?, actor_id.into(), conn);
                         Ok(())
                     },
                     "Follow" => {
@@ -49,15 +49,15 @@ pub trait Inbox {
                         let act: Undo = serde_json::from_value(act.clone())?;
                         match act.undo_props.object["type"].as_str().expect("Inbox::received: undo without original type error") {
                             "Like" => {
-                                likes::Like::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, conn);
+                                likes::Like::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, actor_id.into(), conn);
                                 Ok(())
                             },
                             "Announce" => {
-                                Reshare::delete_id(act.undo_props.object_object::<Announce>()?.object_props.id_string()?, conn);
+                                Reshare::delete_id(act.undo_props.object_object::<Announce>()?.object_props.id_string()?, actor_id.into(), conn);
                                 Ok(())
                             },
                             "Follow" => {
-                                Follow::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, conn);
+                                Follow::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, actor_id.into(), conn);
                                 Ok(())
                             }
                             _ => Err(InboxError::CantUndo)?

@@ -107,9 +107,13 @@ impl Deletable<Connection, activity::Undo> for Like {
         act
     }
 
-    fn delete_id(id: String, conn: &Connection) {
+    fn delete_id(id: String, actor_id: String, conn: &Connection) {
         if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
-            like.delete(conn);
+            if let Some(user) = User::find_by_ap_url(conn, actor_id) {
+                if user.id == like.user_id {
+                    like.delete(conn);
+                }
+            }
         }
     }
 }

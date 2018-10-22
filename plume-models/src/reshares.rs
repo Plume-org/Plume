@@ -120,9 +120,13 @@ impl Deletable<Connection, Undo> for Reshare {
         act
     }
 
-    fn delete_id(id: String, conn: &Connection) {
+    fn delete_id(id: String, actor_id: String, conn: &Connection) {
         if let Some(reshare) = Reshare::find_by_ap_url(conn, id) {
-            reshare.delete(conn);
+            if let Some(actor) = User::find_by_ap_url(conn, actor_id) {
+                if actor.id == reshare.user_id {
+                    reshare.delete(conn);
+                }
+            }
         }
     }
 }
