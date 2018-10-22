@@ -3,7 +3,7 @@
 ## Getting an API token
 
 To get access to the API, you should register your app and obtain a
-token. To do so, use the `apps` API (accessible without a token) to create
+token. To do so, use the `/api/v1/apps` API (accessible without a token) to create
 a new app. Store the result somewhere for future use.
 
 Then send a request to `/api/v1/oauth2`, with the following GET parameters:
