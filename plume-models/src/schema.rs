@@ -1,4 +1,15 @@
 table! {
+    api_tokens (id) {
+        id -> Int4,
+        creation_date -> Timestamp,
+        value -> Text,
+        scopes -> Text,
+        app_id -> Int4,
+        user_id -> Int4,
+    }
+}
+
+table! {
     apps (id) {
         id -> Int4,
         name -> Text,
@@ -184,6 +195,8 @@ table! {
     }
 }
 
+joinable!(api_tokens -> apps (app_id));
+joinable!(api_tokens -> users (user_id));
 joinable!(blog_authors -> blogs (blog_id));
 joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
@@ -204,6 +217,7 @@ joinable!(tags -> posts (post_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
+    api_tokens,
     apps,
     blog_authors,
     blogs,

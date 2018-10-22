@@ -156,6 +156,8 @@ fn main() {
             routes::errors::csrf_violation
         ])
         .mount("/api/v1", routes![
+            api::oauth,
+
             api::apps::create,
 
             api::posts::get,
