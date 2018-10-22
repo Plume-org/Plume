@@ -7,6 +7,7 @@ Here are the variables that Plume uses:
 
 - `BASE_URL`: the domain name, or IP and port on which Plume is listening. It is used in all federation-related code.
 - `DATABASE_URL`: the URL of the PostgreSQL database, used by Plume (`postgres://plume:plume@localhost/plume` by default with PostgreSQL, `plume.db` with SQlite).
+- `MIGRATION_DIRECTORY`: The folder that stores the migration files for the database, migrations/postgres for PostgreSQL database or migrations/sqlite for SQlite database.
 - `USE_HTTPS`: if it is `0`, federation and medias will be using HTTP by default (`1` by default).
 - `ROCKET_ADDRESS`: the adress on which Plume should listen (`0.0.0.0` by default).
 - `ROCKET_PORT`: the port on which Plume should listen ([`7878` by default](https://twitter.com/ag_dubs/status/852559264510070784))
