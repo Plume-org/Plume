@@ -146,7 +146,7 @@ DATABASE_URL=postgres://USER:PASSWORD@IP:PORT/DATABASE_NAME
 
 # For PostgreSQL: migrations/postgres
 # For SQlite: migrations/sqlite
-MIGRATION_DIR=migrations/postgres
+MIGRATION_DIRECTORY=migrations/postgres
 
 # The domain on which your instance will be available
 BASE_URL=plu.me
