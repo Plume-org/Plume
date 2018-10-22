@@ -10,6 +10,10 @@ servers:
     description: Demo instance
 
 paths:
+  /apps:
+    post:
+      description:
+        Registers an application.
   /posts/{id}:
     get:
       description:
@@ -27,6 +31,21 @@ paths:
         List posts.
 
 definitions:
+  App:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        example: "My app"
+      website:
+        type: "string"
+        example: "https://my.app"
+      client_id:
+        type: "string"
+        example: "My app"
+      client_secret:
+        type: "string"
+        example: "My app"
   Post:
     type: "object"
     properties:
