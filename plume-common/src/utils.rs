@@ -1,11 +1,19 @@
 use gettextrs::gettext;
 use heck::CamelCase;
+use openssl::rand::rand_bytes;
 use pulldown_cmark::{Event, Parser, Options, Tag, html};
 use rocket::{
     http::uri::Uri,
     response::{Redirect, Flash}
 };
 use std::collections::HashSet;
+
+/// Generates an hexadecimal representation of 32 bytes of random data
+pub fn random_hex() -> String {
+	let mut bytes = [0; 32];
+    rand_bytes(&mut bytes).expect("Error while generating client id");
+    bytes.into_iter().fold(String::new(), |res, byte| format!("{}{:x}", res, byte))
+}
 
 /// Remove non alphanumeric characters and CamelCase a string
 pub fn make_actor_id(name: String) -> String {

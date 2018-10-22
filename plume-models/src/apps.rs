@@ -1,9 +1,9 @@
 use canapi::{Error, Provider};
 use chrono::NaiveDateTime;
 use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods};
-use openssl::rand::rand_bytes;
 
 use plume_api::apps::AppEndpoint;
+use plume_common::utils::random_hex;
 use Connection;
 use schema::apps;
 
@@ -14,7 +14,7 @@ pub struct App {
     pub client_id: String,
     pub client_secret: String,
     pub redirect_uri: Option<String>,
-    pub website: Option<String>,    
+    pub website: Option<String>,
     pub creation_date: NaiveDateTime,
 }
 
@@ -25,7 +25,7 @@ pub struct NewApp {
     pub client_id: String,
     pub client_secret: String,
     pub redirect_uri: Option<String>,
-    pub website: Option<String>,    
+    pub website: Option<String>,
 }
 
 impl Provider<Connection> for App {
@@ -40,13 +40,9 @@ impl Provider<Connection> for App {
     }
 
     fn create(conn: &Connection, data: AppEndpoint) -> Result<AppEndpoint, Error> {
-        let mut id = [0; 32];
-        rand_bytes(&mut id).expect("Error while generating client id");
-        let client_id = id.into_iter().fold(String::new(), |res, byte| format!("{}{:x}", res, byte)); 
-        
-        let mut secret = [0; 32];
-        rand_bytes(&mut secret).expect("Error while generating client secret");
-        let client_secret = secret.into_iter().fold(String::new(), |res, byte| format!("{}{:x}", res, byte)); 
+        let client_id = random_hex();
+
+        let client_secret = random_hex();
         let app = App::insert(conn, NewApp {
             name: data.name.expect("App::create: name is required"),
             client_id: client_id,
@@ -68,7 +64,7 @@ impl Provider<Connection> for App {
     fn update(conn: &Connection, id: i32, new_data: AppEndpoint) -> Result<AppEndpoint, Error> {
         unimplemented!()
     }
-    
+
     fn delete(conn: &Connection, id: i32) {
         unimplemented!()
     }
@@ -77,4 +73,5 @@ impl Provider<Connection> for App {
 impl App {
     get!(apps);
     insert!(apps, NewApp);
-} 
+    find_by!(apps, find_by_client_id, client_id as String);
+}
