@@ -51,4 +51,5 @@ fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
 }
 
 pub mod apps;
+pub mod authorization;
 pub mod posts;

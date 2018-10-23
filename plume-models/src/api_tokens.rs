@@ -44,7 +44,7 @@ impl ApiToken {
     insert!(api_tokens, NewApiToken);
     find_by!(api_tokens, find_by_value, value as String);
 
-    fn can(&self, what: &'static str, scope: &'static str) -> bool {
+    pub fn can(&self, what: &'static str, scope: &'static str) -> bool {
         let full_scope = what.to_owned() + ":" + scope;
         for s in self.scopes.split('+') {
             if s == what || s == full_scope {
