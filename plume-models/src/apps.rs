@@ -44,7 +44,7 @@ impl Provider<Connection> for App {
 
         let client_secret = random_hex();
         let app = App::insert(conn, NewApp {
-            name: data.name.expect("App::create: name is required"),
+            name: data.name,
             client_id: client_id,
             client_secret: client_secret,
             redirect_uri: data.redirect_uri,
@@ -53,7 +53,7 @@ impl Provider<Connection> for App {
 
         Ok(AppEndpoint {
             id: Some(app.id),
-            name: Some(app.name),
+            name: app.name,
             client_id: Some(app.client_id),
             client_secret: Some(app.client_secret),
             redirect_uri: app.redirect_uri,
