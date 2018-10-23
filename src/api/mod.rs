@@ -35,12 +35,16 @@ fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
                 }))
             } else {
                 Json(json!({
-                    "error": "Wrong password"
+                    "error": "Invalid credentials"
                 }))
             }
         } else {
+            // Making fake password verification to avoid different
+            // response times that would make it possible to know
+            // if a username is registered or not.
+            User::get(&*conn, 1).unwrap().auth(query.password);
             Json(json!({
-                "error": "Unknown user"
+                "error": "Invalid credentials"
             }))
         }
     } else {
