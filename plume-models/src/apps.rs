@@ -31,11 +31,11 @@ pub struct NewApp {
 impl Provider<Connection> for App {
     type Data = AppEndpoint;
 
-    fn get(conn: &Connection, id: i32) -> Result<AppEndpoint, Error> {
+    fn get(_conn: &Connection, _id: i32) -> Result<AppEndpoint, Error> {
         unimplemented!()
     }
 
-    fn list(conn: &Connection, query: AppEndpoint) -> Vec<AppEndpoint> {
+    fn list(_conn: &Connection, _query: AppEndpoint) -> Vec<AppEndpoint> {
         unimplemented!()
     }
 
@@ -61,11 +61,11 @@ impl Provider<Connection> for App {
         })
     }
 
-    fn update(conn: &Connection, id: i32, new_data: AppEndpoint) -> Result<AppEndpoint, Error> {
+    fn update(_conn: &Connection, _id: i32, _new_data: AppEndpoint) -> Result<AppEndpoint, Error> {
         unimplemented!()
     }
 
-    fn delete(conn: &Connection, id: i32) {
+    fn delete(_conn: &Connection, _id: i32) {
         unimplemented!()
     }
 }
