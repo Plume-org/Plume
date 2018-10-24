@@ -3,6 +3,7 @@ use rocket::{
     http::Status,
     request::{self, FromRequest, Request}
 };
+use std::marker::PhantomData;
 use plume_models::{self, api_tokens::ApiToken};
 
 // Actions
@@ -32,11 +33,7 @@ impl Scope for plume_models::posts::Post {
     }
 }
 
-// We have to use A and S in the struct definition
-// otherwise rustc complains they are useless
-//
-// A nicer solution is probably possible.
-pub struct Authorization<A, S> (Option<A>, Option<S>);
+pub struct Authorization<A, S> (PhantomData<(A, S)>);
 
 impl<'a, 'r, A, S> FromRequest<'a, 'r> for Authorization<A, S>
 where A: Action,
@@ -48,7 +45,7 @@ where A: Action,
         request.guard::<ApiToken>()
             .map_failure(|_| (Status::Unauthorized, ()))
             .and_then(|token| if token.can(A::to_str(), S::to_str()) {
-                Outcome::Success(Authorization(None, None))
+                Outcome::Success(Authorization(PhantomData))
             } else {
                 Outcome::Failure((Status::Unauthorized, ()))
             })
