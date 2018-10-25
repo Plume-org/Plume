@@ -57,7 +57,7 @@ Plume exposes instance metadata with NodeInfo on the `/nodeinfo` URL.
   "version": "2.0",
   "software": {
     "name": "Plume",
-    "version": env!("CARGO_PKG_VERSION")
+    "version": "0.2.0"
   },
   "protocols": ["activitypub"],
   "services": {
@@ -67,10 +67,10 @@ Plume exposes instance metadata with NodeInfo on the `/nodeinfo` URL.
   "openRegistrations": true,
   "usage": {
     "users": {
-      "total": User::count_local(&*conn)
+      "total": 42
     },
-    "localPosts": Post::count_local(&*conn),
-    "localComments": Comment::count_local(&*conn)
+    "localPosts": 7878,
+    "localComments": 1312
   },
   "metadata": {}
 }
