@@ -28,7 +28,7 @@
     {% endif %}
 
     <label for="content">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
-    <textarea id="content" name="content" rows="20">{{ form.content | default(value="") }}</textarea>
+    <textarea id="plume-editor" name="content" rows="20">{{ form.content | default(value="") }}</textarea>
 
     {{ macros::input(name="tags", label="Tags, separated by commas", errors=errors, form=form, optional=true) }}
 
