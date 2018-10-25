@@ -7,3 +7,4 @@
 - [Making Plume available in your language](INTERNATIONALIZATION.md)
 - [REST API reference](API.md)
 - [`plm` CLI reference](CLI.md)
+- [How Plume Federates](FEDERATION.md)
