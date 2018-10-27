@@ -475,6 +475,9 @@ impl Deletable<Connection, Delete> for Post {
         act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Post::delete: id error");
         act.object_props.set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)]).expect("Post::delete: to error");
 
+        for m in Mention::list_for_post(&conn, self.id) {
+            m.delete(conn);
+        }
         diesel::delete(self).execute(conn).expect("Post::delete: DB error");
         act
     }
