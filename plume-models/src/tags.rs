@@ -37,10 +37,10 @@ impl Tag {
         ht
     }
 
-    pub fn from_activity(conn: &Connection, tag: Hashtag, post: i32) -> Tag {
+    pub fn from_activity(conn: &Connection, tag: Hashtag, post: i32, is_hashtag: bool) -> Tag {
         Tag::insert(conn, NewTag {
             tag: tag.name_string().expect("Tag::from_activity: name error"),
-            is_hashtag: false,
+            is_hashtag,
             post_id: post
         })
     }
