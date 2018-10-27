@@ -67,7 +67,7 @@ impl Media {
         if self.is_remote {
             self.remote_url.clone().unwrap_or(String::new())
         } else {
-            ap_url(format!("{}/static/{}", Instance::get_local(conn).expect("Media::url: local instance not found error").public_domain, self.file_path))
+            ap_url(format!("{}/{}", Instance::get_local(conn).expect("Media::url: local instance not found error").public_domain, self.file_path))
         }
     }
 
