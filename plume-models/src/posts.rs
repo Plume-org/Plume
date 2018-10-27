@@ -6,14 +6,17 @@ use activitypub::{
 use canapi::{Error, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods, BelongingToDsl};
-use heck::KebabCase;
+use heck::{CamelCase, KebabCase};
 use serde_json;
 
 use plume_api::posts::PostEndpoint;
-use plume_common::activity_pub::{
-    Hashtag, Source,
-    PUBLIC_VISIBILTY, Id, IntoId,
-    inbox::{Deletable, FromActivity}
+use plume_common::{
+    activity_pub::{
+        Hashtag, Source,
+        PUBLIC_VISIBILTY, Id, IntoId,
+        inbox::{Deletable, FromActivity}
+    },
+    utils::md_to_html
 };
 use {BASE_URL, ap_url, Connection};
 use blogs::Blog;
@@ -26,6 +29,7 @@ use tags::Tag;
 use users::User;
 use schema::posts;
 use safe_string::SafeString;
+use std::collections::HashSet;
 
 #[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
 pub struct Post {
@@ -447,6 +451,8 @@ impl FromActivity<Article, Connection> for Post {
             }
 
             // save mentions and tags
+            let mut hashtags = md_to_html(&post.source).2.into_iter().map(|s| s.to_camel_case()).collect::<HashSet<_>>();
+            println!("{:?}", hashtags);
             if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
                 for tag in tags.into_iter() {
                     serde_json::from_value::<link::Mention>(tag.clone())
@@ -454,7 +460,11 @@ impl FromActivity<Article, Connection> for Post {
                         .ok();
 
                     serde_json::from_value::<Hashtag>(tag.clone())
-                        .map(|t| Tag::from_activity(conn, t, post.id))
+                        .map(|t| {
+                            let tag_name = t.name_string().expect("Post::from_activity: tag name error");
+                            println!("{} : {}", tag_name, hashtags.contains(&tag_name));
+                            Tag::from_activity(conn, t, post.id, hashtags.remove(&tag_name));
+                        })
                         .ok();
                 }
             }
