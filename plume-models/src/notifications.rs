@@ -106,4 +106,8 @@ impl Notification {
         });
         json
     }
+
+    pub fn delete(&self, conn: &Connection) {
+        diesel::delete(self).execute(conn).expect("Notification::delete: notification deletion error");
+    }
 }
