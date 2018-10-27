@@ -4,8 +4,7 @@ To federate with other Fediverse software (and itself), Plume uses various
 protocols:
 - [ActivityPub](http://activitypub.rocks/), as the main federation protocol.
 - [WebFinger](https://webfinger.net/), to find other users and blog easily.
-- [HTTP 
-Signatures](https://tools.ietf.org/id/draft-cavage-http-signatures-01.html), to 
+- [HTTP Signatures](https://tools.ietf.org/id/draft-cavage-http-signatures-01.html), to 
 authenticate activities.
 - [NodeInfo](http://nodeinfo.diaspora.software/), which is not part of the 
 federation itself, but that gives some metadata about each instance.
@@ -122,9 +121,8 @@ Creates a new article or comment.
 If `object` is an `Article`:
 - `object.attibutedTo` is a list containing the ID of the authors and of the blog 
 in which this article have been published. If no blog ID is specified, the article 
-will be
-rejected. The `actor` of the activity corresponds to the user that clicked the 
-"Publish" button, and should normally be one of the author in `attributedTo`.
+will be rejected. The `actor` of the activity corresponds to the user that clicked 
+the "Publish" button, and should normally be one of the author in `attributedTo`.
 - `object.name` is the title of the article.
 - `object.content` is a string containing the HTML of the rendered article.
 - `object.creationDate` is the date of the first publication of this article.
@@ -144,8 +142,7 @@ If `object` is a `Note`:
 post that is commented if there is no previous comment.
 - `object.spoilerText` is a string to be displayed in place of the comment, unless 
 the reader explicitely express their will to see the actual content (what is called 
-*Content
-Warning* in Mastodon)
+*Content Warning* in Mastodon)
 - `object.tag` is a list of `Mention` that correspond to the mentionned users.
 
 #### Delete
