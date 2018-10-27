@@ -5,7 +5,7 @@ use rocket::{State, request::LenientForm};
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
-use std::{collections::HashMap, borrow::Cow};
+use std::{collections::{HashMap, HashSet}, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 use workerpool::{Pool, thunk::*};
 
@@ -213,15 +213,16 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             }
 
             let old_tags = Tag::for_post(&*conn, post.id).into_iter().collect::<Vec<_>>();
-            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<Vec<_>>();
-            for tag in tags.iter() {
-                if old_tags.iter().all(|ot| &ot.tag!=tag || ot.is_hashtag) {
-                    Tag::insert(&*conn, NewTag {
-                        tag: tag.clone(),
-                        is_hashtag: false,
-                        post_id: post.id
-                    });
-                }
+            let old_non_hashtags = old_tags.iter().filter_map(|tag| if !tag.is_hashtag {Some(tag.tag.clone())} else {None}).collect();
+            let old_hashtags = old_tags.iter().filter_map(|tag| if tag.is_hashtag {Some(tag.tag.clone())} else {None}).collect();
+
+            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<HashSet<_>>();
+            for tag in tags.difference(&old_non_hashtags) {
+                Tag::insert(&*conn, NewTag {
+                    tag: tag.clone(),
+                    is_hashtag: false,
+                    post_id: post.id
+                });
             }
             for ot in old_tags.iter() {
                 if !tags.contains(&ot.tag) && !ot.is_hashtag {
@@ -229,15 +230,13 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 }
             }
 
-            let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<Vec<_>>();
-            for hashtag in hashtags.iter() {
-                if old_tags.iter().all(|ot| &ot.tag!=hashtag || !ot.is_hashtag) {
-                    Tag::insert(&*conn, NewTag {
-                        tag: hashtag.clone(),
-                        is_hashtag: true,
-                        post_id: post.id,
-                    });
-                }
+            let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<HashSet<_>>();
+            for hashtag in hashtags.difference(&old_hashtags) {
+                Tag::insert(&*conn, NewTag {
+                    tag: hashtag.clone(),
+                    is_hashtag: true,
+                    post_id: post.id,
+                });
             }
             for ot in old_tags {
                 if !hashtags.contains(&ot.tag) && ot.is_hashtag {
@@ -334,7 +333,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 author_id: user.id
             });
 
-            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0);
+            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<HashSet<_>>();
             for tag in tags {
                 Tag::insert(&*conn, NewTag {
                     tag: tag,
