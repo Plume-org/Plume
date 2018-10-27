@@ -5,6 +5,7 @@ use rocket::{
     http::uri::Uri,
     response::{Redirect, Flash}
 };
+use std::collections::HashSet;
 
 /// Remove non alphanumeric characters and CamelCase a string
 pub fn make_actor_id(name: String) -> String {
@@ -29,7 +30,7 @@ enum State {
 }
 
 /// Returns (HTML, mentions, hashtags)
-pub fn md_to_html(md: &str) -> (String, Vec<String>, Vec<String>) {
+pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
     let (parser, mentions, hashtags): (Vec<Vec<Event>>, Vec<Vec<String>>, Vec<Vec<String>>) = parser.map(|evt| match evt {
@@ -129,8 +130,7 @@ pub fn md_to_html(md: &str) -> (String, Vec<String>, Vec<String>) {
 
     let mut buf = String::new();
     html::push_html(&mut buf, parser);
-    let hashtags = hashtags.collect();
-    (buf, mentions.collect(), hashtags)
+    (buf, mentions.collect(), hashtags.collect())
 }
 
 #[cfg(test)]
