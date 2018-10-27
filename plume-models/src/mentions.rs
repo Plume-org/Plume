@@ -102,6 +102,12 @@ impl Mention {
             })
         }
     }
+
+    pub fn delete(&self, conn: &Connection) {
+        //find related notifications and delete them
+        Notification::find(conn, notification_kind::MENTION, self.id).map(|n| n.delete(conn));
+        diesel::delete(self).execute(conn).expect("Mention::delete: mention deletion error");
+    }
 }
 
 impl Notify<Connection> for Mention {
