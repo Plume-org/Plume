@@ -389,10 +389,11 @@ impl Post {
             post.source = source.content;
         }
 
-        let mut hashtags = md_to_html(&post.source).2.into_iter().map(|s| s.to_camel_case()).collect::<HashSet<_>>();
+        let mut txt_hashtags = md_to_html(&post.source).2.into_iter().map(|s| s.to_camel_case()).collect::<HashSet<_>>();
         if let Some(serde_json::Value::Array(mention_tags)) = updated.object_props.tag.clone() {
             let mut mentions = vec![];
             let mut tags = vec![];
+            let mut hashtags = vec![];
             for tag in mention_tags.into_iter() {
                 serde_json::from_value::<link::Mention>(tag.clone())
                     .map(|m| mentions.push(m))
@@ -401,12 +402,16 @@ impl Post {
                 serde_json::from_value::<Hashtag>(tag.clone())
                     .map(|t| {
                         let tag_name = t.name_string().expect("Post::from_activity: tag name error");
-                        tags.push((t, hashtags.remove(&tag_name)));
+                        if txt_hashtags.remove(&tag_name) {
+                            hashtags.push(t);
+                        } else {
+                            tags.push(t);
+                        }
                     }).ok();
             }
-            // Tag::from_activity(conn, t, post.id, bool);
-            // Mention::from_activity(conn, m, post.id, true, true)
             post.update_mentions(conn, mentions);
+            post.update_tags(conn, tags);
+            post.update_hashtags(conn, hashtags);
         }
 
         post.update(conn);
@@ -433,14 +438,44 @@ impl Post {
         }
     }
 
-/*    pub fn update_hashtags_from_activity(&self, conn: &Connection, Vec<Hashtag>/*create a build_activity for Tag, as in Mention,*/) {
-       unimplemented!();
+    pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) {
+        let tags_name = tags.iter().filter_map(|t| t.name_string().ok()).collect::<HashSet<_>>();
+
+        let old_tags = Tag::for_post(&*conn, self.id).into_iter().collect::<Vec<_>>();
+        let old_tags_name = old_tags.iter().filter_map(|tag| if !tag.is_hashtag {Some(tag.tag.clone())} else {None}).collect::<HashSet<_>>();
+
+        for t in tags.into_iter() {
+            if !t.name_string().map(|n| old_tags_name.contains(&n)).unwrap_or(true) {
+                Tag::from_activity(conn, t, self.id, false);
+            }
+        }
+
+        for ot in old_tags {
+            if !tags_name.contains(&ot.tag) {
+                ot.delete(conn);
+            }
+        }
     }
 
-    pub fn update_tags_from_activity(&self, conn: &Connection, Vec<Hashtag>) {
-       unimplemented!();
+    pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) {
+        let tags_name = tags.iter().filter_map(|t| t.name_string().ok()).collect::<HashSet<_>>();
+
+        let old_tags = Tag::for_post(&*conn, self.id).into_iter().collect::<Vec<_>>();
+        let old_tags_name = old_tags.iter().filter_map(|tag| if tag.is_hashtag {Some(tag.tag.clone())} else {None}).collect::<HashSet<_>>();
+
+        for t in tags.into_iter() {
+            if !t.name_string().map(|n| old_tags_name.contains(&n)).unwrap_or(true) {
+                Tag::from_activity(conn, t, self.id, true);
+            }
+        }
+
+        for ot in old_tags {
+            if !tags_name.contains(&ot.tag) {
+                ot.delete(conn);
+            }
+        }
     }
-*/
+
     pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let blog = self.get_blog(conn);
         json!({
