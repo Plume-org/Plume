@@ -192,10 +192,13 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             };
 
             // update publication date if when this article is no longer a draft
-            if !post.published && !form.draft {
+            let newly_published = if !post.published && !form.draft {
                 post.published = true;
                 post.creation_date = Utc::now().naive_utc();
-            }
+                true
+            } else {
+                false
+            };
 
             post.slug = new_slug.clone();
             post.title = form.title.clone();
@@ -246,9 +249,15 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             }
 
             if post.published {
-                let act = post.update_activity(&*conn);
-                let dest = User::one_by_instance(&*conn);
-                worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                if newly_published {
+                    let act = post.create_activity(&conn);
+                    let dest = User::one_by_instance(&*conn);
+                    worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                } else {
+                    let act = post.update_activity(&*conn);
+                    let dest = User::one_by_instance(&*conn);
+                    worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                }
             }
 
             Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
