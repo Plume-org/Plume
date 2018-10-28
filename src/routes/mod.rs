@@ -37,7 +37,7 @@ macro_rules! may_fail {
     };
 }
 
-const ITEMS_PER_PAGE: i32 = 10;
+const ITEMS_PER_PAGE: i32 = 12;
 
 #[derive(FromForm)]
 pub struct Page {
