@@ -45,6 +45,16 @@ impl Tag {
         })
     }
 
+    pub fn build_activity(conn: &Connection, tag: String) -> Hashtag {
+        let mut ht = Hashtag::default();
+        ht.set_href_string(ap_url(format!("{}/tag/{}",
+                                          Instance::get_local(conn).expect("Tag::into_activity: local instance not found error").public_domain,
+                                          tag)
+                                  )).expect("Tag::into_activity: href error");
+        ht.set_name_string(tag).expect("Tag::into_activity: name error");
+        ht
+    }
+
     pub fn delete(&self, conn: &Connection) {
         diesel::delete(self).execute(conn).expect("Tag::delete: database error");
     }

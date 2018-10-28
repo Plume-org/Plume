@@ -213,37 +213,13 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, m)).collect());
             }
 
-            let old_tags = Tag::for_post(&*conn, post.id).into_iter().collect::<Vec<_>>();
-            let old_non_hashtags = old_tags.iter().filter_map(|tag| if !tag.is_hashtag {Some(tag.tag.clone())} else {None}).collect();
-            let old_hashtags = old_tags.iter().filter_map(|tag| if tag.is_hashtag {Some(tag.tag.clone())} else {None}).collect();
+            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0)
+                .collect::<HashSet<_>>().into_iter().map(|t| Tag::build_activity(&conn, t)).collect::<Vec<_>>();
+            post.update_tags(&conn, tags);
 
-            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<HashSet<_>>();
-            for tag in tags.difference(&old_non_hashtags) {
-                Tag::insert(&*conn, NewTag {
-                    tag: tag.clone(),
-                    is_hashtag: false,
-                    post_id: post.id
-                });
-            }
-            for ot in old_tags.iter() {
-                if !tags.contains(&ot.tag) && !ot.is_hashtag {
-                    ot.delete(&conn);
-                }
-            }
-
-            let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<HashSet<_>>();
-            for hashtag in hashtags.difference(&old_hashtags) {
-                Tag::insert(&*conn, NewTag {
-                    tag: hashtag.clone(),
-                    is_hashtag: true,
-                    post_id: post.id,
-                });
-            }
-            for ot in old_tags {
-                if !hashtags.contains(&ot.tag) && ot.is_hashtag {
-                    ot.delete(&conn);
-                }
-            }
+            let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<HashSet<_>>()
+                .into_iter().map(|t| Tag::build_activity(&conn, t)).collect::<Vec<_>>();
+            post.update_tags(&conn, hashtags);
 
             if post.published {
                 if newly_published {
