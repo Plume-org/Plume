@@ -389,9 +389,58 @@ impl Post {
             post.source = source.content;
         }
 
+        let mut hashtags = md_to_html(&post.source).2.into_iter().map(|s| s.to_camel_case()).collect::<HashSet<_>>();
+        if let Some(serde_json::Value::Array(mention_tags)) = updated.object_props.tag.clone() {
+            let mut mentions = vec![];
+            let mut tags = vec![];
+            for tag in mention_tags.into_iter() {
+                serde_json::from_value::<link::Mention>(tag.clone())
+                    .map(|m| mentions.push(m))
+                    .ok();
+
+                serde_json::from_value::<Hashtag>(tag.clone())
+                    .map(|t| {
+                        let tag_name = t.name_string().expect("Post::from_activity: tag name error");
+                        tags.push((t, hashtags.remove(&tag_name)));
+                    }).ok();
+            }
+            // Tag::from_activity(conn, t, post.id, bool);
+            // Mention::from_activity(conn, m, post.id, true, true)
+            post.update_mentions(conn, mentions);
+        }
+
         post.update(conn);
     }
 
+    pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) {
+        let mentions = mentions.into_iter().map(|m| (m.link_props.href_string().ok()
+                                                .and_then(|ap_url| User::find_by_ap_url(conn, ap_url))
+                                                .map(|u| u.id),m))
+            .filter_map(|(id, m)| if let Some(id)=id {Some((m,id))} else {None}).collect::<Vec<_>>();
+
+        let old_mentions = Mention::list_for_post(&conn, self.id);
+        let old_user_mentioned = old_mentions.iter()
+            .map(|m| m.mentioned_id).collect::<HashSet<_>>();
+        for (m,id) in mentions.iter() {
+           if !old_user_mentioned.contains(&id) {
+                Mention::from_activity(&*conn, m.clone(), self.id, true, true);
+            }
+        }
+
+        let new_mentions = mentions.into_iter().map(|(_m,id)| id).collect::<HashSet<_>>();
+        for m in old_mentions.iter().filter(|m| !new_mentions.contains(&m.mentioned_id)) {
+            m.delete(&conn);
+        }
+    }
+
+/*    pub fn update_hashtags_from_activity(&self, conn: &Connection, Vec<Hashtag>/*create a build_activity for Tag, as in Mention,*/) {
+       unimplemented!();
+    }
+
+    pub fn update_tags_from_activity(&self, conn: &Connection, Vec<Hashtag>) {
+       unimplemented!();
+    }
+*/
     pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let blog = self.get_blog(conn);
         json!({
@@ -452,7 +501,6 @@ impl FromActivity<Article, Connection> for Post {
 
             // save mentions and tags
             let mut hashtags = md_to_html(&post.source).2.into_iter().map(|s| s.to_camel_case()).collect::<HashSet<_>>();
-            println!("{:?}", hashtags);
             if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
                 for tag in tags.into_iter() {
                     serde_json::from_value::<link::Mention>(tag.clone())
@@ -462,7 +510,6 @@ impl FromActivity<Article, Connection> for Post {
                     serde_json::from_value::<Hashtag>(tag.clone())
                         .map(|t| {
                             let tag_name = t.name_string().expect("Post::from_activity: tag name error");
-                            println!("{} : {}", tag_name, hashtags.contains(&tag_name));
                             Tag::from_activity(conn, t, post.id, hashtags.remove(&tag_name));
                         })
                         .ok();

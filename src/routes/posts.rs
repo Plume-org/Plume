@@ -210,16 +210,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             let post = post.update_ap_url(&*conn);
 
             if post.published {
-                let old_mentions = Mention::list_for_post(&conn, post.id);
-                let old_user_mentioned = old_mentions.iter()
-                    .filter_map(|m| User::get(&conn, m.mentioned_id).map(|u| u.get_fqn(&conn)))
-                    .collect::<HashSet<_>>();
-                for m in mentions.difference(&old_user_mentioned).into_iter() {
-                    Mention::from_activity(&*conn, Mention::build_activity(&*conn, m.clone()), post.id, true, true);
-                }
-                for m in old_mentions.iter().filter(|m| !User::get(&conn, m.mentioned_id).map(|u| mentions.contains(&u.get_fqn(&conn))).unwrap_or(false)) {
-                    m.delete(&conn);
-                }
+                post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, m)).collect());
             }
 
             let old_tags = Tag::for_post(&*conn, post.id).into_iter().collect::<Vec<_>>();
