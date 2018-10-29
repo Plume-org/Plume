@@ -54,12 +54,12 @@ impl ApiToken {
         false
     }
 
-    pub fn can_read(&self, what: &'static str) -> bool {
-        self.can("read", what)
+    pub fn can_read(&self, scope: &'static str) -> bool {
+        self.can("read", scope)
     }
 
-    pub fn can_write(&self, what: &'static str) -> bool {
-        self.can("write", what)
+    pub fn can_write(&self, scope: &'static str) -> bool {
+        self.can("write", scope)
     }
 }
 
