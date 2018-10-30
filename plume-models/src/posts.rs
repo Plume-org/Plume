@@ -44,6 +44,7 @@ pub struct Post {
     pub ap_url: String,
     pub subtitle: String,
     pub source: String,
+    pub cover_id: Option<i32>,
 }
 
 #[derive(Insertable)]
@@ -59,6 +60,7 @@ pub struct NewPost {
     pub ap_url: String,
     pub subtitle: String,
     pub source: String,
+    pub cover_id: Option<i32>,
 }
 
 impl<'a> Provider<(&'a Connection, Option<i32>)> for Post {
@@ -547,7 +549,8 @@ impl FromActivity<Article, Connection> for Post {
                 ap_url: article.object_props.url_string().unwrap_or(article.object_props.id_string().expect("Post::from_activity: url + id error")),
                 creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc()),
                 subtitle: article.object_props.summary_string().expect("Post::from_activity: summary error"),
-                source: article.ap_object_props.source_object::<Source>().expect("Post::from_activity: source error").content
+                source: article.ap_object_props.source_object::<Source>().expect("Post::from_activity: source error").content,
+                cover_id: None, // TODO
             });
 
             for author in authors.into_iter() {

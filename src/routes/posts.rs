@@ -309,6 +309,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 creation_date: None,
                 subtitle: form.subtitle.clone(),
                 source: form.content.clone(),
+                cover_id: None, // TODO
             });
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
