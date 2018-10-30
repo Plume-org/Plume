@@ -32,6 +32,7 @@ use safe_string::SafeString;
 use std::collections::HashSet;
 
 #[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
+#[changeset_options(treat_none_as_null = "true")]
 pub struct Post {
     pub id: i32,
     pub blog_id: i32,

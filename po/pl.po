@@ -629,6 +629,13 @@ msgstr "Ten wpis nie został jeszcze opublikowany."
 msgid "There is currently no article with that tag"
 msgstr ""
 
+#, fuzzy
+msgid "Illustration"
+msgstr "Administracja"
+
+msgid "None"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Jedno udostępnienie"

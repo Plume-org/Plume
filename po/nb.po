@@ -639,6 +639,13 @@ msgstr ""
 msgid "There is currently no article with that tag"
 msgstr ""
 
+#, fuzzy
+msgid "Illustration"
+msgstr "Administrasjon"
+
+msgid "None"
+msgstr ""
+
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
 #~ msgstr[0] "Én deling"

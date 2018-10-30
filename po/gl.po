@@ -617,3 +617,10 @@ msgstr "Esto é un borrador, non publicar por agora."
 
 msgid "There is currently no article with that tag"
 msgstr ""
+
+#, fuzzy
+msgid "Illustration"
+msgstr "Administración"
+
+msgid "None"
+msgstr ""
