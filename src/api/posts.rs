@@ -13,14 +13,14 @@ use plume_models::{
 use api::authorization::*;
 
 #[get("/posts/<id>")]
-fn get(id: i32, conn: DbConn, _auth: Authorization<Read, Post>) -> Json<serde_json::Value> {
-    let post = <Post as Provider<Connection>>::get(&*conn, id).ok();
+fn get(id: i32, conn: DbConn, auth: Option<Authorization<Read, Post>>) -> Json<serde_json::Value> {
+    let post = <Post as Provider<(&Connection, Option<i32>)>>::get(&(&*conn, auth.map(|a| a.0.user_id)), id).ok();
     Json(json!(post))
 }
 
 #[get("/posts")]
-fn list(conn: DbConn, uri: &Origin, _auth: Authorization<Read, Post>) -> Json<serde_json::Value> {
+fn list(conn: DbConn, uri: &Origin, auth: Option<Authorization<Read, Post>>) -> Json<serde_json::Value> {
     let query: PostEndpoint = serde_qs::from_str(uri.query().unwrap_or("")).expect("api::list: invalid query error");
-    let post = <Post as Provider<Connection>>::list(&*conn, query);
+    let post = <Post as Provider<(&Connection, Option<i32>)>>::list(&(&*conn, auth.map(|a| a.0.user_id)), query);
     Json(json!(post))
 }

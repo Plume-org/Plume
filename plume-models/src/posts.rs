@@ -61,19 +61,27 @@ pub struct NewPost {
     pub source: String,
 }
 
-impl Provider<Connection> for Post {
+impl<'a> Provider<(&'a Connection, Option<i32>)> for Post {
     type Data = PostEndpoint;
 
-    fn get(conn: &Connection, id: i32) -> Result<PostEndpoint, Error> {
-        Post::get(conn, id).map(|p| Ok(PostEndpoint {
-            id: Some(p.id),
-            title: Some(p.title.clone()),
-            subtitle: Some(p.subtitle.clone()),
-            content: Some(p.content.get().clone())
-        })).unwrap_or(Err(Error::NotFound("Get Post".to_string())))
+    fn get((conn, user_id): &(&'a Connection, Option<i32>), id: i32) -> Result<PostEndpoint, Error> {
+        if let Some(post) = Post::get(conn, id) {
+            if !post.published && !user_id.map(|u| post.is_author(conn, u)).unwrap_or(false) {
+                return Err(Error::Authorization("You are not authorized to access this post yet.".to_string()))
+            }
+
+            Ok(PostEndpoint {
+                id: Some(post.id),
+                title: Some(post.title.clone()),
+                subtitle: Some(post.subtitle.clone()),
+                content: Some(post.content.get().clone())
+            })
+        } else {
+            Err(Error::NotFound("Request post was not found".to_string()))
+        }
     }
 
-    fn list(conn: &Connection, filter: PostEndpoint) -> Vec<PostEndpoint> {
+    fn list((conn, user_id): &(&'a Connection, Option<i32>), filter: PostEndpoint) -> Vec<PostEndpoint> {
         let mut query = posts::table.into_boxed();
         if let Some(title) = filter.title {
             query = query.filter(posts::title.eq(title));
@@ -85,7 +93,8 @@ impl Provider<Connection> for Post {
             query = query.filter(posts::content.eq(content));
         }
 
-        query.get_results::<Post>(conn).map(|ps| ps.into_iter()
+        query.get_results::<Post>(*conn).map(|ps| ps.into_iter()
+            .filter(|p| p.published || user_id.map(|u| p.is_author(conn, u)).unwrap_or(false))
             .map(|p| PostEndpoint {
                 id: Some(p.id),
                 title: Some(p.title.clone()),
@@ -96,16 +105,21 @@ impl Provider<Connection> for Post {
         ).unwrap_or(vec![])
     }
 
-    fn create(_conn: &Connection, _query: PostEndpoint) -> Result<PostEndpoint, Error> {
+    fn create((_conn, _user_id): &(&'a Connection, Option<i32>), _query: PostEndpoint) -> Result<PostEndpoint, Error> {
         unimplemented!()
     }
 
-    fn update(_conn: &Connection, _id: i32, _new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
+    fn update((_conn, _user_id): &(&'a Connection, Option<i32>), _id: i32, _new_data: PostEndpoint) -> Result<PostEndpoint, Error> {
         unimplemented!()
     }
 
-    fn delete(conn: &Connection, id: i32) {
-        Post::get(conn, id).map(|p| p.delete(conn));
+    fn delete((conn, user_id): &(&'a Connection, Option<i32>), id: i32) {
+        let user_id = user_id.expect("Post as Provider::delete: not authenticated");
+        if let Some(post) = Post::get(conn, id) {
+            if post.is_author(conn, user_id) {
+                post.delete(conn);
+            }
+        }
     }
 }
 
@@ -262,6 +276,15 @@ impl Post {
         use schema::post_authors;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
         users::table.filter(users::id.eq_any(author_list)).load::<User>(conn).expect("Post::get_authors: loading error")
+    }
+
+    pub fn is_author(&self, conn: &Connection, author_id: i32) -> bool {
+        use schema::post_authors;
+        PostAuthor::belonging_to(self)
+            .filter(post_authors::author_id.eq(author_id))
+            .count()
+            .get_result::<i64>(conn)
+            .expect("Post::is_author: loading error") > 0
     }
 
     pub fn get_blog(&self, conn: &Connection) -> Blog {

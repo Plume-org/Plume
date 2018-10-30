@@ -33,7 +33,7 @@ impl Scope for plume_models::posts::Post {
     }
 }
 
-pub struct Authorization<A, S> (PhantomData<(A, S)>);
+pub struct Authorization<A, S> (pub ApiToken, PhantomData<(A, S)>);
 
 impl<'a, 'r, A, S> FromRequest<'a, 'r> for Authorization<A, S>
 where A: Action,
@@ -45,7 +45,7 @@ where A: Action,
         request.guard::<ApiToken>()
             .map_failure(|_| (Status::Unauthorized, ()))
             .and_then(|token| if token.can(A::to_str(), S::to_str()) {
-                Outcome::Success(Authorization(PhantomData))
+                Outcome::Success(Authorization(token, PhantomData))
             } else {
                 Outcome::Failure((Status::Unauthorized, ()))
             })
