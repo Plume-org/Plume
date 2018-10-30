@@ -150,6 +150,7 @@ table! {
         ap_url -> Varchar,
         subtitle -> Text,
         source -> Text,
+        cover_id -> Nullable<Int4>,
     }
 }
 
@@ -211,6 +212,7 @@ joinable!(notifications -> users (user_id));
 joinable!(post_authors -> posts (post_id));
 joinable!(post_authors -> users (author_id));
 joinable!(posts -> blogs (blog_id));
+joinable!(posts -> medias (cover_id));
 joinable!(reshares -> posts (post_id));
 joinable!(reshares -> users (user_id));
 joinable!(tags -> posts (post_id));
