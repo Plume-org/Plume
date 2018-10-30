@@ -27,13 +27,23 @@
         {% endfor %}
     {% endif %}
 
-     <label for="plume-editor">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
+    <label for="plume-editor">{{ "Content" | _ }}<small>{{ "Markdown is supported" | _ }}</small></label>
     <textarea id="plume-editor" name="content" rows="20">{{ form.content | default(value="") }}</textarea>
 
     {{ macros::input(name="tags", label="Tags, separated by commas", errors=errors, form=form, optional=true) }}
 
     {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
     {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
+
+    <label for="cover">{{ "Illustration" | _ }}<small>{{ "Optional" | _ }}</small>{{ form.cover }}</label>
+    <select id="cover" name="cover">
+        <option value="none" {% if not form.cover %}selected{% endif %}>{{ "None" | _ }}</option>
+        {% for media in medias %}
+            <option value="{{ media.id }}" {% if form.cover == media.id %}selected{% endif %}>
+                {{ media.alt_text | default(value=media.content_warning) }}
+            </option>
+        {% endfor %}
+    </select>
 
     {% if is_draft %}
         <label for="draft">

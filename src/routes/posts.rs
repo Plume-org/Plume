@@ -16,6 +16,7 @@ use plume_models::{
     db_conn::DbConn,
     comments::Comment,
     instance::Instance,
+    medias::Media,
     mentions::Mention,
     post_authors::*,
     posts::*,
@@ -101,6 +102,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
             "error_message": "You are not author in this blog."
         })))
     } else {
+        let medias = Media::for_user(&*conn, user.id);
         Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
@@ -108,6 +110,7 @@ fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
             "errors": null,
             "form": null,
             "is_draft": true,
+            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         })))
     }
 }
@@ -128,6 +131,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
             post.content.get().clone() // fallback to HTML if the markdown was not stored
         };
 
+        let medias = Media::for_user(&*conn, user.id);
         Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
@@ -144,8 +148,10 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
                     .join(", "),
                 license: post.license.clone(),
                 draft: true,
+                cover: post.cover_id,
             },
-            "is_draft": !post.published
+            "is_draft": !post.published,
+            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         })))
     }
 }
@@ -206,9 +212,13 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             post.content = SafeString::new(&content);
             post.source = form.content.clone();
             post.license = license;
+            println!("Cover id from update: {:?}", form.cover);
+            post.cover_id = form.cover;
             post.update(&*conn);
+            println!("Cover id after update: {:?}", post.cover_id);
             let post = post.update_ap_url(&*conn);
 
+            println!("Cover id after after update: {:?}", post.cover_id);
             if post.published {
                 post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, m)).collect());
             }
@@ -236,6 +246,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
         }
     } else {
+        let medias = Media::for_user(&*conn, user.id);
         Err(Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
@@ -243,6 +254,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             "errors": errors.inner(),
             "form": form,
             "is_draft": form.draft,
+            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         }))))
     }
 }
@@ -256,6 +268,7 @@ struct NewPostForm {
     pub tags: String,
     pub license: String,
     pub draft: bool,
+    pub cover: Option<i32>,
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
@@ -309,7 +322,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 creation_date: None,
                 subtitle: form.subtitle.clone(),
                 source: form.content.clone(),
-                cover_id: None, // TODO
+                cover_id: form.cover,
             });
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
@@ -346,13 +359,15 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
         }
     } else {
+        let medias = Media::for_user(&*conn, user.id);
         Err(Some(Template::render("posts/new", json!({
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": false,
             "errors": errors.inner(),
             "form": form,
-            "is_draft": form.draft
+            "is_draft": form.draft,
+            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
         }))))
     }
 }

@@ -597,3 +597,9 @@ msgstr ""
 
 msgid "There is currently no article with that tag"
 msgstr ""
+
+msgid "Illustration"
+msgstr ""
+
+msgid "None"
+msgstr ""
