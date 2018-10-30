@@ -1,9 +1,7 @@
-function autosize () {
-  const el = this
-  el.style.height = 'auto'
-  el.style.height = `${el.scrollHeight}px`
-}
+const articleContent = document.querySelector('#plume-editor')
+const offset = articleContent.offsetHeight - articleContent.clientHeight
 
-const articleContent = document.querySelector('#content')
-autosize.bind(articleContent)()
-articleContent.addEventListener('keyup', autosize)
+articleContent.addEventListener('keydown', () => {
+  articleContent.style.height = 'auto'
+  articleContent.style.height = `${articleContent.scrollHeight - offset}px`
+})
