@@ -1,9 +1,15 @@
+use activitypub::object::Image;
 use diesel::{self, QueryDsl, ExpressionMethods, RunQueryDsl};
+use guid_create::GUID;
+use reqwest;
 use serde_json;
-use std::fs;
+use std::{fs, path::Path};
+
+use plume_common::activity_pub::Id;
 
 use {ap_url, Connection};
 use instance::Instance;
+use users::User;
 use schema::medias;
 
 #[derive(Clone, Identifiable, Queryable, Serialize)]
@@ -93,5 +99,26 @@ impl Media {
             .set(medias::owner_id.eq(id))
             .execute(conn)
             .expect("Media::set_owner: owner update error");
+    }
+
+    // TODO: merge with save_remote?
+    pub fn from_activity(conn: &Connection, image: Image) -> Option<Media> {
+        let remote_url = image.object_props.url_string().ok()?;
+        let ext = remote_url.rsplit('.').next().map(|ext| ext.to_owned()).unwrap_or("png".to_owned());
+        let path = Path::new("static").join("media").join(format!("{}.{}", GUID::rand().to_string(), ext));
+
+        let mut dest = fs::File::create(path.clone()).ok()?;
+        reqwest::get(remote_url.as_str()).ok()?
+            .copy_to(&mut dest).ok()?;
+
+        Some(Media::insert(conn, NewMedia {
+            file_path: path.to_str()?.to_string(),
+            alt_text: image.object_props.content_string().ok()?,
+            is_remote: true,
+            remote_url: None,
+            sensitive: image.object_props.summary_string().is_ok(),
+            content_warning: image.object_props.summary_string().ok(),
+            owner_id: User::from_url(conn, image.object_props.attributed_to_link_vec::<Id>().ok()?.into_iter().next()?.into())?.id
+        }))
     }
 }

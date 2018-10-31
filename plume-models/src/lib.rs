@@ -8,6 +8,7 @@ extern crate canapi;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
+extern crate guid_create;
 extern crate heck;
 #[macro_use]
 extern crate lazy_static;
