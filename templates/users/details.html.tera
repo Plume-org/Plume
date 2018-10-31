@@ -21,7 +21,7 @@
     {% if recents | length != 0 %}
         <h2>
             {{ "Latest articles" | _ }}
-            <small><a href="/@/{{ user.fqn }}/atom.xml"><i title="Atom feed" class="fa fa-rss"></i></a></small>
+            <small><a href="/@/{{ user.fqn }}/atom.xml" title="Atom feed">{{ macros::feather(name="rss") }}</a></small>
         </h2>
         <div class="cards">
             {% for article in recents %}
