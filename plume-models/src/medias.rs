@@ -44,28 +44,32 @@ impl Media {
     pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).expect("Media::to_json: serialization error");
         let url = self.url(conn);
-        let (preview, html, md) = match self.file_path.rsplitn(2, '.').next().expect("Media::to_json: extension error") {
+        let (cat, preview, html, md) = match self.file_path.rsplitn(2, '.').next().expect("Media::to_json: extension error") {
             "png" | "jpg" | "jpeg" | "gif" | "svg" => (
+                "image",
                 format!("<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">", url, self.alt_text, self.alt_text),
                 format!("<img src=\"{}\" alt=\"{}\" title=\"{}\">", url, self.alt_text, self.alt_text),
                 format!("![{}]({})", self.alt_text, url),
             ),
             "mp3" | "wav" | "flac" => (
+                "audio",
                 format!("<audio src=\"{}\" title=\"{}\" class=\"preview\"></audio>", url, self.alt_text),
                 format!("<audio src=\"{}\" title=\"{}\"></audio>", url, self.alt_text),
                 format!("<audio src=\"{}\" title=\"{}\"></audio>", url, self.alt_text),
             ),
             "mp4" | "avi" | "webm" | "mov" => (
+                "video",
                 format!("<video src=\"{}\" title=\"{}\" class=\"preview\"></video>", url, self.alt_text),
                 format!("<video src=\"{}\" title=\"{}\"></video>", url, self.alt_text),
                 format!("<video src=\"{}\" title=\"{}\"></video>", url, self.alt_text),
             ),
-            _ => (String::new(), String::new(), String::new())
+            _ => ("unknown", String::new(), String::new(), String::new())
         };
         json["html_preview"] = json!(preview);
         json["html"] = json!(html);
         json["url"] = json!(url);
         json["md"] = json!(md);
+        json["category"] = json!(cat);
         json
     }
 
