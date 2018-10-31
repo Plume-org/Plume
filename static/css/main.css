@@ -523,6 +523,7 @@ form.inline input[type="submit"] {
 
 form.inline input[type="submit"]:not(.button) {
     margin: 0;
+    padding: 0;
     border: none;
 }
 
