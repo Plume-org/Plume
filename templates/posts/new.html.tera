@@ -39,9 +39,11 @@
     <select id="cover" name="cover">
         <option value="none" {% if form is undefined or form.cover is undefined %}selected{% endif %}>{{ "None" | _ }}</option>
         {% for media in medias %}
-            <option value="{{ media.id }}" {% if form is defined and form.cover is defined and form.cover == media.id %}selected{% endif %}>
-                {{ media.alt_text | default(value=media.content_warning) }}
-            </option>
+            {% if media.category == "image" %}
+                <option value="{{ media.id }}" {% if form is defined and form.cover is defined and form.cover == media.id %}selected{% endif %}>
+                    {{ media.alt_text | default(value=media.content_warning) }}
+                </option>
+            {% endif %}
         {% endfor %}
     </select>
 
