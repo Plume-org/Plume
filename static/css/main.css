@@ -458,7 +458,7 @@ main .article-meta .tags li a {
  	font-size: 1.2em;
  	max-width: 40rem;
  }
- input, textarea {
+ input, textarea, select {
  	transition: all 0.1s ease-in;
  	display: block;
  	width: 100%;

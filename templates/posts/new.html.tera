@@ -35,7 +35,7 @@
     {% set license_infos = "Default license will be {{ instance.default_license }}" | _(instance=instance) %}
     {{ macros::input(name="license", label="License", errors=errors, form=form, optional=true, details=license_infos) }}
 
-    <label for="cover">{{ "Illustration" | _ }}<small>{{ "Optional" | _ }}</small>{{ form.cover }}</label>
+    <label for="cover">{{ "Illustration" | _ }}<small>{{ "Optional" | _ }}</small></label>
     <select id="cover" name="cover">
         <option value="none" {% if not form.cover %}selected{% endif %}>{{ "None" | _ }}</option>
         {% for media in medias %}
