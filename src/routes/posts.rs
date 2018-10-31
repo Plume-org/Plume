@@ -212,13 +212,10 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             post.content = SafeString::new(&content);
             post.source = form.content.clone();
             post.license = license;
-            println!("Cover id from update: {:?}", form.cover);
             post.cover_id = form.cover;
             post.update(&*conn);
-            println!("Cover id after update: {:?}", post.cover_id);
             let post = post.update_ap_url(&*conn);
 
-            println!("Cover id after after update: {:?}", post.cover_id);
             if post.published {
                 post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, m)).collect());
             }
