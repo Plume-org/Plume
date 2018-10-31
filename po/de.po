@@ -567,7 +567,7 @@ msgid ""
 msgstr ""
 "Irgendetwas stimmt mit deinem CSRF token nicht. Vergewissere dich, dass Cookies "
 "in deinem Browser aktiviert sind und versuche diese Seite neu zu laden. "
-"Bitte melde diesen Fehler, falls er erneut auftritt.
+"Bitte melde diesen Fehler, falls er erneut auftritt."
 
 msgid "Administration of {{ instance.name }}"
 msgstr "Administration von {{ instance.name }}"
