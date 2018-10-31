@@ -526,7 +526,8 @@ impl Post {
             "url": format!("/~/{}/{}/", blog.get_fqn(conn), self.slug),
             "date": self.creation_date.timestamp(),
             "blog": blog.to_json(conn),
-            "tags": Tag::for_post(&*conn, self.id)
+            "tags": Tag::for_post(&*conn, self.id),
+            "cover": self.cover_id.and_then(|i| Media::get(conn, i).map(|m| m.to_json(conn))),
         })
     }
 
