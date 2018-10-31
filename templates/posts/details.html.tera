@@ -1,6 +1,18 @@
 {% extends "base" %}
 {% import "macros" as macros %}
 
+{% block head %}
+    <meta property="og:title" content="{{ article.post.title }}"/>
+    <meta property="og:type" content="article"/>
+    {% if article.cover %}
+        <meta property="og:image" content="{{ article.cover.url | safe }}"/>
+    {% endif %}
+    <meta property="og:url" content="{{ article.url | safe }}"/>
+    {% if article.post.subtitle %}
+        <meta property="og:description" content="{{ article.post.subtitle }}"/>
+    {% endif %}
+{% endblock head %}
+
 {% block title %}
 {{ article.post.title }}
 {% endblock title %}

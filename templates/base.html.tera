@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="/static/css/feather.css" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/png" href="/static/icons/trwnh/feather-filled/plumeFeatherFilled64.png">
+        {% block head %}{% endblock head %}
     </head>
     <body>
         <header>
