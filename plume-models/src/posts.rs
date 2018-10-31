@@ -1,7 +1,7 @@
 use activitypub::{
     activity::{Create, Delete, Update},
     link,
-    object::{Article, Tombstone}
+    object::{Article, Image, Tombstone}
 };
 use canapi::{Error, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
@@ -22,6 +22,7 @@ use {BASE_URL, ap_url, Connection};
 use blogs::Blog;
 use instance::Instance;
 use likes::Like;
+use medias::Media;
 use mentions::Mention;
 use post_authors::*;
 use reshares::Reshare;
@@ -358,6 +359,21 @@ impl Post {
         article.object_props.set_published_utctime(Utc.from_utc_datetime(&self.creation_date)).expect("Post::into_activity: published error");
         article.object_props.set_summary_string(self.subtitle.clone()).expect("Post::into_activity: summary error");
         article.object_props.tag = Some(json!(mentions_json));
+
+        if let Some(media_id) = self.cover_id {
+            let media = Media::get(conn, media_id).expect("Post::into_activity: get cover error");
+            let mut cover = Image::default();
+            cover.object_props.set_url_string(media.url(conn)).expect("Post::into_activity: icon.url error");
+            if media.sensitive {
+                cover.object_props.set_summary_string(media.content_warning.unwrap_or(String::new())).expect("Post::into_activity: icon.summary error");
+            }
+            cover.object_props.set_content_string(media.alt_text).expect("Post::into_activity: icon.content error");
+            cover.object_props.set_attributed_to_link_vec(vec![
+                User::get(conn, media.owner_id).expect("Post::into_activity: media owner not found").into_id()
+            ]).expect("Post::into_activity: icon.attributedTo error");
+            article.object_props.set_icon_object(cover).expect("Post::into_activity: icon error");
+        }
+
         article.object_props.set_url_string(self.ap_url.clone()).expect("Post::into_activity: url error");
         article.object_props.set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect()).expect("Post::into_activity: to error");
         article.object_props.set_cc_link_vec::<Id>(vec![]).expect("Post::into_activity: cc error");
@@ -538,6 +554,9 @@ impl FromActivity<Article, Connection> for Post {
                     }
                 });
 
+            let cover = article.object_props.icon_object::<Image>().ok()
+                .and_then(|img| Media::from_activity(conn, img).map(|m| m.id));
+
             let title = article.object_props.name_string().expect("Post::from_activity: title error");
             let post = Post::insert(conn, NewPost {
                 blog_id: blog.expect("Post::from_activity: blog not found error").id,
@@ -551,7 +570,7 @@ impl FromActivity<Article, Connection> for Post {
                 creation_date: Some(article.object_props.published_utctime().expect("Post::from_activity: published error").naive_utc()),
                 subtitle: article.object_props.summary_string().expect("Post::from_activity: summary error"),
                 source: article.ap_object_props.source_object::<Source>().expect("Post::from_activity: source error").content,
-                cover_id: None, // TODO
+                cover_id: cover,
             });
 
             for author in authors.into_iter() {
