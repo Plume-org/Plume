@@ -274,7 +274,7 @@ server {
 	add_header X-Frame-Options DENY;
 	add_header X-Content-Type-Options nosniff;
 	add_header X-XSS-Protection "1; mode=block";
-	add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'self'; frame-src https:";
+	add_header Content-Security-Policy "default-src 'self' 'unsafe-inline'; frame-ancestors 'self'; frame-src https:";
 
     location ~*  \.(jpg|jpeg|png|gif|ico|js|pdf)$ {
         add_header Cache-Control "public";
