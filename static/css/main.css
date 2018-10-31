@@ -178,6 +178,13 @@ header nav a.title p {
  	font-weight: 300;
  }
 
+ main h2.article {
+    max-width: 40rem;
+    margin: auto;
+    font-size: 1.25em;
+    margin-bottom: 0.5em;
+ }
+
 /*
  * == Article ==
  */
