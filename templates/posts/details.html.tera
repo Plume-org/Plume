@@ -35,6 +35,9 @@
             <span class="badge">{{ "Draft" }}</span>
         {% endif %}
     </div>
+    {% if article.cover %}
+        <div class="cover" style="background-image: url('{{ article.cover.url }}')"></div>
+    {% endif %}
     <article>
         {{ article.post.content | safe }}
     </article>

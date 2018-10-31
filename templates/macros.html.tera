@@ -1,5 +1,8 @@
 {% macro post_card(article) %}
     <div class="card">
+        {% if article.cover %}
+            <div class="cover" style="background-image: url('{{ article.cover.url }}')"></div>
+        {% endif %}
         <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
         <main>
             <p>

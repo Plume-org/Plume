@@ -193,6 +193,18 @@ header nav a.title p {
  main .article-info .author { font-weight: 600; }
  main .article-info .author a { font-weight: 600; }
 
+ /* Cover */
+
+ main > .cover {
+    padding: 0px;
+    margin: 0px;
+    width: auto;
+    min-height: 50vh;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+ }
+
  /* Article */
 
  main article {
@@ -624,12 +636,14 @@ form.inline input[type="submit"]:not(.button) {
  	min-width: 17.5em;
  	min-height: 17.5em;
  	margin: 1em;
- 	padding: 1em;
  	box-sizing: border-box;
 
  	background: #E3E3E3;
 
  	text-overflow: ellipsis;
+ }
+ .card > * {
+    margin: 20px;
  }
  .list .card {
  	/* TODO */
@@ -641,10 +655,18 @@ form.inline input[type="submit"]:not(.button) {
 
  /* ~ Card content ~ */
 
+ /* Cover */
+ .card .cover {
+    min-height: 10em;
+    background-position: center;
+    background-size: cover;
+    margin: 0px;
+ }
+
  /* Title */
 
  .card h3 {
- 	margin: 0.75em 0;
+ 	margin: 0.75em 20px;
  	font-family: "Playfair Display", serif;
  	font-size: 1.75em;
  	font-weight: normal;
