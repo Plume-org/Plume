@@ -33,8 +33,8 @@ jobs:
         sudo make install &&
         cd ../.. &&
         rm -rf kcov-master &&
-        kcov --include-path . --verify target/cov cargo test --features sqlite --no-default-features --all &&
-        ls target/cov &&
+        for f in plume_common plume_api plume_models plume; do kcov --verify --include-path . "target/cov/$f" "target/debug/$f-"*; done; &&
+        ls -alR target/cov &&
         bash <(curl -s https://codecov.io/bash) &&
         echo "Uploaded code coverage"
     - stage: test and build
