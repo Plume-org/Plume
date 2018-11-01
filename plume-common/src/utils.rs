@@ -161,7 +161,7 @@ mod tests {
         ];
 
         for (md, mentions) in tests {
-            assert_eq!(md_to_html(md).1, mentions.into_iter().map(|s| s.to_string()).collect::<Vec<String>>());
+            assert_eq!(md_to_html(md).1, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
         }
     }
 
@@ -180,7 +180,7 @@ mod tests {
         ];
 
         for (md, mentions) in tests {
-            assert_eq!(md_to_html(md).2, mentions.into_iter().map(|s| s.to_string()).collect::<Vec<String>>());
+            assert_eq!(md_to_html(md).2, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
         }
     }
 }
