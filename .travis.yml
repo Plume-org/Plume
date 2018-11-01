@@ -14,7 +14,8 @@ addons:
       - cmake
       - gcc
       - binutils-dev
-
+      - zlib1g-dev
+      - libiberty-dev
 jobs:
   include:
     - stage: test and build
