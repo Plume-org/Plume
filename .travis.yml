@@ -1,6 +1,6 @@
 language: rust
 rust:
-  - nightly
+  - nightly-2018-07-17
 cache: cargo
 sudo: true
 dist: trusty
