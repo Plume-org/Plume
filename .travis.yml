@@ -5,11 +5,13 @@ cache: cargo
 
 jobs:
   include:
-    - stage: test_and_build
+    - stage: test and build
       script: cargo test --features sqlite --no-default-features --all
-    - stage: test_and_build
+    - stage: test and build
       env:
-        matrix:
-          - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
-          - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
+        - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
+      script: cargo build --no-default-features --features="${FEATURES}"
+    - stage: test and build
+      env:
+        - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
       script: cargo build --no-default-features --features="${FEATURES}"
