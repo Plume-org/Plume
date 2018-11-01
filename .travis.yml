@@ -33,7 +33,7 @@ jobs:
         sudo make install &&
         cd ../.. &&
         rm -rf kcov-master &&
-        kcov --exclude-pattern=/.cargo,/usr/lib --verify target/cov cargo test --features sqlite --no-default-features --all &&
+        kcov --include-path . --verify target/cov cargo test --features sqlite --no-default-features --all &&
         bash <(curl -s https://codecov.io/bash) &&
         echo "Uploaded code coverage"
     - stage: test and build
