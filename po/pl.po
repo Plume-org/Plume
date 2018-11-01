@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-09-27 12:33+0200\n"
+"PO-Revision-Date: 2018-11-01 12:14+0100\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -447,7 +447,7 @@ msgid "Delete this article"
 msgstr "Usuń ten artykuł"
 
 msgid "Delete this blog"
-msgstr ""
+msgstr "Usuń ten blog"
 
 msgid "And connected to"
 msgstr "Połączony z"
@@ -627,14 +627,13 @@ msgid "This post isn't published yet."
 msgstr "Ten wpis nie został jeszcze opublikowany."
 
 msgid "There is currently no article with that tag"
-msgstr ""
+msgstr "Obecnie nie istnieją artykuły z tym tagiem"
 
-#, fuzzy
 msgid "Illustration"
-msgstr "Administracja"
+msgstr "Ilustracja"
 
 msgid "None"
-msgstr ""
+msgstr "Brak"
 
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"
