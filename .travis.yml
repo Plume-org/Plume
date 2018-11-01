@@ -34,6 +34,7 @@ jobs:
         cd ../.. &&
         rm -rf kcov-master &&
         kcov --include-path . --verify target/cov cargo test --features sqlite --no-default-features --all &&
+        ls target/cov &&
         bash <(curl -s https://codecov.io/bash) &&
         echo "Uploaded code coverage"
     - stage: test and build
