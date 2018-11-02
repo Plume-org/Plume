@@ -1,4 +1,4 @@
-# Plume [![Build Status](https://travis-ci.org/Plume-org/Plume.svg?branch=master)](https://travis-ci.org/Plume-org/Plume)
+# Plume [![Build Status](https://travis-ci.org/Plume-org/Plume.svg?branch=master)](https://travis-ci.org/Plume-org/Plume) [![codecov](https://codecov.io/gh/Plume-org/Plume/branch/master/graph/badge.svg)](https://codecov.io/gh/Plume-org/Plume)
 
 Federated blogging engine, based on ActivityPub. It uses the Rocket framework, and Diesel to interact with the database.
 
