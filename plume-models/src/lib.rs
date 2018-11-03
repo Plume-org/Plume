@@ -10,6 +10,7 @@ extern crate chrono;
 extern crate diesel;
 extern crate guid_create;
 extern crate heck;
+extern crate itertools;
 #[macro_use]
 extern crate lazy_static;
 extern crate openssl;
@@ -22,8 +23,11 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+#[macro_use]
+extern crate tantivy;
 extern crate url;
 extern crate webfinger;
+extern crate whatlang;
 
 #[cfg(test)]
 #[macro_use]
@@ -284,6 +288,7 @@ pub mod post_authors;
 pub mod posts;
 pub mod reshares;
 pub mod safe_string;
+pub mod search;
 pub mod schema;
 pub mod tags;
 pub mod users;
