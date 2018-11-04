@@ -1,7 +1,10 @@
 language: rust
 rust:
   - nightly-2018-07-17
-cache: cargo
+cache:
+  cargo: true
+  directories:
+  - kcov-master
 sudo: true
 dist: trusty
 
@@ -16,32 +19,36 @@ addons:
       - binutils-dev
       - zlib1g-dev
       - libiberty-dev
+stages:
+  - build
+  - code coverage
 jobs:
   include:
-    - stage: test and build
-      env:
-        - RUSTFLAGS='-C link-dead-code'
-      script: cargo test --features sqlite --no-default-features --all
-      after_success:
-       - |
-           wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-           tar xzf master.tar.gz &&
-           cd kcov-master &&
-           mkdir build &&
-           cd build &&
-           cmake .. &&
-           make &&
-           sudo make install &&
-           cd ../.. &&
-           rm -rf kcov-master &&
-           for crate in plume plume_common plume_models plume_api plm lib; do for file in target/debug/$crate-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done; done &&
-           bash <(curl -s https://codecov.io/bash) &&
-           echo "Uploaded code coverage"
-    - stage: test and build
+    - stage: build
+      name: "Build with postgresql"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
       script: cargo build --no-default-features --features="${FEATURES}"
-    - stage: test and build
+    - stage: build
+      name: "Build with sqlite"
       env:
         - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
       script: cargo build --no-default-features --features="${FEATURES}"
+    - stage: code coverage
+      name: "Calculate code coverage"
+      env:
+        - RUSTFLAGS='-C link-dead-code'
+      script:
+        - |
+            cargo test --features sqlite --no-default-features --all && (
+            wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
+            tar xzf master.tar.gz &&
+            mkdir -p kcov-master/build &&
+            cd kcov-master/build &&
+            cmake .. &&
+            make &&
+            sudo make install &&
+            cd ../.. &&
+            for crate in plume plume_common plume_models plume_api plm lib; do for file in target/debug/$crate-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done; done &&
+            bash <(curl -s https://codecov.io/bash) &&
+            echo "Uploaded code coverage" || true )
