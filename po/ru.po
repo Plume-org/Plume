@@ -1,0 +1,645 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-11-05 21:02+0300\n"
+"Last-Translator: Alexander Krotov <ilabdsf@gmail.com>\n"
+"Language-Team: none\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 2.2\n"
+
+msgid "Latest articles"
+msgstr "Последние статьи"
+
+msgid "No posts to see here yet."
+msgstr "Здесь пока нет постов."
+
+msgid "New article"
+msgstr "Новая статья"
+
+msgid "New blog"
+msgstr "Новый блог"
+
+msgid "Create a blog"
+msgstr "Создать блог"
+
+msgid "Title"
+msgstr "Заголовок"
+
+msgid "Create blog"
+msgstr "Создать блог"
+
+msgid "Comment \"{{ post }}\""
+msgstr "Комментарий \"{{ post }}\""
+
+msgid "Content"
+msgstr "Содержимое"
+
+msgid "Submit comment"
+msgstr "Отправить комментарий"
+
+msgid "Something broke on our side."
+msgstr "Произошла ошибка на вашей стороне."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Приносим извинения. Если вы считаете что это ошибка, пожалуйста сообщите о "
+"ней."
+
+msgid "Configuration"
+msgstr "Конфигурация"
+
+msgid "Configure your instance"
+msgstr "Настроить ваш узел"
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Let&#x27;s go!"
+msgstr "Поехали!"
+
+msgid "Welcome to {{ instance_name | escape }}"
+msgstr "Добро пожаловать на {{ instance_name | escape }}"
+
+msgid "Notifications"
+msgstr "Уведомления"
+
+msgid ""
+"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgstr ""
+"Написано {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+
+#, fuzzy
+msgid "This article is under the {{ license }} license."
+msgstr "Эта статья распространяется под лицензией {{ license }}"
+
+msgid "One like"
+msgid_plural "{{ count }} likes"
+msgstr[0] "Один лайк"
+msgstr[1] "{{count}} лайка"
+msgstr[2] "{{ count }} лайков"
+
+msgid "I don&#x27;t like this anymore"
+msgstr "Мне больше не нравится это"
+
+msgid "Add yours"
+msgstr "Добавить свой"
+
+msgid "One Boost"
+msgid_plural "{{ count }} Boosts"
+msgstr[0] "Одно продвижение"
+msgstr[1] "{{ count }} продвижения"
+msgstr[2] "{{ count }} продвижений"
+
+msgid "I don&#x27;t want to boost this anymore"
+msgstr "Я не хочу больше продвигать это"
+
+msgid "Boost"
+msgstr "Продвинуть"
+
+msgid "Comments"
+msgstr "Комментарии"
+
+msgid "Respond"
+msgstr "Ответить"
+
+msgid "Comment"
+msgstr "Комментарий"
+
+msgid "New post"
+msgstr "Новый пост"
+
+msgid "Create a post"
+msgstr "Создать пост"
+
+msgid "Publish"
+msgstr "Опубликовать"
+
+msgid "Login"
+msgstr "Войти"
+
+msgid "Username or email"
+msgstr "Имя пользователя или адрес электронной почты"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Dashboard"
+msgstr "Панель управления"
+
+msgid "Your Dashboard"
+msgstr "Ваша панель управления"
+
+msgid "Your Blogs"
+msgstr "Ваши блоги"
+
+#, fuzzy
+msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"У вас пока нет блогов. Создайте свой собственный или попросите "
+"присоединиться к другому."
+
+msgid "Start a new blog"
+msgstr "Начать новый блог"
+
+msgid "Admin"
+msgstr "Администратор"
+
+msgid "It is you"
+msgstr "Это вы"
+
+msgid "Edit your profile"
+msgstr "Редактировать ваш профиль"
+
+msgid "Open on {{ instance_url }}"
+msgstr "Открыть на {{ instance_url }}"
+
+msgid "Follow"
+msgstr "Подписаться"
+
+msgid "Unfollow"
+msgstr "Отписаться"
+
+msgid "Recently boosted"
+msgstr "Недавно продвинутые"
+
+msgid "One follower"
+msgid_plural "{{ count }} followers"
+msgstr[0] "Один подписчик"
+msgstr[1] "{{ count }} подписчика"
+msgstr[2] "{{ count }} подписчиков"
+
+msgid "Edit your account"
+msgstr "Редактировать ваш аккаунт"
+
+msgid "Your Profile"
+msgstr "Ваш профиль"
+
+msgid "Display Name"
+msgstr "Имя для отображения"
+
+msgid "Email"
+msgstr "Электронная почта"
+
+#, fuzzy
+msgid "Summary"
+msgstr "Резюме"
+
+msgid "Update account"
+msgstr "Обновить аккаунт"
+
+msgid "{{ name | escape }}'s followers"
+msgstr "Подписчики {{ name | escape }}"
+
+msgid "Followers"
+msgstr "Подписчики"
+
+msgid "New Account"
+msgstr "Новый аккаунт"
+
+msgid "Create an account"
+msgstr "Создать новый аккаунт"
+
+msgid "Username"
+msgstr "Имя пользователя"
+
+msgid "Password confirmation"
+msgstr "Подтверждение пароля"
+
+msgid "Create account"
+msgstr "Создать аккаунт"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Меню"
+
+msgid "My account"
+msgstr "Мой аккаунт"
+
+msgid "Log Out"
+msgstr "Выйти"
+
+msgid "Log In"
+msgstr "Войти"
+
+msgid "Register"
+msgstr "Зарегистрироваться"
+
+msgid "You need to be logged in order to create a new blog"
+msgstr "Вы должны войти чтобы создать новый блог"
+
+msgid "You need to be logged in order to post a comment"
+msgstr "Вы должны войти чтобы оставлять комментарии"
+
+msgid "You need to be logged in order to like a post"
+msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Вы должны войти чтобы просматривать ваши уведомления"
+
+msgid "You need to be logged in order to write a new post"
+msgstr "Вы должны войти чтобы написать новый пост"
+
+msgid "You need to be logged in order to boost a post"
+msgstr "Вы должны войти чтобы продвинуть пост"
+
+msgid "Invalid username or password"
+msgstr "Неправильное имя пользователя или пароль"
+
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
+
+msgid "You need to be logged in order to follow someone"
+msgstr "Вы должны войти чтобы подписаться на кого-либо"
+
+msgid "You need to be logged in order to edit your profile"
+msgstr "Вы должны войти чтобы редактировать ваш профиль"
+
+msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgstr "От {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+
+msgid "{{ data }} boosted your article"
+msgstr "{{ data }} продвинул(а) вашу статью"
+
+msgid "{{ data }} started following you"
+msgstr "{{ data }} подписался на вас"
+
+msgid "{{ data }} liked your article"
+msgstr "{{ data }} понравилась ваша статья"
+
+msgid "{{ data }} commented your article"
+msgstr "{{ data }} прокомментировал(а) вашу статью"
+
+msgid "We couldn&#x27;t find this page."
+msgstr "Мы не можем найти эту страницу."
+
+#, fuzzy
+msgid "The link that led you here may be broken."
+msgstr "Возможно, что ссылка, по которой вы пришли, неправильная."
+
+msgid "You are not authorized."
+msgstr "Вы не авторизованы."
+
+msgid "You are not author in this blog."
+msgstr "Вы не автор этого блога."
+
+msgid "{{ data }} mentioned you."
+msgstr "{{ data }} упомянул(а) вас."
+
+msgid "Your comment"
+msgstr "Ваш комментарий"
+
+msgid "Unknown error"
+msgstr "Неизвестная ошибка"
+
+msgid "Invalid name"
+msgstr "Неправильное имя"
+
+msgid "A blog with the same name already exists."
+msgstr "Блог с таким же названием уже существует."
+
+msgid "Your comment can't be empty"
+msgstr "Ваш комментарий не может быть пустым"
+
+msgid "A post with the same title already exists."
+msgstr "Пост с таким же заголовком уже существует."
+
+msgid "We need an email or a username to identify you"
+msgstr ""
+"Нам требуется электронная почта или имя пользователя чтобы идентифицировать "
+"вас"
+
+msgid "Your password can't be empty"
+msgstr "Ваш пароль не может быть пустым"
+
+msgid "Passwords are not matching"
+msgstr "Пароли не совпадают"
+
+msgid "Username can't be empty"
+msgstr "Имя пользователя не может быть пустым"
+
+msgid "Invalid email"
+msgstr "Неправильный адрес электронной почты"
+
+msgid "Password should be at least 8 characters long"
+msgstr "Пароль должен быть не короче 8 символов"
+
+msgid "One author in this blog: "
+msgid_plural "{{ count }} authors in this blog: "
+msgstr[0] "Один автор в этом блоге: "
+msgstr[1] "{{ count }} автора в этом блоге: "
+msgstr[2] "{{ count }} авторов в этом блоге: "
+
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
+"Войдите или используйте свой Fediverse-аккаунт, чтобы взаимодействовать с "
+"этой статьёй"
+
+msgid "Optional"
+msgstr "Не обязательно"
+
+msgid "One article in this blog"
+msgid_plural "{{ count }} articles in this blog"
+msgstr[0] "Один пост в этом блоге"
+msgstr[1] "{{count}} поста в этом блоге"
+msgstr[2] "{{ count }} постов в этом блоге"
+
+msgid "Previous page"
+msgstr "Предыдущая страница"
+
+msgid "Next page"
+msgstr "Следующая страница"
+
+msgid "{{ user }} mentioned you."
+msgstr "{{ user }} упомянул вас."
+
+msgid "{{ user }} commented your article."
+msgstr "{{ user }} прокомментировал вашу статью."
+
+msgid "{{ user }} is now following you."
+msgstr "{{ user }} не подписан на вас."
+
+msgid "{{ user }} liked your article."
+msgstr "{{ user }} понравилась ваша статья."
+
+msgid "{{ user }} boosted your article."
+msgstr "{{ user }} продвинул(а) вашу статью."
+
+msgid "Source code"
+msgstr "Исходный код"
+
+msgid "Matrix room"
+msgstr "Комната в Matrix"
+
+msgid "Administration"
+msgstr "Администрирование"
+
+msgid "Instance settings"
+msgstr "Настройки узла"
+
+msgid "Allow anyone to register"
+msgstr "Позволить регистрироваться кому угодно"
+
+msgid "Short description"
+msgstr "Краткое описание"
+
+msgid "Markdown is supported"
+msgstr "Поддерживается Markdown"
+
+msgid "Long description"
+msgstr "Длинное описание"
+
+msgid "Default license"
+msgstr "Лицензия по умолчанию"
+
+msgid "Save settings"
+msgstr "Сохранить настройки"
+
+msgid "No comments yet. Be the first to react!"
+msgstr "Пока что нет комментариев. Станьте первыми!"
+
+msgid "About this instance"
+msgstr "Об этом узле"
+
+msgid "What is Plume?"
+msgstr "Что такое Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume это децентрализованный движок для блоггинга."
+
+msgid "Authors can manage various blogs from an unique website."
+msgstr "Авторы могут управлять различными блогами с одного сайта."
+
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+"Статьи также видны на других сайтах Plume и вы можете взаимодействовать с "
+"ними напрямую из других платформ, таких как Mastodon."
+
+msgid "Create your account"
+msgstr "Создать аккаунт"
+
+msgid "About {{ instance_name }}"
+msgstr "О {{ instance_name }}"
+
+msgid "Home to"
+msgstr "Дом для"
+
+msgid "people"
+msgstr "человек"
+
+msgid "Who wrote"
+msgstr "Которые написали"
+
+msgid "articles"
+msgstr "статей"
+
+msgid "Read the detailed rules"
+msgstr "Прочитать подробные правила"
+
+msgid "Delete this article"
+msgstr "Удалить эту статью"
+
+msgid "Delete this blog"
+msgstr "Удалить этот блог"
+
+msgid "And connected to"
+msgstr "И подключен к"
+
+msgid "other instances"
+msgstr "другим узлам"
+
+msgid "Administred by"
+msgstr "Администрируется"
+
+msgid "Runs Plume {{ version }}"
+msgstr "Работает на Plume {{ version }}"
+
+msgid "Your media"
+msgstr "Ваши медиафайлы"
+
+msgid "Go to your gallery"
+msgstr "Перейти в вашу галерею"
+
+msgid "{{ name}}'s avatar'"
+msgstr "Аватар {{ name }}"
+
+msgid "Media details"
+msgstr "Детали медиафайла"
+
+msgid "Go back to the gallery"
+msgstr "Вернуться в галерею"
+
+msgid "Markdown code"
+msgstr "Код Markdown"
+
+msgid "Copy it in your articles to insert this media."
+msgstr "Скопируйте это в ваши статьи чтобы вставить этот медиафайл."
+
+msgid "Use as avatar"
+msgstr "Использовать как аватар"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Upload"
+msgstr "Загрузить"
+
+msgid "You don't have any media yet."
+msgstr "Пока что вы не можете загружать медиафайлы."
+
+msgid "Media upload"
+msgstr "Загрузка медиафайлов"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Content warning"
+msgstr "Предупреждение о контенте"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "Send"
+msgstr "Отправить"
+
+msgid ""
+"Sorry, but registrations are closed on this instance. Try to find another one"
+msgstr ""
+"Извините, но регистрации закрыты на данном узле. Попробуйти найти другой"
+
+msgid "Subtitle"
+msgstr "Подзаголовок"
+
+#, fuzzy
+msgid "Login to like"
+msgstr "Войдите, чтобы отмечать понравившиеся посты"
+
+#, fuzzy
+msgid "Login to boost"
+msgstr "Войдите, чтобы продвигать посты"
+
+msgid "Your feed"
+msgstr "Ваша лента"
+
+#, fuzzy
+msgid "Federated feed"
+msgstr "Объединенная лента"
+
+msgid "Local feed"
+msgstr "Локальная лента"
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr ""
+"Пока что здесь ничего нет. Попробуйте подписаться на большее число людей."
+
+msgid "Articles"
+msgstr "Статьи"
+
+msgid "All the articles of the Fediverse"
+msgstr "Все статьи из Fediverse"
+
+msgid "Articles from {{ instance.name }}"
+msgstr "Статьи с {{ instance.name }}"
+
+msgid "View all"
+msgstr "Показать все"
+
+msgid "Articles tagged \"{{ tag }}\""
+msgstr "Статьи, отмеченные тегом «{{ tag }}»"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Edit {{ post }}"
+msgstr "Редактрировать {{ post }}"
+
+msgid "Update"
+msgstr "Обновить"
+
+msgid "We couldn't find this page."
+msgstr "Мы не можем найти эту страницу."
+
+msgid "Invalid CSRF token."
+msgstr "Неправильный CSRF-токен."
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Что-то не так с вашим CSRF-токеном. Убедитесь что в вашем браузере включены "
+"cookies и попробуйте перезагрузить страницу. Если вы продолжите видеть это "
+"сообщение об ошибке, сообщите об этом."
+
+msgid "Administration of {{ instance.name }}"
+msgstr "Администрация {{ instance.name }}"
+
+msgid "Instances"
+msgstr "Узлы"
+
+msgid "Unblock"
+msgstr "Разблокировать"
+
+msgid "Block"
+msgstr "Заблокировать"
+
+#, fuzzy
+msgid "Ban"
+msgstr "Запретить"
+
+#, fuzzy
+msgid "Useful for visually impaired people and licensing"
+msgstr "Описание для лиц с нарушениями зрения и информация о лицензии"
+
+msgid "Let it empty if there is none"
+msgstr "Оставьте пустым если нет"
+
+msgid "Draft"
+msgstr "Черновик"
+
+msgid "This is a draft, don't publish it yet."
+msgstr "Это черновик, не публиковать пока что."
+
+msgid "Update or publish"
+msgstr "Обновить или опубликовать"
+
+msgid "Your Drafts"
+msgstr "Ваши черновики"
+
+msgid "Danger zone"
+msgstr "Опасная зона"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+"Будьте осторожны, любое действие произведённое здесь не может быть отменено."
+
+msgid "Delete your account"
+msgstr "Удалить ваш аккаунт"
+
+msgid "Sorry, but as an admin, you can't leave your instance."
+msgstr "Извините, но как администратор, вы не можете покинуть этот узел."
+
+msgid "Users"
+msgstr "Пользователи"
+
+msgid "This post isn't published yet."
+msgstr "Этот пост ещё не опубликован."
+
+msgid "There is currently no article with that tag"
+msgstr "Сейчас нет статей с таким тегом"
+
+msgid "Illustration"
+msgstr "Иллюстрация"
+
+msgid "None"
+msgstr "Нет"
