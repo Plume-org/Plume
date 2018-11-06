@@ -119,6 +119,15 @@
 
             {% if account %}
                 <form method="post" action="{{ article.url }}comment">
+                    {{ macros::input(
+                        name="warning",
+                        label="Content warning",
+                        optional=true,
+                        form=comment_form,
+                        errors=comment_errors,
+                        default=default)
+                    }}
+
                     <label for="plume-editor">{{ "Your comment" | _ }}</label>
                     {% if previous %}
                         <input type="hidden" name="responding_to" value="{{ previous.id }}"/>

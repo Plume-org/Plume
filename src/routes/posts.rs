@@ -44,6 +44,8 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                 let comments = Comment::list_by_post(&*conn, post.id);
                 let comms = comments.clone();
 
+                let previous = query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r)
+                    .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &vec![])));
                 Template::render("posts/details", json!({
                     "author": post.get_authors(&*conn)[0].to_json(&*conn),
                     "article": post.to_json(&*conn),
@@ -59,11 +61,15 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                     "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
                     "account": &user.clone().map(|u| u.to_json(&*conn)),
                     "date": &post.creation_date.timestamp(),
-                    "previous": query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r)
-                                                                       .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &vec![]))),
+                    "previous": previous,
+                    "default": {
+                        "warning": previous.map(|p| p["spoiler_text"].clone())
+                    },
                     "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
                     "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
-                    "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false)
+                    "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
+                    "comment_form": null,
+                    "comment_errors": null,
                 }))
             } else {
                 Template::render("errors/403", json!({

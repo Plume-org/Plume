@@ -20,11 +20,12 @@ use plume_models::{
     users::User
 };
 
-#[derive(FromForm, Debug, Validate)]
+#[derive(FromForm, Debug, Validate, Serialize)]
 struct NewCommentForm {
     pub responding_to: Option<i32>,
     #[validate(length(min = "1", message = "Your comment can't be empty"))]
-    pub content: String
+    pub content: String,
+    pub warning: String,
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
@@ -42,8 +43,8 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 post_id: post.id,
                 author_id: user.id,
                 ap_url: None,
-                sensitive: false,
-                spoiler_text: String::new()
+                sensitive: form.warning.len() > 0,
+                spoiler_text: form.warning.clone()
             }).update_ap_url(&*conn);
             let new_comment = comm.create_activity(&*conn);
 
@@ -77,7 +78,8 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "date": &post.creation_date.timestamp(),
                 "previous": form.responding_to.and_then(|r| Comment::get(&*conn, r)).map(|r| r.to_json(&*conn, &vec![])),
                 "user_fqn": user.get_fqn(&*conn),
-                "errors": errors
+                "comment_form": form,
+                "comment_errors": errors,
             })))
         })
 }
