@@ -80,7 +80,7 @@ impl Page {
 
 pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
     EntryBuilder::default()
-        .title(post.title.clone())
+        .title(format!("<![CDATA[{}]]>", post.title))
         .content(ContentBuilder::default()
             .value(format!("<![CDATA[{}]]>", *post.content.get()))
             .src(post.ap_url.clone())
