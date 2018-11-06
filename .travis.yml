@@ -39,7 +39,7 @@ jobs:
       name: "Test with potgresql"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume_tests
-      before_script: psql -c 'create database plume_tests;' -U postgres<Paste>
+      before_script: psql -c 'create database plume_tests;' -U postgres
       script: cargo test --no-default-features --features="${FEATURES}" --all
     - stage: code coverage
       name: "Calculate code coverage"
