@@ -45,6 +45,7 @@ jobs:
       name: "Calculate code coverage"
       env:
         - RUSTFLAGS='-C link-dead-code'
+        - DATABASE_URL=':memory:'
       script:
         - |
             cargo test --features sqlite --no-default-features --all && (
