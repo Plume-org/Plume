@@ -7,6 +7,7 @@ cache:
   - kcov-master
 sudo: true
 dist: trusty
+services: postgres
 
 addons:
   apt:
@@ -34,6 +35,12 @@ jobs:
       env:
         - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
       script: cargo build --no-default-features --features="${FEATURES}"
+    - stage: test
+      name: "Test with potgresql"
+      env:
+        - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume_tests
+      before_script: psql -c 'create database plume_tests;' -U postgres<Paste>
+      script: cargo test --no-default-features --features="${FEATURES}" --all
     - stage: code coverage
       name: "Calculate code coverage"
       env:
