@@ -13,6 +13,7 @@ pub struct PostEndpoint {
     pub creation_date: Option<String>,
     pub license: Option<String>,
     pub tags: Option<Vec<String>>,
+    pub cover_id: Option<i32>,
 }
 
 api!("/api/v1/posts" => PostEndpoint);

@@ -92,6 +92,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
                 creation_date: Some(post.creation_date.format("%Y-%m-%d").to_string()),
                 license: Some(post.license.clone()),
                 tags: Some(Tag::for_post(conn, post.id).into_iter().map(|t| t.tag).collect()),
+                cover_id: post.cover_id,
             })
         } else {
             Err(Error::NotFound("Request post was not found".to_string()))
@@ -127,8 +128,10 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
                 creation_date: Some(p.creation_date.format("%Y-%m-%d").to_string()),
                 license: Some(p.license.clone()),
                 tags: Some(Tag::for_post(conn, p.id).into_iter().map(|t| t.tag).collect()),
-            }).collect())
-            .unwrap_or(vec![])
+                cover_id: p.cover_id,
+            })
+            .collect()
+        ).unwrap_or(vec![])
     }
 
     fn update(
@@ -159,13 +162,20 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let title = query.title.clone().expect("No title for new post in API");
         let slug = query.title.unwrap().to_kebab_case();
 
-        let date = query.creation_date
-            .and_then(|d| NaiveDateTime::parse_from_str(d.as_ref(), "%Y-%m-%d").ok());
+        let date = query.creation_date.clone()
+            .and_then(|d| NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok());
+        println!("DATE: {:?}\n\n{:?}", date, query.creation_date);
 
         let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref());
 
         let author = User::get(conn, user_id.expect("<Post as Provider>::create: no user_id error"))?;
         let blog = query.blog_id.unwrap_or_else(|| Blog::find_for_author(conn, &author)[0].id);
+
+        if Post::find_by_slug(conn, &slug, blog).is_some() {
+            // Not an actual authorization problem, but we have nothing better for now…
+            // TODO: add another error variant to canapi and add it there
+            return Err(Error::Authorization("A post with the same slug already exists".to_string()));
+        }
 
         let post = Post::insert(conn, NewPost {
             blog_id: blog,
@@ -179,8 +189,8 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             creation_date: date,
             ap_url: String::new(),
             subtitle: query.subtitle.unwrap_or(String::new()),
-            source: query.source.unwrap(),
-            cover_id: None,
+            source: query.source.expect("Post API::create: no source error"),
+            cover_id: query.cover_id,
         }, search);
         post.update_ap_url(conn);
 
@@ -228,6 +238,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             creation_date: Some(post.creation_date.format("%Y-%m-%d").to_string()),
             license: Some(post.license.clone()),
             tags: Some(Tag::for_post(conn, post.id).into_iter().map(|t| t.tag).collect()),
+            cover_id: post.cover_id,
         })
     }
 }
