@@ -12,7 +12,7 @@ services:
     env_file: .env
     restart: unless-stopped
     volumes:
-      - "./data/plume/static/media:/app/media"
+      - "./data/plume/static/media:/app/static/media"
       - "./.env:/app/.env"
     ports:
       - "127.0.0.1:7878:7878"
