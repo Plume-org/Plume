@@ -22,6 +22,7 @@ addons:
       - libiberty-dev
 stages:
   - build
+  - test
   - code coverage
 jobs:
   include:
