@@ -25,6 +25,9 @@ extern crate serde_json;
 extern crate url;
 extern crate webfinger;
 
+#[cfg(test)]
+#[macro_use] extern crate diesel_migrations;
+
 use std::env;
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
@@ -212,6 +215,37 @@ pub fn ap_url(url: String) -> String {
         "http"
     };
     format!("{}://{}", scheme, url)
+}
+
+#[cfg(test)]
+#[macro_use]
+mod tests {
+    use diesel::Connection;
+    use Connection as Conn;
+    use DATABASE_URL;
+
+    #[cfg(feature = "sqlite")]
+    embed_migrations!("../migrations/sqlite");
+
+    #[cfg(feature = "postgres")]
+    embed_migrations!("../migrations/postgres");
+
+    #[macro_export]
+    macro_rules! part_eq {
+        ( $x:expr, $y:expr, [$( $var:ident ),*] ) => {
+            {
+                $(
+                    assert_eq!($x.$var, $y.$var);
+                )*
+            }
+        };
+    }
+
+    pub fn db() -> Conn {
+        let conn = Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
+        embedded_migrations::run(&conn).expect("Couldn't run migrations");
+        conn
+    }
 }
 
 pub mod admin;

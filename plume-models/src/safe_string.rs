@@ -34,7 +34,7 @@ fn url_add_prefix(url: &str) -> Option<Cow<str>> {
     }
 }
 
-#[derive(Debug, Clone, AsExpression, FromSqlRow, Default)]
+#[derive(Debug, Clone, PartialEq, AsExpression, FromSqlRow, Default)]
 #[sql_type = "Text"]
 pub struct SafeString{
     value: String,
