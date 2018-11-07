@@ -389,6 +389,10 @@ main .article-meta .tags li a {
  	font-weight: 600;
  }
 
+summary {
+    cursor: pointer;
+}
+
  /* New comment */
 
  main .article-meta .comments form input[type="submit"]
