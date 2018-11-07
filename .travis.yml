@@ -22,8 +22,7 @@ addons:
       - libiberty-dev
 stages:
   - build
-  - test
-  - code coverage
+  - test and coverage
 jobs:
   include:
     - stage: build
@@ -36,28 +35,22 @@ jobs:
       env:
         - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
       script: cargo build --no-default-features --features="${FEATURES}"
-    - stage: test
-      name: "Test with potgresql"
+    - stage: test and coverage
+      name: "Test with potgresql backend"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume_tests
-      before_script: psql -c 'create database plume_tests;' -U postgres
-      script: cargo test --no-default-features --features="${FEATURES}" --all
-    - stage: code coverage
-      name: "Calculate code coverage"
-      env:
         - RUSTFLAGS='-C link-dead-code'
-        - DATABASE_URL=':memory:'
+      before_script: psql -c 'create database plume_tests;' -U postgres
       script:
         - |
-            cargo test --features sqlite --no-default-features --all && (
-            wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-            tar xzf master.tar.gz &&
-            mkdir -p kcov-master/build &&
-            cd kcov-master/build &&
-            cmake .. &&
-            make &&
-            sudo make install &&
-            cd ../.. &&
-            for crate in plume plume_common plume_models plume_api plm lib; do for file in target/debug/$crate-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done; done &&
-            bash <(curl -s https://codecov.io/bash) &&
-            echo "Uploaded code coverage" || true )
+            cargo test --features "${FEATURES}" --no-default-features  --all &&
+            ./script/compute_coverage.sh
+    - stage: test and coverage
+      name: "Test with Sqlite backend"
+      env:
+        - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
+        - RUSTFLAGS='-C link-dead-code'
+      script:
+        - |
+            cargo test --features "${FEATURES}" --no-default-features --all &&
+            ./script/compute_coverage.sh
