@@ -39,7 +39,7 @@ jobs:
       name: "Test with potgresql backend"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume_tests
-        - RUSTFLAGS='-C link-dead-code'
+        - RUSTFLAGS='-C link-dead-code' RUST_TEST_THREADS=1
       before_script: psql -c 'create database plume_tests;' -U postgres
       script:
         - |
@@ -49,7 +49,7 @@ jobs:
       name: "Test with Sqlite backend"
       env:
         - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
-        - RUSTFLAGS='-C link-dead-code'
+        - RUSTFLAGS='-C link-dead-code' RUST_TEST_THREADS=1
       script:
         - |
             cargo test --features "${FEATURES}" --no-default-features --all &&
