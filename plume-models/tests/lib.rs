@@ -24,7 +24,7 @@ fn db() -> Conn {
 #[test]
 fn empty_test() {
     let conn = &db();
-	conn.test_transaction::<_, (), _>(|| {
-		Ok(())
+    conn.test_transaction::<_, (), _>(|| {
+        Ok(())
     });
 }

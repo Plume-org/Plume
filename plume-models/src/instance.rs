@@ -140,14 +140,13 @@ impl Instance {
 #[cfg(test)]
 mod tests {
     use diesel::Connection;
+    use Connection as Conn;
     use tests::db;
     use super::*;
 
-    #[test]
-    fn local_instance() {
-        let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inserted = NewInstance {
+    fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
+        vec![
+            NewInstance {
                 default_license: "WTFPL".to_string(),
                 local: true,
                 long_description: SafeString::new("This is my instance."),
@@ -157,8 +156,50 @@ mod tests {
                 name: "My instance".to_string(),
                 open_registrations: true,
                 public_domain: "plu.me".to_string(),
-            };
-            Instance::insert(conn, inserted.clone());
+            },
+            NewInstance {
+                default_license: "WTFPL".to_string(),
+                local: false,
+                long_description: SafeString::new("This is an instance."),
+                long_description_html: "<p>This is an instance</p>".to_string(),
+                short_description: SafeString::new("An instance."),
+                short_description_html: "<p>An instance</p>".to_string(),
+                name: "An instance".to_string(),
+                open_registrations: true,
+                public_domain: "1plu.me".to_string(),
+            },
+            NewInstance {
+                default_license: "CC-0".to_string(),
+                local: false,
+                long_description: SafeString::new("This is the instance of someone."),
+                long_description_html: "<p>This is the instance of someone</p>".to_string(),
+                short_description: SafeString::new("Someone instance."),
+                short_description_html: "<p>Someone instance</p>".to_string(),
+                name: "Someone instance".to_string(),
+                open_registrations: false,
+                public_domain: "2plu.me".to_string(),
+            },
+            NewInstance {
+                default_license: "CC-0-BY-SA".to_string(),
+                local: false,
+                long_description: SafeString::new("Good morning"),
+                long_description_html: "<p>Good morning</p>".to_string(),
+                short_description: SafeString::new("Hello"),
+                short_description_html: "<p>Hello</p>".to_string(),
+                name: "Nice day".to_string(),
+                open_registrations: true,
+                public_domain: "3plu.me".to_string(),
+            },
+        ].into_iter()
+            .map(|inst| (inst.clone(), Instance::find_by_domain(conn, inst.public_domain.clone()).unwrap_or_else(|| Instance::insert(conn, inst) )))
+            .collect()
+    }
+
+    #[test]
+    fn local_instance() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let inserted = fill_database(conn).into_iter().map(|(inserted, _)| inserted).find(|inst| inst.local).unwrap();
             let res = Instance::get_local(conn).unwrap();
 
             part_eq!(res, inserted, [
@@ -181,100 +222,40 @@ mod tests {
     fn remote_instance() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted1 = NewInstance {
-                default_license: "WTFPL".to_string(),
-                local: false,
-                long_description: SafeString::new("This is my instance."),
-                long_description_html: "<p>This is my instance</p>".to_string(),
-                short_description: SafeString::new("My instance."),
-                short_description_html: "<p>My instance</p>".to_string(),
-                name: "My instance".to_string(),
-                open_registrations: true,
-                public_domain: "1plu.me".to_string(),
-            };
-            let inserted2 = NewInstance {
-                default_license: "CC-0".to_string(),
-                local: false,
-                long_description: SafeString::new("This is the instance of someone."),
-                long_description_html: "<p>This is the instance of someone</p>".to_string(),
-                short_description: SafeString::new("Someone instance."),
-                short_description_html: "<p>Someone instance</p>".to_string(),
-                name: "Someone instance".to_string(),
-                open_registrations: false,
-                public_domain: "2plu.me".to_string(),
-            };
-            let inserted3 = NewInstance {
-                default_license: "CC-0-BY-SA".to_string(),
-                local: false,
-                long_description: SafeString::new("Good morning"),
-                long_description_html: "<p>Good morning</p>".to_string(),
-                short_description: SafeString::new("Hello"),
-                short_description_html: "<p>Hello</p>".to_string(),
-                name: "Nice day".to_string(),
-                open_registrations: true,
-                public_domain: "3plu.me".to_string(),
-            };
-            Instance::insert(conn, inserted1.clone());
-            Instance::insert(conn, inserted2.clone());
-            Instance::insert(conn, inserted3.clone());
-            assert_eq!(Instance::count(conn), 3);
+            let inserted = fill_database(conn);
+            assert_eq!(Instance::count(conn), inserted.len() as i64);
+
             let res = Instance::get_remotes(conn);
-            assert_eq!(res.len(), 3);
+            assert_eq!(res.len(), inserted.iter().filter(|(inst,_)| !inst.local).count());
 
-            part_eq!(res[0], inserted1, [
-                     default_license,
-                     local,
-                     long_description,
-                     long_description_html,
-                     short_description,
-                     short_description_html,
-                     name,
-                     open_registrations,
-                     public_domain
-                     ]);
+            inserted.iter().filter(|(newinst,_)| !newinst.local)
+                .map(|(newinst, inst)| (newinst, res.iter().find(|res| res.id==inst.id).unwrap()))
+                .for_each(|(newinst, inst)|
+                          part_eq!(newinst, inst, [
+                                   default_license,
+                                   local,
+                                   long_description,
+                                   long_description_html,
+                                   short_description,
+                                   short_description_html,
+                                   name,
+                                   open_registrations,
+                                   public_domain
+                          ]));
 
-            part_eq!(res[1], inserted2, [
-                     default_license,
-                     local,
-                     long_description,
-                     long_description_html,
-                     short_description,
-                     short_description_html,
-                     name,
-                     open_registrations,
-                     public_domain
-                     ]);
+            let page = Instance::page(conn, (0, 2));
+            assert_eq!(page.len(), 2);
+            let page1 = &page[0];
+            let page2 = &page[1];
+            assert!(page1.public_domain <= page2.public_domain);
 
-            part_eq!(res[2], inserted3, [
-                     default_license,
-                     local,
-                     long_description,
-                     long_description_html,
-                     short_description,
-                     short_description_html,
-                     name,
-                     open_registrations,
-                     public_domain
-                     ]);
-
-            let mut page = Instance::page(conn, (1, 2));
-            assert_eq!(page.len(), 1);
-            let page_res = page.remove(0);
-
-            part_eq!(page_res, res[1], [
-                id,
-                public_domain,
-                name,
-                local,
-                blocked,
-                creation_date,
-                open_registrations,
-                short_description,
-                long_description,
-                default_license,
-                long_description_html,
-                short_description_html
-            ]);
+            let mut last_domaine: String = Instance::page(conn, (0,1))[0].public_domain.clone();
+            for i in 1..inserted.len() as i32 {
+                let page = Instance::page(conn, (i,i+1));
+                assert_eq!(page.len(), 1);
+                assert!(last_domaine <= page[0].public_domain);
+                last_domaine = page[0].public_domain.clone();
+            }
 
             Ok(())
         });
@@ -284,32 +265,28 @@ mod tests {
     fn blocked() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inst = Instance::insert(conn, NewInstance {
-                default_license: "WTFPL".to_string(),
-                local: false,
-                long_description: SafeString::new("This is my instance."),
-                long_description_html: "<p>This is my instance</p>".to_string(),
-                short_description: SafeString::new("My instance."),
-                short_description_html: "<p>My instance</p>".to_string(),
-                name: "My instance".to_string(),
-                open_registrations: true,
-                public_domain: "1plu.me".to_string(),
-            });
+            let inst_list = fill_database(conn);
+            let inst = &inst_list[0].1;
+            let inst_list = &inst_list[1..];
 
-            assert!(!inst.blocked);
+            let blocked = inst.blocked;
             inst.toggle_block(conn);
             let inst = Instance::get(conn, inst.id).unwrap();
-            assert!(inst.blocked);
-            assert!(Instance::is_blocked(conn, "https://1plu.me/something".to_owned()));
-            assert!(!Instance::is_blocked(conn, "https://1plu.mea/something".to_owned()));
-            assert!(!Instance::is_blocked(conn, "https://other/something".to_owned()));
+            assert_eq!(inst.blocked, !blocked);
+            assert_eq!(inst_list.iter().filter(|(_, inst)| inst.blocked != Instance::get(conn, inst.id).unwrap().blocked).count(), 0);
+            assert_eq!(Instance::is_blocked(conn, format!("https://{}/something", inst.public_domain)), inst.blocked);
+            assert_eq!(Instance::is_blocked(conn, format!("https://{}a/something", inst.public_domain)),
+                Instance::find_by_domain(conn, format!("{}a", inst.public_domain)).map(|inst| inst.blocked).unwrap_or(false)
+                );
 
             inst.toggle_block(conn);
             let inst = Instance::get(conn, inst.id).unwrap();
-            assert!(!inst.blocked);
-            assert!(!Instance::is_blocked(conn, "https://1plu.me/something".to_owned()));
-            assert!(!Instance::is_blocked(conn, "https://1plu.mea/something".to_owned()));
-            assert!(!Instance::is_blocked(conn, "https://other/something".to_owned()));
+            assert_eq!(inst.blocked, blocked);
+            assert_eq!(Instance::is_blocked(conn, format!("https://{}/something", inst.public_domain)), inst.blocked);
+            assert_eq!(Instance::is_blocked(conn, format!("https://{}a/something", inst.public_domain)),
+                Instance::find_by_domain(conn, format!("{}a", inst.public_domain)).map(|inst| inst.blocked).unwrap_or(false)
+                );
+            assert_eq!(inst_list.iter().filter(|(_, inst)| inst.blocked != Instance::get(conn, inst.id).unwrap().blocked).count(), 0);
 
             Ok(())
         });
@@ -319,17 +296,7 @@ mod tests {
     fn update() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inst = Instance::insert(conn, NewInstance {
-                default_license: "WTFPL".to_string(),
-                local: true,
-                long_description: SafeString::new("This is my instance."),
-                long_description_html: "<p>This is my instance</p>".to_string(),
-                short_description: SafeString::new("My instance."),
-                short_description_html: "<p>My instance</p>".to_string(),
-                name: "My instance".to_string(),
-                open_registrations: true,
-                public_domain: "plu.me".to_string(),
-            });
+            let inst = &fill_database(conn)[0].1;
 
             inst.update(conn, "NewName".to_owned(), false, SafeString::new("[short](#link)"), SafeString::new("[long_description](/with_link)"));
             let inst = Instance::get(conn, inst.id).unwrap();
