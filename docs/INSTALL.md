@@ -49,10 +49,10 @@ On **Gentoo**:
 emerge --sync
 
 # If you want PostgreSQL
-emerge -av postgresql eselect-postgresql gettext && emerge --ask dev-vcs/git
+emerge -avu dev-db/postgresql dev-vcs/git sys-devel/gettext
 
 # If you want SQlite
-emerge -av gettext && emerge --ask dev-vcs/git && emerge -pv sqlite3 libsqlite3-dev
+emerge -avu dev-db/sqlite dev-vcs/git sys-devel/gettext
 ```
 
 On **Mac OS X**, with [Homebrew](https://brew.sh/):
