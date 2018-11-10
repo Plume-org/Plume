@@ -138,13 +138,13 @@ impl Instance {
 
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use diesel::Connection;
     use Connection as Conn;
     use tests::db;
     use super::*;
 
-    fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
+    pub(crate) fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
         vec![
             NewInstance {
                 default_license: "WTFPL".to_string(),

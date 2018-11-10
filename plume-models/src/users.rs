@@ -140,6 +140,13 @@ impl User {
             .expect("User::grand_admin_rights: update error");
     }
 
+    pub fn revoke_admin_rights(&self, conn: &Connection) {
+        diesel::update(self)
+            .set(users::is_admin.eq(false))
+            .execute(conn)
+            .expect("User::grand_admin_rights: update error");
+    }
+
     pub fn update(&self, conn: &Connection, name: String, email: String, summary: String) -> User {
         diesel::update(self)
             .set((
@@ -329,7 +336,7 @@ impl User {
     }
 
     pub fn get_local_page(conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
-        users::table.filter(users::instance_id.eq(1))
+        users::table.filter(users::instance_id.eq(Instance::local_id(conn)))
             .order(users::username.asc())
             .offset(min.into())
             .limit((max - min).into())
@@ -666,5 +673,170 @@ impl NewUser {
             followers_endpoint: String::from(""),
             avatar_id: None
         })
+    }
+}
+
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use diesel::Connection;
+    use Connection as Conn;
+    use tests::db;
+    use super::*;
+    use instance::{Instance,tests as instanceTests};
+
+    pub(crate) fn fill_database(conn: &Conn) -> Vec<User> {
+        instanceTests::fill_database(conn);
+        let local_user = vec![
+            NewUser::new_local(conn,
+                "admin".to_owned(),
+                "The admin".to_owned(),
+                true,
+                "Hello there, I'm the admin".to_owned(),
+                "admin@example.com".to_owned(),
+                "invalid_admin_password".to_owned(),
+            ),
+            NewUser::new_local(conn,
+                "user".to_owned(),
+                "Some user".to_owned(),
+                false,
+                "Hello there, I'm no one".to_owned(),
+                "user@example.com".to_owned(),
+                "invalid_user_password".to_owned(),
+            ),
+            NewUser::new_local(conn,
+                "other".to_owned(),
+                "Another user".to_owned(),
+                false,
+                "Hello there, I'm someone else".to_owned(),
+                "other@example.com".to_owned(),
+                "invalid_other_password".to_owned(),
+            )
+        ];
+        for u in local_user.iter() {
+            u.update_boxes(conn);
+        }
+        local_user
+    }
+
+    #[test]
+    fn find_by() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            fill_database(conn);
+            let test_user = NewUser::new_local(conn,
+                "test".to_owned(),
+                "test user".to_owned(),
+                false,
+                "Hello I'm a test".to_owned(),
+                "test@example.com".to_owned(),
+                User::hash_pass("test_password".to_owned()),
+            );
+            test_user.update_boxes(conn);
+
+            assert_eq!(test_user.id, User::find_by_name(conn, "test".to_owned(), Instance::local_id(conn)).unwrap().id);
+            assert_eq!(test_user.id, User::find_by_fqn(conn, test_user.get_fqn(conn)).unwrap().id);
+            assert_eq!(test_user.id, User::find_by_email(conn, "test@example.com".to_owned()).unwrap().id);
+            assert_eq!(test_user.id, User::find_by_ap_url(conn,
+                        format!("https://{}/@/{}/", Instance::get_local(conn).unwrap().public_domain, "test")).unwrap().id
+                      );
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn delete() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let inserted = fill_database(conn);
+            assert!(User::get(conn, inserted[0].id).is_some());
+            inserted[0].delete(conn);
+            assert!(User::get(conn, inserted[0].id).is_none());
+            // TODO test post and blog deletion
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn admin() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let inserted = fill_database(conn);
+            let local_inst = Instance::get_local(conn).unwrap();
+            let mut i = 0;
+            while local_inst.has_admin(conn) {
+                assert!(i<100);//prevent from looping indefinitelly
+                local_inst.main_admin(conn).revoke_admin_rights(conn);
+                i+=1;
+            }
+            inserted[0].grant_admin_rights(conn);
+            assert_eq!(inserted[0].id, local_inst.main_admin(conn).id);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn update() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let inserted = fill_database(conn);
+            let updated = inserted[0].update(conn, "new name".to_owned(),
+                    "em@il".to_owned(), "<p>summary</p><script></script>".to_owned());
+            assert_eq!(updated.display_name, "new name");
+            assert_eq!(updated.email.unwrap(), "em@il");
+            assert_eq!(updated.summary.get(), "<p>summary</p>");
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn auth() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            fill_database(conn);
+            let test_user = NewUser::new_local(conn,
+                "test".to_owned(),
+                "test user".to_owned(),
+                false,
+                "Hello I'm a test".to_owned(),
+                "test@example.com".to_owned(),
+                User::hash_pass("test_password".to_owned()),
+            );
+            test_user.update_boxes(conn);
+
+            assert!(test_user.auth("test_password".to_owned()));
+            assert!(!test_user.auth("other_password".to_owned()));
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn get_local_page() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            fill_database(conn);
+
+            let page = User::get_local_page(conn, (0,2));
+            assert_eq!(page.len(), 2);
+            assert!(page[0].username <= page[1].username);
+
+            let mut last_username = User::get_local_page(conn, (0,1))[0].username.clone();
+            for i in 1..User::count_local(conn) as i32{
+                let page = User::get_local_page(conn, (i, i+1));
+                assert_eq!(page.len(), 1);
+                assert!(last_username <= page[0].username);
+                last_username = page[0].username.clone();
+            }
+            assert_eq!(User::get_local_page(conn, (0, User::count_local(conn) as i32 +10)).len(),
+                User::count_local(conn)
+                );
+
+            Ok(())
+        });
     }
 }
