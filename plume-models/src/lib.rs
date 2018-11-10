@@ -198,14 +198,19 @@ lazy_static! {
     pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
 }
 
+#[cfg(not(test))]
+static DB_NAME: &str = "plume";
+#[cfg(test)]
+static DB_NAME: &str = "plume_tests";
+
 #[cfg(all(feature = "postgres", not(feature = "sqlite")))]
 lazy_static! {
-    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(String::from("postgres://plume:plume@localhost/plume"));
+    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(format!("postgres://plume:plume@localhost/{}", DB_NAME));
 }
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
 lazy_static! {
-    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(String::from("plume.sqlite"));
+    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(format!("{}.sqlite", DB_NAME));
 }
 
 pub fn ap_url(url: String) -> String {
