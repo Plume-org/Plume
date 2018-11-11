@@ -243,8 +243,6 @@ impl User {
             }
         };
 
-        let avatar = Media::save_remote(conn, acct.object.object_props.icon_image().expect("User::from_activity: icon error")
-            .object_props.url_string().expect("User::from_activity: icon.url error"));
 
         let user = User::insert(conn, NewUser {
             username: acct.object.ap_actor_props.preferred_username_string().expect("User::from_activity: preferredUsername error"),
@@ -263,9 +261,13 @@ impl User {
             shared_inbox_url: acct.object.ap_actor_props.endpoints_endpoint()
                 .and_then(|e| e.shared_inbox_string()).ok(),
             followers_endpoint: acct.object.ap_actor_props.followers_string().expect("User::from_activity: followers error"),
-            avatar_id: Some(avatar.id)
+            avatar_id: None,
         });
-        avatar.set_owner(conn, user.id);
+
+        let avatar = Media::save_remote(conn, acct.object.object_props.icon_image().expect("User::from_activity: icon error")
+            .object_props.url_string().expect("User::from_activity: icon.url error"), &user);
+
+        user.set_avatar(conn, avatar.id);
 
         user
     }
@@ -273,7 +275,7 @@ impl User {
     pub fn refetch(&self, conn: &Connection) {
         User::fetch(self.ap_url.clone()).map(|json| {
             let avatar = Media::save_remote(conn, json.object.object_props.icon_image().expect("User::refetch: icon error")
-                .object_props.url_string().expect("User::refetch: icon.url error"));
+                .object_props.url_string().expect("User::refetch: icon.url error"), &self);
 
             diesel::update(self)
                 .set((
