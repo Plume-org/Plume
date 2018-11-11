@@ -108,6 +108,8 @@ impl User {
     pub fn delete(&self, conn: &Connection) {
         use schema::post_authors;
 
+        Blog::find_for_author(conn, self).iter().filter(|b| b.list_authors(conn).len()<=1)
+            .for_each(|b| b.delete(conn));
         // delete the posts if they is the only author
         let all_their_posts_ids: Vec<i32> = post_authors::table
             .filter(post_authors::author_id.eq(self.id))
@@ -752,10 +754,10 @@ pub(crate) mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let inserted = fill_database(conn);
+
             assert!(User::get(conn, inserted[0].id).is_some());
             inserted[0].delete(conn);
             assert!(User::get(conn, inserted[0].id).is_none());
-            // TODO test post and blog deletion
 
             Ok(())
         });

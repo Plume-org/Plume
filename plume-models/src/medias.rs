@@ -142,7 +142,7 @@ pub(crate) mod tests {
     use Connection as Conn;
     use tests::db;
     use super::*;
-    use users::{tests as usersTests};
+    use users::tests as usersTests;
     use std::fs;
     use std::path::Path;
     use std::env::{current_dir, set_current_dir};

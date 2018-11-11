@@ -104,7 +104,7 @@ fn details(name: String, conn: DbConn, account: Option<User>, worker: Worker, fe
 
 #[get("/dashboard")]
 fn dashboard(user: User, conn: DbConn) -> Template {
-    let blogs = Blog::find_for_author(&*conn, user.id);
+    let blogs = Blog::find_for_author(&*conn, &user);
     Template::render("users/dashboard", json!({
         "account": user.to_json(&*conn),
         "blogs": blogs,
