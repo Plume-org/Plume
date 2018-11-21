@@ -12,7 +12,6 @@ failure = "0.1"
 gettext-rs = "0.4"
 guid-create = "0.1"
 heck = "0.3.0"
-multipart = "0.15"
 rpassword = "2.0"
 serde = "1.0"
 serde_derive = "1.0"
@@ -33,8 +32,13 @@ features = ["serde"]
 version = "0.4"
 
 [dependencies.diesel]
-features = ["postgres", "sqlite", "r2d2", "chrono"]
+features = ["r2d2", "chrono"]
 version = "*"
+
+[dependencies.multipart]
+default-features = false
+features = ["server"]
+version = "0.15"
 
 [dependencies.plume-api]
 path = "plume-api"
@@ -68,8 +72,8 @@ rev = "75a3bfd7b847324c078a355a7f101f8241a9f59b"
 
 [features]
 default = ["postgres"]
-postgres = ["plume-models/postgres"]
-sqlite = ["plume-models/sqlite"]
+postgres = ["plume-models/postgres", "diesel/postgres"]
+sqlite = ["plume-models/sqlite", "diesel/sqlite"]
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common"]

@@ -13,12 +13,12 @@ dotenv = "0.13"
 rpassword = "2.0"
 
 [dependencies.diesel]
-features = ["postgres", "r2d2", "chrono"]
+features = ["r2d2", "chrono"]
 version = "*"
 
 [dependencies.plume-models]
 path = "../plume-models"
 
 [features]
-postgres = ["plume-models/postgres"]
-sqlite = ["plume-models/sqlite"]
+postgres = ["plume-models/postgres", "diesel/postgres"]
+sqlite = ["plume-models/sqlite", "diesel/sqlite"]

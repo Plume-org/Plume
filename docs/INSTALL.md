@@ -11,6 +11,8 @@ In order to be installed and to work correctly, Plume needs:
 - *GetText* (to manage translations)
 - *Rust* and *Cargo* (to build the code)
 - *OpenSSL* and *OpenSSL librairies* (for security)
+- *xz* (for gettext-sys compilation)
+- *pkg-config* (for openssl-sys compilation)
 
 All the following instructions will need a terminal.
 
@@ -26,10 +28,10 @@ On **Debian**:
 apt update
 
 # If you want PostgreSQL
-apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev
+apt install gettext postgresql postgresql-contrib libpq-dev git curl gcc make openssl libssl-dev xz-utils pkg-config
 
 # If you want SQlite
-apt install gettext sqlite3 libsqlite3-dev git curl gcc make openssl libssl-dev
+apt install gettext libsqlite3-dev git curl gcc make openssl libssl-dev xz-utils pkg-config
 
 ```
 
