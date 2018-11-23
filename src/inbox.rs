@@ -1,4 +1,15 @@
-use activitypub::{activity::{Announce, Create, Delete, Like, Undo, Update}, object::Tombstone};
+use activitypub::{
+    activity::{
+        Announce,
+        Create,
+        Delete,
+        Follow as FollowAct,
+        Like,
+        Undo,
+        Update
+    },
+    object::Tombstone
+};
 use failure::Error;
 use serde_json;
 
@@ -57,7 +68,7 @@ pub trait Inbox {
                                 Ok(())
                             },
                             "Follow" => {
-                                Follow::delete_id(act.undo_props.object_object::<Like>()?.object_props.id_string()?, actor_id.into(), conn);
+                                Follow::delete_id(act.undo_props.object_object::<FollowAct>()?.object_props.id_string()?, actor_id.into(), conn);
                                 Ok(())
                             }
                             _ => Err(InboxError::CantUndo)?
