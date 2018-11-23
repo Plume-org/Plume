@@ -2,7 +2,7 @@ use activitypub::{Actor, activity::{Accept, Follow as FollowAct, Undo}, actor::P
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use plume_common::activity_pub::{broadcast, Id, IntoId, inbox::{FromActivity, Notify, WithInbox, Deletable}, sign::Signer};
-use Connection;
+use {BASE_URL, ap_url, Connection};
 use blogs::Blog;
 use notifications::*;
 use users::User;
@@ -69,7 +69,7 @@ impl Follow {
         });
 
         let mut accept = Accept::default();
-        let accept_id = format!("{}#accept", follow.object_props.id_string().unwrap_or(String::new()));
+        let accept_id = ap_url(format!("{}/follow/{}/accept", BASE_URL.as_str(), res.id));
         accept.object_props.set_id_string(accept_id).expect("Follow::accept_follow: id error");
         accept.object_props.set_to_link(from.clone().into_id()).expect("Follow::accept_follow: to error");
         accept.object_props.set_cc_link_vec::<Id>(vec![]).expect("Follow::accept_follow: cc error");
