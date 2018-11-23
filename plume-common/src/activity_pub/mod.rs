@@ -17,6 +17,8 @@ pub mod sign;
 pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
 pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
 
+pub const AP_CONTENT_TYPE: &'static str = r#"application/ld+json; profile="https://www.w3.org/ns/activitystreams""#;
+
 pub fn ap_accept_header() -> Vec<&'static str> {
     vec![
         "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"",

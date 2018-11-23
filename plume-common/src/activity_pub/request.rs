@@ -1,11 +1,11 @@
 use base64;
 use chrono::{DateTime, offset::Utc};
 use openssl::hash::{Hasher, MessageDigest};
-use reqwest::header::{ACCEPT, DATE, HeaderMap, HeaderValue, USER_AGENT};
+use reqwest::header::{ACCEPT, CONTENT_TYPE, DATE, HeaderMap, HeaderValue, USER_AGENT};
 use std::ops::Deref;
 use std::time::SystemTime;
 
-use activity_pub::ap_accept_header;
+use activity_pub::{AP_CONTENT_TYPE, ap_accept_header};
 use activity_pub::sign::Signer;
 
 const PLUME_USER_AGENT: &'static str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
@@ -62,6 +62,7 @@ pub fn headers() -> HeaderMap {
     headers.insert(USER_AGENT, HeaderValue::from_static(PLUME_USER_AGENT));
     headers.insert(DATE, HeaderValue::from_str(&date).expect("request::headers: date error"));
     headers.insert(ACCEPT, HeaderValue::from_str(&ap_accept_header().into_iter().collect::<Vec<_>>().join(", ")).expect("request::headers: accept error"));
+    headers.insert(CONTENT_TYPE, HeaderValue::from_static(AP_CONTENT_TYPE));
     headers
 }
 
