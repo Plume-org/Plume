@@ -1,13 +1,11 @@
 extern crate diesel;
-#[macro_use] extern crate diesel_migrations;
+#[macro_use]
+extern crate diesel_migrations;
 
 extern crate plume_models;
 
 use diesel::Connection;
-use plume_models::{
-    DATABASE_URL,
-    Connection as Conn,
-};
+use plume_models::{Connection as Conn, DATABASE_URL};
 
 #[cfg(feature = "sqlite")]
 embed_migrations!("../migrations/sqlite");
@@ -24,7 +22,5 @@ fn db() -> Conn {
 #[test]
 fn empty_test() {
     let conn = &db();
-    conn.test_transaction::<_, (), _>(|| {
-        Ok(())
-    });
+    conn.test_transaction::<_, (), _>(|| Ok(()));
 }

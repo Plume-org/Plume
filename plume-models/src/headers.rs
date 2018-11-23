@@ -1,6 +1,8 @@
 use rocket::request::{self, FromRequest, Request};
-use rocket::{http::{Header, HeaderMap}, Outcome};
-
+use rocket::{
+    http::{Header, HeaderMap},
+    Outcome,
+};
 
 pub struct Headers<'r>(pub HeaderMap<'r>);
 
@@ -18,10 +20,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for Headers<'r> {
         } else {
             ori.path().to_owned()
         };
-        headers.add(Header::new("(request-target)",
-                                format!("{} {}",
-                                        request.method().as_str().to_lowercase(),
-                                        uri)));
+        headers.add(Header::new(
+            "(request-target)",
+            format!("{} {}", request.method().as_str().to_lowercase(), uri),
+        ));
         Outcome::Success(Headers(headers))
     }
 }

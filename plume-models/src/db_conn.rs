@@ -1,7 +1,9 @@
-use diesel::{
-    r2d2::{ConnectionManager, Pool, PooledConnection}
+use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use rocket::{
+    http::Status,
+    request::{self, FromRequest},
+    Outcome, Request, State,
 };
-use rocket::{Request, State, Outcome, http::Status, request::{self, FromRequest}};
 use std::ops::Deref;
 
 use Connection;
@@ -23,7 +25,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
         let pool = request.guard::<State<DbPool>>()?;
         match pool.get() {
             Ok(conn) => Outcome::Success(DbConn(conn)),
-            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))
+            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),
         }
     }
 }

@@ -1,4 +1,4 @@
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use schema::blog_authors;
 

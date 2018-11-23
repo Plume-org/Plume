@@ -1,9 +1,9 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::{
-    Outcome,
     http::Status,
-    request::{self, FromRequest, Request}
+    request::{self, FromRequest, Request},
+    Outcome,
 };
 
 use db_conn::DbConn;
@@ -48,7 +48,7 @@ impl ApiToken {
         let full_scope = what.to_owned() + ":" + scope;
         for s in self.scopes.split('+') {
             if s == what || s == full_scope {
-                return true
+                return true;
             }
         }
         false
