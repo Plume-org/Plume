@@ -64,7 +64,7 @@ fn init_pool() -> Option<DbPool> {
         .build(manager).ok()
 }
 
-fn main() {
+fn app() -> rocket::Rocket {
 
     let dbpool = init_pool().expect("main: database pool initialization error");
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
@@ -196,7 +196,14 @@ fn main() {
                     ("/api/<path..>".to_owned(), "/api/<path..>".to_owned(), rocket::http::Method::Post)
                 ])
                 .finalize().expect("main: csrf fairing creation error"))
-        .launch();
+}
+
+fn test_client() -> rocket::local::Client {
+    rocket::local::Client::new(app()).expect("Test client creation error")
+}
+
+fn main() {
+    app().launch();
 }
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
