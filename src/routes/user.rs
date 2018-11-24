@@ -5,7 +5,7 @@ use rocket::{
     request::LenientForm,
     response::{status, Content, Flash, Redirect},
 };
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 use serde_json;
 use validator::{Validate, ValidationError};
 use workerpool::thunk::*;
@@ -26,7 +26,7 @@ use routes::Page;
 use Worker;
 
 #[get("/me")]
-fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
+pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
         Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
         None => Err(utils::requires_login("", uri!(me))),
@@ -34,7 +34,7 @@ fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 }
 
 #[get("/@/<name>", rank = 2)]
-fn details(
+pub fn details(
     name: String,
     conn: DbConn,
     account: Option<User>,
@@ -123,20 +123,20 @@ fn details(
 }
 
 #[get("/dashboard")]
-fn dashboard(user: User, conn: DbConn) -> Template {
+pub fn dashboard(user: User, conn: DbConn) -> Template {
     let blogs = Blog::find_for_author(&*conn, &user);
     Template::render(
         "users/dashboard",
         json!({
-        "account": user.to_json(&*conn),
-        "blogs": blogs,
-        "drafts": Post::drafts_by_author(&*conn, &user).into_iter().map(|a| a.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-    }),
+            "account": user.to_json(&*conn),
+            "blogs": blogs,
+            "drafts": Post::drafts_by_author(&*conn, &user).into_iter().map(|a| a.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+        }),
     )
 }
 
 #[get("/dashboard", rank = 2)]
-fn dashboard_auth() -> Flash<Redirect> {
+pub fn dashboard_auth() -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to access your dashboard",
         uri!(dashboard),
@@ -144,7 +144,7 @@ fn dashboard_auth() -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redirect> {
+pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redirect> {
     let target = User::find_by_fqn(&*conn, &name)?;
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.delete(&*conn);
@@ -169,7 +169,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
 }
 
 #[post("/@/<name>/follow", rank = 2)]
-fn follow_auth(name: String) -> Flash<Redirect> {
+pub fn follow_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to follow someone",
         uri!(follow: name = name),
@@ -177,7 +177,7 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>")]
-fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
+pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
         User::find_by_fqn(&*conn, &name),
@@ -189,29 +189,29 @@ fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: 
             Template::render(
                 "users/followers",
                 json!({
-            "user": user.to_json(&*conn),
-            "instance_url": user.get_instance(&*conn).public_domain,
-            "is_remote": user.instance_id != Instance::local_id(&*conn),
-            "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-            "followers": user.get_followers_page(&*conn, page.limits()).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "account": account.clone().map(|a| a.to_json(&*conn)),
-            "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-            "n_followers": followers_count,
-            "page": page.page,
-            "n_pages": Page::total(followers_count as i32)
-        }),
+                    "user": user.to_json(&*conn),
+                    "instance_url": user.get_instance(&*conn).public_domain,
+                    "is_remote": user.instance_id != Instance::local_id(&*conn),
+                    "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+                    "followers": user.get_followers_page(&*conn, page.limits()).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                    "account": account.clone().map(|a| a.to_json(&*conn)),
+                    "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
+                    "n_followers": followers_count,
+                    "page": page.0,
+                    "n_pages": Page::total(followers_count as i32)
+                }),
             )
         }
     )
 }
 
 #[get("/@/<name>/followers", rank = 2)]
-fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
+pub fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
     followers_paginated(name, conn, account, Page::first())
 }
 
 #[get("/@/<name>", rank = 1)]
-fn activity_details(
+pub fn activity_details(
     name: String,
     conn: DbConn,
     _ap: ApRequest,
@@ -221,26 +221,26 @@ fn activity_details(
 }
 
 #[get("/users/new")]
-fn new(user: Option<User>, conn: DbConn) -> Template {
+pub fn new(user: Option<User>, conn: DbConn) -> Template {
     Template::render(
         "users/new",
         json!({
-        "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
-        "account": user.map(|u| u.to_json(&*conn)),
-        "errors": null,
-        "form": null
-    }),
+            "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
+            "account": user.map(|u| u.to_json(&*conn)),
+            "errors": null,
+            "form": null
+        }),
     )
 }
 
 #[get("/@/<name>/edit")]
-fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
+pub fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
     if user.username == name && !name.contains('@') {
         Some(Template::render(
             "users/edit",
             json!({
-            "account": user.to_json(&*conn)
-        }),
+                "account": user.to_json(&*conn)
+            }),
         ))
     } else {
         None
@@ -248,7 +248,7 @@ fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
 }
 
 #[get("/@/<name>/edit", rank = 2)]
-fn edit_auth(name: String) -> Flash<Redirect> {
+pub fn edit_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to edit your profile",
         uri!(edit: name = name),
@@ -256,28 +256,25 @@ fn edit_auth(name: String) -> Flash<Redirect> {
 }
 
 #[derive(FromForm)]
-struct UpdateUserForm {
+pub struct UpdateUserForm {
     display_name: Option<String>,
     email: Option<String>,
     summary: Option<String>,
 }
 
-#[put("/@/<_name>/edit", data = "<data>")]
-fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserForm>) -> Redirect {
+#[put("/@/<_name>/edit", data = "<form>")]
+pub fn update(_name: String, conn: DbConn, user: User, form: LenientForm<UpdateUserForm>) -> Redirect {
     user.update(
         &*conn,
-        data.get()
-            .display_name
+        form.display_name
             .clone()
             .unwrap_or_else(|| user.display_name.to_string())
             .to_string(),
-        data.get()
-            .email
+        form.email
             .clone()
             .unwrap_or_else(|| user.email.clone().unwrap())
             .to_string(),
-        data.get()
-            .summary
+        form.summary
             .clone()
             .unwrap_or_else(|| user.summary.to_string()),
     );
@@ -285,7 +282,7 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
 }
 
 #[post("/@/<name>/delete")]
-fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
+pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
     let account = User::find_by_fqn(&*conn, &name)?;
     if user.id == account.id {
         account.delete(&*conn);
@@ -308,7 +305,7 @@ fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Optio
         message = "Passwords are not matching"
     )
 )]
-struct NewUserForm {
+pub struct NewUserForm {
     #[validate(length(min = "1", message = "Username can't be empty"))]
     username: String,
     #[validate(email(message = "Invalid email"))]
@@ -329,7 +326,7 @@ struct NewUserForm {
     password_confirmation: String,
 }
 
-fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
+pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
     if form.password != form.password_confirmation {
         Err(ValidationError::new("password_match"))
     } else {
@@ -337,8 +334,8 @@ fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
     }
 }
 
-#[post("/users/new", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Template> {
+#[post("/users/new", data = "<form>")]
+pub fn create(conn: DbConn, form: LenientForm<NewUserForm>) -> Result<Redirect, Template> {
     if !Instance::get_local(&*conn)
         .map(|i| i.open_registrations)
         .unwrap_or(true)
@@ -346,7 +343,6 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
         return Ok(Redirect::to(uri!(new))); // Actually, it is an error
     }
 
-    let form = data.get();
     form.validate()
         .map(|_| {
             NewUser::new_local(
@@ -364,22 +360,22 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
             Template::render(
                 "users/new",
                 json!({
-            "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
-            "errors": e.inner(),
-            "form": form
-        }),
+                    "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
+                    "errors": e.inner(),
+                    "form": *form
+                })
             )
         })
 }
 
 #[get("/@/<name>/outbox")]
-fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
     let user = User::find_local(&*conn, &name)?;
     Some(user.outbox(&*conn))
 }
 
 #[post("/@/<name>/inbox", data = "<data>")]
-fn inbox(
+pub fn inbox(
     name: String,
     conn: DbConn,
     data: String,
@@ -421,7 +417,7 @@ fn inbox(
 }
 
 #[get("/@/<name>/followers")]
-fn ap_followers(
+pub fn ap_followers(
     name: String,
     conn: DbConn,
     _ap: ApRequest,
@@ -447,7 +443,7 @@ fn ap_followers(
 }
 
 #[get("/@/<name>/atom.xml")]
-fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
+pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
     let author = User::find_by_fqn(&*conn, &name)?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())

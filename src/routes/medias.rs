@@ -1,13 +1,13 @@
 use guid_create::GUID;
 use multipart::server::{Multipart, save::{SavedData, SaveResult}};
 use rocket::{Data, http::ContentType, response::{Redirect, status}};
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 use serde_json;
 use std::fs;
 use plume_models::{db_conn::DbConn, medias::*, users::User};
 
 #[get("/medias")]
-fn list(user: User, conn: DbConn) -> Template {
+pub fn list(user: User, conn: DbConn) -> Template {
     let medias = Media::for_user(&*conn, user.id);
     Template::render("medias/index", json!({
         "account": user.to_json(&*conn),
@@ -16,7 +16,7 @@ fn list(user: User, conn: DbConn) -> Template {
 }
 
 #[get("/medias/new")]
-fn new(user: User, conn: DbConn) -> Template {
+pub fn new(user: User, conn: DbConn) -> Template {
     Template::render("medias/new", json!({
         "account": user.to_json(&*conn),
         "form": {},
@@ -25,7 +25,7 @@ fn new(user: User, conn: DbConn) -> Template {
 }
 
 #[post("/medias/new", data = "<data>")]
-fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redirect, status::BadRequest<&'static str>> {
+pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redirect, status::BadRequest<&'static str>> {
     if ct.is_form_data() {
         let (_, boundary) = ct.params().find(|&(k, _)| k == "boundary").ok_or_else(|| status::BadRequest(Some("No boundary")))?;
 
@@ -86,7 +86,7 @@ fn read(data: &SavedData) -> String {
 }
 
 #[get("/medias/<id>")]
-fn details(id: i32, user: User, conn: DbConn) -> Template {
+pub fn details(id: i32, user: User, conn: DbConn) -> Template {
     let media = Media::get(&*conn, id);
     Template::render("medias/details", json!({
         "account": user.to_json(&*conn),
@@ -95,14 +95,14 @@ fn details(id: i32, user: User, conn: DbConn) -> Template {
 }
 
 #[post("/medias/<id>/delete")]
-fn delete(id: i32, _user: User, conn: DbConn) -> Option<Redirect> {
+pub fn delete(id: i32, _user: User, conn: DbConn) -> Option<Redirect> {
     let media = Media::get(&*conn, id)?;
     media.delete(&*conn);
     Some(Redirect::to(uri!(list)))
 }
 
 #[post("/medias/<id>/avatar")]
-fn set_avatar(id: i32, user: User, conn: DbConn) -> Option<Redirect> {
+pub fn set_avatar(id: i32, user: User, conn: DbConn) -> Option<Redirect> {
     let media = Media::get(&*conn, id)?;
     user.set_avatar(&*conn, media.id);
     Some(Redirect::to(uri!(details: id = id)))

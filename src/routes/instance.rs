@@ -1,6 +1,6 @@
-use gettextrs::gettext;
 use rocket::{request::LenientForm, response::{status, Redirect}};
-use rocket_contrib::{Json, Template};
+use rocket_contrib::{json::Json, templates::Template};
+use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate};
 
@@ -20,7 +20,7 @@ use inbox::Inbox;
 use routes::Page;
 
 #[get("/")]
-fn index(conn: DbConn, user: Option<User>) -> Template {
+pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Template {
     match Instance::get_local(&*conn) {
         Some(inst) => {
             let federated = Post::get_recents_page(&*conn, Page::first().limits());
@@ -44,67 +44,67 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
         }
         None => {
             Template::render("errors/500", json!({
-                "error_message": gettext("You need to configure your instance before using it.".to_string())
+                "error_message": intl.catalog.gettext("You need to configure your instance before using it.")
             }))
         }
     }
 }
 
 #[get("/local?<page>")]
-fn paginated_local(conn: DbConn, user: Option<User>, page: Page) -> Template {
+pub fn paginated_local(conn: DbConn, user: Option<User>, page: Page) -> Template {
     let instance = Instance::get_local(&*conn).expect("instance::paginated_local: local instance not found error");
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits());
     Template::render("instance/local", json!({
         "account": user.map(|u| u.to_json(&*conn)),
         "instance": instance,
-        "page": page.page,
+        "page": page.0,
         "n_pages": Page::total(Post::count_local(&*conn) as i32),
         "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
     }))
 }
 
 #[get("/local")]
-fn local(conn: DbConn, user: Option<User>) -> Template {
+pub fn local(conn: DbConn, user: Option<User>) -> Template {
     paginated_local(conn, user, Page::first())
 }
 
 #[get("/feed")]
-fn feed(conn: DbConn, user: User) -> Template {
+pub fn feed(conn: DbConn, user: User) -> Template {
     paginated_feed(conn, user, Page::first())
 }
 
 #[get("/feed?<page>")]
-fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {
+pub fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {
     let followed = user.get_following(&*conn);
     let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
     in_feed.push(user.id);
     let articles = Post::user_feed_page(&*conn, in_feed, page.limits());
     Template::render("instance/feed", json!({
         "account": user.to_json(&*conn),
-        "page": page.page,
+        "page": page.0,
         "n_pages": Page::total(Post::count_local(&*conn) as i32),
         "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
     }))
 }
 
 #[get("/federated")]
-fn federated(conn: DbConn, user: Option<User>) -> Template {
+pub fn federated(conn: DbConn, user: Option<User>) -> Template {
     paginated_federated(conn, user, Page::first())
 }
 
 #[get("/federated?<page>")]
-fn paginated_federated(conn: DbConn, user: Option<User>, page: Page) -> Template {
+pub fn paginated_federated(conn: DbConn, user: Option<User>, page: Page) -> Template {
     let articles = Post::get_recents_page(&*conn, page.limits());
     Template::render("instance/federated", json!({
         "account": user.map(|u| u.to_json(&*conn)),
-        "page": page.page,
+        "page": page.0,
         "n_pages": Page::total(Post::count_local(&*conn) as i32),
         "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
     }))
 }
 
 #[get("/admin")]
-fn admin(conn: DbConn, admin: Admin) -> Template {
+pub fn admin(conn: DbConn, admin: Admin) -> Template {
     Template::render("instance/admin", json!({
         "account": admin.0.to_json(&*conn),
         "instance": Instance::get_local(&*conn),
@@ -114,7 +114,7 @@ fn admin(conn: DbConn, admin: Admin) -> Template {
 }
 
 #[derive(FromForm, Validate, Serialize)]
-struct InstanceSettingsForm {
+pub struct InstanceSettingsForm {
     #[validate(length(min = "1"))]
     name: String,
     open_registrations: bool,
@@ -125,8 +125,7 @@ struct InstanceSettingsForm {
 }
 
 #[post("/admin", data = "<form>")]
-fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>) -> Result<Redirect, Template> {
-    let form = form.get();
+pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>) -> Result<Redirect, Template> {
     form.validate()
         .map(|_| {
             let instance = Instance::get_local(&*conn).expect("instance::update_settings: local instance not found error");
@@ -141,29 +140,29 @@ fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSetting
             "account": admin.0.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "errors": e.inner(),
-            "form": form
+            "form": *form
         })))
 }
 
 #[get("/admin/instances")]
-fn admin_instances(admin: Admin, conn: DbConn) -> Template {
+pub fn admin_instances(admin: Admin, conn: DbConn) -> Template {
     admin_instances_paginated(admin, conn, Page::first())
 }
 
 #[get("/admin/instances?<page>")]
-fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
+pub fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
     let instances = Instance::page(&*conn, page.limits());
     Template::render("instance/list", json!({
         "account": admin.0.to_json(&*conn),
         "instances": instances,
         "instance": Instance::get_local(&*conn),
-        "page": page.page,
+        "page": page.0,
         "n_pages": Page::total(Instance::count(&*conn) as i32),
     }))
 }
 
 #[post("/admin/instances/<id>/block")]
-fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
+pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     if let Some(inst) = Instance::get(&*conn, id) {
         inst.toggle_block(&*conn);
     }
@@ -172,25 +171,25 @@ fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
 }
 
 #[get("/admin/users")]
-fn admin_users(admin: Admin, conn: DbConn) -> Template {
+pub fn admin_users(admin: Admin, conn: DbConn) -> Template {
     admin_users_paginated(admin, conn, Page::first())
 }
 
 #[get("/admin/users?<page>")]
-fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
+pub fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
     let users = User::get_local_page(&*conn, page.limits()).into_iter()
         .map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>();
 
     Template::render("instance/users", json!({
         "account": admin.0.to_json(&*conn),
         "users": users,
-        "page": page.page,
+        "page": page.0,
         "n_pages": Page::total(User::count_local(&*conn) as i32)
     }))
 }
 
 #[post("/admin/users/<id>/ban")]
-fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
+pub fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     if let Some(u) = User::get(&*conn, id) {
         u.delete(&*conn);
     }
@@ -198,7 +197,7 @@ fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
 }
 
 #[post("/inbox", data = "<data>")]
-fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, status::BadRequest<&'static str>> {
+pub fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, status::BadRequest<&'static str>> {
     let act: serde_json::Value = serde_json::from_str(&data[..]).expect("instance::shared_inbox: deserialization error");
 
     let activity = act.clone();
@@ -226,7 +225,7 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, 
 }
 
 #[get("/nodeinfo")]
-fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
+pub fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
     Json(json!({
         "version": "2.0",
         "software": {
@@ -251,7 +250,7 @@ fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
 }
 
 #[get("/about")]
-fn about(user: Option<User>, conn: DbConn) -> Template {
+pub fn about(user: Option<User>, conn: DbConn) -> Template {
     Template::render("instance/about", json!({
         "account": user.map(|u| u.to_json(&*conn)),
         "instance": Instance::get_local(&*conn),
@@ -264,7 +263,7 @@ fn about(user: Option<User>, conn: DbConn) -> Template {
 }
 
 #[get("/manifest.json")]
-fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
+pub fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
     let instance = Instance::get_local(&*conn).expect("instance::web_manifest: local instance not found error");
     Json(json!({
         "name": &instance.name,

@@ -1,0 +1,4 @@
+@i18n!(ctx.1, "Instances")	list.rs.html	/^    <h1>@i18n!(ctx.1, "Instances")<\/h1>$/;"	h
+@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())	index.rs.html	/^  <h1>@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())<\/h1>$/;"	h
+@i18n!(ctx.1, "Articles from {}"; instance.name)	local.rs.html	/^  <h1>@i18n!(ctx.1, "Articles from {}"; instance.name)<\/h1>$/;"	h
+@i18n!(ctx.1, "Users")	users.rs.html	/^    <h1>@i18n!(ctx.1, "Users")<\/h1>$/;"	h

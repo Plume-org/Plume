@@ -12,6 +12,7 @@ guid-create = "0.1"
 heck = "0.3.0"
 lazy_static = "*"
 openssl = "0.10.11"
+rocket = "0.4.0-rc.1"
 reqwest = "0.9"
 serde = "1.0"
 serde_derive = "1.0"
@@ -32,10 +33,6 @@ path = "../plume-api"
 
 [dependencies.plume-common]
 path = "../plume-common"
-
-[dependencies.rocket]
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "55459db7732b9a240826a5c120c650f87e3372ce"
 
 [dev-dependencies]
 diesel_migrations = "1.3.0"

@@ -12,7 +12,7 @@ use plume_models::{
 };
 
 #[post("/~/<blog>/<slug>/like")]
-fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Option<Redirect> {
+pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Option<Redirect> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
@@ -39,7 +39,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
 }
 
 #[post("/~/<blog>/<slug>/like", rank = 2)]
-fn create_auth(blog: String, slug: String) -> Flash<Redirect>{
+pub fn create_auth(blog: String, slug: String) -> Flash<Redirect>{
     utils::requires_login(
         "You need to be logged in order to like a post",
         uri!(create: blog = blog, slug = slug)

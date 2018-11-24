@@ -1,0 +1,123 @@
+not_found	errors.rs	/^pub fn not_found(req: &Request) -> Template {$/;"	f
+server_error	errors.rs	/^pub fn server_error(req: &Request) -> Template {$/;"	f
+csrf_violation	errors.rs	/^pub fn csrf_violation(target: Option<String>) -> Template {$/;"	f
+create	likes.rs	/^fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<(/;"	f
+create	likes.rs	/^pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWork/;"	f	function:create
+create_auth	likes.rs	/^pub fn create_auth(blog: String, slug: String) -> Flash<Redirect>{$/;"	f	function:create
+list	medias.rs	/^pub fn list(user: User, conn: DbConn) -> Template {$/;"	f
+new	medias.rs	/^pub fn new(user: User, conn: DbConn) -> Template {$/;"	f
+upload	medias.rs	/^pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redirect, status/;"	f
+read	medias.rs	/^fn read(data: &SavedData) -> String {$/;"	f
+details	medias.rs	/^pub fn details(id: i32, user: User, conn: DbConn) -> Template {$/;"	f
+delete	medias.rs	/^pub fn delete(id: i32, _user: User, conn: DbConn) -> Option<Redirect> {$/;"	f
+set_avatar	medias.rs	/^pub fn set_avatar(id: i32, user: User, conn: DbConn) -> Option<Redirect> {$/;"	f
+tag	tags.rs	/^pub fn tag(user: Option<User>, conn: DbConn, name: String) -> Template {$/;"	f
+paginated_tag	tags.rs	/^pub fn paginated_tag(user: Option<User>, conn: DbConn, name: String, page: Page) -> Template {$/;"	f
+paginated_notifications	notifications.rs	/^pub fn paginated_notifications(conn: DbConn, user: User, page: Page) -> Template {$/;"	f
+notifications	notifications.rs	/^pub fn notifications(conn: DbConn, user: User) -> Template {$/;"	f
+notifications_auth	notifications.rs	/^pub fn notifications_auth() -> Flash<Redirect>{$/;"	f
+nodeinfo	well_known.rs	/^pub fn nodeinfo() -> Content<String> {$/;"	f
+host_meta	well_known.rs	/^pub fn host_meta() -> String {$/;"	f
+WebfingerResolver	well_known.rs	/^struct WebfingerResolver;$/;"	s
+WebfingerResolver	well_known.rs	/^impl Resolver<DbConn> for WebfingerResolver {$/;"	c
+instance_domain	well_known.rs	/^    fn instance_domain<'a>() -> &'a str {$/;"	P	implementation:WebfingerResolver
+find	well_known.rs	/^    fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {$/;"	P	implementation:WebfingerResolver
+webfinger	well_known.rs	/^pub fn webfinger(resource: String, conn: DbConn) -> Content<String> {$/;"	f
+paginated_details	blogs.rs	/^fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {$/;"	f
+NewCommentForm	comments.rs	/^pub struct NewCommentForm {$/;"	s
+responding_to	comments.rs	/^    pub responding_to: Option<i32>,$/;"	m	struct:NewCommentForm
+content	comments.rs	/^    pub content: String,$/;"	m	struct:NewCommentForm
+warning	comments.rs	/^    pub warning: String,$/;"	m	struct:NewCommentForm
+create	comments.rs	/^pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>, user: User, co/;"	f
+activity_pub	comments.rs	/^fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Option<A/;"	f
+activity_pub	comments.rs	/^pub fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Opti/;"	f	function:activity_pub
+index	instance.rs	/^pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Template {$/;"	f
+paginated_local	instance.rs	/^pub fn paginated_local(conn: DbConn, user: Option<User>, page: Page) -> Template {$/;"	f
+local	instance.rs	/^pub fn local(conn: DbConn, user: Option<User>) -> Template {$/;"	f
+feed	instance.rs	/^pub fn feed(conn: DbConn, user: User) -> Template {$/;"	f
+paginated_feed	instance.rs	/^pub fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {$/;"	f
+federated	instance.rs	/^pub fn federated(conn: DbConn, user: Option<User>) -> Template {$/;"	f
+paginated_federated	instance.rs	/^pub fn paginated_federated(conn: DbConn, user: Option<User>, page: Page) -> Template {$/;"	f
+admin	instance.rs	/^pub fn admin(conn: DbConn, admin: Admin) -> Template {$/;"	f
+InstanceSettingsForm	instance.rs	/^pub struct InstanceSettingsForm {$/;"	s
+name	instance.rs	/^    name: String,$/;"	m	struct:InstanceSettingsForm
+open_registrations	instance.rs	/^    open_registrations: bool,$/;"	m	struct:InstanceSettingsForm
+short_description	instance.rs	/^    short_description: SafeString,$/;"	m	struct:InstanceSettingsForm
+long_description	instance.rs	/^    long_description: SafeString,$/;"	m	struct:InstanceSettingsForm
+default_license	instance.rs	/^    default_license: String$/;"	m	struct:InstanceSettingsForm
+update_settings	instance.rs	/^pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>) -> R/;"	f
+admin_instances	instance.rs	/^pub fn admin_instances(admin: Admin, conn: DbConn) -> Template {$/;"	f
+admin_instances_paginated	instance.rs	/^pub fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {$/;"	f
+toggle_block	instance.rs	/^pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {$/;"	f
+admin_users	instance.rs	/^pub fn admin_users(admin: Admin, conn: DbConn) -> Template {$/;"	f
+admin_users_paginated	instance.rs	/^pub fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {$/;"	f
+ban	instance.rs	/^fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {$/;"	f
+ban	instance.rs	/^pub fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {$/;"	f	function:ban
+shared_inbox	instance.rs	/^pub fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, status::BadR/;"	f	function:ban
+nodeinfo	instance.rs	/^pub fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {$/;"	f	function:ban
+about	instance.rs	/^pub fn about(user: Option<User>, conn: DbConn) -> Template {$/;"	f	function:ban
+web_manifest	instance.rs	/^pub fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {$/;"	f	function:ban
+details	posts.rs	/^pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {$/;"	f
+details_response	posts.rs	/^fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option</;"	f
+may_fail	mod.rs	/^macro_rules! may_fail {$/;"	M
+Page	mod.rs	/^pub struct Page(i32);$/;"	s
+Page	mod.rs	/^impl<'v> FromFormValue<'v> for Page {$/;"	c
+Error	mod.rs	/^    type Error = &'v RawStr;$/;"	t	implementation:Page
+from_form_value	mod.rs	/^    fn from_form_value(form_value: &'v RawStr) -> Result<Page, &'v RawStr> {$/;"	P	implementation:Page
+Page	mod.rs	/^impl Page {$/;"	c
+first	mod.rs	/^    pub fn first() -> Page {$/;"	P	implementation:Page
+total	mod.rs	/^    pub fn total(n_items: i32) -> i32 {$/;"	P	implementation:Page
+limits	mod.rs	/^    pub fn limits(&self) -> (i32, i32) {$/;"	P	implementation:Page
+post_to_atom	mod.rs	/^pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {$/;"	f
+blogs	mod.rs	/^pub mod blogs;$/;"	n
+comments	mod.rs	/^pub mod comments;$/;"	n
+errors	mod.rs	/^pub mod errors;$/;"	n
+instance	mod.rs	/^pub mod instance;$/;"	n
+likes	mod.rs	/^pub mod likes;$/;"	n
+medias	mod.rs	/^pub mod medias;$/;"	n
+notifications	mod.rs	/^pub mod notifications;$/;"	n
+posts	mod.rs	/^pub mod posts;$/;"	n
+reshares	mod.rs	/^pub mod reshares;$/;"	n
+session	mod.rs	/^pub mod session;$/;"	n
+tags	mod.rs	/^pub mod tags;$/;"	n
+user	mod.rs	/^pub mod user;$/;"	n
+well_known	mod.rs	/^pub mod well_known;$/;"	n
+static_files	mod.rs	/^pub fn static_files(file: PathBuf) -> Option<NamedFile> {$/;"	f
+me	user.rs	/^pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {$/;"	f
+details	user.rs	/^pub fn details($/;"	f
+dashboard	user.rs	/^pub fn dashboard(user: User, conn: DbConn) -> Template {$/;"	f
+dashboard_auth	user.rs	/^pub fn dashboard_auth() -> Flash<Redirect> {$/;"	f
+follow	user.rs	/^pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redirect> {$/;"	f
+follow_auth	user.rs	/^pub fn follow_auth(name: String) -> Flash<Redirect> {$/;"	f
+followers_paginated	user.rs	/^fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Templat/;"	f
+followers	user.rs	/^pub fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {$/;"	f
+activity_details	user.rs	/^pub fn activity_details($/;"	f
+new	user.rs	/^pub fn new(user: Option<User>, conn: DbConn) -> Template {$/;"	f
+edit	user.rs	/^pub fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {$/;"	f
+edit_auth	user.rs	/^pub fn edit_auth(name: String) -> Flash<Redirect> {$/;"	f
+UpdateUserForm	user.rs	/^pub struct UpdateUserForm {$/;"	s
+display_name	user.rs	/^    display_name: Option<String>,$/;"	m	struct:UpdateUserForm
+email	user.rs	/^    email: Option<String>,$/;"	m	struct:UpdateUserForm
+summary	user.rs	/^    summary: Option<String>,$/;"	m	struct:UpdateUserForm
+update	user.rs	/^fn update(_name: String, conn: DbConn, user: User, form: LenientForm<UpdateUserForm>) -> Redirec/;"	f
+delete	user.rs	/^pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> /;"	f
+NewUserForm	user.rs	/^pub struct NewUserForm {$/;"	s
+username	user.rs	/^    username: String,$/;"	m	struct:NewUserForm
+email	user.rs	/^    email: String,$/;"	m	struct:NewUserForm
+password	user.rs	/^    password: String,$/;"	m	struct:NewUserForm
+password_confirmation	user.rs	/^    password_confirmation: String,$/;"	m	struct:NewUserForm
+passwords_match	user.rs	/^pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {$/;"	f
+create	user.rs	/^fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Template> {$/;"	f
+outbox	user.rs	/^pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {$/;"	f	function:create
+inbox	user.rs	/^fn inbox($/;"	f	function:create
+ap_followers	user.rs	/^fn ap_followers($/;"	f	function:create
+atom_feed	user.rs	/^fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {$/;"	f	function:create
+new	session.rs	/^pub fn new(user: Option<User>, conn: DbConn) -> Template {$/;"	f
+new_message	session.rs	/^pub fn new_message(user: Option<User>, m: String, conn: DbConn) -> Template {$/;"	f
+LoginForm	session.rs	/^pub struct LoginForm {$/;"	s
+email_or_name	session.rs	/^    email_or_name: String,$/;"	m	struct:LoginForm
+password	session.rs	/^    password: String$/;"	m	struct:LoginForm
+create	session.rs	/^pub fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cooki/;"	f
+delete	session.rs	/^pub fn delete(mut cookies: Cookies) -> Redirect {$/;"	f
+create	reshares.rs	/^pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWork/;"	f
+create_auth	reshares.rs	/^pub fn create_auth(blog: String, slug: String) -> Flash<Redirect> {$/;"	f

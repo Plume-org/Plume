@@ -1,0 +1,34 @@
+@use templates::{base, partials::*};
+@use template_utils::*;
+@use plume_models::instance::Instance;
+@use plume_models::posts::Post;
+
+@(ctx: BaseContext, instance: Instance, n_users: i32, n_articles: i32, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
+
+@:base(ctx.clone(), instance.name.clone().as_ref(), {}, {}, {
+  <h1>@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())</h1>
+
+     @if let Some(_) = ctx.2 {
+        @tabs(&[
+            ("/", i18n!(ctx.1, "Latest articles"), true),
+            ("/feed", i18n!(ctx.1, "Your feed"), false),
+            ("/federated", i18n!(ctx.1, "Federated feed"), false),
+            ("/local", i18n!(ctx.1, "Local feed"), false),
+        ])
+
+        @:home_feed(ctx.1, user_feed.unwrap_or_default(), "/feed", "Your feed")
+        @:home_feed(ctx.1, federated, "/federated", "Federated feed")
+        @:home_feed(ctx.1, local, "/local", "Local feed")
+        @:instance_description(ctx, instance, n_users, n_articles)
+    } else {
+        @tabs(&[
+              ("/", i18n!(ctx.1, "Latest articles"), true),
+              ("/federated", i18n!(ctx.1, "Federated feed"), false),
+              ("/local", i18n!(ctx.1, "Local feed"), false),
+        ])
+
+        @:home_feed(ctx.1, federated, "/federated", "Federated feed")
+        @:home_feed(ctx.1, local, "/local", "Local feed")
+        @:instance_description(ctx, instance, n_users, n_articles)
+    }
+})

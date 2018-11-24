@@ -1,5 +1,4 @@
-#![feature(custom_derive, plugin, decl_macro)]
-#![plugin(rocket_codegen)]
+#![feature(custom_derive, plugin, decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
 extern crate atom_syndication;
@@ -9,7 +8,6 @@ extern crate colored;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
-extern crate gettextrs;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
@@ -36,7 +34,6 @@ extern crate workerpool;
 
 use diesel::r2d2::ConnectionManager;
 use rocket::State;
-use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
 use plume_models::{DATABASE_URL, Connection, db_conn::DbPool};
 use workerpool::{Pool, thunk::ThunkWorker};
@@ -163,16 +160,16 @@ fn main() {
             api::posts::get,
             api::posts::list,
         ])
-        .catch(catchers![
+        .register(catchers![
             routes::errors::not_found,
             routes::errors::server_error
         ])
         .manage(pool)
         .manage(Pool::<ThunkWorker<()>>::new(4))
-        .attach(Template::custom(|engines| {
-            rocket_i18n::tera(&mut engines.tera);
-        }))
-        .attach(rocket_i18n::I18n::new("plume"))
+        // .attach(Template::custom(|engines| {
+            // rocket_i18n::tera(&mut engines.tera);
+        // }))
+        .manage(rocket_i18n::i18n("plume", vec![ "de", "en", "fr", "gl", "it", "nb", "pl", "ru" ]))
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
                 .add_exceptions(vec![

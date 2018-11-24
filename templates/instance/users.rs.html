@@ -1,0 +1,33 @@
+@use templates::base;
+@use template_utils::*;
+@use plume_models::users::User;
+
+@(ctx: BaseContext, users: Vec<User>, page: i32, n_pages: i32)
+
+@:base(ctx.clone(), "Users", {}, {}, {
+    <h1>@i18n!(ctx.1, "Users")</h1>
+
+    @tabs(&[
+        ("/admin", i18n!(ctx.1, "Configuration"), false),
+        ("/admin/instances", i18n!(ctx.1, "Instances"), false),
+        ("/admin/users", i18n!(ctx.1, "Users"), true),
+    ])
+
+    <div class="list">
+        @for user in users {
+            <div class="flex">
+                @avatar(ctx.0, &user, Size::Small, false, ctx.1)
+                <p class="grow">
+                    <a href="/@@/@user.get_fqn(ctx.0)">@user.name(ctx.0)</a>
+                    <small>@format!("@{}", user.username)</small>
+                </p>
+                @if !user.is_admin {
+                    <form class="inline" method="post" href="/admin/users/@user.id/ban">
+                        <input type="submit" value="@i18n!(ctx.1, "Ban")">
+                    </form>
+                }
+            </div>
+        }
+    </div>
+    @paginate(ctx.1, page, n_pages)
+})

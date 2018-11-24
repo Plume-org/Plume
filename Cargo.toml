@@ -9,9 +9,10 @@ canapi = "0.1"
 colored = "1.6"
 dotenv = "0.13"
 failure = "0.1"
-gettext-rs = "0.4"
 guid-create = "0.1"
 heck = "0.3.0"
+rocket = "0.4.0-rc.1"
+rocket_contrib = { version = "0.4.0-rc.1", features = ["json", "templates"] }
 rpassword = "2.0"
 serde = "1.0"
 serde_derive = "1.0"
@@ -49,26 +50,13 @@ path = "plume-common"
 [dependencies.plume-models]
 path = "plume-models"
 
-[dependencies.rocket]
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "55459db7732b9a240826a5c120c650f87e3372ce"
-
-[dependencies.rocket_codegen]
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "55459db7732b9a240826a5c120c650f87e3372ce"
-
-[dependencies.rocket_contrib]
-features = ["tera_templates", "json"]
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "55459db7732b9a240826a5c120c650f87e3372ce"
-
 [dependencies.rocket_csrf]
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "2805ce5dbae4a6441208484426440885a5640a6a"
+rev = "e6ead8051cab12a95ea9dc88db3a107f0b5f7533"
 
 [dependencies.rocket_i18n]
 git = "https://github.com/BaptisteGelez/rocket_i18n"
-rev = "75a3bfd7b847324c078a355a7f101f8241a9f59b"
+rev = "f8f9913f6f7008f65ae155dcd0e730377db6edae"
 
 [features]
 default = ["postgres"]
