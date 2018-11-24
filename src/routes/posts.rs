@@ -95,7 +95,7 @@ fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) ->
 fn new_auth(blog: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to write a new post",
-        uri!(new: blog = blog).into()
+        uri!(new: blog = blog)
     )
 }
 

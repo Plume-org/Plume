@@ -8,7 +8,7 @@ use std::time::SystemTime;
 use activity_pub::{AP_CONTENT_TYPE, ap_accept_header};
 use activity_pub::sign::Signer;
 
-const PLUME_USER_AGENT: &'static str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
+const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
 pub struct Digest(String);
 
@@ -60,7 +60,7 @@ impl Digest {
     pub fn from_header(dig: &str) -> Result<Self, ()> {
         if let Some(pos) = dig.find('=') {
             let pos = pos + 1;
-            if let Ok(_) = base64::decode(&dig[pos..]) {
+            if base64::decode(&dig[pos..]).is_ok() {
                 Ok(Digest(dig.to_owned()))
             } else {
                 Err(())
@@ -94,7 +94,7 @@ pub fn headers() -> HeaderMap {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: HeaderMap) -> HeaderValue {
+pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> HeaderValue {
     let signed_string = headers
         .iter()
         .map(|(h, v)| {

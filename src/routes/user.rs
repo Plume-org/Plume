@@ -29,7 +29,7 @@ use Worker;
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
         Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
-        None => Err(utils::requires_login("", uri!(me).into())),
+        None => Err(utils::requires_login("", uri!(me))),
     }
 }
 
@@ -139,7 +139,7 @@ fn dashboard(user: User, conn: DbConn) -> Template {
 fn dashboard_auth() -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to access your dashboard",
-        uri!(dashboard).into(),
+        uri!(dashboard),
     )
 }
 
@@ -172,7 +172,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
 fn follow_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to follow someone",
-        uri!(follow: name = name).into(),
+        uri!(follow: name = name),
     )
 }
 
@@ -251,7 +251,7 @@ fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
 fn edit_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to edit your profile",
-        uri!(edit: name = name).into(),
+        uri!(edit: name = name),
     )
 }
 
@@ -398,7 +398,7 @@ fn inbox(
         ))))?;
 
     let actor = User::from_url(&conn, actor_id.to_owned()).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, headers.0.clone(), data).is_secure()
+    if !verify_http_headers(&actor, &headers.0, data).is_secure()
         && !act.clone().verify(&actor)
     {
         println!(

@@ -16,17 +16,15 @@ pub fn random_hex() -> String {
 }
 
 /// Remove non alphanumeric characters and CamelCase a string
-pub fn make_actor_id(name: String) -> String {
-    name.as_str()
-        .to_camel_case()
-        .to_string()
+pub fn make_actor_id(name: &str) -> String {
+    name.to_camel_case()
         .chars()
         .filter(|c| c.is_alphanumeric())
         .collect()
 }
 
-pub fn requires_login(message: &str, url: Uri) -> Flash<Redirect> {
-    Flash::new(Redirect::to(format!("/login?m={}", gettext(message.to_string()))), "callback", url.to_string())
+pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Redirect> {
+    Flash::new(Redirect::to(format!("/login?m={}", gettext(message.to_string()))), "callback", url.into().to_string())
 }
 
 #[derive(Debug)]
@@ -41,7 +39,7 @@ enum State {
 pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
-    let (parser, mentions, hashtags): (Vec<Vec<Event>>, Vec<Vec<String>>, Vec<Vec<String>>) = parser.map(|evt| match evt {
+    let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser.map(|evt| match evt {
         Event::Text(txt) => {
             let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold((vec![], State::Ready, String::new(), 0, vec![], vec![]), |(mut events, state, text_acc, n, mut mentions, mut hashtags), c| {
                 match state {
@@ -124,15 +122,15 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
             (evts, new_mentions, new_hashtags)
         },
         _ => (vec![evt], vec![], vec![])
-    }).fold((vec![],vec![],vec![]), |(mut parser, mut mention, mut hashtag), (p, m, h)| {
-        parser.push(p);
-        mention.push(m);
-        hashtag.push(h);
+    }).fold((vec![],vec![],vec![]), |(mut parser, mut mention, mut hashtag), (mut p, mut m, mut h)| {
+        parser.append(&mut p);
+        mention.append(&mut m);
+        hashtag.append(&mut h);
         (parser, mention, hashtag)
     });
-    let parser = parser.into_iter().flatten();
-    let mentions = mentions.into_iter().flatten().map(|m| String::from(m.trim()));
-    let hashtags = hashtags.into_iter().flatten().map(|h| String::from(h.trim()));
+    let parser = parser.into_iter();
+    let mentions = mentions.into_iter().map(|m| String::from(m.trim()));
+    let hashtags = hashtags.into_iter().map(|h| String::from(h.trim()));
 
     // TODO: fetch mentionned profiles in background, if needed
 

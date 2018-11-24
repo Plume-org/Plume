@@ -105,14 +105,14 @@ pub enum SignatureValidity {
 }
 
 impl SignatureValidity {
-    pub fn is_secure(&self) -> bool {
-        self == &SignatureValidity::Valid
+    pub fn is_secure(self) -> bool {
+        self == SignatureValidity::Valid
     }
 }
 
 pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     sender: &S,
-    all_headers: HeaderMap,
+    all_headers: &HeaderMap,
     data: String,
 ) -> SignatureValidity {
     let sig_header = all_headers.get_one("Signature");
@@ -151,7 +151,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
         .collect::<Vec<_>>()
         .join("\n");
 
-    if !sender.verify(h, base64::decode(signature).unwrap_or(Vec::new())) {
+    if !sender.verify(h, base64::decode(signature).unwrap_or_default()) {
         return SignatureValidity::Invalid;
     }
     if !headers.contains(&"digest") {

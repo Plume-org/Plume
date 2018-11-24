@@ -15,10 +15,10 @@ pub mod inbox;
 pub mod request;
 pub mod sign;
 
-pub const CONTEXT_URL: &'static str = "https://www.w3.org/ns/activitystreams";
-pub const PUBLIC_VISIBILTY: &'static str = "https://www.w3.org/ns/activitystreams#Public";
+pub const CONTEXT_URL: &str = "https://www.w3.org/ns/activitystreams";
+pub const PUBLIC_VISIBILTY: &str = "https://www.w3.org/ns/activitystreams#Public";
 
-pub const AP_CONTENT_TYPE: &'static str = r#"application/ld+json; profile="https://www.w3.org/ns/activitystreams""#;
+pub const AP_CONTENT_TYPE: &str = r#"application/ld+json; profile="https://www.w3.org/ns/activitystreams""#;
 
 pub fn ap_accept_header() -> Vec<&'static str> {
     vec![
@@ -84,7 +84,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .get_one("Accept")
             .map(|header| {
                 header
-                    .split(",")
+                    .split(',')
                     .map(|ct| match ct.trim() {
                         // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
                         "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
@@ -95,7 +95,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
                         _ => Outcome::Forward(false),
                     })
                     .fold(Outcome::Forward(false), |out, ct| {
-                        if out.clone().forwarded().unwrap_or(out.is_success()) {
+                        if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
                             out
                         } else {
                             ct
@@ -114,7 +114,7 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
     let boxes = to
         .into_iter()
         .filter(|u| !u.is_local())
-        .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
+        .map(|u| u.get_shared_inbox_url().unwrap_or_else(|| u.get_inbox_url()))
         .collect::<Vec<String>>()
         .unique();
 
@@ -129,7 +129,7 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
         let res = Client::new()
             .post(&inbox[..])
             .headers(headers.clone())
-            .header("Signature", request::signature(sender, headers))
+            .header("Signature", request::signature(sender, &headers))
             .body(signed.to_string())
             .send();
         match res {

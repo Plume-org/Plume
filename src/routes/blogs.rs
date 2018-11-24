@@ -67,7 +67,7 @@ fn new(user: User, conn: DbConn) -> Template {
 fn new_auth() -> Flash<Redirect>{
     utils::requires_login(
         "You need to be logged in order to create a new blog",
-        uri!(new).into()
+        uri!(new)
     )
 }
 
@@ -78,7 +78,7 @@ struct NewBlogForm {
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
-    let slug = utils::make_actor_id(title.to_string());
+    let slug = utils::make_actor_id(title);
     if slug.len() == 0 {
         Err(ValidationError::new("empty_slug"))
     } else {
@@ -89,7 +89,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 #[post("/blogs/new", data = "<data>")]
 fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Redirect, Template> {
     let form = data.get();
-    let slug = utils::make_actor_id(form.title.to_string());
+    let slug = utils::make_actor_id(&form.title);
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),

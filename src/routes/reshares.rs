@@ -43,6 +43,6 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
 fn create_auth(blog: String, slug: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to reshare a post",
-        uri!(create: blog = blog, slug = slug).into()
+        uri!(create: blog = blog, slug = slug)
     )
 }
