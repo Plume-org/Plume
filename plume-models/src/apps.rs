@@ -1,11 +1,11 @@
 use canapi::{Error, Provider};
 use chrono::NaiveDateTime;
-use diesel::{self, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use plume_api::apps::AppEndpoint;
 use plume_common::utils::random_hex;
-use Connection;
 use schema::apps;
+use Connection;
 
 #[derive(Clone, Queryable)]
 pub struct App {
@@ -19,7 +19,7 @@ pub struct App {
 }
 
 #[derive(Insertable)]
-#[table_name= "apps"]
+#[table_name = "apps"]
 pub struct NewApp {
     pub name: String,
     pub client_id: String,
@@ -43,13 +43,16 @@ impl Provider<Connection> for App {
         let client_id = random_hex();
 
         let client_secret = random_hex();
-        let app = App::insert(conn, NewApp {
-            name: data.name,
-            client_id: client_id,
-            client_secret: client_secret,
-            redirect_uri: data.redirect_uri,
-            website: data.website,
-        });
+        let app = App::insert(
+            conn,
+            NewApp {
+                name: data.name,
+                client_id: client_id,
+                client_secret: client_secret,
+                redirect_uri: data.redirect_uri,
+                website: data.website,
+            },
+        );
 
         Ok(AppEndpoint {
             id: Some(app.id),

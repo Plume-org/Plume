@@ -25,6 +25,10 @@ extern crate serde_json;
 extern crate url;
 extern crate webfinger;
 
+#[cfg(test)]
+#[macro_use]
+extern crate diesel_migrations;
+
 use std::env;
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
@@ -99,11 +103,13 @@ macro_rules! list_by {
 macro_rules! get {
     ($table:ident) => {
         pub fn get(conn: &crate::Connection, id: i32) -> Option<Self> {
-            $table::table.filter($table::id.eq(id))
+            $table::table
+                .filter($table::id.eq(id))
                 .limit(1)
                 .load::<Self>(conn)
                 .expect("macro::get: Error loading $table by id")
-                .into_iter().nth(0)
+                .into_iter()
+                .nth(0)
         }
     };
 }
@@ -177,11 +183,16 @@ macro_rules! update {
 macro_rules! last {
     ($table:ident) => {
         pub fn last(conn: &crate::Connection) -> Self {
-            $table::table.order_by($table::id.desc())
+            $table::table
+                .order_by($table::id.desc())
                 .limit(1)
                 .load::<Self>(conn)
-                .expect(concat!("macro::last: Error getting last ", stringify!($table)))
-                .iter().next()
+                .expect(concat!(
+                    "macro::last: Error getting last ",
+                    stringify!($table)
+                ))
+                .iter()
+                .next()
                 .expect(concat!("macro::last: No last ", stringify!($table)))
                 .clone()
         }
@@ -189,29 +200,65 @@ macro_rules! last {
 }
 
 lazy_static! {
-    pub static ref BASE_URL: String = env::var("BASE_URL")
-        .unwrap_or(format!("127.0.0.1:{}", env::var("ROCKET_PORT").unwrap_or(String::from("8000"))));
-
+    pub static ref BASE_URL: String = env::var("BASE_URL").unwrap_or(format!(
+        "127.0.0.1:{}",
+        env::var("ROCKET_PORT").unwrap_or(String::from("8000"))
+    ));
     pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
 }
 
+#[cfg(not(test))]
+static DB_NAME: &str = "plume";
+#[cfg(test)]
+static DB_NAME: &str = "plume_tests";
+
 #[cfg(all(feature = "postgres", not(feature = "sqlite")))]
 lazy_static! {
-    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(String::from("postgres://plume:plume@localhost/plume"));
+    pub static ref DATABASE_URL: String =
+        env::var("DATABASE_URL").unwrap_or(format!("postgres://plume:plume@localhost/{}", DB_NAME));
 }
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
 lazy_static! {
-    pub static ref DATABASE_URL: String = env::var("DATABASE_URL").unwrap_or(String::from("plume.sqlite"));
+    pub static ref DATABASE_URL: String =
+        env::var("DATABASE_URL").unwrap_or(format!("{}.sqlite", DB_NAME));
 }
 
 pub fn ap_url(url: String) -> String {
-    let scheme = if *USE_HTTPS {
-        "https"
-    } else {
-        "http"
-    };
+    let scheme = if *USE_HTTPS { "https" } else { "http" };
     format!("{}://{}", scheme, url)
+}
+
+#[cfg(test)]
+#[macro_use]
+mod tests {
+    use diesel::Connection;
+    use Connection as Conn;
+    use DATABASE_URL;
+
+    #[cfg(feature = "sqlite")]
+    embed_migrations!("../migrations/sqlite");
+
+    #[cfg(feature = "postgres")]
+    embed_migrations!("../migrations/postgres");
+
+    #[macro_export]
+    macro_rules! part_eq {
+        ( $x:expr, $y:expr, [$( $var:ident ),*] ) => {
+            {
+                $(
+                    assert_eq!($x.$var, $y.$var);
+                )*
+            }
+        };
+    }
+
+    pub fn db() -> Conn {
+        let conn =
+            Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
+        embedded_migrations::run(&conn).expect("Couldn't run migrations");
+        conn
+    }
 }
 
 pub mod admin;

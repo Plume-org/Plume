@@ -1,4 +1,8 @@
-use rocket::{Outcome, http::Status, request::{self, FromRequest, Request}};
+use rocket::{
+    http::Status,
+    request::{self, FromRequest, Request},
+    Outcome,
+};
 
 use users::User;
 

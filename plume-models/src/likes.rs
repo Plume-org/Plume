@@ -1,18 +1,16 @@
 use activitypub::activity;
 use chrono::NaiveDateTime;
-use diesel::{self, QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use plume_common::activity_pub::{
-    PUBLIC_VISIBILTY,
-    Id,
-    IntoId,
-    inbox::{FromActivity, Deletable, Notify}
-};
-use Connection;
 use notifications::*;
+use plume_common::activity_pub::{
+    inbox::{Deletable, FromActivity, Notify},
+    Id, IntoId, PUBLIC_VISIBILTY,
+};
 use posts::Post;
-use users::User;
 use schema::likes;
+use users::User;
+use Connection;
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Like {
@@ -20,7 +18,7 @@ pub struct Like {
     pub user_id: i32,
     pub post_id: i32,
     pub creation_date: NaiveDateTime,
-    pub ap_url: String
+    pub ap_url: String,
 }
 
 #[derive(Default, Insertable)]
@@ -28,7 +26,7 @@ pub struct Like {
 pub struct NewLike {
     pub user_id: i32,
     pub post_id: i32,
-    pub ap_url: String
+    pub ap_url: String,
 }
 
 impl Like {
@@ -45,17 +43,36 @@ impl Like {
                     User::get(conn, self.user_id).expect("Like::update_ap_url: user error").ap_url,
                     Post::get(conn, self.post_id).expect("Like::update_ap_url: post error").ap_url
                 )))
-                .execute(conn).expect("Like::update_ap_url: update error");
+                .execute(conn)
+                .expect("Like::update_ap_url: update error");
         }
     }
 
     pub fn into_activity(&self, conn: &Connection) -> activity::Like {
         let mut act = activity::Like::default();
-        act.like_props.set_actor_link(User::get(conn, self.user_id).expect("Like::into_activity: user error").into_id()).expect("Like::into_activity: actor error");
-        act.like_props.set_object_link(Post::get(conn, self.post_id).expect("Like::into_activity: post error").into_id()).expect("Like::into_activity: object error");
-        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Like::into_activity: to error");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Like::into_activity: cc error");
-        act.object_props.set_id_string(self.ap_url.clone()).expect("Like::into_activity: id error");
+        act.like_props
+            .set_actor_link(
+                User::get(conn, self.user_id)
+                    .expect("Like::into_activity: user error")
+                    .into_id(),
+            )
+            .expect("Like::into_activity: actor error");
+        act.like_props
+            .set_object_link(
+                Post::get(conn, self.post_id)
+                    .expect("Like::into_activity: post error")
+                    .into_id(),
+            )
+            .expect("Like::into_activity: object error");
+        act.object_props
+            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))
+            .expect("Like::into_activity: to error");
+        act.object_props
+            .set_cc_link_vec::<Id>(vec![])
+            .expect("Like::into_activity: cc error");
+        act.object_props
+            .set_id_string(self.ap_url.clone())
+            .expect("Like::into_activity: id error");
 
         act
     }
@@ -63,13 +80,30 @@ impl Like {
 
 impl FromActivity<activity::Like, Connection> for Like {
     fn from_activity(conn: &Connection, like: activity::Like, _actor: Id) -> Like {
-        let liker = User::from_url(conn, like.like_props.actor.as_str().expect("Like::from_activity: actor error").to_string());
-        let post = Post::find_by_ap_url(conn, like.like_props.object.as_str().expect("Like::from_activity: object error").to_string());
-        let res = Like::insert(conn, NewLike {
-            post_id: post.expect("Like::from_activity: post error").id,
-            user_id: liker.expect("Like::from_activity: user error").id,
-            ap_url: like.object_props.id_string().unwrap_or(String::from(""))
-        });
+        let liker = User::from_url(
+            conn,
+            like.like_props
+                .actor
+                .as_str()
+                .expect("Like::from_activity: actor error")
+                .to_string(),
+        );
+        let post = Post::find_by_ap_url(
+            conn,
+            like.like_props
+                .object
+                .as_str()
+                .expect("Like::from_activity: object error")
+                .to_string(),
+        );
+        let res = Like::insert(
+            conn,
+            NewLike {
+                post_id: post.expect("Like::from_activity: post error").id,
+                user_id: liker.expect("Like::from_activity: user error").id,
+                ap_url: like.object_props.id_string().unwrap_or(String::from("")),
+            },
+        );
         res.notify(conn);
         res
     }
@@ -79,30 +113,51 @@ impl Notify<Connection> for Like {
     fn notify(&self, conn: &Connection) {
         let post = Post::get(conn, self.post_id).expect("Like::notify: post error");
         for author in post.get_authors(conn) {
-            Notification::insert(conn, NewNotification {
-                kind: notification_kind::LIKE.to_string(),
-                object_id: self.id,
-                user_id: author.id
-            });
+            Notification::insert(
+                conn,
+                NewNotification {
+                    kind: notification_kind::LIKE.to_string(),
+                    object_id: self.id,
+                    user_id: author.id,
+                },
+            );
         }
     }
 }
 
 impl Deletable<Connection, activity::Undo> for Like {
     fn delete(&self, conn: &Connection) -> activity::Undo {
-        diesel::delete(self).execute(conn).expect("Like::delete: delete error");
+        diesel::delete(self)
+            .execute(conn)
+            .expect("Like::delete: delete error");
 
         // delete associated notification if any
         if let Some(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
-            diesel::delete(&notif).execute(conn).expect("Like::delete: notification error");
+            diesel::delete(&notif)
+                .execute(conn)
+                .expect("Like::delete: notification error");
         }
 
         let mut act = activity::Undo::default();
-        act.undo_props.set_actor_link(User::get(conn, self.user_id).expect("Like::delete: user error").into_id()).expect("Like::delete: actor error");
-        act.undo_props.set_object_object(self.into_activity(conn)).expect("Like::delete: object error");
-        act.object_props.set_id_string(format!("{}#delete", self.ap_url)).expect("Like::delete: id error");
-        act.object_props.set_to_link(Id::new(PUBLIC_VISIBILTY.to_string())).expect("Like::delete: to error");
-        act.object_props.set_cc_link_vec::<Id>(vec![]).expect("Like::delete: cc error");
+        act.undo_props
+            .set_actor_link(
+                User::get(conn, self.user_id)
+                    .expect("Like::delete: user error")
+                    .into_id(),
+            )
+            .expect("Like::delete: actor error");
+        act.undo_props
+            .set_object_object(self.into_activity(conn))
+            .expect("Like::delete: object error");
+        act.object_props
+            .set_id_string(format!("{}#delete", self.ap_url))
+            .expect("Like::delete: id error");
+        act.object_props
+            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))
+            .expect("Like::delete: to error");
+        act.object_props
+            .set_cc_link_vec::<Id>(vec![])
+            .expect("Like::delete: cc error");
 
         act
     }

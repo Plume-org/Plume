@@ -1,10 +1,11 @@
-use activitypub::{Activity, Actor, Object, Link};
+use activitypub::{Activity, Actor, Link, Object};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
-    Outcome, http::Status,
-    response::{Response, Responder},
-    request::{FromRequest, Request}
+    http::Status,
+    request::{FromRequest, Request},
+    response::{Responder, Response},
+    Outcome,
 };
 use serde_json;
 
@@ -24,7 +25,7 @@ pub fn ap_accept_header() -> Vec<&'static str> {
         "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"",
         "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"",
         "application/activity+json",
-        "application/ld+json"
+        "application/ld+json",
     ]
 }
 
@@ -52,7 +53,7 @@ pub fn context() -> serde_json::Value {
     ])
 }
 
-pub struct ActivityStream<T> (T);
+pub struct ActivityStream<T>(T);
 
 impl<T> ActivityStream<T> {
     pub fn new(t: T) -> ActivityStream<T> {
@@ -64,9 +65,11 @@ impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
     fn respond_to(self, request: &Request) -> Result<Response<'r>, Status> {
         let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();
-        serde_json::to_string(&json).respond_to(request).map(|r| Response::build_from(r)
-            .raw_header("Content-Type", "application/activity+json")
-            .finalize())
+        serde_json::to_string(&json).respond_to(request).map(|r| {
+            Response::build_from(r)
+                .raw_header("Content-Type", "application/activity+json")
+                .finalize()
+        })
     }
 }
 
@@ -76,28 +79,44 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
-        request.headers().get_one("Accept").map(|header| header.split(",").map(|ct| match ct.trim() {
-            // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
-            "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"" |
-            "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"" |
-            "application/activity+json" |
-            "application/ld+json" => Outcome::Success(ApRequest),
-            "text/html" => Outcome::Forward(true),
-            _ => Outcome::Forward(false)
-        }).fold(Outcome::Forward(false), |out, ct| if out.clone().forwarded().unwrap_or(out.is_success()) {
-                out
-            } else {
-                ct
-        }).map_forward(|_| ())).unwrap_or(Outcome::Forward(()))
+        request
+            .headers()
+            .get_one("Accept")
+            .map(|header| {
+                header
+                    .split(",")
+                    .map(|ct| match ct.trim() {
+                        // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
+                        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
+                        | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
+                        | "application/activity+json"
+                        | "application/ld+json" => Outcome::Success(ApRequest),
+                        "text/html" => Outcome::Forward(true),
+                        _ => Outcome::Forward(false),
+                    })
+                    .fold(Outcome::Forward(false), |out, ct| {
+                        if out.clone().forwarded().unwrap_or(out.is_success()) {
+                            out
+                        } else {
+                            ct
+                        }
+                    })
+                    .map_forward(|_| ())
+            })
+            .unwrap_or(Outcome::Forward(()))
     }
 }
-pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(sender: &S, act: A, to: Vec<T>) {
-    let boxes = to.into_iter()
+pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
+    sender: &S,
+    act: A,
+    to: Vec<T>,
+) {
+    let boxes = to
+        .into_iter()
         .filter(|u| !u.is_local())
         .map(|u| u.get_shared_inbox_url().unwrap_or(u.get_inbox_url()))
         .collect::<Vec<String>>()
         .unique();
-
 
     let mut act = serde_json::to_value(act).expect("activity_pub::broadcast: serialization error");
     act["@context"] = context();
@@ -121,8 +140,8 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(send
                 } else {
                     println!("Error while reading response")
                 }
-            },
-            Err(e) => println!("Error while sending to inbox ({:?})", e)
+            }
+            Err(e) => println!("Error while sending to inbox ({:?})", e),
         }
     }
 }
@@ -152,7 +171,7 @@ impl Link for Id {}
 #[serde(rename_all = "camelCase")]
 pub struct ApSignature {
     #[activitystreams(concrete(PublicKey), functional)]
-    pub public_key: Option<serde_json::Value>
+    pub public_key: Option<serde_json::Value>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
@@ -165,7 +184,7 @@ pub struct PublicKey {
     pub owner: Option<serde_json::Value>,
 
     #[activitystreams(concrete(String), functional)]
-    pub public_key_pem: Option<serde_json::Value>
+    pub public_key_pem: Option<serde_json::Value>,
 }
 
 #[derive(Clone, Debug, Default, UnitString)]

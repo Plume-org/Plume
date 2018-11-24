@@ -1,13 +1,19 @@
 use ammonia::{Builder, UrlRelative};
-use serde::{self, Serialize, Deserialize,
-    Serializer, Deserializer, de::Visitor};
-use std::{fmt::{self, Display},
-    borrow::{Borrow, Cow}, io::Write,
-    iter, ops::Deref};
-use diesel::{self, deserialize::Queryable,
-    types::ToSql,
+use diesel::{
+    self,
+    deserialize::Queryable,
+    serialize::{self, Output},
     sql_types::Text,
-    serialize::{self, Output}};
+    types::ToSql,
+};
+use serde::{self, de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
+use std::{
+    borrow::{Borrow, Cow},
+    fmt::{self, Display},
+    io::Write,
+    iter,
+    ops::Deref,
+};
 
 lazy_static! {
     static ref CLEAN: Builder<'static> = {
@@ -16,17 +22,18 @@ lazy_static! {
             .add_tags(iter::once("iframe"))
             .id_prefix(Some("postcontent-"))
             .url_relative(UrlRelative::Custom(Box::new(url_add_prefix)))
-            .add_tag_attributes("iframe",
-                                ["width", "height", "src", "frameborder"]
-                                    .iter()
-                                    .map(|&v| v));
+            .add_tag_attributes(
+                "iframe",
+                ["width", "height", "src", "frameborder"].iter().map(|&v| v),
+            );
         b
     };
 }
 
 fn url_add_prefix(url: &str) -> Option<Cow<str>> {
-    if url.starts_with('#') && ! url.starts_with("#postcontent-") {//if start with an #
-        let mut new_url = "#postcontent-".to_owned();//change to valid id
+    if url.starts_with('#') && !url.starts_with("#postcontent-") {
+        //if start with an #
+        let mut new_url = "#postcontent-".to_owned(); //change to valid id
         new_url.push_str(&url[1..]);
         Some(Cow::Owned(new_url))
     } else {
@@ -34,15 +41,15 @@ fn url_add_prefix(url: &str) -> Option<Cow<str>> {
     }
 }
 
-#[derive(Debug, Clone, AsExpression, FromSqlRow, Default)]
+#[derive(Debug, Clone, PartialEq, AsExpression, FromSqlRow, Default)]
 #[sql_type = "Text"]
-pub struct SafeString{
+pub struct SafeString {
     value: String,
 }
 
-impl SafeString{
-pub fn new(value: &str) -> Self {
-    SafeString{
+impl SafeString {
+    pub fn new(value: &str) -> Self {
+        SafeString {
             value: CLEAN.clean(&value).to_string(),
         }
     }
@@ -56,7 +63,9 @@ pub fn new(value: &str) -> Self {
 
 impl Serialize for SafeString {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where S: Serializer, {
+    where
+        S: Serializer,
+    {
         serializer.serialize_str(&self.value)
     }
 }
@@ -66,22 +75,24 @@ struct SafeStringVisitor;
 impl<'de> Visitor<'de> for SafeStringVisitor {
     type Value = SafeString;
 
-    fn expecting(&self, formatter:&mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a string")
     }
 
     fn visit_str<E>(self, value: &str) -> Result<SafeString, E>
-    where E: serde::de::Error{
+    where
+        E: serde::de::Error,
+    {
         Ok(SafeString::new(value))
     }
 }
 
 impl<'de> Deserialize<'de> for SafeString {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where D: Deserializer<'de>, {
-        Ok(
-            deserializer.deserialize_string(SafeStringVisitor)?
-        )
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_string(SafeStringVisitor)?)
     }
 }
 
@@ -101,16 +112,15 @@ impl Queryable<Text, diesel::sqlite::Sqlite> for SafeString {
     }
 }
 
-
 impl<DB> ToSql<diesel::sql_types::Text, DB> for SafeString
 where
     DB: diesel::backend::Backend,
-    str: ToSql<diesel::sql_types::Text, DB>, {
+    str: ToSql<diesel::sql_types::Text, DB>,
+{
     fn to_sql<W: Write>(&self, out: &mut Output<W, DB>) -> serialize::Result {
         str::to_sql(&self.value, out)
     }
 }
-
 
 impl Borrow<str> for SafeString {
     fn borrow(&self) -> &str {
@@ -137,8 +147,8 @@ impl AsRef<str> for SafeString {
     }
 }
 
-use rocket::request::FromFormValue;
 use rocket::http::RawStr;
+use rocket::request::FromFormValue;
 
 impl<'v> FromFormValue<'v> for SafeString {
     type Error = &'v RawStr;

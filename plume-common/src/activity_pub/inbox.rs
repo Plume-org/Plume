@@ -1,4 +1,4 @@
-use activitypub::{Object, activity::Create};
+use activitypub::{activity::Create, Object};
 
 use activity_pub::Id;
 
@@ -9,7 +9,7 @@ pub enum InboxError {
     #[fail(display = "Invalid activity type")]
     InvalidType,
     #[fail(display = "Couldn't undo activity")]
-    CantUndo
+    CantUndo,
 }
 
 pub trait FromActivity<T: Object, C>: Sized {
@@ -17,7 +17,13 @@ pub trait FromActivity<T: Object, C>: Sized {
 
     fn try_from_activity(conn: &C, act: Create) -> bool {
         if let Ok(obj) = act.create_props.object_object() {
-            Self::from_activity(conn, obj, act.create_props.actor_link::<Id>().expect("FromActivity::try_from_activity: id not found error"));
+            Self::from_activity(
+                conn,
+                obj,
+                act.create_props
+                    .actor_link::<Id>()
+                    .expect("FromActivity::try_from_activity: id not found error"),
+            );
             true
         } else {
             false
@@ -32,7 +38,6 @@ pub trait Notify<C> {
 pub trait Deletable<C, A> {
     fn delete(&self, conn: &C) -> A;
     fn delete_id(id: String, actor_id: String, conn: &C);
-
 }
 
 pub trait WithInbox {
