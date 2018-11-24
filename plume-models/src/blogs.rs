@@ -58,7 +58,7 @@ pub struct NewBlog {
     pub public_key: String,
 }
 
-const BLOG_PREFIX: &'static str = "~";
+const BLOG_PREFIX: &str = "~";
 
 impl Blog {
     insert!(blogs, NewBlog);
@@ -98,12 +98,12 @@ impl Blog {
     }
 
     pub fn find_by_fqn(conn: &Connection, fqn: String) -> Option<Blog> {
-        if fqn.contains("@") {
+        if fqn.contains('@') {
             // remote blog
             match Instance::find_by_domain(
                 conn,
                 String::from(
-                    fqn.split("@")
+                    fqn.split('@')
                         .last()
                         .expect("Blog::find_by_fqn: unreachable"),
                 ),
@@ -111,16 +111,16 @@ impl Blog {
                 Some(instance) => match Blog::find_by_name(
                     conn,
                     String::from(
-                        fqn.split("@")
+                        fqn.split('@')
                             .nth(0)
                             .expect("Blog::find_by_fqn: unreachable"),
                     ),
                     instance.id,
                 ) {
                     Some(u) => Some(u),
-                    None => Blog::fetch_from_webfinger(conn, fqn),
+                    None => Blog::fetch_from_webfinger(conn, &fqn),
                 },
-                None => Blog::fetch_from_webfinger(conn, fqn),
+                None => Blog::fetch_from_webfinger(conn, &fqn),
             }
         } else {
             // local blog
@@ -128,8 +128,8 @@ impl Blog {
         }
     }
 
-    fn fetch_from_webfinger(conn: &Connection, acct: String) -> Option<Blog> {
-        match resolve(acct.clone(), *USE_HTTPS) {
+    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Option<Blog> {
+        match resolve(acct.to_owned(), *USE_HTTPS) {
             Ok(wf) => wf
                 .links
                 .into_iter()
@@ -137,7 +137,7 @@ impl Blog {
                 .and_then(|l| {
                     Blog::fetch_from_url(
                         conn,
-                        l.href
+                        &l.href
                             .expect("Blog::fetch_from_webfinger: href not found error"),
                     )
                 }),
@@ -148,9 +148,9 @@ impl Blog {
         }
     }
 
-    fn fetch_from_url(conn: &Connection, url: String) -> Option<Blog> {
+    fn fetch_from_url(conn: &Connection, url: &str) -> Option<Blog> {
         let req = Client::new()
-            .get(&url[..])
+            .get(url)
             .header(
                 ACCEPT,
                 HeaderValue::from_str(
@@ -173,27 +173,26 @@ impl Blog {
                 json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
                 Some(Blog::from_activity(
                     conn,
-                    json,
-                    Url::parse(url.as_ref())
+                    &json,
+                    Url::parse(url)
                         .expect("Blog::fetch_from_url: url parsing error")
                         .host_str()
-                        .expect("Blog::fetch_from_url: host extraction error")
-                        .to_string(),
+                        .expect("Blog::fetch_from_url: host extraction error"),
                 ))
             }
             Err(_) => None,
         }
     }
 
-    fn from_activity(conn: &Connection, acct: CustomGroup, inst: String) -> Blog {
-        let instance = match Instance::find_by_domain(conn, inst.clone()) {
+    fn from_activity(conn: &Connection, acct: &CustomGroup, inst: &str) -> Blog {
+        let instance = match Instance::find_by_domain(conn, inst.to_owned()) {
             Some(instance) => instance,
             None => {
                 Instance::insert(
                     conn,
                     NewInstance {
-                        public_domain: inst.clone(),
-                        name: inst.clone(),
+                        public_domain: inst.to_owned(),
+                        name: inst.to_owned(),
                         local: false,
                         // We don't really care about all the following for remote instances
                         long_description: SafeString::new(""),
@@ -251,72 +250,72 @@ impl Blog {
         )
     }
 
-    pub fn into_activity(&self, _conn: &Connection) -> CustomGroup {
+    pub fn to_activity(&self, _conn: &Connection) -> CustomGroup {
         let mut blog = Group::default();
         blog.ap_actor_props
             .set_preferred_username_string(self.actor_id.clone())
-            .expect("Blog::into_activity: preferredUsername error");
+            .expect("Blog::to_activity: preferredUsername error");
         blog.object_props
             .set_name_string(self.title.clone())
-            .expect("Blog::into_activity: name error");
+            .expect("Blog::to_activity: name error");
         blog.ap_actor_props
             .set_outbox_string(self.outbox_url.clone())
-            .expect("Blog::into_activity: outbox error");
+            .expect("Blog::to_activity: outbox error");
         blog.ap_actor_props
             .set_inbox_string(self.inbox_url.clone())
-            .expect("Blog::into_activity: inbox error");
+            .expect("Blog::to_activity: inbox error");
         blog.object_props
             .set_summary_string(self.summary.clone())
-            .expect("Blog::into_activity: summary error");
+            .expect("Blog::to_activity: summary error");
         blog.object_props
             .set_id_string(self.ap_url.clone())
-            .expect("Blog::into_activity: id error");
+            .expect("Blog::to_activity: id error");
 
         let mut public_key = PublicKey::default();
         public_key
             .set_id_string(format!("{}#main-key", self.ap_url))
-            .expect("Blog::into_activity: publicKey.id error");
+            .expect("Blog::to_activity: publicKey.id error");
         public_key
             .set_owner_string(self.ap_url.clone())
-            .expect("Blog::into_activity: publicKey.owner error");
+            .expect("Blog::to_activity: publicKey.owner error");
         public_key
             .set_public_key_pem_string(self.public_key.clone())
-            .expect("Blog::into_activity: publicKey.publicKeyPem error");
+            .expect("Blog::to_activity: publicKey.publicKeyPem error");
         let mut ap_signature = ApSignature::default();
         ap_signature
             .set_public_key_publickey(public_key)
-            .expect("Blog::into_activity: publicKey error");
+            .expect("Blog::to_activity: publicKey error");
 
         CustomGroup::new(blog, ap_signature)
     }
 
     pub fn update_boxes(&self, conn: &Connection) {
         let instance = self.get_instance(conn);
-        if self.outbox_url.len() == 0 {
+        if self.outbox_url.is_empty() {
             diesel::update(self)
                 .set(blogs::outbox_url.eq(instance.compute_box(
                     BLOG_PREFIX,
-                    self.actor_id.clone(),
+                    &self.actor_id,
                     "outbox",
                 )))
                 .execute(conn)
                 .expect("Blog::update_boxes: outbox update error");
         }
 
-        if self.inbox_url.len() == 0 {
+        if self.inbox_url.is_empty() {
             diesel::update(self)
                 .set(blogs::inbox_url.eq(instance.compute_box(
                     BLOG_PREFIX,
-                    self.actor_id.clone(),
+                    &self.actor_id,
                     "inbox",
                 )))
                 .execute(conn)
                 .expect("Blog::update_boxes: inbox update error");
         }
 
-        if self.ap_url.len() == 0 {
+        if self.ap_url.is_empty() {
             diesel::update(self)
-                .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, self.actor_id.clone(), "")))
+                .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, &self.actor_id, "")))
                 .execute(conn)
                 .expect("Blog::update_boxes: ap_url update error");
         }
@@ -367,7 +366,7 @@ impl Blog {
                     mime_type: Some(String::from("application/atom+xml")),
                     href: Some(self.get_instance(conn).compute_box(
                         BLOG_PREFIX,
-                        self.actor_id.clone(),
+                        &self.actor_id,
                         "feed.atom",
                     )),
                     template: None,
@@ -382,11 +381,11 @@ impl Blog {
         }
     }
 
-    pub fn from_url(conn: &Connection, url: String) -> Option<Blog> {
-        Blog::find_by_ap_url(conn, url.clone()).or_else(|| {
+    pub fn from_url(conn: &Connection, url: &str) -> Option<Blog> {
+        Blog::find_by_ap_url(conn, url.to_owned()).or_else(|| {
             // The requested blog was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(url.as_ref())
+            if Url::parse(url)
                 .expect("Blog::from_url: ap_url parsing error")
                 .host_str()
                 .expect("Blog::from_url: host extraction error") != BASE_URL.as_str()
@@ -491,12 +490,12 @@ impl NewBlog {
     ) -> NewBlog {
         let (pub_key, priv_key) = sign::gen_keypair();
         NewBlog {
-            actor_id: actor_id,
-            title: title,
-            summary: summary,
+            actor_id,
+            title,
+            summary,
             outbox_url: String::from(""),
             inbox_url: String::from(""),
-            instance_id: instance_id,
+            instance_id,
             ap_url: String::from(""),
             public_key: String::from_utf8(pub_key).expect("NewBlog::new_local: public key error"),
             private_key: Some(

@@ -32,7 +32,7 @@ fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page)
         Template::render("blogs/details", json!({
             "blog": &blog.to_json(&*conn),
             "account": user.clone().map(|u| u.to_json(&*conn)),
-            "is_author": user.map(|x| x.is_author_in(&*conn, blog.clone())),
+            "is_author": user.map(|x| x.is_author_in(&*conn, &blog)),
             "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
             "n_authors": authors.len(),
@@ -51,7 +51,7 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
 #[get("/~/<name>", rank = 1)]
 fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_local(&*conn, name)?;
-    Some(ActivityStream::new(blog.into_activity(&*conn)))
+    Some(ActivityStream::new(blog.to_activity(&*conn)))
 }
 
 #[get("/blogs/new")]
@@ -132,7 +132,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
 #[post("/~/<name>/delete")]
 fn delete(conn: DbConn, name: String, user: Option<User>) -> Result<Redirect, Option<Template>>{
     let blog = Blog::find_local(&*conn, name).ok_or(None)?;
-    if user.map(|u| u.is_author_in(&*conn, blog.clone())).unwrap_or(false) {
+    if user.map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
         blog.delete(&conn);
         Ok(Redirect::to(uri!(super::instance::index)))
     } else {
@@ -154,7 +154,7 @@ fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
         .id(Instance::get_local(&*conn).expect("blogs::atom_feed: local instance not found error")
-            .compute_box("~", name, "atom.xml"))
+            .compute_box("~", &name, "atom.xml"))
         .entries(Post::get_recents_for_blog(&*conn, &blog, 15)
             .into_iter()
             .map(|p| super::post_to_atom(p, &*conn))

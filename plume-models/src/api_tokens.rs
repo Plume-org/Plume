@@ -83,6 +83,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
             }
         }
 
-        return Outcome::Forward(());
+        Outcome::Forward(())
     }
 }

@@ -113,7 +113,7 @@ pub trait Inbox {
                 }
                 "Update" => {
                     let act: Update = serde_json::from_value(act.clone())?;
-                    Post::handle_update(conn, act.update_props.object_object()?);
+                    Post::handle_update(conn, &act.update_props.object_object()?);
                     Ok(())
                 }
                 _ => Err(InboxError::InvalidType)?,

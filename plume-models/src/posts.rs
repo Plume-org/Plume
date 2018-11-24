@@ -119,7 +119,7 @@ impl<'a> Provider<(&'a Connection, Option<i32>)> for Post {
                     })
                     .collect()
             })
-            .unwrap_or(vec![])
+            .unwrap_or_default()
     }
 
     fn create(
@@ -372,7 +372,7 @@ impl Post {
     }
 
     pub fn update_ap_url(&self, conn: &Connection) -> Post {
-        if self.ap_url.len() == 0 {
+        if self.ap_url.is_empty() {
             diesel::update(self)
                 .set(posts::ap_url.eq(self.compute_id(conn)))
                 .execute(conn)
@@ -389,16 +389,15 @@ impl Post {
             .into_iter()
             .map(|a| a.get_followers(conn))
             .collect::<Vec<Vec<User>>>();
-        let to = followers.into_iter().fold(vec![], |mut acc, f| {
+        followers.into_iter().fold(vec![], |mut acc, f| {
             for x in f {
                 acc.push(x.ap_url);
             }
             acc
-        });
-        to
+        })
     }
 
-    pub fn into_activity(&self, conn: &Connection) -> Article {
+    pub fn to_activity(&self, conn: &Connection) -> Article {
         let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
@@ -408,7 +407,7 @@ impl Post {
             .collect::<Vec<serde_json::Value>>();
         let mut tags_json = Tag::for_post(conn, self.id)
             .into_iter()
-            .map(|t| json!(t.into_activity(conn)))
+            .map(|t| json!(t.to_activity(conn)))
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
@@ -416,11 +415,11 @@ impl Post {
         article
             .object_props
             .set_name_string(self.title.clone())
-            .expect("Post::into_activity: name error");
+            .expect("Post::to_activity: name error");
         article
             .object_props
             .set_id_string(self.ap_url.clone())
-            .expect("Post::into_activity: id error");
+            .expect("Post::to_activity: id error");
 
         let mut authors = self
             .get_authors(conn)
@@ -431,76 +430,76 @@ impl Post {
         article
             .object_props
             .set_attributed_to_link_vec::<Id>(authors)
-            .expect("Post::into_activity: attributedTo error");
+            .expect("Post::to_activity: attributedTo error");
         article
             .object_props
             .set_content_string(self.content.get().clone())
-            .expect("Post::into_activity: content error");
+            .expect("Post::to_activity: content error");
         article
             .ap_object_props
             .set_source_object(Source {
                 content: self.source.clone(),
                 media_type: String::from("text/markdown"),
             })
-            .expect("Post::into_activity: source error");
+            .expect("Post::to_activity: source error");
         article
             .object_props
             .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))
-            .expect("Post::into_activity: published error");
+            .expect("Post::to_activity: published error");
         article
             .object_props
             .set_summary_string(self.subtitle.clone())
-            .expect("Post::into_activity: summary error");
+            .expect("Post::to_activity: summary error");
         article.object_props.tag = Some(json!(mentions_json));
 
         if let Some(media_id) = self.cover_id {
-            let media = Media::get(conn, media_id).expect("Post::into_activity: get cover error");
+            let media = Media::get(conn, media_id).expect("Post::to_activity: get cover error");
             let mut cover = Image::default();
             cover
                 .object_props
                 .set_url_string(media.url(conn))
-                .expect("Post::into_activity: icon.url error");
+                .expect("Post::to_activity: icon.url error");
             if media.sensitive {
                 cover
                     .object_props
-                    .set_summary_string(media.content_warning.unwrap_or(String::new()))
-                    .expect("Post::into_activity: icon.summary error");
+                    .set_summary_string(media.content_warning.unwrap_or_default())
+                    .expect("Post::to_activity: icon.summary error");
             }
             cover
                 .object_props
                 .set_content_string(media.alt_text)
-                .expect("Post::into_activity: icon.content error");
+                .expect("Post::to_activity: icon.content error");
             cover
                 .object_props
                 .set_attributed_to_link_vec(vec![
                     User::get(conn, media.owner_id)
-                        .expect("Post::into_activity: media owner not found")
+                        .expect("Post::to_activity: media owner not found")
                         .into_id(),
                 ])
-                .expect("Post::into_activity: icon.attributedTo error");
+                .expect("Post::to_activity: icon.attributedTo error");
             article
                 .object_props
                 .set_icon_object(cover)
-                .expect("Post::into_activity: icon error");
+                .expect("Post::to_activity: icon error");
         }
 
         article
             .object_props
             .set_url_string(self.ap_url.clone())
-            .expect("Post::into_activity: url error");
+            .expect("Post::to_activity: url error");
         article
             .object_props
             .set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect())
-            .expect("Post::into_activity: to error");
+            .expect("Post::to_activity: to error");
         article
             .object_props
             .set_cc_link_vec::<Id>(vec![])
-            .expect("Post::into_activity: cc error");
+            .expect("Post::to_activity: cc error");
         article
     }
 
     pub fn create_activity(&self, conn: &Connection) -> Create {
-        let article = self.into_activity(conn);
+        let article = self.to_activity(conn);
         let mut act = Create::default();
         act.object_props
             .set_id_string(format!("{}activity", self.ap_url))
@@ -531,7 +530,7 @@ impl Post {
     }
 
     pub fn update_activity(&self, conn: &Connection) -> Update {
-        let article = self.into_activity(conn);
+        let article = self.to_activity(conn);
         let mut act = Update::default();
         act.object_props
             .set_id_string(format!("{}/update-{}", self.ap_url, Utc::now().timestamp()))
@@ -561,7 +560,7 @@ impl Post {
         act
     }
 
-    pub fn handle_update(conn: &Connection, updated: Article) {
+    pub fn handle_update(conn: &Connection, updated: &Article) {
         let id = updated
             .object_props
             .id_string()
@@ -598,7 +597,7 @@ impl Post {
             let mut mentions = vec![];
             let mut tags = vec![];
             let mut hashtags = vec![];
-            for tag in mention_tags.into_iter() {
+            for tag in mention_tags {
                 serde_json::from_value::<link::Mention>(tag.clone())
                     .map(|m| mentions.push(m))
                     .ok();
@@ -651,9 +650,9 @@ impl Post {
             .iter()
             .map(|m| m.mentioned_id)
             .collect::<HashSet<_>>();
-        for (m, id) in mentions.iter() {
+        for (m, id) in &mentions {
             if !old_user_mentioned.contains(&id) {
-                Mention::from_activity(&*conn, m.clone(), self.id, true, true);
+                Mention::from_activity(&*conn, &m, self.id, true, true);
             }
         }
 
@@ -689,13 +688,13 @@ impl Post {
             })
             .collect::<HashSet<_>>();
 
-        for t in tags.into_iter() {
+        for t in tags {
             if !t
                 .name_string()
                 .map(|n| old_tags_name.contains(&n))
                 .unwrap_or(true)
             {
-                Tag::from_activity(conn, t, self.id, false);
+                Tag::from_activity(conn, &t, self.id, false);
             }
         }
 
@@ -726,13 +725,13 @@ impl Post {
             })
             .collect::<HashSet<_>>();
 
-        for t in tags.into_iter() {
+        for t in tags {
             if !t
                 .name_string()
                 .map(|n| old_tags_name.contains(&n))
                 .unwrap_or(true)
             {
-                Tag::from_activity(conn, t, self.id, true);
+                Tag::from_activity(conn, &t, self.id, true);
             }
         }
 
@@ -757,7 +756,7 @@ impl Post {
     }
 
     pub fn compute_id(&self, conn: &Connection) -> String {
-        ap_url(format!(
+        ap_url(&format!(
             "{}/~/{}/{}/",
             BASE_URL.as_str(),
             self.get_blog(conn).get_fqn(conn),
@@ -770,7 +769,7 @@ impl FromActivity<Article, Connection> for Post {
     fn from_activity(conn: &Connection, article: Article, _actor: Id) -> Post {
         if let Some(post) = Post::find_by_ap_url(
             conn,
-            article.object_props.id_string().unwrap_or(String::new()),
+            article.object_props.id_string().unwrap_or_default(),
         ) {
             post
         } else {
@@ -781,12 +780,12 @@ impl FromActivity<Article, Connection> for Post {
                 .into_iter()
                 .fold((None, vec![]), |(blog, mut authors), link| {
                     let url: String = link.into();
-                    match User::from_url(conn, url.clone()) {
+                    match User::from_url(conn, &url) {
                         Some(user) => {
                             authors.push(user);
                             (blog, authors)
                         }
-                        None => (blog.or_else(|| Blog::from_url(conn, url)), authors),
+                        None => (blog.or_else(|| Blog::from_url(conn, &url)), authors),
                     }
                 });
 
@@ -794,7 +793,7 @@ impl FromActivity<Article, Connection> for Post {
                 .object_props
                 .icon_object::<Image>()
                 .ok()
-                .and_then(|img| Media::from_activity(conn, img).map(|m| m.id));
+                .and_then(|img| Media::from_activity(conn, &img).map(|m| m.id));
 
             let title = article
                 .object_props
@@ -805,7 +804,7 @@ impl FromActivity<Article, Connection> for Post {
                 NewPost {
                     blog_id: blog.expect("Post::from_activity: blog not found error").id,
                     slug: title.to_kebab_case(),
-                    title: title,
+                    title,
                     content: SafeString::new(
                         &article
                             .object_props
@@ -815,7 +814,7 @@ impl FromActivity<Article, Connection> for Post {
                     published: true,
                     license: String::from("CC-BY-SA"), // TODO
                     // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                    ap_url: article.object_props.url_string().unwrap_or(
+                    ap_url: article.object_props.url_string().unwrap_or_else(|_|
                         article
                             .object_props
                             .id_string()
@@ -841,7 +840,7 @@ impl FromActivity<Article, Connection> for Post {
                 },
             );
 
-            for author in authors.into_iter() {
+            for author in authors {
                 PostAuthor::insert(
                     conn,
                     NewPostAuthor {
@@ -858,9 +857,9 @@ impl FromActivity<Article, Connection> for Post {
                 .map(|s| s.to_camel_case())
                 .collect::<HashSet<_>>();
             if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
-                for tag in tags.into_iter() {
+                for tag in tags {
                     serde_json::from_value::<link::Mention>(tag.clone())
-                        .map(|m| Mention::from_activity(conn, m, post.id, true, true))
+                        .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
                         .ok();
 
                     serde_json::from_value::<Hashtag>(tag.clone())
@@ -868,7 +867,7 @@ impl FromActivity<Article, Connection> for Post {
                             let tag_name = t
                                 .name_string()
                                 .expect("Post::from_activity: tag name error");
-                            Tag::from_activity(conn, t, post.id, hashtags.remove(&tag_name));
+                            Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name));
                         })
                         .ok();
                 }

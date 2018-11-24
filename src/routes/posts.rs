@@ -85,7 +85,7 @@ fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) ->
     let blog = Blog::find_by_fqn(&*conn, blog).ok_or(None)?;
     let post = Post::find_by_slug(&*conn, slug, blog.id).ok_or(None)?;
     if post.published {
-        Ok(ActivityStream::new(post.into_activity(&*conn)))
+        Ok(ActivityStream::new(post.to_activity(&*conn)))
     } else {
         Err(Some(String::from("Not published yet.")))
     }
@@ -103,7 +103,7 @@ fn new_auth(blog: String) -> Flash<Redirect> {
 fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
     let b = Blog::find_by_fqn(&*conn, blog.to_string())?;
 
-    if !user.is_author_in(&*conn, b.clone()) {
+    if !user.is_author_in(&*conn, &b) {
         Some(Template::render("errors/403", json!({// TODO actually return 403 error code
             "error_message": "You are not author in this blog."
         })))
@@ -126,7 +126,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
     let b = Blog::find_by_fqn(&*conn, blog.to_string())?;
     let post = Post::find_by_slug(&*conn, slug, b.id)?;
 
-    if !user.is_author_in(&*conn, b) {
+    if !user.is_author_in(&*conn, &b) {
         Some(Template::render("errors/403", json!({// TODO actually return 403 error code
             "error_message": "You are not author in this blog."
         })))
@@ -191,7 +191,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
     }
 
     if errors.is_empty() {
-        if !user.is_author_in(&*conn, b) {
+        if !user.is_author_in(&*conn, &b) {
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog)))
         } else {
@@ -223,7 +223,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
             let post = post.update_ap_url(&*conn);
 
             if post.published {
-                post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, m)).collect());
+                post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, &m)).collect());
             }
 
             let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0)
@@ -304,7 +304,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
     }
 
     if errors.is_empty() {
-        if !user.is_author_in(&*conn, blog.clone()) {
+        if !user.is_author_in(&*conn, &blog) {
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog_name)))
         } else {
@@ -351,7 +351,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
 
             if post.published {
                 for m in mentions.into_iter() {
-                    Mention::from_activity(&*conn, Mention::build_activity(&*conn, m), post.id, true, true);
+                    Mention::from_activity(&*conn, &Mention::build_activity(&*conn, &m), post.id, true, true);
                 }
 
                 let act = post.create_activity(&*conn);

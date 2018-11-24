@@ -200,9 +200,9 @@ macro_rules! last {
 }
 
 lazy_static! {
-    pub static ref BASE_URL: String = env::var("BASE_URL").unwrap_or(format!(
+    pub static ref BASE_URL: String = env::var("BASE_URL").unwrap_or_else(|_| format!(
         "127.0.0.1:{}",
-        env::var("ROCKET_PORT").unwrap_or(String::from("8000"))
+        env::var("ROCKET_PORT").unwrap_or_else(|_| String::from("8000"))
     ));
     pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
 }
@@ -215,16 +215,16 @@ static DB_NAME: &str = "plume_tests";
 #[cfg(all(feature = "postgres", not(feature = "sqlite")))]
 lazy_static! {
     pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").unwrap_or(format!("postgres://plume:plume@localhost/{}", DB_NAME));
+        env::var("DATABASE_URL").unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME));
 }
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
 lazy_static! {
     pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").unwrap_or(format!("{}.sqlite", DB_NAME));
+        env::var("DATABASE_URL").unwrap_or_else(|_| format!("{}.sqlite", DB_NAME));
 }
 
-pub fn ap_url(url: String) -> String {
+pub fn ap_url(url: &str) -> String {
     let scheme = if *USE_HTTPS { "https" } else { "http" };
     format!("{}://{}", scheme, url)
 }

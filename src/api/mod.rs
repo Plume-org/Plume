@@ -23,7 +23,7 @@ fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
     let app = App::find_by_client_id(&*conn, query.client_id).expect("OAuth request from unknown client");
     if app.client_secret == query.client_secret {
         if let Some(user) = User::find_local(&*conn, query.username) {
-            if user.auth(query.password) {
+            if user.auth(&query.password) {
                 let token = ApiToken::insert(&*conn, NewApiToken {
                     app_id: app.id,
                     user_id: user.id,
@@ -42,7 +42,7 @@ fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
             // Making fake password verification to avoid different
             // response times that would make it possible to know
             // if a username is registered or not.
-            User::get(&*conn, 1).unwrap().auth(query.password);
+            User::get(&*conn, 1).unwrap().auth(&query.password);
             Json(json!({
                 "error": "Invalid credentials"
             }))

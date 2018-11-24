@@ -26,7 +26,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
         like.notify(&*conn);
 
         let dest = User::one_by_instance(&*conn);
-        let act = like.into_activity(&*conn);
+        let act = like.to_activity(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id).expect("likes::create: like exist but not found error");

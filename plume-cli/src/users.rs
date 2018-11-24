@@ -70,8 +70,8 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         username,
         display_name,
         admin,
-        bio,
+        &bio,
         email,
-        User::hash_pass(password),
+        User::hash_pass(&password),
     ).update_boxes(conn);
 }

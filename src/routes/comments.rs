@@ -50,7 +50,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
 
             // save mentions
             for ment in mentions {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, ment), post.id, true, true);
+                Mention::from_activity(&*conn, &Mention::build_activity(&*conn, &ment), post.id, true, true);
             }
 
             // federate
@@ -86,5 +86,5 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]
 fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Option<ActivityStream<Note>> {
-    Comment::get(&*conn, id).map(|c| ActivityStream::new(c.into_activity(&*conn)))
+    Comment::get(&*conn, id).map(|c| ActivityStream::new(c.to_activity(&*conn)))
 }

@@ -84,13 +84,13 @@ impl Instance {
     }
 
     /// id: AP object id
-    pub fn is_blocked(conn: &Connection, id: String) -> bool {
+    pub fn is_blocked(conn: &Connection, id: &str) -> bool {
         for block in instances::table
             .filter(instances::blocked.eq(true))
             .get_results::<Instance>(conn)
             .expect("Instance::is_blocked: loading error")
         {
-            if id.starts_with(format!("https://{}/", block.public_domain).as_str()) {
+            if id.starts_with(&format!("https://{}/", block.public_domain)) {
                 return true;
             }
         }
@@ -99,12 +99,12 @@ impl Instance {
     }
 
     pub fn has_admin(&self, conn: &Connection) -> bool {
-        users::table
+        !users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
             .load::<User>(conn)
             .expect("Instance::has_admin: loading error")
-            .len() > 0
+            .is_empty()
     }
 
     pub fn main_admin(&self, conn: &Connection) -> User {
@@ -118,11 +118,11 @@ impl Instance {
 
     pub fn compute_box(
         &self,
-        prefix: &'static str,
-        name: String,
-        box_name: &'static str,
+        prefix: &str,
+        name: &str,
+        box_name: &str,
     ) -> String {
-        ap_url(format!(
+        ap_url(&format!(
             "{instance}/{prefix}/{name}/{box_name}",
             instance = self.public_domain,
             prefix = prefix,
@@ -332,11 +332,11 @@ pub(crate) mod tests {
                 0
             );
             assert_eq!(
-                Instance::is_blocked(conn, format!("https://{}/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, format!("https://{}a/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
                 Instance::find_by_domain(conn, format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
@@ -346,11 +346,11 @@ pub(crate) mod tests {
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.blocked, blocked);
             assert_eq!(
-                Instance::is_blocked(conn, format!("https://{}/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, format!("https://{}a/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
                 Instance::find_by_domain(conn, format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)

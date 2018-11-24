@@ -45,7 +45,7 @@ fn details(
 ) -> Template {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
-        User::find_by_fqn(&*conn, name),
+        User::find_by_fqn(&*conn, &name),
         "Couldn't find requested user",
         |user| {
             let recents = Post::get_recents_for_author(&*conn, &user, 6);
@@ -81,7 +81,7 @@ fn details(
                         let follower =
                             User::find_by_ap_url(&*fecth_followers_conn, user_id.clone())
                                 .unwrap_or_else(|| {
-                                    User::fetch_from_url(&*fecth_followers_conn, user_id)
+                                    User::fetch_from_url(&*fecth_followers_conn, &user_id)
                                         .expect("user::details: Couldn't fetch follower")
                                 });
                         follows::Follow::insert(
@@ -145,7 +145,7 @@ fn dashboard_auth() -> Flash<Redirect> {
 
 #[post("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redirect> {
-    let target = User::find_by_fqn(&*conn, name.clone())?;
+    let target = User::find_by_fqn(&*conn, &name)?;
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.delete(&*conn);
         worker.execute(Thunk::of(move || {
@@ -162,7 +162,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
         );
         f.notify(&*conn);
 
-        let act = f.into_activity(&*conn);
+        let act = f.to_activity(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
     }
     Some(Redirect::to(uri!(details: name = name)))
@@ -180,7 +180,7 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
-        User::find_by_fqn(&*conn, name.clone()),
+        User::find_by_fqn(&*conn, &name),
         "Couldn't find requested user",
         |user| {
             let user_id = user.id.clone();
@@ -217,7 +217,7 @@ fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
     let user = User::find_local(&*conn, name)?;
-    Some(ActivityStream::new(user.into_activity(&*conn)))
+    Some(ActivityStream::new(user.to_activity(&*conn)))
 }
 
 #[get("/users/new")]
@@ -286,7 +286,7 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
 
 #[post("/@/<name>/delete")]
 fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
-    let account = User::find_by_fqn(&*conn, name.clone())?;
+    let account = User::find_by_fqn(&*conn, &name)?;
     if user.id == account.id {
         account.delete(&*conn);
 
@@ -354,9 +354,9 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
                 form.username.to_string(),
                 form.username.to_string(),
                 false,
-                String::from(""),
+                "",
                 form.email.to_string(),
-                User::hash_pass(form.password.to_string()),
+                User::hash_pass(&form.password),
             ).update_boxes(&*conn);
             Redirect::to(uri!(super::session::new))
         })
@@ -397,7 +397,7 @@ fn inbox(
             "Missing actor id for activity",
         ))))?;
 
-    let actor = User::from_url(&conn, actor_id.to_owned()).expect("user::inbox: user error");
+    let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
     if !verify_http_headers(&actor, &headers.0, data).is_secure()
         && !act.clone().verify(&actor)
     {
@@ -408,7 +408,7 @@ fn inbox(
         return Err(Some(status::BadRequest(Some("Invalid signature"))));
     }
 
-    if Instance::is_blocked(&*conn, actor_id.to_string()) {
+    if Instance::is_blocked(&*conn, actor_id) {
         return Ok(String::new());
     }
     Ok(match user.received(&*conn, act) {
@@ -448,12 +448,12 @@ fn ap_followers(
 
 #[get("/@/<name>/atom.xml")]
 fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let author = User::find_by_fqn(&*conn, name.clone())?;
+    let author = User::find_by_fqn(&*conn, &name)?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
         .id(Instance::get_local(&*conn)
             .unwrap()
-            .compute_box("~", name, "atom.xml"))
+            .compute_box("~", &name, "atom.xml"))
         .entries(
             Post::get_recents_for_author(&*conn, &author, 15)
                 .into_iter()
