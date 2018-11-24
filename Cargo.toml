@@ -58,6 +58,9 @@ rev = "e6ead8051cab12a95ea9dc88db3a107f0b5f7533"
 git = "https://github.com/BaptisteGelez/rocket_i18n"
 rev = "f8f9913f6f7008f65ae155dcd0e730377db6edae"
 
+[build-dependencies]
+ructe = "0.5.2"
+
 [features]
 default = ["postgres"]
 postgres = ["plume-models/postgres", "diesel/postgres"]

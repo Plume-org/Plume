@@ -182,3 +182,5 @@ fn main() {
                 .finalize().expect("main: csrf fairing creation error"))
         .launch();
 }
+
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));
