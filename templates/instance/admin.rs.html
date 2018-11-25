@@ -1,0 +1,39 @@
+@use templates::base;
+@use template_utils::*;
+@use plume_models::instance::Instance;
+@use routes::instance::InstanceSettingsForm;
+@use validator::ValidationErrors;
+
+@(ctx: BaseContext, instance: Instance, form: InstanceSettingsForm, errors: ValidationErrors)
+
+@:base(ctx.clone(), i18n!(ctx.1, "Administration of {0}"; instance.name.clone()).as_str(), {}, {}, {
+  <h1>@i18n!(ctx.1, "Administration")</h1>
+
+  @tabs(&[
+    ("/admin", i18n!(ctx.1, "Configuration"), true),
+    ("/admin/instances", i18n!(ctx.1, "Instances"), false),
+    ("/admin/users", i18n!(ctx.1, "Users"), false),
+  ])
+
+  <form method="post">
+    @input!(ctx.1, name (text), "Name", form, errors.clone(), "props")
+
+    <label for="open_registrations">
+      @if instance.open_registrations {
+          <input type="checkbox" name="open_registrations" id="open_registrations" checked>
+      } else {
+          <input type="checkbox" name="open_registrations" id="open_registrations">
+      }
+      @i18n!(ctx.1, "Allow anyone to register")
+
+      <label for="short_description">@i18n!(ctx.1, "Short description")<small>@i18n!(ctx.1, "Markdown is supported")</small></label>
+      <textarea id="short_description" name="short_description">@Html(form.short_description)</textarea>
+
+      <label for="long_description">@i18n!(ctx.1, "Long description")<small>@i18n!(ctx.1, "Markdown is supported")</small></label>
+      <textarea id="long_description" name="long_description">@Html(form.long_description)</textarea>
+
+      @input!(ctx.1, default_license (text), "Default license", form, errors, "minlenght=\"1\"")
+
+      <input type="submit" value="@i18n!(ctx.1, "Save settings")"/>
+  </form>
+})

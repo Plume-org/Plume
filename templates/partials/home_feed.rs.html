@@ -1,0 +1,14 @@
+@use plume_models::posts::Post;
+@use rocket_i18n::Catalog;
+@use template_utils::*;
+
+@(catalog: &Catalog, articles: Vec<Post>, link: &str, title: &str)
+
+@if articles.len() > 0 {
+    <h2>@i18n!(catalog, title) &mdash; <a href="@link">@i18n!(catalog, "View all")</a></h2>
+    <div class="cards spaced">
+        @for article in articles {
+            @post_card(article)
+        }
+    </div>
+}

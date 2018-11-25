@@ -27,22 +27,6 @@
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details=' ') %}
-    <label for="{{ name }}">
-        {{ label | _ }}
-        {% if optional %}
-            <small>{{ "Optional" | _ }}</small>
-        {% endif %}
-        <small>{{ details | _ }}</small>
-    </label>
-    {% if errors is defined and errors[name] %}
-        {% for err in errors[name] %}
-            <p class="error">{{ err.message | default(value="Unknown error") | _ }}</p>
-        {% endfor %}
-    {% endif %}
-    {% set default = default[name] | default(value="") %}
-    <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value=default) }}" {{ props | safe }}/>
-{% endmacro input %}
 {% macro comment(comm) %}
     <div class="comment" id="comment-{{ comm.id }}">
         <a class="author" href="/@/{{ comm.author.fqn }}/">

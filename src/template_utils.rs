@@ -39,6 +39,23 @@ pub fn post_card(article: Post) -> Html<&'static str> {
     Html("todo")
 }
 
+pub fn tabs(links: &[(&str, &str, bool)]) -> Html<String> {
+    let mut res = String::from(r#"<div class="tabs">"#);
+    for (url, title, selected) in links {
+        res.push_str(r#"<a href=""#);
+        res.push_str(url);
+        if *selected {
+            res.push_str(r#"" class="selected">"#);
+        } else {
+            res.push_str("\">");
+        }
+        res.push_str(title);
+        res.push_str("</a>");
+    }
+    res.push_str("</div>");
+    Html(res)
+}
+
 /*{% macro post_card(article) %}
     <div class="card">
         {% if article.cover %}
