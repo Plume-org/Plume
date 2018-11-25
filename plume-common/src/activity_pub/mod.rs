@@ -124,13 +124,14 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
 
     for inbox in boxes {
         // TODO: run it in Sidekiq or something like that
+        let body = signed.to_string();
         let mut headers = request::headers();
-        headers.insert("Digest", request::Digest::digest(signed.to_string()));
+        headers.insert("Digest", request::Digest::digest(&body));
         let res = Client::new()
-            .post(&inbox[..])
+            .post(&inbox)
             .headers(headers.clone())
             .header("Signature", request::signature(sender, &headers))
-            .body(signed.to_string())
+            .body(body)
             .send();
         match res {
             Ok(mut r) => {
@@ -158,6 +159,12 @@ impl Id {
 impl Into<String> for Id {
     fn into(self) -> String {
         self.0.clone()
+    }
+}
+
+impl AsRef<str> for Id {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 

@@ -108,10 +108,11 @@ impl FromActivity<Announce, Connection> for Reshare {
     fn from_activity(conn: &Connection, announce: Announce, _actor: Id) -> Reshare {
         let user = User::from_url(
             conn,
-            &Into::<String>::into(announce
+            announce
                 .announce_props
                 .actor_link::<Id>()
-                .expect("Reshare::from_activity: actor error")),
+                .expect("Reshare::from_activity: actor error")
+                .as_ref(),
         );
         let post = Post::find_by_ap_url(
             conn,

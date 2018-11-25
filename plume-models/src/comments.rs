@@ -222,7 +222,7 @@ impl FromActivity<Note, Connection> for Comment {
                         .expect("Comment::from_activity: post error")
                         .id
                 }),
-                author_id: User::from_url(conn, &Into::<String>::into(actor))
+                author_id: User::from_url(conn, actor.as_ref())
                     .expect("Comment::from_activity: author error")
                     .id,
                 sensitive: false, // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate

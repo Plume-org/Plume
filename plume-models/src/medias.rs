@@ -183,12 +183,13 @@ impl Media {
                 content_warning: image.object_props.summary_string().ok(),
                 owner_id: User::from_url(
                     conn,
-                    &Into::<String>::into(image
+                    image
                         .object_props
                         .attributed_to_link_vec::<Id>()
                         .ok()?
                         .into_iter()
-                        .next()?),
+                        .next()?
+                        .as_ref(),
                 )?.id,
             },
         ))

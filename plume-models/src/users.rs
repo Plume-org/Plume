@@ -913,7 +913,7 @@ impl Signer for User {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: String) -> Vec<u8> {
+    fn sign(&self, to_sign: &str) -> Vec<u8> {
         let key = self.get_keypair();
         let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)
             .expect("User::sign: initialization error");
@@ -925,7 +925,7 @@ impl Signer for User {
             .expect("User::sign: finalization error")
     }
 
-    fn verify(&self, data: String, signature: Vec<u8>) -> bool {
+    fn verify(&self, data: &str, signature: &[u8]) -> bool {
         let key = PKey::from_rsa(
             Rsa::public_key_from_pem(self.public_key.as_ref())
                 .expect("User::verify: pem parsing error"),

@@ -453,7 +453,7 @@ impl sign::Signer for Blog {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: String) -> Vec<u8> {
+    fn sign(&self, to_sign: &str) -> Vec<u8> {
         let key = self.get_keypair();
         let mut signer =
             Signer::new(MessageDigest::sha256(), &key).expect("Blog::sign: initialization error");
@@ -465,7 +465,7 @@ impl sign::Signer for Blog {
             .expect("Blog::sign: finalization error")
     }
 
-    fn verify(&self, data: String, signature: Vec<u8>) -> bool {
+    fn verify(&self, data: &str, signature: &[u8]) -> bool {
         let key = PKey::from_rsa(
             Rsa::public_key_from_pem(self.public_key.as_ref())
                 .expect("Blog::verify: pem parsing error"),

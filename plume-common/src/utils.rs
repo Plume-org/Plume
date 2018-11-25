@@ -41,25 +41,24 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
 
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser.map(|evt| match evt {
         Event::Text(txt) => {
-            let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold((vec![], State::Ready, String::new(), 0, vec![], vec![]), |(mut events, state, text_acc, n, mut mentions, mut hashtags), c| {
+            let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold((vec![], State::Ready, String::new(), 0, vec![], vec![]), |(mut events, state, mut text_acc, n, mut mentions, mut hashtags), c| {
                 match state {
                     State::Mention => {
                         let char_matches = c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_';
                         if char_matches && (n < (txt.chars().count() - 1)) {
-                            (events, State::Mention, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                            text_acc.push(c);
+                            (events, State::Mention, text_acc, n + 1, mentions, hashtags)
                         } else {
-                            let mention = if char_matches {
-                                text_acc + c.to_string().as_ref()
-                            } else {
-                                text_acc
-                            };
-                            let short_mention = mention.clone();
-                            let short_mention = short_mention.splitn(1, '@').nth(0).unwrap_or("");
-                            let link = Tag::Link(format!("/@/{}/", mention).into(), short_mention.to_string().into());
+                            if char_matches {
+                                text_acc.push(c)
+                            }
+                            let mention = text_acc;
+                            let short_mention = mention.splitn(1, '@').nth(0).unwrap_or("");
+                            let link = Tag::Link(format!("/@/{}/", &mention).into(), short_mention.to_owned().into());
 
-                            mentions.push(mention);
+                            mentions.push(mention.clone());
                             events.push(Event::Start(link.clone()));
-                            events.push(Event::Text(format!("@{}", short_mention).into()));
+                            events.push(Event::Text(format!("@{}", &short_mention).into()));
                             events.push(Event::End(link));
 
                             (events, State::Ready, c.to_string(), n + 1, mentions, hashtags)
@@ -68,24 +67,25 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                     State::Hashtag => {
                         let char_matches = c.is_alphanumeric();
                         if char_matches && (n < (txt.chars().count() -1)) {
-                            (events, State::Hashtag, text_acc + c.to_string().as_ref(), n+1, mentions, hashtags)
+                            text_acc.push(c);
+                            (events, State::Hashtag, text_acc, n+1, mentions, hashtags)
                         } else {
-                            let hashtag = if char_matches {
-                                text_acc + c.to_string().as_ref()
-                            } else {
-                                text_acc
-                            };
-                            let link = Tag::Link(format!("/tag/{}", hashtag.to_camel_case()).into(), hashtag.to_string().into());
+                            if char_matches {
+                                text_acc.push(c);
+                            }
+                            let hashtag = text_acc;
+                            let link = Tag::Link(format!("/tag/{}", &hashtag.to_camel_case()).into(), hashtag.to_owned().into());
 
                             hashtags.push(hashtag.clone());
                             events.push(Event::Start(link.clone()));
-                            events.push(Event::Text(format!("#{}", hashtag).into()));
+                            events.push(Event::Text(format!("#{}", &hashtag).into()));
                             events.push(Event::End(link));
 
                             (events, State::Ready, c.to_string(), n + 1, mentions, hashtags)
                         }
                     }
                     State::Ready => {
+                        text_acc.push(c);
                         if c == '@' {
                             events.push(Event::Text(text_acc.into()));
                             (events, State::Mention, String::new(), n + 1, mentions, hashtags)
@@ -94,27 +94,28 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                             (events, State::Hashtag, String::new(), n + 1, mentions, hashtags)
                         } else if c.is_alphanumeric() {
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
-                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                                events.push(Event::Text(text_acc.clone().into()))
                             }
-                            (events, State::Word, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                            (events, State::Word, text_acc, n + 1, mentions, hashtags)
                         } else {
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
-                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                                events.push(Event::Text(text_acc.clone().into()))
                             }
-                            (events, State::Ready, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                            (events, State::Ready, text_acc, n + 1, mentions, hashtags)
                         }
                     }
                     State::Word => {
+                        text_acc.push(c);
                         if c.is_alphanumeric() {
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
-                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                                events.push(Event::Text(text_acc.clone().into()))
                             }
-                            (events, State::Word, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                            (events, State::Word, text_acc, n + 1, mentions, hashtags)
                         } else {
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
-                                events.push(Event::Text((text_acc.clone() + c.to_string().as_ref()).into()))
+                                events.push(Event::Text(text_acc.clone().into()))
                             }
-                            (events, State::Ready, text_acc + c.to_string().as_ref(), n + 1, mentions, hashtags)
+                            (events, State::Ready, text_acc, n + 1, mentions, hashtags)
                         }
                     }
                 }

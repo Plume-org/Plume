@@ -204,7 +204,7 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, 
         .or_else(|| activity["actor"]["id"].as_str()).ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
     let actor = User::from_url(&conn, actor_id).expect("instance::shared_inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, data).is_secure() &&
+    if !verify_http_headers(&actor, &headers.0, &data).is_secure() &&
         !act.clone().verify(&actor) {
         println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
         return Err(status::BadRequest(Some("Invalid signature")));

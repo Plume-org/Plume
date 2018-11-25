@@ -24,9 +24,9 @@ pub trait Signer {
     fn get_key_id(&self) -> String;
 
     /// Sign some data with the signer keypair
-    fn sign(&self, to_sign: String) -> Vec<u8>;
+    fn sign(&self, to_sign: &str) -> Vec<u8>;
     /// Verify if the signature is valid
-    fn verify(&self, data: String, signature: Vec<u8>) -> bool;
+    fn verify(&self, data: &str, signature: &[u8]) -> bool;
 }
 
 pub trait Signable {
@@ -37,9 +37,9 @@ pub trait Signable {
     where
         T: Signer;
 
-    fn hash(data: String) -> String {
-        let bytes = data.into_bytes();
-        hex::encode(sha256(&bytes[..]))
+    fn hash(data: &str) -> String {
+        let bytes = data.as_bytes();
+        hex::encode(sha256(bytes))
     }
 }
 
@@ -53,15 +53,15 @@ impl Signable for serde_json::Value {
         });
 
         let options_hash = Self::hash(
-            json!({
+            &json!({
             "@context": "https://w3id.org/identity/v1",
             "created": creation_date
         }).to_string(),
         );
-        let document_hash = Self::hash(self.to_string());
+        let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
 
-        let signature = base64::encode(&creator.sign(to_be_signed));
+        let signature = base64::encode(&creator.sign(&to_be_signed));
 
         options["signatureValue"] = serde_json::Value::String(signature);
         self["signature"] = options;
@@ -85,14 +85,14 @@ impl Signable for serde_json::Value {
         };
         let creation_date = &signature_obj["created"];
         let options_hash = Self::hash(
-            json!({
+            &json!({
             "@context": "https://w3id.org/identity/v1",
             "created": creation_date
         }).to_string(),
         );
-        let document_hash = Self::hash(self.to_string());
+        let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
-        creator.verify(to_be_signed, signature)
+        creator.verify(&to_be_signed, &signature)
     }
 }
 
@@ -113,7 +113,7 @@ impl SignatureValidity {
 pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     sender: &S,
     all_headers: &HeaderMap,
-    data: String,
+    data: &str,
 ) -> SignatureValidity {
     let sig_header = all_headers.get_one("Signature");
     if sig_header.is_none() {
@@ -151,7 +151,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
         .collect::<Vec<_>>()
         .join("\n");
 
-    if !sender.verify(h, base64::decode(signature).unwrap_or_default()) {
+    if !sender.verify(&h, &base64::decode(signature).unwrap_or_default()) {
         return SignatureValidity::Invalid;
     }
     if !headers.contains(&"digest") {
@@ -160,7 +160,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     }
     let digest = all_headers.get_one("digest").unwrap_or("");
     let digest = request::Digest::from_header(digest);
-    if !digest.map(|d| d.verify(data)).unwrap_or(false) {
+    if !digest.map(|d| d.verify(&data)).unwrap_or(false) {
         // signature was valid, but body content does not match its digest
         SignatureValidity::Invalid
     } else {

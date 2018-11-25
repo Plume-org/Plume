@@ -398,7 +398,7 @@ fn inbox(
         ))))?;
 
     let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, data).is_secure()
+    if !verify_http_headers(&actor, &headers.0, &data).is_secure()
         && !act.clone().verify(&actor)
     {
         println!(
