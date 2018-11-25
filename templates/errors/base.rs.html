@@ -1,0 +1,9 @@
+@use templates::base as base_template;
+@use template_utils::*;
+
+@(ctx: BaseContext, error_message: &str, error: Content)
+
+@:base_template(ctx, error_message, {}, {}, {
+  @:error()
+  <p>@error_message</p>
+})

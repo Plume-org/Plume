@@ -1,14 +1,12 @@
-@use plume_models::{Connection, users::User};
-@use rocket_i18n::Catalog;
 @use template_utils::*;
 
-@(conn: &Connection, catalog: &Catalog, account: Option<User>, title: &str, head: Content, header: Content, content: Content)
+@(ctx: BaseContext, title: &str, head: Content, header: Content, content: Content)
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>@i18n!(catalog, title) ⋅ @i18n!(catalog, "Plume")</title>
+        <title>@i18n!(ctx.1, title) ⋅ @i18n!(ctx.1, "Plume")</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/static/css/main.css" />
         <link rel="stylesheet" href="/static/css/feather.css" />
@@ -19,43 +17,43 @@
     <body>
         <header>
             <nav id="menu">
-                <a href="#" aria-label="@i18n!(catalog, "Menu")" title="@i18n!(catalog, "Menu")"><i class="icon icon-menu"></i></a>
+                <a href="#" aria-label="@i18n!(ctx.1, "Menu")" title="@i18n!(ctx.1, "Menu")"><i class="icon icon-menu"></i></a>
             </nav>
             <div id="content">
                 <nav>
                     <a href="/" class="title">
                         <img src="/static/icons/trwnh/feather/plumeFeather256.png">
-                        <p>@i18n!(catalog, "Plume")</p>
+                        <p>@i18n!(ctx.1, "Plume")</p>
                     </a>
                     <hr/>
                     @:header()
                 </nav>
                 <nav>
-                    @if account.is_some() {
+                    @if ctx.2.is_some() {
                         <a href="/dashboard">
-                            <i class="icon icon-home" aria-label="@i18n!(catalog, "Dashboard")"></i>
-                            <span class="mobile-label">@i18n!(catalog, "Dashboard")</span>
+                            <i class="icon icon-home" aria-label="@i18n!(ctx.1, "Dashboard")"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Dashboard")</span>
                         </a>
                         <a href="/notifications">
-                            <i class="icon icon-bell" aria-label="@i18n!(catalog, "Notifications")"></i>
-                            <span class="mobile-label">@i18n!(catalog, "Notifications")</span>
+                            <i class="icon icon-bell" aria-label="@i18n!(ctx.1, "Notifications")"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Notifications")</span>
                         </a>
                         <a href="/logout">
-                            <i class="icon icon-log-out" aria-label="@i18n!(catalog, "Log Out")"></i>
-                            <span class="mobile-label">@i18n!(catalog, "Log Out")</span>
+                            <i class="icon icon-log-out" aria-label="@i18n!(ctx.1, "Log Out")"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Log Out")</span>
                         </a>
-                        <a href="/me" title="@i18n!(catalog, "My account")">
-                            @avatar(conn, &account.clone().unwrap(), Size::Small, false, &catalog)
-                            <span class="mobile-label">@i18n!(catalog, "My account")</span>
+                        <a href="/me" title="@i18n!(ctx.1, "My account")">
+                            @avatar(ctx.0, &ctx.2.clone().unwrap(), Size::Small, false, &ctx.1)
+                            <span class="mobile-label">@i18n!(ctx.1, "My account")</span>
                         </a>
                     } else {
                         <a href="/login">
                             <i class="icon icon-log-in"></i>
-                            <span class="mobile-label">@i18n!(catalog, "Log In")</span>
+                            <span class="mobile-label">@i18n!(ctx.1, "Log In")</span>
                         </a>
                         <a href="/users/new">
                             <i class="icon icon-user-plus"></i>
-                            <span class="mobile-label">@i18n!(catalog, "Register")</span>
+                            <span class="mobile-label">@i18n!(ctx.1, "Register")</span>
                         </a>
                     }
                 </nav>
@@ -66,11 +64,11 @@
         </main>
         <footer>
             <span>Plume 0.2.0</span>
-            <a href="/about">@i18n!(catalog, "About this instance")</a>
-            <a href="https://github.com/Plume-org/Plume">@i18n!(catalog, "Source code")</a>
-            <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(catalog, "Matrix room")</a>
-            @if account.map(|a| a.is_admin).unwrap_or(false) {
-                <a href="/admin">@i18n!(catalog, "Administration")</a>
+            <a href="/about">@i18n!(ctx.1, "About this instance")</a>
+            <a href="https://github.com/Plume-org/Plume">@i18n!(ctx.1, "Source code")</a>
+            <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(ctx.1, "Matrix room")</a>
+            @if ctx.2.map(|a| a.is_admin).unwrap_or(false) {
+                <a href="/admin">@i18n!(ctx.1, "Administration")</a>
             }
         </footer>
         <script src="/static/js/menu.js"></script>

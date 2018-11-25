@@ -18,8 +18,7 @@ use plume_models::{
 #[get("/login")]
 pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
     render!(session::login(
-        &*conn,
-        &intl.catalog,
+        (&*conn, &intl.catalog, user),
         None,
         LoginForm::default(),
         ValidationErrors::default()

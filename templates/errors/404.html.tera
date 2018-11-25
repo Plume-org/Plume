@@ -1,6 +1,0 @@
-{% extends "errors/base" %}
-
-{% block error %}
-    <h1>{{ "We couldn't find this page." | _ }}</h1>
-    <h2>{{ "The link that led you here may be broken." | _ }}</h2>
-{% endblock error %}

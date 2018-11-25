@@ -2,6 +2,8 @@ use plume_models::{Connection, posts::Post, users::User};
 use rocket_i18n::Catalog;
 use templates::Html;
 
+pub type BaseContext<'a> = (&'a Connection, &'a Catalog, Option<User>);
+
 pub enum Size {
     Small,
     Medium,

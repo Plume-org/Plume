@@ -30,9 +30,7 @@ pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<Us
         let authors = &blog.list_authors(&*conn);
 
         Ok(render!(blogs::details(
-            &*conn,
-            &intl.catalog,
-            user.clone(),
+            (&*conn, &intl.catalog, user.clone()),
             blog.clone(),
             blog.get_fqn(&*conn),
             authors,
@@ -59,9 +57,7 @@ pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<Ac
 #[get("/blogs/new")]
 pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
     render!(blogs::new(
-        &*conn,
-        &intl.catalog,
-        Some(user),
+        (&*conn, &intl.catalog, Some(user)),
         NewBlogForm::default(),
         ValidationErrors::default()
     ))

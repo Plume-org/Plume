@@ -1,15 +1,14 @@
-@use rocket_i18n::Catalog;
 @use validator::ValidationErrors;
 @use templates::base;
+@use template_utils::*;
 @use routes::blogs::NewBlogForm;
-@use plume_models::{Connection, users::User};
 
-@(conn: &Connection, catalog: &Catalog, account: Option<User>, form: NewBlogForm, errors: ValidationErrors)
+@(ctx: BaseContext, form: NewBlogForm, errors: ValidationErrors)
 
-@:base(conn, catalog, account, "New Blog", {}, {}, {
-  <h1>@i18n!(catalog, "Create a blog")</h1>
+@:base(ctx.clone(), "New Blog", {}, {}, {
+  <h1>@i18n!(ctx.1, "Create a blog")</h1>
   <form method="post">
-      @input!(catalog, title (text), "Title", form, errors, "required minlength=\"1\"")
-      <input type="submit" value="@i18n!(catalog, "Create blog")"/>
+      @input!(ctx.1, title (text), "Title", form, errors, "required minlength=\"1\"")
+      <input type="submit" value="@i18n!(ctx.1, "Create blog")"/>
   </form>
 })

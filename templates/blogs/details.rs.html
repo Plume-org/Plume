@@ -1,51 +1,49 @@
-@use plume_models::Connection;
 @use plume_models::blogs::Blog;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
-@use rocket_i18n::Catalog;
 @use templates::base;
 @use template_utils::*;
 
-@(conn: &Connection, catalog: &Catalog, account: Option<User>, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: usize, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
+@(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: usize, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
 
-@:base(conn, catalog, account, blog.title.as_ref(), {}, {
+@:base(ctx.clone(), blog.title.as_ref(), {}, {
     <a href="/~/@fqn">@blog.title</a>
 }, {
     <h1>@blog.title <small>~@fqn</small></h1>
     <p>@blog.summary</p>
     <p>
-        @i18n!(catalog, "One author in this blog: ", "{0} authors in this blog: ", authors.len())
+        @i18n!(ctx.1, "One author in this blog: ", "{0} authors in this blog: ", authors.len())
         @for author in authors {
-            <a class="author" href="/@@/@author.get_fqn(conn)">@author.name(conn)</a>
+            <a class="author" href="/@@/@author.get_fqn(ctx.0)">@author.name(ctx.0)</a>
         }
     </p>
     <p>
-        @i18n!(catalog, "One article in this blog", "{0} articles in this blog", total_articles)
+        @i18n!(ctx.1, "One article in this blog", "{0} articles in this blog", total_articles)
     </p>
 
     <section>
         <h2>
-            @i18n!(catalog, "Latest articles")
+            @i18n!(ctx.1, "Latest articles")
             <small><a href="/~/@fqn/atom.xml" title="Atom feed">@icon!("rss")</a></small>
         </h2>
         @if posts.len() < 1 {
-            <p>@i18n!(catalog, "No posts to see here yet.")</p>
+            <p>@i18n!(ctx.1, "No posts to see here yet.")</p>
         }
         @if is_author {
-            <a href="/~/@fqn/new/" class="button inline-block">@i18n!(catalog, "New article")</a>
+            <a href="/~/@fqn/new/" class="button inline-block">@i18n!(ctx.1, "New article")</a>
         }
         <div class="cards">
             @for article in posts {
                 @post_card(article)
             }
         </div>
-        @paginate(catalog, page, n_pages)
+        @paginate(ctx.1, page, n_pages)
     </section>
     @if is_author {
-        <h2>@i18n!(catalog, "Danger zone")</h2>
-        <p>@i18n!(catalog, "Be very careful, any action taken here can't be cancelled.")</p>
+        <h2>@i18n!(ctx.1, "Danger zone")</h2>
+        <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")</p>
         <form method="post" action="/~/@fqn/delete">
-	        <input type="submit" class="inline-block button destructive" value="@i18n!(catalog, "Delete this blog")">
+	        <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete this blog")">
         </form>
     }
 })
