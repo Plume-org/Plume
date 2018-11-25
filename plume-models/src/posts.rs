@@ -164,6 +164,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
 
         let date = query.creation_date.clone()
             .and_then(|d| NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok());
+        println!("DATE: {:?}\n\n{:?}", date, query.creation_date);
 
         let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref());
 
@@ -1061,4 +1062,3 @@ impl IntoId for Post {
         Id::new(self.ap_url.clone())
     }
 }
-
