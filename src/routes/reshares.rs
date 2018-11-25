@@ -13,8 +13,8 @@ use plume_models::{
 
 #[post("/~/<blog>/<slug>/reshare")]
 fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Option<Redirect> {
-    let b = Blog::find_by_fqn(&*conn, blog.clone())?;
-    let post = Post::find_by_slug(&*conn, slug.clone(), b.id)?;
+    let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.has_reshared(&*conn, &post) {
         let reshare = Reshare::insert(&*conn, NewReshare {

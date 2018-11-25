@@ -20,9 +20,9 @@ struct OAuthRequest {
 
 #[get("/oauth2?<query>")]
 fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
-    let app = App::find_by_client_id(&*conn, query.client_id).expect("OAuth request from unknown client");
+    let app = App::find_by_client_id(&*conn, &query.client_id).expect("OAuth request from unknown client");
     if app.client_secret == query.client_secret {
-        if let Some(user) = User::find_local(&*conn, query.username) {
+        if let Some(user) = User::find_local(&*conn, &query.username) {
             if user.auth(&query.password) {
                 let token = ApiToken::insert(&*conn, NewApiToken {
                     app_id: app.id,

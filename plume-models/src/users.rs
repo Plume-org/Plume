@@ -93,9 +93,9 @@ const USER_PREFIX: &str = "@";
 impl User {
     insert!(users, NewUser);
     get!(users);
-    find_by!(users, find_by_email, email as String);
-    find_by!(users, find_by_name, username as String, instance_id as i32);
-    find_by!(users, find_by_ap_url, ap_url as String);
+    find_by!(users, find_by_email, email as &str);
+    find_by!(users, find_by_name, username as &str, instance_id as i32);
+    find_by!(users, find_by_ap_url, ap_url as &str);
 
     pub fn one_by_instance(conn: &Connection) -> Vec<User> {
         users::table
@@ -176,7 +176,7 @@ impl User {
             .len() // TODO count in database?
     }
 
-    pub fn find_local(conn: &Connection, username: String) -> Option<User> {
+    pub fn find_local(conn: &Connection, username: &str) -> Option<User> {
         User::find_by_name(conn, username, Instance::local_id(conn))
     }
 
@@ -185,19 +185,16 @@ impl User {
             // remote user
             match Instance::find_by_domain(
                 conn,
-                String::from(
-                    fqn.split('@')
-                        .last()
-                        .expect("User::find_by_fqn: host error"),
-                ),
+                fqn.split('@')
+                    .last()
+                    .expect("User::find_by_fqn: host error"),
             ) {
                 Some(instance) => match User::find_by_name(
                     conn,
-                    String::from(
-                        fqn.split('@')
-                            .nth(0)
-                            .expect("User::find_by_fqn: name error"),
-                    ),
+                    fqn.split('@')
+                        .nth(0)
+                        .expect("User::find_by_fqn: name error")
+                    ,
                     instance.id,
                 ) {
                     Some(u) => Some(u),
@@ -207,7 +204,7 @@ impl User {
             }
         } else {
             // local user
-            User::find_local(conn, fqn.to_owned())
+            User::find_local(conn, fqn)
         }
     }
 
@@ -282,7 +279,7 @@ impl User {
     }
 
     fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> User {
-        let instance = match Instance::find_by_domain(conn, inst.to_owned()) {
+        let instance = match Instance::find_by_domain(conn, inst) {
             Some(instance) => instance,
             None => {
                 Instance::insert(
@@ -844,7 +841,7 @@ impl User {
     }
 
     pub fn from_url(conn: &Connection, url: &str) -> Option<User> {
-        User::find_by_ap_url(conn, url.to_owned()).or_else(|| {
+        User::find_by_ap_url(conn, url).or_else(|| {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
             if Url::parse(&url)
@@ -1042,7 +1039,7 @@ pub(crate) mod tests {
 
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test".to_owned(), Instance::local_id(conn))
+                User::find_by_name(conn, "test", Instance::local_id(conn))
                     .unwrap()
                     .id
             );
@@ -1052,7 +1049,7 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_email(conn, "test@example.com".to_owned())
+                User::find_by_email(conn, "test@example.com")
                     .unwrap()
                     .id
             );
@@ -1060,7 +1057,7 @@ pub(crate) mod tests {
                 test_user.id,
                 User::find_by_ap_url(
                     conn,
-                    format!(
+                    &format!(
                         "https://{}/@/{}/",
                         Instance::get_local(conn).unwrap().public_domain,
                         "test"

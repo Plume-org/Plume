@@ -37,7 +37,7 @@ pub struct NewFollow {
 impl Follow {
     insert!(follows, NewFollow);
     get!(follows);
-    find_by!(follows, find_by_ap_url, ap_url as String);
+    find_by!(follows, find_by_ap_url, ap_url as &str);
 
     pub fn find(conn: &Connection, from: i32, to: i32) -> Option<Follow> {
         follows::table
@@ -204,7 +204,7 @@ impl Deletable<Connection, Undo> for Follow {
         undo
     }
 
-    fn delete_id(id: String, actor_id: String, conn: &Connection) {
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
         if let Some(follow) = Follow::find_by_ap_url(conn, id) {
             if let Some(user) = User::find_by_ap_url(conn, actor_id) {
                 if user.id == follow.follower_id {

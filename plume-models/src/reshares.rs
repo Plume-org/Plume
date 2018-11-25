@@ -32,7 +32,7 @@ pub struct NewReshare {
 impl Reshare {
     insert!(reshares, NewReshare);
     get!(reshares);
-    find_by!(reshares, find_by_ap_url, ap_url as String);
+    find_by!(reshares, find_by_ap_url, ap_url as &str);
     find_by!(
         reshares,
         find_by_user_on_post,
@@ -120,7 +120,7 @@ impl FromActivity<Announce, Connection> for Reshare {
                 .announce_props
                 .object_link::<Id>()
                 .expect("Reshare::from_activity: object error")
-                .into(),
+                .as_ref(),
         );
         let reshare = Reshare::insert(
             conn,
@@ -191,7 +191,7 @@ impl Deletable<Connection, Undo> for Reshare {
         act
     }
 
-    fn delete_id(id: String, actor_id: String, conn: &Connection) {
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
         if let Some(reshare) = Reshare::find_by_ap_url(conn, id) {
             if let Some(actor) = User::find_by_ap_url(conn, actor_id) {
                 if actor.id == reshare.user_id {

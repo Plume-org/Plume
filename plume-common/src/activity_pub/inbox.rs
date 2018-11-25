@@ -37,7 +37,7 @@ pub trait Notify<C> {
 
 pub trait Deletable<C, A> {
     fn delete(&self, conn: &C) -> A;
-    fn delete_id(id: String, actor_id: String, conn: &C);
+    fn delete_id(id: &str, actor_id: &str, conn: &C);
 }
 
 pub trait WithInbox {

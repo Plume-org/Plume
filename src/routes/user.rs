@@ -79,7 +79,7 @@ fn details(
                 worker.execute(Thunk::of(move || {
                     for user_id in user_clone.fetch_followers_ids() {
                         let follower =
-                            User::find_by_ap_url(&*fecth_followers_conn, user_id.clone())
+                            User::find_by_ap_url(&*fecth_followers_conn, &user_id)
                                 .unwrap_or_else(|| {
                                     User::fetch_from_url(&*fecth_followers_conn, &user_id)
                                         .expect("user::details: Couldn't fetch follower")
@@ -216,7 +216,7 @@ fn activity_details(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_local(&*conn, name)?;
+    let user = User::find_local(&*conn, &name)?;
     Some(ActivityStream::new(user.to_activity(&*conn)))
 }
 
@@ -374,7 +374,7 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
 
 #[get("/@/<name>/outbox")]
 fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, name)?;
+    let user = User::find_local(&*conn, &name)?;
     Some(user.outbox(&*conn))
 }
 
@@ -385,9 +385,9 @@ fn inbox(
     data: String,
     headers: Headers,
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
-    let user = User::find_local(&*conn, name).ok_or(None)?;
+    let user = User::find_local(&*conn, &name).ok_or(None)?;
     let act: serde_json::Value =
-        serde_json::from_str(&data[..]).expect("user::inbox: deserialization error");
+        serde_json::from_str(&data).expect("user::inbox: deserialization error");
 
     let activity = act.clone();
     let actor_id = activity["actor"]
@@ -426,7 +426,7 @@ fn ap_followers(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, name)?;
+    let user = User::find_local(&*conn, &name)?;
     let followers = user
         .get_followers(&*conn)
         .into_iter()

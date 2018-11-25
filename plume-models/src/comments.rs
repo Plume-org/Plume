@@ -46,7 +46,7 @@ impl Comment {
     insert!(comments, NewComment);
     get!(comments);
     list_by!(comments, list_by_post, post_id as i32);
-    find_by!(comments, find_by_ap_url, ap_url as String);
+    find_by!(comments, find_by_ap_url, ap_url as &str);
 
     pub fn get_author(&self, conn: &Connection) -> User {
         User::get(conn, self.author_id).expect("Comment::get_author: author error")
@@ -196,11 +196,11 @@ impl FromActivity<Note, Connection> for Comment {
             .object_props
             .in_reply_to
             .clone()
-            .expect("Comment::from_activity: not an answer error")
+            .expect("Comment::from_activity: not an answer error");
+        let previous_url = previous_url
             .as_str()
-            .expect("Comment::from_activity: in_reply_to parsing error")
-            .to_string();
-        let previous_comment = Comment::find_by_ap_url(conn, previous_url.clone());
+            .expect("Comment::from_activity: in_reply_to parsing error");
+        let previous_comment = Comment::find_by_ap_url(conn, previous_url);
 
         let comm = Comment::insert(
             conn,

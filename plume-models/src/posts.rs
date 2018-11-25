@@ -151,8 +151,8 @@ impl Post {
     insert!(posts, NewPost);
     get!(posts);
     update!(posts);
-    find_by!(posts, find_by_slug, slug as String, blog_id as i32);
-    find_by!(posts, find_by_ap_url, ap_url as String);
+    find_by!(posts, find_by_slug, slug as &str, blog_id as i32);
+    find_by!(posts, find_by_ap_url, ap_url as &str);
 
     pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Vec<Post> {
         use schema::tags;
@@ -565,7 +565,7 @@ impl Post {
             .object_props
             .id_string()
             .expect("Post::handle_update: id error");
-        let mut post = Post::find_by_ap_url(conn, id).expect("Post::handle_update: finding error");
+        let mut post = Post::find_by_ap_url(conn, &id).expect("Post::handle_update: finding error");
 
         if let Ok(title) = updated.object_props.name_string() {
             post.slug = title.to_kebab_case();
@@ -631,7 +631,7 @@ impl Post {
                     m.link_props
                         .href_string()
                         .ok()
-                        .and_then(|ap_url| User::find_by_ap_url(conn, ap_url))
+                        .and_then(|ap_url| User::find_by_ap_url(conn, &ap_url))
                         .map(|u| u.id),
                     m,
                 )
@@ -769,7 +769,7 @@ impl FromActivity<Article, Connection> for Post {
     fn from_activity(conn: &Connection, article: Article, _actor: Id) -> Post {
         if let Some(post) = Post::find_by_ap_url(
             conn,
-            article.object_props.id_string().unwrap_or_default(),
+            &article.object_props.id_string().unwrap_or_default(),
         ) {
             post
         } else {
@@ -909,7 +909,7 @@ impl Deletable<Connection, Delete> for Post {
         act
     }
 
-    fn delete_id(id: String, actor_id: String, conn: &Connection) {
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
         let actor = User::find_by_ap_url(conn, actor_id);
         let post = Post::find_by_ap_url(conn, id);
         let can_delete = actor

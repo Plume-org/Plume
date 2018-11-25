@@ -74,7 +74,7 @@ impl Instance {
 
     insert!(instances, NewInstance);
     get!(instances);
-    find_by!(instances, find_by_domain, public_domain as String);
+    find_by!(instances, find_by_domain, public_domain as &str);
 
     pub fn toggle_block(&self, conn: &Connection) {
         diesel::update(self)
@@ -219,7 +219,7 @@ pub(crate) mod tests {
             .map(|inst| {
                 (
                     inst.clone(),
-                    Instance::find_by_domain(conn, inst.public_domain.clone())
+                    Instance::find_by_domain(conn, &inst.public_domain)
                         .unwrap_or_else(|| Instance::insert(conn, inst)),
                 )
             })
@@ -337,7 +337,7 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
-                Instance::find_by_domain(conn, format!("{}a", inst.public_domain))
+                Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
             );
@@ -351,7 +351,7 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
-                Instance::find_by_domain(conn, format!("{}a", inst.public_domain))
+                Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
             );

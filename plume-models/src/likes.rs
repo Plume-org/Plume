@@ -32,7 +32,7 @@ pub struct NewLike {
 impl Like {
     insert!(likes, NewLike);
     get!(likes);
-    find_by!(likes, find_by_ap_url, ap_url as String);
+    find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
     pub fn update_ap_url(&self, conn: &Connection) {
@@ -92,8 +92,7 @@ impl FromActivity<activity::Like, Connection> for Like {
             like.like_props
                 .object
                 .as_str()
-                .expect("Like::from_activity: object error")
-                .to_string(),
+                .expect("Like::from_activity: object error"),
         );
         let res = Like::insert(
             conn,
@@ -161,7 +160,7 @@ impl Deletable<Connection, activity::Undo> for Like {
         act
     }
 
-    fn delete_id(id: String, actor_id: String, conn: &Connection) {
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
         if let Some(like) = Like::find_by_ap_url(conn, id) {
             if let Some(user) = User::find_by_ap_url(conn, actor_id) {
                 if user.id == like.user_id {

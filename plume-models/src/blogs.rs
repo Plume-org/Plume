@@ -63,8 +63,8 @@ const BLOG_PREFIX: &str = "~";
 impl Blog {
     insert!(blogs, NewBlog);
     get!(blogs);
-    find_by!(blogs, find_by_ap_url, ap_url as String);
-    find_by!(blogs, find_by_name, actor_id as String, instance_id as i32);
+    find_by!(blogs, find_by_ap_url, ap_url as &str);
+    find_by!(blogs, find_by_name, actor_id as &str, instance_id as i32);
 
     pub fn get_instance(&self, conn: &Connection) -> Instance {
         Instance::get(conn, self.instance_id).expect("Blog::get_instance: instance not found error")
@@ -93,34 +93,30 @@ impl Blog {
             .expect("Blog::find_for_author: blog loading error")
     }
 
-    pub fn find_local(conn: &Connection, name: String) -> Option<Blog> {
+    pub fn find_local(conn: &Connection, name: &str) -> Option<Blog> {
         Blog::find_by_name(conn, name, Instance::local_id(conn))
     }
 
-    pub fn find_by_fqn(conn: &Connection, fqn: String) -> Option<Blog> {
+    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Option<Blog> {
         if fqn.contains('@') {
             // remote blog
             match Instance::find_by_domain(
                 conn,
-                String::from(
-                    fqn.split('@')
-                        .last()
-                        .expect("Blog::find_by_fqn: unreachable"),
-                ),
+                fqn.split('@')
+                    .last()
+                    .expect("Blog::find_by_fqn: unreachable"),
             ) {
                 Some(instance) => match Blog::find_by_name(
                     conn,
-                    String::from(
-                        fqn.split('@')
-                            .nth(0)
-                            .expect("Blog::find_by_fqn: unreachable"),
-                    ),
+                    fqn.split('@')
+                        .nth(0)
+                        .expect("Blog::find_by_fqn: unreachable"),
                     instance.id,
                 ) {
                     Some(u) => Some(u),
-                    None => Blog::fetch_from_webfinger(conn, &fqn),
+                    None => Blog::fetch_from_webfinger(conn, fqn),
                 },
-                None => Blog::fetch_from_webfinger(conn, &fqn),
+                None => Blog::fetch_from_webfinger(conn, fqn),
             }
         } else {
             // local blog
@@ -185,7 +181,7 @@ impl Blog {
     }
 
     fn from_activity(conn: &Connection, acct: &CustomGroup, inst: &str) -> Blog {
-        let instance = match Instance::find_by_domain(conn, inst.to_owned()) {
+        let instance = match Instance::find_by_domain(conn, inst) {
             Some(instance) => instance,
             None => {
                 Instance::insert(
@@ -382,7 +378,7 @@ impl Blog {
     }
 
     pub fn from_url(conn: &Connection, url: &str) -> Option<Blog> {
-        Blog::find_by_ap_url(conn, url.to_owned()).or_else(|| {
+        Blog::find_by_ap_url(conn, url).or_else(|| {
             // The requested blog was not in the DB
             // We try to fetch it if it is remote
             if Url::parse(url)
@@ -724,7 +720,7 @@ pub(crate) mod tests {
             );
 
             assert_eq!(
-                Blog::find_local(conn, "SomeName".to_owned()).unwrap().id,
+                Blog::find_local(conn, "SomeName").unwrap().id,
                 blog.id
             );
 

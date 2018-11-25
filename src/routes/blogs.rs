@@ -24,7 +24,7 @@ use routes::Page;
 
 #[get("/~/<name>?<page>", rank = 2)]
 fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
+    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &name), "Requested blog couldn't be found", |blog| {
         let posts = Post::blog_page(&*conn, &blog, page.limits());
         let articles = Post::get_for_blog(&*conn, &blog);
         let authors = &blog.list_authors(&*conn);
@@ -50,7 +50,7 @@ fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
 
 #[get("/~/<name>", rank = 1)]
 fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_local(&*conn, name)?;
+    let blog = Blog::find_local(&*conn, &name)?;
     Some(ActivityStream::new(blog.to_activity(&*conn)))
 }
 
@@ -95,7 +95,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Some(_) = Blog::find_local(&*conn, slug.clone()) {
+    if let Some(_) = Blog::find_local(&*conn, &slug) {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A blog with the same name already exists.")),
@@ -131,7 +131,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
 
 #[post("/~/<name>/delete")]
 fn delete(conn: DbConn, name: String, user: Option<User>) -> Result<Redirect, Option<Template>>{
-    let blog = Blog::find_local(&*conn, name).ok_or(None)?;
+    let blog = Blog::find_local(&*conn, &name).ok_or(None)?;
     if user.map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
         blog.delete(&conn);
         Ok(Redirect::to(uri!(super::instance::index)))
@@ -144,13 +144,13 @@ fn delete(conn: DbConn, name: String, user: Option<User>) -> Result<Redirect, Op
 
 #[get("/~/<name>/outbox")]
 fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_local(&*conn, name)?;
+    let blog = Blog::find_local(&*conn, &name)?;
     Some(blog.outbox(&*conn))
 }
 
 #[get("/~/<name>/atom.xml")]
 fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&*conn, name.clone())?;
+    let blog = Blog::find_by_fqn(&*conn, &name)?;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
         .id(Instance::get_local(&*conn).expect("blogs::atom_feed: local instance not found error")

@@ -30,7 +30,7 @@ pub struct NewMention {
 impl Mention {
     insert!(mentions, NewMention);
     get!(mentions);
-    find_by!(mentions, find_by_ap_url, ap_url as String);
+    find_by!(mentions, find_by_ap_url, ap_url as &str);
     list_by!(mentions, list_for_user, mentioned_id as i32);
     list_by!(mentions, list_for_post, post_id as i32);
     list_by!(mentions, list_for_comment, comment_id as i32);
@@ -93,7 +93,7 @@ impl Mention {
         notify: bool,
     ) -> Option<Self> {
         let ap_url = ment.link_props.href_string().ok()?;
-        let mentioned = User::find_by_ap_url(conn, ap_url)?;
+        let mentioned = User::find_by_ap_url(conn, &ap_url)?;
 
         if in_post {
             Post::get(conn, inside).map(|post| {

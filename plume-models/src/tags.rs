@@ -24,7 +24,7 @@ pub struct NewTag {
 impl Tag {
     insert!(tags, NewTag);
     get!(tags);
-    find_by!(tags, find_by_name, tag as String);
+    find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
     pub fn to_activity(&self, conn: &Connection) -> Hashtag {

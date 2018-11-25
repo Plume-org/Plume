@@ -31,6 +31,11 @@ extern crate diesel_migrations;
 
 use std::env;
 
+#[cfg(not(any(feature = "sqlite", feature = "postgres")))]
+compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
+#[cfg(all(feature = "sqlite", feature = "postgres"))]
+compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
+
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
 pub type Connection = diesel::SqliteConnection;
 
@@ -51,7 +56,7 @@ pub type Connection = diesel::PgConnection;
 /// Model::name_of_the_function(connection, String::new(), 0);
 /// ```
 macro_rules! find_by {
-    ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
+    ($table:ident, $fn:ident, $($col:ident as $type:ty),+) => {
         /// Try to find a $table with a given $col
         pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Option<Self> {
             $table::table
@@ -77,7 +82,7 @@ macro_rules! find_by {
 /// Model::name_of_the_function(connection, String::new());
 /// ```
 macro_rules! list_by {
-    ($table:ident, $fn:ident, $($col:ident as $type:ident),+) => {
+    ($table:ident, $fn:ident, $($col:ident as $type:ty),+) => {
         /// Try to find a $table with a given $col
         pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Vec<Self> {
             $table::table

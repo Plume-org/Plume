@@ -38,8 +38,8 @@ fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Temp
 
 #[get("/~/<blog>/<slug>?<query>")]
 fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, blog), "Couldn't find this blog", |blog| {
-        may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, slug, blog.id), "Couldn't find this post", |post| {
+    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &blog), "Couldn't find this blog", |blog| {
+        may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, &slug, blog.id), "Couldn't find this post", |post| {
             if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
                 let comments = Comment::list_by_post(&*conn, post.id);
                 let comms = comments.clone();
@@ -82,8 +82,8 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
 
 #[get("/~/<blog>/<slug>", rank = 3)]
 fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, Option<String>> {
-    let blog = Blog::find_by_fqn(&*conn, blog).ok_or(None)?;
-    let post = Post::find_by_slug(&*conn, slug, blog.id).ok_or(None)?;
+    let blog = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     if post.published {
         Ok(ActivityStream::new(post.to_activity(&*conn)))
     } else {
@@ -101,7 +101,7 @@ fn new_auth(blog: String) -> Flash<Redirect> {
 
 #[get("/~/<blog>/new", rank = 1)]
 fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
-    let b = Blog::find_by_fqn(&*conn, blog.to_string())?;
+    let b = Blog::find_by_fqn(&*conn, &blog)?;
 
     if !user.is_author_in(&*conn, &b) {
         Some(Template::render("errors/403", json!({// TODO actually return 403 error code
@@ -123,8 +123,8 @@ fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
 
 #[get("/~/<blog>/<slug>/edit")]
 fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template> {
-    let b = Blog::find_by_fqn(&*conn, blog.to_string())?;
-    let post = Post::find_by_slug(&*conn, slug, b.id)?;
+    let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.is_author_in(&*conn, &b) {
         Some(Template::render("errors/403", json!({// TODO actually return 403 error code
@@ -165,8 +165,8 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
 #[post("/~/<blog>/<slug>/edit", data = "<data>")]
 fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>)
     -> Result<Redirect, Option<Template>> {
-    let b = Blog::find_by_fqn(&*conn, blog.to_string()).ok_or(None)?;
-    let mut post = Post::find_by_slug(&*conn, slug.clone(), b.id).ok_or(None)?;
+    let b = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
+    let mut post = Post::find_by_slug(&*conn, &slug, b.id).ok_or(None)?;
 
     let form = data.get();
     let new_slug = if !post.published {
@@ -181,7 +181,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
     };
 
     if new_slug != slug {
-        if let Some(_) = Post::find_by_slug(&*conn, new_slug.clone(), b.id) {
+        if let Some(_) = Post::find_by_slug(&*conn, &new_slug, b.id) {
             errors.add("title", ValidationError {
                 code: Cow::from("existing_slug"),
                 message: Some(Cow::from("A post with the same title already exists.")),
@@ -287,7 +287,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 
 #[post("/~/<blog_name>/new", data = "<data>")]
 fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Result<Redirect, Option<Template>> {
-    let blog = Blog::find_by_fqn(&*conn, blog_name.to_string()).ok_or(None)?;
+    let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
 
@@ -295,7 +295,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Some(_) = Post::find_by_slug(&*conn, slug.clone(), blog.id) {
+    if let Some(_) = Post::find_by_slug(&*conn, &slug, blog.id) {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A post with the same title already exists.")),
@@ -377,8 +377,8 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
 
 #[post("/~/<blog_name>/<slug>/delete")]
 fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
-    let post = Blog::find_by_fqn(&*conn, blog_name.clone())
-        .and_then(|blog| Post::find_by_slug(&*conn, slug.clone(), blog.id));
+    let post = Blog::find_by_fqn(&*conn, &blog_name)
+        .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
 
     if let Some(post) = post {
         if !post.get_authors(&*conn).into_iter().any(|a| a.id == user.id) {

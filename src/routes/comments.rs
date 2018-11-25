@@ -31,8 +31,8 @@ struct NewCommentForm {
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
 fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>)
     -> Result<Redirect, Option<Template>> {
-    let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).ok_or(None)?;
-    let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).ok_or(None)?;
+    let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     let form = data.get();
     form.validate()
         .map(|_| {

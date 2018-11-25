@@ -49,8 +49,8 @@ struct LoginForm {
 #[post("/login", data = "<data>")]
 fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, Template> {
     let form = data.get();
-    let user = User::find_by_email(&*conn, form.email_or_name.to_string())
-        .or_else(|| User::find_local(&*conn, form.email_or_name.to_string()));
+    let user = User::find_by_email(&*conn, &form.email_or_name)
+        .or_else(|| User::find_local(&*conn, &form.email_or_name));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
