@@ -33,7 +33,7 @@ msgstr ""
 msgid "Create blog"
 msgstr ""
 
-msgid "Comment \"{{ post }}\""
+msgid "Comment \"{0}\""
 msgstr ""
 
 msgid "Content"
@@ -60,23 +60,21 @@ msgstr ""
 msgid "Let&#x27;s go!"
 msgstr ""
 
-#, fuzzy
-msgid "Welcome to {{ instance_name | escape }}"
-msgstr "Welcome to {{ instance_name }}"
+msgid "Welcome to {0}"
+msgstr ""
 
 msgid "Notifications"
 msgstr ""
 
-msgid ""
-"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgid "Written by {0}{1}{2}"
 msgstr ""
 
-msgid "This article is under the {{ license }} license."
+msgid "This article is under the {0} license."
 msgstr ""
 
 #, fuzzy
 msgid "One like"
-msgid_plural "{{ count }} likes"
+msgid_plural "{0} likes"
 msgstr[0] "One follower"
 msgstr[1] "{{ count }} followers"
 
@@ -87,7 +85,7 @@ msgid "Add yours"
 msgstr ""
 
 msgid "One Boost"
-msgid_plural "{{ count }} Boosts"
+msgid_plural "{0} Boosts"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -148,9 +146,8 @@ msgstr ""
 msgid "Edit your profile"
 msgstr ""
 
-#, fuzzy
-msgid "Open on {{ instance_url }}"
-msgstr "Welcome to {{ instance_name }}"
+msgid "Open on {0}"
+msgstr ""
 
 msgid "Follow"
 msgstr ""
@@ -162,8 +159,9 @@ msgstr "One follower"
 msgid "Recently boosted"
 msgstr ""
 
+#, fuzzy
 msgid "One follower"
-msgid_plural "{{ count }} followers"
+msgid_plural "{0} followers"
 msgstr[0] "One follower"
 msgstr[1] "{{ count }} followers"
 
@@ -186,7 +184,7 @@ msgid "Update account"
 msgstr ""
 
 #, fuzzy
-msgid "{{ name | escape }}'s followers"
+msgid "{0}'s followers"
 msgstr "One follower"
 
 #, fuzzy
@@ -256,19 +254,19 @@ msgstr ""
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgid "By {0}{1}{2}"
 msgstr ""
 
-msgid "{{ data }} boosted your article"
+msgid "{0} boosted your article"
 msgstr ""
 
-msgid "{{ data }} started following you"
+msgid "{0} started following you"
 msgstr ""
 
-msgid "{{ data }} liked your article"
+msgid "{0} liked your article"
 msgstr ""
 
-msgid "{{ data }} commented your article"
+msgid "{0} commented your article"
 msgstr ""
 
 msgid "We couldn&#x27;t find this page."
@@ -283,7 +281,7 @@ msgstr ""
 msgid "You are not author in this blog."
 msgstr ""
 
-msgid "{{ data }} mentioned you."
+msgid "{0} mentioned you."
 msgstr ""
 
 msgid "Your comment"
@@ -323,7 +321,7 @@ msgid "Password should be at least 8 characters long"
 msgstr ""
 
 msgid "One author in this blog: "
-msgid_plural "{{ count }} authors in this blog: "
+msgid_plural "{0} authors in this blog: "
 msgstr[0] ""
 msgstr[1] ""
 
@@ -334,7 +332,7 @@ msgid "Optional"
 msgstr ""
 
 msgid "One article in this blog"
-msgid_plural "{{ count }} articles in this blog"
+msgid_plural "{0} articles in this blog"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -342,21 +340,6 @@ msgid "Previous page"
 msgstr ""
 
 msgid "Next page"
-msgstr ""
-
-msgid "{{ user }} mentioned you."
-msgstr ""
-
-msgid "{{ user }} commented your article."
-msgstr ""
-
-msgid "{{ user }} is now following you."
-msgstr ""
-
-msgid "{{ user }} liked your article."
-msgstr ""
-
-msgid "{{ user }} boosted your article."
 msgstr ""
 
 msgid "Source code"
@@ -412,9 +395,8 @@ msgstr ""
 msgid "Create your account"
 msgstr ""
 
-#, fuzzy
-msgid "About {{ instance_name }}"
-msgstr "Welcome to {{ instance_name }}"
+msgid "About {0}"
+msgstr ""
 
 msgid "Home to"
 msgstr ""
@@ -446,7 +428,7 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid "Runs Plume {{ version }}"
+msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Your media"
@@ -455,7 +437,7 @@ msgstr ""
 msgid "Go to your gallery"
 msgstr ""
 
-msgid "{{ name}}'s avatar'"
+msgid "{0}'s avatar'"
 msgstr ""
 
 msgid "Media details"
@@ -529,20 +511,20 @@ msgid "All the articles of the Fediverse"
 msgstr ""
 
 #, fuzzy
-msgid "Articles from {{ instance.name }}"
+msgid "Articles from {0}"
 msgstr "Welcome to {{ instance_name }}"
 
 msgid "View all"
 msgstr ""
 
 #, fuzzy
-msgid "Articles tagged \"{{ tag }}\""
+msgid "Articles tagged \"{0}\""
 msgstr "Welcome to {{ instance_name }}"
 
 msgid "Edit"
 msgstr ""
 
-msgid "Edit {{ post }}"
+msgid "Edit {0}"
 msgstr ""
 
 msgid "Update"
@@ -561,7 +543,7 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Administration of {{ instance.name }}"
+msgid "Administration of {0}"
 msgstr "Welcome to {{ instance_name }}"
 
 msgid "Instances"
@@ -620,3 +602,19 @@ msgstr ""
 
 msgid "None"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Welcome to {{ instance_name | escape }}"
+#~ msgstr "Welcome to {{ instance_name }}"
+
+#, fuzzy
+#~ msgid "Open on {{ instance_url }}"
+#~ msgstr "Welcome to {{ instance_name }}"
+
+#, fuzzy
+#~ msgid "{{ name | escape }}'s followers"
+#~ msgstr "One follower"
+
+#, fuzzy
+#~ msgid "About {{ instance_name }}"
+#~ msgstr "Welcome to {{ instance_name }}"

@@ -42,7 +42,7 @@ pub fn details(
     fecth_articles_conn: DbConn,
     fecth_followers_conn: DbConn,
     update_conn: DbConn,
-) -> Template {
+) -> Result<Template, Template> {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
         User::find_by_fqn(&*conn, &name),
@@ -104,20 +104,20 @@ pub fn details(
                 }
             }
 
-            Template::render(
+            Ok(Template::render(
                 "users/details",
                 json!({
-            "user": user.to_json(&*conn),
-            "instance_url": user.get_instance(&*conn).public_domain,
-            "is_remote": user.instance_id != Instance::local_id(&*conn),
-            "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-            "account": account.clone().map(|a| a.to_json(&*conn)),
-            "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "reshares": reshares.into_iter().map(|r| r.get_post(&*conn).unwrap().to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-            "n_followers": n_followers
-        }),
-            )
+                    "user": user.to_json(&*conn),
+                    "instance_url": user.get_instance(&*conn).public_domain,
+                    "is_remote": user.instance_id != Instance::local_id(&*conn),
+                    "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+                    "account": account.clone().map(|a| a.to_json(&*conn)),
+                    "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                    "reshares": reshares.into_iter().map(|r| r.get_post(&*conn).unwrap().to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+                    "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
+                    "n_followers": n_followers
+                }),
+            ))
         }
     )
 }
@@ -177,7 +177,7 @@ pub fn follow_auth(name: String) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>")]
-pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
+pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Result<Template, Template> {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
         User::find_by_fqn(&*conn, &name),
@@ -186,7 +186,7 @@ pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, pa
             let user_id = user.id;
             let followers_count = user.get_followers(&*conn).len();
 
-            Template::render(
+            Ok(Template::render(
                 "users/followers",
                 json!({
                     "user": user.to_json(&*conn),
@@ -200,13 +200,13 @@ pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, pa
                     "page": page.0,
                     "n_pages": Page::total(followers_count as i32)
                 }),
-            )
+            ))
         }
     )
 }
 
 #[get("/@/<name>/followers", rank = 2)]
-pub fn followers(name: String, conn: DbConn, account: Option<User>) -> Template {
+pub fn followers(name: String, conn: DbConn, account: Option<User>) -> Result<Template, Template> {
     followers_paginated(name, conn, account, Page::first())
 }
 

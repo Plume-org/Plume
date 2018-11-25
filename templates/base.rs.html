@@ -1,0 +1,78 @@
+@use plume_models::{Connection, users::User};
+@use rocket_i18n::Catalog;
+@use template_utils::*;
+
+@(conn: &Connection, catalog: &Catalog, account: Option<User>, title: &str, head: Content, header: Content, content: Content)
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>@title ⋅ @i18n!(catalog, "Plume")</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/static/css/main.css" />
+        <link rel="stylesheet" href="/static/css/feather.css" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" type="image/png" href="/static/icons/trwnh/feather-filled/plumeFeatherFilled64.png">
+        @:head()
+    </head>
+    <body>
+        <header>
+            <nav id="menu">
+                <a href="#" aria-label="@i18n!(catalog, "Menu")" title="@i18n!(catalog, "Menu")"><i class="icon icon-menu"></i></a>
+            </nav>
+            <div id="content">
+                <nav>
+                    <a href="/" class="title">
+                        <img src="/static/icons/trwnh/feather/plumeFeather256.png">
+                        <p>@i18n!(catalog, "Plume")</p>
+                    </a>
+                    <hr/>
+                    @:header()
+                </nav>
+                <nav>
+                    @if account.is_some() {
+                        <a href="/dashboard">
+                            <i class="icon icon-home" aria-label="@i18n!(catalog, "Dashboard")"></i>
+                            <span class="mobile-label">@i18n!(catalog, "Dashboard")</span>
+                        </a>
+                        <a href="/notifications">
+                            <i class="icon icon-bell" aria-label="@i18n!(catalog, "Notifications")"></i>
+                            <span class="mobile-label">@i18n!(catalog, "Notifications")</span>
+                        </a>
+                        <a href="/logout">
+                            <i class="icon icon-log-out" aria-label="@i18n!(catalog, "Log Out")"></i>
+                            <span class="mobile-label">@i18n!(catalog, "Log Out")</span>
+                        </a>
+                        <a href="/me" title="@i18n!(catalog, "My account")">
+                            @avatar(conn, &account.clone().unwrap(), Size::Small, false, &catalog)
+                            <span class="mobile-label">@i18n!(catalog, "My account")</span>
+                        </a>
+                    } else {
+                        <a href="/login">
+                            <i class="icon icon-log-in"></i>
+                            <span class="mobile-label">@i18n!(catalog, "Log In")</span>
+                        </a>
+                        <a href="/users/new">
+                            <i class="icon icon-user-plus"></i>
+                            <span class="mobile-label">@i18n!(catalog, "Register")</span>
+                        </a>
+                    }
+                </nav>
+            </div>
+        </header>
+        <main>
+            @:content()
+        </main>
+        <footer>
+            <span>Plume 0.2.0</span>
+            <a href="/about">@i18n!(catalog, "About this instance")</a>
+            <a href="https://github.com/Plume-org/Plume">@i18n!(catalog, "Source code")</a>
+            <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(catalog, "Matrix room")</a>
+            @if account.map(|a| a.is_admin).unwrap_or(false) {
+                <a href="/admin">@i18n!(catalog, "Administration")</a>
+            }
+        </footer>
+        <script src="/static/js/menu.js"></script>
+    </body>
+</html>

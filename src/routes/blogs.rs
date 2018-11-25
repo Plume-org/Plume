@@ -6,7 +6,7 @@ use rocket::{
     response::{Redirect, Flash, content::Content}
 };
 use rocket_contrib::templates::Template;
-use serde_json;
+use rocket_i18n::I18n;
 use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -21,31 +21,38 @@ use plume_models::{
     users::User
 };
 use routes::Page;
+use templates;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {
+pub fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Content<Vec<u8>>, Template> {
     may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &name), "Requested blog couldn't be found", |blog| {
         let posts = Post::blog_page(&*conn, &blog, page.limits());
-        let articles = Post::get_for_blog(&*conn, &blog);
+        let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
         let authors = &blog.list_authors(&*conn);
 
-        Template::render("blogs/details", json!({
-            "blog": &blog.to_json(&*conn),
-            "account": user.clone().map(|u| u.to_json(&*conn)),
-            "is_author": user.map(|x| x.is_author_in(&*conn, &blog)),
-            "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "n_authors": authors.len(),
-            "n_articles": articles.len(),
-            "page": page.0,
-            "n_pages": Page::total(articles.len() as i32)
-        }))
+        println!("nut");
+        let mut res = vec![];
+        templates::blogs::details(
+            &mut res,
+            &*conn,
+            &intl.catalog,
+            user.clone(),
+            blog.clone(),
+            blog.get_fqn(&*conn),
+            authors,
+            articles.len(),
+            page.0,
+            Page::total(articles.len() as i32),
+            user.map(|x| x.is_author_in(&*conn, blog)).unwrap_or(false),
+            posts
+        ).unwrap();
+        Ok(Content(ContentType::HTML, res))
     })
 }
 
 #[get("/~/<name>", rank = 3)]
-pub fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
-    paginated_details(name, conn, user, Page::first())
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Content<Vec<u8>>, Template> {
+    paginated_details(intl, name, conn, user, Page::first())
 }
 
 #[get("/~/<name>", rank = 1)]

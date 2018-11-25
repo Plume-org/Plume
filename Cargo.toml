@@ -55,11 +55,13 @@ git = "https://github.com/fdb-hiroshima/rocket_csrf"
 rev = "e6ead8051cab12a95ea9dc88db3a107f0b5f7533"
 
 [dependencies.rocket_i18n]
-git = "https://github.com/BaptisteGelez/rocket_i18n"
-rev = "f8f9913f6f7008f65ae155dcd0e730377db6edae"
+# git = "https://github.com/BaptisteGelez/rocket_i18n"
+# rev = "f8f9913f6f7008f65ae155dcd0e730377db6edae"
+path = "../rocket_i18n"
 
 [build-dependencies]
 ructe = "0.5.2"
+rocket_i18n = { path = "../rocket_i18n", features = ["build"] }
 
 [features]
 default = ["postgres"]

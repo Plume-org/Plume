@@ -43,16 +43,6 @@
     {% set default = default[name] | default(value="") %}
     <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value=default) }}" {{ props | safe }}/>
 {% endmacro input %}
-{% macro paginate(page, total, previous="Previous page", next="Next page") %}
-    <div class="pagination">
-        {% if page != 1 %}
-            <a href="?page={{ page - 1 }}">{{ previous | _ }}</a>
-        {% endif %}
-        {% if page < total %}
-            <a href="?page={{ page + 1 }}">{{ next | _ }}</a>
-        {% endif %}
-    </div>
-{% endmacro %}
 {% macro comment(comm) %}
     <div class="comment" id="comment-{{ comm.id }}">
         <a class="author" href="/@/{{ comm.author.fqn }}/">
@@ -98,12 +88,4 @@
             {% endfor %}
         </div>
     {% endif %}
-{% endmacro %}
-{% macro avatar(user, size="small", pad=true) %}
-    <div
-        class="avatar {{ size }} {% if pad %}padded{% endif %}"
-        style="background-image: url('{{ user.avatar }}');"
-        title="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
-        aria-label="{{ "{{ name }}'s avatar" | _(name=user.name) }}"
-    ></div>
 {% endmacro %}

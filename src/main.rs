@@ -18,6 +18,7 @@ extern crate plume_models;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
+#[macro_use]
 extern crate rocket_i18n;
 extern crate rpassword;
 extern crate serde;
@@ -41,6 +42,8 @@ use workerpool::{Pool, thunk::ThunkWorker};
 mod api;
 mod inbox;
 mod routes;
+#[macro_use]
+mod template_utils;
 
 type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
 

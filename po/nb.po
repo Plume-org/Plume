@@ -33,7 +33,8 @@ msgstr "Tittel"
 msgid "Create blog"
 msgstr "Opprett blogg"
 
-msgid "Comment \"{{ post }}\""
+#, fuzzy
+msgid "Comment \"{0}\""
 msgstr "Kommentér \"{{ post }}\""
 
 msgid "Content"
@@ -62,22 +63,22 @@ msgstr "Navn"
 msgid "Let&#x27;s go!"
 msgstr "Kjør på!"
 
-msgid "Welcome to {{ instance_name | escape }}"
-msgstr "Velkommen til {{ instance_name | escape }}"
+msgid "Welcome to {0}"
+msgstr ""
 
 msgid "Notifications"
 msgstr "Meldinger"
 
-msgid ""
-"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgid "Written by {0}{1}{2}"
 msgstr ""
-"Skrevet av {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape}}{{ link_3 }}"
 
-msgid "This article is under the {{ license }} license."
+#, fuzzy
+msgid "This article is under the {0} license."
 msgstr "Denne artikkelen er publisert med lisensen {{ license }}"
 
+#, fuzzy
 msgid "One like"
-msgid_plural "{{ count }} likes"
+msgid_plural "{0} likes"
 msgstr[0] "Ett hjerte"
 msgstr[1] "{{ count }} hjerter"
 
@@ -88,7 +89,7 @@ msgid "Add yours"
 msgstr "Legg til din"
 
 msgid "One Boost"
-msgid_plural "{{ count }} Boosts"
+msgid_plural "{0} Boosts"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -152,8 +153,8 @@ msgstr "Dette er deg"
 msgid "Edit your profile"
 msgstr "Rediger profilen din"
 
-msgid "Open on {{ instance_url }}"
-msgstr "Åpne hos {{ instance_url }}"
+msgid "Open on {0}"
+msgstr ""
 
 msgid "Follow"
 msgstr "Følg"
@@ -165,8 +166,9 @@ msgstr "Slutt å følge"
 msgid "Recently boosted"
 msgstr "Nylig delt"
 
+#, fuzzy
 msgid "One follower"
-msgid_plural "{{ count }} followers"
+msgid_plural "{0} followers"
 msgstr[0] "Én følger"
 msgstr[1] "{{ count }} følgere"
 
@@ -188,8 +190,9 @@ msgstr "Sammendrag"
 msgid "Update account"
 msgstr "Oppdater konto"
 
-msgid "{{ name | escape }}'s followers"
-msgstr "{{ name | escape}} sine følgere"
+#, fuzzy
+msgid "{0}'s followers"
+msgstr "Én følger"
 
 msgid "Followers"
 msgstr "Følgere"
@@ -258,20 +261,23 @@ msgstr "Du må være logget inn for å følge noen"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Du må være logget inn for å redigere profilen din"
 
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "Av {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgid "By {0}{1}{2}"
+msgstr ""
 
 #, fuzzy
-msgid "{{ data }} boosted your article"
+msgid "{0} boosted your article"
 msgstr "{{ data }} la inn en kommentar til artikkelen din"
 
-msgid "{{ data }} started following you"
+#, fuzzy
+msgid "{0} started following you"
 msgstr "{{ data }} har begynt å følge deg"
 
-msgid "{{ data }} liked your article"
+#, fuzzy
+msgid "{0} liked your article"
 msgstr "{{ data }} likte artikkelen din"
 
-msgid "{{ data }} commented your article"
+#, fuzzy
+msgid "{0} commented your article"
 msgstr "{{ data }} la inn en kommentar til artikkelen din"
 
 msgid "We couldn&#x27;t find this page."
@@ -286,7 +292,8 @@ msgstr "Det har du har ikke tilgang til."
 msgid "You are not author in this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
-msgid "{{ data }} mentioned you."
+#, fuzzy
+msgid "{0} mentioned you."
 msgstr "{{ data }} nevnte deg."
 
 msgid "Your comment"
@@ -326,8 +333,9 @@ msgstr "Ugyldig epost"
 msgid "Password should be at least 8 characters long"
 msgstr "Passord må bestå av minst åtte tegn"
 
+#, fuzzy
 msgid "One author in this blog: "
-msgid_plural "{{ count }} authors in this blog: "
+msgid_plural "{0} authors in this blog: "
 msgstr[0] "Én forfatter av denne bloggen: "
 msgstr[1] "{{ count }} forfattere av denne bloggen: "
 
@@ -338,8 +346,9 @@ msgstr ""
 msgid "Optional"
 msgstr "Valgfritt"
 
+#, fuzzy
 msgid "One article in this blog"
-msgid_plural "{{ count }} articles in this blog"
+msgid_plural "{0} articles in this blog"
 msgstr[0] "Én artikkel i denne bloggen"
 msgstr[1] "{{ count }} artikler i denne bloggen"
 
@@ -348,22 +357,6 @@ msgstr "Forrige side"
 
 msgid "Next page"
 msgstr "Neste side"
-
-msgid "{{ user }} mentioned you."
-msgstr "{{ user }} nevnte deg."
-
-msgid "{{ user }} commented your article."
-msgstr "{{ user }} la igjen en kommentar til artikkelen din."
-
-msgid "{{ user }} is now following you."
-msgstr "{{ user }} har nå begynt å følge deg."
-
-msgid "{{ user }} liked your article."
-msgstr "{{ user }} likte artikkelen din."
-
-#, fuzzy
-msgid "{{ user }} boosted your article."
-msgstr "{{ user }} la igjen en kommentar til artikkelen din."
 
 msgid "Source code"
 msgstr "Kildekode"
@@ -420,8 +413,8 @@ msgstr ""
 msgid "Create your account"
 msgstr "Opprett din konto"
 
-msgid "About {{ instance_name }}"
-msgstr "Om {{ instance_name }}"
+msgid "About {0}"
+msgstr ""
 
 msgid "Home to"
 msgstr "Hjem for"
@@ -456,7 +449,7 @@ msgstr "Om denne instansen"
 msgid "Administred by"
 msgstr "Administrasjon"
 
-msgid "Runs Plume {{ version }}"
+msgid "Runs Plume {0}"
 msgstr ""
 
 #, fuzzy
@@ -466,7 +459,7 @@ msgstr "Din kommentar"
 msgid "Go to your gallery"
 msgstr ""
 
-msgid "{{ name}}'s avatar'"
+msgid "{0}'s avatar'"
 msgstr ""
 
 msgid "Media details"
@@ -546,21 +539,21 @@ msgid "All the articles of the Fediverse"
 msgstr ""
 
 #, fuzzy
-msgid "Articles from {{ instance.name }}"
+msgid "Articles from {0}"
 msgstr "Om {{ instance_name }}"
 
 msgid "View all"
 msgstr ""
 
 #, fuzzy
-msgid "Articles tagged \"{{ tag }}\""
+msgid "Articles tagged \"{0}\""
 msgstr "Om {{ instance_name }}"
 
 msgid "Edit"
 msgstr ""
 
 #, fuzzy
-msgid "Edit {{ post }}"
+msgid "Edit {0}"
 msgstr "Kommentér \"{{ post }}\""
 
 #, fuzzy
@@ -581,8 +574,8 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Administration of {{ instance.name }}"
-msgstr "Om {{ instance_name }}"
+msgid "Administration of {0}"
+msgstr "Administrasjon"
 
 #, fuzzy
 msgid "Instances"
@@ -645,6 +638,49 @@ msgstr "Administrasjon"
 
 msgid "None"
 msgstr ""
+
+#~ msgid "Welcome to {{ instance_name | escape }}"
+#~ msgstr "Velkommen til {{ instance_name | escape }}"
+
+#~ msgid ""
+#~ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
+#~ "{{ link_3 }}"
+#~ msgstr ""
+#~ "Skrevet av {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape}}{{ link_3 }}"
+
+#~ msgid "Open on {{ instance_url }}"
+#~ msgstr "Åpne hos {{ instance_url }}"
+
+#~ msgid "{{ name | escape }}'s followers"
+#~ msgstr "{{ name | escape}} sine følgere"
+
+#~ msgid ""
+#~ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+#~ msgstr ""
+#~ "Av {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+
+#~ msgid "{{ user }} mentioned you."
+#~ msgstr "{{ user }} nevnte deg."
+
+#~ msgid "{{ user }} commented your article."
+#~ msgstr "{{ user }} la igjen en kommentar til artikkelen din."
+
+#~ msgid "{{ user }} is now following you."
+#~ msgstr "{{ user }} har nå begynt å følge deg."
+
+#~ msgid "{{ user }} liked your article."
+#~ msgstr "{{ user }} likte artikkelen din."
+
+#, fuzzy
+#~ msgid "{{ user }} boosted your article."
+#~ msgstr "{{ user }} la igjen en kommentar til artikkelen din."
+
+#~ msgid "About {{ instance_name }}"
+#~ msgstr "Om {{ instance_name }}"
+
+#, fuzzy
+#~ msgid "Administration of {{ instance.name }}"
+#~ msgstr "Om {{ instance_name }}"
 
 #~ msgid "One reshare"
 #~ msgid_plural "{{ count }} reshares"

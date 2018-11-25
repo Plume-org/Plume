@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
 msgid "Latest articles"
@@ -37,8 +37,9 @@ msgstr "Titre"
 msgid "Create blog"
 msgstr "Créer le blog"
 
-msgid "Comment \"{{ post }}\""
-msgstr "Commenter « {{ post }} »"
+#, fuzzy
+msgid "Comment \"{0}\""
+msgstr "Commenter « {0} »"
 
 msgid "Content"
 msgstr "Contenu"
@@ -66,24 +67,24 @@ msgstr "Nom"
 msgid "Let&#x27;s go!"
 msgstr "C’est parti !"
 
-msgid "Welcome to {{ instance_name | escape }}"
-msgstr "Bienvenue sur {{ instance_name | escape }}"
+msgid "Welcome to {0}"
+msgstr ""
 
 msgid "Notifications"
 msgstr "Notifications"
 
-msgid ""
-"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr ""
-"Écrit par {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgid "Written by {0}{1}{2}"
+msgstr "Écrit par {0}{1}{2}"
 
-msgid "This article is under the {{ license }} license."
-msgstr "Cet article est placé sous la licence {{ license }}"
+#, fuzzy
+msgid "This article is under the {0} license."
+msgstr "Cet article est placé sous la licence {0}"
 
+#, fuzzy
 msgid "One like"
-msgid_plural "{{ count }} likes"
-msgstr[0] "{{ count }} personne aime cet article"
-msgstr[1] "{{ count }} personnes aiment cet article"
+msgid_plural "{0} likes"
+msgstr[0] "{0} personne aime cet article"
+msgstr[1] "{0} personnes aiment cet article"
 
 msgid "I don&#x27;t like this anymore"
 msgstr "Je n’aime plus"
@@ -91,10 +92,11 @@ msgstr "Je n’aime plus"
 msgid "Add yours"
 msgstr "J’aime"
 
+#, fuzzy
 msgid "One Boost"
-msgid_plural "{{ count }} Boosts"
-msgstr[0] "{{ count }} partage"
-msgstr[1] "{{ count }} partages"
+msgid_plural "{0} Boosts"
+msgstr[0] "{0} partage"
+msgstr[1] "{0} partages"
 
 msgid "I don&#x27;t want to boost this anymore"
 msgstr "Je ne veux plus repartager ceci"
@@ -155,8 +157,8 @@ msgstr "C’est vous"
 msgid "Edit your profile"
 msgstr "Modifier votre profil"
 
-msgid "Open on {{ instance_url }}"
-msgstr "Ouvrir sur {{ instance_url }}"
+msgid "Open on {0}"
+msgstr "Ouvrir sur {0}"
 
 msgid "Follow"
 msgstr "S’abonner"
@@ -168,9 +170,9 @@ msgid "Recently boosted"
 msgstr "Récemment partagé"
 
 msgid "One follower"
-msgid_plural "{{ count }} followers"
-msgstr[0] "{{ count }} abonné⋅e"
-msgstr[1] "{{ count }} abonné⋅e⋅s"
+msgid_plural "{0} followers"
+msgstr[0] "{0} abonné⋅e"
+msgstr[1] "{0} abonné⋅e⋅s"
 
 msgid "Edit your account"
 msgstr "Modifier votre compte"
@@ -190,8 +192,8 @@ msgstr "Description"
 msgid "Update account"
 msgstr "Mettre à jour mes informations"
 
-msgid "{{ name | escape }}'s followers"
-msgstr "Les abonné⋅e⋅s de {{ name | escape }}"
+msgid "{0}'s followers"
+msgstr "Abonné⋅e⋅s de {0}"
 
 msgid "Followers"
 msgstr "Abonné⋅e⋅s"
@@ -259,21 +261,20 @@ msgstr "Vous devez vous connecter pour suivre quelqu’un"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr ""
-"Par {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgid "By {0}{1}{2}"
+msgstr "Par {0}{1}{2}"
 
-msgid "{{ data }} boosted your article"
-msgstr "{{ data }} a partagé votre article"
+msgid "{0} boosted your article"
+msgstr "{0} a partagé votre article"
 
-msgid "{{ data }} started following you"
-msgstr "{{ data }} vous suit"
+msgid "{0} started following you"
+msgstr "{0} vous suit"
 
-msgid "{{ data }} liked your article"
-msgstr "{{ data }} a aimé votre article"
+msgid "{0} liked your article"
+msgstr "{0} a aimé votre article"
 
-msgid "{{ data }} commented your article"
-msgstr "{{ data }} a commenté votre article"
+msgid "{0} commented your article"
+msgstr "{0} a commenté votre article"
 
 msgid "We couldn&#x27;t find this page."
 msgstr "Page introuvable."
@@ -287,8 +288,8 @@ msgstr "Vous n’avez pas les droits."
 msgid "You are not author in this blog."
 msgstr "Vous n’êtes pas auteur⋅ice dans ce blog."
 
-msgid "{{ data }} mentioned you."
-msgstr "{{ data }} vous a mentionné."
+msgid "{0} mentioned you."
+msgstr "{0} vous a mentionné."
 
 msgid "Your comment"
 msgstr "Votre commentaire"
@@ -329,9 +330,9 @@ msgid "Password should be at least 8 characters long"
 msgstr "Le mot de passe doit faire au moins 8 caractères."
 
 msgid "One author in this blog: "
-msgid_plural "{{ count }} authors in this blog: "
-msgstr[0] "{{ count }} auteur⋅ice dans ce blog : "
-msgstr[1] "{{ count }} auteur⋅ice⋅s dans ce blog : "
+msgid_plural "{0} authors in this blog: "
+msgstr[0] "{0} auteur⋅ice dans ce blog : "
+msgstr[1] "{0} auteur⋅ice⋅s dans ce blog : "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
@@ -342,30 +343,15 @@ msgid "Optional"
 msgstr "Optionnel"
 
 msgid "One article in this blog"
-msgid_plural "{{ count }} articles in this blog"
-msgstr[0] "{{ count }} article dans ce blog"
-msgstr[1] "{{ count }} articles dans ce blog"
+msgid_plural "{0} articles in this blog"
+msgstr[0] "{0} article dans ce blog"
+msgstr[1] "{0} articles dans ce blog"
 
 msgid "Previous page"
 msgstr "Page précédente"
 
 msgid "Next page"
 msgstr "Page suivante"
-
-msgid "{{ user }} mentioned you."
-msgstr "{{ user }} vous a mentionné."
-
-msgid "{{ user }} commented your article."
-msgstr "{{ user }} a commenté votre article."
-
-msgid "{{ user }} is now following you."
-msgstr "{{ user }} vous suit."
-
-msgid "{{ user }} liked your article."
-msgstr "{{ user }} a aimé votre article."
-
-msgid "{{ user }} boosted your article."
-msgstr "{{ user }} a partagé votre article."
 
 msgid "Source code"
 msgstr "Code source"
@@ -424,8 +410,8 @@ msgstr ""
 msgid "Create your account"
 msgstr "Créer votre compte"
 
-msgid "About {{ instance_name }}"
-msgstr "À propos de {{ instance_name }}"
+msgid "About {0}"
+msgstr "À propos de {0}"
 
 msgid "Home to"
 msgstr "Accueille"
@@ -457,8 +443,8 @@ msgstr "autres instances"
 msgid "Administred by"
 msgstr "Administré par"
 
-msgid "Runs Plume {{ version }}"
-msgstr "Propulsé par Plume {{ version }}"
+msgid "Runs Plume {0}"
+msgstr "Propulsé par Plume {0}"
 
 msgid "Your media"
 msgstr "Vos médias"
@@ -466,8 +452,8 @@ msgstr "Vos médias"
 msgid "Go to your gallery"
 msgstr "Aller à votre galerie"
 
-msgid "{{ name}}'s avatar'"
-msgstr "Avatar de {{ name }}"
+msgid "{0}'s avatar'"
+msgstr "Avatar de {0}"
 
 msgid "Media details"
 msgstr "Détails du média"
@@ -541,20 +527,20 @@ msgstr "Articles"
 msgid "All the articles of the Fediverse"
 msgstr "Tous les articles de la Fédiverse"
 
-msgid "Articles from {{ instance.name }}"
-msgstr "Articles de {{ instance.name }}"
+msgid "Articles from {0}"
+msgstr "Articles de {0}"
 
 msgid "View all"
 msgstr "Tout afficher"
 
-msgid "Articles tagged \"{{ tag }}\""
-msgstr "Articles taggués « {{ instance.name }} »"
+msgid "Articles tagged \"{0}\""
+msgstr "Articles taggués « {0} »"
 
 msgid "Edit"
 msgstr "Modifier"
 
-msgid "Edit {{ post }}"
-msgstr "Modifier « {{ post }} »"
+msgid "Edit {0}"
+msgstr "Modifier {0}"
 
 msgid "Update"
 msgstr "Mettre à jour"
@@ -574,8 +560,8 @@ msgstr ""
 "sont activés dans votre navigateur, et essayez de recharger cette page. Si "
 "vous continuez à voir cette erreur, merci de la signaler."
 
-msgid "Administration of {{ instance.name }}"
-msgstr "Administration de {{ instance.name }}"
+msgid "Administration of {0}"
+msgstr "Administration de {0}"
 
 msgid "Instances"
 msgstr "Instances"
@@ -631,9 +617,8 @@ msgstr "Cet article n’est pas encore publié."
 msgid "There is currently no article with that tag"
 msgstr "Il n'y a pas encore d'article avec ce tag"
 
-#, fuzzy
 msgid "Illustration"
-msgstr "Administration"
+msgstr "Illustration"
 
 msgid "None"
-msgstr ""
+msgstr "Aucun"

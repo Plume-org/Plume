@@ -35,7 +35,8 @@ msgstr "Заголовок"
 msgid "Create blog"
 msgstr "Создать блог"
 
-msgid "Comment \"{{ post }}\""
+#, fuzzy
+msgid "Comment \"{0}\""
 msgstr "Комментарий \"{{ post }}\""
 
 msgid "Content"
@@ -64,23 +65,22 @@ msgstr "Имя"
 msgid "Let&#x27;s go!"
 msgstr "Поехали!"
 
-msgid "Welcome to {{ instance_name | escape }}"
-msgstr "Добро пожаловать на {{ instance_name | escape }}"
+msgid "Welcome to {0}"
+msgstr ""
 
 msgid "Notifications"
 msgstr "Уведомления"
 
-msgid ""
-"Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+msgid "Written by {0}{1}{2}"
 msgstr ""
-"Написано {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
 
 #, fuzzy
-msgid "This article is under the {{ license }} license."
+msgid "This article is under the {0} license."
 msgstr "Эта статья распространяется под лицензией {{ license }}"
 
+#, fuzzy
 msgid "One like"
-msgid_plural "{{ count }} likes"
+msgid_plural "{0} likes"
 msgstr[0] "Один лайк"
 msgstr[1] "{{count}} лайка"
 msgstr[2] "{{ count }} лайков"
@@ -91,8 +91,9 @@ msgstr "Мне больше не нравится это"
 msgid "Add yours"
 msgstr "Добавить свой"
 
+#, fuzzy
 msgid "One Boost"
-msgid_plural "{{ count }} Boosts"
+msgid_plural "{0} Boosts"
 msgstr[0] "Одно продвижение"
 msgstr[1] "{{ count }} продвижения"
 msgstr[2] "{{ count }} продвижений"
@@ -157,8 +158,8 @@ msgstr "Это вы"
 msgid "Edit your profile"
 msgstr "Редактировать ваш профиль"
 
-msgid "Open on {{ instance_url }}"
-msgstr "Открыть на {{ instance_url }}"
+msgid "Open on {0}"
+msgstr ""
 
 msgid "Follow"
 msgstr "Подписаться"
@@ -169,8 +170,9 @@ msgstr "Отписаться"
 msgid "Recently boosted"
 msgstr "Недавно продвинутые"
 
+#, fuzzy
 msgid "One follower"
-msgid_plural "{{ count }} followers"
+msgid_plural "{0} followers"
 msgstr[0] "Один подписчик"
 msgstr[1] "{{ count }} подписчика"
 msgstr[2] "{{ count }} подписчиков"
@@ -194,8 +196,9 @@ msgstr "Резюме"
 msgid "Update account"
 msgstr "Обновить аккаунт"
 
-msgid "{{ name | escape }}'s followers"
-msgstr "Подписчики {{ name | escape }}"
+#, fuzzy
+msgid "{0}'s followers"
+msgstr "Один подписчик"
 
 msgid "Followers"
 msgstr "Подписчики"
@@ -263,19 +266,23 @@ msgstr "Вы должны войти чтобы подписаться на ко
 msgid "You need to be logged in order to edit your profile"
 msgstr "Вы должны войти чтобы редактировать ваш профиль"
 
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "От {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+msgid "By {0}{1}{2}"
+msgstr ""
 
-msgid "{{ data }} boosted your article"
+#, fuzzy
+msgid "{0} boosted your article"
 msgstr "{{ data }} продвинул(а) вашу статью"
 
-msgid "{{ data }} started following you"
+#, fuzzy
+msgid "{0} started following you"
 msgstr "{{ data }} подписался на вас"
 
-msgid "{{ data }} liked your article"
+#, fuzzy
+msgid "{0} liked your article"
 msgstr "{{ data }} понравилась ваша статья"
 
-msgid "{{ data }} commented your article"
+#, fuzzy
+msgid "{0} commented your article"
 msgstr "{{ data }} прокомментировал(а) вашу статью"
 
 msgid "We couldn&#x27;t find this page."
@@ -291,7 +298,8 @@ msgstr "Вы не авторизованы."
 msgid "You are not author in this blog."
 msgstr "Вы не автор этого блога."
 
-msgid "{{ data }} mentioned you."
+#, fuzzy
+msgid "{0} mentioned you."
 msgstr "{{ data }} упомянул(а) вас."
 
 msgid "Your comment"
@@ -332,8 +340,9 @@ msgstr "Неправильный адрес электронной почты"
 msgid "Password should be at least 8 characters long"
 msgstr "Пароль должен быть не короче 8 символов"
 
+#, fuzzy
 msgid "One author in this blog: "
-msgid_plural "{{ count }} authors in this blog: "
+msgid_plural "{0} authors in this blog: "
 msgstr[0] "Один автор в этом блоге: "
 msgstr[1] "{{ count }} автора в этом блоге: "
 msgstr[2] "{{ count }} авторов в этом блоге: "
@@ -346,8 +355,9 @@ msgstr ""
 msgid "Optional"
 msgstr "Не обязательно"
 
+#, fuzzy
 msgid "One article in this blog"
-msgid_plural "{{ count }} articles in this blog"
+msgid_plural "{0} articles in this blog"
 msgstr[0] "Один пост в этом блоге"
 msgstr[1] "{{count}} поста в этом блоге"
 msgstr[2] "{{ count }} постов в этом блоге"
@@ -357,21 +367,6 @@ msgstr "Предыдущая страница"
 
 msgid "Next page"
 msgstr "Следующая страница"
-
-msgid "{{ user }} mentioned you."
-msgstr "{{ user }} упомянул вас."
-
-msgid "{{ user }} commented your article."
-msgstr "{{ user }} прокомментировал вашу статью."
-
-msgid "{{ user }} is now following you."
-msgstr "{{ user }} не подписан на вас."
-
-msgid "{{ user }} liked your article."
-msgstr "{{ user }} понравилась ваша статья."
-
-msgid "{{ user }} boosted your article."
-msgstr "{{ user }} продвинул(а) вашу статью."
 
 msgid "Source code"
 msgstr "Исходный код"
@@ -428,8 +423,8 @@ msgstr ""
 msgid "Create your account"
 msgstr "Создать аккаунт"
 
-msgid "About {{ instance_name }}"
-msgstr "О {{ instance_name }}"
+msgid "About {0}"
+msgstr ""
 
 msgid "Home to"
 msgstr "Дом для"
@@ -461,7 +456,8 @@ msgstr "другим узлам"
 msgid "Administred by"
 msgstr "Администрируется"
 
-msgid "Runs Plume {{ version }}"
+#, fuzzy
+msgid "Runs Plume {0}"
 msgstr "Работает на Plume {{ version }}"
 
 msgid "Your media"
@@ -470,7 +466,8 @@ msgstr "Ваши медиафайлы"
 msgid "Go to your gallery"
 msgstr "Перейти в вашу галерею"
 
-msgid "{{ name}}'s avatar'"
+#, fuzzy
+msgid "{0}'s avatar'"
 msgstr "Аватар {{ name }}"
 
 msgid "Media details"
@@ -548,20 +545,23 @@ msgstr "Статьи"
 msgid "All the articles of the Fediverse"
 msgstr "Все статьи из Fediverse"
 
-msgid "Articles from {{ instance.name }}"
+#, fuzzy
+msgid "Articles from {0}"
 msgstr "Статьи с {{ instance.name }}"
 
 msgid "View all"
 msgstr "Показать все"
 
-msgid "Articles tagged \"{{ tag }}\""
+#, fuzzy
+msgid "Articles tagged \"{0}\""
 msgstr "Статьи, отмеченные тегом «{{ tag }}»"
 
 msgid "Edit"
 msgstr "Редактировать"
 
-msgid "Edit {{ post }}"
-msgstr "Редактрировать {{ post }}"
+#, fuzzy
+msgid "Edit {0}"
+msgstr "Редактировать"
 
 msgid "Update"
 msgstr "Обновить"
@@ -581,8 +581,9 @@ msgstr ""
 "cookies и попробуйте перезагрузить страницу. Если вы продолжите видеть это "
 "сообщение об ошибке, сообщите об этом."
 
-msgid "Administration of {{ instance.name }}"
-msgstr "Администрация {{ instance.name }}"
+#, fuzzy
+msgid "Administration of {0}"
+msgstr "Администрирование"
 
 msgid "Instances"
 msgstr "Узлы"
@@ -643,3 +644,47 @@ msgstr "Иллюстрация"
 
 msgid "None"
 msgstr "Нет"
+
+#~ msgid "Welcome to {{ instance_name | escape }}"
+#~ msgstr "Добро пожаловать на {{ instance_name | escape }}"
+
+#~ msgid ""
+#~ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
+#~ "{{ link_3 }}"
+#~ msgstr ""
+#~ "Написано {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
+
+#~ msgid "Open on {{ instance_url }}"
+#~ msgstr "Открыть на {{ instance_url }}"
+
+#~ msgid "{{ name | escape }}'s followers"
+#~ msgstr "Подписчики {{ name | escape }}"
+
+#~ msgid ""
+#~ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+#~ msgstr ""
+#~ "От {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+
+#~ msgid "{{ user }} mentioned you."
+#~ msgstr "{{ user }} упомянул вас."
+
+#~ msgid "{{ user }} commented your article."
+#~ msgstr "{{ user }} прокомментировал вашу статью."
+
+#~ msgid "{{ user }} is now following you."
+#~ msgstr "{{ user }} не подписан на вас."
+
+#~ msgid "{{ user }} liked your article."
+#~ msgstr "{{ user }} понравилась ваша статья."
+
+#~ msgid "{{ user }} boosted your article."
+#~ msgstr "{{ user }} продвинул(а) вашу статью."
+
+#~ msgid "About {{ instance_name }}"
+#~ msgstr "О {{ instance_name }}"
+
+#~ msgid "Edit {{ post }}"
+#~ msgstr "Редактрировать {{ post }}"
+
+#~ msgid "Administration of {{ instance.name }}"
+#~ msgstr "Администрация {{ instance.name }}"

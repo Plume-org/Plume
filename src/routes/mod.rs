@@ -2,7 +2,7 @@ use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person,
 use rocket::{
     http::RawStr,
     request::FromFormValue,
-    response::NamedFile
+    response::NamedFile,
 };
 use std::path::{Path, PathBuf};
 
@@ -16,10 +16,11 @@ macro_rules! may_fail {
                 let $res = res.unwrap();
                 $block
             } else {
-                Template::render(concat!("errors/", $template), json!({
+                println!("NOT FOUN!!!");
+                Err(Template::render(concat!("errors/", $template), json!({
                     "error_message": $msg,
                     "account": $account
-                }))
+                })))
             }
         }
     };
@@ -48,20 +49,20 @@ impl<'v> FromFormValue<'v> for Page {
         }
     }
 }
-/* TODO: remove it?
-impl UriDisplay for PageQuery {
+
+/* TODO: remove it?impl UriDisplay for PPageQuery{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "page={}", &self.page as &UriDisplay)
     }
 }
 
-impl FromUriParam<i32> for PageQuery {
-    type Target = PageQuery;
-    fn from_uri_param(num: i32) -> PageQuery {
-        PageQuery { page: num }
-    }
+impl FromUriParam<i32> for  PageQuery{
+    type Target =  PageQuery
+    fn from_uri_param(num: i32) ->  PageQuery{
+       P PageQuery { page: num }    }
 }
 */
+
 impl Page {
     pub fn first() -> Page {
         Page(1)

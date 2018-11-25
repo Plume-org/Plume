@@ -797,12 +797,12 @@ impl User {
         } else {
             json!(self.get_fqn(conn))
         };
-        json["avatar"] = json!(
-            self.avatar_id
-                .and_then(|id| Media::get(conn, id).map(|m| m.url(conn)))
-                .unwrap_or_else(|| String::from("/static/default-avatar.png"))
-        );
+        json["avatar"] = json!({});
         json
+    }
+
+    pub fn avatar_url(&self, conn: &Connection) -> String {
+        self.avatar_id.and_then(|id| Media::get(conn, id).map(|m| m.url(conn))).unwrap_or("/static/default-avatar.png".to_string())
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Webfinger {
@@ -865,6 +865,14 @@ impl User {
 
     pub fn needs_update(&self) -> bool {
         (Utc::now().naive_utc() - self.last_fetched_date).num_days() > 1
+    }
+
+    pub fn name(&self, conn: &Connection) -> String {
+        if self.display_name.len() > 0 {
+            self.display_name.clone()
+        } else {
+            self.get_fqn(conn)
+        }
     }
 }
 
