@@ -63,7 +63,7 @@
             @:content()
         </main>
         <footer>
-            <span>Plume 0.2.0</span>
+            <span>@concat!("Plume ", env!("CARGO_PKG_VERSION"))</span>
             <a href="/about">@i18n!(ctx.1, "About this instance")</a>
             <a href="https://github.com/Plume-org/Plume">@i18n!(ctx.1, "Source code")</a>
             <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(ctx.1, "Matrix room")</a>
