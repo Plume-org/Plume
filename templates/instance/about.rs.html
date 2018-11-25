@@ -1,0 +1,40 @@
+@use templates::base;
+@use template_utils::*;
+@use plume_models::{instance::Instance, users::User};
+
+@(ctx: BaseContext, instance: Instance, admin: User, n_users: usize, n_articles: usize, n_instances: i64)
+
+@:base(ctx.clone(), i18n!(ctx.1, "About {0}"; instance.name.clone()).as_str(), {}, {}, {
+  <h1>@i18n!(ctx.1, "About {0}"; instance.name)</h1>
+  <section>
+    @Html(instance.short_description_html)
+  </section>
+  <div class="banner">
+      <section class="stats">
+          <div>
+              <p>@i18n!(ctx.1, "Home to")</p>
+              <em>@n_users</em>
+              <p>@i18n!(ctx.1, "people")</p>
+          </div>
+          <div>
+              <p>@i18n!(ctx.1, "Who wrote")</p>
+              <em>@n_articles</em>
+              <p>@i18n!(ctx.1, "articles")</p>
+          </div>
+          <div>
+              <p>@i18n!(ctx.1, "And connected to")</p>
+              <em>@n_instances</em>
+              <p>@i18n!(ctx.1, "other instances")</p>
+          </div>
+          <div>
+              <p>@i18n!(ctx.1, "Administred by")</p>
+              @avatar(ctx.0, &admin, Size::Small, false, ctx.1)
+              <p><a href="/@@/@admin.get_fqn(ctx.0)">@admin.name(ctx.0)</a><small>@format!("@{}", admin.get_fqn(ctx.0))</small></p>
+          </div>
+      </section>
+      <p>@i18n!(ctx.1, "Runs Plume {0}"; env!("CARGO_PKG_VERSION"))</p>
+  </div>
+  <section>
+      @Html(instance.long_description_html)
+  </section>
+})

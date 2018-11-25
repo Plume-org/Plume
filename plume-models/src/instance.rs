@@ -20,9 +20,9 @@ pub struct Instance {
     pub open_registrations: bool,
     pub short_description: SafeString,
     pub long_description: SafeString,
-    pub default_license: String,
-    pub long_description_html: String,
-    pub short_description_html: String,
+    pub default_license : String,
+    pub long_description_html: SafeString,
+    pub short_description_html: SafeString,
 }
 
 #[derive(Clone, Insertable)]

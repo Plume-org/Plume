@@ -3,6 +3,7 @@ use rocket_contrib::{json::Json, templates::Template};
 use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate};
+use routes::Ructe;
 
 use plume_common::activity_pub::sign::{Signable,
     verify_http_headers};
@@ -250,16 +251,15 @@ pub fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
 }
 
 #[get("/about")]
-pub fn about(user: Option<User>, conn: DbConn) -> Template {
-    Template::render("instance/about", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "instance": Instance::get_local(&*conn),
-        "admin": Instance::get_local(&*conn).map(|i| i.main_admin(&*conn).to_json(&*conn)),
-        "version": env!("CARGO_PKG_VERSION"),
-        "n_users": User::count_local(&*conn),
-        "n_articles": Post::count_local(&*conn),
-        "n_instances": Instance::count(&*conn) - 1
-    }))
+pub fn about(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
+    render!(instance::about(
+        (&*conn, &intl.catalog, user),
+        Instance::get_local(&*conn).expect("Local instance not found"),
+        Instance::get_local(&*conn).expect("Local instance not found").main_admin(&*conn),
+        User::count_local(&*conn),
+        Post::count_local(&*conn),
+        Instance::count(&*conn) - 1
+    ))
 }
 
 #[get("/manifest.json")]
