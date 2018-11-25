@@ -45,7 +45,7 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                 let comms = comments.clone();
 
                 let previous = query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r)
-                    .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &vec![])));
+                    .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &[])));
                 Template::render("posts/details", json!({
                     "author": post.get_authors(&*conn)[0].to_json(&*conn),
                     "article": post.to_json(&*conn),
@@ -65,7 +65,7 @@ fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>
                     "default": {
                         "warning": previous.map(|p| p["spoiler_text"].clone())
                     },
-                    "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or(String::new()),
+                    "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or_default(),
                     "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
                     "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
                     "comment_form": null,
@@ -131,7 +131,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
             "error_message": "You are not author in this blog."
         })))
     } else {
-        let source = if post.source.len() > 0 {
+        let source = if !post.source.is_empty() {
             post.source
         } else {
             post.content.get().clone() // fallback to HTML if the markdown was not stored
@@ -180,14 +180,12 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
         Err(e) => e
     };
 
-    if new_slug != slug {
-        if let Some(_) = Post::find_by_slug(&*conn, &new_slug, b.id) {
-            errors.add("title", ValidationError {
-                code: Cow::from("existing_slug"),
-                message: Some(Cow::from("A post with the same title already exists.")),
-                params: HashMap::new()
-            });
-        }
+    if new_slug != slug && Post::find_by_slug(&*conn, &new_slug, b.id).is_some() {
+        errors.add("title", ValidationError {
+            code: Cow::from("existing_slug"),
+            message: Some(Cow::from("A post with the same title already exists.")),
+            params: HashMap::new()
+        });
     }
 
     if errors.is_empty() {
@@ -197,10 +195,10 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
 
-            let license = if form.license.len() > 0 {
+            let license = if !form.license.is_empty() {
                 form.license.to_string()
             } else {
-                Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-BY-SA"))
+                Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or_else(|| String::from("CC-BY-SA"))
             };
 
             // update publication date if when this article is no longer a draft
@@ -226,7 +224,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 post.update_mentions(&conn, mentions.into_iter().map(|m| Mention::build_activity(&conn, &m)).collect());
             }
 
-            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0)
+            let tags = form.tags.split(',').map(|t| t.trim().to_camel_case()).filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>().into_iter().map(|t| Tag::build_activity(&conn, t)).collect::<Vec<_>>();
             post.update_tags(&conn, tags);
 
@@ -276,7 +274,7 @@ struct NewPostForm {
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
     let slug = title.to_string().to_kebab_case();
-    if slug.len() == 0 {
+    if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
     } else if slug == "new" {
         Err(ValidationError::new("invalid_slug"))
@@ -295,7 +293,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Some(_) = Post::find_by_slug(&*conn, &slug, blog.id) {
+    if Post::find_by_slug(&*conn, &slug, blog.id).is_some() {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A post with the same title already exists.")),
@@ -316,10 +314,10 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 title: form.title.to_string(),
                 content: SafeString::new(&content),
                 published: !form.draft,
-                license: if form.license.len() > 0 {
+                license: if !form.license.is_empty() {
                     form.license.to_string()
                 } else {
-                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or(String::from("CC-BY-SA"))
+                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or_else(||String::from("CC-BY-SA"))
                 },
                 ap_url: "".to_string(),
                 creation_date: None,
@@ -333,10 +331,13 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
                 author_id: user.id
             });
 
-            let tags = form.tags.split(",").map(|t| t.trim().to_camel_case()).filter(|t| t.len() > 0).collect::<HashSet<_>>();
+            let tags = form.tags.split(',')
+                .map(|t| t.trim().to_camel_case())
+                .filter(|t| !t.is_empty())
+                .collect::<HashSet<_>>();
             for tag in tags {
                 Tag::insert(&*conn, NewTag {
-                    tag: tag,
+                    tag,
                     is_hashtag: false,
                     post_id: post.id
                 });
@@ -350,7 +351,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
             }
 
             if post.published {
-                for m in mentions.into_iter() {
+                for m in mentions {
                     Mention::from_activity(&*conn, &Mention::build_activity(&*conn, &m), post.id, true, true);
                 }
 

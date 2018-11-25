@@ -37,7 +37,7 @@ fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redi
                     .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
                     .filename.clone();
                 let ext = filename.and_then(|f| f.rsplit('.').next().map(|ext| ext.to_owned()))
-                    .unwrap_or("png".to_owned());
+                    .unwrap_or_else(|| "png".to_owned());
                 let dest = format!("static/media/{}.{}", GUID::rand().to_string(), ext);
 
                 match fields[&"file".to_string()][0].data {
@@ -49,7 +49,7 @@ fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redi
                     }
                 }
 
-                let has_cw = read(&fields[&"cw".to_string()][0].data).len() > 0;
+                let has_cw = !read(&fields[&"cw".to_string()][0].data).is_empty();
                 let media = Media::insert(&*conn, NewMedia {
                     file_path: dest,
                     alt_text: read(&fields[&"alt".to_string()][0].data),

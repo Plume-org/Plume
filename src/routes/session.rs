@@ -83,7 +83,7 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
             } else {
                 None
             })
-            .unwrap_or("/".to_owned());
+            .unwrap_or_else(|| "/".to_owned());
 
         let uri = Uri::parse(&destination)
             .map(|x| x.into_owned())
@@ -108,6 +108,8 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
 
 #[get("/logout")]
 fn delete(mut cookies: Cookies) -> Redirect {
-    cookies.get_private(AUTH_COOKIE).map(|cookie| cookies.remove_private(cookie));
+    if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
+        cookies.remove_private(cookie);
+    }
     Redirect::to("/")
 }

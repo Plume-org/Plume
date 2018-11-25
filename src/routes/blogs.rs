@@ -79,7 +79,7 @@ struct NewBlogForm {
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
     let slug = utils::make_actor_id(title);
-    if slug.len() == 0 {
+    if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
     } else {
         Ok(())
@@ -95,7 +95,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if let Some(_) = Blog::find_local(&*conn, &slug) {
+    if Blog::find_local(&*conn, &slug).is_some() {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A blog with the same name already exists.")),

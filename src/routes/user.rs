@@ -50,7 +50,7 @@ fn details(
         |user| {
             let recents = Post::get_recents_for_author(&*conn, &user, 6);
             let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
-            let user_id = user.id.clone();
+            let user_id = user.id;
             let n_followers = user.get_followers(&*conn).len();
 
             if !user.get_instance(&*conn).local {
@@ -183,7 +183,7 @@ fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: 
         User::find_by_fqn(&*conn, &name),
         "Couldn't find requested user",
         |user| {
-            let user_id = user.id.clone();
+            let user_id = user.id;
             let followers_count = user.get_followers(&*conn).len();
 
             Template::render(
@@ -235,7 +235,7 @@ fn new(user: Option<User>, conn: DbConn) -> Template {
 
 #[get("/@/<name>/edit")]
 fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
-    if user.username == name && !name.contains("@") {
+    if user.username == name && !name.contains('@') {
         Some(Template::render(
             "users/edit",
             json!({
@@ -269,17 +269,17 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
         data.get()
             .display_name
             .clone()
-            .unwrap_or(user.display_name.to_string())
+            .unwrap_or_else(|| user.display_name.to_string())
             .to_string(),
         data.get()
             .email
             .clone()
-            .unwrap_or(user.email.clone().unwrap())
+            .unwrap_or_else(|| user.email.clone().unwrap())
             .to_string(),
         data.get()
             .summary
             .clone()
-            .unwrap_or(user.summary.to_string()),
+            .unwrap_or_else(|| user.summary.to_string()),
     );
     Redirect::to(uri!(me))
 }
@@ -290,9 +290,9 @@ fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Optio
     if user.id == account.id {
         account.delete(&*conn);
 
-        cookies
-            .get_private(AUTH_COOKIE)
-            .map(|cookie| cookies.remove_private(cookie));
+    if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
+        cookies.remove_private(cookie);
+    }
 
         Some(Redirect::to(uri!(super::instance::index)))
     } else {

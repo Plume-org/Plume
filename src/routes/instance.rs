@@ -191,7 +191,9 @@ fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
 
 #[post("/admin/users/<id>/ban")]
 fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
-    User::get(&*conn, id).map(|u| u.delete(&*conn));
+    if let Some(u) = User::get(&*conn, id) {
+        u.delete(&*conn);
+    }
     Redirect::to(uri!(admin_users))
 }
 

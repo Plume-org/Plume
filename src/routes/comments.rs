@@ -39,11 +39,11 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref());
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),
-                in_response_to_id: form.responding_to.clone(),
+                in_response_to_id: form.responding_to,
                 post_id: post.id,
                 author_id: user.id,
                 ap_url: None,
-                sensitive: form.warning.len() > 0,
+                sensitive: !form.warning.is_empty(),
                 spoiler_text: form.warning.clone()
             }).update_ap_url(&*conn);
             let new_comment = comm.create_activity(&*conn);
@@ -76,7 +76,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "has_reshared": user.has_reshared(&*conn, &post),
                 "account": user.to_json(&*conn),
                 "date": &post.creation_date.timestamp(),
-                "previous": form.responding_to.and_then(|r| Comment::get(&*conn, r)).map(|r| r.to_json(&*conn, &vec![])),
+                "previous": form.responding_to.and_then(|r| Comment::get(&*conn, r)).map(|r| r.to_json(&*conn, &[])),
                 "user_fqn": user.get_fqn(&*conn),
                 "comment_form": form,
                 "comment_errors": errors,
