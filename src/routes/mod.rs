@@ -2,7 +2,7 @@ use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person,
 use rocket::{
     http::RawStr,
     request::FromFormValue,
-    response::NamedFile,
+    response::{Content, NamedFile},
 };
 use std::path::{Path, PathBuf};
 
@@ -99,6 +99,26 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
             .collect::<Vec<Person>>())
         .links(vec![LinkBuilder::default().href(post.ap_url).build().expect("Atom feed: link error")])
         .build().expect("Atom feed: entry error")
+}
+
+type Ructe = Content<Vec<u8>>;
+
+macro_rules! render {
+    ($group:tt :: $page:tt ( $( $param:expr ),* ) ) => {
+        {
+            use rocket::{http::ContentType, response::Content};
+            use templates;
+
+            let mut res = vec![];
+            templates::$group::$page(
+                &mut res,
+                $(
+                    $param
+                ),*
+            ).unwrap();
+            Content(ContentType::HTML, res)
+        }
+    }
 }
 
 pub mod blogs;

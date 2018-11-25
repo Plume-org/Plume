@@ -5,8 +5,10 @@ use rocket::{
 };
 use rocket_contrib::templates::Template;
 use rocket::http::ext::IntoOwned;
+use rocket_i18n::I18n;
 use std::borrow::Cow;
 use validator::{Validate, ValidationError, ValidationErrors};
+use routes::Ructe;
 
 use plume_models::{
     db_conn::DbConn,
@@ -14,12 +16,14 @@ use plume_models::{
 };
 
 #[get("/login")]
-pub fn new(user: Option<User>, conn: DbConn) -> Template {
-    Template::render("session/login", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "errors": null,
-        "form": null
-    }))
+pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
+    render!(session::login(
+        &*conn,
+        &intl.catalog,
+        None,
+        LoginForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
 #[get("/login?<m>")]
@@ -33,12 +37,12 @@ pub fn new_message(user: Option<User>, m: String, conn: DbConn) -> Template {
 }
 
 
-#[derive(FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate, Serialize)]
 pub struct LoginForm {
     #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
-    email_or_name: String,
+    pub email_or_name: String,
     #[validate(length(min = "1", message = "Your password can't be empty"))]
-    password: String
+    pub password: String
 }
 
 #[post("/login", data = "<form>")]
@@ -84,7 +88,7 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
             .map_err(|_| {
             Template::render("session/login", json!({
                 "account": null,
-                "errors": errors.inner(),
+                "errors": errors.errors(),
                 "form": *form,
             }))
         })?;
@@ -94,7 +98,7 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
         println!("{:?}", errors);
         Err(Template::render("session/login", json!({
             "account": null,
-            "errors": errors.inner(),
+            "errors": errors.errors(),
             "form": *form,
         })))
     }

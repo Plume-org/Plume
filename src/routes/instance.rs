@@ -139,7 +139,7 @@ pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSet
         .map_err(|e| Template::render("instance/admin", json!({
             "account": admin.0.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
-            "errors": e.inner(),
+            "errors": e.errors(),
             "form": *form
         })))
 }

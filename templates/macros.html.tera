@@ -74,11 +74,6 @@
         {% endfor %}
     </div>
 {% endmacro %}
-{% macro feather(name) %}
-<svg class="feather">
-    <use xlink:href="/static/images/feather-sprite.svg#{{ name }}"/>
-</svg>
-{% endmacro %}
 {% macro home_feed(title, link, articles) %}
     {% if articles | length > 0 %}
         <h2>{{ title | _ }} &mdash; <a href="{{ link }}">{{ "View all" | _ }}</a></h2>

@@ -246,7 +246,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": true,
-            "errors": errors.inner(),
+            "errors": errors.errors(),
             "form": *form,
             "is_draft": form.draft,
             "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
@@ -361,7 +361,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
             "account": user.to_json(&*conn),
             "instance": Instance::get_local(&*conn),
             "editing": false,
-            "errors": errors.inner(),
+            "errors": errors.errors(),
             "form": *form,
             "is_draft": form.draft,
             "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()

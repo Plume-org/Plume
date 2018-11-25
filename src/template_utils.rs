@@ -86,3 +86,58 @@ macro_rules! icon {
         Html(concat!(r#"<svg class="feather"><use xlink:href="/static/images/feather-sprite.svg#"#, $name, "\"/></svg>"))
     }
 }
+
+macro_rules! input {
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $optional:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {
+        {
+            use validator::ValidationErrorsKind;
+            use std::borrow::Cow;
+
+            Html(format!(r#"
+                <label for="{name}">
+                    {label}
+                    {optional}
+                    {details}
+                </label>
+                {error}
+                <input type="{kind}" id="{name}" name="{name}" value="{val}" {props}/>
+                "#,
+                name = stringify!($name),
+                label = i18n!($catalog, $label),
+                kind = stringify!($kind),
+                optional = if $optional { format!("<small>{}</small>", i18n!($catalog, "Optional")) } else { String::new() },
+                details = if $details.len() > 0 {
+                    format!("<small>{}</small>", i18n!($catalog, $details))
+                } else {
+                    String::new()
+                },
+                error = if let Some(field) = $err.errors().get(stringify!($name)) {
+                    if let ValidationErrorsKind::Field(errs) = field {
+                        format!(r#"<p class="error">{}</p>"#, i18n!($catalog, &*errs[0].message.clone().unwrap_or(Cow::from("Unknown error"))))
+                    } else {
+                        String::new()
+                    }
+                } else {
+                    String::new()
+                },
+                val = $form.$name,
+                props = $props
+            ))
+        }
+    };
+    ($catalog:expr, $name:tt (optional $kind:tt), $label:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {
+        input!($catalog, $name ($kind), $label, true, $details, $form, $err, $props)
+    };
+    ($catalog:expr, $name:tt (optional $kind:tt), $label:expr, $form:expr, $err:expr, $props:expr) => {
+        input!($catalog, $name ($kind), $label, true, "", $form, $err, $props)
+    };
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {
+        input!($catalog, $name ($kind), $label, false, $details, $form, $err, $props)
+    };
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $form:expr, $err:expr, $props:expr) => {
+        input!($catalog, $name ($kind), $label, false, "", $form, $err, $props)
+    };
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $form:expr, $err:expr) => {
+        input!($catalog, $name ($kind), $label, false, "", $form, $err, "")
+    }
+}

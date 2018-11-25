@@ -20,20 +20,16 @@ use plume_models::{
     posts::Post,
     users::User
 };
-use routes::Page;
-use templates;
+use routes::{Page, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Content<Vec<u8>>, Template> {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &name), "Requested blog couldn't be found", |blog| {
+pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Template> {
+    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
         let posts = Post::blog_page(&*conn, &blog, page.limits());
         let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
         let authors = &blog.list_authors(&*conn);
 
-        println!("nut");
-        let mut res = vec![];
-        templates::blogs::details(
-            &mut res,
+        Ok(render!(blogs::details(
             &*conn,
             &intl.catalog,
             user.clone(),
@@ -45,13 +41,12 @@ pub fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: P
             Page::total(articles.len() as i32),
             user.map(|x| x.is_author_in(&*conn, blog)).unwrap_or(false),
             posts
-        ).unwrap();
-        Ok(Content(ContentType::HTML, res))
+        )))
     })
 }
 
 #[get("/~/<name>", rank = 3)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Content<Vec<u8>>, Template> {
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Ructe, Template> {
     paginated_details(intl, name, conn, user, Page::first())
 }
 
@@ -62,12 +57,14 @@ pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<Ac
 }
 
 #[get("/blogs/new")]
-pub fn new(user: User, conn: DbConn) -> Template {
-    Template::render("blogs/new", json!({
-        "account": user.to_json(&*conn),
-        "errors": null,
-        "form": null
-    }))
+pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
+    render!(blogs::new(
+        &*conn,
+        &intl.catalog,
+        Some(user),
+        NewBlogForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
 #[get("/blogs/new", rank = 2)]
@@ -78,10 +75,10 @@ pub fn new_auth() -> Flash<Redirect>{
     )
 }
 
-#[derive(FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate, Serialize)]
 pub struct NewBlogForm {
     #[validate(custom(function = "valid_slug", message = "Invalid name"))]
-    pub title: String
+    pub title: String,
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
@@ -129,7 +126,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User) -> Resul
         println!("{:?}", errors);
         Err(Template::render("blogs/new", json!({
             "account": user.to_json(&*conn),
-            "errors": errors.inner(),
+            "errors": errors.errors(),
             "form": *form,
         })))
     }
