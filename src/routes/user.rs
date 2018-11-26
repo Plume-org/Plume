@@ -361,7 +361,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>) -> Result<Redirect, 
                 "users/new",
                 json!({
                     "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
-                    "errors": e.inner(),
+                    "errors": e.errors(),
                     "form": *form
                 })
             )

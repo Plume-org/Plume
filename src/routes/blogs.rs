@@ -24,7 +24,7 @@ use routes::{Page, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Template> {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, name), "Requested blog couldn't be found", |blog| {
+    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &name), "Requested blog couldn't be found", |blog| {
         let posts = Post::blog_page(&*conn, &blog, page.limits());
         let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
         let authors = &blog.list_authors(&*conn);
@@ -37,7 +37,7 @@ pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<Us
             articles.len(),
             page.0,
             Page::total(articles.len() as i32),
-            user.map(|x| x.is_author_in(&*conn, blog)).unwrap_or(false),
+            user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
             posts
         )))
     })

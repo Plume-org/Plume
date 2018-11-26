@@ -27,12 +27,12 @@ use plume_models::{
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 4)]
-pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
+pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Result<Template, Template> {
     details_response(blog, slug, conn, user, None)
 }
 
 #[get("/~/<blog>/<slug>?<responding_to>")]
-pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>) -> Template {
+pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>) -> Result<Template, Template> {
     may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &blog), "Couldn't find this blog", |blog| {
         may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, &slug, blog.id), "Couldn't find this post", |post| {
             if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
@@ -41,7 +41,7 @@ pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<U
 
                 let previous = responding_to.map(|r| Comment::get(&*conn, r)
                     .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &[]));
-                Template::render("posts/details", json!({
+                Ok(Template::render("posts/details", json!({
                     "author": post.get_authors(&*conn)[0].to_json(&*conn),
                     "article": post.to_json(&*conn),
                     "blog": blog.to_json(&*conn),
@@ -65,11 +65,11 @@ pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<U
                     "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
                     "comment_form": null,
                     "comment_errors": null,
-                }))
+                })))
             } else {
-                Template::render("errors/403", json!({
+                Err(Template::render("errors/403", json!({
                     "error_message": "This post isn't published yet."
-                }))
+                })))
             }
         })
     })
