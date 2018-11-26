@@ -60,7 +60,7 @@ impl Searcher {
 
         let mut schema_builder = SchemaBuilder::default();
 
-        schema_builder.add_i64_field("post_id", INT_STORED);
+        schema_builder.add_i64_field("post_id", INT_STORED | INT_INDEXED);
         schema_builder.add_i64_field("creation_date", INT_INDEXED);
         schema_builder.add_i64_field("instance", INT_INDEXED);
 
@@ -115,7 +115,7 @@ impl Searcher {
         })
     }
 
-    pub fn add_document(&self, conn: &Connection, post: Post) {
+    pub fn add_document(&self, conn: &Connection, post: &Post) {
         let schema = self.index.schema();
 
         let post_id = schema.get_field("post_id").unwrap();
@@ -134,43 +134,37 @@ impl Searcher {
         let lang = schema.get_field("lang").unwrap();
         let license = schema.get_field("license").unwrap();
 
-        {
-            let mut writer = self.writer.lock().unwrap();
-            writer.add_document(doc!(
-                    post_id => post.id as i64,
-                    author => post.get_authors(conn).into_iter().map(|u| u.get_fqn(conn)).join(" "),
-                    creation_date => post.creation_date.num_days_from_ce() as i64,
-                    instance => post.get_blog(conn).instance_id as i64,
-                    hashtag => Tag::for_post(conn, post.id).into_iter().map(|t| t.tag).join(" "),
-                    mention => Mention::list_for_post(conn, post.id).into_iter().filter_map(|m| m.get_mentioned(conn))
-                            .map(|u| u.get_fqn(conn)).join(" "),
-                    blog_name => post.get_blog(conn).title,
-                    content => post.content.get().clone(),
-                    subtitle => post.subtitle,
-                    title => post.title,
-                    lang => detect_lang(post.content.get()).and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} ).unwrap_or(Lang::Eng).name(),
-                    license => post.license,
-                    ));
-            writer.commit().unwrap();
-        }//release the lock as soon as possible
-        self.index.load_searchers().unwrap();
+        let mut writer = self.writer.lock().unwrap();
+        writer.add_document(doc!(
+                post_id => i64::from(post.id),
+                author => post.get_authors(conn).into_iter().map(|u| u.get_fqn(conn)).join(" "),
+                creation_date => i64::from(post.creation_date.num_days_from_ce()),
+                instance => i64::from(post.get_blog(conn).instance_id),
+                hashtag => Tag::for_post(conn, post.id).into_iter().map(|t| t.tag).join(" "),
+                mention => Mention::list_for_post(conn, post.id).into_iter().filter_map(|m| m.get_mentioned(conn))
+                        .map(|u| u.get_fqn(conn)).join(" "),
+                blog_name => post.get_blog(conn).title,
+                content => post.content.get().clone(),
+                subtitle => post.subtitle.clone(),
+                title => post.title.clone(),
+                lang => detect_lang(post.content.get()).and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} ).unwrap_or(Lang::Eng).name(),
+                license => post.license.clone(),
+                ));
     }
 
     pub fn delete_document(&self, post: &Post) {
         let schema = self.index.schema();
         let post_id = schema.get_field("post_id").unwrap();
 
-        let doc_id = Term::from_field_i64(post_id, post.id as i64);
+        let doc_id = Term::from_field_i64(post_id, i64::from(post.id));
         {
             let mut writer = self.writer.lock().unwrap();
             writer.delete_term(doc_id);
-            writer.commit().unwrap();
         }
-        self.index.load_searchers().unwrap();
     }
 
-    pub fn update_document(&self, conn: &Connection, post: Post) {
-        self.delete_document(&post);
+    pub fn update_document(&self, conn: &Connection, post: &Post) {
+        self.delete_document(post);
         self.add_document(conn, post);
     }
 
@@ -194,5 +188,10 @@ impl Searcher {
                     //borrow checker don't want me to use filter_map or and_then here
                           })
             .collect()
+    }
+
+    pub fn commit(&self) {
+        self.writer.lock().unwrap().commit().unwrap();
+        self.index.load_searchers().unwrap();
     }
 }

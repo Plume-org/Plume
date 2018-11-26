@@ -19,11 +19,11 @@ use plume_common::activity_pub::{
 };
 use plume_models::{
     comments::Comment, follows::Follow, instance::Instance, likes, posts::Post, reshares::Reshare,
-    users::User, Connection,
+    users::User, search::Searcher, Connection,
 };
 
 pub trait Inbox {
-    fn received(&self, conn: &Connection, act: serde_json::Value) -> Result<(), Error> {
+    fn received(&self, conn: &Connection, searcher: &Searcher, act: serde_json::Value) -> Result<(), Error> {
         let actor_id = Id::new(act["actor"].as_str().unwrap_or_else(|| {
             act["actor"]["id"]
                 .as_str()
@@ -37,7 +37,7 @@ pub trait Inbox {
                 }
                 "Create" => {
                     let act: Create = serde_json::from_value(act.clone())?;
-                    if Post::try_from_activity(conn, act.clone())
+                    if Post::try_from_activity(&(conn, searcher), act.clone())
                         || Comment::try_from_activity(conn, act)
                     {
                         Ok(())
@@ -53,7 +53,7 @@ pub trait Inbox {
                             .object_props
                             .id_string()?,
                         actor_id.as_ref(),
-                        conn,
+                        &(conn, searcher),
                     );
                     Ok(())
                 }
@@ -113,7 +113,7 @@ pub trait Inbox {
                 }
                 "Update" => {
                     let act: Update = serde_json::from_value(act.clone())?;
-                    Post::handle_update(conn, &act.update_props.object_object()?);
+                    Post::handle_update(conn, &act.update_props.object_object()?, searcher);
                     Ok(())
                 }
                 _ => Err(InboxError::InvalidType)?,

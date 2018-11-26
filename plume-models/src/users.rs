@@ -41,6 +41,7 @@ use posts::Post;
 use reshares::Reshare;
 use safe_string::SafeString;
 use schema::users;
+use search::Searcher;
 use {ap_url, Connection, BASE_URL, USE_HTTPS};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
@@ -104,13 +105,13 @@ impl User {
             .expect("User::one_by_instance: loading error")
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) {
         use schema::post_authors;
 
         Blog::find_for_author(conn, self)
             .iter()
             .filter(|b| b.list_authors(conn).len() <= 1)
-            .for_each(|b| b.delete(conn));
+            .for_each(|b| b.delete(conn, searcher));
         // delete the posts if they is the only author
         let all_their_posts_ids: Vec<i32> = post_authors::table
             .filter(post_authors::author_id.eq(self.id))
@@ -129,7 +130,7 @@ impl User {
             if !has_other_authors {
                 Post::get(conn, post_id)
                     .expect("User::delete: post not found error")
-                    .delete(conn);
+                    .delete(&(conn, searcher));
             }
         }
 

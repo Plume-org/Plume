@@ -149,34 +149,6 @@ macro_rules! insert {
     };
 }
 
-/// Adds a function to a model to save changes to a model.
-/// The model should derive diesel::AsChangeset.
-///
-/// # Usage
-///
-/// ```rust
-/// impl Model {
-///     update!(model_table);
-/// }
-///
-/// // Update and save changes
-/// let m = Model::get(connection, 1);
-/// m.foo = 42;
-/// m.update(connection);
-/// ```
-macro_rules! update {
-    ($table:ident) => {
-        pub fn update(&self, conn: &crate::Connection) -> Self {
-            diesel::update(self)
-                .set(self)
-                .execute(conn)
-                .expect(concat!("macro::update: Error updating ", stringify!($table)));
-            Self::get(conn, self.id)
-                .expect(concat!("macro::update: ", stringify!($table), " we just updated doesn't exist anymore???"))
-        }
-    };
-}
-
 /// Returns the last row of a table.
 ///
 /// # Usage

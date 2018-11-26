@@ -24,6 +24,7 @@ use plume_common::activity_pub::{
 use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
+use search::Searcher;
 use users::User;
 use {Connection, BASE_URL, USE_HTTPS};
 
@@ -411,9 +412,9 @@ impl Blog {
         json
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) {
         for post in Post::get_for_blog(conn, &self) {
-            post.delete(conn);
+            post.delete(&(conn, searcher));
         }
         diesel::delete(self)
             .execute(conn)

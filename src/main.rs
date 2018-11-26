@@ -38,14 +38,17 @@ use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
-use plume_models::{DATABASE_URL, Connection, db_conn::DbPool};
+use plume_models::{DATABASE_URL, Connection,
+    db_conn::DbPool, search::Searcher as UnmanagedSearcher};
 use workerpool::{Pool, thunk::ThunkWorker};
+use std::sync::Arc;
 
 mod api;
 mod inbox;
 mod routes;
 
 type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
+type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
@@ -169,6 +172,7 @@ fn main() {
         ])
         .manage(pool)
         .manage(Pool::<ThunkWorker<()>>::new(4))
+        .manage(Arc::new(UnmanagedSearcher::open(&"search_index").unwrap()))
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);
         }))

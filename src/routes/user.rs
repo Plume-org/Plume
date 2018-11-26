@@ -24,6 +24,7 @@ use plume_models::{
 };
 use routes::Page;
 use Worker;
+use Searcher;
 
 #[get("/me")]
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -39,9 +40,10 @@ fn details(
     conn: DbConn,
     account: Option<User>,
     worker: Worker,
-    fecth_articles_conn: DbConn,
-    fecth_followers_conn: DbConn,
+    fetch_articles_conn: DbConn,
+    fetch_followers_conn: DbConn,
     update_conn: DbConn,
+    searcher: Searcher,
 ) -> Template {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
@@ -56,12 +58,13 @@ fn details(
             if !user.get_instance(&*conn).local {
                 // Fetch new articles
                 let user_clone = user.clone();
+                let searcher = searcher.clone();
                 worker.execute(Thunk::of(move || {
                     for create_act in user_clone.fetch_outbox::<Create>() {
                         match create_act.create_props.object_object::<Article>() {
                             Ok(article) => {
                                 Post::from_activity(
-                                    &*fecth_articles_conn,
+                                    &(&fetch_articles_conn, &searcher),
                                     article,
                                     user_clone.clone().into_id(),
                                 );
@@ -79,13 +82,13 @@ fn details(
                 worker.execute(Thunk::of(move || {
                     for user_id in user_clone.fetch_followers_ids() {
                         let follower =
-                            User::find_by_ap_url(&*fecth_followers_conn, &user_id)
+                            User::find_by_ap_url(&*fetch_followers_conn, &user_id)
                                 .unwrap_or_else(|| {
-                                    User::fetch_from_url(&*fecth_followers_conn, &user_id)
+                                    User::fetch_from_url(&*fetch_followers_conn, &user_id)
                                         .expect("user::details: Couldn't fetch follower")
                                 });
                         follows::Follow::insert(
-                            &*fecth_followers_conn,
+                            &*fetch_followers_conn,
                             follows::NewFollow {
                                 follower_id: follower.id,
                                 following_id: user_clone.id,
@@ -285,10 +288,10 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
 }
 
 #[post("/@/<name>/delete")]
-fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
+fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies, searcher: Searcher) -> Option<Redirect> {
     let account = User::find_by_fqn(&*conn, &name)?;
     if user.id == account.id {
-        account.delete(&*conn);
+        account.delete(&*conn, &searcher);
 
     if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
         cookies.remove_private(cookie);
@@ -384,6 +387,7 @@ fn inbox(
     conn: DbConn,
     data: String,
     headers: Headers,
+    searcher: Searcher,
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
     let user = User::find_local(&*conn, &name).ok_or(None)?;
     let act: serde_json::Value =
@@ -411,7 +415,7 @@ fn inbox(
     if Instance::is_blocked(&*conn, actor_id) {
         return Ok(String::new());
     }
-    Ok(match user.received(&*conn, act) {
+    Ok(match user.received(&*conn, &searcher, act) {
         Ok(_) => String::new(),
         Err(e) => {
             println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());
