@@ -1,13 +1,12 @@
 use activitypub::object::Article;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
-use rocket::{State, request::LenientForm};
+use rocket::{request::LenientForm};
 use rocket::response::{Redirect, Flash};
 use rocket_contrib::Template;
 use serde_json;
 use std::{collections::{HashMap, HashSet}, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
-use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Deletable};
 use plume_common::utils;
@@ -24,6 +23,7 @@ use plume_models::{
     tags::*,
     users::User
 };
+use Worker;
 use Searcher;
 
 #[derive(FromForm)]
@@ -164,7 +164,7 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<data>")]
-fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>, searcher: Searcher)
+fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: Worker, searcher: Searcher)
     -> Result<Redirect, Option<Template>> {
     let b = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
     let mut post = Post::find_by_slug(&*conn, &slug, b.id).ok_or(None)?;
@@ -237,11 +237,11 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
                 if newly_published {
                     let act = post.create_activity(&conn);
                     let dest = User::one_by_instance(&*conn);
-                    worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                    worker.execute(move || broadcast(&user, act, dest));
                 } else {
                     let act = post.update_activity(&*conn);
                     let dest = User::one_by_instance(&*conn);
-                    worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                    worker.execute(move || broadcast(&user, act, dest));
                 }
             }
 
@@ -285,7 +285,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>, searcher: Searcher) -> Result<Redirect, Option<Template>> {
+fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: Worker, searcher: Searcher) -> Result<Redirect, Option<Template>> {
     let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
     let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
@@ -360,7 +360,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
 
                 let act = post.create_activity(&*conn);
                 let dest = User::one_by_instance(&*conn);
-                worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                worker.execute(move || broadcast(&user, act, dest));
             }
 
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
@@ -380,7 +380,7 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
 }
 
 #[post("/~/<blog_name>/<slug>/delete")]
-fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>, searcher: Searcher) -> Redirect {
+fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Redirect {
     let post = Blog::find_by_fqn(&*conn, &blog_name)
         .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
 
@@ -390,7 +390,7 @@ fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Sta
         } else {
             let dest = User::one_by_instance(&*conn);
             let delete_activity = post.delete(&(&conn, &searcher));
-            worker.execute(Thunk::of(move || broadcast(&user, delete_activity, dest)));
+            worker.execute(move || broadcast(&user, delete_activity, dest));
 
             Redirect::to(uri!(super::blogs::details: name = blog_name))
         }

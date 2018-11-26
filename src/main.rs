@@ -13,6 +13,7 @@ extern crate gettextrs;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
+extern crate num_cpus;
 extern crate plume_api;
 extern crate plume_common;
 extern crate plume_models;
@@ -22,6 +23,7 @@ extern crate rocket_contrib;
 extern crate rocket_csrf;
 extern crate rocket_i18n;
 extern crate rpassword;
+extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -32,7 +34,6 @@ extern crate validator;
 #[macro_use]
 extern crate validator_derive;
 extern crate webfinger;
-extern crate workerpool;
 
 use diesel::r2d2::ConnectionManager;
 use rocket::State;
@@ -40,14 +41,14 @@ use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
 use plume_models::{DATABASE_URL, Connection,
     db_conn::DbPool, search::Searcher as UnmanagedSearcher};
-use workerpool::{Pool, thunk::ThunkWorker};
+use scheduled_thread_pool::ScheduledThreadPool;
 use std::sync::Arc;
 
 mod api;
 mod inbox;
 mod routes;
 
-type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
+type Worker<'a> = State<'a, ScheduledThreadPool>;
 type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
@@ -171,7 +172,7 @@ fn main() {
             routes::errors::server_error
         ])
         .manage(pool)
-        .manage(Pool::<ThunkWorker<()>>::new(4))
+        .manage(ScheduledThreadPool::with_name("worker {}", num_cpus::get()))
         .manage(Arc::new(UnmanagedSearcher::open(&"search_index").unwrap()))
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);

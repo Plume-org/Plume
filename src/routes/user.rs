@@ -8,7 +8,6 @@ use rocket::{
 use rocket_contrib::Template;
 use serde_json;
 use validator::{Validate, ValidationError};
-use workerpool::thunk::*;
 
 use inbox::Inbox;
 use plume_common::activity_pub::{
@@ -59,7 +58,7 @@ fn details(
                 // Fetch new articles
                 let user_clone = user.clone();
                 let searcher = searcher.clone();
-                worker.execute(Thunk::of(move || {
+                worker.execute(move || {
                     for create_act in user_clone.fetch_outbox::<Create>() {
                         match create_act.create_props.object_object::<Article>() {
                             Ok(article) => {
@@ -75,11 +74,11 @@ fn details(
                             }
                         }
                     }
-                }));
+                });
 
                 // Fetch followers
                 let user_clone = user.clone();
-                worker.execute(Thunk::of(move || {
+                worker.execute(move || {
                     for user_id in user_clone.fetch_followers_ids() {
                         let follower =
                             User::find_by_ap_url(&*fetch_followers_conn, &user_id)
@@ -96,14 +95,14 @@ fn details(
                             },
                         );
                     }
-                }));
+                });
 
                 // Update profile information if needed
                 let user_clone = user.clone();
                 if user.needs_update() {
-                    worker.execute(Thunk::of(move || {
+                    worker.execute(move || {
                         user_clone.refetch(&*update_conn);
-                    }))
+                    });
                 }
             }
 
@@ -151,9 +150,9 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
     let target = User::find_by_fqn(&*conn, &name)?;
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.delete(&*conn);
-        worker.execute(Thunk::of(move || {
+        worker.execute(move || {
             broadcast(&user, delete_act, vec![target])
-        }));
+        });
     } else {
         let f = follows::Follow::insert(
             &*conn,
@@ -166,7 +165,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
         f.notify(&*conn);
 
         let act = f.to_activity(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
+        worker.execute(move || broadcast(&user, act, vec![target]));
     }
     Some(Redirect::to(uri!(details: name = name)))
 }
