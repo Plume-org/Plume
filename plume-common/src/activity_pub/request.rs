@@ -8,28 +8,28 @@ use std::time::SystemTime;
 use activity_pub::{AP_CONTENT_TYPE, ap_accept_header};
 use activity_pub::sign::Signer;
 
-const PLUME_USER_AGENT: &'static str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
+const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
 pub struct Digest(String);
 
 impl Digest {
-    pub fn digest(body: String) -> HeaderValue {
+    pub fn digest(body: &str) -> HeaderValue {
         let mut hasher =
             Hasher::new(MessageDigest::sha256()).expect("Digest::digest: initialization error");
         hasher
-            .update(&body.into_bytes()[..])
+            .update(body.as_bytes())
             .expect("Digest::digest: content insertion error");
         let res = base64::encode(&hasher.finish().expect("Digest::digest: finalizing error"));
         HeaderValue::from_str(&format!("SHA-256={}", res))
             .expect("Digest::digest: header creation error")
     }
 
-    pub fn verify(&self, body: String) -> bool {
+    pub fn verify(&self, body: &str) -> bool {
         if self.algorithm() == "SHA-256" {
             let mut hasher =
                 Hasher::new(MessageDigest::sha256()).expect("Digest::digest: initialization error");
             hasher
-                .update(&body.into_bytes())
+                .update(body.as_bytes())
                 .expect("Digest::digest: content insertion error");
             self.value().deref()
                 == hasher
@@ -60,7 +60,7 @@ impl Digest {
     pub fn from_header(dig: &str) -> Result<Self, ()> {
         if let Some(pos) = dig.find('=') {
             let pos = pos + 1;
-            if let Ok(_) = base64::decode(&dig[pos..]) {
+            if base64::decode(&dig[pos..]).is_ok() {
                 Ok(Digest(dig.to_owned()))
             } else {
                 Err(())
@@ -94,7 +94,7 @@ pub fn headers() -> HeaderMap {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: HeaderMap) -> HeaderValue {
+pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> HeaderValue {
     let signed_string = headers
         .iter()
         .map(|(h, v)| {
@@ -114,8 +114,8 @@ pub fn signature<S: Signer>(signer: &S, headers: HeaderMap) -> HeaderValue {
         .join(" ")
         .to_lowercase();
 
-    let data = signer.sign(signed_string);
-    let sign = base64::encode(&data[..]);
+    let data = signer.sign(&signed_string);
+    let sign = base64::encode(&data);
 
     HeaderValue::from_str(&format!(
         "keyId=\"{key_id}\",algorithm=\"rsa-sha256\",headers=\"{signed_headers}\",signature=\"{signature}\"",

@@ -13,8 +13,8 @@ use plume_models::{
 
 #[post("/~/<blog>/<slug>/like")]
 fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Option<Redirect> {
-    let b = Blog::find_by_fqn(&*conn, blog.clone())?;
-    let post = Post::find_by_slug(&*conn, slug.clone(), b.id)?;
+    let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.has_liked(&*conn, &post) {
         let like = likes::Like::insert(&*conn, likes::NewLike {
@@ -26,7 +26,7 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
         like.notify(&*conn);
 
         let dest = User::one_by_instance(&*conn);
-        let act = like.into_activity(&*conn);
+        let act = like.to_activity(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id).expect("likes::create: like exist but not found error");
@@ -42,6 +42,6 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Po
 fn create_auth(blog: String, slug: String) -> Flash<Redirect>{
     utils::requires_login(
         "You need to be logged in order to like a post",
-        uri!(create: blog = blog, slug = slug).into()
+        uri!(create: blog = blog, slug = slug)
     )
 }

@@ -31,26 +31,26 @@ struct NewCommentForm {
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
 fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>)
     -> Result<Redirect, Option<Template>> {
-    let blog = Blog::find_by_fqn(&*conn, blog_name.clone()).ok_or(None)?;
-    let post = Post::find_by_slug(&*conn, slug.clone(), blog.id).ok_or(None)?;
+    let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     let form = data.get();
     form.validate()
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref());
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),
-                in_response_to_id: form.responding_to.clone(),
+                in_response_to_id: form.responding_to,
                 post_id: post.id,
                 author_id: user.id,
                 ap_url: None,
-                sensitive: form.warning.len() > 0,
+                sensitive: !form.warning.is_empty(),
                 spoiler_text: form.warning.clone()
             }).update_ap_url(&*conn);
             let new_comment = comm.create_activity(&*conn);
 
             // save mentions
             for ment in mentions {
-                Mention::from_activity(&*conn, Mention::build_activity(&*conn, ment), post.id, true, true);
+                Mention::from_activity(&*conn, &Mention::build_activity(&*conn, &ment), post.id, true, true);
             }
 
             // federate
@@ -76,7 +76,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
                 "has_reshared": user.has_reshared(&*conn, &post),
                 "account": user.to_json(&*conn),
                 "date": &post.creation_date.timestamp(),
-                "previous": form.responding_to.and_then(|r| Comment::get(&*conn, r)).map(|r| r.to_json(&*conn, &vec![])),
+                "previous": form.responding_to.and_then(|r| Comment::get(&*conn, r)).map(|r| r.to_json(&*conn, &[])),
                 "user_fqn": user.get_fqn(&*conn),
                 "comment_form": form,
                 "comment_errors": errors,
@@ -86,5 +86,5 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]
 fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Option<ActivityStream<Note>> {
-    Comment::get(&*conn, id).map(|c| ActivityStream::new(c.into_activity(&*conn)))
+    Comment::get(&*conn, id).map(|c| ActivityStream::new(c.to_activity(&*conn)))
 }

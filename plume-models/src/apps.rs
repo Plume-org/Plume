@@ -47,8 +47,8 @@ impl Provider<Connection> for App {
             conn,
             NewApp {
                 name: data.name,
-                client_id: client_id,
-                client_secret: client_secret,
+                client_id,
+                client_secret,
                 redirect_uri: data.redirect_uri,
                 website: data.website,
             },
@@ -76,5 +76,5 @@ impl Provider<Connection> for App {
 impl App {
     get!(apps);
     insert!(apps, NewApp);
-    find_by!(apps, find_by_client_id, client_id as String);
+    find_by!(apps, find_by_client_id, client_id as &str);
 }

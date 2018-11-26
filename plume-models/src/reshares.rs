@@ -32,7 +32,7 @@ pub struct NewReshare {
 impl Reshare {
     insert!(reshares, NewReshare);
     get!(reshares);
-    find_by!(reshares, find_by_ap_url, ap_url as String);
+    find_by!(reshares, find_by_ap_url, ap_url as &str);
     find_by!(
         reshares,
         find_by_user_on_post,
@@ -41,7 +41,7 @@ impl Reshare {
     );
 
     pub fn update_ap_url(&self, conn: &Connection) {
-        if self.ap_url.len() == 0 {
+        if self.ap_url.is_empty() {
             diesel::update(self)
                 .set(reshares::ap_url.eq(format!(
                         "{}/reshare/{}",
@@ -74,31 +74,31 @@ impl Reshare {
         User::get(conn, self.user_id)
     }
 
-    pub fn into_activity(&self, conn: &Connection) -> Announce {
+    pub fn to_activity(&self, conn: &Connection) -> Announce {
         let mut act = Announce::default();
         act.announce_props
             .set_actor_link(
                 User::get(conn, self.user_id)
-                    .expect("Reshare::into_activity: user error")
+                    .expect("Reshare::to_activity: user error")
                     .into_id(),
             )
-            .expect("Reshare::into_activity: actor error");
+            .expect("Reshare::to_activity: actor error");
         act.announce_props
             .set_object_link(
                 Post::get(conn, self.post_id)
-                    .expect("Reshare::into_activity: post error")
+                    .expect("Reshare::to_activity: post error")
                     .into_id(),
             )
-            .expect("Reshare::into_activity: object error");
+            .expect("Reshare::to_activity: object error");
         act.object_props
             .set_id_string(self.ap_url.clone())
-            .expect("Reshare::into_activity: id error");
+            .expect("Reshare::to_activity: id error");
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))
-            .expect("Reshare::into_activity: to error");
+            .expect("Reshare::to_activity: to error");
         act.object_props
             .set_cc_link_vec::<Id>(vec![])
-            .expect("Reshare::into_activity: cc error");
+            .expect("Reshare::to_activity: cc error");
 
         act
     }
@@ -112,7 +112,7 @@ impl FromActivity<Announce, Connection> for Reshare {
                 .announce_props
                 .actor_link::<Id>()
                 .expect("Reshare::from_activity: actor error")
-                .into(),
+                .as_ref(),
         );
         let post = Post::find_by_ap_url(
             conn,
@@ -120,7 +120,7 @@ impl FromActivity<Announce, Connection> for Reshare {
                 .announce_props
                 .object_link::<Id>()
                 .expect("Reshare::from_activity: object error")
-                .into(),
+                .as_ref(),
         );
         let reshare = Reshare::insert(
             conn,
@@ -130,7 +130,7 @@ impl FromActivity<Announce, Connection> for Reshare {
                 ap_url: announce
                     .object_props
                     .id_string()
-                    .unwrap_or(String::from("")),
+                    .unwrap_or_default(),
             },
         );
         reshare.notify(conn);
@@ -176,7 +176,7 @@ impl Deletable<Connection, Undo> for Reshare {
             )
             .expect("Reshare::delete: actor error");
         act.undo_props
-            .set_object_object(self.into_activity(conn))
+            .set_object_object(self.to_activity(conn))
             .expect("Reshare::delete: object error");
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))
@@ -191,7 +191,7 @@ impl Deletable<Connection, Undo> for Reshare {
         act
     }
 
-    fn delete_id(id: String, actor_id: String, conn: &Connection) {
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
         if let Some(reshare) = Reshare::find_by_ap_url(conn, id) {
             if let Some(actor) = User::find_by_ap_url(conn, actor_id) {
                 if actor.id == reshare.user_id {

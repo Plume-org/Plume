@@ -43,8 +43,6 @@ use safe_string::SafeString;
 use schema::users;
 use {ap_url, Connection, BASE_URL, USE_HTTPS};
 
-pub const AUTH_COOKIE: &'static str = "user_id";
-
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, Debug)]
@@ -89,14 +87,15 @@ pub struct NewUser {
     pub avatar_id: Option<i32>,
 }
 
-const USER_PREFIX: &'static str = "@";
+pub const AUTH_COOKIE: &str = "user_id";
+const USER_PREFIX: &str = "@";
 
 impl User {
     insert!(users, NewUser);
     get!(users);
-    find_by!(users, find_by_email, email as String);
-    find_by!(users, find_by_name, username as String, instance_id as i32);
-    find_by!(users, find_by_ap_url, ap_url as String);
+    find_by!(users, find_by_email, email as &str);
+    find_by!(users, find_by_name, username as &str, instance_id as i32);
+    find_by!(users, find_by_ap_url, ap_url as &str);
 
     pub fn one_by_instance(conn: &Connection) -> Vec<User> {
         users::table
@@ -125,8 +124,7 @@ impl User {
                 .count()
                 .load(conn)
                 .expect("User::delete: count author error")
-                .iter()
-                .next()
+                .first()
                 .unwrap_or(&0) > &0;
             if !has_other_authors {
                 Post::get(conn, post_id)
@@ -178,28 +176,25 @@ impl User {
             .len() // TODO count in database?
     }
 
-    pub fn find_local(conn: &Connection, username: String) -> Option<User> {
+    pub fn find_local(conn: &Connection, username: &str) -> Option<User> {
         User::find_by_name(conn, username, Instance::local_id(conn))
     }
 
-    pub fn find_by_fqn(conn: &Connection, fqn: String) -> Option<User> {
-        if fqn.contains("@") {
+    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Option<User> {
+        if fqn.contains('@') {
             // remote user
             match Instance::find_by_domain(
                 conn,
-                String::from(
-                    fqn.split("@")
-                        .last()
-                        .expect("User::find_by_fqn: host error"),
-                ),
+                fqn.split('@')
+                    .last()
+                    .expect("User::find_by_fqn: host error"),
             ) {
                 Some(instance) => match User::find_by_name(
                     conn,
-                    String::from(
-                        fqn.split("@")
-                            .nth(0)
-                            .expect("User::find_by_fqn: name error"),
-                    ),
+                    fqn.split('@')
+                        .nth(0)
+                        .expect("User::find_by_fqn: name error")
+                    ,
                     instance.id,
                 ) {
                     Some(u) => Some(u),
@@ -213,8 +208,8 @@ impl User {
         }
     }
 
-    fn fetch_from_webfinger(conn: &Connection, acct: String) -> Option<User> {
-        match resolve(acct.clone(), *USE_HTTPS) {
+    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Option<User> {
+        match resolve(acct.to_owned(), *USE_HTTPS) {
             Ok(wf) => wf
                 .links
                 .into_iter()
@@ -222,7 +217,7 @@ impl User {
                 .and_then(|l| {
                     User::fetch_from_url(
                         conn,
-                        l.href
+                        &l.href
                             .expect("User::fetch_from_webginfer: href not found error"),
                     )
                 }),
@@ -233,9 +228,9 @@ impl User {
         }
     }
 
-    fn fetch(url: String) -> Option<CustomPerson> {
+    fn fetch(url: &str) -> Option<CustomPerson> {
         let req = Client::new()
-            .get(&url[..])
+            .get(url)
             .header(
                 ACCEPT,
                 HeaderValue::from_str(
@@ -270,29 +265,28 @@ impl User {
         }
     }
 
-    pub fn fetch_from_url(conn: &Connection, url: String) -> Option<User> {
-        User::fetch(url.clone()).map(|json| {
+    pub fn fetch_from_url(conn: &Connection, url: &str) -> Option<User> {
+        User::fetch(url).map(|json| {
             (User::from_activity(
                 conn,
-                json,
-                Url::parse(url.as_ref())
+                &json,
+                Url::parse(url)
                     .expect("User::fetch_from_url: url error")
                     .host_str()
-                    .expect("User::fetch_from_url: host error")
-                    .to_string(),
+                    .expect("User::fetch_from_url: host error"),
             ))
         })
     }
 
-    fn from_activity(conn: &Connection, acct: CustomPerson, inst: String) -> User {
-        let instance = match Instance::find_by_domain(conn, inst.clone()) {
+    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> User {
+        let instance = match Instance::find_by_domain(conn, inst) {
             Some(instance) => instance,
             None => {
                 Instance::insert(
                     conn,
                     NewInstance {
-                        name: inst.clone(),
-                        public_domain: inst.clone(),
+                        name: inst.to_owned(),
+                        public_domain: inst.to_owned(),
                         local: false,
                         // We don't really care about all the following for remote instances
                         long_description: SafeString::new(""),
@@ -335,7 +329,7 @@ impl User {
                         .object
                         .object_props
                         .summary_string()
-                        .unwrap_or(String::new()),
+                        .unwrap_or_default(),
                 ),
                 email: None,
                 hashed_password: None,
@@ -385,7 +379,7 @@ impl User {
     }
 
     pub fn refetch(&self, conn: &Connection) {
-        User::fetch(self.ap_url.clone()).map(|json| {
+        User::fetch(&self.ap_url.clone()).map(|json| {
             let avatar = Media::save_remote(
                 conn,
                 json.object
@@ -425,7 +419,7 @@ impl User {
                             .object
                             .object_props
                             .summary_string()
-                            .unwrap_or(String::new()),
+                            .unwrap_or_default(),
                     )),
                     users::followers_endpoint.eq(json
                         .object
@@ -440,13 +434,13 @@ impl User {
         });
     }
 
-    pub fn hash_pass(pass: String) -> String {
-        bcrypt::hash(pass.as_str(), 10).expect("User::hash_pass: hashing error")
+    pub fn hash_pass(pass: &str) -> String {
+        bcrypt::hash(pass, 10).expect("User::hash_pass: hashing error")
     }
 
-    pub fn auth(&self, pass: String) -> bool {
+    pub fn auth(&self, pass: &str) -> bool {
         if let Ok(valid) = bcrypt::verify(
-            pass.as_str(),
+            pass,
             self.hashed_password
                 .clone()
                 .expect("User::auth: no password error")
@@ -460,38 +454,38 @@ impl User {
 
     pub fn update_boxes(&self, conn: &Connection) {
         let instance = self.get_instance(conn);
-        if self.outbox_url.len() == 0 {
+        if self.outbox_url.is_empty() {
             diesel::update(self)
                 .set(users::outbox_url.eq(instance.compute_box(
                     USER_PREFIX,
-                    self.username.clone(),
+                    &self.username,
                     "outbox",
                 )))
                 .execute(conn)
                 .expect("User::update_boxes: outbox update error");
         }
 
-        if self.inbox_url.len() == 0 {
+        if self.inbox_url.is_empty() {
             diesel::update(self)
                 .set(users::inbox_url.eq(instance.compute_box(
                     USER_PREFIX,
-                    self.username.clone(),
+                    &self.username,
                     "inbox",
                 )))
                 .execute(conn)
                 .expect("User::update_boxes: inbox update error");
         }
 
-        if self.ap_url.len() == 0 {
+        if self.ap_url.is_empty() {
             diesel::update(self)
-                .set(users::ap_url.eq(instance.compute_box(USER_PREFIX, self.username.clone(), "")))
+                .set(users::ap_url.eq(instance.compute_box(USER_PREFIX, &self.username, "")))
                 .execute(conn)
                 .expect("User::update_boxes: ap_url update error");
         }
 
         if self.shared_inbox_url.is_none() {
             diesel::update(self)
-                .set(users::shared_inbox_url.eq(ap_url(format!(
+                .set(users::shared_inbox_url.eq(ap_url(&format!(
                         "{}/inbox",
                         Instance::get_local(conn)
                             .expect("User::update_boxes: local instance not found error")
@@ -501,11 +495,11 @@ impl User {
                 .expect("User::update_boxes: shared inbox update error");
         }
 
-        if self.followers_endpoint.len() == 0 {
+        if self.followers_endpoint.is_empty() {
             diesel::update(self)
                 .set(users::followers_endpoint.eq(instance.compute_box(
                     USER_PREFIX,
-                    self.username.clone(),
+                    &self.username,
                     "followers",
                 )))
                 .execute(conn)
@@ -660,52 +654,52 @@ impl User {
 
     pub fn is_followed_by(&self, conn: &Connection, other_id: i32) -> bool {
         use schema::follows;
-        follows::table
+        !follows::table
             .filter(follows::follower_id.eq(other_id))
             .filter(follows::following_id.eq(self.id))
             .load::<Follow>(conn)
             .expect("User::is_followed_by: loading error")
-            .len() > 0 // TODO count in database?
+            .is_empty() // TODO count in database?
     }
 
     pub fn is_following(&self, conn: &Connection, other_id: i32) -> bool {
         use schema::follows;
-        follows::table
+        !follows::table
             .filter(follows::follower_id.eq(self.id))
             .filter(follows::following_id.eq(other_id))
             .load::<Follow>(conn)
             .expect("User::is_following: loading error")
-            .len() > 0 // TODO count in database?
+            .is_empty() // TODO count in database?
     }
 
     pub fn has_liked(&self, conn: &Connection, post: &Post) -> bool {
         use schema::likes;
-        likes::table
+        !likes::table
             .filter(likes::post_id.eq(post.id))
             .filter(likes::user_id.eq(self.id))
             .load::<Like>(conn)
             .expect("User::has_liked: loading error")
-            .len() > 0 // TODO count in database?
+            .is_empty() // TODO count in database?
     }
 
     pub fn has_reshared(&self, conn: &Connection, post: &Post) -> bool {
         use schema::reshares;
-        reshares::table
+        !reshares::table
             .filter(reshares::post_id.eq(post.id))
             .filter(reshares::user_id.eq(self.id))
             .load::<Reshare>(conn)
             .expect("User::has_reshared: loading error")
-            .len() > 0 // TODO count in database?
+            .is_empty() // TODO count in database?
     }
 
-    pub fn is_author_in(&self, conn: &Connection, blog: Blog) -> bool {
+    pub fn is_author_in(&self, conn: &Connection, blog: &Blog) -> bool {
         use schema::blog_authors;
-        blog_authors::table
+        !blog_authors::table
             .filter(blog_authors::author_id.eq(self.id))
             .filter(blog_authors::blog_id.eq(blog.id))
             .load::<BlogAuthor>(conn)
             .expect("User::is_author_in: loading error")
-            .len() > 0 // TODO count in database?
+            .is_empty() // TODO count in database?
     }
 
     pub fn get_keypair(&self) -> PKey<Private> {
@@ -719,64 +713,64 @@ impl User {
         ).expect("User::get_keypair: private key deserialization error")
     }
 
-    pub fn into_activity(&self, conn: &Connection) -> CustomPerson {
+    pub fn to_activity(&self, conn: &Connection) -> CustomPerson {
         let mut actor = Person::default();
         actor
             .object_props
             .set_id_string(self.ap_url.clone())
-            .expect("User::into_activity: id error");
+            .expect("User::to_activity: id error");
         actor
             .object_props
             .set_name_string(self.display_name.clone())
-            .expect("User::into_activity: name error");
+            .expect("User::to_activity: name error");
         actor
             .object_props
             .set_summary_string(self.summary.get().clone())
-            .expect("User::into_activity: summary error");
+            .expect("User::to_activity: summary error");
         actor
             .object_props
             .set_url_string(self.ap_url.clone())
-            .expect("User::into_activity: url error");
+            .expect("User::to_activity: url error");
         actor
             .ap_actor_props
             .set_inbox_string(self.inbox_url.clone())
-            .expect("User::into_activity: inbox error");
+            .expect("User::to_activity: inbox error");
         actor
             .ap_actor_props
             .set_outbox_string(self.outbox_url.clone())
-            .expect("User::into_activity: outbox error");
+            .expect("User::to_activity: outbox error");
         actor
             .ap_actor_props
             .set_preferred_username_string(self.username.clone())
-            .expect("User::into_activity: preferredUsername error");
+            .expect("User::to_activity: preferredUsername error");
         actor
             .ap_actor_props
             .set_followers_string(self.followers_endpoint.clone())
-            .expect("User::into_activity: followers error");
+            .expect("User::to_activity: followers error");
 
         let mut endpoints = Endpoint::default();
         endpoints
-            .set_shared_inbox_string(ap_url(format!("{}/inbox/", BASE_URL.as_str())))
-            .expect("User::into_activity: endpoints.sharedInbox error");
+            .set_shared_inbox_string(ap_url(&format!("{}/inbox/", BASE_URL.as_str())))
+            .expect("User::to_activity: endpoints.sharedInbox error");
         actor
             .ap_actor_props
             .set_endpoints_endpoint(endpoints)
-            .expect("User::into_activity: endpoints error");
+            .expect("User::to_activity: endpoints error");
 
         let mut public_key = PublicKey::default();
         public_key
             .set_id_string(format!("{}#main-key", self.ap_url))
-            .expect("User::into_activity: publicKey.id error");
+            .expect("User::to_activity: publicKey.id error");
         public_key
             .set_owner_string(self.ap_url.clone())
-            .expect("User::into_activity: publicKey.owner error");
+            .expect("User::to_activity: publicKey.owner error");
         public_key
             .set_public_key_pem_string(self.public_key.clone())
-            .expect("User::into_activity: publicKey.publicKeyPem error");
+            .expect("User::to_activity: publicKey.publicKeyPem error");
         let mut ap_signature = ApSignature::default();
         ap_signature
             .set_public_key_publickey(public_key)
-            .expect("User::into_activity: publicKey error");
+            .expect("User::to_activity: publicKey error");
 
         let mut avatar = Image::default();
         avatar
@@ -784,13 +778,13 @@ impl User {
             .set_url_string(
                 self.avatar_id
                     .and_then(|id| Media::get(conn, id).map(|m| m.url(conn)))
-                    .unwrap_or(String::new()),
+                    .unwrap_or_default(),
             )
-            .expect("User::into_activity: icon.url error");
+            .expect("User::to_activity: icon.url error");
         actor
             .object_props
             .set_icon_object(avatar)
-            .expect("User::into_activity: icon error");
+            .expect("User::to_activity: icon error");
 
         CustomPerson::new(actor, ap_signature)
     }
@@ -798,7 +792,7 @@ impl User {
     pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
         let mut json = serde_json::to_value(self).expect("User::to_json: serializing error");
         json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
-        json["name"] = if self.display_name.len() > 0 {
+        json["name"] = if !self.display_name.is_empty() {
             json!(self.display_name)
         } else {
             json!(self.get_fqn(conn))
@@ -806,7 +800,7 @@ impl User {
         json["avatar"] = json!(
             self.avatar_id
                 .and_then(|id| Media::get(conn, id).map(|m| m.url(conn)))
-                .unwrap_or("/static/default-avatar.png".to_string())
+                .unwrap_or_else(|| String::from("/static/default-avatar.png"))
         );
         json
     }
@@ -831,7 +825,7 @@ impl User {
                     mime_type: Some(String::from("application/atom+xml")),
                     href: Some(self.get_instance(conn).compute_box(
                         USER_PREFIX,
-                        self.username.clone(),
+                        &self.username,
                         "feed.atom",
                     )),
                     template: None,
@@ -846,11 +840,11 @@ impl User {
         }
     }
 
-    pub fn from_url(conn: &Connection, url: String) -> Option<User> {
-        User::find_by_ap_url(conn, url.clone()).or_else(|| {
+    pub fn from_url(conn: &Connection, url: &str) -> Option<User> {
+        User::find_by_ap_url(conn, url).or_else(|| {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(url.as_ref())
+            if Url::parse(&url)
                 .expect("User::from_url: url error")
                 .host_str()
                 .expect("User::from_url: host error") != BASE_URL.as_str()
@@ -916,7 +910,7 @@ impl Signer for User {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: String) -> Vec<u8> {
+    fn sign(&self, to_sign: &str) -> Vec<u8> {
         let key = self.get_keypair();
         let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)
             .expect("User::sign: initialization error");
@@ -928,7 +922,7 @@ impl Signer for User {
             .expect("User::sign: finalization error")
     }
 
-    fn verify(&self, data: String, signature: Vec<u8>) -> bool {
+    fn verify(&self, data: &str, signature: &[u8]) -> bool {
         let key = PKey::from_rsa(
             Rsa::public_key_from_pem(self.public_key.as_ref())
                 .expect("User::verify: pem parsing error"),
@@ -951,7 +945,7 @@ impl NewUser {
         username: String,
         display_name: String,
         is_admin: bool,
-        summary: String,
+        summary: &str,
         email: String,
         password: String,
     ) -> User {
@@ -959,12 +953,12 @@ impl NewUser {
         User::insert(
             conn,
             NewUser {
-                username: username,
-                display_name: display_name,
+                username,
+                display_name,
                 outbox_url: String::from(""),
                 inbox_url: String::from(""),
-                is_admin: is_admin,
-                summary: SafeString::new(&summary),
+                is_admin,
+                summary: SafeString::new(summary),
                 email: Some(email),
                 hashed_password: Some(password),
                 instance_id: Instance::local_id(conn),
@@ -998,7 +992,7 @@ pub(crate) mod tests {
                 "admin".to_owned(),
                 "The admin".to_owned(),
                 true,
-                "Hello there, I'm the admin".to_owned(),
+                "Hello there, I'm the admin",
                 "admin@example.com".to_owned(),
                 "invalid_admin_password".to_owned(),
             ),
@@ -1007,7 +1001,7 @@ pub(crate) mod tests {
                 "user".to_owned(),
                 "Some user".to_owned(),
                 false,
-                "Hello there, I'm no one".to_owned(),
+                "Hello there, I'm no one",
                 "user@example.com".to_owned(),
                 "invalid_user_password".to_owned(),
             ),
@@ -1016,7 +1010,7 @@ pub(crate) mod tests {
                 "other".to_owned(),
                 "Another user".to_owned(),
                 false,
-                "Hello there, I'm someone else".to_owned(),
+                "Hello there, I'm someone else",
                 "other@example.com".to_owned(),
                 "invalid_other_password".to_owned(),
             ),
@@ -1037,25 +1031,25 @@ pub(crate) mod tests {
                 "test".to_owned(),
                 "test user".to_owned(),
                 false,
-                "Hello I'm a test".to_owned(),
+                "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password".to_owned()),
+                User::hash_pass("test_password"),
             );
             test_user.update_boxes(conn);
 
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test".to_owned(), Instance::local_id(conn))
+                User::find_by_name(conn, "test", Instance::local_id(conn))
                     .unwrap()
                     .id
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_fqn(conn, test_user.get_fqn(conn)).unwrap().id
+                User::find_by_fqn(conn, &test_user.get_fqn(conn)).unwrap().id
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_email(conn, "test@example.com".to_owned())
+                User::find_by_email(conn, "test@example.com")
                     .unwrap()
                     .id
             );
@@ -1063,7 +1057,7 @@ pub(crate) mod tests {
                 test_user.id,
                 User::find_by_ap_url(
                     conn,
-                    format!(
+                    &format!(
                         "https://{}/@/{}/",
                         Instance::get_local(conn).unwrap().public_domain,
                         "test"
@@ -1138,14 +1132,14 @@ pub(crate) mod tests {
                 "test".to_owned(),
                 "test user".to_owned(),
                 false,
-                "Hello I'm a test".to_owned(),
+                "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password".to_owned()),
+                User::hash_pass("test_password"),
             );
             test_user.update_boxes(conn);
 
-            assert!(test_user.auth("test_password".to_owned()));
-            assert!(!test_user.auth("other_password".to_owned()));
+            assert!(test_user.auth("test_password"));
+            assert!(!test_user.auth("other_password"));
 
             Ok(())
         });

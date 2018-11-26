@@ -42,7 +42,7 @@ pub struct NewApiToken {
 impl ApiToken {
     get!(api_tokens);
     insert!(api_tokens, NewApiToken);
-    find_by!(api_tokens, find_by_value, value as String);
+    find_by!(api_tokens, find_by_value, value as &str);
 
     pub fn can(&self, what: &'static str, scope: &'static str) -> bool {
         let full_scope = what.to_owned() + ":" + scope;
@@ -78,11 +78,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
 
         if auth_type == "Bearer" {
             let conn = request.guard::<DbConn>().expect("Couldn't connect to DB");
-            if let Some(token) = ApiToken::find_by_value(&*conn, val.to_string()) {
+            if let Some(token) = ApiToken::find_by_value(&*conn, val) {
                 return Outcome::Success(token);
             }
         }
 
-        return Outcome::Forward(());
+        Outcome::Forward(())
     }
 }

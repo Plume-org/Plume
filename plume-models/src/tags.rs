@@ -24,24 +24,24 @@ pub struct NewTag {
 impl Tag {
     insert!(tags, NewTag);
     get!(tags);
-    find_by!(tags, find_by_name, tag as String);
+    find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
-    pub fn into_activity(&self, conn: &Connection) -> Hashtag {
+    pub fn to_activity(&self, conn: &Connection) -> Hashtag {
         let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(format!(
+        ht.set_href_string(ap_url(&format!(
             "{}/tag/{}",
             Instance::get_local(conn)
-                .expect("Tag::into_activity: local instance not found error")
+                .expect("Tag::to_activity: local instance not found error")
                 .public_domain,
             self.tag
-        ))).expect("Tag::into_activity: href error");
+        ))).expect("Tag::to_activity: href error");
         ht.set_name_string(self.tag.clone())
-            .expect("Tag::into_activity: name error");
+            .expect("Tag::to_activity: name error");
         ht
     }
 
-    pub fn from_activity(conn: &Connection, tag: Hashtag, post: i32, is_hashtag: bool) -> Tag {
+    pub fn from_activity(conn: &Connection, tag: &Hashtag, post: i32, is_hashtag: bool) -> Tag {
         Tag::insert(
             conn,
             NewTag {
@@ -54,15 +54,15 @@ impl Tag {
 
     pub fn build_activity(conn: &Connection, tag: String) -> Hashtag {
         let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(format!(
+        ht.set_href_string(ap_url(&format!(
             "{}/tag/{}",
             Instance::get_local(conn)
-                .expect("Tag::into_activity: local instance not found error")
+                .expect("Tag::to_activity: local instance not found error")
                 .public_domain,
             tag
-        ))).expect("Tag::into_activity: href error");
+        ))).expect("Tag::to_activity: href error");
         ht.set_name_string(tag)
-            .expect("Tag::into_activity: name error");
+            .expect("Tag::to_activity: name error");
         ht
     }
 

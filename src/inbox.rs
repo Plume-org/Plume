@@ -48,11 +48,11 @@ pub trait Inbox {
                 "Delete" => {
                     let act: Delete = serde_json::from_value(act.clone())?;
                     Post::delete_id(
-                        act.delete_props
+                        &act.delete_props
                             .object_object::<Tombstone>()?
                             .object_props
                             .id_string()?,
-                        actor_id.into(),
+                        actor_id.as_ref(),
                         conn,
                     );
                     Ok(())
@@ -77,33 +77,33 @@ pub trait Inbox {
                     {
                         "Like" => {
                             likes::Like::delete_id(
-                                act.undo_props
+                                &act.undo_props
                                     .object_object::<Like>()?
                                     .object_props
                                     .id_string()?,
-                                actor_id.into(),
+                                actor_id.as_ref(),
                                 conn,
                             );
                             Ok(())
                         }
                         "Announce" => {
                             Reshare::delete_id(
-                                act.undo_props
+                                &act.undo_props
                                     .object_object::<Announce>()?
                                     .object_props
                                     .id_string()?,
-                                actor_id.into(),
+                                actor_id.as_ref(),
                                 conn,
                             );
                             Ok(())
                         }
                         "Follow" => {
                             Follow::delete_id(
-                                act.undo_props
+                                &act.undo_props
                                     .object_object::<FollowAct>()?
                                     .object_props
                                     .id_string()?,
-                                actor_id.into(),
+                                actor_id.as_ref(),
                                 conn,
                             );
                             Ok(())
@@ -113,7 +113,7 @@ pub trait Inbox {
                 }
                 "Update" => {
                     let act: Update = serde_json::from_value(act.clone())?;
-                    Post::handle_update(conn, act.update_props.object_object()?);
+                    Post::handle_update(conn, &act.update_props.object_object()?);
                     Ok(())
                 }
                 _ => Err(InboxError::InvalidType)?,

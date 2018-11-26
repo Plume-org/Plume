@@ -191,7 +191,9 @@ fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
 
 #[post("/admin/users/<id>/ban")]
 fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
-    User::get(&*conn, id).map(|u| u.delete(&*conn));
+    if let Some(u) = User::get(&*conn, id) {
+        u.delete(&*conn);
+    }
     Redirect::to(uri!(admin_users))
 }
 
@@ -203,14 +205,14 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, 
     let actor_id = activity["actor"].as_str()
         .or_else(|| activity["actor"]["id"].as_str()).ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor = User::from_url(&conn, actor_id.to_owned()).expect("instance::shared_inbox: user error");
-    if !verify_http_headers(&actor, headers.0.clone(), data).is_secure() &&
+    let actor = User::from_url(&conn, actor_id).expect("instance::shared_inbox: user error");
+    if !verify_http_headers(&actor, &headers.0, &data).is_secure() &&
         !act.clone().verify(&actor) {
         println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
         return Err(status::BadRequest(Some("Invalid signature")));
     }
 
-    if Instance::is_blocked(&*conn, actor_id.to_string()) {
+    if Instance::is_blocked(&*conn, actor_id) {
         return Ok(String::new());
     }
     let instance = Instance::get_local(&*conn).expect("instance::shared_inbox: local instance not found error");

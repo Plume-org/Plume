@@ -11,7 +11,7 @@ fn nodeinfo() -> Content<String> {
         "links": [
             {
                 "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0",
-                "href": ap_url(format!("{domain}/nodeinfo", domain = BASE_URL.as_str()))
+                "href": ap_url(&format!("{domain}/nodeinfo", domain = BASE_URL.as_str()))
             }
         ]
     }).to_string())
@@ -24,7 +24,7 @@ fn host_meta() -> String {
     <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
         <Link rel="lrdd" type="application/xrd+xml" template="{url}"/>
     </XRD>
-    "#, url = ap_url(format!("{domain}/.well-known/webfinger?resource={{uri}}", domain = BASE_URL.as_str())))
+    "#, url = ap_url(&format!("{domain}/.well-known/webfinger?resource={{uri}}", domain = BASE_URL.as_str())))
 }
 
 #[derive(FromForm)]
@@ -40,9 +40,9 @@ impl Resolver<DbConn> for WebfingerResolver {
     }
 
     fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
-        match User::find_local(&*conn, acct.clone()) {
+        match User::find_local(&*conn, &acct) {
             Some(usr) => Ok(usr.webfinger(&*conn)),
-            None => match Blog::find_local(&*conn, acct) {
+            None => match Blog::find_local(&*conn, &acct) {
                 Some(blog) => Ok(blog.webfinger(&*conn)),
                 None => Err(ResolverError::NotFound)
             }

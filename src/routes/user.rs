@@ -29,7 +29,7 @@ use Worker;
 fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
     match user {
         Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
-        None => Err(utils::requires_login("", uri!(me).into())),
+        None => Err(utils::requires_login("", uri!(me))),
     }
 }
 
@@ -45,12 +45,12 @@ fn details(
 ) -> Template {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
-        User::find_by_fqn(&*conn, name),
+        User::find_by_fqn(&*conn, &name),
         "Couldn't find requested user",
         |user| {
             let recents = Post::get_recents_for_author(&*conn, &user, 6);
             let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
-            let user_id = user.id.clone();
+            let user_id = user.id;
             let n_followers = user.get_followers(&*conn).len();
 
             if !user.get_instance(&*conn).local {
@@ -79,9 +79,9 @@ fn details(
                 worker.execute(Thunk::of(move || {
                     for user_id in user_clone.fetch_followers_ids() {
                         let follower =
-                            User::find_by_ap_url(&*fecth_followers_conn, user_id.clone())
+                            User::find_by_ap_url(&*fecth_followers_conn, &user_id)
                                 .unwrap_or_else(|| {
-                                    User::fetch_from_url(&*fecth_followers_conn, user_id)
+                                    User::fetch_from_url(&*fecth_followers_conn, &user_id)
                                         .expect("user::details: Couldn't fetch follower")
                                 });
                         follows::Follow::insert(
@@ -139,13 +139,13 @@ fn dashboard(user: User, conn: DbConn) -> Template {
 fn dashboard_auth() -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to access your dashboard",
-        uri!(dashboard).into(),
+        uri!(dashboard),
     )
 }
 
 #[post("/@/<name>/follow")]
 fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redirect> {
-    let target = User::find_by_fqn(&*conn, name.clone())?;
+    let target = User::find_by_fqn(&*conn, &name)?;
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.delete(&*conn);
         worker.execute(Thunk::of(move || {
@@ -162,7 +162,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
         );
         f.notify(&*conn);
 
-        let act = f.into_activity(&*conn);
+        let act = f.to_activity(&*conn);
         worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
     }
     Some(Redirect::to(uri!(details: name = name)))
@@ -172,7 +172,7 @@ fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<Redi
 fn follow_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to follow someone",
-        uri!(follow: name = name).into(),
+        uri!(follow: name = name),
     )
 }
 
@@ -180,10 +180,10 @@ fn follow_auth(name: String) -> Flash<Redirect> {
 fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Template {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
-        User::find_by_fqn(&*conn, name.clone()),
+        User::find_by_fqn(&*conn, &name),
         "Couldn't find requested user",
         |user| {
-            let user_id = user.id.clone();
+            let user_id = user.id;
             let followers_count = user.get_followers(&*conn).len();
 
             Template::render(
@@ -216,8 +216,8 @@ fn activity_details(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_local(&*conn, name)?;
-    Some(ActivityStream::new(user.into_activity(&*conn)))
+    let user = User::find_local(&*conn, &name)?;
+    Some(ActivityStream::new(user.to_activity(&*conn)))
 }
 
 #[get("/users/new")]
@@ -235,7 +235,7 @@ fn new(user: Option<User>, conn: DbConn) -> Template {
 
 #[get("/@/<name>/edit")]
 fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
-    if user.username == name && !name.contains("@") {
+    if user.username == name && !name.contains('@') {
         Some(Template::render(
             "users/edit",
             json!({
@@ -251,7 +251,7 @@ fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
 fn edit_auth(name: String) -> Flash<Redirect> {
     utils::requires_login(
         "You need to be logged in order to edit your profile",
-        uri!(edit: name = name).into(),
+        uri!(edit: name = name),
     )
 }
 
@@ -269,30 +269,30 @@ fn update(_name: String, conn: DbConn, user: User, data: LenientForm<UpdateUserF
         data.get()
             .display_name
             .clone()
-            .unwrap_or(user.display_name.to_string())
+            .unwrap_or_else(|| user.display_name.to_string())
             .to_string(),
         data.get()
             .email
             .clone()
-            .unwrap_or(user.email.clone().unwrap())
+            .unwrap_or_else(|| user.email.clone().unwrap())
             .to_string(),
         data.get()
             .summary
             .clone()
-            .unwrap_or(user.summary.to_string()),
+            .unwrap_or_else(|| user.summary.to_string()),
     );
     Redirect::to(uri!(me))
 }
 
 #[post("/@/<name>/delete")]
 fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
-    let account = User::find_by_fqn(&*conn, name.clone())?;
+    let account = User::find_by_fqn(&*conn, &name)?;
     if user.id == account.id {
         account.delete(&*conn);
 
-        cookies
-            .get_private(AUTH_COOKIE)
-            .map(|cookie| cookies.remove_private(cookie));
+    if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
+        cookies.remove_private(cookie);
+    }
 
         Some(Redirect::to(uri!(super::instance::index)))
     } else {
@@ -354,9 +354,9 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
                 form.username.to_string(),
                 form.username.to_string(),
                 false,
-                String::from(""),
+                "",
                 form.email.to_string(),
-                User::hash_pass(form.password.to_string()),
+                User::hash_pass(&form.password),
             ).update_boxes(&*conn);
             Redirect::to(uri!(super::session::new))
         })
@@ -374,7 +374,7 @@ fn create(conn: DbConn, data: LenientForm<NewUserForm>) -> Result<Redirect, Temp
 
 #[get("/@/<name>/outbox")]
 fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, name)?;
+    let user = User::find_local(&*conn, &name)?;
     Some(user.outbox(&*conn))
 }
 
@@ -385,9 +385,9 @@ fn inbox(
     data: String,
     headers: Headers,
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
-    let user = User::find_local(&*conn, name).ok_or(None)?;
+    let user = User::find_local(&*conn, &name).ok_or(None)?;
     let act: serde_json::Value =
-        serde_json::from_str(&data[..]).expect("user::inbox: deserialization error");
+        serde_json::from_str(&data).expect("user::inbox: deserialization error");
 
     let activity = act.clone();
     let actor_id = activity["actor"]
@@ -397,8 +397,8 @@ fn inbox(
             "Missing actor id for activity",
         ))))?;
 
-    let actor = User::from_url(&conn, actor_id.to_owned()).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, headers.0.clone(), data).is_secure()
+    let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
+    if !verify_http_headers(&actor, &headers.0, &data).is_secure()
         && !act.clone().verify(&actor)
     {
         println!(
@@ -408,7 +408,7 @@ fn inbox(
         return Err(Some(status::BadRequest(Some("Invalid signature"))));
     }
 
-    if Instance::is_blocked(&*conn, actor_id.to_string()) {
+    if Instance::is_blocked(&*conn, actor_id) {
         return Ok(String::new());
     }
     Ok(match user.received(&*conn, act) {
@@ -426,7 +426,7 @@ fn ap_followers(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, name)?;
+    let user = User::find_local(&*conn, &name)?;
     let followers = user
         .get_followers(&*conn)
         .into_iter()
@@ -448,12 +448,12 @@ fn ap_followers(
 
 #[get("/@/<name>/atom.xml")]
 fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let author = User::find_by_fqn(&*conn, name.clone())?;
+    let author = User::find_by_fqn(&*conn, &name)?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
         .id(Instance::get_local(&*conn)
             .unwrap()
-            .compute_box("~", name, "atom.xml"))
+            .compute_box("~", &name, "atom.xml"))
         .entries(
             Post::get_recents_for_author(&*conn, &author, 15)
                 .into_iter()

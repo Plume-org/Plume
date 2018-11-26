@@ -13,11 +13,11 @@ use users::User;
 use Connection;
 
 pub mod notification_kind {
-    pub const COMMENT: &'static str = "COMMENT";
-    pub const FOLLOW: &'static str = "FOLLOW";
-    pub const LIKE: &'static str = "LIKE";
-    pub const MENTION: &'static str = "MENTION";
-    pub const RESHARE: &'static str = "RESHARE";
+    pub const COMMENT: &str = "COMMENT";
+    pub const FOLLOW: &str = "FOLLOW";
+    pub const LIKE: &str = "LIKE";
+    pub const MENTION: &str = "MENTION";
+    pub const RESHARE: &str = "RESHARE";
 }
 
 #[derive(Clone, Queryable, Identifiable, Serialize)]

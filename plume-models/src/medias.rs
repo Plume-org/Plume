@@ -110,9 +110,9 @@ impl Media {
 
     pub fn url(&self, conn: &Connection) -> String {
         if self.is_remote {
-            self.remote_url.clone().unwrap_or(String::new())
+            self.remote_url.clone().unwrap_or_default()
         } else {
-            ap_url(format!(
+            ap_url(&format!(
                 "{}/{}",
                 Instance::get_local(conn)
                     .expect("Media::url: local instance not found error")
@@ -154,13 +154,13 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &Connection, image: Image) -> Option<Media> {
+    pub fn from_activity(conn: &Connection, image: &Image) -> Option<Media> {
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
             .rsplit('.')
             .next()
             .map(|ext| ext.to_owned())
-            .unwrap_or("png".to_owned());
+            .unwrap_or_else(|| String::from("png"));
         let path =
             Path::new("static")
                 .join("media")
@@ -189,7 +189,7 @@ impl Media {
                         .ok()?
                         .into_iter()
                         .next()?
-                        .into(),
+                        .as_ref(),
                 )?.id,
             },
         ))

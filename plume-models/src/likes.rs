@@ -32,11 +32,11 @@ pub struct NewLike {
 impl Like {
     insert!(likes, NewLike);
     get!(likes);
-    find_by!(likes, find_by_ap_url, ap_url as String);
+    find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
     pub fn update_ap_url(&self, conn: &Connection) {
-        if self.ap_url.len() == 0 {
+        if self.ap_url.is_empty() {
             diesel::update(self)
                 .set(likes::ap_url.eq(format!(
                     "{}/like/{}",
@@ -48,31 +48,31 @@ impl Like {
         }
     }
 
-    pub fn into_activity(&self, conn: &Connection) -> activity::Like {
+    pub fn to_activity(&self, conn: &Connection) -> activity::Like {
         let mut act = activity::Like::default();
         act.like_props
             .set_actor_link(
                 User::get(conn, self.user_id)
-                    .expect("Like::into_activity: user error")
+                    .expect("Like::to_activity: user error")
                     .into_id(),
             )
-            .expect("Like::into_activity: actor error");
+            .expect("Like::to_activity: actor error");
         act.like_props
             .set_object_link(
                 Post::get(conn, self.post_id)
-                    .expect("Like::into_activity: post error")
+                    .expect("Like::to_activity: post error")
                     .into_id(),
             )
-            .expect("Like::into_activity: object error");
+            .expect("Like::to_activity: object error");
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))
-            .expect("Like::into_activity: to error");
+            .expect("Like::to_activity: to error");
         act.object_props
             .set_cc_link_vec::<Id>(vec![])
-            .expect("Like::into_activity: cc error");
+            .expect("Like::to_activity: cc error");
         act.object_props
             .set_id_string(self.ap_url.clone())
-            .expect("Like::into_activity: id error");
+            .expect("Like::to_activity: id error");
 
         act
     }
@@ -85,23 +85,21 @@ impl FromActivity<activity::Like, Connection> for Like {
             like.like_props
                 .actor
                 .as_str()
-                .expect("Like::from_activity: actor error")
-                .to_string(),
+                .expect("Like::from_activity: actor error"),
         );
         let post = Post::find_by_ap_url(
             conn,
             like.like_props
                 .object
                 .as_str()
-                .expect("Like::from_activity: object error")
-                .to_string(),
+                .expect("Like::from_activity: object error"),
         );
         let res = Like::insert(
             conn,
             NewLike {
                 post_id: post.expect("Like::from_activity: post error").id,
                 user_id: liker.expect("Like::from_activity: user error").id,
-                ap_url: like.object_props.id_string().unwrap_or(String::from("")),
+                ap_url: like.object_props.id_string().unwrap_or_default(),
             },
         );
         res.notify(conn);
@@ -147,7 +145,7 @@ impl Deletable<Connection, activity::Undo> for Like {
             )
             .expect("Like::delete: actor error");
         act.undo_props
-            .set_object_object(self.into_activity(conn))
+            .set_object_object(self.to_activity(conn))
             .expect("Like::delete: object error");
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))
@@ -162,8 +160,8 @@ impl Deletable<Connection, activity::Undo> for Like {
         act
     }
 
-    fn delete_id(id: String, actor_id: String, conn: &Connection) {
-        if let Some(like) = Like::find_by_ap_url(conn, id.into()) {
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
+        if let Some(like) = Like::find_by_ap_url(conn, id) {
             if let Some(user) = User::find_by_ap_url(conn, actor_id) {
                 if user.id == like.user_id {
                     like.delete(conn);
