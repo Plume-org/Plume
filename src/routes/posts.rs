@@ -111,7 +111,7 @@ pub fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
             "errors": null,
             "form": null,
             "is_draft": true,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            // "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         })))
     }
 }
@@ -152,7 +152,7 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Temp
                 cover: post.cover_id,
             },
             "is_draft": !post.published,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            // "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         })))
     }
 }
@@ -249,7 +249,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             "errors": errors.errors(),
             "form": *form,
             "is_draft": form.draft,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
+            // "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
         }))))
     }
 }
@@ -364,7 +364,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
             "errors": errors.errors(),
             "form": *form,
             "is_draft": form.draft,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+            // "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
         }))))
     }
 }

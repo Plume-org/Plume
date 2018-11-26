@@ -1,0 +1,29 @@
+@use templates::base;
+@use template_utils::*;
+@use plume_models::medias::Media;
+
+@(ctx: BaseContext, medias: Vec<Media>)
+
+@:base(ctx.clone(), "Your media", {}, {}, {
+    <h1>@i18n!(ctx.1, "Your media")</h1>
+    <div>
+        <a href="/medias/new" class="inline-block button">@i18n!(ctx.1, "Upload")</a>
+    </div>
+
+    <section>
+        @if medias.is_empty() {
+            <p>@i18n!(ctx.1, "You don't have any media yet.")</p>
+        }
+        <div class="list">
+            @for media in medias {
+                <div class="card flex">
+                    @Html(media.preview_html(ctx.0))
+                    <main class="grow">
+                        <p><a href="/medias/@media.id">@media.alt_text</a></p>
+                    </main>
+                    <a href="/medias/@media.id/delete">@i18n!(ctx.1, "Delete")</a>
+                </div>
+            }
+        </div>
+    </section>
+})

@@ -158,5 +158,5 @@ macro_rules! input {
     };
     ($catalog:expr, $name:tt ($kind:tt), $label:expr, $form:expr, $err:expr) => {
         input!($catalog, $name ($kind), $label, false, "", $form, $err, "")
-    }
+    };
 }

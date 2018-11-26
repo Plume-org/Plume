@@ -11,7 +11,7 @@ pub fn list(user: User, conn: DbConn) -> Template {
     let medias = Media::for_user(&*conn, user.id);
     Template::render("medias/index", json!({
         "account": user.to_json(&*conn),
-        "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
+        // "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
     }))
 }
 
@@ -90,7 +90,7 @@ pub fn details(id: i32, user: User, conn: DbConn) -> Template {
     let media = Media::get(&*conn, id);
     Template::render("medias/details", json!({
         "account": user.to_json(&*conn),
-        "media": media.map(|m| m.to_json(&*conn))
+        // "media": media.map(|m| m.to_json(&*conn))
     }))
 }
 
