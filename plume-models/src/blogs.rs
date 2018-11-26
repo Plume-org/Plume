@@ -510,6 +510,7 @@ pub(crate) mod tests {
     use instance::tests as instance_tests;
     use tests::db;
     use users::tests as usersTests;
+    use search::tests::get_searcher;
     use Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<Blog> {
@@ -757,7 +758,7 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let blogs = fill_database(conn);
 
-            blogs[0].delete(conn);
+            blogs[0].delete(conn, &get_searcher());
             assert!(Blog::get(conn, blogs[0].id).is_none());
 
             Ok(())
@@ -768,6 +769,7 @@ pub(crate) mod tests {
     fn delete_via_user() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
+            let searcher = get_searcher();
             let user = usersTests::fill_database(conn);
             fill_database(conn);
 
@@ -819,10 +821,10 @@ pub(crate) mod tests {
                 },
             );
 
-            user[0].delete(conn);
+            user[0].delete(conn, &searcher);
             assert!(Blog::get(conn, blog[0].id).is_some());
             assert!(Blog::get(conn, blog[1].id).is_none());
-            user[1].delete(conn);
+            user[1].delete(conn, &searcher);
             assert!(Blog::get(conn, blog[0].id).is_none());
 
             Ok(())

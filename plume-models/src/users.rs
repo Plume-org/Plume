@@ -982,6 +982,7 @@ pub(crate) mod tests {
     use super::*;
     use diesel::Connection;
     use instance::{tests as instance_tests, Instance};
+    use search::tests::get_searcher;
     use tests::db;
     use Connection as Conn;
 
@@ -1078,7 +1079,7 @@ pub(crate) mod tests {
             let inserted = fill_database(conn);
 
             assert!(User::get(conn, inserted[0].id).is_some());
-            inserted[0].delete(conn);
+            inserted[0].delete(conn, &get_searcher());
             assert!(User::get(conn, inserted[0].id).is_none());
 
             Ok(())

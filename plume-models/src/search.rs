@@ -195,3 +195,27 @@ impl Searcher {
         self.index.load_searchers().unwrap();
     }
 }
+
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use super::*;
+    use std::env::current_dir;
+
+    pub(crate) fn get_searcher() -> Searcher {
+        let mut wd = current_dir().unwrap().to_path_buf();
+        if !wd.join(".git").exists() {
+            while wd.pop() {
+                if wd.join(".git").exists() {
+                    break;
+                }
+            }
+        }
+        let path = wd.join("search_index");
+        if path.exists() {
+            Searcher::open(&path)
+        } else {
+            Searcher::create(&path)
+        }.unwrap()
+    }
+}
