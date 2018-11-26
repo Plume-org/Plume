@@ -43,6 +43,7 @@ use plume_models::{DATABASE_URL, Connection,
     db_conn::DbPool, search::Searcher as UnmanagedSearcher};
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::sync::Arc;
+use std::time::Duration;
 
 mod api;
 mod inbox;
@@ -60,7 +61,14 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
-    let pool = init_pool().expect("main: database pool initialization error");
+
+    let dbpool = init_pool().expect("main: database pool initialization error");
+    let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
+    let searcher = Arc::new(UnmanagedSearcher::open(&"search_index").unwrap());
+
+    let commiter = searcher.clone();
+    workpool.execute_with_fixed_delay(Duration::from_secs(5), Duration::from_secs(60*30), move || commiter.commit());
+
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::paginated_details,
@@ -171,9 +179,9 @@ fn main() {
             routes::errors::not_found,
             routes::errors::server_error
         ])
-        .manage(pool)
-        .manage(ScheduledThreadPool::with_name("worker {}", num_cpus::get()))
-        .manage(Arc::new(UnmanagedSearcher::open(&"search_index").unwrap()))
+        .manage(dbpool)
+        .manage(workpool)
+        .manage(searcher)
         .attach(Template::custom(|engines| {
             rocket_i18n::tera(&mut engines.tera);
         }))
