@@ -1,0 +1,15 @@
+{% extends "base" %}
+{% import "macros" as macros %}
+
+{% block title %}
+Search
+{% endblock title %}
+
+{% block content %}
+    <h1>search</h1>
+
+    <form method="get">
+	<input name="q" placeholder="Your query">
+        <input type="submit" value="Search"/>
+    </form>
+{% endblock content %}

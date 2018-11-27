@@ -1747,7 +1747,7 @@ dependencies = [
  "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)",
  "rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)",
  "rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)",
- "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=2805ce5dbae4a6441208484426440885a5640a6a)",
+ "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=0dfb822d5cbf65a5eee698099368b7c0f4c61fa4)",
  "rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=75a3bfd7b847324c078a355a7f101f8241a9f59b)",
  "rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "scheduled-thread-pool 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2181,7 +2181,7 @@ dependencies = [
 [[package]]
 name = "rocket_csrf"
 version = "0.1.0"
-source = "git+https://github.com/fdb-hiroshima/rocket_csrf?rev=2805ce5dbae4a6441208484426440885a5640a6a#2805ce5dbae4a6441208484426440885a5640a6a"
+source = "git+https://github.com/fdb-hiroshima/rocket_csrf?rev=0dfb822d5cbf65a5eee698099368b7c0f4c61fa4#0dfb822d5cbf65a5eee698099368b7c0f4c61fa4"
 dependencies = [
  "csrf 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "data-encoding 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3487,7 +3487,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)" = "<none>"
 "checksum rocket_codegen_next 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)" = "<none>"
 "checksum rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)" = "<none>"
-"checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=2805ce5dbae4a6441208484426440885a5640a6a)" = "<none>"
+"checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=0dfb822d5cbf65a5eee698099368b7c0f4c61fa4)" = "<none>"
 "checksum rocket_http 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)" = "<none>"
 "checksum rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=75a3bfd7b847324c078a355a7f101f8241a9f59b)" = "<none>"
 "checksum rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d127299b02abda51634f14025aec43ae87a7aa7a95202b6a868ec852607d1451"

@@ -169,9 +169,14 @@ impl Searcher {
     }
 
     pub fn search_document(&self, conn: &Connection, query: &str, (min, max): (i32, i32)) -> Vec<Post>{
-        let post_id = self.index.schema().get_field("post_id").unwrap();
+        let schema = self.index.schema();
+        let post_id = schema.get_field("post_id").unwrap();
 
-        let query = QueryParser::for_index(&self.index, vec![])
+        let content = schema.get_field("content").unwrap();
+        let subtitle = schema.get_field("subtitle").unwrap();
+        let title = schema.get_field("title").unwrap();
+
+        let query = QueryParser::for_index(&self.index, vec![content, subtitle, title])
             .parse_query(query).unwrap();
 
         let mut collector = TopCollector::with_limit(cmp::max(1,max) as usize);

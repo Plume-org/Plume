@@ -131,6 +131,9 @@ fn main() {
             routes::reshares::create,
             routes::reshares::create_auth,
 
+            routes::search::index,
+            routes::search::query,
+
             routes::session::new,
             routes::session::new_message,
             routes::session::create,
