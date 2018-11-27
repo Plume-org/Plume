@@ -1,27 +1,25 @@
 use guid_create::GUID;
 use multipart::server::{Multipart, save::{SavedData, SaveResult}};
 use rocket::{Data, http::ContentType, response::{Redirect, status}};
-use rocket_contrib::templates::Template;
-use serde_json;
+use rocket_i18n::I18n;
 use std::fs;
 use plume_models::{db_conn::DbConn, medias::*, users::User};
+use routes::Ructe;
 
 #[get("/medias")]
-pub fn list(user: User, conn: DbConn) -> Template {
+pub fn list(user: User, conn: DbConn, intl: I18n) -> Ructe {
     let medias = Media::for_user(&*conn, user.id);
-    Template::render("medias/index", json!({
-        "account": user.to_json(&*conn),
-        // "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
-    }))
+    render!(medias::index(
+        (&*conn, &intl.catalog, Some(user)),
+        medias
+    ))
 }
 
 #[get("/medias/new")]
-pub fn new(user: User, conn: DbConn) -> Template {
-    Template::render("medias/new", json!({
-        "account": user.to_json(&*conn),
-        "form": {},
-        "errors": {}
-    }))
+pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
+    render!(medias::new(
+        (&*conn, &intl.catalog, Some(user))
+    ))
 }
 
 #[post("/medias/new", data = "<data>")]
@@ -86,12 +84,12 @@ fn read(data: &SavedData) -> String {
 }
 
 #[get("/medias/<id>")]
-pub fn details(id: i32, user: User, conn: DbConn) -> Template {
-    let media = Media::get(&*conn, id);
-    Template::render("medias/details", json!({
-        "account": user.to_json(&*conn),
-        // "media": media.map(|m| m.to_json(&*conn))
-    }))
+pub fn details(id: i32, user: User, conn: DbConn, intl: I18n) -> Ructe {
+    let media = Media::get(&*conn, id).expect("Media::details: media not found");
+    render!(medias::details(
+        (&*conn, &intl.catalog, Some(user)),
+        media
+    ))
 }
 
 #[post("/medias/<id>/delete")]
