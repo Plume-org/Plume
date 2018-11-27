@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, medias: Vec<Media>)
 
-@:base(ctx.clone(), "Your media", {}, {}, {
+@:base(ctx, "Your media", {}, {}, {
     <h1>@i18n!(ctx.1, "Your media")</h1>
     <div>
         <a href="/medias/new" class="inline-block button">@i18n!(ctx.1, "Upload")</a>

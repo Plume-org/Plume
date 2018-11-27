@@ -33,7 +33,7 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
             });
 
             render!(instance::index(
-                (&*conn, &intl.catalog, user),
+                &(&*conn, &intl.catalog, user),
                 inst,
                 User::count_local(&*conn) as i32,
                 Post::count_local(&*conn) as i32,
@@ -44,7 +44,7 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
         }
         None => {
             render!(errors::server_error(
-                (&*conn, &intl.catalog, user)
+                &(&*conn, &intl.catalog, user)
             ))
         }
     }
@@ -55,7 +55,7 @@ pub fn paginated_local(conn: DbConn, user: Option<User>, page: Page, intl: I18n)
     let instance = Instance::get_local(&*conn).expect("instance::paginated_local: local instance not found error");
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits());
     render!(instance::local(
-        (&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user),
         instance,
         articles,
         page.0,
@@ -80,7 +80,7 @@ pub fn paginated_feed(conn: DbConn, user: User, page: Page, intl: I18n) -> Ructe
     in_feed.push(user.id);
     let articles = Post::user_feed_page(&*conn, in_feed, page.limits());
     render!(instance::feed(
-        (&*conn, &intl.catalog, Some(user)),
+        &(&*conn, &intl.catalog, Some(user)),
         articles,
         page.0,
         Page::total(Post::count_local(&*conn) as i32)
@@ -96,7 +96,7 @@ pub fn federated(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
 pub fn paginated_federated(conn: DbConn, user: Option<User>, page: Page, intl: I18n) -> Ructe {
     let articles = Post::get_recents_page(&*conn, page.limits());
     render!(instance::federated(
-        (&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user),
         articles,
         page.0,
         Page::total(Post::count_local(&*conn) as i32)
@@ -107,7 +107,7 @@ pub fn paginated_federated(conn: DbConn, user: Option<User>, page: Page, intl: I
 pub fn admin(conn: DbConn, admin: Admin, intl: I18n) -> Ructe {
     let local_inst = Instance::get_local(&*conn).expect("instance::admin: local instance not found");
     render!(instance::admin(
-        (&*conn, &intl.catalog, Some(admin.0)),
+        &(&*conn, &intl.catalog, Some(admin.0)),
         local_inst.clone(),
         InstanceSettingsForm {
             name: local_inst.name.clone(),
@@ -146,7 +146,7 @@ pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSet
         .map_err(|e| {
             let local_inst = Instance::get_local(&*conn).expect("instance::update_settings: local instance not found");
             render!(instance::admin(
-                (&*conn, &intl.catalog, Some(admin.0)),
+                &(&*conn, &intl.catalog, Some(admin.0)),
                 local_inst,
                 form.clone(),
                 e
@@ -163,7 +163,7 @@ pub fn admin_instances(admin: Admin, conn: DbConn, intl: I18n) -> Ructe {
 pub fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n) -> Ructe {
     let instances = Instance::page(&*conn, page.limits());
     render!(instance::list(
-        (&*conn, &intl.catalog, Some(admin.0)),
+        &(&*conn, &intl.catalog, Some(admin.0)),
         Instance::get_local(&*conn).expect("admin_instances: local instance error"),
         instances,
         page.0,
@@ -188,7 +188,7 @@ pub fn admin_users(admin: Admin, conn: DbConn, intl: I18n) -> Ructe {
 #[get("/admin/users?<page>")]
 pub fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n) -> Ructe {
     render!(instance::users(
-        (&*conn, &intl.catalog, Some(admin.0)),
+        &(&*conn, &intl.catalog, Some(admin.0)),
         User::get_local_page(&*conn, page.limits()),
         page.0,
         Page::total(User::count_local(&*conn) as i32)
@@ -259,7 +259,7 @@ pub fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
 #[get("/about")]
 pub fn about(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
     render!(instance::about(
-        (&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user),
         Instance::get_local(&*conn).expect("Local instance not found"),
         Instance::get_local(&*conn).expect("Local instance not found").main_admin(&*conn),
         User::count_local(&*conn),

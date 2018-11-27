@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, instance: Instance, admin: User, n_users: usize, n_articles: usize, n_instances: i64)
 
-@:base(ctx.clone(), i18n!(ctx.1, "About {0}"; instance.name.clone()).as_str(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "About {0}"; instance.name.clone()).as_str(), {}, {}, {
   <h1>@i18n!(ctx.1, "About {0}"; instance.name)</h1>
   <section>
     @Html(instance.short_description_html)

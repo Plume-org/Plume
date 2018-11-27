@@ -10,7 +10,7 @@ use routes::Ructe;
 pub fn list(user: User, conn: DbConn, intl: I18n) -> Ructe {
     let medias = Media::for_user(&*conn, user.id);
     render!(medias::index(
-        (&*conn, &intl.catalog, Some(user)),
+        &(&*conn, &intl.catalog, Some(user)),
         medias
     ))
 }
@@ -18,7 +18,7 @@ pub fn list(user: User, conn: DbConn, intl: I18n) -> Ructe {
 #[get("/medias/new")]
 pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
     render!(medias::new(
-        (&*conn, &intl.catalog, Some(user))
+        &(&*conn, &intl.catalog, Some(user))
     ))
 }
 
@@ -87,7 +87,7 @@ fn read(data: &SavedData) -> String {
 pub fn details(id: i32, user: User, conn: DbConn, intl: I18n) -> Ructe {
     let media = Media::get(&*conn, id).expect("Media::details: media not found");
     render!(medias::details(
-        (&*conn, &intl.catalog, Some(user)),
+        &(&*conn, &intl.catalog, Some(user)),
         media
     ))
 }

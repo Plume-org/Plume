@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, media: Media)
 
-@:base(ctx.clone(), "Media details", {}, {}, {
+@:base(ctx, "Media details", {}, {}, {
     <h1>@i18n!(ctx.1, "Media details")</h1>
     <section>
         <a href="/medias">@i18n!(ctx.1, "Go back to the gallery")</a>

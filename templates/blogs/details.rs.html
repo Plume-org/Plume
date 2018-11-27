@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: usize, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
 
-@:base(ctx.clone(), blog.title.as_ref(), {}, {
+@:base(ctx, blog.title.as_ref(), {}, {
     <a href="/~/@fqn">@blog.title</a>
 }, {
     <h1>@blog.title <small>~@fqn</small></h1>

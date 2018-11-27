@@ -3,7 +3,7 @@
 
 @(ctx: BaseContext)
 
-@:base(ctx.clone(), "Page not found", {
+@:base(ctx, "Page not found", {
   <h1>@i18n!(ctx.1, "We couldn't find this page.")</h1>
   <p>@i18n!(ctx.1, "The link that led you here may be broken.")</p>
 })

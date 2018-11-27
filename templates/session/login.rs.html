@@ -5,7 +5,7 @@
 
 @(ctx: BaseContext, message: Option<String>, form: LoginForm, errors: ValidationErrors)
 
-@:base(ctx.clone(), "Login", {}, {}, {
+@:base(ctx, "Login", {}, {}, {
   <h1>@i18n!(ctx.1, "Login")</h1>
   @if let Some(message) = message {
     <p>@message</p>

@@ -3,6 +3,6 @@
 
 @(ctx: BaseContext, error_message: &str)
 
-@:base(ctx.clone(), error_message, {
+@:base(ctx, error_message, {
     <h1>@i18n!(ctx.1, "You are not authorized.")</h1>
 })

@@ -3,7 +3,7 @@
 
 @(ctx: BaseContext)
 
-@:base(ctx.clone(), "Media upload", {}, {}, {
+@:base(ctx, "Media upload", {}, {}, {
     <h1>@i18n!(ctx.1, "Media upload")</h1>
     <form method="post" enctype="multipart/form-data">
         <label for="alt">

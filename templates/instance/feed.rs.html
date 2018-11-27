@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, articles: Vec<Post>, page: i32, n_pages: i32)
 
-@:base(ctx.clone(), "Your feed", {}, {}, {
+@:base(ctx, "Your feed", {}, {}, {
   <h1>@i18n!(ctx.1, "Your feed")</h1>
 
     @tabs(&[

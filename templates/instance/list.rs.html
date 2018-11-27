@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, instance: Instance, instances: Vec<Instance>, page: i32, n_pages: i32)
 
-@:base(ctx.clone(), i18n!(ctx.1, "Administration of {0}"; instance.name.clone()).as_str(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name.clone()).as_str(), {}, {}, {
     <h1>@i18n!(ctx.1, "Instances")</h1>
 
     @tabs(&[

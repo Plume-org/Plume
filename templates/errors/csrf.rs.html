@@ -3,7 +3,7 @@
 
 @(ctx: BaseContext, error_message: &str)
 
-@:base(ctx.clone(), error_message, {
+@:base(ctx, error_message, {
     <h1>@i18n!(ctx.1, "Invalid CSRF token.")</h1>
     <p>@i18n!(ctx.1, r#"Something is wrong with your CSRF token.
 Make sure cookies are enabled in you browser, and try reloading this page.
