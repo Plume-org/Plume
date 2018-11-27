@@ -6,6 +6,7 @@ extern crate atom_syndication;
 extern crate canapi;
 extern crate chrono;
 extern crate colored;
+extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
@@ -42,6 +43,7 @@ use rocket_csrf::CsrfFairingBuilder;
 use plume_models::{DATABASE_URL, Connection,
     db_conn::DbPool, search::Searcher as UnmanagedSearcher};
 use scheduled_thread_pool::ScheduledThreadPool;
+use std::process::exit;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -68,6 +70,13 @@ fn main() {
 
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(Duration::from_secs(5), Duration::from_secs(60*30), move || commiter.commit());
+
+    let search_unlocker = searcher.clone();
+    ctrlc::set_handler(move || {
+        search_unlocker.drop_writer();
+        exit(0);
+    }).expect("Error setting Ctrl-c handler");
+
 
     rocket::ignite()
         .mount("/", routes![

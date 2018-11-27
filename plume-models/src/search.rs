@@ -31,7 +31,7 @@ pub enum SearcherError{
 
 pub struct Searcher {
     index: Index,
-    writer: Mutex<IndexWriter>,
+    writer: Mutex<Option<IndexWriter>>,
 }
 
 impl Searcher {
@@ -87,7 +87,7 @@ impl Searcher {
             tokenizer_manager.register("property_tokenizer", property_tokenizer);
         }//to please the borrow checker
         Ok(Self {
-            writer: Mutex::new(index.writer(50_000_000).map_err(|_| SearcherError::WriteLockAcquisitionError)?),
+            writer: Mutex::new(Some(index.writer(50_000_000).map_err(|_| SearcherError::WriteLockAcquisitionError)?)),
             index
         })
     }
@@ -110,7 +110,7 @@ impl Searcher {
         let mut writer = index.writer(50_000_000).map_err(|_| SearcherError::WriteLockAcquisitionError)?;
         writer.garbage_collect_files().map_err(|_| SearcherError::IndexEditionError)?;
         Ok(Self {
-            writer: Mutex::new(writer),
+            writer: Mutex::new(Some(writer)),
             index,
         })
     }
@@ -135,6 +135,7 @@ impl Searcher {
         let license = schema.get_field("license").unwrap();
 
         let mut writer = self.writer.lock().unwrap();
+        let writer = writer.as_mut().unwrap();
         writer.add_document(doc!(
                 post_id => i64::from(post.id),
                 author => post.get_authors(conn).into_iter().map(|u| u.get_fqn(conn)).join(" "),
@@ -157,10 +158,9 @@ impl Searcher {
         let post_id = schema.get_field("post_id").unwrap();
 
         let doc_id = Term::from_field_i64(post_id, i64::from(post.id));
-        {
-            let mut writer = self.writer.lock().unwrap();
-            writer.delete_term(doc_id);
-        }
+        let mut writer = self.writer.lock().unwrap();
+        let writer = writer.as_mut().unwrap();
+        writer.delete_term(doc_id);
     }
 
     pub fn update_document(&self, conn: &Connection, post: &Post) {
@@ -196,8 +196,13 @@ impl Searcher {
     }
 
     pub fn commit(&self) {
-        self.writer.lock().unwrap().commit().unwrap();
+        let mut writer = self.writer.lock().unwrap();
+        writer.as_mut().unwrap().commit().unwrap();
         self.index.load_searchers().unwrap();
+    }
+
+    pub fn drop_writer(&self) {
+        self.writer.lock().unwrap().take();
     }
 }
 
@@ -205,22 +210,94 @@ impl Searcher {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use std::env::current_dir;
+    use std::env::temp_dir;
+    use diesel::Connection;
+
+    use plume_common::activity_pub::inbox::Deletable;
+    use plume_common::utils::random_hex;
+    use blogs::tests::fill_database;
+    use posts::NewPost;
+    use post_authors::*;
+    use safe_string::SafeString;
+    use tests::db;
+
 
     pub(crate) fn get_searcher() -> Searcher {
-        let mut wd = current_dir().unwrap().to_path_buf();
-        if !wd.join(".git").exists() {
-            while wd.pop() {
-                if wd.join(".git").exists() {
-                    break;
-                }
-            }
-        }
-        let path = wd.join("search_index");
-        if path.exists() {
-            Searcher::open(&path)
+        let dir = temp_dir().join("plume-test");
+        if dir.exists() {
+            Searcher::open(&dir)
         } else {
-            Searcher::create(&path)
+            Searcher::create(&dir)
         }.unwrap()
+    }
+
+    #[test]
+    fn open() {
+        {get_searcher()};//make sure $tmp/plume-test-tantivy exist
+
+        let dir = temp_dir().join("plume-test");
+        Searcher::open(&dir).unwrap();
+    }
+
+    #[test]
+    fn create() {
+        let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
+
+        assert!(Searcher::open(&dir).is_err());
+        {Searcher::create(&dir).unwrap();}
+        Searcher::open(&dir).unwrap();//verify it's well created
+    }
+
+    #[test]
+    fn search() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let searcher = get_searcher();
+            let blog = &fill_database(conn)[0];
+            let author = &blog.list_authors(conn)[0];
+
+            let title = random_hex()[..8].to_owned();
+
+            let mut post = Post::insert(conn, NewPost {
+                blog_id: blog.id,
+                slug: title.clone(),
+                title: title.clone(),
+                content: SafeString::new(""),
+                published: true,
+                license: "CC-BY-SA".to_owned(),
+                ap_url: "".to_owned(),
+                creation_date: None,
+                subtitle: "".to_owned(),
+                source: "".to_owned(),
+                cover_id: None,
+            }, &searcher);
+            PostAuthor::insert(conn, NewPostAuthor {
+                post_id: post.id,
+                author_id: author.id,
+            });
+
+            searcher.commit();
+            assert_eq!(searcher.search_document(conn, &title, (0,1))[0].id, post.id);
+
+            let newtitle = random_hex()[..8].to_owned();
+            post.title = newtitle.clone();
+            post.update(conn, &searcher);
+            searcher.commit();
+            assert_eq!(searcher.search_document(conn, &newtitle, (0,1))[0].id, post.id);
+            assert!(searcher.search_document(conn, &title, (0,1)).is_empty());
+
+            post.delete(&(conn, &searcher));
+            searcher.commit();
+            assert!(searcher.search_document(conn, &newtitle, (0,1)).is_empty());
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn drop_writer() {
+        let searcher = get_searcher();
+        searcher.drop_writer();
+        get_searcher();
     }
 }

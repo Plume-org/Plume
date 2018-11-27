@@ -32,6 +32,10 @@ path = "src/main.rs"
 features = ["serde"]
 version = "0.4"
 
+[dependencies.ctrlc]
+features = ["termination"]
+version = "3.1.1"
+
 [dependencies.diesel]
 features = ["r2d2", "chrono"]
 version = "*"
