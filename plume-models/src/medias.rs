@@ -35,6 +35,7 @@ pub struct NewMedia {
     pub owner_id: i32,
 }
 
+#[derive(PartialEq)]
 pub enum MediaCategory {
     Image,
     Audio,

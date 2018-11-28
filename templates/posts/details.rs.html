@@ -1,0 +1,160 @@
+@use templates::{base, partials::comment};
+@use template_utils::*;
+@use plume_models::blogs::Blog;
+@use plume_models::comments::Comment;
+@use plume_models::mentions::Mention;
+@use plume_models::posts::Post;
+@use plume_models::tags::Tag;
+@use plume_models::users::User;
+@use validator::ValidationErrors;
+@use routes::comments::NewCommentForm;
+
+@(ctx: BaseContext, article: Post, blog: Blog, comment_form: NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<Comment>, previous_comment: Option<Comment>, n_likes: i32, n_reshares: i32, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
+
+@:base(ctx, &article.title.clone(), {
+    <meta property="og:title" content="article.title"/>
+    <meta property="og:type" content="article"/>
+    @if article.cover_id.is_some() {
+        <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
+    }
+    <meta property="og:url" content="@Html(article.url(ctx.0))"/>
+    <meta property="og:description" content="@article.subtitle"/>
+}, {
+    <a href="/~/@blog.get_fqn(ctx.0)">@blog.title</a>
+}, {
+    <h1 class="article">@&article.title</h1>
+    <h2 class="article">@&article.subtitle</h2>
+    <div class="article-info">
+        <span class="author">
+            @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"/@/{}/\">{}</a>", author.get_fqn(ctx.0), author.name(ctx.0))))
+        </span>
+        &mdash;
+        <span class="date">@article.creation_date.format("%B %e, %Y")</span>
+        @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
+            &mdash;
+            <a href="@article.url(ctx.0)/edit">@i18n!(ctx.1, "Edit")</a>
+            &mdash;
+            <form class="inline" method="post" action="@article.url(ctx.0)/delete">
+                <input onclick="return confirm('Are you sure you?')" type="submit" value="@i18n!(ctx.1, "Delete this article")">
+            </form>
+        }
+        @if !article.published {
+            <span class="badge">@i18n!(ctx.1, "Draft")</span>
+        }
+    </div>
+    @if article.cover_id.is_some() {
+        <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
+    }
+    <article>
+        @Html(&article.content)
+    </article>
+
+    <div class="article-meta">
+        <p>@i18n!(ctx.1, "This article is under the {0} license."; &article.license)</p>
+        <ul class="tags">
+            @for tag in tags {
+		        @if !tag.is_hashtag {
+                    <li><a href="/tag/@tag.tag">@tag.tag</a></li>
+                }
+            }
+        </ul>
+        <div class="flex">
+            @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
+            <div class="grow">
+                <h2><a href="/@@/@author.get_fqn(ctx.0)">@author.name(ctx.0)</a></h2>
+                <p>@Html(&author.summary)</h2>
+            </div>
+            <a href="/@@/@author.get_fqn(ctx.0)/follow" class="button">
+                @if is_following {
+                    @i18n!(ctx.1, "Unfollow")
+                } else {
+                    @i18n!(ctx.1, "Follow")
+                }
+            </a>
+        </div>
+
+        @if ctx.2.is_some() {
+            <div class="actions">
+                <form class="likes" action="@article.url(ctx.0)/like" method="POST">
+                    <p aria-label="@i18n!(ctx.1, "One like", "{0} likes", &n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes", n_likes)">
+                        @n_likes
+                    </p>
+
+                    @if has_liked {
+                        <button type="submit" class="action liked">@icon!("heart") @i18n!(ctx.1, "I don't like this anymore")</button>
+                    } else {
+                        <button type="submit" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</button>
+                    }
+                </form>
+                <form class="reshares" action="@article.url(ctx.0)/reshare" method="POST">
+                    <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost", &n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts", n_reshares)">
+                        @n_reshares
+                    </p>
+
+                    @if has_reshared {
+                        <button type="submit" class="action reshared">@icon!("repeat") @i18n!(ctx.1, "I don't want to boost this anymore")</button>
+                    } else {
+                        <button type="submit" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</button>
+                    }
+                </form>
+            </div>
+        } else {
+            <p class="center">@i18n!(ctx.1, "Login or use your Fediverse account to interact with this article")</p>
+            <div class="actions">
+                <div class="likes">
+                    <p aria-label="@i18n!(ctx.1, "One like", "{0} likes", &n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes", n_likes)">
+                        @n_likes
+                    </p>
+                    <a href="/login?m=Login%20to%20like" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
+                </div>
+
+                <div class="reshares">
+                    <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost", &n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts", n_reshares)">
+                        @n_reshares
+                    </p>
+                    <a href="/login?m=Login%20to%20boost" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</a>
+                </div>
+            </div>
+        }
+
+        <div class="comments">
+            <h2>@i18n!(ctx.1, "Comments")</h2>
+
+            @if let Some(ref account) = ctx.2 {
+                <form method="post" action="@article.url(ctx.0)/comment">
+                    @input!(ctx.1, warning (optional text), "Content warning", comment_form, comment_errors, "")
+
+                    <label for="plume-editor">@i18n!(ctx.1, "Your comment")</label>
+                    @if let Some(ref prev) = previous_comment {
+                        <input type="hidden" name="responding_to" value="@prev.id"/>
+                    }
+                    <textarea id="plume-editor" name="content">
+                        @if let Some(prev) = previous_comment {
+                            @prev.get_author(ctx.0).get_fqn(ctx.0)
+
+                            @(Mention::list_for_comment(ctx.0, prev.id)
+                                .into_iter()
+                                .map(|m| m.get_mentioned(ctx.0).map(|u| u.get_fqn(ctx.0)).unwrap_or_default())
+                                .filter_map(|m| if m != account.get_fqn(ctx.0) {
+                                    Some(format!("@{}", m))
+                                } else {
+                                    None
+                                }).collect::<Vec<String>>().join(" "))
+                        }
+                    </textarea>
+                    <input type="submit" value="@i18n!(ctx.1, "Submit comment")" />
+                </form>
+            }
+
+            @if !comments.is_empty() {
+                <div class="list">
+                    @for comm in comments {
+                        @:comment(ctx, &comm, comm.get_author(ctx.0))
+                    }
+                </div>
+            } else {
+                <p class="center">@i18n!(ctx.1, "No comments yet. Be the first to react!")</p>
+            }
+        </div>
+    </div>
+})

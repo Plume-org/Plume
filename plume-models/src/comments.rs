@@ -68,6 +68,12 @@ impl Comment {
             .len() // TODO count in database?
     }
 
+    pub fn get_responses(&self, conn: &Connection) -> Vec<Comment> {
+        comments::table.filter(comments::in_response_to_id.eq(self.id))
+            .load::<Comment>(conn)
+            .expect("Comment::get_responses: loading error")
+    }
+
     pub fn to_json(&self, conn: &Connection, others: &[Comment]) -> serde_json::Value {
         let mut json = serde_json::to_value(self).expect("Comment::to_json: serialization error");
         json["author"] = self.get_author(conn).to_json(conn);

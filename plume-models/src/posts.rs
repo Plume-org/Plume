@@ -755,6 +755,11 @@ impl Post {
         })
     }
 
+    pub fn url(&self, conn: &Connection) -> String {
+        let blog = self.get_blog(conn);
+        format!("/~/{}/{}/", blog.get_fqn(conn), self.slug)
+    }
+
     pub fn compute_id(&self, conn: &Connection) -> String {
         ap_url(&format!(
             "{}/~/{}/{}/",
@@ -762,6 +767,10 @@ impl Post {
             self.get_blog(conn).get_fqn(conn),
             self.slug
         ))
+    }
+
+    pub fn cover_url(&self, conn: &Connection) -> Option<String> {
+        self.cover_id.and_then(|i| Media::get(conn, i)).map(|c| c.url(conn))
     }
 }
 

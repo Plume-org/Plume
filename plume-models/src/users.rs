@@ -26,6 +26,7 @@ use rocket::{
     request::{self, FromRequest, Request},
 };
 use serde_json;
+use std::cmp::PartialEq;
 use url::Url;
 use webfinger::*;
 
@@ -943,6 +944,12 @@ impl Signer for User {
         verifier
             .verify(&signature)
             .expect("User::verify: finalization error")
+    }
+}
+
+impl PartialEq for User {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
     }
 }
 
