@@ -20,7 +20,7 @@ use plume_models::{
     users::User
 };
 
-#[derive(FromForm, Debug, Validate, Serialize)]
+#[derive(Default, FromForm, Debug, Validate, Serialize)]
 pub struct NewCommentForm {
     pub responding_to: Option<i32>,
     #[validate(length(min = "1", message = "Your comment can't be empty"))]

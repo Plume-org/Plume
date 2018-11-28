@@ -5,7 +5,7 @@
 @use plume_models::medias::*;
 @use routes::posts::NewPostForm;
 
-@(ctx: BaseContext, editing: bool, form: NewPostForm, errors: ValidationErrors, default_license: String, medias: Vec<Media>, is_draft: bool)
+@(ctx: BaseContext, editing: bool, form: &NewPostForm, errors: ValidationErrors, default_license: String, medias: Vec<Media>, is_draft: bool)
 
 @:base(ctx, &i18n!(ctx.1, if editing { "Edit {0}" } else { "New post" }; &form.title), {}, {}, {
     <h1>
