@@ -6,8 +6,9 @@ use rocket::{
     response::{status, Content, Flash, Redirect},
 };
 use rocket_contrib::templates::Template;
+use rocket_i18n::I18n;
 use serde_json;
-use validator::{Validate, ValidationError};
+use validator::{Validate, ValidationError, ValidationErrors};
 use workerpool::thunk::*;
 
 use inbox::Inbox;
@@ -22,7 +23,7 @@ use plume_models::{
     blogs::Blog, db_conn::DbConn, follows, headers::Headers, instance::Instance, posts::Post,
     reshares::Reshare, users::*,
 };
-use routes::Page;
+use routes::{Page, Ructe};
 use Worker;
 
 #[get("/me")]
@@ -42,7 +43,8 @@ pub fn details(
     fecth_articles_conn: DbConn,
     fecth_followers_conn: DbConn,
     update_conn: DbConn,
-) -> Result<Template, Template> {
+    intl: I18n,
+) -> Result<Ructe, Template> {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
         User::find_by_fqn(&*conn, &name),
@@ -50,8 +52,6 @@ pub fn details(
         |user| {
             let recents = Post::get_recents_for_author(&*conn, &user, 6);
             let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
-            let user_id = user.id;
-            let n_followers = user.get_followers(&*conn).len();
 
             if !user.get_instance(&*conn).local {
                 // Fetch new articles
@@ -104,35 +104,27 @@ pub fn details(
                 }
             }
 
-            Ok(Template::render(
-                "users/details",
-                json!({
-                    "user": user.to_json(&*conn),
-                    "instance_url": user.get_instance(&*conn).public_domain,
-                    "is_remote": user.instance_id != Instance::local_id(&*conn),
-                    "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-                    "account": account.clone().map(|a| a.to_json(&*conn)),
-                    "recents": recents.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-                    "reshares": reshares.into_iter().map(|r| r.get_post(&*conn).unwrap().to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-                    "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-                    "n_followers": n_followers
-                }),
-            ))
+            Ok(render!(users::details(
+                &(&*conn, &intl.catalog, account.clone()),
+                user.clone(),
+                account.map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+                user.instance_id != Instance::local_id(&*conn),
+                user.get_instance(&*conn).public_domain,
+                recents,
+                reshares.into_iter().map(|r| r.get_post(&*conn).expect("user::details: Reshared post error")).collect()
+            )))
         }
     )
 }
 
 #[get("/dashboard")]
-pub fn dashboard(user: User, conn: DbConn) -> Template {
+pub fn dashboard(user: User, conn: DbConn, intl: I18n) -> Ructe {
     let blogs = Blog::find_for_author(&*conn, &user);
-    Template::render(
-        "users/dashboard",
-        json!({
-            "account": user.to_json(&*conn),
-            "blogs": blogs,
-            "drafts": Post::drafts_by_author(&*conn, &user).into_iter().map(|a| a.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-        }),
-    )
+    render!(users::dashboard(
+        &(&*conn, &intl.catalog, Some(user.clone())),
+        blogs,
+        Post::drafts_by_author(&*conn, &user)
+    ))
 }
 
 #[get("/dashboard", rank = 2)]
@@ -177,37 +169,31 @@ pub fn follow_auth(name: String) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>")]
-pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page) -> Result<Template, Template> {
+pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page, intl: I18n) -> Result<Ructe, Template> {
     may_fail!(
         account.map(|a| a.to_json(&*conn)),
         User::find_by_fqn(&*conn, &name),
         "Couldn't find requested user",
         |user| {
-            let user_id = user.id;
-            let followers_count = user.get_followers(&*conn).len();
+            let followers_count = user.get_followers(&*conn).len(); // TODO: count in DB
 
-            Ok(Template::render(
-                "users/followers",
-                json!({
-                    "user": user.to_json(&*conn),
-                    "instance_url": user.get_instance(&*conn).public_domain,
-                    "is_remote": user.instance_id != Instance::local_id(&*conn),
-                    "follows": account.clone().map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-                    "followers": user.get_followers_page(&*conn, page.limits()).into_iter().map(|f| f.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-                    "account": account.clone().map(|a| a.to_json(&*conn)),
-                    "is_self": account.map(|a| a.id == user_id).unwrap_or(false),
-                    "n_followers": followers_count,
-                    "page": page.0,
-                    "n_pages": Page::total(followers_count as i32)
-                }),
-            ))
+            Ok(render!(users::followers(
+                &(&*conn, &intl.catalog, account.clone()),
+                user.clone(),
+                account.map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+                user.instance_id != Instance::local_id(&*conn),
+                user.get_instance(&*conn).public_domain,
+                user.get_followers_page(&*conn, page.limits()),
+                page.0,
+                Page::total(followers_count as i32)
+            )))
         }
     )
 }
 
 #[get("/@/<name>/followers", rank = 2)]
-pub fn followers(name: String, conn: DbConn, account: Option<User>) -> Result<Template, Template> {
-    followers_paginated(name, conn, account, Page::first())
+pub fn followers(name: String, conn: DbConn, account: Option<User>, intl: I18n) -> Result<Ructe, Template> {
+    followers_paginated(name, conn, account, Page::first(), intl)
 }
 
 #[get("/@/<name>", rank = 1)]
@@ -221,27 +207,27 @@ pub fn activity_details(
 }
 
 #[get("/users/new")]
-pub fn new(user: Option<User>, conn: DbConn) -> Template {
-    Template::render(
-        "users/new",
-        json!({
-            "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
-            "account": user.map(|u| u.to_json(&*conn)),
-            "errors": null,
-            "form": null
-        }),
-    )
+pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
+    render!(users::new(
+        &(&*conn, &intl.catalog, user),
+        Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
+        &NewUserForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
 #[get("/@/<name>/edit")]
-pub fn edit(name: String, user: User, conn: DbConn) -> Option<Template> {
+pub fn edit(name: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe> {
     if user.username == name && !name.contains('@') {
-        Some(Template::render(
-            "users/edit",
-            json!({
-                "account": user.to_json(&*conn)
-            }),
-        ))
+        Some(render!(users::edit(
+            &(&*conn, &intl.catalog, Some(user.clone())),
+            UpdateUserForm {
+                display_name: user.display_name.clone(),
+                email: user.email.clone().unwrap_or_default(),
+                summary: user.summary.to_string(),
+            },
+            ValidationErrors::default()
+        )))
     } else {
         None
     }
@@ -257,26 +243,18 @@ pub fn edit_auth(name: String) -> Flash<Redirect> {
 
 #[derive(FromForm)]
 pub struct UpdateUserForm {
-    display_name: Option<String>,
-    email: Option<String>,
-    summary: Option<String>,
+    pub display_name: String,
+    pub email: String,
+    pub summary: String,
 }
 
 #[put("/@/<_name>/edit", data = "<form>")]
 pub fn update(_name: String, conn: DbConn, user: User, form: LenientForm<UpdateUserForm>) -> Redirect {
     user.update(
         &*conn,
-        form.display_name
-            .clone()
-            .unwrap_or_else(|| user.display_name.to_string())
-            .to_string(),
-        form.email
-            .clone()
-            .unwrap_or_else(|| user.email.clone().unwrap())
-            .to_string(),
-        form.summary
-            .clone()
-            .unwrap_or_else(|| user.summary.to_string()),
+        if !form.display_name.is_empty() { form.display_name.clone() } else { user.display_name.clone() },
+        if !form.email.is_empty() { form.email.clone() } else { user.email.clone().unwrap_or_default() },
+        if !form.summary.is_empty() { form.summary.clone() } else { user.summary.to_string() },
     );
     Redirect::to(uri!(me))
 }
@@ -297,7 +275,7 @@ pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> O
     }
 }
 
-#[derive(FromForm, Serialize, Validate)]
+#[derive(Default, FromForm, Serialize, Validate)]
 #[validate(
     schema(
         function = "passwords_match",
@@ -307,23 +285,23 @@ pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> O
 )]
 pub struct NewUserForm {
     #[validate(length(min = "1", message = "Username can't be empty"))]
-    username: String,
+    pub username: String,
     #[validate(email(message = "Invalid email"))]
-    email: String,
+    pub email: String,
     #[validate(
         length(
             min = "8",
             message = "Password should be at least 8 characters long"
         )
     )]
-    password: String,
+    pub password: String,
     #[validate(
         length(
             min = "8",
             message = "Password should be at least 8 characters long"
         )
     )]
-    password_confirmation: String,
+    pub password_confirmation: String,
 }
 
 pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
@@ -335,7 +313,7 @@ pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
 }
 
 #[post("/users/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewUserForm>) -> Result<Redirect, Template> {
+pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Result<Redirect, Ructe> {
     if !Instance::get_local(&*conn)
         .map(|i| i.open_registrations)
         .unwrap_or(true)
@@ -356,15 +334,13 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>) -> Result<Redirect, 
             ).update_boxes(&*conn);
             Redirect::to(uri!(super::session::new))
         })
-        .map_err(|e| {
-            Template::render(
-                "users/new",
-                json!({
-                    "enabled": Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
-                    "errors": e.errors(),
-                    "form": *form
-                })
-            )
+        .map_err(|err| {
+            render!(users::new(
+                &(&*conn, &intl.catalog, None),
+                Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
+                &*form,
+                err
+            ))
         })
 }
 
