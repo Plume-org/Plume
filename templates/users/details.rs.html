@@ -1,4 +1,4 @@
-@use templates::{base, users::header};
+@use templates::{base, partials::post_card, users::header};
 @use template_utils::*;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
@@ -20,7 +20,7 @@
         </h2>
         <div class="cards">
             @for article in recents {
-                @post_card(article)
+                @:post_card(ctx, article)
             }
         </div>
     }
@@ -29,7 +29,7 @@
         <h2>@i18n!(ctx.1, "Recently boosted")</h2>
         <div class="cards">
             @for article in reshares {
-                @post_card(article)
+                @:post_card(ctx, article)
             }
         </div>
     }

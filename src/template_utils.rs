@@ -1,4 +1,4 @@
-use plume_models::{Connection, posts::Post, users::User};
+use plume_models::{Connection, users::User};
 use rocket_i18n::Catalog;
 use templates::Html;
 
@@ -7,7 +7,6 @@ pub type BaseContext<'a> = &'a(&'a Connection, &'a Catalog, Option<User>);
 pub enum Size {
     Small,
     Medium,
-    Big,
 }
 
 impl Size {
@@ -15,7 +14,6 @@ impl Size {
         match self {
             Size::Small => "small",
             Size::Medium => "medium",
-            Size::Big => "big",
         }
     }
 }
@@ -35,10 +33,6 @@ pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &C
     ))
 }
 
-pub fn post_card(article: Post) -> Html<&'static str> {
-    Html("todo")
-}
-
 pub fn tabs(links: &[(&str, &str, bool)]) -> Html<String> {
     let mut res = String::from(r#"<div class="tabs">"#);
     for (url, title, selected) in links {
@@ -55,36 +49,6 @@ pub fn tabs(links: &[(&str, &str, bool)]) -> Html<String> {
     res.push_str("</div>");
     Html(res)
 }
-
-/*{% macro post_card(article) %}
-    <div class="card">
-        {% if article.cover %}
-            <div class="cover" style="background-image: url('{{ article.cover.url }}')"></div>
-        {% endif %}
-        <h3><a href="{{ article.url }}">{{ article.post.title }}</a></h3>
-        <main>
-            <p>
-                {% if article.post.subtitle | length > 0 %}
-                    {{ article.post.subtitle }}
-                {% else %}
-                    {{ article.post.content | safe | striptags | truncate(length=200) }}
-                {% endif %}
-            </p>
-        </main>
-        <p class="author">
-        	{{ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}" | _(
-                link_1='<a href="/@/',
-                link_2=article.author.fqn,
-                link_3='/">',
-                name=article.author.name,
-                link_4="</a>")
-            }}
-            {% if article.post.published %}⋅ {{ article.date | date(format="%B %e") }}{% endif %}
-            ⋅ <a href="/~/{{ article.blog.fqn }}/">{{ article.blog.title }}</a>
-            {% if not article.post.published %}⋅ {{ "Draft" | _ }}{% endif %}
-        </p>
-    </div>
-{% endmacro post_card %}*/
 
 pub fn paginate(catalog: &Catalog, page: i32, total: i32) -> Html<String> {
     let mut res = String::new();

@@ -1,4 +1,4 @@
-@use templates::base;
+@use templates::{base, partials::post_card};
 @use template_utils::*;
 @use plume_models::posts::Post;
 
@@ -17,7 +17,7 @@
     @if !articles.is_empty() {
         <div class="cards">
             @for article in articles {
-                @post_card(article)
+                @:post_card(ctx, article)
             }
         </div>
     } else {

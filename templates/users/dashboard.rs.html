@@ -1,4 +1,4 @@
-@use templates::base;
+@use templates::{base, partials::post_card};
 @use template_utils::*;
 @use plume_models::blogs::Blog;
 @use plume_models::posts::Post;
@@ -28,7 +28,7 @@
             <h2>@i18n!(ctx.1, "Your Drafts")</h2>
             <div class="cards">
                 @for draft in drafts {
-                    @post_card(draft)
+                    @:post_card(ctx, draft)
                 }
             </div>
         </section>

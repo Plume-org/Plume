@@ -1,7 +1,7 @@
 @use plume_models::blogs::Blog;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
-@use templates::base;
+@use templates::{base, partials::post_card};
 @use template_utils::*;
 
 @(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: usize, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
@@ -34,7 +34,7 @@
         }
         <div class="cards">
             @for article in posts {
-                @post_card(article)
+                @:post_card(ctx, article)
             }
         </div>
         @paginate(ctx.1, page, n_pages)

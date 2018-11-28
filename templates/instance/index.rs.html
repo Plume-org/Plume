@@ -8,7 +8,7 @@
 @:base(ctx, instance.name.clone().as_ref(), {}, {}, {
   <h1>@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())</h1>
 
-     @if let Some(_) = ctx.2 {
+     @if ctx.2.is_some() {
         @tabs(&[
             ("/", i18n!(ctx.1, "Latest articles"), true),
             ("/feed", i18n!(ctx.1, "Your feed"), false),
@@ -16,9 +16,9 @@
             ("/local", i18n!(ctx.1, "Local feed"), false),
         ])
 
-        @:home_feed(ctx.1, user_feed.unwrap_or_default(), "/feed", "Your feed")
-        @:home_feed(ctx.1, federated, "/federated", "Federated feed")
-        @:home_feed(ctx.1, local, "/local", "Local feed")
+        @:home_feed(ctx, user_feed.unwrap_or_default(), "/feed", "Your feed")
+        @:home_feed(ctx, federated, "/federated", "Federated feed")
+        @:home_feed(ctx, local, "/local", "Local feed")
         @:instance_description(ctx, instance, n_users, n_articles)
     } else {
         @tabs(&[
@@ -27,8 +27,8 @@
               ("/local", i18n!(ctx.1, "Local feed"), false),
         ])
 
-        @:home_feed(ctx.1, federated, "/federated", "Federated feed")
-        @:home_feed(ctx.1, local, "/local", "Local feed")
+        @:home_feed(ctx, federated, "/federated", "Federated feed")
+        @:home_feed(ctx, local, "/local", "Local feed")
         @:instance_description(ctx, instance, n_users, n_articles)
     }
 })
