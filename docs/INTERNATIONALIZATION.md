@@ -23,16 +23,21 @@ Sometimes, strings may change depending on a number (for instance, a post counte
 
 ```
 msgid "One post"
-msgid_plural "{{ count }} posts"
+msgid_plural "{0} posts"
 msgstr[0] ""
 msgstr[1] ""
 ```
 
-Then you should fill the two `msgstr` field, one with the singular form, the second with the plural one. If your language as more than two forms, you can add another one by following the same pattern (`msgstr[n] ""`).
+Then you should fill the two `msgstr` field, one with the singular form,
+the second with the plural one. If your language as more than two forms,
+you can add another one by following the same pattern (`msgstr[n] ""`).
 
 ## Interpolation
 
-Strings you translate may contain data from Plume (a username for instance). To tell Plume where to put these data, surround their identifier by `{{` and `}}`. The identifier is also present in this form in the English string to translate (this what you can see above, with the `{{ count }} posts` message).
+Strings you translate may contain data from Plume (a username for instance).
+To tell Plume where to put these data, surround the number that identifies
+them by `{` and `}`. The identifier is also present in this form in the English
+string to translate (this what you can see above, with the `{0} posts` message).
 
 ## Note
 
