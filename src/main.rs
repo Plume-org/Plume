@@ -169,9 +169,6 @@ fn main() {
         ])
         .manage(pool)
         .manage(Pool::<ThunkWorker<()>>::new(4))
-        // .attach(Template::custom(|engines| {
-            // rocket_i18n::tera(&mut engines.tera);
-        // }))
         .manage(rocket_i18n::i18n("plume", vec![ "de", "en", "fr", "gl", "it", "nb", "pl", "ru" ]))
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)

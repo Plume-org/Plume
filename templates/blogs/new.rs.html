@@ -3,7 +3,7 @@
 @use template_utils::*;
 @use routes::blogs::NewBlogForm;
 
-@(ctx: BaseContext, form: NewBlogForm, errors: ValidationErrors)
+@(ctx: BaseContext, form: &NewBlogForm, errors: ValidationErrors)
 
 @:base(ctx, "New Blog", {}, {}, {
   <h1>@i18n!(ctx.1, "Create a blog")</h1>

@@ -45,7 +45,7 @@ pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<U
             &(&*conn, &intl.catalog, user.clone()),
             post.clone(),
             blog,
-            NewCommentForm::default(),
+            &NewCommentForm::default(),
             ValidationErrors::default(),
             Tag::for_post(&*conn, post.id),
             comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),

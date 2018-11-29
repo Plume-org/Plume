@@ -5,7 +5,6 @@ use rocket::{
     request::LenientForm,
     response::{Redirect, Flash, content::Content}
 };
-use rocket_contrib::templates::Template;
 use rocket_i18n::I18n;
 use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
@@ -58,7 +57,7 @@ pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<Ac
 pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
     render!(blogs::new(
         &(&*conn, &intl.catalog, Some(user)),
-        NewBlogForm::default(),
+        &NewBlogForm::default(),
         ValidationErrors::default()
     ))
 }
@@ -87,7 +86,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User) -> Result<Redirect, Template> {
+pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I18n) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
 
     let mut errors = match form.validate() {
@@ -119,12 +118,11 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User) -> Resul
 
         Ok(Redirect::to(uri!(details: name = slug.clone())))
     } else {
-        println!("{:?}", errors);
-        Err(Template::render("blogs/new", json!({
-            "account": user.to_json(&*conn),
-            "errors": errors.errors(),
-            "form": *form,
-        })))
+        Err(render!(blogs::new(
+            &(&*conn, &intl.catalog, Some(user)),
+            &*form,
+            errors
+        )))
     }
 }
 
