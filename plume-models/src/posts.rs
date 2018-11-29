@@ -757,7 +757,7 @@ impl Post {
 
     pub fn url(&self, conn: &Connection) -> String {
         let blog = self.get_blog(conn);
-        format!("/~/{}/{}/", blog.get_fqn(conn), self.slug)
+        format!("/~/{}/{}", blog.get_fqn(conn), self.slug)
     }
 
     pub fn compute_id(&self, conn: &Connection) -> String {
