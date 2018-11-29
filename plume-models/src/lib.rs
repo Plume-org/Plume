@@ -1,5 +1,4 @@
 #![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
-#![feature(crate_in_paths)]
 
 extern crate activitypub;
 extern crate ammonia;
