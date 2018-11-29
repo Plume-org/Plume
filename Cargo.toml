@@ -12,7 +12,8 @@ failure = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
 rocket = "0.4.0-rc.1"
-rocket_contrib = { version = "0.4.0-rc.1", features = ["json", "templates"] }
+rocket_contrib = { version = "0.4.0-rc.1", features = ["json"] }
+rocket_i18n = "0.3"
 rpassword = "2.0"
 serde = "1.0"
 serde_derive = "1.0"
@@ -54,14 +55,9 @@ path = "plume-models"
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
 rev = "e6ead8051cab12a95ea9dc88db3a107f0b5f7533"
 
-[dependencies.rocket_i18n]
-# git = "https://github.com/BaptisteGelez/rocket_i18n"
-# rev = "f8f9913f6f7008f65ae155dcd0e730377db6edae"
-path = "../rocket_i18n"
-
 [build-dependencies]
 ructe = "0.5.2"
-rocket_i18n = { path = "../rocket_i18n", features = ["build"] }
+rocket_i18n = { version = "0.3", features = ["build"] }
 
 [features]
 default = ["postgres"]

@@ -66,7 +66,7 @@ msgstr ""
 msgid "Notifications"
 msgstr "Notifiche"
 
-msgid "Written by {0}{1}{2}"
+msgid "Written by {0}"
 msgstr ""
 
 msgid "This article is under the {0} license."
@@ -252,7 +252,7 @@ msgstr "Devi effettuare l'accesso per seguire qualcuno"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Devi effettuare l'accesso per modificare il tuo profilo"
 
-msgid "By {0}{1}{2}"
+msgid "By {0}"
 msgstr ""
 
 msgid "{0} boosted your article"
