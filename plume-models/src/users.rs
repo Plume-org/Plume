@@ -790,18 +790,6 @@ impl User {
         CustomPerson::new(actor, ap_signature)
     }
 
-    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).expect("User::to_json: serializing error");
-        json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
-        json["name"] = if !self.display_name.is_empty() {
-            json!(self.display_name)
-        } else {
-            json!(self.get_fqn(conn))
-        };
-        json["avatar"] = json!({});
-        json
-    }
-
     pub fn avatar_url(&self, conn: &Connection) -> String {
         self.avatar_id.and_then(|id| Media::get(conn, id).map(|m| m.url(conn))).unwrap_or("/static/default-avatar.png".to_string())
     }

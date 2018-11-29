@@ -88,9 +88,8 @@ impl Notification {
             notification_kind::MENTION => Mention::get(conn, self.object_id).map(|mention|
                 mention.get_post(conn).map(|p| p.url(conn))
                     .unwrap_or_else(|| {
-                        let comment = mention.get_comment(conn).expect("Notification::to_json: comment not found error");
-                        let post = comment.get_post(conn).to_json(conn);
-                        format!("{}#comment-{}", post["url"].as_str().expect("Notification::to_json: post url error"), comment.id)
+                        let comment = mention.get_comment(conn).expect("Notification::get_url: comment not found error");
+                        format!("{}#comment-{}", comment.get_post(conn).url(conn), comment.id)
                     })
             ),
             _ => None,

@@ -59,7 +59,7 @@ impl Media {
             .file_path
             .rsplitn(2, '.')
             .next()
-            .expect("Media::to_json: extension error")
+            .expect("Media::category: extension error")
         {
             "png" | "jpg" | "jpeg" | "gif" | "svg" => MediaCategory::Image,
             "mp3" | "wav" | "flac" => MediaCategory::Audio,

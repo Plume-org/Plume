@@ -74,28 +74,6 @@ impl Comment {
             .expect("Comment::get_responses: loading error")
     }
 
-    pub fn to_json(&self, conn: &Connection, others: &[Comment]) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).expect("Comment::to_json: serialization error");
-        json["author"] = self.get_author(conn).to_json(conn);
-        let mentions = Mention::list_for_comment(conn, self.id)
-            .into_iter()
-            .map(|m| {
-                m.get_mentioned(conn)
-                    .map(|u| u.get_fqn(conn))
-                    .unwrap_or_default()
-            })
-            .collect::<Vec<String>>();
-        json["mentions"] = serde_json::to_value(mentions).expect("Comment::to_json: mention error");
-        json["responses"] = json!(
-            others
-                .into_iter()
-                .filter(|c| c.in_response_to_id.map(|id| id == self.id).unwrap_or(false))
-                .map(|c| c.to_json(conn, others))
-                .collect::<Vec<_>>()
-        );
-        json
-    }
-
     pub fn update_ap_url(&self, conn: &Connection) -> Comment {
         if self.ap_url.is_none() {
             diesel::update(self)

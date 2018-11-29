@@ -405,12 +405,6 @@ impl Blog {
         }
     }
 
-    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).expect("Blog::to_json: serialization error");
-        json["fqn"] = json!(self.get_fqn(conn));
-        json
-    }
-
     pub fn delete(&self, conn: &Connection) {
         for post in Post::get_for_blog(conn, &self) {
             post.delete(conn);
