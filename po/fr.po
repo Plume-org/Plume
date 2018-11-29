@@ -37,7 +37,6 @@ msgstr "Titre"
 msgid "Create blog"
 msgstr "Créer le blog"
 
-#, fuzzy
 msgid "Comment \"{0}\""
 msgstr "Commenter « {0} »"
 
@@ -73,14 +72,13 @@ msgstr ""
 msgid "Notifications"
 msgstr "Notifications"
 
-msgid "Written by {0}{1}{2}"
+#, fuzzy
+msgid "Written by {0}"
 msgstr "Écrit par {0}{1}{2}"
 
-#, fuzzy
 msgid "This article is under the {0} license."
 msgstr "Cet article est placé sous la licence {0}"
 
-#, fuzzy
 msgid "One like"
 msgid_plural "{0} likes"
 msgstr[0] "{0} personne aime cet article"
@@ -92,7 +90,6 @@ msgstr "Je n’aime plus"
 msgid "Add yours"
 msgstr "J’aime"
 
-#, fuzzy
 msgid "One Boost"
 msgid_plural "{0} Boosts"
 msgstr[0] "{0} partage"
@@ -261,7 +258,8 @@ msgstr "Vous devez vous connecter pour suivre quelqu’un"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
-msgid "By {0}{1}{2}"
+#, fuzzy
+msgid "By {0}"
 msgstr "Par {0}{1}{2}"
 
 msgid "{0} boosted your article"
