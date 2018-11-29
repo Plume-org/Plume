@@ -45,7 +45,28 @@ pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<U
             &(&*conn, &intl.catalog, user.clone()),
             post.clone(),
             blog,
-            &NewCommentForm::default(),
+            &NewCommentForm {
+                warning: previous.clone().map(|p| p.spoiler_text).unwrap_or_default(),
+                content: previous.clone().map(|p| format!(
+                    "@{} {}",
+                    p.get_author(&*conn).get_fqn(&*conn),
+                    Mention::list_for_comment(&*conn, p.id)
+                        .into_iter()
+                        .filter_map(|m| {
+                            let user = user.clone();
+                            if let Some(mentioned) = m.get_mentioned(&*conn) {
+                                if user.is_none() || mentioned.id != user.expect("posts::details_response: user error while listing mentions").id {
+                                    Some(format!("@{}", mentioned.get_fqn(&*conn)))
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        }).collect::<Vec<String>>().join(" "))
+                    ).unwrap_or_default(),
+                ..NewCommentForm::default()
+            },
             ValidationErrors::default(),
             Tag::for_post(&*conn, post.id),
             comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),

@@ -2,7 +2,6 @@
 @use template_utils::*;
 @use plume_models::blogs::Blog;
 @use plume_models::comments::Comment;
-@use plume_models::mentions::Mention;
 @use plume_models::posts::Post;
 @use plume_models::tags::Tag;
 @use plume_models::users::User;
@@ -120,7 +119,7 @@
         <div class="comments">
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
-            @if let Some(ref account) = ctx.2 {
+            @if ctx.2.is_some() {
                 <form method="post" action="@article.url(ctx.0)/comment">
                     @input!(ctx.1, warning (optional text), "Content warning", comment_form, comment_errors, "")
 
@@ -128,20 +127,7 @@
                     @if let Some(ref prev) = previous_comment {
                         <input type="hidden" name="responding_to" value="@prev.id"/>
                     }
-                    <textarea id="plume-editor" name="content">
-                        @if let Some(prev) = previous_comment {
-                            @prev.get_author(ctx.0).get_fqn(ctx.0)
-
-                            @(Mention::list_for_comment(ctx.0, prev.id)
-                                .into_iter()
-                                .map(|m| m.get_mentioned(ctx.0).map(|u| u.get_fqn(ctx.0)).unwrap_or_default())
-                                .filter_map(|m| if m != account.get_fqn(ctx.0) {
-                                    Some(format!("@{}", m))
-                                } else {
-                                    None
-                                }).collect::<Vec<String>>().join(" "))
-                        }
-                    </textarea>
+                    <textarea id="plume-editor" name="content">@comment_form.content</textarea>
                     <input type="submit" value="@i18n!(ctx.1, "Submit comment")" />
                 </form>
             }
