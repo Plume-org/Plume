@@ -3,7 +3,6 @@ use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::{State, request::LenientForm};
 use rocket::response::{Redirect, Flash};
-use rocket_contrib::templates::Template;
 use rocket_i18n::I18n;
 use std::{collections::{HashMap, HashSet}, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
@@ -28,43 +27,42 @@ use routes::{Ructe, comments::NewCommentForm};
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 4)]
-pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Template> {
+pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Ructe> {
     details_response(blog, slug, conn, user, None, intl)
 }
 
 #[get("/~/<blog>/<slug>?<responding_to>")]
-pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, Template> {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &blog), "Couldn't find this blog", |blog| {
-        may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, &slug, blog.id), "Couldn't find this post", |post| {
-            if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
-                let comments = Comment::list_by_post(&*conn, post.id);
+pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, Ructe> {
+    let blog = Blog::find_by_fqn(&*conn, &blog).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
+    if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
+        let comments = Comment::list_by_post(&*conn, post.id);
 
-                let previous = responding_to.map(|r| Comment::get(&*conn, r)
-                    .expect("posts::details_reponse: Error retrieving previous comment"));
+        let previous = responding_to.map(|r| Comment::get(&*conn, r)
+            .expect("posts::details_reponse: Error retrieving previous comment"));
 
-                Ok(render!(posts::details(
-                    &(&*conn, &intl.catalog, user.clone()),
-                    post.clone(),
-                    blog,
-                    NewCommentForm::default(),
-                    ValidationErrors::default(),
-                    Tag::for_post(&*conn, post.id),
-                    comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),
-                    previous,
-                    post.get_likes(&*conn).len(),
-                    post.get_reshares(&*conn).len(),
-                    user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
-                    user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
-                    user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
-                    post.get_authors(&*conn)[0].clone()
-                )))
-            } else {
-                Err(Template::render("errors/403", json!({
-                    "error_message": "This post isn't published yet."
-                })))
-            }
-        })
-    })
+        Ok(render!(posts::details(
+            &(&*conn, &intl.catalog, user.clone()),
+            post.clone(),
+            blog,
+            NewCommentForm::default(),
+            ValidationErrors::default(),
+            Tag::for_post(&*conn, post.id),
+            comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),
+            previous,
+            post.get_likes(&*conn).len(),
+            post.get_reshares(&*conn).len(),
+            user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
+            user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
+            user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
+            post.get_authors(&*conn)[0].clone()
+        )))
+    } else {
+        Err(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user.clone()),
+            "This post isn't published yet."
+        )))
+    }
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]

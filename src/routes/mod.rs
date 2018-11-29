@@ -8,34 +8,6 @@ use std::path::{Path, PathBuf};
 
 use plume_models::{Connection, posts::Post};
 
-macro_rules! may_fail {
-    ($account:expr, $expr:expr, $template:expr, $msg:expr, | $res:ident | $block:block) => {
-        {
-            let res = $expr;
-            if res.is_some() {
-                let $res = res.unwrap();
-                $block
-            } else {
-                println!("NOT FOUN!!!");
-                Err(Template::render(concat!("errors/", $template), json!({
-                    "error_message": $msg,
-                    "account": $account
-                })))
-            }
-        }
-    };
-    ($account:expr, $expr:expr, $msg:expr, | $res:ident | $block:block) => {
-        may_fail!($account, $expr, "404", $msg, |$res| {
-            $block
-        })
-    };
-    ($account:expr, $expr:expr, | $res:ident | $block:block) => {
-        may_fail!($account, $expr, "", |$res| {
-            $block
-        })
-    };
-}
-
 const ITEMS_PER_PAGE: i32 = 12;
 
 pub struct Page(i32);
@@ -49,19 +21,6 @@ impl<'v> FromFormValue<'v> for Page {
         }
     }
 }
-
-/* TODO: remove it?impl UriDisplay for PPageQuery{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "page={}", &self.page as &UriDisplay)
-    }
-}
-
-impl FromUriParam<i32> for  PageQuery{
-    type Target =  PageQuery
-    fn from_uri_param(num: i32) ->  PageQuery{
-       P PageQuery { page: num }    }
-}
-*/
 
 impl Page {
     pub fn first() -> Page {

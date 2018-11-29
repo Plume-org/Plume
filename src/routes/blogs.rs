@@ -23,28 +23,28 @@ use plume_models::{
 use routes::{Page, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Template> {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &name), "Requested blog couldn't be found", |blog| {
-        let posts = Post::blog_page(&*conn, &blog, page.limits());
-        let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
-        let authors = &blog.list_authors(&*conn);
+pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Ructe> {
+    let blog = Blog::find_by_fqn(&*conn, &name)
+        .ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
+    let posts = Post::blog_page(&*conn, &blog, page.limits());
+    let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
+    let authors = &blog.list_authors(&*conn);
 
-        Ok(render!(blogs::details(
-            &(&*conn, &intl.catalog, user.clone()),
-            blog.clone(),
-            blog.get_fqn(&*conn),
-            authors,
-            articles.len(),
-            page.0,
-            Page::total(articles.len() as i32),
-            user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
-            posts
-        )))
-    })
+    Ok(render!(blogs::details(
+        &(&*conn, &intl.catalog, user.clone()),
+        blog.clone(),
+        blog.get_fqn(&*conn),
+        authors,
+        articles.len(),
+        page.0,
+        Page::total(articles.len() as i32),
+        user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
+        posts
+    )))
 }
 
 #[get("/~/<name>", rank = 3)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Ructe, Template> {
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Ructe, Ructe> {
     paginated_details(intl, name, conn, user, Page::first())
 }
 
@@ -129,15 +129,17 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User) -> Resul
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(conn: DbConn, name: String, user: Option<User>) -> Result<Redirect, Option<Template>>{
+pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Result<Redirect, Option<Ructe>>{
     let blog = Blog::find_local(&*conn, &name).ok_or(None)?;
-    if user.map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
+    if user.clone().map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
         blog.delete(&conn);
         Ok(Redirect::to(uri!(super::instance::index)))
     } else {
-        Err(Some(Template::render("errors/403", json!({// TODO actually return 403 error code
-            "error_message": "You are not allowed to delete this blog."
-        }))))
+        // TODO actually return 403 error code
+        Err(Some(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user),
+            "You are not allowed to delete this blog."
+        ))))
     }
 }
 

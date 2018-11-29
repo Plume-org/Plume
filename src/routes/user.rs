@@ -5,7 +5,6 @@ use rocket::{
     request::LenientForm,
     response::{status, Content, Flash, Redirect},
 };
-use rocket_contrib::templates::Template;
 use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationError, ValidationErrors};
@@ -44,77 +43,71 @@ pub fn details(
     fecth_followers_conn: DbConn,
     update_conn: DbConn,
     intl: I18n,
-) -> Result<Ructe, Template> {
-    may_fail!(
-        account.map(|a| a.to_json(&*conn)),
-        User::find_by_fqn(&*conn, &name),
-        "Couldn't find requested user",
-        |user| {
-            let recents = Post::get_recents_for_author(&*conn, &user, 6);
-            let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
+) -> Result<Ructe, Ructe> {
+    let user = User::find_by_fqn(&*conn, &name).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, account.clone()))))?;
+    let recents = Post::get_recents_for_author(&*conn, &user, 6);
+    let reshares = Reshare::get_recents_for_author(&*conn, &user, 6);
 
-            if !user.get_instance(&*conn).local {
-                // Fetch new articles
-                let user_clone = user.clone();
-                worker.execute(Thunk::of(move || {
-                    for create_act in user_clone.fetch_outbox::<Create>() {
-                        match create_act.create_props.object_object::<Article>() {
-                            Ok(article) => {
-                                Post::from_activity(
-                                    &*fecth_articles_conn,
-                                    article,
-                                    user_clone.clone().into_id(),
-                                );
-                                println!("Fetched article from remote user");
-                            }
-                            Err(e) => {
-                                println!("Error while fetching articles in background: {:?}", e)
-                            }
-                        }
-                    }
-                }));
-
-                // Fetch followers
-                let user_clone = user.clone();
-                worker.execute(Thunk::of(move || {
-                    for user_id in user_clone.fetch_followers_ids() {
-                        let follower =
-                            User::find_by_ap_url(&*fecth_followers_conn, &user_id)
-                                .unwrap_or_else(|| {
-                                    User::fetch_from_url(&*fecth_followers_conn, &user_id)
-                                        .expect("user::details: Couldn't fetch follower")
-                                });
-                        follows::Follow::insert(
-                            &*fecth_followers_conn,
-                            follows::NewFollow {
-                                follower_id: follower.id,
-                                following_id: user_clone.id,
-                                ap_url: format!("{}/follow/{}", follower.ap_url, user_clone.ap_url),
-                            },
+    if !user.get_instance(&*conn).local {
+        // Fetch new articles
+        let user_clone = user.clone();
+        worker.execute(Thunk::of(move || {
+            for create_act in user_clone.fetch_outbox::<Create>() {
+                match create_act.create_props.object_object::<Article>() {
+                    Ok(article) => {
+                        Post::from_activity(
+                            &*fecth_articles_conn,
+                            article,
+                            user_clone.clone().into_id(),
                         );
+                        println!("Fetched article from remote user");
                     }
-                }));
-
-                // Update profile information if needed
-                let user_clone = user.clone();
-                if user.needs_update() {
-                    worker.execute(Thunk::of(move || {
-                        user_clone.refetch(&*update_conn);
-                    }))
+                    Err(e) => {
+                        println!("Error while fetching articles in background: {:?}", e)
+                    }
                 }
             }
+        }));
 
-            Ok(render!(users::details(
-                &(&*conn, &intl.catalog, account.clone()),
-                user.clone(),
-                account.map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-                user.instance_id != Instance::local_id(&*conn),
-                user.get_instance(&*conn).public_domain,
-                recents,
-                reshares.into_iter().map(|r| r.get_post(&*conn).expect("user::details: Reshared post error")).collect()
-            )))
+        // Fetch followers
+        let user_clone = user.clone();
+        worker.execute(Thunk::of(move || {
+            for user_id in user_clone.fetch_followers_ids() {
+                let follower =
+                    User::find_by_ap_url(&*fecth_followers_conn, &user_id)
+                        .unwrap_or_else(|| {
+                            User::fetch_from_url(&*fecth_followers_conn, &user_id)
+                                .expect("user::details: Couldn't fetch follower")
+                        });
+                follows::Follow::insert(
+                    &*fecth_followers_conn,
+                    follows::NewFollow {
+                        follower_id: follower.id,
+                        following_id: user_clone.id,
+                        ap_url: format!("{}/follow/{}", follower.ap_url, user_clone.ap_url),
+                    },
+                );
+            }
+        }));
+
+        // Update profile information if needed
+        let user_clone = user.clone();
+        if user.needs_update() {
+            worker.execute(Thunk::of(move || {
+                user_clone.refetch(&*update_conn);
+            }))
         }
-    )
+    }
+
+    Ok(render!(users::details(
+        &(&*conn, &intl.catalog, account.clone()),
+        user.clone(),
+        account.map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+        user.instance_id != Instance::local_id(&*conn),
+        user.get_instance(&*conn).public_domain,
+        recents,
+        reshares.into_iter().map(|r| r.get_post(&*conn).expect("user::details: Reshared post error")).collect()
+    )))
 }
 
 #[get("/dashboard")]
@@ -169,30 +162,24 @@ pub fn follow_auth(name: String) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>")]
-pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page, intl: I18n) -> Result<Ructe, Template> {
-    may_fail!(
-        account.map(|a| a.to_json(&*conn)),
-        User::find_by_fqn(&*conn, &name),
-        "Couldn't find requested user",
-        |user| {
-            let followers_count = user.get_followers(&*conn).len(); // TODO: count in DB
+pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page, intl: I18n) -> Result<Ructe, Ructe> {
+    let user = User::find_by_fqn(&*conn, &name).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, account.clone()))))?;
+    let followers_count = user.get_followers(&*conn).len(); // TODO: count in DB
 
-            Ok(render!(users::followers(
-                &(&*conn, &intl.catalog, account.clone()),
-                user.clone(),
-                account.map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
-                user.instance_id != Instance::local_id(&*conn),
-                user.get_instance(&*conn).public_domain,
-                user.get_followers_page(&*conn, page.limits()),
-                page.0,
-                Page::total(followers_count as i32)
-            )))
-        }
-    )
+    Ok(render!(users::followers(
+        &(&*conn, &intl.catalog, account.clone()),
+        user.clone(),
+        account.map(|x| x.is_following(&*conn, user.id)).unwrap_or(false),
+        user.instance_id != Instance::local_id(&*conn),
+        user.get_instance(&*conn).public_domain,
+        user.get_followers_page(&*conn, page.limits()),
+        page.0,
+        Page::total(followers_count as i32)
+    )))
 }
 
 #[get("/@/<name>/followers", rank = 2)]
-pub fn followers(name: String, conn: DbConn, account: Option<User>, intl: I18n) -> Result<Ructe, Template> {
+pub fn followers(name: String, conn: DbConn, account: Option<User>, intl: I18n) -> Result<Ructe, Ructe> {
     followers_paginated(name, conn, account, Page::first(), intl)
 }
 
