@@ -26,12 +26,12 @@ use plume_models::{
 use routes::{Ructe, comments::NewCommentForm};
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
-#[get("/~/<blog>/<slug>", rank = 4)]
+#[get("/~/<blog>/<slug>", rank = 5)]
 pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Ructe> {
     details_response(blog, slug, conn, user, None, intl)
 }
 
-#[get("/~/<blog>/<slug>?<responding_to>")]
+#[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
 pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, Ructe> {
     let blog = Blog::find_by_fqn(&*conn, &blog).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
