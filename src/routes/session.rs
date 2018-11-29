@@ -3,7 +3,6 @@ use rocket::{
     response::Redirect,
     request::{LenientForm,FlashMessage}
 };
-use rocket_contrib::templates::Template;
 use rocket::http::ext::IntoOwned;
 use rocket_i18n::I18n;
 use std::borrow::Cow;
@@ -20,19 +19,19 @@ pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
     render!(session::login(
         &(&*conn, &intl.catalog, user),
         None,
-        LoginForm::default(),
+        &LoginForm::default(),
         ValidationErrors::default()
     ))
 }
 
 #[get("/login?<m>")]
-pub fn new_message(user: Option<User>, m: String, conn: DbConn) -> Template {
-    Template::render("session/login", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "message": m,
-        "errors": null,
-        "form": null
-    }))
+pub fn new_message(user: Option<User>, m: String, conn: DbConn, intl: I18n) -> Ructe {
+    render!(session::login(
+        &(&*conn, &intl.catalog, user),
+        Some(m),
+        &LoginForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
 
@@ -45,7 +44,7 @@ pub struct LoginForm {
 }
 
 #[post("/login", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, Template> {
+pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies, intl: I18n) -> Result<Redirect, Ructe> {
     let user = User::find_by_email(&*conn, &form.email_or_name)
         .or_else(|| User::find_local(&*conn, &form.email_or_name));
     let mut errors = match form.validate() {
@@ -84,22 +83,21 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
 
         let uri = Uri::parse(&destination)
             .map(|x| x.into_owned())
-            .map_err(|_| {
-            Template::render("session/login", json!({
-                "account": null,
-                "errors": errors.errors(),
-                "form": *form,
-            }))
-        })?;
+            .map_err(|_| render!(session::login(
+                &(&*conn, &intl.catalog, None),
+                None,
+                &*form,
+                errors
+            )))?;
 
         Ok(Redirect::to(uri))
     } else {
-        println!("{:?}", errors);
-        Err(Template::render("session/login", json!({
-            "account": null,
-            "errors": errors.errors(),
-            "form": *form,
-        })))
+        Err(render!(session::login(
+            &(&*conn, &intl.catalog, None),
+            None,
+            &*form,
+            errors
+        )))
     }
 }
 
