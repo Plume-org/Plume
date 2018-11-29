@@ -1,6 +1,5 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use serde_json;
 
 use comments::Comment;
 use follows::Follow;
@@ -71,45 +70,66 @@ impl Notification {
             .ok()
     }
 
-    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = json!(self);
-        json["object"] = json!(match self.kind.as_ref() {
-            notification_kind::COMMENT => Comment::get(conn, self.object_id).map(|comment| json!({
-                    "post": comment.get_post(conn).to_json(conn),
-                    "user": comment.get_author(conn).to_json(conn),
-                    "id": comment.id
-                })),
-            notification_kind::FOLLOW => Follow::get(conn, self.object_id).map(|follow| {
-                json!({
-                    "follower": User::get(conn, follow.follower_id).map(|u| u.to_json(conn))
-                })
-            }),
-            notification_kind::LIKE => Like::get(conn, self.object_id).map(|like| {
-                json!({
-                    "post": Post::get(conn, like.post_id).map(|p| p.to_json(conn)),
-                    "user": User::get(conn, like.user_id).map(|u| u.to_json(conn))
-                })
-            }),
-            notification_kind::MENTION => Mention::get(conn, self.object_id).map(|mention| {
-                json!({
-                    "user": mention.get_user(conn).map(|u| u.to_json(conn)),
-                    "url": mention.get_post(conn).map(|p| p.to_json(conn)["url"].clone())
-                        .unwrap_or_else(|| {
-                            let comment = mention.get_comment(conn).expect("Notification::to_json: comment not found error");
-                            let post = comment.get_post(conn).to_json(conn);
-                            json!(format!("{}#comment-{}", post["url"].as_str().expect("Notification::to_json: post url error"), comment.id))
-                        })
-                })
-            }),
-            notification_kind::RESHARE => Reshare::get(conn, self.object_id).map(|reshare| {
-                json!({
-                    "post": reshare.get_post(conn).map(|p| p.to_json(conn)),
-                    "user": reshare.get_user(conn).map(|u| u.to_json(conn))
-                })
-            }),
-            _ => Some(json!({})),
-        });
-        json
+    pub fn get_message(&self) -> &'static str {
+        match self.kind.as_ref() {
+            notification_kind::COMMENT => "{0} commented your article.",
+            notification_kind::FOLLOW => "{0} is now following you.",
+            notification_kind::LIKE => "{0} liked your article.",
+            notification_kind::MENTION => "{0} mentioned you.",
+            notification_kind::RESHARE => "{0} boosted your article.",
+            _ => unreachable!("Notification::get_message: Unknow type"),
+        }
+    }
+
+    pub fn get_url(&self, conn: &Connection) -> Option<String> {
+        match self.kind.as_ref() {
+            notification_kind::COMMENT => self.get_post(conn).map(|p| format!("{}#comment-{}", p.url(conn), self.object_id)),
+            notification_kind::FOLLOW => Some(format!("/@/{}/", self.get_actor(conn).get_fqn(conn))),
+            notification_kind::MENTION => Mention::get(conn, self.object_id).map(|mention|
+                mention.get_post(conn).map(|p| p.url(conn))
+                    .unwrap_or_else(|| {
+                        let comment = mention.get_comment(conn).expect("Notification::to_json: comment not found error");
+                        let post = comment.get_post(conn).to_json(conn);
+                        format!("{}#comment-{}", post["url"].as_str().expect("Notification::to_json: post url error"), comment.id)
+                    })
+            ),
+            _ => None,
+        }
+    }
+
+    pub fn get_post(&self, conn: &Connection) -> Option<Post> {
+        match self.kind.as_ref() {
+            notification_kind::COMMENT => Comment::get(conn, self.object_id).map(|comment| comment.get_post(conn)),
+            notification_kind::LIKE => Like::get(conn, self.object_id).and_then(|like| Post::get(conn, like.post_id)),
+            notification_kind::RESHARE => Reshare::get(conn, self.object_id).and_then(|reshare| reshare.get_post(conn)),
+            _ => None,
+        }
+    }
+
+    pub fn get_actor(&self, conn: &Connection) -> User {
+        match self.kind.as_ref() {
+            notification_kind::COMMENT => Comment::get(conn, self.object_id).expect("Notification::get_actor: comment error").get_author(conn),
+            notification_kind::FOLLOW => User::get(conn, Follow::get(conn, self.object_id).expect("Notification::get_actor: follow error").follower_id)
+                .expect("Notification::get_actor: follower error"),
+            notification_kind::LIKE => User::get(conn, Like::get(conn, self.object_id).expect("Notification::get_actor: like error").user_id)
+                .expect("Notification::get_actor: liker error"),
+            notification_kind::MENTION => Mention::get(conn, self.object_id).expect("Notification::get_actor: mention error").get_user(conn)
+                .expect("Notification::get_actor: mentioner error"),
+            notification_kind::RESHARE => Reshare::get(conn, self.object_id).expect("Notification::get_actor: reshare error").get_user(conn)
+                .expect("Notification::get_actor: resharer error"),
+            _ => unreachable!("Notification::get_actor: Unknow type"),
+        }
+    }
+
+    pub fn icon_class(&self) -> &'static str {
+        match self.kind.as_ref() {
+            notification_kind::COMMENT => "icon-message-circle",
+            notification_kind::FOLLOW => "icon-user-plus",
+            notification_kind::LIKE => "icon-heart",
+            notification_kind::MENTION => "icon-at-sign",
+            notification_kind::RESHARE => "icon-repeat",
+            _ => unreachable!("Notification::get_actor: Unknow type"),
+        }
     }
 
     pub fn delete(&self, conn: &Connection) {
