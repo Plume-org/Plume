@@ -9,7 +9,7 @@
 
     @tabs(&[
         (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Articles"), false),
-        (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), true)
+        (&format!("/@/{}/followers", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), true)
     ])
 
     <div class="cards">

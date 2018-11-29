@@ -10,7 +10,7 @@
 
     @tabs(&[
         (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Articles"), true),
-        (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), false)
+        (&format!("/@/{}/followers", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), false)
     ])
 
     @if !recents.is_empty() {
