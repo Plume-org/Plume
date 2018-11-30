@@ -31,31 +31,68 @@ pub(crate) mod tests {
 
     #[test]
     fn get_first_token() {
-        assert_eq!(Query::get_first_token("+\"my token\" other"), ("+\"my token\"", " other"));
-        assert_eq!(Query::get_first_token("-\"my token\" other"), ("-\"my token\"", " other"));
-        assert_eq!(Query::get_first_token(" \"my token\" other"), ("\"my token\"", " other"));
-        assert_eq!(Query::get_first_token("\"my token\" other"), ("\"my token\"", " other"));
-        assert_eq!(Query::get_first_token("+my token other"), ("+my", " token other"));
-        assert_eq!(Query::get_first_token("-my token other"), ("-my", " token other"));
-        assert_eq!(Query::get_first_token(" my token other"), ("my", " token other"));
-        assert_eq!(Query::get_first_token("my token other"), ("my", " token other"));
-        assert_eq!(Query::get_first_token("+\"my token other"), ("+\"my token other", ""));
-        assert_eq!(Query::get_first_token("-\"my token other"), ("-\"my token other", ""));
-        assert_eq!(Query::get_first_token(" \"my token other"), ("\"my token other", ""));
-        assert_eq!(Query::get_first_token("\"my token other"), ("\"my token other", ""));
+        let vector = vec![
+            ("+\"my token\" other", ("+\"my token\"", " other")),
+            ("-\"my token\" other", ("-\"my token\"", " other")),
+            (" \"my token\" other", ("\"my token\"", " other")),
+            ("\"my token\" other", ("\"my token\"", " other")),
+            ("+my token other", ("+my", " token other")),
+            ("-my token other", ("-my", " token other")),
+            (" my token other", ("my", " token other")),
+            ("my token other", ("my", " token other")),
+            ("+\"my token other", ("+\"my token other", "")),
+            ("-\"my token other", ("-\"my token other", "")),
+            (" \"my token other", ("\"my token other", "")),
+            ("\"my token other", ("\"my token other", "")),
+        ];
+        for (source, res) in vector {
+            assert_eq!(Query::get_first_token(source), res);
+        }
     }
 
     #[test]
     fn from_str() {
-        assert_eq!(&Query::from_str("").to_string(), "");
-        assert_eq!(&Query::from_str("a query").to_string(), "a query");
-        assert_eq!(&Query::from_str("+a -\"query\"").to_string(), "+a -query");
-        assert_eq!(&Query::from_str("title:\"something\" a query").to_string(), "a query title:something");
-        assert_eq!(&Query::from_str("-title:\"something\" a query").to_string(), "a query -title:something");
-        assert_eq!(&Query::from_str("author:user@domain").to_string(), "author:user@domain");
-        assert_eq!(&Query::from_str("-author:@user@domain").to_string(), "-author:user@domain");
-        assert_eq!(&Query::from_str("before:2017-11-05 before:2018-01-01").to_string(), "before:2017-11-05");
-        assert_eq!(&Query::from_str("after:2017-11-05 after:2018-01-01").to_string(), "after:2018-01-01");
+        let vector = vec![
+            ("", ""),
+            ("a query", "a query"),
+            ("\"a query\"", "\"a query\""),
+            ("+a -\"query\"", "+a -query"),
+            ("title:\"something\" a query", "a query title:something"),
+            ("-title:\"something\" a query", "a query -title:something"),
+            ("author:user@domain", "author:user@domain"),
+            ("-author:@user@domain", "-author:user@domain"),
+            ("before:2017-11-05 before:2018-01-01", "before:2017-11-05"),
+            ("after:2017-11-05 after:2018-01-01", "after:2018-01-01"),
+        ];
+        for (source, res) in vector {
+            assert_eq!(&Query::from_str(source).to_string(), res);
+            assert_eq!(Query::new().parse_query(source).to_string(), res);
+        }
+    }
+
+    #[test]
+    fn setters() {
+        let vector = vec![
+            ("something", "title:something"),
+            ("+something", "+title:something"),
+            ("-something", "-title:something"),
+            ("+\"something\"", "+title:something"),
+            ("+some thing", "+title:\"some thing\""),
+        ];
+        for (source, res) in vector {
+            assert_eq!(&Query::new().title(source, None).to_string(), res);
+        }
+
+        let vector = vec![
+            ("something", "author:something"),
+            ("+something", "+author:something"),
+            ("-something", "-author:something"),
+            ("+\"something\"", "+author:something"),
+            ("+@someone@somewhere", "+author:someone@somewhere"),
+        ];
+        for (source, res) in vector {
+            assert_eq!(&Query::new().author(source, None).to_string(), res);
+        }
     }
 
     #[test]
