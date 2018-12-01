@@ -55,28 +55,25 @@ macro_rules! gen_func {
 //generate the parser for advanced query from string
 macro_rules! gen_parser {
     ( $self:ident, $query:ident, $occur:ident; normal: $($field:ident),*; date: $($date:ident),*) => {
-        if false {
-            unreachable!();
-        }
         $(  // most fields go here
-            else if $query.starts_with(concat!(stringify!($field), ':')) {
+            if $query.starts_with(concat!(stringify!($field), ':')) {
                 let new_query = &$query[concat!(stringify!($field), ':').len()..];
                 let (token, rest) = Self::get_first_token(new_query);
                 $query = rest;
                 $self.$field(token, Some($occur));
-            }
+            } else
         )*
         $(  // dates (before/after) got here
-            else if $query.starts_with(concat!(stringify!($date), ':')) {
+            if $query.starts_with(concat!(stringify!($date), ':')) {
                 let new_query = &$query[concat!(stringify!($date), ':').len()..];
                 let (token, rest) = Self::get_first_token(new_query);
                 $query = rest;
                 if let Ok(token) = NaiveDate::parse_from_str(token, "%Y-%m-%d") {
                     $self.$date(&token);
                 }
-            }
+            } else
         )*  // fields without 'fieldname:' prefix are considered bare words, and will be searched in title, subtitle and content
-        else {
+        {
             let (token, rest) = Self::get_first_token($query);
             $query = rest;
             $self.text(token, Some($occur));
@@ -288,7 +285,7 @@ impl PlumeQuery {
         let token = token.to_lowercase();
         let token = token.as_str();
         let field = Searcher::schema().get_field(field_name).unwrap();
-        if token.contains('@') && field_name=="author" || field_name=="blog" {
+        if token.contains('@') && (field_name=="author" || field_name=="blog") {
             let pos = token.find('@').unwrap();
             let user_term = Term::from_field_text(field, &token[..pos]);
             let instance_term = Term::from_field_text(Searcher::schema().get_field("instance").unwrap(), &token[pos+1..]);

@@ -11,6 +11,9 @@ window.onload = function(evt) {
 	var form = document.getElementById('form');
 	form.addEventListener('submit', function () {
 	    for (var input of form.getElementsByTagName('input')) {
+		if (input.name === '') {
+		    input.name = input.id
+		}
 		if (input.name && !input.value) {
 		    input.name = '';
 		}
@@ -24,7 +27,7 @@ window.onload = function(evt) {
     <h1>search</h1>
 
     <form method="get" id="form">
-	<input name="q" placeholder="Your query" type="search">
+	<input id="q" name="q" placeholder="Your query" type="search">
 	<details>
 		<summary>Advanced search</summary>
         {{ macros::input(name="title", label="Title matching these words", props='placeholder="Title"') }}
