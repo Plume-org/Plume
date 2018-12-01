@@ -3,6 +3,7 @@
 
 extern crate activitypub;
 extern crate ammonia;
+extern crate askama_escape;
 extern crate bcrypt;
 extern crate canapi;
 extern crate chrono;

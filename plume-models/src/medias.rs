@@ -1,4 +1,5 @@
 use activitypub::object::Image;
+use askama_escape::escape;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use reqwest;
@@ -7,6 +8,7 @@ use std::{fs, path::Path};
 use plume_common::activity_pub::Id;
 
 use instance::Instance;
+use safe_string::SafeString;
 use schema::medias;
 use users::User;
 use {ap_url, Connection};
@@ -68,50 +70,50 @@ impl Media {
         }
     }
 
-    pub fn preview_html(&self, conn: &Connection) -> String {
+    pub fn preview_html(&self, conn: &Connection) -> SafeString {
         let url = self.url(conn);
         match self.category() {
-            MediaCategory::Image => format!(
+            MediaCategory::Image => SafeString::new(&format!(
                 "<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">",
-                url, self.alt_text, self.alt_text
-            ),
-            MediaCategory::Audio => format!(
+                url, escape(&self.alt_text), escape(&self.alt_text)
+            )),
+            MediaCategory::Audio => SafeString::new(&format!(
                 "<audio src=\"{}\" title=\"{}\" class=\"preview\"></audio>",
-                url, self.alt_text
-            ),
-            MediaCategory::Video => format!(
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Video => SafeString::new(&format!(
                 "<video src=\"{}\" title=\"{}\" class=\"preview\"></video>",
-                url, self.alt_text
-            ),
-            MediaCategory::Unknown => String::new(),
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Unknown => SafeString::new(""),
         }
     }
 
-    pub fn html(&self, conn: &Connection) -> String {
+    pub fn html(&self, conn: &Connection) -> SafeString {
         let url = self.url(conn);
         match self.category() {
-            MediaCategory::Image => format!(
+            MediaCategory::Image => SafeString::new(&format!(
                 "<img src=\"{}\" alt=\"{}\" title=\"{}\">",
-                url, self.alt_text, self.alt_text
-            ),
-            MediaCategory::Audio => format!(
+                url, escape(&self.alt_text), escape(&self.alt_text)
+            )),
+            MediaCategory::Audio => SafeString::new(&format!(
                 "<audio src=\"{}\" title=\"{}\"></audio>",
-                url, self.alt_text
-            ),
-            MediaCategory::Video => format!(
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Video => SafeString::new(&format!(
                 "<video src=\"{}\" title=\"{}\"></video>",
-                url, self.alt_text
-            ),
-            MediaCategory::Unknown => String::new(),
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Unknown => SafeString::new(""),
         }
     }
 
-    pub fn markdown(&self, conn: &Connection) -> String {
+    pub fn markdown(&self, conn: &Connection) -> SafeString {
         let url = self.url(conn);
         match self.category() {
-            MediaCategory::Image => format!("![{}]({})", self.alt_text, url),
+            MediaCategory::Image => SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url)),
             MediaCategory::Audio | MediaCategory::Video => self.html(conn),
-            MediaCategory::Unknown => String::new(),
+            MediaCategory::Unknown => SafeString::new(""),
         }
     }
 

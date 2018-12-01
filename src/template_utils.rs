@@ -2,6 +2,8 @@ use plume_models::{Connection, users::User};
 use rocket_i18n::Catalog;
 use templates::Html;
 
+pub use askama_escape::escape;
+
 pub type BaseContext<'a> = &'a(&'a Connection, &'a Catalog, Option<User>);
 
 pub enum Size {
@@ -19,6 +21,7 @@ impl Size {
 }
 
 pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &Catalog) -> Html<String> {
+    let name = escape(&user.name(conn)).to_string();
     Html(format!(
         r#"<div
         class="avatar {size} {padded}"
@@ -29,7 +32,7 @@ pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &C
         size = size.as_str(),
         padded = if pad { "padded" } else { "" },
         url = user.avatar_url(conn),
-        title = i18n!(catalog, "{0}'s avatar"; user.name(conn)),
+        title = i18n!(catalog, "{0}'s avatar"; name),
     ))
 }
 

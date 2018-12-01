@@ -1,6 +1,7 @@
 #![feature(custom_derive, plugin, decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
+extern crate askama_escape;
 extern crate atom_syndication;
 extern crate canapi;
 extern crate chrono;

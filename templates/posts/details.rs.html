@@ -25,7 +25,7 @@
     <h2 class="article">@&article.subtitle</h2>
     <div class="article-info">
         <span class="author">
-            @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"/@/{}/\">{}</a>", author.get_fqn(ctx.0), author.name(ctx.0))))
+            @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"/@/{}/\">{}</a>", escape(&author.get_fqn(ctx.0)), escape(&author.name(ctx.0)))))
         </span>
         &mdash;
         <span class="date">@article.creation_date.format("%B %e, %Y")</span>

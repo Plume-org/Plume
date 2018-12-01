@@ -6,6 +6,7 @@ authors = ["Baptiste Gelez <baptiste@gelez.xyz>"]
 [dependencies]
 activitypub = "0.1.1"
 ammonia = "1.2.0"
+askama_escape = "0.1"
 bcrypt = "0.2"
 canapi = "0.1"
 guid-create = "0.1"

@@ -14,8 +14,8 @@
     <p class="author">
         @Html(i18n!(ctx.1, "By {0}"; format!(
             "<a href=\"/@/{}/\">{}</a>",
-            article.get_authors(ctx.0)[0].get_fqn(ctx.0),
-            article.get_authors(ctx.0)[0].name(ctx.0)
+            escape(&article.get_authors(ctx.0)[0].get_fqn(ctx.0)),
+            escape(&article.get_authors(ctx.0)[0].name(ctx.0))
         )))
         @if article.published {
         ⋅ @article.creation_date.format("%B %e, %Y")
