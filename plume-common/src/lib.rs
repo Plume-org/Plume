@@ -13,7 +13,6 @@ extern crate failure_derive;
 extern crate gettextrs;
 extern crate hex;
 extern crate heck;
-extern crate hyper;
 extern crate openssl;
 extern crate pulldown_cmark;
 extern crate reqwest;
