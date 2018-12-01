@@ -19,7 +19,8 @@ use plume_models::{
     posts::Post,
     users::User
 };
-use routes::{Page, Ructe};
+use routes::Page;
+use template_utils::Ructe;
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Ructe> {

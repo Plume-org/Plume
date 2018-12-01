@@ -22,7 +22,8 @@ use plume_models::{
     blogs::Blog, db_conn::DbConn, follows, headers::Headers, instance::Instance, posts::Post,
     reshares::Reshare, users::*,
 };
-use routes::{Page, Ructe};
+use routes::Page;
+use template_utils::Ructe;
 use Worker;
 
 #[get("/me")]

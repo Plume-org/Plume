@@ -7,7 +7,7 @@ use rocket::http::ext::IntoOwned;
 use rocket_i18n::I18n;
 use std::borrow::Cow;
 use validator::{Validate, ValidationError, ValidationErrors};
-use routes::Ructe;
+use template_utils::Ructe;
 
 use plume_models::{
     db_conn::DbConn,

@@ -42,9 +42,9 @@ use workerpool::{Pool, thunk::ThunkWorker};
 
 mod api;
 mod inbox;
-mod routes;
 #[macro_use]
 mod template_utils;
+mod routes;
 
 type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
 

@@ -857,7 +857,7 @@ impl User {
     }
 
     pub fn name(&self, conn: &Connection) -> String {
-        if self.display_name.len() > 0 {
+        if !self.display_name.is_empty() {
             self.display_name.clone()
         } else {
             self.get_fqn(conn)

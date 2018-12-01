@@ -3,7 +3,8 @@ use rocket_i18n::I18n;
 
 use plume_common::utils;
 use plume_models::{db_conn::DbConn, notifications::Notification, users::User};
-use routes::{Page, Ructe};
+use routes::Page;
+use template_utils::Ructe;
 
 #[get("/notifications?<page>")]
 pub fn paginated_notifications(conn: DbConn, user: User, page: Page, intl: I18n) -> Ructe {

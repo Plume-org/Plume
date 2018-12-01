@@ -23,7 +23,8 @@ use plume_models::{
     tags::*,
     users::User
 };
-use routes::{Ructe, comments::NewCommentForm};
+use routes::comments::NewCommentForm;
+use template_utils::Ructe;
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 5)]

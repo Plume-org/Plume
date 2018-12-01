@@ -3,7 +3,7 @@ use rocket::request::FromRequest;
 use rocket_i18n::I18n;
 use plume_models::db_conn::DbConn;
 use plume_models::users::User;
-use routes::Ructe;
+use template_utils::Ructe;
 
 #[catch(404)]
 pub fn not_found(req: &Request) -> Ructe {

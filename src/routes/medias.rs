@@ -4,7 +4,7 @@ use rocket::{Data, http::ContentType, response::{Redirect, status}};
 use rocket_i18n::I18n;
 use std::fs;
 use plume_models::{db_conn::DbConn, medias::*, users::User};
-use routes::Ructe;
+use template_utils::Ructe;
 
 #[get("/medias")]
 pub fn list(user: User, conn: DbConn, intl: I18n) -> Ructe {

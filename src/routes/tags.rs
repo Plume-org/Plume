@@ -5,7 +5,8 @@ use plume_models::{
     posts::Post,
     users::User,
 };
-use routes::{Ructe, Page};
+use routes::Page;
+use template_utils::Ructe;
 
 #[get("/tag/<name>")]
 pub fn tag(user: Option<User>, conn: DbConn, name: String, intl: I18n) -> Ructe {

@@ -17,7 +17,8 @@ use plume_models::{
     instance::*
 };
 use inbox::Inbox;
-use routes::{Page, Ructe};
+use routes::Page;
+use template_utils::Ructe;
 
 #[get("/")]
 pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {

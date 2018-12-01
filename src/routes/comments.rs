@@ -7,7 +7,7 @@ use rocket::{
 use rocket_i18n::I18n;
 use validator::Validate;
 use workerpool::{Pool, thunk::*};
-use routes::Ructe;
+use template_utils::Ructe;
 
 use plume_common::{utils, activity_pub::{broadcast, ApRequest, ActivityStream}};
 use plume_models::{

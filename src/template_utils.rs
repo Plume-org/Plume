@@ -1,10 +1,32 @@
 use plume_models::{Connection, users::User};
+use rocket::response::Content;
 use rocket_i18n::Catalog;
 use templates::Html;
 
 pub use askama_escape::escape;
 
 pub type BaseContext<'a> = &'a(&'a Connection, &'a Catalog, Option<User>);
+
+pub type Ructe = Content<Vec<u8>>;
+
+#[macro_export]
+macro_rules! render {
+    ($group:tt :: $page:tt ( $( $param:expr ),* ) ) => {
+        {
+            use rocket::{http::ContentType, response::Content};
+            use templates;
+
+            let mut res = vec![];
+            templates::$group::$page(
+                &mut res,
+                $(
+                    $param
+                ),*
+            ).unwrap();
+            Content(ContentType::HTML, res)
+        }
+    }
+}
 
 pub enum Size {
     Small,
