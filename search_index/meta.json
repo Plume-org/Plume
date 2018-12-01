@@ -1,0 +1,127 @@
+{
+  "segments": [
+    {
+      "segment_id": "53805a6e-9eb0-47fa-8e76-485176e359f3",
+      "max_doc": 1,
+      "deletes": null
+    }
+  ],
+  "schema": [
+    {
+      "name": "post_id",
+      "type": "i64",
+      "options": {
+        "indexed": true,
+        "stored": true
+      }
+    },
+    {
+      "name": "creation_date",
+      "type": "i64",
+      "options": {
+        "indexed": true,
+        "stored": false
+      }
+    },
+    {
+      "name": "instance",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "basic",
+          "tokenizer": "whitespace_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "author",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "basic",
+          "tokenizer": "whitespace_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "tag",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "basic",
+          "tokenizer": "whitespace_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "blog",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "tokenizer": "content_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "content",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "tokenizer": "content_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "subtitle",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "tokenizer": "content_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "tokenizer": "content_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "lang",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "tokenizer": "property_tokenizer"
+        },
+        "stored": false
+      }
+    },
+    {
+      "name": "license",
+      "type": "text",
+      "options": {
+        "indexing": {
+          "record": "position",
+          "tokenizer": "property_tokenizer"
+        },
+        "stored": false
+      }
+    }
+  ],
+  "opstamp": 3
+}

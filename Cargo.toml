@@ -15,7 +15,7 @@ guid-create = "0.1"
 heck = "0.3.0"
 rocket = "0.4.0-rc.1"
 rocket_contrib = { version = "0.4.0-rc.1", features = ["json"] }
-rocket_i18n = { path = "../rocket_i18n" }
+rocket_i18n = "0.3.1"
 rpassword = "2.0"
 serde = "1.0"
 serde_derive = "1.0"
@@ -58,7 +58,7 @@ rev = "e6ead8051cab12a95ea9dc88db3a107f0b5f7533"
 
 [build-dependencies]
 ructe = "0.5.2"
-rocket_i18n = { path = "../rocket_i18n", features = ["build"] }
+rocket_i18n = { version = "0.3.1", features = ["build"] }
 
 [features]
 default = ["postgres"]

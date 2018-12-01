@@ -1522,7 +1522,7 @@ dependencies = [
  "rocket 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=e6ead8051cab12a95ea9dc88db3a107f0b5f7533)",
- "rocket_i18n 0.3.1",
+ "rocket_i18n 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "ructe 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1927,6 +1927,7 @@ dependencies = [
 [[package]]
 name = "rocket_i18n"
 version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3047,6 +3048,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_contrib 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)" = "38cce3e4f0de0b950604c2a5cda4b3d74a7f17c62937cee54f4996b36c2d31a5"
 "checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=e6ead8051cab12a95ea9dc88db3a107f0b5f7533)" = "<none>"
 "checksum rocket_http 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2201c854709fd6f8cc7dca9bd7ebbddb10f27e1cdda191f932546c3dcd98d4a6"
+"checksum rocket_i18n 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "f10dc7394c8c400d20a86d25b8d6f6f8066cadd5e849ceed611bc6c28e1aaac5"
 "checksum rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d127299b02abda51634f14025aec43ae87a7aa7a95202b6a868ec852607d1451"
 "checksum ructe 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "58506bf5e543a65bc9e336ff8b5a48ed73c47d966c838550bb9a0058fb5710bd"
 "checksum rust-crypto 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)" = "f76d05d3993fd5f4af9434e8e436db163a12a9d40e1a58a726f27a01dfd12a2a"
