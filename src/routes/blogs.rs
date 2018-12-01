@@ -123,7 +123,7 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
         println!("{:?}", errors);
         Err(Template::render("blogs/new", json!({
             "account": user.to_json(&*conn),
-            "errors": errors.inner(),
+            "errors": errors.field_errors(),
             "form": form
         })))
     }

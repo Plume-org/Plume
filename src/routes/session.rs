@@ -90,7 +90,7 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
             .map_err(|_| {
             Template::render("session/login", json!({
                 "account": null,
-                "errors": errors.inner(),
+                "errors": errors.field_errors(),
                 "form": form
             }))
         })?;
@@ -100,7 +100,7 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
         println!("{:?}", errors);
         Err(Template::render("session/login", json!({
             "account": null,
-            "errors": errors.inner(),
+            "errors": errors.field_errors(),
             "form": form
         })))
     }
