@@ -169,7 +169,7 @@ fn main() {
         ])
         .manage(pool)
         .manage(Pool::<ThunkWorker<()>>::new(4))
-        .manage(rocket_i18n::i18n("plume", vec![ "de", "en", "fr", "gl", "it", "nb", "pl", "ru" ]))
+        .manage(include_i18n!("plume", [ "de", "en", "fr", "gl", "it", "nb", "pl", "ru" ]))
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
                 .add_exceptions(vec![
