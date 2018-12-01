@@ -72,9 +72,8 @@ msgstr ""
 msgid "Notifications"
 msgstr "Notifications"
 
-#, fuzzy
 msgid "Written by {0}"
-msgstr "Écrit par {0}{1}{2}"
+msgstr "Écrit par {0}"
 
 msgid "This article is under the {0} license."
 msgstr "Cet article est placé sous la licence {0}"
@@ -258,9 +257,8 @@ msgstr "Vous devez vous connecter pour suivre quelqu’un"
 msgid "You need to be logged in order to edit your profile"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
-#, fuzzy
 msgid "By {0}"
-msgstr "Par {0}{1}{2}"
+msgstr "Par {0}"
 
 msgid "{0} boosted your article"
 msgstr "{0} a partagé votre article"
