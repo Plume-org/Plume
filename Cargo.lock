@@ -272,7 +272,7 @@ dependencies = [
 
 [[package]]
 name = "canapi"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "serde 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1509,7 +1509,7 @@ version = "0.2.0"
 dependencies = [
  "activitypub 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "atom_syndication 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "canapi 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "canapi 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "colored 1.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1543,7 +1543,7 @@ dependencies = [
 name = "plume-api"
 version = "0.1.0"
 dependencies = [
- "canapi 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "canapi 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1591,7 +1591,7 @@ dependencies = [
  "activitypub 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "ammonia 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "canapi 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "canapi 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel_migrations 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2979,7 +2979,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum byte-tools 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "560c32574a12a89ecd91f5e742165893f86e3ab98d21f8ea548658eb9eef5f40"
 "checksum byteorder 1.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "90492c5858dd7d2e78691cfb89f90d273a2800fc11d98f60786e5d87e2f83781"
 "checksum bytes 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)" = "0ce55bd354b095246fc34caf4e9e242f5297a7fd938b090cadfea6eee614aa62"
-"checksum canapi 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ff3e02a04f44b531d851d2db62f95aabf65d033a6724767a4bed9732563e9bc4"
+"checksum canapi 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aab4d6d1edcef8bf19b851b7730d3d1a90373c06321a49a984baebe0989c962c"
 "checksum cc 1.0.25 (registry+https://github.com/rust-lang/crates.io-index)" = "f159dfd43363c4d08055a07703eb7a3406b0dac4d0584d96965a3262db3c9d16"
 "checksum cfg-if 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "0c4e7bb64a8ebb0d856483e1e682ea3422f883c5f5615a90d51a2c82fe87fdd3"
 "checksum chomp 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "9f74ad218e66339b11fd23f693fb8f1d621e80ba6ac218297be26073365d163d"
