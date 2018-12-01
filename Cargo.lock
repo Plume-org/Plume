@@ -1516,7 +1516,7 @@ dependencies = [
  "rocket 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=e6ead8051cab12a95ea9dc88db3a107f0b5f7533)",
- "rocket_i18n 0.3.0",
+ "rocket_i18n 0.3.1",
  "rpassword 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "ructe 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1919,7 +1919,7 @@ dependencies = [
 
 [[package]]
 name = "rocket_i18n"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0-rc.1 (registry+https://github.com/rust-lang/crates.io-index)",

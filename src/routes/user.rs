@@ -121,9 +121,9 @@ pub fn dashboard(user: User, conn: DbConn, intl: I18n) -> Ructe {
 }
 
 #[get("/dashboard", rank = 2)]
-pub fn dashboard_auth() -> Flash<Redirect> {
+pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        "You need to be logged in order to access your dashboard",
+        i18n!(i18n.catalog, "You need to be logged in order to access your dashboard"),
         uri!(dashboard),
     )
 }
@@ -154,9 +154,9 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<
 }
 
 #[post("/@/<name>/follow", rank = 2)]
-pub fn follow_auth(name: String) -> Flash<Redirect> {
+pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        "You need to be logged in order to follow someone",
+        i18n!(i18n.catalog, "You need to be logged in order to follow someone"),
         uri!(follow: name = name),
     )
 }
@@ -221,9 +221,9 @@ pub fn edit(name: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe>
 }
 
 #[get("/@/<name>/edit", rank = 2)]
-pub fn edit_auth(name: String) -> Flash<Redirect> {
+pub fn edit_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        "You need to be logged in order to edit your profile",
+        i18n!(i18n.catalog, "You need to be logged in order to edit your profile"),
         uri!(edit: name = name),
     )
 }

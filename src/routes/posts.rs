@@ -98,9 +98,9 @@ pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest
 }
 
 #[get("/~/<blog>/new", rank = 2)]
-pub fn new_auth(blog: String) -> Flash<Redirect> {
+pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        "You need to be logged in order to write a new post",
+        i18n!(i18n.catalog, "You need to be logged in order to write a new post"),
         uri!(new: blog = blog)
     )
 }

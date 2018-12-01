@@ -21,9 +21,9 @@ pub fn notifications(conn: DbConn, user: User, intl: I18n) -> Ructe {
 }
 
 #[get("/notifications", rank = 2)]
-pub fn notifications_auth() -> Flash<Redirect>{
+pub fn notifications_auth(i18n: I18n) -> Flash<Redirect>{
     utils::requires_login(
-        "You need to be logged in order to see your notifications",
+        i18n!(i18n.catalog, "You need to be logged in order to see your notifications"),
         uri!(notifications)
     )
 }

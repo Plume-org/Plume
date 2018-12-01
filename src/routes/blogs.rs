@@ -63,9 +63,9 @@ pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
 }
 
 #[get("/blogs/new", rank = 2)]
-pub fn new_auth() -> Flash<Redirect>{
+pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
     utils::requires_login(
-        "You need to be logged in order to create a new blog",
+        i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
         uri!(new)
     )
 }
