@@ -267,7 +267,7 @@ impl User {
     }
 
     pub fn fetch_from_url(conn: &Connection, url: &str) -> Option<User> {
-        User::fetch(url).map(|json| {
+        User::fetch(url).and_then(|json| {
             (User::from_activity(
                 conn,
                 &json,
@@ -275,11 +275,11 @@ impl User {
                     .expect("User::fetch_from_url: url error")
                     .host_str()
                     .expect("User::fetch_from_url: host error"),
-            ))
+            ).ok())
         })
     }
 
-    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> User {
+    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> Result<User, ()> {
         let instance = match Instance::find_by_domain(conn, inst) {
             Some(instance) => instance,
             None => {
@@ -301,6 +301,11 @@ impl User {
             }
         };
 
+        if acct.object.ap_actor_props.preferred_username_string()
+            .expect("User::from_activity: preferredUsername error")
+            .contains(&['<', '>', '&', '@', '\'', '"'][..]) {
+            return Err(());
+        }
         let user = User::insert(
             conn,
             NewUser {
@@ -308,7 +313,7 @@ impl User {
                     .object
                     .ap_actor_props
                     .preferred_username_string()
-                    .expect("User::from_activity: preferredUsername error"),
+                    .unwrap(),
                 display_name: acct
                     .object
                     .object_props
@@ -374,9 +379,11 @@ impl User {
             &user,
         );
 
-        user.set_avatar(conn, avatar.id);
+        if let Ok(avatar) = avatar {
+            user.set_avatar(conn, avatar.id);
+        }
 
-        user
+        Ok(user)
     }
 
     pub fn refetch(&self, conn: &Connection) {
@@ -391,7 +398,7 @@ impl User {
                     .url_string()
                     .expect("User::refetch: icon.url error"),
                 &self,
-            );
+            ).ok();
 
             diesel::update(self)
                 .set((
@@ -427,7 +434,7 @@ impl User {
                         .ap_actor_props
                         .followers_string()
                         .expect("User::refetch: followers error")),
-                    users::avatar_id.eq(Some(avatar.id)),
+                    users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
                 ))
                 .execute(conn)
