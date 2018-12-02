@@ -27,7 +27,7 @@
         </p>
     </div>
 {% endmacro post_card %}
-{% macro input(name, label, errors, form, type="text", props="", optional=false, default='', details=' ') %}
+{% macro input(name, label, errors="", form="", type="text", props="", optional=false, default='', details=' ') %}
     <label for="{{ name }}">
         {{ label | _ }}
         {% if optional %}
@@ -43,13 +43,16 @@
     {% set default = default[name] | default(value="") %}
     <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form[name] | default(value=default) }}" {{ props | safe }}/>
 {% endmacro input %}
-{% macro paginate(page, total, previous="Previous page", next="Next page") %}
+{% macro paginate(page, total, previous="Previous page", next="Next page", query="") %}
+    {% if query %}
+        {% set query = query ~ "&" %}
+    {% endif %}
     <div class="pagination">
         {% if page != 1 %}
-            <a href="?page={{ page - 1 }}">{{ previous | _ }}</a>
+            <a href="?{{ query }}page={{ page - 1 }}">{{ previous | _ }}</a>
         {% endif %}
         {% if page < total %}
-            <a href="?page={{ page + 1 }}">{{ next | _ }}</a>
+            <a href="?{{ query }}page={{ page + 1 }}">{{ next | _ }}</a>
         {% endif %}
     </div>
 {% endmacro %}

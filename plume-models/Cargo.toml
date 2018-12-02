@@ -10,14 +10,17 @@ bcrypt = "0.2"
 canapi = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
+itertools = "0.7.8"
 lazy_static = "*"
 openssl = "0.10.11"
 reqwest = "0.9"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
+tantivy = "0.7.1"
 url = "1.7"
 webfinger = "0.3.1"
+whatlang = "0.5.0"
 
 [dependencies.chrono]
 features = ["serde"]

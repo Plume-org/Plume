@@ -1,13 +1,11 @@
 use activitypub::object::Note;
 use rocket::{
-    State,
     request::LenientForm,
     response::Redirect
 };
 use rocket_contrib::Template;
 use serde_json;
 use validator::Validate;
-use workerpool::{Pool, thunk::*};
 
 use plume_common::{utils, activity_pub::{broadcast, ApRequest, ActivityStream}};
 use plume_models::{
@@ -19,6 +17,7 @@ use plume_models::{
     safe_string::SafeString,
     users::User
 };
+use Worker;
 
 #[derive(FromForm, Debug, Validate, Serialize)]
 struct NewCommentForm {
@@ -29,7 +28,7 @@ struct NewCommentForm {
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<data>")]
-fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>)
+fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: Worker)
     -> Result<Redirect, Option<Template>> {
     let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
@@ -56,7 +55,7 @@ fn create(blog_name: String, slug: String, data: LenientForm<NewCommentForm>, us
             // federate
             let dest = User::one_by_instance(&*conn);
             let user_clone = user.clone();
-            worker.execute(Thunk::of(move || broadcast(&user_clone, new_comment, dest)));
+            worker.execute(move || broadcast(&user_clone, new_comment, dest));
 
             Redirect::to(uri!(super::posts::details: blog = blog_name, slug = slug))
         })
