@@ -21,7 +21,6 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
 extern crate rocket_i18n;
-extern crate rpassword;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;

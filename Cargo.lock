@@ -1497,7 +1497,6 @@ dependencies = [
  "rocket_contrib 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=55459db7732b9a240826a5c120c650f87e3372ce)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=2805ce5dbae4a6441208484426440885a5640a6a)",
  "rocket_i18n 0.1.1 (git+https://github.com/BaptisteGelez/rocket_i18n?rev=75a3bfd7b847324c078a355a7f101f8241a9f59b)",
- "rpassword 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.80 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.80 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.33 (registry+https://github.com/rust-lang/crates.io-index)",
