@@ -20,7 +20,7 @@ serde_json = "1.0"
 tantivy = "0.7.1"
 url = "1.7"
 webfinger = "0.3.1"
-whatlang = "0.5.0"
+whatlang = "0.6.0"
 
 [dependencies.chrono]
 features = ["serde"]
