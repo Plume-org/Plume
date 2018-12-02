@@ -19,7 +19,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                 .short("p")
                 .long("path")
                 .takes_value(true)
-                .required(true)
+                .required(false)
                 .help("Path to Plume's working directory"))
             .arg(Arg::with_name("force")
                 .short("f")
@@ -31,7 +31,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                 .short("p")
                 .long("path")
                 .takes_value(true)
-                .required(true)
+                .required(false)
                 .help("Path to Plume's working directory")
             ).about("Regenerate Plume's search index"))
         .subcommand(SubCommand::with_name("unlock")
@@ -39,7 +39,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                 .short("p")
                 .long("path")
                 .takes_value(true)
-                .required(true)
+                .required(false)
                 .help("Path to Plume's working directory")
             ).about("Release lock on search directory"))
 }
@@ -55,7 +55,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
 }
 
 fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let path = args.value_of("path").unwrap();
+    let path = args.value_of("path").unwrap_or(".");
     let force = args.is_present("force");
     let path = Path::new(path).join("search_index");
 
@@ -82,7 +82,7 @@ fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
 }
 
 fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searcher>) {
-    let path = args.value_of("path").unwrap();
+    let path = args.value_of("path").unwrap_or(".");
     let path = Path::new(path).join("search_index");
     let searcher = searcher.unwrap_or_else(|| Searcher::open(&path).unwrap());
 
@@ -102,7 +102,7 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
 
 
 fn unlock<'a>(args: &ArgMatches<'a>) {
-    let path = args.value_of("path").unwrap();
+    let path = args.value_of("path").unwrap_or(".");
     let path = Path::new(path).join("search_index/.tantivy-indexer.lock");
 
     remove_file(path).unwrap();
