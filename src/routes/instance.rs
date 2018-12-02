@@ -19,6 +19,7 @@ use plume_models::{
 use inbox::Inbox;
 use routes::Page;
 use template_utils::Ructe;
+use Searcher;
 
 #[get("/")]
 pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
@@ -197,15 +198,15 @@ pub fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n)
 }
 
 #[post("/admin/users/<id>/ban")]
-pub fn ban(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
+pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Redirect {
     if let Some(u) = User::get(&*conn, id) {
-        u.delete(&*conn);
+        u.delete(&*conn, &searcher);
     }
     Redirect::to(uri!(admin_users))
 }
 
 #[post("/inbox", data = "<data>")]
-pub fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<String, status::BadRequest<&'static str>> {
+pub fn shared_inbox(conn: DbConn, data: String, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
     let act: serde_json::Value = serde_json::from_str(&data[..]).expect("instance::shared_inbox: deserialization error");
 
     let activity = act.clone();
@@ -223,7 +224,7 @@ pub fn shared_inbox(conn: DbConn, data: String, headers: Headers) -> Result<Stri
         return Ok(String::new());
     }
     let instance = Instance::get_local(&*conn).expect("instance::shared_inbox: local instance not found error");
-    Ok(match instance.received(&*conn, act) {
+    Ok(match instance.received(&*conn, &searcher, act) {
         Ok(_) => String::new(),
         Err(e) => {
             println!("Shared inbox error: {}\n{}", e.as_fail(), e.backtrace());

@@ -21,6 +21,7 @@ use plume_models::{
 };
 use routes::Page;
 use template_utils::Ructe;
+use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Ructe> {
@@ -128,10 +129,10 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Result<Redirect, Option<Ructe>>{
+pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Option<Ructe>>{
     let blog = Blog::find_local(&*conn, &name).ok_or(None)?;
     if user.clone().map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
-        blog.delete(&conn);
+        blog.delete(&conn, &searcher);
         Ok(Redirect::to(uri!(super::instance::index)))
     } else {
         // TODO actually return 403 error code

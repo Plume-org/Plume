@@ -193,6 +193,12 @@ plm instance new
 plm users new --admin
 ```
 
+You will also need to initialise search index
+
+```
+plm search init -p path/to/plume/workingdir
+```
+
 For more information about these commands, and the arguments you can give them, check out [their documentaion](CLI.md).
 
 Finally, you can start Plume with:
@@ -224,6 +230,7 @@ docker-compose run --rm plume diesel database setup
 # Setup your instance
 docker-compose run --rm plume plm instance new
 docker-compose run --rm plume plm users new --admin
+docker-compose run --rm plume plm search init
 
 # Launch your instance for good
 docker-compose up -d

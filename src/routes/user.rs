@@ -8,7 +8,6 @@ use rocket::{
 use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationError, ValidationErrors};
-use workerpool::thunk::*;
 
 use inbox::Inbox;
 use plume_common::activity_pub::{
@@ -25,6 +24,7 @@ use plume_models::{
 use routes::Page;
 use template_utils::Ructe;
 use Worker;
+use Searcher;
 
 #[get("/me")]
 pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -40,10 +40,11 @@ pub fn details(
     conn: DbConn,
     account: Option<User>,
     worker: Worker,
-    fecth_articles_conn: DbConn,
-    fecth_followers_conn: DbConn,
+    fetch_articles_conn: DbConn,
+    fetch_followers_conn: DbConn,
     update_conn: DbConn,
     intl: I18n,
+    searcher: Searcher,
 ) -> Result<Ructe, Ructe> {
     let user = User::find_by_fqn(&*conn, &name).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, account.clone()))))?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6);
@@ -52,12 +53,13 @@ pub fn details(
     if !user.get_instance(&*conn).local {
         // Fetch new articles
         let user_clone = user.clone();
-        worker.execute(Thunk::of(move || {
+        let searcher = searcher.clone();
+        worker.execute(move || {
             for create_act in user_clone.fetch_outbox::<Create>() {
                 match create_act.create_props.object_object::<Article>() {
                     Ok(article) => {
                         Post::from_activity(
-                            &*fecth_articles_conn,
+                            &(&*fetch_articles_conn, &searcher),
                             article,
                             user_clone.clone().into_id(),
                         );
@@ -68,20 +70,20 @@ pub fn details(
                     }
                 }
             }
-        }));
+        });
 
         // Fetch followers
         let user_clone = user.clone();
-        worker.execute(Thunk::of(move || {
+        worker.execute(move || {
             for user_id in user_clone.fetch_followers_ids() {
                 let follower =
-                    User::find_by_ap_url(&*fecth_followers_conn, &user_id)
+                    User::find_by_ap_url(&*fetch_followers_conn, &user_id)
                         .unwrap_or_else(|| {
-                            User::fetch_from_url(&*fecth_followers_conn, &user_id)
+                            User::fetch_from_url(&*fetch_followers_conn, &user_id)
                                 .expect("user::details: Couldn't fetch follower")
                         });
                 follows::Follow::insert(
-                    &*fecth_followers_conn,
+                    &*fetch_followers_conn,
                     follows::NewFollow {
                         follower_id: follower.id,
                         following_id: user_clone.id,
@@ -89,14 +91,14 @@ pub fn details(
                     },
                 );
             }
-        }));
+        });
 
         // Update profile information if needed
         let user_clone = user.clone();
         if user.needs_update() {
-            worker.execute(Thunk::of(move || {
+            worker.execute(move || {
                 user_clone.refetch(&*update_conn);
-            }))
+            });
         }
     }
 
@@ -134,9 +136,9 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<
     let target = User::find_by_fqn(&*conn, &name)?;
     if let Some(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.delete(&*conn);
-        worker.execute(Thunk::of(move || {
+        worker.execute(move || {
             broadcast(&user, delete_act, vec![target])
-        }));
+        });
     } else {
         let f = follows::Follow::insert(
             &*conn,
@@ -149,7 +151,7 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Option<
         f.notify(&*conn);
 
         let act = f.to_activity(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, act, vec![target])));
+        worker.execute(move || broadcast(&user, act, vec![target]));
     }
     Some(Redirect::to(uri!(details: name = name)))
 }
@@ -248,10 +250,10 @@ pub fn update(_name: String, conn: DbConn, user: User, form: LenientForm<UpdateU
 }
 
 #[post("/@/<name>/delete")]
-pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> Option<Redirect> {
+pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies, searcher: Searcher) -> Option<Redirect> {
     let account = User::find_by_fqn(&*conn, &name)?;
     if user.id == account.id {
-        account.delete(&*conn);
+        account.delete(&*conn, &searcher);
 
     if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
         cookies.remove_private(cookie);
@@ -309,7 +311,7 @@ pub fn validate_username(username: &str) -> Result<(), ValidationError> {
     }
 }
 
-#[post("/users/new", data = "<data>")]
+#[post("/users/new", data = "<form>")]
 pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Result<Redirect, Ructe> {
   if !Instance::get_local(&*conn)
         .map(|i| i.open_registrations)
@@ -353,6 +355,7 @@ pub fn inbox(
     conn: DbConn,
     data: String,
     headers: Headers,
+    searcher: Searcher,
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
     let user = User::find_local(&*conn, &name).ok_or(None)?;
     let act: serde_json::Value =
@@ -380,7 +383,7 @@ pub fn inbox(
     if Instance::is_blocked(&*conn, actor_id) {
         return Ok(String::new());
     }
-    Ok(match user.received(&*conn, act) {
+    Ok(match user.received(&*conn, &searcher, act) {
         Ok(_) => String::new(),
         Err(e) => {
             println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());

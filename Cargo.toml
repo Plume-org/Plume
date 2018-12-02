@@ -13,10 +13,12 @@ dotenv = "0.13"
 failure = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
+num_cpus = "1.0"
 rocket = "0.4.0-rc.1"
 rocket_contrib = { version = "0.4.0-rc.1", features = ["json"] }
 rocket_i18n = "0.3.1"
 rpassword = "2.0"
+scheduled-thread-pool = "0.2.0"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
@@ -24,7 +26,6 @@ serde_qs = "0.4"
 validator = "0.8"
 validator_derive = "0.7"
 webfinger = "0.3.1"
-workerpool = "1.1"
 
 [[bin]]
 name = "plume"
@@ -33,6 +34,10 @@ path = "src/main.rs"
 [dependencies.chrono]
 features = ["serde"]
 version = "0.4"
+
+[dependencies.ctrlc]
+features = ["termination"]
+version = "3.1.1"
 
 [dependencies.diesel]
 features = ["r2d2", "chrono"]
@@ -54,7 +59,7 @@ path = "plume-models"
 
 [dependencies.rocket_csrf]
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "e6ead8051cab12a95ea9dc88db3a107f0b5f7533"
+rev = "717fad53cfd2ee5cbee5b4571f6190644f9dddd7"
 
 [build-dependencies]
 ructe = "0.5.2"

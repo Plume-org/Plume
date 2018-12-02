@@ -10,6 +10,7 @@ use plume_models::{Connection, posts::Post};
 
 const ITEMS_PER_PAGE: i32 = 12;
 
+#[derive(Copy, Clone)]
 pub struct Page(i32);
 
 impl<'v> FromFormValue<'v> for Page {
@@ -72,6 +73,7 @@ pub mod reshares;
 pub mod session;
 pub mod tags;
 pub mod user;
+pub mod search;
 pub mod well_known;
 
 #[get("/static/<file..>", rank = 2)]

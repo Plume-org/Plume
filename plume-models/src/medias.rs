@@ -140,19 +140,23 @@ impl Media {
             .expect("Media::delete: database entry deletion error");
     }
 
-    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Media {
-        Media::insert(
-            conn,
-            NewMedia {
-                file_path: String::new(),
-                alt_text: String::new(),
-                is_remote: true,
-                remote_url: Some(url),
-                sensitive: false,
-                content_warning: None,
-                owner_id: user.id,
-            },
-        )
+    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Result<Media, ()> {
+        if url.contains(&['<', '>', '"'][..]) {
+            Err(())
+        } else {
+            Ok(Media::insert(
+                conn,
+                NewMedia {
+                    file_path: String::new(),
+                    alt_text: String::new(),
+                    is_remote: true,
+                    remote_url: Some(url),
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: user.id,
+                },
+            ))
+        }
     }
 
     pub fn set_owner(&self, conn: &Connection, user: &User) {
@@ -186,7 +190,7 @@ impl Media {
             NewMedia {
                 file_path: path.to_str()?.to_string(),
                 alt_text: image.object_props.content_string().ok()?,
-                is_remote: true,
+                is_remote: false,
                 remote_url: None,
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),

@@ -6,12 +6,14 @@ extern crate atom_syndication;
 extern crate canapi;
 extern crate chrono;
 extern crate colored;
+extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
+extern crate num_cpus;
 extern crate plume_api;
 extern crate plume_common;
 extern crate plume_models;
@@ -22,6 +24,7 @@ extern crate rocket_csrf;
 #[macro_use]
 extern crate rocket_i18n;
 extern crate rpassword;
+extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -32,13 +35,16 @@ extern crate validator;
 #[macro_use]
 extern crate validator_derive;
 extern crate webfinger;
-extern crate workerpool;
 
 use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
-use plume_models::{DATABASE_URL, Connection, db_conn::DbPool};
-use workerpool::{Pool, thunk::ThunkWorker};
+use plume_models::{DATABASE_URL, Connection,
+    db_conn::DbPool, search::Searcher as UnmanagedSearcher};
+use scheduled_thread_pool::ScheduledThreadPool;
+use std::process::exit;
+use std::sync::Arc;
+use std::time::Duration;
 
 mod api;
 mod inbox;
@@ -46,7 +52,8 @@ mod inbox;
 mod template_utils;
 mod routes;
 
-type Worker<'a> = State<'a, Pool<ThunkWorker<()>>>;
+type Worker<'a> = State<'a, ScheduledThreadPool>;
+type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
@@ -57,7 +64,20 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
-    let pool = init_pool().expect("main: database pool initialization error");
+
+    let dbpool = init_pool().expect("main: database pool initialization error");
+    let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
+    let searcher = Arc::new(UnmanagedSearcher::open(&"search_index").unwrap());
+
+    let commiter = searcher.clone();
+    workpool.execute_with_fixed_delay(Duration::from_secs(5), Duration::from_secs(60*30), move || commiter.commit());
+
+    let search_unlocker = searcher.clone();
+    ctrlc::set_handler(move || {
+        search_unlocker.drop_writer();
+        exit(0);
+    }).expect("Error setting Ctrl-c handler");
+
     rocket::ignite()
         .mount("/", routes![
             routes::blogs::paginated_details,
@@ -120,6 +140,8 @@ fn main() {
             routes::reshares::create,
             routes::reshares::create_auth,
 
+            routes::search::search,
+
             routes::session::new,
             routes::session::new_message,
             routes::session::create,
@@ -168,8 +190,9 @@ fn main() {
             routes::errors::not_found,
             routes::errors::server_error
         ])
-        .manage(pool)
-        .manage(Pool::<ThunkWorker<()>>::new(4))
+        .manage(dbpool)
+        .manage(workpool)
+        .manage(searcher)
         .manage(include_i18n!("plume", [ "de", "en", "fr", "gl", "it", "nb", "pl", "ru" ]))
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)

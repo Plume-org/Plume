@@ -25,6 +25,7 @@ use plume_common::{
 use post_authors::*;
 use reshares::Reshare;
 use safe_string::SafeString;
+use search::Searcher;
 use schema::posts;
 use std::collections::HashSet;
 use tags::Tag;
@@ -64,11 +65,11 @@ pub struct NewPost {
     pub cover_id: Option<i32>,
 }
 
-impl<'a> Provider<(&'a Connection, Option<i32>)> for Post {
+impl<'a> Provider<(&'a Connection, &'a Searcher, Option<i32>)> for Post {
     type Data = PostEndpoint;
 
     fn get(
-        (conn, user_id): &(&'a Connection, Option<i32>),
+        (conn, _search, user_id): &(&'a Connection, &Searcher, Option<i32>),
         id: i32,
     ) -> Result<PostEndpoint, Error> {
         if let Some(post) = Post::get(conn, id) {
@@ -90,7 +91,7 @@ impl<'a> Provider<(&'a Connection, Option<i32>)> for Post {
     }
 
     fn list(
-        (conn, user_id): &(&'a Connection, Option<i32>),
+        (conn, _searcher, user_id): &(&'a Connection, &Searcher, Option<i32>),
         filter: PostEndpoint,
     ) -> Vec<PostEndpoint> {
         let mut query = posts::table.into_boxed();
@@ -123,36 +124,56 @@ impl<'a> Provider<(&'a Connection, Option<i32>)> for Post {
     }
 
     fn create(
-        (_conn, _user_id): &(&'a Connection, Option<i32>),
+        (_conn, _searcher, _user_id): &(&'a Connection, &Searcher, Option<i32>),
         _query: PostEndpoint,
     ) -> Result<PostEndpoint, Error> {
         unimplemented!()
     }
 
     fn update(
-        (_conn, _user_id): &(&'a Connection, Option<i32>),
+        (_conn, _searcher, _user_id): &(&'a Connection, &Searcher, Option<i32>),
         _id: i32,
         _new_data: PostEndpoint,
     ) -> Result<PostEndpoint, Error> {
         unimplemented!()
     }
 
-    fn delete((conn, user_id): &(&'a Connection, Option<i32>), id: i32) {
+    fn delete((conn, searcher, user_id): &(&'a Connection, &Searcher, Option<i32>), id: i32) {
         let user_id = user_id.expect("Post as Provider::delete: not authenticated");
         if let Some(post) = Post::get(conn, id) {
             if post.is_author(conn, user_id) {
-                post.delete(conn);
+                post.delete(&(conn, searcher));
             }
         }
     }
 }
 
 impl Post {
-    insert!(posts, NewPost);
     get!(posts);
-    update!(posts);
     find_by!(posts, find_by_slug, slug as &str, blog_id as i32);
     find_by!(posts, find_by_ap_url, ap_url as &str);
+
+    last!(posts);
+    pub fn insert(conn: &Connection, new: NewPost, searcher: &Searcher) -> Self {
+        diesel::insert_into(posts::table)
+            .values(new)
+            .execute(conn)
+            .expect("Post::insert: Error saving in posts");
+        let post = Self::last(conn);
+        searcher.add_document(conn, &post);
+        post
+    }
+    pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Self {
+        diesel::update(self)
+            .set(self)
+            .execute(conn)
+            .expect("Post::update: Error updating posts");
+        let post = Self::get(conn, self.id)
+            .expect("macro::update: posts we just updated doesn't exist anymore???");
+        searcher.update_document(conn, &post);
+        post
+    }
+
 
     pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Vec<Post> {
         use schema::tags;
@@ -560,7 +581,7 @@ impl Post {
         act
     }
 
-    pub fn handle_update(conn: &Connection, updated: &Article) {
+    pub fn handle_update(conn: &Connection, updated: &Article, searcher: &Searcher) {
         let id = updated
             .object_props
             .id_string()
@@ -620,7 +641,7 @@ impl Post {
             post.update_hashtags(conn, hashtags);
         }
 
-        post.update(conn);
+        post.update(conn, searcher);
     }
 
     pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) {
@@ -761,8 +782,8 @@ impl Post {
     }
 }
 
-impl FromActivity<Article, Connection> for Post {
-    fn from_activity(conn: &Connection, article: Article, _actor: Id) -> Post {
+impl<'a> FromActivity<Article, (&'a Connection, &'a Searcher)> for Post {
+    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: Article, _actor: Id) -> Post {
         if let Some(post) = Post::find_by_ap_url(
             conn,
             &article.object_props.id_string().unwrap_or_default(),
@@ -834,6 +855,7 @@ impl FromActivity<Article, Connection> for Post {
                         .content,
                     cover_id: cover,
                 },
+                searcher,
             );
 
             for author in authors {
@@ -873,8 +895,8 @@ impl FromActivity<Article, Connection> for Post {
     }
 }
 
-impl Deletable<Connection, Delete> for Post {
-    fn delete(&self, conn: &Connection) -> Delete {
+impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
+    fn delete(&self, (conn, searcher): &(&Connection, &Searcher)) -> Delete {
         let mut act = Delete::default();
         act.delete_props
             .set_actor_link(self.get_authors(conn)[0].clone().into_id())
@@ -900,12 +922,13 @@ impl Deletable<Connection, Delete> for Post {
             m.delete(conn);
         }
         diesel::delete(self)
-            .execute(conn)
+            .execute(*conn)
             .expect("Post::delete: DB error");
+        searcher.delete_document(self);
         act
     }
 
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
+    fn delete_id(id: &str, actor_id: &str, (conn, searcher): &(&Connection, &Searcher)) {
         let actor = User::find_by_ap_url(conn, actor_id);
         let post = Post::find_by_ap_url(conn, id);
         let can_delete = actor
@@ -915,7 +938,7 @@ impl Deletable<Connection, Delete> for Post {
             })
             .unwrap_or(false);
         if can_delete {
-            post.map(|p| p.delete(conn));
+            post.map(|p| p.delete(&(conn, searcher)));
         }
     }
 }

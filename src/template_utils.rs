@@ -148,4 +148,17 @@ macro_rules! input {
     ($catalog:expr, $name:tt ($kind:tt), $label:expr, $form:expr, $err:expr) => {
         input!($catalog, $name ($kind), $label, false, "", $form, $err, "")
     };
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $props:expr) => {
+        {
+            Html(format!(r#"
+                <label for="{name}">{label}</label>
+                <input type="{kind}" id="{name}" name="{name}" {props}/>
+                "#,
+                name = stringify!($name),
+                label = i18n!($catalog, $label),
+                kind = stringify!($kind),
+                props = $props
+            ))
+        }
+    };
 }

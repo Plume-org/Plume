@@ -1,6 +1,5 @@
-use rocket::{State, response::{Redirect, Flash}};
+use rocket::response::{Redirect, Flash};
 use rocket_i18n::I18n;
-use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::{broadcast, inbox::{Deletable, Notify}};
 use plume_common::utils;
@@ -11,9 +10,10 @@ use plume_models::{
     reshares::*,
     users::User
 };
+use Worker;
 
 #[post("/~/<blog>/<slug>/reshare")]
-pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>) -> Option<Redirect> {
+pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker) -> Option<Redirect> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
@@ -28,13 +28,13 @@ pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Stat
 
         let dest = User::one_by_instance(&*conn);
         let act = reshare.to_activity(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+        worker.execute(move || broadcast(&user, act, dest));
     } else {
         let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id)
             .expect("reshares::create: reshare exist but not found error");
         let delete_act = reshare.delete(&*conn);
         let dest = User::one_by_instance(&*conn);
-        worker.execute(Thunk::of(move || broadcast(&user, delete_act, dest)));
+        worker.execute(move || broadcast(&user, delete_act, dest));
     }
 
     Some(Redirect::to(uri!(super::posts::details: blog = blog, slug = slug)))

@@ -42,6 +42,7 @@ use posts::Post;
 use reshares::Reshare;
 use safe_string::SafeString;
 use schema::users;
+use search::Searcher;
 use {ap_url, Connection, BASE_URL, USE_HTTPS};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
@@ -105,13 +106,13 @@ impl User {
             .expect("User::one_by_instance: loading error")
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) {
         use schema::post_authors;
 
         Blog::find_for_author(conn, self)
             .iter()
             .filter(|b| b.list_authors(conn).len() <= 1)
-            .for_each(|b| b.delete(conn));
+            .for_each(|b| b.delete(conn, searcher));
         // delete the posts if they is the only author
         let all_their_posts_ids: Vec<i32> = post_authors::table
             .filter(post_authors::author_id.eq(self.id))
@@ -130,7 +131,7 @@ impl User {
             if !has_other_authors {
                 Post::get(conn, post_id)
                     .expect("User::delete: post not found error")
-                    .delete(conn);
+                    .delete(&(conn, searcher));
             }
         }
 
@@ -267,7 +268,7 @@ impl User {
     }
 
     pub fn fetch_from_url(conn: &Connection, url: &str) -> Option<User> {
-        User::fetch(url).map(|json| {
+        User::fetch(url).and_then(|json| {
             (User::from_activity(
                 conn,
                 &json,
@@ -275,11 +276,11 @@ impl User {
                     .expect("User::fetch_from_url: url error")
                     .host_str()
                     .expect("User::fetch_from_url: host error"),
-            ))
+            ).ok())
         })
     }
 
-    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> User {
+    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> Result<User, ()> {
         let instance = match Instance::find_by_domain(conn, inst) {
             Some(instance) => instance,
             None => {
@@ -301,6 +302,11 @@ impl User {
             }
         };
 
+        if acct.object.ap_actor_props.preferred_username_string()
+            .expect("User::from_activity: preferredUsername error")
+            .contains(&['<', '>', '&', '@', '\'', '"'][..]) {
+            return Err(());
+        }
         let user = User::insert(
             conn,
             NewUser {
@@ -308,7 +314,7 @@ impl User {
                     .object
                     .ap_actor_props
                     .preferred_username_string()
-                    .expect("User::from_activity: preferredUsername error"),
+                    .unwrap(),
                 display_name: acct
                     .object
                     .object_props
@@ -374,9 +380,11 @@ impl User {
             &user,
         );
 
-        user.set_avatar(conn, avatar.id);
+        if let Ok(avatar) = avatar {
+            user.set_avatar(conn, avatar.id);
+        }
 
-        user
+        Ok(user)
     }
 
     pub fn refetch(&self, conn: &Connection) {
@@ -391,7 +399,7 @@ impl User {
                     .url_string()
                     .expect("User::refetch: icon.url error"),
                 &self,
-            );
+            ).ok();
 
             diesel::update(self)
                 .set((
@@ -427,7 +435,7 @@ impl User {
                         .ap_actor_props
                         .followers_string()
                         .expect("User::refetch: followers error")),
-                    users::avatar_id.eq(Some(avatar.id)),
+                    users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
                 ))
                 .execute(conn)
@@ -984,6 +992,7 @@ pub(crate) mod tests {
     use super::*;
     use diesel::Connection;
     use instance::{tests as instance_tests, Instance};
+    use search::tests::get_searcher;
     use tests::db;
     use Connection as Conn;
 
@@ -1080,7 +1089,7 @@ pub(crate) mod tests {
             let inserted = fill_database(conn);
 
             assert!(User::get(conn, inserted[0].id).is_some());
-            inserted[0].delete(conn);
+            inserted[0].delete(conn, &get_searcher());
             assert!(User::get(conn, inserted[0].id).is_none());
 
             Ok(())

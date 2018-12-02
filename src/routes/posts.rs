@@ -1,12 +1,11 @@
 use activitypub::object::Article;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
-use rocket::{State, request::LenientForm};
+use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
 use rocket_i18n::I18n;
 use std::{collections::{HashMap, HashSet}, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
-use workerpool::{Pool, thunk::*};
 
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Deletable};
 use plume_common::utils;
@@ -25,6 +24,8 @@ use plume_models::{
 };
 use routes::comments::NewCommentForm;
 use template_utils::Ructe;
+use Worker;
+use Searcher;
 
 // See: https://github.com/SergioBenitez/Rocket/pull/454
 #[get("/~/<blog>/<slug>", rank = 5)]
@@ -173,7 +174,7 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) ->
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
-pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: LenientForm<NewPostForm>, worker: State<Pool<ThunkWorker<()>>>, intl: I18n)
+pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: LenientForm<NewPostForm>, worker: Worker, intl: I18n, searcher: Searcher)
     -> Result<Redirect, Option<Ructe>> {
     let b = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
     let mut post = Post::find_by_slug(&*conn, &slug, b.id).ok_or(None)?;
@@ -226,7 +227,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             post.source = form.content.clone();
             post.license = license;
             post.cover_id = form.cover;
-            post.update(&*conn);
+            post.update(&*conn, &searcher);
             let post = post.update_ap_url(&*conn);
 
             if post.published {
@@ -245,11 +246,11 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
                 if newly_published {
                     let act = post.create_activity(&conn);
                     let dest = User::one_by_instance(&*conn);
-                    worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                    worker.execute(move || broadcast(&user, act, dest));
                 } else {
                     let act = post.update_activity(&*conn);
                     let dest = User::one_by_instance(&*conn);
-                    worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                    worker.execute(move || broadcast(&user, act, dest));
                 }
             }
 
@@ -294,7 +295,7 @@ pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<form>")]
-pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: State<Pool<ThunkWorker<()>>>, intl: I18n) -> Result<Redirect, Option<Ructe>> {
+pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher) -> Result<Redirect, Option<Ructe>> {
     let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
     let slug = form.title.to_string().to_kebab_case();
 
@@ -333,7 +334,9 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
                 subtitle: form.subtitle.clone(),
                 source: form.content.clone(),
                 cover_id: form.cover,
-            });
+                },
+                &searcher,
+            );
             let post = post.update_ap_url(&*conn);
             PostAuthor::insert(&*conn, NewPostAuthor {
                 post_id: post.id,
@@ -366,7 +369,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
 
                 let act = post.create_activity(&*conn);
                 let dest = User::one_by_instance(&*conn);
-                worker.execute(Thunk::of(move || broadcast(&user, act, dest)));
+                worker.execute(move || broadcast(&user, act, dest));
             }
 
             Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
@@ -386,7 +389,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
 }
 
 #[post("/~/<blog_name>/<slug>/delete")]
-pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: State<Pool<ThunkWorker<()>>>) -> Redirect {
+pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Redirect {
     let post = Blog::find_by_fqn(&*conn, &blog_name)
         .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
 
@@ -395,8 +398,8 @@ pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker:
             Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone()))
         } else {
             let dest = User::one_by_instance(&*conn);
-            let delete_activity = post.delete(&*conn);
-            worker.execute(Thunk::of(move || broadcast(&user, delete_activity, dest)));
+            let delete_activity = post.delete(&(&conn, &searcher));
+            worker.execute(move || broadcast(&user, delete_activity, dest));
 
             Redirect::to(uri!(super::blogs::details: name = blog_name))
         }
