@@ -272,7 +272,8 @@ pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies) -> O
     )
 )]
 pub struct NewUserForm {
-    #[validate(length(min = "1", message = "Username can't be empty"))]
+    #[validate(length(min = "1", message = "Username can't be empty"),
+        custom( function = "validate_username", message = "User name is not allowed to contain any of < > & @ ' or \""))]
     pub username: String,
     #[validate(email(message = "Invalid email"))]
     pub email: String,
@@ -300,9 +301,17 @@ pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
     }
 }
 
-#[post("/users/new", data = "<form>")]
+pub fn validate_username(username: &str) -> Result<(), ValidationError> {
+    if username.contains(&['<', '>', '&', '@', '\'', '"'][..]) {
+        Err(ValidationError::new("username_illegal_char"))
+    } else {
+        Ok(())
+    }
+}
+
+#[post("/users/new", data = "<data>")]
 pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Result<Redirect, Ructe> {
-    if !Instance::get_local(&*conn)
+  if !Instance::get_local(&*conn)
         .map(|i| i.open_registrations)
         .unwrap_or(true)
     {
