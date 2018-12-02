@@ -1,6 +1,8 @@
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
-    http::uri::{FromUriParam, UriDisplay},
+    http::{RawStr,
+        uri::{FromUriParam, UriDisplay}},
+    request::FromFormValue,
     response::NamedFile
 };
 use std::{
@@ -57,6 +59,17 @@ impl FromUriParam<i32> for Page {
     }
 }
 
+impl<'v> FromFormValue<'v> for Page {
+    type Error = &'v RawStr;
+
+    fn from_form_value(form_value: &'v RawStr) -> Result<Page, &'v RawStr> {
+        match form_value.parse::<i32>() {
+            Ok(page) => Ok(Page{page}),
+            _ => Err(form_value),
+        }
+    }
+}
+
 impl Page {
     pub fn first() -> Page {
         Page {
@@ -109,6 +122,7 @@ pub mod reshares;
 pub mod session;
 pub mod tags;
 pub mod user;
+pub mod search;
 pub mod well_known;
 
 #[get("/static/<file..>", rank = 2)]

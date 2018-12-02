@@ -11,6 +11,7 @@ use plume_models::{DATABASE_URL, Connection as Conn};
 
 mod instance;
 mod users;
+mod search;
 
 fn main() {
     let mut app = App::new("Plume CLI")
@@ -18,7 +19,8 @@ fn main() {
         .version(env!("CARGO_PKG_VERSION"))
         .about("Collection of tools to manage your Plume instance.")
         .subcommand(instance::command())
-        .subcommand(users::command());
+        .subcommand(users::command())
+        .subcommand(search::command());
     let matches = app.clone().get_matches();
 
     dotenv::dotenv().ok();
@@ -27,6 +29,7 @@ fn main() {
     match matches.subcommand() {
         ("instance", Some(args)) => instance::run(args, &conn.expect("Couldn't connect to the database.")),
         ("users", Some(args)) => users::run(args, &conn.expect("Couldn't connect to the database.")),
+        ("search", Some(args)) => search::run(args, &conn.expect("Couldn't connect to the database.")),
         _ => app.print_help().expect("Couldn't print help")
     };
 }

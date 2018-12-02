@@ -10,6 +10,7 @@ extern crate chrono;
 extern crate diesel;
 extern crate guid_create;
 extern crate heck;
+extern crate itertools;
 #[macro_use]
 extern crate lazy_static;
 extern crate openssl;
@@ -22,8 +23,11 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+#[macro_use]
+extern crate tantivy;
 extern crate url;
 extern crate webfinger;
+extern crate whatlang;
 
 #[cfg(test)]
 #[macro_use]
@@ -145,34 +149,6 @@ macro_rules! insert {
     };
 }
 
-/// Adds a function to a model to save changes to a model.
-/// The model should derive diesel::AsChangeset.
-///
-/// # Usage
-///
-/// ```rust
-/// impl Model {
-///     update!(model_table);
-/// }
-///
-/// // Update and save changes
-/// let m = Model::get(connection, 1);
-/// m.foo = 42;
-/// m.update(connection);
-/// ```
-macro_rules! update {
-    ($table:ident) => {
-        pub fn update(&self, conn: &crate::Connection) -> Self {
-            diesel::update(self)
-                .set(self)
-                .execute(conn)
-                .expect(concat!("macro::update: Error updating ", stringify!($table)));
-            Self::get(conn, self.id)
-                .expect(concat!("macro::update: ", stringify!($table), " we just updated doesn't exist anymore???"))
-        }
-    };
-}
-
 /// Returns the last row of a table.
 ///
 /// # Usage
@@ -284,6 +260,7 @@ pub mod post_authors;
 pub mod posts;
 pub mod reshares;
 pub mod safe_string;
+pub mod search;
 pub mod schema;
 pub mod tags;
 pub mod users;

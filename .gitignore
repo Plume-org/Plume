@@ -14,3 +14,4 @@ docker-compose.yml
 *.sqlite
 *.sqlite3
 *.swp
+search_index
