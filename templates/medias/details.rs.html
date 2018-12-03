@@ -1,6 +1,6 @@
 @use templates::base;
 @use template_utils::*;
-@use plume_models::medias::Media;
+@use plume_models::medias::{Media, MediaCategory};
 
 @(ctx: BaseContext, media: Media)
 
@@ -23,9 +23,11 @@
             <code>@media.markdown(ctx.0)</code>
         </div>
         <div>
-            <form class="inline" method="post" action="/medias/@media.id/avatar">
-                <input class="button" type="submit" value="@i18n!(ctx.1, "Use as avatar")">
-            </form>
+	    @if media.category() == MediaCategory::Image {
+                <form class="inline" method="post" action="/medias/@media.id/avatar">
+		    <input class="button" type="submit" value="@i18n!(ctx.1, "Use as avatar")">
+                </form>
+	    }
             <form class="inline" method="post" action="/medias/@media.id/delete">
                 <input class="button" type="submit" value="@i18n!(ctx.1, "Delete")">
             </form>

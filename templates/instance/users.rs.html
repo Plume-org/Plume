@@ -22,7 +22,7 @@
                     <small>@format!("@{}", user.username)</small>
                 </p>
                 @if !user.is_admin {
-                    <form class="inline" method="post" href="/admin/users/@user.id/ban">
+                    <form class="inline" method="post" action="/admin/users/@user.id/ban">
                         <input type="submit" value="@i18n!(ctx.1, "Ban")">
                     </form>
                 }

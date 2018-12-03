@@ -14,7 +14,7 @@
     <p>
         @i18n!(ctx.1, "One author in this blog: ", "{0} authors in this blog: ", authors.len())
         @for author in authors {
-            <a class="author" href="/@@/@author.get_fqn(ctx.0)">author.name(ctx.0)</a>
+            <a class="author" href="/@@/@author.get_fqn(ctx.0)">@author.name(ctx.0)</a>
         }
     </p>
     <p>

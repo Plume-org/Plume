@@ -74,15 +74,15 @@ impl Media {
         let url = self.url(conn);
         match self.category() {
             MediaCategory::Image => SafeString::new(&format!(
-                "<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">",
+                r#"<img src="{}" alt="{}" title="{}" class=\"preview\">"#,
                 url, escape(&self.alt_text), escape(&self.alt_text)
             )),
             MediaCategory::Audio => SafeString::new(&format!(
-                "<audio src=\"{}\" title=\"{}\" class=\"preview\"></audio>",
+                r#"<audio src="{}" title="{}" class="preview"></audio>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Video => SafeString::new(&format!(
-                "<video src=\"{}\" title=\"{}\" class=\"preview\"></video>",
+                r#"<video src="{}" title="{}" class="preview"></video>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Unknown => SafeString::new(""),
@@ -93,15 +93,15 @@ impl Media {
         let url = self.url(conn);
         match self.category() {
             MediaCategory::Image => SafeString::new(&format!(
-                "<img src=\"{}\" alt=\"{}\" title=\"{}\">",
+                r#"<img src="{}" alt="{}" title="{}">"#,
                 url, escape(&self.alt_text), escape(&self.alt_text)
             )),
             MediaCategory::Audio => SafeString::new(&format!(
-                "<audio src=\"{}\" title=\"{}\"></audio>",
+                r#"<audio src="{}" title="{}"></audio>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Video => SafeString::new(&format!(
-                "<video src=\"{}\" title=\"{}\"></video>",
+                r#"<video src="{}" title="{}"></video>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Unknown => SafeString::new(""),
