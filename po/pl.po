@@ -409,17 +409,14 @@ msgstr "Utwórz konto"
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to"
-msgstr "Dom dla"
+msgid "Home to <em>{0}</em> users"
+msgstr ""
 
-msgid "people"
-msgstr "osób"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
 
-msgid "Who wrote"
-msgstr "Które napisały"
-
-msgid "articles"
-msgstr "artykuły"
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
@@ -429,12 +426,6 @@ msgstr "Usuń ten artykuł"
 
 msgid "Delete this blog"
 msgstr "Usuń ten blog"
-
-msgid "And connected to"
-msgstr "Połączony z"
-
-msgid "other instances"
-msgstr "innych instancji"
 
 msgid "Administred by"
 msgstr "Administrowany przez"
@@ -617,3 +608,21 @@ msgstr "Ilustracja"
 
 msgid "None"
 msgstr "Brak"
+
+#~ msgid "Home to"
+#~ msgstr "Dom dla"
+
+#~ msgid "people"
+#~ msgstr "osób"
+
+#~ msgid "Who wrote"
+#~ msgstr "Które napisały"
+
+#~ msgid "articles"
+#~ msgstr "artykuły"
+
+#~ msgid "And connected to"
+#~ msgstr "Połączony z"
+
+#~ msgid "other instances"
+#~ msgstr "innych instancji"

@@ -722,9 +722,14 @@ form.inline input[type="submit"]:not(.button) {
  	align-items: center;
  }
 
+.stats p {
+    text-align: center;
+}
+
  .stats em {
- 	text-align: center;
  	font-weight: bold;
+ 	display: block;
+ 	margin: 1em 0;
  }
 
   /*== Pagination ==*/

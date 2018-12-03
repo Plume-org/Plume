@@ -20,14 +20,10 @@
                 @Html(instance.short_description_html)
                 <section class="stats">
                     <div>
-                        <p>@i18n!(ctx.1, "Home to")</p>
-                        <em>@n_users</em>
-                        <p>@i18n!(ctx.1, "people")</p>
+                        <p>@Html(i18n!(ctx.1, "Home to <em>{0}</em> people"; n_users))</p>
                     </div>
                     <div>
-                        <p>@i18n!(ctx.1, "Who wrote")</p>
-                        <em>@n_articles</em>
-                        <p>@i18n!(ctx.1, "articles")</p>
+                        <p>@Html(i18n!(ctx.1, "Who wrote <em>{0}</em> articles"; n_articles))</p>
                     </div>
                 </section>
             </main>

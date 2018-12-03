@@ -403,17 +403,14 @@ msgstr "Eigenen Account erstellen"
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to"
-msgstr "Heimat von"
+msgid "Home to <em>{0}</em> users"
+msgstr ""
 
-msgid "people"
-msgstr "Menschen"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
 
-msgid "Who wrote"
-msgstr "Wer schrieb"
-
-msgid "articles"
-msgstr "Artikel"
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Lies die detailierten Regeln"
@@ -424,12 +421,6 @@ msgstr "Artikel löschen"
 #, fuzzy
 msgid "Delete this blog"
 msgstr "Artikel löschen"
-
-msgid "And connected to"
-msgstr "Und verbunden mit"
-
-msgid "other instances"
-msgstr "anderen Instanzen"
 
 msgid "Administred by"
 msgstr "Administriert von"
@@ -617,3 +608,21 @@ msgstr "Administration"
 
 msgid "None"
 msgstr ""
+
+#~ msgid "Home to"
+#~ msgstr "Heimat von"
+
+#~ msgid "people"
+#~ msgstr "Menschen"
+
+#~ msgid "Who wrote"
+#~ msgstr "Wer schrieb"
+
+#~ msgid "articles"
+#~ msgstr "Artikel"
+
+#~ msgid "And connected to"
+#~ msgstr "Und verbunden mit"
+
+#~ msgid "other instances"
+#~ msgstr "anderen Instanzen"

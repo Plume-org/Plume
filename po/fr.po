@@ -409,17 +409,14 @@ msgstr "Créer votre compte"
 msgid "About {0}"
 msgstr "À propos de {0}"
 
-msgid "Home to"
-msgstr "Accueille"
+msgid "Home to <em>{0}</em> users"
+msgstr "Accueille <em>{0} personnes"
 
-msgid "people"
-msgstr "personnes"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Qui ont écrit <em>{0}</em> articles"
 
-msgid "Who wrote"
-msgstr "Ayant écrit"
-
-msgid "articles"
-msgstr "articles"
+msgid "And connected to <em>{0}</em> other instances"
+msgstr "Et connecté à <em>{0}</em> autres instances"
 
 msgid "Read the detailed rules"
 msgstr "Lire les règles détaillées"
@@ -429,12 +426,6 @@ msgstr "Supprimer cet article"
 
 msgid "Delete this blog"
 msgstr "Supprimer ce blog"
-
-msgid "And connected to"
-msgstr "Et connectée à"
-
-msgid "other instances"
-msgstr "autres instances"
 
 msgid "Administred by"
 msgstr "Administré par"

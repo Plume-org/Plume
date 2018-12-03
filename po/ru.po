@@ -414,17 +414,14 @@ msgstr "Создать аккаунт"
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to"
-msgstr "Дом для"
+msgid "Home to <em>{0}</em> users"
+msgstr ""
 
-msgid "people"
-msgstr "человек"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
 
-msgid "Who wrote"
-msgstr "Которые написали"
-
-msgid "articles"
-msgstr "статей"
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Прочитать подробные правила"
@@ -434,12 +431,6 @@ msgstr "Удалить эту статью"
 
 msgid "Delete this blog"
 msgstr "Удалить этот блог"
-
-msgid "And connected to"
-msgstr "И подключен к"
-
-msgid "other instances"
-msgstr "другим узлам"
 
 msgid "Administred by"
 msgstr "Администрируется"
@@ -628,3 +619,21 @@ msgstr "Иллюстрация"
 
 msgid "None"
 msgstr "Нет"
+
+#~ msgid "Home to"
+#~ msgstr "Дом для"
+
+#~ msgid "people"
+#~ msgstr "человек"
+
+#~ msgid "Who wrote"
+#~ msgstr "Которые написали"
+
+#~ msgid "articles"
+#~ msgstr "статей"
+
+#~ msgid "And connected to"
+#~ msgstr "И подключен к"
+
+#~ msgid "other instances"
+#~ msgstr "другим узлам"

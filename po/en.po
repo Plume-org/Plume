@@ -398,16 +398,13 @@ msgstr ""
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to"
+msgid "Home to <em>{0}</em> users"
 msgstr ""
 
-msgid "people"
+msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "Who wrote"
-msgstr ""
-
-msgid "articles"
+msgid "And connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -417,12 +414,6 @@ msgid "Delete this article"
 msgstr ""
 
 msgid "Delete this blog"
-msgstr ""
-
-msgid "And connected to"
-msgstr ""
-
-msgid "other instances"
 msgstr ""
 
 msgid "Administred by"

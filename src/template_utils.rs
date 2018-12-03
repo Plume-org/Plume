@@ -119,16 +119,12 @@ macro_rules! input {
                 } else {
                     String::new()
                 },
-                error = if let Some(field) = $err.errors().get(stringify!($name)) {
-                    if let ValidationErrorsKind::Field(errs) = field {
-                        format!(r#"<p class="error">{}</p>"#, i18n!($catalog, &*errs[0].message.clone().unwrap_or(Cow::from("Unknown error"))))
-                    } else {
-                        String::new()
-                    }
+                error = if let Some(ValidationErrorsKind::Field(errs)) = $err.errors().get(stringify!($name)) {
+                    format!(r#"<p class="error">{}</p>"#, i18n!($catalog, &*errs[0].message.clone().unwrap_or(Cow::from("Unknown error"))))
                 } else {
                     String::new()
                 },
-                val = $form.$name,
+                val = escape(&$form.$name),
                 props = $props
             ))
         }
