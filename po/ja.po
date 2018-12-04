@@ -4,13 +4,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
 "PO-Revision-Date: 2018-12-03 21:52+0900\n"
+"Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
+"Language-Team: \n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
-"Language-Team: \n"
 "X-Generator: Poedit 2.2\n"
 
 msgid "Latest articles"
@@ -34,7 +34,8 @@ msgstr "タイトル"
 msgid "Create blog"
 msgstr "ブログを作成"
 
-msgid "Comment \"{{ post }}\""
+#, fuzzy
+msgid "Comment \"{0}\""
 msgstr "\"{{ post }}\" にコメント"
 
 msgid "Content"
@@ -47,7 +48,8 @@ msgid "Something broke on our side."
 msgstr "サーバー側で何らかの問題が発生しました。"
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
+msgstr ""
+"申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
 
 msgid "Configuration"
 msgstr "設定"
@@ -61,20 +63,22 @@ msgstr "名前"
 msgid "Let&#x27;s go!"
 msgstr "開始しましょう！"
 
-msgid "Welcome to {{ instance_name | escape }}"
-msgstr "{{ instance_name | escape }} へようこそ"
+msgid "Welcome to {0}"
+msgstr ""
 
 msgid "Notifications"
 msgstr "通知"
 
-msgid "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }}"
-msgstr "{{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }} さんが投稿"
+msgid "Written by {0}"
+msgstr ""
 
-msgid "This article is under the {{ license }} license."
+#, fuzzy
+msgid "This article is under the {0} license."
 msgstr "この記事は {{ license }} ライセンスの元で公開されています。"
 
+#, fuzzy
 msgid "One like"
-msgid_plural "{{ count }} likes"
+msgid_plural "{0} likes"
 msgstr[0] "{{ count }} いいね"
 
 msgid "I don&#x27;t like this anymore"
@@ -83,8 +87,9 @@ msgstr "もうこれにいいねしません"
 msgid "Add yours"
 msgstr "いいねする"
 
+#, fuzzy
 msgid "One Boost"
-msgid_plural "{{ count }} Boosts"
+msgid_plural "{0} Boosts"
 msgstr[0] "{{ count }} ブースト"
 
 msgid "I don&#x27;t want to boost this anymore"
@@ -130,7 +135,9 @@ msgid "Your Blogs"
 msgstr "自分のブログ"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
-msgstr "まだブログを開設していません。ご自身のブログを開設するか、他のブログに参加するようにお願いしてください。"
+msgstr ""
+"まだブログを開設していません。ご自身のブログを開設するか、他のブログに参加す"
+"るようにお願いしてください。"
 
 msgid "Start a new blog"
 msgstr "新しいブログを開始"
@@ -144,8 +151,8 @@ msgstr "自分"
 msgid "Edit your profile"
 msgstr "自分のプロフィールを編集"
 
-msgid "Open on {{ instance_url }}"
-msgstr "{{ instance_url }} で開く"
+msgid "Open on {0}"
+msgstr ""
 
 msgid "Follow"
 msgstr "フォロー"
@@ -156,8 +163,9 @@ msgstr "フォロー解除"
 msgid "Recently boosted"
 msgstr "最近ブーストしたもの"
 
+#, fuzzy
 msgid "One follower"
-msgid_plural "{{ count }} followers"
+msgid_plural "{0} followers"
 msgstr[0] "{{ count }} フォロワー"
 
 msgid "Edit your account"
@@ -178,8 +186,9 @@ msgstr "要約"
 msgid "Update account"
 msgstr "アカウントをアップデート"
 
-msgid "{{ name | escape }}'s followers"
-msgstr "{{ name | escape }} のフォロワー"
+#, fuzzy
+msgid "{0}'s followers"
+msgstr "{{ count }} フォロワー"
 
 msgid "Followers"
 msgstr "フォロワー"
@@ -247,19 +256,23 @@ msgstr "他の人をフォローするにはログインする必要がありま
 msgid "You need to be logged in order to edit your profile"
 msgstr "自分のプロフィールを編集するにはログインする必要があります"
 
-msgid "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
-msgstr "{{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }} が投稿"
+msgid "By {0}"
+msgstr ""
 
-msgid "{{ data }} boosted your article"
+#, fuzzy
+msgid "{0} boosted your article"
 msgstr "{{ data }} があなたの記事をブーストしました"
 
-msgid "{{ data }} started following you"
+#, fuzzy
+msgid "{0} started following you"
 msgstr "{{ data }} があなたのフォローを開始しました"
 
-msgid "{{ data }} liked your article"
+#, fuzzy
+msgid "{0} liked your article"
 msgstr "{{ data }} があなたの記事をいいねしました"
 
-msgid "{{ data }} commented your article"
+#, fuzzy
+msgid "{0} commented your article"
 msgstr "{{ data }} があなたの記事にコメントしました"
 
 msgid "We couldn&#x27;t find this page."
@@ -274,7 +287,8 @@ msgstr "認証されていません。"
 msgid "You are not author in this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
-msgid "{{ data }} mentioned you."
+#, fuzzy
+msgid "{0} mentioned you."
 msgstr "{{ data }} があなたをメンションしました。"
 
 msgid "Your comment"
@@ -313,18 +327,21 @@ msgstr "無効なメールアドレス"
 msgid "Password should be at least 8 characters long"
 msgstr "パスワードは最低 8 文字にするべきです"
 
+#, fuzzy
 msgid "One author in this blog: "
-msgid_plural "{{ count }} authors in this blog: "
+msgid_plural "{0} authors in this blog: "
 msgstr[0] "ブログに {{ count }} 人の作成者がいます: "
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr "この記事と関わるにはログインするか Fediverse アカウントを使用してください"
+msgstr ""
+"この記事と関わるにはログインするか Fediverse アカウントを使用してください"
 
 msgid "Optional"
 msgstr "省略可"
 
+#, fuzzy
 msgid "One article in this blog"
-msgid_plural "{{ count }} articles in this blog"
+msgid_plural "{0} articles in this blog"
 msgstr[0] "ブログ内に {{ count }} 件の記事"
 
 msgid "Previous page"
@@ -332,21 +349,6 @@ msgstr "前のページ"
 
 msgid "Next page"
 msgstr "次のページ"
-
-msgid "{{ user }} mentioned you."
-msgstr "{{ user }} があなたをメンションしました。"
-
-msgid "{{ user }} commented your article."
-msgstr "{{ user }} があなたの記事にコメントしました。"
-
-msgid "{{ user }} is now following you."
-msgstr "{{ user }} はあなたをフォローしています。"
-
-msgid "{{ user }} liked your article."
-msgstr "{{ user }} があなたの記事にいいねしました。"
-
-msgid "{{ user }} boosted your article."
-msgstr "{{ user }} があなたの記事をブーストしました。"
 
 msgid "Source code"
 msgstr "ソースコード"
@@ -393,26 +395,27 @@ msgstr "Plume は分散型ブログエンジンです。"
 msgid "Authors can manage various blogs from an unique website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
 
-msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
-msgstr "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラットフォームから直接記事と関わることができます。"
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+"記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラット"
+"フォームから直接記事と関わることができます。"
 
 msgid "Create your account"
 msgstr "アカウントを作成"
 
-msgid "About {{ instance_name }}"
-msgstr "{{ instance_name }} について"
+msgid "About {0}"
+msgstr ""
 
-msgid "Home to"
-msgstr "登録者数"
+msgid "Home to <em>{0}</em> users"
+msgstr ""
 
-msgid "people"
-msgstr "人"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
 
-msgid "Who wrote"
-msgstr "投稿記事数"
-
-msgid "articles"
-msgstr "件"
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
@@ -423,16 +426,11 @@ msgstr "この記事を削除"
 msgid "Delete this blog"
 msgstr "このブログを削除"
 
-msgid "And connected to"
-msgstr "他のインスタンスからの接続数"
-
-msgid "other instances"
-msgstr "件"
-
 msgid "Administred by"
 msgstr "管理者"
 
-msgid "Runs Plume {{ version }}"
+#, fuzzy
+msgid "Runs Plume {0}"
 msgstr "Plume {{ version }} を実行中"
 
 msgid "Your media"
@@ -441,7 +439,8 @@ msgstr "メディア"
 msgid "Go to your gallery"
 msgstr "ギャラリーを参照"
 
-msgid "{{ name}}'s avatar'"
+#, fuzzy
+msgid "{0}'s avatar'"
 msgstr "{{ name}} のアバター"
 
 msgid "Media details"
@@ -483,8 +482,11 @@ msgstr "ファイル"
 msgid "Send"
 msgstr "送信"
 
-msgid "Sorry, but registrations are closed on this instance. Try to find another one"
-msgstr "申し訳ありませんが、このインスタンスでは登録者は限定されています。別のインスタンスをお探しください"
+msgid ""
+"Sorry, but registrations are closed on this instance. Try to find another one"
+msgstr ""
+"申し訳ありませんが、このインスタンスでは登録者は限定されています。別のインス"
+"タンスをお探しください"
 
 msgid "Subtitle"
 msgstr "サブタイトル"
@@ -505,7 +507,9 @@ msgid "Local feed"
 msgstr "このインスタンスのフィード"
 
 msgid "Nothing to see here yet. Try to follow more people."
-msgstr "ここにはまだ表示できるものがありません。他の人をもっとフォローしてみてください。"
+msgstr ""
+"ここにはまだ表示できるものがありません。他の人をもっとフォローしてみてくださ"
+"い。"
 
 msgid "Articles"
 msgstr "記事"
@@ -513,20 +517,23 @@ msgstr "記事"
 msgid "All the articles of the Fediverse"
 msgstr "Fediverse のすべての記事"
 
-msgid "Articles from {{ instance.name }}"
+#, fuzzy
+msgid "Articles from {0}"
 msgstr "{{ instance.name }} の記事"
 
 msgid "View all"
 msgstr "すべて表示"
 
-msgid "Articles tagged \"{{ tag }}\""
+#, fuzzy
+msgid "Articles tagged \"{0}\""
 msgstr "\"{{ tag }}\" タグの記事"
 
 msgid "Edit"
 msgstr "編集"
 
-msgid "Edit {{ post }}"
-msgstr "{{ post }} を編集"
+#, fuzzy
+msgid "Edit {0}"
+msgstr "編集"
 
 msgid "Update"
 msgstr "アップデート"
@@ -537,11 +544,18 @@ msgstr "このページは見つかりませんでした。"
 msgid "Invalid CSRF token."
 msgstr "無効な CSRF トークンです。"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "ご自身の CSRF トークンにおいて問題が発生しました。お使いのブラウザーで Cookie　が有効になっていることを確認して、このページを再読み込みしてみてください。このエラーメッセージが表示され続けた場合、問題を報告してください。"
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"ご自身の CSRF トークンにおいて問題が発生しました。お使いのブラウザーで "
+"Cookie　が有効になっていることを確認して、このページを再読み込みしてみてくだ"
+"さい。このエラーメッセージが表示され続けた場合、問題を報告してください。"
 
-msgid "Administration of {{ instance.name }}"
-msgstr "{{ instance.name }} の管理"
+#, fuzzy
+msgid "Administration of {0}"
+msgstr "管理"
 
 msgid "Instances"
 msgstr "インスタンス"
@@ -599,3 +613,66 @@ msgstr "図"
 
 msgid "None"
 msgstr "なし"
+
+#~ msgid "Welcome to {{ instance_name | escape }}"
+#~ msgstr "{{ instance_name | escape }} へようこそ"
+
+#~ msgid ""
+#~ "Written by {{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}"
+#~ "{{ link_3 }}"
+#~ msgstr ""
+#~ "{{ link_1 }}{{ url }}{{ link_2 }}{{ name | escape }}{{ link_3 }} さんが投"
+#~ "稿"
+
+#~ msgid "Open on {{ instance_url }}"
+#~ msgstr "{{ instance_url }} で開く"
+
+#~ msgid "{{ name | escape }}'s followers"
+#~ msgstr "{{ name | escape }} のフォロワー"
+
+#~ msgid ""
+#~ "By {{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }}"
+#~ msgstr ""
+#~ "{{ link_1 }}{{ link_2 }}{{ link_3 }}{{ name | escape }}{{ link_4 }} が投稿"
+
+#~ msgid "{{ user }} mentioned you."
+#~ msgstr "{{ user }} があなたをメンションしました。"
+
+#~ msgid "{{ user }} commented your article."
+#~ msgstr "{{ user }} があなたの記事にコメントしました。"
+
+#~ msgid "{{ user }} is now following you."
+#~ msgstr "{{ user }} はあなたをフォローしています。"
+
+#~ msgid "{{ user }} liked your article."
+#~ msgstr "{{ user }} があなたの記事にいいねしました。"
+
+#~ msgid "{{ user }} boosted your article."
+#~ msgstr "{{ user }} があなたの記事をブーストしました。"
+
+#~ msgid "About {{ instance_name }}"
+#~ msgstr "{{ instance_name }} について"
+
+#~ msgid "Home to"
+#~ msgstr "登録者数"
+
+#~ msgid "people"
+#~ msgstr "人"
+
+#~ msgid "Who wrote"
+#~ msgstr "投稿記事数"
+
+#~ msgid "articles"
+#~ msgstr "件"
+
+#~ msgid "And connected to"
+#~ msgstr "他のインスタンスからの接続数"
+
+#~ msgid "other instances"
+#~ msgstr "件"
+
+#~ msgid "Edit {{ post }}"
+#~ msgstr "{{ post }} を編集"
+
+#~ msgid "Administration of {{ instance.name }}"
+#~ msgstr "{{ instance.name }} の管理"
