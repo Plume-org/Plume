@@ -47,7 +47,7 @@ impl Searcher {
 
         let mut schema_builder = SchemaBuilder::default();
 
-        schema_builder.add_i64_field("post_id", INT_STORED );
+        schema_builder.add_i64_field("post_id", INT_STORED | INT_INDEXED);
         schema_builder.add_i64_field("creation_date", INT_INDEXED);
 
         schema_builder.add_text_field("instance", tag_indexing.clone());
