@@ -85,7 +85,6 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                         }
                     }
                     State::Ready => {
-                        text_acc.push(c);
                         if c == '@' {
                             events.push(Event::Text(text_acc.into()));
                             (events, State::Mention, String::new(), n + 1, mentions, hashtags)
@@ -93,11 +92,13 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                             events.push(Event::Text(text_acc.into()));
                             (events, State::Hashtag, String::new(), n + 1, mentions, hashtags)
                         } else if c.is_alphanumeric() {
+                            text_acc.push(c);
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
                                 events.push(Event::Text(text_acc.clone().into()))
                             }
                             (events, State::Word, text_acc, n + 1, mentions, hashtags)
                         } else {
+                            text_acc.push(c);
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
                                 events.push(Event::Text(text_acc.clone().into()))
                             }

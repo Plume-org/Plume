@@ -719,7 +719,7 @@ impl Post {
             }
         }
 
-        for ot in old_tags {
+        for ot in old_tags.iter().filter(|t| !t.is_hashtag) {
             if !tags_name.contains(&ot.tag) {
                 ot.delete(conn);
             }
@@ -756,7 +756,7 @@ impl Post {
             }
         }
 
-        for ot in old_tags {
+        for ot in old_tags.into_iter().filter(|t| t.is_hashtag) {
             if !tags_name.contains(&ot.tag) {
                 ot.delete(conn);
             }

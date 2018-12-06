@@ -231,7 +231,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
 
             let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<HashSet<_>>()
                 .into_iter().map(|t| Tag::build_activity(&conn, t)).collect::<Vec<_>>();
-            post.update_tags(&conn, hashtags);
+            post.update_hashtags(&conn, hashtags);
 
             if post.published {
                 if newly_published {
