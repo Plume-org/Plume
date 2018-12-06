@@ -3,10 +3,11 @@ use rocket::{
     response::Redirect,
     request::{LenientForm,FlashMessage}
 };
-use rocket_contrib::Template;
 use rocket::http::ext::IntoOwned;
+use rocket_i18n::I18n;
 use std::borrow::Cow;
 use validator::{Validate, ValidationError, ValidationErrors};
+use template_utils::Ructe;
 
 use plume_models::{
     db_conn::DbConn,
@@ -14,48 +15,43 @@ use plume_models::{
 };
 
 #[get("/login")]
-fn new(user: Option<User>, conn: DbConn) -> Template {
-    Template::render("session/login", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "errors": null,
-        "form": null
-    }))
+pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
+    render!(session::login(
+        &(&*conn, &intl.catalog, user),
+        None,
+        &LoginForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
-#[derive(FromForm)]
-struct Message {
-	m: String
-}
-
-#[get("/login?<message>")]
-fn new_message(user: Option<User>, message: Message, conn: DbConn) -> Template {
-    Template::render("session/login", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "message": message.m,
-        "errors": null,
-        "form": null
-    }))
+#[get("/login?<m>")]
+pub fn new_message(user: Option<User>, m: String, conn: DbConn, intl: I18n) -> Ructe {
+    render!(session::login(
+        &(&*conn, &intl.catalog, user),
+        Some(i18n!(intl.catalog, &m).to_string()),
+        &LoginForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
 
-#[derive(FromForm, Validate, Serialize)]
-struct LoginForm {
+#[derive(Default, FromForm, Validate, Serialize)]
+pub struct LoginForm {
     #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
-    email_or_name: String,
+    pub email_or_name: String,
     #[validate(length(min = "1", message = "Your password can't be empty"))]
-    password: String
+    pub password: String
 }
 
-#[post("/login", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies) -> Result<Redirect, Template> {
-    let form = data.get();
+#[post("/login", data = "<form>")]
+pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies, intl: I18n) -> Result<Redirect, Ructe> {
     let user = User::find_by_email(&*conn, &form.email_or_name)
         .or_else(|| User::find_local(&*conn, &form.email_or_name));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    
+
     if let Some(user) = user.clone() {
         if !user.auth(&form.password) {
             let mut err = ValidationError::new("invalid_login");
@@ -87,27 +83,26 @@ fn create(conn: DbConn, data: LenientForm<LoginForm>, flash: Option<FlashMessage
 
         let uri = Uri::parse(&destination)
             .map(|x| x.into_owned())
-            .map_err(|_| {
-            Template::render("session/login", json!({
-                "account": null,
-                "errors": errors.inner(),
-                "form": form
-            }))
-        })?;
+            .map_err(|_| render!(session::login(
+                &(&*conn, &intl.catalog, None),
+                None,
+                &*form,
+                errors
+            )))?;
 
         Ok(Redirect::to(uri))
     } else {
-        println!("{:?}", errors);
-        Err(Template::render("session/login", json!({
-            "account": null,
-            "errors": errors.inner(),
-            "form": form
-        })))
+        Err(render!(session::login(
+            &(&*conn, &intl.catalog, None),
+            None,
+            &*form,
+            errors
+        )))
     }
 }
 
 #[get("/logout")]
-fn delete(mut cookies: Cookies) -> Redirect {
+pub fn delete(mut cookies: Cookies) -> Redirect {
     if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
         cookies.remove_private(cookie);
     }

@@ -1,0 +1,41 @@
+@use templates::{base, partials::post_card};
+@use template_utils::*;
+@use plume_models::blogs::Blog;
+@use plume_models::posts::Post;
+
+@(ctx: BaseContext, blogs: Vec<Blog>, drafts: Vec<Post>)
+
+@:base(ctx, "Your Dashboard", {}, {}, {
+    <h1>@i18n!(ctx.1, "Your Dashboard")</h1>
+
+    <section>
+        <h2>@i18n!(ctx.1, "Your Blogs")</h2>
+        @if blogs.is_empty() {
+            <p>@i18n!(ctx.1, "You don't have any blog yet. Create your own, or ask to join one.")</p>
+        }
+        <div class="cards">
+            @for blog in blogs {
+                <div class="card">
+                    <h3><a href="/~/@blog.actor_id/">@blog.title</a></h3>
+                </div>
+            }
+        </div>
+        <a class="button" href="/blogs/new">@i18n!(ctx.1, "Start a new blog")</a>
+    </section>
+
+    @if !drafts.is_empty() {
+        <section>
+            <h2>@i18n!(ctx.1, "Your Drafts")</h2>
+            <div class="cards">
+                @for draft in drafts {
+                    @:post_card(ctx, draft)
+                }
+            </div>
+        </section>
+    }
+
+    <section>
+        <h2>@i18n!(ctx.1, "Your media")</h2>
+        <a class="button" href="/medias">@i18n!(ctx.1, "Go to your gallery")</a>
+    </section>
+})

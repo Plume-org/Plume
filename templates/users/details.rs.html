@@ -1,0 +1,36 @@
+@use templates::{base, partials::post_card, users::header};
+@use template_utils::*;
+@use plume_models::posts::Post;
+@use plume_models::users::User;
+
+@(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, recents: Vec<Post>, reshares: Vec<Post>)
+
+@:base(ctx, &user.name(ctx.0), {}, {}, {
+    @:header(ctx, &user, follows, is_remote, remote_url)
+
+    @tabs(&[
+        (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Articles"), true),
+        (&format!("/@/{}/followers", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), false)
+    ])
+
+    @if !recents.is_empty() {
+        <h2>
+            @i18n!(ctx.1, "Latest articles")
+            <small><a href="/@@/@user.get_fqn(ctx.0)/atom.xml" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
+        </h2>
+        <div class="cards">
+            @for article in recents {
+                @:post_card(ctx, article)
+            }
+        </div>
+    }
+
+    @if !reshares.is_empty() {
+        <h2>@i18n!(ctx.1, "Recently boosted")</h2>
+        <div class="cards">
+            @for article in reshares {
+                @:post_card(ctx, article)
+            }
+        </div>
+    }
+})

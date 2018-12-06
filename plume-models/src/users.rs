@@ -26,6 +26,7 @@ use rocket::{
     request::{self, FromRequest, Request},
 };
 use serde_json;
+use std::cmp::PartialEq;
 use url::Url;
 use webfinger::*;
 
@@ -797,20 +798,8 @@ impl User {
         CustomPerson::new(actor, ap_signature)
     }
 
-    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).expect("User::to_json: serializing error");
-        json["fqn"] = serde_json::Value::String(self.get_fqn(conn));
-        json["name"] = if !self.display_name.is_empty() {
-            json!(self.display_name)
-        } else {
-            json!(self.get_fqn(conn))
-        };
-        json["avatar"] = json!(
-            self.avatar_id
-                .and_then(|id| Media::get(conn, id).map(|m| m.url(conn)))
-                .unwrap_or_else(|| String::from("/static/default-avatar.png"))
-        );
-        json
+    pub fn avatar_url(&self, conn: &Connection) -> String {
+        self.avatar_id.and_then(|id| Media::get(conn, id).map(|m| m.url(conn))).unwrap_or("/static/default-avatar.png".to_string())
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Webfinger {
@@ -873,6 +862,14 @@ impl User {
 
     pub fn needs_update(&self) -> bool {
         (Utc::now().naive_utc() - self.last_fetched_date).num_days() > 1
+    }
+
+    pub fn name(&self, conn: &Connection) -> String {
+        if !self.display_name.is_empty() {
+            self.display_name.clone()
+        } else {
+            self.get_fqn(conn)
+        }
     }
 }
 
@@ -943,6 +940,12 @@ impl Signer for User {
         verifier
             .verify(&signature)
             .expect("User::verify: finalization error")
+    }
+}
+
+impl PartialEq for User {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
     }
 }
 

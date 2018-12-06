@@ -5,8 +5,7 @@ use rocket::{
     request::LenientForm,
     response::{Redirect, Flash, content::Content}
 };
-use rocket_contrib::Template;
-use serde_json;
+use rocket_i18n::I18n;
 use std::{collections::HashMap, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -21,61 +20,62 @@ use plume_models::{
     users::User
 };
 use routes::Page;
+use template_utils::Ructe;
 use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
-fn paginated_details(name: String, conn: DbConn, user: Option<User>, page: Page) -> Template {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &name), "Requested blog couldn't be found", |blog| {
-        let posts = Post::blog_page(&*conn, &blog, page.limits());
-        let articles = Post::get_for_blog(&*conn, &blog);
-        let authors = &blog.list_authors(&*conn);
+pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Ructe> {
+    let blog = Blog::find_by_fqn(&*conn, &name)
+        .ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
+    let posts = Post::blog_page(&*conn, &blog, page.limits());
+    let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
+    let authors = &blog.list_authors(&*conn);
 
-        Template::render("blogs/details", json!({
-            "blog": &blog.to_json(&*conn),
-            "account": user.clone().map(|u| u.to_json(&*conn)),
-            "is_author": user.map(|x| x.is_author_in(&*conn, &blog)),
-            "posts": posts.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "authors": authors.into_iter().map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-            "n_authors": authors.len(),
-            "n_articles": articles.len(),
-            "page": page.page,
-            "n_pages": Page::total(articles.len() as i32)
-        }))
-    })
+    Ok(render!(blogs::details(
+        &(&*conn, &intl.catalog, user.clone()),
+        blog.clone(),
+        blog.get_fqn(&*conn),
+        authors,
+        articles.len(),
+        page.0,
+        Page::total(articles.len() as i32),
+        user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
+        posts
+    )))
 }
 
 #[get("/~/<name>", rank = 3)]
-fn details(name: String, conn: DbConn, user: Option<User>) -> Template {
-    paginated_details(name, conn, user, Page::first())
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Ructe, Ructe> {
+    paginated_details(intl, name, conn, user, Page::first())
 }
 
 #[get("/~/<name>", rank = 1)]
-fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
+pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_local(&*conn, &name)?;
     Some(ActivityStream::new(blog.to_activity(&*conn)))
 }
 
 #[get("/blogs/new")]
-fn new(user: User, conn: DbConn) -> Template {
-    Template::render("blogs/new", json!({
-        "account": user.to_json(&*conn),
-        "errors": null,
-        "form": null
-    }))
+pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
+    render!(blogs::new(
+        &(&*conn, &intl.catalog, Some(user)),
+        &NewBlogForm::default(),
+        ValidationErrors::default()
+    ))
 }
 
 #[get("/blogs/new", rank = 2)]
-fn new_auth() -> Flash<Redirect>{
+pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
     utils::requires_login(
-        "You need to be logged in order to create a new blog",
+        i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
         uri!(new)
     )
 }
 
-#[derive(FromForm, Validate, Serialize)]
-struct NewBlogForm {
+#[derive(Default, FromForm, Validate, Serialize)]
+pub struct NewBlogForm {
     #[validate(custom(function = "valid_slug", message = "Invalid name"))]
-    pub title: String
+    pub title: String,
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
@@ -87,9 +87,8 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
     }
 }
 
-#[post("/blogs/new", data = "<data>")]
-fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Redirect, Template> {
-    let form = data.get();
+#[post("/blogs/new", data = "<form>")]
+pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I18n) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
 
     let mut errors = match form.validate() {
@@ -121,36 +120,37 @@ fn create(conn: DbConn, data: LenientForm<NewBlogForm>, user: User) -> Result<Re
 
         Ok(Redirect::to(uri!(details: name = slug.clone())))
     } else {
-        println!("{:?}", errors);
-        Err(Template::render("blogs/new", json!({
-            "account": user.to_json(&*conn),
-            "errors": errors.inner(),
-            "form": form
-        })))
+        Err(render!(blogs::new(
+            &(&*conn, &intl.catalog, Some(user)),
+            &*form,
+            errors
+        )))
     }
 }
 
 #[post("/~/<name>/delete")]
-fn delete(conn: DbConn, name: String, user: Option<User>, searcher: Searcher) -> Result<Redirect, Option<Template>>{
+pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Option<Ructe>>{
     let blog = Blog::find_local(&*conn, &name).ok_or(None)?;
-    if user.map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
+    if user.clone().map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
         blog.delete(&conn, &searcher);
         Ok(Redirect::to(uri!(super::instance::index)))
     } else {
-        Err(Some(Template::render("errors/403", json!({// TODO actually return 403 error code
-            "error_message": "You are not allowed to delete this blog."
-        }))))
+        // TODO actually return 403 error code
+        Err(Some(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user),
+            "You are not allowed to delete this blog."
+        ))))
     }
 }
 
 #[get("/~/<name>/outbox")]
-fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
     let blog = Blog::find_local(&*conn, &name)?;
     Some(blog.outbox(&*conn))
 }
 
 #[get("/~/<name>/atom.xml")]
-fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
+pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
     let blog = Blog::find_by_fqn(&*conn, &name)?;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())

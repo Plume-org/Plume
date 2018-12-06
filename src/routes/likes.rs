@@ -1,4 +1,5 @@
-use rocket::{response::{Redirect, Flash}};
+use rocket::response::{Redirect, Flash};
+use rocket_i18n::I18n;
 
 use plume_common::activity_pub::{broadcast, inbox::{Notify, Deletable}};
 use plume_common::utils;
@@ -12,7 +13,7 @@ use plume_models::{
 use Worker;
 
 #[post("/~/<blog>/<slug>/like")]
-fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker) -> Option<Redirect> {
+pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker) -> Option<Redirect> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
@@ -39,9 +40,9 @@ fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker) 
 }
 
 #[post("/~/<blog>/<slug>/like", rank = 2)]
-fn create_auth(blog: String, slug: String) -> Flash<Redirect>{
+pub fn create_auth(blog: String, slug: String, i18n: I18n) -> Flash<Redirect>{
     utils::requires_login(
-        "You need to be logged in order to like a post",
+        i18n!(i18n.catalog, "You need to be logged in order to like a post"),
         uri!(create: blog = blog, slug = slug)
     )
 }

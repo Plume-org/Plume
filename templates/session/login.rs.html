@@ -1,0 +1,18 @@
+@use template_utils::*;
+@use templates::base;
+@use validator::ValidationErrors;
+@use routes::session::LoginForm;
+
+@(ctx: BaseContext, message: Option<String>, form: &LoginForm, errors: ValidationErrors)
+
+@:base(ctx, "Login", {}, {}, {
+    <h1>@i18n!(ctx.1, "Login")</h1>
+    @if let Some(message) = message {
+        <p>@message</p>
+    }
+    <form method="post">
+        @input!(ctx.1, email_or_name (text), "Username or email", form, errors.clone(), "minlenght=\"1\"")
+        @input!(ctx.1, password (password), "Password", form, errors, "minlenght=\"1\"")
+        <input type="submit" value="@i18n!(ctx.1, "Login")" />
+    </form>
+})

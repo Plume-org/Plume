@@ -1,0 +1,33 @@
+@use templates::base;
+@use template_utils::*;
+@use plume_models::notifications::Notification;
+
+@(ctx: BaseContext, notifications: Vec<Notification>, page: i32, n_pages: i32)
+
+@:base(ctx, "Notifications", {}, {}, {
+    <h1>@i18n!(ctx.1, "Notifications")</h1>
+
+    <div class="list">
+        @for notification in notifications {
+            <div class="card flex">
+                <i class="icon @notification.icon_class() left-icon"></i>
+                <main class="grow">
+                    <h3>
+                        @if let Some(url) = notification.get_url(ctx.0) {
+                            <a href="@url">
+                                @i18n!(ctx.1, notification.get_message(); notification.get_actor(ctx.0).name(ctx.0))
+                            </a>
+                        } else {
+                            @i18n!(ctx.1, notification.get_message(); notification.get_actor(ctx.0).name(ctx.0))
+                        }
+                    </h3>
+                    @if let Some(post) = notification.get_post(ctx.0) {
+                        <p><a href="@post.url(ctx.0)">@post.title</a></p>
+                    }
+                </main>
+                <p><small>@notification.creation_date.format("%B %e, %H:%M")</small></p>
+            </div>
+        }
+    </div>
+    @paginate(ctx.1, page, n_pages)
+})

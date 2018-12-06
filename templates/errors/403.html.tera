@@ -1,5 +1,0 @@
-{% extends "errors/base" %}
-
-{% block error %}
-    <h1>{{ "You are not authorized." | _ }}</h1>
-{% endblock error %}

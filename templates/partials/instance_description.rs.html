@@ -1,0 +1,33 @@
+@use template_utils::*;
+@use plume_models::instance::Instance;
+
+@(ctx: BaseContext, instance: Instance, n_users: i32, n_articles: i32)
+
+<section class="spaced">
+    <div class="cards">
+        <div class="presentation card">
+            <h2>@i18n!(ctx.1, "What is Plume?")</h2>
+            <main>
+                <p>@i18n!(ctx.1, "Plume is a decentralized blogging engine.")</p>
+                <p>@i18n!(ctx.1, "Authors can manage various blogs from an unique website.")</p>
+                <p>@i18n!(ctx.1, "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon.")</p>
+            </main>
+            <a href="/users/new">@i18n!(ctx.1, "Create your account")</a>
+        </div>
+        <div class="presentation card">
+            <h2>@i18n!(ctx.1, "About {0}"; instance.name)</h2>
+            <main>
+                @Html(instance.short_description_html)
+                <section class="stats">
+                    <div>
+                        <p>@Html(i18n!(ctx.1, "Home to <em>{0}</em> people"; n_users))</p>
+                    </div>
+                    <div>
+                        <p>@Html(i18n!(ctx.1, "Who wrote <em>{0}</em> articles"; n_articles))</p>
+                    </div>
+                </section>
+            </main>
+            <a href="/about">@i18n!(ctx.1, "Read the detailed rules")</a>
+        </div>
+    </div>
+</section>

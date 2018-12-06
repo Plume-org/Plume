@@ -1,7 +1,7 @@
-#![feature(custom_derive, plugin, decl_macro)]
-#![plugin(rocket_codegen)]
+#![feature(custom_derive, plugin, decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
+extern crate askama_escape;
 extern crate atom_syndication;
 extern crate canapi;
 extern crate chrono;
@@ -10,7 +10,6 @@ extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
-extern crate gettextrs;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
@@ -22,6 +21,7 @@ extern crate plume_models;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
+#[macro_use]
 extern crate rocket_i18n;
 extern crate rpassword;
 extern crate scheduled_thread_pool;
@@ -38,7 +38,6 @@ extern crate webfinger;
 
 use diesel::r2d2::ConnectionManager;
 use rocket::State;
-use rocket_contrib::Template;
 use rocket_csrf::CsrfFairingBuilder;
 use plume_models::{DATABASE_URL, Connection,
     db_conn::DbPool, search::Searcher as UnmanagedSearcher};
@@ -49,6 +48,8 @@ use std::time::Duration;
 
 mod api;
 mod inbox;
+#[macro_use]
+mod template_utils;
 mod routes;
 
 type Worker<'a> = State<'a, ScheduledThreadPool>;
@@ -76,7 +77,6 @@ fn main() {
         search_unlocker.drop_writer();
         exit(0);
     }).expect("Error setting Ctrl-c handler");
-
 
     rocket::ignite()
         .mount("/", routes![
@@ -140,8 +140,7 @@ fn main() {
             routes::reshares::create,
             routes::reshares::create_auth,
 
-            routes::search::index,
-            routes::search::query,
+            routes::search::search,
 
             routes::session::new,
             routes::session::new_message,
@@ -187,17 +186,14 @@ fn main() {
             api::posts::get,
             api::posts::list,
         ])
-        .catch(catchers![
+        .register(catchers![
             routes::errors::not_found,
             routes::errors::server_error
         ])
         .manage(dbpool)
         .manage(workpool)
         .manage(searcher)
-        .attach(Template::custom(|engines| {
-            rocket_i18n::tera(&mut engines.tera);
-        }))
-        .attach(rocket_i18n::I18n::new("plume"))
+        .manage(include_i18n!("plume", [ "de", "en", "fr", "gl", "it", "ja", "nb", "pl", "ru" ]))
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
                 .add_exceptions(vec![
@@ -210,3 +206,5 @@ fn main() {
                 .finalize().expect("main: csrf fairing creation error"))
         .launch();
 }
+
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));

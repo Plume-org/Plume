@@ -1,0 +1,14 @@
+@use validator::ValidationErrors;
+@use templates::base;
+@use template_utils::*;
+@use routes::blogs::NewBlogForm;
+
+@(ctx: BaseContext, form: &NewBlogForm, errors: ValidationErrors)
+
+@:base(ctx, "New Blog", {}, {}, {
+  <h1>@i18n!(ctx.1, "Create a blog")</h1>
+  <form method="post">
+      @input!(ctx.1, title (text), "Title", form, errors, "required minlength=\"1\"")
+      <input type="submit" value="@i18n!(ctx.1, "Create blog")"/>
+  </form>
+})

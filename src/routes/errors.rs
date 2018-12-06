@@ -1,40 +1,36 @@
-use rocket_contrib::Template;
 use rocket::Request;
 use rocket::request::FromRequest;
+use rocket_i18n::I18n;
 use plume_models::db_conn::DbConn;
 use plume_models::users::User;
+use template_utils::Ructe;
 
 #[catch(404)]
-fn not_found(req: &Request) -> Template {
+pub fn not_found(req: &Request) -> Ructe {
     let conn = req.guard::<DbConn>().succeeded();
+    let intl = req.guard::<I18n>().succeeded();
     let user = User::from_request(req).succeeded();
-    Template::render("errors/404", json!({
-        "error_message": "Page not found",
-        "account": user.and_then(|u| conn.map(|conn| u.to_json(&*conn)))
-    }))
+    render!(errors::not_found(
+        &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+    ))
 }
 
 #[catch(500)]
-fn server_error(req: &Request) -> Template {
+pub fn server_error(req: &Request) -> Ructe {
     let conn = req.guard::<DbConn>().succeeded();
+    let intl = req.guard::<I18n>().succeeded();
     let user = User::from_request(req).succeeded();
-    Template::render("errors/500", json!({
-        "error_message": "Server error",
-        "account": user.and_then(|u| conn.map(|conn| u.to_json(&*conn)))
-    }))
+    render!(errors::server_error(
+        &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+    ))
 }
 
-#[derive(FromForm)]
-pub struct Uri {
-    target: String,
-}
-
-#[post("/csrf-violation?<uri>")]
-fn csrf_violation(uri: Option<Uri>) -> Template {
-    if let Some(uri) = uri {
-        eprintln!("Csrf violation while acceding \"{}\"", uri.target)
+#[post("/csrf-violation?<target>")]
+pub fn csrf_violation(target: Option<String>, conn: DbConn, intl: I18n, user: Option<User>) -> Ructe {
+    if let Some(uri) = target {
+        eprintln!("Csrf violation while acceding \"{}\"", uri)
     }
-    Template::render("errors/csrf", json!({
-        "error_message":""
-    }))
+    render!(errors::csrf(
+        &(&*conn, &intl.catalog, user)
+    ))
 }

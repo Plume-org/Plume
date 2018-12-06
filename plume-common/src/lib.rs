@@ -1,4 +1,4 @@
-#![feature(custom_attribute, iterator_flatten)]
+#![feature(custom_attribute)]
 
 extern crate activitypub;
 #[macro_use]
@@ -10,7 +10,6 @@ extern crate chrono;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
-extern crate gettextrs;
 extern crate hex;
 extern crate heck;
 extern crate hyper;

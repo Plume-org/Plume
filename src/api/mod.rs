@@ -1,4 +1,5 @@
-use rocket_contrib::Json;
+use rocket::request::Form;
+use rocket_contrib::json::Json;
 use serde_json;
 
 use plume_common::utils::random_hex;
@@ -10,7 +11,7 @@ use plume_models::{
 };
 
 #[derive(FromForm)]
-struct OAuthRequest {
+pub struct OAuthRequest {
     client_id: String,
     client_secret: String,
     password: String,
@@ -18,8 +19,8 @@ struct OAuthRequest {
     scopes: String,
 }
 
-#[get("/oauth2?<query>")]
-fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
+#[get("/oauth2?<query..>")]
+pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Json<serde_json::Value> {
     let app = App::find_by_client_id(&*conn, &query.client_id).expect("OAuth request from unknown client");
     if app.client_secret == query.client_secret {
         if let Some(user) = User::find_local(&*conn, &query.username) {
@@ -28,7 +29,7 @@ fn oauth(query: OAuthRequest, conn: DbConn) -> Json<serde_json::Value> {
                     app_id: app.id,
                     user_id: user.id,
                     value: random_hex(),
-                    scopes: query.scopes,
+                    scopes: query.scopes.clone(),
                 });
                 Json(json!({
                     "token": token.value

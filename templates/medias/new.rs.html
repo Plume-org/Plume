@@ -1,0 +1,28 @@
+@use templates::base;
+@use template_utils::*;
+
+@(ctx: BaseContext)
+
+@:base(ctx, "Media upload", {}, {}, {
+    <h1>@i18n!(ctx.1, "Media upload")</h1>
+    <form method="post" enctype="multipart/form-data">
+        <label for="alt">
+            @i18n!(ctx.1, "Description")
+            <small>@i18n!(ctx.1, "Useful for visually impaired people and licensing")</small>
+        </label>
+        <input type="text" id="alt" name="alt" required minlenght="1"/>
+
+        <label for="cw">
+            @i18n!(ctx.1, "Content warning")
+            <small>@i18n!(ctx.1, "Let it empty if there is none")</small>
+        </label>
+        <input type="txt" id="cw" name="cw"/>
+
+        <label for="file">
+            @i18n!(ctx.1, "File")
+        </label>
+        <input type="file" id="file" name="file" required/>
+
+        <input type="submit" value="@i18n!(ctx.1, "Send")"/>
+    </form>
+})

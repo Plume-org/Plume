@@ -1,8 +1,8 @@
-use gettextrs::gettext;
 use rocket::{request::LenientForm, response::{status, Redirect}};
-use rocket_contrib::{Json, Template};
+use rocket_contrib::json::Json;
+use rocket_i18n::I18n;
 use serde_json;
-use validator::{Validate};
+use validator::{Validate, ValidationErrors};
 
 use plume_common::activity_pub::sign::{Signable,
     verify_http_headers};
@@ -18,10 +18,11 @@ use plume_models::{
 };
 use inbox::Inbox;
 use routes::Page;
+use template_utils::Ructe;
 use Searcher;
 
 #[get("/")]
-fn index(conn: DbConn, user: Option<User>) -> Template {
+pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
     match Instance::get_local(&*conn) {
         Some(inst) => {
             let federated = Post::get_recents_page(&*conn, Page::first().limits());
@@ -33,101 +34,107 @@ fn index(conn: DbConn, user: Option<User>) -> Template {
                 Post::user_feed_page(&*conn, in_feed, Page::first().limits())
             });
 
-            Template::render("instance/index", json!({
-                "instance": inst,
-                "account": user.map(|u| u.to_json(&*conn)),
-                "federated": federated.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-                "local": local.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-                "user_feed": user_feed.map(|f| f.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()),
-                "n_users": User::count_local(&*conn),
-                "n_articles": Post::count_local(&*conn)
-            }))
+            render!(instance::index(
+                &(&*conn, &intl.catalog, user),
+                inst,
+                User::count_local(&*conn) as i32,
+                Post::count_local(&*conn) as i32,
+                local,
+                federated,
+                user_feed
+            ))
         }
         None => {
-            Template::render("errors/500", json!({
-                "error_message": gettext("You need to configure your instance before using it.".to_string())
-            }))
+            render!(errors::server_error(
+                &(&*conn, &intl.catalog, user)
+            ))
         }
     }
 }
 
 #[get("/local?<page>")]
-fn paginated_local(conn: DbConn, user: Option<User>, page: Page) -> Template {
+pub fn paginated_local(conn: DbConn, user: Option<User>, page: Page, intl: I18n) -> Ructe {
     let instance = Instance::get_local(&*conn).expect("instance::paginated_local: local instance not found error");
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits());
-    Template::render("instance/local", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "instance": instance,
-        "page": page.page,
-        "n_pages": Page::total(Post::count_local(&*conn) as i32),
-        "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
-    }))
+    render!(instance::local(
+        &(&*conn, &intl.catalog, user),
+        instance,
+        articles,
+        page.0,
+        Page::total(Post::count_local(&*conn) as i32)
+    ))
 }
 
 #[get("/local")]
-fn local(conn: DbConn, user: Option<User>) -> Template {
-    paginated_local(conn, user, Page::first())
+pub fn local(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
+    paginated_local(conn, user, Page::first(), intl)
 }
 
 #[get("/feed")]
-fn feed(conn: DbConn, user: User) -> Template {
-    paginated_feed(conn, user, Page::first())
+pub fn feed(conn: DbConn, user: User, intl: I18n) -> Ructe {
+    paginated_feed(conn, user, Page::first(), intl)
 }
 
 #[get("/feed?<page>")]
-fn paginated_feed(conn: DbConn, user: User, page: Page) -> Template {
+pub fn paginated_feed(conn: DbConn, user: User, page: Page, intl: I18n) -> Ructe {
     let followed = user.get_following(&*conn);
     let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
     in_feed.push(user.id);
     let articles = Post::user_feed_page(&*conn, in_feed, page.limits());
-    Template::render("instance/feed", json!({
-        "account": user.to_json(&*conn),
-        "page": page.page,
-        "n_pages": Page::total(Post::count_local(&*conn) as i32),
-        "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
-    }))
+    render!(instance::feed(
+        &(&*conn, &intl.catalog, Some(user)),
+        articles,
+        page.0,
+        Page::total(Post::count_local(&*conn) as i32)
+    ))
 }
 
 #[get("/federated")]
-fn federated(conn: DbConn, user: Option<User>) -> Template {
-    paginated_federated(conn, user, Page::first())
+pub fn federated(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
+    paginated_federated(conn, user, Page::first(), intl)
 }
 
 #[get("/federated?<page>")]
-fn paginated_federated(conn: DbConn, user: Option<User>, page: Page) -> Template {
+pub fn paginated_federated(conn: DbConn, user: Option<User>, page: Page, intl: I18n) -> Ructe {
     let articles = Post::get_recents_page(&*conn, page.limits());
-    Template::render("instance/federated", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "page": page.page,
-        "n_pages": Page::total(Post::count_local(&*conn) as i32),
-        "articles": articles.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
-    }))
+    render!(instance::federated(
+        &(&*conn, &intl.catalog, user),
+        articles,
+        page.0,
+        Page::total(Post::count_local(&*conn) as i32)
+    ))
 }
 
 #[get("/admin")]
-fn admin(conn: DbConn, admin: Admin) -> Template {
-    Template::render("instance/admin", json!({
-        "account": admin.0.to_json(&*conn),
-        "instance": Instance::get_local(&*conn),
-        "errors": null,
-        "form": null
-    }))
+pub fn admin(conn: DbConn, admin: Admin, intl: I18n) -> Ructe {
+    let local_inst = Instance::get_local(&*conn).expect("instance::admin: local instance not found");
+    render!(instance::admin(
+        &(&*conn, &intl.catalog, Some(admin.0)),
+        local_inst.clone(),
+        InstanceSettingsForm {
+            name: local_inst.name.clone(),
+            open_registrations: local_inst.open_registrations,
+            short_description: local_inst.short_description,
+            long_description: local_inst.long_description,
+            default_license: local_inst.default_license,
+        },
+        ValidationErrors::default()
+    ))
 }
 
-#[derive(FromForm, Validate, Serialize)]
-struct InstanceSettingsForm {
+#[derive(Clone, FromForm, Validate, Serialize)]
+pub struct InstanceSettingsForm {
     #[validate(length(min = "1"))]
-    name: String,
-    open_registrations: bool,
-    short_description: SafeString,
-    long_description: SafeString,
+    pub name: String,
+    pub open_registrations: bool,
+    pub short_description: SafeString,
+    pub long_description: SafeString,
     #[validate(length(min = "1"))]
-    default_license: String
+    pub default_license: String
 }
 
 #[post("/admin", data = "<form>")]
-fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>) -> Result<Redirect, Template> {
-    let form = form.get();
+pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>, intl: I18n) -> Result<Redirect, Ructe> {
     form.validate()
         .map(|_| {
             let instance = Instance::get_local(&*conn).expect("instance::update_settings: local instance not found error");
@@ -138,33 +145,36 @@ fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSetting
                 form.long_description.clone());
             Redirect::to(uri!(admin))
         })
-        .map_err(|e| Template::render("instance/admin", json!({
-            "account": admin.0.to_json(&*conn),
-            "instance": Instance::get_local(&*conn),
-            "errors": e.inner(),
-            "form": form
-        })))
+        .map_err(|e| {
+            let local_inst = Instance::get_local(&*conn).expect("instance::update_settings: local instance not found");
+            render!(instance::admin(
+                &(&*conn, &intl.catalog, Some(admin.0)),
+                local_inst,
+                form.clone(),
+                e
+            ))
+        })
 }
 
 #[get("/admin/instances")]
-fn admin_instances(admin: Admin, conn: DbConn) -> Template {
-    admin_instances_paginated(admin, conn, Page::first())
+pub fn admin_instances(admin: Admin, conn: DbConn, intl: I18n) -> Ructe {
+    admin_instances_paginated(admin, conn, Page::first(), intl)
 }
 
 #[get("/admin/instances?<page>")]
-fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
+pub fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n) -> Ructe {
     let instances = Instance::page(&*conn, page.limits());
-    Template::render("instance/list", json!({
-        "account": admin.0.to_json(&*conn),
-        "instances": instances,
-        "instance": Instance::get_local(&*conn),
-        "page": page.page,
-        "n_pages": Page::total(Instance::count(&*conn) as i32),
-    }))
+    render!(instance::list(
+        &(&*conn, &intl.catalog, Some(admin.0)),
+        Instance::get_local(&*conn).expect("admin_instances: local instance error"),
+        instances,
+        page.0,
+        Page::total(Instance::count(&*conn) as i32)
+    ))
 }
 
 #[post("/admin/instances/<id>/block")]
-fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
+pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
     if let Some(inst) = Instance::get(&*conn, id) {
         inst.toggle_block(&*conn);
     }
@@ -173,25 +183,22 @@ fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
 }
 
 #[get("/admin/users")]
-fn admin_users(admin: Admin, conn: DbConn) -> Template {
-    admin_users_paginated(admin, conn, Page::first())
+pub fn admin_users(admin: Admin, conn: DbConn, intl: I18n) -> Ructe {
+    admin_users_paginated(admin, conn, Page::first(), intl)
 }
 
 #[get("/admin/users?<page>")]
-fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page) -> Template {
-    let users = User::get_local_page(&*conn, page.limits()).into_iter()
-        .map(|u| u.to_json(&*conn)).collect::<Vec<serde_json::Value>>();
-
-    Template::render("instance/users", json!({
-        "account": admin.0.to_json(&*conn),
-        "users": users,
-        "page": page.page,
-        "n_pages": Page::total(User::count_local(&*conn) as i32)
-    }))
+pub fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n) -> Ructe {
+    render!(instance::users(
+        &(&*conn, &intl.catalog, Some(admin.0)),
+        User::get_local_page(&*conn, page.limits()),
+        page.0,
+        Page::total(User::count_local(&*conn) as i32)
+    ))
 }
 
 #[post("/admin/users/<id>/ban")]
-fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Redirect {
+pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Redirect {
     if let Some(u) = User::get(&*conn, id) {
         u.delete(&*conn, &searcher);
     }
@@ -199,7 +206,7 @@ fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Redirect {
 }
 
 #[post("/inbox", data = "<data>")]
-fn shared_inbox(conn: DbConn, data: String, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
+pub fn shared_inbox(conn: DbConn, data: String, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
     let act: serde_json::Value = serde_json::from_str(&data[..]).expect("instance::shared_inbox: deserialization error");
 
     let activity = act.clone();
@@ -227,7 +234,7 @@ fn shared_inbox(conn: DbConn, data: String, headers: Headers, searcher: Searcher
 }
 
 #[get("/nodeinfo")]
-fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
+pub fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
     Json(json!({
         "version": "2.0",
         "software": {
@@ -252,20 +259,19 @@ fn nodeinfo(conn: DbConn) -> Json<serde_json::Value> {
 }
 
 #[get("/about")]
-fn about(user: Option<User>, conn: DbConn) -> Template {
-    Template::render("instance/about", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "instance": Instance::get_local(&*conn),
-        "admin": Instance::get_local(&*conn).map(|i| i.main_admin(&*conn).to_json(&*conn)),
-        "version": env!("CARGO_PKG_VERSION"),
-        "n_users": User::count_local(&*conn),
-        "n_articles": Post::count_local(&*conn),
-        "n_instances": Instance::count(&*conn) - 1
-    }))
+pub fn about(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
+    render!(instance::about(
+        &(&*conn, &intl.catalog, user),
+        Instance::get_local(&*conn).expect("Local instance not found"),
+        Instance::get_local(&*conn).expect("Local instance not found").main_admin(&*conn),
+        User::count_local(&*conn),
+        Post::count_local(&*conn),
+        Instance::count(&*conn) - 1
+    ))
 }
 
 #[get("/manifest.json")]
-fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
+pub fn web_manifest(conn: DbConn) -> Json<serde_json::Value> {
     let instance = Instance::get_local(&*conn).expect("instance::web_manifest: local instance not found error");
     Json(json!({
         "name": &instance.name,

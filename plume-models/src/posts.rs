@@ -763,17 +763,9 @@ impl Post {
         }
     }
 
-    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
+    pub fn url(&self, conn: &Connection) -> String {
         let blog = self.get_blog(conn);
-        json!({
-            "post": self,
-            "author": self.get_authors(conn)[0].to_json(conn),
-            "url": format!("/~/{}/{}/", blog.get_fqn(conn), self.slug),
-            "date": self.creation_date.timestamp(),
-            "blog": blog.to_json(conn),
-            "tags": Tag::for_post(&*conn, self.id),
-            "cover": self.cover_id.and_then(|i| Media::get(conn, i).map(|m| m.to_json(conn))),
-        })
+        format!("/~/{}/{}", blog.get_fqn(conn), self.slug)
     }
 
     pub fn compute_id(&self, conn: &Connection) -> String {
@@ -783,6 +775,10 @@ impl Post {
             self.get_blog(conn).get_fqn(conn),
             self.slug
         ))
+    }
+
+    pub fn cover_url(&self, conn: &Connection) -> Option<String> {
+        self.cover_id.and_then(|i| Media::get(conn, i)).map(|c| c.url(conn))
     }
 }
 

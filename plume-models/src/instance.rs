@@ -20,9 +20,9 @@ pub struct Instance {
     pub open_registrations: bool,
     pub short_description: SafeString,
     pub long_description: SafeString,
-    pub default_license: String,
-    pub long_description_html: String,
-    pub short_description_html: String,
+    pub default_license : String,
+    pub long_description_html: SafeString,
+    pub short_description_html: SafeString,
 }
 
 #[derive(Clone, Insertable)]
@@ -244,14 +244,15 @@ pub(crate) mod tests {
                     default_license,
                     local,
                     long_description,
-                    long_description_html,
                     short_description,
-                    short_description_html,
                     name,
                     open_registrations,
                     public_domain
                 ]
             );
+            assert_eq!(res.long_description_html.get(), &inserted.long_description_html);
+            assert_eq!(res.short_description_html.get(), &inserted.short_description_html);
+
             assert_eq!(Instance::local_id(conn), res.id);
             Ok(())
         });
@@ -282,14 +283,14 @@ pub(crate) mod tests {
                             default_license,
                             local,
                             long_description,
-                            long_description_html,
                             short_description,
-                            short_description_html,
                             name,
                             open_registrations,
                             public_domain
                         ]
-                    )
+                    );
+                    assert_eq!(&newinst.long_description_html, inst.long_description_html.get());
+                    assert_eq!(&newinst.short_description_html, inst.short_description_html.get());
                 });
 
             let page = Instance::page(conn, (0, 2));
@@ -391,12 +392,12 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 inst.long_description_html,
-                "<p><a href=\"/with_link\">long_description</a></p>\n"
+                SafeString::new("<p><a href=\"/with_link\">long_description</a></p>\n")
             );
             assert_eq!(inst.short_description.get(), "[short](#link)");
             assert_eq!(
                 inst.short_description_html,
-                "<p><a href=\"#link\">short</a></p>\n"
+                SafeString::new("<p><a href=\"#link\">short</a></p>\n")
             );
 
             Ok(())

@@ -1,4 +1,3 @@
-use gettextrs::gettext;
 use heck::CamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{Event, Parser, Options, Tag, html};
@@ -23,8 +22,13 @@ pub fn make_actor_id(name: &str) -> String {
         .collect()
 }
 
+/**
+* Redirects to the login page with a given message.
+*
+* Note that the message should be translated before passed to this function.
+*/
 pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Redirect> {
-    Flash::new(Redirect::to(format!("/login?m={}", gettext(message.to_string()))), "callback", url.into().to_string())
+    Flash::new(Redirect::to(format!("/login?m={}", message)), "callback", url.into().to_string())
 }
 
 #[derive(Debug)]

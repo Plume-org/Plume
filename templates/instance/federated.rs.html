@@ -1,0 +1,31 @@
+@use templates::{base, partials::post_card};
+@use template_utils::*;
+@use plume_models::posts::Post;
+
+@(ctx: BaseContext, articles: Vec<Post>, page: i32, n_pages: i32)
+
+@:base(ctx, "All the articles of the Fediverse", {}, {}, {
+  <h1>@i18n!(ctx.1, "All the articles of the Fediverse")</h1>
+
+    @if let Some(_) = ctx.2 {
+        @tabs(&[
+            ("/", i18n!(ctx.1, "Latest articles"), false),
+            ("/feed", i18n!(ctx.1, "Your feed"), false),
+            ("/federated", i18n!(ctx.1, "Federated feed"), true),
+            ("/local", i18n!(ctx.1, "Local feed"), false),
+        ])
+    } else {
+        @tabs(&[
+              ("/", i18n!(ctx.1, "Latest articles"), false),
+              ("/federated", i18n!(ctx.1, "Federated feed"), true),
+              ("/local", i18n!(ctx.1, "Local feed"), false),
+        ])
+    }
+
+    <div class="cards">
+        @for article in articles {
+            @:post_card(ctx, article)
+        }
+    </div>
+    @paginate(ctx.1, page, n_pages)
+})
