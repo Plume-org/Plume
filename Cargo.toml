@@ -62,7 +62,7 @@ git = "https://github.com/fdb-hiroshima/rocket_csrf"
 rev = "717fad53cfd2ee5cbee5b4571f6190644f9dddd7"
 
 [build-dependencies]
-ructe = "0.5.2"
+ructe = "0.5.4"
 rocket_i18n = { version = "0.3.1", features = ["build"] }
 
 [features]
