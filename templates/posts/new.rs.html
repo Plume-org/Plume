@@ -3,9 +3,12 @@
 @use validator::{ValidationErrors, ValidationErrorsKind};
 @use std::borrow::Cow;
 @use plume_models::medias::*;
+@use plume_models::blogs::Blog;
+@use plume_models::posts::Post;
 @use routes::posts::NewPostForm;
+@use routes::*;
 
-@(ctx: BaseContext, editing: bool, form: &NewPostForm, errors: ValidationErrors, default_license: String, medias: Vec<Media>, is_draft: bool)
+@(ctx: BaseContext, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, default_license: String, medias: Vec<Media>)
 
 @:base(ctx, &i18n!(ctx.1, if editing { "Edit {0}" } else { "New post" }; &form.title), {}, {}, {
     <h1>
@@ -15,7 +18,11 @@
             @i18n!(ctx.1, "Create a new post")
         }
     </h1>
-    <form class="new-post" method="post">
+    @if let Some(article) = article {
+	    <form class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)">
+    } else {
+	    <form class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)">
+    }
         @input!(ctx.1, title (text), "Title", form, errors.clone(), "required")
         @input!(ctx.1, subtitle (optional text), "Subtitle", form, errors.clone(), "")
 
@@ -63,5 +70,5 @@
             }
         }
     </form>
-    <script src="/static/js/autoExpand.js"></script>
+    <script src="@uri!(static_files: file = "js/autoExpand.js")"></script>
 })

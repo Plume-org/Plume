@@ -2,29 +2,32 @@
 @use template_utils::*;
 @use routes::user::UpdateUserForm;
 @use validator::ValidationErrors;
+@use routes::*;
 
 @(ctx: BaseContext, form: UpdateUserForm, errors: ValidationErrors)
 
 @:base(ctx, "Edit your account", {}, {}, {
-    <h1>@i18n!(ctx.1, "Your Profile")</h1>
-    <form method="post">
-        <!-- Rocket hack to use various HTTP methods -->
-        <input type=hidden name="_method" value="put">
+    @if let Some(u) = ctx.2.clone() {
+        <h1>@i18n!(ctx.1, "Your Profile")</h1>
+        <form method="post" action="@uri!(user::update: _name = u.username.clone())">
+            <!-- Rocket hack to use various HTTP methods -->
+            <input type=hidden name="_method" value="put">
 
-        @input!(ctx.1, display_name (text), "Display name", form, errors.clone())
-        @input!(ctx.1, email (text), "Email", form, errors.clone())
-        @input!(ctx.1, summary (text), "Summary", form, errors)
+            @input!(ctx.1, display_name (text), "Display name", form, errors.clone())
+            @input!(ctx.1, email (text), "Email", form, errors.clone())
+            @input!(ctx.1, summary (text), "Summary", form, errors)
 
-        <input type="submit" value="@i18n!(ctx.1, "Update account")"/>
-    </form>
-
-    <h2>@i18n!(ctx.1, "Danger zone")</h2>
-    <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")
-    @if !ctx.2.clone().expect("Editing profile while not connected").is_admin {
-        <form method="post" action="/@@/@ctx.2.clone().expect("Editing profile while not connected").get_fqn(ctx.0)/delete">
-            <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete your account")">
+            <input type="submit" value="@i18n!(ctx.1, "Update account")"/>
         </form>
-    } else {
-        <p>@i18n!(ctx.1, "Sorry, but as an admin, you can't leave your instance.")</p>
+
+        <h2>@i18n!(ctx.1, "Danger zone")</h2>
+        <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")
+        @if !u.is_admin {
+            <form method="post" action="@uri!(user::delete: name = u.username)">
+                <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete your account")">
+            </form>
+        } else {
+            <p>@i18n!(ctx.1, "Sorry, but as an admin, you can't leave your instance.")</p>
+        }
     }
 })

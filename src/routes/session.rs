@@ -28,7 +28,7 @@ pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
 pub fn new_message(user: Option<User>, m: String, conn: DbConn, intl: I18n) -> Ructe {
     render!(session::login(
         &(&*conn, &intl.catalog, user),
-        Some(i18n!(intl.catalog, &m).to_string()),
+        Some(m),
         &LoginForm::default(),
         ValidationErrors::default()
     ))

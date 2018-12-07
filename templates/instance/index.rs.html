@@ -2,6 +2,7 @@
 @use template_utils::*;
 @use plume_models::instance::Instance;
 @use plume_models::posts::Post;
+@use routes::*;
 
 @(ctx: BaseContext, instance: Instance, n_users: i32, n_articles: i32, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
 
@@ -10,25 +11,25 @@
 
      @if ctx.2.is_some() {
         @tabs(&[
-            ("/", i18n!(ctx.1, "Latest articles"), true),
-            ("/feed", i18n!(ctx.1, "Your feed"), false),
-            ("/federated", i18n!(ctx.1, "Federated feed"), false),
-            ("/local", i18n!(ctx.1, "Local feed"), false),
+            (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), true),
+            (&uri!(instance::feed).to_string(), i18n!(ctx.1, "Your feed"), false),
+            (&uri!(instance::federated).to_string(), i18n!(ctx.1, "Federated feed"), false),
+            (&uri!(instance::local).to_string(), i18n!(ctx.1, "Local feed"), false),
         ])
 
-        @:home_feed(ctx, user_feed.unwrap_or_default(), "/feed", "Your feed")
-        @:home_feed(ctx, federated, "/federated", "Federated feed")
-        @:home_feed(ctx, local, "/local", "Local feed")
+        @:home_feed(ctx, user_feed.unwrap_or_default(), &uri!(instance::feed).to_string(), "Your feed")
+        @:home_feed(ctx, federated, &uri!(instance::federated).to_string(), "Federated feed")
+        @:home_feed(ctx, local, &uri!(instance::local).to_string(), "Local feed")
         @:instance_description(ctx, instance, n_users, n_articles)
     } else {
         @tabs(&[
-              ("/", i18n!(ctx.1, "Latest articles"), true),
-              ("/federated", i18n!(ctx.1, "Federated feed"), false),
-              ("/local", i18n!(ctx.1, "Local feed"), false),
+            (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), true),
+            (&uri!(instance::federated).to_string(), i18n!(ctx.1, "Federated feed"), false),
+            (&uri!(instance::local).to_string(), i18n!(ctx.1, "Local feed"), false),
         ])
 
-        @:home_feed(ctx, federated, "/federated", "Federated feed")
-        @:home_feed(ctx, local, "/local", "Local feed")
+        @:home_feed(ctx, federated, &uri!(instance::federated).to_string(), "Federated feed")
+        @:home_feed(ctx, local, &uri!(instance::local).to_string(), "Local feed")
         @:instance_description(ctx, instance, n_users, n_articles)
     }
 })

@@ -2,6 +2,7 @@
 @use template_utils::*;
 @use plume_models::blogs::Blog;
 @use plume_models::posts::Post;
+@use routes::*;
 
 @(ctx: BaseContext, blogs: Vec<Blog>, drafts: Vec<Post>)
 
@@ -16,11 +17,11 @@
         <div class="cards">
             @for blog in blogs {
                 <div class="card">
-                    <h3><a href="/~/@blog.actor_id/">@blog.title</a></h3>
+                    <h3><a href="@uri!(blogs::details: name = blog.actor_id)">@blog.title</a></h3>
                 </div>
             }
         </div>
-        <a class="button" href="/blogs/new">@i18n!(ctx.1, "Start a new blog")</a>
+        <a class="button" href="@uri!(blogs::new)">@i18n!(ctx.1, "Start a new blog")</a>
     </section>
 
     @if !drafts.is_empty() {
@@ -36,6 +37,6 @@
 
     <section>
         <h2>@i18n!(ctx.1, "Your media")</h2>
-        <a class="button" href="/medias">@i18n!(ctx.1, "Go to your gallery")</a>
+        <a class="button" href="@uri!(medias::list)">@i18n!(ctx.1, "Go to your gallery")</a>
     </section>
 })

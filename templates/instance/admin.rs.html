@@ -1,8 +1,9 @@
+@use plume_models::instance::Instance;
+@use validator::ValidationErrors;
 @use templates::base;
 @use template_utils::*;
-@use plume_models::instance::Instance;
 @use routes::instance::InstanceSettingsForm;
-@use validator::ValidationErrors;
+@use routes::*;
 
 @(ctx: BaseContext, instance: Instance, form: InstanceSettingsForm, errors: ValidationErrors)
 
@@ -10,12 +11,12 @@
   <h1>@i18n!(ctx.1, "Administration")</h1>
 
   @tabs(&[
-    ("/admin", i18n!(ctx.1, "Configuration"), true),
-    ("/admin/instances", i18n!(ctx.1, "Instances"), false),
-    ("/admin/users", i18n!(ctx.1, "Users"), false),
+    (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), true),
+    (&uri!(instance::admin_instances).to_string(), i18n!(ctx.1, "Instances"), false),
+    (&uri!(instance::admin_users).to_string(), i18n!(ctx.1, "Users"), false),
   ])
 
-  <form method="post">
+  <form method="post" action="@uri!(instance::update_settings)">
     @input!(ctx.1, name (text), "Name", form, errors.clone(), "props")
 
     <label for="open_registrations">

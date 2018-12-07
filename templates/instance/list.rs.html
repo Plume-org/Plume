@@ -1,6 +1,7 @@
+@use plume_models::instance::Instance;
 @use templates::base;
 @use template_utils::*;
-@use plume_models::instance::Instance;
+@use routes::*;
 
 @(ctx: BaseContext, instance: Instance, instances: Vec<Instance>, page: i32, n_pages: i32)
 
@@ -8,9 +9,9 @@
     <h1>@i18n!(ctx.1, "Instances")</h1>
 
     @tabs(&[
-        ("/admin", i18n!(ctx.1, "Configuration"), false),
-        ("/admin/instances", i18n!(ctx.1, "Instances"), true),
-        ("/admin/users", i18n!(ctx.1, "Users"), false),
+    (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
+    (&uri!(instance::admin_instances).to_string(), i18n!(ctx.1, "Instances"), true),
+    (&uri!(instance::admin_users).to_string(), i18n!(ctx.1, "Users"), false),
     ])
 
     <div class="list">
@@ -21,7 +22,7 @@
                     <small>@instance.public_domain</small>
                 </p>
                 @if !instance.local {
-                    <form class="inline" method="post" action="/admin/instances/@instance.id/block">
+                    <form class="inline" method="post" action="@uri!(instance::toggle_block: id = instance.id)">
                         <input type="submit" value="@i18n!(ctx.1, if instance.blocked { "Unblock" } else { "Block"})">
                     </form>
                 }

@@ -1,6 +1,7 @@
 @use templates::{base, users::header};
 @use template_utils::*;
 @use plume_models::users::User;
+@use routes::*;
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, followers: Vec<User>, page: i32, n_pages: i32)
 
@@ -8,14 +9,14 @@
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
-        (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Articles"), false),
-        (&format!("/@/{}/followers", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), true)
+        (&uri!(user::details: name= user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Articles"), false),
+        (&uri!(user::followers: name = user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Followers"), true)
     ])
 
     <div class="cards">
         @for follower in followers {
             <div class="card">
-                <h3><a href="/@@/@follower.get_fqn(ctx.0)/">@follower.name(ctx.0)</a> <small>@format!("@{}", follower.get_fqn(ctx.0))</small></h3>
+                <h3><a href="@uri!(user::details: name = follower.get_fqn(ctx.0))">@follower.name(ctx.0)</a> <small>@format!("@{}", follower.get_fqn(ctx.0))</small></h3>
                 <main><p>@Html(follower.summary)</p></main>
             </div>
         }

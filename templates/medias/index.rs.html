@@ -1,13 +1,14 @@
+@use plume_models::medias::Media;
 @use templates::base;
 @use template_utils::*;
-@use plume_models::medias::Media;
+@use routes::*;
 
 @(ctx: BaseContext, medias: Vec<Media>)
 
 @:base(ctx, "Your media", {}, {}, {
     <h1>@i18n!(ctx.1, "Your media")</h1>
     <div>
-        <a href="/medias/new" class="inline-block button">@i18n!(ctx.1, "Upload")</a>
+        <a href="@uri!(medias::new)" class="inline-block button">@i18n!(ctx.1, "Upload")</a>
     </div>
 
     <section>
@@ -19,9 +20,11 @@
                 <div class="card flex">
                     @Html(media.preview_html(ctx.0))
                     <main class="grow">
-                        <p><a href="/medias/@media.id">@media.alt_text</a></p>
+                        <p><a href="@uri!(medias::details: id = media.id)">@media.alt_text</a></p>
                     </main>
-                    <a href="/medias/@media.id/delete">@i18n!(ctx.1, "Delete")</a>
+                    <form action="@uri!(medias::delete: id = media.id)" class="inline" method="POST">
+                        <input type="submit" value="@i18n!(ctx.1, "Delete")"/>
+                    </form>
                 </div>
             }
         </div>

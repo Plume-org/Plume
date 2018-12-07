@@ -1,34 +1,20 @@
 @use templates::base;
 @use template_utils::*;
+@use routes::*;
 
 @(ctx: BaseContext, now: &str)
 
-@:base(ctx, "Search", {
-  <script> 
-  window.onload = function(evt) @{ 
-    var form = document.getElementById('form'); 
-    form.addEventListener('submit', function () @{ 
-      for (var input of form.getElementsByTagName('input')) @{ 
-        if (input.name === '') @{ 
-          input.name = input.id 
-        @} 
-        if (input.name && !input.value) @{ 
-          input.name = ''; 
-        @} 
-      @} 
-    @}); 
-  @} 
-  </script>
-}, {}, {
+@:base(ctx, "Search", {}, {}, {
   <h1>@i18n!(ctx.1, "Search")</h1>
   <form method="get" id="form">
     <input id="q" name="q" placeholder="Your query" type="search">
+    <br/>
     <details>
         <summary>Advanced search</summary>
         @input!(ctx.1, title    (text), "Title matching these words",       "placeholder=\"Title\"")
         @input!(ctx.1, subtitle (text), "Subtitle matching these words",    "placeholder=\"Subtitle\"")
         @input!(ctx.1, content  (text), "Content matching these words",     "placeholder=\"Content\"")
-	@input!(ctx.1, after    (date), "From this date",                   &format!("max={}", now)))
+	@input!(ctx.1, after    (date), "From this date",                   &format!("max={}", now))
         @input!(ctx.1, before   (date), "To this date",                     &format!("max={}", now))
 
         @input!(ctx.1, tag      (text), "Containing these tags",            "placeholder=\"Tags\"")
@@ -40,4 +26,5 @@
     </details>
     <input type="submit" value="Search"/>
   </form>
+  <script src="@uri!(static_files: file = "js/search.js")"></script>
 })

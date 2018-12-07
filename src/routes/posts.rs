@@ -121,12 +121,14 @@ pub fn new(blog: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe> 
         let medias = Media::for_user(&*conn, user.id);
         Some(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            b,
             false,
             &NewPostForm::default(),
+            true,
+            None,
             ValidationErrors::default(),
             Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
-            medias,
-            true
+            medias
         )))
     }
 }
@@ -143,7 +145,7 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) ->
         )))
     } else {
         let source = if !post.source.is_empty() {
-            post.source
+            post.source.clone()
         } else {
             post.content.get().clone() // fallback to HTML if the markdown was not stored
         };
@@ -151,6 +153,7 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) ->
         let medias = Media::for_user(&*conn, user.id);
         Some(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            b,
             true,
             &NewPostForm {
                 title: post.title.clone(),
@@ -165,10 +168,11 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) ->
                 draft: true,
                 cover: post.cover_id,
             },
+            !post.published,
+            Some(post),
             ValidationErrors::default(),
             Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
-            medias,
-            !post.published
+            medias
         )))
     }
 }
@@ -182,7 +186,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
     let new_slug = if !post.published {
         form.title.to_string().to_kebab_case()
     } else {
-        post.slug
+        post.slug.clone()
     };
 
     let mut errors = match form.validate() {
@@ -260,12 +264,14 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
         let medias = Media::for_user(&*conn, user.id);
         let temp = render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            b,
             true,
             &*form,
+            form.draft.clone(),
+            Some(post),
             errors.clone(),
             Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
-            medias.clone(),
-            form.draft.clone()
+            medias.clone()
         ));
         Err(Some(temp))
     }
@@ -378,12 +384,14 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
         let medias = Media::for_user(&*conn, user.id);
         Err(Some(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            blog,
             false,
             &*form,
+            form.draft,
+            None,
             errors.clone(),
             Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
-            medias,
-            form.draft
+            medias
         ))))
     }
 }

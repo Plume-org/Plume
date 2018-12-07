@@ -2,6 +2,7 @@
 @use template_utils::*;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
+@use routes::*;
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, recents: Vec<Post>, reshares: Vec<Post>)
 
@@ -9,14 +10,14 @@
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
-        (&format!("/@/{}", user.get_fqn(ctx.0)), i18n!(ctx.1, "Articles"), true),
-        (&format!("/@/{}/followers", user.get_fqn(ctx.0)), i18n!(ctx.1, "Followers"), false)
+        (&uri!(user::details: name= user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Articles"), true),
+        (&uri!(user::followers: name = user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Followers"), false)
     ])
 
     @if !recents.is_empty() {
         <h2>
             @i18n!(ctx.1, "Latest articles")
-            <small><a href="/@@/@user.get_fqn(ctx.0)/atom.xml" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
+            <small><a href="@uri!(user::atom_feed: name = user.get_fqn(ctx.0))" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
         </h2>
         <div class="cards">
             @for article in recents {

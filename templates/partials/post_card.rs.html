@@ -1,5 +1,6 @@
-@use template_utils::*;
 @use plume_models::posts::Post;
+@use template_utils::*;
+@use routes::*;
 
 @(ctx: BaseContext, article: Post)
 
@@ -7,20 +8,20 @@
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
     }
-    <h3><a href="@article.url(ctx.0)">@article.title</a></h3>
+    <h3><a href="@uri!(posts::details: blog = article.get_blog(ctx.0).get_fqn(ctx.0), slug = &article.slug)">@article.title</a></h3>
     <main>
         <p>@article.subtitle</p>
     </main>
     <p class="author">
         @Html(i18n!(ctx.1, "By {0}"; format!(
-            "<a href=\"/@/{}/\">{}</a>",
-            escape(&article.get_authors(ctx.0)[0].get_fqn(ctx.0)),
+            "<a href=\"{}\">{}</a>",
+            uri!(user::details: name = article.get_authors(ctx.0)[0].get_fqn(ctx.0)),
             escape(&article.get_authors(ctx.0)[0].name(ctx.0))
         )))
         @if article.published {
         ⋅ @article.creation_date.format("%B %e, %Y")
         }
-        ⋅ <a href="/~/@article.get_blog(ctx.0).get_fqn(ctx.0)/">@article.get_blog(ctx.0).title</a>
+        ⋅ <a href="@uri!(blogs::details: name = article.get_blog(ctx.0).get_fqn(ctx.0))">@article.get_blog(ctx.0).title</a>
         @if !article.published {
         ⋅ @i18n!(ctx.1, "Draft")
         }

@@ -1,7 +1,8 @@
-@use templates::{base, partials::post_card};
-@use template_utils::*;
 @use plume_models::posts::Post;
 @use plume_models::instance::Instance;
+@use templates::{base, partials::post_card};
+@use template_utils::*;
+@use routes::*;
 
 @(ctx: BaseContext, instance: Instance, articles: Vec<Post>, page: i32, n_pages: i32)
 
@@ -10,16 +11,16 @@
 
     @if let Some(_) = ctx.2 {
         @tabs(&[
-            ("/", i18n!(ctx.1, "Latest articles"), false),
-            ("/feed", i18n!(ctx.1, "Your feed"), false),
-            ("/federated", i18n!(ctx.1, "Federated feed"), false),
-            ("/local", i18n!(ctx.1, "Local feed"), true),
+            (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), false),
+            (&uri!(instance::feed).to_string(), i18n!(ctx.1, "Your feed"), false),
+            (&uri!(instance::federated).to_string(), i18n!(ctx.1, "Federated feed"), false),
+            (&uri!(instance::local).to_string(), i18n!(ctx.1, "Local feed"), true),
         ])
     } else {
         @tabs(&[
-              ("/", i18n!(ctx.1, "Latest articles"), false),
-              ("/federated", i18n!(ctx.1, "Federated feed"), false),
-              ("/local", i18n!(ctx.1, "Local feed"), true),
+            (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), false),
+            (&uri!(instance::federated).to_string(), i18n!(ctx.1, "Federated feed"), false),
+            (&uri!(instance::local).to_string(), i18n!(ctx.1, "Local feed"), true),
         ])
     }
 

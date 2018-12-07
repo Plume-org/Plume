@@ -1,5 +1,6 @@
 @use template_utils::*;
 @use plume_models::users::User;
+@use routes::*;
 
 @(ctx: BaseContext, user: &User, follows: bool, is_remote: bool, instance_url: String)
 
@@ -19,7 +20,7 @@
 
             @if ctx.2.clone().map(|u| u.id == user.id).unwrap_or(false) {
                 <span class="badge">@i18n!(ctx.1, "It is you")</span>
-                <a href="/@@/@user.username/edit" class="button inline-block">@i18n!(ctx.1, "Edit your profile")</a>
+                <a href="@uri!(user::edit: name = &user.username)" class="button inline-block">@i18n!(ctx.1, "Edit your profile")</a>
             }
         </p>
     </div>
@@ -29,7 +30,7 @@
     }
 
     @if ctx.2.clone().map(|u| u.id != user.id).unwrap_or(false) {
-        <form class="inline" method="post" action="/@@/@user.get_fqn(ctx.0)/follow/">
+        <form class="inline" method="post" action="@uri!(user::follow: name = user.get_fqn(ctx.0))">
         @if follows {
             <input type="submit" value="@i18n!(ctx.1, "Unfollow")">
         } else {
