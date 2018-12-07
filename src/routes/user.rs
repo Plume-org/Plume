@@ -333,7 +333,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
             ).update_boxes(&*conn);
             Redirect::to(uri!(super::session::new))
         })
-        .map_err(|err| {
+       .map_err(|err| {
             render!(users::new(
                 &(&*conn, &intl.catalog, None),
                 Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),

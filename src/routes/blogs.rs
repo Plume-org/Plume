@@ -120,7 +120,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 
         Ok(Redirect::to(uri!(details: name = slug.clone())))
     } else {
-        Err(render!(blogs::new(
+       Err(render!(blogs::new(
             &(&*conn, &intl.catalog, Some(user)),
             &*form,
             errors

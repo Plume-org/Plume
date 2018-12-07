@@ -83,7 +83,7 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
 
         let uri = Uri::parse(&destination)
             .map(|x| x.into_owned())
-            .map_err(|_| render!(session::login(
+           .map_err(|_| render!(session::login(
                 &(&*conn, &intl.catalog, None),
                 None,
                 &*form,

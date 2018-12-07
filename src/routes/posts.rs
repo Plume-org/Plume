@@ -262,7 +262,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
-        let temp = render!(posts::new(
+       let temp = render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
             b,
             true,
@@ -382,7 +382,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
-        Err(Some(render!(posts::new(
+       Err(Some(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
             blog,
             false,

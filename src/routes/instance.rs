@@ -145,7 +145,7 @@ pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSet
                 form.long_description.clone());
             Redirect::to(uri!(admin))
         })
-        .map_err(|e| {
+       .map_err(|e| {
             let local_inst = Instance::get_local(&*conn).expect("instance::update_settings: local instance not found");
             render!(instance::admin(
                 &(&*conn, &intl.catalog, Some(admin.0)),

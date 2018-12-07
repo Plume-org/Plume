@@ -23,7 +23,6 @@ extern crate rocket_contrib;
 extern crate rocket_csrf;
 #[macro_use]
 extern crate rocket_i18n;
-extern crate rpassword;
 extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
