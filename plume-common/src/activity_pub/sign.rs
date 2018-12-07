@@ -1,6 +1,7 @@
 use super::request;
 use base64;
-use chrono::Utc;
+use chrono::{DateTime, Duration,
+    naive::NaiveDateTime, Utc};
 use hex;
 use openssl::{pkey::PKey, rsa::Rsa, sha::sha256};
 use rocket::http::HeaderMap;
@@ -86,10 +87,24 @@ impl Signable for serde_json::Value {
         let creation_date = &signature_obj["created"];
         let options_hash = Self::hash(
             &json!({
-            "@context": "https://w3id.org/identity/v1",
-            "created": creation_date
-        }).to_string(),
+                "@context": "https://w3id.org/identity/v1",
+                "created": creation_date
+            }).to_string(),
         );
+        let creation_date = creation_date.as_str();
+        if creation_date.is_none() {
+            return false;
+        }
+        let creation_date = DateTime::parse_from_rfc3339(creation_date.unwrap());
+        if creation_date.is_err() {
+            return false;
+        }
+        let diff = creation_date.unwrap().signed_duration_since(Utc::now());
+        let future = Duration::hours(12);
+        let past = Duration::hours(-12);
+        if !(diff < future && diff > past) {
+            return false;
+        }
         let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
         creator.verify(&to_be_signed, &signature)
@@ -102,6 +117,7 @@ pub enum SignatureValidity {
     ValidNoDigest,
     Valid,
     Absent,
+    Outdated,
 }
 
 impl SignatureValidity {
@@ -162,8 +178,26 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     let digest = request::Digest::from_header(digest);
     if !digest.map(|d| d.verify(&data)).unwrap_or(false) {
         // signature was valid, but body content does not match its digest
-        SignatureValidity::Invalid
+        return SignatureValidity::Invalid;
+    }
+    if !headers.contains(&"date") {
+        return SignatureValidity::Valid; //maybe we shouldn't trust a request without date?
+    }
+
+    let date = all_headers.get_one("date");
+    if date.is_none() {
+        return SignatureValidity::Outdated;
+    }
+    let date = NaiveDateTime::parse_from_str(date.unwrap(), "%a, %d %h %Y %T GMT");
+    if date.is_err() {
+        return SignatureValidity::Outdated;
+    }
+    let diff = Utc::now().naive_utc() - date.unwrap();
+    let future = Duration::hours(12);
+    let past = Duration::hours(-12);
+    if diff < future && diff > past {
+        SignatureValidity::Valid
     } else {
-        SignatureValidity::Valid // all check passed
+        SignatureValidity::Outdated
     }
 }

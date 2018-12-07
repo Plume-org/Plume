@@ -1,0 +1,10 @@
+@use templates::errors::base;
+@use template_utils::*;
+
+@(ctx: BaseContext)
+
+@:base(ctx, "Page not found", {
+  <h1>@i18n!(ctx.1, "We couldn't find this page.")</h1>
+  <p>@i18n!(ctx.1, "The link that led you here may be broken.")</p>
+})
+

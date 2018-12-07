@@ -1,0 +1,23 @@
+@use templates::base;
+@use template_utils::*;
+@use routes::user::NewUserForm;
+@use validator::ValidationErrors;
+@use routes::*;
+
+@(ctx: BaseContext, enabled: bool, form: &NewUserForm, errors: ValidationErrors)
+
+@:base(ctx, "Edit your account", {}, {}, {
+    @if enabled {
+        <h1>@i18n!(ctx.1, "Create an account")</h1>
+        <form method="post" action="@uri!(user::create)">
+            @input!(ctx.1, username (text), "Username", form, errors.clone(), "minlenght=\"1\"")
+            @input!(ctx.1, email (text), "Email", form, errors.clone())
+            @input!(ctx.1, password (password), "Password", form, errors.clone(), "minlenght=\"8\"")
+            @input!(ctx.1, password_confirmation (password), "Password confirmation", form, errors, "minlenght=\"8\"")
+
+            <input type="submit" value="@i18n!(ctx.1, "Create account")" />
+        </form>
+    } else {
+        <p class="center">@i18n!(ctx.1, "Sorry, but registrations are closed on this instance. Try to find another one")</p>
+    }
+})

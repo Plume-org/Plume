@@ -6,7 +6,7 @@ use webfinger::*;
 use plume_models::{BASE_URL, ap_url, db_conn::DbConn, blogs::Blog, users::User};
 
 #[get("/.well-known/nodeinfo")]
-fn nodeinfo() -> Content<String> {
+pub fn nodeinfo() -> Content<String> {
     Content(ContentType::new("application", "jrd+json"), json!({
         "links": [
             {
@@ -18,18 +18,13 @@ fn nodeinfo() -> Content<String> {
 }
 
 #[get("/.well-known/host-meta")]
-fn host_meta() -> String {
+pub fn host_meta() -> String {
     format!(r#"
     <?xml version="1.0"?>
     <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
         <Link rel="lrdd" type="application/xrd+xml" template="{url}"/>
     </XRD>
     "#, url = ap_url(&format!("{domain}/.well-known/webfinger?resource={{uri}}", domain = BASE_URL.as_str())))
-}
-
-#[derive(FromForm)]
-struct WebfingerQuery {
-    resource: String
 }
 
 struct WebfingerResolver;
@@ -50,9 +45,9 @@ impl Resolver<DbConn> for WebfingerResolver {
     }
 }
 
-#[get("/.well-known/webfinger?<query>")]
-fn webfinger(query: WebfingerQuery, conn: DbConn) -> Content<String> {
-    match WebfingerResolver::endpoint(query.resource, conn).and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound)) {
+#[get("/.well-known/webfinger?<resource>")]
+pub fn webfinger(resource: String, conn: DbConn) -> Content<String> {
+    match WebfingerResolver::endpoint(resource, conn).and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound)) {
         Ok(wf) => Content(ContentType::new("application", "jrd+json"), wf),
         Err(err) => Content(ContentType::new("text", "plain"), String::from(match err {
             ResolverError::InvalidResource => "Invalid resource. Make sure to request an acct: URI",

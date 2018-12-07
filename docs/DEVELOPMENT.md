@@ -41,22 +41,25 @@ Now, make any changes to the code you want. After committing your changes, push 
 
 The project maintainers may suggest further changes to improve the pull request even more. After implementing this locally, you can push to your upstream fork again and the changes will immediately show up in the pull request after pushing. Once all the suggested changes are made, the pull request may be accepted. Thanks for contributing.
 
-## When working with Tera templates
+## When working with Ructe templates
 
-When working with the interface, or any message that will be displayed to the final user, keep in mind that Plume is an internationalized software. To make sure that the parts of the interface you are changing are translatable, you should:
+When working with the interface, or any message that will be displayed to the final user,
+keep in mind that Plume is an internationalized software.
+To make sure that the parts of the interface you are changing are translatable, you should:
 
-- Use the `_` and `_n` filters instead of directly writing strings in your HTML markup
+- Wrap strings to translate in the `i18n!` macro (see [rocket_i18n docs](https://docs.rs/rocket_i18n/)
+for more details about its arguments).The `Catalog` argument is usually `ctx.1`.
 - Add the strings to translate to the `po/plume.pot` file
 
-Here is an example: let's say we want to add two strings, a simple one and one that may deal with plurals. The first step is to add them to whatever template we want to display them in:
+Here is an example: let's say we want to add two strings, a simple one and one
+that may deal with plurals. The first step is to add them to whatever
+template we want to display them in:
 
-```jinja
-<p>{{ "Hello, world!" | _ }}</p>
+```html
+<p>@i18n!(ctx.1, "Hello, world!")</p>
 
-<p>{{ "You have {{ count }} new notifications" | _n(singular="You have one new notification", count=n_notifications) }}</p>
+<p>@i18n!(ctx.1, "You have one new notification", "You have {0} new notifications", n_notifications)</p>
 ```
-
-As you can see, the `_` doesn't need any special argument to work, but `_n` requires `singular` (the singular form, in English) and `count` (the number of items, to determine which form to use) to be present. Note that any parameters given to these filters can be used as regular Tera variables inside of the translated strings, like we are doing with the `count` variable in the second string above.
 
 The second step is to add them to POT file. To add a simple message, just do:
 
@@ -69,7 +72,7 @@ For plural forms, the syntax is a bit different:
 
 ```po
 msgid "You have one new notification" # The singular form
-msgid_plural "You have {{ count }} new notifications" # The plural one
+msgid_plural "You have {0} new notifications" # The plural one
 msgstr[0] ""
 msgstr[1] ""
 ```
@@ -84,4 +87,4 @@ For CSS, the only rule is to use One True Brace Style.
 
 For JavaScript, we use [the JavaScript Standard Style](https://standardjs.com/).
 
-For HTML/Tera templates, we use HTML5 syntax.
+For HTML/Ructe templates, we use HTML5 syntax.

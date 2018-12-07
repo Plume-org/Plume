@@ -1,0 +1,37 @@
+@use plume_models::medias::{Media, MediaCategory};
+@use templates::base;
+@use template_utils::*;
+@use routes::*;
+
+@(ctx: BaseContext, media: Media)
+
+@:base(ctx, "Media details", {}, {}, {
+    <h1>@i18n!(ctx.1, "Media details")</h1>
+    <section>
+        <a href="@uri!(medias::list)">@i18n!(ctx.1, "Go back to the gallery")</a>
+    </section>
+
+    <section>
+        <figure class="media">
+            @Html(media.html(ctx.0))
+            <figcaption>@media.alt_text</figcaption>
+        </figure>
+        <div>
+            <p>
+                @i18n!(ctx.1, "Markdown code")
+                <small>@i18n!(ctx.1, "Copy it in your articles to insert this media.")</small>
+            </p>
+            <code>@media.markdown(ctx.0)</code>
+        </div>
+        <div>
+	    @if media.category() == MediaCategory::Image {
+                <form class="inline" method="post" action="@uri!(medias::set_avatar: id = media.id)">
+		    <input class="button" type="submit" value="@i18n!(ctx.1, "Use as avatar")">
+                </form>
+	    }
+            <form class="inline" method="post" action="@uri!(medias::delete: id = media.id)">
+                <input class="button" type="submit" value="@i18n!(ctx.1, "Delete")">
+            </form>
+        </div>
+    </section>
+})

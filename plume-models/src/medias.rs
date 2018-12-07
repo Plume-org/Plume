@@ -1,13 +1,14 @@
 use activitypub::object::Image;
+use askama_escape::escape;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use reqwest;
-use serde_json;
 use std::{fs, path::Path};
 
 use plume_common::activity_pub::Id;
 
 use instance::Instance;
+use safe_string::SafeString;
 use schema::medias;
 use users::User;
 use {ap_url, Connection};
@@ -36,6 +37,14 @@ pub struct NewMedia {
     pub owner_id: i32,
 }
 
+#[derive(PartialEq)]
+pub enum MediaCategory {
+    Image,
+    Audio,
+    Video,
+    Unknown,
+}
+
 impl Media {
     insert!(medias, NewMedia);
     get!(medias);
@@ -47,65 +56,65 @@ impl Media {
             .expect("Media::list_all_medias: loading error")
     }
 
-    pub fn to_json(&self, conn: &Connection) -> serde_json::Value {
-        let mut json = serde_json::to_value(self).expect("Media::to_json: serialization error");
-        let url = self.url(conn);
-        let (cat, preview, html, md) = match self
+    pub fn category(&self) -> MediaCategory {
+        match self
             .file_path
             .rsplitn(2, '.')
             .next()
-            .expect("Media::to_json: extension error")
+            .expect("Media::category: extension error")
         {
-            "png" | "jpg" | "jpeg" | "gif" | "svg" => (
-                "image",
-                format!(
-                    "<img src=\"{}\" alt=\"{}\" title=\"{}\" class=\"preview\">",
-                    url, self.alt_text, self.alt_text
-                ),
-                format!(
-                    "<img src=\"{}\" alt=\"{}\" title=\"{}\">",
-                    url, self.alt_text, self.alt_text
-                ),
-                format!("![{}]({})", self.alt_text, url),
-            ),
-            "mp3" | "wav" | "flac" => (
-                "audio",
-                format!(
-                    "<audio src=\"{}\" title=\"{}\" class=\"preview\"></audio>",
-                    url, self.alt_text
-                ),
-                format!(
-                    "<audio src=\"{}\" title=\"{}\"></audio>",
-                    url, self.alt_text
-                ),
-                format!(
-                    "<audio src=\"{}\" title=\"{}\"></audio>",
-                    url, self.alt_text
-                ),
-            ),
-            "mp4" | "avi" | "webm" | "mov" => (
-                "video",
-                format!(
-                    "<video src=\"{}\" title=\"{}\" class=\"preview\"></video>",
-                    url, self.alt_text
-                ),
-                format!(
-                    "<video src=\"{}\" title=\"{}\"></video>",
-                    url, self.alt_text
-                ),
-                format!(
-                    "<video src=\"{}\" title=\"{}\"></video>",
-                    url, self.alt_text
-                ),
-            ),
-            _ => ("unknown", String::new(), String::new(), String::new()),
-        };
-        json["html_preview"] = json!(preview);
-        json["html"] = json!(html);
-        json["url"] = json!(url);
-        json["md"] = json!(md);
-        json["category"] = json!(cat);
-        json
+            "png" | "jpg" | "jpeg" | "gif" | "svg" => MediaCategory::Image,
+            "mp3" | "wav" | "flac" => MediaCategory::Audio,
+            "mp4" | "avi" | "webm" | "mov" => MediaCategory::Video,
+            _ => MediaCategory::Unknown,
+        }
+    }
+
+    pub fn preview_html(&self, conn: &Connection) -> SafeString {
+        let url = self.url(conn);
+        match self.category() {
+            MediaCategory::Image => SafeString::new(&format!(
+                r#"<img src="{}" alt="{}" title="{}" class=\"preview\">"#,
+                url, escape(&self.alt_text), escape(&self.alt_text)
+            )),
+            MediaCategory::Audio => SafeString::new(&format!(
+                r#"<audio src="{}" title="{}" class="preview"></audio>"#,
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Video => SafeString::new(&format!(
+                r#"<video src="{}" title="{}" class="preview"></video>"#,
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Unknown => SafeString::new(""),
+        }
+    }
+
+    pub fn html(&self, conn: &Connection) -> SafeString {
+        let url = self.url(conn);
+        match self.category() {
+            MediaCategory::Image => SafeString::new(&format!(
+                r#"<img src="{}" alt="{}" title="{}">"#,
+                url, escape(&self.alt_text), escape(&self.alt_text)
+            )),
+            MediaCategory::Audio => SafeString::new(&format!(
+                r#"<audio src="{}" title="{}"></audio>"#,
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Video => SafeString::new(&format!(
+                r#"<video src="{}" title="{}"></video>"#,
+                url, escape(&self.alt_text)
+            )),
+            MediaCategory::Unknown => SafeString::new(""),
+        }
+    }
+
+    pub fn markdown(&self, conn: &Connection) -> SafeString {
+        let url = self.url(conn);
+        match self.category() {
+            MediaCategory::Image => SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url)),
+            MediaCategory::Audio | MediaCategory::Video => self.html(conn),
+            MediaCategory::Unknown => SafeString::new(""),
+        }
     }
 
     pub fn url(&self, conn: &Connection) -> String {
@@ -131,19 +140,23 @@ impl Media {
             .expect("Media::delete: database entry deletion error");
     }
 
-    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Media {
-        Media::insert(
-            conn,
-            NewMedia {
-                file_path: String::new(),
-                alt_text: String::new(),
-                is_remote: true,
-                remote_url: Some(url),
-                sensitive: false,
-                content_warning: None,
-                owner_id: user.id,
-            },
-        )
+    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Result<Media, ()> {
+        if url.contains(&['<', '>', '"'][..]) {
+            Err(())
+        } else {
+            Ok(Media::insert(
+                conn,
+                NewMedia {
+                    file_path: String::new(),
+                    alt_text: String::new(),
+                    is_remote: true,
+                    remote_url: Some(url),
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: user.id,
+                },
+            ))
+        }
     }
 
     pub fn set_owner(&self, conn: &Connection, user: &User) {
@@ -177,7 +190,7 @@ impl Media {
             NewMedia {
                 file_path: path.to_str()?.to_string(),
                 alt_text: image.object_props.content_string().ok()?,
-                is_remote: true,
+                is_remote: false,
                 remote_url: None,
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),

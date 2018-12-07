@@ -1,6 +1,0 @@
-{% extends "errors/base" %}
-
-{% block error %}
-    <h1>{{ "Invalid CSRF token." | _ }}</h1>
-    <p>{{ "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it." | _ }}</p>
-{% endblock error %}

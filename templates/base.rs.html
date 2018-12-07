@@ -1,0 +1,76 @@
+@use template_utils::*;
+@use routes::*;
+@(ctx: BaseContext, title: &str, head: Content, header: Content, content: Content)
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>@i18n!(ctx.1, title) ⋅ @i18n!(ctx.1, "Plume")</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="@uri!(static_files: file = "css/main.css")" />
+        <link rel="stylesheet" href="@uri!(static_files: file = "css/feather.css")" />
+        <link rel="manifest" href="@uri!(instance::web_manifest)" />
+        <link rel="icon" type="image/png" href="@uri!(static_files: file = "icons/trwnh/feather-filled/plumeFeatherFilled64.png")">
+        @:head()
+    </head>
+    <body>
+        <header>
+            <nav id="menu">
+                <a href="#" aria-label="@i18n!(ctx.1, "Menu")" title="@i18n!(ctx.1, "Menu")"><i class="icon icon-menu"></i></a>
+            </nav>
+            <div id="content">
+                <nav>
+                    <a href="@uri!(instance::index)" class="title">
+                        <img src="@uri!(static_files: file = "icons/trwnh/feather/plumeFeather256.png")">
+                        <p>@i18n!(ctx.1, "Plume")</p>
+                    </a>
+                    <hr/>
+                    @:header()
+                </nav>
+                <nav>
+                    @if ctx.2.is_some() {
+                        <a href="@uri!(user::dashboard)">
+                            <i class="icon icon-home" aria-label="@i18n!(ctx.1, "Dashboard")"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Dashboard")</span>
+                        </a>
+                        <a href="@uri!(notifications::notifications)">
+                            <i class="icon icon-bell" aria-label="@i18n!(ctx.1, "Notifications")"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Notifications")</span>
+                        </a>
+                        <a href="@uri!(session::delete)">
+                            <i class="icon icon-log-out" aria-label="@i18n!(ctx.1, "Log Out")"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Log Out")</span>
+                        </a>
+                        <a href="@uri!(user::me)" title="@i18n!(ctx.1, "My account")">
+                            @avatar(ctx.0, &ctx.2.clone().unwrap(), Size::Small, false, &ctx.1)
+                            <span class="mobile-label">@i18n!(ctx.1, "My account")</span>
+                        </a>
+                    } else {
+                        <a href="@uri!(session::new)">
+                            <i class="icon icon-log-in"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Log In")</span>
+                        </a>
+                        <a href="@uri!(user::new)">
+                            <i class="icon icon-user-plus"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Register")</span>
+                        </a>
+                    }
+                </nav>
+            </div>
+        </header>
+        <main>
+            @:content()
+        </main>
+        <footer>
+            <span>@concat!("Plume ", env!("CARGO_PKG_VERSION"))</span>
+            <a href="@uri!(instance::about)">@i18n!(ctx.1, "About this instance")</a>
+            <a href="https://github.com/Plume-org/Plume">@i18n!(ctx.1, "Source code")</a>
+            <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(ctx.1, "Matrix room")</a>
+            @if ctx.2.clone().map(|a| a.is_admin).unwrap_or(false) {
+                <a href="@uri!(instance::admin)">@i18n!(ctx.1, "Administration")</a>
+            }
+        </footer>
+        <script src="@uri!(static_files: file = "js/menu.js")"></script>
+    </body>
+</html>

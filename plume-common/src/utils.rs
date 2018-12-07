@@ -1,4 +1,3 @@
-use gettextrs::gettext;
 use heck::CamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{Event, Parser, Options, Tag, html};
@@ -23,8 +22,13 @@ pub fn make_actor_id(name: &str) -> String {
         .collect()
 }
 
+/**
+* Redirects to the login page with a given message.
+*
+* Note that the message should be translated before passed to this function.
+*/
 pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Redirect> {
-    Flash::new(Redirect::to(format!("/login?m={}", gettext(message.to_string()))), "callback", url.into().to_string())
+    Flash::new(Redirect::to(format!("/login?m={}", message)), "callback", url.into().to_string())
 }
 
 #[derive(Debug)]
@@ -85,7 +89,6 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                         }
                     }
                     State::Ready => {
-                        text_acc.push(c);
                         if c == '@' {
                             events.push(Event::Text(text_acc.into()));
                             (events, State::Mention, String::new(), n + 1, mentions, hashtags)
@@ -93,11 +96,13 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                             events.push(Event::Text(text_acc.into()));
                             (events, State::Hashtag, String::new(), n + 1, mentions, hashtags)
                         } else if c.is_alphanumeric() {
+                            text_acc.push(c);
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
                                 events.push(Event::Text(text_acc.clone().into()))
                             }
                             (events, State::Word, text_acc, n + 1, mentions, hashtags)
                         } else {
+                            text_acc.push(c);
                             if n >= (txt.chars().count() - 1) { // Add the text after at the end, even if it is not followed by a mention.
                                 events.push(Event::Text(text_acc.clone().into()))
                             }

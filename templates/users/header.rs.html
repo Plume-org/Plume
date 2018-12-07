@@ -1,0 +1,44 @@
+@use template_utils::*;
+@use plume_models::users::User;
+@use routes::*;
+
+@(ctx: BaseContext, user: &User, follows: bool, is_remote: bool, instance_url: String)
+
+<div class="user">
+    <div class="flex wrap">
+        @avatar(ctx.0, &user, Size::Medium, false, ctx.1)
+
+        <h1 class="grow flex vertical">
+            @user.name(ctx.0)
+            <small>@user.get_fqn(ctx.0)</small>
+        </h1>
+
+        <p>
+            @if user.is_admin {
+                <span class="badge">@i18n!(ctx.1, "Admin")</span>
+            }
+
+            @if ctx.2.clone().map(|u| u.id == user.id).unwrap_or(false) {
+                <span class="badge">@i18n!(ctx.1, "It is you")</span>
+                <a href="@uri!(user::edit: name = &user.username)" class="button inline-block">@i18n!(ctx.1, "Edit your profile")</a>
+            }
+        </p>
+    </div>
+
+    @if is_remote {
+        <a class="inline-block" href="@user.ap_url" target="_blank">@i18n!(ctx.1, "Open on {0}"; instance_url)</a>
+    }
+
+    @if ctx.2.clone().map(|u| u.id != user.id).unwrap_or(false) {
+        <form class="inline" method="post" action="@uri!(user::follow: name = user.get_fqn(ctx.0))">
+        @if follows {
+            <input type="submit" value="@i18n!(ctx.1, "Unfollow")">
+        } else {
+            <input type="submit" value="@i18n!(ctx.1, "Follow")">
+        }
+        </form>
+    }
+</div>
+<div class="user-summary">
+    @Html(user.summary.clone())
+</div>

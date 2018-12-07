@@ -328,7 +328,7 @@ main .article-meta .tags li a {
  main .article-meta .reshares .action:hover { color: #7765E3; }
 
  main .article-meta .likes .action svg.feather,
- main .article-meta .reshares .action i {
+ main .article-meta .reshares .action svg.feather {
  	transition: background 0.1s ease-in;
  	display: flex;
  	align-items: center;
@@ -352,12 +352,12 @@ main .article-meta .tags li a {
  	background: rgba(233, 47, 47, 0.15);
  }
 
- main .article-meta .reshares .action i {
+ main .article-meta .reshares .action svg.feather {
  	color: #7765E3;
  	border: solid #7765E3 thin;
  	font-weight: 600;
  }
- main .article-meta .reshares .action:hover i {
+ main .article-meta .reshares .action:hover svg.feather {
  	background: rgba(119, 101, 227, 0.15);
  }
 
@@ -366,14 +366,14 @@ main .article-meta .tags li a {
  	background: rgba(233, 47, 47, 0.25);
  	color: #E92F2F;
  }
- main .article-meta .reshares .action.reshared i { background: #7765E3; }
- main .article-meta .reshares .action.reshared:hover i {
+ main .article-meta .reshares .action.reshared svg.feather { background: #7765E3; }
+ main .article-meta .reshares .action.reshared:hover svg.feather {
  	background: rgba(119, 101, 227, 0.25);
  	color: #7765E3;
  }
 
  main .article-meta .likes .action.liked svg.feather,
- main .article-meta .reshares .action.reshared i {
+ main .article-meta .reshares .action.reshared svg.feather {
  	color: #F4F4F4;
  	font-weight: 900;
  }
@@ -722,9 +722,14 @@ form.inline input[type="submit"]:not(.button) {
  	align-items: center;
  }
 
+.stats p {
+    text-align: center;
+}
+
  .stats em {
- 	text-align: center;
  	font-weight: bold;
+ 	display: block;
+ 	margin: 1em 0;
  }
 
   /*== Pagination ==*/

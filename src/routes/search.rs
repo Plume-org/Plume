@@ -1,23 +1,16 @@
 use chrono::offset::Utc;
-use rocket_contrib::Template;
-use serde_json;
+use rocket::request::Form;
+use rocket_i18n::I18n;
 
 use plume_models::{
     db_conn::DbConn, users::User,
     search::Query};
 use routes::Page;
+use template_utils::Ructe;
 use Searcher;
 
-#[get("/search")]
-fn index(conn: DbConn, user: Option<User>) -> Template {
-    Template::render("search/index", json!({
-        "account": user.map(|u| u.to_json(&*conn)),
-        "now": format!("{}", Utc::today().format("%Y-%m-d")),
-    }))
-}
-
-#[derive(FromForm)]
-struct SearchQuery {
+#[derive(Default, FromForm)]
+pub struct SearchQuery {
     q: Option<String>,
     title: Option<String>,
     subtitle: Option<String>,
@@ -36,7 +29,7 @@ struct SearchQuery {
 macro_rules! param_to_query {
     ( $query:ident, $parsed_query:ident; normal: $($field:ident),*; date: $($date:ident),*) => {
         $(
-            if let Some(field) = $query.$field {
+            if let Some(ref field) = $query.$field {
                 let mut rest = field.as_str();
                 while !rest.is_empty() {
                     let (token, r) = Query::get_first_token(rest);
@@ -46,7 +39,7 @@ macro_rules! param_to_query {
             }
         )*
         $(
-            if let Some(field) = $query.$date {
+            if let Some(ref field) = $query.$date {
                 let mut rest = field.as_str();
                 while !rest.is_empty() {
                     use chrono::naive::NaiveDate;
@@ -62,23 +55,31 @@ macro_rules! param_to_query {
 }
 
 
-#[get("/search?<query>")]
-fn query(query: SearchQuery, conn: DbConn, searcher: Searcher, user: Option<User>) -> Template {
+#[get("/search?<query..>")]
+pub fn search(query: Form<SearchQuery>, conn: DbConn, searcher: Searcher, user: Option<User>, intl: I18n) -> Ructe {
     let page = query.page.unwrap_or(Page::first());
-    let mut parsed_query = Query::from_str(&query.q.unwrap_or_default());
+    let mut parsed_query = Query::from_str(&query.q.as_ref().map(|q| q.as_str()).unwrap_or_default());
 
     param_to_query!(query, parsed_query; normal: title, subtitle, content, tag,
               instance, author, blog, lang, license;
               date: before, after);
 
-    let str_q = parsed_query.to_string();
-    let res = searcher.search_document(&conn, parsed_query, page.limits());
+    let str_query = parsed_query.to_string();
 
-    Template::render("search/result", json!({
-        "query":str_q,
-        "account": user.map(|u| u.to_json(&*conn)),
-        "next_page": if res.is_empty() { 0 } else { page.page+1 },
-        "posts": res.into_iter().map(|p| p.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-        "page": page.page,
-    }))
+    if str_query.is_empty() {
+        render!(search::index(
+            &(&*conn, &intl.catalog, user),
+            &format!("{}", Utc::today().format("%Y-%m-d"))
+        ))
+    } else {
+        let res = searcher.search_document(&conn, parsed_query, page.limits());
+        let next_page = if res.is_empty() { 0 } else { page.0+1 };
+        render!(search::result(
+            &(&*conn, &intl.catalog, user),
+            &str_query,
+            res,
+            page.0,
+            next_page
+        ))
+    }
 }

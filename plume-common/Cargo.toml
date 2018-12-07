@@ -11,10 +11,11 @@ array_tool = "1.0"
 base64 = "0.10"
 failure = "0.1"
 failure_derive = "0.1"
-gettext-rs = "0.4"
 heck = "0.3.0"
 hex = "0.3"
+hyper = "0.11.27"
 openssl = "0.10.15"
+rocket = "0.4.0-rc.1"
 reqwest = "0.9"
 serde = "1.0"
 serde_derive = "1.0"
@@ -27,7 +28,3 @@ version = "0.4"
 [dependencies.pulldown-cmark]
 default-features = false
 version = "0.2.0"
-
-[dependencies.rocket]
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "55459db7732b9a240826a5c120c650f87e3372ce"

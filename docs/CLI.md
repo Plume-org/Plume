@@ -49,3 +49,51 @@ plm users new --admin -n 'kate' -N 'Kate' --bio "I'm Kate." --email 'kate@plu.me
 - `--email`, `-e`: the email adress of the user.
 - `--password`, `-p`: the password of the user. You probably want to use this option in shell scipts only, since if you don't specify it, the prompt won't show your password.
 - `--admin`, `-a`: makes the user an admin of the instance. Optional, off by default.
+
+## `plm search`
+
+Manage full text search index.
+
+### `plm search init`
+
+Initialize the search index.
+
+**Example:**
+
+```bash
+plm search init -p Plume'
+```
+
+**Arguments:**
+
+- `--path`, `-n`: path to plume working directory.
+- `--force`, `-f`: override any already existing search index.
+
+### `plm search refill`
+
+Refill the search index.
+
+**Example:**
+
+```bash
+plm search refill -p Plume'
+```
+
+**Arguments:**
+
+- `--path`, `-n`: path to plume working directory.
+
+### `plm search unlock`
+
+Remove lock on the search index, after abnormal termination such as power loss.
+Only do this if you know no processus is currently using the index.
+
+**Example:**
+
+```bash
+plm search unlock -p Plume'
+```
+
+**Arguments:**
+
+- `--path`, `-n`: path to plume working directory.

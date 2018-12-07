@@ -1,10 +1,9 @@
 use activitypub::object::Article;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
-use rocket::{request::LenientForm};
+use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
-use rocket_contrib::Template;
-use serde_json;
+use rocket_i18n::I18n;
 use std::{collections::{HashMap, HashSet}, borrow::Cow};
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -23,66 +22,74 @@ use plume_models::{
     tags::*,
     users::User
 };
+use routes::comments::NewCommentForm;
+use template_utils::Ructe;
 use Worker;
 use Searcher;
 
-#[derive(FromForm)]
-struct CommentQuery {
-    responding_to: Option<i32>
-}
-
 // See: https://github.com/SergioBenitez/Rocket/pull/454
-#[get("/~/<blog>/<slug>", rank = 4)]
-fn details(blog: String, slug: String, conn: DbConn, user: Option<User>) -> Template {
-    details_response(blog, slug, conn, user, None)
+#[get("/~/<blog>/<slug>", rank = 5)]
+pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Ructe> {
+    details_response(blog, slug, conn, user, None, intl)
 }
 
-#[get("/~/<blog>/<slug>?<query>")]
-fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, query: Option<CommentQuery>) -> Template {
-    may_fail!(user.map(|u| u.to_json(&*conn)), Blog::find_by_fqn(&*conn, &blog), "Couldn't find this blog", |blog| {
-        may_fail!(user.map(|u| u.to_json(&*conn)), Post::find_by_slug(&*conn, &slug, blog.id), "Couldn't find this post", |post| {
-            if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
-                let comments = Comment::list_by_post(&*conn, post.id);
-                let comms = comments.clone();
+#[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
+pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, Ructe> {
+    let blog = Blog::find_by_fqn(&*conn, &blog).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
+    if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
+        let comments = Comment::list_by_post(&*conn, post.id);
 
-                let previous = query.and_then(|q| q.responding_to.map(|r| Comment::get(&*conn, r)
-                    .expect("posts::details_reponse: Error retrieving previous comment").to_json(&*conn, &[])));
-                Template::render("posts/details", json!({
-                    "author": post.get_authors(&*conn)[0].to_json(&*conn),
-                    "article": post.to_json(&*conn),
-                    "blog": blog.to_json(&*conn),
-                    "comments": &comments.into_iter().filter_map(|c| if c.in_response_to_id.is_none() {
-                        Some(c.to_json(&*conn, &comms))
-                    } else {
-                        None
-                    }).collect::<Vec<serde_json::Value>>(),
-                    "n_likes": post.get_likes(&*conn).len(),
-                    "has_liked": user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
-                    "n_reshares": post.get_reshares(&*conn).len(),
-                    "has_reshared": user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
-                    "account": &user.clone().map(|u| u.to_json(&*conn)),
-                    "date": &post.creation_date.timestamp(),
-                    "previous": previous,
-                    "default": {
-                        "warning": previous.map(|p| p["spoiler_text"].clone())
-                    },
-                    "user_fqn": user.clone().map(|u| u.get_fqn(&*conn)).unwrap_or_default(),
-                    "is_author": user.clone().map(|u| post.get_authors(&*conn).into_iter().any(|a| u.id == a.id)).unwrap_or(false),
-                    "is_following": user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
-                    "comment_form": null,
-                    "comment_errors": null,
-                }))
-            } else {
-                Template::render("errors/403", json!({
-                    "error_message": "This post isn't published yet."
-                }))
-            }
-        })
-    })
+        let previous = responding_to.map(|r| Comment::get(&*conn, r)
+            .expect("posts::details_reponse: Error retrieving previous comment"));
+
+        Ok(render!(posts::details(
+            &(&*conn, &intl.catalog, user.clone()),
+            post.clone(),
+            blog,
+            &NewCommentForm {
+                warning: previous.clone().map(|p| p.spoiler_text).unwrap_or_default(),
+                content: previous.clone().map(|p| format!(
+                    "@{} {}",
+                    p.get_author(&*conn).get_fqn(&*conn),
+                    Mention::list_for_comment(&*conn, p.id)
+                        .into_iter()
+                        .filter_map(|m| {
+                            let user = user.clone();
+                            if let Some(mentioned) = m.get_mentioned(&*conn) {
+                                if user.is_none() || mentioned.id != user.expect("posts::details_response: user error while listing mentions").id {
+                                    Some(format!("@{}", mentioned.get_fqn(&*conn)))
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        }).collect::<Vec<String>>().join(" "))
+                    ).unwrap_or_default(),
+                ..NewCommentForm::default()
+            },
+            ValidationErrors::default(),
+            Tag::for_post(&*conn, post.id),
+            comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),
+            previous,
+            post.get_likes(&*conn).len(),
+            post.get_reshares(&*conn).len(),
+            user.clone().map(|u| u.has_liked(&*conn, &post)).unwrap_or(false),
+            user.clone().map(|u| u.has_reshared(&*conn, &post)).unwrap_or(false),
+            user.map(|u| u.is_following(&*conn, post.get_authors(&*conn)[0].id)).unwrap_or(false),
+            post.get_authors(&*conn)[0].clone()
+        )))
+    } else {
+        Err(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user.clone()),
+            "This post isn't published yet."
+        )))
+    }
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, Option<String>> {
+pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, Option<String>> {
     let blog = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     if post.published {
@@ -93,58 +100,62 @@ fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) ->
 }
 
 #[get("/~/<blog>/new", rank = 2)]
-fn new_auth(blog: String) -> Flash<Redirect> {
+pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        "You need to be logged in order to write a new post",
+        i18n!(i18n.catalog, "You need to be logged in order to write a new post"),
         uri!(new: blog = blog)
     )
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-fn new(blog: String, user: User, conn: DbConn) -> Option<Template> {
+pub fn new(blog: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
 
     if !user.is_author_in(&*conn, &b) {
-        Some(Template::render("errors/403", json!({// TODO actually return 403 error code
-            "error_message": "You are not author in this blog."
-        })))
+        // TODO actually return 403 error code
+        Some(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, Some(user)),
+            "You are not author in this blog."
+        )))
     } else {
         let medias = Media::for_user(&*conn, user.id);
-        Some(Template::render("posts/new", json!({
-            "account": user.to_json(&*conn),
-            "instance": Instance::get_local(&*conn),
-            "editing": false,
-            "errors": null,
-            "form": null,
-            "is_draft": true,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-        })))
+        Some(render!(posts::new(
+            &(&*conn, &intl.catalog, Some(user)),
+            b,
+            false,
+            &NewPostForm::default(),
+            true,
+            None,
+            ValidationErrors::default(),
+            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
+            medias
+        )))
     }
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template> {
+pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.is_author_in(&*conn, &b) {
-        Some(Template::render("errors/403", json!({// TODO actually return 403 error code
-            "error_message": "You are not author in this blog."
-        })))
+        Some(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, Some(user)),
+            "You are not author in this blog."
+        )))
     } else {
         let source = if !post.source.is_empty() {
-            post.source
+            post.source.clone()
         } else {
             post.content.get().clone() // fallback to HTML if the markdown was not stored
         };
 
         let medias = Media::for_user(&*conn, user.id);
-        Some(Template::render("posts/new", json!({
-            "account": user.to_json(&*conn),
-            "instance": Instance::get_local(&*conn),
-            "editing": true,
-            "errors": null,
-            "form": NewPostForm {
+        Some(render!(posts::new(
+            &(&*conn, &intl.catalog, Some(user)),
+            b,
+            true,
+            &NewPostForm {
                 title: post.title.clone(),
                 subtitle: post.subtitle.clone(),
                 content: source,
@@ -157,23 +168,25 @@ fn edit(blog: String, slug: String, user: User, conn: DbConn) -> Option<Template
                 draft: true,
                 cover: post.cover_id,
             },
-            "is_draft": !post.published,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-        })))
+            !post.published,
+            Some(post),
+            ValidationErrors::default(),
+            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
+            medias
+        )))
     }
 }
 
-#[post("/~/<blog>/<slug>/edit", data = "<data>")]
-fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientForm<NewPostForm>, worker: Worker, searcher: Searcher)
-    -> Result<Redirect, Option<Template>> {
+#[post("/~/<blog>/<slug>/edit", data = "<form>")]
+pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: LenientForm<NewPostForm>, worker: Worker, intl: I18n, searcher: Searcher)
+    -> Result<Redirect, Option<Ructe>> {
     let b = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
     let mut post = Post::find_by_slug(&*conn, &slug, b.id).ok_or(None)?;
 
-    let form = data.get();
     let new_slug = if !post.published {
         form.title.to_string().to_kebab_case()
     } else {
-        post.slug
+        post.slug.clone()
     };
 
     let mut errors = match form.validate() {
@@ -231,7 +244,7 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
 
             let hashtags = hashtags.into_iter().map(|h| h.to_camel_case()).collect::<HashSet<_>>()
                 .into_iter().map(|t| Tag::build_activity(&conn, t)).collect::<Vec<_>>();
-            post.update_tags(&conn, hashtags);
+            post.update_hashtags(&conn, hashtags);
 
             if post.published {
                 if newly_published {
@@ -249,20 +262,23 @@ fn update(blog: String, slug: String, user: User, conn: DbConn, data: LenientFor
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
-        Err(Some(Template::render("posts/new", json!({
-            "account": user.to_json(&*conn),
-            "instance": Instance::get_local(&*conn),
-            "editing": true,
-            "errors": errors.field_errors(),
-            "form": form,
-            "is_draft": form.draft,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>(),
-        }))))
+       let temp = render!(posts::new(
+            &(&*conn, &intl.catalog, Some(user)),
+            b,
+            true,
+            &*form,
+            form.draft.clone(),
+            Some(post),
+            errors.clone(),
+            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
+            medias.clone()
+        ));
+        Err(Some(temp))
     }
 }
 
-#[derive(FromForm, Validate, Serialize)]
-struct NewPostForm {
+#[derive(Default, FromForm, Validate, Serialize)]
+pub struct NewPostForm {
     #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,
     pub subtitle: String,
@@ -273,7 +289,7 @@ struct NewPostForm {
     pub cover: Option<i32>,
 }
 
-fn valid_slug(title: &str) -> Result<(), ValidationError> {
+pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
     let slug = title.to_string().to_kebab_case();
     if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
@@ -284,10 +300,9 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
     }
 }
 
-#[post("/~/<blog_name>/new", data = "<data>")]
-fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: Worker, searcher: Searcher) -> Result<Redirect, Option<Template>> {
+#[post("/~/<blog_name>/new", data = "<form>")]
+pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher) -> Result<Redirect, Option<Ructe>> {
     let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
-    let form = data.get();
     let slug = form.title.to_string().to_kebab_case();
 
     let mut errors = match form.validate() {
@@ -367,20 +382,22 @@ fn create(blog_name: String, data: LenientForm<NewPostForm>, user: User, conn: D
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
-        Err(Some(Template::render("posts/new", json!({
-            "account": user.to_json(&*conn),
-            "instance": Instance::get_local(&*conn),
-            "editing": false,
-            "errors": errors.field_errors(),
-            "form": form,
-            "is_draft": form.draft,
-            "medias": medias.into_iter().map(|m| m.to_json(&*conn)).collect::<Vec<serde_json::Value>>()
-        }))))
+       Err(Some(render!(posts::new(
+            &(&*conn, &intl.catalog, Some(user)),
+            blog,
+            false,
+            &*form,
+            form.draft,
+            None,
+            errors.clone(),
+            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
+            medias
+        ))))
     }
 }
 
 #[post("/~/<blog_name>/<slug>/delete")]
-fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Redirect {
+pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Redirect {
     let post = Blog::find_by_fqn(&*conn, &blog_name)
         .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
 
