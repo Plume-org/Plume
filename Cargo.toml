@@ -14,7 +14,7 @@ failure = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
 num_cpus = "1.0"
-rocket = "0.4.0-rc.1"
+rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0-rc.1", features = ["json"] }
 rocket_i18n = "0.3.1"
 rpassword = "2.0"
