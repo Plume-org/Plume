@@ -15,8 +15,9 @@
     ])
 
     @if !recents.is_empty() {
+    <div class="h-feed">
         <h2>
-            @i18n!(ctx.1, "Latest articles")
+            <span class="p-name">@i18n!(ctx.1, "Latest articles")</span>
             <small><a href="@uri!(user::atom_feed: name = user.get_fqn(ctx.0))" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
         </h2>
         <div class="cards">
@@ -24,14 +25,17 @@
                 @:post_card(ctx, article)
             }
         </div>
+    </div>
     }
 
     @if !reshares.is_empty() {
-        <h2>@i18n!(ctx.1, "Recently boosted")</h2>
+    <div class="h-feed">
+        <h2 class="p-name">@i18n!(ctx.1, "Recently boosted")</h2>
         <div class="cards">
             @for article in reshares {
                 @:post_card(ctx, article)
             }
         </div>
+    </div>
     }
 })

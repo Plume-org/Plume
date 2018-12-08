@@ -45,12 +45,11 @@ impl Size {
 pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &Catalog) -> Html<String> {
     let name = escape(&user.name(conn)).to_string();
     Html(format!(
-        r#"<div
-        class="avatar {size} {padded}"
+        r#"<div class="avatar {size} {padded}"
         style="background-image: url('{url}');"
         title="{title}"
-        aria-label="{title}"
-        ></div>"#,
+        aria-label="{title}"></div>
+        <img class="hidden u-photo" src="{url}"/>"#,
         size = size.as_str(),
         padded = if pad { "padded" } else { "" },
         url = user.avatar_url(conn),

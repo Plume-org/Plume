@@ -5,10 +5,12 @@
 @(ctx: BaseContext, articles: Vec<Post>, link: &str, title: &str)
 
 @if articles.len() > 0 {
-    <h2>@i18n!(ctx.1, title) &mdash; <a href="@link">@i18n!(ctx.1, "View all")</a></h2>
+<div class="h-feed">
+    <h2><span class="p-name">@i18n!(ctx.1, title)</span> &mdash; <a href="@link">@i18n!(ctx.1, "View all")</a></h2>
     <div class="cards spaced">
         @for article in articles {
             @:post_card(ctx, article)
         }
     </div>
+</div>
 }

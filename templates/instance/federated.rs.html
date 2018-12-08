@@ -6,7 +6,8 @@
 @(ctx: BaseContext, articles: Vec<Post>, page: i32, n_pages: i32)
 
 @:base(ctx, "All the articles of the Fediverse", {}, {}, {
-  <h1>@i18n!(ctx.1, "All the articles of the Fediverse")</h1>
+<div class="h-feed">
+  <h1 "p-name">@i18n!(ctx.1, "All the articles of the Fediverse")</h1>
 
     @if let Some(_) = ctx.2 {
         @tabs(&[
@@ -29,4 +30,5 @@
         }
     </div>
     @paginate(ctx.1, page, n_pages)
+</div>
 })

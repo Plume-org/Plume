@@ -3,15 +3,21 @@
 @use plume_models::users::User;
 @use routes::*;
 
-@(ctx: BaseContext, comm: &Comment, author: User)
+@(ctx: BaseContext, comm: &Comment, author: User, in_reply_to: Option<&str>)
 
-<div class="comment" id="comment-@comm.id">
-    <a class="author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
+<div class="comment u-comment h-cite" id="comment-@comm.id">
+    <a class="author u-author h-card" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
-        <span class="display-name">@author.name(ctx.0)</span>
+        <span class="display-name p-name">@author.name(ctx.0)</span>
         <small>@author.get_fqn(ctx.0)</small>
     </a>
-    <div class="text">
+    @if let Some(ref ap_url) = comm.ap_url {
+        <a class="u-url" href="@ap_url"></a>
+    }
+    @if let Some(ref in_reply_to) = in_reply_to {
+        <a class="u-in-reply-to" href="@in_reply_to"></a>
+    }
+    <div class="text p-content">
         @if comm.sensitive {
             <details>
                 <summary>@comm.spoiler_text</summary>
@@ -23,6 +29,6 @@
     </div>
     <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
     @for res in comm.get_responses(ctx.0) {
-        @:comment(ctx, &res, res.get_author(ctx.0))
+        @:comment(ctx, &res, res.get_author(ctx.0), comm.ap_url.as_ref().map(|u| &**u))
     }
 </div>

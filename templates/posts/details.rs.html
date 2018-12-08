@@ -22,8 +22,9 @@
 }, {
     <a href="@uri!(blogs::details: name = blog.get_fqn(ctx.0))">@blog.title</a>
 }, {
-    <h1 class="article">@&article.title</h1>
-    <h2 class="article">@&article.subtitle</h2>
+<div class="h-entry">
+    <h1 class="article p-name">@&article.title</h1>
+    <h2 class="article p-summary">@&article.subtitle</h2>
     <div class="article-info">
         <span class="author">
             @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
@@ -31,7 +32,7 @@
                                 escape(&author.name(ctx.0)))))
         </span>
         &mdash;
-        <span class="date">@article.creation_date.format("%B %e, %Y")</span>
+        <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
         @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
             &mdash;
             <a href="@uri!(posts::edit: blog = blog.get_fqn(ctx.0), slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
@@ -46,24 +47,29 @@
     </div>
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
+	<img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()" />
     }
-    <article>
+    <article class="e-content">
         @Html(&article.content)
     </article>
-
     <div class="article-meta">
         <p>@i18n!(ctx.1, "This article is under the {0} license."; &article.license)</p>
         <ul class="tags">
             @for tag in tags {
-		        @if !tag.is_hashtag {
-                    <li><a href="@uri!(tags::tag: name = &tag.tag)">@tag.tag</a></li>
+                @if !tag.is_hashtag {
+                    <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag)">@tag.tag</a></li>
+                } else {
+                    <span class="hidden p-category">@tag.tag</span>
                 }
             }
         </ul>
-        <div class="flex">
+        <div class="flex p-author h-card">
             @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
             <div class="grow">
-                <h2><a href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a></h2>
+                <h2 class="p-name">
+		    <a href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
+		    <a rel="author" class="u-url" href="@author.ap_url"></a>
+		</h2>
                 <p>@Html(&author.summary)</h2>
             </div>
 	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
@@ -72,7 +78,6 @@
                 </form>
 	    }
         </div>
-
         @if ctx.2.is_some() {
             <div class="actions">
                 <form class="likes" action="@uri!(likes::create: blog = blog.get_fqn(ctx.0), slug = &article.slug)" method="POST">
@@ -116,7 +121,6 @@
                 </div>
             </div>
         }
-
         <div class="comments">
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
@@ -136,7 +140,7 @@
             @if !comments.is_empty() {
                 <div class="list">
                     @for comm in comments {
-                        @:comment(ctx, &comm, comm.get_author(ctx.0))
+                        @:comment(ctx, &comm, comm.get_author(ctx.0), Some(&article.ap_url))
                     }
                 </div>
             } else {
@@ -144,4 +148,5 @@
             }
         </div>
     </div>
+</div>
 })

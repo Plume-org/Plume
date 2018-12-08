@@ -51,6 +51,10 @@
  	margin: 3em 0px;
  }
 
+ .hidden {
+	display: none;
+ }
+
 /*
  * == Header ==
  */
@@ -155,8 +159,12 @@ header nav a.title p {
  * == Main ==
  */
 
- body > main > * {
+ body > main > *, .h-feed > * {
  	padding: 0 20%;
+ }
+
+ body > main > .h-entry, .h-feed {
+	padding: 0;
  }
 
  main h1 {
