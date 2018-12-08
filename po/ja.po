@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-12-03 21:52+0900\n"
+"PO-Revision-Date: 2018-12-08 22:31+0900\n"
 "Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -34,9 +34,8 @@ msgstr "タイトル"
 msgid "Create blog"
 msgstr "ブログを作成"
 
-#, fuzzy
 msgid "Comment \"{0}\""
-msgstr "\"{{ post }}\" にコメント"
+msgstr "\"{0}\" にコメント"
 
 msgid "Content"
 msgstr "コメント"
@@ -64,33 +63,30 @@ msgid "Let&#x27;s go!"
 msgstr "開始しましょう！"
 
 msgid "Welcome to {0}"
-msgstr ""
+msgstr "{0} へようこそ"
 
 msgid "Notifications"
 msgstr "通知"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "{0} さんが作成"
 
-#, fuzzy
 msgid "This article is under the {0} license."
-msgstr "この記事は {{ license }} ライセンスの元で公開されています。"
+msgstr "この記事は {0} ライセンスの元で公開されています。"
 
-#, fuzzy
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] "{{ count }} いいね"
+msgstr[0] "{0} いいね"
 
 msgid "I don&#x27;t like this anymore"
 msgstr "もうこれにいいねしません"
 
 msgid "Add yours"
-msgstr "いいねする"
+msgstr "いいね"
 
-#, fuzzy
 msgid "One Boost"
 msgid_plural "{0} Boosts"
-msgstr[0] "{{ count }} ブースト"
+msgstr[0] "{0} ブースト"
 
 msgid "I don&#x27;t want to boost this anymore"
 msgstr "もうこれをブーストしたくありません"
@@ -152,7 +148,7 @@ msgid "Edit your profile"
 msgstr "自分のプロフィールを編集"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "{0} で開く"
 
 msgid "Follow"
 msgstr "フォロー"
@@ -163,10 +159,9 @@ msgstr "フォロー解除"
 msgid "Recently boosted"
 msgstr "最近ブーストしたもの"
 
-#, fuzzy
 msgid "One follower"
 msgid_plural "{0} followers"
-msgstr[0] "{{ count }} フォロワー"
+msgstr[0] "{0} フォロワー"
 
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
@@ -186,9 +181,8 @@ msgstr "要約"
 msgid "Update account"
 msgstr "アカウントをアップデート"
 
-#, fuzzy
 msgid "{0}'s followers"
-msgstr "{{ count }} フォロワー"
+msgstr "{0} さんのフォロワー"
 
 msgid "Followers"
 msgstr "フォロワー"
@@ -257,23 +251,19 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "自分のプロフィールを編集するにはログインする必要があります"
 
 msgid "By {0}"
-msgstr ""
+msgstr "{0} さんが作成"
 
-#, fuzzy
 msgid "{0} boosted your article"
-msgstr "{{ data }} があなたの記事をブーストしました"
+msgstr "{0} さんがあなたの記事をブーストしました"
 
-#, fuzzy
 msgid "{0} started following you"
-msgstr "{{ data }} があなたのフォローを開始しました"
+msgstr "{0} さんがあなたのフォローを開始しました"
 
-#, fuzzy
 msgid "{0} liked your article"
-msgstr "{{ data }} があなたの記事をいいねしました"
+msgstr "{0} さんがあなたの記事をいいねしました"
 
-#, fuzzy
 msgid "{0} commented your article"
-msgstr "{{ data }} があなたの記事にコメントしました"
+msgstr "{0} さんがあなたの記事にコメントしました"
 
 msgid "We couldn&#x27;t find this page."
 msgstr "このページを見つけられませんでした。"
@@ -287,9 +277,8 @@ msgstr "認証されていません。"
 msgid "You are not author in this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
-#, fuzzy
 msgid "{0} mentioned you."
-msgstr "{{ data }} があなたをメンションしました。"
+msgstr "{0} さんがあなたをメンションしました。"
 
 msgid "Your comment"
 msgstr "あなたのコメント"
@@ -327,22 +316,20 @@ msgstr "無効なメールアドレス"
 msgid "Password should be at least 8 characters long"
 msgstr "パスワードは最低 8 文字にするべきです"
 
-#, fuzzy
 msgid "One author in this blog: "
 msgid_plural "{0} authors in this blog: "
-msgstr[0] "ブログに {{ count }} 人の作成者がいます: "
+msgstr[0] "ブログに {0} 人の作成者がいます: "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
-"この記事と関わるにはログインするか Fediverse アカウントを使用してください"
+"この記事と関わるには、ログインするか Fediverse アカウントを使用してください"
 
 msgid "Optional"
 msgstr "省略可"
 
-#, fuzzy
 msgid "One article in this blog"
 msgid_plural "{0} articles in this blog"
-msgstr[0] "ブログ内に {{ count }} 件の記事"
+msgstr[0] "ブログに {0} 件の記事があります"
 
 msgid "Previous page"
 msgstr "前のページ"
@@ -390,7 +377,7 @@ msgid "What is Plume?"
 msgstr "Plume とは？"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr "Plume は分散型ブログエンジンです。"
+msgstr "Plume は、分散型のブログエンジンです。"
 
 msgid "Authors can manage various blogs from an unique website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
@@ -406,16 +393,16 @@ msgid "Create your account"
 msgstr "アカウントを作成"
 
 msgid "About {0}"
-msgstr ""
+msgstr "{0} について"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "登録者数 <em>{0}</em> 人"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "投稿記事数 <em>{0}</em> 件"
 
 msgid "And connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "他のインスタンスからの接続数 <em>{0}</em> 件"
 
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
@@ -429,9 +416,8 @@ msgstr "このブログを削除"
 msgid "Administred by"
 msgstr "管理者"
 
-#, fuzzy
 msgid "Runs Plume {0}"
-msgstr "Plume {{ version }} を実行中"
+msgstr "Plume {0} を実行中"
 
 msgid "Your media"
 msgstr "メディア"
@@ -439,9 +425,8 @@ msgstr "メディア"
 msgid "Go to your gallery"
 msgstr "ギャラリーを参照"
 
-#, fuzzy
 msgid "{0}'s avatar'"
-msgstr "{{ name}} のアバター"
+msgstr "{0} さんのアバター"
 
 msgid "Media details"
 msgstr "メディアの詳細"
@@ -517,23 +502,20 @@ msgstr "記事"
 msgid "All the articles of the Fediverse"
 msgstr "Fediverse のすべての記事"
 
-#, fuzzy
 msgid "Articles from {0}"
-msgstr "{{ instance.name }} の記事"
+msgstr "{0} の記事"
 
 msgid "View all"
 msgstr "すべて表示"
 
-#, fuzzy
 msgid "Articles tagged \"{0}\""
-msgstr "\"{{ tag }}\" タグの記事"
+msgstr "\"{0}\" タグの記事"
 
 msgid "Edit"
 msgstr "編集"
 
-#, fuzzy
 msgid "Edit {0}"
-msgstr "編集"
+msgstr "{0} を編集"
 
 msgid "Update"
 msgstr "アップデート"
@@ -553,9 +535,8 @@ msgstr ""
 "Cookie　が有効になっていることを確認して、このページを再読み込みしてみてくだ"
 "さい。このエラーメッセージが表示され続けた場合、問題を報告してください。"
 
-#, fuzzy
 msgid "Administration of {0}"
-msgstr "管理"
+msgstr "{0} の管理"
 
 msgid "Instances"
 msgstr "インスタンス"
