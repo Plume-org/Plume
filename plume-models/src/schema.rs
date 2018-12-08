@@ -183,6 +183,7 @@ table! {
         is_admin -> Bool,
         summary -> Text,
         email -> Nullable<Text>,
+        custom_domain -> Nullable<Text>,
         hashed_password -> Nullable<Text>,
         instance_id -> Int4,
         creation_date -> Timestamp,
