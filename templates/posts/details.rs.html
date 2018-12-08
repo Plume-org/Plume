@@ -32,7 +32,7 @@
                                 escape(&author.name(ctx.0)))))
         </span>
         &mdash;
-	<span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
+        <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
         @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
             &mdash;
             <a href="@uri!(posts::edit: blog = blog.get_fqn(ctx.0), slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
@@ -56,11 +56,11 @@
         <p>@i18n!(ctx.1, "This article is under the {0} license."; &article.license)</p>
         <ul class="tags">
             @for tag in tags {
-		@if !tag.is_hashtag {
+                @if !tag.is_hashtag {
                     <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag)">@tag.tag</a></li>
-		} else {
-		    <span class="hidden p-category">@tag.tag</span>
-		}
+                } else {
+                    <span class="hidden p-category">@tag.tag</span>
+                }
             }
         </ul>
         <div class="flex p-author h-card">

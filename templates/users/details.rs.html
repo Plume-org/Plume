@@ -17,7 +17,7 @@
     @if !recents.is_empty() {
     <div class="h-feed">
         <h2>
-	    <span class="p-name">@i18n!(ctx.1, "Latest articles")</span>
+            <span class="p-name">@i18n!(ctx.1, "Latest articles")</span>
             <small><a href="@uri!(user::atom_feed: name = user.get_fqn(ctx.0))" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
         </h2>
         <div class="cards">
