@@ -140,7 +140,7 @@
             @if !comments.is_empty() {
                 <div class="list">
                     @for comm in comments {
-                        @:comment(ctx, &comm, comm.get_author(ctx.0))
+                        @:comment(ctx, &comm, comm.get_author(ctx.0), Some(&article.ap_url))
                     }
                 </div>
             } else {
