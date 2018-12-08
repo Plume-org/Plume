@@ -33,6 +33,11 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                 .long("email")
                 .takes_value(true)
                 .help("Email address of the new user")
+            ).arg(Arg::with_name("custom-domain")
+                  .short("d")
+                  .long("domain")
+                  .takes_value(true)
+                  .help("Custom domain of the new user (optional)")
             ).arg(Arg::with_name("password")
                 .short("p")
                 .long("password")
@@ -59,6 +64,7 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let admin = args.is_present("admin");
     let bio = args.value_of("biography").unwrap_or("").to_string();
     let email = args.value_of("email").map(String::from).unwrap_or_else(|| super::ask_for("Email address"));
+    let custom_domain = args.value_of("custom-domain").unwrap_or("").to_string();
     let password = args.value_of("password").map(String::from).unwrap_or_else(|| {
         print!("Password: ");
         io::stdout().flush().expect("Couldn't flush STDOUT");
@@ -72,6 +78,7 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         admin,
         &bio,
         email,
+        Some(custom_domain),
         User::hash_pass(&password),
     ).update_boxes(conn);
 }

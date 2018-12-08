@@ -210,6 +210,7 @@ pub fn edit(name: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe>
             UpdateUserForm {
                 display_name: user.display_name.clone(),
                 email: user.email.clone().unwrap_or_default(),
+                custom_domain: user.custom_domain.clone().unwrap_or_default(),
                 summary: user.summary.to_string(),
             },
             ValidationErrors::default()
@@ -231,6 +232,7 @@ pub fn edit_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 pub struct UpdateUserForm {
     pub display_name: String,
     pub email: String,
+    pub custom_domain: String,
     pub summary: String,
 }
 
@@ -275,6 +277,7 @@ pub struct NewUserForm {
     pub username: String,
     #[validate(email(message = "Invalid email"))]
     pub email: String,
+    pub custom_domain: Option<String>,
     #[validate(
         length(
             min = "8",
@@ -325,6 +328,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
                 false,
                 "",
                 form.email.to_string(),
+                form.custom_domain.clone(),
                 User::hash_pass(&form.password),
             ).update_boxes(&*conn);
             Redirect::to(uri!(super::session::new: m = _))

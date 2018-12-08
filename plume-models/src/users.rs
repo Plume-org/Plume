@@ -968,6 +968,7 @@ impl NewUser {
         is_admin: bool,
         summary: &str,
         email: String,
+        custom_domain: Option<String>,
         password: String,
     ) -> User {
         let (pub_key, priv_key) = gen_keypair();
@@ -981,7 +982,7 @@ impl NewUser {
                 is_admin,
                 summary: SafeString::new(summary),
                 email: Some(email),
-                custom_domain: None,
+                custom_domain: custom_domain,
                 hashed_password: Some(password),
                 instance_id: Instance::local_id(conn),
                 ap_url: String::from(""),
@@ -1016,6 +1017,7 @@ pub(crate) mod tests {
             true,
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
+            None,
             "invalid_admin_password".to_owned(),
         );
         admin.update_boxes(conn);
@@ -1026,6 +1028,7 @@ pub(crate) mod tests {
             false,
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
+            Some("example.com"),
             "invalid_user_password".to_owned(),
         );
         user.update_boxes(conn);
@@ -1036,6 +1039,7 @@ pub(crate) mod tests {
             false,
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
+            None,
             "invalid_other_password".to_owned(),
         );
         other.update_boxes(conn);

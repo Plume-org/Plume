@@ -12,6 +12,7 @@
         <form method="post" action="@uri!(user::create)">
             @input!(ctx.1, username (text), "Username", form, errors.clone(), "minlenght=\"1\"")
             @input!(ctx.1, email (text), "Email", form, errors.clone())
+            @input!(ctx.1, email (text), "Email", form, errors.clone(), "")
             @input!(ctx.1, password (password), "Password", form, errors.clone(), "minlenght=\"8\"")
             @input!(ctx.1, password_confirmation (password), "Password confirmation", form, errors, "minlenght=\"8\"")
 

@@ -16,6 +16,7 @@
             @input!(ctx.1, display_name (text), "Display name", form, errors.clone())
             @input!(ctx.1, email (text), "Email", form, errors.clone())
             @input!(ctx.1, summary (text), "Summary", form, errors)
+            @input!(ctx.1, custom_domain (optional text), "Custom Domain", form, errors.clone(), "")
 
             <input type="submit" value="@i18n!(ctx.1, "Update account")"/>
         </form>
