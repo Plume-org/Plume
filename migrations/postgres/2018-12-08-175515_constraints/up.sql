@@ -1,0 +1,25 @@
+-- Your SQL goes here
+ALTER TABLE api_tokens ADD CONSTRAINT api_tokens_unique_value UNIQUE (value);
+ALTER TABLE blog_authors ADD CONSTRAINT blog_author_unique UNIQUE (blog_id, author_id);
+ALTER TABLE blogs ADD CONSTRAINT blog_unique UNIQUE (actor_id, instance_id);
+ALTER TABLE blogs ADD CONSTRAINT blog_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE blogs ADD CONSTRAINT blog_unique_outbox UNIQUE (outbox_url);
+ALTER TABLE blogs ADD CONSTRAINT blog_unique_inbox UNIQUE (inbox_url);
+ALTER TABLE comments ADD CONSTRAINT comments_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE follows ADD CONSTRAINT follows_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE instances ADD CONSTRAINT instance_unique_domain UNIQUE (public_domain);
+ALTER TABLE likes ADD CONSTRAINT likes_unique UNIQUE (user_id, post_id);
+ALTER TABLE likes ADD CONSTRAINT likes_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE medias ADD CONSTRAINT medias_unique_path UNIQUE (file_path);
+ALTER TABLE mentions ADD CONSTRAINT mentions_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE post_authors ADD CONSTRAINT post_authors_unique UNIQUE (post_id, author_id);
+ALTER TABLE posts ADD CONSTRAINT post_unique_slug UNIQUE (blog_id, slug);
+ALTER TABLE posts ADD CONSTRAINT post_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE reshares ADD CONSTRAINT reshares_unique UNIQUE (user_id, post_id);
+ALTER TABLE reshares ADD CONSTRAINT reshares_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE tags ADD CONSTRAINT tags_unique UNIQUE (tag, post_id, is_hashtag);
+ALTER TABLE users ADD CONSTRAINT users_unique UNIQUE (username, instance_id);
+ALTER TABLE users ADD CONSTRAINT users_unique_inbox UNIQUE (inbox_url);
+ALTER TABLE users ADD CONSTRAINT users_unique_outbox UNIQUE (outbox_url);
+ALTER TABLE users ADD CONSTRAINT users_unique_ap_url UNIQUE (ap_url);
+ALTER TABLE users ADD CONSTRAINT users_unique_followers_url UNIQUE (followers_endpoint);
