@@ -8,11 +8,13 @@
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <a class="author u-author h-card" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
-        <span class="display-name">@author.name(ctx.0)</span>
+        <span class="display-name p-name">@author.name(ctx.0)</span>
         <small>@author.get_fqn(ctx.0)</small>
     </a>
-    <a class="u-url" @if let Some(ref ap_url) = comm.ap_url {href="@ap_url"}></a>
-    <div class="text p-content p-name">
+    @if let Some(ref ap_url) = comm.ap_url {
+        <a class="u-url" href="@ap_url"></a>
+    }
+    <div class="text p-content">
         @if comm.sensitive {
             <details>
                 <summary>@comm.spoiler_text</summary>

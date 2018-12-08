@@ -47,6 +47,7 @@
     </div>
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
+	<img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()" />
     }
     <article class="e-content">
         @Html(&article.content)
@@ -55,17 +56,19 @@
         <p>@i18n!(ctx.1, "This article is under the {0} license."; &article.license)</p>
         <ul class="tags">
             @for tag in tags {
-		        @if !tag.is_hashtag {
+		@if !tag.is_hashtag {
                     <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag)">@tag.tag</a></li>
-                }
+		} else {
+		    <span class="hidden p-category">@tag.tag</span>
+		}
             }
         </ul>
-        <div class="flex">
+        <div class="flex p-author h-card">
             @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
             <div class="grow">
-                <h2 class="p-author h-card">
-		    <a rel="author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
-		    <div class="u-photo" src="@author.avatar_url(ctx.0)"></div>
+                <h2 class="p-name">
+		    <a href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
+		    <a rel="author" class="u-url" href="@author.ap_url"></a>
 		</h2>
                 <p>@Html(&author.summary)</h2>
             </div>
