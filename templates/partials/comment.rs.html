@@ -5,13 +5,14 @@
 
 @(ctx: BaseContext, comm: &Comment, author: User)
 
-<div class="comment" id="comment-@comm.id">
-    <a class="author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
+<div class="comment u-comment h-cite" id="comment-@comm.id">
+    <a class="author u-author h-card" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
         <span class="display-name">@author.name(ctx.0)</span>
         <small>@author.get_fqn(ctx.0)</small>
     </a>
-    <div class="text">
+    <a class="u-url" @if let Some(ref ap_url) = comm.ap_url {href="@ap_url"}></a>
+    <div class="text p-content p-name">
         @if comm.sensitive {
             <details>
                 <summary>@comm.spoiler_text</summary>

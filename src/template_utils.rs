@@ -46,7 +46,8 @@ pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &C
     let name = escape(&user.name(conn)).to_string();
     Html(format!(
         r#"<div
-        class="avatar {size} {padded}"
+        src="{url}"
+        class="avatar {size} {padded} u-photo"
         style="background-image: url('{url}');"
         title="{title}"
         aria-label="{title}"
