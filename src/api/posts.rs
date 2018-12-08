@@ -1,4 +1,4 @@
-use canapi::Provider;
+use canapi::{Error as ApiError, Provider};
 use rocket::http::uri::Origin;
 use rocket_contrib::json::Json;
 use scheduled_thread_pool::ScheduledThreadPool;
