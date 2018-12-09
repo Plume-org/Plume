@@ -595,6 +595,13 @@ msgstr "図"
 msgid "None"
 msgstr "なし"
 
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "不要な場合は空にしてください"
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Welcome to {{ instance_name | escape }}"
 #~ msgstr "{{ instance_name | escape }} へようこそ"
 

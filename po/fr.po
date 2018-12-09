@@ -609,3 +609,10 @@ msgstr "Illustration"
 
 msgid "None"
 msgstr "Aucun"
+
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "Laisser vide s’il n’y en a pas"
+
+msgid "All rights reserved."
+msgstr ""

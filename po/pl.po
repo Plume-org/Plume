@@ -609,6 +609,13 @@ msgstr "Ilustracja"
 msgid "None"
 msgstr "Brak"
 
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "Pozostaw puste, jeżeli niepotrzebne"
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Dom dla"
 
