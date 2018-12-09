@@ -1,4 +1,5 @@
 use activitypub::{
+    CustomObject,
     activity::{Create, Delete, Update},
     link,
     object::{Article, Image, Tombstone},
@@ -18,7 +19,7 @@ use plume_api::posts::PostEndpoint;
 use plume_common::{
     activity_pub::{
         inbox::{Deletable, FromActivity},
-        Hashtag, Id, IntoId, Source, PUBLIC_VISIBILTY,
+        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
     },
     utils::md_to_html,
 };
@@ -31,6 +32,8 @@ use std::collections::HashSet;
 use tags::Tag;
 use users::User;
 use {ap_url, Connection, BASE_URL};
+
+pub type LicensedArticle = CustomObject<Licensed, Article>;
 
 #[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
 #[changeset_options(treat_none_as_null = "true")]
@@ -418,7 +421,7 @@ impl Post {
         })
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Article {
+    pub fn to_activity(&self, conn: &Connection) -> LicensedArticle {
         let mut to = self.get_receivers_urls(conn);
         to.push(PUBLIC_VISIBILTY.to_string());
 
@@ -516,7 +519,9 @@ impl Post {
             .object_props
             .set_cc_link_vec::<Id>(vec![])
             .expect("Post::to_activity: cc error");
-        article
+        let mut license = Licensed::default();
+        license.set_license_string(self.license.clone()).expect("Post::to_activity: license error");
+        LicensedArticle::new(article, license)
     }
 
     pub fn create_activity(&self, conn: &Connection) -> Create {
@@ -527,7 +532,7 @@ impl Post {
             .expect("Post::create_activity: id error");
         act.object_props
             .set_to_link_vec::<Id>(
-                article
+                article.object
                     .object_props
                     .to_link_vec()
                     .expect("Post::create_activity: Couldn't copy 'to'"),
@@ -535,7 +540,7 @@ impl Post {
             .expect("Post::create_activity: to error");
         act.object_props
             .set_cc_link_vec::<Id>(
-                article
+                article.object
                     .object_props
                     .cc_link_vec()
                     .expect("Post::create_activity: Couldn't copy 'cc'"),
@@ -558,7 +563,7 @@ impl Post {
             .expect("Post::update_activity: id error");
         act.object_props
             .set_to_link_vec::<Id>(
-                article
+                article.object
                     .object_props
                     .to_link_vec()
                     .expect("Post::update_activity: Couldn't copy 'to'"),
@@ -566,7 +571,7 @@ impl Post {
             .expect("Post::update_activity: to error");
         act.object_props
             .set_cc_link_vec::<Id>(
-                article
+                article.object
                     .object_props
                     .cc_link_vec()
                     .expect("Post::update_activity: Couldn't copy 'cc'"),
@@ -577,36 +582,40 @@ impl Post {
             .expect("Post::update_activity: actor error");
         act.update_props
             .set_object_object(article)
-            .expect("Article::update_activity: object error");
+            .expect("Post::update_activity: object error");
         act
     }
 
-    pub fn handle_update(conn: &Connection, updated: &Article, searcher: &Searcher) {
-        let id = updated
+    pub fn handle_update(conn: &Connection, updated: &LicensedArticle, searcher: &Searcher) {
+        let id = updated.object
             .object_props
             .id_string()
             .expect("Post::handle_update: id error");
         let mut post = Post::find_by_ap_url(conn, &id).expect("Post::handle_update: finding error");
 
-        if let Ok(title) = updated.object_props.name_string() {
+        if let Ok(title) = updated.object.object_props.name_string() {
             post.slug = title.to_kebab_case();
             post.title = title;
         }
 
-        if let Ok(content) = updated.object_props.content_string() {
+        if let Ok(content) = updated.object.object_props.content_string() {
             post.content = SafeString::new(&content);
         }
 
-        if let Ok(subtitle) = updated.object_props.summary_string() {
+        if let Ok(subtitle) = updated.object.object_props.summary_string() {
             post.subtitle = subtitle;
         }
 
-        if let Ok(ap_url) = updated.object_props.url_string() {
+        if let Ok(ap_url) = updated.object.object_props.url_string() {
             post.ap_url = ap_url;
         }
 
-        if let Ok(source) = updated.ap_object_props.source_object::<Source>() {
+        if let Ok(source) = updated.object.ap_object_props.source_object::<Source>() {
             post.source = source.content;
+        }
+
+        if let Ok(license) = updated.custom_props.license_string() {
+            post.license = license;
         }
 
         let mut txt_hashtags = md_to_html(&post.source)
@@ -614,7 +623,7 @@ impl Post {
             .into_iter()
             .map(|s| s.to_camel_case())
             .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(mention_tags)) = updated.object_props.tag.clone() {
+        if let Some(serde_json::Value::Array(mention_tags)) = updated.object.object_props.tag.clone() {
             let mut mentions = vec![];
             let mut tags = vec![];
             let mut hashtags = vec![];
@@ -782,8 +791,10 @@ impl Post {
     }
 }
 
-impl<'a> FromActivity<Article, (&'a Connection, &'a Searcher)> for Post {
-    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: Article, _actor: Id) -> Post {
+impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post {
+    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: LicensedArticle, _actor: Id) -> Post {
+        let license = article.custom_props.license_string().unwrap_or_default();
+        let article = article.object;
         if let Some(post) = Post::find_by_ap_url(
             conn,
             &article.object_props.id_string().unwrap_or_default(),
@@ -829,7 +840,7 @@ impl<'a> FromActivity<Article, (&'a Connection, &'a Searcher)> for Post {
                             .expect("Post::from_activity: content error"),
                     ),
                     published: true,
-                    license: String::from("CC-BY-SA"), // TODO
+                    license: license,
                     // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
                     ap_url: article.object_props.url_string().unwrap_or_else(|_|
                         article

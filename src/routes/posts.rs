@@ -1,4 +1,3 @@
-use activitypub::object::Article;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::request::LenientForm;
@@ -89,7 +88,7 @@ pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<U
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, Option<String>> {
+pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
     let blog = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     if post.published {
