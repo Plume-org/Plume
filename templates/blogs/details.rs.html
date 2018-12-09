@@ -5,7 +5,7 @@
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: usize, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
+@(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: i64, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
 
 @:base(ctx, blog.title.as_ref(), {}, {
     <a href="@uri!(blogs::details: name = &fqn)">@blog.title</a>

@@ -9,7 +9,7 @@
 @use routes::comments::NewCommentForm;
 @use routes::*;
 
-@(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<Comment>, previous_comment: Option<Comment>, n_likes: usize, n_reshares: usize, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
+@(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<Comment>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 
 @:base(ctx, &article.title.clone(), {
     <meta property="og:title" content="@article.title"/>

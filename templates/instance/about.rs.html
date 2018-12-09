@@ -3,7 +3,7 @@
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, instance: Instance, admin: User, n_users: usize, n_articles: usize, n_instances: i64)
+@(ctx: BaseContext, instance: Instance, admin: User, n_users: i64, n_articles: i64, n_instances: i64)
 
 @:base(ctx, i18n!(ctx.1, "About {0}"; instance.name.clone()).as_str(), {}, {}, {
     <h1>@i18n!(ctx.1, "About {0}"; instance.name)</h1>

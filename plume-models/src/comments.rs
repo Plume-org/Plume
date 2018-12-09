@@ -56,16 +56,16 @@ impl Comment {
         Post::get(conn, self.post_id).expect("Comment::get_post: post error")
     }
 
-    pub fn count_local(conn: &Connection) -> usize {
+    pub fn count_local(conn: &Connection) -> i64 {
         use schema::users;
         let local_authors = users::table
             .filter(users::instance_id.eq(Instance::local_id(conn)))
             .select(users::id);
         comments::table
             .filter(comments::author_id.eq_any(local_authors))
-            .load::<Comment>(conn)
+            .count()
+            .get_result(conn)
             .expect("Comment::count_local: loading error")
-            .len() // TODO count in database?
     }
 
     pub fn get_responses(&self, conn: &Connection) -> Vec<Comment> {

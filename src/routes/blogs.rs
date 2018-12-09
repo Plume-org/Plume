@@ -28,7 +28,7 @@ pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<Us
     let blog = Blog::find_by_fqn(&*conn, &name)
         .ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     let posts = Post::blog_page(&*conn, &blog, page.limits());
-    let articles = Post::get_for_blog(&*conn, &blog); // TODO only count them in DB
+    let articles_count = Post::count_for_blog(&*conn, &blog);
     let authors = &blog.list_authors(&*conn);
 
     Ok(render!(blogs::details(
@@ -36,9 +36,9 @@ pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<Us
         blog.clone(),
         blog.get_fqn(&*conn),
         authors,
-        articles.len(),
+        articles_count,
         page.0,
-        Page::total(articles.len() as i32),
+        Page::total(articles_count as i32),
         user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
         posts
     )))
