@@ -99,21 +99,6 @@ INSERT INTO likes2 SELECT * FROM likes;
 DROP TABLE likes;
 ALTER TABLE likes2 RENAME TO likes;
 
-CREATE TABLE medias2 (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    file_path TEXT NOT NULL DEFAULT '',
-    alt_text TEXT NOT NULL DEFAULT '',
-    is_remote BOOLEAN NOT NULL DEFAULT 'f',
-    remote_url TEXT,
-    sensitive BOOLEAN NOT NULL DEFAULT 'f',
-    content_warning TEXT,
-    owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL
-);
-
-INSERT INTO medias2 SELECT * FROM medias;
-DROP TABLE medias;
-ALTER TABLE medias2 RENAME TO medias;
-
 CREATE TABLE mentions2 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     mentioned_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,

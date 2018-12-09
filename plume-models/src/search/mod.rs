@@ -117,7 +117,7 @@ pub(crate) mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let searcher = get_searcher();
-            let blog = &fill_database(conn)[0];
+            let blog = &fill_database(conn).1[0];
             let author = &blog.list_authors(conn)[0];
 
             let title = random_hex()[..8].to_owned();

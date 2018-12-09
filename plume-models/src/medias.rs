@@ -220,7 +220,7 @@ pub(crate) mod tests {
     use users::tests as usersTests;
     use Connection as Conn;
 
-    pub(crate) fn fill_database(conn: &Conn) -> Vec<Media> {
+    pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Media>) {
         let mut wd = current_dir().unwrap().to_path_buf();
         while wd.pop() {
             if wd.join(".git").exists() {
@@ -236,7 +236,7 @@ pub(crate) mod tests {
         let f2 = "static/media/2.mp3".to_owned();
         fs::write(f1.clone(), []).unwrap();
         fs::write(f2.clone(), []).unwrap();
-        vec![
+        (users, vec![
             NewMedia {
                 file_path: f1,
                 alt_text: "some alt".to_owned(),
@@ -266,7 +266,7 @@ pub(crate) mod tests {
             },
         ].into_iter()
             .map(|nm| Media::insert(conn, nm))
-            .collect()
+            .collect())
     }
 
     pub(crate) fn clean(conn: &Conn) {
@@ -282,8 +282,7 @@ pub(crate) mod tests {
     fn delete() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let user = usersTests::fill_database(conn)[0].id;
-            fill_database(conn);
+            let user = fill_database(conn).0[0].id;
 
             let path = "static/media/test_deletion".to_owned();
             fs::write(path.clone(), []).unwrap();
@@ -316,10 +315,9 @@ pub(crate) mod tests {
     fn set_owner() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let users = usersTests::fill_database(conn);
+            let (users, _) = fill_database(conn);
             let u1 = &users[0];
             let u2 = &users[1];
-            fill_database(conn);
 
             let path = "static/media/test_set_owner".to_owned();
             fs::write(path.clone(), []).unwrap();
