@@ -277,7 +277,7 @@ pub struct NewUserForm {
     pub username: String,
     #[validate(email(message = "Invalid email"))]
     pub email: String,
-    pub custom_domain: Option<String>,
+    pub custom_domain: String,
     #[validate(
         length(
             min = "8",
@@ -328,7 +328,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
                 false,
                 "",
                 form.email.to_string(),
-                form.custom_domain.clone(),
+                Some(form.custom_domain.clone()),
                 User::hash_pass(&form.password),
             ).update_boxes(&*conn);
             Redirect::to(uri!(super::session::new: m = _))
