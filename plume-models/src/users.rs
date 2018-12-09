@@ -1180,7 +1180,7 @@ pub(crate) mod tests {
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(conn, (0, User::count_local(conn) as i32 + 10)).len(),
+                User::get_local_page(conn, (0, User::count_local(conn) as i32 + 10)).len() as i64,
                 User::count_local(conn)
             );
 
