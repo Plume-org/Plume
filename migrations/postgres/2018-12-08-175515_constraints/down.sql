@@ -10,7 +10,6 @@ ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_unique_ap_url;
 ALTER TABLE instances DROP CONSTRAINT IF EXISTS instance_unique_domain;
 ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_unique;
 ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_unique_ap_url;
-ALTER TABLE medias DROP CONSTRAINT IF EXISTS medias_unique_path;
 ALTER TABLE mentions DROP CONSTRAINT IF EXISTS mentions_unique_ap_url;
 ALTER TABLE post_authors DROP CONSTRAINT IF EXISTS post_authors_unique;
 ALTER TABLE posts DROP CONSTRAINT IF EXISTS post_unique_slug;
