@@ -998,39 +998,37 @@ pub(crate) mod tests {
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<User> {
         instance_tests::fill_database(conn);
-        let local_user = vec![
-            NewUser::new_local(
-                conn,
-                "admin".to_owned(),
-                "The admin".to_owned(),
-                true,
-                "Hello there, I'm the admin",
-                "admin@example.com".to_owned(),
-                "invalid_admin_password".to_owned(),
-            ),
-            NewUser::new_local(
-                conn,
-                "user".to_owned(),
-                "Some user".to_owned(),
-                false,
-                "Hello there, I'm no one",
-                "user@example.com".to_owned(),
-                "invalid_user_password".to_owned(),
-            ),
-            NewUser::new_local(
-                conn,
-                "other".to_owned(),
-                "Another user".to_owned(),
-                false,
-                "Hello there, I'm someone else",
-                "other@example.com".to_owned(),
-                "invalid_other_password".to_owned(),
-            ),
-        ];
-        for u in local_user.iter() {
-            u.update_boxes(conn);
-        }
-        local_user
+        let admin = NewUser::new_local(
+            conn,
+            "admin".to_owned(),
+            "The admin".to_owned(),
+            true,
+            "Hello there, I'm the admin",
+            "admin@example.com".to_owned(),
+            "invalid_admin_password".to_owned(),
+        );
+        admin.update_boxes(conn);
+        let user = NewUser::new_local(
+            conn,
+            "user".to_owned(),
+            "Some user".to_owned(),
+            false,
+            "Hello there, I'm no one",
+            "user@example.com".to_owned(),
+            "invalid_user_password".to_owned(),
+        );
+        user.update_boxes(conn);
+        let other = NewUser::new_local(
+            conn,
+            "other".to_owned(),
+            "Another user".to_owned(),
+            false,
+            "Hello there, I'm someone else",
+            "other@example.com".to_owned(),
+            "invalid_other_password".to_owned(),
+        );
+        other.update_boxes(conn);
+        vec![ admin, user, other ]
     }
 
     #[test]

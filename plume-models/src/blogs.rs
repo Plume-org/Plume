@@ -513,36 +513,35 @@ pub(crate) mod tests {
     use search::tests::get_searcher;
     use Connection as Conn;
 
-    pub(crate) fn fill_database(conn: &Conn) -> Vec<Blog> {
+    pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Blog>) {
         instance_tests::fill_database(conn);
         let users = usersTests::fill_database(conn);
-        let blogs = vec![
-            NewBlog::new_local(
-                "BlogName".to_owned(),
-                "Blog name".to_owned(),
-                "This is a small blog".to_owned(),
-                Instance::local_id(conn),
-            ),
-            NewBlog::new_local(
+        let blog1 = Blog::insert(conn, NewBlog::new_local(
+            "BlogName".to_owned(),
+            "Blog name".to_owned(),
+            "This is a small blog".to_owned(),
+            Instance::local_id(conn),
+        ));
+        blog1.update_boxes(conn);
+        let blog2 = Blog::insert(conn, NewBlog::new_local(
                 "MyBlog".to_owned(),
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
                 Instance::local_id(conn),
-            ),
-            NewBlog::new_local(
+        ));
+        blog2.update_boxes(conn);
+        let blog3 = Blog::insert(conn, NewBlog::new_local(
                 "WhyILikePlume".to_owned(),
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
                 Instance::local_id(conn),
-            ),
-        ].into_iter()
-            .map(|nb| Blog::insert(conn, nb))
-            .collect::<Vec<_>>();
+        ));
+        blog3.update_boxes(conn);
 
         BlogAuthor::insert(
             conn,
             NewBlogAuthor {
-                blog_id: blogs[0].id,
+                blog_id: blog1.id,
                 author_id: users[0].id,
                 is_owner: true,
             },
@@ -551,7 +550,7 @@ pub(crate) mod tests {
         BlogAuthor::insert(
             conn,
             NewBlogAuthor {
-                blog_id: blogs[0].id,
+                blog_id: blog1.id,
                 author_id: users[1].id,
                 is_owner: false,
             },
@@ -560,7 +559,7 @@ pub(crate) mod tests {
         BlogAuthor::insert(
             conn,
             NewBlogAuthor {
-                blog_id: blogs[1].id,
+                blog_id: blog2.id,
                 author_id: users[1].id,
                 is_owner: true,
             },
@@ -569,12 +568,12 @@ pub(crate) mod tests {
         BlogAuthor::insert(
             conn,
             NewBlogAuthor {
-                blog_id: blogs[2].id,
+                blog_id: blog3.id,
                 author_id: users[2].id,
                 is_owner: true,
             },
         );
-        blogs
+        (users, vec![ blog1, blog2, blog3 ])
     }
 
     #[test]
@@ -604,29 +603,29 @@ pub(crate) mod tests {
     fn authors() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let user = usersTests::fill_database(conn);
-            fill_database(conn);
+            let (user, _) = fill_database(conn);
 
-            let blog = vec![
-                Blog::insert(
-                    conn,
-                    NewBlog::new_local(
-                        "SomeName".to_owned(),
-                        "Some name".to_owned(),
-                        "This is some blog".to_owned(),
-                        Instance::local_id(conn),
-                    ),
+            let b1 = Blog::insert(
+                conn,
+                NewBlog::new_local(
+                    "SomeName".to_owned(),
+                    "Some name".to_owned(),
+                    "This is some blog".to_owned(),
+                    Instance::local_id(conn),
                 ),
-                Blog::insert(
-                    conn,
-                    NewBlog::new_local(
-                        "Blog".to_owned(),
-                        "Blog".to_owned(),
-                        "I've named my blog Blog".to_owned(),
-                        Instance::local_id(conn),
-                    ),
+            );
+            b1.update_boxes(conn);
+            let b2 = Blog::insert(
+                conn,
+                NewBlog::new_local(
+                    "Blog".to_owned(),
+                    "Blog".to_owned(),
+                    "I've named my blog Blog".to_owned(),
+                    Instance::local_id(conn),
                 ),
-            ];
+            );
+            b2.update_boxes(conn);
+            let blog = vec![ b1, b2 ];
 
             BlogAuthor::insert(
                 conn,
@@ -756,7 +755,7 @@ pub(crate) mod tests {
     fn delete() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let blogs = fill_database(conn);
+            let (_, blogs) = fill_database(conn);
 
             blogs[0].delete(conn, &get_searcher());
             assert!(Blog::get(conn, blogs[0].id).is_none());
@@ -770,29 +769,29 @@ pub(crate) mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let searcher = get_searcher();
-            let user = usersTests::fill_database(conn);
-            fill_database(conn);
+            let (user, _) = fill_database(conn);
 
-            let blog = vec![
-                Blog::insert(
-                    conn,
-                    NewBlog::new_local(
-                        "SomeName".to_owned(),
-                        "Some name".to_owned(),
-                        "This is some blog".to_owned(),
-                        Instance::local_id(conn),
-                    ),
+            let b1 = Blog::insert(
+                conn,
+                NewBlog::new_local(
+                    "SomeName".to_owned(),
+                    "Some name".to_owned(),
+                    "This is some blog".to_owned(),
+                    Instance::local_id(conn),
                 ),
-                Blog::insert(
-                    conn,
-                    NewBlog::new_local(
-                        "Blog".to_owned(),
-                        "Blog".to_owned(),
-                        "I've named my blog Blog".to_owned(),
-                        Instance::local_id(conn),
-                    ),
+            );
+            b1.update_boxes(conn);
+            let b2 = Blog::insert(
+                conn,
+                NewBlog::new_local(
+                    "Blog".to_owned(),
+                    "Blog".to_owned(),
+                    "I've named my blog Blog".to_owned(),
+                    Instance::local_id(conn),
                 ),
-            ];
+            );
+            b2.update_boxes(conn);
+            let blog = vec![ b1, b2 ];
 
             BlogAuthor::insert(
                 conn,
