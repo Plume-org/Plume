@@ -609,6 +609,13 @@ msgstr "Administration"
 msgid "None"
 msgstr ""
 
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "Falls es dies nicht gibt, lass es leer"
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Heimat von"
 

@@ -1,4 +1,4 @@
-use activitypub::{activity::Create, collection::OrderedCollection, object::Article};
+use activitypub::{activity::Create, collection::OrderedCollection};
 use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     http::{ContentType, Cookies},
@@ -18,7 +18,7 @@ use plume_common::activity_pub::{
 };
 use plume_common::utils;
 use plume_models::{
-    blogs::Blog, db_conn::DbConn, follows, headers::Headers, instance::Instance, posts::Post,
+    blogs::Blog, db_conn::DbConn, follows, headers::Headers, instance::Instance, posts::{LicensedArticle, Post},
     reshares::Reshare, users::*,
 };
 use routes::Page;
@@ -56,7 +56,7 @@ pub fn details(
         let searcher = searcher.clone();
         worker.execute(move || {
             for create_act in user_clone.fetch_outbox::<Create>() {
-                match create_act.create_props.object_object::<Article>() {
+                match create_act.create_props.object_object::<LicensedArticle>() {
                     Ok(article) => {
                         Post::from_activity(
                             &(&*fetch_articles_conn, &searcher),

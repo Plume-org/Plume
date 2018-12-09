@@ -53,7 +53,13 @@
         @Html(&article.content)
     </article>
     <div class="article-meta">
-        <p>@i18n!(ctx.1, "This article is under the {0} license."; &article.license)</p>
+        <p>
+            @if article.license.is_empty() {
+                @i18n!(ctx.1, "All rights reserved."; &article.license)
+            } else {
+                @i18n!(ctx.1, "This article is under the {0} license."; &article.license)
+            }
+        </p>
         <ul class="tags">
             @for tag in tags {
                 @if !tag.is_hashtag {

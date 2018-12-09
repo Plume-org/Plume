@@ -615,6 +615,12 @@ msgstr "Administrasjon"
 msgid "None"
 msgstr ""
 
+msgid "Let it empty reserve all rights"
+msgstr ""
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Hjem for"
 

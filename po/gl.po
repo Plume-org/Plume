@@ -600,6 +600,13 @@ msgstr "Administración"
 msgid "None"
 msgstr ""
 
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "Deixar baldeiro si non hai ningunha"
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Fogar de"
 

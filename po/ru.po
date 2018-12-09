@@ -620,6 +620,13 @@ msgstr "Иллюстрация"
 msgid "None"
 msgstr "Нет"
 
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "Оставьте пустым если нет"
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Дом для"
 

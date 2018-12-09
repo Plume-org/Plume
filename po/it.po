@@ -603,6 +603,13 @@ msgstr "Amministrazione"
 msgid "None"
 msgstr ""
 
+#, fuzzy
+msgid "Let it empty reserve all rights"
+msgstr "Lascialo vuoto se non è presente nessuno"
+
+msgid "All rights reserved."
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Casa di"
 

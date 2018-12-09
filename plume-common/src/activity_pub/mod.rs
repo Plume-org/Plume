@@ -220,3 +220,12 @@ pub struct Source {
 }
 
 impl Object for Source {}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
+#[serde(rename_all = "camelCase")]
+pub struct Licensed {
+    #[activitystreams(concrete(String), functional)]
+    pub license: Option<serde_json::Value>,
+}
+
+impl Object for Licensed {}

@@ -8,7 +8,7 @@
 @use routes::posts::NewPostForm;
 @use routes::*;
 
-@(ctx: BaseContext, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, default_license: String, medias: Vec<Media>)
+@(ctx: BaseContext, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>)
 
 @:base(ctx, &i18n!(ctx.1, if editing { "Edit {0}" } else { "New post" }; &form.title), {}, {}, {
     <h1>
@@ -35,7 +35,7 @@
 
         @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")
 
-        @input!(ctx.1, license (optional text), "License", &i18n!(ctx.1, "Default license will be {0}"; &default_license), form, errors, "")
+        @input!(ctx.1, license (optional text), "License", "Let it empty reserve all rights", form, errors, "")
 
         <label for="cover">@i18n!(ctx.1, "Illustration")<small>@i18n!(ctx.1, "Optional")</small></label>
         <select id="cover" name="cover">

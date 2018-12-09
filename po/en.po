@@ -593,3 +593,9 @@ msgstr ""
 
 msgid "None"
 msgstr ""
+
+msgid "Let it empty reserve all rights"
+msgstr ""
+
+msgid "All rights reserved."
+msgstr ""

@@ -1,4 +1,3 @@
-use activitypub::object::Article;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::request::LenientForm;
@@ -89,7 +88,7 @@ pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<U
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<Article>, Option<String>> {
+pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
     let blog = Blog::find_by_fqn(&*conn, &blog).ok_or(None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     if post.published {
@@ -123,11 +122,13 @@ pub fn new(blog: String, user: User, conn: DbConn, intl: I18n) -> Option<Ructe> 
             &(&*conn, &intl.catalog, Some(user)),
             b,
             false,
-            &NewPostForm::default(),
+            &NewPostForm {
+                license: Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or_else(||String::from("CC-BY-SA")),
+                ..NewPostForm::default()
+            },
             true,
             None,
             ValidationErrors::default(),
-            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
             medias
         )))
     }
@@ -171,7 +172,6 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) ->
             !post.published,
             Some(post),
             ValidationErrors::default(),
-            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
             medias
         )))
     }
@@ -209,12 +209,6 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
 
-            let license = if !form.license.is_empty() {
-                form.license.to_string()
-            } else {
-                Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or_else(|| String::from("CC-BY-SA"))
-            };
-
             // update publication date if when this article is no longer a draft
             let newly_published = if !post.published && !form.draft {
                 post.published = true;
@@ -229,7 +223,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             post.subtitle = form.subtitle.clone();
             post.content = SafeString::new(&content);
             post.source = form.content.clone();
-            post.license = license;
+            post.license = form.license.clone();
             post.cover_id = form.cover;
             post.update(&*conn, &searcher);
             let post = post.update_ap_url(&*conn);
@@ -262,7 +256,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
-       let temp = render!(posts::new(
+        let temp = render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
             b,
             true,
@@ -270,7 +264,6 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             form.draft.clone(),
             Some(post),
             errors.clone(),
-            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
             medias.clone()
         ));
         Err(Some(temp))
@@ -330,11 +323,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
                 title: form.title.to_string(),
                 content: SafeString::new(&content),
                 published: !form.draft,
-                license: if !form.license.is_empty() {
-                    form.license.to_string()
-                } else {
-                    Instance::get_local(&*conn).map(|i| i.default_license).unwrap_or_else(||String::from("CC-BY-SA"))
-                },
+                license: form.license.clone(),
                 ap_url: "".to_string(),
                 creation_date: None,
                 subtitle: form.subtitle.clone(),
@@ -390,7 +379,6 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
             form.draft,
             None,
             errors.clone(),
-            Instance::get_local(&*conn).expect("posts::new error: Local instance is null").default_license,
             medias
         ))))
     }
