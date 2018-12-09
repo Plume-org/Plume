@@ -1028,7 +1028,7 @@ pub(crate) mod tests {
             false,
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
-            Some("example.com"),
+            Some("example.com".to_owned()),
             "invalid_user_password".to_owned(),
         );
         user.update_boxes(conn);
@@ -1058,6 +1058,7 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
+                Some("example.com".to_owned()),
                 User::hash_pass("test_password"),
             );
             test_user.update_boxes(conn);
@@ -1159,6 +1160,7 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
+                None,
                 User::hash_pass("test_password"),
             );
             test_user.update_boxes(conn);
