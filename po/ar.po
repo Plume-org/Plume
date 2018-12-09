@@ -3,44 +3,47 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2018-12-10 11:51+0000\n"
+"Last-Translator: ButterflyOfFire <butterflyoffire+funkwhale@protonmail.com>\n"
+"Language-Team: Arabic <https://translate.funkwhale.audio/projects/plume/"
+"Plume/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 3.2.2\n"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "آخر المقالات"
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
 
 msgid "New article"
-msgstr ""
+msgstr "مقال جديد"
 
 msgid "New blog"
-msgstr ""
+msgstr "مدونة جديدة"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "انشئ مدونة"
 
 msgid "Title"
-msgstr ""
+msgstr "العنوان"
 
 msgid "Create blog"
-msgstr ""
+msgstr "انشاء مدونة"
 
 msgid "Comment \"{0}\""
-msgstr ""
+msgstr "تعليق \"{0}\""
 
 msgid "Content"
-msgstr ""
+msgstr "المحتوى"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "ارسال التعليق"
 
 msgid "Something broke on our side."
 msgstr ""
@@ -49,28 +52,28 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 
 msgid "Configuration"
-msgstr ""
+msgstr "الإعدادات"
 
 msgid "Configure your instance"
-msgstr ""
+msgstr "إعداد مثيل الخادم"
 
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 msgid "Let&#x27;s go!"
-msgstr ""
+msgstr "هيا بنا!"
 
 msgid "Welcome to {0}"
-msgstr ""
+msgstr "أهلا بكم على {0}"
 
 msgid "Notifications"
-msgstr ""
+msgstr "الإشعارات"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "كتبه {0}"
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "تم نشر هذا المقال تحت رخصة {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -100,70 +103,70 @@ msgid "I don&#x27;t want to boost this anymore"
 msgstr ""
 
 msgid "Boost"
-msgstr ""
+msgstr "رقّي"
 
 msgid "Comments"
-msgstr ""
+msgstr "التعليقات"
 
 msgid "Respond"
-msgstr ""
+msgstr "رد"
 
 msgid "Comment"
-msgstr ""
+msgstr "تعليق"
 
 msgid "New post"
-msgstr ""
+msgstr "منشور جديد"
 
 msgid "Create a post"
-msgstr ""
+msgstr "انشئ منشورا"
 
 msgid "Publish"
-msgstr ""
+msgstr "انشر"
 
 msgid "Login"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 msgid "Username or email"
-msgstr ""
+msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
 msgid "Password"
-msgstr ""
+msgstr "كلمة السر"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "لوح المراقبة"
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "لوح المراقبة"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "مدوناتك"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
 msgstr ""
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "انشئ مدونة جديدة"
 
 msgid "Admin"
-msgstr ""
+msgstr "المدير"
 
 msgid "It is you"
-msgstr ""
+msgstr "هو أنت"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "تعديل ملفك الشخصي"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "افتح على {0}"
 
 msgid "Follow"
-msgstr ""
+msgstr "اتبع"
 
 msgid "Unfollow"
-msgstr ""
+msgstr "الغاء المتابعة"
 
 msgid "Recently boosted"
-msgstr ""
+msgstr "تم ترقيتها حديثا"
 
 msgid "One follower"
 msgid_plural "{0} followers"
@@ -175,73 +178,73 @@ msgstr[4] ""
 msgstr[5] ""
 
 msgid "Edit your account"
-msgstr ""
+msgstr "تعديل حسابك"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "ملفك الشخصي"
 
 msgid "Display Name"
-msgstr ""
+msgstr "الاسم العلني"
 
 msgid "Email"
-msgstr ""
+msgstr "البريد الالكتروني"
 
 msgid "Summary"
-msgstr ""
+msgstr "الملخص"
 
 msgid "Update account"
-msgstr ""
+msgstr "تحديث الحساب"
 
 msgid "{0}'s followers"
-msgstr ""
+msgstr "{0} متابِعون"
 
 msgid "Followers"
-msgstr ""
+msgstr "المتابِعون"
 
 msgid "New Account"
-msgstr ""
+msgstr "حساب جديد"
 
 msgid "Create an account"
-msgstr ""
+msgstr "انشئ حسابا"
 
 msgid "Username"
-msgstr ""
+msgstr "اسم المستخدم"
 
 msgid "Password confirmation"
-msgstr ""
+msgstr "تأكيد الكلمة السرية"
 
 msgid "Create account"
-msgstr ""
+msgstr "انشئ حسابا"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "القائمة"
 
 msgid "My account"
-msgstr ""
+msgstr "حسابي"
 
 msgid "Log Out"
-msgstr ""
+msgstr "الخروج"
 
 msgid "Log In"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 msgid "Register"
-msgstr ""
+msgstr "انشاء حساب"
 
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
 
 msgid "You need to be logged in order to post a comment"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول إن كنت تريد نشر تعليق"
 
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
 
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول للإطلاع على إشعاراتك"
 
 msgid "You need to be logged in order to write a new post"
 msgstr ""
@@ -262,10 +265,10 @@ msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
 msgid "By {0}"
-msgstr ""
+msgstr "مِن طرف {0}"
 
 msgid "{0} boosted your article"
-msgstr ""
+msgstr "قام {0} بترقية مقالك"
 
 msgid "{0} started following you"
 msgstr ""
@@ -283,28 +286,28 @@ msgid "The link that led you here may be broken."
 msgstr ""
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "ليست لديك التصريحات اللازمة للقيام بذلك."
 
 msgid "You are not author in this blog."
 msgstr ""
 
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "أشار إليك {0}."
 
 msgid "Your comment"
-msgstr ""
+msgstr "تعليقك"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "خطأ مجهول"
 
 msgid "Invalid name"
-msgstr ""
+msgstr "اسم غير صالح"
 
 msgid "A blog with the same name already exists."
 msgstr ""
 
 msgid "Your comment can't be empty"
-msgstr ""
+msgstr "لا يمكن ترك التعليق فارغا"
 
 msgid "A post with the same title already exists."
 msgstr ""
@@ -313,16 +316,16 @@ msgid "We need an email or a username to identify you"
 msgstr ""
 
 msgid "Your password can't be empty"
-msgstr ""
+msgstr "لا يمكن ترك خانة الكلمة السرية فارغة"
 
 msgid "Passwords are not matching"
-msgstr ""
+msgstr "الكلمات السرية غير متشابهة"
 
 msgid "Username can't be empty"
-msgstr ""
+msgstr "لا يمكن ترك خانة اسم المستخدم فارغة"
 
 msgid "Invalid email"
-msgstr ""
+msgstr "عنوان البريد الالكتروني غير صالح"
 
 msgid "Password should be at least 8 characters long"
 msgstr ""
@@ -340,7 +343,7 @@ msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Optional"
-msgstr ""
+msgstr "اختياري"
 
 msgid "One article in this blog"
 msgid_plural "{0} articles in this blog"
@@ -352,49 +355,49 @@ msgstr[4] ""
 msgstr[5] ""
 
 msgid "Previous page"
-msgstr ""
+msgstr "الصفحة السابقة"
 
 msgid "Next page"
-msgstr ""
+msgstr "الصفحة التالية"
 
 msgid "Source code"
-msgstr ""
+msgstr "الشيفرة المصدرية"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "غرفة المحادثة على ماتريكس"
 
 msgid "Administration"
-msgstr ""
+msgstr "الإدارة"
 
 msgid "Instance settings"
-msgstr ""
+msgstr "إعدادات مثيل الخادم"
 
 msgid "Allow anyone to register"
-msgstr ""
+msgstr "السماح للجميع بتسجيل حساب"
 
 msgid "Short description"
-msgstr ""
+msgstr "وصف قصير"
 
 msgid "Markdown is supported"
 msgstr ""
 
 msgid "Long description"
-msgstr ""
+msgstr "الوصف الطويل"
 
 msgid "Default license"
-msgstr ""
+msgstr "الرخصة الافتراضية"
 
 msgid "Save settings"
-msgstr ""
+msgstr "حفظ التعديلات"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
 
 msgid "About this instance"
-msgstr ""
+msgstr "عن مثيل الخادوم هذا"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "ما هو بلوم Plume؟"
 
 msgid "Plume is a decentralized blogging engine."
 msgstr ""
@@ -406,10 +409,10 @@ msgid "Articles are also visible on other Plume websites, and you can interact w
 msgstr ""
 
 msgid "Create your account"
-msgstr ""
+msgstr "انشئ حسابك"
 
 msgid "About {0}"
-msgstr ""
+msgstr "عن {0}"
 
 msgid "Home to <em>{0}</em> users"
 msgstr ""
@@ -424,31 +427,31 @@ msgid "Read the detailed rules"
 msgstr ""
 
 msgid "Delete this article"
-msgstr ""
+msgstr "احذف هذا المقال"
 
 msgid "Delete this blog"
-msgstr ""
+msgstr "احذف هذه المدونة"
 
 msgid "Administred by"
-msgstr ""
+msgstr "يديره"
 
 msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Your media"
-msgstr ""
+msgstr "وسائطك"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "الانتقال إلى معرضك"
 
 msgid "{0}'s avatar'"
 msgstr ""
 
 msgid "Media details"
-msgstr ""
+msgstr "تفاصيل الصورة"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "العودة إلى المعرض"
 
 msgid "Markdown code"
 msgstr ""
@@ -457,31 +460,31 @@ msgid "Copy it in your articles to insert this media."
 msgstr ""
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "استخدمها كصورة رمزية"
 
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 msgid "Upload"
-msgstr ""
+msgstr "إرسال"
 
 msgid "You don't have any media yet."
 msgstr ""
 
 msgid "Media upload"
-msgstr ""
+msgstr "إرسال الوسائط"
 
 msgid "Description"
-msgstr ""
+msgstr "الوصف"
 
 msgid "Content warning"
-msgstr ""
+msgstr "تحذير عن المحتوى"
 
 msgid "File"
-msgstr ""
+msgstr "الملف"
 
 msgid "Send"
-msgstr ""
+msgstr "أرسل"
 
 msgid "Sorry, but registrations are closed on this instance. Try to find another one"
 msgstr ""
@@ -496,22 +499,22 @@ msgid "Login to boost"
 msgstr ""
 
 msgid "Your feed"
-msgstr ""
+msgstr "خيطك"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "الخيط الموحد"
 
 msgid "Local feed"
-msgstr ""
+msgstr "الخيط المحلي"
 
 msgid "Nothing to see here yet. Try to follow more people."
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "المقالات"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "كافة مقالات الفديفرس"
 
 msgid "Articles from {0}"
 msgstr ""
@@ -523,13 +526,13 @@ msgid "Articles tagged \"{0}\""
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "تعديل"
 
 msgid "Edit {0}"
-msgstr ""
+msgstr "تعديل {0}"
 
 msgid "Update"
-msgstr ""
+msgstr "تحديث"
 
 msgid "We couldn't find this page."
 msgstr ""
@@ -541,16 +544,16 @@ msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in
 msgstr ""
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "إدارة {0}"
 
 msgid "Instances"
-msgstr ""
+msgstr "مثيلات الخوادم"
 
 msgid "Unblock"
-msgstr ""
+msgstr "الغاء الحظر"
 
 msgid "Block"
-msgstr ""
+msgstr "حظر"
 
 msgid "Ban"
 msgstr ""
@@ -562,31 +565,31 @@ msgid "Let it empty if there is none"
 msgstr ""
 
 msgid "Draft"
-msgstr ""
+msgstr "مسودة"
 
 msgid "This is a draft, don't publish it yet."
 msgstr ""
 
 msgid "Update or publish"
-msgstr ""
+msgstr "تحديث أو نشر"
 
 msgid "Your Drafts"
-msgstr ""
+msgstr "مسوداتك"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "منطقة الخطر"
 
 msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
 msgid "Delete your account"
-msgstr ""
+msgstr "احذف حسابك"
 
 msgid "Sorry, but as an admin, you can't leave your instance."
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "المستخدمون"
 
 msgid "This post isn't published yet."
 msgstr ""
@@ -598,4 +601,4 @@ msgid "Illustration"
 msgstr ""
 
 msgid "None"
-msgstr ""
+msgstr "لا شيء"
