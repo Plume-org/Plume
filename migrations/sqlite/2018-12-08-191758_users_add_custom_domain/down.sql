@@ -20,6 +20,7 @@ CREATE TABLE users2 (
     avatar_id INTEGER REFERENCES medias(id) ON DELETE CASCADE,
     last_fetched_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (avatar_id) REFERENCES medias(id) ON DELETE SET NULL
+    CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
 
 INSERT INTO users2 SELECT id, username, display_name, outbox_url, inbox_url,
