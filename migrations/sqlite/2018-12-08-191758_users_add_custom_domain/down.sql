@@ -1,6 +1,6 @@
 -- This file should undo anything in `up.sql`
 PRAGMA foreign_keys = ON;
-CREATE TABLE users2 (
+CREATE TABLE migrate_users_custom_domain (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     username VARCHAR NOT NULL,
     display_name VARCHAR NOT NULL DEFAULT '',
@@ -23,9 +23,9 @@ CREATE TABLE users2 (
     CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
 
-INSERT INTO users2 SELECT id, username, display_name, outbox_url, inbox_url,
+INSERT INTO migrate_users_custom_domain SELECT id, username, display_name, outbox_url, inbox_url,
   is_admin, summary, email, hashed_password, instance_id, creation_date, ap_url,
   private_key, public_key, shared_inbox_url, followers_endpoint, avatar_id,
   last_fetched_date FROM users;
 DROP TABLE users;
-ALTER TABLE users2 RENAME TO users;
+ALTER TABLE migrate_users_custom_domain RENAME TO users;
