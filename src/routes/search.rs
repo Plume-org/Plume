@@ -29,13 +29,11 @@ pub struct SearchQuery {
 macro_rules! param_to_query {
     ( $query:ident, $parsed_query:ident; normal: $($field:ident),*; date: $($date:ident),*) => {
         $(
-            if let Some(ref field) = $query.$field {
-                let mut rest = field.as_str();
-                while !rest.is_empty() {
-                    let (token, r) = Query::get_first_token(rest);
-                    rest = r;
-                    $parsed_query.$field(token, None);
-                }
+            let mut rest = $query.$field.as_ref().map(String::as_str).unwrap_or_default();
+            while !rest.is_empty() {
+                let (token, r) = Query::get_first_token(rest);
+                rest = r;
+                $parsed_query.$field(token, None);
             }
         )*
         $(

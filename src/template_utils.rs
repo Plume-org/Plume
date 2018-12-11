@@ -75,16 +75,34 @@ pub fn tabs(links: &[(&str, &str, bool)]) -> Html<String> {
 }
 
 pub fn paginate(catalog: &Catalog, page: i32, total: i32) -> Html<String> {
+    paginate_param(catalog, page, total, None)
+}
+pub fn paginate_param(catalog: &Catalog, page: i32, total: i32, param: Option<String>) -> Html<String> {
     let mut res = String::new();
+    let param = param.map(|mut p| {p.push('&'); p}).unwrap_or_default();
     res.push_str(r#"<div class="pagination">"#);
     if page != 1 {
-        res.push_str(format!(r#"<a href="?page={}">{}</a>"#, page - 1, catalog.gettext("Previous page")).as_str());
+        res.push_str(format!(r#"<a href="?{}page={}">{}</a>"#, param, page - 1, catalog.gettext("Previous page")).as_str());
     }
     if page < total {
-        res.push_str(format!(r#"<a href="?page={}">{}</a>"#, page + 1, catalog.gettext("Next page")).as_str());
+        res.push_str(format!(r#"<a href="?{}page={}">{}</a>"#, param, page + 1, catalog.gettext("Next page")).as_str());
     }
     res.push_str("</div>");
     Html(res)
+}
+
+pub fn encode_query_param(param: &str) -> String {
+    param.chars().map(|c| match c {
+        '+' => Ok("%2B"),
+        ' ' => Err('+'),
+        c   => Err(c),
+    }).fold(String::new(), |mut s,r| {
+        match r {
+            Ok(r) => s.push_str(r),
+            Err(r) => s.push(r),
+        };
+        s
+    })
 }
 
 #[macro_export]
