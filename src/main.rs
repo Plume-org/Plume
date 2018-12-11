@@ -35,10 +35,6 @@ extern crate validator;
 extern crate validator_derive;
 extern crate webfinger;
 
-#[cfg(test)]
-#[macro_use]
-extern crate diesel_migrations;
-
 use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
