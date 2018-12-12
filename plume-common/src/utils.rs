@@ -5,13 +5,14 @@ use rocket::{
     http::uri::Uri,
     response::{Redirect, Flash}
 };
+use std::borrow::Cow;
 use std::collections::HashSet;
 
 /// Generates an hexadecimal representation of 32 bytes of random data
 pub fn random_hex() -> String {
 	let mut bytes = [0; 32];
     rand_bytes(&mut bytes).expect("Error while generating client id");
-    bytes.into_iter().fold(String::new(), |res, byte| format!("{}{:x}", res, byte))
+    bytes.iter().fold(String::new(), |res, byte| format!("{}{:x}", res, byte))
 }
 
 /// Remove non alphanumeric characters and CamelCase a string
@@ -43,12 +44,33 @@ enum State {
 pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
-    let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser.map(|evt| match evt {
+    let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
+                                    .scan(None, |state: &mut Option<String>, evt|{
+                                        let (s, res) = match evt {
+                                            Event::Text(txt) => match state.take() {
+                                                Some(mut prev_txt) => {
+                                                    prev_txt.push_str(&txt);
+                                                    (Some(prev_txt), vec![])
+                                                },
+                                                None => {
+                                                    (Some(txt.into_owned()), vec![])
+                                                }
+                                            },
+                                            e => match state.take() {
+                                                Some(prev) => (None, vec![Event::Text(Cow::Owned(prev)), e]),
+                                                None => (None, vec![e]),
+                                            }
+                                        };
+                                        *state = s;
+                                        Some(res)
+                                    })
+                                    .flat_map(|v| v.into_iter())
+                                    .map(|evt| match evt {
         Event::Text(txt) => {
             let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold((vec![], State::Ready, String::new(), 0, vec![], vec![]), |(mut events, state, mut text_acc, n, mut mentions, mut hashtags), c| {
                 match state {
                     State::Mention => {
-                        let char_matches = c.is_alphanumeric() || c == '@' || c == '.' || c == '-' || c == '_';
+                        let char_matches = c.is_alphanumeric() || "@.-_".contains(c);
                         if char_matches && (n < (txt.chars().count() - 1)) {
                             text_acc.push(c);
                             (events, State::Mention, text_acc, n + 1, mentions, hashtags)
@@ -69,7 +91,7 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                         }
                     }
                     State::Hashtag => {
-                        let char_matches = c.is_alphanumeric();
+                        let char_matches = c.is_alphanumeric() || "-_".contains(c);
                         if char_matches && (n < (txt.chars().count() -1)) {
                             text_acc.push(c);
                             (events, State::Hashtag, text_acc, n+1, mentions, hashtags)
@@ -161,6 +183,7 @@ mod tests {
             ("between parenthesis (@test)", vec!["test"]),
             ("with some punctuation @test!", vec!["test"]),
             ("      @spaces     ", vec!["spaces"]),
+            ("@is_a@mention", vec!["is_a@mention"]),
             ("not_a@mention", vec![]),
         ];
 
