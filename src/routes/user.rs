@@ -165,7 +165,8 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>")]
-pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, page: Page, intl: I18n) -> Result<Ructe, Ructe> {
+pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, Ructe> {
+    let page = page.unwrap_or_default();
     let user = User::find_by_fqn(&*conn, &name).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, account.clone()))))?;
     let followers_count = user.get_followers(&*conn).len(); // TODO: count in DB
 
@@ -179,11 +180,6 @@ pub fn followers_paginated(name: String, conn: DbConn, account: Option<User>, pa
         page.0,
         Page::total(followers_count as i32)
     )))
-}
-
-#[get("/@/<name>/followers", rank = 2)]
-pub fn followers(name: String, conn: DbConn, account: Option<User>, intl: I18n) -> Result<Ructe, Ructe> {
-    followers_paginated(name, conn, account, Page::first(), intl)
 }
 
 #[get("/@/<name>", rank = 1)]

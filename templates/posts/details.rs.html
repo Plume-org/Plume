@@ -20,7 +20,7 @@
     <meta property="og:url" content="@uri!(posts::details: blog = blog.get_fqn(ctx.0), slug = &article.slug)"/>
     <meta property="og:description" content="@article.subtitle"/>
 }, {
-    <a href="@uri!(blogs::details: name = blog.get_fqn(ctx.0))">@blog.title</a>
+    <a href="@uri!(blogs::details: name = blog.get_fqn(ctx.0), page = _)">@blog.title</a>
 }, {
 <div class="h-entry">
     <h1 class="article p-name">@&article.title</h1>
@@ -63,7 +63,7 @@
         <ul class="tags">
             @for tag in tags {
                 @if !tag.is_hashtag {
-                    <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag)">@tag.tag</a></li>
+                    <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
                 } else {
                     <span class="hidden p-category">@tag.tag</span>
                 }

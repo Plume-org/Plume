@@ -11,7 +11,7 @@
 
     @tabs(&[
         (&uri!(user::details: name= user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Articles"), true),
-        (&uri!(user::followers: name = user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Followers"), false)
+        (&uri!(user::followers: name = user.get_fqn(ctx.0), page = _).to_string(), i18n!(ctx.1, "Followers"), false)
     ])
 
     @if !recents.is_empty() {

@@ -205,7 +205,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
     if errors.is_empty() {
         if !user.is_author_in(&*conn, &b) {
             // actually it's not "Ok"…
-            Ok(Redirect::to(uri!(super::blogs::details: name = blog)))
+            Ok(Redirect::to(uri!(super::blogs::details: name = blog, page = _)))
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
 
@@ -313,7 +313,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
     if errors.is_empty() {
         if !user.is_author_in(&*conn, &blog) {
             // actually it's not "Ok"…
-            Ok(Redirect::to(uri!(super::blogs::details: name = blog_name)))
+            Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
 
@@ -397,9 +397,9 @@ pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker:
             let delete_activity = post.delete(&(&conn, &searcher));
             worker.execute(move || broadcast(&user, delete_activity, dest));
 
-            Redirect::to(uri!(super::blogs::details: name = blog_name))
+            Redirect::to(uri!(super::blogs::details: name = blog_name, page = _))
         }
     } else {
-        Redirect::to(uri!(super::blogs::details: name = blog_name))
+        Redirect::to(uri!(super::blogs::details: name = blog_name, page = _))
     }
 }

@@ -8,13 +8,9 @@ use plume_models::{
 use routes::Page;
 use template_utils::Ructe;
 
-#[get("/tag/<name>")]
-pub fn tag(user: Option<User>, conn: DbConn, name: String, intl: I18n) -> Ructe {
-    paginated_tag(user, conn, name, Page::first(), intl)
-}
-
 #[get("/tag/<name>?<page>")]
-pub fn paginated_tag(user: Option<User>, conn: DbConn, name: String, page: Page, intl: I18n) -> Ructe {
+pub fn tag(user: Option<User>, conn: DbConn, name: String, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     let posts = Post::list_by_tag(&*conn, name.clone(), page.limits());
     render!(tags::index(
         &(&*conn, &intl.catalog, user),

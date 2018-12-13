@@ -24,7 +24,8 @@ use template_utils::Ructe;
 use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Page) -> Result<Ructe, Ructe> {
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>) -> Result<Ructe, Ructe> {
+    let page = page.unwrap_or_default();
     let blog = Blog::find_by_fqn(&*conn, &name)
         .ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     let posts = Post::blog_page(&*conn, &blog, page.limits());
@@ -42,11 +43,6 @@ pub fn paginated_details(intl: I18n, name: String, conn: DbConn, user: Option<Us
         user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
         posts
     )))
-}
-
-#[get("/~/<name>", rank = 3)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>) -> Result<Ructe, Ructe> {
-    paginated_details(intl, name, conn, user, Page::first())
 }
 
 #[get("/~/<name>", rank = 1)]
@@ -118,7 +114,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
             is_owner: true
         });
 
-        Ok(Redirect::to(uri!(details: name = slug.clone())))
+        Ok(Redirect::to(uri!(details: name = slug.clone(), page = _)))
     } else {
        Err(render!(blogs::new(
             &(&*conn, &intl.catalog, Some(user)),

@@ -17,7 +17,7 @@
         <div class="cards">
             @for blog in blogs {
                 <div class="card">
-                    <h3><a href="@uri!(blogs::details: name = blog.actor_id)">@blog.title</a></h3>
+                    <h3><a href="@uri!(blogs::details: name = blog.actor_id, page = _)">@blog.title</a></h3>
                 </div>
             }
         </div>

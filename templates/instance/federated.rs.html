@@ -12,15 +12,15 @@
     @if let Some(_) = ctx.2 {
         @tabs(&[
             (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), false),
-            (&uri!(instance::feed).to_string(), i18n!(ctx.1, "Your feed"), false),
-            (&uri!(instance::federated).to_string(), i18n!(ctx.1, "Federated feed"), true),
-            (&uri!(instance::local).to_string(), i18n!(ctx.1, "Local feed"), false),
+            (&uri!(instance::feed: _).to_string(), i18n!(ctx.1, "Your feed"), false),
+            (&uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"), true),
+            (&uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"), false),
         ])
     } else {
         @tabs(&[
               (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), false),
-              (&uri!(instance::federated).to_string(), i18n!(ctx.1, "Federated feed"), true),
-              (&uri!(instance::local).to_string(), i18n!(ctx.1, "Local feed"), false),
+              (&uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"), true),
+              (&uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"), false),
         ])
     }
 

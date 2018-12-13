@@ -25,13 +25,13 @@ use Searcher;
 pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
     match Instance::get_local(&*conn) {
         Some(inst) => {
-            let federated = Post::get_recents_page(&*conn, Page::first().limits());
-            let local = Post::get_instance_page(&*conn, inst.id, Page::first().limits());
+            let federated = Post::get_recents_page(&*conn, Page::default().limits());
+            let local = Post::get_instance_page(&*conn, inst.id, Page::default().limits());
             let user_feed = user.clone().map(|user| {
                 let followed = user.get_following(&*conn);
                 let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
                 in_feed.push(user.id);
-                Post::user_feed_page(&*conn, in_feed, Page::first().limits())
+                Post::user_feed_page(&*conn, in_feed, Page::default().limits())
             });
 
             render!(instance::index(
@@ -53,7 +53,8 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
 }
 
 #[get("/local?<page>")]
-pub fn paginated_local(conn: DbConn, user: Option<User>, page: Page, intl: I18n) -> Ructe {
+pub fn local(conn: DbConn, user: Option<User>, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     let instance = Instance::get_local(&*conn).expect("instance::paginated_local: local instance not found error");
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits());
     render!(instance::local(
@@ -65,18 +66,9 @@ pub fn paginated_local(conn: DbConn, user: Option<User>, page: Page, intl: I18n)
     ))
 }
 
-#[get("/local")]
-pub fn local(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
-    paginated_local(conn, user, Page::first(), intl)
-}
-
-#[get("/feed")]
-pub fn feed(conn: DbConn, user: User, intl: I18n) -> Ructe {
-    paginated_feed(conn, user, Page::first(), intl)
-}
-
 #[get("/feed?<page>")]
-pub fn paginated_feed(conn: DbConn, user: User, page: Page, intl: I18n) -> Ructe {
+pub fn feed(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     let followed = user.get_following(&*conn);
     let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
     in_feed.push(user.id);
@@ -89,13 +81,9 @@ pub fn paginated_feed(conn: DbConn, user: User, page: Page, intl: I18n) -> Ructe
     ))
 }
 
-#[get("/federated")]
-pub fn federated(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
-    paginated_federated(conn, user, Page::first(), intl)
-}
-
 #[get("/federated?<page>")]
-pub fn paginated_federated(conn: DbConn, user: Option<User>, page: Page, intl: I18n) -> Ructe {
+pub fn federated(conn: DbConn, user: Option<User>, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     let articles = Post::get_recents_page(&*conn, page.limits());
     render!(instance::federated(
         &(&*conn, &intl.catalog, user),
@@ -156,13 +144,9 @@ pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSet
         })
 }
 
-#[get("/admin/instances")]
-pub fn admin_instances(admin: Admin, conn: DbConn, intl: I18n) -> Ructe {
-    admin_instances_paginated(admin, conn, Page::first(), intl)
-}
-
 #[get("/admin/instances?<page>")]
-pub fn admin_instances_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n) -> Ructe {
+pub fn admin_instances(admin: Admin, conn: DbConn, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     let instances = Instance::page(&*conn, page.limits());
     render!(instance::list(
         &(&*conn, &intl.catalog, Some(admin.0)),
@@ -179,16 +163,12 @@ pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Redirect {
         inst.toggle_block(&*conn);
     }
 
-    Redirect::to(uri!(admin_instances))
-}
-
-#[get("/admin/users")]
-pub fn admin_users(admin: Admin, conn: DbConn, intl: I18n) -> Ructe {
-    admin_users_paginated(admin, conn, Page::first(), intl)
+    Redirect::to(uri!(admin_instances: page = _))
 }
 
 #[get("/admin/users?<page>")]
-pub fn admin_users_paginated(admin: Admin, conn: DbConn, page: Page, intl: I18n) -> Ructe {
+pub fn admin_users(admin: Admin, conn: DbConn, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     render!(instance::users(
         &(&*conn, &intl.catalog, Some(admin.0)),
         User::get_local_page(&*conn, page.limits()),
@@ -202,7 +182,7 @@ pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Redirect
     if let Some(u) = User::get(&*conn, id) {
         u.delete(&*conn, &searcher);
     }
-    Redirect::to(uri!(admin_users))
+    Redirect::to(uri!(admin_users: page = _))
 }
 
 #[post("/inbox", data = "<data>")]
