@@ -85,12 +85,8 @@ impl Blog {
 
     pub fn count_authors(&self, conn: &Connection) -> i64 {
         use schema::blog_authors;
-        use schema::users;
-        let authors_ids = blog_authors::table
+        blog_authors::table
             .filter(blog_authors::blog_id.eq(self.id))
-            .select(blog_authors::author_id);
-        users::table
-            .filter(users::id.eq_any(authors_ids))
             .count()
             .get_result(conn)
             .expect("Blog::count_authors: count loading error")

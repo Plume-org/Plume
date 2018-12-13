@@ -51,7 +51,6 @@ impl Notification {
     pub fn count_for_user(conn: &Connection, user: &User) -> i64 {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
-            .order_by(notifications::creation_date.desc())
             .count()
             .get_result(conn)
             .expect("Notification::count_for_user: count loading error")
