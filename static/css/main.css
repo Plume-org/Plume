@@ -361,6 +361,8 @@ main .article-meta .tags li a {
  }
 
  main .article-meta .reshares .action svg.feather {
+    padding: 0.7em;
+ 	box-sizing: border-box;
  	color: #7765E3;
  	border: solid #7765E3 thin;
  	font-weight: 600;
