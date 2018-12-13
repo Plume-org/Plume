@@ -1,6 +1,6 @@
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
-    http::RawStr,
+    http::{RawStr, uri::{FromUriParam, Query}},
     request::FromFormValue,
     response::NamedFile,
 };
@@ -10,7 +10,7 @@ use plume_models::{Connection, posts::Post};
 
 const ITEMS_PER_PAGE: i32 = 12;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, UriDisplayQuery)]
 pub struct Page(i32);
 
 impl<'v> FromFormValue<'v> for Page {
@@ -23,11 +23,15 @@ impl<'v> FromFormValue<'v> for Page {
     }
 }
 
-impl Page {
-    pub fn first() -> Page {
-        Page(1)
-    }
+impl FromUriParam<Query, Option<Page>> for Page {
+    type Target = Page;
 
+    fn from_uri_param(val: Option<Page>) -> Page {
+        val.unwrap_or_default()
+    }
+}
+
+impl Page {
     /// Computes the total number of pages needed to display n_items
     pub fn total(n_items: i32) -> i32 {
         if n_items % ITEMS_PER_PAGE == 0 {
@@ -39,6 +43,12 @@ impl Page {
 
     pub fn limits(&self) -> (i32, i32) {
         ((self.0 - 1) * ITEMS_PER_PAGE, self.0 * ITEMS_PER_PAGE)
+    }
+}
+
+impl Default for Page {
+    fn default() -> Self {
+        Page(1)
     }
 }
 

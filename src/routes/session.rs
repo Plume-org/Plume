@@ -14,26 +14,15 @@ use plume_models::{
     users::{User, AUTH_COOKIE}
 };
 
-#[get("/login")]
-pub fn new(user: Option<User>, conn: DbConn, intl: I18n) -> Ructe {
-    render!(session::login(
-        &(&*conn, &intl.catalog, user),
-        None,
-        &LoginForm::default(),
-        ValidationErrors::default()
-    ))
-}
-
 #[get("/login?<m>")]
-pub fn new_message(user: Option<User>, m: String, conn: DbConn, intl: I18n) -> Ructe {
+pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n) -> Ructe {
     render!(session::login(
         &(&*conn, &intl.catalog, user),
-        Some(m),
+        m,
         &LoginForm::default(),
         ValidationErrors::default()
     ))
 }
-
 
 #[derive(Default, FromForm, Validate, Serialize)]
 pub struct LoginForm {

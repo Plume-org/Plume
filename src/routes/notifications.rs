@@ -7,7 +7,8 @@ use routes::Page;
 use template_utils::Ructe;
 
 #[get("/notifications?<page>")]
-pub fn paginated_notifications(conn: DbConn, user: User, page: Page, intl: I18n) -> Ructe {
+pub fn notifications(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -> Ructe {
+    let page = page.unwrap_or_default();
     render!(notifications::index(
         &(&*conn, &intl.catalog, Some(user.clone())),
         Notification::page_for_user(&*conn, &user, page.limits()),
@@ -16,15 +17,10 @@ pub fn paginated_notifications(conn: DbConn, user: User, page: Page, intl: I18n)
     ))
 }
 
-#[get("/notifications")]
-pub fn notifications(conn: DbConn, user: User, intl: I18n) -> Ructe {
-    paginated_notifications(conn, user, Page::first(), intl)
-}
-
-#[get("/notifications", rank = 2)]
-pub fn notifications_auth(i18n: I18n) -> Flash<Redirect>{
+#[get("/notifications?<page>", rank = 2)]
+pub fn notifications_auth(i18n: I18n, page: Option<Page>) -> Flash<Redirect>{
     utils::requires_login(
         i18n!(i18n.catalog, "You need to be logged in order to see your notifications"),
-        uri!(notifications)
+        uri!(notifications: page = page)
     )
 }

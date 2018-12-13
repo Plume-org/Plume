@@ -12,8 +12,8 @@
 
   @tabs(&[
     (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), true),
-    (&uri!(instance::admin_instances).to_string(), i18n!(ctx.1, "Instances"), false),
-    (&uri!(instance::admin_users).to_string(), i18n!(ctx.1, "Users"), false),
+    (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
+    (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
   ])
 
   <form method="post" action="@uri!(instance::update_settings)">

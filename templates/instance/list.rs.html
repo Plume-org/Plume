@@ -10,8 +10,8 @@
 
     @tabs(&[
     (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
-    (&uri!(instance::admin_instances).to_string(), i18n!(ctx.1, "Instances"), true),
-    (&uri!(instance::admin_users).to_string(), i18n!(ctx.1, "Users"), false),
+    (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), true),
+    (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
     ])
 
     <div class="list">

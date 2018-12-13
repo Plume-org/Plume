@@ -55,7 +55,7 @@ macro_rules! param_to_query {
 
 #[get("/search?<query..>")]
 pub fn search(query: Form<SearchQuery>, conn: DbConn, searcher: Searcher, user: Option<User>, intl: I18n) -> Ructe {
-    let page = query.page.unwrap_or(Page::first());
+    let page = query.page.unwrap_or_default();
     let mut parsed_query = Query::from_str(&query.q.as_ref().map(|q| q.as_str()).unwrap_or_default());
 
     param_to_query!(query, parsed_query; normal: title, subtitle, content, tag,
@@ -71,7 +71,7 @@ pub fn search(query: Form<SearchQuery>, conn: DbConn, searcher: Searcher, user: 
         ))
     } else {
         let res = searcher.search_document(&conn, parsed_query, page.limits());
-        let next_page = if res.is_empty() { 0 } else { page.0+1 };
+        let next_page = if res.is_empty() { 0 } else { page.0 + 1 };
         render!(search::result(
             &(&*conn, &intl.catalog, user),
             &str_query,

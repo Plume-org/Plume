@@ -79,7 +79,6 @@ fn main() {
 
     rocket::ignite()
         .mount("/", routes![
-            routes::blogs::paginated_details,
             routes::blogs::details,
             routes::blogs::activity_details,
             routes::blogs::outbox,
@@ -93,17 +92,12 @@ fn main() {
             routes::comments::activity_pub,
 
             routes::instance::index,
-            routes::instance::paginated_local,
             routes::instance::local,
-            routes::instance::paginated_feed,
             routes::instance::feed,
-            routes::instance::paginated_federated,
             routes::instance::federated,
             routes::instance::admin,
             routes::instance::admin_instances,
-            routes::instance::admin_instances_paginated,
             routes::instance::admin_users,
-            routes::instance::admin_users_paginated,
             routes::instance::ban,
             routes::instance::toggle_block,
             routes::instance::update_settings,
@@ -122,12 +116,10 @@ fn main() {
             routes::medias::delete,
             routes::medias::set_avatar,
 
-            routes::notifications::paginated_notifications,
             routes::notifications::notifications,
             routes::notifications::notifications_auth,
 
             routes::posts::details,
-            routes::posts::details_response,
             routes::posts::activity_details,
             routes::posts::edit,
             routes::posts::update,
@@ -142,20 +134,17 @@ fn main() {
             routes::search::search,
 
             routes::session::new,
-            routes::session::new_message,
             routes::session::create,
             routes::session::delete,
 
             routes::static_files,
 
             routes::tags::tag,
-            routes::tags::paginated_tag,
 
             routes::user::me,
             routes::user::details,
             routes::user::dashboard,
             routes::user::dashboard_auth,
-            routes::user::followers_paginated,
             routes::user::followers,
             routes::user::edit,
             routes::user::edit_auth,
