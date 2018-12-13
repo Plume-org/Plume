@@ -59,7 +59,7 @@ path = "plume-models"
 
 [dependencies.rocket_csrf]
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "717fad53cfd2ee5cbee5b4571f6190644f9dddd7"
+rev = "4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
 
 [build-dependencies]
 ructe = "0.5.4"
