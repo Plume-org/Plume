@@ -120,7 +120,6 @@ fn main() {
             routes::notifications::notifications_auth,
 
             routes::posts::details,
-            routes::posts::details_response,
             routes::posts::activity_details,
             routes::posts::edit,
             routes::posts::update,
@@ -135,7 +134,6 @@ fn main() {
             routes::search::search,
 
             routes::session::new,
-            routes::session::new_message,
             routes::session::create,
             routes::session::delete,
 

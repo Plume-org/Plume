@@ -327,7 +327,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
                 form.email.to_string(),
                 User::hash_pass(&form.password),
             ).update_boxes(&*conn);
-            Redirect::to(uri!(super::session::new))
+            Redirect::to(uri!(super::session::new: m = _))
         })
        .map_err(|err| {
             render!(users::new(

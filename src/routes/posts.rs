@@ -26,14 +26,8 @@ use template_utils::Ructe;
 use Worker;
 use Searcher;
 
-// See: https://github.com/SergioBenitez/Rocket/pull/454
-#[get("/~/<blog>/<slug>", rank = 5)]
-pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Ructe> {
-    details_response(blog, slug, conn, user, None, intl)
-}
-
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
-pub fn details_response(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, Ructe> {
+pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, Ructe> {
     let blog = Blog::find_by_fqn(&*conn, &blog).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
@@ -252,7 +246,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
                 }
             }
 
-            Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug)))
+            Ok(Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)))
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
@@ -367,7 +361,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
                 worker.execute(move || broadcast(&user, act, dest));
             }
 
-            Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug)))
+            Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)))
         }
     } else {
         let medias = Media::for_user(&*conn, user.id);
@@ -391,7 +385,7 @@ pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker:
 
     if let Some(post) = post {
         if !post.get_authors(&*conn).into_iter().any(|a| a.id == user.id) {
-            Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone()))
+            Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _))
         } else {
             let dest = User::one_by_instance(&*conn);
             let delete_activity = post.delete(&(&conn, &searcher));

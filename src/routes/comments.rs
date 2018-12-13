@@ -57,7 +57,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
             let user_clone = user.clone();
             worker.execute(move || broadcast(&user_clone, new_comment, dest));
 
-            Redirect::to(uri!(super::posts::details: blog = blog_name, slug = slug))
+            Redirect::to(uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _))
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code

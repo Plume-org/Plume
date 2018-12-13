@@ -17,7 +17,7 @@
     @if article.cover_id.is_some() {
         <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
     }
-    <meta property="og:url" content="@uri!(posts::details: blog = blog.get_fqn(ctx.0), slug = &article.slug)"/>
+    <meta property="og:url" content="@uri!(posts::details: blog = blog.get_fqn(ctx.0), slug = &article.slug, responding_to = _)"/>
     <meta property="og:description" content="@article.subtitle"/>
 }, {
     <a href="@uri!(blogs::details: name = blog.get_fqn(ctx.0), page = _)">@blog.title</a>
@@ -116,14 +116,14 @@
                     <p aria-label="@i18n!(ctx.1, "One like", "{0} likes", &n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes", n_likes)">
                         @n_likes
                     </p>
-		    <a href="@uri!(session::new_message: m = i18n!(ctx.1, "Login to like"))" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
+		    <a href="@uri!(session::new: m = i18n!(ctx.1, "Login to like"))" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
                 </div>
 
                 <div class="reshares">
                     <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost", &n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts", n_reshares)">
                         @n_reshares
                     </p>
-                    <a href="@uri!(session::new_message: m = i18n!(ctx.1, "Login to boost"))" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</a>
+                    <a href="@uri!(session::new: m = i18n!(ctx.1, "Login to boost"))" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</a>
                 </div>
             </div>
         }
