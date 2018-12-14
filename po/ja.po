@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-12-03 21:52+0900\n"
+"PO-Revision-Date: 2018-12-15 01:48+0000\n"
 "Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
-"Language-Team: \n"
+"Language-Team: Japanese <https://translate.funkwhale.audio/projects/plume/"
+"Plume/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Weblate 3.2.2\n"
 
 msgid "Latest articles"
 msgstr "最新記事"
@@ -76,10 +77,9 @@ msgstr ""
 msgid "This article is under the {0} license."
 msgstr "この記事は {{ license }} ライセンスの元で公開されています。"
 
-#, fuzzy
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] "{{ count }} いいね"
+msgstr[0] "{0} いいね"
 
 msgid "I don&#x27;t like this anymore"
 msgstr "もうこれにいいねしません"
@@ -87,10 +87,9 @@ msgstr "もうこれにいいねしません"
 msgid "Add yours"
 msgstr "いいねする"
 
-#, fuzzy
 msgid "One Boost"
 msgid_plural "{0} Boosts"
-msgstr[0] "{{ count }} ブースト"
+msgstr[0] "{0} ブースト"
 
 msgid "I don&#x27;t want to boost this anymore"
 msgstr "もうこれをブーストしたくありません"
@@ -163,10 +162,9 @@ msgstr "フォロー解除"
 msgid "Recently boosted"
 msgstr "最近ブーストしたもの"
 
-#, fuzzy
 msgid "One follower"
 msgid_plural "{0} followers"
-msgstr[0] "{{ count }} フォロワー"
+msgstr[0] "{0} フォロワー"
 
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
@@ -327,10 +325,9 @@ msgstr "無効なメールアドレス"
 msgid "Password should be at least 8 characters long"
 msgstr "パスワードは最低 8 文字にするべきです"
 
-#, fuzzy
 msgid "One author in this blog: "
 msgid_plural "{0} authors in this blog: "
-msgstr[0] "ブログに {{ count }} 人の作成者がいます: "
+msgstr[0] "ブログに {0} 人の作成者がいます: "
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
@@ -339,10 +336,9 @@ msgstr ""
 msgid "Optional"
 msgstr "省略可"
 
-#, fuzzy
 msgid "One article in this blog"
 msgid_plural "{0} articles in this blog"
-msgstr[0] "ブログ内に {{ count }} 件の記事"
+msgstr[0] "ブログに {0} 件の記事があります"
 
 msgid "Previous page"
 msgstr "前のページ"
