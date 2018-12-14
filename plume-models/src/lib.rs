@@ -213,7 +213,7 @@ pub fn ap_url(url: &str) -> String {
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use diesel::Connection;
+    use diesel::{dsl::sql_query, Connection, RunQueryDsl};
     use Connection as Conn;
     use DATABASE_URL;
 
@@ -238,6 +238,8 @@ mod tests {
         let conn =
             Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
         embedded_migrations::run(&conn).expect("Couldn't run migrations");
+        #[cfg(feature = "sqlite")]
+        sql_query("PRAGMA foreign_keys = on;").execute(&conn).expect("PRAGMA foreign_keys fail");
         conn
     }
 }

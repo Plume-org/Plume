@@ -829,10 +829,13 @@ pub(crate) mod tests {
                 },
             );
 
+            println!("count bfore {}", blog[0].count_authors(conn));
             user[0].delete(conn, &searcher);
             assert!(Blog::get(conn, blog[0].id).is_some());
             assert!(Blog::get(conn, blog[1].id).is_none());
+            println!("count after bfore {}", blog[0].count_authors(conn));
             user[1].delete(conn, &searcher);
+            println!("count after after {}", blog[0].count_authors(conn));
             assert!(Blog::get(conn, blog[0].id).is_none());
 
             Ok(())
