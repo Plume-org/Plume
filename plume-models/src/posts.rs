@@ -12,7 +12,6 @@ use serde_json;
 
 use blogs::Blog;
 use instance::Instance;
-use likes::Like;
 use medias::Media;
 use mentions::Mention;
 use plume_api::posts::PostEndpoint;
@@ -24,7 +23,6 @@ use plume_common::{
     utils::md_to_html,
 };
 use post_authors::*;
-use reshares::Reshare;
 use safe_string::SafeString;
 use search::Searcher;
 use schema::posts;
@@ -206,7 +204,7 @@ impl Post {
             .expect("Post::count_for_tag: no result error")
     }
 
-    pub fn count_local(conn: &Connection) -> usize {
+    pub fn count_local(conn: &Connection) -> i64 {
         use schema::post_authors;
         use schema::users;
         let local_authors = users::table
@@ -218,9 +216,9 @@ impl Post {
         posts::table
             .filter(posts::id.eq_any(local_posts_id))
             .filter(posts::published.eq(true))
-            .load::<Post>(conn)
+            .count()
+            .get_result(conn)
             .expect("Post::count_local: loading error")
-            .len() // TODO count in database?
     }
 
     pub fn count(conn: &Connection) -> i64 {
@@ -269,6 +267,15 @@ impl Post {
             .filter(posts::published.eq(true))
             .load::<Post>(conn)
             .expect("Post::get_for_blog:: loading error")
+    }
+
+    pub fn count_for_blog(conn: &Connection, blog: &Blog) -> i64 {
+        posts::table
+            .filter(posts::blog_id.eq(blog.id))
+            .filter(posts::published.eq(true))
+            .count()
+            .get_result(conn)
+            .expect("Post::count_for_blog:: count error")
     }
 
     pub fn blog_page(conn: &Connection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
@@ -379,19 +386,21 @@ impl Post {
             .expect("Post::get_blog: no result error")
     }
 
-    pub fn get_likes(&self, conn: &Connection) -> Vec<Like> {
+    pub fn count_likes(&self, conn: &Connection) -> i64 {
         use schema::likes;
         likes::table
             .filter(likes::post_id.eq(self.id))
-            .load::<Like>(conn)
+            .count()
+            .get_result(conn)
             .expect("Post::get_likes: loading error")
     }
 
-    pub fn get_reshares(&self, conn: &Connection) -> Vec<Reshare> {
+    pub fn count_reshares(&self, conn: &Connection) -> i64 {
         use schema::reshares;
         reshares::table
             .filter(reshares::post_id.eq(self.id))
-            .load::<Reshare>(conn)
+            .count()
+            .get_result(conn)
             .expect("Post::get_reshares: loading error")
     }
 

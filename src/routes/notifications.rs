@@ -13,7 +13,7 @@ pub fn notifications(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -
         &(&*conn, &intl.catalog, Some(user.clone())),
         Notification::page_for_user(&*conn, &user, page.limits()),
         page.0,
-        Page::total(Notification::find_for_user(&*conn, &user).len() as i32)
+        Page::total(Notification::count_for_user(&*conn, &user) as i32)
     ))
 }
 

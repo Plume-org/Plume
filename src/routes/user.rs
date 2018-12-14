@@ -168,7 +168,7 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, Ructe> {
     let page = page.unwrap_or_default();
     let user = User::find_by_fqn(&*conn, &name).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, account.clone()))))?;
-    let followers_count = user.get_followers(&*conn).len(); // TODO: count in DB
+    let followers_count = user.count_followers(&*conn);
 
     Ok(render!(users::followers(
         &(&*conn, &intl.catalog, account.clone()),

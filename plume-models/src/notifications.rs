@@ -48,6 +48,14 @@ impl Notification {
             .expect("Notification::find_for_user: notification loading error")
     }
 
+    pub fn count_for_user(conn: &Connection, user: &User) -> i64 {
+        notifications::table
+            .filter(notifications::user_id.eq(user.id))
+            .count()
+            .get_result(conn)
+            .expect("Notification::count_for_user: count loading error")
+    }
+
     pub fn page_for_user(
         conn: &Connection,
         user: &User,

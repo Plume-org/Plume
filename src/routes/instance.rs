@@ -37,8 +37,8 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Ructe {
             render!(instance::index(
                 &(&*conn, &intl.catalog, user),
                 inst,
-                User::count_local(&*conn) as i32,
-                Post::count_local(&*conn) as i32,
+                User::count_local(&*conn),
+                Post::count_local(&*conn),
                 local,
                 federated,
                 user_feed

@@ -4,7 +4,7 @@
 @use plume_models::posts::Post;
 @use routes::*;
 
-@(ctx: BaseContext, instance: Instance, n_users: i32, n_articles: i32, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
+@(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
 
 @:base(ctx, instance.name.clone().as_ref(), {}, {}, {
   <h1>@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())</h1>

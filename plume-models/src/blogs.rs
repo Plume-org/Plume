@@ -83,6 +83,15 @@ impl Blog {
             .expect("Blog::list_authors: author loading error")
     }
 
+    pub fn count_authors(&self, conn: &Connection) -> i64 {
+        use schema::blog_authors;
+        blog_authors::table
+            .filter(blog_authors::blog_id.eq(self.id))
+            .count()
+            .get_result(conn)
+            .expect("Blog::count_authors: count loading error")
+    }
+
     pub fn find_for_author(conn: &Connection, author: &User) -> Vec<Blog> {
         use schema::blog_authors;
         let author_ids = blog_authors::table

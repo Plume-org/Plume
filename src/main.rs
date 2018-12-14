@@ -39,7 +39,7 @@ use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
 use plume_models::{DATABASE_URL, Connection,
-    db_conn::DbPool, search::Searcher as UnmanagedSearcher};
+    db_conn::{DbPool, PragmaForeignKey}, search::Searcher as UnmanagedSearcher};
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
 use std::sync::Arc;
@@ -59,7 +59,9 @@ fn init_pool() -> Option<DbPool> {
     dotenv::dotenv().ok();
 
     let manager = ConnectionManager::<Connection>::new(DATABASE_URL.as_str());
-    DbPool::new(manager).ok()
+    DbPool::builder()
+        .connection_customizer(Box::new(PragmaForeignKey))
+        .build(manager).ok()
 }
 
 fn main() {
