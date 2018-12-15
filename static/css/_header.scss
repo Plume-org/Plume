@@ -1,0 +1,106 @@
+header {
+  background: $lightgray;
+
+  #content {
+    display: flex;
+   	align-content: center;
+   	justify-content: space-between;
+  }
+
+  nav#menu {
+    position: relative;
+    display: none;
+    transform: skewX(-15deg);
+    left: -1em;
+    padding: 1em 1em 1em 2em;
+    background: $purple;
+    align-self: flex-start;
+
+    a {
+      transform: skewX(15deg);
+     	display: flex;
+     	flex-direction: column;
+     	align-items: center;
+     	justify-content: center;
+     	width: 1.4em;
+     	height: 1.4em;
+     	margin: 0;
+     	padding: 0;
+     	color: $lightgray;
+     	font-size: 1.33em;
+   	}
+  }
+
+  nav {
+    display: flex;
+   	flex-direction: row;
+   	align-items: center;
+
+   	hr {
+     	height: 100%;
+     	width: 0.2em;
+     	background: $purple;
+     	border: none;
+     	transform: skewX(-15deg);
+    }
+    a {
+     	display: flex;
+     	align-items: center;
+     	position: relative;
+     	align-self: stretch;
+     	margin: 0;
+     	padding: 0 2em;
+     	font-size: 1em;
+
+     	i { font-size: 1.2em; }
+
+     	&.title {
+     	  margin: 0;
+        text-align: center;
+        padding: 0.5em 1em;
+        font-size: 1.75em;
+
+        img {
+          height: 1.75em;
+          width: 1.75em;
+        }
+
+        p {
+          margin: 0;
+          padding-left: 0.5em;
+        }
+     	}
+    }
+  }
+}
+
+// Only enable label animations on normal screens
+@media screen and (min-width: 900px) {
+ 	header nav a {
+ 	  i {
+   		transition: all 0.2s ease;
+   		margin: 0;
+   	}
+
+   	.mobile-label {
+   		transition: all 0.2s ease;
+   		display: block;
+   		position: absolute;
+   		left: 50%;
+   		transform: translate(-50%, 0);
+   		opacity: 0;
+   		font-size: 0.9em;
+   		white-space: nowrap;
+   	}
+
+   	img + .mobile-label { display: none; }
+
+   	&:hover {
+   	  i { margin-bottom: 0.75em; }
+   	  .mobile-label {
+   	    opacity: 1;
+     		transform: translate(-50%, 80%);
+   		}
+    }
+ 	}
+}

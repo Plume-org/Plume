@@ -1,0 +1,131 @@
+label {
+ 	display: block;
+ 	margin: 2em auto 1em;
+ 	font-size: 1.2em;
+ 	max-width: 40rem;
+}
+input, textarea, select {
+ 	transition: all 0.1s ease-in;
+ 	display: block;
+ 	width: 100%;
+ 	max-width: 40rem;
+ 	margin: auto;
+ 	padding: 1em;
+ 	box-sizing: border-box;
+
+ 	background: $white;
+ 	color: $black;
+ 	border: none;
+ 	border: solid $lightgray thin;
+ 	border-radius: 0.5em;
+
+ 	font-size: 1.2em;
+ 	font-weight: 400;
+
+ 	&:focus {
+ 	  background: $white;
+ 	  border-color: $purple;
+ 	}
+}
+form input[type="submit"] { margin: 2em auto; }
+
+textarea {
+ 	resize: vertical;
+
+ 	font-family: $lora;
+ 	font-size: 1.1em;
+ 	line-height: 1.5em;
+}
+
+input[type="checkbox"] {
+ 	display: inline;
+ 	margin: initial;
+ 	min-width: initial;
+ 	width: initial;
+}
+
+/** Inline forms (containing only CSRF token and a <submit>, for protected links) **/
+
+form.inline {
+  display: inline;
+  margin: 0px;
+  padding: 0px;
+  width: auto;
+
+  input[type="submit"] {
+    display: inline-block;
+    color: $purple;
+    cursor: pointer;
+    font-size: 1em;
+    width: auto;
+
+    &:not(.button) {
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: $purple;
+    }
+  }
+}
+
+.button, input[type="submit"], button {
+ 	transition: all 0.1s ease-in;
+ 	display: inline-block;
+
+ 	border-radius: 0.5em;
+ 	margin: 0.5em auto;
+ 	padding: 0.75em 1em;
+
+ 	background: transparent;
+ 	color: $purple;
+ 	border: 1px solid $purple;
+
+ 	cursor: pointer;
+
+ 	&:hover {
+ 	  background: transparentize($purple, 0.6);
+ 	  color: white;
+ 	}
+
+ 	&.destructive {
+ 	  color: $red;
+    border-color: $red;
+
+    &:hover {
+      background: transparentize($red, 0.6);
+      color: $white;
+    }
+ 	}
+}
+input[type="submit"] { display: block; }
+
+//  Writing page
+form.new-post {
+  .title {
+   	margin: 0 auto;
+   	padding: 0.75em 0;
+
+   	background: none;
+   	border: none;
+
+   	font-family: $playfair;
+   	font-size: 2em;
+   	text-align: left;
+  }
+  textarea {
+   	min-height: 20em;
+   	overflow-y: hidden;
+   	resize: none;
+   	box-sizing: content-box;
+  }
+  input[type="submit"] {
+   	background: $lightgray;
+   	color: $black;
+   	border: none;
+
+   	font-family: $playfair;
+   	font-size: 1.5em;
+  }
+  input[type="submit"]:hover { background: $lightgray; }
+}

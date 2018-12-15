@@ -1,0 +1,266 @@
+// Heading
+main .article-info {
+  max-width: 40rem;
+ 	margin: 0 auto 3em;
+ 	font-size: 0.95em;
+ 	font-weight: 400;
+
+ 	.author, .author a {
+ 	  font-weight: 600;
+ 	}
+}
+
+// The article itself
+main article {
+  max-width: 40rem;
+ 	margin: 2.5em auto;
+ 	font-family: $lora;
+ 	font-size: 1.2em;
+ 	line-height: 1.7em;
+
+ 	a:hover {
+ 	  text-decoration: underline;
+ 	}
+
+ 	img {
+   	display: block;
+   	margin: 3em auto;
+   	max-width: 100%;
+  }
+
+  pre {
+   	padding: 1em;
+   	background: $lightgray;
+   	overflow: auto;
+   	border-radius: 5px;
+  }
+}
+
+// Metadata under the article
+main .article-meta, main .article-meta button {
+  padding: 0;
+  font-size: 1.1em;
+  margin-top: 10%;
+}
+
+main .article-meta {
+
+  > * {
+    margin: 0 20%;
+  }
+
+  > p {
+    margin: 2em 20%;
+ 	  font-size: 0.9em;
+  }
+
+  // Tags
+  .tags {
+    list-style: none;
+    display: inline-block;
+    padding: 0px;
+    margin-bottom: 2em;
+
+    li {
+      display: inline-block;
+      background: $lightgray;
+      padding: 0px;
+      margin-right: 10px;
+      border-radius: 3px;
+      transition: all 0.2s ease-in;
+
+      a {
+        display: inline-block;
+        padding: 10px 20px;
+        color: $black;
+      }
+
+      &:hover {
+        background: mix($black, $lightgray, 10%);
+      }
+    }
+  }
+
+  // Likes & Boosts
+  .actions {
+    display: flex;
+   	flex-direction: row;
+   	justify-content: space-around;
+  }
+
+  .likes, .reshares {
+    display: flex;
+   	flex-direction: column;
+   	align-items: center;
+   	padding: 0.5em 0;
+
+    p {
+      font-size: 1.5em;
+      display: inline-block;
+      margin: 0;
+    }
+
+    .action {
+      display: flex;
+     	flex-direction: column;
+     	align-items: center;
+     	justify-content: center;
+     	margin: 0;
+     	padding: 0;
+     	background: none;
+     	color: $black;
+     	border: none;
+     	font-size: 1.1em;
+
+     	svg.feather {
+       	transition: background 0.1s ease-in;
+       	display: flex;
+       	align-items: center;
+       	justify-content: center;
+
+       	margin: 0.5em 0;
+       	width: 2.5em;
+       	height: 2.5em;
+
+       	border-radius: 50%;
+      }
+
+      &.reshared, &.liked {
+        svg.feather {
+         	color: $white;
+         	font-weight: 900;
+        }
+      }
+    }
+  }
+
+  .likes {
+    p, .action:hover { color: $red; }
+
+    .action svg.feather {
+      padding: 0.7em;
+     	box-sizing: border-box;
+     	color: $red;
+     	fill: none;
+     	border: solid $red thin;
+    }
+
+    .action:hover svg.feather {
+     	background: transparentize($red, 0.85);
+    }
+
+    .action.liked svg.feather {
+      background: $red;
+      fill: currentColor;
+    }
+    .action.liked:hover svg.feather {
+      background: transparentize($red, 0.75)
+      color: $red;
+    }
+  }
+
+  .reshares {
+    p, .action:hover { color: $purple; }
+
+    .action svg.feather {
+      padding: 0.7em;
+     	box-sizing: border-box;
+     	color: $purple;
+     	border: solid $purple thin;
+     	font-weight: 600;
+    }
+
+    .action:hover svg.feather {
+     	background: transparentize($purple, 0.85);
+    }
+
+    .action.reshared svg.feather {
+      background: $purple;
+    }
+    .action.reshared:hover svg.feather {
+     	background: transparentize($purple, 0.75)
+     	color: $purple;
+    }
+  }
+
+  // Comments
+  .comments {
+    margin: 0;
+    > * {
+      margin-left: 20%;
+      margin-right: 20%;
+    }
+
+    h2 {
+     	color: $purple;
+     	font-size: 1.5em;
+     	font-weight: 600;
+    }
+
+    summary {
+      cursor: pointer;
+    }
+
+    // New comment form
+    form input[type="submit"] {
+      font-size: 1em;
+    }
+
+    // Response button
+    a.button {
+     	display: inline-block;
+     	padding: 0;
+     	background: none;
+     	color: $black;
+     	border: none;
+
+     	&::before {
+     	  color: $purple;
+     	  padding-right: 0.5em;
+      }
+
+      &:hover { color: $purple; }
+    }
+
+    .list {
+     	display: grid;
+     	margin: 0 0 -5em;
+     	padding: 0 20%;
+     	background: $lightgray;
+    }
+
+    .comment {
+      padding: 2em;
+     	font-size: 1em;
+     	border: none;
+
+     	.author {
+     	  display: flex;
+       	flex-direction: row;
+       	align-items: center;
+       	align-content: center;
+
+       	* {
+       	  transition: all 0.1s ease-in;
+       	}
+
+       	.display-name {
+         	color: $black;
+        }
+
+        &:hover {
+          .display-name { color: $purple; }
+          small { opacity: 1; }
+        }
+     	}
+
+     	.text {
+       	padding: 1.25em 0;
+       	font-family: $lora;
+       	font-size: 1.1em;
+       	line-height: 1.4em;
+       	text-align: left;
+      }
+    }
+  }
+}

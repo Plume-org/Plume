@@ -64,6 +64,7 @@ rev = "4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
 [build-dependencies]
 ructe = "0.5.4"
 rocket_i18n = { version = "0.3.1", features = ["build"] }
+rsass = "0.9"
 
 [features]
 default = ["postgres"]
