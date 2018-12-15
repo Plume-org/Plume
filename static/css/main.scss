@@ -1,0 +1,134 @@
+/* color palette: https://coolors.co/23f0c7-ef767a-7765e3-6457a6-ffe347 */
+
+@import url('/static/fonts/Route159/Route159.css');
+@import url('/static/fonts/Lora/Lora.css');
+@import url('/static/fonts/Playfair_Display/PlayfairDisplay.css');
+
+@import 'variables';
+@import 'global';
+@import 'header';
+@import 'article';
+@import 'forms';
+
+/// Small screens
+@media screen and (max-width: 900px) {
+  @keyframes menuOpening {
+    from {
+      transform: scaleX(0);
+      transform-origin: left;
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      transform-origin: left;
+      opacity: 1;
+    }
+  }
+
+  header {
+    flex-direction: column;
+
+    nav#menu {
+      display: inline-flex;
+    }
+
+    #content {
+      display: none;
+      text-align: center;
+    }
+  }
+
+  header:focus-within #content, #content.show {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+
+    animation: 0.2s menuOpening;
+
+    &::before {
+      content: "";
+      position: absolute;
+      transform: skewX(-10deg);
+      top: 0;
+      left: -20%;
+      width: 100%;
+      height: 100%;
+
+      z-index: -10;
+
+      background: $purple;
+    }
+
+    > nav {
+      flex-direction: column;
+      align-items: flex-start;
+
+      a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0;
+        padding: 1rem 1.5rem;
+        color: $white;
+        font-size: 1.4em;
+        font-weight: 300;
+
+        &.title { font-size: 1.8em; }
+
+        > *:first-child { width: 3rem; }
+        > img:first-child { height: 3rem; }
+        > *:last-child { margin-left: 1rem; }
+        > nav hr {
+          display: block;
+          margin: 0;
+          width: 100%;
+          border: solid $white 0.1rem;
+        }
+        .mobile-label { display: initial; }
+      }
+    }
+  }
+
+  body > main > * {
+    padding: 0 5%;
+  }
+  main .article-meta {
+    > * {
+      margin: 0 5%;
+    }
+    > p {
+      margin: 2em 5%;
+      font-size: 0.9em;
+    }
+    .comments > * { margin: auto 5%; }
+    .comments .comment { padding: 2em 0px; }
+  }
+  main .article-info, main article, main h1.article, main h2.article {
+    max-width: 90vw;
+  }
+
+  .card {
+    min-width: 80%;
+    min-height: 80%;
+  }
+
+  .tabs {
+    margin: auto 0px 2em;
+  }
+
+  .stats { flex-direction: column; }
+    body > footer {
+    flex-direction: column;
+    align-items: center;
+  }
+  body > footer * { margin: 1em auto; }
+
+  .flex.wrap { flex-direction: column; }
+}
