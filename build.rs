@@ -16,7 +16,6 @@ fn main() {
 
     println!("cargo:rerun-if-changed=static/css");
     let mut out = File::create("static/css/main.css").expect("Couldn't create main.css");
-    println!("annana");
     out.write_all(
         &rsass::compile_scss_file("static/css/main.scss".as_ref(), rsass::OutputStyle::Compressed)
             .expect("Error during SCSS compilation")
