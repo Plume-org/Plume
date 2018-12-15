@@ -100,14 +100,18 @@
     padding: 0 5%;
   }
   main .article-meta {
-    * {
+    > * {
       margin: 0 5%;
     }
     > p {
       margin: 2em 5%;
       font-size: 0.9em;
     }
-    .comments > * { margin-left: 5%; margin-right: 5%; }
+    .comments > * { margin: auto 5%; }
+    .comments .comment { padding: 2em 0px; }
+  }
+  main .article-info, main article, main h1.article, main h2.article {
+    max-width: 90vw;
   }
 
   .card {
