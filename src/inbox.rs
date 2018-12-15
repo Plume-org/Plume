@@ -14,7 +14,7 @@ use failure::Error;
 use serde_json;
 
 use plume_common::activity_pub::{
-    inbox::{Deletable, FromActivity, InboxError},
+    inbox::{Deletable, FromActivity, InboxError, Notify},
     Id,
 };
 use plume_models::{
@@ -58,7 +58,7 @@ pub trait Inbox {
                     Ok(())
                 }
                 "Follow" => {
-                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id);
+                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id).notify(conn);
                     Ok(())
                 }
                 "Like" => {

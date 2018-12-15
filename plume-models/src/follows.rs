@@ -82,14 +82,12 @@ impl Follow {
         from_id: i32,
         target_id: i32,
     ) -> Follow {
-        let from_url: String = from.clone().into_id().into();
-        let target_url: String = target.clone().into_id().into();
         let res = Follow::insert(
             conn,
             NewFollow {
                 follower_id: from_id,
                 following_id: target_id,
-                ap_url: format!("{}/follow/{}", from_url, target_url),
+                ap_url: follow.object_props.id_string().expect("Follow::accept_follow: get id error"),
             },
         );
 
@@ -98,7 +96,7 @@ impl Follow {
         accept
             .object_props
             .set_id_string(accept_id)
-            .expect("Follow::accept_follow: id error");
+            .expect("Follow::accept_follow: set id error");
         accept
             .object_props
             .set_to_link(from.clone().into_id())
