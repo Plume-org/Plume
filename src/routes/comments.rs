@@ -7,7 +7,8 @@ use rocket_i18n::I18n;
 use validator::Validate;
 use template_utils::Ructe;
 
-use plume_common::{utils, activity_pub::{broadcast, ApRequest, ActivityStream}};
+use plume_common::{utils, activity_pub::{broadcast, ApRequest, 
+    ActivityStream, inbox::Deletable}};
 use plume_models::{
     blogs::Blog,
     comments::*,
@@ -83,6 +84,18 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 post.get_authors(&*conn)[0].clone()
             )))
         })
+}
+
+#[post("/~/<blog>/<slug>/comment/<id>/delete")]
+pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, worker: Worker) -> Redirect {
+    if let Some(comment) = Comment::get(&*conn, id) {
+        if comment.author_id == user.id {
+            let dest = User::one_by_instance(&*conn);
+            let delete_activity = comment.delete(&*conn);
+            worker.execute(move || broadcast(&user, delete_activity, dest));
+        }
+    }
+    Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _))
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]

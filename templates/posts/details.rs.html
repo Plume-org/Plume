@@ -146,7 +146,7 @@
             @if !comments.is_empty() {
                 <div class="list">
                     @for comm in comments {
-                        @:comment(ctx, &comm, comm.get_author(ctx.0), Some(&article.ap_url))
+                        @:comment(ctx, &comm, comm.get_author(ctx.0), Some(&article.ap_url), &blog.get_fqn(ctx.0), &article.slug)
                     }
                 </div>
             } else {

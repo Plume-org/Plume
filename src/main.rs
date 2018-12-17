@@ -91,6 +91,7 @@ fn main() {
             routes::blogs::atom_feed,
 
             routes::comments::create,
+            routes::comments::delete,
             routes::comments::activity_pub,
 
             routes::instance::index,
