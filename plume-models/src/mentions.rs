@@ -15,7 +15,6 @@ pub struct Mention {
     pub mentioned_id: i32,
     pub post_id: Option<i32>,
     pub comment_id: Option<i32>,
-    pub ap_url: String, // TODO: remove, since mentions don't have an AP URL actually, this field was added by mistake
 }
 
 #[derive(Insertable)]
@@ -24,13 +23,11 @@ pub struct NewMention {
     pub mentioned_id: i32,
     pub post_id: Option<i32>,
     pub comment_id: Option<i32>,
-    pub ap_url: String,
 }
 
 impl Mention {
     insert!(mentions, NewMention);
     get!(mentions);
-    find_by!(mentions, find_by_ap_url, ap_url as &str);
     list_by!(mentions, list_for_user, mentioned_id as i32);
     list_by!(mentions, list_for_post, post_id as i32);
     list_by!(mentions, list_for_comment, comment_id as i32);
@@ -103,7 +100,6 @@ impl Mention {
                         mentioned_id: mentioned.id,
                         post_id: Some(post.id),
                         comment_id: None,
-                        ap_url: ment.link_props.href_string().unwrap_or_default(),
                     },
                 );
                 if notify {
@@ -119,7 +115,6 @@ impl Mention {
                         mentioned_id: mentioned.id,
                         post_id: None,
                         comment_id: Some(comment.id),
-                        ap_url: ment.link_props.href_string().unwrap_or_default(),
                     },
                 );
                 if notify {
