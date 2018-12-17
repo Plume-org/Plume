@@ -41,7 +41,7 @@ enum State {
 }
 
 /// Returns (HTML, mentions, hashtags)
-pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
+pub fn md_to_html(md: &str, base_url: &str) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
@@ -80,7 +80,7 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                             }
                             let mention = text_acc;
                             let short_mention = mention.splitn(1, '@').nth(0).unwrap_or("");
-                            let link = Tag::Link(format!("/@/{}/", &mention).into(), short_mention.to_owned().into());
+                            let link = Tag::Link(format!("//{}/@/{}/", base_url, &mention).into(), short_mention.to_owned().into());
 
                             mentions.push(mention.clone());
                             events.push(Event::Start(link.clone()));
@@ -100,7 +100,7 @@ pub fn md_to_html(md: &str) -> (String, HashSet<String>, HashSet<String>) {
                                 text_acc.push(c);
                             }
                             let hashtag = text_acc;
-                            let link = Tag::Link(format!("/tag/{}", &hashtag.to_camel_case()).into(), hashtag.to_owned().into());
+                            let link = Tag::Link(format!("//{}/tag/{}", base_url, &hashtag.to_camel_case()).into(), hashtag.to_owned().into());
 
                             hashtags.push(hashtag.clone());
                             events.push(Event::Start(link.clone()));
@@ -188,7 +188,7 @@ mod tests {
         ];
 
         for (md, mentions) in tests {
-            assert_eq!(md_to_html(md).1, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
+            assert_eq!(md_to_html(md, "").1, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
         }
     }
 
@@ -207,7 +207,7 @@ mod tests {
         ];
 
         for (md, mentions) in tests {
-            assert_eq!(md_to_html(md).2, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
+            assert_eq!(md_to_html(md, "").2, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
         }
     }
 }

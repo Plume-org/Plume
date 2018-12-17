@@ -201,7 +201,7 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog, page = _)))
         } else {
-            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
+            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref(), &Instance::get_local(&conn).expect("posts::update: Error getting local instance").public_domain);
 
             // update publication date if when this article is no longer a draft
             let newly_published = if !post.published && !form.draft {
@@ -309,7 +309,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
         } else {
-            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref());
+            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref(), &Instance::get_local(&conn).expect("posts::create: Error getting l  ocal instance").public_domain);
 
             let post = Post::insert(&*conn, NewPost {
                 blog_id: blog.id,
