@@ -111,13 +111,13 @@ pub trait Inbox {
                     } else {
                         let link = act.undo_props.object.as_str().expect("Inbox::received: undo don't contain type and isn't Link");
                         if let Some(like) = likes::Like::find_by_ap_url(conn, link) {
-                            like.delete(conn);
+                            likes::Like::delete_id(&like.ap_url, actor_id.as_ref(), conn);
                             Ok(())
                         } else if let Some(reshare) = Reshare::find_by_ap_url(conn, link) {
-                            reshare.delete(conn);
+                            Reshare::delete_id(&reshare.ap_url, actor_id.as_ref(), conn);
                             Ok(())
                         } else if let Some(follow) = Follow::find_by_ap_url(conn, link) {
-                            follow.delete(conn);
+                            Follow::delete_id(&follow.ap_url, actor_id.as_ref(), conn);
                             Ok(())
                         } else {
                             Err(InboxError::NoType)?
