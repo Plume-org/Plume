@@ -71,44 +71,57 @@ pub trait Inbox {
                 }
                 "Undo" => {
                     let act: Undo = serde_json::from_value(act.clone())?;
-                    match act.undo_props.object["type"]
-                        .as_str()
-                        .expect("Inbox::received: undo without original type error")
-                    {
-                        "Like" => {
-                            likes::Like::delete_id(
-                                &act.undo_props
-                                    .object_object::<Like>()?
-                                    .object_props
-                                    .id_string()?,
-                                actor_id.as_ref(),
-                                conn,
-                            );
-                            Ok(())
+                    if let Some(t) = act.undo_props.object["type"].as_str() {
+                        match t {
+                            "Like" => {
+                                likes::Like::delete_id(
+                                    &act.undo_props
+                                        .object_object::<Like>()?
+                                        .object_props
+                                        .id_string()?,
+                                    actor_id.as_ref(),
+                                    conn,
+                                );
+                                Ok(())
+                            }
+                            "Announce" => {
+                                Reshare::delete_id(
+                                    &act.undo_props
+                                        .object_object::<Announce>()?
+                                        .object_props
+                                        .id_string()?,
+                                    actor_id.as_ref(),
+                                    conn,
+                                );
+                                Ok(())
+                            }
+                            "Follow" => {
+                                Follow::delete_id(
+                                    &act.undo_props
+                                        .object_object::<FollowAct>()?
+                                        .object_props
+                                        .id_string()?,
+                                    actor_id.as_ref(),
+                                    conn,
+                                );
+                                Ok(())
+                            }
+                            _ => Err(InboxError::CantUndo)?,
                         }
-                        "Announce" => {
-                            Reshare::delete_id(
-                                &act.undo_props
-                                    .object_object::<Announce>()?
-                                    .object_props
-                                    .id_string()?,
-                                actor_id.as_ref(),
-                                conn,
-                            );
+                    } else {
+                        let link = act.undo_props.object.as_str().expect("Inbox::received: undo don't contain type and isn't Link");
+                        if let Some(like) = likes::Like::find_by_ap_url(conn, link) {
+                            like.delete(conn);
                             Ok(())
-                        }
-                        "Follow" => {
-                            Follow::delete_id(
-                                &act.undo_props
-                                    .object_object::<FollowAct>()?
-                                    .object_props
-                                    .id_string()?,
-                                actor_id.as_ref(),
-                                conn,
-                            );
+                        } else if let Some(reshare) = Reshare::find_by_ap_url(conn, link) {
+                            reshare.delete(conn);
                             Ok(())
+                        } else if let Some(follow) = Follow::find_by_ap_url(conn, link) {
+                            follow.delete(conn);
+                            Ok(())
+                        } else {
+                            Err(InboxError::NoType)?
                         }
-                        _ => Err(InboxError::CantUndo)?,
                     }
                 }
                 "Update" => {

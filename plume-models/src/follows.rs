@@ -58,13 +58,13 @@ impl Follow {
             .set_actor_link::<Id>(user.clone().into_id())
             .expect("Follow::to_activity: actor error");
         act.follow_props
-            .set_object_object(user.to_activity(&*conn))
+            .set_object_link::<Id>(target.clone().into_id())
             .expect("Follow::to_activity: object error");
         act.object_props
             .set_id_string(self.ap_url.clone())
             .expect("Follow::to_activity: id error");
         act.object_props
-            .set_to_link(target.clone().into_id())
+            .set_to_link(target.into_id())
             .expect("Follow::to_activity: target error");
         act.object_props
             .set_cc_link_vec::<Id>(vec![])
@@ -197,7 +197,7 @@ impl Deletable<Connection, Undo> for Follow {
             .set_id_string(format!("{}/undo", self.ap_url))
             .expect("Follow::delete: id error");
         undo.undo_props
-            .set_object_object(self.to_activity(conn))
+            .set_object_link::<Id>(self.clone().into_id())
             .expect("Follow::delete: object error");
         undo
     }
@@ -210,5 +210,11 @@ impl Deletable<Connection, Undo> for Follow {
                 }
             }
         }
+    }
+}
+
+impl IntoId for Follow {
+    fn into_id(self) -> Id {
+        Id::new(self.ap_url)
     }
 }
