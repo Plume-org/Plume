@@ -285,12 +285,11 @@ impl<'a> Deletable<Connection, Delete> for Comment {
             .expect("Comment::delete: DB error could not update other comments");
         diesel::delete(self)
             .execute(conn)
-            .expect("Post::delete: DB error");
+            .expect("Comment::delete: DB error");
         act
     }
 
     fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
-        println!("Deleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\nDeleting comment\n");
         let actor = User::find_by_ap_url(conn, actor_id);
         let comment = Comment::find_by_ap_url(conn, id);
         if let Some(comment) = comment.filter(|c| c.author_id == actor.unwrap().id) {
