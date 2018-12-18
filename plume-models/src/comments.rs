@@ -28,6 +28,7 @@ pub struct Comment {
     pub ap_url: Option<String>,
     pub sensitive: bool,
     pub spoiler_text: String,
+    pub public_visibility: bool,
 }
 
 #[derive(Insertable, Default)]
@@ -40,6 +41,7 @@ pub struct NewComment {
     pub ap_url: Option<String>,
     pub sensitive: bool,
     pub spoiler_text: String,
+    pub public_visibility: bool,
 }
 
 impl Comment {
@@ -179,12 +181,25 @@ impl FromActivity<Note, Connection> for Comment {
         let previous_url = note
             .object_props
             .in_reply_to
-            .clone()
+            .as_ref()
             .expect("Comment::from_activity: not an answer error");
         let previous_url = previous_url
             .as_str()
             .expect("Comment::from_activity: in_reply_to parsing error");
         let previous_comment = Comment::find_by_ap_url(conn, previous_url);
+        let public_visibility = note.object_props.to.as_ref().map(|to| to.as_array()
+                .ok_or_else(|| note.object_props.to.as_ref().unwrap().as_str())
+                .map(|v| v.iter().any(|to| to.as_str().map(|to| to==PUBLIC_VISIBILTY).unwrap_or(false)))
+                .unwrap_or_else(|to| to.map(|to| to==PUBLIC_VISIBILTY).unwrap_or(false))
+                ).unwrap_or(false);
+
+        let public_visibility = public_visibility || note.object_props.cc.as_ref().map(|to| to.as_array()
+                .ok_or_else(|| note.object_props.cc.as_ref().unwrap().as_str())
+                .map(|v| v.iter().any(|to| to.as_str().map(|to| to==PUBLIC_VISIBILTY).unwrap_or(false)))
+                .unwrap_or_else(|to| to.map(|to| to==PUBLIC_VISIBILTY).unwrap_or(false))
+                ).unwrap_or(false);
+
+
 
         let comm = Comment::insert(
             conn,
@@ -210,6 +225,7 @@ impl FromActivity<Note, Connection> for Comment {
                     .expect("Comment::from_activity: author error")
                     .id,
                 sensitive: false, // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
+                public_visibility
             },
         );
 

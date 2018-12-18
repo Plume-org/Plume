@@ -43,7 +43,8 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 author_id: user.id,
                 ap_url: None,
                 sensitive: !form.warning.is_empty(),
-                spoiler_text: form.warning.clone()
+                spoiler_text: form.warning.clone(),
+                public_visibility: true
             }).update_ap_url(&*conn);
             let new_comment = comm.create_activity(&*conn);
 
