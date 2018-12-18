@@ -26,7 +26,7 @@ use rocket::{
     request::{self, FromRequest, Request},
 };
 use serde_json;
-use std::cmp::PartialEq;
+use std::{cmp::PartialEq, hash::{Hash, Hasher}};
 use url::Url;
 use webfinger::*;
 
@@ -900,6 +900,7 @@ impl IntoId for User {
     }
 }
 
+impl Eq for User {}
 impl Object for User {}
 impl Actor for User {}
 
@@ -953,6 +954,12 @@ impl Signer for User {
 impl PartialEq for User {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
+    }
+}
+
+impl Hash for User {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
     }
 }
 

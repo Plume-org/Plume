@@ -5,7 +5,7 @@
 
 @(ctx: BaseContext, comm: &Comment, author: User, in_reply_to: Option<&str>)
 
-@if comm.public_visibility {
+@if ctx.2.as_ref().map(|u| comm.can_see(ctx.0 ,u)).unwrap_or(comm.public_visibility) {
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <a class="author u-author h-card" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
@@ -29,10 +29,18 @@
         }
     </div>
     <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
-} else {
-<div class="comment">
-}
     @for res in comm.get_responses(ctx.0) {
         @:comment(ctx, &res, res.get_author(ctx.0), comm.ap_url.as_ref().map(|u| &**u))
     }
 </div>
+} else {
+    @if let Some(responses) = Some(comm.get_responses(ctx.0)) {
+        @if !responses.is_empty() {
+<div class="comment">
+    @for res in comm.get_responses(ctx.0) {
+        @:comment(ctx, &res, res.get_author(ctx.0), comm.ap_url.as_ref().map(|u| &**u))
+    }
+</div>
+        }
+    }
+}
