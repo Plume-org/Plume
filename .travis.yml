@@ -43,7 +43,7 @@ jobs:
       before_script: psql -c 'create database plume_tests;' -U postgres
       script:
         - |
-            cargo test --features "${FEATURES}" --no-default-features  --all --release &&
+            cargo test --features "${FEATURES}" --no-default-features  --all &&
             ./script/compute_coverage.sh
     - stage: test and coverage
       name: "Test with Sqlite backend"
@@ -52,5 +52,5 @@ jobs:
         - RUSTFLAGS='-C link-dead-code' RUST_TEST_THREADS=1
       script:
         - |
-            cargo test --features "${FEATURES}" --no-default-features --all --release &&
+            cargo test --features "${FEATURES}" --no-default-features --all &&
             ./script/compute_coverage.sh
