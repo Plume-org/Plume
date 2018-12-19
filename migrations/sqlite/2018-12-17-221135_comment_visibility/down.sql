@@ -11,7 +11,17 @@ CREATE TABLE comments2 (
     spoiler_text TEXT NOT NULL DEFAULT ''
 );
 
-INSERT INTO comments2 SELECT id,content,in_response_to_id,post_id,author_id,creation_date,ap_url,sensitive,spoiler_text FROM comments;
+INSERT INTO comments2 SELECT
+        id,
+        content,
+        in_response_to_id,
+        post_id,
+        author_id,
+        creation_date,
+        ap_url,
+        sensitive,
+        spoiler_text
+    FROM comments;
 DROP TABLE comments;
 ALTER TABLE comments2 RENAME TO comments;
 
