@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-11-01 12:14+0100\n"
+"PO-Revision-Date: 2018-12-20 13:47+0100\n"
 "Last-Translator: Marcin Mikołajczak <me@m4sk.in>\n"
 "Language-Team: none\n"
 "Language: pl\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2\n"
 
 msgid "Latest articles"
 msgstr "Najnowsze artykuły"
@@ -64,13 +64,13 @@ msgid "Let&#x27;s go!"
 msgstr "Przejdźmy dalej!"
 
 msgid "Welcome to {0}"
-msgstr ""
+msgstr "Witamy na {0}"
 
 msgid "Notifications"
 msgstr "Powiadomienia"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Napisany przez {0}"
 
 msgid "This article is under the {0} license."
 msgstr "Ten artykuł został opublikowany na licencji {0}."
@@ -153,7 +153,7 @@ msgid "Edit your profile"
 msgstr "Edytuj swój profil"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Otwórz w {0}"
 
 msgid "Follow"
 msgstr "Obserwuj"
@@ -188,9 +188,8 @@ msgstr "Opis"
 msgid "Update account"
 msgstr "Aktualizuj konto"
 
-#, fuzzy
 msgid "{0}'s followers"
-msgstr "Jeden obserwujący"
+msgstr "Obserwujący {0}"
 
 msgid "Followers"
 msgstr "Śledzący"
@@ -259,7 +258,7 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Musisz się zalogować , aby móc edytować swój profil"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Od {0}"
 
 msgid "{0} boosted your article"
 msgstr "{0} podbił(a) Twój artykuł"
@@ -407,16 +406,16 @@ msgid "Create your account"
 msgstr "Utwórz konto"
 
 msgid "About {0}"
-msgstr ""
+msgstr "O {0}"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "Używana przez <em>{0}</em> użytkowników"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "Którzy napisali <em>{0}</em> artykułów"
 
 msgid "And connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "Połączona z <em>{0}</em> innych instancji"
 
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
@@ -526,9 +525,8 @@ msgstr "Artykuły oznaczone „{0}”"
 msgid "Edit"
 msgstr "Edytuj"
 
-#, fuzzy
 msgid "Edit {0}"
-msgstr "Edytuj"
+msgstr "Edytuj {0}"
 
 msgid "Update"
 msgstr "Aktualizuj"
@@ -548,9 +546,8 @@ msgstr ""
 "włączone pliki cookies i spróbuj odświeżyć stronę. Jeżeli wciąż widzisz tę "
 "wiadomość, zgłoś to."
 
-#, fuzzy
 msgid "Administration of {0}"
-msgstr "Administracja"
+msgstr "Administracja {0}"
 
 msgid "Instances"
 msgstr "Instancje"
@@ -609,12 +606,11 @@ msgstr "Ilustracja"
 msgid "None"
 msgstr "Brak"
 
-#, fuzzy
 msgid "Let it empty reserve all rights"
-msgstr "Pozostaw puste, jeżeli niepotrzebne"
+msgstr "Pozostawienie pustego jest równe zastrzeżeniu wszystkich praw"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Wszelkie prawa zastrzeżone"
 
 #~ msgid "Home to"
 #~ msgstr "Dom dla"
