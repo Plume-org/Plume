@@ -1,0 +1,344 @@
+html, body {
+ 	margin: 0;
+ 	padding: 0;
+ 	background: $background;
+ 	color: $black;
+ 	font-family: $route159;
+}
+
+a, a:visited {
+ 	color: $purple;
+ 	text-decoration: none;
+}
+
+small {
+ 	margin-left: 1em;
+ 	color: transparentize($black, 0.6);
+ 	font-size: 0.75em;
+ 	word-wrap: break-word;
+ 	word-break: break-all;
+}
+
+.center {
+ 	text-align: center;
+ 	font-weight: bold;
+ 	opacity: 0.6;
+ 	padding: 5em;
+}
+
+.spaced {
+ 	margin: 4rem 0;
+}
+
+.cards.spaced {
+  margin: 1rem 0 5rem;
+}
+
+.banner {
+ 	background: $gray;
+ 	padding-top: 2em;
+ 	padding-bottom: 1em;
+ 	margin: 3em 0px;
+}
+
+.hidden {
+	display: none;
+}
+
+/// Main
+body > main > *, .h-feed > * {
+ 	padding: 0 20%;
+}
+
+body > main > .h-entry, .h-feed {
+	padding: 0;
+}
+
+main {
+  h1 {
+    font-family: $route159;
+    font-size: 2.5em;
+    font-weight: 300;
+
+    &.article {
+      max-width: 40rem;
+     	margin: 1em auto 0.5em;
+     	font-family: $playfair;
+     	font-size: 2.5em;
+     	font-weight: normal;
+    }
+  }
+
+  h2 {
+    font-family: $route159;
+   	font-size: 1.75em;
+   	font-weight: 300;
+
+   	&.article {
+      max-width: 40rem;
+      margin: auto;
+      font-size: 1.25em;
+      margin-bottom: 0.5em;
+    }
+  }
+
+  .cover {
+    padding: 0px;
+    margin: 0px;
+    width: auto;
+    min-height: 50vh;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+  }
+}
+
+/// Errors
+p.error {
+ 	color: $red;
+ 	font-weight: bold;
+ 	max-width: 40rem;
+ 	margin: 1em auto;
+}
+
+/// User page
+.user h1 {
+ 	display: flex;
+ 	flex-direction: row;
+ 	align-items: center;
+  margin: 0px;
+}
+
+.badge {
+ 	margin-right: 1em;
+ 	padding: 0.35em 1em;
+
+ 	background: $white;
+ 	color: $purple;
+ 	border: 1px solid $purple;
+ 	border-radius: 1em;
+
+ 	font-size: 1rem;
+}
+
+.user-summary {
+   margin: 2em 0px;
+}
+
+/// Cards
+.cards {
+ 	display: flex;
+ 	flex-direction: row;
+ 	flex-wrap: wrap;
+ 	padding: 0 5%;
+}
+.card {
+ 	flex: 1;
+ 	display: flex;
+ 	flex-direction: column;
+
+ 	min-width: 20em;
+ 	min-height: 20em;
+ 	margin: 1em;
+ 	box-sizing: border-box;
+
+ 	background: $gray;
+
+ 	text-overflow: ellipsis;
+
+ 	> * {
+ 	  margin: 20px;
+ 	}
+
+ 	.cover {
+    min-height: 10em;
+    background-position: center;
+    background-size: cover;
+    margin: 0px;
+  }
+
+  h3 {
+   	margin: 0.75em 20px;
+   	font-family: $playfair;
+   	font-size: 1.75em;
+   	font-weight: normal;
+   	a {
+   	  transition: color 0.1s ease-in;
+   	  color: $black;
+
+   	  &:hover { color: $purple; }
+   	}
+  }
+
+  main {
+   	flex: 1;
+
+   	font-family: $lora;
+   	font-size: 1em;
+   	line-height: 1.25em;
+   	text-align: left;
+   	overflow: hidden;
+  }
+}
+.list .card {
+ 	/* TODO */
+ 	background: 0;
+ 	margin: 2em 0;
+ 	padding: 0;
+ 	min-height: 0;
+}
+
+/// Instance presentation
+.presentation > h2, .presentation > a {
+ 	text-align: center;
+}
+.presentation > a {
+ 	font-size: 1.2em;
+ 	margin: 1em;
+}
+
+//  Stats
+.stats {
+ 	display: flex;
+ 	justify-content: space-around;
+ 	margin: 2em;
+
+ 	> div {
+   	display: flex;
+   	flex-direction: column;
+   	justify-content: center;
+   	align-items: center;
+  }
+
+  p {
+    text-align: center;
+  }
+
+  em {
+    font-weight: bold;
+    display: block;
+    margin: 1em 0;
+  }
+}
+
+/// Pagination
+.pagination {
+  display: flex;
+  justify-content: space-evenly;
+
+  > * {
+    padding: 2em;
+  }
+}
+
+/// Flex boxes
+.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  &.vertical {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+
+    small {
+      margin: initial;
+    }
+  }
+
+  .grow {
+    flex: 1;
+  }
+}
+
+.left-icon {
+    align-self: center;
+    padding: 1em;
+    background: $lightgray;
+    border-radius: 50px;
+    margin: 1em;
+    margin-right: 2em;
+}
+
+/// Footer
+body > footer {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  background: $lightgray;
+  padding: 0 20%;
+  margin-top: 5em;
+
+  * {
+    margin: 5em 0;
+  }
+}
+
+/// Media
+figure {
+  text-align: center;
+  margin: 2em;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+
+  > * {
+    max-width: 100%;
+  }
+
+  figcaption {
+    padding: 1em;
+  }
+}
+
+.preview {
+  display: block;
+  max-width: 100px;
+  max-height: 100px;
+  width: auto;
+  height: auto;
+  margin-right: 20px;
+}
+
+/// Avatars
+.avatar {
+  background-position: center;
+  background-size: cover;
+  border-radius: 100%;
+
+  &.small {
+    width: 50px;
+    height: 50px;
+  }
+
+  &.medium {
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+  }
+
+  &.padded {
+    margin-right: 2rem;
+  }
+}
+
+/// Tabs
+.tabs {
+  border-bottom: 1px solid $lightgray;
+  padding: 0px;
+  margin: auto 20% 2em;
+  overflow: auto;
+  display: flex;
+
+  a {
+    display: inline-block;
+    color: $black;
+    padding: 1em;
+
+    &.selected {
+      color: $purple;
+      border-bottom: 1px solid $purple;
+    }
+  }
+}

@@ -30,16 +30,13 @@ use std::cmp::PartialEq;
 use url::Url;
 use webfinger::*;
 
-use blog_authors::BlogAuthor;
 use blogs::Blog;
 use db_conn::DbConn;
 use follows::Follow;
 use instance::*;
-use likes::Like;
 use medias::Media;
 use post_authors::PostAuthor;
 use posts::Post;
-use reshares::Reshare;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
@@ -111,7 +108,7 @@ impl User {
 
         Blog::find_for_author(conn, self)
             .iter()
-            .filter(|b| b.list_authors(conn).len() <= 1)
+            .filter(|b| b.count_authors(conn) <= 1)
             .for_each(|b| b.delete(conn, searcher));
         // delete the posts if they is the only author
         let all_their_posts_ids: Vec<i32> = post_authors::table
@@ -170,12 +167,12 @@ impl User {
         User::get(conn, self.id).expect("User::update: get error")
     }
 
-    pub fn count_local(conn: &Connection) -> usize {
+    pub fn count_local(conn: &Connection) -> i64 {
         users::table
             .filter(users::instance_id.eq(Instance::local_id(conn)))
-            .load::<User>(conn)
+            .count()
+            .get_result(conn)
             .expect("User::count_local: loading error")
-            .len() // TODO count in database?
     }
 
     pub fn find_local(conn: &Connection, username: &str) -> Option<User> {
@@ -641,6 +638,16 @@ impl User {
             .expect("User::get_followers: loading error")
     }
 
+    pub fn count_followers(&self, conn: &Connection) -> i64 {
+        use schema::follows;
+        let follows = Follow::belonging_to(self).select(follows::follower_id);
+        users::table
+            .filter(users::id.eq_any(follows))
+            .count()
+            .get_result(conn)
+            .expect("User::count_followers: counting error")
+    }
+
     pub fn get_followers_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
@@ -663,52 +670,52 @@ impl User {
 
     pub fn is_followed_by(&self, conn: &Connection, other_id: i32) -> bool {
         use schema::follows;
-        !follows::table
+        follows::table
             .filter(follows::follower_id.eq(other_id))
             .filter(follows::following_id.eq(self.id))
-            .load::<Follow>(conn)
-            .expect("User::is_followed_by: loading error")
-            .is_empty() // TODO count in database?
+            .count()
+            .get_result::<i64>(conn)
+            .expect("User::is_followed_by: loading error") > 0
     }
 
     pub fn is_following(&self, conn: &Connection, other_id: i32) -> bool {
         use schema::follows;
-        !follows::table
+        follows::table
             .filter(follows::follower_id.eq(self.id))
             .filter(follows::following_id.eq(other_id))
-            .load::<Follow>(conn)
-            .expect("User::is_following: loading error")
-            .is_empty() // TODO count in database?
+            .count()
+            .get_result::<i64>(conn)
+            .expect("User::is_following: loading error") > 0
     }
 
     pub fn has_liked(&self, conn: &Connection, post: &Post) -> bool {
         use schema::likes;
-        !likes::table
+        likes::table
             .filter(likes::post_id.eq(post.id))
             .filter(likes::user_id.eq(self.id))
-            .load::<Like>(conn)
-            .expect("User::has_liked: loading error")
-            .is_empty() // TODO count in database?
+            .count()
+            .get_result::<i64>(conn)
+            .expect("User::has_liked: loading error") > 0
     }
 
     pub fn has_reshared(&self, conn: &Connection, post: &Post) -> bool {
         use schema::reshares;
-        !reshares::table
+        reshares::table
             .filter(reshares::post_id.eq(post.id))
             .filter(reshares::user_id.eq(self.id))
-            .load::<Reshare>(conn)
-            .expect("User::has_reshared: loading error")
-            .is_empty() // TODO count in database?
+            .count()
+            .get_result::<i64>(conn)
+            .expect("User::has_reshared: loading error") > 0
     }
 
     pub fn is_author_in(&self, conn: &Connection, blog: &Blog) -> bool {
         use schema::blog_authors;
-        !blog_authors::table
+        blog_authors::table
             .filter(blog_authors::author_id.eq(self.id))
             .filter(blog_authors::blog_id.eq(blog.id))
-            .load::<BlogAuthor>(conn)
-            .expect("User::is_author_in: loading error")
-            .is_empty() // TODO count in database?
+            .count()
+            .get_result::<i64>(conn)
+            .expect("User::is_author_in: loading error") > 0
     }
 
     pub fn get_keypair(&self) -> PKey<Private> {
@@ -1173,7 +1180,7 @@ pub(crate) mod tests {
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(conn, (0, User::count_local(conn) as i32 + 10)).len(),
+                User::get_local_page(conn, (0, User::count_local(conn) as i32 + 10)).len() as i64,
                 User::count_local(conn)
             );
 

@@ -182,7 +182,7 @@ When in doubt, run them.
 Then, you'll need to install Plume and the CLI tools to manage your instance.
 
 ```
-cargo install --no-default-features --features $FEATURES
+cargo install --no-default-features --features $FEATURES --path ./
 cargo install --no-default-features --features $FEATURES --path plume-cli
 ```
 

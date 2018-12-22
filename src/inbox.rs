@@ -11,11 +11,21 @@ use activitypub::{
     object::Tombstone
 };
 use failure::Error;
+use rocket::{
+    data::*,
+    http::Status,
+    Outcome::{self, *},
+    Request,
+};
+use rocket_contrib::json::*;
+use serde::Deserialize;
 use serde_json;
+
+use std::io::Read;
 
 use plume_common::activity_pub::{
     inbox::{Deletable, FromActivity, InboxError, Notify},
-    Id,
+    Id,request::Digest,
 };
 use plume_models::{
     comments::Comment, follows::Follow, instance::Instance, likes, posts::Post, reshares::Reshare,
@@ -138,3 +148,36 @@ pub trait Inbox {
 
 impl Inbox for Instance {}
 impl Inbox for User {}
+
+const JSON_LIMIT: u64 = 1 << 20;
+
+pub struct SignedJson<T>(pub Digest, pub Json<T>);
+
+impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
+    type Error = JsonError<'a>;
+    type Owned = String;
+    type Borrowed = str;
+
+    fn transform(r: &Request, d: Data) -> Transform<Outcome<Self::Owned, (Status, Self::Error), Data>> {
+        let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
+        let mut s = String::with_capacity(512);
+        match d.open().take(size_limit).read_to_string(&mut s) {
+            Ok(_) => Transform::Borrowed(Success(s)),
+            Err(e) => Transform::Borrowed(Failure((Status::BadRequest, JsonError::Io(e))))
+        }
+    }
+
+    fn from_data(_: &Request, o: Transformed<'a, Self>) -> Outcome<Self, (Status, Self::Error), Data> {
+        let string = o.borrowed()?;
+        match serde_json::from_str(&string) {
+            Ok(v) => Success(SignedJson(Digest::from_body(&string),Json(v))),
+            Err(e) => {
+                if e.is_data() {
+                    Failure((Status::UnprocessableEntity, JsonError::Parse(string, e)))
+                } else {
+                    Failure((Status::BadRequest, JsonError::Parse(string, e)))
+                }
+            }
+        }
+    }
+}

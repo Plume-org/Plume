@@ -16,3 +16,4 @@ docker-compose.yml
 tags.*
 !tags.rs
 search_index
+main.css

@@ -1,4 +1,4 @@
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use diesel::{dsl::sql_query, r2d2::{ConnectionManager, CustomizeConnection, Error as ConnError, Pool, PooledConnection}, ConnectionError, RunQueryDsl};
 use rocket::{
     http::Status,
     request::{self, FromRequest},
@@ -36,5 +36,17 @@ impl Deref for DbConn {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+// Execute a pragma for every new sqlite connection
+#[derive(Debug)]
+pub struct PragmaForeignKey;
+impl CustomizeConnection<Connection, ConnError> for PragmaForeignKey {
+    #[cfg(feature = "sqlite")] // will default to an empty function for postgres
+    fn on_acquire(&self, conn: &mut Connection) -> Result<(), ConnError> {
+        sql_query("PRAGMA foreign_keys = on;").execute(conn)
+            .map(|_| ())
+            .map_err(|_| ConnError::ConnectionError(ConnectionError::BadConnection(String::from("PRAGMA foreign_keys = on failed"))))
     }
 }

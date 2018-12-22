@@ -115,7 +115,6 @@ table! {
         mentioned_id -> Int4,
         post_id -> Nullable<Int4>,
         comment_id -> Nullable<Int4>,
-        ap_url -> Varchar,
     }
 }
 
