@@ -129,7 +129,7 @@ impl SignatureValidity {
 pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     sender: &S,
     all_headers: &HeaderMap,
-    data: &str,
+    data: &request::Digest,
 ) -> SignatureValidity {
     let sig_header = all_headers.get_one("Signature");
     if sig_header.is_none() {
@@ -176,7 +176,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     }
     let digest = all_headers.get_one("digest").unwrap_or("");
     let digest = request::Digest::from_header(digest);
-    if !digest.map(|d| d.verify(&data)).unwrap_or(false) {
+    if !digest.map(|d| d.verify_header(&data)).unwrap_or(false) {
         // signature was valid, but body content does not match its digest
         return SignatureValidity::Invalid;
     }

@@ -9,7 +9,7 @@ use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use inbox::Inbox;
+use inbox::{Inbox, SignedJson};
 use plume_common::activity_pub::{
     broadcast,
     inbox::{Deletable, FromActivity, Notify},
@@ -349,13 +349,12 @@ pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollec
 pub fn inbox(
     name: String,
     conn: DbConn,
-    data: String,
+    data: SignedJson<serde_json::Value>,
     headers: Headers,
     searcher: Searcher,
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
     let user = User::find_local(&*conn, &name).ok_or(None)?;
-    let act: serde_json::Value =
-        serde_json::from_str(&data).expect("user::inbox: deserialization error");
+    let act = data.1.into_inner();
 
     let activity = act.clone();
     let actor_id = activity["actor"]
@@ -366,7 +365,7 @@ pub fn inbox(
         ))))?;
 
     let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &data).is_secure()
+    if !verify_http_headers(&actor, &headers.0, &data.0).is_secure()
         && !act.clone().verify(&actor)
     {
         println!(

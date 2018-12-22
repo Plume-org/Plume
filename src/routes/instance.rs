@@ -16,7 +16,7 @@ use plume_models::{
     safe_string::SafeString,
     instance::*
 };
-use inbox::Inbox;
+use inbox::{Inbox, SignedJson};
 use routes::Page;
 use template_utils::Ructe;
 use Searcher;
@@ -186,15 +186,15 @@ pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Redirect
 }
 
 #[post("/inbox", data = "<data>")]
-pub fn shared_inbox(conn: DbConn, data: String, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
-    let act: serde_json::Value = serde_json::from_str(&data[..]).expect("instance::shared_inbox: deserialization error");
+pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
+    let act = data.1.into_inner();
 
     let activity = act.clone();
     let actor_id = activity["actor"].as_str()
         .or_else(|| activity["actor"]["id"].as_str()).ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
     let actor = User::from_url(&conn, actor_id).expect("instance::shared_inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &data).is_secure() &&
+    if !verify_http_headers(&actor, &headers.0, &data.0).is_secure() &&
         !act.clone().verify(&actor) {
         println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
         return Err(status::BadRequest(Some("Invalid signature")));
