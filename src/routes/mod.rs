@@ -90,3 +90,8 @@ pub mod well_known;
 pub fn static_files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
 }
+
+#[get("/plume-front.wasm")]
+pub fn wasm_front(_prefix: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("static/plume-front.wasm")).ok()
+}
