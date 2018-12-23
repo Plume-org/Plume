@@ -18,12 +18,7 @@ pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Work
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.has_liked(&*conn, &post) {
-        let like = likes::Like::insert(&*conn, likes::NewLike {
-            post_id: post.id,
-            user_id: user.id,
-            ap_url: "".to_string()
-        });
-        like.update_ap_url(&*conn);
+        let like = likes::Like::insert(&*conn, likes::NewLike::new(&post ,&user));
         like.notify(&*conn);
 
         let dest = User::one_by_instance(&*conn);
