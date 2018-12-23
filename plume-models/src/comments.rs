@@ -100,7 +100,6 @@ impl Comment {
             user.as_ref().map(|u| CommentSeers::can_see(conn, self, u)).unwrap_or(false)
     }
 
-
     pub fn to_activity(&self, conn: &Connection) -> Note {
         let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref());
 
@@ -327,14 +326,14 @@ impl CommentTree {
         Comment::list_by_post(conn, p.id).into_iter()
             .filter(|c| c.in_response_to_id.is_none())
             .filter(|c| c.can_see(conn, user))
-            .map(|c| Self::from_comment(c, conn, user))
+            .map(|c| Self::from_comment(conn, c, user))
             .collect()
     }
 
-    pub fn from_comment(comment: Comment, conn: &Connection, user: Option<&User>) -> Self {
+    pub fn from_comment(conn: &Connection, comment: Comment, user: Option<&User>) -> Self {
         let responses = comment.get_responses(conn).into_iter()
             .filter(|c| c.can_see(conn, user))
-            .map(|c| Self::from_comment(c, conn, user))
+            .map(|c| Self::from_comment(conn, c, user))
             .collect();
         CommentTree {
             comment,
