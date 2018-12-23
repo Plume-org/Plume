@@ -65,6 +65,14 @@ pub trait Inbox {
                         actor_id.as_ref(),
                         &(conn, searcher),
                     );
+                    Comment::delete_id(
+                        &act.delete_props
+                            .object_object::<Tombstone>()?
+                            .object_props
+                            .id_string()?,
+                        actor_id.as_ref(),
+                        conn,
+                    );
                     Ok(())
                 }
                 "Follow" => {

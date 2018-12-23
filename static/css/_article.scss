@@ -202,17 +202,18 @@ main .article-meta {
     }
 
     // New comment form
-    form input[type="submit"] {
+    > form input[type="submit"] {
       font-size: 1em;
     }
 
-    // Response button
-    a.button {
+    // Response/delete buttons
+    a.button, form.inline, form.inline input {
      	display: inline-block;
      	padding: 0;
      	background: none;
      	color: $black;
      	border: none;
+     	margin-right: 2em;
 
      	&::before {
      	  color: $purple;
