@@ -3,14 +3,14 @@
 @use plume_models::users::User;
 @use routes::*;
 
-@(ctx: BaseContext, comm: &Comment, author: User, in_reply_to: Option<&str>)
+@(ctx: BaseContext, comm: &Comment, author: User, in_reply_to: Option<&str>, blog: &str, slug: &str)
 
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <a class="author u-author h-card" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
         <span class="display-name p-name">@author.name(ctx.0)</span>
         <small>@author.get_fqn(ctx.0)</small>
-    </a>
+	    </a>
     @if let Some(ref ap_url) = comm.ap_url {
         <a class="u-url" href="@ap_url"></a>
     }
@@ -28,7 +28,12 @@
         }
     </div>
     <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
+    @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
+        <form class="inline icon icon-trash" method="post" action="@uri!(comments::delete: blog = blog, slug = slug, id = comm.id)">
+            <input onclick="return confirm('Are you sure you?')" type="submit" value="@i18n!(ctx.1, "Delete this comment")">
+	    </form>
+    }
     @for res in comm.get_responses(ctx.0) {
-        @:comment(ctx, &res, res.get_author(ctx.0), comm.ap_url.as_ref().map(|u| &**u))
+        @:comment(ctx, &res, res.get_author(ctx.0), comm.ap_url.as_ref().map(|u| &**u), blog, slug)
     }
 </div>

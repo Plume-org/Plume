@@ -35,19 +35,6 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn update_ap_url(&self, conn: &Connection) {
-        if self.ap_url.is_empty() {
-            diesel::update(self)
-                .set(likes::ap_url.eq(format!(
-                    "{}/like/{}",
-                    User::get(conn, self.user_id).expect("Like::update_ap_url: user error").ap_url,
-                    Post::get(conn, self.post_id).expect("Like::update_ap_url: post error").ap_url
-                )))
-                .execute(conn)
-                .expect("Like::update_ap_url: update error");
-        }
-    }
-
     pub fn to_activity(&self, conn: &Connection) -> activity::Like {
         let mut act = activity::Like::default();
         act.like_props
@@ -167,6 +154,17 @@ impl Deletable<Connection, activity::Undo> for Like {
                     like.delete(conn);
                 }
             }
+        }
+    }
+}
+
+impl NewLike {
+    pub fn new(p: &Post, u: &User) -> Self {
+        let ap_url = format!("{}/like/{}", u.ap_url, p.ap_url);
+        NewLike {
+            post_id: p.id,
+            user_id: u.id,
+            ap_url
         }
     }
 }

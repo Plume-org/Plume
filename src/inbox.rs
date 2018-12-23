@@ -24,7 +24,7 @@ use serde_json;
 use std::io::Read;
 
 use plume_common::activity_pub::{
-    inbox::{Deletable, FromActivity, InboxError},
+    inbox::{Deletable, FromActivity, InboxError, Notify},
     Id,request::Digest,
 };
 use plume_models::{
@@ -65,10 +65,18 @@ pub trait Inbox {
                         actor_id.as_ref(),
                         &(conn, searcher),
                     );
+                    Comment::delete_id(
+                        &act.delete_props
+                            .object_object::<Tombstone>()?
+                            .object_props
+                            .id_string()?,
+                        actor_id.as_ref(),
+                        conn,
+                    );
                     Ok(())
                 }
                 "Follow" => {
-                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id);
+                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id).notify(conn);
                     Ok(())
                 }
                 "Like" => {
@@ -81,44 +89,57 @@ pub trait Inbox {
                 }
                 "Undo" => {
                     let act: Undo = serde_json::from_value(act.clone())?;
-                    match act.undo_props.object["type"]
-                        .as_str()
-                        .expect("Inbox::received: undo without original type error")
-                    {
-                        "Like" => {
-                            likes::Like::delete_id(
-                                &act.undo_props
-                                    .object_object::<Like>()?
-                                    .object_props
-                                    .id_string()?,
-                                actor_id.as_ref(),
-                                conn,
-                            );
-                            Ok(())
+                    if let Some(t) = act.undo_props.object["type"].as_str() {
+                        match t {
+                            "Like" => {
+                                likes::Like::delete_id(
+                                    &act.undo_props
+                                        .object_object::<Like>()?
+                                        .object_props
+                                        .id_string()?,
+                                    actor_id.as_ref(),
+                                    conn,
+                                );
+                                Ok(())
+                            }
+                            "Announce" => {
+                                Reshare::delete_id(
+                                    &act.undo_props
+                                        .object_object::<Announce>()?
+                                        .object_props
+                                        .id_string()?,
+                                    actor_id.as_ref(),
+                                    conn,
+                                );
+                                Ok(())
+                            }
+                            "Follow" => {
+                                Follow::delete_id(
+                                    &act.undo_props
+                                        .object_object::<FollowAct>()?
+                                        .object_props
+                                        .id_string()?,
+                                    actor_id.as_ref(),
+                                    conn,
+                                );
+                                Ok(())
+                            }
+                            _ => Err(InboxError::CantUndo)?,
                         }
-                        "Announce" => {
-                            Reshare::delete_id(
-                                &act.undo_props
-                                    .object_object::<Announce>()?
-                                    .object_props
-                                    .id_string()?,
-                                actor_id.as_ref(),
-                                conn,
-                            );
+                    } else {
+                        let link = act.undo_props.object.as_str().expect("Inbox::received: undo don't contain type and isn't Link");
+                        if let Some(like) = likes::Like::find_by_ap_url(conn, link) {
+                            likes::Like::delete_id(&like.ap_url, actor_id.as_ref(), conn);
                             Ok(())
-                        }
-                        "Follow" => {
-                            Follow::delete_id(
-                                &act.undo_props
-                                    .object_object::<FollowAct>()?
-                                    .object_props
-                                    .id_string()?,
-                                actor_id.as_ref(),
-                                conn,
-                            );
+                        } else if let Some(reshare) = Reshare::find_by_ap_url(conn, link) {
+                            Reshare::delete_id(&reshare.ap_url, actor_id.as_ref(), conn);
                             Ok(())
+                        } else if let Some(follow) = Follow::find_by_ap_url(conn, link) {
+                            Follow::delete_id(&follow.ap_url, actor_id.as_ref(), conn);
+                            Ok(())
+                        } else {
+                            Err(InboxError::NoType)?
                         }
-                        _ => Err(InboxError::CantUndo)?,
                     }
                 }
                 "Update" => {

@@ -555,7 +555,7 @@ impl User {
                     serde_json::from_str(text).expect("User::fetch_outbox: parsing error");
                 json["items"]
                     .as_array()
-                    .expect("Outbox.items is not an array")
+                    .unwrap_or(&vec![])
                     .into_iter()
                     .filter_map(|j| serde_json::from_value(j.clone()).ok())
                     .collect::<Vec<T>>()
@@ -587,7 +587,7 @@ impl User {
                     serde_json::from_str(text).expect("User::fetch_followers_ids: parsing error");
                 json["items"]
                     .as_array()
-                    .expect("User::fetch_followers_ids: not an array error")
+                    .unwrap_or(&vec![])
                     .into_iter()
                     .filter_map(|j| serde_json::from_value(j.clone()).ok())
                     .collect::<Vec<String>>()

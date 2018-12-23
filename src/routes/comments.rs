@@ -7,11 +7,13 @@ use rocket_i18n::I18n;
 use validator::Validate;
 use template_utils::Ructe;
 
-use plume_common::{utils, activity_pub::{broadcast, ApRequest, ActivityStream}};
+use plume_common::{utils, activity_pub::{broadcast, ApRequest, 
+    ActivityStream, inbox::Deletable}};
 use plume_models::{
     blogs::Blog,
     comments::*,
     db_conn::DbConn,
+    instance::Instance,
     mentions::Mention,
     posts::Post,
     safe_string::SafeString,
@@ -35,7 +37,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     form.validate()
         .map(|_| {
-            let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref());
+            let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref(), &Instance::get_local(&conn).expect("comments::create: Error getting local instance").public_domain);
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),
                 in_response_to_id: form.responding_to,
@@ -64,7 +66,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
             let comments = Comment::list_by_post(&*conn, post.id);
 
             let previous = form.responding_to.map(|r| Comment::get(&*conn, r)
-                .expect("posts::details_reponse: Error retrieving previous comment"));
+                .expect("comments::create: Error retrieving previous comment"));
 
             Some(render!(posts::details(
                 &(&*conn, &intl.catalog, Some(user.clone())),
@@ -83,6 +85,18 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 post.get_authors(&*conn)[0].clone()
             )))
         })
+}
+
+#[post("/~/<blog>/<slug>/comment/<id>/delete")]
+pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, worker: Worker) -> Redirect {
+    if let Some(comment) = Comment::get(&*conn, id) {
+        if comment.author_id == user.id {
+            let dest = User::one_by_instance(&*conn);
+            let delete_activity = comment.delete(&*conn);
+            worker.execute(move || broadcast(&user, delete_activity, dest));
+        }
+    }
+    Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _))
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]

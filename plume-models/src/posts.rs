@@ -431,8 +431,8 @@ impl Post {
     }
 
     pub fn to_activity(&self, conn: &Connection) -> LicensedArticle {
-        let mut to = self.get_receivers_urls(conn);
-        to.push(PUBLIC_VISIBILTY.to_string());
+        let cc = self.get_receivers_urls(conn);
+        let to  = vec![PUBLIC_VISIBILTY.to_string()];
 
         let mut mentions_json = Mention::list_for_post(conn, self.id)
             .into_iter()
@@ -526,7 +526,7 @@ impl Post {
             .expect("Post::to_activity: to error");
         article
             .object_props
-            .set_cc_link_vec::<Id>(vec![])
+            .set_cc_link_vec::<Id>(cc.into_iter().map(Id::new).collect())
             .expect("Post::to_activity: cc error");
         let mut license = Licensed::default();
         license.set_license_string(self.license.clone()).expect("Post::to_activity: license error");
@@ -627,7 +627,7 @@ impl Post {
             post.license = license;
         }
 
-        let mut txt_hashtags = md_to_html(&post.source)
+        let mut txt_hashtags = md_to_html(&post.source, "")
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
@@ -889,7 +889,7 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
             }
 
             // save mentions and tags
-            let mut hashtags = md_to_html(&post.source)
+            let mut hashtags = md_to_html(&post.source, "")
                 .2
                 .into_iter()
                 .map(|s| s.to_camel_case())
