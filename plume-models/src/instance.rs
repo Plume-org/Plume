@@ -139,8 +139,8 @@ impl Instance {
         short_description: SafeString,
         long_description: SafeString,
     ) {
-        let (sd, _, _) = md_to_html(short_description.as_ref());
-        let (ld, _, _) = md_to_html(long_description.as_ref());
+        let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain);
+        let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain);
         diesel::update(self)
             .set((
                 instances::name.eq(name),

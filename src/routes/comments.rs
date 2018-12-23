@@ -12,6 +12,7 @@ use plume_models::{
     blogs::Blog,
     comments::*,
     db_conn::DbConn,
+    instance::Instance,
     mentions::Mention,
     posts::Post,
     safe_string::SafeString,
@@ -35,7 +36,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
     form.validate()
         .map(|_| {
-            let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref());
+            let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref(), &Instance::get_local(&conn).expect("comments::create: Error getting local instance").public_domain);
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),
                 in_response_to_id: form.responding_to,
@@ -64,7 +65,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
             let comments = Comment::list_by_post(&*conn, post.id);
 
             let previous = form.responding_to.map(|r| Comment::get(&*conn, r)
-                .expect("posts::details_reponse: Error retrieving previous comment"));
+                .expect("comments::create: Error retrieving previous comment"));
 
             Some(render!(posts::details(
                 &(&*conn, &intl.catalog, Some(user.clone())),
