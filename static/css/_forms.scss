@@ -72,6 +72,10 @@ form.inline {
 .button, input[type="submit"], button {
  	transition: all 0.1s ease-in;
  	display: inline-block;
+ @media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0)
+{ @media {
+    display: block;
+}}
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
@@ -79,7 +83,7 @@ form.inline {
 
  	background: transparent;
  	color: $purple;
- 	border: 1px auto $purple;
+ 	border: 1px solid $purple;
 
  	cursor: pointer;
 
