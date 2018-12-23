@@ -29,10 +29,9 @@
     </div>
     <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
     @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
-        &mdash;
-        <form class="inline" method="post" action="@uri!(comments::delete: blog = blog, slug = slug, id = comm.id)">
+        <form class="inline icon icon-trash" method="post" action="@uri!(comments::delete: blog = blog, slug = slug, id = comm.id)">
             <input onclick="return confirm('Are you sure you?')" type="submit" value="@i18n!(ctx.1, "Delete this comment")">
-	</form>
+	    </form>
     }
     @for res in comm.get_responses(ctx.0) {
         @:comment(ctx, &res, res.get_author(ctx.0), comm.ap_url.as_ref().map(|u| &**u), blog, slug)
