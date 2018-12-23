@@ -11,7 +11,7 @@ use plume_common::utils;
 use plume_models::{
     blogs::*,
     db_conn::DbConn,
-    comments::Comment,
+    comments::{Comment, CommentTree},
     instance::Instance,
     medias::Media,
     mentions::Mention,
@@ -31,7 +31,7 @@ pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, res
     let blog = Blog::find_by_fqn(&*conn, &blog).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
     if post.published || post.get_authors(&*conn).into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
-        let comments = Comment::list_by_post(&*conn, post.id);
+        let comments = CommentTree::from_post(&*conn, &post, user.as_ref());
 
         let previous = responding_to.map(|r| Comment::get(&*conn, r)
             .expect("posts::details_reponse: Error retrieving previous comment"));
@@ -64,7 +64,7 @@ pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, res
             },
             ValidationErrors::default(),
             Tag::for_post(&*conn, post.id),
-            comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),
+            comments,
             previous,
             post.count_likes(&*conn),
             post.count_reshares(&*conn),

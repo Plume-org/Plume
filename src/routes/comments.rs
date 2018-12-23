@@ -62,7 +62,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code
-            let comments = Comment::list_by_post(&*conn, post.id);
+            let comments = CommentTree::from_post(&*conn, &post, Some(&user));
 
             let previous = form.responding_to.map(|r| Comment::get(&*conn, r)
                 .expect("posts::details_reponse: Error retrieving previous comment"));
@@ -74,7 +74,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 &*form,
                 errors,
                 Tag::for_post(&*conn, post.id),
-                comments.into_iter().filter(|c| c.in_response_to_id.is_none()).collect::<Vec<Comment>>(),
+                comments,
                 previous,
                 post.count_likes(&*conn),
                 post.count_reshares(&*conn),

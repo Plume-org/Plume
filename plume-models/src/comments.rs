@@ -95,8 +95,9 @@ impl Comment {
         format!("{}comment/{}", self.get_post(conn).ap_url, self.id)
     }
 
-    pub fn can_see(&self, conn: &Connection, user: &User) -> bool {
-        self.public_visibility || CommentSeers::can_see(conn, self, user)
+    pub fn can_see(&self, conn: &Connection, user: Option<&User>) -> bool {
+        self.public_visibility ||
+            user.as_ref().map(|u| CommentSeers::can_see(conn, self, u)).unwrap_or(false)
     }
 
 
@@ -312,6 +313,32 @@ impl Notify<Connection> for Comment {
                     user_id: author.id,
                 },
             );
+        }
+    }
+}
+
+pub struct CommentTree {
+    pub comment: Comment,
+    pub responses: Vec<CommentTree>,
+}
+
+impl CommentTree {
+    pub fn from_post(conn: &Connection, p: &Post, user: Option<&User>) -> Vec<Self> {
+        Comment::list_by_post(conn, p.id).into_iter()
+            .filter(|c| c.in_response_to_id.is_none())
+            .filter(|c| c.can_see(conn, user))
+            .map(|c| Self::from_comment(c, conn, user))
+            .collect()
+    }
+
+    pub fn from_comment(comment: Comment, conn: &Connection, user: Option<&User>) -> Self {
+        let responses = comment.get_responses(conn).into_iter()
+            .filter(|c| c.can_see(conn, user))
+            .map(|c| Self::from_comment(c, conn, user))
+            .collect();
+        CommentTree {
+            comment,
+            responses,
         }
     }
 }
