@@ -40,23 +40,6 @@ impl Reshare {
         post_id as i32
     );
 
-    pub fn update_ap_url(&self, conn: &Connection) {
-        if self.ap_url.is_empty() {
-            diesel::update(self)
-                .set(reshares::ap_url.eq(format!(
-                        "{}/reshare/{}",
-                        User::get(conn, self.user_id)
-                            .expect("Reshare::update_ap_url: user error")
-                            .ap_url,
-                        Post::get(conn, self.post_id)
-                            .expect("Reshare::update_ap_url: post error")
-                            .ap_url
-                    )))
-                .execute(conn)
-                .expect("Reshare::update_ap_url: update error");
-        }
-    }
-
     pub fn get_recents_for_author(conn: &Connection, user: &User, limit: i64) -> Vec<Reshare> {
         reshares::table
             .filter(reshares::user_id.eq(user.id))
@@ -198,6 +181,17 @@ impl Deletable<Connection, Undo> for Reshare {
                     reshare.delete(conn);
                 }
             }
+        }
+    }
+}
+
+impl NewReshare {
+    pub fn new(p: &Post, u: &User) -> Self {
+        let ap_url = format!("{}/reshare/{}", u.ap_url, p.ap_url);
+        NewReshare {
+            post_id: p.id,
+            user_id: u.id,
+            ap_url
         }
     }
 }
