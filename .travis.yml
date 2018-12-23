@@ -29,12 +29,12 @@ jobs:
       name: "Build with postgresql"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
-      script: cargo build --no-default-features --features="${FEATURES}"
+      script: cargo build --no-default-features --features="${FEATURES}" --release
     - stage: build
       name: "Build with sqlite"
       env:
         - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
-      script: cargo build --no-default-features --features="${FEATURES}"
+      script: cargo build --no-default-features --features="${FEATURES}" --release
     - stage: test and coverage
       name: "Test with potgresql backend"
       env:

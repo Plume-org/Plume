@@ -17,7 +17,7 @@
 	fill: none;
 }
 
-.icon {
+.icon:before {
 	font-family: "Feather";
 	speak: none;
 	font-style: normal;

@@ -18,12 +18,7 @@ pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Work
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.has_reshared(&*conn, &post) {
-        let reshare = Reshare::insert(&*conn, NewReshare {
-            post_id: post.id,
-            user_id: user.id,
-            ap_url: "".to_string()
-        });
-        reshare.update_ap_url(&*conn);
+        let reshare = Reshare::insert(&*conn, NewReshare::new(&post, &user));
         reshare.notify(&*conn);
 
         let dest = User::one_by_instance(&*conn);

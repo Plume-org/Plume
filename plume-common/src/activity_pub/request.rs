@@ -41,6 +41,10 @@ impl Digest {
         }
     }
 
+    pub fn verify_header(&self, other: &Digest) -> bool {
+        self.value()==other.value()
+    }
+
     pub fn algorithm(&self) -> &str {
         let pos = self
             .0
@@ -68,6 +72,13 @@ impl Digest {
         } else {
             Err(())
         }
+    }
+
+    pub fn from_body(body: &str) -> Self {
+        let mut hasher = Hasher::new(MessageDigest::sha256()).expect("Digest::digest: initialization error");
+        hasher.update(body.as_bytes()).expect("Digest::digest: content insertion error");
+        let res = base64::encode(&hasher.finish().expect("Digest::digest: finalizing error"));
+        Digest(format!("SHA-256={}", res))
     }
 }
 

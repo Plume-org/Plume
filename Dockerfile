@@ -14,8 +14,8 @@ WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 RUN cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
 COPY . .
-RUN cargo install --force --no-default-features --features postgres
+RUN cargo install --path ./ --force --no-default-features --features postgres
 RUN cargo install --path plume-cli --force --no-default-features --features postgres
-RUN rm -rf target/debug/incremental
+RUN rm -rf target/release/incremental
 CMD ["plume"]
 EXPOSE 7878

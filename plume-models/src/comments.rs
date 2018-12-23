@@ -1,4 +1,4 @@
-use activitypub::{activity::Create, link, object::Note};
+use activitypub::{activity::{Create, Delete}, link, object::{Note, Tombstone}};
 use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use serde_json;
@@ -9,7 +9,7 @@ use instance::Instance;
 use mentions::Mention;
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{FromActivity, Notify},
+    inbox::{FromActivity, Notify, Deletable},
     Id, IntoId, PUBLIC_VISIBILTY,
 };
 use plume_common::utils;
@@ -101,7 +101,10 @@ impl Comment {
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Note {
-        let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref());
+        let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref(),
+                &Instance::get_local(conn)
+                .expect("Comment::to_activity: instance error")
+                .public_domain);
 
         let author = User::get(conn, self.author_id).expect("Comment::to_activity: author error");
         let mut note = Note::default();
@@ -338,6 +341,51 @@ impl CommentTree {
         CommentTree {
             comment,
             responses,
+        }
+    }
+}
+
+impl<'a> Deletable<Connection, Delete> for Comment {
+    fn delete(&self, conn: &Connection) -> Delete {
+        let mut act = Delete::default();
+        act.delete_props
+            .set_actor_link(self.get_author(conn).into_id())
+            .expect("Comment::delete: actor error");
+
+        let mut tombstone = Tombstone::default();
+        tombstone
+            .object_props
+            .set_id_string(self.ap_url.clone().expect("Comment::delete: no ap_url"))
+            .expect("Comment::delete: object.id error");
+        act.delete_props
+            .set_object_object(tombstone)
+            .expect("Comment::delete: object error");
+
+        act.object_props
+            .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))
+            .expect("Comment::delete: id error");
+        act.object_props
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])
+            .expect("Comment::delete: to error");
+
+        for m in Mention::list_for_comment(&conn, self.id) {
+            m.delete(conn);
+        }
+        diesel::update(comments::table).filter(comments::in_response_to_id.eq(self.id))
+            .set(comments::in_response_to_id.eq(self.in_response_to_id))
+            .execute(conn)
+            .expect("Comment::delete: DB error could not update other comments");
+        diesel::delete(self)
+            .execute(conn)
+            .expect("Comment::delete: DB error");
+        act
+    }
+
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
+        let actor = User::find_by_ap_url(conn, actor_id);
+        let comment = Comment::find_by_ap_url(conn, id);
+        if let Some(comment) = comment.filter(|c| c.author_id == actor.unwrap().id) {
+            comment.delete(conn);
         }
     }
 }
