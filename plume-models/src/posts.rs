@@ -164,9 +164,9 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
 
         let date = query.creation_date.clone()
             .and_then(|d| NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok());
-        println!("DATE: {:?}\n\n{:?}", date, query.creation_date);
 
-        let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref());
+        let domain = &Instance::get_local(&conn).expect("posts::update: Error getting local instance").public_domain;
+        let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref(), domain);
 
         let author = User::get(conn, user_id.expect("<Post as Provider>::create: no user_id error"))?;
         let blog = query.blog_id.unwrap_or_else(|| Blog::find_for_author(conn, &author)[0].id);
