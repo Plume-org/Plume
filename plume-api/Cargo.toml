@@ -1,7 +1,7 @@
 [package]
 name = "plume-api"
 version = "0.1.0"
-authors = ["Bat' <baptiste@gelez.xyz>"]
+authors = ["Plume contributors"]
 
 [dependencies]
 canapi = "0.2"
