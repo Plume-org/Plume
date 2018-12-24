@@ -538,7 +538,7 @@ msgstr ""
 msgid "Useful for visually impaired people and information about licenses"
 msgstr ""
 
-msgid "Leave it empty, if there is none"
+msgid "Leave it empty, if none is meeded"
 msgstr ""
 
 msgid "Draft"
@@ -580,7 +580,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-msgid "Leave it empty reserve all rights"
+msgid "Leave empty to reserve all rights"
 msgstr ""
 
 msgid "All rights reserved."
