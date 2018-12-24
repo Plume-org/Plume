@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, enabled: bool, form: &NewUserForm, errors: ValidationErrors)
 
-@:base(ctx, "Edit your account", {}, {}, {
+@:base(ctx, "Create your account", {}, {}, {
     @if enabled {
         <h1>@i18n!(ctx.1, "Create an account")</h1>
         <form method="post" action="@uri!(user::create)">
@@ -15,9 +15,9 @@
             @input!(ctx.1, password (password), "Password", form, errors.clone(), "minlenght=\"8\"")
             @input!(ctx.1, password_confirmation (password), "Password confirmation", form, errors, "minlenght=\"8\"")
 
-            <input type="submit" value="@i18n!(ctx.1, "Create account")" />
+            <input type="submit" value="@i18n!(ctx.1, "Create your account")" />
         </form>
     } else {
-        <p class="center">@i18n!(ctx.1, "Sorry, but registrations are closed on this instance. Try to find another one")</p>
+<p class="center">@i18n!(ctx.1, "Apologies, but registrations are closed on this instance. Find another one by visiting joinplu.me/#instances")</p>
     }
 })
