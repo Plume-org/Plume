@@ -27,7 +27,7 @@ jobs:
   include:
     - stage: build
       name: "Build front"
-      script: cargo install cargo-web && cd plume-front && cargo web check
+      script: (cargo web -h || cargo install cargo-web) && cd plume-front && cargo web check
     - stage: build
       name: "Build with postgresql"
       env:
