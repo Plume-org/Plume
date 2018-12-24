@@ -225,10 +225,10 @@ msgstr ""
 msgid "You need to be signed in, so that you can post a comment"
 msgstr ""
 
-msgid "You need to be signed in, in order for you to like a post"
+msgid "You need to be signed in, to be able to like a post"
 msgstr ""
 
-msgid "You need to be logged in order to see your notifications"
+msgid "You need to be logged in, so that you can see your notifications"
 msgstr ""
 
 msgid "You need to be logged in, to be able to write a new post"
@@ -252,7 +252,7 @@ msgstr ""
 msgid "By {0}"
 msgstr ""
 
-msgid "{0} boosted your article"
+msgid "{0} gave a boost to your article"
 msgstr ""
 
 msgid "{0} started following you"
@@ -270,7 +270,7 @@ msgstr ""
 msgid "The link that led you here may be broken."
 msgstr ""
 
-msgid "You are not authorized."
+msgid "You are not authorized to access this page."
 msgstr ""
 
 msgid "You are not an author on this blog."
@@ -291,7 +291,7 @@ msgstr ""
 msgid "A blog with the same name already exists."
 msgstr ""
 
-msgid "Your comment can't be empty"
+msgid "Your comment can't be left empty"
 msgstr ""
 
 msgid "A post with the same title already exists."
@@ -320,7 +320,7 @@ msgid_plural "This blog has {0} authors: "
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid "Log in, or use your other account within the Fediverse, to interact with this article"
 msgstr ""
 
 msgid "Optional"
@@ -376,7 +376,7 @@ msgstr ""
 msgid "What is Plume?"
 msgstr ""
 
-msgid "Plume is a decentralized blogging engine."
+msgid "Plume is a decentralized blogging engine and a member of the Fediverse."
 msgstr ""
 
 msgid "Authors can manage various blogs, each from a separate, unique website."
