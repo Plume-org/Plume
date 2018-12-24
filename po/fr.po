@@ -610,9 +610,62 @@ msgstr "Illustration"
 msgid "None"
 msgstr "Aucun"
 
-#, fuzzy
 msgid "Let it empty reserve all rights"
-msgstr "Laisser vide s’il n’y en a pas"
+msgstr "Laisser vide pour garder tous vos droits"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Tous droits réservés"
+
+msgid "Search"
+msgstr "Recherche"
+
+msgid "Your query"
+msgstr "Votre recherche"
+
+msgid "Advanced search"
+msgstr "Recherche avancée"
+
+msgid "Title matching these words"
+msgstr "Titre avec ces mots"
+
+msgid "Subtitle matching these words"
+msgstr "Sous-titre contenant ces mots"
+
+msgid "Content matching these words"
+msgstr "Contenant ces mots"
+
+msgid "From this date"
+msgstr "À partir de cette date"
+
+msgid "To this date"
+msgstr "Avant cette date"
+
+msgid "Containing these tags"
+msgstr "Avec ces tags"
+
+msgid "Posted in one of these instances"
+msgstr "Publié sur une de ces instances"
+
+msgid "Posted by one of these authors"
+msgstr "Écrit par un de ces auteur⋅ices"
+
+msgid "Posted in one of these blogs"
+msgstr "Publié dans un de ces blogs"
+
+msgid "Written in this language"
+msgstr "Écrit en"
+
+msgid "Using this license"
+msgstr "Sous licence"
+
+msgid "Search result for \"{0}\""
+msgstr "Résultats pour « {0} »"
+
+msgid "Search result"
+msgstr "Résultats"
+
+msgid "No result for your query"
+msgstr "Aucun résultat pour votre recherche"
+
+msgid "No more result for your query"
+msgstr "Plus de résultats pour votre recherche"

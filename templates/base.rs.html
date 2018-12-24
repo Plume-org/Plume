@@ -38,6 +38,10 @@
                             <i class="icon icon-bell" aria-label="@i18n!(ctx.1, "Notifications")"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Notifications")</span>
                         </a>
+                        <a href="@uri!(search::search: _)">
+                            <i class="icon icon-search"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Search")</span>
+                        </a>
                         <a href="@uri!(session::delete)">
                             <i class="icon icon-log-out" aria-label="@i18n!(ctx.1, "Log Out")"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Log Out")</span>
@@ -47,6 +51,10 @@
                             <span class="mobile-label">@i18n!(ctx.1, "My account")</span>
                         </a>
                     } else {
+                        <a href="@uri!(search::search: _)">
+                            <i class="icon icon-search"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Search")</span>
+                        </a>
                         <a href="@uri!(session::new: m = _)">
                             <i class="icon icon-log-in"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Log In")</span>

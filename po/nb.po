@@ -621,6 +621,62 @@ msgstr ""
 msgid "All rights reserved."
 msgstr ""
 
+msgid "Search"
+msgstr ""
+
+#, fuzzy
+msgid "Your query"
+msgstr "Din kommentar"
+
+msgid "Advanced search"
+msgstr ""
+
+msgid "Title matching these words"
+msgstr ""
+
+msgid "Subtitle matching these words"
+msgstr ""
+
+msgid "Content matching these words"
+msgstr ""
+
+msgid "From this date"
+msgstr ""
+
+msgid "To this date"
+msgstr ""
+
+msgid "Containing these tags"
+msgstr ""
+
+msgid "Posted in one of these instances"
+msgstr ""
+
+msgid "Posted by one of these authors"
+msgstr ""
+
+msgid "Posted in one of these blogs"
+msgstr ""
+
+#, fuzzy
+msgid "Written in this language"
+msgstr "Den siden fant vi ikke."
+
+msgid "Using this license"
+msgstr ""
+
+msgid "Search result for \"{0}\""
+msgstr ""
+
+msgid "Search result"
+msgstr ""
+
+msgid "No result for your query"
+msgstr ""
+
+msgid "No more result for your query"
+msgstr ""
+
 #~ msgid "Home to"
 #~ msgstr "Hjem for"
 
