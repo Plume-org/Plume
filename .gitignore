@@ -19,3 +19,4 @@ search_index
 main.css
 static/index.html
 *.wasm
+*.js

@@ -141,7 +141,6 @@ fn main() {
             routes::session::delete,
 
             routes::static_files,
-            routes::wasm_front,
 
             routes::tags::tag,
 
