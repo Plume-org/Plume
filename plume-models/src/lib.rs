@@ -18,6 +18,7 @@ extern crate plume_api;
 extern crate plume_common;
 extern crate reqwest;
 extern crate rocket;
+extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
