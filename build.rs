@@ -21,7 +21,7 @@ fn main() {
             .expect("Error during SCSS compilation")
     ).expect("Couldn't write CSS output");
 
-    copy("target/deploy/plume-front.wasm", "static/plume-front.wasm").ok();
-    let js = read_to_string("target/deploy/plume-front.js").ok();
-    write("static/plume-front.js", js.replace("\"plume-front.wasm\"", "\"/static/plume-front.wasm\"")).ok();
+    copy("target/deploy/plume-front.wasm", "static/plume-front.wasm")
+        .and_then(|_| read_to_string("target/deploy/plume-front.js"))
+        .and_then(|js| write("static/plume-front.js", js.replace("\"plume-front.wasm\"", "\"/static/plume-front.wasm\""))).ok();
 }
