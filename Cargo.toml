@@ -72,4 +72,4 @@ postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
 
 [workspace]
-members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front"]
+members = ["plume-api", "plume-cli", "plume-models", "plume-common"]
