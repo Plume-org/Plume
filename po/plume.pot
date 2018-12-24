@@ -463,9 +463,7 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-msgid "Apologies, but registrations are closed on this instance.)</p>
-<p class="center">
-   You can <a href="https://joinplu.me/#instances">@i18n!(ctx.1, "Find a different one")</a>
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, <a href="https://joinplu.me/#instances">find a different one</a>.
 </p>"
 msgstr ""
 
