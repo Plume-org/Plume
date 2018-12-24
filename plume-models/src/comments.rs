@@ -3,6 +3,8 @@ use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use serde_json;
 
+use std::collections::HashSet;
+
 use instance::Instance;
 use mentions::Mention;
 use notifications::*;
@@ -11,6 +13,7 @@ use plume_common::activity_pub::{
     Id, IntoId, PUBLIC_VISIBILTY,
 };
 use plume_common::utils;
+use comment_seers::{CommentSeers, NewCommentSeers};
 use posts::Post;
 use safe_string::SafeString;
 use schema::comments;
@@ -28,6 +31,7 @@ pub struct Comment {
     pub ap_url: Option<String>,
     pub sensitive: bool,
     pub spoiler_text: String,
+    pub public_visibility: bool,
 }
 
 #[derive(Insertable, Default)]
@@ -40,6 +44,7 @@ pub struct NewComment {
     pub ap_url: Option<String>,
     pub sensitive: bool,
     pub spoiler_text: String,
+    pub public_visibility: bool,
 }
 
 impl Comment {
@@ -88,6 +93,11 @@ impl Comment {
 
     pub fn compute_id(&self, conn: &Connection) -> String {
         format!("{}comment/{}", self.get_post(conn).ap_url, self.id)
+    }
+
+    pub fn can_see(&self, conn: &Connection, user: Option<&User>) -> bool {
+        self.public_visibility ||
+            user.as_ref().map(|u| CommentSeers::can_see(conn, self, u)).unwrap_or(false)
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Note {
@@ -179,59 +189,113 @@ impl Comment {
 
 impl FromActivity<Note, Connection> for Comment {
     fn from_activity(conn: &Connection, note: Note, actor: Id) -> Comment {
-        let previous_url = note
-            .object_props
-            .in_reply_to
-            .clone()
-            .expect("Comment::from_activity: not an answer error");
-        let previous_url = previous_url
-            .as_str()
-            .expect("Comment::from_activity: in_reply_to parsing error");
-        let previous_comment = Comment::find_by_ap_url(conn, previous_url);
+        let comm = {
+            let previous_url = note
+                .object_props
+                .in_reply_to
+                .as_ref()
+                .expect("Comment::from_activity: not an answer error")
+                .as_str()
+                .expect("Comment::from_activity: in_reply_to parsing error");
+            let previous_comment = Comment::find_by_ap_url(conn, previous_url);
 
-        let comm = Comment::insert(
-            conn,
-            NewComment {
-                content: SafeString::new(
-                    &note
+            let is_public = |v: &Option<serde_json::Value>| match v.as_ref().unwrap_or(&serde_json::Value::Null) {
+                serde_json::Value::Array(v) => v.iter().filter_map(serde_json::Value::as_str).any(|s| s==PUBLIC_VISIBILTY),
+                serde_json::Value::String(s) => s == PUBLIC_VISIBILTY,
+                _ => false,
+            };
+
+            let public_visibility = is_public(&note.object_props.to) ||
+                is_public(&note.object_props.bto) ||
+                is_public(&note.object_props.cc) ||
+                is_public(&note.object_props.bcc);
+
+            let comm = Comment::insert(
+                conn,
+                NewComment {
+                    content: SafeString::new(
+                        &note
+                            .object_props
+                            .content_string()
+                            .expect("Comment::from_activity: content deserialization error"),
+                    ),
+                    spoiler_text: note
                         .object_props
-                        .content_string()
-                        .expect("Comment::from_activity: content deserialization error"),
-                ),
-                spoiler_text: note
-                    .object_props
-                    .summary_string()
-                    .unwrap_or_default(),
-                ap_url: note.object_props.id_string().ok(),
-                in_response_to_id: previous_comment.clone().map(|c| c.id),
-                post_id: previous_comment.map(|c| c.post_id).unwrap_or_else(|| {
-                    Post::find_by_ap_url(conn, previous_url)
-                        .expect("Comment::from_activity: post error")
-                        .id
-                }),
-                author_id: User::from_url(conn, actor.as_ref())
-                    .expect("Comment::from_activity: author error")
-                    .id,
-                sensitive: false, // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
-            },
-        );
+                        .summary_string()
+                        .unwrap_or_default(),
+                    ap_url: note.object_props.id_string().ok(),
+                    in_response_to_id: previous_comment.clone().map(|c| c.id),
+                    post_id: previous_comment.map(|c| c.post_id).unwrap_or_else(|| {
+                        Post::find_by_ap_url(conn, previous_url)
+                            .expect("Comment::from_activity: post error")
+                            .id
+                    }),
+                    author_id: User::from_url(conn, actor.as_ref())
+                        .expect("Comment::from_activity: author error")
+                        .id,
+                    sensitive: false, // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
+                    public_visibility
+                },
+            );
 
-        // save mentions
-        if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
-            for tag in tags {
-                serde_json::from_value::<link::Mention>(tag)
-                    .map(|m| {
-                        let author = &Post::get(conn, comm.post_id)
-                            .expect("Comment::from_activity: error")
-                            .get_authors(conn)[0];
-                        let not_author = m
-                            .link_props
-                            .href_string()
-                            .expect("Comment::from_activity: no href error")
-                            != author.ap_url.clone();
-                        Mention::from_activity(conn, &m, comm.id, false, not_author)
-                    })
-                    .ok();
+            // save mentions
+            if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
+                for tag in tags {
+                    serde_json::from_value::<link::Mention>(tag)
+                        .map(|m| {
+                            let author = &Post::get(conn, comm.post_id)
+                                .expect("Comment::from_activity: error")
+                                .get_authors(conn)[0];
+                            let not_author = m
+                                .link_props
+                                .href_string()
+                                .expect("Comment::from_activity: no href error")
+                                != author.ap_url.clone();
+                            Mention::from_activity(conn, &m, comm.id, false, not_author)
+                        })
+                        .ok();
+                }
+            }
+            comm
+        };
+
+
+        if !comm.public_visibility {
+            let receivers_ap_url = |v: Option<serde_json::Value>| {
+                let filter = |e: serde_json::Value| if let serde_json::Value::String(s) = e { Some(s) } else { None };
+                match v.unwrap_or(serde_json::Value::Null) {
+                    serde_json::Value::Array(v) => v,
+                    v => vec![v],
+                }.into_iter().filter_map(filter)
+            };
+
+            let mut note = note;
+
+            let to = receivers_ap_url(note.object_props.to.take());
+            let cc = receivers_ap_url(note.object_props.cc.take());
+            let bto = receivers_ap_url(note.object_props.bto.take());
+            let bcc = receivers_ap_url(note.object_props.bcc.take());
+
+            let receivers_ap_url = to.chain(cc).chain(bto).chain(bcc)
+                .collect::<HashSet<_>>()//remove duplicates (don't do a query more than once)
+                .into_iter()
+                .map(|v| if let Some(user) = User::from_url(conn,&v) {
+                    vec![user]
+                } else {
+                    vec![]// TODO try to fetch collection
+                })
+                .flatten()
+                .filter(|u| u.get_instance(conn).local)
+                .collect::<HashSet<User>>();//remove duplicates (prevent db error)
+
+            for user in &receivers_ap_url {
+                CommentSeers::insert(
+                    conn,
+                    NewCommentSeers {
+                        comment_id: comm.id,
+                        user_id: user.id
+                    }
+                );
             }
         }
 
@@ -255,6 +319,31 @@ impl Notify<Connection> for Comment {
     }
 }
 
+pub struct CommentTree {
+    pub comment: Comment,
+    pub responses: Vec<CommentTree>,
+}
+
+impl CommentTree {
+    pub fn from_post(conn: &Connection, p: &Post, user: Option<&User>) -> Vec<Self> {
+        Comment::list_by_post(conn, p.id).into_iter()
+            .filter(|c| c.in_response_to_id.is_none())
+            .filter(|c| c.can_see(conn, user))
+            .map(|c| Self::from_comment(conn, c, user))
+            .collect()
+    }
+
+    pub fn from_comment(conn: &Connection, comment: Comment, user: Option<&User>) -> Self {
+        let responses = comment.get_responses(conn).into_iter()
+            .filter(|c| c.can_see(conn, user))
+            .map(|c| Self::from_comment(conn, c, user))
+            .collect();
+        CommentTree {
+            comment,
+            responses,
+        }
+    }
+}
 
 impl<'a> Deletable<Connection, Delete> for Comment {
     fn delete(&self, conn: &Connection) -> Delete {

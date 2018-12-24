@@ -16,6 +16,6 @@ RUN cargo install diesel_cli --no-default-features --features postgres --version
 COPY . .
 RUN cargo install --path ./ --force --no-default-features --features postgres
 RUN cargo install --path plume-cli --force --no-default-features --features postgres
-RUN rm -rf target/release/incremental
+RUN cargo clean
 CMD ["plume"]
 EXPOSE 7878

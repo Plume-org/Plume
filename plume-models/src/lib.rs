@@ -251,6 +251,7 @@ pub mod apps;
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;
+pub mod comment_seers;
 pub mod db_conn;
 pub mod follows;
 pub mod headers;
