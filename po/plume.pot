@@ -273,7 +273,7 @@ msgstr ""
 msgid "You are not authorized."
 msgstr ""
 
-msgid "You are not author in this blog."
+msgid "You are not an author on this blog."
 msgstr ""
 
 msgid "{0} mentioned you."
@@ -303,7 +303,7 @@ msgstr ""
 msgid "Your password field can't be empty"
 msgstr ""
 
-msgid "Passwords are not matching"
+msgid "The two passwords must be a match!"
 msgstr ""
 
 msgid "Username can't be empty"
@@ -312,7 +312,7 @@ msgstr ""
 msgid "Invalid email"
 msgstr ""
 
-msgid "Password should be at least 8 characters long"
+msgid "The password should be at least 8 characters long"
 msgstr ""
 
 msgid "This blog has one author: "
@@ -436,7 +436,7 @@ msgstr ""
 msgid "Copy it into your articles, to insert this media."
 msgstr ""
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr ""
 
 msgid "Delete"
@@ -463,7 +463,10 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-msgid "Apologies, but registrations are closed on this instance. You can <a href="https://joinplu.me/#instances">@i18n!(ctx.1, "Find a different one")</a>"."
+msgid "Apologies, but registrations are closed on this instance.)</p>
+<p class="center">
+   You can <a href="https://joinplu.me/#instances">@i18n!(ctx.1, "Find a different one")</a>
+</p>"
 msgstr ""
 
 msgid "Subtitle"
