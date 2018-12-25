@@ -1,3 +1,5 @@
+<meta charset="utf-8" />
+
 @use plume_models::instance::Instance;
 @use validator::ValidationErrors;
 @use templates::base;
@@ -27,10 +29,10 @@
       }
       @i18n!(ctx.1, "Allow anyone to register")
 
-      <label for="short_description">@i18n!(ctx.1, "Short description")<small>@i18n!(ctx.1, "Markdown is supported")</small></label>
+      <label for="short_description">@i18n!(ctx.1, "Short description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
       <textarea id="short_description" name="short_description">@Html(form.short_description)</textarea>
 
-      <label for="long_description">@i18n!(ctx.1, "Long description")<small>@i18n!(ctx.1, "Markdown is supported")</small></label>
+      <label for="long_description">@i18n!(ctx.1, "Long description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
       <textarea id="long_description" name="long_description">@Html(form.long_description)</textarea>
 
       @input!(ctx.1, default_license (text), "Default license", form, errors, "minlenght=\"1\"")
