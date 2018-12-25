@@ -9,13 +9,13 @@
     <form method="post" enctype="multipart/form-data" action="@uri!(medias::upload)">
         <label for="alt">
             @i18n!(ctx.1, "Description")
-            <small>@i18n!(ctx.1, "Useful for visually impaired people and licensing")</small>
+            <small>@i18n!(ctx.1, "Useful for visually impaired people, as well as licensing information")</small>
         </label>
         <input type="text" id="alt" name="alt" required minlenght="1"/>
 
         <label for="cw">
             @i18n!(ctx.1, "Content warning")
-            <small>@i18n!(ctx.1, "Let it empty if there is none")</small>
+            <small>@i18n!(ctx.1, "Leave it empty, if none is needed")</small>
         </label>
         <input type="txt" id="cw" name="cw"/>
 
