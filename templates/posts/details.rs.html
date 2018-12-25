@@ -1,7 +1,7 @@
 @use templates::{base, partials::comment};
 @use template_utils::*;
 @use plume_models::blogs::Blog;
-@use plume_models::comments::Comment;
+@use plume_models::comments::{Comment, CommentTree};
 @use plume_models::posts::Post;
 @use plume_models::tags::Tag;
 @use plume_models::users::User;
@@ -9,7 +9,7 @@
 @use routes::comments::NewCommentForm;
 @use routes::*;
 
-@(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<Comment>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
+@(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 
 @:base(ctx, &article.title.clone(), {
     <meta property="og:title" content="@article.title"/>
@@ -146,7 +146,7 @@
             @if !comments.is_empty() {
                 <div class="list">
                     @for comm in comments {
-                        @:comment(ctx, &comm, comm.get_author(ctx.0), Some(&article.ap_url), &blog.get_fqn(ctx.0), &article.slug)
+                        @:comment(ctx, &comm, Some(&article.ap_url), &blog.get_fqn(ctx.0), &article.slug)
                     }
                 </div>
             } else {

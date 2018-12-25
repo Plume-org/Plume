@@ -18,6 +18,7 @@ extern crate plume_api;
 extern crate plume_common;
 extern crate reqwest;
 extern crate rocket;
+extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -250,6 +251,7 @@ pub mod apps;
 pub mod blog_authors;
 pub mod blogs;
 pub mod comments;
+pub mod comment_seers;
 pub mod db_conn;
 pub mod follows;
 pub mod headers;

@@ -71,7 +71,8 @@ msgstr "通知"
 msgid "Written by {0}"
 msgstr "{0} さんが作成"
 
-msgid "This article is under the {0} license."
+#, fuzzy
+msgid "This article is published under the {0} license."
 msgstr "この記事は {0} ライセンスの元で公開されています。"
 
 msgid "One like"
@@ -88,7 +89,8 @@ msgid "One Boost"
 msgid_plural "{0} Boosts"
 msgstr[0] "{0} ブースト"
 
-msgid "I don&#x27;t want to boost this anymore"
+#, fuzzy
+msgid "I don&#x27;t want this boosted anymore"
 msgstr "もうこれをブーストしたくありません"
 
 msgid "Boost"
@@ -115,7 +117,8 @@ msgstr "公開"
 msgid "Login"
 msgstr "ログイン"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
 msgid "Password"
@@ -127,7 +130,8 @@ msgstr "ダッシュボード"
 msgid "Your Dashboard"
 msgstr "自分のダッシュボード"
 
-msgid "Your Blogs"
+#, fuzzy
+msgid "Your blogs"
 msgstr "自分のブログ"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
@@ -141,7 +145,8 @@ msgstr "新しいブログを開始"
 msgid "Admin"
 msgstr "管理者"
 
-msgid "It is you"
+#, fuzzy
+msgid "That's you"
 msgstr "自分"
 
 msgid "Edit your profile"
@@ -220,34 +225,43 @@ msgstr "ログイン"
 msgid "Register"
 msgstr "登録"
 
-msgid "You need to be logged in order to create a new blog"
+#, fuzzy
+msgid "You need to be signed in, for you to create a new blog"
 msgstr "新しいブログを作成するにはログインする必要があります"
 
-msgid "You need to be logged in order to post a comment"
+#, fuzzy
+msgid "You need to be signed in, so that you can post a comment"
 msgstr "コメントを投稿するにはログインする必要があります"
 
-msgid "You need to be logged in order to like a post"
+#, fuzzy
+msgid "You need to be signed in, in order for you to like a post"
 msgstr "投稿をいいねするにはログインする必要があります"
 
 msgid "You need to be logged in order to see your notifications"
 msgstr "通知を表示するにはログインする必要があります"
 
-msgid "You need to be logged in order to write a new post"
+#, fuzzy
+msgid "You need to be logged in, to be able to write a new post"
 msgstr "新しい記事を書くにはログインする必要があります"
 
-msgid "You need to be logged in order to boost a post"
+#, fuzzy
+msgid "You need to be logged in, for you to be able to boost a post"
 msgstr "投稿をブーストするにはログインする必要があります"
 
-msgid "Invalid username or password"
+#, fuzzy
+msgid "Invalid username, or password"
 msgstr "ユーザー名またはパスワードが間違っています"
 
-msgid "You need to be logged in order to access your dashboard"
+#, fuzzy
+msgid "You need to be logged in, to be able to access your dashboard"
 msgstr "ダッシュボードにアクセスするにはログインする必要があります"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in, to be able to follow someone"
 msgstr "他の人をフォローするにはログインする必要があります"
 
-msgid "You need to be logged in order to edit your profile"
+#, fuzzy
+msgid "You need to be logged in, to be able to edit your profile"
 msgstr "自分のプロフィールを編集するにはログインする必要があります"
 
 msgid "By {0}"
@@ -262,7 +276,8 @@ msgstr "{0} さんがあなたのフォローを開始しました"
 msgid "{0} liked your article"
 msgstr "{0} さんがあなたの記事をいいねしました"
 
-msgid "{0} commented your article"
+#, fuzzy
+msgid "{0} commented on your article"
 msgstr "{0} さんがあなたの記事にコメントしました"
 
 msgid "We couldn&#x27;t find this page."
@@ -274,7 +289,8 @@ msgstr "このリンクは切れている可能性があります。"
 msgid "You are not authorized."
 msgstr "認証されていません。"
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author on this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
 msgid "{0} mentioned you."
@@ -298,14 +314,16 @@ msgstr "コメントは空にできません"
 msgid "A post with the same title already exists."
 msgstr "同じタイトルの投稿がすでに存在します。"
 
-msgid "We need an email or a username to identify you"
+#, fuzzy
+msgid "We need an email, or a username to identify you"
 msgstr "あなたを識別するために、メールアドレスかユーザー名が必要です"
 
-msgid "Your password can't be empty"
+#, fuzzy
+msgid "Your password field can't be empty"
 msgstr "パスワードは空にできません"
 
-msgid "Passwords are not matching"
-msgstr "パスワードが一致しません"
+msgid "The two passwords must be a match!"
+msgstr ""
 
 msgid "Username can't be empty"
 msgstr "ユーザー名は空にできません"
@@ -313,23 +331,25 @@ msgstr "ユーザー名は空にできません"
 msgid "Invalid email"
 msgstr "無効なメールアドレス"
 
-msgid "Password should be at least 8 characters long"
+#, fuzzy
+msgid "The password should be at least 8 characters long"
 msgstr "パスワードは最低 8 文字にするべきです"
 
-msgid "One author in this blog: "
-msgid_plural "{0} authors in this blog: "
-msgstr[0] "ブログに {0} 人の作成者がいます: "
+msgid "This blog has one author: "
+msgid_plural "This blog has {0} authors: "
+msgstr[0] ""
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "この記事と関わるには、ログインするか Fediverse アカウントを使用してください"
 
 msgid "Optional"
 msgstr "省略可"
 
-msgid "One article in this blog"
-msgid_plural "{0} articles in this blog"
-msgstr[0] "ブログに {0} 件の記事があります"
+msgid "This blog has one article"
+msgid_plural "This blog has {0} articles"
+msgstr[0] ""
 
 msgid "Previous page"
 msgstr "前のページ"
@@ -352,7 +372,8 @@ msgstr "インスタンスの設定"
 msgid "Allow anyone to register"
 msgstr "不特定多数に登録を許可"
 
-msgid "Short description"
+#, fuzzy
+msgid "Short description - byline"
 msgstr "短い説明"
 
 msgid "Markdown is supported"
@@ -367,7 +388,8 @@ msgstr "デフォルトのライセンス"
 msgid "Save settings"
 msgstr "設定を保存"
 
-msgid "No comments yet. Be the first to react!"
+#, fuzzy
+msgid "There are no comments here yet. Be the first to react!"
 msgstr "コメントがまだありません。最初のコメントを書きましょう！"
 
 msgid "About this instance"
@@ -379,12 +401,15 @@ msgstr "Plume とは？"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume は、分散型のブログエンジンです。"
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each from a separate, unique website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume websites, called instances, and you "
+"can interact with them directly from other platforms like Mastodon, or "
+"WriteFreely."
 msgstr ""
 "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラット"
 "フォームから直接記事と関わることができます。"
@@ -401,7 +426,8 @@ msgstr "登録者数 <em>{0}</em> 人"
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "投稿記事数 <em>{0}</em> 件"
 
-msgid "And connected to <em>{0}</em> other instances"
+#, fuzzy
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr "他のインスタンスからの接続数 <em>{0}</em> 件"
 
 msgid "Read the detailed rules"
@@ -434,13 +460,16 @@ msgstr "メディアの詳細"
 msgid "Go back to the gallery"
 msgstr "ライブラリに戻る"
 
-msgid "Markdown code"
+#, fuzzy
+msgid "Markdown syntax"
 msgstr "Markdown コード"
 
-msgid "Copy it in your articles to insert this media."
+#, fuzzy
+msgid "Copy it into your articles, to insert this media."
 msgstr "このメディアを記事に挿入するには、自分の記事にコピーしてください。"
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "アバターとして使う"
 
 msgid "Delete"
@@ -449,7 +478,8 @@ msgstr "削除"
 msgid "Upload"
 msgstr "アップロード"
 
-msgid "You don't have any media yet."
+#, fuzzy
+msgid "You don't have any media uploaded yet."
 msgstr "メディアがまだありません。"
 
 msgid "Media upload"
@@ -467,8 +497,10 @@ msgstr "ファイル"
 msgid "Send"
 msgstr "送信"
 
+#, fuzzy
 msgid ""
-"Sorry, but registrations are closed on this instance. Try to find another one"
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 "申し訳ありませんが、このインスタンスでは登録者は限定されています。別のインス"
 "タンスをお探しください"
@@ -482,8 +514,9 @@ msgstr "いいねするにはログインしてください"
 msgid "Login to boost"
 msgstr "ブーストするにはログインしてください"
 
-msgid "Your feed"
-msgstr "自分のフィード"
+#, fuzzy
+msgid "Personal feed"
+msgstr "このインスタンスのフィード"
 
 msgid "Federated feed"
 msgstr "全インスタンスのフィード"
@@ -491,7 +524,8 @@ msgstr "全インスタンスのフィード"
 msgid "Local feed"
 msgstr "このインスタンスのフィード"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to follow some people."
 msgstr ""
 "ここにはまだ表示できるものがありません。他の人をもっとフォローしてみてくださ"
 "い。"
@@ -499,7 +533,8 @@ msgstr ""
 msgid "Articles"
 msgstr "記事"
 
-msgid "All the articles of the Fediverse"
+#, fuzzy
+msgid "All of the articles within the Fediverse"
 msgstr "Fediverse のすべての記事"
 
 msgid "Articles from {0}"
@@ -508,7 +543,8 @@ msgstr "{0} の記事"
 msgid "View all"
 msgstr "すべて表示"
 
-msgid "Articles tagged \"{0}\""
+#, fuzzy
+msgid "Articles tagged under \"{0}\""
 msgstr "\"{0}\" タグの記事"
 
 msgid "Edit"
@@ -550,10 +586,12 @@ msgstr "ブロック"
 msgid "Ban"
 msgstr "禁止"
 
-msgid "Useful for visually impaired people and licensing"
+#, fuzzy
+msgid "Useful for visually impaired people and information about licenses"
 msgstr "視覚的に障害のある方や認可の際に便利です"
 
-msgid "Let it empty if there is none"
+#, fuzzy
+msgid "Leave it empty, if none is meeded"
 msgstr "不要な場合は空にしてください"
 
 msgid "Draft"
@@ -562,7 +600,8 @@ msgstr "下書き"
 msgid "This is a draft, don't publish it yet."
 msgstr "これは下書きなので、まだ公開しないでください。"
 
-msgid "Update or publish"
+#, fuzzy
+msgid "Update, or publish"
 msgstr "更新または公開"
 
 msgid "Your Drafts"
@@ -571,13 +610,15 @@ msgstr "下書き"
 msgid "Danger zone"
 msgstr "危険"
 
-msgid "Be very careful, any action taken here can't be cancelled."
+#, fuzzy
+msgid "Be very careful, any action taken here cannot be reversed."
 msgstr "十分ご注意ください。ここで行ったすべての操作は取り消しできません。"
 
 msgid "Delete your account"
 msgstr "アカウントを削除"
 
-msgid "Sorry, but as an admin, you can't leave your instance."
+#, fuzzy
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr "申し訳ありませんが、管理者として、自分のインスタンスを離脱できません。"
 
 msgid "Users"
@@ -586,7 +627,8 @@ msgstr "ユーザー"
 msgid "This post isn't published yet."
 msgstr "この投稿はまだ公開されていません。"
 
-msgid "There is currently no article with that tag"
+#, fuzzy
+msgid "There are currently no articles with such a tag"
 msgstr "そのタグのある記事は現在ありません"
 
 msgid "Illustration"
@@ -596,11 +638,25 @@ msgid "None"
 msgstr "なし"
 
 #, fuzzy
-msgid "Let it empty reserve all rights"
+msgid "Leave empty to reserve all rights"
 msgstr "不要な場合は空にしてください"
 
 msgid "All rights reserved."
 msgstr ""
+
+#~ msgid "Passwords are not matching"
+#~ msgstr "パスワードが一致しません"
+
+#~ msgid "One author in this blog: "
+#~ msgid_plural "{0} authors in this blog: "
+#~ msgstr[0] "ブログに {0} 人の作成者がいます: "
+
+#~ msgid "One article in this blog"
+#~ msgid_plural "{0} articles in this blog"
+#~ msgstr[0] "ブログに {0} 件の記事があります"
+
+#~ msgid "Your feed"
+#~ msgstr "自分のフィード"
 
 #~ msgid "Welcome to {{ instance_name | escape }}"
 #~ msgstr "{{ instance_name | escape }} へようこそ"
