@@ -300,7 +300,7 @@ pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
 }
 
 pub fn validate_username(username: &str) -> Result<(), ValidationError> {
-    if username.contains(&['<', '>', '&', '@', '\'', '"'][..]) {
+    if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\n', '\t'][..]) {
         Err(ValidationError::new("username_illegal_char"))
     } else {
         Ok(())
@@ -316,6 +316,9 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
         return Ok(Redirect::to(uri!(new))); // Actually, it is an error
     }
 
+    let mut form = form.into_inner();
+    form.username = form.username.trim().to_owned();
+    form.email = form.email.trim().to_owned();
     form.validate()
         .map(|_| {
             NewUser::new_local(
@@ -333,7 +336,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
             render!(users::new(
                 &(&*conn, &intl.catalog, None),
                 Instance::get_local(&*conn).map(|i| i.open_registrations).unwrap_or(true),
-                &*form,
+                &form,
                 err
             ))
         })
