@@ -22,13 +22,13 @@
     <h1><span class="p-name">@blog.title</span> <small>~@fqn</small></h1>
     <p>@blog.summary</p>
     <p>
-        @i18n!(ctx.1, "One author in this blog: ", "{0} authors in this blog: ", authors.len())
+        @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: ", authors.len())
         @for author in authors {
             <a class="author p-author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
         }
     </p>
     <p>
-        @i18n!(ctx.1, "One article in this blog", "{0} articles in this blog", total_articles)
+        @i18n!(ctx.1, "There's one article on this blog", "There are {0} articles on this blog", total_articles)
     </p>
 
     <section>
@@ -52,9 +52,9 @@
 </div>
     @if is_author {
         <h2>@i18n!(ctx.1, "Danger zone")</h2>
-        <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")</p>
+        <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be reversed.")</p>
         <form method="post" action="@uri!(blogs::delete: name = &fqn)">
-	        <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete this blog")">
+	        <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Permanently delete this blog")">
         </form>
     }
 })
