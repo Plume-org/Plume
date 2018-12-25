@@ -30,12 +30,12 @@
             @format!(r#"<p class="error">{}</p>"#, i18n!(ctx.1, &*errs[0].message.clone().unwrap_or(Cow::from("Unknown error"))))
         }
 
-        <label for="plume-editor">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown is supported")</small></label>
+        <label for="plume-editor">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="plume-editor" name="content" rows="20">@form.content</textarea>
 
         @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")
 
-        @input!(ctx.1, license (optional text), "License", "Let it empty reserve all rights", form, errors, "")
+        @input!(ctx.1, license (optional text), "License", "Leave it empty to reserve all rights", form, errors, "")
 
         <label for="cover">@i18n!(ctx.1, "Illustration")<small>@i18n!(ctx.1, "Optional")</small></label>
         <select id="cover" name="cover">
@@ -64,7 +64,7 @@
             <input type="submit" value="@i18n!(ctx.1, "Update")" />
         } else {
             @if is_draft {
-                <input type="submit" value="@i18n!(ctx.1, "Update or publish")" />
+                <input type="submit" value="@i18n!(ctx.1, "Update, or publish")" />
             } else {
                 <input type="submit" value="@i18n!(ctx.1, "Publish")" />
             }
