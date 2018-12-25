@@ -1,3 +1,5 @@
+<meta charset="utf-8" />
+
 @use templates::base;
 @use template_utils::*;
 @use routes::user::UpdateUserForm;
@@ -27,7 +29,7 @@
                 <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete your account")">
             </form>
         } else {
-            <p>@i18n!(ctx.1, "Sorry, but as an admin, you can't leave your instance.")</p>
+            <p>@i18n!(ctx.1, "Sorry, but as an admin, you can't leave your own instance.")</p>
         }
     }
 })
