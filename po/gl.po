@@ -69,7 +69,8 @@ msgstr "Notificacións"
 msgid "Written by {0}"
 msgstr ""
 
-msgid "This article is under the {0} license."
+#, fuzzy
+msgid "This article is published under the {0} license."
 msgstr "Este artigo ten licenza {0}"
 
 msgid "One like"
@@ -88,7 +89,8 @@ msgid_plural "{0} Boosts"
 msgstr[0] "Unha promoción"
 msgstr[1] "{0} promocións"
 
-msgid "I don&#x27;t want to boost this anymore"
+#, fuzzy
+msgid "I don&#x27;t want this boosted anymore"
 msgstr "Quero retirar a pomoción realizada"
 
 msgid "Boost"
@@ -115,7 +117,8 @@ msgstr "Publicar"
 msgid "Login"
 msgstr "Conectar"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "Usuaria ou correo-e"
 
 msgid "Password"
@@ -127,7 +130,8 @@ msgstr "Taboleiro"
 msgid "Your Dashboard"
 msgstr "O seu taboleiro"
 
-msgid "Your Blogs"
+#, fuzzy
+msgid "Your blogs"
 msgstr "Os seus Blogs"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
@@ -139,7 +143,8 @@ msgstr "Iniciar un blog"
 msgid "Admin"
 msgstr "Admin"
 
-msgid "It is you"
+#, fuzzy
+msgid "That's you"
 msgstr "É vostede"
 
 msgid "Edit your profile"
@@ -220,34 +225,43 @@ msgstr "Conectar"
 msgid "Register"
 msgstr "Rexistrar"
 
-msgid "You need to be logged in order to create a new blog"
+#, fuzzy
+msgid "You need to be signed in, for you to create a new blog"
 msgstr "Debe estar conectada para crear un novo blog"
 
-msgid "You need to be logged in order to post a comment"
+#, fuzzy
+msgid "You need to be signed in, so that you can post a comment"
 msgstr "Debe estar conectada para publicar un comentario"
 
-msgid "You need to be logged in order to like a post"
+#, fuzzy
+msgid "You need to be signed in, in order for you to like a post"
 msgstr "Debe estar conectada para gustar unha entrada"
 
 msgid "You need to be logged in order to see your notifications"
 msgstr "Debe estar conectada para ver as súas notificacións"
 
-msgid "You need to be logged in order to write a new post"
+#, fuzzy
+msgid "You need to be logged in, to be able to write a new post"
 msgstr "Debe estar conectada para escribir un novo artigo"
 
-msgid "You need to be logged in order to boost a post"
+#, fuzzy
+msgid "You need to be logged in, for you to be able to boost a post"
 msgstr "Precisa estar conectada para promover un artigo"
 
-msgid "Invalid username or password"
+#, fuzzy
+msgid "Invalid username, or password"
 msgstr "Usuaria ou Contrasinal incorrectos"
 
-msgid "You need to be logged in order to access your dashboard"
+#, fuzzy
+msgid "You need to be logged in, to be able to access your dashboard"
 msgstr "Debe estar conectada para acceder ao seu taboleiro"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in, to be able to follow someone"
 msgstr "Debe estar conectada para seguir a alguén"
 
-msgid "You need to be logged in order to edit your profile"
+#, fuzzy
+msgid "You need to be logged in, to be able to edit your profile"
 msgstr "Debe estar conectada para editar o seu perfil"
 
 msgid "By {0}"
@@ -262,7 +276,8 @@ msgstr "{0} comezou a seguila"
 msgid "{0} liked your article"
 msgstr "{0} gustou do seu artigo"
 
-msgid "{0} commented your article"
+#, fuzzy
+msgid "{0} commented on your article"
 msgstr "{0} comentou o seu artigo"
 
 msgid "We couldn&#x27;t find this page."
@@ -274,7 +289,8 @@ msgstr "A ligazón que a trouxo aquí podería estar quebrado"
 msgid "You are not authorized."
 msgstr "Non ten permiso."
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author on this blog."
 msgstr "Vostede non é autora en este blog."
 
 msgid "{0} mentioned you."
@@ -298,14 +314,16 @@ msgstr "O seu comentario non pode estar baldeiro"
 msgid "A post with the same title already exists."
 msgstr "Xa existe unha entrada co mismo nome."
 
-msgid "We need an email or a username to identify you"
+#, fuzzy
+msgid "We need an email, or a username to identify you"
 msgstr "Precisamos un correo-e ou un nome de usuaria para identificala"
 
-msgid "Your password can't be empty"
+#, fuzzy
+msgid "Your password field can't be empty"
 msgstr "O contrasinal non pode estar baldeiro"
 
-msgid "Passwords are not matching"
-msgstr "Con coinciden os contrasinais"
+msgid "The two passwords must be a match!"
+msgstr ""
 
 msgid "Username can't be empty"
 msgstr "O nome de usuaria non pode estar baldeiro"
@@ -313,15 +331,16 @@ msgstr "O nome de usuaria non pode estar baldeiro"
 msgid "Invalid email"
 msgstr "Correo-e non válido"
 
-msgid "Password should be at least 8 characters long"
+#, fuzzy
+msgid "The password should be at least 8 characters long"
 msgstr "O contrasinal debe ter ao menos 8 caracteres"
 
-msgid "One author in this blog: "
-msgid_plural "{0} authors in this blog: "
-msgstr[0] "Unha autora en este blog: "
-msgstr[1] "{0} autoras en este blog: "
+msgid "This blog has one author: "
+msgid_plural "This blog has {0} authors: "
+msgstr[0] ""
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Conéctese ou utilice a súa conta no fediverso para interactuar con este "
 "artigo"
@@ -329,10 +348,9 @@ msgstr ""
 msgid "Optional"
 msgstr "Opcional"
 
-msgid "One article in this blog"
-msgid_plural "{0} articles in this blog"
-msgstr[0] "Un artigo en este blog"
-msgstr[1] "{0} artigos en este blog"
+msgid "This blog has one article"
+msgid_plural "This blog has {0} articles"
+msgstr[0] ""
 
 msgid "Previous page"
 msgstr "Páxina anterior"
@@ -355,7 +373,8 @@ msgstr "Axustes da instancia"
 msgid "Allow anyone to register"
 msgstr "Permitir o rexistro aberto"
 
-msgid "Short description"
+#, fuzzy
+msgid "Short description - byline"
 msgstr "Descrición curta"
 
 msgid "Markdown is supported"
@@ -370,7 +389,8 @@ msgstr "Licenza por omisión"
 msgid "Save settings"
 msgstr "Gardar axustes"
 
-msgid "No comments yet. Be the first to react!"
+#, fuzzy
+msgid "There are no comments here yet. Be the first to react!"
 msgstr "Sen comentarios. Sexa a primeira e comentar!"
 
 msgid "About this instance"
@@ -382,12 +402,15 @@ msgstr "Qué é Plume?"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume é un motor de publicación descentralizada."
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each from a separate, unique website."
 msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume websites, called instances, and you "
+"can interact with them directly from other platforms like Mastodon, or "
+"WriteFreely."
 msgstr ""
 "Os artigos son visibles tamén en outros sitios Plume, e pode interactuar "
 "coneles desde outras plataformas como Mastadon."
@@ -404,7 +427,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -437,13 +460,16 @@ msgstr "Detalles dos medios"
 msgid "Go back to the gallery"
 msgstr "Voltar a galería"
 
-msgid "Markdown code"
+#, fuzzy
+msgid "Markdown syntax"
 msgstr "Código markdown"
 
-msgid "Copy it in your articles to insert this media."
+#, fuzzy
+msgid "Copy it into your articles, to insert this media."
 msgstr "Copie para incrustar este contido nos seus artigos"
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
 
 msgid "Delete"
@@ -452,7 +478,8 @@ msgstr "Eliminar"
 msgid "Upload"
 msgstr "Subir"
 
-msgid "You don't have any media yet."
+#, fuzzy
+msgid "You don't have any media uploaded yet."
 msgstr "Aínda non ten medios"
 
 msgid "Media upload"
@@ -470,8 +497,10 @@ msgstr "Ficheiro"
 msgid "Send"
 msgstr "Enviar"
 
+#, fuzzy
 msgid ""
-"Sorry, but registrations are closed on this instance. Try to find another one"
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 "Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar "
 "outra"
@@ -485,8 +514,9 @@ msgstr "Conéctese para gostar"
 msgid "Login to boost"
 msgstr "Conéctese para promover"
 
-msgid "Your feed"
-msgstr "Para vostede"
+#, fuzzy
+msgid "Personal feed"
+msgstr "Artigos locais"
 
 msgid "Federated feed"
 msgstr "Artigos federados"
@@ -494,13 +524,15 @@ msgstr "Artigos federados"
 msgid "Local feed"
 msgstr "Artigos locais"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to follow some people."
 msgstr "Nada que ler por aquí. Intente seguir a máis xente."
 
 msgid "Articles"
 msgstr "Artigos"
 
-msgid "All the articles of the Fediverse"
+#, fuzzy
+msgid "All of the articles within the Fediverse"
 msgstr "Todos os artigos do Fediverso"
 
 msgid "Articles from {0}"
@@ -509,7 +541,8 @@ msgstr "Artigos desde {0}"
 msgid "View all"
 msgstr "Ver todos"
 
-msgid "Articles tagged \"{0}\""
+#, fuzzy
+msgid "Articles tagged under \"{0}\""
 msgstr "Artigos etiquetados con {0}"
 
 msgid "Edit"
@@ -553,10 +586,12 @@ msgstr "Bloquear"
 msgid "Ban"
 msgstr "Prohibir"
 
-msgid "Useful for visually impaired people and licensing"
+#, fuzzy
+msgid "Useful for visually impaired people and information about licenses"
 msgstr "Útil para xente con problemas visuais e licenzas"
 
-msgid "Let it empty if there is none"
+#, fuzzy
+msgid "Leave it empty, if none is meeded"
 msgstr "Deixar baldeiro si non hai ningunha"
 
 msgid "Draft"
@@ -565,7 +600,8 @@ msgstr "Borrador"
 msgid "This is a draft, don't publish it yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
-msgid "Update or publish"
+#, fuzzy
+msgid "Update, or publish"
 msgstr "Actualizar ou publicar"
 
 msgid "Your Drafts"
@@ -574,13 +610,15 @@ msgstr "O seus Borradores"
 msgid "Danger zone"
 msgstr "Zona perigosa"
 
-msgid "Be very careful, any action taken here can't be cancelled."
+#, fuzzy
+msgid "Be very careful, any action taken here cannot be reversed."
 msgstr "Sexa coidadosa, as accións tomadas non se poden restablecer."
 
 msgid "Delete your account"
 msgstr "Eliminar a súa conta"
 
-msgid "Sorry, but as an admin, you can't leave your instance."
+#, fuzzy
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 "Lamentámolo, pero como administradora, non pode deixar a súa instancia."
 
@@ -590,7 +628,7 @@ msgstr "Usuarias"
 msgid "This post isn't published yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
-msgid "There is currently no article with that tag"
+msgid "There are currently no articles with such a tag"
 msgstr ""
 
 #, fuzzy
@@ -601,11 +639,27 @@ msgid "None"
 msgstr ""
 
 #, fuzzy
-msgid "Let it empty reserve all rights"
+msgid "Leave empty to reserve all rights"
 msgstr "Deixar baldeiro si non hai ningunha"
 
 msgid "All rights reserved."
 msgstr ""
+
+#~ msgid "Passwords are not matching"
+#~ msgstr "Con coinciden os contrasinais"
+
+#~ msgid "One author in this blog: "
+#~ msgid_plural "{0} authors in this blog: "
+#~ msgstr[0] "Unha autora en este blog: "
+#~ msgstr[1] "{0} autoras en este blog: "
+
+#~ msgid "One article in this blog"
+#~ msgid_plural "{0} articles in this blog"
+#~ msgstr[0] "Un artigo en este blog"
+#~ msgstr[1] "{0} artigos en este blog"
+
+#~ msgid "Your feed"
+#~ msgstr "Para vostede"
 
 #~ msgid "Home to"
 #~ msgstr "Fogar de"

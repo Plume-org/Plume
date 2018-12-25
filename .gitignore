@@ -17,3 +17,5 @@ tags.*
 !tags.rs
 search_index
 main.css
+*.wasm
+*.js

@@ -1,0 +1,7 @@
+[package]
+name = "plume-front"
+version = "0.1.0"
+authors = ["Plume contributors"]
+
+[dependencies]
+stdweb = "0.4"

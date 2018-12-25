@@ -1,6 +1,5 @@
 @use templates::base;
 @use template_utils::*;
-@use routes::*;
 
 @(ctx: BaseContext, now: &str)
 
@@ -26,5 +25,4 @@
     </details>
     <input type="submit" value="Search"/>
   </form>
-  <script src="@uri!(static_files: file = "js/search.js")"></script>
 })

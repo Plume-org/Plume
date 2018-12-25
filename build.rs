@@ -2,7 +2,7 @@ extern crate ructe;
 extern crate rocket_i18n;
 extern crate rsass;
 use ructe::*;
-use std::{env, fs::File, io::Write, path::PathBuf};
+use std::{env, fs::*, io::Write, path::PathBuf};
 
 fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -20,4 +20,8 @@ fn main() {
         &rsass::compile_scss_file("static/css/main.scss".as_ref(), rsass::OutputStyle::Compressed)
             .expect("Error during SCSS compilation")
     ).expect("Couldn't write CSS output");
+
+    copy("target/deploy/plume-front.wasm", "static/plume-front.wasm")
+        .and_then(|_| read_to_string("target/deploy/plume-front.js"))
+        .and_then(|js| write("static/plume-front.js", js.replace("\"plume-front.wasm\"", "\"/static/plume-front.wasm\""))).ok();
 }
