@@ -30,7 +30,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-msgid "Create blog"
+msgid "Create the blog"
 msgstr ""
 
 msgid "Comment \"{0}\""
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Add yours"
 msgstr ""
 
-msgid "One Boost"
+msgid "One boost"
 msgid_plural "{0} Boosts"
 msgstr[0] ""
 msgstr[1] ""
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
-msgid "Update account"
+msgid "Update your account"
 msgstr ""
 
 msgid "{0}'s followers"
@@ -258,10 +258,10 @@ msgstr ""
 msgid "{0} started following you"
 msgstr ""
 
-msgid "{0} liked your article"
+msgid "{0} liked your post"
 msgstr ""
 
-msgid "{0} commented on your article"
+msgid "{0} commented on your post"
 msgstr ""
 
 msgid "We couldn&#x27;t find this page."
@@ -291,7 +291,7 @@ msgstr ""
 msgid "A blog with the same name already exists."
 msgstr ""
 
-msgid "Your comment can't be left empty"
+msgid "The comment field can't be left empty"
 msgstr ""
 
 msgid "A post with the same title already exists."
@@ -300,13 +300,13 @@ msgstr ""
 msgid "We need an email, or a username to identify you"
 msgstr ""
 
-msgid "Your password field can't be empty"
+msgid "Your password field can't be left empty"
 msgstr ""
 
 msgid "The two passwords must be a match!"
 msgstr ""
 
-msgid "Username can't be empty"
+msgid "The Username field can't be left empty"
 msgstr ""
 
 msgid "Invalid email"
@@ -355,13 +355,13 @@ msgstr ""
 msgid "Short description - byline"
 msgstr ""
 
-msgid "Markdown is supported"
+msgid "Markdown syntax is supported"
 msgstr ""
 
 msgid "Long description"
 msgstr ""
 
-msgid "Default license"
+msgid "Default article license"
 msgstr ""
 
 msgid "Save settings"
@@ -469,10 +469,10 @@ msgstr ""
 msgid "Subtitle"
 msgstr ""
 
-msgid "Login to like"
+msgid "Log In to like"
 msgstr ""
 
-msgid "Login to boost"
+msgid "Log In to boost"
 msgstr ""
 
 msgid "Personal feed"
