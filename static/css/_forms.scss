@@ -12,7 +12,8 @@ input, textarea, select {
  	margin: auto;
  	padding: 1em;
  	box-sizing: border-box;
-
+  -webkit-overflow-scrolling: auto; 
+ 
  	background: $white;
  	color: $black;
  	border: none;
@@ -35,6 +36,7 @@ textarea {
  	font-family: $lora;
  	font-size: 1.1em;
  	line-height: 1.5em;
+  -webkit-overflow-scrolling: auto;
 }
 
 input[type="checkbox"] {
@@ -114,12 +116,14 @@ form.new-post {
    	font-family: $playfair;
    	font-size: 2em;
    	text-align: left;
+    -webkit-overflow-scrolling: auto;
   }
   textarea {
    	min-height: 20em;
    	overflow-y: hidden;
    	resize: none;
    	box-sizing: content-box;
+    -webkit-overflow-scrolling: auto;
   }
   input[type="submit"] {
    	background: $lightgray;
