@@ -7,11 +7,11 @@
 @:base(ctx, "Search", {}, {}, {
   <h1>@i18n!(ctx.1, "Search")</h1>
   <form method="get" id="form">
-    <input id="q" name="q" placeholder="Your query" type="search">
+    <input id="q" name="q" placeholder="Your search query" type="search">
     <br/>
     <details>
         <summary>Advanced search</summary>
-        @input!(ctx.1, title    (text), "Post title matching these words",       "placeholder=\"Title\"")
+        @input!(ctx.1, title    (text), "Article title matching these words",       "placeholder=\"Title\"")
         @input!(ctx.1, subtitle (text), "Subtitle matching these words",    "placeholder=\"Subtitle\"")
         @input!(ctx.1, content  (text), "Content matching these words",     "placeholder=\"Content\"")
 	@input!(ctx.1, after    (date), "From this date",                   &format!("max={}", now))
