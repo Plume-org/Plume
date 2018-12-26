@@ -4,8 +4,8 @@
 
 @(ctx: BaseContext, tag: String, articles: Vec<Post>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Articles tagged \"{0}\""; &tag).as_str(), {}, {}, {
-    <h1>@i18n!(ctx.1, "Articles tagged \"{0}\""; &tag)</h1>
+@:base(ctx, i18n!(ctx.1, "Posts tagged under \"{0}\""; &tag).as_str(), {}, {}, {
+    <h1>@i18n!(ctx.1, "Posts tagged under \"{0}\""; &tag)</h1>
 
     @if !articles.is_empty() {
         <div class="cards">
@@ -15,7 +15,7 @@
         </div>
     } else {
         <section>
-            <h2>@i18n!(ctx.1, "There is currently no article with that tag")</h2>
+            <h2>@i18n!(ctx.1, "There are currently no articles with such a tag to be found")</h2>
         </section>
     }
     @paginate(ctx.1, page, n_pages)
