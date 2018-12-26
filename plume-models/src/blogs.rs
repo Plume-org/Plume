@@ -456,23 +456,23 @@ pub(crate) mod tests {
             "BlogName".to_owned(),
             "Blog name".to_owned(),
             "This is a small blog".to_owned(),
-            Instance::local_id(conn),
-        ));
-        blog1.update_boxes(conn);
+            Instance::get_local(conn).unwrap().id
+        ).unwrap()).unwrap();
+        blog1.update_boxes(conn).unwrap();
         let blog2 = Blog::insert(conn, NewBlog::new_local(
                 "MyBlog".to_owned(),
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
-                Instance::local_id(conn),
-        ));
-        blog2.update_boxes(conn);
+                Instance::get_local(conn).unwrap().id
+        ).unwrap()).unwrap();
+        blog2.update_boxes(conn).unwrap();
         let blog3 = Blog::insert(conn, NewBlog::new_local(
                 "WhyILikePlume".to_owned(),
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
-                Instance::local_id(conn),
-        ));
-        blog3.update_boxes(conn);
+                Instance::get_local(conn).unwrap().id
+        ).unwrap()).unwrap();
+        blog3.update_boxes(conn).unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -481,7 +481,7 @@ pub(crate) mod tests {
                 author_id: users[0].id,
                 is_owner: true,
             },
-        );
+        ).unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -490,7 +490,7 @@ pub(crate) mod tests {
                 author_id: users[1].id,
                 is_owner: false,
             },
-        );
+        ).unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -499,7 +499,7 @@ pub(crate) mod tests {
                 author_id: users[1].id,
                 is_owner: true,
             },
-        );
+        ).unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -508,7 +508,7 @@ pub(crate) mod tests {
                 author_id: users[2].id,
                 is_owner: true,
             },
-        );
+        ).unwrap();
         (users, vec![ blog1, blog2, blog3 ])
     }
 
@@ -524,11 +524,11 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
+                    Instance::get_local(conn).unwrap().id
+                ).unwrap(),
+            ).unwrap();
 
-            assert_eq!(blog.get_instance(conn).id, Instance::local_id(conn));
+            assert_eq!(blog.get_instance(conn).unwrap().id, Instance::get_local(conn).unwrap().id);
             // TODO add tests for remote instance
 
             Ok(())
@@ -547,20 +547,20 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
-            b1.update_boxes(conn);
+                    Instance::get_local(conn).unwrap().id,
+                ).unwrap(),
+            ).unwrap();
+            b1.update_boxes(conn).unwrap();
             let b2 = Blog::insert(
                 conn,
                 NewBlog::new_local(
                     "Blog".to_owned(),
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
-            b2.update_boxes(conn);
+                    Instance::get_local(conn).unwrap().id
+                ).unwrap(),
+            ).unwrap();
+            b2.update_boxes(conn).unwrap();
             let blog = vec![ b1, b2 ];
 
             BlogAuthor::insert(
@@ -570,7 +570,7 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            );
+            ).unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -579,7 +579,7 @@ pub(crate) mod tests {
                     author_id: user[1].id,
                     is_owner: false,
                 },
-            );
+            ).unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -588,50 +588,50 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            );
+            ).unwrap();
 
             assert!(
                 blog[0]
-                    .list_authors(conn)
+                    .list_authors(conn).unwrap()
                     .iter()
                     .any(|a| a.id == user[0].id)
             );
             assert!(
                 blog[0]
-                    .list_authors(conn)
+                    .list_authors(conn).unwrap()
                     .iter()
                     .any(|a| a.id == user[1].id)
             );
             assert!(
                 blog[1]
-                    .list_authors(conn)
+                    .list_authors(conn).unwrap()
                     .iter()
                     .any(|a| a.id == user[0].id)
             );
             assert!(
                 !blog[1]
-                    .list_authors(conn)
+                    .list_authors(conn).unwrap()
                     .iter()
                     .any(|a| a.id == user[1].id)
             );
 
             assert!(
-                Blog::find_for_author(conn, &user[0])
+                Blog::find_for_author(conn, &user[0]).unwrap()
                     .iter()
                     .any(|b| b.id == blog[0].id)
             );
             assert!(
-                Blog::find_for_author(conn, &user[1])
+                Blog::find_for_author(conn, &user[1]).unwrap()
                     .iter()
                     .any(|b| b.id == blog[0].id)
             );
             assert!(
-                Blog::find_for_author(conn, &user[0])
+                Blog::find_for_author(conn, &user[0]).unwrap()
                     .iter()
                     .any(|b| b.id == blog[1].id)
             );
             assert!(
-                !Blog::find_for_author(conn, &user[1])
+                !Blog::find_for_author(conn, &user[1]).unwrap()
                     .iter()
                     .any(|b| b.id == blog[1].id)
             );
@@ -652,9 +652,9 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
+                    Instance::get_local(conn).unwrap().id,
+                ).unwrap(),
+            ).unwrap();
 
             assert_eq!(
                 Blog::find_local(conn, "SomeName").unwrap().id,
@@ -677,9 +677,9 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
+                    Instance::get_local(conn).unwrap().id,
+                ).unwrap(),
+            ).unwrap();
 
             assert_eq!(blog.get_fqn(conn), "SomeName");
 
@@ -693,8 +693,8 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let (_, blogs) = fill_database(conn);
 
-            blogs[0].delete(conn, &get_searcher());
-            assert!(Blog::get(conn, blogs[0].id).is_none());
+            blogs[0].delete(conn, &get_searcher()).unwrap();
+            assert!(Blog::get(conn, blogs[0].id).is_err());
 
             Ok(())
         });
@@ -713,20 +713,20 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
-            b1.update_boxes(conn);
+                    Instance::get_local(conn).unwrap().id,
+                ).unwrap(),
+            ).unwrap();
+            b1.update_boxes(conn).unwrap();
             let b2 = Blog::insert(
                 conn,
                 NewBlog::new_local(
                     "Blog".to_owned(),
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
-                    Instance::local_id(conn),
-                ),
-            );
-            b2.update_boxes(conn);
+                    Instance::get_local(conn).unwrap().id,
+                ).unwrap(),
+            ).unwrap();
+            b2.update_boxes(conn).unwrap();
             let blog = vec![ b1, b2 ];
 
             BlogAuthor::insert(
@@ -736,7 +736,7 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            );
+            ).unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -745,7 +745,7 @@ pub(crate) mod tests {
                     author_id: user[1].id,
                     is_owner: false,
                 },
-            );
+            ).unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -754,13 +754,13 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            );
+            ).unwrap();
 
-            user[0].delete(conn, &searcher);
-            assert!(Blog::get(conn, blog[0].id).is_some());
-            assert!(Blog::get(conn, blog[1].id).is_none());
-            user[1].delete(conn, &searcher);
-            assert!(Blog::get(conn, blog[0].id).is_none());
+            user[0].delete(conn, &searcher).unwrap();
+            assert!(Blog::get(conn, blog[0].id).is_err());
+            assert!(Blog::get(conn, blog[1].id).is_err());
+            user[1].delete(conn, &searcher).unwrap();
+            assert!(Blog::get(conn, blog[0].id).is_err());
 
             Ok(())
         });

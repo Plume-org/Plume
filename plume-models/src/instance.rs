@@ -212,7 +212,7 @@ pub(crate) mod tests {
                 (
                     inst.clone(),
                     Instance::find_by_domain(conn, &inst.public_domain)
-                        .unwrap_or_else(|| Instance::insert(conn, inst)),
+                        .unwrap_or_else(|_| Instance::insert(conn, inst).unwrap()),
                 )
             })
             .collect()
@@ -245,7 +245,6 @@ pub(crate) mod tests {
             assert_eq!(res.long_description_html.get(), &inserted.long_description_html);
             assert_eq!(res.short_description_html.get(), &inserted.short_description_html);
 
-            assert_eq!(Instance::local_id(conn), res.id);
             Ok(())
         });
     }
@@ -255,9 +254,9 @@ pub(crate) mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let inserted = fill_database(conn);
-            assert_eq!(Instance::count(conn), inserted.len() as i64);
+            assert_eq!(Instance::count(conn).unwrap(), inserted.len() as i64);
 
-            let res = Instance::get_remotes(conn);
+            let res = Instance::get_remotes(conn).unwrap();
             assert_eq!(
                 res.len(),
                 inserted.iter().filter(|(inst, _)| !inst.local).count()
@@ -285,15 +284,15 @@ pub(crate) mod tests {
                     assert_eq!(&newinst.short_description_html, inst.short_description_html.get());
                 });
 
-            let page = Instance::page(conn, (0, 2));
+            let page = Instance::page(conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             let page1 = &page[0];
             let page2 = &page[1];
             assert!(page1.public_domain <= page2.public_domain);
 
-            let mut last_domaine: String = Instance::page(conn, (0, 1))[0].public_domain.clone();
+            let mut last_domaine: String = Instance::page(conn, (0, 1)).unwrap()[0].public_domain.clone();
             for i in 1..inserted.len() as i32 {
-                let page = Instance::page(conn, (i, i + 1));
+                let page = Instance::page(conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_domaine <= page[0].public_domain);
                 last_domaine = page[0].public_domain.clone();
@@ -312,7 +311,7 @@ pub(crate) mod tests {
             let inst_list = &inst_list[1..];
 
             let blocked = inst.blocked;
-            inst.toggle_block(conn);
+            inst.toggle_block(conn).unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.blocked, !blocked);
             assert_eq!(
@@ -325,25 +324,25 @@ pub(crate) mod tests {
                 0
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)).unwrap(),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)).unwrap(),
                 Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
             );
 
-            inst.toggle_block(conn);
+            inst.toggle_block(conn).unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.blocked, blocked);
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)).unwrap(),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)).unwrap(),
                 Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
@@ -374,7 +373,7 @@ pub(crate) mod tests {
                 false,
                 SafeString::new("[short](#link)"),
                 SafeString::new("[long_description](/with_link)"),
-            );
+            ).unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.name, "NewName".to_owned());
             assert_eq!(inst.open_registrations, false);

@@ -895,8 +895,8 @@ pub(crate) mod tests {
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
             "invalid_admin_password".to_owned(),
-        );
-        admin.update_boxes(conn);
+        ).unwrap();
+        admin.update_boxes(conn).unwrap();
         let user = NewUser::new_local(
             conn,
             "user".to_owned(),
@@ -905,8 +905,8 @@ pub(crate) mod tests {
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
             "invalid_user_password".to_owned(),
-        );
-        user.update_boxes(conn);
+        ).unwrap();
+        user.update_boxes(conn).unwrap();
         let other = NewUser::new_local(
             conn,
             "other".to_owned(),
@@ -915,8 +915,8 @@ pub(crate) mod tests {
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
             "invalid_other_password".to_owned(),
-        );
-        other.update_boxes(conn);
+        ).unwrap();
+        other.update_boxes(conn).unwrap();
         vec![ admin, user, other ]
     }
 
@@ -932,13 +932,13 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password"),
-            );
-            test_user.update_boxes(conn);
+                User::hash_pass("test_password").unwrap(),
+            ).unwrap();
+            test_user.update_boxes(conn).unwrap();
 
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test", Instance::local_id(conn))
+                User::find_by_name(conn, "test", Instance::get_local(conn).unwrap().id)
                     .unwrap()
                     .id
             );
@@ -975,9 +975,9 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let inserted = fill_database(conn);
 
-            assert!(User::get(conn, inserted[0].id).is_some());
-            inserted[0].delete(conn, &get_searcher());
-            assert!(User::get(conn, inserted[0].id).is_none());
+            assert!(User::get(conn, inserted[0].id).is_ok());
+            inserted[0].delete(conn, &get_searcher()).unwrap();
+            assert!(User::get(conn, inserted[0].id).is_err());
 
             Ok(())
         });
@@ -990,13 +990,13 @@ pub(crate) mod tests {
             let inserted = fill_database(conn);
             let local_inst = Instance::get_local(conn).unwrap();
             let mut i = 0;
-            while local_inst.has_admin(conn) {
+            while local_inst.has_admin(conn).unwrap() {
                 assert!(i < 100); //prevent from looping indefinitelly
-                local_inst.main_admin(conn).revoke_admin_rights(conn);
+                local_inst.main_admin(conn).unwrap().revoke_admin_rights(conn).unwrap();
                 i += 1;
             }
-            inserted[0].grant_admin_rights(conn);
-            assert_eq!(inserted[0].id, local_inst.main_admin(conn).id);
+            inserted[0].grant_admin_rights(conn).unwrap();
+            assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
 
             Ok(())
         });
@@ -1012,7 +1012,7 @@ pub(crate) mod tests {
                 "new name".to_owned(),
                 "em@il".to_owned(),
                 "<p>summary</p><script></script>".to_owned(),
-            );
+            ).unwrap();
             assert_eq!(updated.display_name, "new name");
             assert_eq!(updated.email.unwrap(), "em@il");
             assert_eq!(updated.summary.get(), "<p>summary</p>");
@@ -1033,9 +1033,9 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password"),
-            );
-            test_user.update_boxes(conn);
+                User::hash_pass("test_password").unwrap(),
+            ).unwrap();
+            test_user.update_boxes(conn).unwrap();
 
             assert!(test_user.auth("test_password"));
             assert!(!test_user.auth("other_password"));
@@ -1050,20 +1050,20 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             fill_database(conn);
 
-            let page = User::get_local_page(conn, (0, 2));
+            let page = User::get_local_page(conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             assert!(page[0].username <= page[1].username);
 
-            let mut last_username = User::get_local_page(conn, (0, 1))[0].username.clone();
-            for i in 1..User::count_local(conn) as i32 {
-                let page = User::get_local_page(conn, (i, i + 1));
+            let mut last_username = User::get_local_page(conn, (0, 1)).unwrap()[0].username.clone();
+            for i in 1..User::count_local(conn).unwrap() as i32 {
+                let page = User::get_local_page(conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_username <= page[0].username);
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(conn, (0, User::count_local(conn) as i32 + 10)).len() as i64,
-                User::count_local(conn)
+                User::get_local_page(conn, (0, User::count_local(conn).unwrap() as i32 + 10)).unwrap().len() as i64,
+                User::count_local(conn).unwrap()
             );
 
             Ok(())
