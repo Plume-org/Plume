@@ -1,11 +1,11 @@
-use canapi::{Error, Provider};
+use canapi::{Error as ApiError, Provider};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use plume_api::apps::AppEndpoint;
 use plume_common::utils::random_hex;
 use schema::apps;
-use Connection;
+use {Connection, Error, Result, ApiResult};
 
 #[derive(Clone, Queryable)]
 pub struct App {
@@ -31,7 +31,7 @@ pub struct NewApp {
 impl Provider<Connection> for App {
     type Data = AppEndpoint;
 
-    fn get(_conn: &Connection, _id: i32) -> Result<AppEndpoint, Error> {
+    fn get(_conn: &Connection, _id: i32) -> ApiResult<AppEndpoint> {
         unimplemented!()
     }
 
@@ -39,7 +39,7 @@ impl Provider<Connection> for App {
         unimplemented!()
     }
 
-    fn create(conn: &Connection, data: AppEndpoint) -> Result<AppEndpoint, Error> {
+    fn create(conn: &Connection, data: AppEndpoint) -> ApiResult<AppEndpoint> {
         let client_id = random_hex();
 
         let client_secret = random_hex();
@@ -52,7 +52,7 @@ impl Provider<Connection> for App {
                 redirect_uri: data.redirect_uri,
                 website: data.website,
             },
-        );
+        ).map_err(|_| ApiError::NotFound("Couldn't register app".into()))?;
 
         Ok(AppEndpoint {
             id: Some(app.id),
@@ -64,7 +64,7 @@ impl Provider<Connection> for App {
         })
     }
 
-    fn update(_conn: &Connection, _id: i32, _new_data: AppEndpoint) -> Result<AppEndpoint, Error> {
+    fn update(_conn: &Connection, _id: i32, _new_data: AppEndpoint) -> ApiResult<AppEndpoint> {
         unimplemented!()
     }
 

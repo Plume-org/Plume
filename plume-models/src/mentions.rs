@@ -7,7 +7,7 @@ use plume_common::activity_pub::inbox::Notify;
 use posts::Post;
 use schema::mentions;
 use users::User;
-use Connection;
+use {Connection, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable, Serialize, Deserialize)]
 pub struct Mention {
@@ -32,54 +32,47 @@ impl Mention {
     list_by!(mentions, list_for_post, post_id as i32);
     list_by!(mentions, list_for_comment, comment_id as i32);
 
-    pub fn get_mentioned(&self, conn: &Connection) -> Option<User> {
+    pub fn get_mentioned(&self, conn: &Connection) -> Result<User> {
         User::get(conn, self.mentioned_id)
     }
 
-    pub fn get_post(&self, conn: &Connection) -> Option<Post> {
-        self.post_id.and_then(|id| Post::get(conn, id))
+    pub fn get_post(&self, conn: &Connection) -> Result<Post> {
+        self.post_id.ok_or(Error::NotFound).and_then(|id| Post::get(conn, id))
     }
 
-    pub fn get_comment(&self, conn: &Connection) -> Option<Comment> {
-        self.comment_id.and_then(|id| Comment::get(conn, id))
+    pub fn get_comment(&self, conn: &Connection) -> Result<Comment> {
+        self.comment_id.ok_or(Error::NotFound).and_then(|id| Comment::get(conn, id))
     }
 
-    pub fn get_user(&self, conn: &Connection) -> Option<User> {
+    pub fn get_user(&self, conn: &Connection) -> Result<User> {
         match self.get_post(conn) {
-            Some(p) => p.get_authors(conn).into_iter().next(),
-            None => self.get_comment(conn).map(|c| c.get_author(conn)),
+            Ok(p) => Ok(p.get_authors(conn)?.into_iter().next()?),
+            Err(_) => self.get_comment(conn).and_then(|c| c.get_author(conn)),
         }
     }
 
-    pub fn build_activity(conn: &Connection, ment: &str) -> link::Mention {
-        let user = User::find_by_fqn(conn, ment);
+    pub fn build_activity(conn: &Connection, ment: &str) -> Result<link::Mention> {
+        let user = User::find_by_fqn(conn, ment)?;
         let mut mention = link::Mention::default();
         mention
             .link_props
-            .set_href_string(user.clone().map(|u| u.ap_url).unwrap_or_default())
-            .expect("Mention::build_activity: href error");
+            .set_href_string(user.ap_url)?;
         mention
             .link_props
-            .set_name_string(format!("@{}", ment))
-            .expect("Mention::build_activity: name error:");
-        mention
+            .set_name_string(format!("@{}", ment))?;
+        Ok(mention)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> link::Mention {
-        let user = self.get_mentioned(conn);
+    pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
+        let user = self.get_mentioned(conn)?;
         let mut mention = link::Mention::default();
         mention
             .link_props
-            .set_href_string(user.clone().map(|u| u.ap_url).unwrap_or_default())
-            .expect("Mention::to_activity: href error");
+            .set_href_string(user.ap_url.clone())?;
         mention
             .link_props
-            .set_name_string(
-                user.map(|u| format!("@{}", u.get_fqn(conn)))
-                    .unwrap_or_default(),
-            )
-            .expect("Mention::to_activity: mention error");
-        mention
+            .set_name_string(format!("@{}", user.get_fqn(conn)))?;
+        Ok(mention)
     }
 
     pub fn from_activity(
@@ -88,12 +81,12 @@ impl Mention {
         inside: i32,
         in_post: bool,
         notify: bool,
-    ) -> Option<Self> {
+    ) -> Result<Self> {
         let ap_url = ment.link_props.href_string().ok()?;
         let mentioned = User::find_by_ap_url(conn, &ap_url)?;
 
         if in_post {
-            Post::get(conn, inside).map(|post| {
+            Post::get(conn, inside).and_then(|post| {
                 let res = Mention::insert(
                     conn,
                     NewMention {
@@ -101,14 +94,14 @@ impl Mention {
                         post_id: Some(post.id),
                         comment_id: None,
                     },
-                );
+                )?;
                 if notify {
-                    res.notify(conn);
+                    res.notify(conn)?;
                 }
-                res
+                Ok(res)
             })
         } else {
-            Comment::get(conn, inside).map(|comment| {
+            Comment::get(conn, inside).and_then(|comment| {
                 let res = Mention::insert(
                     conn,
                     NewMention {
@@ -116,37 +109,37 @@ impl Mention {
                         post_id: None,
                         comment_id: Some(comment.id),
                     },
-                );
+                )?;
                 if notify {
-                    res.notify(conn);
+                    res.notify(conn)?;
                 }
-                res
+                Ok(res)
             })
         }
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection) -> Result<usize> {
         //find related notifications and delete them
-        if let Some(n) = Notification::find(conn, notification_kind::MENTION, self.id) {
-            n.delete(conn)
+        if let Ok(n) = Notification::find(conn, notification_kind::MENTION, self.id) {
+            n.delete(conn)?;
         }
         diesel::delete(self)
             .execute(conn)
-            .expect("Mention::delete: mention deletion error");
+            .map_err(Error::from)
     }
 }
 
 impl Notify<Connection> for Mention {
-    fn notify(&self, conn: &Connection) {
-        if let Some(m) = self.get_mentioned(conn) {
-            Notification::insert(
-                conn,
-                NewNotification {
-                    kind: notification_kind::MENTION.to_string(),
-                    object_id: self.id,
-                    user_id: m.id,
-                },
-            );
-        }
+    type Error = Error;
+    fn notify(&self, conn: &Connection) -> Result<()> {
+        let m = self.get_mentioned(conn)?;
+        Notification::insert(
+            conn,
+            NewNotification {
+                kind: notification_kind::MENTION.to_string(),
+                object_id: self.id,
+                user_id: m.id,
+            },
+        ).map(|_| ())
     }
 }

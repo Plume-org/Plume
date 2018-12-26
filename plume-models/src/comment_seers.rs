@@ -3,7 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use comments::Comment;
 use schema::comment_seers;
 use users::User;
-use Connection;
+use {Connection, Error, Result};
 
 #[derive(Queryable, Serialize, Clone)]
 pub struct CommentSeers {
@@ -22,11 +22,11 @@ pub struct NewCommentSeers {
 impl CommentSeers {
     insert!(comment_seers, NewCommentSeers);
 
-    pub fn can_see(conn: &Connection, c: &Comment, u: &User) -> bool {
-        !comment_seers::table.filter(comment_seers::comment_id.eq(c.id))
+    pub fn can_see(conn: &Connection, c: &Comment, u: &User) -> Result<bool> {
+        comment_seers::table.filter(comment_seers::comment_id.eq(c.id))
             .filter(comment_seers::user_id.eq(u.id))
             .load::<CommentSeers>(conn)
-            .expect("Comment::get_responses: loading error")
-            .is_empty()
+            .map_err(Error::from)
+            .map(|r| !r.is_empty())
     }
 }

@@ -7,7 +7,7 @@ use plume_common::utils::md_to_html;
 use safe_string::SafeString;
 use schema::{instances, users};
 use users::User;
-use Connection;
+use {Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Instance {
@@ -40,80 +40,72 @@ pub struct NewInstance {
 }
 
 impl Instance {
-    pub fn get_local(conn: &Connection) -> Option<Instance> {
+    pub fn get_local(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
             .limit(1)
-            .load::<Instance>(conn)
-            .expect("Instance::get_local: loading error")
+            .load::<Instance>(conn)?
             .into_iter()
-            .nth(0)
+            .nth(0).ok_or(Error::NotFound)
     }
 
-    pub fn get_remotes(conn: &Connection) -> Vec<Instance> {
+    pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
         instances::table
             .filter(instances::local.eq(false))
             .load::<Instance>(conn)
-            .expect("Instance::get_remotes: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Vec<Instance> {
+    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
         instances::table
             .order(instances::public_domain.asc())
             .offset(min.into())
             .limit((max - min).into())
             .load::<Instance>(conn)
-            .expect("Instance::page: loading error")
-    }
-
-    pub fn local_id(conn: &Connection) -> i32 {
-        Instance::get_local(conn)
-            .expect("Instance::local_id: local instance not found error")
-            .id
+            .map_err(Error::from)
     }
 
     insert!(instances, NewInstance);
     get!(instances);
     find_by!(instances, find_by_domain, public_domain as &str);
 
-    pub fn toggle_block(&self, conn: &Connection) {
+    pub fn toggle_block(&self, conn: &Connection) -> Result<usize> {
         diesel::update(self)
             .set(instances::blocked.eq(!self.blocked))
             .execute(conn)
-            .expect("Instance::toggle_block: update error");
+            .map_err(Error::from)
     }
 
     /// id: AP object id
-    pub fn is_blocked(conn: &Connection, id: &str) -> bool {
+    pub fn is_blocked(conn: &Connection, id: &str) -> Result<bool> {
         for block in instances::table
             .filter(instances::blocked.eq(true))
-            .get_results::<Instance>(conn)
-            .expect("Instance::is_blocked: loading error")
+            .get_results::<Instance>(conn)?
         {
             if id.starts_with(&format!("https://{}/", block.public_domain)) {
-                return true;
+                return Ok(true);
             }
         }
 
-        false
+        Ok(false)
     }
 
-    pub fn has_admin(&self, conn: &Connection) -> bool {
-        !users::table
+    pub fn has_admin(&self, conn: &Connection) -> Result<bool> {
+        users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
             .load::<User>(conn)
-            .expect("Instance::has_admin: loading error")
-            .is_empty()
+            .map_err(Error::from)
+            .map(|r| !r.is_empty())
     }
 
-    pub fn main_admin(&self, conn: &Connection) -> User {
+    pub fn main_admin(&self, conn: &Connection) -> Result<User> {
         users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
             .limit(1)
             .get_result::<User>(conn)
-            .expect("Instance::main_admin: loading error")
+            .map_err(Error::from)
     }
 
     pub fn compute_box(
@@ -138,7 +130,7 @@ impl Instance {
         open_registrations: bool,
         short_description: SafeString,
         long_description: SafeString,
-    ) {
+    ) -> Result<usize> {
         let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain);
         let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain);
         diesel::update(self)
@@ -151,14 +143,14 @@ impl Instance {
                 instances::long_description_html.eq(ld),
             ))
             .execute(conn)
-            .expect("Instance::update: update error");
+            .map_err(Error::from)
     }
 
-    pub fn count(conn: &Connection) -> i64 {
+    pub fn count(conn: &Connection) -> Result<i64> {
         instances::table
             .count()
             .get_result(conn)
-            .expect("Instance::count: counting error")
+            .map_err(Error::from)
     }
 }
 

@@ -1,4 +1,6 @@
-use diesel::{dsl::sql_query, r2d2::{ConnectionManager, CustomizeConnection, Error as ConnError, Pool, PooledConnection}, ConnectionError, RunQueryDsl};
+use diesel::{r2d2::{ConnectionManager, CustomizeConnection, Error as ConnError, Pool, PooledConnection}};
+#[cfg(feature = "sqlite")]
+use diesel::{dsl::sql_query, ConnectionError, RunQueryDsl};
 use rocket::{
     http::Status,
     request::{self, FromRequest},

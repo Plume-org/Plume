@@ -3,7 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use instance::Instance;
 use plume_common::activity_pub::Hashtag;
 use schema::tags;
-use {ap_url, Connection};
+use {ap_url, Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Serialize, Queryable)]
 pub struct Tag {
@@ -27,48 +27,42 @@ impl Tag {
     find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
-    pub fn to_activity(&self, conn: &Connection) -> Hashtag {
+    pub fn to_activity(&self, conn: &Connection) -> Result<Hashtag> {
         let mut ht = Hashtag::default();
         ht.set_href_string(ap_url(&format!(
             "{}/tag/{}",
-            Instance::get_local(conn)
-                .expect("Tag::to_activity: local instance not found error")
-                .public_domain,
+            Instance::get_local(conn)?.public_domain,
             self.tag
-        ))).expect("Tag::to_activity: href error");
-        ht.set_name_string(self.tag.clone())
-            .expect("Tag::to_activity: name error");
-        ht
+        )))?;
+        ht.set_name_string(self.tag.clone())?;
+        Ok(ht)
     }
 
-    pub fn from_activity(conn: &Connection, tag: &Hashtag, post: i32, is_hashtag: bool) -> Tag {
+    pub fn from_activity(conn: &Connection, tag: &Hashtag, post: i32, is_hashtag: bool) -> Result<Tag> {
         Tag::insert(
             conn,
             NewTag {
-                tag: tag.name_string().expect("Tag::from_activity: name error"),
+                tag: tag.name_string()?,
                 is_hashtag,
                 post_id: post,
             },
         )
     }
 
-    pub fn build_activity(conn: &Connection, tag: String) -> Hashtag {
+    pub fn build_activity(conn: &Connection, tag: String) -> Result<Hashtag> {
         let mut ht = Hashtag::default();
         ht.set_href_string(ap_url(&format!(
             "{}/tag/{}",
-            Instance::get_local(conn)
-                .expect("Tag::to_activity: local instance not found error")
-                .public_domain,
+            Instance::get_local(conn)?.public_domain,
             tag
-        ))).expect("Tag::to_activity: href error");
-        ht.set_name_string(tag)
-            .expect("Tag::to_activity: name error");
-        ht
+        )))?;
+        ht.set_name_string(tag)?;
+        Ok(ht)
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection) -> Result<usize> {
         diesel::delete(self)
             .execute(conn)
-            .expect("Tag::delete: database error");
+            .map_err(Error::from)
     }
 }
