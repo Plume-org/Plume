@@ -30,7 +30,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-msgid "Create your blog"
+msgid "Create the blog"
 msgstr ""
 
 msgid "Comment \"{0}\""
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid "Submit your comment"
+msgid "Submit comment"
 msgstr ""
 
 msgid "Something broke on our side."
