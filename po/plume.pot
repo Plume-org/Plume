@@ -30,7 +30,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-msgid "Create the blog"
+msgid "Create your blog"
 msgstr ""
 
 msgid "Comment \"{0}\""
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid "Submit comment"
+msgid "Submit your comment"
 msgstr ""
 
 msgid "Something broke on our side."
@@ -394,7 +394,7 @@ msgstr ""
 msgid "Home to <em>{0}</em> users"
 msgstr ""
 
-msgid "Who wrote <em>{0}</em> articles"
+msgid "Who wrote <em>{0}</em> posts"
 msgstr ""
 
 msgid "And are connected to <em>{0}</em> other instances"
@@ -403,7 +403,7 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr ""
 
-msgid "Delete this article"
+msgid "Delete this post"
 msgstr ""
 
 msgid "Delete this blog"
