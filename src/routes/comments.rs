@@ -21,6 +21,7 @@ use plume_models::{
     users::User
 };
 use Worker;
+use routes::errors::ErrorPage;
 
 #[derive(Default, FromForm, Debug, Validate, Serialize)]
 pub struct NewCommentForm {
@@ -32,12 +33,15 @@ pub struct NewCommentForm {
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<form>")]
 pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: Worker, intl: I18n)
-    -> Result<Redirect, Option<Ructe>> {
-    let blog = Blog::find_by_fqn(&*conn, &blog_name).ok_or(None)?;
-    let post = Post::find_by_slug(&*conn, &slug, blog.id).ok_or(None)?;
+    -> Result<Redirect, Ructe> {
+    let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("comments::create: blog error");
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
     form.validate()
         .map(|_| {
-            let (html, mentions, _hashtags) = utils::md_to_html(form.content.as_ref(), &Instance::get_local(&conn).expect("comments::create: Error getting local instance").public_domain);
+            let (html, mentions, _hashtags) = utils::md_to_html(
+                form.content.as_ref(),
+                &Instance::get_local(&conn).expect("comments::create: local instance error").public_domain
+            );
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),
                 in_response_to_id: form.responding_to,
@@ -47,16 +51,22 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 sensitive: !form.warning.is_empty(),
                 spoiler_text: form.warning.clone(),
                 public_visibility: true
-            }).update_ap_url(&*conn);
-            let new_comment = comm.create_activity(&*conn);
+            }).expect("comments::create: insert error").update_ap_url(&*conn).expect("comments::create: update ap url error");
+            let new_comment = comm.create_activity(&*conn).expect("comments::create: activity error");
 
             // save mentions
             for ment in mentions {
-                Mention::from_activity(&*conn, &Mention::build_activity(&*conn, &ment), post.id, true, true);
+                Mention::from_activity(
+                    &*conn,
+                    &Mention::build_activity(&*conn, &ment).expect("comments::create: build mention error"),
+                    post.id,
+                    true,
+                    true
+                ).expect("comments::create: mention save error");
             }
 
             // federate
-            let dest = User::one_by_instance(&*conn);
+            let dest = User::one_by_instance(&*conn).expect("comments::create: dest error");
             let user_clone = user.clone();
             worker.execute(move || broadcast(&user_clone, new_comment, dest));
 
@@ -64,43 +74,46 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code
-            let comments = CommentTree::from_post(&*conn, &post, Some(&user));
+            let comments = CommentTree::from_post(&*conn, &post, Some(&user)).expect("comments::create: comments error");
 
-            let previous = form.responding_to.map(|r| Comment::get(&*conn, r)
-                .expect("comments::create: Error retrieving previous comment"));
+            let previous = form.responding_to.and_then(|r| Comment::get(&*conn, r).ok());
 
-            Some(render!(posts::details(
+            render!(posts::details(
                 &(&*conn, &intl.catalog, Some(user.clone())),
                 post.clone(),
                 blog,
                 &*form,
                 errors,
-                Tag::for_post(&*conn, post.id),
+                Tag::for_post(&*conn, post.id).expect("comments::create: tags error"),
                 comments,
                 previous,
-                post.count_likes(&*conn),
-                post.count_reshares(&*conn),
-                user.has_liked(&*conn, &post),
-                user.has_reshared(&*conn, &post),
-                user.is_following(&*conn, post.get_authors(&*conn)[0].id),
-                post.get_authors(&*conn)[0].clone()
-            )))
+                post.count_likes(&*conn).expect("comments::create: count likes error"),
+                post.count_reshares(&*conn).expect("comments::create: count reshares error"),
+                user.has_liked(&*conn, &post).expect("comments::create: liked error"),
+                user.has_reshared(&*conn, &post).expect("comments::create: reshared error"),
+                user.is_following(&*conn, post.get_authors(&*conn).expect("comments::create: authors error")[0].id)
+                    .expect("comments::create: following error"),
+                post.get_authors(&*conn).expect("comments::create: authors error")[0].clone()
+            ))
         })
 }
 
 #[post("/~/<blog>/<slug>/comment/<id>/delete")]
-pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, worker: Worker) -> Redirect {
-    if let Some(comment) = Comment::get(&*conn, id) {
+pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, worker: Worker) -> Result<Redirect, ErrorPage> {
+    if let Ok(comment) = Comment::get(&*conn, id) {
         if comment.author_id == user.id {
-            let dest = User::one_by_instance(&*conn);
-            let delete_activity = comment.delete(&*conn);
+            let dest = User::one_by_instance(&*conn)?;
+            let delete_activity = comment.delete(&*conn)?;
             worker.execute(move || broadcast(&user, delete_activity, dest));
         }
     }
-    Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _))
+    Ok(Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _)))
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]
 pub fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Option<ActivityStream<Note>> {
-    Comment::get(&*conn, id).map(|c| ActivityStream::new(c.to_activity(&*conn)))
+    Comment::get(&*conn, id)
+        .and_then(|c| c.to_activity(&*conn))
+        .ok()
+        .map(ActivityStream::new)
 }

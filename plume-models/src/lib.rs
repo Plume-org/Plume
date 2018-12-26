@@ -49,6 +49,7 @@ pub type Connection = diesel::SqliteConnection;
 pub type Connection = diesel::PgConnection;
 
 /// All the possible errors that can be encoutered in this crate
+#[derive(Debug)]
 pub enum Error {
     Db(diesel::result::Error),
     InvalidValue,

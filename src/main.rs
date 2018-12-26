@@ -38,8 +38,11 @@ extern crate webfinger;
 use diesel::r2d2::ConnectionManager;
 use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
-use plume_models::{DATABASE_URL, Connection,
-    db_conn::{DbPool, PragmaForeignKey}, search::Searcher as UnmanagedSearcher};
+use plume_models::{
+    DATABASE_URL, Connection, Error,
+    db_conn::{DbPool, PragmaForeignKey},
+    search::{Searcher as UnmanagedSearcher, SearcherError},
+};
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
 use std::sync::Arc;
@@ -65,10 +68,22 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
-
     let dbpool = init_pool().expect("main: database pool initialization error");
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
-    let searcher = Arc::new(UnmanagedSearcher::open(&"search_index").unwrap());
+    let searcher = match UnmanagedSearcher::open(&"search_index") {
+        Err(Error::Search(e)) => match e {
+            SearcherError::WriteLockAcquisitionError => panic!(
+r#"Your search index is locked. Plume can't start. To fix this issue, run:
+
+    plm search unlock
+
+And try to restart Plume.
+"#),
+            e => Err(e).unwrap()
+        },
+        Err(_) => panic!("Unexpected error while opening search index"),
+        Ok(s) => Arc::new(s)
+    };
 
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(Duration::from_secs(5), Duration::from_secs(60*30), move || commiter.commit());

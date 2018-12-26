@@ -42,13 +42,14 @@ pub trait Inbox {
         match act["type"].as_str() {
             Some(t) => match t {
                 "Announce" => {
-                    Reshare::from_activity(conn, serde_json::from_value(act.clone())?, actor_id);
+                    Reshare::from_activity(conn, serde_json::from_value(act.clone())?, actor_id)
+                        .expect("Inbox::received: Announce error");;
                     Ok(())
                 }
                 "Create" => {
                     let act: Create = serde_json::from_value(act.clone())?;
-                    if Post::try_from_activity(&(conn, searcher), act.clone())
-                        || Comment::try_from_activity(conn, act)
+                    if Post::try_from_activity(&(conn, searcher), act.clone()).is_ok()
+                        || Comment::try_from_activity(conn, act).is_ok()
                     {
                         Ok(())
                     } else {
@@ -64,7 +65,7 @@ pub trait Inbox {
                             .id_string()?,
                         actor_id.as_ref(),
                         &(conn, searcher),
-                    );
+                    ).ok();
                     Comment::delete_id(
                         &act.delete_props
                             .object_object::<Tombstone>()?
@@ -72,11 +73,12 @@ pub trait Inbox {
                             .id_string()?,
                         actor_id.as_ref(),
                         conn,
-                    );
+                    ).ok();
                     Ok(())
                 }
                 "Follow" => {
-                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id).notify(conn);
+                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id)
+                        .and_then(|f| f.notify(conn)).expect("Inbox::received: follow from activity error");;
                     Ok(())
                 }
                 "Like" => {
@@ -84,7 +86,7 @@ pub trait Inbox {
                         conn,
                         serde_json::from_value(act.clone())?,
                         actor_id,
-                    );
+                    ).expect("Inbox::received: like from activity error");;
                     Ok(())
                 }
                 "Undo" => {
@@ -99,7 +101,7 @@ pub trait Inbox {
                                         .id_string()?,
                                     actor_id.as_ref(),
                                     conn,
-                                );
+                                ).expect("Inbox::received: undo like fail");;
                                 Ok(())
                             }
                             "Announce" => {
@@ -110,7 +112,7 @@ pub trait Inbox {
                                         .id_string()?,
                                     actor_id.as_ref(),
                                     conn,
-                                );
+                                ).expect("Inbox::received: undo reshare fail");;
                                 Ok(())
                             }
                             "Follow" => {
@@ -121,21 +123,21 @@ pub trait Inbox {
                                         .id_string()?,
                                     actor_id.as_ref(),
                                     conn,
-                                );
+                                ).expect("Inbox::received: undo follow error");;
                                 Ok(())
                             }
                             _ => Err(InboxError::CantUndo)?,
                         }
                     } else {
                         let link = act.undo_props.object.as_str().expect("Inbox::received: undo don't contain type and isn't Link");
-                        if let Some(like) = likes::Like::find_by_ap_url(conn, link) {
-                            likes::Like::delete_id(&like.ap_url, actor_id.as_ref(), conn);
+                        if let Ok(like) = likes::Like::find_by_ap_url(conn, link) {
+                            likes::Like::delete_id(&like.ap_url, actor_id.as_ref(), conn).expect("Inbox::received: delete Like error");
                             Ok(())
-                        } else if let Some(reshare) = Reshare::find_by_ap_url(conn, link) {
-                            Reshare::delete_id(&reshare.ap_url, actor_id.as_ref(), conn);
+                        } else if let Ok(reshare) = Reshare::find_by_ap_url(conn, link) {
+                            Reshare::delete_id(&reshare.ap_url, actor_id.as_ref(), conn).expect("Inbox::received: delete Announce error");
                             Ok(())
-                        } else if let Some(follow) = Follow::find_by_ap_url(conn, link) {
-                            Follow::delete_id(&follow.ap_url, actor_id.as_ref(), conn);
+                        } else if let Ok(follow) = Follow::find_by_ap_url(conn, link) {
+                            Follow::delete_id(&follow.ap_url, actor_id.as_ref(), conn).expect("Inbox::received: delete Follow error");
                             Ok(())
                         } else {
                             Err(InboxError::NoType)?
@@ -144,7 +146,7 @@ pub trait Inbox {
                 }
                 "Update" => {
                     let act: Update = serde_json::from_value(act.clone())?;
-                    Post::handle_update(conn, &act.update_props.object_object()?, searcher);
+                    Post::handle_update(conn, &act.update_props.object_object()?, searcher).expect("Inbox::received: post update error");;
                     Ok(())
                 }
                 _ => Err(InboxError::InvalidType)?,

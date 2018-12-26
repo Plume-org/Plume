@@ -35,13 +35,11 @@ impl Resolver<DbConn> for WebfingerResolver {
     }
 
     fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
-        match User::find_local(&*conn, &acct) {
-            Some(usr) => Ok(usr.webfinger(&*conn)),
-            None => match Blog::find_local(&*conn, &acct) {
-                Some(blog) => Ok(blog.webfinger(&*conn)),
-                None => Err(ResolverError::NotFound)
-            }
-        }
+        User::find_local(&*conn, &acct)
+            .and_then(|usr| usr.webfinger(&*conn))
+            .or_else(|_| Blog::find_local(&*conn, &acct)
+                .and_then(|blog| blog.webfinger(&*conn))
+                .or(Err(ResolverError::NotFound)))
     }
 }
 
