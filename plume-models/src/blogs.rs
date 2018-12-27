@@ -757,7 +757,7 @@ pub(crate) mod tests {
             ).unwrap();
 
             user[0].delete(conn, &searcher).unwrap();
-            assert!(Blog::get(conn, blog[0].id).is_err());
+            assert!(Blog::get(conn, blog[0].id).is_ok());
             assert!(Blog::get(conn, blog[1].id).is_err());
             user[1].delete(conn, &searcher).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_err());
