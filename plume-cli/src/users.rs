@@ -72,6 +72,7 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         admin,
         &bio,
         email,
-        User::hash_pass(&password),
-    ).update_boxes(conn);
+        User::hash_pass(&password).expect("Couldn't hash password"),
+    ).expect("Couldn't save new user")
+    .update_boxes(conn).expect("Couldn't update ActivityPub informations for new user");
 }

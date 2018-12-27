@@ -59,5 +59,5 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         open_registrations: open_reg,
         short_description_html: String::new(),
         long_description_html: String::new()
-    });
+    }).expect("Couldn't save instance");
 }
