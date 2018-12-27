@@ -15,7 +15,7 @@ msgstr ""
 msgid "Latest articles"
 msgstr ""
 
-msgid "No posts to see here yet."
+msgid "No articles to see here yet."
 msgstr ""
 
 msgid "New article"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid "Submit comment"
+msgid "Submit your comment"
 msgstr ""
 
 msgid "Something broke on our side."
@@ -103,10 +103,7 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-msgid "New post"
-msgstr ""
-
-msgid "Create a post"
+msgid "Create an article"
 msgstr ""
 
 msgid "Publish"
@@ -165,7 +162,7 @@ msgstr[1] ""
 msgid "Edit your account"
 msgstr ""
 
-msgid "Your Profile"
+msgid "Your profile"
 msgstr ""
 
 msgid "Display Name"
@@ -294,7 +291,7 @@ msgstr ""
 msgid "The comment field can't be left empty"
 msgstr ""
 
-msgid "A post with the same title already exists."
+msgid "An article with the same title already exists."
 msgstr ""
 
 msgid "We need an email, or a username to identify you"
@@ -306,7 +303,7 @@ msgstr ""
 msgid "The two passwords must be a match!"
 msgstr ""
 
-msgid "The Username field can't be left empty"
+msgid "The 'username' field can't be left empty"
 msgstr ""
 
 msgid "Invalid email"
@@ -550,7 +547,7 @@ msgstr ""
 msgid "Update, or publish"
 msgstr ""
 
-msgid "Your Drafts"
+msgid "Your drafts"
 msgstr ""
 
 msgid "Danger zone"
