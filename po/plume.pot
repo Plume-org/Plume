@@ -103,9 +103,6 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-msgid "New article"
-msgstr ""
-
 msgid "Create an article"
 msgstr ""
 
