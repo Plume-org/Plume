@@ -33,7 +33,7 @@
       <label for="long_description">@i18n!(ctx.1, "Long description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
       <textarea id="long_description" name="long_description">@Html(form.long_description)</textarea>
 
-      @input!(ctx.1, default_license (text), "Default license", form, errors, "minlenght=\"1\"")
+      @input!(ctx.1, default_license (text), "Default content license", form, errors, "minlenght=\"1\"")
 
       <input type="submit" value="@i18n!(ctx.1, "Save settings")"/>
   </form>
