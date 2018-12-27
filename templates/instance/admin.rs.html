@@ -7,7 +7,7 @@
 
 @(ctx: BaseContext, instance: Instance, form: InstanceSettingsForm, errors: ValidationErrors)
 
-@:base(ctx, i18n!(ctx.1, "The administration of {0}"; instance.name.clone()).as_str(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name.clone()).as_str(), {}, {}, {
   <h1>@i18n!(ctx.1, "Administration")</h1>
 
   @tabs(&[
