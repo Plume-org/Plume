@@ -73,11 +73,12 @@ fn main() {
     let searcher = match UnmanagedSearcher::open(&"search_index") {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(
-r#"Your search index is locked. Plume can't start. To fix this issue, run:
+r#"Your search index is locked. Plume can't start. To fix this issue
+make sure no other Plume instance is started, and run:
 
     plm search unlock
 
-And try to restart Plume.
+Then try to restart Plume.
 "#),
             e => Err(e).unwrap()
         },
