@@ -922,11 +922,11 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                     published: true,
                     license: license,
                     // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                    ap_url: article.object_props.url_string().unwrap_or(
+                    ap_url: article.object_props.url_string().or_else(|_|
                         article
                             .object_props
-                            .id_string()?
-                    ),
+                            .id_string()
+                    )?,
                     creation_date: Some(
                         article
                             .object_props
