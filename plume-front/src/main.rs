@@ -1,21 +1,26 @@
+#![recursion_limit="128"]
+
 #[macro_use]
 extern crate stdweb;
 
 use stdweb::{unstable::TryFrom, web::{*, event::*}};
 
+mod editor;
+
 fn main() {
     auto_expand();
     menu();
     search();
+    editor::init();
 }
 
 /// Auto expands the editor when adding text
 fn auto_expand() {
-    match document().query_selector("#plume-editor") {
+    match document().query_selector("#editor-content") {
         Ok(Some(x)) => HtmlElement::try_from(x).map(|article_content| {
             let offset = article_content.offset_height() - (article_content.get_bounding_client_rect().get_height() as i32);
             article_content.add_event_listener(move |_: KeyDownEvent| {
-                let article_content = document().query_selector("#plume-editor").ok();
+                let article_content = document().query_selector("#editor-content").ok();
                 js! {
                     @{&article_content}.style.height = "auto";
                     @{&article_content}.style.height = @{&article_content}.scrollHeight - @{offset} + "px";

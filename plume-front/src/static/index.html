@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Plume editor test</title>
+        <style>
+            #plume-editor > * {
+                height: 1em;
+            }
+
+            .placeholder {
+                color: #DADADA;
+            }
+
+            #plume-editor {
+                margin: 10vh 20vw;
+            }
+
+            h2 {
+                margin-bottom: 2em;
+            }
+
+            .popup {
+                position: absolute;
+                top: 15vh;
+                bottom: 20vh;
+                left: 20vw;
+                right: 20vw;
+                background: white;
+                border: 1px solid #DADADA;
+                z-index: 42;
+                padding: 2em;
+            }
+
+            .popup:not(.show), .popup-bg:not(.show) {
+                display: none;
+            }
+
+            .popup-bg {
+                background: rgba(0, 0, 0, 0.1);
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <button id="publish">Publish</button>
+        </header>
+        <div id="plume-editor"></div>
+        <div id="plume-fallback-editor">
+            <label for="title">
+                    Titre
+
+
+                </label>
+
+                <input type="hidden" name="csrf-token" value="YIWI9iKi4b7dRMPUxY4lhx6FU4_7FYIhG9hLbDOZb5M3_bW_BDet9lkZfPabhhIbwqn0tpR3G_PuYPcb8szRbLay2jXTb0pt3yL3GLLI0leixY-4YjmIHUwpT3o"/>
+                <input type="text" id="title" name="title" value="Another test" required="true"/>
+
+
+                <label for="subtitle">
+                    Sous-titre
+                    <small>Optionnel</small>
+
+                </label>
+
+                <input type="text" id="subtitle" name="subtitle" value="Test test" />
+
+
+
+
+        <label for="plume-editor">Contenu<small>Vous pouvez utiliser du Markdown</small></label>
+        <textarea id="editor-content" name="content" rows="20">Testing mention links this time @Elza@soc.punktrash.club
+
+Other paragraph amirite?
+        </textarea>
+
+
+                <label for="tags">
+                    Tags, separated by commas
+                    <small>Optionnel</small>
+
+                </label>
+
+                <input type="text" id="tags" name="tags" value="" />
+
+
+
+                <label for="license">
+                    License
+                    <small>Optionnel</small>
+                    <small>Let it empty reserve all rights</small>
+                </label>
+
+                <input type="text" id="license" name="license" value="CC-BY-SA" />
+
+
+        <label for="cover">Illustration<small>Optionnel</small></label>
+        <select id="cover" name="cover">
+            <option value="none"  selected="true" >Aucun</option>
+            </select>
+
+
+
+
+            <input type="submit" value="Mettre à jour" />
+        </div>
+        <script src="plume-front.js"></script>
+    </body>
+</html>
