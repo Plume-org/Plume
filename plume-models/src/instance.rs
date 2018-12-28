@@ -69,10 +69,11 @@ impl Instance {
     get!(instances);
     find_by!(instances, find_by_domain, public_domain as &str);
 
-    pub fn toggle_block(&self, conn: &Connection) -> Result<usize> {
+    pub fn toggle_block(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(instances::blocked.eq(!self.blocked))
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 
@@ -130,7 +131,7 @@ impl Instance {
         open_registrations: bool,
         short_description: SafeString,
         long_description: SafeString,
-    ) -> Result<usize> {
+    ) -> Result<()> {
         let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain);
         let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain);
         diesel::update(self)
@@ -143,6 +144,7 @@ impl Instance {
                 instances::long_description_html.eq(ld),
             ))
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 

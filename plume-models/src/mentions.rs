@@ -118,13 +118,14 @@ impl Mention {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<usize> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         //find related notifications and delete them
         if let Ok(n) = Notification::find(conn, notification_kind::MENTION, self.id) {
             n.delete(conn)?;
         }
         diesel::delete(self)
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 }

@@ -129,12 +129,13 @@ impl Media {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<usize> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         if !self.is_remote {
             fs::remove_file(self.file_path.as_str())?;
         }
         diesel::delete(self)
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 
@@ -157,10 +158,11 @@ impl Media {
         }
     }
 
-    pub fn set_owner(&self, conn: &Connection, user: &User) -> Result<usize> {
+    pub fn set_owner(&self, conn: &Connection, user: &User) -> Result<()> {
         diesel::update(self)
             .set(medias::owner_id.eq(user.id))
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 

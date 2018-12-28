@@ -354,11 +354,14 @@ impl Blog {
         }
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<usize> {
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
         for post in Post::get_for_blog(conn, &self)? {
             post.delete(&(conn, searcher))?;
         }
-        diesel::delete(self).execute(conn).map_err(Error::from)
+        diesel::delete(self)
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
     }
 }
 

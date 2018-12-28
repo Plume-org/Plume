@@ -103,7 +103,7 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<usize> {
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
         use schema::post_authors;
 
         for blog in Blog::find_for_author(conn, self)?
@@ -132,6 +132,7 @@ impl User {
 
         diesel::delete(self)
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 
@@ -139,17 +140,19 @@ impl User {
         Instance::get(conn, self.instance_id)
     }
 
-    pub fn grant_admin_rights(&self, conn: &Connection) -> Result<usize> {
+    pub fn grant_admin_rights(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(users::is_admin.eq(true))
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 
-    pub fn revoke_admin_rights(&self, conn: &Connection) -> Result<usize> {
+    pub fn revoke_admin_rights(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(users::is_admin.eq(false))
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 
@@ -318,7 +321,7 @@ impl User {
         Ok(user)
     }
 
-    pub fn refetch(&self, conn: &Connection) -> Result<usize> {
+    pub fn refetch(&self, conn: &Connection) -> Result<()> {
         User::fetch(&self.ap_url.clone()).and_then(|json| {
             let avatar = Media::save_remote(
                 conn,
@@ -363,6 +366,7 @@ impl User {
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
                 ))
                 .execute(conn)
+                .map(|_| ())
                 .map_err(Error::from)
         })
     }
@@ -740,10 +744,11 @@ impl User {
         })
     }
 
-    pub fn set_avatar(&self, conn: &Connection, id: i32) -> Result<usize> {
+    pub fn set_avatar(&self, conn: &Connection, id: i32) -> Result<()> {
         diesel::update(self)
             .set(users::avatar_id.eq(id))
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 

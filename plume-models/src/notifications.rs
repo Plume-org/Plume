@@ -135,9 +135,10 @@ impl Notification {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<usize> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         diesel::delete(self)
             .execute(conn)
+            .map(|_| ())
             .map_err(Error::from)
     }
 }
