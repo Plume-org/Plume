@@ -346,7 +346,7 @@ msgstr ""
 msgid "Instance settings"
 msgstr ""
 
-msgid "Allow anyone to register"
+msgid "Allow anyone to register here"
 msgstr ""
 
 msgid "Short description - byline"
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Default article license"
 msgstr ""
 
-msgid "Save settings"
+msgid "Save these settings"
 msgstr ""
 
 msgid "There are no comments here yet. Be the first to react!"
