@@ -11,7 +11,7 @@ use instance::Instance;
 use safe_string::SafeString;
 use schema::medias;
 use users::User;
-use {ap_url, Connection};
+use {ap_url, Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Media {
@@ -50,10 +50,10 @@ impl Media {
     get!(medias);
     list_by!(medias, for_user, owner_id as i32);
 
-    pub fn list_all_medias(conn: &Connection) -> Vec<Media> {
+    pub fn list_all_medias(conn: &Connection) -> Result<Vec<Media>> {
         medias::table
             .load::<Media>(conn)
-            .expect("Media::list_all_medias: loading error")
+            .map_err(Error::from)
     }
 
     pub fn category(&self) -> MediaCategory {
@@ -70,9 +70,9 @@ impl Media {
         }
     }
 
-    pub fn preview_html(&self, conn: &Connection) -> SafeString {
-        let url = self.url(conn);
-        match self.category() {
+    pub fn preview_html(&self, conn: &Connection) -> Result<SafeString> {
+        let url = self.url(conn)?;
+        Ok(match self.category() {
             MediaCategory::Image => SafeString::new(&format!(
                 r#"<img src="{}" alt="{}" title="{}" class=\"preview\">"#,
                 url, escape(&self.alt_text), escape(&self.alt_text)
@@ -86,12 +86,12 @@ impl Media {
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Unknown => SafeString::new(""),
-        }
+        })
     }
 
-    pub fn html(&self, conn: &Connection) -> SafeString {
-        let url = self.url(conn);
-        match self.category() {
+    pub fn html(&self, conn: &Connection) -> Result<SafeString> {
+        let url = self.url(conn)?;
+        Ok(match self.category() {
             MediaCategory::Image => SafeString::new(&format!(
                 r#"<img src="{}" alt="{}" title="{}">"#,
                 url, escape(&self.alt_text), escape(&self.alt_text)
@@ -105,46 +105,45 @@ impl Media {
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Unknown => SafeString::new(""),
-        }
+        })
     }
 
-    pub fn markdown(&self, conn: &Connection) -> SafeString {
-        let url = self.url(conn);
-        match self.category() {
+    pub fn markdown(&self, conn: &Connection) -> Result<SafeString> {
+        let url = self.url(conn)?;
+        Ok(match self.category() {
             MediaCategory::Image => SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url)),
-            MediaCategory::Audio | MediaCategory::Video => self.html(conn),
+            MediaCategory::Audio | MediaCategory::Video => self.html(conn)?,
             MediaCategory::Unknown => SafeString::new(""),
-        }
+        })
     }
 
-    pub fn url(&self, conn: &Connection) -> String {
+    pub fn url(&self, conn: &Connection) -> Result<String> {
         if self.is_remote {
-            self.remote_url.clone().unwrap_or_default()
+            Ok(self.remote_url.clone().unwrap_or_default())
         } else {
-            ap_url(&format!(
+            Ok(ap_url(&format!(
                 "{}/{}",
-                Instance::get_local(conn)
-                    .expect("Media::url: local instance not found error")
-                    .public_domain,
+                Instance::get_local(conn)?.public_domain,
                 self.file_path
-            ))
+            )))
         }
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         if !self.is_remote {
-            fs::remove_file(self.file_path.as_str()).expect("Media::delete: file deletion error");
+            fs::remove_file(self.file_path.as_str())?;
         }
         diesel::delete(self)
             .execute(conn)
-            .expect("Media::delete: database entry deletion error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
-    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Result<Media, ()> {
+    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Result<Media> {
         if url.contains(&['<', '>', '"'][..]) {
-            Err(())
+            Err(Error::Url)
         } else {
-            Ok(Media::insert(
+            Media::insert(
                 conn,
                 NewMedia {
                     file_path: String::new(),
@@ -155,19 +154,20 @@ impl Media {
                     content_warning: None,
                     owner_id: user.id,
                 },
-            ))
+            )
         }
     }
 
-    pub fn set_owner(&self, conn: &Connection, user: &User) {
+    pub fn set_owner(&self, conn: &Connection, user: &User) -> Result<()> {
         diesel::update(self)
             .set(medias::owner_id.eq(user.id))
             .execute(conn)
-            .expect("Media::set_owner: owner update error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &Connection, image: &Image) -> Option<Media> {
+    pub fn from_activity(conn: &Connection, image: &Image) -> Result<Media> {
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
             .rsplit('.')
@@ -185,7 +185,7 @@ impl Media {
             .copy_to(&mut dest)
             .ok()?;
 
-        Some(Media::insert(
+        Media::insert(
             conn,
             NewMedia {
                 file_path: path.to_str()?.to_string(),
@@ -205,7 +205,7 @@ impl Media {
                         .as_ref(),
                 )?.id,
             },
-        ))
+        )
     }
 }
 
@@ -265,14 +265,14 @@ pub(crate) mod tests {
                 owner_id: user_two,
             },
         ].into_iter()
-            .map(|nm| Media::insert(conn, nm))
+            .map(|nm| Media::insert(conn, nm).unwrap())
             .collect())
     }
 
     pub(crate) fn clean(conn: &Conn) {
         //used to remove files generated by tests
-        for media in Media::list_all_medias(conn) {
-            media.delete(conn);
+        for media in Media::list_all_medias(conn).unwrap() {
+            media.delete(conn).unwrap();
         }
     }
 
@@ -298,10 +298,10 @@ pub(crate) mod tests {
                     content_warning: None,
                     owner_id: user,
                 },
-            );
+            ).unwrap();
 
             assert!(Path::new(&path).exists());
-            media.delete(conn);
+            media.delete(conn).unwrap();
             assert!(!Path::new(&path).exists());
 
             clean(conn);
@@ -333,26 +333,26 @@ pub(crate) mod tests {
                     content_warning: None,
                     owner_id: u1.id,
                 },
-            );
+            ).unwrap();
 
             assert!(
-                Media::for_user(conn, u1.id)
+                Media::for_user(conn, u1.id).unwrap()
                     .iter()
                     .any(|m| m.id == media.id)
             );
             assert!(
-                !Media::for_user(conn, u2.id)
+                !Media::for_user(conn, u2.id).unwrap()
                     .iter()
                     .any(|m| m.id == media.id)
             );
-            media.set_owner(conn, u2);
+            media.set_owner(conn, u2).unwrap();
             assert!(
-                !Media::for_user(conn, u1.id)
+                !Media::for_user(conn, u1.id).unwrap()
                     .iter()
                     .any(|m| m.id == media.id)
             );
             assert!(
-                Media::for_user(conn, u2.id)
+                Media::for_user(conn, u2.id).unwrap()
                     .iter()
                     .any(|m| m.id == media.id)
             );

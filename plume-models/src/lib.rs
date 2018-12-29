@@ -1,4 +1,5 @@
 #![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
+#![feature(try_trait)]
 
 extern crate activitypub;
 extern crate ammonia;
@@ -47,6 +48,102 @@ pub type Connection = diesel::SqliteConnection;
 #[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
 pub type Connection = diesel::PgConnection;
 
+/// All the possible errors that can be encoutered in this crate
+#[derive(Debug)]
+pub enum Error {
+    Db(diesel::result::Error),
+    InvalidValue,
+    Io(std::io::Error),
+    MissingApProperty,
+    NotFound,
+    Request,
+    SerDe,
+    Search(search::SearcherError),
+    Signature,
+    Unauthorized,
+    Url,
+    Webfinger,
+}
+
+impl From<bcrypt::BcryptError> for Error {
+    fn from(_: bcrypt::BcryptError) -> Self {
+        Error::Signature
+    }
+}
+
+impl From<openssl::error::ErrorStack> for Error {
+    fn from(_: openssl::error::ErrorStack) -> Self {
+        Error::Signature
+    }
+}
+
+impl From<diesel::result::Error> for Error {
+    fn from(err: diesel::result::Error) -> Self {
+        Error::Db(err)
+    }
+}
+
+impl From<std::option::NoneError> for Error {
+    fn from(_: std::option::NoneError) -> Self {
+        Error::NotFound
+    }
+}
+
+impl From<url::ParseError> for Error {
+    fn from(_: url::ParseError) -> Self {
+        Error::Url
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(_: serde_json::Error) -> Self {
+        Error::SerDe
+    }
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(_: reqwest::Error) -> Self {
+        Error::Request
+    }
+}
+
+impl From<reqwest::header::InvalidHeaderValue> for Error {
+    fn from(_: reqwest::header::InvalidHeaderValue) -> Self {
+        Error::Request
+    }
+}
+
+impl From<activitypub::Error> for Error {
+    fn from(err: activitypub::Error) -> Self {
+        match err {
+            activitypub::Error::NotFound => Error::MissingApProperty,
+            _ => Error::SerDe,
+        }
+    }
+}
+
+impl From<webfinger::WebfingerError> for Error {
+    fn from(_: webfinger::WebfingerError) -> Self {
+        Error::Webfinger
+    }
+}
+
+impl From<search::SearcherError> for Error {
+    fn from(err: search::SearcherError) -> Self {
+        Error::Search(err)
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(err: std::io::Error) -> Self {
+        Error::Io(err)
+    }
+}
+
+pub type Result<T> = std::result::Result<T, Error>;
+
+pub type ApiResult<T> = std::result::Result<T, canapi::Error>;
+
 /// Adds a function to a model, that returns the first
 /// matching row for a given list of fields.
 ///
@@ -63,13 +160,14 @@ pub type Connection = diesel::PgConnection;
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ty),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Option<Self> {
+        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Result<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .limit(1)
-                .load::<Self>(conn)
-                .expect("macro::find_by: Error loading $table by $col")
-                .into_iter().nth(0)
+                .load::<Self>(conn)?
+                .into_iter()
+                .next()
+                .ok_or(Error::NotFound)
         }
     };
 }
@@ -89,11 +187,11 @@ macro_rules! find_by {
 macro_rules! list_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ty),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Vec<Self> {
+        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Result<Vec<Self>> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .load::<Self>(conn)
-                .expect("macro::list_by: Error loading $table by $col")
+                .map_err(Error::from)
         }
     };
 }
@@ -112,14 +210,14 @@ macro_rules! list_by {
 /// ```
 macro_rules! get {
     ($table:ident) => {
-        pub fn get(conn: &crate::Connection, id: i32) -> Option<Self> {
+        pub fn get(conn: &crate::Connection, id: i32) -> Result<Self> {
             $table::table
                 .filter($table::id.eq(id))
                 .limit(1)
-                .load::<Self>(conn)
-                .expect("macro::get: Error loading $table by id")
+                .load::<Self>(conn)?
                 .into_iter()
-                .nth(0)
+                .next()
+                .ok_or(Error::NotFound)
         }
     };
 }
@@ -140,11 +238,10 @@ macro_rules! insert {
     ($table:ident, $from:ident) => {
         last!($table);
 
-        pub fn insert(conn: &crate::Connection, new: $from) -> Self {
+        pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
             diesel::insert_into($table::table)
                 .values(new)
-                .execute(conn)
-                .expect("macro::insert: Error saving new $table");
+                .execute(conn)?;
             Self::last(conn)
         }
     };
@@ -164,19 +261,14 @@ macro_rules! insert {
 /// ```
 macro_rules! last {
     ($table:ident) => {
-        pub fn last(conn: &crate::Connection) -> Self {
+        pub fn last(conn: &crate::Connection) -> Result<Self> {
             $table::table
                 .order_by($table::id.desc())
                 .limit(1)
-                .load::<Self>(conn)
-                .expect(concat!(
-                    "macro::last: Error getting last ",
-                    stringify!($table)
-                ))
-                .iter()
+                .load::<Self>(conn)?
+                .into_iter()
                 .next()
-                .expect(concat!("macro::last: No last ", stringify!($table)))
-                .clone()
+                .ok_or(Error::NotFound)
         }
     };
 }

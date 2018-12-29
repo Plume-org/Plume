@@ -7,7 +7,7 @@ use plume_common::utils::md_to_html;
 use safe_string::SafeString;
 use schema::{instances, users};
 use users::User;
-use Connection;
+use {Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Instance {
@@ -40,80 +40,73 @@ pub struct NewInstance {
 }
 
 impl Instance {
-    pub fn get_local(conn: &Connection) -> Option<Instance> {
+    pub fn get_local(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
             .limit(1)
-            .load::<Instance>(conn)
-            .expect("Instance::get_local: loading error")
+            .load::<Instance>(conn)?
             .into_iter()
-            .nth(0)
+            .nth(0).ok_or(Error::NotFound)
     }
 
-    pub fn get_remotes(conn: &Connection) -> Vec<Instance> {
+    pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
         instances::table
             .filter(instances::local.eq(false))
             .load::<Instance>(conn)
-            .expect("Instance::get_remotes: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Vec<Instance> {
+    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
         instances::table
             .order(instances::public_domain.asc())
             .offset(min.into())
             .limit((max - min).into())
             .load::<Instance>(conn)
-            .expect("Instance::page: loading error")
-    }
-
-    pub fn local_id(conn: &Connection) -> i32 {
-        Instance::get_local(conn)
-            .expect("Instance::local_id: local instance not found error")
-            .id
+            .map_err(Error::from)
     }
 
     insert!(instances, NewInstance);
     get!(instances);
     find_by!(instances, find_by_domain, public_domain as &str);
 
-    pub fn toggle_block(&self, conn: &Connection) {
+    pub fn toggle_block(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(instances::blocked.eq(!self.blocked))
             .execute(conn)
-            .expect("Instance::toggle_block: update error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
     /// id: AP object id
-    pub fn is_blocked(conn: &Connection, id: &str) -> bool {
+    pub fn is_blocked(conn: &Connection, id: &str) -> Result<bool> {
         for block in instances::table
             .filter(instances::blocked.eq(true))
-            .get_results::<Instance>(conn)
-            .expect("Instance::is_blocked: loading error")
+            .get_results::<Instance>(conn)?
         {
             if id.starts_with(&format!("https://{}/", block.public_domain)) {
-                return true;
+                return Ok(true);
             }
         }
 
-        false
+        Ok(false)
     }
 
-    pub fn has_admin(&self, conn: &Connection) -> bool {
-        !users::table
+    pub fn has_admin(&self, conn: &Connection) -> Result<bool> {
+        users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
             .load::<User>(conn)
-            .expect("Instance::has_admin: loading error")
-            .is_empty()
+            .map_err(Error::from)
+            .map(|r| !r.is_empty())
     }
 
-    pub fn main_admin(&self, conn: &Connection) -> User {
+    pub fn main_admin(&self, conn: &Connection) -> Result<User> {
         users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
             .limit(1)
             .get_result::<User>(conn)
-            .expect("Instance::main_admin: loading error")
+            .map_err(Error::from)
     }
 
     pub fn compute_box(
@@ -138,7 +131,7 @@ impl Instance {
         open_registrations: bool,
         short_description: SafeString,
         long_description: SafeString,
-    ) {
+    ) -> Result<()> {
         let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain);
         let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain);
         diesel::update(self)
@@ -151,14 +144,15 @@ impl Instance {
                 instances::long_description_html.eq(ld),
             ))
             .execute(conn)
-            .expect("Instance::update: update error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
-    pub fn count(conn: &Connection) -> i64 {
+    pub fn count(conn: &Connection) -> Result<i64> {
         instances::table
             .count()
             .get_result(conn)
-            .expect("Instance::count: counting error")
+            .map_err(Error::from)
     }
 }
 
@@ -220,7 +214,7 @@ pub(crate) mod tests {
                 (
                     inst.clone(),
                     Instance::find_by_domain(conn, &inst.public_domain)
-                        .unwrap_or_else(|| Instance::insert(conn, inst)),
+                        .unwrap_or_else(|_| Instance::insert(conn, inst).unwrap()),
                 )
             })
             .collect()
@@ -253,7 +247,6 @@ pub(crate) mod tests {
             assert_eq!(res.long_description_html.get(), &inserted.long_description_html);
             assert_eq!(res.short_description_html.get(), &inserted.short_description_html);
 
-            assert_eq!(Instance::local_id(conn), res.id);
             Ok(())
         });
     }
@@ -263,9 +256,9 @@ pub(crate) mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let inserted = fill_database(conn);
-            assert_eq!(Instance::count(conn), inserted.len() as i64);
+            assert_eq!(Instance::count(conn).unwrap(), inserted.len() as i64);
 
-            let res = Instance::get_remotes(conn);
+            let res = Instance::get_remotes(conn).unwrap();
             assert_eq!(
                 res.len(),
                 inserted.iter().filter(|(inst, _)| !inst.local).count()
@@ -293,15 +286,15 @@ pub(crate) mod tests {
                     assert_eq!(&newinst.short_description_html, inst.short_description_html.get());
                 });
 
-            let page = Instance::page(conn, (0, 2));
+            let page = Instance::page(conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             let page1 = &page[0];
             let page2 = &page[1];
             assert!(page1.public_domain <= page2.public_domain);
 
-            let mut last_domaine: String = Instance::page(conn, (0, 1))[0].public_domain.clone();
+            let mut last_domaine: String = Instance::page(conn, (0, 1)).unwrap()[0].public_domain.clone();
             for i in 1..inserted.len() as i32 {
-                let page = Instance::page(conn, (i, i + 1));
+                let page = Instance::page(conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_domaine <= page[0].public_domain);
                 last_domaine = page[0].public_domain.clone();
@@ -320,7 +313,7 @@ pub(crate) mod tests {
             let inst_list = &inst_list[1..];
 
             let blocked = inst.blocked;
-            inst.toggle_block(conn);
+            inst.toggle_block(conn).unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.blocked, !blocked);
             assert_eq!(
@@ -333,25 +326,25 @@ pub(crate) mod tests {
                 0
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)).unwrap(),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)).unwrap(),
                 Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
             );
 
-            inst.toggle_block(conn);
+            inst.toggle_block(conn).unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.blocked, blocked);
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)).unwrap(),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)).unwrap(),
                 Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
@@ -382,7 +375,7 @@ pub(crate) mod tests {
                 false,
                 SafeString::new("[short](#link)"),
                 SafeString::new("[long_description](/with_link)"),
-            );
+            ).unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.name, "NewName".to_owned());
             assert_eq!(inst.open_registrations, false);

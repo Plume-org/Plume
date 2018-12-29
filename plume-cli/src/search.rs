@@ -94,7 +94,7 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
     let len = posts.len();
     for (i,post) in posts.iter().enumerate() {
         println!("Importing {}/{} : {}", i+1, len, post.title);
-        searcher.update_document(conn, &post);
+        searcher.update_document(conn, &post).expect("Couldn't import post");
     }
     println!("Commiting result");
     searcher.commit();

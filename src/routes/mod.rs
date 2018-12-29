@@ -60,7 +60,7 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
             .src(post.ap_url.clone())
             .content_type("html".to_string())
             .build().expect("Atom feed: content error"))
-        .authors(post.get_authors(&*conn)
+        .authors(post.get_authors(&*conn).expect("Atom feed: author error")
             .into_iter()
             .map(|a| PersonBuilder::default()
                 .name(a.display_name)

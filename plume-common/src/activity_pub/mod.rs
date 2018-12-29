@@ -120,7 +120,7 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
 
     let mut act = serde_json::to_value(act).expect("activity_pub::broadcast: serialization error");
     act["@context"] = context();
-    let signed = act.sign(sender);
+    let signed = act.sign(sender).expect("activity_pub::broadcast: signature error");
 
     for inbox in boxes {
         // TODO: run it in Sidekiq or something like that
@@ -130,7 +130,7 @@ pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
         let res = Client::new()
             .post(&inbox)
             .headers(headers.clone())
-            .header("Signature", request::signature(sender, &headers))
+            .header("Signature", request::signature(sender, &headers).expect("activity_pub::broadcast: request signature error"))
             .body(body)
             .send();
         match res {

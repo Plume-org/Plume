@@ -105,7 +105,7 @@ pub fn headers() -> HeaderMap {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> HeaderValue {
+pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderValue, ()> {
     let signed_string = headers
         .iter()
         .map(|(h, v)| {
@@ -125,7 +125,7 @@ pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> HeaderValue {
         .join(" ")
         .to_lowercase();
 
-    let data = signer.sign(&signed_string);
+    let data = signer.sign(&signed_string).map_err(|_| ())?;
     let sign = base64::encode(&data);
 
     HeaderValue::from_str(&format!(
@@ -133,5 +133,5 @@ pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> HeaderValue {
         key_id = signer.get_key_id(),
         signed_headers = signed_headers,
         signature = sign
-    )).expect("request::signature: signature header error")
+    )).map_err(|_| ())
 }

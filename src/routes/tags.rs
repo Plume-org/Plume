@@ -5,18 +5,18 @@ use plume_models::{
     posts::Post,
     users::User,
 };
-use routes::Page;
+use routes::{Page, errors::ErrorPage};
 use template_utils::Ructe;
 
 #[get("/tag/<name>?<page>")]
-pub fn tag(user: Option<User>, conn: DbConn, name: String, page: Option<Page>, intl: I18n) -> Ructe {
+pub fn tag(user: Option<User>, conn: DbConn, name: String, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let posts = Post::list_by_tag(&*conn, name.clone(), page.limits());
-    render!(tags::index(
+    let posts = Post::list_by_tag(&*conn, name.clone(), page.limits())?;
+    Ok(render!(tags::index(
         &(&*conn, &intl.catalog, user),
         name.clone(),
         posts,
         page.0,
-        Page::total(Post::count_for_tag(&*conn, name) as i32)
-    ))
+        Page::total(Post::count_for_tag(&*conn, name)? as i32)
+    )))
 }
