@@ -7,6 +7,8 @@ use rocket_i18n::I18n;
 use validator::Validate;
 use template_utils::Ructe;
 
+use std::time::Duration;
+
 use plume_common::{utils, activity_pub::{broadcast, ApRequest, 
     ActivityStream, inbox::Deletable}};
 use plume_models::{
@@ -104,7 +106,9 @@ pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, wor
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&*conn)?;
             let delete_activity = comment.delete(&*conn)?;
-            worker.execute(move || broadcast(&user, delete_activity, dest));
+            let user_c = user.clone();
+            worker.execute(move || broadcast(&user_c, delete_activity, dest));
+            worker.execute_after(Duration::from_secs(10*60), move || {user.rotate_keypair(&conn).expect("Failed to rotate keypair");});
         }
     }
     Ok(Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _)))
