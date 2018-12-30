@@ -15,7 +15,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
 RUN cargo install cargo-web
 COPY . .
-RUN cargo web deploy -p plume-front
+RUN chmod a+x ./plume-front.sh && ./plume-front.sh
 RUN cargo install --path ./ --force --no-default-features --features postgres
 RUN cargo install --path plume-cli --force --no-default-features --features postgres
 RUN cargo clean
