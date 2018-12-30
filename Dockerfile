@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
     libssl-dev
 WORKDIR /app
+RUN chmod a+x ./wasm-deps.sh && ./wasm-deps.sh
 COPY Cargo.toml Cargo.lock ./
 RUN cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
 RUN cargo install cargo-web
