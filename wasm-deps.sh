@@ -28,6 +28,6 @@ if [ "$ARCH" == "aarch64" -o "$ARCH" == "armv7l" ] ; then
     fi
     ninja lld
     ninja install-lld
-    cd /app
+    cd ~
     rm -rf /scratch
 fi
