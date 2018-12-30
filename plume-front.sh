@@ -32,7 +32,7 @@ if [ "$ARCH" == "aarch64" -o "$ARCH" == "armv7l" ] ; then
     export PATH=/opt/local/llvm/bin:${PATH}
     cd /app
     RUSTFLAGS="-C linker=lld" cargo web deploy -p plume-front
-    rm -rf /opt/*
+    rm -rf /scratch
     export PATH=${PATH_OLD}
 else
     cargo web deploy -p plume-front
