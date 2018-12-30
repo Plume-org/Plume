@@ -364,6 +364,10 @@ impl User {
                         .followers_string()?),
                     users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
+                    users::public_key.eq(json
+                        .custom_props
+                        .public_key_publickey()?
+                        .public_key_pem_string()?),
                 ))
                 .execute(conn)
                 .map(|_| ())

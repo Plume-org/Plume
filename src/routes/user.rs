@@ -370,6 +370,7 @@ pub fn inbox(
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
     let user = User::find_local(&*conn, &name).map_err(|_| None)?;
     let act = data.1.into_inner();
+    let sig = data.0;
 
     let activity = act.clone();
     let actor_id = activity["actor"]
@@ -380,14 +381,21 @@ pub fn inbox(
         ))))?;
 
     let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &data.0).is_secure()
+    if !verify_http_headers(&actor, &headers.0, &sig).is_secure()
         && !act.clone().verify(&actor)
     {
-        println!(
-            "Rejected invalid activity supposedly from {}, with headers {:?}",
-            actor.username, headers.0
-        );
-        return Err(Some(status::BadRequest(Some("Invalid signature"))));
+        // maybe we just know an old key?
+        actor.refetch(&conn).and_then(|_| User::get(&conn, actor.id))
+            .and_then(|actor| if !verify_http_headers(&actor, &headers.0, &sig).is_secure()
+                      && !act.clone().verify(&actor)
+                    {
+                        Ok(())
+                    } else {
+                        Err(Error::Signature)
+                    })
+            .map_err(|_| {
+                println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
+                status::BadRequest(Some("Invalid signature"))})?;
     }
 
     if Instance::is_blocked(&*conn, actor_id).map_err(|_| None)? {
