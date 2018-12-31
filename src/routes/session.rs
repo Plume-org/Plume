@@ -47,9 +47,9 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
             let mut err = ValidationError::new("invalid_login");
             err.message = Some(Cow::from("Invalid username or password"));
             errors.add("email_or_name", err);
-            user.id.to_string()
-        } else {
             String::new()
+        } else {
+            user.id.to_string()
         }
     } else {
         // Fake password verification, only to avoid different login times
@@ -66,7 +66,6 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
         cookies.add_private(Cookie::build(AUTH_COOKIE, user_id)
                                             .same_site(SameSite::Lax)
                                             .finish());
-
         let destination = flash
             .and_then(|f| if f.name() == "callback" {
                 Some(f.msg().to_owned())
