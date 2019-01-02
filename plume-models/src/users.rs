@@ -381,6 +381,13 @@ impl User {
             .unwrap_or(false)
     }
 
+    pub fn reset_password(&self, conn: &Connection, pass: &str) -> Result<()> {
+        diesel::update(self)
+            .set(users::hashed_password.eq(User::hash_pass(pass)?))
+            .execute(conn)?;
+        Ok(())
+    }
+
     pub fn update_boxes(&self, conn: &Connection) -> Result<()> {
         let instance = self.get_instance(conn)?;
         if self.outbox_url.is_empty() {
