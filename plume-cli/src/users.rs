@@ -94,12 +94,12 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
 
 fn reset_password<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let username = args.value_of("name").map(String::from).unwrap_or_else(|| super::ask_for("Username"));
+    let user = User::find_by_name(conn, &username, Instance::get_local(conn).expect("Failed to get local instance").id)
+        .expect("Failed to get user");
     let password = args.value_of("password").map(String::from).unwrap_or_else(|| {
         print!("Password: ");
         io::stdout().flush().expect("Couldn't flush STDOUT");
         rpassword::read_password().expect("Couldn't read your password.")
     });
-    let user = User::find_by_name(conn, &username, Instance::get_local(conn).expect("Failed to get local instance").id)
-        .expect("Failed to get user");
     user.reset_password(conn, &password).expect("Failed to reset password");
 }
