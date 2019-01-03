@@ -4,6 +4,7 @@ use rpassword;
 use std::io::{self, Write};
 use plume_models::{
     Connection,
+    instance::Instance,
     users::*,
 };
 
@@ -43,13 +44,27 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                 .long("admin")
                 .help("Makes the user an administrator of the instance")
             ).about("Create a new user on this instance"))
+        .subcommand(SubCommand::with_name("reset-password")
+            .arg(Arg::with_name("name")
+                .short("u")
+                .long("user")
+                .alias("username")
+                .takes_value(true)
+                .help("The username of the user to reset password to")
+            ).arg(Arg::with_name("password")
+                .short("p")
+                .long("password")
+                .takes_value(true)
+                .help("The password new for the user")
+            ).about("Reset user password"))
 }
 
 pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let conn = conn;
     match args.subcommand() {
         ("new", Some(x)) => new(x, conn),
-        _ => println!("Unknwon subcommand"),
+        ("reset-password", Some(x)) => reset_password(x, conn),
+        _ => println!("Unknown subcommand"),
     }
 }
 
@@ -75,4 +90,16 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         User::hash_pass(&password).expect("Couldn't hash password"),
     ).expect("Couldn't save new user")
     .update_boxes(conn).expect("Couldn't update ActivityPub informations for new user");
+}
+
+fn reset_password<'a>(args: &ArgMatches<'a>, conn: &Connection) {
+    let username = args.value_of("name").map(String::from).unwrap_or_else(|| super::ask_for("Username"));
+    let user = User::find_by_name(conn, &username, Instance::get_local(conn).expect("Failed to get local instance").id)
+        .expect("Failed to get user");
+    let password = args.value_of("password").map(String::from).unwrap_or_else(|| {
+        print!("Password: ");
+        io::stdout().flush().expect("Couldn't flush STDOUT");
+        rpassword::read_password().expect("Couldn't read your password.")
+    });
+    user.reset_password(conn, &password).expect("Failed to reset password");
 }
