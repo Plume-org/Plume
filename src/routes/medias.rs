@@ -3,7 +3,7 @@ use multipart::server::{Multipart, save::{SavedData, SaveResult}};
 use rocket::{Data, http::ContentType, response::{Redirect, status}};
 use rocket_i18n::I18n;
 use std::fs;
-use plume_models::{db_conn::DbConn, medias::*, users::User};
+use plume_models::{Error, db_conn::DbConn, medias::*, users::User};
 use template_utils::Ructe;
 use routes::errors::ErrorPage;
 
@@ -83,22 +83,30 @@ fn read(data: &SavedData) -> Result<String, status::BadRequest<&'static str>> {
 #[get("/medias/<id>")]
 pub fn details(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
     let media = Media::get(&*conn, id)?;
-    Ok(render!(medias::details(
-        &(&*conn, &intl.catalog, Some(user)),
-        media
-    )))
+    if media.owner_id == user.id {
+        Ok(render!(medias::details(
+            &(&*conn, &intl.catalog, Some(user)),
+            media
+        )))
+    } else {
+        Err(Error::Unauthorized.into())
+    }
 }
 
 #[post("/medias/<id>/delete")]
-pub fn delete(id: i32, _user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
+pub fn delete(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
     let media = Media::get(&*conn, id)?;
-    media.delete(&*conn)?;
+    if media.owner_id == user.id {
+        media.delete(&*conn)?;
+    }
     Ok(Redirect::to(uri!(list)))
 }
 
 #[post("/medias/<id>/avatar")]
 pub fn set_avatar(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
     let media = Media::get(&*conn, id)?;
-    user.set_avatar(&*conn, media.id)?;
+    if media.owner_id == user.id {
+        user.set_avatar(&*conn, media.id)?;
+    }
     Ok(Redirect::to(uri!(details: id = id)))
 }
