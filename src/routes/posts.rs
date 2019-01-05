@@ -3,7 +3,10 @@ use heck::{CamelCase, KebabCase};
 use rocket::request::LenientForm;
 use rocket::response::{Redirect, Flash};
 use rocket_i18n::I18n;
-use std::{collections::{HashMap, HashSet}, borrow::Cow};
+use std::{
+    collections::{HashMap, HashSet},
+    borrow::Cow, time::Duration,
+};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Deletable};
@@ -397,7 +400,9 @@ pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker:
         } else {
             let dest = User::one_by_instance(&*conn)?;
             let delete_activity = post.delete(&(&conn, &searcher))?;
-            worker.execute(move || broadcast(&user, delete_activity, dest));
+            let user_c = user.clone();
+            worker.execute(move || broadcast(&user_c, delete_activity, dest));
+            worker.execute_after(Duration::from_secs(10*60), move || {user.rotate_keypair(&conn).expect("Failed to rotate keypair");});
 
             Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
         }

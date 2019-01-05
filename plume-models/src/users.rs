@@ -364,6 +364,10 @@ impl User {
                         .followers_string()?),
                     users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
+                    users::public_key.eq(json
+                        .custom_props
+                        .public_key_publickey()?
+                        .public_key_pem_string()?),
                 ))
                 .execute(conn)
                 .map(|_| ())
@@ -636,6 +640,30 @@ impl User {
                     .as_ref(),
             )?,
         ).map_err(Error::from)
+    }
+
+    pub fn rotate_keypair(&self, conn: &Connection) -> Result<PKey<Private>> {
+        if self.private_key.is_none() {
+            return Err(Error::InvalidValue)
+        }
+        if (Utc::now().naive_utc() - self.last_fetched_date).num_minutes() < 10 {
+            //rotated recently
+            self.get_keypair()
+        } else {
+            let (public_key, private_key) = gen_keypair();
+            let public_key = String::from_utf8(public_key).expect("NewUser::new_local: public key error");
+            let private_key = String::from_utf8(private_key).expect("NewUser::new_local: private key error");
+            let res = PKey::from_rsa(
+                Rsa::private_key_from_pem(private_key.as_ref())?
+                )?;
+            diesel::update(self)
+                .set((users::public_key.eq(public_key),
+                    users::private_key.eq(Some(private_key)),
+                    users::last_fetched_date.eq(Utc::now().naive_utc())))
+                .execute(conn)
+                .map_err(Error::from)
+                .map(|_| res)
+        }
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomPerson> {
