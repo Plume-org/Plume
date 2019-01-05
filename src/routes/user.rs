@@ -386,8 +386,8 @@ pub fn inbox(
     {
         // maybe we just know an old key?
         actor.refetch(&conn).and_then(|_| User::get(&conn, actor.id))
-            .and_then(|actor| if !verify_http_headers(&actor, &headers.0, &sig).is_secure()
-                      && !act.clone().verify(&actor)
+            .and_then(|actor| if verify_http_headers(&actor, &headers.0, &sig).is_secure()
+                      || act.clone().verify(&actor)
                     {
                         Ok(())
                     } else {

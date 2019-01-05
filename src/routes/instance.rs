@@ -192,8 +192,8 @@ pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: 
         !act.clone().verify(&actor) {
         // maybe we just know an old key?
         actor.refetch(&conn).and_then(|_| User::get(&conn, actor.id))
-            .and_then(|actor| if !verify_http_headers(&actor, &headers.0, &sig).is_secure() &&
-                      !act.clone().verify(&actor) {
+            .and_then(|u| if verify_http_headers(&u, &headers.0, &sig).is_secure() ||
+                      act.clone().verify(&u) {
                           Ok(())
                       } else {
                           Err(Error::Signature)
