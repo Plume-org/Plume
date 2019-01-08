@@ -16,7 +16,7 @@ main article {
  	margin: 2.5em auto;
  	font-family: $lora;
  	font-size: 1.2em;
- 	line-height: 1.7em;
+ 	line-height: 1.7;
 
  	a:hover {
  	  text-decoration: underline;
@@ -260,7 +260,7 @@ main .article-meta {
        	padding: 1.25em 0;
        	font-family: $lora;
        	font-size: 1.1em;
-       	line-height: 1.4em;
+       	line-height: 1.4;
        	text-align: left;
       }
     }
