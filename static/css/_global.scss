@@ -47,11 +47,11 @@ small {
 
 /// Main
 body > main > *, .h-feed > * {
- 	padding: 0 20%;
+ 	margin: 0 20%;
 }
 
 body > main > .h-entry, .h-feed {
-	padding: 0;
+	margin: 0;
 }
 
 main {
@@ -59,6 +59,7 @@ main {
     font-family: $route159;
     font-size: 2.5em;
     font-weight: 300;
+    margin-top: 1em;
 
     &.article {
       max-width: 40rem;

@@ -4,6 +4,13 @@
 @import url('/static/fonts/Lora/Lora.css');
 @import url('/static/fonts/Playfair_Display/PlayfairDisplay.css');
 
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 @import 'variables';
 @import 'global';
 @import 'header';
