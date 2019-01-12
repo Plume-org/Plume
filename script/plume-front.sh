@@ -18,7 +18,7 @@ elif processor == 'armv7l':
 EOF
 )
 
-if [ "$ARCH" == "aarch64" -o "$ARCH" == "armv7l" ] ; then
+if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     export PATH=/opt/local/llvm/bin:${PATH}
     cd /app
     RUSTFLAGS="-C linker=lld" cargo web deploy -p plume-front
