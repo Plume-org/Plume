@@ -18,7 +18,9 @@ elif processor == 'armv7l':
 EOF
 )
 
-if [ "$ARCH" == "aarch64" -o "$ARCH" == "armv7l" ] ; then
+echo "Detected arch: $ARCH"
+
+if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     apt-get install -y --no-install-recommends build-essential subversion ninja-build cmake
     mkdir -p /scratch/src
     cd /scratch/src
