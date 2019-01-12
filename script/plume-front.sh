@@ -10,7 +10,7 @@ if processor == 'aarch64':
     if '32bit' in architecture:
         print('armv71', end='')
     else:
-        print('arm64', end='')
+        print('aarch64', end='')
 elif processor == 'x86 64' or processor == 'x86_64':
     print('amd64', end='')
 elif processor == 'armv7l':
