@@ -1,14 +1,32 @@
 #!/bin/bash
 
-ARCH=`arch`
+ARCH=$(python <<EOF
+from __future__ import print_function
+import platform
+processor = platform.machine()
+architecture = platform.architecture()
+if processor == 'aarch64':
+    # Mutli arch arm support is why this 32bit check is present
+    if '32bit' in architecture:
+        print('armv71', end='')
+    else:
+        print('arm64', end='')
+elif processor == 'x86 64' or processor == 'x86_64':
+    print('amd64', end='')
+elif processor == 'armv7l':
+    print('armhf', end='')
+EOF
+)
 
 if [ "$ARCH" == "aarch64" -o "$ARCH" == "armv7l" ] ; then
     apt-get install -y --no-install-recommends build-essential subversion ninja-build cmake
     mkdir -p /scratch/src
     cd /scratch/src
-    svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
+    # Pin LLVM to post 7.0.1 tag and pin to a known-good revision for Plume builds
+    svn co -r350977 http://llvm.org/svn/llvm-project/llvm/trunk/ llvm
     cd /scratch/src/llvm/tools
-    svn co http://llvm.org/svn/llvm-project/lld/trunk lld
+    # Pin lld to post 7.0.1 tag and pin to a known-good revision for Plume builds
+    svn co -r350975 http://llvm.org/svn/llvm-project/lld/trunk lld
     #svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
     #svn co http://llvm.org/svn/llvm-project/clang-tools-extra/trunk extra
     mkdir -p /scratch/build/arm
