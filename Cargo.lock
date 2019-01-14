@@ -68,7 +68,7 @@ dependencies = [
 
 [[package]]
 name = "ammonia"
-version = "1.2.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "html5ever 0.22.5 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1904,7 +1904,7 @@ name = "plume-models"
 version = "0.2.0"
 dependencies = [
  "activitypub 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "ammonia 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ammonia 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "askama_escape 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "canapi 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3367,7 +3367,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum activitystreams-types 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "71a093765d662b91305b95c2ff51a036e1b4c830d3c643679f0e986e200a1368"
 "checksum adler32 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "7e522997b529f05601e05166c07ed17789691f562762c7f3b987263d2dedee5c"
 "checksum aho-corasick 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)" = "1e9a933f4e58658d7b12defcf96dc5c720f20832deebe3e0a19efd3b6aaeeb9e"
-"checksum ammonia 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a8b93ecb80665873703bf3b0a77f369c96b183d8e0afaf30a3ff5ff07dfc6409"
+"checksum ammonia 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9c8cd3dff93e4471fff384645c5625cb8e4349000d8a730b9685bdbb19cbacb4"
 "checksum ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ee49baf6cb617b853aa8d93bf420db2383fab46d314482ca2803b40d5fde979b"
 "checksum antidote 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "34fde25430d87a9388dadbe6e34d7f72a462c8b43ac8d309b42b0a8505d7e2a5"
 "checksum array_tool 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "8f8cb5d814eb646a863c4f24978cff2880c4be96ad8cde2c0f0678732902e271"
