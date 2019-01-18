@@ -6,7 +6,7 @@ use Connection;
 use chrono::Datelike;
 use itertools::Itertools;
 use tantivy::{
-    collector::TopCollector, directory::MmapDirectory,
+    collector::TopDocs, directory::MmapDirectory,
     schema::*, tokenizer::*, Index, IndexWriter, Term
 };
 use whatlang::{detect as detect_lang, Lang};
@@ -177,14 +177,14 @@ impl Searcher {
         let schema = self.index.schema();
         let post_id = schema.get_field("post_id").unwrap();
 
-        let mut collector = TopCollector::with_limit(cmp::max(1,max) as usize);
+        let collector = TopDocs::with_limit(cmp::max(1,max) as usize);
 
         let searcher = self.index.searcher();
-        searcher.search(&query.into_query(), &mut collector).unwrap();
+        let res = searcher.search(&query.into_query(), &collector).unwrap();
 
-        collector.docs().get(min as usize..).unwrap_or(&[])
+        res.get(min as usize..).unwrap_or(&[])
             .into_iter()
-            .filter_map(|doc_add| {
+            .filter_map(|(_,doc_add)| {
                 let doc = searcher.doc(*doc_add).ok()?;
                 let id = doc.get_first(post_id)?;
                 Post::get(conn, id.i64_value() as i32).ok()
