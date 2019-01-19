@@ -15,7 +15,7 @@ msgstr ""
 msgid "Latest articles"
 msgstr ""
 
-msgid "No posts to see here yet."
+msgid "No articles to see here yet."
 msgstr ""
 
 msgid "New article"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-msgid "Create blog"
+msgid "Create the blog"
 msgstr ""
 
 msgid "Comment \"{0}\""
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid "Submit comment"
+msgid "Submit your comment"
 msgstr ""
 
 msgid "Something broke on our side."
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
-msgid "This article is under the {0} license."
+msgid "This article is published under the {0} license."
 msgstr ""
 
 #, fuzzy
@@ -84,12 +84,12 @@ msgstr ""
 msgid "Add yours"
 msgstr ""
 
-msgid "One Boost"
+msgid "One boost"
 msgid_plural "{0} Boosts"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "I don&#x27;t want to boost this anymore"
+msgid "I don&#x27;t want this boosted anymore"
 msgstr ""
 
 msgid "Boost"
@@ -104,10 +104,7 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-msgid "New post"
-msgstr ""
-
-msgid "Create a post"
+msgid "Create an article"
 msgstr ""
 
 msgid "Publish"
@@ -116,7 +113,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-msgid "Username or email"
+msgid "Username, or email"
 msgstr ""
 
 msgid "Password"
@@ -128,7 +125,7 @@ msgstr ""
 msgid "Your Dashboard"
 msgstr ""
 
-msgid "Your Blogs"
+msgid "Your blogs"
 msgstr ""
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
@@ -140,7 +137,7 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-msgid "It is you"
+msgid "That's you"
 msgstr ""
 
 msgid "Edit your profile"
@@ -168,7 +165,7 @@ msgstr[1] "{{ count }} followers"
 msgid "Edit your account"
 msgstr ""
 
-msgid "Your Profile"
+msgid "Your profile"
 msgstr ""
 
 msgid "Display Name"
@@ -180,7 +177,7 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
-msgid "Update account"
+msgid "Update your account"
 msgstr ""
 
 #, fuzzy
@@ -224,49 +221,49 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-msgid "You need to be logged in order to create a new blog"
+msgid "You need to be signed in, for you to create a new blog"
 msgstr ""
 
-msgid "You need to be logged in order to post a comment"
+msgid "You need to be signed in, so that you can post a comment"
 msgstr ""
 
-msgid "You need to be logged in order to like a post"
+msgid "You need to be signed in, to be able to like a post"
 msgstr ""
 
-msgid "You need to be logged in order to see your notifications"
+msgid "You need to be logged in, so that you can see your notifications"
 msgstr ""
 
-msgid "You need to be logged in order to write a new post"
+msgid "You need to be logged in, to be able to write a new post"
 msgstr ""
 
-msgid "You need to be logged in order to boost a post"
+msgid "You need to be logged in, for you to be able to boost a post"
 msgstr ""
 
-msgid "Invalid username or password"
+msgid "Invalid username, or password"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
+msgid "You need to be logged in, to be able to access your dashboard"
 msgstr ""
 
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in, to be able to follow someone"
 msgstr ""
 
-msgid "You need to be logged in order to edit your profile"
+msgid "You need to be logged in, to be able to edit your profile"
 msgstr ""
 
 msgid "By {0}"
 msgstr ""
 
-msgid "{0} boosted your article"
+msgid "{0} gave a boost to your article"
 msgstr ""
 
 msgid "{0} started following you"
 msgstr ""
 
-msgid "{0} liked your article"
+msgid "{0} liked your post"
 msgstr ""
 
-msgid "{0} commented your article"
+msgid "{0} commented on your post"
 msgstr ""
 
 msgid "We couldn&#x27;t find this page."
@@ -275,10 +272,10 @@ msgstr ""
 msgid "The link that led you here may be broken."
 msgstr ""
 
-msgid "You are not authorized."
+msgid "You are not authorized to access this page."
 msgstr ""
 
-msgid "You are not author in this blog."
+msgid "You are not an author on this blog."
 msgstr ""
 
 msgid "{0} mentioned you."
@@ -296,43 +293,45 @@ msgstr ""
 msgid "A blog with the same name already exists."
 msgstr ""
 
-msgid "Your comment can't be empty"
+msgid "The comment field can't be left empty"
 msgstr ""
 
-msgid "A post with the same title already exists."
+msgid "An article with the same title already exists."
 msgstr ""
 
-msgid "We need an email or a username to identify you"
+msgid "We need an email, or a username to identify you"
 msgstr ""
 
-msgid "Your password can't be empty"
+msgid "Your password field can't be left empty"
 msgstr ""
 
-msgid "Passwords are not matching"
+msgid "The two passwords must be a match!"
 msgstr ""
 
-msgid "Username can't be empty"
+msgid "The 'username' field can't be left empty"
 msgstr ""
 
 msgid "Invalid email"
 msgstr ""
 
-msgid "Password should be at least 8 characters long"
+msgid "The password should be at least 8 characters long"
 msgstr ""
 
-msgid "One author in this blog: "
-msgid_plural "{0} authors in this blog: "
+msgid "This blog has one author: "
+msgid_plural "This blog has {0} authors: "
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Login or use your Fediverse account to interact with this article"
+msgid ""
+"Log in, or use your other account within the Fediverse, to interact with "
+"this article"
 msgstr ""
 
 msgid "Optional"
 msgstr ""
 
-msgid "One article in this blog"
-msgid_plural "{0} articles in this blog"
+msgid "This blog has one article"
+msgid_plural "This blog has {0} articles"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -354,25 +353,25 @@ msgstr ""
 msgid "Instance settings"
 msgstr ""
 
-msgid "Allow anyone to register"
+msgid "Allow anyone to register here"
 msgstr ""
 
-msgid "Short description"
+msgid "Short description - byline"
 msgstr ""
 
-msgid "Markdown is supported"
+msgid "Markdown syntax is supported"
 msgstr ""
 
 msgid "Long description"
 msgstr ""
 
-msgid "Default license"
+msgid "Default article license"
 msgstr ""
 
-msgid "Save settings"
+msgid "Save these settings"
 msgstr ""
 
-msgid "No comments yet. Be the first to react!"
+msgid "There are no comments here yet. Be the first to react!"
 msgstr ""
 
 msgid "About this instance"
@@ -381,15 +380,16 @@ msgstr ""
 msgid "What is Plume?"
 msgstr ""
 
-msgid "Plume is a decentralized blogging engine."
+msgid "Plume is a decentralized blogging engine and a member of the Fediverse."
 msgstr ""
 
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs, each from a separate, unique website."
 msgstr ""
 
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume websites, called instances, and you "
+"can interact with them directly from other platforms like Mastodon, or "
+"WriteFreely."
 msgstr ""
 
 msgid "Create your account"
@@ -404,7 +404,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -437,13 +437,13 @@ msgstr ""
 msgid "Go back to the gallery"
 msgstr ""
 
-msgid "Markdown code"
+msgid "Markdown syntax"
 msgstr ""
 
-msgid "Copy it in your articles to insert this media."
+msgid "Copy it into your articles, to insert this media."
 msgstr ""
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr ""
 
 msgid "Delete"
@@ -452,7 +452,7 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-msgid "You don't have any media yet."
+msgid "You don't have any media uploaded yet."
 msgstr ""
 
 msgid "Media upload"
@@ -471,19 +471,20 @@ msgid "Send"
 msgstr ""
 
 msgid ""
-"Sorry, but registrations are closed on this instance. Try to find another one"
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 
 msgid "Subtitle"
 msgstr ""
 
-msgid "Login to like"
+msgid "Log In to like"
 msgstr ""
 
-msgid "Login to boost"
+msgid "Log In to boost"
 msgstr ""
 
-msgid "Your feed"
+msgid "Personal feed"
 msgstr ""
 
 msgid "Federated feed"
@@ -492,13 +493,13 @@ msgstr ""
 msgid "Local feed"
 msgstr ""
 
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to follow some people."
 msgstr ""
 
 msgid "Articles"
 msgstr ""
 
-msgid "All the articles of the Fediverse"
+msgid "All of the articles within the Fediverse"
 msgstr ""
 
 #, fuzzy
@@ -509,7 +510,7 @@ msgid "View all"
 msgstr ""
 
 #, fuzzy
-msgid "Articles tagged \"{0}\""
+msgid "Articles tagged under \"{0}\""
 msgstr "Welcome to {{ instance_name }}"
 
 msgid "Edit"
@@ -549,10 +550,10 @@ msgstr ""
 msgid "Ban"
 msgstr ""
 
-msgid "Useful for visually impaired people and licensing"
+msgid "Useful for visually impaired people and information about licenses"
 msgstr ""
 
-msgid "Let it empty if there is none"
+msgid "Leave it empty, if none is meeded"
 msgstr ""
 
 msgid "Draft"
@@ -561,22 +562,22 @@ msgstr ""
 msgid "This is a draft, don't publish it yet."
 msgstr ""
 
-msgid "Update or publish"
+msgid "Update, or publish"
 msgstr ""
 
-msgid "Your Drafts"
+msgid "Your drafts"
 msgstr ""
 
 msgid "Danger zone"
 msgstr ""
 
-msgid "Be very careful, any action taken here can't be cancelled."
+msgid "Be very careful, any action taken here cannot be reversed."
 msgstr ""
 
 msgid "Delete your account"
 msgstr ""
 
-msgid "Sorry, but as an admin, you can't leave your instance."
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 
 msgid "Users"
@@ -585,7 +586,7 @@ msgstr ""
 msgid "This post isn't published yet."
 msgstr ""
 
-msgid "There is currently no article with that tag"
+msgid "There are currently no articles with such a tag"
 msgstr ""
 
 msgid "Illustration"
@@ -594,7 +595,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-msgid "Let it empty reserve all rights"
+msgid "Leave empty to reserve all rights"
 msgstr ""
 
 msgid "All rights reserved."
@@ -609,7 +610,7 @@ msgstr ""
 msgid "Advanced search"
 msgstr ""
 
-msgid "Title matching these words"
+msgid "Article title matching these words"
 msgstr ""
 
 msgid "Subtitle matching these words"
@@ -627,19 +628,19 @@ msgstr ""
 msgid "Containing these tags"
 msgstr ""
 
-msgid "Posted in one of these instances"
+msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Posted in one of these blogs"
+msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Written in this language"
 msgstr ""
 
-msgid "Using this license"
+msgid "Published under this license"
 msgstr ""
 
 msgid "Search result for \"{0}\""
@@ -652,4 +653,28 @@ msgid "No result for your query"
 msgstr ""
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Subtitle — byline"
+msgstr ""
+
+msgid "Body content"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+msgid "Instance domain"
+msgstr ""
+
+msgid "Authors"
+msgstr ""
+
+msgid "Blog title"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Article license"
 msgstr ""

@@ -118,7 +118,7 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let searcher = get_searcher();
             let blog = &fill_database(conn).1[0];
-            let author = &blog.list_authors(conn)[0];
+            let author = &blog.list_authors(conn).unwrap()[0];
 
             let title = random_hex()[..8].to_owned();
 
@@ -134,23 +134,23 @@ pub(crate) mod tests {
                 subtitle: "".to_owned(),
                 source: "".to_owned(),
                 cover_id: None,
-            }, &searcher);
+            }, &searcher).unwrap();
             PostAuthor::insert(conn, NewPostAuthor {
                 post_id: post.id,
                 author_id: author.id,
-            });
+            }).unwrap();
 
             searcher.commit();
             assert_eq!(searcher.search_document(conn, Query::from_str(&title), (0,1))[0].id, post.id);
 
             let newtitle = random_hex()[..8].to_owned();
             post.title = newtitle.clone();
-            post.update(conn, &searcher);
+            post.update(conn, &searcher).unwrap();
             searcher.commit();
             assert_eq!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1))[0].id, post.id);
             assert!(searcher.search_document(conn, Query::from_str(&title), (0,1)).is_empty());
 
-            post.delete(&(conn, &searcher));
+            post.delete(&(conn, &searcher)).unwrap();
             searcher.commit();
             assert!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1)).is_empty());
 

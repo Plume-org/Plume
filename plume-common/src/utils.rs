@@ -29,7 +29,7 @@ pub fn make_actor_id(name: &str) -> String {
 * Note that the message should be translated before passed to this function.
 */
 pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Redirect> {
-    Flash::new(Redirect::to(format!("/login?m={}", message)), "callback", url.into().to_string())
+    Flash::new(Redirect::to(format!("/login?m={}", Uri::percent_encode(message))), "callback", url.into().to_string())
 }
 
 #[derive(Debug)]

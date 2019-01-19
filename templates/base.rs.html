@@ -30,6 +30,10 @@
                 </nav>
                 <nav>
                     @if ctx.2.is_some() {
+                        <a href="@uri!(search::search: _)">
+                            <i class="icon icon-search"></i>
+                            <span class="mobile-label">@i18n!(ctx.1, "Search")</span>
+                        </a>
                         <a href="@uri!(user::dashboard)">
                             <i class="icon icon-home" aria-label="@i18n!(ctx.1, "Dashboard")"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Dashboard")</span>
@@ -37,10 +41,6 @@
                         <a href="@uri!(notifications::notifications: page = _)">
                             <i class="icon icon-bell" aria-label="@i18n!(ctx.1, "Notifications")"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Notifications")</span>
-                        </a>
-                        <a href="@uri!(search::search: _)">
-                            <i class="icon icon-search"></i>
-                            <span class="mobile-label">@i18n!(ctx.1, "Search")</span>
                         </a>
                         <a href="@uri!(session::delete)">
                             <i class="icon icon-log-out" aria-label="@i18n!(ctx.1, "Log Out")"></i>
@@ -79,6 +79,6 @@
                 <a href="@uri!(instance::admin)">@i18n!(ctx.1, "Administration")</a>
             }
         </footer>
-        <script src="@uri!(static_files: file = "js/menu.js")"></script>
+        <script src="@uri!(static_files: file = "plume-front.js")"></script>
     </body>
 </html>

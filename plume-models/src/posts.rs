@@ -4,32 +4,33 @@ use activitypub::{
     link,
     object::{Article, Image, Tombstone},
 };
-use canapi::{Error, Provider};
+use canapi::{Error as ApiError, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use heck::{CamelCase, KebabCase};
+use scheduled_thread_pool::ScheduledThreadPool as Worker;
 use serde_json;
+use std::collections::HashSet;
 
-use blogs::Blog;
-use instance::Instance;
-use medias::Media;
-use mentions::Mention;
 use plume_api::posts::PostEndpoint;
 use plume_common::{
     activity_pub::{
         inbox::{Deletable, FromActivity},
-        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
+        broadcast, Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
     },
     utils::md_to_html,
 };
+use blogs::Blog;
+use instance::Instance;
+use medias::Media;
+use mentions::Mention;
 use post_authors::*;
 use safe_string::SafeString;
 use search::Searcher;
 use schema::posts;
-use std::collections::HashSet;
-use tags::Tag;
+use tags::*;
 use users::User;
-use {ap_url, Connection, BASE_URL};
+use {ap_url, Connection, BASE_URL, Error, Result, ApiResult};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -66,33 +67,40 @@ pub struct NewPost {
     pub cover_id: Option<i32>,
 }
 
-impl<'a> Provider<(&'a Connection, &'a Searcher, Option<i32>)> for Post {
+impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for Post {
     type Data = PostEndpoint;
 
     fn get(
-        (conn, _search, user_id): &(&'a Connection, &Searcher, Option<i32>),
+        (conn, _worker, _search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
         id: i32,
-    ) -> Result<PostEndpoint, Error> {
-        if let Some(post) = Post::get(conn, id) {
-            if !post.published && !user_id.map(|u| post.is_author(conn, u)).unwrap_or(false) {
-                return Err(Error::Authorization(
+    ) -> ApiResult<PostEndpoint> {
+        if let Ok(post) = Post::get(conn, id) {
+            if !post.published && !user_id.map(|u| post.is_author(conn, u).unwrap_or(false)).unwrap_or(false) {
+                return Err(ApiError::Authorization(
                     "You are not authorized to access this post yet.".to_string(),
                 ));
             }
-
             Ok(PostEndpoint {
                 id: Some(post.id),
                 title: Some(post.title.clone()),
                 subtitle: Some(post.subtitle.clone()),
                 content: Some(post.content.get().clone()),
+                source: Some(post.source.clone()),
+                author: Some(post.get_authors(conn).map_err(|_| ApiError::NotFound("Authors not found".into()))?[0].username.clone()),
+                blog_id: Some(post.blog_id),
+                published: Some(post.published),
+                creation_date: Some(post.creation_date.format("%Y-%m-%d").to_string()),
+                license: Some(post.license.clone()),
+                tags: Some(Tag::for_post(conn, post.id).map_err(|_| ApiError::NotFound("Tags not found".into()))?.into_iter().map(|t| t.tag).collect()),
+                cover_id: post.cover_id,
             })
         } else {
-            Err(Error::NotFound("Request post was not found".to_string()))
+            Err(ApiError::NotFound("Request post was not found".to_string()))
         }
     }
 
     fn list(
-        (conn, _searcher, user_id): &(&'a Connection, &Searcher, Option<i32>),
+        (conn, _worker, _search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
         filter: PostEndpoint,
     ) -> Vec<PostEndpoint> {
         let mut query = posts::table.into_boxed();
@@ -106,46 +114,144 @@ impl<'a> Provider<(&'a Connection, &'a Searcher, Option<i32>)> for Post {
             query = query.filter(posts::content.eq(content));
         }
 
-        query
-            .get_results::<Post>(*conn)
-            .map(|ps| {
-                ps.into_iter()
-                    .filter(|p| {
-                        p.published || user_id.map(|u| p.is_author(conn, u)).unwrap_or(false)
-                    })
-                    .map(|p| PostEndpoint {
-                        id: Some(p.id),
-                        title: Some(p.title.clone()),
-                        subtitle: Some(p.subtitle.clone()),
-                        content: Some(p.content.get().clone()),
-                    })
-                    .collect()
+        query.get_results::<Post>(*conn).map(|ps| ps.into_iter()
+            .filter(|p| p.published || user_id.map(|u| p.is_author(conn, u).unwrap_or(false)).unwrap_or(false))
+            .map(|p| PostEndpoint {
+                id: Some(p.id),
+                title: Some(p.title.clone()),
+                subtitle: Some(p.subtitle.clone()),
+                content: Some(p.content.get().clone()),
+                source: Some(p.source.clone()),
+                author: Some(p.get_authors(conn).unwrap_or_default()[0].username.clone()),
+                blog_id: Some(p.blog_id),
+                published: Some(p.published),
+                creation_date: Some(p.creation_date.format("%Y-%m-%d").to_string()),
+                license: Some(p.license.clone()),
+                tags: Some(Tag::for_post(conn, p.id).unwrap_or(vec![]).into_iter().map(|t| t.tag).collect()),
+                cover_id: p.cover_id,
             })
-            .unwrap_or_default()
-    }
-
-    fn create(
-        (_conn, _searcher, _user_id): &(&'a Connection, &Searcher, Option<i32>),
-        _query: PostEndpoint,
-    ) -> Result<PostEndpoint, Error> {
-        unimplemented!()
+            .collect()
+        ).unwrap_or(vec![])
     }
 
     fn update(
-        (_conn, _searcher, _user_id): &(&'a Connection, &Searcher, Option<i32>),
+        (_conn, _worker, _search, _user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
         _id: i32,
         _new_data: PostEndpoint,
-    ) -> Result<PostEndpoint, Error> {
+    ) -> ApiResult<PostEndpoint> {
         unimplemented!()
     }
 
-    fn delete((conn, searcher, user_id): &(&'a Connection, &Searcher, Option<i32>), id: i32) {
+    fn delete((conn, _worker, search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>), id: i32) {
         let user_id = user_id.expect("Post as Provider::delete: not authenticated");
-        if let Some(post) = Post::get(conn, id) {
-            if post.is_author(conn, user_id) {
-                post.delete(&(conn, searcher));
+        if let Ok(post) = Post::get(conn, id) {
+            if post.is_author(conn, user_id).unwrap_or(false) {
+                post.delete(&(conn, search)).ok().expect("Post as Provider::delete: delete error");
             }
         }
+    }
+
+    fn create(
+        (conn, worker, search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
+        query: PostEndpoint,
+    ) -> ApiResult<PostEndpoint> {
+        if user_id.is_none() {
+            return Err(ApiError::Authorization("You are not authorized to create new articles.".to_string()));
+        }
+
+        let title = query.title.clone().expect("No title for new post in API");
+        let slug = query.title.unwrap().to_kebab_case();
+
+        let date = query.creation_date.clone()
+            .and_then(|d| NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok());
+
+        let domain = &Instance::get_local(&conn)
+            .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
+            .public_domain;
+        let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref(), domain);
+
+        let author = User::get(conn, user_id.expect("<Post as Provider>::create: no user_id error"))
+            .map_err(|_| ApiError::NotFound("Author not found".into()))?;
+        let blog = match query.blog_id {
+            Some(x) => x,
+            None => Blog::find_for_author(conn, &author).map_err(|_| ApiError::NotFound("No default blog".into()))?[0].id
+        };
+
+        if Post::find_by_slug(conn, &slug, blog).is_ok() {
+            // Not an actual authorization problem, but we have nothing better for now…
+            // TODO: add another error variant to canapi and add it there
+            return Err(ApiError::Authorization("A post with the same slug already exists".to_string()));
+        }
+
+        let post = Post::insert(conn, NewPost {
+            blog_id: blog,
+            slug: slug,
+            title: title,
+            content: SafeString::new(content.as_ref()),
+            published: query.published.unwrap_or(true),
+            license: query.license.unwrap_or(Instance::get_local(conn)
+                .map(|i| i.default_license)
+                .unwrap_or(String::from("CC-BY-SA"))),
+            creation_date: date,
+            ap_url: String::new(),
+            subtitle: query.subtitle.unwrap_or(String::new()),
+            source: query.source.expect("Post API::create: no source error"),
+            cover_id: query.cover_id,
+        }, search).map_err(|_| ApiError::NotFound("Creation error".into()))?;
+        post.update_ap_url(conn).map_err(|_| ApiError::NotFound("Error setting ActivityPub URLs".into()))?;;
+
+        PostAuthor::insert(conn, NewPostAuthor {
+            author_id: author.id,
+            post_id: post.id
+        }).map_err(|_| ApiError::NotFound("Error saving authors".into()))?;
+
+        if let Some(tags) = query.tags {
+            for tag in tags {
+                Tag::insert(conn, NewTag {
+                    tag: tag,
+                    is_hashtag: false,
+                    post_id: post.id
+                }).map_err(|_| ApiError::NotFound("Error saving tags".into()))?;
+            }
+        }
+        for hashtag in hashtags {
+            Tag::insert(conn, NewTag {
+                tag: hashtag.to_camel_case(),
+                is_hashtag: true,
+                post_id: post.id
+            }).map_err(|_| ApiError::NotFound("Error saving hashtags".into()))?;
+        }
+
+        if post.published {
+            for m in mentions.into_iter() {
+                Mention::from_activity(
+                    &*conn,
+                    &Mention::build_activity(&*conn, &m).map_err(|_| ApiError::NotFound("Couldn't build mentions".into()))?,
+                    post.id,
+                    true,
+                    true
+                ).map_err(|_| ApiError::NotFound("Error saving mentions".into()))?;
+            }
+
+            let act = post.create_activity(&*conn).map_err(|_| ApiError::NotFound("Couldn't create activity".into()))?;
+            let dest = User::one_by_instance(&*conn).map_err(|_| ApiError::NotFound("Couldn't list remote instances".into()))?;
+            worker.execute(move || broadcast(&author, act, dest));
+        }
+
+        Ok(PostEndpoint {
+            id: Some(post.id),
+            title: Some(post.title.clone()),
+            subtitle: Some(post.subtitle.clone()),
+            content: Some(post.content.get().clone()),
+            source: Some(post.source.clone()),
+            author: Some(post.get_authors(conn).map_err(|_| ApiError::NotFound("No authors".into()))?[0].username.clone()),
+            blog_id: Some(post.blog_id),
+            published: Some(post.published),
+            creation_date: Some(post.creation_date.format("%Y-%m-%d").to_string()),
+            license: Some(post.license.clone()),
+            tags: Some(Tag::for_post(conn, post.id).map_err(|_| ApiError::NotFound("Tags not found".into()))?.into_iter().map(|t| t.tag).collect()),
+            cover_id: post.cover_id,
+        })
     }
 }
 
@@ -155,28 +261,25 @@ impl Post {
     find_by!(posts, find_by_ap_url, ap_url as &str);
 
     last!(posts);
-    pub fn insert(conn: &Connection, new: NewPost, searcher: &Searcher) -> Self {
+    pub fn insert(conn: &Connection, new: NewPost, searcher: &Searcher) -> Result<Self> {
         diesel::insert_into(posts::table)
             .values(new)
-            .execute(conn)
-            .expect("Post::insert: Error saving in posts");
-        let post = Self::last(conn);
-        searcher.add_document(conn, &post);
-        post
+            .execute(conn)?;
+        let post = Self::last(conn)?;
+        searcher.add_document(conn, &post)?;
+        Ok(post)
     }
-    pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Self {
+    pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
         diesel::update(self)
             .set(self)
-            .execute(conn)
-            .expect("Post::update: Error updating posts");
-        let post = Self::get(conn, self.id)
-            .expect("macro::update: posts we just updated doesn't exist anymore???");
-        searcher.update_document(conn, &post);
-        post
+            .execute(conn)?;
+        let post = Self::get(conn, self.id)?;
+        searcher.update_document(conn, &post)?;
+        Ok(post)
     }
 
 
-    pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         use schema::tags;
 
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
@@ -187,28 +290,28 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load(conn)
-            .expect("Post::list_by_tag: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn count_for_tag(conn: &Connection, tag: String) -> i64 {
+    pub fn count_for_tag(conn: &Connection, tag: String) -> Result<i64> {
         use schema::tags;
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
-        *posts::table
+        posts::table
             .filter(posts::id.eq_any(ids))
             .filter(posts::published.eq(true))
             .count()
-            .load(conn)
-            .expect("Post::count_for_tag: counting error")
+            .load(conn)?
             .iter()
             .next()
-            .expect("Post::count_for_tag: no result error")
+            .map(|x| *x)
+            .ok_or(Error::NotFound)
     }
 
-    pub fn count_local(conn: &Connection) -> i64 {
+    pub fn count_local(conn: &Connection) -> Result<i64> {
         use schema::post_authors;
         use schema::users;
         let local_authors = users::table
-            .filter(users::instance_id.eq(Instance::local_id(conn)))
+            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
             .select(users::id);
         let local_posts_id = post_authors::table
             .filter(post_authors::author_id.eq_any(local_authors))
@@ -218,27 +321,27 @@ impl Post {
             .filter(posts::published.eq(true))
             .count()
             .get_result(conn)
-            .expect("Post::count_local: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn count(conn: &Connection) -> i64 {
+    pub fn count(conn: &Connection) -> Result<i64> {
         posts::table
             .filter(posts::published.eq(true))
             .count()
             .get_result(conn)
-            .expect("Post::count: counting error")
+            .map_err(Error::from)
     }
 
-    pub fn get_recents(conn: &Connection, limit: i64) -> Vec<Post> {
+    pub fn get_recents(conn: &Connection, limit: i64) -> Result<Vec<Post>> {
         posts::table
             .order(posts::creation_date.desc())
             .filter(posts::published.eq(true))
             .limit(limit)
             .load::<Post>(conn)
-            .expect("Post::get_recents: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn get_recents_for_author(conn: &Connection, author: &User, limit: i64) -> Vec<Post> {
+    pub fn get_recents_for_author(conn: &Connection, author: &User, limit: i64) -> Result<Vec<Post>> {
         use schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
@@ -248,37 +351,37 @@ impl Post {
             .order(posts::creation_date.desc())
             .limit(limit)
             .load::<Post>(conn)
-            .expect("Post::get_recents_for_author: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn get_recents_for_blog(conn: &Connection, blog: &Blog, limit: i64) -> Vec<Post> {
+    pub fn get_recents_for_blog(conn: &Connection, blog: &Blog, limit: i64) -> Result<Vec<Post>> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .order(posts::creation_date.desc())
             .limit(limit)
             .load::<Post>(conn)
-            .expect("Post::get_recents_for_blog: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn get_for_blog(conn: &Connection, blog: &Blog) -> Vec<Post> {
+    pub fn get_for_blog(conn: &Connection, blog: &Blog) -> Result<Vec<Post>> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .load::<Post>(conn)
-            .expect("Post::get_for_blog:: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn count_for_blog(conn: &Connection, blog: &Blog) -> i64 {
+    pub fn count_for_blog(conn: &Connection, blog: &Blog) -> Result<i64> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
             .count()
             .get_result(conn)
-            .expect("Post::count_for_blog:: count error")
+            .map_err(Error::from)
     }
 
-    pub fn blog_page(conn: &Connection, blog: &Blog, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn blog_page(conn: &Connection, blog: &Blog, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
@@ -286,18 +389,18 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Post::blog_page: loading error")
+            .map_err(Error::from)
     }
 
     /// Give a page of all the recent posts known to this instance (= federated timeline)
-    pub fn get_recents_page(conn: &Connection, (min, max): (i32, i32)) -> Vec<Post> {
+    pub fn get_recents_page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         posts::table
             .order(posts::creation_date.desc())
             .filter(posts::published.eq(true))
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Post::get_recents_page: loading error")
+            .map_err(Error::from)
     }
 
     /// Give a page of posts from a specific instance
@@ -305,7 +408,7 @@ impl Post {
         conn: &Connection,
         instance_id: i32,
         (min, max): (i32, i32),
-    ) -> Vec<Post> {
+    ) -> Result<Vec<Post>> {
         use schema::blogs;
 
         let blog_ids = blogs::table
@@ -319,7 +422,7 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Post::get_instance_page: loading error")
+            .map_err(Error::from)
     }
 
     /// Give a page of customized user feed, based on a list of followed users
@@ -327,7 +430,7 @@ impl Post {
         conn: &Connection,
         followed: Vec<i32>,
         (min, max): (i32, i32),
-    ) -> Vec<Post> {
+    ) -> Result<Vec<Post>> {
         use schema::post_authors;
         let post_ids = post_authors::table
             .filter(post_authors::author_id.eq_any(followed))
@@ -340,10 +443,10 @@ impl Post {
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)
-            .expect("Post::user_feed_page: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn drafts_by_author(conn: &Connection, author: &User) -> Vec<Post> {
+    pub fn drafts_by_author(conn: &Connection, author: &User) -> Result<Vec<Post>> {
         use schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
@@ -352,255 +455,221 @@ impl Post {
             .filter(posts::published.eq(false))
             .filter(posts::id.eq_any(posts))
             .load::<Post>(conn)
-            .expect("Post::drafts_by_author: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn get_authors(&self, conn: &Connection) -> Vec<User> {
+    pub fn get_authors(&self, conn: &Connection) -> Result<Vec<User>> {
         use schema::post_authors;
         use schema::users;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
         users::table
             .filter(users::id.eq_any(author_list))
             .load::<User>(conn)
-            .expect("Post::get_authors: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn is_author(&self, conn: &Connection, author_id: i32) -> bool {
+    pub fn is_author(&self, conn: &Connection, author_id: i32) -> Result<bool> {
         use schema::post_authors;
-        PostAuthor::belonging_to(self)
+        Ok(PostAuthor::belonging_to(self)
             .filter(post_authors::author_id.eq(author_id))
             .count()
-            .get_result::<i64>(conn)
-            .expect("Post::is_author: loading error") > 0
+            .get_result::<i64>(conn)? > 0)
     }
 
-    pub fn get_blog(&self, conn: &Connection) -> Blog {
+    pub fn get_blog(&self, conn: &Connection) -> Result<Blog> {
         use schema::blogs;
         blogs::table
             .filter(blogs::id.eq(self.blog_id))
             .limit(1)
-            .load::<Blog>(conn)
-            .expect("Post::get_blog: loading error")
+            .load::<Blog>(conn)?
             .into_iter()
             .nth(0)
-            .expect("Post::get_blog: no result error")
+            .ok_or(Error::NotFound)
     }
 
-    pub fn count_likes(&self, conn: &Connection) -> i64 {
+    pub fn count_likes(&self, conn: &Connection) -> Result<i64> {
         use schema::likes;
         likes::table
             .filter(likes::post_id.eq(self.id))
             .count()
             .get_result(conn)
-            .expect("Post::get_likes: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn count_reshares(&self, conn: &Connection) -> i64 {
+    pub fn count_reshares(&self, conn: &Connection) -> Result<i64> {
         use schema::reshares;
         reshares::table
             .filter(reshares::post_id.eq(self.id))
             .count()
             .get_result(conn)
-            .expect("Post::get_reshares: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn update_ap_url(&self, conn: &Connection) -> Post {
+    pub fn update_ap_url(&self, conn: &Connection) -> Result<Post> {
         if self.ap_url.is_empty() {
             diesel::update(self)
-                .set(posts::ap_url.eq(self.compute_id(conn)))
-                .execute(conn)
-                .expect("Post::update_ap_url: update error");
-            Post::get(conn, self.id).expect("Post::update_ap_url: get error")
+                .set(posts::ap_url.eq(self.compute_id(conn)?))
+                .execute(conn)?;
+            Post::get(conn, self.id)
         } else {
-            self.clone()
+            Ok(self.clone())
         }
     }
 
-    pub fn get_receivers_urls(&self, conn: &Connection) -> Vec<String> {
+    pub fn get_receivers_urls(&self, conn: &Connection) -> Result<Vec<String>> {
         let followers = self
-            .get_authors(conn)
+            .get_authors(conn)?
             .into_iter()
-            .map(|a| a.get_followers(conn))
+            .filter_map(|a| a.get_followers(conn).ok())
             .collect::<Vec<Vec<User>>>();
-        followers.into_iter().fold(vec![], |mut acc, f| {
+        Ok(followers.into_iter().fold(vec![], |mut acc, f| {
             for x in f {
                 acc.push(x.ap_url);
             }
             acc
-        })
+        }))
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> LicensedArticle {
-        let cc = self.get_receivers_urls(conn);
+    pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
+        let cc = self.get_receivers_urls(conn)?;
         let to  = vec![PUBLIC_VISIBILTY.to_string()];
 
-        let mut mentions_json = Mention::list_for_post(conn, self.id)
+        let mut mentions_json = Mention::list_for_post(conn, self.id)?
             .into_iter()
-            .map(|m| json!(m.to_activity(conn)))
+            .map(|m| json!(m.to_activity(conn).ok()))
             .collect::<Vec<serde_json::Value>>();
-        let mut tags_json = Tag::for_post(conn, self.id)
+        let mut tags_json = Tag::for_post(conn, self.id)?
             .into_iter()
-            .map(|t| json!(t.to_activity(conn)))
+            .map(|t| json!(t.to_activity(conn).ok()))
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
         let mut article = Article::default();
         article
             .object_props
-            .set_name_string(self.title.clone())
-            .expect("Post::to_activity: name error");
+            .set_name_string(self.title.clone())?;
         article
             .object_props
-            .set_id_string(self.ap_url.clone())
-            .expect("Post::to_activity: id error");
+            .set_id_string(self.ap_url.clone())?;
 
         let mut authors = self
-            .get_authors(conn)
+            .get_authors(conn)?
             .into_iter()
             .map(|x| Id::new(x.ap_url))
             .collect::<Vec<Id>>();
-        authors.push(self.get_blog(conn).into_id()); // add the blog URL here too
+        authors.push(self.get_blog(conn)?.into_id()); // add the blog URL here too
         article
             .object_props
-            .set_attributed_to_link_vec::<Id>(authors)
-            .expect("Post::to_activity: attributedTo error");
+            .set_attributed_to_link_vec::<Id>(authors)?;
         article
             .object_props
-            .set_content_string(self.content.get().clone())
-            .expect("Post::to_activity: content error");
+            .set_content_string(self.content.get().clone())?;
         article
             .ap_object_props
             .set_source_object(Source {
                 content: self.source.clone(),
                 media_type: String::from("text/markdown"),
-            })
-            .expect("Post::to_activity: source error");
+            })?;
         article
             .object_props
-            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))
-            .expect("Post::to_activity: published error");
+            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
         article
             .object_props
-            .set_summary_string(self.subtitle.clone())
-            .expect("Post::to_activity: summary error");
+            .set_summary_string(self.subtitle.clone())?;
         article.object_props.tag = Some(json!(mentions_json));
 
         if let Some(media_id) = self.cover_id {
-            let media = Media::get(conn, media_id).expect("Post::to_activity: get cover error");
+            let media = Media::get(conn, media_id)?;
             let mut cover = Image::default();
             cover
                 .object_props
-                .set_url_string(media.url(conn))
-                .expect("Post::to_activity: icon.url error");
+                .set_url_string(media.url(conn)?)?;
             if media.sensitive {
                 cover
                     .object_props
-                    .set_summary_string(media.content_warning.unwrap_or_default())
-                    .expect("Post::to_activity: icon.summary error");
+                    .set_summary_string(media.content_warning.unwrap_or_default())?;
             }
             cover
                 .object_props
-                .set_content_string(media.alt_text)
-                .expect("Post::to_activity: icon.content error");
+                .set_content_string(media.alt_text)?;
             cover
                 .object_props
                 .set_attributed_to_link_vec(vec![
-                    User::get(conn, media.owner_id)
-                        .expect("Post::to_activity: media owner not found")
+                    User::get(conn, media.owner_id)?
                         .into_id(),
-                ])
-                .expect("Post::to_activity: icon.attributedTo error");
+                ])?;
             article
                 .object_props
-                .set_icon_object(cover)
-                .expect("Post::to_activity: icon error");
+                .set_icon_object(cover)?;
         }
 
         article
             .object_props
-            .set_url_string(self.ap_url.clone())
-            .expect("Post::to_activity: url error");
+            .set_url_string(self.ap_url.clone())?;
         article
             .object_props
-            .set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect())
-            .expect("Post::to_activity: to error");
+            .set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect())?;
         article
             .object_props
-            .set_cc_link_vec::<Id>(cc.into_iter().map(Id::new).collect())
-            .expect("Post::to_activity: cc error");
+            .set_cc_link_vec::<Id>(cc.into_iter().map(Id::new).collect())?;
         let mut license = Licensed::default();
-        license.set_license_string(self.license.clone()).expect("Post::to_activity: license error");
-        LicensedArticle::new(article, license)
+        license.set_license_string(self.license.clone())?;
+        Ok(LicensedArticle::new(article, license))
     }
 
-    pub fn create_activity(&self, conn: &Connection) -> Create {
-        let article = self.to_activity(conn);
+    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
+        let article = self.to_activity(conn)?;
         let mut act = Create::default();
         act.object_props
-            .set_id_string(format!("{}activity", self.ap_url))
-            .expect("Post::create_activity: id error");
+            .set_id_string(format!("{}activity", self.ap_url))?;
         act.object_props
             .set_to_link_vec::<Id>(
                 article.object
                     .object_props
-                    .to_link_vec()
-                    .expect("Post::create_activity: Couldn't copy 'to'"),
-            )
-            .expect("Post::create_activity: to error");
+                    .to_link_vec()?,
+            )?;
         act.object_props
             .set_cc_link_vec::<Id>(
                 article.object
                     .object_props
-                    .cc_link_vec()
-                    .expect("Post::create_activity: Couldn't copy 'cc'"),
-            )
-            .expect("Post::create_activity: cc error");
+                    .cc_link_vec()?,
+            )?;
         act.create_props
-            .set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url))
-            .expect("Post::create_activity: actor error");
+            .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
         act.create_props
-            .set_object_object(article)
-            .expect("Post::create_activity: object error");
-        act
+            .set_object_object(article)?;
+        Ok(act)
     }
 
-    pub fn update_activity(&self, conn: &Connection) -> Update {
-        let article = self.to_activity(conn);
+    pub fn update_activity(&self, conn: &Connection) -> Result<Update> {
+        let article = self.to_activity(conn)?;
         let mut act = Update::default();
         act.object_props
-            .set_id_string(format!("{}/update-{}", self.ap_url, Utc::now().timestamp()))
-            .expect("Post::update_activity: id error");
+            .set_id_string(format!("{}/update-{}", self.ap_url, Utc::now().timestamp()))?;
         act.object_props
             .set_to_link_vec::<Id>(
                 article.object
                     .object_props
-                    .to_link_vec()
-                    .expect("Post::update_activity: Couldn't copy 'to'"),
-            )
-            .expect("Post::update_activity: to error");
+                    .to_link_vec()?,
+            )?;
         act.object_props
             .set_cc_link_vec::<Id>(
                 article.object
                     .object_props
-                    .cc_link_vec()
-                    .expect("Post::update_activity: Couldn't copy 'cc'"),
-            )
-            .expect("Post::update_activity: cc error");
+                    .cc_link_vec()?,
+            )?;
         act.update_props
-            .set_actor_link(Id::new(self.get_authors(conn)[0].clone().ap_url))
-            .expect("Post::update_activity: actor error");
+            .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
         act.update_props
-            .set_object_object(article)
-            .expect("Post::update_activity: object error");
-        act
+            .set_object_object(article)?;
+        Ok(act)
     }
 
-    pub fn handle_update(conn: &Connection, updated: &LicensedArticle, searcher: &Searcher) {
+    pub fn handle_update(conn: &Connection, updated: &LicensedArticle, searcher: &Searcher) -> Result<()> {
         let id = updated.object
             .object_props
-            .id_string()
-            .expect("Post::handle_update: id error");
-        let mut post = Post::find_by_ap_url(conn, &id).expect("Post::handle_update: finding error");
+            .id_string()?;
+        let mut post = Post::find_by_ap_url(conn, &id)?;
 
         if let Ok(title) = updated.object.object_props.name_string() {
             post.slug = title.to_kebab_case();
@@ -642,27 +711,29 @@ impl Post {
                     .ok();
 
                 serde_json::from_value::<Hashtag>(tag.clone())
-                    .map(|t| {
+                    .map_err(Error::from)
+                    .and_then(|t| {
                         let tag_name = t
-                            .name_string()
-                            .expect("Post::from_activity: tag name error");
+                            .name_string()?;
                         if txt_hashtags.remove(&tag_name) {
                             hashtags.push(t);
                         } else {
                             tags.push(t);
                         }
+                        Ok(())
                     })
                     .ok();
             }
-            post.update_mentions(conn, mentions);
-            post.update_tags(conn, tags);
-            post.update_hashtags(conn, hashtags);
+            post.update_mentions(conn, mentions)?;
+            post.update_tags(conn, tags)?;
+            post.update_hashtags(conn, hashtags)?;
         }
 
-        post.update(conn, searcher);
+        post.update(conn, searcher)?;
+        Ok(())
     }
 
-    pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) {
+    pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
         let mentions = mentions
             .into_iter()
             .map(|m| {
@@ -670,7 +741,7 @@ impl Post {
                     m.link_props
                         .href_string()
                         .ok()
-                        .and_then(|ap_url| User::find_by_ap_url(conn, &ap_url))
+                        .and_then(|ap_url| User::find_by_ap_url(conn, &ap_url).ok())
                         .map(|u| u.id),
                     m,
                 )
@@ -684,14 +755,14 @@ impl Post {
             })
             .collect::<Vec<_>>();
 
-        let old_mentions = Mention::list_for_post(&conn, self.id);
+        let old_mentions = Mention::list_for_post(&conn, self.id)?;
         let old_user_mentioned = old_mentions
             .iter()
             .map(|m| m.mentioned_id)
             .collect::<HashSet<_>>();
         for (m, id) in &mentions {
             if !old_user_mentioned.contains(&id) {
-                Mention::from_activity(&*conn, &m, self.id, true, true);
+                Mention::from_activity(&*conn, &m, self.id, true, true)?;
             }
         }
 
@@ -703,19 +774,18 @@ impl Post {
             .iter()
             .filter(|m| !new_mentions.contains(&m.mentioned_id))
         {
-            m.delete(&conn);
+            m.delete(&conn)?;
         }
+        Ok(())
     }
 
-    pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) {
+    pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name_string().ok())
             .collect::<HashSet<_>>();
 
-        let old_tags = Tag::for_post(&*conn, self.id)
-            .into_iter()
-            .collect::<Vec<_>>();
+        let old_tags = Tag::for_post(&*conn, self.id)?;
         let old_tags_name = old_tags
             .iter()
             .filter_map(|tag| {
@@ -733,26 +803,25 @@ impl Post {
                 .map(|n| old_tags_name.contains(&n))
                 .unwrap_or(true)
             {
-                Tag::from_activity(conn, &t, self.id, false);
+                Tag::from_activity(conn, &t, self.id, false)?;
             }
         }
 
         for ot in old_tags.iter().filter(|t| !t.is_hashtag) {
             if !tags_name.contains(&ot.tag) {
-                ot.delete(conn);
+                ot.delete(conn)?;
             }
         }
+        Ok(())
     }
 
-    pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) {
+    pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name_string().ok())
             .collect::<HashSet<_>>();
 
-        let old_tags = Tag::for_post(&*conn, self.id)
-            .into_iter()
-            .collect::<Vec<_>>();
+        let old_tags = Tag::for_post(&*conn, self.id)?;
         let old_tags_name = old_tags
             .iter()
             .filter_map(|tag| {
@@ -770,59 +839,63 @@ impl Post {
                 .map(|n| old_tags_name.contains(&n))
                 .unwrap_or(true)
             {
-                Tag::from_activity(conn, &t, self.id, true);
+                Tag::from_activity(conn, &t, self.id, true)?;
             }
         }
 
         for ot in old_tags.into_iter().filter(|t| t.is_hashtag) {
             if !tags_name.contains(&ot.tag) {
-                ot.delete(conn);
+                ot.delete(conn)?;
             }
         }
+        Ok(())
     }
 
-    pub fn url(&self, conn: &Connection) -> String {
-        let blog = self.get_blog(conn);
-        format!("/~/{}/{}", blog.get_fqn(conn), self.slug)
+    pub fn url(&self, conn: &Connection) -> Result<String> {
+        let blog = self.get_blog(conn)?;
+        Ok(format!("/~/{}/{}", blog.get_fqn(conn), self.slug))
     }
 
-    pub fn compute_id(&self, conn: &Connection) -> String {
-        ap_url(&format!(
+    pub fn compute_id(&self, conn: &Connection) -> Result<String> {
+        Ok(ap_url(&format!(
             "{}/~/{}/{}/",
             BASE_URL.as_str(),
-            self.get_blog(conn).get_fqn(conn),
+            self.get_blog(conn)?.get_fqn(conn),
             self.slug
-        ))
+        )))
     }
 
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {
-        self.cover_id.and_then(|i| Media::get(conn, i)).map(|c| c.url(conn))
+        self.cover_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
     }
 }
 
 impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post {
-    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: LicensedArticle, _actor: Id) -> Post {
+    type Error = Error;
+
+    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: LicensedArticle, _actor: Id) -> Result<Post> {
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
-        if let Some(post) = Post::find_by_ap_url(
+        if let Ok(post) = Post::find_by_ap_url(
             conn,
             &article.object_props.id_string().unwrap_or_default(),
         ) {
-            post
+            Ok(post)
         } else {
             let (blog, authors) = article
                 .object_props
-                .attributed_to_link_vec::<Id>()
-                .expect("Post::from_activity: attributedTo error")
+                .attributed_to_link_vec::<Id>()?
                 .into_iter()
                 .fold((None, vec![]), |(blog, mut authors), link| {
                     let url: String = link.into();
                     match User::from_url(conn, &url) {
-                        Some(user) => {
-                            authors.push(user);
+                        Ok(u) => {
+                            authors.push(u);
                             (blog, authors)
-                        }
-                        None => (blog.or_else(|| Blog::from_url(conn, &url)), authors),
+                        },
+                        Err(_) => {
+                            (blog.or_else(|| Blog::from_url(conn, &url).ok()), authors)
+                        },
                     }
                 });
 
@@ -830,53 +903,47 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                 .object_props
                 .icon_object::<Image>()
                 .ok()
-                .and_then(|img| Media::from_activity(conn, &img).map(|m| m.id));
+                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
 
             let title = article
                 .object_props
-                .name_string()
-                .expect("Post::from_activity: title error");
+                .name_string()?;
             let post = Post::insert(
                 conn,
                 NewPost {
-                    blog_id: blog.expect("Post::from_activity: blog not found error").id,
+                    blog_id: blog?.id,
                     slug: title.to_kebab_case(),
                     title,
                     content: SafeString::new(
                         &article
                             .object_props
-                            .content_string()
-                            .expect("Post::from_activity: content error"),
+                            .content_string()?,
                     ),
                     published: true,
                     license: license,
                     // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                    ap_url: article.object_props.url_string().unwrap_or_else(|_|
+                    ap_url: article.object_props.url_string().or_else(|_|
                         article
                             .object_props
                             .id_string()
-                            .expect("Post::from_activity: url + id error"),
-                    ),
+                    )?,
                     creation_date: Some(
                         article
                             .object_props
-                            .published_utctime()
-                            .expect("Post::from_activity: published error")
+                            .published_utctime()?
                             .naive_utc(),
                     ),
                     subtitle: article
                         .object_props
-                        .summary_string()
-                        .expect("Post::from_activity: summary error"),
+                        .summary_string()?,
                     source: article
                         .ap_object_props
-                        .source_object::<Source>()
-                        .expect("Post::from_activity: source error")
+                        .source_object::<Source>()?
                         .content,
                     cover_id: cover,
                 },
                 searcher,
-            );
+            )?;
 
             for author in authors {
                 PostAuthor::insert(
@@ -885,7 +952,7 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                         post_id: post.id,
                         author_id: author.id,
                     },
-                );
+                )?;
             }
 
             // save mentions and tags
@@ -901,64 +968,56 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                         .ok();
 
                     serde_json::from_value::<Hashtag>(tag.clone())
-                        .map(|t| {
-                            let tag_name = t
-                                .name_string()
-                                .expect("Post::from_activity: tag name error");
-                            Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name));
+                        .map_err(Error::from)
+                        .and_then(|t| {
+                            let tag_name = t.name_string()?;
+                            Ok(Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name)))
                         })
                         .ok();
                 }
             }
-            post
+            Ok(post)
         }
     }
 }
 
 impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
-    fn delete(&self, (conn, searcher): &(&Connection, &Searcher)) -> Delete {
+    type Error = Error;
+
+    fn delete(&self, (conn, searcher): &(&Connection, &Searcher)) -> Result<Delete> {
         let mut act = Delete::default();
         act.delete_props
-            .set_actor_link(self.get_authors(conn)[0].clone().into_id())
-            .expect("Post::delete: actor error");
+            .set_actor_link(self.get_authors(conn)?[0].clone().into_id())?;
 
         let mut tombstone = Tombstone::default();
         tombstone
             .object_props
-            .set_id_string(self.ap_url.clone())
-            .expect("Post::delete: object.id error");
+            .set_id_string(self.ap_url.clone())?;
         act.delete_props
-            .set_object_object(tombstone)
-            .expect("Post::delete: object error");
+            .set_object_object(tombstone)?;
 
         act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))
-            .expect("Post::delete: id error");
+            .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])
-            .expect("Post::delete: to error");
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
 
-        for m in Mention::list_for_post(&conn, self.id) {
-            m.delete(conn);
+        for m in Mention::list_for_post(&conn, self.id)? {
+            m.delete(conn)?;
         }
         diesel::delete(self)
-            .execute(*conn)
-            .expect("Post::delete: DB error");
+            .execute(*conn)?;
         searcher.delete_document(self);
-        act
+        Ok(act)
     }
 
-    fn delete_id(id: &str, actor_id: &str, (conn, searcher): &(&Connection, &Searcher)) {
-        let actor = User::find_by_ap_url(conn, actor_id);
-        let post = Post::find_by_ap_url(conn, id);
-        let can_delete = actor
-            .and_then(|act| {
-                post.clone()
-                    .map(|p| p.get_authors(conn).into_iter().any(|a| act.id == a.id))
-            })
-            .unwrap_or(false);
+    fn delete_id(id: &str, actor_id: &str, (conn, searcher): &(&Connection, &Searcher)) -> Result<Delete> {
+        let actor = User::find_by_ap_url(conn, actor_id)?;
+        let post = Post::find_by_ap_url(conn, id)?;
+        let can_delete = post.get_authors(conn)?.into_iter().any(|a| actor.id == a.id);
         if can_delete {
-            post.map(|p| p.delete(&(conn, searcher)));
+            post.delete(&(conn, searcher))
+        } else {
+            Err(Error::Unauthorized)
         }
     }
 }

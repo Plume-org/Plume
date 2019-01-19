@@ -1,4 +1,5 @@
 @use plume_models::medias::Media;
+@use plume_models::safe_string::SafeString;
 @use templates::base;
 @use template_utils::*;
 @use routes::*;
@@ -18,7 +19,7 @@
         <div class="list">
             @for media in medias {
                 <div class="card flex">
-                    @Html(media.preview_html(ctx.0))
+                    @Html(media.preview_html(ctx.0).unwrap_or(SafeString::new("")))
                     <main class="grow">
                         <p><a href="@uri!(medias::details: id = media.id)">@media.alt_text</a></p>
                     </main>

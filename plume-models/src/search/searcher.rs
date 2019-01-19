@@ -6,7 +6,7 @@ use Connection;
 use chrono::Datelike;
 use itertools::Itertools;
 use tantivy::{
-    collector::TopCollector, directory::MmapDirectory,
+    collector::TopDocs, directory::MmapDirectory,
     schema::*, tokenizer::*, Index, IndexWriter, Term
 };
 use whatlang::{detect as detect_lang, Lang};
@@ -14,9 +14,10 @@ use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 
 use search::query::PlumeQuery;
 use super::tokenizer;
+use Result;
 
 #[derive(Debug)]
-pub enum SearcherError{
+pub enum SearcherError {
     IndexCreationError,
     WriteLockAcquisitionError,
     IndexOpeningError,
@@ -66,7 +67,7 @@ impl Searcher {
     }
 
 
-    pub fn create(path: &AsRef<Path>) -> Result<Self,SearcherError> {
+    pub fn create(path: &AsRef<Path>) -> Result<Self> {
         let whitespace_tokenizer = tokenizer::WhitespaceTokenizer
             .filter(LowerCaser);
 
@@ -94,7 +95,7 @@ impl Searcher {
         })
     }
 
-    pub fn open(path: &AsRef<Path>) -> Result<Self, SearcherError> {
+    pub fn open(path: &AsRef<Path>) -> Result<Self> {
         let whitespace_tokenizer = tokenizer::WhitespaceTokenizer
             .filter(LowerCaser);
 
@@ -121,7 +122,7 @@ impl Searcher {
         })
     }
 
-    pub fn add_document(&self, conn: &Connection, post: &Post) {
+    pub fn add_document(&self, conn: &Connection, post: &Post) -> Result<()> {
         let schema = self.index.schema();
 
         let post_id = schema.get_field("post_id").unwrap();
@@ -142,18 +143,19 @@ impl Searcher {
         let mut writer = self.writer.lock().unwrap();
         let writer = writer.as_mut().unwrap();
         writer.add_document(doc!(
-                post_id => i64::from(post.id),
-                author => post.get_authors(conn).into_iter().map(|u| u.get_fqn(conn)).join(" "),
-                creation_date => i64::from(post.creation_date.num_days_from_ce()),
-                instance => Instance::get(conn, post.get_blog(conn).instance_id).unwrap().public_domain.clone(),
-                tag => Tag::for_post(conn, post.id).into_iter().map(|t| t.tag).join(" "),
-                blog_name => post.get_blog(conn).title,
-                content => post.content.get().clone(),
-                subtitle => post.subtitle.clone(),
-                title => post.title.clone(),
-                lang => detect_lang(post.content.get()).and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} ).unwrap_or(Lang::Eng).name(),
-                license => post.license.clone(),
-                ));
+            post_id => i64::from(post.id),
+            author => post.get_authors(conn)?.into_iter().map(|u| u.get_fqn(conn)).join(" "),
+            creation_date => i64::from(post.creation_date.num_days_from_ce()),
+            instance => Instance::get(conn, post.get_blog(conn)?.instance_id)?.public_domain.clone(),
+            tag => Tag::for_post(conn, post.id)?.into_iter().map(|t| t.tag).join(" "),
+            blog_name => post.get_blog(conn)?.title,
+            content => post.content.get().clone(),
+            subtitle => post.subtitle.clone(),
+            title => post.title.clone(),
+            lang => detect_lang(post.content.get()).and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} ).unwrap_or(Lang::Eng).name(),
+            license => post.license.clone(),
+        ));
+        Ok(())
     }
 
     pub fn delete_document(&self, post: &Post) {
@@ -166,28 +168,28 @@ impl Searcher {
         writer.delete_term(doc_id);
     }
 
-    pub fn update_document(&self, conn: &Connection, post: &Post) {
+    pub fn update_document(&self, conn: &Connection, post: &Post) -> Result<()> {
         self.delete_document(post);
-        self.add_document(conn, post);
+        self.add_document(conn, post)
     }
 
     pub fn search_document(&self, conn: &Connection, query: PlumeQuery, (min, max): (i32, i32)) -> Vec<Post>{
         let schema = self.index.schema();
         let post_id = schema.get_field("post_id").unwrap();
 
-        let mut collector = TopCollector::with_limit(cmp::max(1,max) as usize);
+        let collector = TopDocs::with_limit(cmp::max(1,max) as usize);
 
         let searcher = self.index.searcher();
-        searcher.search(&query.into_query(), &mut collector).unwrap();
+        let res = searcher.search(&query.into_query(), &collector).unwrap();
 
-        collector.docs().get(min as usize..).unwrap_or(&[])
+        res.get(min as usize..).unwrap_or(&[])
             .into_iter()
-            .filter_map(|doc_add| {
+            .filter_map(|(_,doc_add)| {
                 let doc = searcher.doc(*doc_add).ok()?;
                 let id = doc.get_first(post_id)?;
-                Post::get(conn, id.i64_value() as i32)
-                    //borrow checker don't want me to use filter_map or and_then here
-                          })
+                Post::get(conn, id.i64_value() as i32).ok()
+                //borrow checker don't want me to use filter_map or and_then here
+            })
             .collect()
     }
 

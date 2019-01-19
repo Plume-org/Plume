@@ -26,6 +26,9 @@ stages:
 jobs:
   include:
     - stage: build
+      name: "Build front"
+      script: (cargo web -h || cargo install cargo-web) && cd plume-front && cargo web check
+    - stage: build
       name: "Build with postgresql"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
@@ -43,7 +46,7 @@ jobs:
       before_script: psql -c 'create database plume_tests;' -U postgres
       script:
         - |
-            cargo test --features "${FEATURES}" --no-default-features  --all &&
+            cargo test --features "${FEATURES}" --no-default-features  --all --exclude plume-front &&
             ./script/compute_coverage.sh
     - stage: test and coverage
       name: "Test with Sqlite backend"
@@ -52,5 +55,5 @@ jobs:
         - RUSTFLAGS='-C link-dead-code' RUST_TEST_THREADS=1
       script:
         - |
-            cargo test --features "${FEATURES}" --no-default-features --all &&
+            cargo test --features "${FEATURES}" --no-default-features --all --exclude plume-front &&
             ./script/compute_coverage.sh

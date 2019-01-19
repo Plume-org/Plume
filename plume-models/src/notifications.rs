@@ -9,7 +9,7 @@ use posts::Post;
 use reshares::Reshare;
 use schema::notifications;
 use users::User;
-use Connection;
+use {Connection, Error, Result};
 
 pub mod notification_kind {
     pub const COMMENT: &str = "COMMENT";
@@ -40,42 +40,42 @@ impl Notification {
     insert!(notifications, NewNotification);
     get!(notifications);
 
-    pub fn find_for_user(conn: &Connection, user: &User) -> Vec<Notification> {
+    pub fn find_for_user(conn: &Connection, user: &User) -> Result<Vec<Notification>> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
             .order_by(notifications::creation_date.desc())
             .load::<Notification>(conn)
-            .expect("Notification::find_for_user: notification loading error")
+            .map_err(Error::from)
     }
 
-    pub fn count_for_user(conn: &Connection, user: &User) -> i64 {
+    pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
             .count()
             .get_result(conn)
-            .expect("Notification::count_for_user: count loading error")
+            .map_err(Error::from)
     }
 
     pub fn page_for_user(
         conn: &Connection,
         user: &User,
         (min, max): (i32, i32),
-    ) -> Vec<Notification> {
+    ) -> Result<Vec<Notification>> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
             .order_by(notifications::creation_date.desc())
             .offset(min.into())
             .limit((max - min).into())
             .load::<Notification>(conn)
-            .expect("Notification::page_for_user: notification loading error")
+            .map_err(Error::from)
     }
 
-    pub fn find<S: Into<String>>(conn: &Connection, kind: S, obj: i32) -> Option<Notification> {
+    pub fn find<S: Into<String>>(conn: &Connection, kind: S, obj: i32) -> Result<Notification> {
         notifications::table
             .filter(notifications::kind.eq(kind.into()))
             .filter(notifications::object_id.eq(obj))
             .get_result::<Notification>(conn)
-            .ok()
+            .map_err(Error::from)
     }
 
     pub fn get_message(&self) -> &'static str {
@@ -91,41 +91,37 @@ impl Notification {
 
     pub fn get_url(&self, conn: &Connection) -> Option<String> {
         match self.kind.as_ref() {
-            notification_kind::COMMENT => self.get_post(conn).map(|p| format!("{}#comment-{}", p.url(conn), self.object_id)),
-            notification_kind::FOLLOW => Some(format!("/@/{}/", self.get_actor(conn).get_fqn(conn))),
-            notification_kind::MENTION => Mention::get(conn, self.object_id).map(|mention|
-                mention.get_post(conn).map(|p| p.url(conn))
-                    .unwrap_or_else(|| {
-                        let comment = mention.get_comment(conn).expect("Notification::get_url: comment not found error");
-                        format!("{}#comment-{}", comment.get_post(conn).url(conn), comment.id)
+            notification_kind::COMMENT => self.get_post(conn).and_then(|p| Some(format!("{}#comment-{}", p.url(conn).ok()?, self.object_id))),
+            notification_kind::FOLLOW => Some(format!("/@/{}/", self.get_actor(conn).ok()?.get_fqn(conn))),
+            notification_kind::MENTION => Mention::get(conn, self.object_id).and_then(|mention|
+                mention.get_post(conn).and_then(|p| p.url(conn))
+                    .or_else(|_| {
+                        let comment = mention.get_comment(conn)?;
+                        Ok(format!("{}#comment-{}", comment.get_post(conn)?.url(conn)?, comment.id))
                     })
-            ),
+            ).ok(),
             _ => None,
         }
     }
 
     pub fn get_post(&self, conn: &Connection) -> Option<Post> {
         match self.kind.as_ref() {
-            notification_kind::COMMENT => Comment::get(conn, self.object_id).map(|comment| comment.get_post(conn)),
-            notification_kind::LIKE => Like::get(conn, self.object_id).and_then(|like| Post::get(conn, like.post_id)),
-            notification_kind::RESHARE => Reshare::get(conn, self.object_id).and_then(|reshare| reshare.get_post(conn)),
+            notification_kind::COMMENT => Comment::get(conn, self.object_id).and_then(|comment| comment.get_post(conn)).ok(),
+            notification_kind::LIKE => Like::get(conn, self.object_id).and_then(|like| Post::get(conn, like.post_id)).ok(),
+            notification_kind::RESHARE => Reshare::get(conn, self.object_id).and_then(|reshare| reshare.get_post(conn)).ok(),
             _ => None,
         }
     }
 
-    pub fn get_actor(&self, conn: &Connection) -> User {
-        match self.kind.as_ref() {
-            notification_kind::COMMENT => Comment::get(conn, self.object_id).expect("Notification::get_actor: comment error").get_author(conn),
-            notification_kind::FOLLOW => User::get(conn, Follow::get(conn, self.object_id).expect("Notification::get_actor: follow error").follower_id)
-                .expect("Notification::get_actor: follower error"),
-            notification_kind::LIKE => User::get(conn, Like::get(conn, self.object_id).expect("Notification::get_actor: like error").user_id)
-                .expect("Notification::get_actor: liker error"),
-            notification_kind::MENTION => Mention::get(conn, self.object_id).expect("Notification::get_actor: mention error").get_user(conn)
-                .expect("Notification::get_actor: mentioner error"),
-            notification_kind::RESHARE => Reshare::get(conn, self.object_id).expect("Notification::get_actor: reshare error").get_user(conn)
-                .expect("Notification::get_actor: resharer error"),
+    pub fn get_actor(&self, conn: &Connection) -> Result<User> {
+        Ok(match self.kind.as_ref() {
+            notification_kind::COMMENT => Comment::get(conn, self.object_id)?.get_author(conn)?,
+            notification_kind::FOLLOW => User::get(conn, Follow::get(conn, self.object_id)?.follower_id)?,
+            notification_kind::LIKE => User::get(conn, Like::get(conn, self.object_id)?.user_id)?,
+            notification_kind::MENTION => Mention::get(conn, self.object_id)?.get_user(conn)?,
+            notification_kind::RESHARE => Reshare::get(conn, self.object_id)?.get_user(conn)?,
             _ => unreachable!("Notification::get_actor: Unknow type"),
-        }
+        })
     }
 
     pub fn icon_class(&self) -> &'static str {
@@ -139,9 +135,10 @@ impl Notification {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         diesel::delete(self)
             .execute(conn)
-            .expect("Notification::delete: notification deletion error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 }

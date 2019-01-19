@@ -17,3 +17,8 @@ macro_rules! api {
 
 pub mod apps;
 pub mod posts;
+
+#[derive(Default)]
+pub struct Api {
+    pub posts: posts::PostEndpoint,
+}

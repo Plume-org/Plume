@@ -57,6 +57,15 @@ table! {
         ap_url -> Nullable<Varchar>,
         sensitive -> Bool,
         spoiler_text -> Text,
+        public_visibility -> Bool,
+    }
+}
+
+table! {
+    comment_seers (id) {
+        id -> Int4,
+        comment_id -> Int4,
+        user_id -> Int4,
     }
 }
 
@@ -200,6 +209,8 @@ joinable!(api_tokens -> users (user_id));
 joinable!(blog_authors -> blogs (blog_id));
 joinable!(blog_authors -> users (author_id));
 joinable!(blogs -> instances (instance_id));
+joinable!(comment_seers -> comments (comment_id));
+joinable!(comment_seers -> users (user_id));
 joinable!(comments -> posts (post_id));
 joinable!(comments -> users (author_id));
 joinable!(likes -> posts (post_id));
@@ -223,6 +234,7 @@ allow_tables_to_appear_in_same_query!(
     blog_authors,
     blogs,
     comments,
+    comment_seers,
     follows,
     instances,
     likes,

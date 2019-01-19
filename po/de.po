@@ -16,7 +16,8 @@ msgstr ""
 msgid "Latest articles"
 msgstr "Neueste Artikel"
 
-msgid "No posts to see here yet."
+#, fuzzy
+msgid "No articles to see here yet."
 msgstr "Bisher keine Artikel vorhanden."
 
 msgid "New article"
@@ -31,8 +32,9 @@ msgstr "Erstelle einen Blog"
 msgid "Title"
 msgstr "Titel"
 
-msgid "Create blog"
-msgstr "Blog erstellen"
+#, fuzzy
+msgid "Create the blog"
+msgstr "Erstelle einen Blog"
 
 msgid "Comment \"{0}\""
 msgstr "Kommentar \"{0}\""
@@ -40,7 +42,8 @@ msgstr "Kommentar \"{0}\""
 msgid "Content"
 msgstr "Inhalt"
 
-msgid "Submit comment"
+#, fuzzy
+msgid "Submit your comment"
 msgstr "Kommentar abschicken"
 
 msgid "Something broke on our side."
@@ -72,7 +75,8 @@ msgstr "Benachrichtigungen"
 msgid "Written by {0}"
 msgstr ""
 
-msgid "This article is under the {0} license."
+#, fuzzy
+msgid "This article is published under the {0} license."
 msgstr "Dieser Artikel steht unter der {0} Lizenz."
 
 msgid "One like"
@@ -86,12 +90,14 @@ msgstr "Nicht mehr Liken"
 msgid "Add yours"
 msgstr "Like"
 
-msgid "One Boost"
+#, fuzzy
+msgid "One boost"
 msgid_plural "{0} Boosts"
 msgstr[0] "Ein Boost"
 msgstr[1] "{0} Boosts"
 
-msgid "I don&#x27;t want to boost this anymore"
+#, fuzzy
+msgid "I don&#x27;t want this boosted anymore"
 msgstr "Nicht mehr boosten"
 
 msgid "Boost"
@@ -106,11 +112,9 @@ msgstr "Antworten"
 msgid "Comment"
 msgstr "Kommentar"
 
-msgid "New post"
-msgstr "Neuer Beitrag"
-
-msgid "Create a post"
-msgstr "Beitrag erstellen"
+#, fuzzy
+msgid "Create an article"
+msgstr "Erstelle einen Account"
 
 msgid "Publish"
 msgstr "Veröffentlichen"
@@ -118,7 +122,8 @@ msgstr "Veröffentlichen"
 msgid "Login"
 msgstr "Login"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "Nutzername oder E-Mail"
 
 msgid "Password"
@@ -130,7 +135,8 @@ msgstr "Dashboard"
 msgid "Your Dashboard"
 msgstr "Dein Dashboard"
 
-msgid "Your Blogs"
+#, fuzzy
+msgid "Your blogs"
 msgstr "Deine Blogs"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
@@ -144,7 +150,8 @@ msgstr "Starte einen neuen Blog"
 msgid "Admin"
 msgstr "Admin"
 
-msgid "It is you"
+#, fuzzy
+msgid "That's you"
 msgstr "Das bist du"
 
 msgid "Edit your profile"
@@ -170,7 +177,8 @@ msgstr[1] "{0} Followers"
 msgid "Edit your account"
 msgstr "Ändere deinen Account"
 
-msgid "Your Profile"
+#, fuzzy
+msgid "Your profile"
 msgstr "Dein Profil"
 
 msgid "Display Name"
@@ -182,7 +190,8 @@ msgstr "E-Mail"
 msgid "Summary"
 msgstr "Zusammenfassung"
 
-msgid "Update account"
+#, fuzzy
+msgid "Update your account"
 msgstr "Account aktualisieren"
 
 msgid "{0}'s followers"
@@ -224,49 +233,62 @@ msgstr "Einloggen"
 msgid "Register"
 msgstr "Registrieren"
 
-msgid "You need to be logged in order to create a new blog"
+#, fuzzy
+msgid "You need to be signed in, for you to create a new blog"
 msgstr "Du musst eingeloggt sein, um einen neuen Blog zu erstellen"
 
-msgid "You need to be logged in order to post a comment"
+#, fuzzy
+msgid "You need to be signed in, so that you can post a comment"
 msgstr "Du musst eingeloggt sein, um einen Kommentar zu schreiben"
 
-msgid "You need to be logged in order to like a post"
-msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
-
-msgid "You need to be logged in order to see your notifications"
-msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
-
-msgid "You need to be logged in order to write a new post"
+#, fuzzy
+msgid "You need to be signed in, to be able to like a post"
 msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
-msgid "You need to be logged in order to boost a post"
+#, fuzzy
+msgid "You need to be logged in, so that you can see your notifications"
+msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
+
+#, fuzzy
+msgid "You need to be logged in, to be able to write a new post"
+msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
+
+#, fuzzy
+msgid "You need to be logged in, for you to be able to boost a post"
 msgstr "Du musst eingeloggt sein, um einen Beitrag zu boosten"
 
-msgid "Invalid username or password"
+#, fuzzy
+msgid "Invalid username, or password"
 msgstr "Nutzername oder Passwort ungültig"
 
-msgid "You need to be logged in order to access your dashboard"
+#, fuzzy
+msgid "You need to be logged in, to be able to access your dashboard"
 msgstr "Du musst eingeloggt sein, um dein Dashboard zu sehen"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in, to be able to follow someone"
 msgstr "Du musst eingeloggt sein, um jemandem zu folgen"
 
-msgid "You need to be logged in order to edit your profile"
+#, fuzzy
+msgid "You need to be logged in, to be able to edit your profile"
 msgstr "Du musst eingeloggt sein, um dein Profil zu editieren"
 
 msgid "By {0}"
 msgstr ""
 
-msgid "{0} boosted your article"
+#, fuzzy
+msgid "{0} gave a boost to your article"
 msgstr "{0} hat deinen Artikel geboostet"
 
 msgid "{0} started following you"
 msgstr "{0} folgt dir nun"
 
-msgid "{0} liked your article"
+#, fuzzy
+msgid "{0} liked your post"
 msgstr "{0} hat deinen Artikel geliked"
 
-msgid "{0} commented your article"
+#, fuzzy
+msgid "{0} commented on your post"
 msgstr "{0} hat deinen Artikel kommentiert"
 
 msgid "We couldn&#x27;t find this page."
@@ -275,10 +297,12 @@ msgstr "Wir konnten diese Seite nicht finden."
 msgid "The link that led you here may be broken."
 msgstr "Der Link, welcher dich hier her führte, ist wohl kaputt."
 
-msgid "You are not authorized."
-msgstr "Nicht berechtigt."
+#, fuzzy
+msgid "You are not authorized to access this page."
+msgstr "Du bist kein Autor in diesem Blog."
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author on this blog."
 msgstr "Du bist kein Autor in diesem Blog."
 
 msgid "{0} mentioned you."
@@ -296,37 +320,46 @@ msgstr "Ungültiger Name"
 msgid "A blog with the same name already exists."
 msgstr "Ein Blog mit demselben Namen existiert bereits."
 
-msgid "Your comment can't be empty"
+#, fuzzy
+msgid "The comment field can't be left empty"
 msgstr "Dein Kommentar kann nicht leer sein"
 
-msgid "A post with the same title already exists."
+#, fuzzy
+msgid "An article with the same title already exists."
 msgstr "Ein Beitrag mit demselben Titel existiert bereits."
 
-msgid "We need an email or a username to identify you"
+#, fuzzy
+msgid "We need an email, or a username to identify you"
 msgstr ""
 "Wir brauchen eine E-Mail oder einen Nutzernamen um dich zu identifizieren"
 
-msgid "Your password can't be empty"
+#, fuzzy
+msgid "Your password field can't be left empty"
 msgstr "Dein Passwort darf nicht leer sein"
 
-msgid "Passwords are not matching"
-msgstr "Passwörter stimmen nicht überein"
+msgid "The two passwords must be a match!"
+msgstr ""
 
-msgid "Username can't be empty"
+#, fuzzy
+msgid "The 'username' field can't be left empty"
 msgstr "Nutzername darf nicht leer sein"
 
 msgid "Invalid email"
 msgstr "Ungültige E-Mail Adresse"
 
-msgid "Password should be at least 8 characters long"
+#, fuzzy
+msgid "The password should be at least 8 characters long"
 msgstr "Passwort sollte mindestens 8 Zeichen lang sein"
 
-msgid "One author in this blog: "
-msgid_plural "{0} authors in this blog: "
-msgstr[0] "Ein Autor in diesem Blog: "
-msgstr[1] "{0} Autoren in diesem Blog: "
+msgid "This blog has one author: "
+msgid_plural "This blog has {0} authors: "
+msgstr[0] ""
+msgstr[1] ""
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid ""
+"Log in, or use your other account within the Fediverse, to interact with "
+"this article"
 msgstr ""
 "Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
 "interagieren"
@@ -334,10 +367,10 @@ msgstr ""
 msgid "Optional"
 msgstr "Optional"
 
-msgid "One article in this blog"
-msgid_plural "{0} articles in this blog"
-msgstr[0] "Ein Artikel in diesem Blog"
-msgstr[1] "{0} Artikel in diesem Blog"
+msgid "This blog has one article"
+msgid_plural "This blog has {0} articles"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Previous page"
 msgstr "Vorherige Seite"
@@ -357,25 +390,31 @@ msgstr "Administration"
 msgid "Instance settings"
 msgstr "Instanz-Einstellungen"
 
-msgid "Allow anyone to register"
+#, fuzzy
+msgid "Allow anyone to register here"
 msgstr "Erlaube jedem die Registrierung"
 
-msgid "Short description"
+#, fuzzy
+msgid "Short description - byline"
 msgstr "Kurze Beschreibung"
 
-msgid "Markdown is supported"
+#, fuzzy
+msgid "Markdown syntax is supported"
 msgstr "Markdown wird unterstützt"
 
 msgid "Long description"
 msgstr "Lange Beschreibung"
 
-msgid "Default license"
+#, fuzzy
+msgid "Default article license"
 msgstr "Voreingestellte Lizenz"
 
-msgid "Save settings"
+#, fuzzy
+msgid "Save these settings"
 msgstr "Einstellungen speichern"
 
-msgid "No comments yet. Be the first to react!"
+#, fuzzy
+msgid "There are no comments here yet. Be the first to react!"
 msgstr "Bisher keine Kommentare. Schreibe die erste Reaktion!"
 
 msgid "About this instance"
@@ -384,15 +423,19 @@ msgstr "Über diese Instanz"
 msgid "What is Plume?"
 msgstr "Was ist Plume?"
 
-msgid "Plume is a decentralized blogging engine."
+#, fuzzy
+msgid "Plume is a decentralized blogging engine and a member of the Fediverse."
 msgstr "Plume ist eine dezentrale Blogging-Engine."
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each from a separate, unique website."
 msgstr "Autoren können verschiedene Blogs von einer Website aus verwalten."
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume websites, called instances, and you "
+"can interact with them directly from other platforms like Mastodon, or "
+"WriteFreely."
 msgstr ""
 "Artikel sind auch auf anderen Plume-Websites sichtbar und es ist möglich aus "
 "anderen Plattformen wie Mastodon mit diesen zu interagieren."
@@ -409,7 +452,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -444,13 +487,16 @@ msgstr "Mediendetails"
 msgid "Go back to the gallery"
 msgstr "Zurück zur Gallerie"
 
-msgid "Markdown code"
+#, fuzzy
+msgid "Markdown syntax"
 msgstr "Markdown Code"
 
-msgid "Copy it in your articles to insert this media."
+#, fuzzy
+msgid "Copy it into your articles, to insert this media."
 msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "Als Avatar verwenden"
 
 msgid "Delete"
@@ -459,7 +505,8 @@ msgstr "Löschen"
 msgid "Upload"
 msgstr "Hochladen"
 
-msgid "You don't have any media yet."
+#, fuzzy
+msgid "You don't have any media uploaded yet."
 msgstr "Derzeit sind noch keine Mediendateien hochgeladen."
 
 msgid "Media upload"
@@ -477,8 +524,10 @@ msgstr "Datei"
 msgid "Send"
 msgstr "Senden"
 
+#, fuzzy
 msgid ""
-"Sorry, but registrations are closed on this instance. Try to find another one"
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 "Tut mir leid. Auf dieser Instanz sind Registrierungen derzeit nicht möglich. "
 "Es gibt aber noch andere"
@@ -486,14 +535,17 @@ msgstr ""
 msgid "Subtitle"
 msgstr "Untertitel"
 
-msgid "Login to like"
+#, fuzzy
+msgid "Log In to like"
 msgstr "Um zu liken, musst du eingeloggt sein"
 
-msgid "Login to boost"
+#, fuzzy
+msgid "Log In to boost"
 msgstr "Um zu boosten, musst du eingeloggt sein"
 
-msgid "Your feed"
-msgstr "Dein Feed"
+#, fuzzy
+msgid "Personal feed"
+msgstr "Lokaler Feed"
 
 msgid "Federated feed"
 msgstr "Föderativer Feed"
@@ -501,13 +553,15 @@ msgstr "Föderativer Feed"
 msgid "Local feed"
 msgstr "Lokaler Feed"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to follow some people."
 msgstr "Hier gibts noch nichts. Versuche dich mehr Leuten anzuschließen."
 
 msgid "Articles"
 msgstr "Artikel"
 
-msgid "All the articles of the Fediverse"
+#, fuzzy
+msgid "All of the articles within the Fediverse"
 msgstr "Alle Artikel des Fediverse"
 
 msgid "Articles from {0}"
@@ -516,7 +570,8 @@ msgstr "Artikel von {0}"
 msgid "View all"
 msgstr "Alles anzeigen"
 
-msgid "Articles tagged \"{0}\""
+#, fuzzy
+msgid "Articles tagged under \"{0}\""
 msgstr "Mit \"{0}\" markierte Artikel"
 
 msgid "Edit"
@@ -560,10 +615,12 @@ msgstr "Blockade"
 msgid "Ban"
 msgstr "Sperre"
 
-msgid "Useful for visually impaired people and licensing"
+#, fuzzy
+msgid "Useful for visually impaired people and information about licenses"
 msgstr "Hilfreich für Sehbehinderte und zur Lizenziserung"
 
-msgid "Let it empty if there is none"
+#, fuzzy
+msgid "Leave it empty, if none is meeded"
 msgstr "Falls es dies nicht gibt, lass es leer"
 
 msgid "Draft"
@@ -572,23 +629,27 @@ msgstr "Entwurf"
 msgid "This is a draft, don't publish it yet."
 msgstr "Dies ist ein Entwurf, noch nicht veröffentlichen."
 
-msgid "Update or publish"
+#, fuzzy
+msgid "Update, or publish"
 msgstr "Aktualisieren oder veröffentlichen"
 
-msgid "Your Drafts"
+#, fuzzy
+msgid "Your drafts"
 msgstr "Deine Entwürfe"
 
 msgid "Danger zone"
 msgstr "Gefahrenbereich"
 
-msgid "Be very careful, any action taken here can't be cancelled."
+#, fuzzy
+msgid "Be very careful, any action taken here cannot be reversed."
 msgstr ""
 "Sei umsichtig, jede ausgeführte Aktion kann hier nicht abgebrochen werden."
 
 msgid "Delete your account"
 msgstr "Eigenen Account löschen"
 
-msgid "Sorry, but as an admin, you can't leave your instance."
+#, fuzzy
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 "Tut mir leid. Als Administrator kannst du deine Instanz leider nicht "
 "verlassen."
@@ -599,7 +660,7 @@ msgstr "Nutzende"
 msgid "This post isn't published yet."
 msgstr "Dieser Beitrag ist noch nicht veröffentlicht."
 
-msgid "There is currently no article with that tag"
+msgid "There are currently no articles with such a tag"
 msgstr ""
 
 #, fuzzy
@@ -610,7 +671,7 @@ msgid "None"
 msgstr ""
 
 #, fuzzy
-msgid "Let it empty reserve all rights"
+msgid "Leave empty to reserve all rights"
 msgstr "Falls es dies nicht gibt, lass es leer"
 
 msgid "All rights reserved."
@@ -626,7 +687,7 @@ msgstr "Dein Feed"
 msgid "Advanced search"
 msgstr ""
 
-msgid "Title matching these words"
+msgid "Article title matching these words"
 msgstr ""
 
 msgid "Subtitle matching these words"
@@ -644,21 +705,22 @@ msgstr ""
 msgid "Containing these tags"
 msgstr ""
 
-msgid "Posted in one of these instances"
+msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Posted in one of these blogs"
+msgid "Posted on one of these blogs"
 msgstr ""
 
 #, fuzzy
 msgid "Written in this language"
 msgstr "Wir konnten diese Seite nicht finden."
 
-msgid "Using this license"
-msgstr ""
+#, fuzzy
+msgid "Published under this license"
+msgstr "Dieser Artikel steht unter der {0} Lizenz."
 
 msgid "Search result for \"{0}\""
 msgstr ""
@@ -673,20 +735,45 @@ msgstr "Zu deiner Gallerie"
 msgid "No more result for your query"
 msgstr ""
 
-#~ msgid "Home to"
-#~ msgstr "Heimat von"
+msgid "Subtitle — byline"
+msgstr ""
 
-#~ msgid "people"
-#~ msgstr "Menschen"
+#, fuzzy
+msgid "Body content"
+msgstr "Inhalt"
 
-#~ msgid "Who wrote"
-#~ msgstr "Wer schrieb"
+msgid "Tags"
+msgstr ""
 
-#~ msgid "articles"
-#~ msgstr "Artikel"
+#, fuzzy
+msgid "Instance domain"
+msgstr "Instanz-Einstellungen"
 
-#~ msgid "And connected to"
-#~ msgstr "Und verbunden mit"
+msgid "Authors"
+msgstr ""
 
-#~ msgid "other instances"
-#~ msgstr "anderen Instanzen"
+msgid "Blog title"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+#, fuzzy
+msgid "Article license"
+msgstr "Voreingestellte Lizenz"
+
+#~ msgid "Create blog"
+#~ msgstr "Blog erstellen"
+
+#~ msgid "New post"
+#~ msgstr "Neuer Beitrag"
+
+#~ msgid "Create a post"
+#~ msgstr "Beitrag erstellen"
+
+#, fuzzy
+#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
+
+#~ msgid "You are not authorized."
+#~ msgstr "Nicht berechtigt."

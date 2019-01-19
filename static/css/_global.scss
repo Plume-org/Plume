@@ -47,21 +47,29 @@ small {
 
 /// Main
 body > main > *, .h-feed > * {
- 	padding: 0 20%;
+ 	margin: 0 20%;
 }
 
 body > main > .h-entry, .h-feed {
-	padding: 0;
+	margin: 0;
 }
 
 main {
+  h1, h2, h3, h4, h5, h6 {
+      font-family: $route159;
+      line-height: 1.15;
+      font-weight: 300;
+
+      &.article {
+          max-width: 40rem;
+      }
+  }
   h1 {
-    font-family: $route159;
     font-size: 2.5em;
     font-weight: 300;
+    margin-top: 1em;
 
     &.article {
-      max-width: 40rem;
      	margin: 1em auto 0.5em;
      	font-family: $playfair;
      	font-size: 2.5em;
@@ -70,16 +78,25 @@ main {
   }
 
   h2 {
-    font-family: $route159;
    	font-size: 1.75em;
    	font-weight: 300;
 
    	&.article {
-      max-width: 40rem;
       margin: auto;
       font-size: 1.25em;
       margin-bottom: 0.5em;
     }
+  }
+
+  h3, h4, h5, h6 {
+      font-size: 1.5em;
+      font-weight: 300;
+
+      &.article {
+          margin: auto;
+          font-size: 1.1em;
+          margin-bottom: 0.5em;
+      }
   }
 
   .cover {
@@ -175,7 +192,7 @@ p.error {
 
    	font-family: $lora;
    	font-size: 1em;
-   	line-height: 1.25em;
+   	line-height: 1.25;
    	text-align: left;
    	overflow: hidden;
   }
