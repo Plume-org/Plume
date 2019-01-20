@@ -58,6 +58,10 @@ mod inbox;
 mod template_utils;
 mod routes;
 
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));
+
+compile_i18n!();
+
 type Worker<'a> = State<'a, ScheduledThreadPool>;
 type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
@@ -218,6 +222,3 @@ Then try to restart Plume.
                 .finalize().expect("main: csrf fairing creation error"))
         .launch();
 }
-
-include!(concat!(env!("OUT_DIR"), "/templates.rs"));
-compile_i18n!();
