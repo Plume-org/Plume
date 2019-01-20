@@ -5,7 +5,7 @@
 
 @(ctx: BaseContext, instance: Instance, instances: Vec<Instance>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name.clone()).as_str(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name.clone()), {}, {}, {
     <h1>@i18n!(ctx.1, "Instances")</h1>
 
     @tabs(&[
@@ -23,7 +23,7 @@
                 </p>
                 @if !instance.local {
                     <form class="inline" method="post" action="@uri!(instance::toggle_block: id = instance.id)">
-                        <input type="submit" value="@i18n!(ctx.1, if instance.blocked { "Unblock" } else { "Block"})">
+                        <input type="submit" value="@if instance.blocked { @i18n!(ctx.1, "Unblock") } else { @i18n!(ctx.1, "Block") }">
                     </form>
                 }
             </div>

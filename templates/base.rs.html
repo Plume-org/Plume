@@ -1,12 +1,12 @@
 @use template_utils::*;
 @use routes::*;
-@(ctx: BaseContext, title: &str, head: Content, header: Content, content: Content)
+@(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>@i18n!(ctx.1, title) ⋅ @i18n!(ctx.1, "Plume")</title>
+        <title>@title ⋅ @i18n!(ctx.1, "Plume")</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="@uri!(static_files: file = "css/main.css")" />
         <link rel="stylesheet" href="@uri!(static_files: file = "css/feather.css")" />

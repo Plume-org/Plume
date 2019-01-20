@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, tag: String, articles: Vec<Post>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Articles tagged \"{0}\""; &tag).as_str(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Articles tagged \"{0}\""; &tag), {}, {}, {
     <h1>@i18n!(ctx.1, "Articles tagged \"{0}\""; &tag)</h1>
 
     @if !articles.is_empty() {

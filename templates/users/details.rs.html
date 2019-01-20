@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, recents: Vec<Post>, reshares: Vec<Post>)
 
-@:base(ctx, &user.name(ctx.0), {}, {}, {
+@:base(ctx, user.name(ctx.0), {}, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[

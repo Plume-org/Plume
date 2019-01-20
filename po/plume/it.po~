@@ -1,0 +1,792 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-10-27 06:25+0000\n"
+"Last-Translator: silkevicious \n"
+"Language-Team: Italian \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#, fuzzy
+msgid "{0} commented your article."
+msgstr "{0} ha commentato il tuo articolo"
+
+#, fuzzy
+msgid "{0} is now following you."
+msgstr "{0} ha iniziato a seguirti"
+
+#, fuzzy
+msgid "{0} liked your article."
+msgstr "{0} ha messo mi piace al tuo articolo"
+
+msgid "{0} mentioned you."
+msgstr "{0} ti ha menzionato."
+
+#, fuzzy
+msgid "{0} boosted your article."
+msgstr "{0} ha boostato il tuo articolo"
+
+#, fuzzy
+msgid "{0}'s avatar"
+msgstr "Avatar di {0}"
+
+#, fuzzy
+msgid "You need to be logged in order to create a new blog"
+msgstr "Devi effettuare l'accesso per creare un nuovo blog"
+
+#, fuzzy
+msgid "You are not allowed to delete this blog."
+msgstr "Non sei l'autore di questo blog."
+
+#, fuzzy
+msgid "You need to be logged in order to like a post"
+msgstr "Devi effettuare l'accesso per mettere mi piace ad un post"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Devi effettuare l'accesso per vedere le tue notifiche"
+
+msgid "This post isn't published yet."
+msgstr "Questo post non è ancora stato pubblicato."
+
+#, fuzzy
+msgid "You need to be logged in order to write a new post"
+msgstr "Devi effettuare l'accesso per scrivere un post"
+
+#, fuzzy
+msgid "You are not author in this blog."
+msgstr "Non sei l'autore di questo blog."
+
+#, fuzzy
+msgid "Edit {0}"
+msgstr "Modifica"
+
+msgid "New post"
+msgstr "Nuovo post"
+
+#, fuzzy
+msgid "You need to be logged in order to reshare a post"
+msgstr "Devi effettuare l'accesso per vedere le tue notifiche"
+
+#, fuzzy
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Devi effettuare l'accesso per accedere al tuo pannello"
+
+#, fuzzy
+msgid "You need to be logged in order to follow someone"
+msgstr "Devi effettuare l'accesso per seguire qualcuno"
+
+#, fuzzy
+msgid "You need to be logged in order to edit your profile"
+msgstr "Devi effettuare l'accesso per modificare il tuo profilo"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "Dashboard"
+msgstr "Pannello"
+
+msgid "Notifications"
+msgstr "Notifiche"
+
+msgid "Log Out"
+msgstr "Disconnettiti"
+
+msgid "My account"
+msgstr "Il mio account"
+
+msgid "Log In"
+msgstr "Accedi"
+
+msgid "Register"
+msgstr "Registrati"
+
+msgid "About this instance"
+msgstr "A proposito di questa istanza"
+
+msgid "Source code"
+msgstr "Codice sorgente"
+
+msgid "Matrix room"
+msgstr "Stanza Matrix"
+
+msgid "Administration"
+msgstr "Amministrazione"
+
+msgid "Welcome on {}"
+msgstr ""
+
+msgid "Latest articles"
+msgstr "Ultimi articoli"
+
+msgid "Your feed"
+msgstr "Il tuo flusso"
+
+msgid "Federated feed"
+msgstr "Flusso federato"
+
+msgid "Local feed"
+msgstr "Flusso locale"
+
+#, fuzzy
+msgid "Administration of {0}"
+msgstr "Amministrazione"
+
+msgid "Instances"
+msgstr "Istanze"
+
+msgid "Configuration"
+msgstr "Configurazione"
+
+msgid "Users"
+msgstr "Utenti"
+
+msgid "Unblock"
+msgstr "Sblocca"
+
+msgid "Block"
+msgstr "Blocca"
+
+msgid "Ban"
+msgstr "Banna"
+
+#, fuzzy
+msgid "All the articles of the Fediverse"
+msgstr "Tutti gli articoli del Fediverso"
+
+#, fuzzy
+msgid "Articles from {}"
+msgstr "Articoli da {0}}"
+
+#, fuzzy
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr "Non c'è niente da mostrare qui. Prova a seguire più persone."
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Optional"
+msgstr "Opzionale"
+
+#, fuzzy
+msgid "Allow anyone to register here"
+msgstr "Consenti a chiunque di registrarsi"
+
+#, fuzzy
+msgid "Short description - byline"
+msgstr "Breve descrizione"
+
+#, fuzzy
+msgid "Markdown syntax is supported"
+msgstr "Il Markdown è supportato"
+
+msgid "Long description"
+msgstr "Descrizione lunga"
+
+#, fuzzy
+msgid "Default article license"
+msgstr "Licenza predefinita"
+
+#, fuzzy
+msgid "Save these settings"
+msgstr "Salva impostazioni"
+
+msgid "About {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> users"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
+
+msgid "Administred by"
+msgstr "Amministrata da"
+
+msgid "Runs Plume {0}"
+msgstr "Utilizza Plume {0}"
+
+msgid "Edit your account"
+msgstr "Modifica il tuo account"
+
+msgid "Your Profile"
+msgstr "Il tuo Profilo"
+
+#, fuzzy
+msgid "Display name"
+msgstr "Nome Visualizzato"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Summary"
+msgstr "Riepilogo"
+
+msgid "Update account"
+msgstr "Aggiorna account"
+
+msgid "Danger zone"
+msgstr "Zona pericolosa"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+"Fai molta attenzione, qualsiasi azione fatta qui non può essere annullata."
+
+msgid "Delete your account"
+msgstr "Elimina il tuo account"
+
+#, fuzzy
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+"Scusa, ma essendo tu un amministratore, non puoi abbandonare la tua istanza."
+
+msgid "Your Dashboard"
+msgstr "Il tuo Pannello"
+
+#, fuzzy
+msgid "Your Blogs"
+msgstr "I Tuoi Blogs"
+
+#, fuzzy
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Non hai ancora nessun blog. Crea il tuo, oppure chiedi di unirti ad uno "
+"esistente."
+
+msgid "Start a new blog"
+msgstr "Inizia un nuovo blog"
+
+msgid "Your Drafts"
+msgstr "Le tue Bozze"
+
+msgid "Your media"
+msgstr "I tuoi media"
+
+msgid "Go to your gallery"
+msgstr "Vai alla tua galleria"
+
+msgid "Create your account"
+msgstr "Crea il tuo account"
+
+msgid "Create an account"
+msgstr "Crea un account"
+
+msgid "Username"
+msgstr "Nome utente"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Password confirmation"
+msgstr "Conferma password"
+
+#, fuzzy
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+"Scusa, ma le registrazioni sono chiuse su questa istanza. Prova a cercarne "
+"un'altra"
+
+msgid "Articles"
+msgstr "Articoli"
+
+msgid "Followers"
+msgstr "Seguaci"
+
+#, fuzzy
+msgid "Atom feed"
+msgstr "Il tuo flusso"
+
+msgid "Recently boosted"
+msgstr "Boostato recentemente"
+
+msgid "Admin"
+msgstr "Amministratore"
+
+#, fuzzy
+msgid "It is you"
+msgstr "Sei tu"
+
+msgid "Edit your profile"
+msgstr "Modifica il tuo profilo"
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Unfollow"
+msgstr "Smetti di seguire"
+
+msgid "Follow"
+msgstr "Segui"
+
+#, fuzzy
+msgid "{0}'s followers"
+msgstr "Uno ti segue"
+
+msgid "Respond"
+msgstr "Rispondi"
+
+#, fuzzy
+msgid "Delete this comment"
+msgstr "Elimina questo blog"
+
+msgid "What is Plume?"
+msgstr "Cos'è Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume è un motore di blog decentralizzato."
+
+#, fuzzy
+msgid "Authors can manage various blogs from an unique website."
+msgstr "Gli autori possono gestire vari blog da un unico sito."
+
+#, fuzzy
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+"Gli articoli sono visibili anche da altri siti Plume, e puoi interagire con "
+"loro direttamente da altre piattaforme come Mastodon."
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr "Leggi le regole dettagliate"
+
+msgid "View all"
+msgstr "Vedi tutto"
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr "Bozza"
+
+msgid "Search"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Article title matching these words"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Subtitle matching these words"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Content matching these words"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "From this date"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "To this date"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Containing these tags"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Posted on one of these instances"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Posted by one of these authors"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Posted on one of these blogs"
+msgstr ""
+
+# src/template_utils.rs:183
+msgid "Written in this language"
+msgstr ""
+
+#, fuzzy
+msgid "Published under this license"
+msgstr "Questo articolo è rilasciato con licenza {0} ."
+
+msgid "Search result for \"{0}\""
+msgstr ""
+
+msgid "Search result"
+msgstr ""
+
+#, fuzzy
+msgid "No result for your query"
+msgstr "Vai alla tua galleria"
+
+msgid "No more result for your query"
+msgstr ""
+
+msgid "Login"
+msgstr "Accedi"
+
+#, fuzzy
+msgid "Username or email"
+msgstr "Nome utente o email"
+
+msgid "Title"
+msgstr "Titolo"
+
+msgid "Subtitle"
+msgstr "Sottotitolo"
+
+msgid "Content"
+msgstr "Contenuto"
+
+# src/template_utils.rs:143
+msgid "Tags, separated by commas"
+msgstr ""
+
+# src/template_utils.rs:143
+msgid "License"
+msgstr ""
+
+#, fuzzy
+msgid "Leave it empty to reserve all rights"
+msgstr "Lascialo vuoto se non è presente nessuno"
+
+#, fuzzy
+msgid "Illustration"
+msgstr "Amministrazione"
+
+msgid "None"
+msgstr ""
+
+msgid "This is a draft, don't publish it yet."
+msgstr "Questa è una bozza, non pubblicarla ancora."
+
+msgid "Update"
+msgstr "Aggiorna"
+
+#, fuzzy
+msgid "Update, or publish"
+msgstr "Aggiorna o pubblica"
+
+msgid "Publish your post"
+msgstr ""
+
+msgid "Written by {0}"
+msgstr ""
+
+msgid "Edit"
+msgstr "Modifica"
+
+msgid "Delete this article"
+msgstr "Elimina questo articolo"
+
+msgid "All rights reserved."
+msgstr ""
+
+#, fuzzy
+msgid "This article is under the {0} license."
+msgstr "Questo articolo è rilasciato con licenza {0} ."
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Un mi piace"
+msgstr[1] "{0} mi piace"
+
+#, fuzzy
+msgid "I don't like this anymore"
+msgstr "Non mi piace più"
+
+msgid "Add yours"
+msgstr "Metti mi piace"
+
+#, fuzzy
+msgid "One boost"
+msgid_plural "{0} boost"
+msgstr[0] "Un Boost"
+msgstr[1] "{0} Boost"
+
+#, fuzzy
+msgid "I don't want to boost this anymore"
+msgstr "Annulla boost"
+
+msgid "Boost"
+msgstr "Boost"
+
+#, fuzzy
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
+"Accedi o utilizza un tuo account del Fediverso per interagire con questo "
+"articolo"
+
+msgid "Comments"
+msgstr "Commenti"
+
+msgid "Content warning"
+msgstr "Avviso di contenuto sensibile"
+
+msgid "Your comment"
+msgstr "Il tuo commento"
+
+msgid "Submit comment"
+msgstr "Invia commento"
+
+#, fuzzy
+msgid "No comments yet. Be the first to react!"
+msgstr "Ancora nessun commento. Scrivi la prima reazione!"
+
+#, fuzzy
+msgid "Invalid CSRF token"
+msgstr "Token CSRF non valido."
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Qualcosa è andato storto con il tuo token CSRF. Assicurati di aver abilitato "
+"i cookies nel tuo browser, e prova a ricaricare questa pagina. Se l'errore "
+"si dovesse ripresentare, per favore segnalacelo."
+
+msgid "Page not found"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr "Non riusciamo a trovare questa pagina."
+
+msgid "The link that led you here may be broken."
+msgstr "Il collegamento che ti ha portato qui potrebbe non essere valido."
+
+msgid "You are not authorized."
+msgstr "Non sei autorizzato."
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr "Qualcosa non va da questo lato."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Scusa per questo. Se pensi sia un bug, per favore segnalacelo."
+
+#, fuzzy
+msgid "New Blog"
+msgstr "Nuovo blog"
+
+msgid "Create a blog"
+msgstr "Crea un blog"
+
+msgid "Create blog"
+msgstr "Crea blog"
+
+#, fuzzy
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Un autore in questo blog: "
+msgstr[1] "{0} autori in questo blog: "
+
+#, fuzzy
+msgid "There's one article on this blog"
+msgid_plural "There are {0} articles on this blog"
+msgstr[0] "Un articolo in questo blog"
+msgstr[1] "{0} articoli in questo blog"
+
+msgid "No posts to see here yet."
+msgstr "Nessun post da mostrare qui."
+
+msgid "New article"
+msgstr "Nuovo articolo"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+"Fai molta attenzione, qualsiasi azione fatta qui non può essere annullata."
+
+#, fuzzy
+msgid "Permanently delete this blog"
+msgstr "Elimina questo blog"
+
+#, fuzzy
+msgid "Articles tagged \"{0}\""
+msgstr "Articoli etichettati \"{0}\""
+
+#, fuzzy
+msgid "There are currently no articles with such a tag"
+msgstr "Attualmente non è ancora presente nessun articolo con quell'etichetta"
+
+msgid "Upload"
+msgstr "Carica"
+
+#, fuzzy
+msgid "You don't have any media yet."
+msgstr "Non hai ancora nessun media."
+
+msgid "Delete"
+msgstr "Elimina"
+
+msgid "Media upload"
+msgstr "Caricamento di un media"
+
+msgid "Description"
+msgstr "Descrizione"
+
+#, fuzzy
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Utile per persone ipovedenti e per informazioni sulla licenza"
+
+#, fuzzy
+msgid "Leave it empty, if none is needed"
+msgstr "Lascialo vuoto se non è presente nessuno"
+
+msgid "File"
+msgstr "File"
+
+msgid "Send"
+msgstr "Invia"
+
+msgid "Media details"
+msgstr "Dettagli del media"
+
+msgid "Go back to the gallery"
+msgstr "Torna alla galleria"
+
+#, fuzzy
+msgid "Markdown syntax"
+msgstr "Codice Markdown"
+
+#, fuzzy
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Copialo nei tuoi articoli per inserire questo media."
+
+#, fuzzy
+msgid "Use as avatar"
+msgstr "Usa come avatar"
+
+#, fuzzy
+#~ msgid "Create a new post"
+#~ msgstr "Crea un post"
+
+#~ msgid "Comment \"{0}\""
+#~ msgstr "Commenta \"{0}\""
+
+#~ msgid "Configure your instance"
+#~ msgstr "Configura la tua istanza"
+
+#~ msgid "Let&#x27;s go!"
+#~ msgstr "Andiamo!"
+
+#~ msgid "Comment"
+#~ msgstr "Commenta"
+
+#~ msgid "Publish"
+#~ msgstr "Pubblica"
+
+#~ msgid "One follower"
+#~ msgid_plural "{0} followers"
+#~ msgstr[0] "Uno ti segue"
+#~ msgstr[1] "{0} ti seguono"
+
+#~ msgid "New Account"
+#~ msgstr "Nuovo Account"
+
+#~ msgid "Create account"
+#~ msgstr "Crea account"
+
+#, fuzzy
+#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgstr "Devi effettuare l'accesso per commentare"
+
+#, fuzzy
+#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgstr "Devi effettuare l'accesso per boostare un post"
+
+#, fuzzy
+#~ msgid "Invalid username, or password"
+#~ msgstr "Nome utente o password non validi"
+
+#~ msgid "We couldn&#x27;t find this page."
+#~ msgstr "Non riusciamo a trovare questa pagina."
+
+#~ msgid "Unknown error"
+#~ msgstr "Errore sconosciuto"
+
+#~ msgid "Invalid name"
+#~ msgstr "Nome non valido"
+
+#~ msgid "A blog with the same name already exists."
+#~ msgstr "Un blog con lo stesso nome esiste già."
+
+#~ msgid "Your comment can't be empty"
+#~ msgstr "Il tuo commento non può essere vuoto"
+
+#~ msgid "A post with the same title already exists."
+#~ msgstr "Un post con lo stesso titolo esiste già."
+
+#, fuzzy
+#~ msgid "We need an email, or a username to identify you"
+#~ msgstr "Occorre un indirizzo email o un nome utente per identificarti"
+
+#, fuzzy
+#~ msgid "Your password field can't be empty"
+#~ msgstr "La tua password non può essere vuota"
+
+#~ msgid "Username can't be empty"
+#~ msgstr "Il nome utente non può essere vuoto"
+
+#~ msgid "Invalid email"
+#~ msgstr "Indirizzo email non valido"
+
+#, fuzzy
+#~ msgid "The password should be at least 8 characters long"
+#~ msgstr "Le password devono essere lunghe almeno 8 caratteri"
+
+#~ msgid "Previous page"
+#~ msgstr "Pagina precedente"
+
+#~ msgid "Next page"
+#~ msgstr "Prossima pagina"
+
+#~ msgid "Instance settings"
+#~ msgstr "Impostazioni dell'istanza"
+
+#~ msgid "Login to like"
+#~ msgstr "Accedi per mettere mi piace"
+
+#~ msgid "Login to boost"
+#~ msgstr "Accedi per boostare"
+
+#, fuzzy
+#~ msgid "Personal feed"
+#~ msgstr "Flusso locale"
+
+#~ msgid "Passwords are not matching"
+#~ msgstr "Le password non corrispondono"
+
+#~ msgid "Home to"
+#~ msgstr "Casa di"
+
+#~ msgid "people"
+#~ msgstr "persone"
+
+#~ msgid "Who wrote"
+#~ msgstr "Che hanno scritto"
+
+#~ msgid "articles"
+#~ msgstr "articoli"
+
+#~ msgid "And connected to"
+#~ msgstr "E connesso a"
+
+#~ msgid "other instances"
+#~ msgstr "altre istanze"

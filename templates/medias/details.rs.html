@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, media: Media)
 
-@:base(ctx, "Media details", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Media details"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media details")</h1>
     <section>
         <a href="@uri!(medias::list)">@i18n!(ctx.1, "Go back to the gallery")</a>

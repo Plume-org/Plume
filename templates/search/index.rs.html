@@ -3,7 +3,7 @@
 
 @(ctx: BaseContext, now: &str)
 
-@:base(ctx, "Search", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Search"), {}, {}, {
   <h1>@i18n!(ctx.1, "Search")</h1>
   <form method="get" id="form">
     <input id="q" name="q" placeholder="Your search query" type="search">
@@ -13,7 +13,7 @@
         @input!(ctx.1, title    (text), "Article title matching these words",       "placeholder=\"Title\"")
         @input!(ctx.1, subtitle (text), "Subtitle matching these words",    "placeholder=\"Subtitle - byline\"")
         @input!(ctx.1, content  (text), "Content matching these words",     "placeholder=\"Body content\"")
-	@input!(ctx.1, after    (date), "From this date",                   &format!("max={}", now))
+	    @input!(ctx.1, after    (date), "From this date",                   &format!("max={}", now))
         @input!(ctx.1, before   (date), "To this date",                     &format!("max={}", now))
 
         @input!(ctx.1, tag      (text), "Containing these tags",            "placeholder=\"Tags\"")

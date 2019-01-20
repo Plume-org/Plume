@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, form: &NewBlogForm, errors: ValidationErrors)
 
-@:base(ctx, "New Blog", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "New Blog"), {}, {}, {
   <h1>@i18n!(ctx.1, "Create a blog")</h1>
   <form method="post" action="@uri!(blogs::create)">
       @input!(ctx.1, title (text), "Title", form, errors, "required minlength=\"1\"")

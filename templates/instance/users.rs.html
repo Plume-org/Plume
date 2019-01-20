@@ -5,7 +5,7 @@
 
 @(ctx: BaseContext, users: Vec<User>, page: i32, n_pages: i32)
 
-@:base(ctx, "Users", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Users"), {}, {}, {
     <h1>@i18n!(ctx.1, "Users")</h1>
 
     @tabs(&[

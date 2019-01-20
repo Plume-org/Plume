@@ -2,11 +2,11 @@
 @use plume_models::posts::Post;
 @use template_utils::*;
 
-@(ctx: BaseContext, articles: Vec<Post>, link: &str, title: &str)
+@(ctx: BaseContext, articles: Vec<Post>, link: &str, title: String)
 
 @if articles.len() > 0 {
 <div class="h-feed">
-    <h2><span class="p-name">@i18n!(ctx.1, title)</span> &mdash; <a href="@link">@i18n!(ctx.1, "View all")</a></h2>
+    <h2><span class="p-name">@title</span> &mdash; <a href="@link">@i18n!(ctx.1, "View all")</a></h2>
     <div class="cards spaced">
         @for article in articles {
             @:post_card(ctx, article)

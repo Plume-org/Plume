@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, instance: Instance, articles: Vec<Post>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Articles from {}"; instance.name.clone()).as_str(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Articles from {}"; instance.name.clone()), {}, {}, {
 <div class="h-feed">
   <h1 class="p-name">@i18n!(ctx.1, "Articles from {}"; instance.name)</h1>
 

@@ -3,10 +3,11 @@
 
 @(ctx: BaseContext)
 
-@:base(ctx, "", {
-    <h1>@i18n!(ctx.1, "Invalid CSRF token.")</h1>
-    <p>@i18n!(ctx.1, r#"Something is wrong with your CSRF token.
-Make sure cookies are enabled in you browser, and try reloading this page.
-If you continue to see this error message, please report it."#)
-</p>
+@:base(ctx, i18n!(ctx.1, "Invalid CSRF token"), {
+    <h1>@i18n!(ctx.1, "Invalid CSRF token")</h1>
+    <p>
+        @i18n!(ctx.1,
+        "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+        )
+    </p>
 })
