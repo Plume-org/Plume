@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-01-13 02:50+0000\n"
-"Last-Translator: Xenelio <thomas.colonna.d@gmail.com>\n"
+"PO-Revision-Date: 2019-01-22 00:50+0000\n"
+"Last-Translator: Kevin Chavez <kevin9794@hotmail.com>\n"
 "Language-Team: Spanish <https://translate.funkwhale.audio/projects/plume/"
 "Plume/es/>\n"
 "Language: es\n"
@@ -39,40 +39,41 @@ msgid "Comment \"{0}\""
 msgstr ""
 
 msgid "Content"
-msgstr ""
+msgstr "Contenido"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Enviar comentario"
 
 msgid "Something broke on our side."
 msgstr ""
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
+"Disculpe la molestia. Si cree que esto es un defecto, por favor repórtalo."
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 msgid "Configure your instance"
-msgstr ""
+msgstr "Configure su instancia"
 
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 msgid "Let&#x27;s go!"
-msgstr ""
+msgstr "Vamos!"
 
 msgid "Welcome to {0}"
-msgstr ""
+msgstr "Bienvenido(a) a {0}"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notificaciones"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Escrito por {0}"
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Este artículo está bajo la licencia {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -83,7 +84,7 @@ msgid "I don&#x27;t like this anymore"
 msgstr ""
 
 msgid "Add yours"
-msgstr ""
+msgstr "Agregue el suyo"
 
 msgid "One Boost"
 msgid_plural "{0} Boosts"
@@ -97,13 +98,13 @@ msgid "Boost"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Comentários"
 
 msgid "Respond"
-msgstr ""
+msgstr "Responder"
 
 msgid "Comment"
-msgstr ""
+msgstr "Comentar"
 
 msgid "New post"
 msgstr ""
@@ -112,16 +113,16 @@ msgid "Create a post"
 msgstr ""
 
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
 msgid "Login"
-msgstr ""
+msgstr "Iniciar Sesión"
 
 msgid "Username or email"
-msgstr ""
+msgstr "Nombre de usuario o correo electrónico"
 
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 msgid "Dashboard"
 msgstr ""
@@ -130,10 +131,10 @@ msgid "Your Dashboard"
 msgstr ""
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Tus blogs"
 
 msgid "You don&#x27;t have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Aun no tienes un blog. Crea o pide unirte a uno."
 
 msgid "Start a new blog"
 msgstr ""
@@ -142,60 +143,60 @@ msgid "Admin"
 msgstr ""
 
 msgid "It is you"
-msgstr ""
+msgstr "Eres tú"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Edita tu perfil"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Abrir en {0}"
 
 msgid "Follow"
-msgstr ""
+msgstr "Seguir"
 
 msgid "Unfollow"
-msgstr ""
+msgstr "Dejar de seguir"
 
 msgid "Recently boosted"
 msgstr ""
 
 msgid "One follower"
 msgid_plural "{0} followers"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un seguidor"
+msgstr[1] "{0} seguidores"
 
 msgid "Edit your account"
 msgstr ""
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Tu perfil"
 
 msgid "Display Name"
 msgstr ""
 
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 msgid "Update account"
 msgstr ""
 
 msgid "{0}'s followers"
-msgstr ""
+msgstr "Los seguidores de {0}"
 
 msgid "Followers"
 msgstr "Seguidores"
 
 msgid "New Account"
-msgstr ""
+msgstr "Nueva cuenta"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Crear una cuenta"
 
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 msgid "Password confirmation"
 msgstr ""
@@ -204,34 +205,34 @@ msgid "Create account"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menú"
 
 msgid "My account"
-msgstr ""
+msgstr "Mi cuenta"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Cerrar Sesión"
 
 msgid "Log In"
-msgstr ""
+msgstr "Iniciar Sesión"
 
 msgid "Register"
 msgstr ""
 
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Necesitas iniciar sesión para crear un nuevo blog"
 
 msgid "You need to be logged in order to post a comment"
-msgstr ""
+msgstr "Necesitas iniciar sesión para publicar un comentario"
 
 msgid "You need to be logged in order to like a post"
 msgstr ""
 
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Necesitas iniciar sesión para ver tus notificaciones"
 
 msgid "You need to be logged in order to write a new post"
 msgstr ""
@@ -249,7 +250,7 @@ msgid "You need to be logged in order to follow someone"
 msgstr ""
 
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Necesitas iniciar sesión para poder editar tu peril"
 
 msgid "By {0}"
 msgstr ""
