@@ -3,7 +3,7 @@ rls
 **/*.rs.bk
 rls
 translations
-po/*.po~
+po/plume/*.po~
 .env
 Rocket.toml
 !.gitkeep
