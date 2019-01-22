@@ -1,0 +1,10 @@
+@use templates::errors::base;
+@use template_utils::*;
+
+@(ctx: BaseContext)
+
+@:base(ctx, "Unprocessable entity", {
+  <h1>@i18n!(ctx.1, "The content you sent can't be processed.")</h1>
+  <p>@i18n!(ctx.1, "Maybe it was too long.")</p>
+})
+

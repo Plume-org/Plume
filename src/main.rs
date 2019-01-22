@@ -101,7 +101,7 @@ Then try to restart Plume.
 
     let mut config = Config::active().unwrap();
     config.set_address(env::var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned())).unwrap();
-    config.set_port(env::var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(8000));
+    config.set_port(env::var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(7878));
     let _ = env::var("ROCKET_SECRET_KEY").map(|k| config.set_secret_key(k).unwrap());
     let form_size = &env::var("FORM_SIZE").unwrap_or_else(|_| "32".to_owned()).parse::<u64>().unwrap();
     let activity_size = &env::var("ACTIVITY_SIZE").unwrap_or_else(|_| "1024".to_owned()).parse::<u64>().unwrap();
@@ -210,6 +210,7 @@ Then try to restart Plume.
         ])
         .register(catchers![
             routes::errors::not_found,
+            routes::errors::unprocessable_entity,
             routes::errors::server_error
         ])
         .manage(dbpool)
