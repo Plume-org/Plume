@@ -264,6 +264,7 @@ pub fn web_manifest(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> 
         "display": String::from("standalone"),
         "background_color": String::from("#f4f4f4"),
         "theme_color": String::from("#7765e3"),
+        "categories": [String::from("social")],
         "icons": [
             {
                 "src": "/static/icons/trwnh/feather/plumeFeather48.png",
