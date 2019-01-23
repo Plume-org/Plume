@@ -30,8 +30,9 @@
             @format!(r#"<p class="error">{}</p>"#, i18n!(ctx.1, &*errs[0].message.clone().unwrap_or(Cow::from("Unknown error"))))
         }
 
-	<label for="plume-editor">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small> <i id="editor-left">left</i></label>
+        <label for="plume-editor">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="plume-editor" name="content" rows="20">@form.content</textarea>
+	    <small id="editor-left">@content_len</small>
 
         @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")
 
