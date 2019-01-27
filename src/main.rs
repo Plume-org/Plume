@@ -36,7 +36,10 @@ extern crate validator_derive;
 extern crate webfinger;
 
 use diesel::r2d2::ConnectionManager;
-use rocket::State;
+use rocket::{
+    Config, State,
+    config::Limits
+};
 use rocket_csrf::CsrfFairingBuilder;
 use plume_models::{
     DATABASE_URL, Connection, Error,
@@ -44,6 +47,7 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
 };
 use scheduled_thread_pool::ScheduledThreadPool;
+use std::env;
 use std::process::exit;
 use std::sync::Arc;
 use std::time::Duration;
@@ -95,7 +99,17 @@ Then try to restart Plume.
         exit(0);
     }).expect("Error setting Ctrl-c handler");
 
-    rocket::ignite()
+    let mut config = Config::active().unwrap();
+    config.set_address(env::var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned())).unwrap();
+    config.set_port(env::var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(7878));
+    let _ = env::var("ROCKET_SECRET_KEY").map(|k| config.set_secret_key(k).unwrap());
+    let form_size = &env::var("FORM_SIZE").unwrap_or_else(|_| "32".to_owned()).parse::<u64>().unwrap();
+    let activity_size = &env::var("ACTIVITY_SIZE").unwrap_or_else(|_| "1024".to_owned()).parse::<u64>().unwrap();
+    config.set_limits(Limits::new()
+                      .limit("forms", form_size * 1024)
+                      .limit("json", activity_size * 1024));
+
+    rocket::custom(config)
         .mount("/", routes![
             routes::blogs::details,
             routes::blogs::activity_details,
@@ -196,6 +210,7 @@ Then try to restart Plume.
         ])
         .register(catchers![
             routes::errors::not_found,
+            routes::errors::unprocessable_entity,
             routes::errors::server_error
         ])
         .manage(dbpool)

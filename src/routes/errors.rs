@@ -47,6 +47,16 @@ pub fn not_found(req: &Request) -> Ructe {
     ))
 }
 
+#[catch(422)]
+pub fn unprocessable_entity(req: &Request) -> Ructe {
+    let conn = req.guard::<DbConn>().succeeded();
+    let intl = req.guard::<I18n>().succeeded();
+    let user = User::from_request(req).succeeded();
+    render!(errors::unprocessable_entity(
+        &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+    ))
+}
+
 #[catch(500)]
 pub fn server_error(req: &Request) -> Ructe {
     let conn = req.guard::<DbConn>().succeeded();

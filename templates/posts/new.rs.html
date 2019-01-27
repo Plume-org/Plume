@@ -8,7 +8,7 @@
 @use routes::posts::NewPostForm;
 @use routes::*;
 
-@(ctx: BaseContext, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>)
+@(ctx: BaseContext, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
 
 @:base(ctx, &i18n!(ctx.1, if editing { "Edit {0}" } else { "New post" }; &form.title), {}, {}, {
     <h1>
@@ -19,9 +19,9 @@
         }
     </h1>
     @if let Some(article) = article {
-	    <form class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)">
+	    <form id="post-form" class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)" content-size="@content_len">
     } else {
-	    <form class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)">
+	    <form id="post-form" class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)" content-size="@content_len">
     }
         @input!(ctx.1, title (text), "Title", form, errors.clone(), "required")
         @input!(ctx.1, subtitle (optional text), "Subtitle", form, errors.clone(), "")
@@ -32,6 +32,7 @@
 
         <label for="plume-editor">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="plume-editor" name="content" rows="20">@form.content</textarea>
+	    <small id="editor-left">@content_len</small>
 
         @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")
 
