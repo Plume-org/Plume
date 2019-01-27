@@ -57,11 +57,12 @@ impl Media {
     }
 
     pub fn category(&self) -> MediaCategory {
-        match self
+        match &*self
             .file_path
             .rsplitn(2, '.')
             .next()
             .expect("Media::category: extension error")
+            .to_lowercase()
         {
             "png" | "jpg" | "jpeg" | "gif" | "svg" => MediaCategory::Image,
             "mp3" | "wav" | "flac" => MediaCategory::Audio,
