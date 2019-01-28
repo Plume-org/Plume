@@ -11,9 +11,9 @@
     @if articles.is_empty() {
         <section>
 	    @if page == 1 {
-                <h2>@i18n!(ctx.1, "No result for your query")</h2>
+            <h2>@i18n!(ctx.1, "No result for your query")</h2>
 	    } else {
-                <h2>@i18n!(ctx.1, "No more result for your query")</h2>
+            <h2>@i18n!(ctx.1, "No more result for your query")</h2>
 	    }
         </section>
     } else {

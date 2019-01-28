@@ -54,7 +54,8 @@ macro_rules! param_to_query {
 
 
 #[get("/search?<query..>")]
-pub fn search(query: Form<SearchQuery>, conn: DbConn, searcher: Searcher, user: Option<User>, intl: I18n) -> Ructe {
+pub fn search(query: Option<Form<SearchQuery>>, conn: DbConn, searcher: Searcher, user: Option<User>, intl: I18n) -> Ructe {
+    let query = query.map(|f| f.into_inner()).unwrap_or_default();
     let page = query.page.unwrap_or_default();
     let mut parsed_query = Query::from_str(&query.q.as_ref().map(|q| q.as_str()).unwrap_or_default());
 
