@@ -24,7 +24,7 @@ use plume_models::{
     tags::*,
     users::User
 };
-use routes::{errors::ErrorPage, comments::NewCommentForm};
+use routes::{errors::ErrorPage, comments::NewCommentForm, ContentLen};
 use template_utils::Ructe;
 use Worker;
 use Searcher;
@@ -103,7 +103,7 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-pub fn new(blog: String, user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
 
     if !user.is_author_in(&*conn, &b)? {
@@ -126,13 +126,14 @@ pub fn new(blog: String, user: User, conn: DbConn, intl: I18n) -> Result<Ructe, 
             true,
             None,
             ValidationErrors::default(),
-            medias
+            medias,
+            cl.0
         )))
     }
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
@@ -171,13 +172,14 @@ pub fn edit(blog: String, slug: String, user: User, conn: DbConn, intl: I18n) ->
             !post.published,
             Some(post),
             ValidationErrors::default(),
-            medias
+            medias,
+            cl.0
         )))
     }
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
-pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: LenientForm<NewPostForm>, worker: Worker, intl: I18n, searcher: Searcher)
+pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: LenientForm<NewPostForm>, worker: Worker, conn: DbConn, intl: I18n, searcher: Searcher)
     -> Result<Redirect, Ructe> {
     let b = Blog::find_by_fqn(&*conn, &blog).expect("post::update: blog error");
     let mut post = Post::find_by_slug(&*conn, &slug, b.id).expect("post::update: find by slug error");
@@ -265,7 +267,8 @@ pub fn update(blog: String, slug: String, user: User, conn: DbConn, form: Lenien
             form.draft.clone(),
             Some(post),
             errors.clone(),
-            medias.clone()
+            medias.clone(),
+            cl.0
         )))
     }
 }
@@ -294,7 +297,7 @@ pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<form>")]
-pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher) -> Result<Redirect, Result<Ructe, ErrorPage>> {
+pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl: ContentLen, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher) -> Result<Redirect, Result<Ructe, ErrorPage>> {
     let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
 
@@ -389,7 +392,8 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, con
             form.draft,
             None,
             errors.clone(),
-            medias
+            medias,
+            cl.0
         ))))
     }
 }

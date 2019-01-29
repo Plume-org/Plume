@@ -16,9 +16,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "{0} ha commentato il tuo articolo"
 
-#, fuzzy
+# src/template_utils.rs:35
 msgid "{0} is now following you."
-msgstr "{0} ha iniziato a seguirti"
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -37,7 +37,7 @@ msgstr "Avatar di {0}"
 
 #, fuzzy
 msgid "You need to be logged in order to create a new blog"
-msgstr "Devi effettuare l'accesso per creare un nuovo blog"
+msgstr "Devi effettuare l'accesso per scrivere un post"
 
 #, fuzzy
 msgid "You are not allowed to delete this blog."
@@ -47,6 +47,7 @@ msgstr "Non sei l'autore di questo blog."
 msgid "You need to be logged in order to like a post"
 msgstr "Devi effettuare l'accesso per mettere mi piace ad un post"
 
+#, fuzzy
 msgid "You need to be logged in order to see your notifications"
 msgstr "Devi effettuare l'accesso per vedere le tue notifiche"
 
@@ -90,6 +91,9 @@ msgstr "Plume"
 msgid "Menu"
 msgstr "Menu"
 
+msgid "Search"
+msgstr ""
+
 msgid "Dashboard"
 msgstr "Pannello"
 
@@ -123,15 +127,18 @@ msgstr "Amministrazione"
 msgid "Welcome on {}"
 msgstr ""
 
+#, fuzzy
 msgid "Latest articles"
-msgstr "Ultimi articoli"
+msgstr "Nuovo articolo"
 
+#, fuzzy
 msgid "Your feed"
-msgstr "Il tuo flusso"
+msgstr "I tuoi media"
 
 msgid "Federated feed"
-msgstr "Flusso federato"
+msgstr ""
 
+#, fuzzy
 msgid "Local feed"
 msgstr "Flusso locale"
 
@@ -151,11 +158,12 @@ msgstr "Utenti"
 msgid "Unblock"
 msgstr "Sblocca"
 
+#, fuzzy
 msgid "Block"
-msgstr "Blocca"
+msgstr "Sblocca"
 
 msgid "Ban"
-msgstr "Banna"
+msgstr ""
 
 #, fuzzy
 msgid "All the articles of the Fediverse"
@@ -219,6 +227,7 @@ msgstr "Utilizza Plume {0}"
 msgid "Edit your account"
 msgstr "Modifica il tuo account"
 
+#, fuzzy
 msgid "Your Profile"
 msgstr "Il tuo Profilo"
 
@@ -232,6 +241,7 @@ msgstr "Email"
 msgid "Summary"
 msgstr "Riepilogo"
 
+#, fuzzy
 msgid "Update account"
 msgstr "Aggiorna account"
 
@@ -325,8 +335,9 @@ msgstr "Modifica il tuo profilo"
 msgid "Open on {0}"
 msgstr ""
 
+#, fuzzy
 msgid "Unfollow"
-msgstr "Smetti di seguire"
+msgstr "Segui"
 
 msgid "Follow"
 msgstr "Segui"
@@ -372,55 +383,82 @@ msgstr "Vedi tutto"
 msgid "By {0}"
 msgstr ""
 
+#, fuzzy
 msgid "Draft"
-msgstr "Bozza"
+msgstr "Le tue Bozze"
 
-msgid "Search"
+#, fuzzy
+msgid "Your query"
+msgstr "Il tuo flusso"
+
+msgid "Advanced search"
 msgstr ""
 
-# src/template_utils.rs:183
 msgid "Article title matching these words"
 msgstr ""
 
-# src/template_utils.rs:183
+msgid "Title"
+msgstr "Titolo"
+
 msgid "Subtitle matching these words"
 msgstr ""
 
-# src/template_utils.rs:183
+#, fuzzy
+msgid "Subtitle - byline"
+msgstr "Sottotitolo"
+
 msgid "Content matching these words"
 msgstr ""
 
-# src/template_utils.rs:183
+#, fuzzy
+msgid "Body content"
+msgstr "Contenuto"
+
 msgid "From this date"
 msgstr ""
 
-# src/template_utils.rs:183
 msgid "To this date"
 msgstr ""
 
-# src/template_utils.rs:183
 msgid "Containing these tags"
 msgstr ""
 
-# src/template_utils.rs:183
+msgid "Tags"
+msgstr ""
+
 msgid "Posted on one of these instances"
 msgstr ""
 
-# src/template_utils.rs:183
+#, fuzzy
+msgid "Instance domain"
+msgstr "Impostazioni dell'istanza"
+
 msgid "Posted by one of these authors"
 msgstr ""
 
-# src/template_utils.rs:183
+msgid "Authors"
+msgstr ""
+
 msgid "Posted on one of these blogs"
 msgstr ""
 
-# src/template_utils.rs:183
+msgid "Blog title"
+msgstr ""
+
+#, fuzzy
 msgid "Written in this language"
+msgstr "Non riusciamo a trovare questa pagina."
+
+msgid "Language"
 msgstr ""
 
 #, fuzzy
 msgid "Published under this license"
 msgstr "Questo articolo è rilasciato con licenza {0} ."
+
+#, fuzzy
+msgid "Article license"
+msgstr "Licenza predefinita"
 
 msgid "Search result for \"{0}\""
 msgstr ""
@@ -436,14 +474,11 @@ msgid "No more result for your query"
 msgstr ""
 
 msgid "Login"
-msgstr "Accedi"
+msgstr ""
 
 #, fuzzy
 msgid "Username or email"
 msgstr "Nome utente o email"
-
-msgid "Title"
-msgstr "Titolo"
 
 msgid "Subtitle"
 msgstr "Sottotitolo"
@@ -474,23 +509,26 @@ msgid "This is a draft, don't publish it yet."
 msgstr "Questa è una bozza, non pubblicarla ancora."
 
 msgid "Update"
-msgstr "Aggiorna"
+msgstr ""
 
 #, fuzzy
 msgid "Update, or publish"
 msgstr "Aggiorna o pubblica"
 
+#, fuzzy
 msgid "Publish your post"
-msgstr ""
+msgstr "{0} ha messo mi piace al tuo articolo"
 
 msgid "Written by {0}"
 msgstr ""
 
+#, fuzzy
 msgid "Edit"
 msgstr "Modifica"
 
+#, fuzzy
 msgid "Delete this article"
-msgstr "Elimina questo articolo"
+msgstr "Elimina questo blog"
 
 msgid "All rights reserved."
 msgstr ""
@@ -499,17 +537,18 @@ msgstr ""
 msgid "This article is under the {0} license."
 msgstr "Questo articolo è rilasciato con licenza {0} ."
 
+#, fuzzy
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] "Un mi piace"
-msgstr[1] "{0} mi piace"
+msgstr[0] "Uno ti segue"
+msgstr[1] "{0} ti seguono"
 
 #, fuzzy
 msgid "I don't like this anymore"
 msgstr "Non mi piace più"
 
 msgid "Add yours"
-msgstr "Metti mi piace"
+msgstr ""
 
 #, fuzzy
 msgid "One boost"
@@ -530,15 +569,18 @@ msgstr ""
 "Accedi o utilizza un tuo account del Fediverso per interagire con questo "
 "articolo"
 
+#, fuzzy
 msgid "Comments"
-msgstr "Commenti"
+msgstr "Commenta"
 
 msgid "Content warning"
 msgstr "Avviso di contenuto sensibile"
 
+#, fuzzy
 msgid "Your comment"
-msgstr "Il tuo commento"
+msgstr "Invia commento"
 
+#, fuzzy
 msgid "Submit comment"
 msgstr "Invia commento"
 
@@ -567,6 +609,12 @@ msgstr "Non riusciamo a trovare questa pagina."
 
 msgid "The link that led you here may be broken."
 msgstr "Il collegamento che ti ha portato qui potrebbe non essere valido."
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
 
 msgid "You are not authorized."
 msgstr "Non sei autorizzato."
@@ -656,10 +704,11 @@ msgid "Send"
 msgstr "Invia"
 
 msgid "Media details"
-msgstr "Dettagli del media"
+msgstr ""
 
+#, fuzzy
 msgid "Go back to the gallery"
-msgstr "Torna alla galleria"
+msgstr "Vai alla tua galleria"
 
 #, fuzzy
 msgid "Markdown syntax"
@@ -674,6 +723,76 @@ msgid "Use as avatar"
 msgstr "Usa come avatar"
 
 #, fuzzy
+#~ msgid "No articles to see here yet."
+#~ msgstr "Nessun post da mostrare qui."
+
+#, fuzzy
+#~ msgid "Create the blog"
+#~ msgstr "Crea un blog"
+
+#, fuzzy
+#~ msgid "Create an article"
+#~ msgstr "Crea un account"
+
+#, fuzzy
+#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgstr "Devi effettuare l'accesso per scrivere un post"
+
+#, fuzzy
+#~ msgid "{0} gave a boost to your article"
+#~ msgstr "{0} ha boostato il tuo articolo"
+
+#, fuzzy
+#~ msgid "{0} commented on your post"
+#~ msgstr "{0} ha commentato il tuo articolo"
+
+#, fuzzy
+#~ msgid "You are not authorized to access this page."
+#~ msgstr "Non sei l'autore di questo blog."
+
+#, fuzzy
+#~ msgid "The comment field can't be left empty"
+#~ msgstr "Il tuo commento non può essere vuoto"
+
+#, fuzzy
+#~ msgid "An article with the same title already exists."
+#~ msgstr "Un post con lo stesso titolo esiste già."
+
+#, fuzzy
+#~ msgid "Your password field can't be left empty"
+#~ msgstr "La tua password non può essere vuota"
+
+#, fuzzy
+#~ msgid "The 'username' field can't be left empty"
+#~ msgstr "Il nome utente non può essere vuoto"
+
+#~ msgid "Previous page"
+#~ msgstr "Pagina precedente"
+
+#~ msgid "Next page"
+#~ msgstr "Prossima pagina"
+
+#~ msgid "Instance settings"
+#~ msgstr "Impostazioni dell'istanza"
+
+#, fuzzy
+#~ msgid ""
+#~ "Plume is a decentralized blogging engine and a member of the Fediverse."
+#~ msgstr "Plume è un motore di blog decentralizzato."
+
+#, fuzzy
+#~ msgid "Log In to like"
+#~ msgstr "Accedi per mettere mi piace"
+
+#, fuzzy
+#~ msgid "Log In to boost"
+#~ msgstr "Accedi per boostare"
+
+#, fuzzy
+#~ msgid "Your drafts"
+#~ msgstr "Le tue Bozze"
+
+#, fuzzy
 #~ msgid "Create a new post"
 #~ msgstr "Crea un post"
 
@@ -686,16 +805,8 @@ msgstr "Usa come avatar"
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Andiamo!"
 
-#~ msgid "Comment"
-#~ msgstr "Commenta"
-
 #~ msgid "Publish"
 #~ msgstr "Pubblica"
-
-#~ msgid "One follower"
-#~ msgid_plural "{0} followers"
-#~ msgstr[0] "Uno ti segue"
-#~ msgstr[1] "{0} ti seguono"
 
 #~ msgid "New Account"
 #~ msgstr "Nuovo Account"
@@ -734,10 +845,6 @@ msgstr "Usa come avatar"
 #~ msgstr "Un post con lo stesso titolo esiste già."
 
 #, fuzzy
-#~ msgid "We need an email, or a username to identify you"
-#~ msgstr "Occorre un indirizzo email o un nome utente per identificarti"
-
-#, fuzzy
 #~ msgid "Your password field can't be empty"
 #~ msgstr "La tua password non può essere vuota"
 
@@ -751,42 +858,15 @@ msgstr "Usa come avatar"
 #~ msgid "The password should be at least 8 characters long"
 #~ msgstr "Le password devono essere lunghe almeno 8 caratteri"
 
-#~ msgid "Previous page"
-#~ msgstr "Pagina precedente"
-
-#~ msgid "Next page"
-#~ msgstr "Prossima pagina"
-
-#~ msgid "Instance settings"
-#~ msgstr "Impostazioni dell'istanza"
-
 #~ msgid "Login to like"
 #~ msgstr "Accedi per mettere mi piace"
 
 #~ msgid "Login to boost"
 #~ msgstr "Accedi per boostare"
 
+#~ msgid "Create a post"
+#~ msgstr "Crea un post"
+
 #, fuzzy
-#~ msgid "Personal feed"
-#~ msgstr "Flusso locale"
-
-#~ msgid "Passwords are not matching"
-#~ msgstr "Le password non corrispondono"
-
-#~ msgid "Home to"
-#~ msgstr "Casa di"
-
-#~ msgid "people"
-#~ msgstr "persone"
-
-#~ msgid "Who wrote"
-#~ msgstr "Che hanno scritto"
-
-#~ msgid "articles"
-#~ msgstr "articoli"
-
-#~ msgid "And connected to"
-#~ msgstr "E connesso a"
-
-#~ msgid "other instances"
-#~ msgstr "altre istanze"
+#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgstr "Devi effettuare l'accesso per mettere mi piace ad un post"

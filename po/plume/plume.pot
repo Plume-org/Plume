@@ -68,7 +68,7 @@ msgstr ""
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:155
+# src/routes/posts.rs:156
 msgid "Edit {0}"
 msgstr ""
 
@@ -92,6 +92,9 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
+msgstr ""
+
+msgid "Search"
 msgstr ""
 
 msgid "Dashboard"
@@ -355,19 +358,31 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-msgid "Search"
+msgid "Your query"
+msgstr ""
+
+msgid "Advanced search"
 msgstr ""
 
 # src/template_utils.rs:185
 msgid "Article title matching these words"
 msgstr ""
 
+msgid "Title"
+msgstr ""
+
 # src/template_utils.rs:185
 msgid "Subtitle matching these words"
 msgstr ""
 
+msgid "Subtitle - byline"
+msgstr ""
+
 # src/template_utils.rs:185
 msgid "Content matching these words"
+msgstr ""
+
+msgid "Body content"
 msgstr ""
 
 # src/template_utils.rs:185
@@ -382,24 +397,42 @@ msgstr ""
 msgid "Containing these tags"
 msgstr ""
 
+msgid "Tags"
+msgstr ""
+
 # src/template_utils.rs:185
 msgid "Posted on one of these instances"
+msgstr ""
+
+msgid "Instance domain"
 msgstr ""
 
 # src/template_utils.rs:185
 msgid "Posted by one of these authors"
 msgstr ""
 
+msgid "Authors"
+msgstr ""
+
 # src/template_utils.rs:185
 msgid "Posted on one of these blogs"
+msgstr ""
+
+msgid "Blog title"
 msgstr ""
 
 # src/template_utils.rs:185
 msgid "Written in this language"
 msgstr ""
 
+msgid "Language"
+msgstr ""
+
 # src/template_utils.rs:185
 msgid "Published under this license"
+msgstr ""
+
+msgid "Article license"
 msgstr ""
 
 msgid "Search result for \"{0}\""
@@ -419,10 +452,6 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Username or email"
-msgstr ""
-
-# src/template_utils.rs:144
-msgid "Title"
 msgstr ""
 
 # src/template_utils.rs:144
@@ -529,6 +558,12 @@ msgid "We couldn't find this page."
 msgstr ""
 
 msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
 msgstr ""
 
 msgid "You are not authorized."

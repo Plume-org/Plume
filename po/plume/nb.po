@@ -24,8 +24,9 @@ msgstr "{0} har begynt å følge deg"
 msgid "{0} liked your article."
 msgstr "{0} likte artikkelen din"
 
+#, fuzzy
 msgid "{0} mentioned you."
-msgstr "{0} nevnte deg."
+msgstr "{0} la inn en kommentar til artikkelen din"
 
 #, fuzzy
 msgid "{0} boosted your article."
@@ -75,7 +76,7 @@ msgstr "Du må være logget inn for å se meldingene dine"
 
 #, fuzzy
 msgid "You need to be logged in order to access your dashboard"
-msgstr "Du må være logget inn for å få tilgang til oversikten din"
+msgstr "Du må være logget inn for å redigere profilen din"
 
 #, fuzzy
 msgid "You need to be logged in order to follow someone"
@@ -91,14 +92,19 @@ msgstr "Plume"
 msgid "Menu"
 msgstr "Meny"
 
+msgid "Search"
+msgstr ""
+
 msgid "Dashboard"
 msgstr "Oversikt"
 
+#, fuzzy
 msgid "Notifications"
-msgstr "Meldinger"
+msgstr "Oppsett"
 
+#, fuzzy
 msgid "Log Out"
-msgstr "Logg ut"
+msgstr "Logg inn"
 
 msgid "My account"
 msgstr "Min konto"
@@ -134,8 +140,9 @@ msgstr "Din kommentar"
 msgid "Federated feed"
 msgstr ""
 
+#, fuzzy
 msgid "Local feed"
-msgstr ""
+msgstr "Din kommentar"
 
 #, fuzzy
 msgid "Administration of {0}"
@@ -171,11 +178,13 @@ msgstr "Om {0}"
 msgid "Nothing to see here yet. Try to follow more people."
 msgstr ""
 
+# src/template_utils.rs:144
 msgid "Name"
-msgstr "Navn"
+msgstr ""
 
+# src/template_utils.rs:146
 msgid "Optional"
-msgstr "Valgfritt"
+msgstr ""
 
 #, fuzzy
 msgid "Allow anyone to register here"
@@ -222,6 +231,7 @@ msgstr ""
 msgid "Edit your account"
 msgstr "Rediger kontoen din"
 
+#, fuzzy
 msgid "Your Profile"
 msgstr "Din profil"
 
@@ -254,9 +264,8 @@ msgstr ""
 msgid "Your Dashboard"
 msgstr "Din oversikt"
 
-#, fuzzy
 msgid "Your Blogs"
-msgstr "Dine blogger"
+msgstr ""
 
 #, fuzzy
 msgid "You don't have any blog yet. Create your own, or ask to join one."
@@ -264,8 +273,9 @@ msgstr ""
 "Du har ingen blogger enda. Lag din egen, eller be om å få bli med på en "
 "annen."
 
+#, fuzzy
 msgid "Start a new blog"
-msgstr "Start en ny blogg"
+msgstr "Lag en ny blogg"
 
 #, fuzzy
 msgid "Your Drafts"
@@ -313,14 +323,15 @@ msgid "Recently boosted"
 msgstr "Nylig delt"
 
 msgid "Admin"
-msgstr "Administrator"
+msgstr ""
 
 #, fuzzy
 msgid "It is you"
 msgstr "Dette er deg"
 
+#, fuzzy
 msgid "Edit your profile"
-msgstr "Rediger profilen din"
+msgstr "Din profil"
 
 msgid "Open on {0}"
 msgstr ""
@@ -345,6 +356,7 @@ msgstr "Siste artikler"
 msgid "What is Plume?"
 msgstr "Hva er Plume?"
 
+#, fuzzy
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume er et desentralisert bloggsystem."
 
@@ -375,52 +387,101 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-msgid "Search"
+#, fuzzy
+msgid "Your query"
+msgstr "Din kommentar"
+
+msgid "Advanced search"
 msgstr ""
 
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Article title matching these words"
 msgstr ""
 
+msgid "Title"
+msgstr "Tittel"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Subtitle matching these words"
 msgstr ""
 
+#, fuzzy
+msgid "Subtitle - byline"
+msgstr "Tittel"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Content matching these words"
 msgstr ""
 
+#, fuzzy
+msgid "Body content"
+msgstr "Innhold"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "From this date"
 msgstr ""
 
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "To this date"
 msgstr ""
 
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Containing these tags"
 msgstr ""
 
+msgid "Tags"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Posted on one of these instances"
 msgstr ""
 
+#, fuzzy
+msgid "Instance domain"
+msgstr "Instillinger for instansen"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Posted by one of these authors"
 msgstr ""
 
+msgid "Authors"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
 msgid "Posted on one of these blogs"
 msgstr ""
 
+msgid "Blog title"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
 # src/template_utils.rs:183
+#, fuzzy
 msgid "Written in this language"
+msgstr ""
+"#-#-#-#-#  nb.po (plume)  #-#-#-#-#\n"
+"#-#-#-#-#  nb.po (plume)  #-#-#-#-#\n"
+"Den siden fant vi ikke."
+
+msgid "Language"
 msgstr ""
 
 #, fuzzy
 msgid "Published under this license"
 msgstr "Denne artikkelen er publisert med lisensen {0}"
+
+#, fuzzy
+msgid "Article license"
+msgstr "Standardlisens"
 
 msgid "Search result for \"{0}\""
 msgstr ""
@@ -440,9 +501,6 @@ msgstr "Logg inn"
 #, fuzzy
 msgid "Username or email"
 msgstr "Brukernavn eller epost"
-
-msgid "Title"
-msgstr "Tittel"
 
 #, fuzzy
 msgid "Subtitle"
@@ -566,6 +624,12 @@ msgstr "Den siden fant vi ikke."
 msgid "The link that led you here may be broken."
 msgstr "Kanhende lenken som førte deg hit er ødelagt."
 
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
+
 msgid "You are not authorized."
 msgstr "Det har du har ikke tilgang til."
 
@@ -666,104 +730,90 @@ msgid "Use as avatar"
 msgstr ""
 
 #, fuzzy
-#~ msgid "Create a new post"
-#~ msgstr "Lag et nytt innlegg"
+#~ msgid "No articles to see here yet."
+#~ msgstr "Ingen innlegg å vise enda."
 
-#~ msgid "Comment \"{0}\""
-#~ msgstr "Kommentér \"{0}\""
+#~ msgid "New blog"
+#~ msgstr "Ny blogg"
 
-#~ msgid "Configure your instance"
-#~ msgstr "Sett opp din instans"
+#, fuzzy
+#~ msgid "Create the blog"
+#~ msgstr "Lag en ny blogg"
 
-#~ msgid "Let&#x27;s go!"
-#~ msgstr "Kjør på!"
+#, fuzzy
+#~ msgid "Submit your comment"
+#~ msgstr "Send kommentar"
 
-#~ msgid "Comment"
-#~ msgstr "Kommentér"
-
-#~ msgid "Publish"
-#~ msgstr "Publisér"
+#, fuzzy
+#~ msgid "Create an article"
+#~ msgstr "Lag en ny konto"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"
 #~ msgstr[0] "Én følger"
 #~ msgstr[1] "{0} følgere"
 
-#~ msgid "New Account"
-#~ msgstr "Ny konto"
-
-#~ msgid "Create account"
-#~ msgstr "Opprett konto"
+#~ msgid "Display Name"
+#~ msgstr "Visningsnavn"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
-#~ msgstr "Du må være logget inn for å legge inn en kommentar"
+#~ msgid "Update your account"
+#~ msgstr "Oppdater konto"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
-#~ msgstr "Du må være logget inn for å like et innlegg"
+#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgstr "Du må være logget inn for å skrive et nytt innlegg"
 
 #, fuzzy
-#~ msgid "Invalid username, or password"
-#~ msgstr "Ugyldig brukernavn eller passord"
+#~ msgid "You need to be logged in, so that you can see your notifications"
+#~ msgstr "Du må være logget inn for å se meldingene dine"
 
-#~ msgid "We couldn&#x27;t find this page."
-#~ msgstr "Den siden fant vi ikke."
+#, fuzzy
+#~ msgid "{0} gave a boost to your article"
+#~ msgstr "{0} la inn en kommentar til artikkelen din"
 
-#~ msgid "Unknown error"
-#~ msgstr "Ukjent feil"
+#, fuzzy
+#~ msgid "{0} liked your post"
+#~ msgstr "{0} likte artikkelen din"
 
-#~ msgid "A blog with the same name already exists."
-#~ msgstr "En blogg med det navnet eksisterer allerede."
+#, fuzzy
+#~ msgid "You are not authorized to access this page."
+#~ msgstr "Du er ikke denne bloggens forfatter."
 
-#~ msgid "Your comment can't be empty"
+#, fuzzy
+#~ msgid "The comment field can't be left empty"
 #~ msgstr "Kommentaren din kan ikke være tom"
 
-#~ msgid "A post with the same title already exists."
+#, fuzzy
+#~ msgid "An article with the same title already exists."
 #~ msgstr "Et innlegg med samme navn finnes allerede."
 
 #, fuzzy
-#~ msgid "We need an email, or a username to identify you"
-#~ msgstr "Vi trenger en epost eller et brukernavn for å identifisere deg"
-
-#, fuzzy
-#~ msgid "Your password field can't be empty"
+#~ msgid "Your password field can't be left empty"
 #~ msgstr "Kommentaren din kan ikke være tom"
 
-#~ msgid "Username can't be empty"
+#, fuzzy
+#~ msgid "The 'username' field can't be left empty"
 #~ msgstr "Brukernavnet kan ikke være tomt"
 
 #~ msgid "Invalid email"
 #~ msgstr "Ugyldig epost"
 
 #, fuzzy
-#~ msgid "The password should be at least 8 characters long"
-#~ msgstr "Passord må bestå av minst åtte tegn"
-
-#~ msgid "Previous page"
-#~ msgstr "Forrige side"
-
-#~ msgid "Next page"
-#~ msgstr "Neste side"
-
-#~ msgid "Instance settings"
-#~ msgstr "Instillinger for instansen"
-
-#~ msgid "Passwords are not matching"
-#~ msgstr "Passordene stemmer ikke overens"
-
-#~ msgid "Home to"
-#~ msgstr "Hjem for"
-
-#~ msgid "people"
-#~ msgstr "personer"
-
-#~ msgid "Who wrote"
-#~ msgstr "Som har skrevet"
-
-#~ msgid "articles"
-#~ msgstr "artikler"
+#~ msgid "Log In to like"
+#~ msgstr "Logg inn"
 
 #, fuzzy
-#~ msgid "other instances"
-#~ msgstr "Om denne instansen"
+#~ msgid "Your drafts"
+#~ msgstr "Din oversikt"
+
+#, fuzzy
+#~ msgid "Create a new post"
+#~ msgstr "Lag et nytt innlegg"
+
+#~ msgid "Create a post"
+#~ msgstr "Lag et nytt innlegg"
+
+#, fuzzy
+#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgstr "Du må være logget inn for å like et innlegg"
