@@ -32,14 +32,14 @@ pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<
             SaveResult::Full(entries) => {
                 let fields = entries.fields;
 
-                let filename = fields.get(&"file".to_string()).and_then(|v| v.into_iter().next())
+                let filename = fields.get("file").and_then(|v| v.into_iter().next())
                     .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
                     .filename.clone();
                 let ext = filename.and_then(|f| f.rsplit('.').next().map(|ext| ext.to_owned()))
                     .unwrap_or_else(|| "png".to_owned());
                 let dest = format!("static/media/{}.{}", GUID::rand().to_string(), ext);
 
-                match fields[&"file".to_string()][0].data {
+                match fields["file"][0].data {
                     SavedData::Bytes(ref bytes) => fs::write(&dest, bytes).map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
                     SavedData::File(ref path, _) => {fs::copy(path, &dest).map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;},
                     _ => {
@@ -47,15 +47,15 @@ pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<
                     }
                 }
 
-                let has_cw = !read(&fields[&"cw".to_string()][0].data).map(|cw| cw.is_empty()).unwrap_or(false);
+                let has_cw = !read(&fields["cw"][0].data).map(|cw| cw.is_empty()).unwrap_or(false);
                 let media = Media::insert(&*conn, NewMedia {
                     file_path: dest,
-                    alt_text: read(&fields[&"alt".to_string()][0].data)?,
+                    alt_text: read(&fields["alt"][0].data)?,
                     is_remote: false,
                     remote_url: None,
                     sensitive: has_cw,
                     content_warning: if has_cw {
-                        Some(read(&fields[&"cw".to_string()][0].data)?)
+                        Some(read(&fields["cw"][0].data)?)
                     } else {
                         None
                     },
