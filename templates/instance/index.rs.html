@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
 
-@:base(ctx, instance.name.clone().as_ref(), {}, {}, {
+@:base(ctx, instance.name.clone(), {}, {}, {
   <h1>@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())</h1>
 
      @if ctx.2.is_some() {
@@ -17,9 +17,9 @@
             (&uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"), false),
         ])
 
-        @:home_feed(ctx, user_feed.unwrap_or_default(), &uri!(instance::feed: _).to_string(), "Your feed")
-        @:home_feed(ctx, federated, &uri!(instance::federated: _).to_string(), "Federated feed")
-        @:home_feed(ctx, local, &uri!(instance::local: _).to_string(), "Local feed")
+        @:home_feed(ctx, user_feed.unwrap_or_default(), &uri!(instance::feed: _).to_string(), i18n!(ctx.1, "Your feed"))
+        @:home_feed(ctx, federated, &uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"))
+        @:home_feed(ctx, local, &uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"))
         @:instance_description(ctx, instance, n_users, n_articles)
     } else {
         @tabs(&[
@@ -28,8 +28,8 @@
             (&uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"), false),
         ])
 
-        @:home_feed(ctx, federated, &uri!(instance::federated: _).to_string(), "Federated feed")
-        @:home_feed(ctx, local, &uri!(instance::local: _).to_string(), "Local feed")
+        @:home_feed(ctx, federated, &uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"))
+        @:home_feed(ctx, local, &uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"))
         @:instance_description(ctx, instance, n_users, n_articles)
     }
 })

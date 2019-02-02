@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, notifications: Vec<Notification>, page: i32, n_pages: i32)
 
-@:base(ctx, "Notifications", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Notifications"), {}, {}, {
     <h1>@i18n!(ctx.1, "Notifications")</h1>
 
     <div class="list">
@@ -15,10 +15,10 @@
                     <h3>
                         @if let Some(url) = notification.get_url(ctx.0) {
                             <a href="@url">
-                                @i18n!(ctx.1, notification.get_message(); notification.get_actor(ctx.0).unwrap().name(ctx.0))
+                                @translate_notification(ctx, notification.clone())
                             </a>
                         } else {
-                            @i18n!(ctx.1, notification.get_message(); notification.get_actor(ctx.0).unwrap().name(ctx.0))
+                            @translate_notification(ctx, notification.clone())
                         }
                     </h3>
                     @if let Some(post) = notification.get_post(ctx.0) {

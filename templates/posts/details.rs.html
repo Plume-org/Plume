@@ -11,7 +11,7 @@
 
 @(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 
-@:base(ctx, &article.title.clone(), {
+@:base(ctx, article.title.clone(), {
     <meta property="og:title" content="@article.title"/>
     <meta property="og:type" content="article"/>
     @if article.cover_id.is_some() {
@@ -87,7 +87,7 @@
         @if ctx.2.is_some() {
             <div class="actions">
                 <form class="likes" action="@uri!(likes::create: blog = blog.get_fqn(ctx.0), slug = &article.slug)" method="POST">
-                    <p aria-label="@i18n!(ctx.1, "One like", "{0} likes", &n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes", n_likes)">
+                    <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
                     </p>
 
@@ -98,7 +98,7 @@
                     }
                 </form>
                 <form class="reshares" action="@uri!(reshares::create: blog = blog.get_fqn(ctx.0), slug = &article.slug)" method="POST">
-                    <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost", &n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts", n_reshares)">
+                    <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost"; n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts"; n_reshares)">
                         @n_reshares
                     </p>
 
@@ -113,14 +113,14 @@
             <p class="center">@i18n!(ctx.1, "Login or use your Fediverse account to interact with this article")</p>
             <div class="actions">
                 <div class="likes">
-                    <p aria-label="@i18n!(ctx.1, "One like", "{0} likes", &n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes", n_likes)">
+                    <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
                     </p>
 		    <a href="@uri!(session::new: m = i18n!(ctx.1, "Login to like"))" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
                 </div>
 
                 <div class="reshares">
-                    <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost", &n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts", n_reshares)">
+                    <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost"; n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts"; n_reshares)">
                         @n_reshares
                     </p>
                     <a href="@uri!(session::new: m = i18n!(ctx.1, "Login to boost"))" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</a>

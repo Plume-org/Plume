@@ -7,7 +7,7 @@
 
 @(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: i64, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
 
-@:base(ctx, blog.title.as_ref(), {}, {
+@:base(ctx, blog.title.clone(), {}, {
     <a href="@uri!(blogs::details: name = &fqn, page = _)">@blog.title</a>
 }, {
 <div class="hidden">
@@ -22,13 +22,13 @@
     <h1><span class="p-name">@blog.title</span> <small>~@fqn</small></h1>
     <p>@blog.summary</p>
     <p>
-        @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: ", authors.len())
+        @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
         @for author in authors {
             <a class="author p-author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
         }
     </p>
     <p>
-        @i18n!(ctx.1, "There's one article on this blog", "There are {0} articles on this blog", total_articles)
+        @i18n!(ctx.1, "There's one article on this blog", "There are {0} articles on this blog"; total_articles)
     </p>
 
     <section>

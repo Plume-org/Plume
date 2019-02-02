@@ -1,4 +1,4 @@
-use plume_models::{Connection, users::User};
+use plume_models::{Connection, notifications::*, users::User};
 use rocket::response::Content;
 use rocket_i18n::Catalog;
 use templates::Html;
@@ -25,6 +25,18 @@ macro_rules! render {
             ).unwrap();
             Content(ContentType::HTML, res)
         }
+    }
+}
+
+pub fn translate_notification(ctx: BaseContext, notif: Notification) -> String {
+    let name = notif.get_actor(ctx.0).unwrap().name(ctx.0);
+    match notif.kind.as_ref() {
+        notification_kind::COMMENT => i18n!(ctx.1, "{0} commented your article."; &name),
+        notification_kind::FOLLOW => i18n!(ctx.1, "{0} is now following you."; &name),
+        notification_kind::LIKE => i18n!(ctx.1, "{0} liked your article."; &name),
+        notification_kind::MENTION => i18n!(ctx.1, "{0} mentioned you."; &name),
+        notification_kind::RESHARE => i18n!(ctx.1, "{0} boosted your article."; &name),
+        _ => unreachable!("translate_notification: Unknow type"),
     }
 }
 
@@ -57,7 +69,7 @@ pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &C
     ))
 }
 
-pub fn tabs(links: &[(&str, &str, bool)]) -> Html<String> {
+pub fn tabs(links: &[(&str, String, bool)]) -> Html<String> {
     let mut res = String::from(r#"<div class="tabs">"#);
     for (url, title, selected) in links {
         res.push_str(r#"<a href=""#);
@@ -117,6 +129,7 @@ macro_rules! input {
         {
             use validator::ValidationErrorsKind;
             use std::borrow::Cow;
+            let cat = $catalog;
 
             Html(format!(r#"
                 <label for="{name}">
@@ -128,16 +141,16 @@ macro_rules! input {
                 <input type="{kind}" id="{name}" name="{name}" value="{val}" {props}/>
                 "#,
                 name = stringify!($name),
-                label = i18n!($catalog, $label),
+                label = i18n!(cat, $label),
                 kind = stringify!($kind),
-                optional = if $optional { format!("<small>{}</small>", i18n!($catalog, "Optional")) } else { String::new() },
+                optional = if $optional { format!("<small>{}</small>", i18n!(cat, "Optional")) } else { String::new() },
                 details = if $details.len() > 0 {
-                    format!("<small>{}</small>", i18n!($catalog, $details))
+                    format!("<small>{}</small>", i18n!(cat, $details))
                 } else {
                     String::new()
                 },
                 error = if let Some(ValidationErrorsKind::Field(errs)) = $err.errors().get(stringify!($name)) {
-                    format!(r#"<p class="error">{}</p>"#, i18n!($catalog, &*errs[0].message.clone().unwrap_or(Cow::from("Unknown error"))))
+                    format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or(Cow::from("Unknown error")))
                 } else {
                     String::new()
                 },
@@ -163,12 +176,13 @@ macro_rules! input {
     };
     ($catalog:expr, $name:tt ($kind:tt), $label:expr, $props:expr) => {
         {
+            let cat = $catalog;
             Html(format!(r#"
                 <label for="{name}">{label}</label>
                 <input type="{kind}" id="{name}" name="{name}" {props}/>
                 "#,
                 name = stringify!($name),
-                label = i18n!($catalog, $label),
+                label = i18n!(cat, $label),
                 kind = stringify!($kind),
                 props = $props
             ))

@@ -78,7 +78,7 @@ pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, res
     } else {
         Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, user.clone()),
-            "This post isn't published yet."
+            i18n!(intl.catalog, "This post isn't published yet.")
         )))
     }
 }
@@ -97,7 +97,7 @@ pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest
 #[get("/~/<blog>/new", rank = 2)]
 pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        i18n!(i18n.catalog, "You need to be logged in order to write a new post"),
+        &i18n!(i18n.catalog, "You need to be logged in order to write a new post"),
         uri!(new: blog = blog)
     )
 }
@@ -110,12 +110,13 @@ pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -
         // TODO actually return 403 error code
         Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
-            "You are not author in this blog."
+            i18n!(intl.catalog, "You are not author in this blog.")
         )))
     } else {
         let medias = Media::for_user(&*conn, user.id)?;
         Ok(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            i18n!(intl.catalog, "New post"),
             b,
             false,
             &NewPostForm {
@@ -139,7 +140,7 @@ pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn
     if !user.is_author_in(&*conn, &b)? {
         Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
-            "You are not author in this blog."
+            i18n!(intl.catalog, "You are not author in this blog.")
         )))
     } else {
         let source = if !post.source.is_empty() {
@@ -149,8 +150,10 @@ pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn
         };
 
         let medias = Media::for_user(&*conn, user.id)?;
+        let title = post.title.clone();
         Ok(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            i18n!(intl.catalog, "Edit {0}"; &title),
             b,
             true,
             &NewPostForm {
@@ -257,6 +260,7 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
         let medias = Media::for_user(&*conn, user.id).expect("posts:update: medias error");
         Err(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            i18n!(intl.catalog, "Edit {0}"; &form.title),
             b,
             true,
             &*form,
@@ -381,6 +385,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
         Err(Ok(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
+            i18n!(intl.catalog, "New post"),
             blog,
             false,
             &*form,

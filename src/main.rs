@@ -10,6 +10,9 @@ extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
+#[macro_use]
+extern crate gettext_macros;
+extern crate gettext_utils;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
@@ -21,7 +24,6 @@ extern crate plume_models;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
-#[macro_use]
 extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
 extern crate serde;
@@ -52,11 +54,17 @@ use std::process::exit;
 use std::sync::Arc;
 use std::time::Duration;
 
+init_i18n!("plume", de, en, fr, gl, it, ja, nb, pl, ru);
+
 mod api;
 mod inbox;
 #[macro_use]
 mod template_utils;
 mod routes;
+
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));
+
+compile_i18n!();
 
 type Worker<'a> = State<'a, ScheduledThreadPool>;
 type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
@@ -216,7 +224,7 @@ Then try to restart Plume.
         .manage(dbpool)
         .manage(workpool)
         .manage(searcher)
-        .manage(include_i18n!("plume", [ "de", "en", "fr", "gl", "it", "ja", "nb", "pl", "ru" ]))
+        .manage(include_i18n!())
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
                 .add_exceptions(vec![
@@ -229,5 +237,3 @@ Then try to restart Plume.
                 .finalize().expect("main: csrf fairing creation error"))
         .launch();
 }
-
-include!(concat!(env!("OUT_DIR"), "/templates.rs"));

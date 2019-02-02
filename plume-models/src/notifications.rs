@@ -78,17 +78,6 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn get_message(&self) -> &'static str {
-        match self.kind.as_ref() {
-            notification_kind::COMMENT => "{0} commented your article.",
-            notification_kind::FOLLOW => "{0} is now following you.",
-            notification_kind::LIKE => "{0} liked your article.",
-            notification_kind::MENTION => "{0} mentioned you.",
-            notification_kind::RESHARE => "{0} boosted your article.",
-            _ => unreachable!("Notification::get_message: Unknow type"),
-        }
-    }
-
     pub fn get_url(&self, conn: &Connection) -> Option<String> {
         match self.kind.as_ref() {
             notification_kind::COMMENT => self.get_post(conn).and_then(|p| Some(format!("{}#comment-{}", p.url(conn).ok()?, self.object_id))),

@@ -62,7 +62,7 @@ pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
 #[get("/blogs/new", rank = 2)]
 pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
     utils::requires_login(
-        i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
+        &i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
         uri!(new)
     )
 }
@@ -133,7 +133,7 @@ pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, search
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, user),
-            "You are not allowed to delete this blog."
+            i18n!(intl.catalog, "You are not allowed to delete this blog.")
         )))
     }
 }

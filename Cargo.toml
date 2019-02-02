@@ -11,12 +11,15 @@ canapi = "0.2"
 colored = "1.7"
 dotenv = "0.13"
 failure = "0.1"
+gettext = "0.3"
+gettext-macros = "0.3"
+gettext-utils = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
 num_cpus = "1.0"
 rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
-rocket_i18n = "0.3.1"
+rocket_i18n = "0.4.0"
 rpassword = "2.0"
 scheduled-thread-pool = "0.2.0"
 serde = "1.0"
@@ -63,7 +66,6 @@ rev = "4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
 
 [build-dependencies]
 ructe = "0.5.6"
-rocket_i18n = { version = "0.3.1", features = ["build"] }
 rsass = "0.9"
 
 [features]

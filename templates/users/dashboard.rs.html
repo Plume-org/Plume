@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, blogs: Vec<Blog>, drafts: Vec<Post>)
 
-@:base(ctx, "Your Dashboard", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Your Dashboard"), {}, {}, {
     <h1>@i18n!(ctx.1, "Your Dashboard")</h1>
 
     <section>

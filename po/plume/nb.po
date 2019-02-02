@@ -1,0 +1,819 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-06-15 16:33-0700\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, fuzzy
+msgid "{0} commented your article."
+msgstr "{0} la inn en kommentar til artikkelen din"
+
+#, fuzzy
+msgid "{0} is now following you."
+msgstr "{0} har begynt å følge deg"
+
+#, fuzzy
+msgid "{0} liked your article."
+msgstr "{0} likte artikkelen din"
+
+#, fuzzy
+msgid "{0} mentioned you."
+msgstr "{0} la inn en kommentar til artikkelen din"
+
+#, fuzzy
+msgid "{0} boosted your article."
+msgstr "{0} la inn en kommentar til artikkelen din"
+
+# src/template_utils.rs:68
+msgid "{0}'s avatar"
+msgstr ""
+
+#, fuzzy
+msgid "You need to be logged in order to create a new blog"
+msgstr "Du må være logget inn for å lage en ny blogg"
+
+#, fuzzy
+msgid "You are not allowed to delete this blog."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
+msgid "You need to be logged in order to like a post"
+msgstr "Du må være logget inn for å like et innlegg"
+
+msgid "You need to be logged in order to see your notifications"
+msgstr "Du må være logget inn for å se meldingene dine"
+
+# src/routes/posts.rs:81
+msgid "This post isn't published yet."
+msgstr ""
+
+#, fuzzy
+msgid "You need to be logged in order to write a new post"
+msgstr "Du må være logget inn for å skrive et nytt innlegg"
+
+#, fuzzy
+msgid "You are not author in this blog."
+msgstr "Du er ikke denne bloggens forfatter."
+
+msgid "New post"
+msgstr "Nytt innlegg"
+
+#, fuzzy
+msgid "Edit {0}"
+msgstr "Kommentér \"{0}\""
+
+#, fuzzy
+msgid "You need to be logged in order to reshare a post"
+msgstr "Du må være logget inn for å se meldingene dine"
+
+#, fuzzy
+msgid "You need to be logged in order to access your dashboard"
+msgstr "Du må være logget inn for å redigere profilen din"
+
+#, fuzzy
+msgid "You need to be logged in order to follow someone"
+msgstr "Du må være logget inn for å følge noen"
+
+#, fuzzy
+msgid "You need to be logged in order to edit your profile"
+msgstr "Du må være logget inn for å redigere profilen din"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Meny"
+
+msgid "Search"
+msgstr ""
+
+msgid "Dashboard"
+msgstr "Oversikt"
+
+#, fuzzy
+msgid "Notifications"
+msgstr "Oppsett"
+
+#, fuzzy
+msgid "Log Out"
+msgstr "Logg inn"
+
+msgid "My account"
+msgstr "Min konto"
+
+msgid "Log In"
+msgstr "Logg inn"
+
+msgid "Register"
+msgstr "Registrér deg"
+
+msgid "About this instance"
+msgstr "Om denne instansen"
+
+msgid "Source code"
+msgstr "Kildekode"
+
+msgid "Matrix room"
+msgstr "Snakkerom"
+
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "Welcome on {}"
+msgstr ""
+
+msgid "Latest articles"
+msgstr "Siste artikler"
+
+#, fuzzy
+msgid "Your feed"
+msgstr "Din kommentar"
+
+msgid "Federated feed"
+msgstr ""
+
+#, fuzzy
+msgid "Local feed"
+msgstr "Din kommentar"
+
+#, fuzzy
+msgid "Administration of {0}"
+msgstr "Administrasjon"
+
+#, fuzzy
+msgid "Instances"
+msgstr "Instillinger for instansen"
+
+msgid "Configuration"
+msgstr "Oppsett"
+
+#, fuzzy
+msgid "Users"
+msgstr "Brukernavn"
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Ban"
+msgstr ""
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+#, fuzzy
+msgid "Articles from {}"
+msgstr "Om {0}"
+
+msgid "Nothing to see here yet. Try to follow more people."
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Name"
+msgstr ""
+
+# src/template_utils.rs:146
+msgid "Optional"
+msgstr ""
+
+#, fuzzy
+msgid "Allow anyone to register here"
+msgstr "Tillat at hvem som helst registrerer seg"
+
+#, fuzzy
+msgid "Short description - byline"
+msgstr "Kort beskrivelse"
+
+#, fuzzy
+msgid "Markdown syntax is supported"
+msgstr "Du kan bruke markdown"
+
+msgid "Long description"
+msgstr "Lang beskrivelse"
+
+#, fuzzy
+msgid "Default article license"
+msgstr "Standardlisens"
+
+#, fuzzy
+msgid "Save these settings"
+msgstr "Lagre innstillingene"
+
+msgid "About {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> users"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
+
+#, fuzzy
+msgid "Administred by"
+msgstr "Administrasjon"
+
+msgid "Runs Plume {0}"
+msgstr ""
+
+msgid "Edit your account"
+msgstr "Rediger kontoen din"
+
+#, fuzzy
+msgid "Your Profile"
+msgstr "Din profil"
+
+#, fuzzy
+msgid "Display name"
+msgstr "Visningsnavn"
+
+msgid "Email"
+msgstr "Epost"
+
+msgid "Summary"
+msgstr "Sammendrag"
+
+msgid "Update account"
+msgstr "Oppdater konto"
+
+msgid "Danger zone"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+
+#, fuzzy
+msgid "Delete your account"
+msgstr "Opprett din konto"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+
+msgid "Your Dashboard"
+msgstr "Din oversikt"
+
+msgid "Your Blogs"
+msgstr ""
+
+#, fuzzy
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Du har ingen blogger enda. Lag din egen, eller be om å få bli med på en "
+"annen."
+
+#, fuzzy
+msgid "Start a new blog"
+msgstr "Lag en ny blogg"
+
+#, fuzzy
+msgid "Your Drafts"
+msgstr "Din oversikt"
+
+#, fuzzy
+msgid "Your media"
+msgstr "Din kommentar"
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "Create your account"
+msgstr "Opprett din konto"
+
+msgid "Create an account"
+msgstr "Lag en ny konto"
+
+msgid "Username"
+msgstr "Brukernavn"
+
+msgid "Password"
+msgstr "Passord"
+
+msgid "Password confirmation"
+msgstr "Passordbekreftelse"
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+
+#, fuzzy
+msgid "Articles"
+msgstr "artikler"
+
+msgid "Followers"
+msgstr "Følgere"
+
+#, fuzzy
+msgid "Atom feed"
+msgstr "Din kommentar"
+
+msgid "Recently boosted"
+msgstr "Nylig delt"
+
+msgid "Admin"
+msgstr ""
+
+#, fuzzy
+msgid "It is you"
+msgstr "Dette er deg"
+
+#, fuzzy
+msgid "Edit your profile"
+msgstr "Din profil"
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Unfollow"
+msgstr "Slutt å følge"
+
+msgid "Follow"
+msgstr "Følg"
+
+#, fuzzy
+msgid "{0}'s followers"
+msgstr "Én følger"
+
+msgid "Respond"
+msgstr "Svar"
+
+#, fuzzy
+msgid "Delete this comment"
+msgstr "Siste artikler"
+
+msgid "What is Plume?"
+msgstr "Hva er Plume?"
+
+#, fuzzy
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume er et desentralisert bloggsystem."
+
+#, fuzzy
+msgid "Authors can manage various blogs from an unique website."
+msgstr "Forfattere kan administrere forskjellige blogger fra en unik webside."
+
+#, fuzzy
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
+msgstr ""
+"Artiklene er også synlige på andre websider som kjører Plume, og du kan "
+"interagere med dem direkte fra andre plattformer som f.eks. Mastodon."
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr "Les reglene"
+
+msgid "View all"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+#, fuzzy
+msgid "Your query"
+msgstr "Din kommentar"
+
+msgid "Advanced search"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Article title matching these words"
+msgstr ""
+
+msgid "Title"
+msgstr "Tittel"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Subtitle matching these words"
+msgstr ""
+
+#, fuzzy
+msgid "Subtitle - byline"
+msgstr "Tittel"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Content matching these words"
+msgstr ""
+
+#, fuzzy
+msgid "Body content"
+msgstr "Innhold"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "From this date"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "To this date"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Containing these tags"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Posted on one of these instances"
+msgstr ""
+
+#, fuzzy
+msgid "Instance domain"
+msgstr "Instillinger for instansen"
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Posted by one of these authors"
+msgstr ""
+
+msgid "Authors"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+msgid "Posted on one of these blogs"
+msgstr ""
+
+msgid "Blog title"
+msgstr ""
+
+# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
+# src/template_utils.rs:183
+#, fuzzy
+msgid "Written in this language"
+msgstr ""
+"#-#-#-#-#  nb.po (plume)  #-#-#-#-#\n"
+"#-#-#-#-#  nb.po (plume)  #-#-#-#-#\n"
+"Den siden fant vi ikke."
+
+msgid "Language"
+msgstr ""
+
+#, fuzzy
+msgid "Published under this license"
+msgstr "Denne artikkelen er publisert med lisensen {0}"
+
+#, fuzzy
+msgid "Article license"
+msgstr "Standardlisens"
+
+msgid "Search result for \"{0}\""
+msgstr ""
+
+msgid "Search result"
+msgstr ""
+
+msgid "No result for your query"
+msgstr ""
+
+msgid "No more result for your query"
+msgstr ""
+
+msgid "Login"
+msgstr "Logg inn"
+
+#, fuzzy
+msgid "Username or email"
+msgstr "Brukernavn eller epost"
+
+#, fuzzy
+msgid "Subtitle"
+msgstr "Tittel"
+
+msgid "Content"
+msgstr "Innhold"
+
+# src/template_utils.rs:143
+msgid "Tags, separated by commas"
+msgstr ""
+
+# src/template_utils.rs:143
+msgid "License"
+msgstr ""
+
+# src/template_utils.rs:147
+msgid "Leave it empty to reserve all rights"
+msgstr ""
+
+#, fuzzy
+msgid "Illustration"
+msgstr "Administrasjon"
+
+msgid "None"
+msgstr ""
+
+msgid "This is a draft, don't publish it yet."
+msgstr ""
+
+#, fuzzy
+msgid "Update"
+msgstr "Oppdater konto"
+
+msgid "Update, or publish"
+msgstr ""
+
+msgid "Publish your post"
+msgstr ""
+
+msgid "Written by {0}"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+#, fuzzy
+msgid "Delete this article"
+msgstr "Siste artikler"
+
+msgid "All rights reserved."
+msgstr ""
+
+#, fuzzy
+msgid "This article is under the {0} license."
+msgstr "Denne artikkelen er publisert med lisensen {0}"
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Ett hjerte"
+msgstr[1] "{0} hjerter"
+
+#, fuzzy
+msgid "I don't like this anymore"
+msgstr "Jeg liker ikke dette lengre"
+
+msgid "Add yours"
+msgstr "Legg til din"
+
+msgid "One boost"
+msgid_plural "{0} boost"
+msgstr[0] ""
+msgstr[1] ""
+
+#, fuzzy
+msgid "I don't want to boost this anymore"
+msgstr "Jeg ønsker ikke å dele dette lengre"
+
+msgid "Boost"
+msgstr ""
+
+#, fuzzy
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
+"Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
+
+msgid "Comments"
+msgstr "Kommetarer"
+
+#, fuzzy
+msgid "Content warning"
+msgstr "Innhold"
+
+msgid "Your comment"
+msgstr "Din kommentar"
+
+msgid "Submit comment"
+msgstr "Send kommentar"
+
+#, fuzzy
+msgid "No comments yet. Be the first to react!"
+msgstr "Ingen kommentarer enda. Vær den første!"
+
+#, fuzzy
+msgid "Invalid CSRF token"
+msgstr "Ugyldig navn"
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+#, fuzzy
+msgid "We couldn't find this page."
+msgstr "Den siden fant vi ikke."
+
+msgid "The link that led you here may be broken."
+msgstr "Kanhende lenken som førte deg hit er ødelagt."
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
+
+msgid "You are not authorized."
+msgstr "Det har du har ikke tilgang til."
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr "Noe gikk feil i vår ende."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Beklager så mye. Dersom du tror dette er en bug, vær grei å rapportér det "
+"til oss."
+
+#, fuzzy
+msgid "New Blog"
+msgstr "Ny blogg"
+
+msgid "Create a blog"
+msgstr "Lag en ny blogg"
+
+msgid "Create blog"
+msgstr "Opprett blogg"
+
+#, fuzzy
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Én forfatter av denne bloggen: "
+msgstr[1] "{0} forfattere av denne bloggen: "
+
+#, fuzzy
+msgid "There's one article on this blog"
+msgid_plural "There are {0} articles on this blog"
+msgstr[0] "Én artikkel i denne bloggen"
+msgstr[1] "{0} artikler i denne bloggen"
+
+msgid "No posts to see here yet."
+msgstr "Ingen innlegg å vise enda."
+
+msgid "New article"
+msgstr "Ny artikkel"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+#, fuzzy
+msgid "Articles tagged \"{0}\""
+msgstr "Om {0}"
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Media upload"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Lang beskrivelse"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr ""
+
+msgid "Leave it empty, if none is needed"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
+msgid "Media details"
+msgstr ""
+
+msgid "Go back to the gallery"
+msgstr ""
+
+#, fuzzy
+msgid "Markdown syntax"
+msgstr "Du kan bruke markdown"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr ""
+
+msgid "Use as avatar"
+msgstr ""
+
+#, fuzzy
+#~ msgid "No articles to see here yet."
+#~ msgstr "Ingen innlegg å vise enda."
+
+#~ msgid "New blog"
+#~ msgstr "Ny blogg"
+
+#, fuzzy
+#~ msgid "Create the blog"
+#~ msgstr "Lag en ny blogg"
+
+#, fuzzy
+#~ msgid "Submit your comment"
+#~ msgstr "Send kommentar"
+
+#, fuzzy
+#~ msgid "Create an article"
+#~ msgstr "Lag en ny konto"
+
+#~ msgid "One follower"
+#~ msgid_plural "{0} followers"
+#~ msgstr[0] "Én følger"
+#~ msgstr[1] "{0} følgere"
+
+#~ msgid "Display Name"
+#~ msgstr "Visningsnavn"
+
+#, fuzzy
+#~ msgid "Update your account"
+#~ msgstr "Oppdater konto"
+
+#, fuzzy
+#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgstr "Du må være logget inn for å skrive et nytt innlegg"
+
+#, fuzzy
+#~ msgid "You need to be logged in, so that you can see your notifications"
+#~ msgstr "Du må være logget inn for å se meldingene dine"
+
+#, fuzzy
+#~ msgid "{0} gave a boost to your article"
+#~ msgstr "{0} la inn en kommentar til artikkelen din"
+
+#, fuzzy
+#~ msgid "{0} liked your post"
+#~ msgstr "{0} likte artikkelen din"
+
+#, fuzzy
+#~ msgid "You are not authorized to access this page."
+#~ msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
+#~ msgid "The comment field can't be left empty"
+#~ msgstr "Kommentaren din kan ikke være tom"
+
+#, fuzzy
+#~ msgid "An article with the same title already exists."
+#~ msgstr "Et innlegg med samme navn finnes allerede."
+
+#, fuzzy
+#~ msgid "Your password field can't be left empty"
+#~ msgstr "Kommentaren din kan ikke være tom"
+
+#, fuzzy
+#~ msgid "The 'username' field can't be left empty"
+#~ msgstr "Brukernavnet kan ikke være tomt"
+
+#~ msgid "Invalid email"
+#~ msgstr "Ugyldig epost"
+
+#, fuzzy
+#~ msgid "Log In to like"
+#~ msgstr "Logg inn"
+
+#, fuzzy
+#~ msgid "Your drafts"
+#~ msgstr "Din oversikt"
+
+#, fuzzy
+#~ msgid "Create a new post"
+#~ msgstr "Lag et nytt innlegg"
+
+#~ msgid "Create a post"
+#~ msgstr "Lag et nytt innlegg"
+
+#, fuzzy
+#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgstr "Du må være logget inn for å like et innlegg"
