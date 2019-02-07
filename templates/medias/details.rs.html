@@ -20,7 +20,7 @@
         <div>
             <p>
                 @i18n!(ctx.1, "Markdown syntax")
-                <small>@i18n!(ctx.1, "Copy it into your articles, to insert this media:")</small>
+                <small>@i18n!(ctx.1, "Copy it into your articles to insert this media:")</small>
             </p>
             <code>@media.markdown(ctx.0).unwrap_or(SafeString::new(""))</code>
         </div>

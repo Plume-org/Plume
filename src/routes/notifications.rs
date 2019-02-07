@@ -20,7 +20,7 @@ pub fn notifications(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -
 #[get("/notifications?<page>", rank = 2)]
 pub fn notifications_auth(i18n: I18n, page: Option<Page>) -> Flash<Redirect>{
     utils::requires_login(
-        &i18n!(i18n.catalog, "You need to be logged in order to see your notifications"),
+        &i18n!(i18n.catalog, "You need to be logged in to see your notifications"),
         uri!(notifications: page = page)
     )
 }

@@ -52,7 +52,7 @@
 </div>
     @if is_author {
         <h2>@i18n!(ctx.1, "Danger zone")</h2>
-        <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be reversed.")</p>
+        <p>@i18n!(ctx.1, "Be very careful, any actions taken here can't be reversed.")</p>
         <form method="post" action="@uri!(blogs::delete: name = &fqn)">
 	        <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Permanently delete this blog")">
         </form>

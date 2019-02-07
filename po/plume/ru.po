@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} прокомментировал(а) вашу статью"
 
 # src/template_utils.rs:35
@@ -38,7 +38,7 @@ msgid "{0}'s avatar"
 msgstr "Аватар {0}"
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
+msgid "You need to be logged in to create a new blog"
 msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
@@ -46,22 +46,22 @@ msgid "You are not allowed to delete this blog."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "You need to be logged in to like a post"
 msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
+msgid "You need to be logged in to see your notifications"
 msgstr "Вы должны войти чтобы просматривать ваши уведомления"
 
 msgid "This post isn't published yet."
 msgstr "Этот пост ещё не опубликован."
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "You need to be logged in to write a new post"
 msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author on this blog."
 msgstr "Вы не автор этого блога."
 
 msgid "New post"
@@ -72,19 +72,19 @@ msgid "Edit {0}"
 msgstr "Редактировать"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "You need to be logged in to reshare a post"
 msgstr "Вы должны войти чтобы просматривать ваши уведомления"
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "You need to be logged in to access your dashboard"
 msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in to follow someone"
 msgstr "Вы должны войти чтобы подписаться на кого-либо"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "You need to be logged in to edit your profile"
 msgstr "Вы должны войти чтобы редактировать ваш профиль"
 
 msgid "Plume"
@@ -126,7 +126,7 @@ msgstr "Комната в Matrix"
 msgid "Administration"
 msgstr "Администрирование"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 #, fuzzy
@@ -178,7 +178,7 @@ msgid "Articles from {}"
 msgstr "Статьи с {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try following some more people."
 msgstr ""
 "Пока что здесь ничего нет. Попробуйте подписаться на большее число людей."
 
@@ -223,7 +223,7 @@ msgstr ""
 msgid "And connected to <em>{0}</em> other instances"
 msgstr ""
 
-msgid "Administred by"
+msgid "Administered by"
 msgstr "Администрируется"
 
 msgid "Runs Plume {0}"
@@ -255,7 +255,7 @@ msgid "Danger zone"
 msgstr "Опасная зона"
 
 #, fuzzy
-msgid "Be very careful, any action taken here can't be cancelled."
+msgid "Be very careful, any actions taken here can't be cancelled."
 msgstr ""
 "Будьте осторожны, любое действие произведённое здесь не может быть отменено."
 
@@ -263,7 +263,7 @@ msgid "Delete your account"
 msgstr "Удалить ваш аккаунт"
 
 #, fuzzy
-msgid "Sorry, but as an admin, you can't leave your own instance."
+msgid "Sorry, but as an admin you can't leave your own instance."
 msgstr "Извините, но как администратор, вы не можете покинуть этот узел."
 
 msgid "Your Dashboard"
@@ -274,7 +274,7 @@ msgid "Your Blogs"
 msgstr "Ваши блоги"
 
 #, fuzzy
-msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgid "You don't have any blogs yet. Create your own or ask to join one."
 msgstr ""
 "У вас пока нет блогов. Создайте свой собственный или попросите "
 "присоединиться к другому."
@@ -330,7 +330,7 @@ msgid "Admin"
 msgstr "Администратор"
 
 #, fuzzy
-msgid "It is you"
+msgid "This is you"
 msgstr "Это вы"
 
 msgid "Edit your profile"
@@ -364,7 +364,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume это децентрализованный движок для блоггинга."
 
 #, fuzzy
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs from a unique website."
 msgstr "Авторы могут управлять различными блогами с одного сайта."
 
 #, fuzzy
@@ -464,17 +464,17 @@ msgstr "Эта статья распространяется под лиценз
 msgid "Article license"
 msgstr "Лицензия по умолчанию"
 
-msgid "Search result for \"{0}\""
+msgid "Search results for \"{0}\""
 msgstr ""
 
-msgid "Search result"
+msgid "Search results"
 msgstr ""
 
 #, fuzzy
-msgid "No result for your query"
+msgid "No results for your query"
 msgstr "Перейти в вашу галерею"
 
-msgid "No more result for your query"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Login"
@@ -516,7 +516,7 @@ msgid "Update"
 msgstr ""
 
 #, fuzzy
-msgid "Update, or publish"
+msgid "Update or publish"
 msgstr "Обновить или опубликовать"
 
 msgid "Publish your post"
@@ -566,7 +566,7 @@ msgid "Boost"
 msgstr "Продвинуть"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in or use your Fediverse account to interact with this article"
 msgstr ""
 "Войдите или используйте свой Fediverse-аккаунт, чтобы взаимодействовать с "
 "этой статьёй"
@@ -596,7 +596,7 @@ msgstr "Неправильный CSRF-токен."
 
 msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
+"your browser and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
 "Что-то не так с вашим CSRF-токеном. Убедитесь что в вашем браузере включены "
@@ -664,7 +664,7 @@ msgid "New article"
 msgstr "Новая статья"
 
 #, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
+msgid "Be very careful, any actions taken here can't be reversed."
 msgstr ""
 "Будьте осторожны, любое действие произведённое здесь не может быть отменено."
 
@@ -677,7 +677,7 @@ msgid "Articles tagged \"{0}\""
 msgstr "Статьи, отмеченные тегом «{0}»"
 
 #, fuzzy
-msgid "There are currently no articles with such a tag"
+msgid "There are currently no articles with this tag"
 msgstr "Сейчас нет статей с таким тегом"
 
 msgid "Upload"
@@ -701,7 +701,7 @@ msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "Описание для лиц с нарушениями зрения и информация о лицензии"
 
 #, fuzzy
-msgid "Leave it empty, if none is needed"
+msgid "Leave it empty if none are needed"
 msgstr "Оставьте пустым если нет"
 
 msgid "File"
@@ -720,7 +720,7 @@ msgstr "Вернуться в галерею"
 msgid "Markdown syntax"
 msgstr "Поддерживается Markdown"
 
-msgid "Copy it into your articles, to insert this media:"
+msgid "Copy it into your articles to insert this media:"
 msgstr ""
 
 #, fuzzy
@@ -740,11 +740,11 @@ msgstr "Использовать как аватар"
 #~ msgstr "Создать новый аккаунт"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgid "You need to be signed in to be able to like a post"
 #~ msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
-#~ msgid "{0} gave a boost to your article"
+#~ msgid "{0} boosted your article"
 #~ msgstr "{0} продвинул(а) вашу статью"
 
 #, fuzzy
@@ -768,11 +768,11 @@ msgstr "Использовать как аватар"
 #~ msgstr "Пост с таким же заголовком уже существует."
 
 #, fuzzy
-#~ msgid "Your password field can't be left empty"
+#~ msgid "Your password can't be empty"
 #~ msgstr "Ваш пароль не может быть пустым"
 
 #, fuzzy
-#~ msgid "The 'username' field can't be left empty"
+#~ msgid "Your username can't be empty"
 #~ msgstr "Имя пользователя не может быть пустым"
 
 #~ msgid "Previous page"
@@ -790,11 +790,11 @@ msgstr "Использовать как аватар"
 #~ msgstr "Plume это децентрализованный движок для блоггинга."
 
 #, fuzzy
-#~ msgid "Log In to like"
+#~ msgid "Log in to like"
 #~ msgstr "Войдите, чтобы отмечать понравившиеся посты"
 
 #, fuzzy
-#~ msgid "Log In to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Войдите, чтобы продвигать посты"
 
 #, fuzzy
@@ -830,15 +830,15 @@ msgstr "Использовать как аватар"
 #~ msgstr "Создать аккаунт"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "You need to be logged in to post a comment"
 #~ msgstr "Вы должны войти чтобы оставлять комментарии"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "You need to be logged in to boost a post"
 #~ msgstr "Вы должны войти чтобы продвинуть пост"
 
 #, fuzzy
-#~ msgid "Invalid username, or password"
+#~ msgid "Invalid username or password"
 #~ msgstr "Неправильное имя пользователя или пароль"
 
 #~ msgid "We couldn&#x27;t find this page."
@@ -866,7 +866,7 @@ msgstr "Использовать как аватар"
 #~ "идентифицировать вас"
 
 #, fuzzy
-#~ msgid "Your password field can't be empty"
+#~ msgid "Your password field be empty"
 #~ msgstr "Ваш пароль не может быть пустым"
 
 #~ msgid "Username can't be empty"
@@ -876,11 +876,11 @@ msgstr "Использовать как аватар"
 #~ msgstr "Неправильный адрес электронной почты"
 
 #, fuzzy
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Войдите, чтобы отмечать понравившиеся посты"
 
 #, fuzzy
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Войдите, чтобы продвигать посты"
 
 #, fuzzy
@@ -891,5 +891,5 @@ msgstr "Использовать как аватар"
 #~ msgstr "Создать пост"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "You need to be logged in to like a post"
 #~ msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
