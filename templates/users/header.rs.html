@@ -20,7 +20,7 @@
                 }
 
                 @if ctx.2.clone().map(|u| u.id == user.id).unwrap_or(false) {
-                    <span class="badge">@i18n!(ctx.1, "It is you")</span>
+                    <span class="badge">@i18n!(ctx.1, "This is you")</span>
                     <a href="@uri!(user::edit: name = &user.username)" class="button inline-block">@i18n!(ctx.1, "Edit your profile")</a>
                 }
             </p>

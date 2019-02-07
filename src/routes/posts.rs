@@ -97,7 +97,7 @@ pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest
 #[get("/~/<blog>/new", rank = 2)]
 pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        &i18n!(i18n.catalog, "You need to be logged in order to write a new post"),
+        &i18n!(i18n.catalog, "You need to be logged in to write a new post"),
         uri!(new: blog = blog)
     )
 }
@@ -110,7 +110,7 @@ pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -
         // TODO actually return 403 error code
         Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "You are not author in this blog.")
+            i18n!(intl.catalog, "You are not an author on this blog.")
         )))
     } else {
         let medias = Media::for_user(&*conn, user.id)?;
@@ -140,7 +140,7 @@ pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn
     if !user.is_author_in(&*conn, &b)? {
         Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "You are not author in this blog.")
+            i18n!(intl.catalog, "You are not an author on this blog.")
         )))
     } else {
         let source = if !post.source.is_empty() {

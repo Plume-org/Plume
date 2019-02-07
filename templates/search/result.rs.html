@@ -4,16 +4,16 @@
 
 @(ctx: BaseContext, query_str: &str, articles: Vec<Post>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Search result for \"{0}\""; query_str), {}, {}, {
-    <h1>@i18n!(ctx.1, "Search result")</h1>
+@:base(ctx, i18n!(ctx.1, "Search results for \"{0}\""; query_str), {}, {}, {
+    <h1>@i18n!(ctx.1, "Search results")</h1>
     <p>@query_str</p>
 
     @if articles.is_empty() {
         <section>
 	    @if page == 1 {
-            <h2>@i18n!(ctx.1, "No result for your query")</h2>
+            <h2>@i18n!(ctx.1, "No results for your query")</h2>
 	    } else {
-            <h2>@i18n!(ctx.1, "No more result for your query")</h2>
+            <h2>@i18n!(ctx.1, "No more results for your query")</h2>
 	    }
         </section>
     } else {

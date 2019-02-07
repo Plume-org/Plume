@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=n > 1;\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} comentou o seu artigo"
 
 # src/template_utils.rs:35
@@ -36,7 +36,7 @@ msgid "{0}'s avatar"
 msgstr "Avatar de {{ name}}"
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
+msgid "You need to be logged in to create a new blog"
 msgstr "Debe estar conectada para escribir un novo artigo"
 
 #, fuzzy
@@ -44,22 +44,22 @@ msgid "You are not allowed to delete this blog."
 msgstr "Vostede non é autora en este blog."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "You need to be logged in to like a post"
 msgstr "Debe estar conectada para gustar unha entrada"
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
+msgid "You need to be logged in to see your notifications"
 msgstr "Debe estar conectada para ver as súas notificacións"
 
 msgid "This post isn't published yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "You need to be logged in to write a new post"
 msgstr "Debe estar conectada para escribir un novo artigo"
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author on this blog."
 msgstr "Vostede non é autora en este blog."
 
 msgid "New post"
@@ -70,19 +70,19 @@ msgid "Edit {0}"
 msgstr "Editar"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "You need to be logged in to reshare a post"
 msgstr "Debe estar conectada para ver as súas notificacións"
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "You need to be logged in to access your dashboard"
 msgstr "Debe estar conectada para acceder ao seu taboleiro"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in to follow someone"
 msgstr "Debe estar conectada para seguir a alguén"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "You need to be logged in to edit your profile"
 msgstr "Debe estar conectada para editar o seu perfil"
 
 msgid "Plume"
@@ -124,7 +124,7 @@ msgstr "Sala Matrix"
 msgid "Administration"
 msgstr "Administración"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 #, fuzzy
@@ -174,7 +174,7 @@ msgid "Articles from {}"
 msgstr "Artigos desde {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try following some more people."
 msgstr "Nada que ler por aquí. Intente seguir a máis xente."
 
 msgid "Name"
@@ -218,7 +218,7 @@ msgstr ""
 msgid "And connected to <em>{0}</em> other instances"
 msgstr ""
 
-msgid "Administred by"
+msgid "Administered by"
 msgstr "Administrada por"
 
 msgid "Runs Plume {0}"
@@ -249,14 +249,14 @@ msgid "Danger zone"
 msgstr "Zona perigosa"
 
 #, fuzzy
-msgid "Be very careful, any action taken here can't be cancelled."
+msgid "Be very careful, any actions taken here can't be cancelled."
 msgstr "Sexa coidadosa, as accións tomadas non se poden restablecer."
 
 msgid "Delete your account"
 msgstr "Eliminar a súa conta"
 
 #, fuzzy
-msgid "Sorry, but as an admin, you can't leave your own instance."
+msgid "Sorry, but as an admin you can't leave your own instance."
 msgstr ""
 "Lamentámolo, pero como administradora, non pode deixar a súa instancia."
 
@@ -268,7 +268,7 @@ msgid "Your Blogs"
 msgstr "Os seus Blogs"
 
 #, fuzzy
-msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgid "You don't have any blogs yet. Create your own or ask to join one."
 msgstr "Aínda non ten blogs. Publique un, ou solicita unirse a un."
 
 msgid "Start a new blog"
@@ -323,7 +323,7 @@ msgid "Admin"
 msgstr "Admin"
 
 #, fuzzy
-msgid "It is you"
+msgid "This is you"
 msgstr "É vostede"
 
 msgid "Edit your profile"
@@ -357,7 +357,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume é un motor de publicación descentralizada."
 
 #, fuzzy
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs from a unique website."
 msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 
 #, fuzzy
@@ -457,17 +457,17 @@ msgstr "Este artigo ten licenza {0}"
 msgid "Article license"
 msgstr "Licenza por omisión"
 
-msgid "Search result for \"{0}\""
+msgid "Search results for \"{0}\""
 msgstr ""
 
-msgid "Search result"
+msgid "Search results"
 msgstr ""
 
 #, fuzzy
-msgid "No result for your query"
+msgid "No results for your query"
 msgstr "Ir a súa galería"
 
-msgid "No more result for your query"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Login"
@@ -509,7 +509,7 @@ msgid "Update"
 msgstr "Actualizar"
 
 #, fuzzy
-msgid "Update, or publish"
+msgid "Update or publish"
 msgstr "Actualizar ou publicar"
 
 msgid "Publish your post"
@@ -559,7 +559,7 @@ msgid "Boost"
 msgstr "Promover"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in or use your Fediverse account to interact with this article"
 msgstr ""
 "Conéctese ou utilice a súa conta no fediverso para interactuar con este "
 "artigo"
@@ -589,7 +589,7 @@ msgstr "Testemuño CSRF non válido"
 
 msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
+"your browser and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
 "Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas "
@@ -652,7 +652,7 @@ msgid "New article"
 msgstr "Novo artigo"
 
 #, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
+msgid "Be very careful, any actions taken here can't be reversed."
 msgstr "Sexa coidadosa, as accións tomadas non se poden restablecer."
 
 #, fuzzy
@@ -663,7 +663,7 @@ msgstr "Borrar este blog"
 msgid "Articles tagged \"{0}\""
 msgstr "Artigos etiquetados con {0}"
 
-msgid "There are currently no articles with such a tag"
+msgid "There are currently no articles with this tag"
 msgstr ""
 
 msgid "Upload"
@@ -687,7 +687,7 @@ msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "Útil para xente con problemas visuais e licenzas"
 
 #, fuzzy
-msgid "Leave it empty, if none is needed"
+msgid "Leave it empty if none are needed"
 msgstr "Deixar baldeiro si non hai ningunha"
 
 msgid "File"
@@ -708,7 +708,7 @@ msgid "Markdown syntax"
 msgstr "Código markdown"
 
 #, fuzzy
-msgid "Copy it into your articles, to insert this media:"
+msgid "Copy it into your articles to insert this media:"
 msgstr "Copie para incrustar este contido nos seus artigos"
 
 #, fuzzy
@@ -728,11 +728,11 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Crear unha conta"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgid "You need to be signed in to be able to like a post"
 #~ msgstr "Debe estar conectada para escribir un novo artigo"
 
 #, fuzzy
-#~ msgid "{0} gave a boost to your article"
+#~ msgid "{0} boosted your article"
 #~ msgstr "{0} promoveron o seu artigo"
 
 #, fuzzy
@@ -756,11 +756,11 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Xa existe unha entrada co mismo nome."
 
 #, fuzzy
-#~ msgid "Your password field can't be left empty"
+#~ msgid "Your password can't be empty"
 #~ msgstr "O contrasinal non pode estar baldeiro"
 
 #, fuzzy
-#~ msgid "The 'username' field can't be left empty"
+#~ msgid "Your username can't be empty"
 #~ msgstr "O nome de usuaria non pode estar baldeiro"
 
 #~ msgid "Previous page"
@@ -778,11 +778,11 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Plume é un motor de publicación descentralizada."
 
 #, fuzzy
-#~ msgid "Log In to like"
+#~ msgid "Log in to like"
 #~ msgstr "Conéctese para gostar"
 
 #, fuzzy
-#~ msgid "Log In to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Conéctese para promover"
 
 #, fuzzy
@@ -812,15 +812,15 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Crear conta"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "You need to be logged in to post a comment"
 #~ msgstr "Debe estar conectada para publicar un comentario"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "You need to be logged in to boost a post"
 #~ msgstr "Precisa estar conectada para promover un artigo"
 
 #, fuzzy
-#~ msgid "Invalid username, or password"
+#~ msgid "Invalid username or password"
 #~ msgstr "Usuaria ou Contrasinal incorrectos"
 
 #~ msgid "We couldn&#x27;t find this page."
@@ -842,7 +842,7 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Xa existe unha entrada co mismo nome."
 
 #, fuzzy
-#~ msgid "Your password field can't be empty"
+#~ msgid "Your password field be empty"
 #~ msgstr "O contrasinal non pode estar baldeiro"
 
 #~ msgid "Username can't be empty"
@@ -852,18 +852,18 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Correo-e non válido"
 
 #, fuzzy
-#~ msgid "The password should be at least 8 characters long"
+#~ msgid "Your password should be at least 8 characters long"
 #~ msgstr "O contrasinal debe ter ao menos 8 caracteres"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Conéctese para gostar"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Conéctese para promover"
 
 #~ msgid "Create a post"
 #~ msgstr "Crear unha entrada"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "You need to be logged in to like a post"
 #~ msgstr "Debe estar conectada para gustar unha entrada"
