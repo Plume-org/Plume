@@ -187,6 +187,7 @@ Then try to restart Plume.
             routes::user::dashboard,
             routes::user::dashboard_auth,
             routes::user::followers,
+            routes::user::followed,
             routes::user::edit,
             routes::user::edit_auth,
             routes::user::update,

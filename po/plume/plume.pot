@@ -84,7 +84,7 @@ msgstr ""
 msgid "You need to be logged in order to follow someone"
 msgstr ""
 
-# src/routes/user.rs:227
+# src/routes/user.rs:245
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
@@ -298,6 +298,9 @@ msgstr ""
 msgid "Followers"
 msgstr ""
 
+msgid "Followed"
+msgstr ""
+
 msgid "Atom feed"
 msgstr ""
 
@@ -320,6 +323,9 @@ msgid "Unfollow"
 msgstr ""
 
 msgid "Follow"
+msgstr ""
+
+msgid "People {0} follows"
 msgstr ""
 
 msgid "{0}'s followers"

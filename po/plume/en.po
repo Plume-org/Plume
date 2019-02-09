@@ -286,6 +286,9 @@ msgstr ""
 msgid "Followers"
 msgstr ""
 
+msgid "Followed"
+msgstr ""
+
 msgid "Atom feed"
 msgstr ""
 
@@ -308,6 +311,9 @@ msgid "Unfollow"
 msgstr ""
 
 msgid "Follow"
+msgstr ""
+
+msgid "People {0} follows"
 msgstr ""
 
 msgid "{0}'s followers"

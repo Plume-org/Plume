@@ -320,6 +320,10 @@ msgid "Followers"
 msgstr "Подписчики"
 
 #, fuzzy
+msgid "Followed"
+msgstr "Подписаться"
+
+#, fuzzy
 msgid "Atom feed"
 msgstr "Ваша лента"
 
@@ -345,6 +349,10 @@ msgstr "Подписаться"
 
 msgid "Follow"
 msgstr "Подписаться"
+
+#, fuzzy
+msgid "People {0} follows"
+msgstr "Один подписчик"
 
 #, fuzzy
 msgid "{0}'s followers"

@@ -184,6 +184,24 @@ pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option
     )))
 }
 
+#[get("/@/<name>/followed?<page>", rank = 2)]
+pub fn followed(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let user = User::find_by_fqn(&*conn, &name)?;
+    let followed_count = user.count_followed(&*conn)?;
+
+    Ok(render!(users::followed(
+        &(&*conn, &intl.catalog, account.clone()),
+        user.clone(),
+        account.and_then(|x| x.is_following(&*conn, user.id).ok()).unwrap_or(false),
+        user.instance_id != Instance::get_local(&*conn)?.id,
+        user.get_instance(&*conn)?.public_domain,
+        user.get_followed_page(&*conn, page.limits())?,
+        page.0,
+        Page::total(followed_count as i32)
+    )))
+}
+
 #[get("/@/<name>", rank = 1)]
 pub fn activity_details(
     name: String,

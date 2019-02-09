@@ -316,6 +316,10 @@ msgid "Followers"
 msgstr "Følgere"
 
 #, fuzzy
+msgid "Followed"
+msgstr "Følg"
+
+#, fuzzy
 msgid "Atom feed"
 msgstr "Din kommentar"
 
@@ -341,6 +345,10 @@ msgstr "Slutt å følge"
 
 msgid "Follow"
 msgstr "Følg"
+
+#, fuzzy
+msgid "People {0} follows"
+msgstr "Én følger"
 
 #, fuzzy
 msgid "{0}'s followers"

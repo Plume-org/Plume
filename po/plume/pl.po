@@ -311,6 +311,10 @@ msgid "Followers"
 msgstr "Śledzący"
 
 #, fuzzy
+msgid "Followed"
+msgstr "Śledzący"
+
+#, fuzzy
 msgid "Atom feed"
 msgstr "Twój strumień"
 
@@ -337,6 +341,10 @@ msgstr "Jeden obserwujący"
 #, fuzzy
 msgid "Follow"
 msgstr "Śledzący"
+
+#, fuzzy
+msgid "People {0} follows"
+msgstr "Obserwujący {0}"
 
 msgid "{0}'s followers"
 msgstr "Obserwujący {0}"
