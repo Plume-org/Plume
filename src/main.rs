@@ -9,7 +9,6 @@ extern crate colored;
 extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
-extern crate failure;
 #[macro_use]
 extern crate gettext_macros;
 extern crate gettext_utils;

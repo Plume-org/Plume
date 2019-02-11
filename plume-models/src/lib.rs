@@ -52,6 +52,7 @@ pub type Connection = diesel::PgConnection;
 #[derive(Debug)]
 pub enum Error {
     Db(diesel::result::Error),
+    Inbox(plume_common::activity_pub::inbox::InboxError),
     InvalidValue,
     Io(std::io::Error),
     MissingApProperty,
@@ -140,9 +141,36 @@ impl From<std::io::Error> for Error {
     }
 }
 
+impl From<plume_common::activity_pub::inbox::InboxError> for Error {
+    fn from(err: plume_common::activity_pub::inbox::InboxError) -> Error {
+        Error::Inbox(err)
+    }
+}
+
 pub type Result<T> = std::result::Result<T, Error>;
 
 pub type ApiResult<T> = std::result::Result<T, canapi::Error>;
+
+/// Context manipulated by models
+pub struct Context<'a> {
+    conn: &'a Connection,
+    searcher: &'a search::Searcher,
+}
+
+impl<'a> Context<'a> {
+    pub fn build(conn: &'a Connection, searcher: &'a search::Searcher) -> Self {
+        Context {
+            conn: conn,
+            searcher: searcher,
+        }
+    }
+}
+
+impl<'a> Into<&'a Connection> for &Context<'a> {
+    fn into(self) -> &'a Connection {
+        self.conn
+    }
+}
 
 /// Adds a function to a model, that returns the first
 /// matching row for a given list of fields.
@@ -306,7 +334,9 @@ pub fn ap_url(url: &str) -> String {
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use diesel::{dsl::sql_query, Connection, RunQueryDsl};
+    #[cfg(feature = "sqlite")]
+    use diesel::{dsl::sql_query, RunQueryDsl};
+    use diesel::Connection;
     use Connection as Conn;
     use DATABASE_URL;
 

@@ -13,7 +13,7 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     ap_accept_header,
-    inbox::{Deletable, WithInbox},
+    inbox::AsActor,
     sign::{gen_keypair, Signer},
     ActivityStream, ApSignature, Id, IntoId, PublicKey,
 };
@@ -40,7 +40,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
-use {ap_url, Connection, BASE_URL, USE_HTTPS, Error, Result};
+use {ap_url, Connection, Context, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -126,7 +126,7 @@ impl User {
                 .unwrap_or(&0) > &0;
             if !has_other_authors {
                 Post::get(conn, post_id)?
-                    .delete(&(conn, searcher))?;
+                    .delete(conn, searcher)?;
             }
         }
 
@@ -225,11 +225,12 @@ impl User {
         User::fetch(url).and_then(|json| User::from_activity(
             conn,
             &json,
-            Url::parse(url)?.host_str()?,
         ))
     }
 
-    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> Result<User> {
+    pub fn from_activity(conn: &Connection, acct: &CustomPerson) -> Result<User> {
+        let url = Url::parse(&acct.object.object_props.id_string()?)?;
+        let inst = url.host_str()?;
         let instance = Instance::find_by_domain(conn, inst)
             .or_else(|_| Instance::insert(
                 conn,
@@ -767,18 +768,6 @@ impl User {
         })
     }
 
-    pub fn from_url(conn: &Connection, url: &str) -> Result<User> {
-        User::find_by_ap_url(conn, url).or_else(|_| {
-            // The requested user was not in the DB
-            // We try to fetch it if it is remote
-            if Url::parse(&url)?.host_str()? != BASE_URL.as_str() {
-                User::fetch_from_url(conn, url)
-            } else {
-                Err(Error::NotFound)
-            }
-        })
-    }
-
     pub fn set_avatar(&self, conn: &Connection, id: i32) -> Result<()> {
         diesel::update(self)
             .set(users::avatar_id.eq(id))
@@ -824,7 +813,22 @@ impl Eq for User {}
 impl Object for User {}
 impl Actor for User {}
 
-impl WithInbox for User {
+impl<'a> AsActor<&Context<'a>> for User {
+    type Error = Error;
+
+    fn get_or_fetch<S>(c: &Context, id: S) -> Result<Self> where S: AsRef<str> {
+        let id = id.as_ref();
+        User::find_by_ap_url(c.conn, id).or_else(|_| {
+            // The requested user was not in the DB
+            // We try to fetch it if it is remote
+            if Url::parse(&id)?.host_str()? != BASE_URL.as_str() {
+                User::fetch_from_url(c.conn, id)
+            } else {
+                Err(Error::NotFound)
+            }
+        })
+    }
+
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }

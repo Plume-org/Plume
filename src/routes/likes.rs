@@ -1,20 +1,23 @@
+use activitypub::activity::*;
 use rocket::response::{Redirect, Flash};
 use rocket_i18n::I18n;
 
-use plume_common::activity_pub::{broadcast, inbox::{Notify, Deletable}};
+use plume_common::activity_pub::{broadcast, inbox::Inbox};
 use plume_common::utils;
 use plume_models::{
     blogs::Blog,
     db_conn::DbConn,
+    Context,
+    Error,
     likes,
     posts::Post,
     users::User
 };
-use Worker;
+use {Searcher, Worker};
 use routes::errors::ErrorPage;
 
 #[post("/~/<blog>/<slug>/like")]
-pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker) -> Result<Redirect, ErrorPage> {
+pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker, searcher: Searcher) -> Result<Redirect, ErrorPage> {
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
@@ -27,7 +30,11 @@ pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Work
         worker.execute(move || broadcast(&user, act, dest));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id)?;
-        let delete_act = like.delete(&*conn)?;
+        let delete_act = like.build_undo(&*conn)?;
+        Inbox::handle(&Context::build(&conn, &searcher), serde_json::to_value(&delete_act).map_err(Error::from)?)
+            .with::<User, Undo, likes::Like, _>()
+            .done()?;
+
         let dest = User::one_by_instance(&*conn)?;
         worker.execute(move || broadcast(&user, delete_act, dest));
     }

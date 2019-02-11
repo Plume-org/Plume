@@ -1,21 +1,19 @@
 use activitypub::{
     activity::{Accept, Follow as FollowAct, Undo},
-    actor::Person,
-    Actor,
 };
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use blogs::Blog;
 use notifications::*;
 use plume_common::activity_pub::{
     broadcast,
-    inbox::{Deletable, FromActivity, Notify, WithInbox},
+    inbox::{AsActor, AsObject},
+    // inbox::{Deletable, FromActivity, Notify, WithInbox},
     sign::Signer,
     Id, IntoId,
 };
 use schema::follows;
-use users::User;
-use {ap_url, Connection, BASE_URL, Error, Result};
+use users::{User, CustomPerson};
+use {ap_url, Connection, Context, BASE_URL, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable, Associations)]
 #[belongs_to(User, foreign_key = "following_id")]
@@ -65,13 +63,24 @@ impl Follow {
         Ok(act)
     }
 
+    pub fn notify(&self, conn: &Connection) -> Result<Notification> {
+        Notification::insert(
+            conn,
+            NewNotification {
+                kind: notification_kind::FOLLOW.to_string(),
+                object_id: self.id,
+                user_id: self.following_id,
+            },
+        )
+    }
+
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
-    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor + IntoId>(
+    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
         conn: &Connection,
         from: &B,
         target: &A,
-        follow: FollowAct,
+        follow: String,
         from_id: i32,
         target_id: i32,
     ) -> Result<Follow> {
@@ -80,9 +89,10 @@ impl Follow {
             NewFollow {
                 follower_id: from_id,
                 following_id: target_id,
-                ap_url: follow.object_props.id_string()?,
+                ap_url: follow.clone(),
             },
         )?;
+        res.notify(conn)?;
 
         let mut accept = Accept::default();
         let accept_id = ap_url(&format!("{}/follow/{}/accept", BASE_URL.as_str(), &res.id));
@@ -100,77 +110,12 @@ impl Follow {
             .set_actor_link::<Id>(target.clone().into_id())?;
         accept
             .accept_props
-            .set_object_object(follow)?;
+            .set_object_link(Id::new(follow))?;
         broadcast(&*target, accept, vec![from.clone()]);
         Ok(res)
     }
-}
 
-impl FromActivity<FollowAct, Connection> for Follow {
-    type Error = Error;
-
-    fn from_activity(conn: &Connection, follow: FollowAct, _actor: Id) -> Result<Follow> {
-        let from_id = follow
-            .follow_props
-            .actor_link::<Id>()
-            .map(|l| l.into())
-            .or_else(|_| Ok(follow
-                .follow_props
-                .actor_object::<Person>()?
-                .object_props
-                .id_string()?) as Result<String>)?;
-        let from =
-            User::from_url(conn, &from_id)?;
-        match User::from_url(
-            conn,
-            follow
-                .follow_props
-                .object
-                .as_str()?,
-        ) {
-            Ok(user) => Follow::accept_follow(conn, &from, &user, follow, from.id, user.id),
-            Err(_) => {
-                let blog = Blog::from_url(
-                    conn,
-                    follow
-                        .follow_props
-                        .object
-                        .as_str()?,
-                )?;
-                Follow::accept_follow(conn, &from, &blog, follow, from.id, blog.id)
-            }
-        }
-    }
-}
-
-impl Notify<Connection> for Follow {
-    type Error = Error;
-
-    fn notify(&self, conn: &Connection) -> Result<()> {
-        Notification::insert(
-            conn,
-            NewNotification {
-                kind: notification_kind::FOLLOW.to_string(),
-                object_id: self.id,
-                user_id: self.following_id,
-            },
-        ).map(|_| ())
-    }
-}
-
-impl Deletable<Connection, Undo> for Follow {
-    type Error = Error;
-
-    fn delete(&self, conn: &Connection) -> Result<Undo> {
-        diesel::delete(self)
-            .execute(conn)?;
-
-        // delete associated notification if any
-        if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
-            diesel::delete(&notif)
-                .execute(conn)?;
-        }
-
+    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
         let mut undo = Undo::default();
         undo.undo_props
             .set_actor_link(
@@ -183,12 +128,36 @@ impl Deletable<Connection, Undo> for Follow {
             .set_object_link::<Id>(self.clone().into_id())?;
         Ok(undo)
     }
+}
 
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) -> Result<Undo> {
-        let follow = Follow::find_by_ap_url(conn, id)?;
-        let user = User::find_by_ap_url(conn, actor_id)?;
-        if user.id == follow.follower_id {
-            follow.delete(conn)
+impl<'a> AsObject<User, FollowAct, CustomPerson, &Context<'a>> for User {
+    type Error = Error;
+    type Output = Follow;
+
+    fn activity(c: &Context, actor: User, target: CustomPerson, id: &str) -> Result<Follow> {
+        let target = User::from_activity(c.conn, &target)?;
+        Follow::accept_follow(c.conn, &actor, &target, id.to_string(), actor.id, target.id)
+    }
+}
+
+impl<'a> AsObject<User, Undo, FollowAct, &Context<'a>> for Follow {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(c: &Context, actor: User, follow: FollowAct, _id: &str) -> Result<()> {
+        let conn = c.conn;
+        let follow = Follow::find_by_ap_url(conn, &follow.object_props.id_string()?)?;
+        if follow.follower_id == actor.id {
+            diesel::delete(&follow)
+                .execute(conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, follow.id) {
+                diesel::delete(&notif)
+                    .execute(conn)?;
+            }
+
+            Ok(())
         } else {
             Err(Error::Unauthorized)
         }

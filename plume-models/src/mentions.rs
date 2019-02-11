@@ -3,7 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
 use notifications::*;
-use plume_common::activity_pub::inbox::Notify;
+// use plume_common::activity_pub::inbox::Notify;
 use posts::Post;
 use schema::mentions;
 use users::User;
@@ -128,10 +128,7 @@ impl Mention {
             .map(|_| ())
             .map_err(Error::from)
     }
-}
 
-impl Notify<Connection> for Mention {
-    type Error = Error;
     fn notify(&self, conn: &Connection) -> Result<()> {
         let m = self.get_mentioned(conn)?;
         Notification::insert(

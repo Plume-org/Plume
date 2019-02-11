@@ -10,19 +10,16 @@ use serde_json;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use inbox::{Inbox, SignedJson};
 use plume_common::activity_pub::{
     broadcast,
-    inbox::{Deletable, FromActivity, Notify},
-    sign::{verify_http_headers, Signable},
-    ActivityStream, ApRequest, Id, IntoId,
+    ActivityStream, ApRequest, Id,
 };
 use plume_common::utils;
 use plume_models::{
-    Error,
-    blogs::Blog, db_conn::DbConn, follows, headers::Headers, instance::Instance, posts::{LicensedArticle, Post},
-    reshares::Reshare, users::*,
+    Error, blogs::Blog, db_conn::DbConn, follows, headers::Headers,
+    instance::Instance, posts::{LicensedArticle, Post}, reshares::Reshare, users::*,
 };
+use inbox;
 use routes::{Page, errors::ErrorPage};
 use template_utils::Ructe;
 use Worker;
@@ -61,9 +58,9 @@ pub fn details(
                 match create_act.create_props.object_object::<LicensedArticle>() {
                     Ok(article) => {
                         Post::from_activity(
-                            &(&*fetch_articles_conn, &searcher),
+                            &*fetch_articles_conn,
+                            &searcher,
                             article,
-                            user_clone.clone().into_id(),
                         ).expect("Article from remote user couldn't be saved");
                         println!("Fetched article from remote user");
                     }
@@ -137,7 +134,7 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
 pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<Redirect, ErrorPage> {
     let target = User::find_by_fqn(&*conn, &name)?;
     if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
-        let delete_act = follow.delete(&*conn)?;
+        let delete_act = follow.build_undo(&*conn)?;
         worker.execute(move || {
             broadcast(&user, delete_act, vec![target])
         });
@@ -364,50 +361,13 @@ pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollec
 pub fn inbox(
     name: String,
     conn: DbConn,
-    data: SignedJson<serde_json::Value>,
+    data: inbox::SignedJson<serde_json::Value>,
     headers: Headers,
     searcher: Searcher,
-) -> Result<String, Option<status::BadRequest<&'static str>>> {
-    let user = User::find_local(&*conn, &name).map_err(|_| None)?;
-    let act = data.1.into_inner();
-    let sig = data.0;
-
-    let activity = act.clone();
-    let actor_id = activity["actor"]
-        .as_str()
-        .or_else(|| activity["actor"]["id"].as_str())
-        .ok_or(Some(status::BadRequest(Some(
-            "Missing actor id for activity",
-        ))))?;
-
-    let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &sig).is_secure()
-        && !act.clone().verify(&actor)
-    {
-        // maybe we just know an old key?
-        actor.refetch(&conn).and_then(|_| User::get(&conn, actor.id))
-            .and_then(|actor| if verify_http_headers(&actor, &headers.0, &sig).is_secure()
-                      || act.clone().verify(&actor)
-                    {
-                        Ok(())
-                    } else {
-                        Err(Error::Signature)
-                    })
-            .map_err(|_| {
-                println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
-                status::BadRequest(Some("Invalid signature"))})?;
-    }
-
-    if Instance::is_blocked(&*conn, actor_id).map_err(|_| None)? {
-        return Ok(String::new());
-    }
-    Ok(match user.received(&*conn, &searcher, act) {
-        Ok(_) => String::new(),
-        Err(e) => {
-            println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());
-            format!("Error: {}", e.as_fail())
-        }
-    })
+) -> Result<String, status::BadRequest<&'static str>> {
+    User::find_local(&*conn, &name)
+        .map_err(|_| status::BadRequest(Some("User not found")))?;
+    inbox::handle_incoming(conn, data, headers, searcher)
 }
 
 #[get("/@/<name>/followers", rank = 1)]

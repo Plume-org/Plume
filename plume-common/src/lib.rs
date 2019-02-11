@@ -1,4 +1,4 @@
-#![feature(custom_attribute)]
+#![feature(custom_attribute, associated_type_defaults)]
 
 extern crate activitypub;
 #[macro_use]
@@ -7,9 +7,6 @@ extern crate activitystreams_traits;
 extern crate array_tool;
 extern crate base64;
 extern crate chrono;
-extern crate failure;
-#[macro_use]
-extern crate failure_derive;
 extern crate hex;
 extern crate heck;
 extern crate openssl;

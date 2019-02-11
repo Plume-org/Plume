@@ -5,13 +5,13 @@ use guid_create::GUID;
 use reqwest;
 use std::{fs, path::Path};
 
-use plume_common::activity_pub::Id;
+use plume_common::activity_pub::{Id, inbox::AsActor};
 
 use instance::Instance;
 use safe_string::SafeString;
 use schema::medias;
 use users::User;
-use {ap_url, Connection, Error, Result};
+use {ap_url, Connection, Context, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable, Serialize)]
 pub struct Media {
@@ -168,7 +168,8 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &Connection, image: &Image) -> Result<Media> {
+    pub fn from_activity(c: &Context, image: &Image) -> Result<Media> {
+        let conn = c.conn;
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
             .rsplit('.')
@@ -195,8 +196,8 @@ impl Media {
                 remote_url: None,
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),
-                owner_id: User::from_url(
-                    conn,
+                owner_id: User::get_or_fetch(
+                    c,
                     image
                         .object_props
                         .attributed_to_link_vec::<Id>()

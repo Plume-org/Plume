@@ -4,13 +4,13 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{Deletable, FromActivity, Notify},
+    inbox::AsObject,
     Id, IntoId, PUBLIC_VISIBILTY,
 };
-use posts::Post;
+use posts::{Post, LicensedArticle};
 use schema::reshares;
 use users::User;
-use {Connection, Error, Result};
+use {Connection, Context, Error, Result};
 
 #[derive(Clone, Serialize, Deserialize, Queryable, Identifiable)]
 pub struct Reshare {
@@ -72,46 +72,8 @@ impl Reshare {
 
         Ok(act)
     }
-}
 
-impl FromActivity<Announce, Connection> for Reshare {
-    type Error = Error;
-
-    fn from_activity(conn: &Connection, announce: Announce, _actor: Id) -> Result<Reshare> {
-        let user = User::from_url(
-            conn,
-            announce
-                .announce_props
-                .actor_link::<Id>()?
-                .as_ref(),
-        )?;
-        let post = Post::find_by_ap_url(
-            conn,
-            announce
-                .announce_props
-                .object_link::<Id>()?
-                .as_ref(),
-        )?;
-        let reshare = Reshare::insert(
-            conn,
-            NewReshare {
-                post_id: post.id,
-                user_id: user.id,
-                ap_url: announce
-                    .object_props
-                    .id_string()
-                    .unwrap_or_default(),
-            },
-        )?;
-        reshare.notify(conn)?;
-        Ok(reshare)
-    }
-}
-
-impl Notify<Connection> for Reshare {
-    type Error = Error;
-
-    fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &Connection) -> Result<()> {
         let post = self.get_post(conn)?;
         for author in post.get_authors(conn)? {
             Notification::insert(
@@ -125,21 +87,8 @@ impl Notify<Connection> for Reshare {
         }
         Ok(())
     }
-}
 
-impl Deletable<Connection, Undo> for Reshare {
-    type Error = Error;
-
-    fn delete(&self, conn: &Connection) -> Result<Undo> {
-        diesel::delete(self)
-            .execute(conn)?;
-
-        // delete associated notification if any
-        if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
-            diesel::delete(&notif)
-                .execute(conn)?;
-        }
-
+    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
         let mut act = Undo::default();
         act.undo_props
             .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
@@ -154,12 +103,49 @@ impl Deletable<Connection, Undo> for Reshare {
 
         Ok(act)
     }
+}
 
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) -> Result<Undo> {
+impl<'a> AsObject<User, Announce, LicensedArticle, &Context<'a>> for Post {
+    type Error = Error;
+    type Output = Reshare;
+
+    fn activity(c: &Context, actor: User, article: LicensedArticle, id: &str) -> Result<Reshare> {
+        let conn = c.conn;
+        let post = Post::find_by_ap_url(
+            conn,
+            &article.object.object_props.id_string()?
+        )?;
+        let reshare = Reshare::insert(
+            conn,
+            NewReshare {
+                post_id: post.id,
+                user_id: actor.id,
+                ap_url: id.to_string(),
+            },
+        )?;
+        reshare.notify(conn)?;
+        Ok(reshare)
+    }
+}
+
+impl<'a> AsObject<User, Undo, Announce, &Context<'a>> for Reshare {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(c: &Context, actor: User, _announce: Announce, id: &str) -> Result<()> {
+        let conn = c.conn;
         let reshare = Reshare::find_by_ap_url(conn, id)?;
-        let actor = User::find_by_ap_url(conn, actor_id)?;
         if actor.id == reshare.user_id {
-            reshare.delete(conn)
+            diesel::delete(&reshare)
+                .execute(conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, reshare.id) {
+                diesel::delete(&notif)
+                    .execute(conn)?;
+            }
+
+            Ok(())
         } else {
             Err(Error::Unauthorized)
         }

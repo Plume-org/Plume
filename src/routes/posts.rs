@@ -1,3 +1,4 @@
+use activitypub::activity::Delete;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::request::LenientForm;
@@ -9,11 +10,13 @@ use std::{
 };
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Deletable};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Inbox};
 use plume_common::utils;
 use plume_models::{
+    Context,
     blogs::*,
     db_conn::DbConn,
+    Error,
     comments::{Comment, CommentTree},
     instance::Instance,
     medias::Media,
@@ -408,7 +411,11 @@ pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker:
             Ok(Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _)))
         } else {
             let dest = User::one_by_instance(&*conn)?;
-            let delete_activity = post.delete(&(&conn, &searcher))?;
+            let delete_activity = post.build_delete(&*conn)?;
+            Inbox::handle(&Context::build(&*conn, &searcher), serde_json::to_value(&delete_activity).map_err(Error::from)?)
+                .with::<User, Delete, Post, _>()
+                .done()?;
+
             let user_c = user.clone();
             worker.execute(move || broadcast(&user_c, delete_activity, dest));
             worker.execute_after(Duration::from_secs(10*60), move || {user.rotate_keypair(&conn).expect("Failed to rotate keypair");});

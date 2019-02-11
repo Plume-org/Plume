@@ -11,7 +11,6 @@ pub(crate) mod tests {
     use std::env::temp_dir;
     use diesel::Connection;
 
-    use plume_common::activity_pub::inbox::Deletable;
     use plume_common::utils::random_hex;
     use blogs::tests::fill_database;
     use posts::{NewPost, Post};
@@ -150,7 +149,7 @@ pub(crate) mod tests {
             assert_eq!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1))[0].id, post.id);
             assert!(searcher.search_document(conn, Query::from_str(&title), (0,1)).is_empty());
 
-            post.delete(&(conn, &searcher)).unwrap();
+            post.delete(conn, &searcher).unwrap();
             searcher.commit();
             assert!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1)).is_empty());
 

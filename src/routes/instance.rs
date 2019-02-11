@@ -4,20 +4,17 @@ use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationErrors};
 
-use plume_common::activity_pub::sign::{Signable,
-    verify_http_headers};
 use plume_models::{
     admin::Admin,
     comments::Comment,
     db_conn::DbConn,
-    Error,
     headers::Headers,
     posts::Post,
     users::User,
     safe_string::SafeString,
     instance::*
 };
-use inbox::{Inbox, SignedJson};
+use inbox;
 use routes::{Page, errors::ErrorPage};
 use template_utils::Ructe;
 use Searcher;
@@ -179,41 +176,13 @@ pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Result<R
 }
 
 #[post("/inbox", data = "<data>")]
-pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
-    let act = data.1.into_inner();
-    let sig = data.0;
-
-    let activity = act.clone();
-    let actor_id = activity["actor"].as_str()
-        .or_else(|| activity["actor"]["id"].as_str()).ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
-
-    let actor = User::from_url(&conn, actor_id).expect("instance::shared_inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &sig).is_secure() &&
-        !act.clone().verify(&actor) {
-        // maybe we just know an old key?
-        actor.refetch(&conn).and_then(|_| User::get(&conn, actor.id))
-            .and_then(|u| if verify_http_headers(&u, &headers.0, &sig).is_secure() ||
-                      act.clone().verify(&u) {
-                          Ok(())
-                      } else {
-                          Err(Error::Signature)
-                      })
-            .map_err(|_| {
-                println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
-                status::BadRequest(Some("Invalid signature"))})?;
-    }
-
-    if Instance::is_blocked(&*conn, actor_id).map_err(|_| status::BadRequest(Some("Can't tell if instance is blocked")))? {
-        return Ok(String::new());
-    }
-    let instance = Instance::get_local(&*conn).expect("instance::shared_inbox: local instance not found error");
-    Ok(match instance.received(&*conn, &searcher, act) {
-        Ok(_) => String::new(),
-        Err(e) => {
-            println!("Shared inbox error: {}\n{}", e.as_fail(), e.backtrace());
-            format!("Error: {}", e.as_fail())
-        }
-    })
+pub fn shared_inbox(
+    conn: DbConn,
+    data: inbox::SignedJson<serde_json::Value>,
+    headers: Headers,
+    searcher: Searcher
+) -> Result<String, status::BadRequest<&'static str>> {
+    inbox::handle_incoming(conn, data, headers, searcher)
 }
 
 #[get("/nodeinfo")]

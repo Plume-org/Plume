@@ -44,7 +44,7 @@ msgstr ""
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/likes.rs:41
+# src/routes/likes.rs:48
 msgid "You need to be logged in order to like a post"
 msgstr ""
 
@@ -52,39 +52,39 @@ msgstr ""
 msgid "You need to be logged in order to see your notifications"
 msgstr ""
 
-# src/routes/posts.rs:81
+# src/routes/posts.rs:84
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:100
+# src/routes/posts.rs:103
 msgid "You need to be logged in order to write a new post"
 msgstr ""
 
-# src/routes/posts.rs:113
+# src/routes/posts.rs:116
 msgid "You are not author in this blog."
 msgstr ""
 
-# src/routes/posts.rs:119
+# src/routes/posts.rs:122
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:156
+# src/routes/posts.rs:159
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/reshares.rs:41
+# src/routes/reshares.rs:48
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
-# src/routes/user.rs:131
+# src/routes/user.rs:128
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
-# src/routes/user.rs:164
+# src/routes/user.rs:161
 msgid "You need to be logged in order to follow someone"
 msgstr ""
 
-# src/routes/user.rs:227
+# src/routes/user.rs:224
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 

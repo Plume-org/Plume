@@ -18,7 +18,7 @@ use webfinger::*;
 use instance::*;
 use plume_common::activity_pub::{
     ap_accept_header,
-    inbox::{Deletable, WithInbox},
+    inbox::AsActor,
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey,
 };
 use posts::Post;
@@ -26,7 +26,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, BASE_URL, USE_HTTPS, Error, Result};
+use {Connection, Context, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -330,18 +330,6 @@ impl Blog {
         })
     }
 
-    pub fn from_url(conn: &Connection, url: &str) -> Result<Blog> {
-        Blog::find_by_ap_url(conn, url).or_else(|_| {
-            // The requested blog was not in the DB
-            // We try to fetch it if it is remote
-            if Url::parse(url)?.host_str()? != BASE_URL.as_str() {
-                Blog::fetch_from_url(conn, url)
-            } else {
-                Err(Error::NotFound)
-            }
-        })
-    }
-
     pub fn get_fqn(&self, conn: &Connection) -> String {
         if self.instance_id == Instance::get_local(conn).ok().expect("Blog::get_fqn: local instance error").id {
             self.actor_id.clone()
@@ -356,7 +344,7 @@ impl Blog {
 
     pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
         for post in Post::get_for_blog(conn, &self)? {
-            post.delete(&(conn, searcher))?;
+            post.delete(conn, searcher)?;
         }
         diesel::delete(self)
             .execute(conn)
@@ -374,7 +362,22 @@ impl IntoId for Blog {
 impl Object for Blog {}
 impl Actor for Blog {}
 
-impl WithInbox for Blog {
+impl<'a> AsActor<&Context<'a>> for Blog {
+    type Error = Error;
+
+    fn get_or_fetch<S>(c: &Context, id: S) -> Result<Self> where S: AsRef<str> {
+        let id = id.as_ref();
+        Blog::find_by_ap_url(c.conn, id).or_else(|_| {
+            // The requested blog was not in the DB
+            // We try to fetch it if it is remote
+            if Url::parse(id)?.host_str()? != BASE_URL.as_str() {
+                Blog::fetch_from_url(c.conn, id)
+            } else {
+                Err(Error::NotFound)
+            }
+        })
+    }
+
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
@@ -384,7 +387,7 @@ impl WithInbox for Blog {
     }
 
     fn is_local(&self) -> bool {
-        self.instance_id == 0
+        self.instance_id == 1 // TODO: this is not always true
     }
 }
 

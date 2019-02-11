@@ -1,4 +1,4 @@
-use activitypub::{Activity, Actor, Link, Object};
+use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
@@ -106,11 +106,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .unwrap_or(Outcome::Forward(()))
     }
 }
-pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
-    sender: &S,
-    act: A,
-    to: Vec<T>,
-) {
+pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>) where
+    S: sign::Signer,
+    A: Activity,
+    T: inbox::AsActor<C>,
+{
     let boxes = to
         .into_iter()
         .filter(|u| !u.is_local())

@@ -15,7 +15,7 @@ use std::collections::HashSet;
 use plume_api::posts::PostEndpoint;
 use plume_common::{
     activity_pub::{
-        inbox::{Deletable, FromActivity},
+        inbox::{AsActor, AsObject},
         broadcast, Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
     },
     utils::md_to_html,
@@ -30,7 +30,7 @@ use search::Searcher;
 use schema::posts;
 use tags::*;
 use users::User;
-use {ap_url, Connection, BASE_URL, Error, Result, ApiResult};
+use {ap_url, Connection, Context, BASE_URL, Error, Result, ApiResult};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -146,7 +146,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let user_id = user_id.expect("Post as Provider::delete: not authenticated");
         if let Ok(post) = Post::get(conn, id) {
             if post.is_author(conn, user_id).unwrap_or(false) {
-                post.delete(&(conn, search)).ok().expect("Post as Provider::delete: delete error");
+                post.delete(conn, search).ok().expect("Post as Provider::delete: delete error");
             }
         }
     }
@@ -278,6 +278,15 @@ impl Post {
         Ok(post)
     }
 
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+        for m in Mention::list_for_post(&conn, self.id)? {
+            m.delete(conn)?;
+        }
+        diesel::delete(self)
+            .execute(conn)?;
+        searcher.delete_document(self);
+        Ok(())
+    }
 
     pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         use schema::tags;
@@ -665,74 +674,6 @@ impl Post {
         Ok(act)
     }
 
-    pub fn handle_update(conn: &Connection, updated: &LicensedArticle, searcher: &Searcher) -> Result<()> {
-        let id = updated.object
-            .object_props
-            .id_string()?;
-        let mut post = Post::find_by_ap_url(conn, &id)?;
-
-        if let Ok(title) = updated.object.object_props.name_string() {
-            post.slug = title.to_kebab_case();
-            post.title = title;
-        }
-
-        if let Ok(content) = updated.object.object_props.content_string() {
-            post.content = SafeString::new(&content);
-        }
-
-        if let Ok(subtitle) = updated.object.object_props.summary_string() {
-            post.subtitle = subtitle;
-        }
-
-        if let Ok(ap_url) = updated.object.object_props.url_string() {
-            post.ap_url = ap_url;
-        }
-
-        if let Ok(source) = updated.object.ap_object_props.source_object::<Source>() {
-            post.source = source.content;
-        }
-
-        if let Ok(license) = updated.custom_props.license_string() {
-            post.license = license;
-        }
-
-        let mut txt_hashtags = md_to_html(&post.source, "")
-            .2
-            .into_iter()
-            .map(|s| s.to_camel_case())
-            .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(mention_tags)) = updated.object.object_props.tag.clone() {
-            let mut mentions = vec![];
-            let mut tags = vec![];
-            let mut hashtags = vec![];
-            for tag in mention_tags {
-                serde_json::from_value::<link::Mention>(tag.clone())
-                    .map(|m| mentions.push(m))
-                    .ok();
-
-                serde_json::from_value::<Hashtag>(tag.clone())
-                    .map_err(Error::from)
-                    .and_then(|t| {
-                        let tag_name = t
-                            .name_string()?;
-                        if txt_hashtags.remove(&tag_name) {
-                            hashtags.push(t);
-                        } else {
-                            tags.push(t);
-                        }
-                        Ok(())
-                    })
-                    .ok();
-            }
-            post.update_mentions(conn, mentions)?;
-            post.update_tags(conn, tags)?;
-            post.update_hashtags(conn, hashtags)?;
-        }
-
-        post.update(conn, searcher)?;
-        Ok(())
-    }
-
     pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
         let mentions = mentions
             .into_iter()
@@ -868,12 +809,8 @@ impl Post {
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {
         self.cover_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
     }
-}
 
-impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post {
-    type Error = Error;
-
-    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: LicensedArticle, _actor: Id) -> Result<Post> {
+    pub fn from_activity(conn: &Connection, searcher: &Searcher, article: LicensedArticle) -> Result<Self> {
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
         if let Ok(post) = Post::find_by_ap_url(
@@ -888,13 +825,13 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                 .into_iter()
                 .fold((None, vec![]), |(blog, mut authors), link| {
                     let url: String = link.into();
-                    match User::from_url(conn, &url) {
+                    match User::get_or_fetch(&Context::build(conn, searcher), &url) {
                         Ok(u) => {
                             authors.push(u);
                             (blog, authors)
                         },
                         Err(_) => {
-                            (blog.or_else(|| Blog::from_url(conn, &url).ok()), authors)
+                            (blog.or_else(|| Blog::get_or_fetch(&Context::build(conn, searcher), &url).ok()), authors)
                         },
                     }
                 });
@@ -903,7 +840,7 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                 .object_props
                 .icon_object::<Image>()
                 .ok()
-                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
+                .and_then(|img| Media::from_activity(&Context::build(conn, searcher), &img).ok().map(|m| m.id));
 
             let title = article
                 .object_props
@@ -979,12 +916,8 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
             Ok(post)
         }
     }
-}
 
-impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
-    type Error = Error;
-
-    fn delete(&self, (conn, searcher): &(&Connection, &Searcher)) -> Result<Delete> {
+    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
         let mut act = Delete::default();
         act.delete_props
             .set_actor_link(self.get_authors(conn)?[0].clone().into_id())?;
@@ -1000,25 +933,116 @@ impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
-
-        for m in Mention::list_for_post(&conn, self.id)? {
-            m.delete(conn)?;
-        }
-        diesel::delete(self)
-            .execute(*conn)?;
-        searcher.delete_document(self);
         Ok(act)
     }
+}
 
-    fn delete_id(id: &str, actor_id: &str, (conn, searcher): &(&Connection, &Searcher)) -> Result<Delete> {
-        let actor = User::find_by_ap_url(conn, actor_id)?;
-        let post = Post::find_by_ap_url(conn, id)?;
-        let can_delete = post.get_authors(conn)?.into_iter().any(|a| actor.id == a.id);
+impl<'a> AsObject<User, Create, LicensedArticle, &Context<'a>> for Post {
+    type Error = Error;
+    type Output = Post;
+
+    fn activity(c: &Context, _actor: User, article: LicensedArticle, _id: &str) -> Result<Post> {
+        Post::from_activity(c.conn, c.searcher, article)
+    }
+}
+
+impl<'a> AsObject<User, Delete, LicensedArticle, &Context<'a>> for Post {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(c: &Context, actor: User, article: LicensedArticle, _id: &str) -> Result<()> {
+        let post = Post::find_by_ap_url(c.conn, &article.object.object_props.id_string()?)?;
+        let can_delete = post.get_authors(c.conn)?.into_iter().any(|a| actor.id == a.id);
         if can_delete {
-            post.delete(&(conn, searcher))
+            for m in Mention::list_for_post(c.conn, post.id)? {
+                m.delete(c.conn)?;
+            }
+            diesel::delete(&post)
+                .execute(c.conn)?;
+            c.searcher.delete_document(&post);
+            Ok(())
         } else {
             Err(Error::Unauthorized)
         }
+    }
+}
+
+impl<'a> AsObject<User, Update, LicensedArticle, &Context<'a>> for Post {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(c: &Context, actor: User, updated: LicensedArticle, _id: &str) -> Result<()> {
+        let conn = c.conn;
+        let searcher = c.searcher;
+        let id = updated.object
+            .object_props
+            .id_string()?;
+        let mut post = Post::find_by_ap_url(conn, &id)?;
+
+        if !post.is_author(conn, actor.id)? {
+            return Err(Error::Unauthorized);
+        }
+
+        if let Ok(title) = updated.object.object_props.name_string() {
+            post.slug = title.to_kebab_case();
+            post.title = title;
+        }
+
+        if let Ok(content) = updated.object.object_props.content_string() {
+            post.content = SafeString::new(&content);
+        }
+
+        if let Ok(subtitle) = updated.object.object_props.summary_string() {
+            post.subtitle = subtitle;
+        }
+
+        if let Ok(ap_url) = updated.object.object_props.url_string() {
+            post.ap_url = ap_url;
+        }
+
+        if let Ok(source) = updated.object.ap_object_props.source_object::<Source>() {
+            post.source = source.content;
+        }
+
+        if let Ok(license) = updated.custom_props.license_string() {
+            post.license = license;
+        }
+
+        let mut txt_hashtags = md_to_html(&post.source, "")
+            .2
+            .into_iter()
+            .map(|s| s.to_camel_case())
+            .collect::<HashSet<_>>();
+        if let Some(serde_json::Value::Array(mention_tags)) = updated.object.object_props.tag.clone() {
+            let mut mentions = vec![];
+            let mut tags = vec![];
+            let mut hashtags = vec![];
+            for tag in mention_tags {
+                serde_json::from_value::<link::Mention>(tag.clone())
+                    .map(|m| mentions.push(m))
+                    .ok();
+
+                serde_json::from_value::<Hashtag>(tag.clone())
+                    .map_err(Error::from)
+                    .and_then(|t| {
+                        let tag_name = t
+                            .name_string()?;
+                        if txt_hashtags.remove(&tag_name) {
+                            hashtags.push(t);
+                        } else {
+                            tags.push(t);
+                        }
+                        Ok(())
+                    })
+                    .ok();
+            }
+            post.update_mentions(conn, mentions)?;
+            post.update_tags(conn, tags)?;
+            post.update_hashtags(conn, hashtags)?;
+        }
+
+        post.update(conn, searcher)?;
+        Ok(())
     }
 }
 

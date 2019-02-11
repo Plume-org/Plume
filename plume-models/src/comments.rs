@@ -9,7 +9,7 @@ use instance::Instance;
 use mentions::Mention;
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{FromActivity, Notify, Deletable},
+    inbox::{AsActor, AsObject},
     Id, IntoId, PUBLIC_VISIBILTY,
 };
 use plume_common::utils;
@@ -18,7 +18,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::comments;
 use users::User;
-use {Connection, Error, Result};
+use {Connection, Context, Error, Result};
 
 #[derive(Queryable, Identifiable, Serialize, Clone)]
 pub struct Comment {
@@ -160,12 +160,48 @@ impl Comment {
             .set_cc_link_vec::<Id>(vec![])?;
         Ok(act)
     }
+
+    fn notify(&self, conn: &Connection) -> Result<()> {
+        for author in self.get_post(conn)?.get_authors(conn)? {
+            Notification::insert(
+                conn,
+                NewNotification {
+                    kind: notification_kind::COMMENT.to_string(),
+                    object_id: self.id,
+                    user_id: author.id,
+                },
+            )?;
+        }
+        Ok(())
+    }
+
+    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
+        let mut act = Delete::default();
+        act.delete_props
+            .set_actor_link(self.get_author(conn)?.into_id())?;
+
+        let mut tombstone = Tombstone::default();
+        tombstone
+            .object_props
+            .set_id_string(self.ap_url.clone()?)?;
+        act.delete_props
+            .set_object_object(tombstone)?;
+
+        act.object_props
+            .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))?;
+        act.object_props
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
+
+        Ok(act)
+    }
 }
 
-impl FromActivity<Note, Connection> for Comment {
+impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
     type Error = Error;
+    type Output = Self;
 
-    fn from_activity(conn: &Connection, note: Note, actor: Id) -> Result<Comment> {
+    fn activity(c: &Context, actor: User, note: Note, _id: &str) -> Result<Self> {
+        let conn = c.conn;
         let comm = {
             let previous_url = note
                 .object_props
@@ -201,8 +237,8 @@ impl FromActivity<Note, Connection> for Comment {
                     in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
                     post_id: previous_comment.map(|c| c.post_id)
                         .or_else(|_| Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>)?,
-                    author_id: User::from_url(conn, actor.as_ref())?.id,
-                    sensitive: false, // "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
+                    author_id: actor.id,
+                    sensitive: false, // TODO: "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
                     public_visibility
                 },
             )?;
@@ -247,7 +283,7 @@ impl FromActivity<Note, Connection> for Comment {
             let receivers_ap_url = to.chain(cc).chain(bto).chain(bcc)
                 .collect::<HashSet<_>>()//remove duplicates (don't do a query more than once)
                 .into_iter()
-                .map(|v| if let Ok(user) = User::from_url(conn,&v) {
+                .map(|v| if let Ok(user) = User::get_or_fetch(c, &v) {
                     vec![user]
                 } else {
                     vec![]// TODO try to fetch collection
@@ -272,21 +308,26 @@ impl FromActivity<Note, Connection> for Comment {
     }
 }
 
-impl Notify<Connection> for Comment {
+impl<'a> AsObject<User, Delete, Note, &Context<'a>> for Comment {
     type Error = Error;
+    type Output = ();
 
-    fn notify(&self, conn: &Connection) -> Result<()> {
-        for author in self.get_post(conn)?.get_authors(conn)? {
-            Notification::insert(
-                conn,
-                NewNotification {
-                    kind: notification_kind::COMMENT.to_string(),
-                    object_id: self.id,
-                    user_id: author.id,
-                },
-            )?;
+    fn activity(c: &Context, actor: User, note: Note, _id: &str) -> Result<()> {
+        let conn = c.conn;
+        let comment = Comment::find_by_ap_url(conn, note.object_props.id_string()?.as_ref())?;
+        if comment.author_id == actor.id {
+            for m in Mention::list_for_comment(&conn, comment.id)? {
+                m.delete(conn)?;
+            }
+            diesel::update(comments::table).filter(comments::in_response_to_id.eq(comment.id))
+                .set(comments::in_response_to_id.eq(comment.in_response_to_id))
+                .execute(conn)?;
+            diesel::delete(&comment)
+                .execute(conn)?;
+            Ok(())
+        } else {
+            Err(Error::Unauthorized)
         }
-        Ok(())
     }
 }
 
@@ -316,44 +357,3 @@ impl CommentTree {
     }
 }
 
-impl<'a> Deletable<Connection, Delete> for Comment {
-    type Error = Error;
-
-    fn delete(&self, conn: &Connection) -> Result<Delete> {
-        let mut act = Delete::default();
-        act.delete_props
-            .set_actor_link(self.get_author(conn)?.into_id())?;
-
-        let mut tombstone = Tombstone::default();
-        tombstone
-            .object_props
-            .set_id_string(self.ap_url.clone()?)?;
-        act.delete_props
-            .set_object_object(tombstone)?;
-
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
-
-        for m in Mention::list_for_comment(&conn, self.id)? {
-            m.delete(conn)?;
-        }
-        diesel::update(comments::table).filter(comments::in_response_to_id.eq(self.id))
-            .set(comments::in_response_to_id.eq(self.in_response_to_id))
-            .execute(conn)?;
-        diesel::delete(self)
-            .execute(conn)?;
-        Ok(act)
-    }
-
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) -> Result<Delete> {
-        let actor = User::find_by_ap_url(conn, actor_id)?;
-        let comment = Comment::find_by_ap_url(conn, id)?;
-        if comment.author_id == actor.id {
-            comment.delete(conn)
-        } else {
-            Err(Error::Unauthorized)
-        }
-    }
-}

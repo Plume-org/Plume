@@ -4,13 +4,13 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{Deletable, FromActivity, Notify},
+    inbox::AsObject,
     Id, IntoId, PUBLIC_VISIBILTY,
 };
-use posts::Post;
+use posts::{Post, LicensedArticle};
 use schema::likes;
 use users::User;
-use {Connection, Error, Result};
+use {Connection, Context, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Like {
@@ -56,41 +56,8 @@ impl Like {
 
         Ok(act)
     }
-}
 
-impl FromActivity<activity::Like, Connection> for Like {
-    type Error = Error;
-
-    fn from_activity(conn: &Connection, like: activity::Like, _actor: Id) -> Result<Like> {
-        let liker = User::from_url(
-            conn,
-            like.like_props
-                .actor
-                .as_str()?,
-        )?;
-        let post = Post::find_by_ap_url(
-            conn,
-            like.like_props
-                .object
-                .as_str()?,
-        )?;
-        let res = Like::insert(
-            conn,
-            NewLike {
-                post_id: post.id,
-                user_id: liker.id,
-                ap_url: like.object_props.id_string()?,
-            },
-        )?;
-        res.notify(conn)?;
-        Ok(res)
-    }
-}
-
-impl Notify<Connection> for Like {
-    type Error = Error;
-
-    fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &Connection) -> Result<()> {
         let post = Post::get(conn, self.post_id)?;
         for author in post.get_authors(conn)? {
             Notification::insert(
@@ -104,21 +71,8 @@ impl Notify<Connection> for Like {
         }
         Ok(())
     }
-}
 
-impl Deletable<Connection, activity::Undo> for Like {
-    type Error = Error;
-
-    fn delete(&self, conn: &Connection) -> Result<activity::Undo> {
-        diesel::delete(self)
-            .execute(conn)?;
-
-        // delete associated notification if any
-        if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
-            diesel::delete(&notif)
-                .execute(conn)?;
-        }
-
+    pub fn build_undo(&self, conn: &Connection) -> Result<activity::Undo> {
         let mut act = activity::Undo::default();
         act.undo_props
             .set_actor_link(User::get(conn, self.user_id)?.into_id(),)?;
@@ -133,12 +87,44 @@ impl Deletable<Connection, activity::Undo> for Like {
 
         Ok(act)
     }
+}
 
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) -> Result<activity::Undo> {
-        let like = Like::find_by_ap_url(conn, id)?;
-        let user = User::find_by_ap_url(conn, actor_id)?;
-        if user.id == like.user_id {
-            like.delete(conn)
+impl<'a> AsObject<User, activity::Like, LicensedArticle, &Context<'a>> for Post {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(c: &Context, actor: User, article: LicensedArticle, id: &str) -> Result<()> {
+        let post = Post::from_activity(&c.conn, &c.searcher, article)?;
+        let res = Like::insert(
+            &c.conn,
+            NewLike {
+                post_id: post.id,
+                user_id: actor.id,
+                ap_url: id.to_string(),
+            },
+        )?;
+        res.notify(&c.conn)?;
+        Ok(())
+    }
+}
+
+impl<'a> AsObject<User, activity::Undo, activity::Like, &Context<'a>> for Like {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(c: &Context, actor: User, like: activity::Like, _id: &str) -> Result<()> {
+        let conn = c.conn;
+        let like = Like::find_by_ap_url(conn, &like.object_props.id_string()?)?;
+        if actor.id == like.user_id {
+            diesel::delete(&like)
+                .execute(conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, like.id) {
+                diesel::delete(&notif)
+                    .execute(conn)?;
+            }
+            Ok(())
         } else {
             Err(Error::Unauthorized)
         }
@@ -147,6 +133,7 @@ impl Deletable<Connection, activity::Undo> for Like {
 
 impl NewLike {
     pub fn new(p: &Post, u: &User) -> Self {
+        // TODO: this URL is not valid
         let ap_url = format!("{}/like/{}", u.ap_url, p.ap_url);
         NewLike {
             post_id: p.id,

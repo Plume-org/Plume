@@ -1,4 +1,4 @@
-use activitypub::object::Note;
+use activitypub::{activity::Delete, object::Note};
 use rocket::{
     request::LenientForm,
     response::Redirect
@@ -9,12 +9,16 @@ use template_utils::Ructe;
 
 use std::time::Duration;
 
-use plume_common::{utils, activity_pub::{broadcast, ApRequest, 
-    ActivityStream, inbox::Deletable}};
+use plume_common::{
+    utils,
+    activity_pub::{broadcast, ApRequest, ActivityStream, inbox::Inbox}
+};
 use plume_models::{
     blogs::Blog,
     comments::*,
+    Context,
     db_conn::DbConn,
+    Error,
     instance::Instance,
     mentions::Mention,
     posts::Post,
@@ -22,7 +26,7 @@ use plume_models::{
     tags::Tag,
     users::User
 };
-use Worker;
+use {Searcher, Worker};
 use routes::errors::ErrorPage;
 
 #[derive(Default, FromForm, Debug, Validate, Serialize)]
@@ -101,11 +105,15 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
 }
 
 #[post("/~/<blog>/<slug>/comment/<id>/delete")]
-pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, worker: Worker) -> Result<Redirect, ErrorPage> {
+pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, worker: Worker, searcher: Searcher) -> Result<Redirect, ErrorPage> {
     if let Ok(comment) = Comment::get(&*conn, id) {
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&*conn)?;
-            let delete_activity = comment.delete(&*conn)?;
+            let delete_activity = comment.build_delete(&*conn)?;
+            Inbox::handle(&Context::build(&conn, &searcher), serde_json::to_value(&delete_activity).map_err(Error::from)?)
+                .with::<User, Delete, Comment, _>()
+                .done()?;
+
             let user_c = user.clone();
             worker.execute(move || broadcast(&user_c, delete_activity, dest));
             worker.execute_after(Duration::from_secs(10*60), move || {user.rotate_keypair(&conn).expect("Failed to rotate keypair");});
