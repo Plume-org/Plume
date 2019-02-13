@@ -314,12 +314,12 @@ msgstr ""
 msgid "Articles"
 msgstr "artikler"
 
-msgid "Followers"
-msgstr "Følgere"
+msgid "Subscribers"
+msgstr ""
 
 #, fuzzy
-msgid "Followed"
-msgstr "Følg"
+msgid "Subscriptions"
+msgstr "Lang beskrivelse"
 
 #, fuzzy
 msgid "Atom feed"
@@ -342,11 +342,11 @@ msgstr "Din profil"
 msgid "Open on {0}"
 msgstr ""
 
-msgid "Unfollow"
-msgstr "Slutt å følge"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Følg"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
 msgid "People {0} follows"
@@ -739,6 +739,19 @@ msgstr ""
 
 msgid "Use as avatar"
 msgstr ""
+
+#~ msgid "Followers"
+#~ msgstr "Følgere"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Følg"
+
+#~ msgid "Unfollow"
+#~ msgstr "Slutt å følge"
+
+#~ msgid "Follow"
+#~ msgstr "Følg"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

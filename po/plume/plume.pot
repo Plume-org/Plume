@@ -295,10 +295,10 @@ msgstr ""
 msgid "Articles"
 msgstr ""
 
-msgid "Followers"
+msgid "Subscribers"
 msgstr ""
 
-msgid "Followed"
+msgid "Subscriptions"
 msgstr ""
 
 msgid "Atom feed"
@@ -319,10 +319,10 @@ msgstr ""
 msgid "Open on {0}"
 msgstr ""
 
-msgid "Unfollow"
+msgid "Unsubscribe"
 msgstr ""
 
-msgid "Follow"
+msgid "Subscribe"
 msgstr ""
 
 msgid "People {0} follows"

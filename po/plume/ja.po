@@ -298,12 +298,12 @@ msgstr ""
 msgid "Articles"
 msgstr "記事"
 
-msgid "Followers"
-msgstr "フォロワー"
+msgid "Subscribers"
+msgstr ""
 
 #, fuzzy
-msgid "Followed"
-msgstr "フォロー"
+msgid "Subscriptions"
+msgstr "説明"
 
 #, fuzzy
 msgid "Atom feed"
@@ -324,11 +324,11 @@ msgstr "自分のプロフィールを編集"
 msgid "Open on {0}"
 msgstr ""
 
-msgid "Unfollow"
-msgstr "フォロー解除"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "フォロー"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
 msgid "People {0} follows"
@@ -699,6 +699,19 @@ msgstr "このメディアを記事に挿入するには、自分の記事にコ
 
 msgid "Use as avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "Followers"
+#~ msgstr "フォロワー"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "フォロー"
+
+#~ msgid "Unfollow"
+#~ msgstr "フォロー解除"
+
+#~ msgid "Follow"
+#~ msgstr "フォロー"
 
 #, fuzzy
 #~ msgid "Comment \"{0}\""

@@ -315,12 +315,12 @@ msgstr ""
 msgid "Articles"
 msgstr "Artikel"
 
-msgid "Followers"
-msgstr "Follower"
+msgid "Subscribers"
+msgstr ""
 
 #, fuzzy
-msgid "Followed"
-msgstr "Folgen"
+msgid "Subscriptions"
+msgstr "Beschreibung"
 
 #, fuzzy
 msgid "Atom feed"
@@ -342,12 +342,11 @@ msgstr "Ändere dein Profil"
 msgid "Open on {0}"
 msgstr ""
 
-#, fuzzy
-msgid "Unfollow"
-msgstr "Folgen"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Folgen"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
 msgid "People {0} follows"
@@ -732,6 +731,20 @@ msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Als Avatar verwenden"
+
+#~ msgid "Followers"
+#~ msgstr "Follower"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Folgen"
+
+#, fuzzy
+#~ msgid "Unfollow"
+#~ msgstr "Folgen"
+
+#~ msgid "Follow"
+#~ msgstr "Folgen"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

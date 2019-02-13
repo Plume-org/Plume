@@ -313,11 +313,12 @@ msgstr ""
 msgid "Articles"
 msgstr "Articles"
 
-msgid "Followers"
-msgstr "Abonné⋅e⋅s"
+msgid "Subscribers"
+msgstr ""
 
-msgid "Followed"
-msgstr "Suivi⋅e⋅s"
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Description"
 
 #, fuzzy
 msgid "Atom feed"
@@ -339,12 +340,11 @@ msgstr "Modifier votre profil"
 msgid "Open on {0}"
 msgstr ""
 
-#, fuzzy
-msgid "Unfollow"
-msgstr "S’abonner"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "S’abonner"
+msgid "Subscribe"
+msgstr ""
 
 msgid "People {0} follows"
 msgstr "Personnes suivies par {0}"
@@ -723,6 +723,19 @@ msgstr "Copiez-le dans vos articles pour insérer ce média."
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Utiliser comme avatar"
+
+#~ msgid "Followers"
+#~ msgstr "Abonné⋅e⋅s"
+
+#~ msgid "Followed"
+#~ msgstr "Suivi⋅e⋅s"
+
+#, fuzzy
+#~ msgid "Unfollow"
+#~ msgstr "S’abonner"
+
+#~ msgid "Follow"
+#~ msgstr "S’abonner"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

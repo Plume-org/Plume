@@ -316,12 +316,12 @@ msgstr ""
 msgid "Articles"
 msgstr "Статьи"
 
-msgid "Followers"
-msgstr "Подписчики"
+msgid "Subscribers"
+msgstr ""
 
 #, fuzzy
-msgid "Followed"
-msgstr "Подписаться"
+msgid "Subscriptions"
+msgstr "Описание"
 
 #, fuzzy
 msgid "Atom feed"
@@ -343,12 +343,11 @@ msgstr "Редактировать ваш профиль"
 msgid "Open on {0}"
 msgstr ""
 
-#, fuzzy
-msgid "Unfollow"
-msgstr "Подписаться"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Подписаться"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
 msgid "People {0} follows"
@@ -734,6 +733,20 @@ msgstr ""
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Использовать как аватар"
+
+#~ msgid "Followers"
+#~ msgstr "Подписчики"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Подписаться"
+
+#, fuzzy
+#~ msgid "Unfollow"
+#~ msgstr "Подписаться"
+
+#~ msgid "Follow"
+#~ msgstr "Подписаться"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

@@ -292,8 +292,12 @@ msgstr ""
 msgid "Articles"
 msgstr "المقالات"
 
-msgid "Followers"
-msgstr "المتابِعون"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "الوصف"
 
 #, fuzzy
 msgid "Atom feed"
@@ -314,11 +318,15 @@ msgstr "تعديل ملفك الشخصي"
 msgid "Open on {0}"
 msgstr "افتح على {0}"
 
-msgid "Unfollow"
-msgstr "الغاء المتابعة"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "اتبع"
+msgid "Subscribe"
+msgstr ""
+
+#, fuzzy
+msgid "People {0} follows"
+msgstr "{0} متابِعون"
 
 msgid "{0}'s followers"
 msgstr "{0} متابِعون"
@@ -701,6 +709,15 @@ msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض ال
 
 msgid "Use as avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#~ msgid "Followers"
+#~ msgstr "المتابِعون"
+
+#~ msgid "Unfollow"
+#~ msgstr "الغاء المتابعة"
+
+#~ msgid "Follow"
+#~ msgstr "اتبع"
 
 #~ msgid "Comment \"{0}\""
 #~ msgstr "تعليق \"{0}\""
