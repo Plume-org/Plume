@@ -316,11 +316,10 @@ msgid "Articles"
 msgstr "Artikel"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Abonomenten"
 
-#, fuzzy
 msgid "Subscriptions"
-msgstr "Beschreibung"
+msgstr "Abonoment"
 
 #, fuzzy
 msgid "Atom feed"
@@ -343,10 +342,10 @@ msgid "Open on {0}"
 msgstr ""
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Abbestellen"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Abonieren"
 
 #, fuzzy
 msgid "People {0} follows"
