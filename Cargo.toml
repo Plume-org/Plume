@@ -49,7 +49,7 @@ version = "*"
 [dependencies.multipart]
 default-features = false
 features = ["server"]
-version = "0.15"
+version = "0.16"
 
 [dependencies.plume-api]
 path = "plume-api"
