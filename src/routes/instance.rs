@@ -221,7 +221,7 @@ pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
     Ok(Json(json!({
         "version": "2.0",
         "software": {
-            "name": "Plume",
+            "name": "plume",
             "version": env!("CARGO_PKG_VERSION")
         },
         "protocols": ["activitypub"],
