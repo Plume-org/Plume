@@ -216,15 +216,18 @@ pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: 
     })
 }
 
-#[get("/nodeinfo")]
-pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
+#[get("/nodeinfo/<version>")]
+pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
+    if version != "2.0" || version != "2.1" {
+        return Err(ErrorPage::from(Error::NotFound));
+    }
+
     let local_inst = Instance::get_local(&*conn)?;
-    Ok(Json(json!({
-        "version": "2.0",
+    let mut doc = json!({
+        "version": version,
         "software": {
             "name": env!("CARGO_PKG_NAME"),
             "version": env!("CARGO_PKG_VERSION"),
-            "repository": env!("CARGO_PKG_REPOSITORY")
         },
         "protocols": ["activitypub"],
         "services": {
@@ -243,7 +246,13 @@ pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
             "nodeName": local_inst.name,
             "nodeDescription": local_inst.short_description
         }
-    })))
+    });
+
+    if version == "2.1" {
+        doc["software"]["repository"] = json!(env!("CARGO_PKG_REPOSITORY"));
+    }
+
+    Ok(Json(doc))
 }
 
 #[get("/about")]
