@@ -218,18 +218,20 @@ pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: 
 
 #[get("/nodeinfo")]
 pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
+    let local_inst = Instance::get_local(&*conn)?;
     Ok(Json(json!({
         "version": "2.0",
         "software": {
-            "name": "plume",
-            "version": env!("CARGO_PKG_VERSION")
+            "name": env!("CARGO_PKG_NAME"),
+            "version": env!("CARGO_PKG_VERSION"),
+            "repository": env!("CARGO_PKG_REPOSITORY")
         },
         "protocols": ["activitypub"],
         "services": {
             "inbound": [],
             "outbound": []
         },
-        "openRegistrations": true,
+        "openRegistrations": local_inst.open_registrations,
         "usage": {
             "users": {
                 "total": User::count_local(&*conn)?
@@ -237,7 +239,10 @@ pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
             "localPosts": Post::count_local(&*conn)?,
             "localComments": Comment::count_local(&*conn)?
         },
-        "metadata": {}
+        "metadata": {
+            "nodeName": local_inst.name,
+            "nodeDescription": local_inst.short_description
+        }
     })))
 }
 
