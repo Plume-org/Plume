@@ -11,7 +11,11 @@ pub fn nodeinfo() -> Content<String> {
         "links": [
             {
                 "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0",
-                "href": ap_url(&format!("{domain}/nodeinfo", domain = BASE_URL.as_str()))
+                "href": ap_url(&format!("{domain}/nodeinfo/2.0", domain = BASE_URL.as_str()))
+            },
+            {
+                "rel": "http://nodeinfo.diaspora.software/ns/schema/2.1",
+                "href": ap_url(&format!("{domain}/nodeinfo/2.1", domain = BASE_URL.as_str()))
             }
         ]
     }).to_string())

@@ -216,20 +216,25 @@ pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: 
     })
 }
 
-#[get("/nodeinfo")]
-pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
-    Ok(Json(json!({
-        "version": "2.0",
+#[get("/nodeinfo/<version>")]
+pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
+    if version != "2.0" || version != "2.1" {
+        return Err(ErrorPage::from(Error::NotFound));
+    }
+
+    let local_inst = Instance::get_local(&*conn)?;
+    let mut doc = json!({
+        "version": version,
         "software": {
-            "name": "Plume",
-            "version": env!("CARGO_PKG_VERSION")
+            "name": env!("CARGO_PKG_NAME"),
+            "version": env!("CARGO_PKG_VERSION"),
         },
         "protocols": ["activitypub"],
         "services": {
             "inbound": [],
             "outbound": []
         },
-        "openRegistrations": true,
+        "openRegistrations": local_inst.open_registrations,
         "usage": {
             "users": {
                 "total": User::count_local(&*conn)?
@@ -237,8 +242,17 @@ pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
             "localPosts": Post::count_local(&*conn)?,
             "localComments": Comment::count_local(&*conn)?
         },
-        "metadata": {}
-    })))
+        "metadata": {
+            "nodeName": local_inst.name,
+            "nodeDescription": local_inst.short_description
+        }
+    });
+
+    if version == "2.1" {
+        doc["software"]["repository"] = json!(env!("CARGO_PKG_REPOSITORY"));
+    }
+
+    Ok(Json(doc))
 }
 
 #[get("/about")]
