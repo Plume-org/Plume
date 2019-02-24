@@ -63,6 +63,22 @@ msgstr "Edytuj {0}"
 msgid "You need to be logged in order to reshare a post"
 msgstr "Musisz się zalogować, aby udostępnić wpis"
 
+#, fuzzy
+msgid "Password reset"
+msgstr "Hasło"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:199
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
 
@@ -434,6 +450,36 @@ msgstr "Brak wyników dla tego kryterium"
 
 msgid "No more result for your query"
 msgstr "Nie ma więcej wyników pasujących do tych kryteriów"
+
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Hasło"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Konfiguracja"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Aktualizuj konto"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Adres e-mail"
+
+msgid "Send reset link"
+msgstr ""
 
 msgid "Login"
 msgstr "Zaloguj się"

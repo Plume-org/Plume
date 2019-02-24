@@ -1,19 +1,24 @@
+use lettre::EmailTransport;
+use lettre_email::EmailBuilder;
 use rocket::{
+    State,
     http::{Cookie, Cookies, SameSite, uri::Uri},
     response::Redirect,
-    request::{LenientForm,FlashMessage}
+    request::{LenientForm, FlashMessage, Form}
 };
 use rocket::http::ext::IntoOwned;
 use rocket_i18n::I18n;
-use std::borrow::Cow;
+use std::{borrow::Cow, env, sync::{Arc, Mutex}, time::Instant};
 use validator::{Validate, ValidationError, ValidationErrors};
 use template_utils::Ructe;
 
 use plume_models::{
+    BASE_URL, Error,
     db_conn::DbConn,
     users::{User, AUTH_COOKIE}
 };
-
+use mail::Mailer;
+use routes::errors::ErrorPage;
 
 #[get("/login?<m>")]
 pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n) -> Ructe {
@@ -76,7 +81,7 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
 
         let uri = Uri::parse(&destination)
             .map(|x| x.into_owned())
-           .map_err(|_| render!(session::login(
+            .map_err(|_| render!(session::login(
                 &(&*conn, &intl.catalog, None),
                 None,
                 &*form,
@@ -100,4 +105,113 @@ pub fn delete(mut cookies: Cookies) -> Redirect {
         cookies.remove_private(cookie);
     }
     Redirect::to("/")
+}
+
+pub struct ResetRequest {
+    pub mail: String,
+    pub id: String,
+    pub creation_date: Instant,
+}
+
+#[get("/password-reset")]
+pub fn password_reset_request_form(conn: DbConn, intl: I18n) -> Ructe {
+    render!(session::password_reset_request(
+        &(&*conn, &intl.catalog, None),
+        &ResetForm::default(),
+        ValidationErrors::default()
+    ))
+}
+
+#[derive(FromForm, Validate, Default)]
+pub struct ResetForm {
+    #[validate(email)]
+    pub email: String,
+}
+
+#[post("/password-reset", data = "<form>")]
+pub fn password_reset_request(
+    conn: DbConn,
+    intl: I18n,
+    mail: State<Arc<Mutex<Mailer>>>,
+    form: Form<ResetForm>,
+    requests: State<Arc<Mutex<Vec<ResetRequest>>>>
+) -> Ructe {
+    if User::find_by_email(&*conn, &form.email).is_ok() {
+        let id = plume_common::utils::random_hex();
+        {
+            let mut requests = requests.lock().unwrap();
+            requests.push(ResetRequest {
+                mail: form.email.clone(),
+                id: id.clone(),
+                creation_date: Instant::now(),
+            });
+        }
+        let link = format!("https://{}/password-reset/{}", *BASE_URL, id);
+        let message = EmailBuilder::new()
+            .from(env::var("MAIL_ADDRESS")
+                .or_else(|_| Ok(format!("{}@{}", env::var("MAIL_USER")?, env::var("MAIL_SERVER")?)) as Result<_, env::VarError>)
+                .expect("Mail server is not correctly configured"))
+            .to(form.email.clone())
+            .subject(i18n!(intl.catalog, "Password reset"))
+            .text(i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link))
+            .build()
+            .expect("Couldn't build password reset mail");
+        match *mail.lock().unwrap() {
+            Some(ref mut mail) => { mail.send(&message).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
+            None => {}
+        }
+    }
+    render!(session::password_reset_request_ok(
+        &(&*conn, &intl.catalog, None)
+    ))
+}
+
+#[get("/password-reset/<token>")]
+pub fn password_reset_form(conn: DbConn, intl: I18n, token: String, requests: State<Arc<Mutex<Vec<ResetRequest>>>>) -> Result<Ructe, ErrorPage> {
+    requests.lock().unwrap().iter().find(|x| x.id == token.clone()).ok_or(Error::NotFound)?;
+    Ok(render!(session::password_reset(
+        &(&*conn, &intl.catalog, None),
+        &NewPasswordForm::default(),
+        ValidationErrors::default()
+    )))
+}
+
+#[derive(FromForm, Default, Validate)]
+#[validate(
+    schema(
+        function = "passwords_match",
+        skip_on_field_errors = "false",
+        message = "Passwords are not matching"
+    )
+)]
+pub struct NewPasswordForm {
+    pub password: String,
+    pub password_confirmation: String,
+}
+
+fn passwords_match(form: &NewPasswordForm) -> Result<(), ValidationError> {
+    if form.password != form.password_confirmation {
+        Err(ValidationError::new("password_match"))
+    } else {
+        Ok(())
+    }
+}
+
+#[post("/password-reset/<token>", data = "<form>")]
+pub fn password_reset(
+    conn: DbConn,
+    intl: I18n,
+    token: String,
+    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+    form: Form<NewPasswordForm>
+) -> Result<Redirect, ErrorPage> {
+    let requests = requests.lock().unwrap();
+    let req = requests.iter().find(|x| x.id == token.clone()).ok_or(Error::NotFound)?;
+    if req.creation_date.elapsed().as_secs() < 60 * 15 { // Reset link is only valid for 15 minutes
+        let user = User::find_by_email(&*conn, &req.mail)?;
+        user.reset_password(&*conn, &form.password)?;
+        Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Your password was successfully reset."))))
+    } else {
+        Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Sorry, but the link expired. Try again"))))
+    }
 }

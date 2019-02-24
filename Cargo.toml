@@ -17,6 +17,8 @@ gettext-macros = "0.3"
 gettext-utils = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
+lettre = "0.8"
+lettre_email = "0.8"
 num_cpus = "1.0"
 rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
@@ -73,6 +75,7 @@ rsass = "0.9"
 default = ["postgres"]
 postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
+debug-mailer = []
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front"]

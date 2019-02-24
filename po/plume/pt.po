@@ -69,6 +69,22 @@ msgstr "Mudar {0}"
 msgid "You need to be logged in order to reshare a post"
 msgstr "Você precisa estar logado para gostar de um post"
 
+#, fuzzy
+msgid "Password reset"
+msgstr "Senha"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Your password was successfully reset."
+msgstr "Sua senha não pode estar vazia"
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Você precisa estar autenticado para acessar seu painel de controle"
 
@@ -457,6 +473,36 @@ msgstr "Ir para a sua galeria"
 msgid "No more result for your query"
 msgstr ""
 
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Senha"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Configuração"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Atualizar conta"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Email"
+
+msgid "Send reset link"
+msgstr ""
+
 msgid "Login"
 msgstr "Entrar"
 
@@ -739,9 +785,6 @@ msgstr "Utilizar como avatar"
 #~ msgid "We need an email or a username to identify you"
 #~ msgstr ""
 #~ "Precisamos de um endereço de e-mail ou nome de usuário para identificá-lo"
-
-#~ msgid "Your password can't be empty"
-#~ msgstr "Sua senha não pode estar vazia"
 
 #~ msgid "Passwords are not matching"
 #~ msgstr "As senhas não correspondem"

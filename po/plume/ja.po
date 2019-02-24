@@ -71,6 +71,22 @@ msgstr "編集"
 msgid "You need to be logged in order to reshare a post"
 msgstr "投稿をいいねするにはログインする必要があります"
 
+#, fuzzy
+msgid "Password reset"
+msgstr "パスワード"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Your password was successfully reset."
+msgstr "パスワードは空にできません"
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 msgid "You need to be logged in order to access your dashboard"
 msgstr "ダッシュボードにアクセスするにはログインする必要があります"
 
@@ -463,6 +479,36 @@ msgstr "ギャラリーを参照"
 msgid "No more result for your query"
 msgstr ""
 
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "パスワード"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "設定"
+
+#, fuzzy
+msgid "Update password"
+msgstr "アカウントをアップデート"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "メールアドレス"
+
+msgid "Send reset link"
+msgstr ""
+
 msgid "Login"
 msgstr "ログイン"
 
@@ -755,9 +801,6 @@ msgstr "アバターとして使う"
 
 #~ msgid "We need an email or a username to identify you"
 #~ msgstr "あなたを識別するために、メールアドレスかユーザー名が必要です"
-
-#~ msgid "Your password can't be empty"
-#~ msgstr "パスワードは空にできません"
 
 #~ msgid "Passwords are not matching"
 #~ msgstr "パスワードが一致しません"

@@ -70,6 +70,22 @@ msgstr "تعديل {0}"
 msgid "You need to be logged in order to reshare a post"
 msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
 
+#, fuzzy
+msgid "Password reset"
+msgstr "كلمة السر"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Your password was successfully reset."
+msgstr "لا يمكن ترك خانة الكلمة السرية فارغة"
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 msgid "You need to be logged in order to access your dashboard"
 msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
 
@@ -457,6 +473,36 @@ msgstr "الانتقال إلى معرضك"
 msgid "No more result for your query"
 msgstr ""
 
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "كلمة السر"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "الإعدادات"
+
+#, fuzzy
+msgid "Update password"
+msgstr "تحديث الحساب"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "البريد الالكتروني"
+
+msgid "Send reset link"
+msgstr ""
+
 msgid "Login"
 msgstr "تسجيل الدخول"
 
@@ -764,9 +810,6 @@ msgstr "استخدمها كصورة رمزية"
 
 #~ msgid "We need an email or a username to identify you"
 #~ msgstr "نحن بحاجة إلى عنوان بريد إلكتروني أو اسم مستخدم للتعرف عليك"
-
-#~ msgid "Your password can't be empty"
-#~ msgstr "لا يمكن ترك خانة الكلمة السرية فارغة"
 
 #~ msgid "Passwords are not matching"
 #~ msgstr "الكلمات السرية غير متشابهة"
