@@ -76,19 +76,19 @@ msgstr ""
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
-# src/routes/session.rs:155
+# src/routes/session.rs:169
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:156
+# src/routes/session.rs:170
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:213
+# src/routes/session.rs:231
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:215
+# src/routes/session.rs:233
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 

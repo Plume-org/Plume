@@ -1,5 +1,4 @@
 use lettre::EmailTransport;
-use lettre_email::EmailBuilder;
 use rocket::{
     State,
     http::{Cookie, Cookies, SameSite, uri::Uri},
@@ -8,7 +7,7 @@ use rocket::{
 };
 use rocket::http::ext::IntoOwned;
 use rocket_i18n::I18n;
-use std::{borrow::Cow, env, sync::{Arc, Mutex}, time::Instant};
+use std::{borrow::Cow, sync::{Arc, Mutex}, time::Instant};
 use validator::{Validate, ValidationError, ValidationErrors};
 use template_utils::Ructe;
 
@@ -17,7 +16,7 @@ use plume_models::{
     db_conn::DbConn,
     users::{User, AUTH_COOKIE}
 };
-use mail::Mailer;
+use mail::{build_mail, Mailer};
 use routes::errors::ErrorPage;
 
 #[get("/login?<m>")]
@@ -107,10 +106,17 @@ pub fn delete(mut cookies: Cookies) -> Redirect {
     Redirect::to("/")
 }
 
+#[derive(Clone)]
 pub struct ResetRequest {
     pub mail: String,
     pub id: String,
     pub creation_date: Instant,
+}
+
+impl PartialEq for ResetRequest {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
 }
 
 #[get("/password-reset")]
@@ -136,7 +142,7 @@ pub fn password_reset_request(
     form: Form<ResetForm>,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>
 ) -> Ructe {
-    if User::find_by_email(&*conn, &form.email).is_ok() {
+    if User::find_by_email(&*conn, &form.email).is_ok() && requests.lock().unwrap().iter().find(|x| x.mail == form.email.clone()).is_none() {
         let id = plume_common::utils::random_hex();
         {
             let mut requests = requests.lock().unwrap();
@@ -146,16 +152,23 @@ pub fn password_reset_request(
                 creation_date: Instant::now(),
             });
         }
+        // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
+        let to_remove = {
+            let lock = requests.lock().unwrap();
+            lock.clone().into_iter()
+                .filter(|r| r.creation_date.elapsed().as_secs() > 24 * 60)
+                .collect::<Vec<_>>()
+        };
+        for req in to_remove {
+            requests.lock().unwrap().remove_item(&req);
+        }
+
         let link = format!("https://{}/password-reset/{}", *BASE_URL, id);
-        let message = EmailBuilder::new()
-            .from(env::var("MAIL_ADDRESS")
-                .or_else(|_| Ok(format!("{}@{}", env::var("MAIL_USER")?, env::var("MAIL_SERVER")?)) as Result<_, env::VarError>)
-                .expect("Mail server is not correctly configured"))
-            .to(form.email.clone())
-            .subject(i18n!(intl.catalog, "Password reset"))
-            .text(i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link))
-            .build()
-            .expect("Couldn't build password reset mail");
+        let message = build_mail(
+            form.email.clone(),
+            i18n!(intl.catalog, "Password reset"),
+            i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link)
+        );
         match *mail.lock().unwrap() {
             Some(ref mut mail) => { mail.send(&message).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
             None => {}
@@ -204,14 +217,27 @@ pub fn password_reset(
     token: String,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
     form: Form<NewPasswordForm>
-) -> Result<Redirect, ErrorPage> {
-    let requests = requests.lock().unwrap();
-    let req = requests.iter().find(|x| x.id == token.clone()).ok_or(Error::NotFound)?;
-    if req.creation_date.elapsed().as_secs() < 60 * 15 { // Reset link is only valid for 15 minutes
-        let user = User::find_by_email(&*conn, &req.mail)?;
-        user.reset_password(&*conn, &form.password)?;
-        Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Your password was successfully reset."))))
-    } else {
-        Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Sorry, but the link expired. Try again"))))
-    }
+) -> Result<Redirect, Ructe> {
+    form.validate()
+        .and_then(|_| {
+            let req = {
+                let req_lock = requests.lock().unwrap();
+                req_lock.iter().find(|x| x.id == token.clone()).expect("Couldn't find the password reset request").clone()
+            };
+            if req.creation_date.elapsed().as_secs() < 60 * 2 { // Reset link is only valid for 2 hours
+                requests.lock().unwrap().remove_item(&req);
+                let user = User::find_by_email(&*conn, &req.mail).expect("User not found");
+                user.reset_password(&*conn, &form.password).ok();
+                Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Your password was successfully reset."))))
+            } else {
+                Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Sorry, but the link expired. Try again"))))
+            }
+        })
+        .map_err(|err| {
+            render!(session::password_reset(
+                &(&*conn, &intl.catalog, None),
+                &form,
+                err
+            ))
+        })
 }
