@@ -161,7 +161,7 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<
 #[post("/@/<name>/follow", rank = 2)]
 pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        &i18n!(i18n.catalog, "You need to be logged in order to follow someone"),
+        &i18n!(i18n.catalog, "You need to be logged in order to subscribe to someone"),
         uri!(follow: name = name),
     )
 }

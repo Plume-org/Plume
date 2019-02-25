@@ -18,9 +18,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "{0} la inn en kommentar til artikkelen din"
 
-#, fuzzy
-msgid "{0} is now following you."
-msgstr "{0} har begynt å følge deg"
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -81,7 +81,7 @@ msgid "You need to be logged in order to access your dashboard"
 msgstr "Du må være logget inn for å redigere profilen din"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Du må være logget inn for å følge noen"
 
 #, fuzzy
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Articles from {}"
 msgstr "Om {0}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -349,12 +349,12 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "People {0} follows"
-msgstr "Én følger"
+msgid "{0}'s subscriptions'"
+msgstr "Lang beskrivelse"
 
 #, fuzzy
-msgid "{0}'s followers"
-msgstr "Én følger"
+msgid "{0}'s subscribers"
+msgstr "Lang beskrivelse"
 
 msgid "Respond"
 msgstr "Svar"
@@ -739,6 +739,18 @@ msgstr ""
 
 msgid "Use as avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "{0}'s followers"
+#~ msgstr "Én følger"
+
+#, fuzzy
+#~ msgid "{0} is now following you."
+#~ msgstr "{0} har begynt å følge deg"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Én følger"
 
 #~ msgid "Followers"
 #~ msgstr "Følgere"

@@ -18,7 +18,7 @@ msgid "{0} commented your article."
 msgstr "{0} hat deinen Artikel kommentiert"
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 #, fuzzy
@@ -79,7 +79,7 @@ msgid "You need to be logged in order to access your dashboard"
 msgstr "Du musst eingeloggt sein, um dein Dashboard zu sehen"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Du musst eingeloggt sein, um jemandem zu folgen"
 
 #, fuzzy
@@ -175,7 +175,7 @@ msgid "Articles from {}"
 msgstr "Artikel von {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Hier gibts noch nichts. Versuche dich mehr Leuten anzuschließen."
 
 msgid "Name"
@@ -348,11 +348,12 @@ msgid "Subscribe"
 msgstr "Abonieren"
 
 #, fuzzy
-msgid "People {0} follows"
-msgstr "{0}s Follower"
+msgid "{0}'s subscriptions'"
+msgstr "Abonoment"
 
-msgid "{0}'s followers"
-msgstr "{0}s Follower"
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Abonoment"
 
 msgid "Respond"
 msgstr "Antworten"
@@ -730,6 +731,13 @@ msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Als Avatar verwenden"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "{0}s Follower"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "{0}s Follower"
 
 #~ msgid "Followers"
 #~ msgstr "Follower"

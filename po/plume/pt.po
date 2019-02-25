@@ -18,9 +18,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "{0} comentou o seu artigo"
 
-#, fuzzy
-msgid "{0} is now following you."
-msgstr "{0} começou a seguir você"
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -72,7 +72,8 @@ msgstr "Você precisa estar logado para gostar de um post"
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Você precisa estar autenticado para acessar seu painel de controle"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Você precisa estar autenticado para poder seguir alguém"
 
 msgid "You need to be logged in order to edit your profile"
@@ -161,7 +162,8 @@ msgstr "Todos os artigos do Fediverse"
 msgid "Articles from {}"
 msgstr "Artigos de {0}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Ainda não há nada para ver aqui. Tente seguir mais pessoas."
 
 msgid "Name"
@@ -325,11 +327,12 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "People {0} follows"
-msgstr "Seguidores de {0}"
+msgid "{0}'s subscriptions'"
+msgstr "Descrição"
 
-msgid "{0}'s followers"
-msgstr "Seguidores de {0}"
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Descrição"
 
 msgid "Respond"
 msgstr "Responder"
@@ -690,6 +693,17 @@ msgstr "Copie-o em seus artigos para inserir esta mídia."
 
 msgid "Use as avatar"
 msgstr "Utilizar como avatar"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "Seguidores de {0}"
+
+#, fuzzy
+#~ msgid "{0} is now following you."
+#~ msgstr "{0} começou a seguir você"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Seguidores de {0}"
 
 #~ msgid "Followers"
 #~ msgstr "Seguidores"

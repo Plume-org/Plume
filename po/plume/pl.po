@@ -18,8 +18,8 @@ msgid "{0} commented your article."
 msgstr "{0} skomentował(a) Twój artykuł."
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
-msgstr "{0} zaczął(-eła) Cię obserwować."
+msgid "{0} is subscribed to you."
+msgstr ""
 
 msgid "{0} liked your article."
 msgstr "{0} polubił(a) Twój artykuł."
@@ -66,7 +66,8 @@ msgstr "Musisz się zalogować, aby udostępnić wpis"
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Musisz się zalogować, aby zacząć obserwować innych"
 
 msgid "You need to be logged in order to edit your profile"
@@ -153,7 +154,8 @@ msgstr "Wszystkie artykuły w Fediwersum"
 msgid "Articles from {}"
 msgstr "Artykuły z {}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Nie ma tutaj niczego. Spróbuj zacząć śledzić więcej osób."
 
 msgid "Name"
@@ -309,11 +311,12 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "People {0} follows"
-msgstr "Obserwujący {0}"
+msgid "{0}'s subscriptions'"
+msgstr "Opis"
 
-msgid "{0}'s followers"
-msgstr "Obserwujący {0}"
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Opis"
 
 msgid "Respond"
 msgstr "Odpowiedz"
@@ -666,6 +669,17 @@ msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialn
 
 msgid "Use as avatar"
 msgstr "Użyj jako awataru"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "Obserwujący {0}"
+
+# src/template_utils.rs:35
+#~ msgid "{0} is now following you."
+#~ msgstr "{0} zaczął(-eła) Cię obserwować."
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Obserwujący {0}"
 
 #~ msgid "Followers"
 #~ msgstr "Śledzący"

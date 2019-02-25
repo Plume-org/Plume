@@ -19,7 +19,7 @@ msgid "{0} commented your article."
 msgstr "{0} прокомментировал(а) вашу статью"
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 #, fuzzy
@@ -80,7 +80,7 @@ msgid "You need to be logged in order to access your dashboard"
 msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Вы должны войти чтобы подписаться на кого-либо"
 
 #, fuzzy
@@ -178,7 +178,7 @@ msgid "Articles from {}"
 msgstr "Статьи с {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 "Пока что здесь ничего нет. Попробуйте подписаться на большее число людей."
 
@@ -350,12 +350,12 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "People {0} follows"
-msgstr "Один подписчик"
+msgid "{0}'s subscriptions'"
+msgstr "Описание"
 
 #, fuzzy
-msgid "{0}'s followers"
-msgstr "Один подписчик"
+msgid "{0}'s subscribers"
+msgstr "Описание"
 
 msgid "Respond"
 msgstr "Ответить"
@@ -733,6 +733,14 @@ msgstr ""
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Использовать как аватар"
+
+#, fuzzy
+#~ msgid "{0}'s followers"
+#~ msgstr "Один подписчик"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Один подписчик"
 
 #~ msgid "Followers"
 #~ msgstr "Подписчики"
