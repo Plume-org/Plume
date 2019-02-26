@@ -237,6 +237,12 @@ msgstr "Rediger kontoen din"
 msgid "Your Profile"
 msgstr "Din profil"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
 #, fuzzy
 msgid "Display name"
 msgstr "Visningsnavn"
@@ -519,6 +525,15 @@ msgstr "Tittel"
 msgid "Content"
 msgstr "Innhold"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+#, fuzzy
+msgid "Upload media"
+msgstr "Din kommentar"
+
 # src/template_utils.rs:143
 msgid "Tags, separated by commas"
 msgstr ""
@@ -702,7 +717,14 @@ msgstr ""
 msgid "You don't have any media yet."
 msgstr ""
 
+#, fuzzy
+msgid "Content warning: {0}"
+msgstr "Innhold"
+
 msgid "Delete"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Media upload"

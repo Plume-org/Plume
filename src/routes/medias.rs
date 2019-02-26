@@ -5,14 +5,17 @@ use rocket_i18n::I18n;
 use std::fs;
 use plume_models::{Error, db_conn::DbConn, medias::*, users::User};
 use template_utils::Ructe;
-use routes::errors::ErrorPage;
+use routes::{Page, errors::ErrorPage};
 
-#[get("/medias")]
-pub fn list(user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let medias = Media::for_user(&*conn, user.id)?;
+#[get("/medias?<page>")]
+pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let medias = Media::page_for_user(&*conn, &user, page.limits())?;
     Ok(render!(medias::index(
-        &(&*conn, &intl.catalog, Some(user)),
-        medias
+        &(&*conn, &intl.catalog, Some(user.clone())),
+        medias,
+        page.0,
+        Page::total(Media::count_for_user(&*conn, &user)? as i32)
     )))
 }
 
@@ -99,7 +102,7 @@ pub fn delete(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> 
     if media.owner_id == user.id {
         media.delete(&*conn)?;
     }
-    Ok(Redirect::to(uri!(list)))
+    Ok(Redirect::to(uri!(list: page = _)))
 }
 
 #[post("/medias/<id>/avatar")]

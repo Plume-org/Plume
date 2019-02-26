@@ -1,10 +1,9 @@
 @use plume_models::medias::Media;
-@use plume_models::safe_string::SafeString;
 @use templates::base;
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, medias: Vec<Media>)
+@(ctx: BaseContext, medias: Vec<Media>, page: i32, n_pages: i32)
 
 @:base(ctx, i18n!(ctx.1, "Your media"), {}, {}, {
     <h1>@i18n!(ctx.1, "Your media")</h1>
@@ -12,22 +11,29 @@
         <a href="@uri!(medias::new)" class="inline-block button">@i18n!(ctx.1, "Upload")</a>
     </div>
 
-    <section>
-        @if medias.is_empty() {
-            <p>@i18n!(ctx.1, "You don't have any media yet.")</p>
+    @if medias.is_empty() {
+        <p>@i18n!(ctx.1, "You don't have any media yet.")</p>
+    }
+
+    <div class="cards spaced">
+        @for media in medias {
+          <div class="card">
+              <div class="cover" style="@media.preview_image(ctx.0)"></div>
+              <main>
+                  <p class="p-summary">@media.alt_text</p>
+                  @if let Some(cw) = media.content_warning {
+                      <p>@i18n!(ctx.1, "Content warning: {0}"; cw)</p>
+                  }
+              </main>
+              <footer>
+                <form action="@uri!(medias::delete: id = media.id)" class="inline" method="POST">
+                    <input type="submit" value="@i18n!(ctx.1, "Delete")"/>
+                </form>
+                &mdash;
+                <a href="@uri!(medias::details: id = media.id)">@i18n!(ctx.1, "Details")</a>
+              </footer>
+          </div>
         }
-        <div class="list">
-            @for media in medias {
-                <div class="card flex">
-                    @Html(media.preview_html(ctx.0).unwrap_or(SafeString::new("")))
-                    <main class="grow">
-                        <p><a href="@uri!(medias::details: id = media.id)">@media.alt_text</a></p>
-                    </main>
-                    <form action="@uri!(medias::delete: id = media.id)" class="inline" method="POST">
-                        <input type="submit" value="@i18n!(ctx.1, "Delete")"/>
-                    </form>
-                </div>
-            }
-        </div>
-    </section>
+    </div>
+    @paginate(ctx.1, page, n_pages)
 })

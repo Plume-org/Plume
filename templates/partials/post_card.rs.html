@@ -16,7 +16,7 @@
     <main>
         <p class="p-summary">@article.subtitle</p>
     </main>
-    <p class="author">
+    <footer class="authors">
         @Html(i18n!(ctx.1, "By {0}"; format!(
             "<a class=\"p-author h-card\" href=\"{}\">{}</a>",
             uri!(user::details: name = article.get_authors(ctx.0).unwrap_or_default()[0].get_fqn(ctx.0)),
@@ -29,6 +29,6 @@
         @if !article.published {
         ⋅ @i18n!(ctx.1, "Draft")
         }
-    </p>
+    </footer>
 </div>
 

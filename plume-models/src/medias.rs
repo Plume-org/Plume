@@ -56,6 +56,23 @@ impl Media {
             .map_err(Error::from)
     }
 
+    pub fn page_for_user(conn: &Connection, user: &User, (min, max): (i32, i32)) -> Result<Vec<Media>> {
+        medias::table
+            .filter(medias::owner_id.eq(user.id))
+            .offset(min as i64)
+            .limit((max - min) as i64)
+            .load::<Media>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
+        medias::table
+            .filter(medias::owner_id.eq(user.id))
+            .count()
+            .get_result(conn)
+            .map_err(Error::from)
+    }
+
     pub fn category(&self) -> MediaCategory {
         match &*self
             .file_path
@@ -71,23 +88,18 @@ impl Media {
         }
     }
 
-    pub fn preview_html(&self, conn: &Connection) -> Result<SafeString> {
-        let url = self.url(conn)?;
-        Ok(match self.category() {
-            MediaCategory::Image => SafeString::new(&format!(
-                r#"<img src="{}" alt="{}" title="{}" class=\"preview\">"#,
-                url, escape(&self.alt_text), escape(&self.alt_text)
-            )),
-            MediaCategory::Audio => SafeString::new(&format!(
-                r#"<audio src="{}" title="{}" class="preview"></audio>"#,
-                url, escape(&self.alt_text)
-            )),
-            MediaCategory::Video => SafeString::new(&format!(
-                r#"<video src="{}" title="{}" class="preview"></video>"#,
-                url, escape(&self.alt_text)
-            )),
-            MediaCategory::Unknown => SafeString::new(""),
-        })
+    pub fn preview_image(&self, conn: &Connection) -> String {
+        let (url, is_icon) = match self.category() {
+            MediaCategory::Image => (self.url(conn).unwrap_or(String::new()), false),
+            MediaCategory::Audio => ("/static/images/audio-file.svg".into(), true),
+            MediaCategory::Video => ("/static/images/video-file.svg".into(), true),
+            MediaCategory::Unknown => ("/static/images/unknown-file.svg".into(), true),
+        };
+        if is_icon {
+            format!("background-image: url('{}'); background-color: #7765E3; background-repeat: no-repeat; background-position: center; background-size: 4em;", url)
+        } else {
+            format!("background-image: url('{}')", url)
+        }
     }
 
     pub fn html(&self, conn: &Connection) -> Result<SafeString> {

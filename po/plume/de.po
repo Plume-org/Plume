@@ -232,6 +232,13 @@ msgstr "Ändere deinen Account"
 msgid "Your Profile"
 msgstr "Dein Profil"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+#, fuzzy
+msgid "Upload an avatar"
+msgstr "Als Avatar verwenden"
+
 #, fuzzy
 msgid "Display name"
 msgstr "Anzeigename"
@@ -495,6 +502,15 @@ msgstr "Untertitel"
 msgid "Content"
 msgstr "Inhalt"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+#, fuzzy
+msgid "Upload media"
+msgstr "Hochladen"
+
 # src/template_utils.rs:143
 msgid "Tags, separated by commas"
 msgstr ""
@@ -690,8 +706,15 @@ msgstr "Hochladen"
 msgid "You don't have any media yet."
 msgstr "Derzeit sind noch keine Mediendateien hochgeladen."
 
+#, fuzzy
+msgid "Content warning: {0}"
+msgstr "Warnhinweis zum Inhalt"
+
 msgid "Delete"
 msgstr "Löschen"
+
+msgid "Details"
+msgstr ""
 
 msgid "Media upload"
 msgstr "Hochladen von Mediendateien"
