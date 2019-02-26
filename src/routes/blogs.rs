@@ -20,9 +20,9 @@ use routes::{errors::ErrorPage, Page, PlumeRocket};
 use template_utils::Ructe;
 
 #[get("/?<page>", rank = 1)]
-pub fn custom_details(intl: I18n, custom_domain: String, user: Option<User>, conn: DbConn, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn custom_details(intl: I18n, custom_domain: Host, user: Option<User>, conn: DbConn, page: Option<Page>) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let blog = Blog::find_by_custom_domain(&*conn, &custom_domain, Instance::get_local(&conn)?.id)?;
+    let blog = Blog::find_by_custom_domain(&*conn, &custom_domain.as_ref(), Instance::get_local(&conn)?.id)?;
     let posts = Post::blog_page(&*conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(&*conn, &blog)?;
     let authors = &blog.list_authors(&*conn)?;

@@ -11,6 +11,10 @@ use reqwest::{
     header::{HeaderValue, ACCEPT},
     Client,
 };
+use rocket::{
+    outcome::IntoOutcome,
+    request::{self, FromRequest, Request},
+};
 use serde_json;
 use url::Url;
 use webfinger::*;
@@ -22,6 +26,7 @@ use plume_common::activity_pub::{
     inbox::{Deletable, WithInbox},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
+use db_conn::DbConn;
 use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
@@ -33,6 +38,27 @@ pub type CustomGroup = CustomObject<ApSignature, Group>;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
 #[changeset_options(treat_none_as_null = "true")]
+pub struct Host(String);
+
+impl Host {
+    pub fn new<T: Into<String>>(host: T) -> Host {
+        Host(host.into())
+    }
+}
+
+impl Into<String> for Host {
+    fn into(self) -> String {
+        self.0.clone()
+    }
+}
+
+impl AsRef<str> for Host {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -404,6 +430,19 @@ impl Blog {
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for Host {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Host, ()> {
+        let conn = request.guard::<DbConn>()?;
+        request
+            .headers()
+            .get_one("Host")
+            .and_then(|x| if x != Instance::get_local(&conn).ok()?.public_domain { Some(Host(x.to_string())) } else { None })
+            .or_forward(())
     }
 }
 
