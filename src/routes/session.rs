@@ -142,26 +142,17 @@ pub fn password_reset_request(
     form: Form<ResetForm>,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>
 ) -> Ructe {
-    if User::find_by_email(&*conn, &form.email).is_ok() && requests.lock().unwrap().iter().find(|x| x.mail == form.email.clone()).is_none() {
+    let mut requests = requests.lock().unwrap();
+    if User::find_by_email(&*conn, &form.email).is_ok() && !requests.iter().any(|x| x.mail == form.email.clone()) {
         let id = plume_common::utils::random_hex();
-        {
-            let mut requests = requests.lock().unwrap();
-            requests.push(ResetRequest {
-                mail: form.email.clone(),
-                id: id.clone(),
-                creation_date: Instant::now(),
-            });
-        }
         // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
-        let to_remove = {
-            let lock = requests.lock().unwrap();
-            lock.clone().into_iter()
-                .filter(|r| r.creation_date.elapsed().as_secs() > 24 * 60)
-                .collect::<Vec<_>>()
-        };
-        for req in to_remove {
-            requests.lock().unwrap().remove_item(&req);
-        }
+        requests.retain(|r| r.creation_date.elapsed().as_secs() < 24 * 60 * 6);
+
+        requests.push(ResetRequest {
+            mail: form.email.clone(),
+            id: id.clone(),
+            creation_date: Instant::now(),
+        });
 
         let link = format!("https://{}/password-reset/{}", *BASE_URL, id);
         let message = build_mail(
@@ -220,12 +211,10 @@ pub fn password_reset(
 ) -> Result<Redirect, Ructe> {
     form.validate()
         .and_then(|_| {
-            let req = {
-                let req_lock = requests.lock().unwrap();
-                req_lock.iter().find(|x| x.id == token.clone()).expect("Couldn't find the password reset request").clone()
-            };
-            if req.creation_date.elapsed().as_secs() < 60 * 2 { // Reset link is only valid for 2 hours
-                requests.lock().unwrap().remove_item(&req);
+            let mut requests = requests.lock().unwrap();
+            let req = requests.iter().find(|x| x.id == token.clone()).expect("Couldn't find the password reset request").clone();
+            if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 { // Reset link is only valid for 2 hours
+                requests.retain(|r| *r != req);
                 let user = User::find_by_email(&*conn, &req.mail).expect("User not found");
                 user.reset_password(&*conn, &form.password).ok();
                 Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Your password was successfully reset."))))
