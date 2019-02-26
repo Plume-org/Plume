@@ -1,4 +1,4 @@
-use lettre::EmailTransport;
+use lettre::Transport;
 use rocket::{
     State,
     http::{Cookie, Cookies, SameSite, uri::Uri},
@@ -162,7 +162,7 @@ pub fn password_reset_request(
             i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link)
         ) {
             match *mail.lock().unwrap() {
-                Some(ref mut mail) => { mail.send(&message).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
+                Some(ref mut mail) => { mail.send(message.into()).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
                 None => {}
             }
         }

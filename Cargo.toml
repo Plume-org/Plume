@@ -17,8 +17,8 @@ gettext-macros = "0.3"
 gettext-utils = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
-lettre = "0.8"
-lettre_email = "0.8"
+lettre = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
+lettre_email = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
 num_cpus = "1.0"
 rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }

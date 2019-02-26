@@ -1,16 +1,16 @@
-use lettre_email::{Email, EmailBuilder};
+use lettre_email::Email;
 use std::env;
 
 pub use self::mailer::*;
 
 #[cfg(feature = "debug-mailer")]
 mod mailer {
-    use lettre::{EmailTransport, SendableEmail};
+    use lettre::{Transport, SendableEmail};
     use std::{io::Read};
 
     pub struct DebugTransport;
 
-    impl<'a, T: Into<&'a [u8]> + Read + 'a> EmailTransport<'a, T, Result<(), ()>> for DebugTransport {
+    impl<'a, T: Into<&'a [u8]> + Read + 'a> Transport<'a, T, Result<(), ()>> for DebugTransport {
         fn send<U: SendableEmail<'a, T> + 'a>(&mut self, email: &'a U) -> Result<(), ()> {
             let message = *email.message();
             println!(
@@ -38,6 +38,7 @@ mod mailer {
 mod mailer {
     use lettre::{
         SmtpTransport,
+        SmtpClient,
         smtp::{
             authentication::{Credentials, Mechanism},
             extension::ClientId,
@@ -53,18 +54,19 @@ mod mailer {
         let helo_name = env::var("MAIL_HELO_NAME").unwrap_or_else(|_| "localhost".to_owned());
         let username = env::var("MAIL_USER").ok()?;
         let password = env::var("MAIL_PASSWORD").ok()?;
-        let mail = SmtpTransport::simple_builder(&server).unwrap()
+        let mail = SmtpClient::new_simple(&server).unwrap()
             .hello_name(ClientId::Domain(helo_name))
             .credentials(Credentials::new(username, password))
             .smtp_utf8(true)
             .authentication_mechanism(Mechanism::Plain)
-            .connection_reuse(ConnectionReuseParameters::NoReuse).build();
+            .connection_reuse(ConnectionReuseParameters::NoReuse)
+            .transport();
         Some(mail)
     }
 }
 
 pub fn build_mail(dest: String, subject: String, body: String) -> Option<Email> {
-    EmailBuilder::new()
+    Email::builder()
         .from(env::var("MAIL_ADDRESS")
             .or_else(|_| Ok(format!("{}@{}", env::var("MAIL_USER")?, env::var("MAIL_SERVER")?)) as Result<_, env::VarError>)
             .expect("Mail server is not correctly configured"))
