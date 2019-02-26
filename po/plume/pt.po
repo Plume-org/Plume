@@ -463,6 +463,9 @@ msgstr "Entrar"
 msgid "Username or email"
 msgstr "Nome de usuário ou e-mail"
 
+msgid "Publish"
+msgstr "Publicar"
+
 msgid "Subtitle"
 msgstr "Subtítulo"
 
@@ -697,9 +700,6 @@ msgstr "Utilizar como avatar"
 
 #~ msgid "Create a post"
 #~ msgstr "Criar um artigo"
-
-#~ msgid "Publish"
-#~ msgstr "Publicar"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"

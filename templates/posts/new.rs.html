@@ -12,9 +12,13 @@
 
 @:base(ctx, title.clone(), {}, {}, {
     <h1 id="plume-editor-title">@title</h1>
-    <div class="plume-editor"></div>
+    <div id="plume-editor" style="display: none;">
+      <header>
+        <button id="publish" class="button">@i18n!(ctx.1, "Publish")</button>
+      </header>
+    </div>
     @if let Some(article) = article {
-	    <form id="plume-fallback-edtior" class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)" content-size="@content_len">
+	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)" content-size="@content_len">
     } else {
 	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)" content-size="@content_len">
     }

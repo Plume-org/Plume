@@ -504,6 +504,9 @@ msgstr "Logg inn"
 msgid "Username or email"
 msgstr "Brukernavn eller epost"
 
+msgid "Publish"
+msgstr ""
+
 #, fuzzy
 msgid "Subtitle"
 msgstr "Tittel"

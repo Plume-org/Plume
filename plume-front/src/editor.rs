@@ -225,7 +225,7 @@ mod utils {
 
 
 
-use std::{rc::Rc, cell::RefCell};
+use std::rc::Rc;
 use stdweb::{unstable::TryInto, web::{*, html_element::*, event::*}};
 
 macro_rules! mv {
@@ -433,6 +433,10 @@ fn no_return(evt: KeyDownEvent) {
 pub fn init() {
     document().get_element_by_id("plume-editor")
         .and_then(|ed| {
+            js!{
+                @{&ed}.style.display = "block";
+            };
+
             let title_val = get_elt_value("title");
             let subtitle_val = get_elt_value("subtitle");
             let content_val = get_elt_value("editor-content");
@@ -464,9 +468,16 @@ pub fn init() {
             }
             content.append_child(&document().create_text_node(&content_val));
 
+            // Add the elements, and make sure the placeholders are rendered
             ed.append_child(&title);
+            title.focus();
+            title.blur();
             ed.append_child(&subtitle);
+            subtitle.focus();
+            subtitle.blur();
             ed.append_child(&content);
+            content.focus();
+            content.blur();
 
             let widgets = Rc::new((
                 title, subtitle, content
@@ -483,11 +494,19 @@ pub fn init() {
                         make_input("Tags", "popup-tags", &popup).set_raw_value(&tags.join(", "));
                         make_input("License", "popup-license", &popup).set_raw_value(&license);
 
+                        let cover_label = document().create_element("label").unwrap();
+                        cover_label.append_child(&document().create_text_node("Cover"));
+                        cover_label.set_attribute("for", "cover").unwrap();
                         let cover = document().get_element_by_id("cover").unwrap();
                         cover.parent_element().unwrap().remove_child(&cover).ok();
+                        popup.append_child(&cover_label);
                         popup.append_child(&cover);
 
-                        let button = document().create_element("button").unwrap();
+                        let button = document().create_element("input").unwrap();
+                        js!{
+                            @{&button}.type = "submit";
+                            @{&button}.value = "Publish";
+                        };
                         button.append_child(&document().create_text_node("Publish"));
                         button.add_event_listener(mv!(widgets, old_ed => move |_: ClickEvent| {
                             console!(log, "wtf");
@@ -583,6 +602,7 @@ fn placeholder<'a>(elt: HtmlElement, text: &'a str) -> HtmlElement {
             "true"
         }).expect("Couldn't update edition state");
     }));
+    console!(log, "blur");
     elt
 }
 

@@ -266,3 +266,57 @@ main .article-meta {
     }
   }
 }
+
+#plume-editor {
+  header {
+    display: flex;
+    flex-direction: row-reverse;
+    background: transparent;
+    button {
+      flex: 0 0 10em;
+      font-size: 1.25em;
+      margin: 0.5em 0em;
+    }
+  }
+
+  & > * {
+    min-height: 1em;
+    outline: none;
+    margin-bottom: 0.5em;
+  }
+
+  .placeholder {
+    color: transparentize($black, 0.6);
+  }
+
+  article {
+    max-width: none;
+    min-height: 80vh;
+  }
+}
+
+.popup {
+  position: fixed;
+  top: 15vh;
+  bottom: 20vh;
+  left: 20vw;
+  right: 20vw;
+  background: $lightgray;
+  border: 1px solid $purple;
+  z-index: 2;
+  padding: 2em;
+  overflow-y: auto;
+}
+
+.popup:not(.show), .popup-bg:not(.show) {
+    display: none;
+}
+
+.popup-bg {
+    background: rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}

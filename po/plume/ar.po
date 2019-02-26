@@ -463,6 +463,9 @@ msgstr "تسجيل الدخول"
 msgid "Username or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
+msgid "Publish"
+msgstr "انشر"
+
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
 
@@ -716,9 +719,6 @@ msgstr "استخدمها كصورة رمزية"
 
 #~ msgid "Create a post"
 #~ msgstr "انشئ منشورا"
-
-#~ msgid "Publish"
-#~ msgstr "انشر"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"

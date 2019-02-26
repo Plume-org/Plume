@@ -460,6 +460,9 @@ msgstr ""
 msgid "Username or email"
 msgstr ""
 
+msgid "Publish"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Subtitle"
 msgstr ""
