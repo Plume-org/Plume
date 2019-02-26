@@ -4,10 +4,6 @@
         <meta charset="utf-8"/>
         <title>Plume editor test</title>
         <style>
-            #plume-editor > * {
-                height: 1em;
-            }
-
             .placeholder {
                 color: #DADADA;
             }
@@ -16,7 +12,14 @@
                 margin: 10vh 20vw;
             }
 
-            h2 {
+            #plume-editor * {
+              outline: none;
+              min-height: 1em;
+              margin: 0;
+              margin-bottom: 0.5em;
+            }
+
+            #plume-editor h2 {
                 margin-bottom: 2em;
             }
 
@@ -51,7 +54,7 @@
             <button id="publish">Publish</button>
         </header>
         <div id="plume-editor"></div>
-        <div id="plume-fallback-editor">
+        <form id="plume-fallback-editor" method="post">
             <label for="title">
                     Titre
 
@@ -108,7 +111,7 @@ Other paragraph amirite?
 
 
             <input type="submit" value="Mettre à jour" />
-        </div>
+        </form>
         <script src="plume-front.js"></script>
     </body>
 </html>
