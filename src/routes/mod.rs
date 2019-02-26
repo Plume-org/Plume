@@ -105,3 +105,8 @@ pub mod well_known;
 pub fn static_files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
 }
+
+struct Front
+
+#[get("/static/plume-front.mo", rank = 1)]
+pub fn front_mo()

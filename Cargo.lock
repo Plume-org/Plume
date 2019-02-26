@@ -1919,6 +1919,9 @@ dependencies = [
 name = "plume-front"
 version = "0.1.0"
 dependencies = [
+ "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext-macros 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "stdweb 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

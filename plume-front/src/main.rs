@@ -1,12 +1,18 @@
 #![recursion_limit="128"]
+
+extern crate gettex;
+#[macro_use]
+extern crate gettext_macros;
 #[macro_use]
 extern crate stdweb;
 
 use stdweb::{unstable::{TryFrom, TryInto}, web::{*, event::*}};
 
 mod editor;
+mod i18n;
 
 fn main() {
+    i18n::load_mo();
     editor_loop();
     menu();
     search();

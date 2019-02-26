@@ -5,3 +5,6 @@ authors = ["Plume contributors"]
 
 [dependencies]
 stdweb = "0.4"
+gettext = "0.3"
+gettext-macros = "0.3"
+gettext-utils = "0.1"
