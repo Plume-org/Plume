@@ -143,10 +143,11 @@ pub fn password_reset_request(
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>
 ) -> Ructe {
     let mut requests = requests.lock().unwrap();
+    // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
+    requests.retain(|r| r.creation_date.elapsed().as_secs() < 24 * 60 * 6);
+
     if User::find_by_email(&*conn, &form.email).is_ok() && !requests.iter().any(|x| x.mail == form.email.clone()) {
         let id = plume_common::utils::random_hex();
-        // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
-        requests.retain(|r| r.creation_date.elapsed().as_secs() < 24 * 60 * 6);
 
         requests.push(ResetRequest {
             mail: form.email.clone(),
