@@ -53,7 +53,7 @@ table! {
 
 table! {
     comment_seers (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         comment_id -> Integer,
         user_id -> Integer,
 >>>>>>> add custom_detais route to blogs with custom_domains
