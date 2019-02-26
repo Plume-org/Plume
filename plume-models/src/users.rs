@@ -568,11 +568,33 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn get_following(&self, conn: &Connection) -> Result<Vec<User>> {
+    pub fn get_followed(&self, conn: &Connection) -> Result<Vec<User>> {
         use schema::follows::dsl::*;
         let f = follows.filter(follower_id.eq(self.id)).select(following_id);
         users::table
             .filter(users::id.eq_any(f))
+            .load::<User>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn count_followed(&self, conn: &Connection) -> Result<i64> {
+        use schema::follows;
+        follows::table
+            .filter(follows::follower_id.eq(self.id))
+            .count()
+            .get_result(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn get_followed_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<User>> {
+        use schema::follows;
+        let follows = follows::table
+            .filter(follows::follower_id.eq(self.id))
+            .select(follows::following_id)
+            .limit((max - min).into());
+        users::table
+            .filter(users::id.eq_any(follows))
+            .offset(min.into())
             .load::<User>(conn)
             .map_err(Error::from)
     }

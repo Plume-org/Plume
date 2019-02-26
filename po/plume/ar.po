@@ -19,9 +19,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "علَّق {0} على مقالك"
 
-#, fuzzy
-msgid "{0} is now following you."
-msgstr "إنّ {0} يتبعك الآن"
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -73,7 +73,8 @@ msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمن
 msgid "You need to be logged in order to access your dashboard"
 msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "يجب عليك أولا تسجيل الدخول قصد متابعة شخص آخر"
 
 msgid "You need to be logged in order to edit your profile"
@@ -162,7 +163,8 @@ msgstr "كافة مقالات الفديفرس"
 msgid "Articles from {}"
 msgstr "مقالات مِن {0}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "حاليا لا يوجد أي شيء هنا. حاول متابعة أشخاص آخرين."
 
 msgid "Name"
@@ -292,8 +294,12 @@ msgstr ""
 msgid "Articles"
 msgstr "المقالات"
 
-msgid "Followers"
-msgstr "المتابِعون"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "الوصف"
 
 #, fuzzy
 msgid "Atom feed"
@@ -314,14 +320,19 @@ msgstr "تعديل ملفك الشخصي"
 msgid "Open on {0}"
 msgstr "افتح على {0}"
 
-msgid "Unfollow"
-msgstr "الغاء المتابعة"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "اتبع"
+msgid "Subscribe"
+msgstr ""
 
-msgid "{0}'s followers"
-msgstr "{0} متابِعون"
+#, fuzzy
+msgid "{0}'s subscriptions'"
+msgstr "الوصف"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "الوصف"
 
 msgid "Respond"
 msgstr "رد"
@@ -701,6 +712,26 @@ msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض ال
 
 msgid "Use as avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "{0} متابِعون"
+
+#, fuzzy
+#~ msgid "{0} is now following you."
+#~ msgstr "إنّ {0} يتبعك الآن"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "{0} متابِعون"
+
+#~ msgid "Followers"
+#~ msgstr "المتابِعون"
+
+#~ msgid "Unfollow"
+#~ msgstr "الغاء المتابعة"
+
+#~ msgid "Follow"
+#~ msgstr "اتبع"
 
 #~ msgid "Comment \"{0}\""
 #~ msgstr "تعليق \"{0}\""

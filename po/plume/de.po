@@ -18,7 +18,7 @@ msgid "{0} commented your article."
 msgstr "{0} hat deinen Artikel kommentiert"
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 #, fuzzy
@@ -79,7 +79,7 @@ msgid "You need to be logged in order to access your dashboard"
 msgstr "Du musst eingeloggt sein, um dein Dashboard zu sehen"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Du musst eingeloggt sein, um jemandem zu folgen"
 
 #, fuzzy
@@ -175,7 +175,7 @@ msgid "Articles from {}"
 msgstr "Artikel von {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Hier gibts noch nichts. Versuche dich mehr Leuten anzuschließen."
 
 msgid "Name"
@@ -315,8 +315,11 @@ msgstr ""
 msgid "Articles"
 msgstr "Artikel"
 
-msgid "Followers"
-msgstr "Follower"
+msgid "Subscribers"
+msgstr "Abonomenten"
+
+msgid "Subscriptions"
+msgstr "Abonoment"
 
 #, fuzzy
 msgid "Atom feed"
@@ -338,15 +341,19 @@ msgstr "Ändere dein Profil"
 msgid "Open on {0}"
 msgstr ""
 
+msgid "Unsubscribe"
+msgstr "Abbestellen"
+
+msgid "Subscribe"
+msgstr "Abonieren"
+
 #, fuzzy
-msgid "Unfollow"
-msgstr "Folgen"
+msgid "{0}'s subscriptions'"
+msgstr "Abonoment"
 
-msgid "Follow"
-msgstr "Folgen"
-
-msgid "{0}'s followers"
-msgstr "{0}s Follower"
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Abonoment"
 
 msgid "Respond"
 msgstr "Antworten"
@@ -724,6 +731,27 @@ msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Als Avatar verwenden"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "{0}s Follower"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "{0}s Follower"
+
+#~ msgid "Followers"
+#~ msgstr "Follower"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Folgen"
+
+#, fuzzy
+#~ msgid "Unfollow"
+#~ msgstr "Folgen"
+
+#~ msgid "Follow"
+#~ msgstr "Folgen"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

@@ -18,9 +18,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "{{ data }} があなたの記事にコメントしました"
 
-#, fuzzy
-msgid "{0} is now following you."
-msgstr "{{ user }} はあなたをフォローしています。"
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -74,7 +74,8 @@ msgstr "投稿をいいねするにはログインする必要があります"
 msgid "You need to be logged in order to access your dashboard"
 msgstr "ダッシュボードにアクセスするにはログインする必要があります"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "他の人をフォローするにはログインする必要があります"
 
 msgid "You need to be logged in order to edit your profile"
@@ -163,7 +164,8 @@ msgstr "Fediverse のすべての記事"
 msgid "Articles from {}"
 msgstr "{{ instance.name }} の記事"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 "ここにはまだ表示できるものがありません。他の人をもっとフォローしてみてくださ"
 "い。"
@@ -298,8 +300,12 @@ msgstr ""
 msgid "Articles"
 msgstr "記事"
 
-msgid "Followers"
-msgstr "フォロワー"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "説明"
 
 #, fuzzy
 msgid "Atom feed"
@@ -320,15 +326,19 @@ msgstr "自分のプロフィールを編集"
 msgid "Open on {0}"
 msgstr ""
 
-msgid "Unfollow"
-msgstr "フォロー解除"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "フォロー"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
-msgid "{0}'s followers"
-msgstr "{{ count }} フォロワー"
+msgid "{0}'s subscriptions'"
+msgstr "説明"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "説明"
 
 msgid "Respond"
 msgstr "返信"
@@ -692,6 +702,30 @@ msgstr "このメディアを記事に挿入するには、自分の記事にコ
 
 msgid "Use as avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "{{ count }} フォロワー"
+
+#, fuzzy
+#~ msgid "{0} is now following you."
+#~ msgstr "{{ user }} はあなたをフォローしています。"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "{0} さんのフォロワー"
+
+#~ msgid "Followers"
+#~ msgstr "フォロワー"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "フォロー"
+
+#~ msgid "Unfollow"
+#~ msgstr "フォロー解除"
+
+#~ msgid "Follow"
+#~ msgstr "フォロー"
 
 #, fuzzy
 #~ msgid "Comment \"{0}\""

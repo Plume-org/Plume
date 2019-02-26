@@ -17,7 +17,7 @@ msgid "{0} commented your article."
 msgstr "{0} comentou o seu artigo"
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 #, fuzzy
@@ -78,7 +78,7 @@ msgid "You need to be logged in order to access your dashboard"
 msgstr "Debe estar conectada para acceder ao seu taboleiro"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Debe estar conectada para seguir a alguén"
 
 #, fuzzy
@@ -174,7 +174,7 @@ msgid "Articles from {}"
 msgstr "Artigos desde {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Nada que ler por aquí. Intente seguir a máis xente."
 
 msgid "Name"
@@ -309,8 +309,12 @@ msgstr ""
 msgid "Articles"
 msgstr "Artigos"
 
-msgid "Followers"
-msgstr "Seguidoras"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Descrición"
 
 #, fuzzy
 msgid "Atom feed"
@@ -332,16 +336,19 @@ msgstr "Edite o seu perfil"
 msgid "Open on {0}"
 msgstr ""
 
-#, fuzzy
-msgid "Unfollow"
-msgstr "Seguir"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Seguir"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
-msgid "{0}'s followers"
-msgstr "Unha seguidora"
+msgid "{0}'s subscriptions'"
+msgstr "Descrición"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Descrición"
 
 msgid "Respond"
 msgstr "Respostar"
@@ -714,6 +721,28 @@ msgstr "Copie para incrustar este contido nos seus artigos"
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Utilizar como avatar"
+
+#, fuzzy
+#~ msgid "{0}'s followers"
+#~ msgstr "Unha seguidora"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Unha seguidora"
+
+#~ msgid "Followers"
+#~ msgstr "Seguidoras"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Seguir"
+
+#, fuzzy
+#~ msgid "Unfollow"
+#~ msgstr "Seguir"
+
+#~ msgid "Follow"
+#~ msgstr "Seguir"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

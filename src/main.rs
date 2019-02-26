@@ -54,7 +54,7 @@ use std::process::exit;
 use std::sync::Arc;
 use std::time::Duration;
 
-init_i18n!("plume", ar, de, en, fr, gl, it, ja, nb, pl, pt, ru);
+init_i18n!("plume", ar, de, en, es, fr, gl, it, ja, nb, pl, pt, ru);
 
 mod api;
 mod inbox;
@@ -187,6 +187,7 @@ Then try to restart Plume.
             routes::user::dashboard,
             routes::user::dashboard_auth,
             routes::user::followers,
+            routes::user::followed,
             routes::user::edit,
             routes::user::edit_auth,
             routes::user::update,

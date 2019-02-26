@@ -35,9 +35,9 @@
         @if ctx.2.clone().map(|u| u.id != user.id).unwrap_or(false) {
             <form class="inline" method="post" action="@uri!(user::follow: name = user.get_fqn(ctx.0))">
             @if follows {
-                <input type="submit" value="@i18n!(ctx.1, "Unfollow")">
+                <input type="submit" value="@i18n!(ctx.1, "Unsubscribe")">
             } else {
-                <input type="submit" value="@i18n!(ctx.1, "Follow")">
+                <input type="submit" value="@i18n!(ctx.1, "Subscribe")">
             }
             </form>
         }

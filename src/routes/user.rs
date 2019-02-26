@@ -161,7 +161,7 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<
 #[post("/@/<name>/follow", rank = 2)]
 pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        &i18n!(i18n.catalog, "You need to be logged in order to follow someone"),
+        &i18n!(i18n.catalog, "You need to be logged in order to subscribe to someone"),
         uri!(follow: name = name),
     )
 }
@@ -181,6 +181,24 @@ pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option
         user.get_followers_page(&*conn, page.limits())?,
         page.0,
         Page::total(followers_count as i32)
+    )))
+}
+
+#[get("/@/<name>/followed?<page>", rank = 2)]
+pub fn followed(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let user = User::find_by_fqn(&*conn, &name)?;
+    let followed_count = user.count_followed(&*conn)?;
+
+    Ok(render!(users::followed(
+        &(&*conn, &intl.catalog, account.clone()),
+        user.clone(),
+        account.and_then(|x| x.is_following(&*conn, user.id).ok()).unwrap_or(false),
+        user.instance_id != Instance::get_local(&*conn)?.id,
+        user.get_instance(&*conn)?.public_domain,
+        user.get_followed_page(&*conn, page.limits())?,
+        page.0,
+        Page::total(followed_count as i32)
     )))
 }
 
