@@ -84,11 +84,11 @@ msgstr ""
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:221
+# src/routes/session.rs:222
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:223
+# src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 

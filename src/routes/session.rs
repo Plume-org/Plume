@@ -156,14 +156,15 @@ pub fn password_reset_request(
         });
 
         let link = format!("https://{}/password-reset/{}", *BASE_URL, id);
-        let message = build_mail(
+        if let Some(message) = build_mail(
             form.email.clone(),
             i18n!(intl.catalog, "Password reset"),
             i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link)
-        );
-        match *mail.lock().unwrap() {
-            Some(ref mut mail) => { mail.send(&message).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
-            None => {}
+        ) {
+            match *mail.lock().unwrap() {
+                Some(ref mut mail) => { mail.send(&message).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
+                None => {}
+            }
         }
     }
     render!(session::password_reset_request_ok(
@@ -213,10 +214,10 @@ pub fn password_reset(
     form.validate()
         .and_then(|_| {
             let mut requests = requests.lock().unwrap();
-            let req = requests.iter().find(|x| x.id == token.clone()).expect("Couldn't find the password reset request").clone();
+            let req = requests.iter().find(|x| x.id == token.clone()).ok_or(to_validation(0))?.clone();
             if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 { // Reset link is only valid for 2 hours
                 requests.retain(|r| *r != req);
-                let user = User::find_by_email(&*conn, &req.mail).expect("User not found");
+                let user = User::find_by_email(&*conn, &req.mail).map_err(to_validation)?;
                 user.reset_password(&*conn, &form.password).ok();
                 Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Your password was successfully reset."))))
             } else {
@@ -230,4 +231,14 @@ pub fn password_reset(
                 err
             ))
         })
+}
+
+fn to_validation<T>(_: T) -> ValidationErrors {
+    let mut errors = ValidationErrors::new();
+    errors.add("", ValidationError {
+        code: Cow::from("server_error"),
+        message: Some(Cow::from("An unknown error occured")),
+        params: std::collections::HashMap::new()
+    });
+    errors
 }

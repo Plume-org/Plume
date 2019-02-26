@@ -63,7 +63,7 @@ mod mailer {
     }
 }
 
-pub fn build_mail(dest: String, subject: String, body: String) -> Email {
+pub fn build_mail(dest: String, subject: String, body: String) -> Option<Email> {
     EmailBuilder::new()
         .from(env::var("MAIL_ADDRESS")
             .or_else(|_| Ok(format!("{}@{}", env::var("MAIL_USER")?, env::var("MAIL_SERVER")?)) as Result<_, env::VarError>)
@@ -72,5 +72,5 @@ pub fn build_mail(dest: String, subject: String, body: String) -> Email {
         .subject(subject)
         .text(body)
         .build()
-        .expect("Couldn't build password reset mail")
+        .ok()
 }
