@@ -49,6 +49,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_domain: Option<String>,
 }
 
 #[derive(Default, Insertable)]
@@ -66,6 +67,7 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_domain: Option<String>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -98,6 +100,7 @@ impl Blog {
     get!(blogs);
     find_by!(blogs, find_by_ap_url, ap_url as &str);
     find_by!(blogs, find_by_name, actor_id as &str, instance_id as i32);
+    find_by!(blogs, find_by_custom_domain, custom_domain as &str, instance_id as i32);
 
     pub fn get_instance(&self, conn: &Connection) -> Result<Instance> {
         Instance::get(conn, self.instance_id)
@@ -248,6 +251,7 @@ impl Blog {
                 banner_id,
                 icon_id,
                 summary_html: SafeString::new(&acct.object.object_props.summary_string()?),
+                custom_domain: None,
             },
         )
     }
@@ -460,6 +464,7 @@ impl NewBlog {
             instance_id,
             public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
             private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
+            custom_domain: None,
             ..NewBlog::default()
         })
     }

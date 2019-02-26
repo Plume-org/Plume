@@ -9,9 +9,9 @@ CREATE TABLE tmp_blogs_add_custom_domains (
   instance_id INTEGER REFERENCES instances(id) ON DELETE CASCADE NOT NULL,
   creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   ap_url text not null default '' UNIQUE,
-  custom_domain VARCHAR DEFAULT NULL UNIQUE,
   private_key TEXT,
   public_key TEXT NOT NULL DEFAULT '',
+  custom_domain VARCHAR DEFAULT NULL UNIQUE,
   CONSTRAINT blog_unique UNIQUE (actor_id, instance_id)
 );
 

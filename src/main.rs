@@ -98,8 +98,8 @@ Then try to restart Plume.
             SearcherError::IndexOpeningError => panic!(
                 r#"
 Plume was unable to open the search index. If you created the index
-before, make sure to run Plume in the directory it was created, or 
-to set SEARCH_INDEX accordingly. If you did not create the search 
+before, make sure to run Plume in the directory it was created, or
+to set SEARCH_INDEX accordingly. If you did not create the search
 index, run this command:
 
     plm search init
@@ -137,6 +137,7 @@ Then try to restart Plume
         .mount(
             "/",
             routes![
+                routes::blogs::custom_details,
                 routes::blogs::details,
                 routes::blogs::activity_details,
                 routes::blogs::outbox,

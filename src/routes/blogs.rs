@@ -19,6 +19,27 @@ use plume_models::{
 use routes::{errors::ErrorPage, Page, PlumeRocket};
 use template_utils::Ructe;
 
+#[get("/?<page>", rank = 1)]
+pub fn custom_details(intl: I18n, custom_domain: String, user: Option<User>, conn: DbConn, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let blog = Blog::find_by_custom_domain(&*conn, &custom_domain, Instance::get_local(&conn)?.id)?;
+    let posts = Post::blog_page(&*conn, &blog, page.limits())?;
+    let articles_count = Post::count_for_blog(&*conn, &blog)?;
+    let authors = &blog.list_authors(&*conn)?;
+
+    Ok(render!(blogs::details(
+        &(&*conn, &intl.catalog, user.clone()),
+        blog.clone(),
+        blog.get_fqn(&*conn),
+        authors,
+        articles_count,
+        page.0,
+        Page::total(articles_count as i32),
+        user.and_then(|x| x.is_author_in(&*conn, &blog).ok()).unwrap_or(false),
+        posts
+    )))
+}
+
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
