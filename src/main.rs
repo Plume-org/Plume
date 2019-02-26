@@ -1,4 +1,4 @@
-#![feature(custom_derive, plugin, decl_macro, proc_macro_hygiene)]
+#![feature(decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
 extern crate askama_escape;
