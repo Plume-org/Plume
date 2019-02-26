@@ -1,29 +1,25 @@
 label {
  	display: block;
- 	margin: 2em auto 1em;
+ 	margin: 2em auto .5em;
  	font-size: 1.2em;
- 	max-width: 40rem;
 }
 input, textarea, select {
  	transition: all 0.1s ease-in;
  	display: block;
  	width: 100%;
- 	max-width: 40rem;
  	margin: auto;
  	padding: 1em;
  	box-sizing: border-box;
 
- 	background: $white;
+ 	background: $form-input-background;
  	color: $black;
  	border: none;
  	border: solid $lightgray thin;
- 	border-radius: 0.5em;
 
  	font-size: 1.2em;
  	font-weight: 400;
 
  	&:focus {
- 	  background: $white;
  	  border-color: $purple;
  	}
 }
@@ -34,7 +30,7 @@ textarea {
 
  	font-family: $lora;
  	font-size: 1.1em;
- 	line-height: 1.5em;
+ 	line-height: 1.5;
 }
 
 input[type="checkbox"] {
@@ -104,6 +100,7 @@ input[type="submit"] { display: block; }
 
 //  Writing page
 form.new-post {
+  max-width: 60em;
   .title {
    	margin: 0 auto;
    	padding: 0.75em 0;
@@ -119,7 +116,6 @@ form.new-post {
    	min-height: 20em;
    	overflow-y: hidden;
    	resize: none;
-   	box-sizing: content-box;
   }
   input[type="submit"] {
    	background: $lightgray;

@@ -4,6 +4,7 @@ rls
 rls
 translations
 po/*.po~
+po/plume/*.po~
 .env
 Rocket.toml
 !.gitkeep
@@ -19,3 +20,4 @@ search_index
 main.css
 *.wasm
 *.js
+.buildconfig

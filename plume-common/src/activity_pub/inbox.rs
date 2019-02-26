@@ -1,4 +1,4 @@
-use activitypub::{activity::Create, Object};
+use activitypub::{activity::Create, Error as ApError, Object};
 
 use activity_pub::Id;
 
@@ -13,31 +13,30 @@ pub enum InboxError {
 }
 
 pub trait FromActivity<T: Object, C>: Sized {
-    fn from_activity(conn: &C, obj: T, actor: Id) -> Self;
+    type Error: From<ApError>;
 
-    fn try_from_activity(conn: &C, act: Create) -> bool {
-        if let Ok(obj) = act.create_props.object_object() {
-            Self::from_activity(
-                conn,
-                obj,
-                act.create_props
-                    .actor_link::<Id>()
-                    .expect("FromActivity::try_from_activity: id not found error"),
-            );
-            true
-        } else {
-            false
-        }
+    fn from_activity(conn: &C, obj: T, actor: Id) -> Result<Self, Self::Error>;
+
+    fn try_from_activity(conn: &C, act: Create) -> Result<Self, Self::Error> {
+        Self::from_activity(
+            conn,
+            act.create_props.object_object()?,
+            act.create_props.actor_link::<Id>()?,
+        )
     }
 }
 
 pub trait Notify<C> {
-    fn notify(&self, conn: &C);
+    type Error;
+
+    fn notify(&self, conn: &C) -> Result<(), Self::Error>;
 }
 
 pub trait Deletable<C, A> {
-    fn delete(&self, conn: &C) -> A;
-    fn delete_id(id: &str, actor_id: &str, conn: &C);
+    type Error;
+
+    fn delete(&self, conn: &C) -> Result<A, Self::Error>;
+    fn delete_id(id: &str, actor_id: &str, conn: &C) -> Result<A, Self::Error>;
 }
 
 pub trait WithInbox {

@@ -19,18 +19,17 @@ use plume_models::{
     posts::Post,
     users::User
 };
-use routes::Page;
+use routes::{Page, errors::ErrorPage};
 use template_utils::Ructe;
 use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>) -> Result<Ructe, Ructe> {
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let blog = Blog::find_by_fqn(&*conn, &name)
-        .ok_or_else(|| render!(errors::not_found(&(&*conn, &intl.catalog, user.clone()))))?;
-    let posts = Post::blog_page(&*conn, &blog, page.limits());
-    let articles_count = Post::count_for_blog(&*conn, &blog);
-    let authors = &blog.list_authors(&*conn);
+    let blog = Blog::find_by_fqn(&*conn, &name)?;
+    let posts = Post::blog_page(&*conn, &blog, page.limits())?;
+    let articles_count = Post::count_for_blog(&*conn, &blog)?;
+    let authors = &blog.list_authors(&*conn)?;
 
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
@@ -40,15 +39,15 @@ pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page:
         articles_count,
         page.0,
         Page::total(articles_count as i32),
-        user.map(|x| x.is_author_in(&*conn, &blog)).unwrap_or(false),
+        user.and_then(|x| x.is_author_in(&*conn, &blog).ok()).unwrap_or(false),
         posts
     )))
 }
 
 #[get("/~/<name>", rank = 1)]
 pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_local(&*conn, &name)?;
-    Some(ActivityStream::new(blog.to_activity(&*conn)))
+    let blog = Blog::find_local(&*conn, &name).ok()?;
+    Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
 }
 
 #[get("/blogs/new")]
@@ -63,7 +62,7 @@ pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
 #[get("/blogs/new", rank = 2)]
 pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
     utils::requires_login(
-        i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
+        &i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
         uri!(new)
     )
 }
@@ -91,7 +90,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if Blog::find_local(&*conn, &slug).is_some() {
+    if Blog::find_local(&*conn, &slug).is_ok() {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A blog with the same name already exists.")),
@@ -104,19 +103,19 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
             slug.clone(),
             form.title.to_string(),
             String::from(""),
-            Instance::local_id(&*conn)
-        ));
-        blog.update_boxes(&*conn);
+            Instance::get_local(&*conn).expect("blog::create: instance error").id
+        ).expect("blog::create: new local error")).expect("blog::create:  error");
+        blog.update_boxes(&*conn).expect("blog::create: insert error");
 
         BlogAuthor::insert(&*conn, NewBlogAuthor {
             blog_id: blog.id,
             author_id: user.id,
             is_owner: true
-        });
+        }).expect("blog::create: author error");
 
         Ok(Redirect::to(uri!(details: name = slug.clone(), page = _)))
     } else {
-       Err(render!(blogs::new(
+        Err(render!(blogs::new(
             &(&*conn, &intl.catalog, Some(user)),
             &*form,
             errors
@@ -125,38 +124,37 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Option<Ructe>>{
-    let blog = Blog::find_local(&*conn, &name).ok_or(None)?;
-    if user.clone().map(|u| u.is_author_in(&*conn, &blog)).unwrap_or(false) {
-        blog.delete(&conn, &searcher);
+pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe>{
+    let blog = Blog::find_local(&*conn, &name).expect("blog::delete: blog not found");
+    if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
+        blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
     } else {
         // TODO actually return 403 error code
-        Err(Some(render!(errors::not_authorized(
+        Err(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, user),
-            "You are not allowed to delete this blog."
-        ))))
+            i18n!(intl.catalog, "You are not allowed to delete this blog.")
+        )))
     }
 }
 
 #[get("/~/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_local(&*conn, &name)?;
-    Some(blog.outbox(&*conn))
+    let blog = Blog::find_local(&*conn, &name).ok()?;
+    Some(blog.outbox(&*conn).ok()?)
 }
 
 #[get("/~/<name>/atom.xml")]
 pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&*conn, &name)?;
+    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
-        .id(Instance::get_local(&*conn).expect("blogs::atom_feed: local instance not found error")
+        .id(Instance::get_local(&*conn).ok()?
             .compute_box("~", &name, "atom.xml"))
-        .entries(Post::get_recents_for_blog(&*conn, &blog, 15)
+        .entries(Post::get_recents_for_blog(&*conn, &blog, 15).ok()?
             .into_iter()
             .map(|p| super::post_to_atom(p, &*conn))
             .collect::<Vec<Entry>>())
-        .build()
-        .expect("blogs::atom_feed: feed creation error");
+        .build().ok()?;
     Some(Content(ContentType::new("application", "atom+xml"), feed.to_string()))
 }

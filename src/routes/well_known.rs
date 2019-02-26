@@ -11,7 +11,11 @@ pub fn nodeinfo() -> Content<String> {
         "links": [
             {
                 "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0",
-                "href": ap_url(&format!("{domain}/nodeinfo", domain = BASE_URL.as_str()))
+                "href": ap_url(&format!("{domain}/nodeinfo/2.0", domain = BASE_URL.as_str()))
+            },
+            {
+                "rel": "http://nodeinfo.diaspora.software/ns/schema/2.1",
+                "href": ap_url(&format!("{domain}/nodeinfo/2.1", domain = BASE_URL.as_str()))
             }
         ]
     }).to_string())
@@ -35,13 +39,11 @@ impl Resolver<DbConn> for WebfingerResolver {
     }
 
     fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
-        match User::find_local(&*conn, &acct) {
-            Some(usr) => Ok(usr.webfinger(&*conn)),
-            None => match Blog::find_local(&*conn, &acct) {
-                Some(blog) => Ok(blog.webfinger(&*conn)),
-                None => Err(ResolverError::NotFound)
-            }
-        }
+        User::find_local(&*conn, &acct)
+            .and_then(|usr| usr.webfinger(&*conn))
+            .or_else(|_| Blog::find_local(&*conn, &acct)
+                .and_then(|blog| blog.webfinger(&*conn))
+                .or(Err(ResolverError::NotFound)))
     }
 }
 

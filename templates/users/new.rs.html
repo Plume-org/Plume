@@ -6,7 +6,7 @@
 
 @(ctx: BaseContext, enabled: bool, form: &NewUserForm, errors: ValidationErrors)
 
-@:base(ctx, "Create your account", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Create your account"), {}, {}, {
     @if enabled {
         <h1>@i18n!(ctx.1, "Create an account")</h1>
         <form method="post" action="@uri!(user::create)">

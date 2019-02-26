@@ -1,7 +1,8 @@
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
-    http::{RawStr, uri::{FromUriParam, Query}},
-    request::FromFormValue,
+    http::{RawStr, Status, uri::{FromUriParam, Query}},
+    Outcome,
+    request::{self, FromFormValue, FromRequest, Request},
     response::NamedFile,
 };
 use std::path::{Path, PathBuf};
@@ -46,6 +47,20 @@ impl Page {
     }
 }
 
+pub struct ContentLen(pub u64);
+
+impl<'a, 'r> FromRequest<'a, 'r> for ContentLen {
+    type Error = ();
+
+    fn from_request(r: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        match r.limits().get("forms") {
+            Some(l) => Outcome::Success(ContentLen(l)),
+            None => Outcome::Failure((Status::InternalServerError, ())),
+        }
+    }
+}
+
+
 impl Default for Page {
     fn default() -> Self {
         Page(1)
@@ -60,7 +75,7 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
             .src(post.ap_url.clone())
             .content_type("html".to_string())
             .build().expect("Atom feed: content error"))
-        .authors(post.get_authors(&*conn)
+        .authors(post.get_authors(&*conn).expect("Atom feed: author error")
             .into_iter()
             .map(|a| PersonBuilder::default()
                 .name(a.display_name)

@@ -1,11 +1,12 @@
 @use plume_models::medias::{Media, MediaCategory};
+@use plume_models::safe_string::SafeString;
 @use templates::base;
 @use template_utils::*;
 @use routes::*;
 
 @(ctx: BaseContext, media: Media)
 
-@:base(ctx, "Media details", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Media details"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media details")</h1>
     <section>
         <a href="@uri!(medias::list)">@i18n!(ctx.1, "Go back to the gallery")</a>
@@ -13,7 +14,7 @@
 
     <section>
         <figure class="media">
-            @Html(media.html(ctx.0))
+            @Html(media.html(ctx.0).unwrap_or(SafeString::new("")))
             <figcaption>@media.alt_text</figcaption>
         </figure>
         <div>
@@ -21,7 +22,7 @@
                 @i18n!(ctx.1, "Markdown syntax")
                 <small>@i18n!(ctx.1, "Copy it into your articles, to insert this media:")</small>
             </p>
-            <code>@media.markdown(ctx.0)</code>
+            <code>@media.markdown(ctx.0).unwrap_or(SafeString::new(""))</code>
         </div>
         <div>
 	    @if media.category() == MediaCategory::Image {

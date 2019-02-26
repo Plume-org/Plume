@@ -1,9 +1,41 @@
-use rocket::Request;
-use rocket::request::FromRequest;
+use rocket::{
+    Request,
+    request::FromRequest,
+    response::{self, Responder},
+};
 use rocket_i18n::I18n;
-use plume_models::db_conn::DbConn;
+use plume_models::{Error, db_conn::DbConn};
 use plume_models::users::User;
 use template_utils::Ructe;
+
+#[derive(Debug)]
+pub struct ErrorPage(Error);
+
+impl From<Error> for ErrorPage {
+    fn from(err: Error) -> ErrorPage {
+        ErrorPage(err)
+    }
+}
+
+impl<'r> Responder<'r> for ErrorPage {
+    fn respond_to(self, req: &Request) -> response::Result<'r> {
+        let conn = req.guard::<DbConn>().succeeded();
+        let intl = req.guard::<I18n>().succeeded();
+        let user = User::from_request(req).succeeded();
+
+        match self.0 {
+            Error::NotFound => render!(errors::not_found(
+                &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+            )).respond_to(req),
+            Error::Unauthorized => render!(errors::not_found(
+                &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+            )).respond_to(req),
+            _ => render!(errors::not_found(
+                &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+            )).respond_to(req)
+        }
+    }
+}
 
 #[catch(404)]
 pub fn not_found(req: &Request) -> Ructe {
@@ -11,6 +43,16 @@ pub fn not_found(req: &Request) -> Ructe {
     let intl = req.guard::<I18n>().succeeded();
     let user = User::from_request(req).succeeded();
     render!(errors::not_found(
+        &(&*conn.unwrap(), &intl.unwrap().catalog, user)
+    ))
+}
+
+#[catch(422)]
+pub fn unprocessable_entity(req: &Request) -> Ructe {
+    let conn = req.guard::<DbConn>().succeeded();
+    let intl = req.guard::<I18n>().succeeded();
+    let user = User::from_request(req).succeeded();
+    render!(errors::unprocessable_entity(
         &(&*conn.unwrap(), &intl.unwrap().catalog, user)
     ))
 }

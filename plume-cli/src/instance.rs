@@ -37,7 +37,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let conn = conn;
     match args.subcommand() {
         ("new", Some(x)) => new(x, conn),
-        _ => println!("Unknwon subcommand"),
+        _ => println!("Unknown subcommand"),
     }
 }
 
@@ -59,5 +59,5 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         open_registrations: open_reg,
         short_description_html: String::new(),
         long_description_html: String::new()
-    });
+    }).expect("Couldn't save instance");
 }

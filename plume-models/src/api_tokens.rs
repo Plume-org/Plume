@@ -8,6 +8,7 @@ use rocket::{
 
 use db_conn::DbConn;
 use schema::api_tokens;
+use {Error, Result};
 
 #[derive(Clone, Queryable)]
 pub struct ApiToken {
@@ -63,22 +64,39 @@ impl ApiToken {
     }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
-    type Error = ();
+#[derive(Debug)]
+pub enum TokenError {
+    /// The Authorization header was not present
+    NoHeader,
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<ApiToken, ()> {
+    /// The type of the token was not specified ("Basic" or "Bearer" for instance)
+    NoType,
+
+    /// No value was provided
+    NoValue,
+
+    /// Error while connecting to the database to retrieve all the token metadata
+    DbError,
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
+    type Error = TokenError;
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<ApiToken, TokenError> {
         let headers: Vec<_> = request.headers().get("Authorization").collect();
         if headers.len() != 1 {
-            return Outcome::Failure((Status::BadRequest, ()));
+            return Outcome::Failure((Status::BadRequest, TokenError::NoHeader));
         }
 
         let mut parsed_header = headers[0].split(' ');
-        let auth_type = parsed_header.next().expect("Expect a token type");
-        let val = parsed_header.next().expect("Expect a token value");
+        let auth_type = parsed_header.next()
+            .map_or_else(|| Outcome::Failure((Status::BadRequest, TokenError::NoType)), |t| Outcome::Success(t))?;
+        let val = parsed_header.next()
+            .map_or_else(|| Outcome::Failure((Status::BadRequest, TokenError::NoValue)), |t| Outcome::Success(t))?;
 
         if auth_type == "Bearer" {
-            let conn = request.guard::<DbConn>().expect("Couldn't connect to DB");
-            if let Some(token) = ApiToken::find_by_value(&*conn, val) {
+            let conn = request.guard::<DbConn>().map_failure(|_| (Status::InternalServerError, TokenError::DbError))?;
+            if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
                 return Outcome::Success(token);
             }
         }

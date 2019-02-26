@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext)
 
-@:base(ctx, "Media upload", {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Media upload"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media upload")</h1>
     <form method="post" enctype="multipart/form-data" action="@uri!(medias::upload)">
         <label for="alt">

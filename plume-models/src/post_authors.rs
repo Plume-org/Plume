@@ -3,6 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use posts::Post;
 use schema::post_authors;
 use users::User;
+use {Error, Result};
 
 #[derive(Clone, Queryable, Identifiable, Associations)]
 #[belongs_to(Post)]

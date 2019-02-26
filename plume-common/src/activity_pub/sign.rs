@@ -22,16 +22,18 @@ pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
 }
 
 pub trait Signer {
+    type Error;
+
     fn get_key_id(&self) -> String;
 
     /// Sign some data with the signer keypair
-    fn sign(&self, to_sign: &str) -> Vec<u8>;
+    fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error>;
     /// Verify if the signature is valid
-    fn verify(&self, data: &str, signature: &[u8]) -> bool;
+    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error>;
 }
 
 pub trait Signable {
-    fn sign<T>(&mut self, creator: &T) -> &mut Self
+    fn sign<T>(&mut self, creator: &T) -> Result<&mut Self, ()>
     where
         T: Signer;
     fn verify<T>(self, creator: &T) -> bool
@@ -45,7 +47,7 @@ pub trait Signable {
 }
 
 impl Signable for serde_json::Value {
-    fn sign<T: Signer>(&mut self, creator: &T) -> &mut serde_json::Value {
+    fn sign<T: Signer>(&mut self, creator: &T) -> Result<&mut serde_json::Value, ()> {
         let creation_date = Utc::now().to_rfc3339();
         let mut options = json!({
             "type": "RsaSignature2017",
@@ -62,11 +64,11 @@ impl Signable for serde_json::Value {
         let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
 
-        let signature = base64::encode(&creator.sign(&to_be_signed));
+        let signature = base64::encode(&creator.sign(&to_be_signed).map_err(|_| ())?);
 
         options["signatureValue"] = serde_json::Value::String(signature);
         self["signature"] = options;
-        self
+        Ok(self)
     }
 
     fn verify<T: Signer>(mut self, creator: &T) -> bool {
@@ -107,7 +109,7 @@ impl Signable for serde_json::Value {
         }
         let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
-        creator.verify(&to_be_signed, &signature)
+        creator.verify(&to_be_signed, &signature).unwrap_or(false)
     }
 }
 
@@ -167,7 +169,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
         .collect::<Vec<_>>()
         .join("\n");
 
-    if !sender.verify(&h, &base64::decode(signature).unwrap_or_default()) {
+    if !sender.verify(&h, &base64::decode(signature).unwrap_or_default()).unwrap_or(false) {
         return SignatureValidity::Invalid;
     }
     if !headers.contains(&"digest") {

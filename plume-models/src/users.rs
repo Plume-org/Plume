@@ -40,7 +40,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
-use {ap_url, Connection, BASE_URL, USE_HTTPS};
+use {ap_url, Connection, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -96,139 +96,112 @@ impl User {
     find_by!(users, find_by_name, username as &str, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as &str);
 
-    pub fn one_by_instance(conn: &Connection) -> Vec<User> {
+    pub fn one_by_instance(conn: &Connection) -> Result<Vec<User>> {
         users::table
             .filter(users::instance_id.eq_any(users::table.select(users::instance_id).distinct()))
             .load::<User>(conn)
-            .expect("User::one_by_instance: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) {
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
         use schema::post_authors;
 
-        Blog::find_for_author(conn, self)
+        for blog in Blog::find_for_author(conn, self)?
             .iter()
-            .filter(|b| b.count_authors(conn) <= 1)
-            .for_each(|b| b.delete(conn, searcher));
+            .filter(|b| b.count_authors(conn).map(|c| c <= 1).unwrap_or(false)) {
+            blog.delete(conn, searcher)?;
+        }
         // delete the posts if they is the only author
         let all_their_posts_ids: Vec<i32> = post_authors::table
             .filter(post_authors::author_id.eq(self.id))
             .select(post_authors::post_id)
-            .load(conn)
-            .expect("User::delete: post loading error");
+            .load(conn)?;
         for post_id in all_their_posts_ids {
             let has_other_authors = post_authors::table
                 .filter(post_authors::post_id.eq(post_id))
                 .filter(post_authors::author_id.ne(self.id))
                 .count()
-                .load(conn)
-                .expect("User::delete: count author error")
+                .load(conn)?
                 .first()
                 .unwrap_or(&0) > &0;
             if !has_other_authors {
-                Post::get(conn, post_id)
-                    .expect("User::delete: post not found error")
-                    .delete(&(conn, searcher));
+                Post::get(conn, post_id)?
+                    .delete(&(conn, searcher))?;
             }
         }
 
         diesel::delete(self)
             .execute(conn)
-            .expect("User::delete: user deletion error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
-    pub fn get_instance(&self, conn: &Connection) -> Instance {
-        Instance::get(conn, self.instance_id).expect("User::get_instance: instance not found error")
+    pub fn get_instance(&self, conn: &Connection) -> Result<Instance> {
+        Instance::get(conn, self.instance_id)
     }
 
-    pub fn grant_admin_rights(&self, conn: &Connection) {
+    pub fn grant_admin_rights(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(users::is_admin.eq(true))
             .execute(conn)
-            .expect("User::grand_admin_rights: update error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
-    pub fn revoke_admin_rights(&self, conn: &Connection) {
+    pub fn revoke_admin_rights(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(users::is_admin.eq(false))
             .execute(conn)
-            .expect("User::grand_admin_rights: update error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
-    pub fn update(&self, conn: &Connection, name: String, email: String, summary: String) -> User {
+    pub fn update(&self, conn: &Connection, name: String, email: String, summary: String) -> Result<User> {
         diesel::update(self)
             .set((
                 users::display_name.eq(name),
                 users::email.eq(email),
                 users::summary.eq(summary),
             ))
-            .execute(conn)
-            .expect("User::update: update error");
-        User::get(conn, self.id).expect("User::update: get error")
+            .execute(conn)?;
+        User::get(conn, self.id)
     }
 
-    pub fn count_local(conn: &Connection) -> i64 {
+    pub fn count_local(conn: &Connection) -> Result<i64> {
         users::table
-            .filter(users::instance_id.eq(Instance::local_id(conn)))
+            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
             .count()
             .get_result(conn)
-            .expect("User::count_local: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn find_local(conn: &Connection, username: &str) -> Option<User> {
-        User::find_by_name(conn, username, Instance::local_id(conn))
+    pub fn find_local(conn: &Connection, username: &str) -> Result<User> {
+        User::find_by_name(conn, username, Instance::get_local(conn)?.id)
     }
 
-    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Option<User> {
-        if fqn.contains('@') {
-            // remote user
-            match Instance::find_by_domain(
-                conn,
-                fqn.split('@')
-                    .last()
-                    .expect("User::find_by_fqn: host error"),
-            ) {
-                Some(instance) => match User::find_by_name(
-                    conn,
-                    fqn.split('@')
-                        .nth(0)
-                        .expect("User::find_by_fqn: name error")
-                    ,
-                    instance.id,
-                ) {
-                    Some(u) => Some(u),
-                    None => User::fetch_from_webfinger(conn, fqn),
-                },
-                None => User::fetch_from_webfinger(conn, fqn),
-            }
-        } else {
-            // local user
-            User::find_local(conn, fqn)
+    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<User> {
+        let mut split_fqn = fqn.split('@');
+        let username = split_fqn.next().ok_or(Error::InvalidValue)?;
+        if let Some(domain) = split_fqn.next() { // remote user
+            Instance::find_by_domain(conn, domain)
+                .and_then(|instance| User::find_by_name(conn, username, instance.id))
+                .or_else(|_| User::fetch_from_webfinger(conn, fqn))
+        } else { // local user
+            User::find_local(conn, username)
         }
     }
 
-    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Option<User> {
-        match resolve(acct.to_owned(), *USE_HTTPS) {
-            Ok(wf) => wf
-                .links
-                .into_iter()
-                .find(|l| l.mime_type == Some(String::from("application/activity+json")))
-                .and_then(|l| {
-                    User::fetch_from_url(
-                        conn,
-                        &l.href
-                            .expect("User::fetch_from_webginfer: href not found error"),
-                    )
-                }),
-            Err(details) => {
-                println!("WF Error: {:?}", details);
-                None
-            }
-        }
+    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<User> {
+        let link = resolve(acct.to_owned(), *USE_HTTPS)?
+            .links
+            .into_iter()
+            .find(|l| l.mime_type == Some(String::from("application/activity+json")))
+            .ok_or(Error::Webfinger)?;
+        User::fetch_from_url(conn, link.href.as_ref()?)
     }
 
-    fn fetch(url: &str) -> Option<CustomPerson> {
-        let req = Client::new()
+    fn fetch(url: &str) -> Result<CustomPerson> {
+        let mut res = Client::new()
             .get(url)
             .header(
                 ACCEPT,
@@ -237,72 +210,45 @@ impl User {
                         .into_iter()
                         .collect::<Vec<_>>()
                         .join(", "),
-                ).expect("User::fetch: accept header error"),
+                )?,
             )
-            .send();
-        match req {
-            Ok(mut res) => {
-                if let Ok(text) = &res.text() {
-                    if let Ok(ap_sign) = serde_json::from_str::<ApSignature>(text) {
-                        if let Ok(mut json) = serde_json::from_str::<CustomPerson>(text) {
-                            json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-                            Some(json)
-                        } else {
-                            None
-                        }
-                    } else {
-                        None
-                    }
-                } else {
-                    None
-                }
-            }
-            Err(e) => {
-                println!("User fetch error: {:?}", e);
-                None
-            }
-        }
+            .send()?;
+        let text = &res.text()?;
+        // without this workaround, publicKey is not correctly deserialized
+        let ap_sign = serde_json::from_str::<ApSignature>(text)?;
+        let mut json = serde_json::from_str::<CustomPerson>(text)?;
+        json.custom_props = ap_sign;
+        Ok(json)
     }
 
-    pub fn fetch_from_url(conn: &Connection, url: &str) -> Option<User> {
-        User::fetch(url).and_then(|json| {
-            (User::from_activity(
+    pub fn fetch_from_url(conn: &Connection, url: &str) -> Result<User> {
+        User::fetch(url).and_then(|json| User::from_activity(
+            conn,
+            &json,
+            Url::parse(url)?.host_str()?,
+        ))
+    }
+
+    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> Result<User> {
+        let instance = Instance::find_by_domain(conn, inst)
+            .or_else(|_| Instance::insert(
                 conn,
-                &json,
-                Url::parse(url)
-                    .expect("User::fetch_from_url: url error")
-                    .host_str()
-                    .expect("User::fetch_from_url: host error"),
-            ).ok())
-        })
-    }
+                NewInstance {
+                    name: inst.to_owned(),
+                    public_domain: inst.to_owned(),
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: SafeString::new(""),
+                    short_description: SafeString::new(""),
+                    default_license: String::new(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new(),
+                },
+            ))?;
 
-    fn from_activity(conn: &Connection, acct: &CustomPerson, inst: &str) -> Result<User, ()> {
-        let instance = match Instance::find_by_domain(conn, inst) {
-            Some(instance) => instance,
-            None => {
-                Instance::insert(
-                    conn,
-                    NewInstance {
-                        name: inst.to_owned(),
-                        public_domain: inst.to_owned(),
-                        local: false,
-                        // We don't really care about all the following for remote instances
-                        long_description: SafeString::new(""),
-                        short_description: SafeString::new(""),
-                        default_license: String::new(),
-                        open_registrations: true,
-                        short_description_html: String::new(),
-                        long_description_html: String::new(),
-                    },
-                )
-            }
-        };
-
-        if acct.object.ap_actor_props.preferred_username_string()
-            .expect("User::from_activity: preferredUsername error")
-            .contains(&['<', '>', '&', '@', '\'', '"'][..]) {
-            return Err(());
+        if acct.object.ap_actor_props.preferred_username_string()?.contains(&['<', '>', '&', '@', '\'', '"'][..]) {
+            return Err(Error::InvalidValue);
         }
         let user = User::insert(
             conn,
@@ -315,18 +261,15 @@ impl User {
                 display_name: acct
                     .object
                     .object_props
-                    .name_string()
-                    .expect("User::from_activity: name error"),
+                    .name_string()?,
                 outbox_url: acct
                     .object
                     .ap_actor_props
-                    .outbox_string()
-                    .expect("User::from_activity: outbox error"),
+                    .outbox_string()?,
                 inbox_url: acct
                     .object
                     .ap_actor_props
-                    .inbox_string()
-                    .expect("User::from_activity: inbox error"),
+                    .inbox_string()?,
                 is_admin: false,
                 summary: SafeString::new(
                     &acct
@@ -341,14 +284,11 @@ impl User {
                 ap_url: acct
                     .object
                     .object_props
-                    .id_string()
-                    .expect("User::from_activity: id error"),
+                    .id_string()?,
                 public_key: acct
                     .custom_props
-                    .public_key_publickey()
-                    .expect("User::from_activity: publicKey error")
-                    .public_key_pem_string()
-                    .expect("User::from_activity: publicKey.publicKeyPem error"),
+                    .public_key_publickey()?
+                    .public_key_pem_string()?,
                 private_key: None,
                 shared_inbox_url: acct
                     .object
@@ -359,42 +299,37 @@ impl User {
                 followers_endpoint: acct
                     .object
                     .ap_actor_props
-                    .followers_string()
-                    .expect("User::from_activity: followers error"),
+                    .followers_string()?,
                 avatar_id: None,
             },
-        );
+        )?;
 
         let avatar = Media::save_remote(
             conn,
             acct.object
                 .object_props
-                .icon_image()
-                .expect("User::from_activity: icon error")
+                .icon_image()?
                 .object_props
-                .url_string()
-                .expect("User::from_activity: icon.url error"),
+                .url_string()?,
             &user,
         );
 
         if let Ok(avatar) = avatar {
-            user.set_avatar(conn, avatar.id);
+            user.set_avatar(conn, avatar.id)?;
         }
 
         Ok(user)
     }
 
-    pub fn refetch(&self, conn: &Connection) {
-        User::fetch(&self.ap_url.clone()).map(|json| {
+    pub fn refetch(&self, conn: &Connection) -> Result<()> {
+        User::fetch(&self.ap_url.clone()).and_then(|json| {
             let avatar = Media::save_remote(
                 conn,
                 json.object
                     .object_props
-                    .icon_image()
-                    .expect("User::refetch: icon error")
+                    .icon_image()?
                     .object_props
-                    .url_string()
-                    .expect("User::refetch: icon.url error"),
+                    .url_string()?,
                 &self,
             ).ok();
 
@@ -403,23 +338,19 @@ impl User {
                     users::username.eq(json
                         .object
                         .ap_actor_props
-                        .preferred_username_string()
-                        .expect("User::refetch: preferredUsername error")),
+                        .preferred_username_string()?),
                     users::display_name.eq(json
                         .object
                         .object_props
-                        .name_string()
-                        .expect("User::refetch: name error")),
+                        .name_string()?),
                     users::outbox_url.eq(json
                         .object
                         .ap_actor_props
-                        .outbox_string()
-                        .expect("User::refetch: outbox error")),
+                        .outbox_string()?),
                     users::inbox_url.eq(json
                         .object
                         .ap_actor_props
-                        .inbox_string()
-                        .expect("User::refetch: inbox error")),
+                        .inbox_string()?),
                     users::summary.eq(SafeString::new(
                         &json
                             .object
@@ -430,36 +361,39 @@ impl User {
                     users::followers_endpoint.eq(json
                         .object
                         .ap_actor_props
-                        .followers_string()
-                        .expect("User::refetch: followers error")),
+                        .followers_string()?),
                     users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
+                    users::public_key.eq(json
+                        .custom_props
+                        .public_key_publickey()?
+                        .public_key_pem_string()?),
                 ))
                 .execute(conn)
-                .expect("User::refetch: update error")
-        });
+                .map(|_| ())
+                .map_err(Error::from)
+        })
     }
 
-    pub fn hash_pass(pass: &str) -> String {
-        bcrypt::hash(pass, 10).expect("User::hash_pass: hashing error")
+    pub fn hash_pass(pass: &str) -> Result<String> {
+        bcrypt::hash(pass, 10).map_err(Error::from)
     }
 
     pub fn auth(&self, pass: &str) -> bool {
-        if let Ok(valid) = bcrypt::verify(
-            pass,
-            self.hashed_password
-                .clone()
-                .expect("User::auth: no password error")
-                .as_str(),
-        ) {
-            valid
-        } else {
-            false
-        }
+        self.hashed_password.clone()
+            .map(|hashed| bcrypt::verify(pass, hashed.as_ref()).unwrap_or(false))
+            .unwrap_or(false)
     }
 
-    pub fn update_boxes(&self, conn: &Connection) {
-        let instance = self.get_instance(conn);
+    pub fn reset_password(&self, conn: &Connection, pass: &str) -> Result<()> {
+        diesel::update(self)
+            .set(users::hashed_password.eq(User::hash_pass(pass)?))
+            .execute(conn)?;
+        Ok(())
+    }
+
+    pub fn update_boxes(&self, conn: &Connection) -> Result<()> {
+        let instance = self.get_instance(conn)?;
         if self.outbox_url.is_empty() {
             diesel::update(self)
                 .set(users::outbox_url.eq(instance.compute_box(
@@ -467,8 +401,7 @@ impl User {
                     &self.username,
                     "outbox",
                 )))
-                .execute(conn)
-                .expect("User::update_boxes: outbox update error");
+                .execute(conn)?;
         }
 
         if self.inbox_url.is_empty() {
@@ -478,27 +411,23 @@ impl User {
                     &self.username,
                     "inbox",
                 )))
-                .execute(conn)
-                .expect("User::update_boxes: inbox update error");
+                .execute(conn)?;
         }
 
         if self.ap_url.is_empty() {
             diesel::update(self)
                 .set(users::ap_url.eq(instance.compute_box(USER_PREFIX, &self.username, "")))
-                .execute(conn)
-                .expect("User::update_boxes: ap_url update error");
+                .execute(conn)?;
         }
 
         if self.shared_inbox_url.is_none() {
             diesel::update(self)
                 .set(users::shared_inbox_url.eq(ap_url(&format!(
                         "{}/inbox",
-                        Instance::get_local(conn)
-                            .expect("User::update_boxes: local instance not found error")
+                        Instance::get_local(conn)?
                             .public_domain
                     ))))
-                .execute(conn)
-                .expect("User::update_boxes: shared inbox update error");
+                .execute(conn)?;
         }
 
         if self.followers_endpoint.is_empty() {
@@ -508,35 +437,34 @@ impl User {
                     &self.username,
                     "followers",
                 )))
-                .execute(conn)
-                .expect("User::update_boxes: follower update error");
+                .execute(conn)?;
         }
+
+        Ok(())
     }
 
-    pub fn get_local_page(conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
+    pub fn get_local_page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<User>> {
         users::table
-            .filter(users::instance_id.eq(Instance::local_id(conn)))
+            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
             .order(users::username.asc())
             .offset(min.into())
             .limit((max - min).into())
             .load::<User>(conn)
-            .expect("User::get_local_page: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn outbox(&self, conn: &Connection) -> ActivityStream<OrderedCollection> {
-        let acts = self.get_activities(conn);
+    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        let acts = self.get_activities(conn)?;
         let n_acts = acts.len();
         let mut coll = OrderedCollection::default();
-        coll.collection_props.items =
-            serde_json::to_value(acts).expect("User::outbox: activity error");
+        coll.collection_props.items = serde_json::to_value(acts)?;
         coll.collection_props
-            .set_total_items_u64(n_acts as u64)
-            .expect("User::outbox: count error");
-        ActivityStream::new(coll)
+            .set_total_items_u64(n_acts as u64)?;
+        Ok(ActivityStream::new(coll))
     }
 
-    pub fn fetch_outbox<T: Activity>(&self) -> Vec<T> {
-        let req = Client::new()
+    pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
+        let mut res = Client::new()
             .get(&self.outbox_url[..])
             .header(
                 ACCEPT,
@@ -545,30 +473,22 @@ impl User {
                         .into_iter()
                         .collect::<Vec<_>>()
                         .join(", "),
-                ).expect("User::fetch_outbox: accept header error"),
+                )?
             )
-            .send();
-        match req {
-            Ok(mut res) => {
-                let text = &res.text().expect("User::fetch_outbox: body error");
-                let json: serde_json::Value =
-                    serde_json::from_str(text).expect("User::fetch_outbox: parsing error");
-                json["items"]
-                    .as_array()
-                    .unwrap_or(&vec![])
-                    .into_iter()
-                    .filter_map(|j| serde_json::from_value(j.clone()).ok())
-                    .collect::<Vec<T>>()
-            }
-            Err(e) => {
-                println!("User outbox fetch error: {:?}", e);
-                vec![]
-            }
-        }
+            .send()?;
+        let text = &res.text()?;
+        let json: serde_json::Value =
+            serde_json::from_str(text)?;
+        Ok(json["items"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .into_iter()
+            .filter_map(|j| serde_json::from_value(j.clone()).ok())
+            .collect::<Vec<T>>())
     }
 
-    pub fn fetch_followers_ids(&self) -> Vec<String> {
-        let req = Client::new()
+    pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
+        let mut res = Client::new()
             .get(&self.followers_endpoint[..])
             .header(
                 ACCEPT,
@@ -577,78 +497,67 @@ impl User {
                         .into_iter()
                         .collect::<Vec<_>>()
                         .join(", "),
-                ).expect("User::fetch_followers_ids: accept header error"),
+                )?
             )
-            .send();
-        match req {
-            Ok(mut res) => {
-                let text = &res.text().expect("User::fetch_followers_ids: body error");
-                let json: serde_json::Value =
-                    serde_json::from_str(text).expect("User::fetch_followers_ids: parsing error");
-                json["items"]
-                    .as_array()
-                    .unwrap_or(&vec![])
-                    .into_iter()
-                    .filter_map(|j| serde_json::from_value(j.clone()).ok())
-                    .collect::<Vec<String>>()
-            }
-            Err(e) => {
-                println!("User followers fetch error: {:?}", e);
-                vec![]
-            }
-        }
+            .send()?;
+        let text = &res.text()?;
+        let json: serde_json::Value = serde_json::from_str(text)?;
+        Ok(json["items"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .into_iter()
+            .filter_map(|j| serde_json::from_value(j.clone()).ok())
+            .collect::<Vec<String>>())
     }
 
-    fn get_activities(&self, conn: &Connection) -> Vec<serde_json::Value> {
+    fn get_activities(&self, conn: &Connection) -> Result<Vec<serde_json::Value>> {
         use schema::post_authors;
         use schema::posts;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table
             .filter(posts::published.eq(true))
             .filter(posts::id.eq_any(posts_by_self))
-            .load::<Post>(conn)
-            .expect("User::get_activities: loading error");
-        posts
+            .load::<Post>(conn)?;
+        Ok(posts
             .into_iter()
-            .map(|p| {
-                serde_json::to_value(p.create_activity(conn))
-                    .expect("User::get_activities: creation error")
+            .filter_map(|p| {
+                p.create_activity(conn).ok().and_then(|a| serde_json::to_value(a).ok())
             })
-            .collect::<Vec<serde_json::Value>>()
+            .collect::<Vec<serde_json::Value>>())
     }
 
     pub fn get_fqn(&self, conn: &Connection) -> String {
-        if self.instance_id == Instance::local_id(conn) {
+        if self.instance_id == Instance::get_local(conn).ok().expect("User::get_fqn: instance error").id {
             self.username.clone()
         } else {
             format!(
                 "{}@{}",
                 self.username,
-                self.get_instance(conn).public_domain
+                self.get_instance(conn).ok().expect("User::get_fqn: instance error").public_domain
             )
         }
     }
 
-    pub fn get_followers(&self, conn: &Connection) -> Vec<User> {
+    pub fn get_followers(&self, conn: &Connection) -> Result<Vec<User>> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
         users::table
             .filter(users::id.eq_any(follows))
             .load::<User>(conn)
-            .expect("User::get_followers: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn count_followers(&self, conn: &Connection) -> i64 {
+    pub fn count_followers(&self, conn: &Connection) -> Result<i64> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
         users::table
             .filter(users::id.eq_any(follows))
             .count()
             .get_result(conn)
-            .expect("User::count_followers: counting error")
+            .map_err(Error::from)
     }
 
-    pub fn get_followers_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Vec<User> {
+    pub fn get_followers_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<User>> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
         users::table
@@ -656,165 +565,179 @@ impl User {
             .offset(min.into())
             .limit((max - min).into())
             .load::<User>(conn)
-            .expect("User::get_followers_page: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn get_following(&self, conn: &Connection) -> Vec<User> {
+    pub fn get_following(&self, conn: &Connection) -> Result<Vec<User>> {
         use schema::follows::dsl::*;
         let f = follows.filter(follower_id.eq(self.id)).select(following_id);
         users::table
             .filter(users::id.eq_any(f))
             .load::<User>(conn)
-            .expect("User::get_following: loading error")
+            .map_err(Error::from)
     }
 
-    pub fn is_followed_by(&self, conn: &Connection, other_id: i32) -> bool {
+    pub fn is_followed_by(&self, conn: &Connection, other_id: i32) -> Result<bool> {
         use schema::follows;
         follows::table
             .filter(follows::follower_id.eq(other_id))
             .filter(follows::following_id.eq(self.id))
             .count()
             .get_result::<i64>(conn)
-            .expect("User::is_followed_by: loading error") > 0
+            .map_err(Error::from)
+            .map(|r| r > 0)
     }
 
-    pub fn is_following(&self, conn: &Connection, other_id: i32) -> bool {
+    pub fn is_following(&self, conn: &Connection, other_id: i32) -> Result<bool> {
         use schema::follows;
         follows::table
             .filter(follows::follower_id.eq(self.id))
             .filter(follows::following_id.eq(other_id))
             .count()
             .get_result::<i64>(conn)
-            .expect("User::is_following: loading error") > 0
+            .map_err(Error::from)
+            .map(|r| r > 0)
     }
 
-    pub fn has_liked(&self, conn: &Connection, post: &Post) -> bool {
+    pub fn has_liked(&self, conn: &Connection, post: &Post) -> Result<bool> {
         use schema::likes;
         likes::table
             .filter(likes::post_id.eq(post.id))
             .filter(likes::user_id.eq(self.id))
             .count()
             .get_result::<i64>(conn)
-            .expect("User::has_liked: loading error") > 0
+            .map_err(Error::from)
+            .map(|r| r > 0)
     }
 
-    pub fn has_reshared(&self, conn: &Connection, post: &Post) -> bool {
+    pub fn has_reshared(&self, conn: &Connection, post: &Post) -> Result<bool> {
         use schema::reshares;
         reshares::table
             .filter(reshares::post_id.eq(post.id))
             .filter(reshares::user_id.eq(self.id))
             .count()
             .get_result::<i64>(conn)
-            .expect("User::has_reshared: loading error") > 0
+            .map_err(Error::from)
+            .map(|r| r > 0)
     }
 
-    pub fn is_author_in(&self, conn: &Connection, blog: &Blog) -> bool {
+    pub fn is_author_in(&self, conn: &Connection, blog: &Blog) -> Result<bool> {
         use schema::blog_authors;
         blog_authors::table
             .filter(blog_authors::author_id.eq(self.id))
             .filter(blog_authors::blog_id.eq(blog.id))
             .count()
             .get_result::<i64>(conn)
-            .expect("User::is_author_in: loading error") > 0
+            .map_err(Error::from)
+            .map(|r| r > 0)
     }
 
-    pub fn get_keypair(&self) -> PKey<Private> {
+    pub fn get_keypair(&self) -> Result<PKey<Private>> {
         PKey::from_rsa(
             Rsa::private_key_from_pem(
                 self.private_key
-                    .clone()
-                    .expect("User::get_keypair: private key not found error")
+                    .clone()?
                     .as_ref(),
-            ).expect("User::get_keypair: pem parsing error"),
-        ).expect("User::get_keypair: private key deserialization error")
+            )?,
+        ).map_err(Error::from)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> CustomPerson {
+    pub fn rotate_keypair(&self, conn: &Connection) -> Result<PKey<Private>> {
+        if self.private_key.is_none() {
+            return Err(Error::InvalidValue)
+        }
+        if (Utc::now().naive_utc() - self.last_fetched_date).num_minutes() < 10 {
+            //rotated recently
+            self.get_keypair()
+        } else {
+            let (public_key, private_key) = gen_keypair();
+            let public_key = String::from_utf8(public_key).expect("NewUser::new_local: public key error");
+            let private_key = String::from_utf8(private_key).expect("NewUser::new_local: private key error");
+            let res = PKey::from_rsa(
+                Rsa::private_key_from_pem(private_key.as_ref())?
+                )?;
+            diesel::update(self)
+                .set((users::public_key.eq(public_key),
+                    users::private_key.eq(Some(private_key)),
+                    users::last_fetched_date.eq(Utc::now().naive_utc())))
+                .execute(conn)
+                .map_err(Error::from)
+                .map(|_| res)
+        }
+    }
+
+    pub fn to_activity(&self, conn: &Connection) -> Result<CustomPerson> {
         let mut actor = Person::default();
         actor
             .object_props
-            .set_id_string(self.ap_url.clone())
-            .expect("User::to_activity: id error");
+            .set_id_string(self.ap_url.clone())?;
         actor
             .object_props
-            .set_name_string(self.display_name.clone())
-            .expect("User::to_activity: name error");
+            .set_name_string(self.display_name.clone())?;
         actor
             .object_props
-            .set_summary_string(self.summary.get().clone())
-            .expect("User::to_activity: summary error");
+            .set_summary_string(self.summary.get().clone())?;
         actor
             .object_props
-            .set_url_string(self.ap_url.clone())
-            .expect("User::to_activity: url error");
+            .set_url_string(self.ap_url.clone())?;
         actor
             .ap_actor_props
-            .set_inbox_string(self.inbox_url.clone())
-            .expect("User::to_activity: inbox error");
+            .set_inbox_string(self.inbox_url.clone())?;
         actor
             .ap_actor_props
-            .set_outbox_string(self.outbox_url.clone())
-            .expect("User::to_activity: outbox error");
+            .set_outbox_string(self.outbox_url.clone())?;
         actor
             .ap_actor_props
-            .set_preferred_username_string(self.username.clone())
-            .expect("User::to_activity: preferredUsername error");
+            .set_preferred_username_string(self.username.clone())?;
         actor
             .ap_actor_props
-            .set_followers_string(self.followers_endpoint.clone())
-            .expect("User::to_activity: followers error");
+            .set_followers_string(self.followers_endpoint.clone())?;
 
         let mut endpoints = Endpoint::default();
         endpoints
-            .set_shared_inbox_string(ap_url(&format!("{}/inbox/", BASE_URL.as_str())))
-            .expect("User::to_activity: endpoints.sharedInbox error");
+            .set_shared_inbox_string(ap_url(&format!("{}/inbox/", BASE_URL.as_str())))?;
         actor
             .ap_actor_props
-            .set_endpoints_endpoint(endpoints)
-            .expect("User::to_activity: endpoints error");
+            .set_endpoints_endpoint(endpoints)?;
 
         let mut public_key = PublicKey::default();
         public_key
-            .set_id_string(format!("{}#main-key", self.ap_url))
-            .expect("User::to_activity: publicKey.id error");
+            .set_id_string(format!("{}#main-key", self.ap_url))?;
         public_key
-            .set_owner_string(self.ap_url.clone())
-            .expect("User::to_activity: publicKey.owner error");
+            .set_owner_string(self.ap_url.clone())?;
         public_key
-            .set_public_key_pem_string(self.public_key.clone())
-            .expect("User::to_activity: publicKey.publicKeyPem error");
+            .set_public_key_pem_string(self.public_key.clone())?;
         let mut ap_signature = ApSignature::default();
         ap_signature
-            .set_public_key_publickey(public_key)
-            .expect("User::to_activity: publicKey error");
+            .set_public_key_publickey(public_key)?;
 
         let mut avatar = Image::default();
         avatar
             .object_props
             .set_url_string(
                 self.avatar_id
-                    .and_then(|id| Media::get(conn, id).map(|m| m.url(conn)))
+                    .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
                     .unwrap_or_default(),
-            )
-            .expect("User::to_activity: icon.url error");
+            )?;
         actor
             .object_props
-            .set_icon_object(avatar)
-            .expect("User::to_activity: icon error");
+            .set_icon_object(avatar)?;
 
-        CustomPerson::new(actor, ap_signature)
+        Ok(CustomPerson::new(actor, ap_signature))
     }
 
     pub fn avatar_url(&self, conn: &Connection) -> String {
-        self.avatar_id.and_then(|id| Media::get(conn, id).map(|m| m.url(conn))).unwrap_or("/static/default-avatar.png".to_string())
+        self.avatar_id.and_then(|id|
+            Media::get(conn, id).and_then(|m| m.url(conn)).ok()
+        ).unwrap_or("/static/default-avatar.png".to_string())
     }
 
-    pub fn webfinger(&self, conn: &Connection) -> Webfinger {
-        Webfinger {
+    pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {
+        Ok(Webfinger {
             subject: format!(
                 "acct:{}@{}",
                 self.username,
-                self.get_instance(conn).public_domain
+                self.get_instance(conn)?.public_domain
             ),
             aliases: vec![self.ap_url.clone()],
             links: vec![
@@ -827,7 +750,7 @@ impl User {
                 Link {
                     rel: String::from("http://schemas.google.com/g/2010#updates-from"),
                     mime_type: Some(String::from("application/atom+xml")),
-                    href: Some(self.get_instance(conn).compute_box(
+                    href: Some(self.get_instance(conn)?.compute_box(
                         USER_PREFIX,
                         &self.username,
                         "feed.atom",
@@ -841,30 +764,27 @@ impl User {
                     template: None,
                 },
             ],
-        }
+        })
     }
 
-    pub fn from_url(conn: &Connection, url: &str) -> Option<User> {
-        User::find_by_ap_url(conn, url).or_else(|| {
+    pub fn from_url(conn: &Connection, url: &str) -> Result<User> {
+        User::find_by_ap_url(conn, url).or_else(|_| {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(&url)
-                .expect("User::from_url: url error")
-                .host_str()
-                .expect("User::from_url: host error") != BASE_URL.as_str()
-            {
+            if Url::parse(&url)?.host_str()? != BASE_URL.as_str() {
                 User::fetch_from_url(conn, url)
             } else {
-                None
+                Err(Error::NotFound)
             }
         })
     }
 
-    pub fn set_avatar(&self, conn: &Connection, id: i32) {
+    pub fn set_avatar(&self, conn: &Connection, id: i32) -> Result<()> {
         diesel::update(self)
             .set(users::avatar_id.eq(id))
             .execute(conn)
-            .expect("User::set_avatar: update error");
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
     pub fn needs_update(&self) -> bool {
@@ -889,7 +809,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             .cookies()
             .get_private(AUTH_COOKIE)
             .and_then(|cookie| cookie.value().parse().ok())
-            .map(|id| User::get(&*conn, id).expect("User::from_request: user not found error"))
+            .and_then(|id| User::get(&*conn, id).ok())
             .or_forward(())
     }
 }
@@ -919,35 +839,30 @@ impl WithInbox for User {
 }
 
 impl Signer for User {
+    type Error = Error;
+
     fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: &str) -> Vec<u8> {
-        let key = self.get_keypair();
-        let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)
-            .expect("User::sign: initialization error");
+    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
+        let key = self.get_keypair()?;
+        let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)?;
         signer
-            .update(to_sign.as_bytes())
-            .expect("User::sign: content insertion error");
+            .update(to_sign.as_bytes())?;
         signer
             .sign_to_vec()
-            .expect("User::sign: finalization error")
+            .map_err(Error::from)
     }
 
-    fn verify(&self, data: &str, signature: &[u8]) -> bool {
-        let key = PKey::from_rsa(
-            Rsa::public_key_from_pem(self.public_key.as_ref())
-                .expect("User::verify: pem parsing error"),
-        ).expect("User::verify: deserialization error");
-        let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)
-            .expect("User::verify: initialization error");
+    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+        let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
+        let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)?;
         verifier
-            .update(data.as_bytes())
-            .expect("User::verify: content insertion error");
+            .update(data.as_bytes())?;
         verifier
             .verify(&signature)
-            .expect("User::verify: finalization error")
+            .map_err(Error::from)
     }
 }
 
@@ -973,7 +888,7 @@ impl NewUser {
         summary: &str,
         email: String,
         password: String,
-    ) -> User {
+    ) -> Result<User> {
         let (pub_key, priv_key) = gen_keypair();
         User::insert(
             conn,
@@ -986,7 +901,7 @@ impl NewUser {
                 summary: SafeString::new(summary),
                 email: Some(email),
                 hashed_password: Some(password),
-                instance_id: Instance::local_id(conn),
+                instance_id: Instance::get_local(conn)?.id,
                 ap_url: String::from(""),
                 public_key: String::from_utf8(pub_key)
                     .expect("NewUser::new_local: public key error"),
@@ -1020,8 +935,8 @@ pub(crate) mod tests {
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
             "invalid_admin_password".to_owned(),
-        );
-        admin.update_boxes(conn);
+        ).unwrap();
+        admin.update_boxes(conn).unwrap();
         let user = NewUser::new_local(
             conn,
             "user".to_owned(),
@@ -1030,8 +945,8 @@ pub(crate) mod tests {
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
             "invalid_user_password".to_owned(),
-        );
-        user.update_boxes(conn);
+        ).unwrap();
+        user.update_boxes(conn).unwrap();
         let other = NewUser::new_local(
             conn,
             "other".to_owned(),
@@ -1040,8 +955,8 @@ pub(crate) mod tests {
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
             "invalid_other_password".to_owned(),
-        );
-        other.update_boxes(conn);
+        ).unwrap();
+        other.update_boxes(conn).unwrap();
         vec![ admin, user, other ]
     }
 
@@ -1057,13 +972,13 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password"),
-            );
-            test_user.update_boxes(conn);
+                User::hash_pass("test_password").unwrap(),
+            ).unwrap();
+            test_user.update_boxes(conn).unwrap();
 
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test", Instance::local_id(conn))
+                User::find_by_name(conn, "test", Instance::get_local(conn).unwrap().id)
                     .unwrap()
                     .id
             );
@@ -1100,9 +1015,9 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let inserted = fill_database(conn);
 
-            assert!(User::get(conn, inserted[0].id).is_some());
-            inserted[0].delete(conn, &get_searcher());
-            assert!(User::get(conn, inserted[0].id).is_none());
+            assert!(User::get(conn, inserted[0].id).is_ok());
+            inserted[0].delete(conn, &get_searcher()).unwrap();
+            assert!(User::get(conn, inserted[0].id).is_err());
 
             Ok(())
         });
@@ -1115,13 +1030,13 @@ pub(crate) mod tests {
             let inserted = fill_database(conn);
             let local_inst = Instance::get_local(conn).unwrap();
             let mut i = 0;
-            while local_inst.has_admin(conn) {
+            while local_inst.has_admin(conn).unwrap() {
                 assert!(i < 100); //prevent from looping indefinitelly
-                local_inst.main_admin(conn).revoke_admin_rights(conn);
+                local_inst.main_admin(conn).unwrap().revoke_admin_rights(conn).unwrap();
                 i += 1;
             }
-            inserted[0].grant_admin_rights(conn);
-            assert_eq!(inserted[0].id, local_inst.main_admin(conn).id);
+            inserted[0].grant_admin_rights(conn).unwrap();
+            assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
 
             Ok(())
         });
@@ -1137,7 +1052,7 @@ pub(crate) mod tests {
                 "new name".to_owned(),
                 "em@il".to_owned(),
                 "<p>summary</p><script></script>".to_owned(),
-            );
+            ).unwrap();
             assert_eq!(updated.display_name, "new name");
             assert_eq!(updated.email.unwrap(), "em@il");
             assert_eq!(updated.summary.get(), "<p>summary</p>");
@@ -1158,9 +1073,9 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password"),
-            );
-            test_user.update_boxes(conn);
+                User::hash_pass("test_password").unwrap(),
+            ).unwrap();
+            test_user.update_boxes(conn).unwrap();
 
             assert!(test_user.auth("test_password"));
             assert!(!test_user.auth("other_password"));
@@ -1175,20 +1090,20 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             fill_database(conn);
 
-            let page = User::get_local_page(conn, (0, 2));
+            let page = User::get_local_page(conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             assert!(page[0].username <= page[1].username);
 
-            let mut last_username = User::get_local_page(conn, (0, 1))[0].username.clone();
-            for i in 1..User::count_local(conn) as i32 {
-                let page = User::get_local_page(conn, (i, i + 1));
+            let mut last_username = User::get_local_page(conn, (0, 1)).unwrap()[0].username.clone();
+            for i in 1..User::count_local(conn).unwrap() as i32 {
+                let page = User::get_local_page(conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_username <= page[0].username);
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(conn, (0, User::count_local(conn) as i32 + 10)).len() as i64,
-                User::count_local(conn)
+                User::get_local_page(conn, (0, User::count_local(conn).unwrap() as i32 + 10)).unwrap().len() as i64,
+                User::count_local(conn).unwrap()
             );
 
             Ok(())

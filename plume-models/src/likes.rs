@@ -10,7 +10,7 @@ use plume_common::activity_pub::{
 use posts::Post;
 use schema::likes;
 use users::User;
-use Connection;
+use {Connection, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Like {
@@ -35,69 +35,64 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn to_activity(&self, conn: &Connection) -> activity::Like {
+    pub fn to_activity(&self, conn: &Connection) -> Result<activity::Like> {
         let mut act = activity::Like::default();
         act.like_props
             .set_actor_link(
-                User::get(conn, self.user_id)
-                    .expect("Like::to_activity: user error")
+                User::get(conn, self.user_id)?
                     .into_id(),
-            )
-            .expect("Like::to_activity: actor error");
+            )?;
         act.like_props
             .set_object_link(
-                Post::get(conn, self.post_id)
-                    .expect("Like::to_activity: post error")
+                Post::get(conn, self.post_id)?
                     .into_id(),
-            )
-            .expect("Like::to_activity: object error");
+            )?;
         act.object_props
-            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))
-            .expect("Like::to_activity: to error");
+            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
         act.object_props
-            .set_cc_link_vec::<Id>(vec![])
-            .expect("Like::to_activity: cc error");
+            .set_cc_link_vec::<Id>(vec![])?;
         act.object_props
-            .set_id_string(self.ap_url.clone())
-            .expect("Like::to_activity: id error");
+            .set_id_string(self.ap_url.clone())?;
 
-        act
+        Ok(act)
     }
 }
 
 impl FromActivity<activity::Like, Connection> for Like {
-    fn from_activity(conn: &Connection, like: activity::Like, _actor: Id) -> Like {
+    type Error = Error;
+
+    fn from_activity(conn: &Connection, like: activity::Like, _actor: Id) -> Result<Like> {
         let liker = User::from_url(
             conn,
             like.like_props
                 .actor
-                .as_str()
-                .expect("Like::from_activity: actor error"),
-        );
+                .as_str()?,
+        )?;
         let post = Post::find_by_ap_url(
             conn,
             like.like_props
                 .object
-                .as_str()
-                .expect("Like::from_activity: object error"),
-        );
+                .as_str()?,
+        )?;
         let res = Like::insert(
             conn,
             NewLike {
-                post_id: post.expect("Like::from_activity: post error").id,
-                user_id: liker.expect("Like::from_activity: user error").id,
-                ap_url: like.object_props.id_string().unwrap_or_default(),
+                post_id: post.id,
+                user_id: liker.id,
+                ap_url: like.object_props.id_string()?,
             },
-        );
-        res.notify(conn);
-        res
+        )?;
+        res.notify(conn)?;
+        Ok(res)
     }
 }
 
 impl Notify<Connection> for Like {
-    fn notify(&self, conn: &Connection) {
-        let post = Post::get(conn, self.post_id).expect("Like::notify: post error");
-        for author in post.get_authors(conn) {
+    type Error = Error;
+
+    fn notify(&self, conn: &Connection) -> Result<()> {
+        let post = Post::get(conn, self.post_id)?;
+        for author in post.get_authors(conn)? {
             Notification::insert(
                 conn,
                 NewNotification {
@@ -105,55 +100,47 @@ impl Notify<Connection> for Like {
                     object_id: self.id,
                     user_id: author.id,
                 },
-            );
+            )?;
         }
+        Ok(())
     }
 }
 
 impl Deletable<Connection, activity::Undo> for Like {
-    fn delete(&self, conn: &Connection) -> activity::Undo {
+    type Error = Error;
+
+    fn delete(&self, conn: &Connection) -> Result<activity::Undo> {
         diesel::delete(self)
-            .execute(conn)
-            .expect("Like::delete: delete error");
+            .execute(conn)?;
 
         // delete associated notification if any
-        if let Some(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
+        if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
             diesel::delete(&notif)
-                .execute(conn)
-                .expect("Like::delete: notification error");
+                .execute(conn)?;
         }
 
         let mut act = activity::Undo::default();
         act.undo_props
-            .set_actor_link(
-                User::get(conn, self.user_id)
-                    .expect("Like::delete: user error")
-                    .into_id(),
-            )
-            .expect("Like::delete: actor error");
+            .set_actor_link(User::get(conn, self.user_id)?.into_id(),)?;
         act.undo_props
-            .set_object_object(self.to_activity(conn))
-            .expect("Like::delete: object error");
+            .set_object_object(self.to_activity(conn)?)?;
         act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))
-            .expect("Like::delete: id error");
+            .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
-            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))
-            .expect("Like::delete: to error");
+            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
         act.object_props
-            .set_cc_link_vec::<Id>(vec![])
-            .expect("Like::delete: cc error");
+            .set_cc_link_vec::<Id>(vec![])?;
 
-        act
+        Ok(act)
     }
 
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) {
-        if let Some(like) = Like::find_by_ap_url(conn, id) {
-            if let Some(user) = User::find_by_ap_url(conn, actor_id) {
-                if user.id == like.user_id {
-                    like.delete(conn);
-                }
-            }
+    fn delete_id(id: &str, actor_id: &str, conn: &Connection) -> Result<activity::Undo> {
+        let like = Like::find_by_ap_url(conn, id)?;
+        let user = User::find_by_ap_url(conn, actor_id)?;
+        if user.id == like.user_id {
+            like.delete(conn)
+        } else {
+            Err(Error::Unauthorized)
         }
     }
 }

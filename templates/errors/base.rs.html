@@ -1,9 +1,9 @@
 @use templates::base as base_template;
 @use template_utils::*;
 
-@(ctx: BaseContext, error_message: &str, error: Content)
+@(ctx: BaseContext, error_message: String, error: Content)
 
-@:base_template(ctx, error_message, {}, {}, {
+@:base_template(ctx, error_message.clone(), {}, {}, {
   @:error()
   <p>@error_message</p>
 })

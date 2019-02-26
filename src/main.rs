@@ -10,6 +10,9 @@ extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
 extern crate failure;
+#[macro_use]
+extern crate gettext_macros;
+extern crate gettext_utils;
 extern crate guid_create;
 extern crate heck;
 extern crate multipart;
@@ -21,7 +24,6 @@ extern crate plume_models;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
-#[macro_use]
 extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
 extern crate serde;
@@ -36,20 +38,33 @@ extern crate validator_derive;
 extern crate webfinger;
 
 use diesel::r2d2::ConnectionManager;
-use rocket::State;
+use rocket::{
+    Config, State,
+    config::Limits
+};
 use rocket_csrf::CsrfFairingBuilder;
-use plume_models::{DATABASE_URL, Connection,
-    db_conn::{DbPool, PragmaForeignKey}, search::Searcher as UnmanagedSearcher};
+use plume_models::{
+    DATABASE_URL, Connection, Error,
+    db_conn::{DbPool, PragmaForeignKey},
+    search::{Searcher as UnmanagedSearcher, SearcherError},
+};
 use scheduled_thread_pool::ScheduledThreadPool;
+use std::env;
 use std::process::exit;
 use std::sync::Arc;
 use std::time::Duration;
+
+init_i18n!("plume", ar, de, en, fr, gl, it, ja, nb, pl, pt, ru);
 
 mod api;
 mod inbox;
 #[macro_use]
 mod template_utils;
 mod routes;
+
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));
+
+compile_i18n!();
 
 type Worker<'a> = State<'a, ScheduledThreadPool>;
 type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
@@ -65,10 +80,23 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
-
     let dbpool = init_pool().expect("main: database pool initialization error");
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
-    let searcher = Arc::new(UnmanagedSearcher::open(&"search_index").unwrap());
+    let searcher = match UnmanagedSearcher::open(&"search_index") {
+        Err(Error::Search(e)) => match e {
+            SearcherError::WriteLockAcquisitionError => panic!(
+r#"Your search index is locked. Plume can't start. To fix this issue
+make sure no other Plume instance is started, and run:
+
+    plm search unlock
+
+Then try to restart Plume.
+"#),
+            e => Err(e).unwrap()
+        },
+        Err(_) => panic!("Unexpected error while opening search index"),
+        Ok(s) => Arc::new(s)
+    };
 
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(Duration::from_secs(5), Duration::from_secs(60*30), move || commiter.commit());
@@ -79,7 +107,17 @@ fn main() {
         exit(0);
     }).expect("Error setting Ctrl-c handler");
 
-    rocket::ignite()
+    let mut config = Config::active().unwrap();
+    config.set_address(env::var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned())).unwrap();
+    config.set_port(env::var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(7878));
+    let _ = env::var("ROCKET_SECRET_KEY").map(|k| config.set_secret_key(k).unwrap());
+    let form_size = &env::var("FORM_SIZE").unwrap_or_else(|_| "32".to_owned()).parse::<u64>().unwrap();
+    let activity_size = &env::var("ACTIVITY_SIZE").unwrap_or_else(|_| "1024".to_owned()).parse::<u64>().unwrap();
+    config.set_limits(Limits::new()
+                      .limit("forms", form_size * 1024)
+                      .limit("json", activity_size * 1024));
+
+    rocket::custom(config)
         .mount("/", routes![
             routes::blogs::details,
             routes::blogs::activity_details,
@@ -180,12 +218,13 @@ fn main() {
         ])
         .register(catchers![
             routes::errors::not_found,
+            routes::errors::unprocessable_entity,
             routes::errors::server_error
         ])
         .manage(dbpool)
         .manage(workpool)
         .manage(searcher)
-        .manage(include_i18n!("plume", [ "de", "en", "fr", "gl", "it", "ja", "nb", "pl", "ru" ]))
+        .manage(include_i18n!())
         .attach(CsrfFairingBuilder::new()
                 .set_default_target("/csrf-violation?target=<uri>".to_owned(), rocket::http::Method::Post)
                 .add_exceptions(vec![
@@ -198,5 +237,3 @@ fn main() {
                 .finalize().expect("main: csrf fairing creation error"))
         .launch();
 }
-
-include!(concat!(env!("OUT_DIR"), "/templates.rs"));
