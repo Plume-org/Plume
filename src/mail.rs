@@ -10,18 +10,20 @@ mod mailer {
 
     pub struct DebugTransport;
 
-    impl<'a, T: Into<&'a [u8]> + Read + 'a> Transport<'a, T, Result<(), ()>> for DebugTransport {
-        fn send<U: SendableEmail<'a, T> + 'a>(&mut self, email: &'a U) -> Result<(), ()> {
-            let message = *email.message();
+    impl<'a> Transport<'a> for DebugTransport {
+        type Result = Result<(), ()>;
+
+        fn send(&mut self, email: SendableEmail) -> Self::Result {
             println!(
                 "{}: from=<{}> to=<{:?}>\n{:#?}",
-                email.message_id(),
-                match email.envelope().from() {
-                    Some(address) => address.to_string(),
-                    None => "".to_string(),
+                email.message_id().to_string(),
+                email.envelope().from().map(ToString::to_string).unwrap_or_default(),
+                email.envelope().to().to_vec(),
+                {
+                    let mut message = String::new();
+                    email.message().read_to_string(&mut message).map_err(|_| ())?;
+                    message
                 },
-                email.envelope().to(),
-                String::from_utf8(message.into().to_vec()),
             );
             Ok(())
         }
