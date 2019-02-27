@@ -76,6 +76,22 @@ msgstr ""
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
+# src/routes/session.rs:161
+msgid "Password reset"
+msgstr ""
+
+# src/routes/session.rs:162
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:222
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:224
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 # src/routes/user.rs:131
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
@@ -451,6 +467,33 @@ msgid "No result for your query"
 msgstr ""
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "New password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "E-mail"
+msgstr ""
+
+msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
