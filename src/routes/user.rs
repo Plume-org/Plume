@@ -78,18 +78,13 @@ pub fn details(
         let user_clone = user.clone();
         worker.execute(move || {
             for user_id in user_clone.fetch_followers_ids().expect("Remote user: fetching followers error") {
-                let follower =
-                    User::find_by_ap_url(&*fetch_followers_conn, &user_id)
-                        .unwrap_or_else(|_| {
-                            User::fetch_from_url(&*fetch_followers_conn, &user_id)
-                                .expect("user::details: Couldn't fetch follower")
-                        });
+                let follower = User::from_url(&*fetch_followers_conn, &user_id).expect("user::details: Couldn't fetch follower");
                 follows::Follow::insert(
                     &*fetch_followers_conn,
                     follows::NewFollow {
                         follower_id: follower.id,
                         following_id: user_clone.id,
-                        ap_url: format!("{}/follow/{}", follower.ap_url, user_clone.ap_url),
+                        ap_url: String::new(),
                     },
                 ).expect("Couldn't save follower for remote user");
             }
@@ -147,7 +142,7 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<
             follows::NewFollow {
                 follower_id: user.id,
                 following_id: target.id,
-                ap_url: format!("{}/follow/{}", user.ap_url, target.ap_url),
+                ap_url: String::new(),
             },
         )?;
         f.notify(&*conn)?;
