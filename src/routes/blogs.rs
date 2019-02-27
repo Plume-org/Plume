@@ -19,10 +19,20 @@ use plume_models::{
 use routes::{errors::ErrorPage, Page, PlumeRocket};
 use template_utils::Ructe;
 
-#[get("/?<page>", rank = 1)]
-pub fn custom_details(intl: I18n, custom_domain: Host, user: Option<User>, conn: DbConn, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+#[get("/?<page>", rank = 2)]
+pub fn custom_details(
+    intl: I18n,
+    custom_domain: Host,
+    user: Option<User>,
+    conn: DbConn,
+    page: Option<Page>,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let blog = Blog::find_by_custom_domain(&*conn, &custom_domain.as_ref(), Instance::get_local(&conn)?.id)?;
+    let blog = Blog::find_by_custom_domain(
+        &*conn,
+        &custom_domain.as_ref(),
+        Instance::get_local(&conn)?.id,
+    )?;
     let posts = Post::blog_page(&*conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(&*conn, &blog)?;
     let authors = &blog.list_authors(&*conn)?;
@@ -35,7 +45,8 @@ pub fn custom_details(intl: I18n, custom_domain: Host, user: Option<User>, conn:
         articles_count,
         page.0,
         Page::total(articles_count as i32),
-        user.and_then(|x| x.is_author_in(&*conn, &blog).ok()).unwrap_or(false),
+        user.and_then(|x| x.is_author_in(&*conn, &blog).ok())
+            .unwrap_or(false),
         posts
     )))
 }
@@ -61,6 +72,22 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
     )))
 }
 
+#[get("/", rank = 1)]
+pub fn custom_activity_details(
+    custom_domain: Host,
+    conn: DbConn,
+    _ap: ApRequest,
+) -> Option<ActivityStream<CustomGroup>> {
+    let blog = Blog::find_by_custom_domain(
+        &*conn,
+        &custom_domain.as_ref(),
+        Instance::get_local(&conn).ok()?.id,
+    )
+    .ok()?;
+    Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
+}
+
+#[get("/~/<name>", rank = 4)]
 #[get("/~/<name>", rank = 1)]
 pub fn activity_details(
     name: String,

@@ -17,7 +17,7 @@ use routes::{errors::ErrorPage, Page, rocket_uri_macro_static_files};
 use template_utils::Ructe;
 use Searcher;
 
-#[get("/")]
+#[get("/", rank=3)]
 pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, ErrorPage> {
     let inst = Instance::get_local(&*conn)?;
     let federated = Post::get_recents_page(&*conn, Page::default().limits())?;
