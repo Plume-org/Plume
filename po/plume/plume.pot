@@ -40,7 +40,7 @@ msgstr ""
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:136
+# src/routes/blogs.rs:135
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
@@ -76,15 +76,15 @@ msgstr ""
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
-# src/routes/user.rs:131
+# src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
-# src/routes/user.rs:164
+# src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
-# src/routes/user.rs:245
+# src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 

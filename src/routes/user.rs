@@ -354,7 +354,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
                 "",
                 form.email.to_string(),
                 User::hash_pass(&form.password).map_err(to_validation)?,
-            ).and_then(|u| u.update_boxes(&*conn)).map_err(to_validation)?;
+            ).map_err(to_validation)?;
             Ok(Redirect::to(uri!(super::session::new: m = _)))
         })
        .map_err(|err| {
