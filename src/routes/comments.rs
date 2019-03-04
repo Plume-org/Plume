@@ -57,7 +57,7 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 sensitive: !form.warning.is_empty(),
                 spoiler_text: form.warning.clone(),
                 public_visibility: true
-            }).expect("comments::create: insert error").update_ap_url(&*conn).expect("comments::create: update ap url error");
+            }).expect("comments::create: insert error");
             let new_comment = comm.create_activity(&*conn).expect("comments::create: activity error");
 
             // save mentions

@@ -5,6 +5,7 @@ use serde_json;
 use validator::{Validate, ValidationErrors};
 
 use plume_models::{
+    Error,
     admin::Admin,
     comments::Comment,
     db_conn::DbConn,
@@ -25,7 +26,7 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Erro
     let federated = Post::get_recents_page(&*conn, Page::default().limits())?;
     let local = Post::get_instance_page(&*conn, inst.id, Page::default().limits())?;
     let user_feed = user.clone().and_then(|user| {
-        let followed = user.get_following(&*conn).ok()?;
+        let followed = user.get_followed(&*conn).ok()?;
         let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
         in_feed.push(user.id);
         Post::user_feed_page(&*conn, in_feed, Page::default().limits()).ok()
@@ -59,7 +60,7 @@ pub fn local(conn: DbConn, user: Option<User>, page: Option<Page>, intl: I18n) -
 #[get("/feed?<page>")]
 pub fn feed(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let followed = user.get_following(&*conn)?;
+    let followed = user.get_followed(&*conn)?;
     let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
     in_feed.push(user.id);
     let articles = Post::user_feed_page(&*conn, in_feed, page.limits())?;
@@ -185,20 +186,25 @@ pub fn shared_inbox(
     inbox::handle_incoming(conn, data, headers, searcher)
 }
 
-#[get("/nodeinfo")]
-pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
-    Ok(Json(json!({
-        "version": "2.0",
+#[get("/nodeinfo/<version>")]
+pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
+    if version != "2.0" || version != "2.1" {
+        return Err(ErrorPage::from(Error::NotFound));
+    }
+
+    let local_inst = Instance::get_local(&*conn)?;
+    let mut doc = json!({
+        "version": version,
         "software": {
-            "name": "Plume",
-            "version": env!("CARGO_PKG_VERSION")
+            "name": env!("CARGO_PKG_NAME"),
+            "version": env!("CARGO_PKG_VERSION"),
         },
         "protocols": ["activitypub"],
         "services": {
             "inbound": [],
             "outbound": []
         },
-        "openRegistrations": true,
+        "openRegistrations": local_inst.open_registrations,
         "usage": {
             "users": {
                 "total": User::count_local(&*conn)?
@@ -206,8 +212,17 @@ pub fn nodeinfo(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
             "localPosts": Post::count_local(&*conn)?,
             "localComments": Comment::count_local(&*conn)?
         },
-        "metadata": {}
-    })))
+        "metadata": {
+            "nodeName": local_inst.name,
+            "nodeDescription": local_inst.short_description
+        }
+    });
+
+    if version == "2.1" {
+        doc["software"]["repository"] = json!(env!("CARGO_PKG_REPOSITORY"));
+    }
+
+    Ok(Json(doc))
 }
 
 #[get("/about")]

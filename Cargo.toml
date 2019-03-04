@@ -2,6 +2,7 @@
 authors = ["Plume contributors"]
 name = "plume"
 version = "0.2.0"
+repository = "https://github.com/Plume-org/Plume"
 
 [dependencies]
 activitypub = "0.1.3"
@@ -15,6 +16,8 @@ gettext-macros = "0.3"
 gettext-utils = "0.1"
 guid-create = "0.1"
 heck = "0.3.0"
+lettre = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
+lettre_email = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
 num_cpus = "1.0"
 rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
@@ -48,7 +51,7 @@ version = "*"
 [dependencies.multipart]
 default-features = false
 features = ["server"]
-version = "0.15"
+version = "0.16"
 
 [dependencies.plume-api]
 path = "plume-api"
@@ -71,6 +74,7 @@ rsass = "0.9"
 default = ["postgres"]
 postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
+debug-mailer = []
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front"]

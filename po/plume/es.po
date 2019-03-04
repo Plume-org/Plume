@@ -3,82 +3,75 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2019-01-31 18:50+0000\n"
+"Last-Translator: Kevin Chavez <kevin9794@hotmail.com>\n"
+"Language-Team: Spanish <https://translate.funkwhale.audio/projects/plume/"
+"Plume/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.2.2\n"
 
-# src/template_utils.rs:34
+#, fuzzy
 msgid "{0} commented your article."
-msgstr ""
+msgstr "{0} gusto tu publicación"
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
 msgstr ""
 
-# src/template_utils.rs:36
+#, fuzzy
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} gusto tu publicación"
 
-# src/template_utils.rs:37
 msgid "{0} mentioned you."
 msgstr ""
 
-# src/template_utils.rs:38
+#, fuzzy
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} gusto tu publicación"
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:65
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Necesitas iniciar sesión para crear un nuevo blog"
 
-# src/routes/blogs.rs:135
+# src/routes/blogs.rs:136
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/likes.rs:48
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "Necesitas iniciar sesión para gustar una publicación"
 
-# src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Necesitas iniciar sesión para ver tus notificaciones"
 
-# src/routes/posts.rs:84
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:103
 msgid "You need to be logged in order to write a new post"
-msgstr ""
+msgstr "Necesitas iniciar sesión para publicar una publicación"
 
-# src/routes/posts.rs:116
 msgid "You are not author in this blog."
 msgstr ""
 
-# src/routes/posts.rs:122
 msgid "New post"
-msgstr ""
+msgstr "Nueva publicación"
 
-# src/routes/posts.rs:159
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/reshares.rs:48
+#, fuzzy
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Necesitas iniciar sesión para gustar una publicación"
 
-# src/routes/session.rs:161
+#, fuzzy
 msgid "Password reset"
-msgstr ""
+msgstr "Contraseña"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
@@ -92,23 +85,21 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:125
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
-# src/routes/user.rs:158
+#, fuzzy
 msgid "You need to be logged in order to subscribe to someone"
-msgstr ""
+msgstr "Necesitas iniciar sesión para seguir a alguien"
 
-# src/routes/user.rs:239
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Necesitas iniciar sesión para poder editar tu peril"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menú"
 
 msgid "Search"
 msgstr ""
@@ -117,19 +108,19 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notificaciones"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Cerrar Sesión"
 
 msgid "My account"
-msgstr ""
+msgstr "Mi cuenta"
 
 msgid "Log In"
-msgstr ""
+msgstr "Iniciar Sesión"
 
 msgid "Register"
-msgstr ""
+msgstr "Registrar"
 
 msgid "About this instance"
 msgstr ""
@@ -143,11 +134,12 @@ msgstr ""
 msgid "Administration"
 msgstr ""
 
+#, fuzzy
 msgid "Welcome on {}"
-msgstr ""
+msgstr "Bienvenido(a) a {0}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Últimas publicaciones"
 
 msgid "Your feed"
 msgstr ""
@@ -165,7 +157,7 @@ msgid "Instances"
 msgstr ""
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 msgid "Users"
 msgstr ""
@@ -188,11 +180,9 @@ msgstr ""
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 
-# src/template_utils.rs:144
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
-# src/template_utils.rs:146
 msgid "Optional"
 msgstr ""
 
@@ -234,25 +224,23 @@ msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Edita tu cuenta"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Tu perfil"
 
 # src/template_utils.rs:144
 msgid "Display name"
 msgstr ""
 
-# src/template_utils.rs:144
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
-# src/template_utils.rs:144
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 msgid "Update account"
-msgstr ""
+msgstr "Actualizar cuenta"
 
 msgid "Danger zone"
 msgstr ""
@@ -270,13 +258,14 @@ msgid "Your Dashboard"
 msgstr ""
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Tus blogs"
 
+#, fuzzy
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Aun no tienes un blog. Crea o pide unirte a uno."
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "Iniciar un nuevo blog"
 
 msgid "Your Drafts"
 msgstr ""
@@ -291,21 +280,20 @@ msgid "Create your account"
 msgstr ""
 
 msgid "Create an account"
-msgstr ""
+msgstr "Crear una cuenta"
 
-# src/template_utils.rs:144
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
-# src/template_utils.rs:144
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
-# src/template_utils.rs:144
 msgid "Password confirmation"
-msgstr ""
+msgstr "Confirmación de contraseña"
 
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 
 msgid "Articles"
@@ -327,13 +315,13 @@ msgid "Admin"
 msgstr ""
 
 msgid "It is you"
-msgstr ""
+msgstr "Eres tú"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Edita tu perfil"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Abrir en {0}"
 
 msgid "Unsubscribe"
 msgstr ""
@@ -348,7 +336,7 @@ msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
-msgstr ""
+msgstr "Responder"
 
 msgid "Delete this comment"
 msgstr ""
@@ -362,7 +350,9 @@ msgstr ""
 msgid "Authors can manage various blogs from an unique website."
 msgstr ""
 
-msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
+msgid ""
+"Articles are also visible on other Plume websites, and you can interact with "
+"them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Home to <em>{0}</em> people"
@@ -374,8 +364,9 @@ msgstr ""
 msgid "View all"
 msgstr ""
 
+#, fuzzy
 msgid "By {0}"
-msgstr ""
+msgstr "Por"
 
 msgid "Draft"
 msgstr ""
@@ -391,7 +382,7 @@ msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 # src/template_utils.rs:185
 msgid "Subtitle matching these words"
@@ -404,8 +395,9 @@ msgstr ""
 msgid "Content matching these words"
 msgstr ""
 
+#, fuzzy
 msgid "Body content"
-msgstr ""
+msgstr "Contenido"
 
 # src/template_utils.rs:185
 msgid "From this date"
@@ -450,9 +442,9 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-# src/template_utils.rs:185
+#, fuzzy
 msgid "Published under this license"
-msgstr ""
+msgstr "Este artículo está bajo la licencia {0}."
 
 msgid "Article license"
 msgstr ""
@@ -472,43 +464,44 @@ msgstr ""
 msgid "Reset your password"
 msgstr ""
 
-# src/template_utils.rs:144
+#, fuzzy
 msgid "New password"
-msgstr ""
+msgstr "Contraseña"
 
-# src/template_utils.rs:144
+#, fuzzy
 msgid "Confirmation"
-msgstr ""
+msgstr "Configuración"
 
+#, fuzzy
 msgid "Update password"
-msgstr ""
+msgstr "Actualizar cuenta"
 
 msgid "Check your inbox!"
 msgstr ""
 
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
 msgstr ""
 
-# src/template_utils.rs:144
+#, fuzzy
 msgid "E-mail"
-msgstr ""
+msgstr "Correo electrónico"
 
 msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
-msgstr ""
+msgstr "Iniciar Sesión"
 
-# src/template_utils.rs:144
 msgid "Username or email"
-msgstr ""
+msgstr "Nombre de usuario o correo electrónico"
 
-# src/template_utils.rs:144
 msgid "Subtitle"
 msgstr ""
 
 msgid "Content"
-msgstr ""
+msgstr "Contenido"
 
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
@@ -541,7 +534,7 @@ msgid "Publish your post"
 msgstr ""
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Escrito por {0}"
 
 msgid "Edit"
 msgstr ""
@@ -553,24 +546,28 @@ msgid "All rights reserved."
 msgstr ""
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Este artículo está bajo la licencia {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
 msgstr[0] ""
+msgstr[1] ""
 
+#, fuzzy
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Ya no me gusta"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Agregue el suyo"
 
 msgid "One boost"
 msgid_plural "{0} boost"
 msgstr[0] ""
+msgstr[1] ""
 
+#, fuzzy
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Ya no me gusta"
 
 msgid "Boost"
 msgstr ""
@@ -579,9 +576,8 @@ msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Comentários"
 
-# src/template_utils.rs:144
 msgid "Content warning"
 msgstr ""
 
@@ -589,7 +585,7 @@ msgid "Your comment"
 msgstr ""
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Enviar comentario"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
@@ -597,7 +593,10 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
 msgstr ""
 
 msgid "Page not found"
@@ -626,29 +625,34 @@ msgstr ""
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
+"Disculpe la molestia. Si cree que esto es un defecto, por favor repórtalo."
 
+#, fuzzy
 msgid "New Blog"
-msgstr ""
+msgstr "Nuevo blog"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Crear un blog"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Crear el blog"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "There's one article on this blog"
 msgid_plural "There are {0} articles on this blog"
 msgstr[0] ""
+msgstr[1] ""
 
+#, fuzzy
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "No hay publicaciones para ver aquí ahora."
 
 msgid "New article"
-msgstr ""
+msgstr "Nueva publicación"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
@@ -704,8 +708,49 @@ msgstr ""
 msgid "Use as avatar"
 msgstr ""
 
-msgid "Login to boost"
-msgstr ""
+#~ msgid "Comment \"{0}\""
+#~ msgstr "Comentario \"{0}\""
 
-msgid "Login to like"
-msgstr ""
+#~ msgid "Configure your instance"
+#~ msgstr "Configure su instancia"
+
+#~ msgid "Let&#x27;s go!"
+#~ msgstr "Vamos!"
+
+#~ msgid "Comment"
+#~ msgstr "Comentar"
+
+#~ msgid "Create a post"
+#~ msgstr "Crear una publicación"
+
+#~ msgid "Publish"
+#~ msgstr "Publicar"
+
+#~ msgid "Follow"
+#~ msgstr "Seguir"
+
+#~ msgid "Unfollow"
+#~ msgstr "Dejar de seguir"
+
+#~ msgid "One follower"
+#~ msgid_plural "{0} followers"
+#~ msgstr[0] "Un seguidor"
+#~ msgstr[1] "{0} seguidores"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "Los seguidores de {0}"
+
+#~ msgid "Followers"
+#~ msgstr "Seguidores"
+
+#~ msgid "New Account"
+#~ msgstr "Nueva cuenta"
+
+#~ msgid "Create account"
+#~ msgstr "Crea una cuenta"
+
+#~ msgid "You need to be logged in order to post a comment"
+#~ msgstr "Necesitas iniciar sesión para publicar un comentario"
+
+#~ msgid "{0} started following you"
+#~ msgstr "{0} comenzó a seguirte"

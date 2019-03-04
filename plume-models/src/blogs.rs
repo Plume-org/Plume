@@ -1,6 +1,6 @@
 use activitypub::{actor::Group, collection::OrderedCollection, Actor, CustomObject, Object};
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -30,7 +30,7 @@ use {Connection, Context, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, AsChangeset)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -45,7 +45,7 @@ pub struct Blog {
     pub public_key: String,
 }
 
-#[derive(Insertable)]
+#[derive(Default, Insertable)]
 #[table_name = "blogs"]
 pub struct NewBlog {
     pub actor_id: String,
@@ -62,7 +62,33 @@ pub struct NewBlog {
 const BLOG_PREFIX: &str = "~";
 
 impl Blog {
-    insert!(blogs, NewBlog);
+    insert!(blogs, NewBlog, |inserted, conn| {
+        let instance = inserted.get_instance(conn)?;
+        if inserted.outbox_url.is_empty() {
+            inserted.outbox_url = instance.compute_box(
+                BLOG_PREFIX,
+                &inserted.actor_id,
+                "outbox",
+            );
+        }
+
+        if inserted.inbox_url.is_empty() {
+            inserted.inbox_url = instance.compute_box(
+                BLOG_PREFIX,
+                &inserted.actor_id,
+                "inbox",
+            );
+        }
+
+        if inserted.ap_url.is_empty() {
+            inserted.ap_url = instance.compute_box(
+                BLOG_PREFIX,
+                &inserted.actor_id,
+                "",
+            );
+        }
+        inserted.save_changes(conn).map_err(Error::from)
+    });
     get!(blogs);
     find_by!(blogs, find_by_ap_url, ap_url as &str);
     find_by!(blogs, find_by_name, actor_id as &str, instance_id as i32);
@@ -243,36 +269,6 @@ impl Blog {
         Ok(CustomGroup::new(blog, ap_signature))
     }
 
-    pub fn update_boxes(&self, conn: &Connection) -> Result<()> {
-        let instance = self.get_instance(conn)?;
-        if self.outbox_url.is_empty() {
-            diesel::update(self)
-                .set(blogs::outbox_url.eq(instance.compute_box(
-                    BLOG_PREFIX,
-                    &self.actor_id,
-                    "outbox",
-                )))
-                .execute(conn)?;
-        }
-
-        if self.inbox_url.is_empty() {
-            diesel::update(self)
-                .set(blogs::inbox_url.eq(instance.compute_box(
-                    BLOG_PREFIX,
-                    &self.actor_id,
-                    "inbox",
-                )))
-                .execute(conn)?;
-        }
-
-        if self.ap_url.is_empty() {
-            diesel::update(self)
-                .set(blogs::ap_url.eq(instance.compute_box(BLOG_PREFIX, &self.actor_id, "")))
-                .execute(conn)?;
-        }
-        Ok(())
-    }
-
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
         let mut coll = OrderedCollection::default();
         coll.collection_props.items = serde_json::to_value(self.get_activities(conn)?)?;
@@ -434,12 +430,10 @@ impl NewBlog {
             actor_id,
             title,
             summary,
-            outbox_url: String::from(""),
-            inbox_url: String::from(""),
             instance_id,
-            ap_url: String::from(""),
             public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
             private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
+            ..NewBlog::default()
         })
     }
 }
@@ -464,21 +458,18 @@ pub(crate) mod tests {
             "This is a small blog".to_owned(),
             Instance::get_local(conn).unwrap().id
         ).unwrap()).unwrap();
-        blog1.update_boxes(conn).unwrap();
         let blog2 = Blog::insert(conn, NewBlog::new_local(
                 "MyBlog".to_owned(),
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
                 Instance::get_local(conn).unwrap().id
         ).unwrap()).unwrap();
-        blog2.update_boxes(conn).unwrap();
         let blog3 = Blog::insert(conn, NewBlog::new_local(
                 "WhyILikePlume".to_owned(),
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
                 Instance::get_local(conn).unwrap().id
         ).unwrap()).unwrap();
-        blog3.update_boxes(conn).unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -556,7 +547,6 @@ pub(crate) mod tests {
                     Instance::get_local(conn).unwrap().id,
                 ).unwrap(),
             ).unwrap();
-            b1.update_boxes(conn).unwrap();
             let b2 = Blog::insert(
                 conn,
                 NewBlog::new_local(
@@ -566,7 +556,6 @@ pub(crate) mod tests {
                     Instance::get_local(conn).unwrap().id
                 ).unwrap(),
             ).unwrap();
-            b2.update_boxes(conn).unwrap();
             let blog = vec![ b1, b2 ];
 
             BlogAuthor::insert(
@@ -722,7 +711,6 @@ pub(crate) mod tests {
                     Instance::get_local(conn).unwrap().id,
                 ).unwrap(),
             ).unwrap();
-            b1.update_boxes(conn).unwrap();
             let b2 = Blog::insert(
                 conn,
                 NewBlog::new_local(
@@ -732,7 +720,6 @@ pub(crate) mod tests {
                     Instance::get_local(conn).unwrap().id,
                 ).unwrap(),
             ).unwrap();
-            b2.update_boxes(conn).unwrap();
             let blog = vec![ b1, b2 ];
 
             BlogAuthor::insert(

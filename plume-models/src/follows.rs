@@ -1,7 +1,7 @@
 use activitypub::{
     activity::{Accept, Follow as FollowAct, Undo},
 };
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
@@ -15,7 +15,7 @@ use schema::follows;
 use users::{User, CustomPerson};
 use {ap_url, Connection, Context, BASE_URL, Error, Result};
 
-#[derive(Clone, Queryable, Identifiable, Associations)]
+#[derive(Clone, Queryable, Identifiable, Associations, AsChangeset)]
 #[belongs_to(User, foreign_key = "following_id")]
 pub struct Follow {
     pub id: i32,
@@ -33,7 +33,14 @@ pub struct NewFollow {
 }
 
 impl Follow {
-    insert!(follows, NewFollow);
+    insert!(follows, NewFollow, |inserted, conn| {
+        if inserted.ap_url.is_empty() {
+            inserted.ap_url = ap_url(&format!("{}/follows/{}", *BASE_URL, inserted.id));
+            inserted.save_changes(conn).map_err(Error::from)
+        } else {
+            Ok(inserted)
+        }
+    });
     get!(follows);
     find_by!(follows, find_by_ap_url, ap_url as &str);
 
@@ -167,5 +174,35 @@ impl<'a> AsObject<User, Undo, FollowAct, &Context<'a>> for Follow {
 impl IntoId for Follow {
     fn into_id(self) -> Id {
         Id::new(self.ap_url)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use diesel::Connection;
+    use super::*;
+    use tests::db;
+    use users::tests as user_tests;
+
+    #[test]
+    fn test_id() {
+        let conn = db();
+        conn.test_transaction::<_, (), _>(|| {
+            let users = user_tests::fill_database(&conn);
+            let follow = Follow::insert(&conn, NewFollow {
+                follower_id: users[0].id,
+                following_id: users[1].id,
+                ap_url: String::new(),
+            }).expect("Couldn't insert new follow");
+            assert_eq!(follow.ap_url, format!("https://{}/follows/{}", *BASE_URL, follow.id));
+
+            let follow = Follow::insert(&conn, NewFollow {
+                follower_id: users[1].id,
+                following_id: users[0].id,
+                ap_url: String::from("https://some.url/"),
+            }).expect("Couldn't insert new follow");
+            assert_eq!(follow.ap_url, String::from("https://some.url/"));
+            Ok(())
+        });
     }
 }

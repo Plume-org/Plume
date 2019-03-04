@@ -1,4 +1,3 @@
-#![allow(proc_macro_derive_resolution_fallback)] // This can be removed after diesel-1.4
 #![feature(try_trait)]
 
 extern crate activitypub;
@@ -264,13 +263,19 @@ macro_rules! get {
 /// ```
 macro_rules! insert {
     ($table:ident, $from:ident) => {
+        insert!($table, $from, |x, _conn| { Ok(x) });
+    };
+    ($table:ident, $from:ident, |$val:ident, $conn:ident | $after:block) => {
         last!($table);
 
         pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
             diesel::insert_into($table::table)
                 .values(new)
                 .execute(conn)?;
-            Self::last(conn)
+            #[allow(unused_mut)]
+            let mut $val = Self::last(conn)?;
+            let $conn = conn;
+            $after
         }
     };
 }

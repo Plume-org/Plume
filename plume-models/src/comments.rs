@@ -1,6 +1,6 @@
 use activitypub::{activity::{Create, Delete}, link, object::{Note, Tombstone}};
 use chrono::{self, NaiveDateTime};
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use serde_json;
 
 use std::collections::HashSet;
@@ -20,7 +20,7 @@ use schema::comments;
 use users::User;
 use {Connection, Context, Error, Result};
 
-#[derive(Queryable, Identifiable, Serialize, Clone)]
+#[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
 pub struct Comment {
     pub id: i32,
     pub content: SafeString,
@@ -48,7 +48,13 @@ pub struct NewComment {
 }
 
 impl Comment {
-    insert!(comments, NewComment);
+    insert!(comments, NewComment, |inserted, conn| {
+        if inserted.ap_url.is_none() {
+            inserted.ap_url = Some(format!("{}comment/{}", inserted.get_post(conn)?.ap_url, inserted.id));
+            let _: Comment = inserted.save_changes(conn)?;
+        }
+        Ok(inserted)
+    });
     get!(comments);
     list_by!(comments, list_by_post, post_id as i32);
     find_by!(comments, find_by_ap_url, ap_url as &str);
@@ -79,21 +85,6 @@ impl Comment {
             .map_err(Error::from)
     }
 
-    pub fn update_ap_url(&self, conn: &Connection) -> Result<Comment> {
-        if self.ap_url.is_none() {
-            diesel::update(self)
-                .set(comments::ap_url.eq(self.compute_id(conn)?))
-                .execute(conn)?;
-            Comment::get(conn, self.id)
-        } else {
-            Ok(self.clone())
-        }
-    }
-
-    pub fn compute_id(&self, conn: &Connection) -> Result<String> {
-        Ok(format!("{}comment/{}", self.get_post(conn)?.ap_url, self.id))
-    }
-
     pub fn can_see(&self, conn: &Connection, user: Option<&User>) -> bool {
         self.public_visibility ||
             user.as_ref().map(|u| CommentSeers::can_see(conn, self, u).unwrap_or(false))
@@ -117,7 +108,7 @@ impl Comment {
         note.object_props
             .set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(
                 || Ok(Post::get(conn, self.post_id)?.ap_url),
-                |id| Ok(Comment::get(conn, id)?.compute_id(conn)?) as Result<String>,
+                |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
             )?))?;
         note.object_props
             .set_published_string(chrono::Utc::now().to_rfc3339())?;

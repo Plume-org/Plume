@@ -105,7 +105,6 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
             String::from(""),
             Instance::get_local(&*conn).expect("blog::create: instance error").id
         ).expect("blog::create: new local error")).expect("blog::create:  error");
-        blog.update_boxes(&*conn).expect("blog::create: insert error");
 
         BlogAuthor::insert(&*conn, NewBlogAuthor {
             blog_id: blog.id,

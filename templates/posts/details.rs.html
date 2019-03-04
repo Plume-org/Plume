@@ -80,7 +80,7 @@
             </div>
 	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
                 <form action="@uri!(user::follow: name = author.get_fqn(ctx.0))" method="POST">
-                    <input type="submit" class="button" value="@if is_following {@i18n!(ctx.1, "Unfollow")} else {@i18n!(ctx.1, "Follow")}">
+                    <input type="submit" class="button" value="@if is_following {@i18n!(ctx.1, "Unsubscribe")} else {@i18n!(ctx.1, "Subscribe")}">
                 </form>
 	    }
         </div>

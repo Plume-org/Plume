@@ -230,7 +230,6 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
             post.license = form.license.clone();
             post.cover_id = form.cover;
             post.update(&*conn, &searcher).expect("post::update: update error");;
-            let post = post.update_ap_url(&*conn).expect("post::update: update ap url error");
 
             if post.published {
                 post.update_mentions(&conn, mentions.into_iter().filter_map(|m| Mention::build_activity(&conn, &m).ok()).collect())
@@ -341,7 +340,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
                 },
                 &searcher,
             ).expect("post::create: post save error");
-            let post = post.update_ap_url(&*conn).expect("post::create: update ap url error");
+
             PostAuthor::insert(&*conn, NewPostAuthor {
                 post_id: post.id,
                 author_id: user.id

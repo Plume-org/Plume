@@ -6,7 +6,7 @@ use activitypub::{
 };
 use canapi::{Error as ApiError, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use heck::{CamelCase, KebabCase};
 use scheduled_thread_pool::ScheduledThreadPool as Worker;
 use serde_json;
@@ -198,7 +198,6 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             source: query.source.expect("Post API::create: no source error"),
             cover_id: query.cover_id,
         }, search).map_err(|_| ApiError::NotFound("Creation error".into()))?;
-        post.update_ap_url(conn).map_err(|_| ApiError::NotFound("Error setting ActivityPub URLs".into()))?;;
 
         PostAuthor::insert(conn, NewPostAuthor {
             author_id: author.id,
@@ -265,10 +264,21 @@ impl Post {
         diesel::insert_into(posts::table)
             .values(new)
             .execute(conn)?;
-        let post = Self::last(conn)?;
+        let mut post = Self::last(conn)?;
+        if post.ap_url.is_empty() {
+            post.ap_url = ap_url(&format!(
+                "{}/~/{}/{}/",
+                *BASE_URL,
+                post.get_blog(conn)?.get_fqn(conn),
+                post.slug
+            ));
+            let _: Post = post.save_changes(conn)?;
+        }
+
         searcher.add_document(conn, &post)?;
         Ok(post)
     }
+
     pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
         diesel::update(self)
             .set(self)
@@ -512,17 +522,6 @@ impl Post {
             .count()
             .get_result(conn)
             .map_err(Error::from)
-    }
-
-    pub fn update_ap_url(&self, conn: &Connection) -> Result<Post> {
-        if self.ap_url.is_empty() {
-            diesel::update(self)
-                .set(posts::ap_url.eq(self.compute_id(conn)?))
-                .execute(conn)?;
-            Post::get(conn, self.id)
-        } else {
-            Ok(self.clone())
-        }
     }
 
     pub fn get_receivers_urls(&self, conn: &Connection) -> Result<Vec<String>> {
@@ -797,15 +796,6 @@ impl Post {
         Ok(format!("/~/{}/{}", blog.get_fqn(conn), self.slug))
     }
 
-    pub fn compute_id(&self, conn: &Connection) -> Result<String> {
-        Ok(ap_url(&format!(
-            "{}/~/{}/{}/",
-            BASE_URL.as_str(),
-            self.get_blog(conn)?.get_fqn(conn),
-            self.slug
-        )))
-    }
-
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {
         self.cover_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
     }
@@ -954,13 +944,7 @@ impl<'a> AsObject<User, Delete, LicensedArticle, &Context<'a>> for Post {
         let post = Post::find_by_ap_url(c.conn, &article.object.object_props.id_string()?)?;
         let can_delete = post.get_authors(c.conn)?.into_iter().any(|a| actor.id == a.id);
         if can_delete {
-            for m in Mention::list_for_post(c.conn, post.id)? {
-                m.delete(c.conn)?;
-            }
-            diesel::delete(&post)
-                .execute(c.conn)?;
-            c.searcher.delete_document(&post);
-            Ok(())
+            post.delete(c.conn, c.searcher).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
