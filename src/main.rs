@@ -1,4 +1,4 @@
-#![feature(custom_derive, plugin, decl_macro, proc_macro_hygiene)]
+#![feature(decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
 extern crate askama_escape;
@@ -15,6 +15,8 @@ extern crate gettext_macros;
 extern crate gettext_utils;
 extern crate guid_create;
 extern crate heck;
+extern crate lettre;
+extern crate lettre_email;
 extern crate multipart;
 extern crate num_cpus;
 extern crate plume_api;
@@ -51,13 +53,14 @@ use plume_models::{
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::env;
 use std::process::exit;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 init_i18n!("plume", ar, de, en, es, fr, gl, it, ja, nb, pl, pt, ru);
 
 mod api;
 mod inbox;
+mod mail;
 #[macro_use]
 mod template_utils;
 mod routes;
@@ -116,6 +119,12 @@ Then try to restart Plume.
     config.set_limits(Limits::new()
                       .limit("forms", form_size * 1024)
                       .limit("json", activity_size * 1024));
+
+    let mail = mail::init();
+    if mail.is_none() && config.environment.is_prod() {
+        println!("Warning: the email server is not configured (or not completely).");
+        println!("Please refer to the documentation to see how to configure it.");
+    }
 
     rocket::custom(config)
         .mount("/", routes![
@@ -177,6 +186,10 @@ Then try to restart Plume.
             routes::session::new,
             routes::session::create,
             routes::session::delete,
+            routes::session::password_reset_request_form,
+            routes::session::password_reset_request,
+            routes::session::password_reset_form,
+            routes::session::password_reset,
 
             routes::static_files,
 
@@ -222,6 +235,8 @@ Then try to restart Plume.
             routes::errors::unprocessable_entity,
             routes::errors::server_error
         ])
+        .manage(Arc::new(Mutex::new(mail)))
+        .manage::<Arc<Mutex<Vec<routes::session::ResetRequest>>>>(Arc::new(Mutex::new(vec![])))
         .manage(dbpool)
         .manage(workpool)
         .manage(searcher)

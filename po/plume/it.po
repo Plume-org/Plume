@@ -74,6 +74,22 @@ msgid "You need to be logged in order to reshare a post"
 msgstr "Devi effettuare l'accesso per vedere le tue notifiche"
 
 #, fuzzy
+msgid "Password reset"
+msgstr "Password"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:199
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
+#, fuzzy
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Devi effettuare l'accesso per accedere al tuo pannello"
 
@@ -478,6 +494,36 @@ msgid "No result for your query"
 msgstr "Vai alla tua galleria"
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Password"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Configurazione"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Aggiorna account"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Email"
+
+msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
