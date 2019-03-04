@@ -6,7 +6,7 @@ use activitypub::{
 };
 use canapi::{Error as ApiError, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use heck::{CamelCase, KebabCase};
 use scheduled_thread_pool::ScheduledThreadPool as Worker;
 use serde_json;
@@ -198,7 +198,6 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             source: query.source.expect("Post API::create: no source error"),
             cover_id: query.cover_id,
         }, search).map_err(|_| ApiError::NotFound("Creation error".into()))?;
-        post.update_ap_url(conn).map_err(|_| ApiError::NotFound("Error setting ActivityPub URLs".into()))?;;
 
         PostAuthor::insert(conn, NewPostAuthor {
             author_id: author.id,
@@ -265,7 +264,17 @@ impl Post {
         diesel::insert_into(posts::table)
             .values(new)
             .execute(conn)?;
-        let post = Self::last(conn)?;
+        let mut post = Self::last(conn)?;
+        if post.ap_url.is_empty() {
+            post.ap_url = ap_url(&format!(
+                "{}/~/{}/{}/",
+                *BASE_URL,
+                post.get_blog(conn)?.get_fqn(conn),
+                post.slug
+            ));
+            let _: Post = post.save_changes(conn)?;
+        }
+
         searcher.add_document(conn, &post)?;
         Ok(post)
     }
@@ -277,7 +286,6 @@ impl Post {
         searcher.update_document(conn, &post)?;
         Ok(post)
     }
-
 
     pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         use schema::tags;
@@ -503,17 +511,6 @@ impl Post {
             .count()
             .get_result(conn)
             .map_err(Error::from)
-    }
-
-    pub fn update_ap_url(&self, conn: &Connection) -> Result<Post> {
-        if self.ap_url.is_empty() {
-            diesel::update(self)
-                .set(posts::ap_url.eq(self.compute_id(conn)?))
-                .execute(conn)?;
-            Post::get(conn, self.id)
-        } else {
-            Ok(self.clone())
-        }
     }
 
     pub fn get_receivers_urls(&self, conn: &Connection) -> Result<Vec<String>> {
@@ -854,15 +851,6 @@ impl Post {
     pub fn url(&self, conn: &Connection) -> Result<String> {
         let blog = self.get_blog(conn)?;
         Ok(format!("/~/{}/{}", blog.get_fqn(conn), self.slug))
-    }
-
-    pub fn compute_id(&self, conn: &Connection) -> Result<String> {
-        Ok(ap_url(&format!(
-            "{}/~/{}/{}/",
-            BASE_URL.as_str(),
-            self.get_blog(conn)?.get_fqn(conn),
-            self.slug
-        )))
     }
 
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {

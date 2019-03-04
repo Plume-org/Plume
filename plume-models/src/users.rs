@@ -4,7 +4,7 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -44,7 +44,7 @@ use {ap_url, Connection, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, Debug)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, Debug, AsChangeset)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -66,7 +66,7 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
 }
 
-#[derive(Insertable)]
+#[derive(Default, Insertable)]
 #[table_name = "users"]
 pub struct NewUser {
     pub username: String,
@@ -90,7 +90,50 @@ pub const AUTH_COOKIE: &str = "user_id";
 const USER_PREFIX: &str = "@";
 
 impl User {
-    insert!(users, NewUser);
+    insert!(users, NewUser, |inserted, conn| {
+        let instance = inserted.get_instance(conn)?;
+        if inserted.outbox_url.is_empty() {
+            inserted.outbox_url = instance.compute_box(
+                USER_PREFIX,
+                &inserted.username,
+                "outbox",
+            );
+        }
+
+        if inserted.inbox_url.is_empty() {
+            inserted.inbox_url = instance.compute_box(
+                USER_PREFIX,
+                &inserted.username,
+                "inbox",
+            );
+        }
+
+        if inserted.ap_url.is_empty() {
+            inserted.ap_url = instance.compute_box(
+                USER_PREFIX,
+                &inserted.username,
+                "",
+            );
+        }
+
+        if inserted.shared_inbox_url.is_none() {
+            inserted.shared_inbox_url = Some(ap_url(&format!(
+                "{}/inbox",
+                Instance::get_local(conn)?
+                    .public_domain
+            )));
+        }
+
+        if inserted.followers_endpoint.is_empty() {
+            inserted.followers_endpoint = instance.compute_box(
+                USER_PREFIX,
+                &inserted.username,
+                "followers",
+            );
+        }
+
+        inserted.save_changes(conn).map_err(Error::from)
+    });
     get!(users);
     find_by!(users, find_by_email, email as &str);
     find_by!(users, find_by_name, username as &str, instance_id as i32);
@@ -389,57 +432,6 @@ impl User {
         diesel::update(self)
             .set(users::hashed_password.eq(User::hash_pass(pass)?))
             .execute(conn)?;
-        Ok(())
-    }
-
-    pub fn update_boxes(&self, conn: &Connection) -> Result<()> {
-        let instance = self.get_instance(conn)?;
-        if self.outbox_url.is_empty() {
-            diesel::update(self)
-                .set(users::outbox_url.eq(instance.compute_box(
-                    USER_PREFIX,
-                    &self.username,
-                    "outbox",
-                )))
-                .execute(conn)?;
-        }
-
-        if self.inbox_url.is_empty() {
-            diesel::update(self)
-                .set(users::inbox_url.eq(instance.compute_box(
-                    USER_PREFIX,
-                    &self.username,
-                    "inbox",
-                )))
-                .execute(conn)?;
-        }
-
-        if self.ap_url.is_empty() {
-            diesel::update(self)
-                .set(users::ap_url.eq(instance.compute_box(USER_PREFIX, &self.username, "")))
-                .execute(conn)?;
-        }
-
-        if self.shared_inbox_url.is_none() {
-            diesel::update(self)
-                .set(users::shared_inbox_url.eq(ap_url(&format!(
-                        "{}/inbox",
-                        Instance::get_local(conn)?
-                            .public_domain
-                    ))))
-                .execute(conn)?;
-        }
-
-        if self.followers_endpoint.is_empty() {
-            diesel::update(self)
-                .set(users::followers_endpoint.eq(instance.compute_box(
-                    USER_PREFIX,
-                    &self.username,
-                    "followers",
-                )))
-                .execute(conn)?;
-        }
-
         Ok(())
     }
 
@@ -917,22 +909,15 @@ impl NewUser {
             NewUser {
                 username,
                 display_name,
-                outbox_url: String::from(""),
-                inbox_url: String::from(""),
                 is_admin,
                 summary: SafeString::new(summary),
                 email: Some(email),
                 hashed_password: Some(password),
                 instance_id: Instance::get_local(conn)?.id,
-                ap_url: String::from(""),
-                public_key: String::from_utf8(pub_key)
-                    .expect("NewUser::new_local: public key error"),
-                private_key: Some(
-                    String::from_utf8(priv_key).expect("NewUser::new_local: private key error"),
-                ),
-                shared_inbox_url: None,
-                followers_endpoint: String::from(""),
-                avatar_id: None,
+                ap_url: String::new(),
+                public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
+                private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
+                ..NewUser::default()
             },
         )
     }
@@ -958,7 +943,6 @@ pub(crate) mod tests {
             "admin@example.com".to_owned(),
             "invalid_admin_password".to_owned(),
         ).unwrap();
-        admin.update_boxes(conn).unwrap();
         let user = NewUser::new_local(
             conn,
             "user".to_owned(),
@@ -968,7 +952,6 @@ pub(crate) mod tests {
             "user@example.com".to_owned(),
             "invalid_user_password".to_owned(),
         ).unwrap();
-        user.update_boxes(conn).unwrap();
         let other = NewUser::new_local(
             conn,
             "other".to_owned(),
@@ -978,7 +961,6 @@ pub(crate) mod tests {
             "other@example.com".to_owned(),
             "invalid_other_password".to_owned(),
         ).unwrap();
-        other.update_boxes(conn).unwrap();
         vec![ admin, user, other ]
     }
 
@@ -996,7 +978,6 @@ pub(crate) mod tests {
                 "test@example.com".to_owned(),
                 User::hash_pass("test_password").unwrap(),
             ).unwrap();
-            test_user.update_boxes(conn).unwrap();
 
             assert_eq!(
                 test_user.id,
@@ -1097,7 +1078,6 @@ pub(crate) mod tests {
                 "test@example.com".to_owned(),
                 User::hash_pass("test_password").unwrap(),
             ).unwrap();
-            test_user.update_boxes(conn).unwrap();
 
             assert!(test_user.auth("test_password"));
             assert!(!test_user.auth("other_password"));
