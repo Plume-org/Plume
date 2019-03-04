@@ -19,12 +19,20 @@ lazy_static! {
     static ref CLEAN: Builder<'static> = {
         let mut b = Builder::new();
         b.add_generic_attributes(iter::once("id"))
-            .add_tags(iter::once("iframe"))
+            .add_tags(&[ "iframe", "video", "audio" ])
             .id_prefix(Some("postcontent-"))
             .url_relative(UrlRelative::Custom(Box::new(url_add_prefix)))
             .add_tag_attributes(
                 "iframe",
-                ["width", "height", "src", "frameborder"].iter().map(|&v| v),
+                [ "width", "height", "src", "frameborder" ].iter().map(|&v| v),
+            )
+            .add_tag_attributes(
+                "video",
+                [ "src", "title", "controls" ].iter(),
+            )
+            .add_tag_attributes(
+                "audio",
+                [ "src", "title", "controls" ].iter(),
             );
         b
     };

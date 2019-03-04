@@ -110,11 +110,11 @@ impl Media {
                 url, escape(&self.alt_text), escape(&self.alt_text)
             )),
             MediaCategory::Audio => SafeString::new(&format!(
-                r#"<audio src="{}" title="{}"></audio>"#,
+                r#"<audio src="{}" title="{}" controls></audio>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Video => SafeString::new(&format!(
-                r#"<video src="{}" title="{}"></video>"#,
+                r#"<video src="{}" title="{}" controls></video>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Unknown => SafeString::new(""),
