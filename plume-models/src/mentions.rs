@@ -3,7 +3,6 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
 use notifications::*;
-// use plume_common::activity_pub::inbox::Notify;
 use posts::Post;
 use schema::mentions;
 use users::User;

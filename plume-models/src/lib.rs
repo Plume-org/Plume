@@ -35,6 +35,7 @@ extern crate whatlang;
 extern crate diesel_migrations;
 
 use std::env;
+use plume_common::activity_pub::inbox::InboxError;
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
 compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
@@ -51,7 +52,7 @@ pub type Connection = diesel::PgConnection;
 #[derive(Debug)]
 pub enum Error {
     Db(diesel::result::Error),
-    Inbox(plume_common::activity_pub::inbox::InboxError),
+    Inbox(InboxError),
     InvalidValue,
     Io(std::io::Error),
     MissingApProperty,
@@ -140,7 +141,7 @@ impl From<std::io::Error> for Error {
     }
 }
 
-impl From<plume_common::activity_pub::inbox::InboxError> for Error {
+impl From<InboxError> for Error {
     fn from(err: plume_common::activity_pub::inbox::InboxError) -> Error {
         Error::Inbox(err)
     }

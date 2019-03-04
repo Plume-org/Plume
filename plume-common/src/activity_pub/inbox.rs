@@ -125,26 +125,34 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError> {
         match self {
             Inbox::NotHandled(ctx, act, e) => {
                 if serde_json::from_value::<V>(act.clone()).is_ok() {
-                    let actor = match A::get_or_fetch(ctx, get_id(act["actor"].clone())) {
+                    let actor_id = match get_id(act["actor"].clone()) {
+                        Some(x) => x,
+                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor),
+                    };
+                    let actor = match A::get_or_fetch(ctx, actor_id) {
                         Ok(a) => a,
                         // If the actor was not found, go to the next handler
                         Err(_) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor),
                     };
 
+                    let act_id = match get_id(act["object"].clone()) {
+                        Some(x) => x,
+                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject),
+                    };
                     let obj: O = match serde_json::from_value(act["object"].clone()) {
                         Ok(o) => o,
                         // If the object was not of the expected type, try to dereference it
                         // and if it is still not valid, go to the next handler
-                        Err(_) => match reqwest::get(&get_id(act["object"].clone()))
-                                .map_err(|_| InboxError::DerefError)
-                                .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject))
+                        Err(_) => match reqwest::get(&act_id)
+                            .map_err(|_| InboxError::DerefError)
+                            .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject))
                         {
                             Ok(o) => o,
                             Err(err) => return Inbox::NotHandled(ctx, act, err),
                         }
                     };
 
-                    match M::activity(ctx, actor, obj, &get_id(act.clone())) {
+                    match M::activity(ctx, actor, obj, &act_id) {
                         Ok(res) => Inbox::Handled(res.into()),
                         Err(e) => Inbox::Failed(e)
                     }
@@ -177,12 +185,11 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError> {
 ///
 /// This function panics if the value is neither a string nor an object with an
 /// `id` field that is a string.
-fn get_id<'a>(json: serde_json::Value) -> String {
+fn get_id<'a>(json: serde_json::Value) -> Option<String> {
     match json {
-        serde_json::Value::String(s) => s,
-        serde_json::Value::Object(map) => get_id(map["id"].clone()),
-        // I don't know if it is really a good idea to panic here…
-        _ => panic!("Tried to get the ID of something that don't have one"),
+        serde_json::Value::String(s) => Some(s),
+        serde_json::Value::Object(map) => map["id"].as_str().map(ToString::to_string),
+        _ => None,
     }
 }
 
