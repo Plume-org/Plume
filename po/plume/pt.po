@@ -18,9 +18,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "{0} comentou o seu artigo"
 
-#, fuzzy
-msgid "{0} is now following you."
-msgstr "{0} começou a seguir você"
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -69,10 +69,27 @@ msgstr "Mudar {0}"
 msgid "You need to be logged in order to reshare a post"
 msgstr "Você precisa estar logado para gostar de um post"
 
+#, fuzzy
+msgid "Password reset"
+msgstr "Senha"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Your password was successfully reset."
+msgstr "Sua senha não pode estar vazia"
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Você precisa estar autenticado para acessar seu painel de controle"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Você precisa estar autenticado para poder seguir alguém"
 
 msgid "You need to be logged in order to edit your profile"
@@ -161,7 +178,8 @@ msgstr "Todos os artigos do Fediverse"
 msgid "Articles from {}"
 msgstr "Artigos de {0}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Ainda não há nada para ver aqui. Tente seguir mais pessoas."
 
 msgid "Name"
@@ -292,8 +310,12 @@ msgstr ""
 msgid "Articles"
 msgstr "Artigos"
 
-msgid "Followers"
-msgstr "Seguidores"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Descrição"
 
 #, fuzzy
 msgid "Atom feed"
@@ -314,14 +336,19 @@ msgstr "Editar o seu perfil"
 msgid "Open on {0}"
 msgstr "Abrir em {0}"
 
-msgid "Unfollow"
-msgstr "Não Seguir"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Seguir"
+msgid "Subscribe"
+msgstr ""
 
-msgid "{0}'s followers"
-msgstr "Seguidores de {0}"
+#, fuzzy
+msgid "{0}'s subscriptions'"
+msgstr "Descrição"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Descrição"
 
 msgid "Respond"
 msgstr "Responder"
@@ -455,6 +482,36 @@ msgid "No result for your query"
 msgstr "Ir para a sua galeria"
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Senha"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Configuração"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Atualizar conta"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Email"
+
+msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
@@ -686,6 +743,26 @@ msgstr "Copie-o em seus artigos para inserir esta mídia."
 msgid "Use as avatar"
 msgstr "Utilizar como avatar"
 
+#~ msgid "{0}'s followers"
+#~ msgstr "Seguidores de {0}"
+
+#, fuzzy
+#~ msgid "{0} is now following you."
+#~ msgstr "{0} começou a seguir você"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Seguidores de {0}"
+
+#~ msgid "Followers"
+#~ msgstr "Seguidores"
+
+#~ msgid "Unfollow"
+#~ msgstr "Não Seguir"
+
+#~ msgid "Follow"
+#~ msgstr "Seguir"
+
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Comentário \"{0}\""
 
@@ -739,9 +816,6 @@ msgstr "Utilizar como avatar"
 #~ msgid "We need an email or a username to identify you"
 #~ msgstr ""
 #~ "Precisamos de um endereço de e-mail ou nome de usuário para identificá-lo"
-
-#~ msgid "Your password can't be empty"
-#~ msgstr "Sua senha não pode estar vazia"
 
 #~ msgid "Passwords are not matching"
 #~ msgstr "As senhas não correspondem"

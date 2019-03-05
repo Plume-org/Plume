@@ -1,10 +1,6 @@
 use std::rc::Rc;
 use stdweb::{unstable::TryInto, web::{*, html_element::*, event::*}};
-use gettext::Catalog;
-
-fn catalog() {
-    crate::CATALOG.unwrap()
-}
+use CATALOG;
 
 macro_rules! mv {
     ( $( $var:ident ),* => $exp:expr ) => {
@@ -54,21 +50,21 @@ pub fn init() {
                 @{&old_title}.style.display = "none";
             };
 
-            let title = placeholder(make_editable("h1").try_into().unwrap(), i18n!(catalog(), "Title"));
+            let title = placeholder(make_editable("h1").try_into().unwrap(), &i18n!(CATALOG, "Title"));
             if !title_val.is_empty() {
                 title.dataset().insert("edited", "true").unwrap();
             }
             title.append_child(&document().create_text_node(&title_val));
             title.add_event_listener(no_return);
 
-            let subtitle = placeholder(make_editable("h2").try_into().unwrap(), "Subtitle or summary");
+            let subtitle = placeholder(make_editable("h2").try_into().unwrap(), &i18n!(CATALOG, "Subtitle or summary"));
             if !subtitle_val.is_empty() {
                 subtitle.dataset().insert("edited", "true").unwrap();
             }
             subtitle.append_child(&document().create_text_node(&subtitle_val));
             subtitle.add_event_listener(no_return);
 
-            let content = placeholder(make_editable("article").try_into().unwrap(), "Write your article here. Markdown is supported.");
+            let content = placeholder(make_editable("article").try_into().unwrap(), &i18n!(CATALOG, "Write your article here. Markdown is supported."));
             if !content_val.is_empty() {
                 content.dataset().insert("edited", "true").unwrap();
             }
@@ -97,11 +93,11 @@ pub fn init() {
 
                         let tags = get_elt_value("tags").split(',').map(str::trim).map(str::to_string).collect::<Vec<_>>();
                         let license = get_elt_value("license");
-                        make_input("Tags", "popup-tags", &popup).set_raw_value(&tags.join(", "));
-                        make_input("License", "popup-license", &popup).set_raw_value(&license);
+                        make_input(i18n!(CATALOG, "Tags"), "popup-tags", &popup).set_raw_value(&tags.join(", "));
+                        make_input(i18n!(CATALOG, "License"), "popup-license", &popup).set_raw_value(&license);
 
                         let cover_label = document().create_element("label").unwrap();
-                        cover_label.append_child(&document().create_text_node("Cover"));
+                        cover_label.append_child(&document().create_text_node(i18n!(CATALOG, "Cover")));
                         cover_label.set_attribute("for", "cover").unwrap();
                         let cover = document().get_element_by_id("cover").unwrap();
                         cover.parent_element().unwrap().remove_child(&cover).ok();
@@ -111,24 +107,18 @@ pub fn init() {
                         let button = document().create_element("input").unwrap();
                         js!{
                             @{&button}.type = "submit";
-                            @{&button}.value = "Publish";
+                            @{&button}.value = @{i18n!(CATALOG, "Publish")};
                         };
-                        button.append_child(&document().create_text_node("Publish"));
+                        button.append_child(&document().create_text_node(&i18n!(CATALOG, "Publish")));
                         button.add_event_listener(mv!(widgets, old_ed => move |_: ClickEvent| {
-                            console!(log, "wtf");
                             set_value("title", widgets.0.inner_text());
                             set_value("subtitle", widgets.1.inner_text());
-                            console!(log, "là??");
                             set_value("editor-content", widgets.2.inner_text());
-                            console!(log, "ici");
                             set_value("tags", get_elt_value("popup-tags"));
-                            console!(log, "hein");
                             let cover = document().get_element_by_id("cover").unwrap();
                             cover.parent_element().unwrap().remove_child(&cover).ok();
                             old_ed.append_child(&cover);
-                            console!(log, "d'eux");
                             set_value("license", get_elt_value("popup-license"));
-                            console!(log, "ok ok");
                             js! {
                                 @{&old_ed}.submit();
                             };
@@ -208,7 +198,6 @@ fn placeholder<'a>(elt: HtmlElement, text: &'a str) -> HtmlElement {
             "true"
         }).expect("Couldn't update edition state");
     }));
-    console!(log, "blur");
     elt
 }
 

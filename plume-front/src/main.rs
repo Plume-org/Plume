@@ -1,18 +1,32 @@
 #![recursion_limit="128"]
+#![feature(decl_macro, proc_macro_hygiene)]
 
-extern crate gettex;
+extern crate gettext;
 #[macro_use]
 extern crate gettext_macros;
+#[macro_use]
+extern crate lazy_static;
 #[macro_use]
 extern crate stdweb;
 
 use stdweb::{unstable::{TryFrom, TryInto}, web::{*, event::*}};
 
+init_i18n!("plume-front", en, fr);
+
 mod editor;
-mod i18n;
+
+compile_i18n!();
+
+lazy_static! {
+    static ref CATALOG: gettext::Catalog = {
+        let catalogs = include_i18n!();
+        let lang = js!{ return navigator.language }.into_string().unwrap();
+        let lang = lang.splitn(2, '-').next().unwrap_or("en");
+        catalogs.iter().find(|(l, _)| l == &lang).unwrap_or(&catalogs[0]).clone().1
+    };
+}
 
 fn main() {
-    i18n::load_mo();
     editor_loop();
     menu();
     search();

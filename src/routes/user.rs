@@ -78,18 +78,13 @@ pub fn details(
         let user_clone = user.clone();
         worker.execute(move || {
             for user_id in user_clone.fetch_followers_ids().expect("Remote user: fetching followers error") {
-                let follower =
-                    User::find_by_ap_url(&*fetch_followers_conn, &user_id)
-                        .unwrap_or_else(|_| {
-                            User::fetch_from_url(&*fetch_followers_conn, &user_id)
-                                .expect("user::details: Couldn't fetch follower")
-                        });
+                let follower = User::from_url(&*fetch_followers_conn, &user_id).expect("user::details: Couldn't fetch follower");
                 follows::Follow::insert(
                     &*fetch_followers_conn,
                     follows::NewFollow {
                         follower_id: follower.id,
                         following_id: user_clone.id,
-                        ap_url: format!("{}/follow/{}", follower.ap_url, user_clone.ap_url),
+                        ap_url: String::new(),
                     },
                 ).expect("Couldn't save follower for remote user");
             }
@@ -147,7 +142,7 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<
             follows::NewFollow {
                 follower_id: user.id,
                 following_id: target.id,
-                ap_url: format!("{}/follow/{}", user.ap_url, target.ap_url),
+                ap_url: String::new(),
             },
         )?;
         f.notify(&*conn)?;
@@ -161,7 +156,7 @@ pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<
 #[post("/@/<name>/follow", rank = 2)]
 pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        &i18n!(i18n.catalog, "You need to be logged in order to follow someone"),
+        &i18n!(i18n.catalog, "You need to be logged in order to subscribe to someone"),
         uri!(follow: name = name),
     )
 }
@@ -181,6 +176,24 @@ pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option
         user.get_followers_page(&*conn, page.limits())?,
         page.0,
         Page::total(followers_count as i32)
+    )))
+}
+
+#[get("/@/<name>/followed?<page>", rank = 2)]
+pub fn followed(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let user = User::find_by_fqn(&*conn, &name)?;
+    let followed_count = user.count_followed(&*conn)?;
+
+    Ok(render!(users::followed(
+        &(&*conn, &intl.catalog, account.clone()),
+        user.clone(),
+        account.and_then(|x| x.is_following(&*conn, user.id).ok()).unwrap_or(false),
+        user.instance_id != Instance::get_local(&*conn)?.id,
+        user.get_instance(&*conn)?.public_domain,
+        user.get_followed_page(&*conn, page.limits())?,
+        page.0,
+        Page::total(followed_count as i32)
     )))
 }
 
@@ -341,7 +354,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
                 "",
                 form.email.to_string(),
                 User::hash_pass(&form.password).map_err(to_validation)?,
-            ).and_then(|u| u.update_boxes(&*conn)).map_err(to_validation)?;
+            ).map_err(to_validation)?;
             Ok(Redirect::to(uri!(super::session::new: m = _)))
         })
        .map_err(|err| {

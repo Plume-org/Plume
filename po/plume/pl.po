@@ -18,8 +18,8 @@ msgid "{0} commented your article."
 msgstr "{0} skomentował(a) Twój artykuł."
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
-msgstr "{0} zaczął(-eła) Cię obserwować."
+msgid "{0} is subscribed to you."
+msgstr ""
 
 msgid "{0} liked your article."
 msgstr "{0} polubił(a) Twój artykuł."
@@ -63,10 +63,27 @@ msgstr "Edytuj {0}"
 msgid "You need to be logged in order to reshare a post"
 msgstr "Musisz się zalogować, aby udostępnić wpis"
 
+#, fuzzy
+msgid "Password reset"
+msgstr "Hasło"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:199
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
 
-msgid "You need to be logged in order to follow someone"
+#, fuzzy
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Musisz się zalogować, aby zacząć obserwować innych"
 
 msgid "You need to be logged in order to edit your profile"
@@ -153,7 +170,8 @@ msgstr "Wszystkie artykuły w Fediwersum"
 msgid "Articles from {}"
 msgstr "Artykuły z {}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+#, fuzzy
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Nie ma tutaj niczego. Spróbuj zacząć śledzić więcej osób."
 
 msgid "Name"
@@ -276,9 +294,14 @@ msgstr ""
 msgid "Articles"
 msgstr "Artykuły"
 
-msgid "Followers"
-msgstr "Śledzący"
+msgid "Subscribers"
+msgstr ""
 
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Opis"
+
+#, fuzzy
 msgid "Atom feed"
 msgstr "Strumień Atom"
 
@@ -297,14 +320,19 @@ msgstr "Edytuj swój profil"
 msgid "Open on {0}"
 msgstr "Otwórz w {0}"
 
-msgid "Unfollow"
-msgstr "Przestań obserwować"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Obserwuj"
+msgid "Subscribe"
+msgstr ""
 
-msgid "{0}'s followers"
-msgstr "Obserwujący {0}"
+#, fuzzy
+msgid "{0}'s subscriptions'"
+msgstr "Opis"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Opis"
 
 msgid "Respond"
 msgstr "Odpowiedz"
@@ -434,6 +462,36 @@ msgstr "Brak wyników dla tego kryterium"
 
 msgid "No more result for your query"
 msgstr "Nie ma więcej wyników pasujących do tych kryteriów"
+
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Hasło"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Konfiguracja"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Aktualizuj konto"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Adres e-mail"
+
+msgid "Send reset link"
+msgstr ""
 
 msgid "Login"
 msgstr "Zaloguj się"
@@ -660,6 +718,30 @@ msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialn
 
 msgid "Use as avatar"
 msgstr "Użyj jako awataru"
+
+#~ msgid "{0}'s followers"
+#~ msgstr "Obserwujący {0}"
+
+# src/template_utils.rs:35
+#~ msgid "{0} is now following you."
+#~ msgstr "{0} zaczął(-eła) Cię obserwować."
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Obserwujący {0}"
+
+#~ msgid "Followers"
+#~ msgstr "Śledzący"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Śledzący"
+
+#~ msgid "Unfollow"
+#~ msgstr "Przestań obserwować"
+
+#~ msgid "Follow"
+#~ msgstr "Obserwuj"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

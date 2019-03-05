@@ -18,9 +18,9 @@ msgstr ""
 msgid "{0} commented your article."
 msgstr "{0} la inn en kommentar til artikkelen din"
 
-#, fuzzy
-msgid "{0} is now following you."
-msgstr "{0} har begynt å følge deg"
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
 
 #, fuzzy
 msgid "{0} liked your article."
@@ -77,11 +77,27 @@ msgid "You need to be logged in order to reshare a post"
 msgstr "Du må være logget inn for å se meldingene dine"
 
 #, fuzzy
+msgid "Password reset"
+msgstr "Passord"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:199
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
+#, fuzzy
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Du må være logget inn for å redigere profilen din"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Du må være logget inn for å følge noen"
 
 #, fuzzy
@@ -177,7 +193,7 @@ msgstr ""
 msgid "Articles from {}"
 msgstr "Om {0}"
 
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -314,8 +330,12 @@ msgstr ""
 msgid "Articles"
 msgstr "artikler"
 
-msgid "Followers"
-msgstr "Følgere"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Lang beskrivelse"
 
 #, fuzzy
 msgid "Atom feed"
@@ -338,15 +358,19 @@ msgstr "Din profil"
 msgid "Open on {0}"
 msgstr ""
 
-msgid "Unfollow"
-msgstr "Slutt å følge"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Følg"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
-msgid "{0}'s followers"
-msgstr "Én følger"
+msgid "{0}'s subscriptions'"
+msgstr "Lang beskrivelse"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Lang beskrivelse"
 
 msgid "Respond"
 msgstr "Svar"
@@ -495,6 +519,36 @@ msgid "No result for your query"
 msgstr ""
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Passord"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Oppsett"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Oppdater konto"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Epost"
+
+msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
@@ -734,6 +788,31 @@ msgstr ""
 
 msgid "Use as avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "{0}'s followers"
+#~ msgstr "Én følger"
+
+#, fuzzy
+#~ msgid "{0} is now following you."
+#~ msgstr "{0} har begynt å følge deg"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Én følger"
+
+#~ msgid "Followers"
+#~ msgstr "Følgere"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Følg"
+
+#~ msgid "Unfollow"
+#~ msgstr "Slutt å følge"
+
+#~ msgid "Follow"
+#~ msgstr "Følg"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

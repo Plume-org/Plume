@@ -19,7 +19,7 @@ msgid "{0} commented your article."
 msgstr "{0} прокомментировал(а) вашу статью"
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 #, fuzzy
@@ -76,11 +76,27 @@ msgid "You need to be logged in order to reshare a post"
 msgstr "Вы должны войти чтобы просматривать ваши уведомления"
 
 #, fuzzy
+msgid "Password reset"
+msgstr "Пароль"
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:199
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
+#, fuzzy
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
 
 #, fuzzy
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr "Вы должны войти чтобы подписаться на кого-либо"
 
 #, fuzzy
@@ -178,7 +194,7 @@ msgid "Articles from {}"
 msgstr "Статьи с {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 "Пока что здесь ничего нет. Попробуйте подписаться на большее число людей."
 
@@ -316,8 +332,12 @@ msgstr ""
 msgid "Articles"
 msgstr "Статьи"
 
-msgid "Followers"
-msgstr "Подписчики"
+msgid "Subscribers"
+msgstr ""
+
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Описание"
 
 #, fuzzy
 msgid "Atom feed"
@@ -339,16 +359,19 @@ msgstr "Редактировать ваш профиль"
 msgid "Open on {0}"
 msgstr ""
 
-#, fuzzy
-msgid "Unfollow"
-msgstr "Подписаться"
+msgid "Unsubscribe"
+msgstr ""
 
-msgid "Follow"
-msgstr "Подписаться"
+msgid "Subscribe"
+msgstr ""
 
 #, fuzzy
-msgid "{0}'s followers"
-msgstr "Один подписчик"
+msgid "{0}'s subscriptions'"
+msgstr "Описание"
+
+#, fuzzy
+msgid "{0}'s subscribers"
+msgstr "Описание"
 
 msgid "Respond"
 msgstr "Ответить"
@@ -475,6 +498,36 @@ msgid "No result for your query"
 msgstr "Перейти в вашу галерею"
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+#, fuzzy
+msgid "New password"
+msgstr "Пароль"
+
+#, fuzzy
+msgid "Confirmation"
+msgstr "Конфигурация"
+
+#, fuzzy
+msgid "Update password"
+msgstr "Обновить аккаунт"
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+#, fuzzy
+msgid "E-mail"
+msgstr "Электронная почта"
+
+msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
@@ -729,6 +782,28 @@ msgstr ""
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Использовать как аватар"
+
+#, fuzzy
+#~ msgid "{0}'s followers"
+#~ msgstr "Один подписчик"
+
+#, fuzzy
+#~ msgid "People {0} follows"
+#~ msgstr "Один подписчик"
+
+#~ msgid "Followers"
+#~ msgstr "Подписчики"
+
+#, fuzzy
+#~ msgid "Followed"
+#~ msgstr "Подписаться"
+
+#, fuzzy
+#~ msgid "Unfollow"
+#~ msgstr "Подписаться"
+
+#~ msgid "Follow"
+#~ msgstr "Подписаться"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."

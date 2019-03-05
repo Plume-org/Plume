@@ -16,6 +16,7 @@ fn main() {
             .expect("Error during SCSS compilation")
     ).expect("Couldn't write CSS output");
 
+    println!("cargo:rerun-if-changed=target/deploy/plume-front.wasm");
     copy("target/deploy/plume-front.wasm", "static/plume-front.wasm")
         .and_then(|_| read_to_string("target/deploy/plume-front.js"))
         .and_then(|js| write("static/plume-front.js", js.replace("\"plume-front.wasm\"", "\"/static/plume-front.wasm\""))).ok();

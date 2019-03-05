@@ -16,4 +16,5 @@
         @input!(ctx.1, password (password), "Password", form, errors, "minlenght=\"1\"")
         <input type="submit" value="@i18n!(ctx.1, "Login")" />
     </form>
+    <a href="@uri!(session::password_reset_request_form)">Forgot your password?</a>
 })

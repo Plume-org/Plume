@@ -19,7 +19,7 @@ msgid "{0} commented your article."
 msgstr ""
 
 # src/template_utils.rs:35
-msgid "{0} is now following you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 # src/template_utils.rs:36
@@ -78,12 +78,28 @@ msgstr ""
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
+# src/routes/session.rs:147
+msgid "Password reset"
+msgstr ""
+
+# src/routes/session.rs:156
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:199
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 # src/routes/user.rs:131
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
 # src/routes/user.rs:164
-msgid "You need to be logged in order to follow someone"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
 # src/routes/user.rs:227
@@ -171,7 +187,7 @@ msgstr ""
 msgid "Articles from {}"
 msgstr ""
 
-msgid "Nothing to see here yet. Try to follow more people."
+msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -299,7 +315,10 @@ msgstr ""
 msgid "Articles"
 msgstr ""
 
-msgid "Followers"
+msgid "Subscribers"
+msgstr ""
+
+msgid "Subscriptions"
 msgstr ""
 
 msgid "Atom feed"
@@ -320,13 +339,16 @@ msgstr ""
 msgid "Open on {0}"
 msgstr ""
 
-msgid "Unfollow"
+msgid "Unsubscribe"
 msgstr ""
 
-msgid "Follow"
+msgid "Subscribe"
 msgstr ""
 
-msgid "{0}'s followers"
+msgid "{0}'s subscriptions'"
+msgstr ""
+
+msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
@@ -451,6 +473,35 @@ msgid "No result for your query"
 msgstr ""
 
 msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "New password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "E-mail"
+msgstr ""
+
+msgid "Send reset link"
 msgstr ""
 
 msgid "Login"

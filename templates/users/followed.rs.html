@@ -3,9 +3,9 @@
 @use plume_models::users::User;
 @use routes::*;
 
-@(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, followers: Vec<User>, page: i32, n_pages: i32)
+@(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, followed: Vec<User>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "{0}'s subscribers"; user.name(ctx.0)), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "{0}'s subscriptions'"; user.name(ctx.0)), {}, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
@@ -15,10 +15,10 @@
     ])
 
     <div class="cards">
-        @for follower in followers {
+        @for follow in followed {
             <div class="card">
-                <h3><a href="@uri!(user::details: name = follower.get_fqn(ctx.0))">@follower.name(ctx.0)</a> <small>@format!("@{}", follower.get_fqn(ctx.0))</small></h3>
-                <main><p>@Html(follower.summary)</p></main>
+                <h3><a href="@uri!(user::details: name = follow.get_fqn(ctx.0))">@follow.name(ctx.0)</a> <small>@format!("@{}", follow.get_fqn(ctx.0))</small></h3>
+                <main><p>@Html(follow.summary)</p></main>
             </div>
         }
     </div>
