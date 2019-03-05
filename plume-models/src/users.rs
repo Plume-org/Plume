@@ -981,7 +981,7 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_fqn(conn, &test_user.get_fqn(conn)).unwrap().id
+                User::find_by_fqn(conn, &test_user.fqn).unwrap().id
             );
             assert_eq!(
                 test_user.id,

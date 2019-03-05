@@ -645,7 +645,7 @@ pub(crate) mod tests {
             ).unwrap();
 
             assert_eq!(
-                Blog::find_local(conn, "SomeName").unwrap().id,
+                Blog::find_by_fqn(conn, "SomeName").unwrap().id,
                 blog.id
             );
 
@@ -669,7 +669,7 @@ pub(crate) mod tests {
                 ).unwrap(),
             ).unwrap();
 
-            assert_eq!(blog.get_fqn(conn), "SomeName");
+            assert_eq!(blog.fqn, "SomeName");
 
             Ok(())
         });
