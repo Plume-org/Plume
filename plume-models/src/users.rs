@@ -64,6 +64,7 @@ pub struct User {
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
     pub last_fetched_date: NaiveDateTime,
+    pub fqn: String,
 }
 
 #[derive(Default, Insertable)]
@@ -119,8 +120,7 @@ impl User {
         if inserted.shared_inbox_url.is_none() {
             inserted.shared_inbox_url = Some(ap_url(&format!(
                 "{}/inbox",
-                Instance::get_local(conn)?
-                    .public_domain
+                instance.public_domain
             )));
         }
 
@@ -130,6 +130,14 @@ impl User {
                 &inserted.username,
                 "followers",
             );
+        }
+
+        if inserted.fqn.is_empty() {
+            if instance.local {
+                inserted.fqn = inserted.username.clone();
+            } else {
+                inserted.fqn = format!("{}@{}", inserted.username, instance.public_domain);
+            }
         }
 
         inserted.save_changes(conn).map_err(Error::from)
@@ -218,19 +226,17 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn find_local(conn: &Connection, username: &str) -> Result<User> {
-        User::find_by_name(conn, username, Instance::get_local(conn)?.id)
-    }
-
     pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<User> {
-        let mut split_fqn = fqn.split('@');
-        let username = split_fqn.next().ok_or(Error::InvalidValue)?;
-        if let Some(domain) = split_fqn.next() { // remote user
-            Instance::find_by_domain(conn, domain)
-                .and_then(|instance| User::find_by_name(conn, username, instance.id))
-                .or_else(|_| User::fetch_from_webfinger(conn, fqn))
-        } else { // local user
-            User::find_local(conn, username)
+        let from_db = users::table
+            .filter(users::fqn.eq(fqn))
+            .limit(1)
+            .load::<User>(conn)?
+            .into_iter()
+            .next();
+        if let Some(from_db) = from_db {
+            Ok(from_db)
+        } else {
+            User::fetch_from_webfinger(conn, fqn)
         }
     }
 
@@ -518,18 +524,6 @@ impl User {
             .collect::<Vec<serde_json::Value>>())
     }
 
-    pub fn get_fqn(&self, conn: &Connection) -> String {
-        if self.instance_id == Instance::get_local(conn).ok().expect("User::get_fqn: instance error").id {
-            self.username.clone()
-        } else {
-            format!(
-                "{}@{}",
-                self.username,
-                self.get_instance(conn).ok().expect("User::get_fqn: instance error").public_domain
-            )
-        }
-    }
-
     pub fn get_followers(&self, conn: &Connection) -> Result<Vec<User>> {
         use schema::follows;
         let follows = Follow::belonging_to(self).select(follows::follower_id);
@@ -805,11 +799,11 @@ impl User {
         (Utc::now().naive_utc() - self.last_fetched_date).num_days() > 1
     }
 
-    pub fn name(&self, conn: &Connection) -> String {
+    pub fn name(&self) -> String {
         if !self.display_name.is_empty() {
             self.display_name.clone()
         } else {
-            self.get_fqn(conn)
+            self.fqn.clone()
         }
     }
 }

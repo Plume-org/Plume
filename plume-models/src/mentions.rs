@@ -71,7 +71,7 @@ impl Mention {
             .set_href_string(user.ap_url.clone())?;
         mention
             .link_props
-            .set_name_string(format!("@{}", user.get_fqn(conn)))?;
+            .set_name_string(format!("@{}", user.fqn))?;
         Ok(mention)
     }
 

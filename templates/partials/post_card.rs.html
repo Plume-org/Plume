@@ -9,7 +9,7 @@
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
     }
     <h3 class="p-name">
-        <a class="u-url" href="@uri!(posts::details: blog = article.get_blog(ctx.0).unwrap().get_fqn(ctx.0), slug = &article.slug, responding_to = _)">
+        <a class="u-url" href="@uri!(posts::details: blog = article.get_blog(ctx.0).unwrap().fqn, slug = &article.slug, responding_to = _)">
             @article.title
         </a>
     </h3>
@@ -19,15 +19,15 @@
     <p class="author">
         @Html(i18n!(ctx.1, "By {0}"; format!(
             "<a class=\"p-author h-card\" href=\"{}\">{}</a>",
-            uri!(user::details: name = article.get_authors(ctx.0).unwrap_or_default()[0].get_fqn(ctx.0)),
-            escape(&article.get_authors(ctx.0).unwrap_or_default()[0].name(ctx.0))
+            uri!(user::details: name = &article.get_authors(ctx.0).unwrap_or_default()[0].fqn),
+            escape(&article.get_authors(ctx.0).unwrap_or_default()[0].name())
         )))
         @if article.published {
-	⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
+	       ⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
         }
-        ⋅ <a href="@uri!(blogs::details: name = article.get_blog(ctx.0).unwrap().get_fqn(ctx.0), page = _)">@article.get_blog(ctx.0).unwrap().title</a>
+        ⋅ <a href="@uri!(blogs::details: name = &article.get_blog(ctx.0).unwrap().fqn, page = _)">@article.get_blog(ctx.0).unwrap().title</a>
         @if !article.published {
-        ⋅ @i18n!(ctx.1, "Draft")
+            ⋅ @i18n!(ctx.1, "Draft")
         }
     </p>
 </div>

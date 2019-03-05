@@ -144,7 +144,7 @@ impl Searcher {
         let writer = writer.as_mut().unwrap();
         writer.add_document(doc!(
             post_id => i64::from(post.id),
-            author => post.get_authors(conn)?.into_iter().map(|u| u.get_fqn(conn)).join(" "),
+            author => post.get_authors(conn)?.into_iter().map(|u| u.fqn).join(" "),
             creation_date => i64::from(post.creation_date.num_days_from_ce()),
             instance => Instance::get(conn, post.get_blog(conn)?.instance_id)?.public_domain.clone(),
             tag => Tag::for_post(conn, post.id)?.into_iter().map(|t| t.tag).join(" "),

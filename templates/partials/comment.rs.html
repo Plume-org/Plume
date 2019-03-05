@@ -7,10 +7,10 @@
 @if let Some(ref comm) = Some(&comment_tree.comment) {
 @if let Some(author) = comm.get_author(ctx.0).ok() {
 <div class="comment u-comment h-cite" id="comment-@comm.id">
-    <a class="author u-author h-card" href="@uri!(user::details: name = author.get_fqn(ctx.0))">
+    <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
-        <span class="display-name p-name">@author.name(ctx.0)</span>
-        <small>@author.get_fqn(ctx.0)</small>
+        <span class="display-name p-name">@author.name()</span>
+        <small>@&author.fqn</small>
 	    </a>
     @if let Some(ref ap_url) = comm.ap_url {
         <a class="u-url" href="@ap_url"></a>

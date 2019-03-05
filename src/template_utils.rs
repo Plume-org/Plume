@@ -29,7 +29,7 @@ macro_rules! render {
 }
 
 pub fn translate_notification(ctx: BaseContext, notif: Notification) -> String {
-    let name = notif.get_actor(ctx.0).unwrap().name(ctx.0);
+    let name = notif.get_actor(ctx.0).unwrap().name();
     match notif.kind.as_ref() {
         notification_kind::COMMENT => i18n!(ctx.1, "{0} commented your article."; &name),
         notification_kind::FOLLOW => i18n!(ctx.1, "{0} is subscribed to you."; &name),
@@ -55,7 +55,7 @@ impl Size {
 }
 
 pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &Catalog) -> Html<String> {
-    let name = escape(&user.name(conn)).to_string();
+    let name = escape(&user.name()).to_string();
     Html(format!(
         r#"<div class="avatar {size} {padded}"
         style="background-image: url('{url}');"
