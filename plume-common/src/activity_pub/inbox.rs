@@ -188,7 +188,7 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError> {
 fn get_id<'a>(json: serde_json::Value) -> Option<String> {
     match json {
         serde_json::Value::String(s) => Some(s),
-        serde_json::Value::Object(map) => map["id"].as_str().map(ToString::to_string),
+        serde_json::Value::Object(map) => map.get("id")?.as_str().map(ToString::to_string),
         _ => None,
     }
 }
@@ -365,7 +365,9 @@ mod tests {
         let mut person = Person::default();
         person.object_props.set_id_string(String::from("https://test.ap/actor")).unwrap();
         act.create_props.set_actor_object(person).unwrap();
-        act.create_props.set_object_object(Note::default()).unwrap();
+        let mut note = Note::default();
+        note.object_props.set_id_string(String::from("https://test.ap/note")).unwrap();
+        act.create_props.set_object_object(note).unwrap();
         act
     }
 
