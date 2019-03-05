@@ -33,7 +33,9 @@ lazy_static! {
             .add_tag_attributes(
                 "audio",
                 [ "src", "title", "controls" ].iter(),
-            );
+            )
+            .add_tag_attributes("div", [ "class" ].iter())
+            .add_tag_attributes("a", [ "class" ].iter());
         b
     };
 }

@@ -1,4 +1,4 @@
-@use plume_models::medias::Media;
+@use plume_models::medias::*;
 @use templates::base;
 @use template_utils::*;
 @use routes::*;
@@ -18,7 +18,11 @@
     <div class="cards spaced">
         @for media in medias {
           <div class="card">
-              <div class="cover" style="@media.preview_image(ctx.0)"></div>
+              <div class="cover media-preview @media.category().to_string()"
+                @if media.category() == MediaCategory::Image {
+                  style="background-image: url('@media.url(ctx.0).unwrap_or_default()')"
+                }
+              ></div>
               <main>
                   <p class="p-summary">@media.alt_text</p>
                   @if let Some(cw) = media.content_warning {

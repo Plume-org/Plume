@@ -45,6 +45,17 @@ pub enum MediaCategory {
     Unknown,
 }
 
+impl MediaCategory {
+    pub fn to_string(&self) -> &str {
+        match *self {
+            MediaCategory::Image => "image",
+            MediaCategory::Audio => "audio",
+            MediaCategory::Video => "video",
+            MediaCategory::Unknown => "unknown",
+        }
+    }
+}
+
 impl Media {
     insert!(medias, NewMedia);
     get!(medias);
@@ -88,20 +99,6 @@ impl Media {
         }
     }
 
-    pub fn preview_image(&self, conn: &Connection) -> String {
-        let (url, is_icon) = match self.category() {
-            MediaCategory::Image => (self.url(conn).unwrap_or(String::new()), false),
-            MediaCategory::Audio => ("/static/images/audio-file.svg".into(), true),
-            MediaCategory::Video => ("/static/images/video-file.svg".into(), true),
-            MediaCategory::Unknown => ("/static/images/unknown-file.svg".into(), true),
-        };
-        if is_icon {
-            format!("background-image: url('{}'); background-color: #7765E3; background-repeat: no-repeat; background-position: center; background-size: 4em;", url)
-        } else {
-            format!("background-image: url('{}')", url)
-        }
-    }
-
     pub fn html(&self, conn: &Connection) -> Result<SafeString> {
         let url = self.url(conn)?;
         Ok(match self.category() {
@@ -110,14 +107,17 @@ impl Media {
                 url, escape(&self.alt_text), escape(&self.alt_text)
             )),
             MediaCategory::Audio => SafeString::new(&format!(
-                r#"<audio src="{}" title="{}" controls></audio>"#,
+                r#"<div class="media-preview audio"></div><audio src="{}" title="{}" controls></audio>"#,
                 url, escape(&self.alt_text)
             )),
             MediaCategory::Video => SafeString::new(&format!(
                 r#"<video src="{}" title="{}" controls></video>"#,
                 url, escape(&self.alt_text)
             )),
-            MediaCategory::Unknown => SafeString::new(""),
+            MediaCategory::Unknown => SafeString::new(&format!(
+                r#"<a href="{}" class="media-preview unknown"></a>"#,
+                url,
+            )),
         })
     }
 
