@@ -15,3 +15,15 @@ msgstr ""
 # plume-front/src/editor.rs:57
 msgid "Title"
 msgstr "Title"
+
+# plume-front/src/editor.rs:61
+msgid "Subtitle or summary"
+msgstr ""
+
+# plume-front/src/editor.rs:68
+msgid "Write your article here. Markdown is supported."
+msgstr ""
+
+# plume-front/src/editor.rs:111
+msgid "Publish"
+msgstr ""

@@ -24,6 +24,18 @@ msgstr "Sous-titre ou résumé"
 msgid "Write your article here. Markdown is supported."
 msgstr "Écrivez votre article ici. Vous pouvez utiliser du Markdown."
 
+# plume-front/src/editor.rs:96
+msgid "Tags"
+msgstr ""
+
+# plume-front/src/editor.rs:97
+msgid "License"
+msgstr ""
+
+# plume-front/src/editor.rs:100
+msgid "Cover"
+msgstr ""
+
 # plume-front/src/editor.rs:111
 msgid "Publish"
 msgstr "Publier"
