@@ -93,11 +93,11 @@ pub fn init() {
 
                         let tags = get_elt_value("tags").split(',').map(str::trim).map(str::to_string).collect::<Vec<_>>();
                         let license = get_elt_value("license");
-                        make_input(i18n!(CATALOG, "Tags"), "popup-tags", &popup).set_raw_value(&tags.join(", "));
-                        make_input(i18n!(CATALOG, "License"), "popup-license", &popup).set_raw_value(&license);
+                        make_input(&i18n!(CATALOG, "Tags"), "popup-tags", &popup).set_raw_value(&tags.join(", "));
+                        make_input(&i18n!(CATALOG, "License"), "popup-license", &popup).set_raw_value(&license);
 
                         let cover_label = document().create_element("label").unwrap();
-                        cover_label.append_child(&document().create_text_node(i18n!(CATALOG, "Cover")));
+                        cover_label.append_child(&document().create_text_node(&i18n!(CATALOG, "Cover")));
                         cover_label.set_attribute("for", "cover").unwrap();
                         let cover = document().get_element_by_id("cover").unwrap();
                         cover.parent_element().unwrap().remove_child(&cover).ok();
@@ -152,7 +152,7 @@ fn close_popup() {
         .map(|bg| bg.class_list().remove("show"));
 }
 
-fn make_input(label_text: &'static str, name: &'static str, form: &Element) -> InputElement {
+fn make_input(label_text: &str, name: &'static str, form: &Element) -> InputElement {
     let label = document().create_element("label").unwrap();
     label.append_child(&document().create_text_node(label_text));
     label.set_attribute("for", name).unwrap();
