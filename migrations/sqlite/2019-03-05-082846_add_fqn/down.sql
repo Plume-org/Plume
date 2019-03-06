@@ -10,11 +10,23 @@ CREATE TABLE blogs_no_fqn (
     creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ap_url text not null default '' UNIQUE,
     private_key TEXT,
-    public_key TEXT NOT NULL DEFAULT '', fqn TEXT NOT NULL DEFAULT '',
+    public_key TEXT NOT NULL DEFAULT '',
     CONSTRAINT blog_unique UNIQUE (actor_id, instance_id)
 );
 
-INSERT INTO blogs_no_fqn SELECT * FROM blogs;
+INSERT INTO blogs_no_fqn SELECT
+    id,
+    actor_id,
+    title,
+    summary,
+    outbox_url,
+    inbox_url,
+    instance_id,
+    creation_date,
+    ap_url,
+    private_key,
+    public_key
+FROM blogs;
 DROP TABLE blogs;
 ALTER TABLE blogs_no_fqn RENAME TO blogs;
 
@@ -37,10 +49,29 @@ CREATE TABLE users_no_fqn (
     shared_inbox_url VARCHAR,
     followers_endpoint VARCHAR NOT NULL DEFAULT '' UNIQUE,
     avatar_id INTEGER REFERENCES medias(id) ON DELETE SET NULL,
-    last_fetched_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, fqn TEXT NOT NULL DEFAULT '',
+    last_fetched_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
 
-INSERT INTO users_no_fqn SELECT * FROM users;
+INSERT INTO users_no_fqn SELECT
+    id,
+    username,
+    display_name,
+    outbox_url,
+    inbox_url,
+    is_admin,
+    summary,
+    email,
+    hashed_password,
+    instance_id,
+    creation_date,
+    ap_url,
+    private_key,
+    public_key,
+    shared_inbox_url,
+    followers_endpoint,
+    avatar_id,
+    last_fetched_date
+FROM users;
 DROP TABLE users;
 ALTER TABLE users_no_fqn RENAME TO users;
