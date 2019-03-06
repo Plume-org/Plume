@@ -302,8 +302,9 @@ msgid ""
 "can, however, find a different one."
 msgstr ""
 
+#, fuzzy
 msgid "Articles"
-msgstr ""
+msgstr "Nueva publicación"
 
 msgid "Subscribers"
 msgstr ""

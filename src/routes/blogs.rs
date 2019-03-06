@@ -34,7 +34,6 @@ pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page:
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
         blog.clone(),
-        blog.get_fqn(&*conn),
         authors,
         articles_count,
         page.0,
@@ -46,7 +45,7 @@ pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page:
 
 #[get("/~/<name>", rank = 1)]
 pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_local(&*conn, &name).ok()?;
+    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
 }
 
@@ -90,7 +89,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if Blog::find_local(&*conn, &slug).is_ok() {
+    if Blog::find_by_fqn(&*conn, &slug).is_ok() {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A blog with the same name already exists.")),
@@ -124,7 +123,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 
 #[post("/~/<name>/delete")]
 pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe>{
-    let blog = Blog::find_local(&*conn, &name).expect("blog::delete: blog not found");
+    let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
@@ -139,7 +138,7 @@ pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, search
 
 #[get("/~/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_local(&*conn, &name).ok()?;
+    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     Some(blog.outbox(&*conn).ok()?)
 }
 

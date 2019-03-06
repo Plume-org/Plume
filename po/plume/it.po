@@ -335,8 +335,9 @@ msgstr ""
 msgid "Articles"
 msgstr "Articoli"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "Descrizione"
 
 #, fuzzy
 msgid "Subscriptions"

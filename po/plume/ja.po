@@ -323,8 +323,9 @@ msgstr ""
 msgid "Articles"
 msgstr "記事"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "説明"
 
 #, fuzzy
 msgid "Subscriptions"

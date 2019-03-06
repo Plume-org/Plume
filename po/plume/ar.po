@@ -317,8 +317,9 @@ msgstr ""
 msgid "Articles"
 msgstr "المقالات"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "الوصف"
 
 #, fuzzy
 msgid "Subscriptions"

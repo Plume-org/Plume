@@ -36,11 +36,11 @@ msgstr ""
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:65
+# src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:135
+# src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
