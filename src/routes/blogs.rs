@@ -1,5 +1,6 @@
 use activitypub::collection::OrderedCollection;
 use atom_syndication::{Entry, FeedBuilder};
+use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
     request::LenientForm,
@@ -16,7 +17,9 @@ use plume_models::{
     blogs::*,
     db_conn::DbConn,
     instance::Instance,
+    medias::Media,
     posts::Post,
+    safe_string::SafeString,
     users::User
 };
 use routes::{Page, errors::ErrorPage};
@@ -33,10 +36,9 @@ pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page:
 
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
-        blog.clone(),
+        &blog,
         blog.get_fqn(&*conn),
         authors,
-        articles_count,
         page.0,
         Page::total(articles_count as i32),
         user.and_then(|x| x.is_author_in(&*conn, &blog).ok()).unwrap_or(false),
@@ -133,6 +135,76 @@ pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, search
         Err(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, user),
             i18n!(intl.catalog, "You are not allowed to delete this blog.")
+        )))
+    }
+}
+
+#[derive(FromForm, Validate)]
+pub struct EditForm {
+    #[validate(custom(function = "valid_slug", message = "Invalid name"))]
+    pub title: String,
+    pub summary: String,
+    pub icon: Option<i32>,
+    pub banner: Option<i32>,
+}
+
+#[get("/~/<name>/edit")]
+pub fn edit(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_local(&*conn, &name)?;
+    if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
+        let user = user.expect("blogs::edit: User was None while it shouldn't");
+        let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
+        Ok(render!(blogs::edit(
+            &(&*conn, &intl.catalog, Some(user)),
+            &blog,
+            medias,
+            &EditForm {
+                title: blog.title.clone(),
+                summary: blog.summary.clone(),
+                icon: blog.icon_id,
+                banner: blog.banner_id,
+            },
+            ValidationErrors::default()
+        )))
+    } else {
+        // TODO actually return 403 error code
+        Ok(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user),
+            i18n!(intl.catalog, "You are not allowed to edit this blog.")
+        )))
+    }
+}
+
+#[put("/~/<name>/edit", data = "<form>")]
+pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: LenientForm<EditForm>) -> Result<Redirect, Ructe> {
+    let mut blog = Blog::find_local(&*conn, &name).expect("blog::update: blog not found");
+    if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
+        let user = user.expect("blogs::edit: User was None while it shouldn't");
+        form.validate()
+            .and_then(|_| {
+                blog.title = form.title.clone();
+                blog.summary = form.summary.clone();
+                blog.summary_html = SafeString::new(&utils::md_to_html(&form.summary, "", true).0);
+                blog.icon_id = form.icon;
+                blog.banner_id = form.banner;
+                blog.save_changes::<Blog>(&*conn).expect("Couldn't save blog changes");
+                Ok(Redirect::to(uri!(details: name = name, page = _)))
+            })
+            .map_err(|err| {
+                let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
+                render!(blogs::edit(
+                    &(&*conn, &intl.catalog, Some(user)),
+                    &blog,
+                    medias,
+                    &*form,
+                    err
+                ))
+            })
+    } else {
+        // TODO actually return 403 error code
+        Err(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user),
+            i18n!(intl.catalog, "You are not allowed to edit this blog.")
         )))
     }
 }

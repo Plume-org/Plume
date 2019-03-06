@@ -47,7 +47,7 @@
     </div>
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
-	<img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()" />
+        <img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
     }
     <article class="e-content">
         @Html(&article.content)

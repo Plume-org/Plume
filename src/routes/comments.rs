@@ -42,7 +42,8 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
-                &Instance::get_local(&conn).expect("comments::create: local instance error").public_domain
+                &Instance::get_local(&conn).expect("comments::create: local instance error").public_domain,
+                true,
             );
             let comm = Comment::insert(&*conn, NewComment {
                 content: SafeString::new(html.as_ref()),

@@ -5,7 +5,7 @@
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, blog: Blog, fqn: String, authors: &Vec<User>, total_articles: i64, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
+@(ctx: BaseContext, blog: &Blog, fqn: String, authors: &Vec<User>, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
 
 @:base(ctx, blog.title.clone(), {}, {
     <a href="@uri!(blogs::details: name = &fqn, page = _)">@blog.title</a>
@@ -19,17 +19,36 @@
     }
 </div>
 <div class="h-feed">
-    <h1><span class="p-name">@blog.title</span> <small>~@fqn</small></h1>
-    <p>@blog.summary</p>
-    <p>
-        @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
-        @for author in authors {
-            <a class="author p-author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
-        }
-    </p>
-    <p>
-        @i18n!(ctx.1, "There's one article on this blog", "There are {0} articles on this blog"; total_articles)
-    </p>
+    @if blog.banner_id.is_some() {
+        <div class="cover" style="background-image: url('@Html(blog.banner_url(ctx.0).unwrap_or_default())')"></div>
+        <img class="hidden u-photo" src="@blog.banner_url(ctx.0).unwrap_or_default()"/>
+    }
+    <div class="h-card">
+        <div class="user">
+            <div class="flex wrap">
+                <div class="avatar medium" style="background-image: url('@blog.icon_url(ctx.0)');" aria-label="@i18n!(ctx.1, "{}'s icon"; &blog.title)"></div>
+                <img class="hidden u-photo" src="@blog.icon_url(ctx.0)"/>
+
+                <h1 class="grow flex vertical">
+                    <span class="p-name">@blog.title</span>
+                    <small>~@fqn</small>
+                </h1>
+
+                @if ctx.2.clone().and_then(|u| u.is_author_in(ctx.0, &blog).ok()).unwrap_or(false) {
+                    <a href="@uri!(blogs::edit: name = &blog.actor_id)" class="button inline-block">@i18n!(ctx.1, "Edit")</a>
+                }
+            </div>
+            
+            <p class="user-summary">
+                <p>
+                    @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
+                    @for author in authors {
+                        <a class="author p-author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
+                    }
+                </p>
+                @Html(blog.summary_html.clone())
+            </p>
+    </div>
 
     <section>
         <h2>
@@ -50,11 +69,4 @@
         @paginate(ctx.1, page, n_pages)
     </section>
 </div>
-    @if is_author {
-        <h2>@i18n!(ctx.1, "Danger zone")</h2>
-        <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be reversed.")</p>
-        <form method="post" action="@uri!(blogs::delete: name = &fqn)">
-	        <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Permanently delete this blog")">
-        </form>
-    }
 })

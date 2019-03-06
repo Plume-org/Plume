@@ -208,7 +208,11 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
             // actually it's not "Ok"…
             Ok(Redirect::to(uri!(super::blogs::details: name = blog, page = _)))
         } else {
-            let (content, mentions, hashtags) = utils::md_to_html(form.content.to_string().as_ref(), &Instance::get_local(&conn).expect("posts::update: Error getting local instance").public_domain);
+            let (content, mentions, hashtags) = utils::md_to_html(
+                form.content.to_string().as_ref(),
+                &Instance::get_local(&conn).expect("posts::update: Error getting local instance").public_domain,
+                false,
+            );
 
             // update publication date if when this article is no longer a draft
             let newly_published = if !post.published && !form.draft {
@@ -319,7 +323,8 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
-                &Instance::get_local(&conn).expect("post::create: local instance error").public_domain
+                &Instance::get_local(&conn).expect("post::create: local instance error").public_domain,
+                false,
             );
 
             let post = Post::insert(&*conn, NewPost {

@@ -1,0 +1,41 @@
+@use validator::ValidationErrors;
+@use plume_models::blogs::Blog;
+@use plume_models::medias::Media;
+@use routes::blogs;
+@use routes::blogs::EditForm;
+@use template_utils::*;
+@use templates::base;
+@use templates::partials::image_select;
+
+@(ctx: BaseContext, blog: &Blog, medias: Vec<Media>, form: &EditForm, errors: ValidationErrors)
+
+@:base(ctx, i18n!(ctx.1, "Edit \"{}\""; &blog.title), {}, {
+	<a href="@uri!(blogs::details: name = &blog.actor_id, page = _)">@blog.title</a>
+}, {
+	<h1>@i18n!(ctx.1, "Edit \"{}\""; &blog.title)</h1>
+    <form method="post" action="@uri!(blogs::update: name = &blog.actor_id)">
+        <!-- Rocket hack to use various HTTP methods -->
+        <input type=hidden name="_method" value="put">
+
+        @input!(ctx.1, title (text), "Title", form, errors.clone(), "minlenght=\"1\"")
+
+        <label for="summary">@i18n!(ctx.1, "Description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
+        <textarea id="summary" name="summary" rows="20">@form.summary</textarea>
+
+        <p>
+            @i18n!(ctx.1, "You can upload images to your gallery, to use them as blog icons or banners.")
+            <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload images")</a>
+        </p>
+
+        @:image_select(ctx, "icon", i18n!(ctx.1, "Blog icon"), true, medias.clone(), form.icon)
+        @:image_select(ctx, "banner", i18n!(ctx.1, "Blog banner"), true, medias, form.banner)
+
+        <input type="submit" value="@i18n!(ctx.1, "Update blog")"/>
+    </form>
+
+    <h2>@i18n!(ctx.1, "Danger zone")</h2>
+    <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be reversed.")</p>
+    <form method="post" action="@uri!(blogs::delete: name = &blog.actor_id)">
+        <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Permanently delete this blog")">
+    </form>
+})

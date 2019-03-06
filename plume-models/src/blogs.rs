@@ -21,6 +21,7 @@ use plume_common::activity_pub::{
     inbox::{Deletable, WithInbox},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey,
 };
+use medias::Media;
 use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
@@ -43,6 +44,9 @@ pub struct Blog {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
+    pub summary_html: SafeString,
+    pub icon_id: Option<i32>,
+    pub banner_id: Option<i32>,
 }
 
 #[derive(Default, Insertable)]
@@ -57,6 +61,9 @@ pub struct NewBlog {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
+    pub summary_html: SafeString,
+    pub icon_id: Option<i32>,
+    pub banner_id: Option<i32>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -236,6 +243,10 @@ impl Blog {
                     .public_key_publickey()?
                     .public_key_pem_string()?,
                 private_key: None,
+                // TODO: federate the two following properties
+                banner_id: None,
+                icon_id: None,
+                summary_html: SafeString::new(""),
             },
         )
     }
@@ -348,6 +359,16 @@ impl Blog {
                 self.get_instance(conn).ok().expect("Blog::get_fqn: instance error").public_domain
             )
         }
+    }
+
+    pub fn icon_url(&self, conn: &Connection) -> String {
+        self.icon_id.and_then(|id|
+            Media::get(conn, id).and_then(|m| m.url(conn)).ok()
+        ).unwrap_or("/static/default-avatar.png".to_string())
+    }
+
+    pub fn banner_url(&self, conn: &Connection) -> Option<String> {
+        self.banner_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
     }
 
     pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {

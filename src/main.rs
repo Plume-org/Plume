@@ -135,6 +135,8 @@ Then try to restart Plume.
             routes::blogs::new_auth,
             routes::blogs::create,
             routes::blogs::delete,
+            routes::blogs::edit,
+            routes::blogs::update,
             routes::blogs::atom_feed,
 
             routes::comments::create,

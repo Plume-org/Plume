@@ -43,6 +43,9 @@ table! {
         ap_url -> Text,
         private_key -> Nullable<Text>,
         public_key -> Text,
+        summary_html -> Text,
+        icon_id -> Nullable<Int4>,
+        banner_id -> Nullable<Int4>,
     }
 }
 

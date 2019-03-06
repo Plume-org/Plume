@@ -93,7 +93,7 @@ impl Comment {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<Note> {
         let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref(),
-                &Instance::get_local(conn)?.public_domain);
+                &Instance::get_local(conn)?.public_domain, false);
 
         let author = User::get(conn, self.author_id)?;
         let mut note = Note::default();

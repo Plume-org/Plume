@@ -40,8 +40,16 @@ enum State {
     Ready,
 }
 
+fn to_inline(tag: Tag) -> Tag {
+    match tag {
+        Tag::Header(_) | Tag::Table(_) | Tag::TableHead | Tag::TableRow | Tag::TableCell => Tag::Paragraph,
+        Tag::Image(url, title) => Tag::Link(url, title),
+        t => t,
+    }
+}
+
 /// Returns (HTML, mentions, hashtags)
-pub fn md_to_html(md: &str, base_url: &str) -> (String, HashSet<String>, HashSet<String>) {
+pub fn md_to_html(md: &str, base_url: &str, inline: bool) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
@@ -65,6 +73,26 @@ pub fn md_to_html(md: &str, base_url: &str) -> (String, HashSet<String>, HashSet
                                         Some(res)
                                     })
                                     .flat_map(|v| v.into_iter())
+                                    // Ignore headings, images, and tables if inline = true
+                                    .scan(vec![], |state: &mut Vec<Tag>, evt| {
+                                        if inline {
+                                            let new_evt = match evt {
+                                                Event::Start(t) => {
+                                                    let tag = to_inline(t);
+                                                    state.push(tag.clone());
+                                                    Event::Start(tag)
+                                                },
+                                                Event::End(t) => match state.pop() {
+                                                    Some(other) => Event::End(other),
+                                                    None => Event::End(t),
+                                                },
+                                                e => e,
+                                            };
+                                            Some(new_evt)
+                                        } else {
+                                            Some(evt)
+                                        }
+                                    })
                                     .map(|evt| match evt {
         Event::Text(txt) => {
             let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold((vec![], State::Ready, String::new(), 0, vec![], vec![]), |(mut events, state, mut text_acc, n, mut mentions, mut hashtags), c| {
@@ -188,7 +216,7 @@ mod tests {
         ];
 
         for (md, mentions) in tests {
-            assert_eq!(md_to_html(md, "").1, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
+            assert_eq!(md_to_html(md, "", false).1, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
         }
     }
 
@@ -207,7 +235,13 @@ mod tests {
         ];
 
         for (md, mentions) in tests {
-            assert_eq!(md_to_html(md, "").2, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
+            assert_eq!(md_to_html(md, "", false).2, mentions.into_iter().map(|s| s.to_string()).collect::<HashSet<String>>());
         }
+    }
+
+    #[test]
+    fn test_inline() {
+        assert_eq!(md_to_html("# Hello", "", false).0, String::from("<h1>Hello</h1>\n"));
+        assert_eq!(md_to_html("# Hello", "", true).0, String::from("<p>Hello</p>\n"));
     }
 }

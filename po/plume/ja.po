@@ -45,6 +45,10 @@ msgstr "新しいブログを作成するにはログインする必要があり
 msgid "You are not allowed to delete this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
+#, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "あなたはこのブログの作者ではありません。"
+
 msgid "You need to be logged in order to like a post"
 msgstr "投稿をいいねするにはログインする必要があります"
 
@@ -237,6 +241,7 @@ msgstr "Plume {{ version }} を実行中"
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
 
+#, fuzzy
 msgid "Your Profile"
 msgstr "自分のプロフィール"
 
@@ -250,6 +255,7 @@ msgstr "メールアドレス"
 msgid "Summary"
 msgstr "要約"
 
+#, fuzzy
 msgid "Update account"
 msgstr "アカウントをアップデート"
 
@@ -384,6 +390,13 @@ msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
+
+msgid "None"
+msgstr "なし"
+
+#, fuzzy
+msgid "No description"
+msgstr "長い説明"
 
 msgid "View all"
 msgstr "すべて表示"
@@ -546,9 +559,6 @@ msgstr ""
 msgid "Illustration"
 msgstr "図"
 
-msgid "None"
-msgstr "なし"
-
 msgid "This is a draft, don't publish it yet."
 msgstr "これは下書きなので、まだ公開しないでください。"
 
@@ -662,6 +672,31 @@ msgstr ""
 "申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "編集"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "ブログを作成"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "十分ご注意ください。ここで行ったすべての操作は取り消しできません。"
+
+#, fuzzy
+msgid "Permanently delete this blog"
+msgstr "このブログを削除"
+
+#, fuzzy
 msgid "New Blog"
 msgstr "新しいブログ"
 
@@ -671,29 +706,19 @@ msgstr "ブログを作成"
 msgid "Create blog"
 msgstr "ブログを作成"
 
+msgid "{}'s icon"
+msgstr ""
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "ブログに {0} 人の作成者がいます: "
-
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "ブログに {0} 件の記事があります"
 
 msgid "No posts to see here yet."
 msgstr "ここにはまだ表示できる投稿がありません。"
 
 msgid "New article"
 msgstr "新しい記事"
-
-#, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "十分ご注意ください。ここで行ったすべての操作は取り消しできません。"
-
-#, fuzzy
-msgid "Permanently delete this blog"
-msgstr "このブログを削除"
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -714,9 +739,6 @@ msgstr "削除"
 
 msgid "Media upload"
 msgstr "メディアのアップロード"
-
-msgid "Description"
-msgstr "説明"
 
 #, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
@@ -748,6 +770,11 @@ msgstr "このメディアを記事に挿入するには、自分の記事にコ
 
 msgid "Use as avatar"
 msgstr "アバターとして使う"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "ブログに {0} 件の記事があります"
 
 #~ msgid "{0}'s followers"
 #~ msgstr "{{ count }} フォロワー"

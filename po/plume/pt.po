@@ -44,6 +44,10 @@ msgstr "Você precisa estar logado para criar um novo blog"
 msgid "You are not allowed to delete this blog."
 msgstr "Você não é autor neste blog."
 
+#, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "Você não é autor neste blog."
+
 msgid "You need to be logged in order to like a post"
 msgstr "Você precisa estar logado para gostar de um post"
 
@@ -380,6 +384,13 @@ msgstr "Acolhe <em>{0}</em> pessoas"
 msgid "Read the detailed rules"
 msgstr "Leia as regras detalhadas"
 
+msgid "None"
+msgstr "Nenhum"
+
+#, fuzzy
+msgid "No description"
+msgstr "Descrição longa"
+
 msgid "View all"
 msgstr "Ver tudo"
 
@@ -541,9 +552,6 @@ msgstr ""
 msgid "Illustration"
 msgstr "Ilustração"
 
-msgid "None"
-msgstr "Nenhum"
-
 msgid "This is a draft, don't publish it yet."
 msgstr "Este artigo é um rascunho, será publicado mais tarde."
 
@@ -653,6 +661,31 @@ msgstr ""
 "Desculpa por isso. Se você acha que isso é um bug, por favor, relate-o."
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "Mudar {0}"
+
+msgid "Description"
+msgstr "Descrição"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Criar o blog"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Cuidado, qualquer acção tomada aqui não pode ser anulada."
+
+#, fuzzy
+msgid "Permanently delete this blog"
+msgstr "Suprimir este blog"
+
+#, fuzzy
 msgid "New Blog"
 msgstr "Novo blog"
 
@@ -662,31 +695,20 @@ msgstr "Criar um blog"
 msgid "Create blog"
 msgstr "Criar o blog"
 
+msgid "{}'s icon"
+msgstr ""
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Um autor neste blog: "
 msgstr[1] "{0} autores neste blog: "
 
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Um artigo neste blog"
-msgstr[1] "{0} artigos neste blog"
-
 msgid "No posts to see here yet."
 msgstr "Ainda não há posts para ver."
 
 msgid "New article"
 msgstr "Novo artigo"
-
-#, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Cuidado, qualquer acção tomada aqui não pode ser anulada."
-
-#, fuzzy
-msgid "Permanently delete this blog"
-msgstr "Suprimir este blog"
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artigos marcados com \"{0}\""
@@ -706,9 +728,6 @@ msgstr "Suprimir"
 
 msgid "Media upload"
 msgstr "Carregamento de mídia"
-
-msgid "Description"
-msgstr "Descrição"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
@@ -739,6 +758,12 @@ msgstr "Copie-o em seus artigos para inserir esta mídia."
 
 msgid "Use as avatar"
 msgstr "Utilizar como avatar"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Um artigo neste blog"
+#~ msgstr[1] "{0} artigos neste blog"
 
 #~ msgid "{0}'s followers"
 #~ msgstr "Seguidores de {0}"
