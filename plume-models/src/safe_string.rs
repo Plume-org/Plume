@@ -25,6 +25,14 @@ lazy_static! {
             .add_tag_attributes(
                 "iframe",
                 [ "width", "height", "src", "frameborder" ].iter().map(|&v| v),
+            )
+            .add_tag_attributes(
+                "video",
+                [ "src", "title", "controls" ].iter(),
+            )
+            .add_tag_attributes(
+                "audio",
+                [ "src", "title", "controls" ].iter(),
             );
         b
     };
