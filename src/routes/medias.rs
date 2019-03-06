@@ -35,9 +35,19 @@ pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<
                 let filename = fields.get("file").and_then(|v| v.into_iter().next())
                     .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
                     .filename.clone();
-                let ext = filename.and_then(|f| f.rsplit('.').next().map(|ext| ext.to_owned()))
-                    .unwrap_or_else(|| "png".to_owned());
-                let dest = format!("static/media/{}.{}", GUID::rand().to_string(), ext);
+                // Remove extension if it contains something else than just letters and numbers
+                let ext = filename
+                    .and_then(|f| f
+                        .rsplit('.')
+                        .next()
+                        .and_then(|ext| if ext.chars().any(|c| !c.is_alphanumeric()) {
+                            None
+                        } else {
+                            Some(ext.to_lowercase())
+                        })
+                        .map(|ext| format!(".{}", ext))
+                    ).unwrap_or_default();
+                let dest = format!("static/media/{}{}", GUID::rand().to_string(), ext);
 
                 match fields["file"][0].data {
                     SavedData::Bytes(ref bytes) => fs::write(&dest, bytes).map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
