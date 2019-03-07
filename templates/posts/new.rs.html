@@ -30,7 +30,7 @@
         }
 
         <label for="editor-content">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
-        <textarea id="editor-content" name="content" rows="20">@form.content</textarea>
+        <textarea id="editor-content" name="content" rows="20">@Html(&form.content)</textarea>
 	    <small id="editor-left">@content_len</small>
 
         @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")

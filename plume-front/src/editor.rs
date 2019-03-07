@@ -68,7 +68,7 @@ pub fn init() {
             if !content_val.is_empty() {
                 content.dataset().insert("edited", "true").unwrap();
             }
-            content.append_child(&document().create_text_node(&content_val));
+            js! { @{&content}.innerHTML = @{content_val}; };
 
             // Add the elements, and make sure the placeholders are rendered
             ed.append_child(&title);
@@ -113,7 +113,7 @@ pub fn init() {
                         button.add_event_listener(mv!(widgets, old_ed => move |_: ClickEvent| {
                             set_value("title", widgets.0.inner_text());
                             set_value("subtitle", widgets.1.inner_text());
-                            set_value("editor-content", widgets.2.inner_text());
+                            set_value("editor-content", js!{ return @{&widgets.2}.innerHTML }.as_str().unwrap_or_default());
                             set_value("tags", get_elt_value("popup-tags"));
                             let cover = document().get_element_by_id("cover").unwrap();
                             cover.parent_element().unwrap().remove_child(&cover).ok();
