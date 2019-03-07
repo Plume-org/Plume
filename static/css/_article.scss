@@ -272,10 +272,11 @@ main .article-meta {
     display: flex;
     flex-direction: row-reverse;
     background: transparent;
+    align-items: center;
     button {
       flex: 0 0 10em;
       font-size: 1.25em;
-      margin: 0.5em 0em;
+      margin: .5em 0em .5em 1em;
     }
   }
 

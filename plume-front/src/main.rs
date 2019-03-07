@@ -9,7 +9,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate stdweb;
 
-use stdweb::{unstable::{TryFrom, TryInto}, web::{*, event::*}};
+use stdweb::{web::{*, event::*}};
 
 init_i18n!("plume-front", en, fr);
 
@@ -27,53 +27,9 @@ lazy_static! {
 }
 
 fn main() {
-    editor_loop();
     menu();
     search();
     editor::init();
-}
-
-/// Auto expands the editor when adding text and count chars
-fn editor_loop() {
-    match document().query_selector("#editor-content") {
-        Ok(Some(x)) => HtmlElement::try_from(x).map(|article_content| {
-            let offset = article_content.offset_height() - (article_content.get_bounding_client_rect().get_height() as i32);
-            article_content.add_event_listener(move |_: KeyDownEvent| {
-                let article_content = document().query_selector("#editor-content").ok();
-                js! {
-                    @{&article_content}.style.height = "auto";
-                    @{&article_content}.style.height = @{&article_content}.scrollHeight - @{offset} + "px";
-                };
-                window().set_timeout(|| {match document().query_selector("#post-form") {
-                    Ok(Some(form)) => HtmlElement::try_from(form).map(|form| {
-                        if let Some(len) = form.get_attribute("content-size").and_then(|s| s.parse::<i32>().ok()) {
-                            let consumed: i32 = js!{
-                                var len = - 1;
-                                for(var i = 0; i < @{&form}.length; i++) {
-                                    if(@{&form}[i].name != "") {
-                                        len += @{&form}[i].name.length + encodeURIComponent(@{&form}[i].value)
-                                            .replace(/%20/g, "+")
-                                            .replace(/%0A/g, "%0D%0A")
-                                            .replace(new RegExp("[!'*()]", "g"), "XXX") //replace exceptions of encodeURIComponent with placeholder
-                                            .length + 2;
-                                    }
-                                }
-                                return len;
-                            }.try_into().unwrap_or_default();
-                            match document().query_selector("#editor-left") {
-                                Ok(Some(e)) => HtmlElement::try_from(e).map(|e| {
-                                    js!{@{e}.innerText = (@{len-consumed})};
-                                }).ok(),
-                                _ => None,
-                            };
-                           }
-                        }).ok(),
-                    _ => None,
-                };}, 0);
-            });
-        }).ok(),
-        _ => None
-    };
 }
 
 /// Toggle menu on mobile device

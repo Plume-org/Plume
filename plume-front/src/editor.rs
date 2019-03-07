@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use stdweb::{unstable::TryInto, web::{*, html_element::*, event::*}};
+use stdweb::{unstable::{TryInto, TryFrom}, web::{*, html_element::*, event::*}};
 use CATALOG;
 
 macro_rules! mv {
@@ -141,8 +141,44 @@ pub fn init() {
                     }).class_list().add("show").unwrap();
             }));
 
+            // character counter
+            let widgets_clone = widgets.clone();
+            widgets.2.add_event_listener(move |_: KeyDownEvent| {
+                let widgets_clone = widgets_clone.clone();
+                window().set_timeout(move || {
+                    if let Some(e) = document().get_element_by_id("char-count") {
+                        let count = chars_left("#plume-fallback-editor", &widgets_clone.2).unwrap_or_default();
+                        let text = i18n!(CATALOG, "Around {} characters left"; count);
+                        HtmlElement::try_from(e).map(|e| {
+                            js!{@{e}.innerText = @{text}};
+                        }).ok();
+                    };
+                }, 0);
+            });
+
             Some(())
         });
+}
+
+fn chars_left(selector: &str, content: &HtmlElement) -> Option<i32> {
+    match document().query_selector(selector) {
+        Ok(Some(form)) => HtmlElement::try_from(form).ok().and_then(|form| {
+            if let Some(len) = form.get_attribute("content-size").and_then(|s| s.parse::<i32>().ok()) {
+                (js! {
+                    let x = encodeURIComponent(@{content}.innerHTML)
+                        .replace(/%20/g, "+")
+                        .replace(/%0A/g, "%0D%0A")
+                        .replace(new RegExp("[!'*()]", "g"), "XXX") // replace exceptions of encodeURIComponent with placeholder
+                        .length + 2;
+                    console.log(x);
+                    return x;
+                }).try_into().map(|c: i32| len - c).ok()
+            } else {
+                None
+            }
+        }),
+        _ => None,
+    }
 }
 
 fn close_popup() {

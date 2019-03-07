@@ -39,3 +39,7 @@ msgstr ""
 # plume-front/src/editor.rs:110
 msgid "Publish"
 msgstr ""
+
+# plume-front/src/editor.rs:151
+msgid "Around {} characters left"
+msgstr ""

@@ -12,6 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+# plume-front/src/editor.rs:46
+msgid "Around {} characters left"
+msgstr ""
+
 # plume-front/src/editor.rs:57
 msgid "Title"
 msgstr "Title"
@@ -22,6 +26,18 @@ msgstr ""
 
 # plume-front/src/editor.rs:68
 msgid "Write your article here. Markdown is supported."
+msgstr ""
+
+# plume-front/src/editor.rs:96
+msgid "Tags"
+msgstr ""
+
+# plume-front/src/editor.rs:97
+msgid "License"
+msgstr ""
+
+# plume-front/src/editor.rs:100
+msgid "Cover"
 msgstr ""
 
 # plume-front/src/editor.rs:111
