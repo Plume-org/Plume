@@ -245,6 +245,12 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Display name"
 msgstr ""
@@ -528,6 +534,14 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+msgid "Upload media"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
 msgstr ""
@@ -653,6 +667,13 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
 msgid "Blog icon"
 msgstr ""
 
@@ -680,15 +701,15 @@ msgstr ""
 msgid "{}'s icon"
 msgstr ""
 
+msgid "New article"
+msgstr ""
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] ""
 msgstr[1] ""
 
 msgid "No posts to see here yet."
-msgstr ""
-
-msgid "New article"
 msgstr ""
 
 msgid "Articles tagged \"{0}\""
@@ -703,7 +724,13 @@ msgstr ""
 msgid "You don't have any media yet."
 msgstr ""
 
+msgid "Content warning: {0}"
+msgstr ""
+
 msgid "Delete"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Media upload"

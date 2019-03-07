@@ -5,15 +5,15 @@
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, blog: &Blog, fqn: String, authors: &Vec<User>, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
+@(ctx: BaseContext, blog: &Blog, authors: &Vec<User>, page: i32, n_pages: i32, posts: Vec<Post>)
 
 @:base(ctx, blog.title.clone(), {}, {
-    <a href="@uri!(blogs::details: name = &fqn, page = _)">@blog.title</a>
+    <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="hidden">
     @for author in authors {
         <div class="h-card">
-            <span class="p-name">@author.name(ctx.0)</span>
+            <span class="p-name">@author.name()</span>
             <a class="u-url" href="@author.ap_url"></a>
 	</div>
     }
@@ -31,35 +31,33 @@
 
                 <h1 class="grow flex vertical">
                     <span class="p-name">@blog.title</span>
-                    <small>~@fqn</small>
+                    <small>~@blog.fqn</small>
                 </h1>
 
                 @if ctx.2.clone().and_then(|u| u.is_author_in(ctx.0, &blog).ok()).unwrap_or(false) {
-                    <a href="@uri!(blogs::edit: name = &blog.actor_id)" class="button inline-block">@i18n!(ctx.1, "Edit")</a>
+                    <a href="@uri!(posts::new: blog = &blog.fqn)" class="button">@i18n!(ctx.1, "New article")</a>
+                    <a href="@uri!(blogs::edit: name = &blog.fqn)" class="button">@i18n!(ctx.1, "Edit")</a>
                 }
             </div>
             
-            <p class="user-summary">
+            <main class="user-summary">
                 <p>
                     @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
                     @for author in authors {
-                        <a class="author p-author" href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
+                        <a class="author p-author" href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
                     }
                 </p>
                 @Html(blog.summary_html.clone())
-            </p>
+            </main>
     </div>
 
     <section>
         <h2>
             @i18n!(ctx.1, "Latest articles")
-            <small><a href="@uri!(blogs::atom_feed: name = &fqn)" title="Atom feed">@icon!("rss")</a></small>
+            <small><a href="@uri!(blogs::atom_feed: name = &blog.fqn)" title="Atom feed">@icon!("rss")</a></small>
         </h2>
         @if posts.len() < 1 {
             <p>@i18n!(ctx.1, "No posts to see here yet.")</p>
-        }
-        @if is_author {
-            <a href="@uri!(posts::new: blog = &fqn)" class="button inline-block">@i18n!(ctx.1, "New article")</a>
         }
         <div class="cards">
             @for article in posts {

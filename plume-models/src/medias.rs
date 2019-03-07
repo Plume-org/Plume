@@ -45,6 +45,17 @@ pub enum MediaCategory {
     Unknown,
 }
 
+impl MediaCategory {
+    pub fn to_string(&self) -> &str {
+        match *self {
+            MediaCategory::Image => "image",
+            MediaCategory::Audio => "audio",
+            MediaCategory::Video => "video",
+            MediaCategory::Unknown => "unknown",
+        }
+    }
+}
+
 impl Media {
     insert!(medias, NewMedia);
     get!(medias);
@@ -53,6 +64,23 @@ impl Media {
     pub fn list_all_medias(conn: &Connection) -> Result<Vec<Media>> {
         medias::table
             .load::<Media>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn page_for_user(conn: &Connection, user: &User, (min, max): (i32, i32)) -> Result<Vec<Media>> {
+        medias::table
+            .filter(medias::owner_id.eq(user.id))
+            .offset(min as i64)
+            .limit((max - min) as i64)
+            .load::<Media>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
+        medias::table
+            .filter(medias::owner_id.eq(user.id))
+            .count()
+            .get_result(conn)
             .map_err(Error::from)
     }
 
@@ -71,41 +99,25 @@ impl Media {
         }
     }
 
-    pub fn preview_html(&self, conn: &Connection) -> Result<SafeString> {
-        let url = self.url(conn)?;
-        Ok(match self.category() {
-            MediaCategory::Image => SafeString::new(&format!(
-                r#"<img src="{}" alt="{}" title="{}" class=\"preview\">"#,
-                url, escape(&self.alt_text), escape(&self.alt_text)
-            )),
-            MediaCategory::Audio => SafeString::new(&format!(
-                r#"<audio src="{}" title="{}" class="preview"></audio>"#,
-                url, escape(&self.alt_text)
-            )),
-            MediaCategory::Video => SafeString::new(&format!(
-                r#"<video src="{}" title="{}" class="preview"></video>"#,
-                url, escape(&self.alt_text)
-            )),
-            MediaCategory::Unknown => SafeString::new(""),
-        })
-    }
-
     pub fn html(&self, conn: &Connection) -> Result<SafeString> {
         let url = self.url(conn)?;
         Ok(match self.category() {
-            MediaCategory::Image => SafeString::new(&format!(
+            MediaCategory::Image => SafeString::trusted(&format!(
                 r#"<img src="{}" alt="{}" title="{}">"#,
                 url, escape(&self.alt_text), escape(&self.alt_text)
             )),
-            MediaCategory::Audio => SafeString::new(&format!(
-                r#"<audio src="{}" title="{}"></audio>"#,
+            MediaCategory::Audio => SafeString::trusted(&format!(
+                r#"<div class="media-preview audio"></div><audio src="{}" title="{}" controls></audio>"#,
                 url, escape(&self.alt_text)
             )),
-            MediaCategory::Video => SafeString::new(&format!(
-                r#"<video src="{}" title="{}"></video>"#,
+            MediaCategory::Video => SafeString::trusted(&format!(
+                r#"<video src="{}" title="{}" controls></video>"#,
                 url, escape(&self.alt_text)
             )),
-            MediaCategory::Unknown => SafeString::new(""),
+            MediaCategory::Unknown => SafeString::trusted(&format!(
+                r#"<a href="{}" class="media-preview unknown"></a>"#,
+                url,
+            )),
         })
     }
 

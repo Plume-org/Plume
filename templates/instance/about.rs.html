@@ -24,7 +24,7 @@
         <div>
             <p>@i18n!(ctx.1, "Administred by")</p>
             @avatar(ctx.0, &admin, Size::Small, false, ctx.1)
-            <p><a href="@uri!(user::details: name = admin.get_fqn(ctx.0))">@admin.name(ctx.0)</a><small>@@@admin.get_fqn(ctx.0)</small></p>
+            <p><a href="@uri!(user::details: name = &admin.fqn)">@admin.name()</a><small>@@@admin.fqn</small></p>
         </div>
         </section>
         <p>@i18n!(ctx.1, "Runs Plume {0}"; env!("CARGO_PKG_VERSION"))</p>

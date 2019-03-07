@@ -240,6 +240,13 @@ msgstr "تعديل حسابك"
 msgid "Your Profile"
 msgstr "ملفك الشخصي"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+#, fuzzy
+msgid "Upload an avatar"
+msgstr "استخدمها كصورة رمزية"
+
 #, fuzzy
 msgid "Display name"
 msgstr "الاسم العلني"
@@ -314,8 +321,9 @@ msgstr ""
 msgid "Articles"
 msgstr "المقالات"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "الوصف"
 
 #, fuzzy
 msgid "Subscriptions"
@@ -537,6 +545,15 @@ msgstr "العنوان الثانوي"
 msgid "Content"
 msgstr "المحتوى"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+#, fuzzy
+msgid "Upload media"
+msgstr "إرسال"
+
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
 msgstr ""
@@ -677,6 +694,14 @@ msgstr "تعديل {0}"
 msgid "Description"
 msgstr "الوصف"
 
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "إرسال"
+
 msgid "Blog icon"
 msgstr ""
 
@@ -708,6 +733,9 @@ msgstr "انشاء مدونة"
 msgid "{}'s icon"
 msgstr ""
 
+msgid "New article"
+msgstr "مقال جديد"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -720,9 +748,6 @@ msgstr[5] "{0} كُتاب على هذه المدونة: "
 
 msgid "No posts to see here yet."
 msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
-
-msgid "New article"
-msgstr "مقال جديد"
 
 msgid "Articles tagged \"{0}\""
 msgstr "المقالات الموسومة بـ \"{0}\""
@@ -737,8 +762,16 @@ msgstr "إرسال"
 msgid "You don't have any media yet."
 msgstr "ليس لديك أية وسائط بعد."
 
+#, fuzzy
+msgid "Content warning: {0}"
+msgstr "تحذير عن المحتوى"
+
 msgid "Delete"
 msgstr "حذف"
+
+#, fuzzy
+msgid "Details"
+msgstr "تفاصيل الصورة"
 
 msgid "Media upload"
 msgstr "إرسال الوسائط"

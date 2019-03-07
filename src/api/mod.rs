@@ -49,7 +49,7 @@ pub struct OAuthRequest {
 pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
     let app = App::find_by_client_id(&*conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::find_local(&*conn, &query.username) {
+        if let Ok(user) = User::find_by_fqn(&*conn, &query.username) {
             if user.auth(&query.password) {
                 let token = ApiToken::insert(&*conn, NewApiToken {
                     app_id: app.id,

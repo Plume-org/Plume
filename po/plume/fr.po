@@ -251,6 +251,13 @@ msgstr "Modifier votre compte"
 msgid "Your Profile"
 msgstr "Votre profil"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+#, fuzzy
+msgid "Upload an avatar"
+msgstr "Utiliser comme avatar"
+
 #, fuzzy
 msgid "Display name"
 msgstr "Nom affiché"
@@ -333,8 +340,9 @@ msgstr ""
 msgid "Articles"
 msgstr "Articles"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "Description"
 
 #, fuzzy
 msgid "Subscriptions"
@@ -547,6 +555,15 @@ msgstr "Sous-titre"
 msgid "Content"
 msgstr "Contenu"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+#, fuzzy
+msgid "Upload media"
+msgstr "Téléverser"
+
 # src/template_utils.rs:143
 msgid "Tags, separated by commas"
 msgstr ""
@@ -693,6 +710,14 @@ msgstr "Modifier {0}"
 msgid "Description"
 msgstr "Description"
 
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "Téléverser"
+
 #, fuzzy
 msgid "Blog icon"
 msgstr "Nom du blog"
@@ -726,6 +751,9 @@ msgstr "Créer le blog"
 msgid "{}'s icon"
 msgstr ""
 
+msgid "New article"
+msgstr "Nouvel article"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -734,9 +762,6 @@ msgstr[1] "{0} auteur⋅ice⋅s dans ce blog : "
 
 msgid "No posts to see here yet."
 msgstr "Aucun article pour le moment."
-
-msgid "New article"
-msgstr "Nouvel article"
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -753,8 +778,15 @@ msgstr "Téléverser"
 msgid "You don't have any media yet."
 msgstr "Vous n’avez pas encore de média."
 
+#, fuzzy
+msgid "Content warning: {0}"
+msgstr "Avertissement"
+
 msgid "Delete"
 msgstr "Supprimer"
+
+msgid "Details"
+msgstr ""
 
 msgid "Media upload"
 msgstr "Téléversement de média"

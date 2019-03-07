@@ -37,18 +37,16 @@ pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page:
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
         &blog,
-        blog.get_fqn(&*conn),
         authors,
         page.0,
         Page::total(articles_count as i32),
-        user.and_then(|x| x.is_author_in(&*conn, &blog).ok()).unwrap_or(false),
         posts
     )))
 }
 
 #[get("/~/<name>", rank = 1)]
 pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_local(&*conn, &name).ok()?;
+    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
 }
 
@@ -92,7 +90,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if Blog::find_local(&*conn, &slug).is_ok() {
+    if Blog::find_by_fqn(&*conn, &slug).is_ok() {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A blog with the same name already exists.")),
@@ -126,7 +124,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 
 #[post("/~/<name>/delete")]
 pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe>{
-    let blog = Blog::find_local(&*conn, &name).expect("blog::delete: blog not found");
+    let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
@@ -150,7 +148,7 @@ pub struct EditForm {
 
 #[get("/~/<name>/edit")]
 pub fn edit(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let blog = Blog::find_local(&*conn, &name)?;
+    let blog = Blog::find_by_fqn(&*conn, &name)?;
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         let user = user.expect("blogs::edit: User was None while it shouldn't");
         let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
@@ -177,7 +175,7 @@ pub fn edit(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Resul
 
 #[put("/~/<name>/edit", data = "<form>")]
 pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: LenientForm<EditForm>) -> Result<Redirect, Ructe> {
-    let mut blog = Blog::find_local(&*conn, &name).expect("blog::update: blog not found");
+    let mut blog = Blog::find_by_fqn(&*conn, &name).expect("blog::update: blog not found");
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         let user = user.expect("blogs::edit: User was None while it shouldn't");
         form.validate()
@@ -211,7 +209,7 @@ pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: 
 
 #[get("/~/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_local(&*conn, &name).ok()?;
+    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     Some(blog.outbox(&*conn).ok()?)
 }
 

@@ -11,10 +11,10 @@
 @(ctx: BaseContext, blog: &Blog, medias: Vec<Media>, form: &EditForm, errors: ValidationErrors)
 
 @:base(ctx, i18n!(ctx.1, "Edit \"{}\""; &blog.title), {}, {
-	<a href="@uri!(blogs::details: name = &blog.actor_id, page = _)">@blog.title</a>
+	<a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 	<h1>@i18n!(ctx.1, "Edit \"{}\""; &blog.title)</h1>
-    <form method="post" action="@uri!(blogs::update: name = &blog.actor_id)">
+    <form method="post" action="@uri!(blogs::update: name = &blog.fqn)">
         <!-- Rocket hack to use various HTTP methods -->
         <input type=hidden name="_method" value="put">
 
@@ -36,7 +36,7 @@
 
     <h2>@i18n!(ctx.1, "Danger zone")</h2>
     <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be reversed.")</p>
-    <form method="post" action="@uri!(blogs::delete: name = &blog.actor_id)">
+    <form method="post" action="@uri!(blogs::delete: name = &blog.fqn)">
         <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Permanently delete this blog")">
     </form>
 })

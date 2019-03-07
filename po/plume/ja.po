@@ -245,6 +245,13 @@ msgstr "自分のアカウントを編集"
 msgid "Your Profile"
 msgstr "自分のプロフィール"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+#, fuzzy
+msgid "Upload an avatar"
+msgstr "アバターとして使う"
+
 #, fuzzy
 msgid "Display name"
 msgstr "表示名"
@@ -322,8 +329,9 @@ msgstr ""
 msgid "Articles"
 msgstr "記事"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "説明"
 
 #, fuzzy
 msgid "Subscriptions"
@@ -544,6 +552,15 @@ msgstr "サブタイトル"
 msgid "Content"
 msgstr "コメント"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+#, fuzzy
+msgid "Upload media"
+msgstr "アップロード"
+
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
 msgstr ""
@@ -678,6 +695,14 @@ msgstr "編集"
 msgid "Description"
 msgstr "説明"
 
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "アップロード"
+
 msgid "Blog icon"
 msgstr ""
 
@@ -709,6 +734,9 @@ msgstr "ブログを作成"
 msgid "{}'s icon"
 msgstr ""
 
+msgid "New article"
+msgstr "新しい記事"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -716,9 +744,6 @@ msgstr[0] "ブログに {0} 人の作成者がいます: "
 
 msgid "No posts to see here yet."
 msgstr "ここにはまだ表示できる投稿がありません。"
-
-msgid "New article"
-msgstr "新しい記事"
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -734,8 +759,16 @@ msgstr "アップロード"
 msgid "You don't have any media yet."
 msgstr "メディアがまだありません。"
 
+#, fuzzy
+msgid "Content warning: {0}"
+msgstr "コンテンツの警告"
+
 msgid "Delete"
 msgstr "削除"
+
+#, fuzzy
+msgid "Details"
+msgstr "メディアの詳細"
 
 msgid "Media upload"
 msgstr "メディアのアップロード"

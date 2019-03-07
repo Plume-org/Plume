@@ -17,10 +17,10 @@
     @if article.cover_id.is_some() {
         <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
     }
-    <meta property="og:url" content="@uri!(posts::details: blog = blog.get_fqn(ctx.0), slug = &article.slug, responding_to = _)"/>
+    <meta property="og:url" content="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)"/>
     <meta property="og:description" content="@article.subtitle"/>
 }, {
-    <a href="@uri!(blogs::details: name = blog.get_fqn(ctx.0), page = _)">@blog.title</a>
+    <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="h-entry">
     <h1 class="article p-name">@&article.title</h1>
@@ -28,16 +28,16 @@
     <div class="article-info">
         <span class="author">
             @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
-                                uri!(user::details: name = &author.get_fqn(ctx.0)),
-                                escape(&author.name(ctx.0)))))
+                                uri!(user::details: name = &author.fqn),
+                                escape(&author.name()))))
         </span>
         &mdash;
         <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
         @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
             &mdash;
-            <a href="@uri!(posts::edit: blog = blog.get_fqn(ctx.0), slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
+            <a href="@uri!(posts::edit: blog = &blog.fqn, slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
             &mdash;
-            <form class="inline" method="post" action="@uri!(posts::delete: blog_name = blog.get_fqn(ctx.0), slug = &article.slug)">
+            <form class="inline" method="post" action="@uri!(posts::delete: blog_name = &blog.fqn, slug = &article.slug)">
                 <input onclick="return confirm('Are you sure you?')" type="submit" value="@i18n!(ctx.1, "Delete this article")">
             </form>
         }
@@ -73,20 +73,20 @@
             @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
             <div class="grow">
                 <h2 class="p-name">
-		    <a href="@uri!(user::details: name = author.get_fqn(ctx.0))">@author.name(ctx.0)</a>
+		    <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
 		    <a rel="author" class="u-url" href="@author.ap_url"></a>
 		</h2>
                 <p>@Html(&author.summary)</h2>
             </div>
 	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
-                <form action="@uri!(user::follow: name = author.get_fqn(ctx.0))" method="POST">
+                <form action="@uri!(user::follow: name = &author.fqn)" method="POST">
                     <input type="submit" class="button" value="@if is_following {@i18n!(ctx.1, "Unsubscribe")} else {@i18n!(ctx.1, "Subscribe")}">
                 </form>
 	    }
         </div>
         @if ctx.2.is_some() {
             <div class="actions">
-                <form class="likes" action="@uri!(likes::create: blog = blog.get_fqn(ctx.0), slug = &article.slug)" method="POST">
+                <form class="likes" action="@uri!(likes::create: blog = &blog.fqn, slug = &article.slug)" method="POST">
                     <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
                     </p>
@@ -97,7 +97,7 @@
                         <button type="submit" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</button>
                     }
                 </form>
-                <form class="reshares" action="@uri!(reshares::create: blog = blog.get_fqn(ctx.0), slug = &article.slug)" method="POST">
+                <form class="reshares" action="@uri!(reshares::create: blog = &blog.fqn, slug = &article.slug)" method="POST">
                     <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost"; n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts"; n_reshares)">
                         @n_reshares
                     </p>
@@ -131,7 +131,7 @@
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
             @if ctx.2.is_some() {
-                <form method="post" action="@uri!(comments::create: blog_name = blog.get_fqn(ctx.0), slug = &article.slug)">
+                <form method="post" action="@uri!(comments::create: blog_name = &blog.fqn, slug = &article.slug)">
                     @input!(ctx.1, warning (optional text), "Content warning", comment_form, comment_errors, "")
 
                     <label for="plume-editor">@i18n!(ctx.1, "Your comment")</label>
@@ -146,7 +146,7 @@
             @if !comments.is_empty() {
                 <div class="list">
                     @for comm in comments {
-                        @:comment(ctx, &comm, Some(&article.ap_url), &blog.get_fqn(ctx.0), &article.slug)
+                        @:comment(ctx, &comm, Some(&article.ap_url), &blog.fqn, &article.slug)
                     }
                 </div>
             } else {

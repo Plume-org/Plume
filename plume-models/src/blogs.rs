@@ -44,6 +44,7 @@ pub struct Blog {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
+    pub fqn: String,
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
@@ -94,6 +95,15 @@ impl Blog {
                 "",
             );
         }
+
+        if inserted.fqn.is_empty() {
+            if instance.local {
+                inserted.fqn = inserted.actor_id.clone();
+            } else {
+                inserted.fqn = format!("{}@{}", inserted.actor_id, instance.public_domain);
+            }
+        }
+
         inserted.save_changes(conn).map_err(Error::from)
     });
     get!(blogs);
@@ -136,19 +146,17 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn find_local(conn: &Connection, name: &str) -> Result<Blog> {
-        Blog::find_by_name(conn, name, Instance::get_local(conn)?.id)
-    }
-
     pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<Blog> {
-        let mut split_fqn = fqn.split('@');
-        let actor = split_fqn.next().ok_or(Error::InvalidValue)?;
-        if let Some(domain) = split_fqn.next() { // remote blog
-            Instance::find_by_domain(conn, domain)
-                .and_then(|instance| Blog::find_by_name(conn, actor, instance.id))
-                .or_else(|_| Blog::fetch_from_webfinger(conn, fqn))
-        } else { // local blog
-            Blog::find_local(conn, actor)
+        let from_db = blogs::table
+            .filter(blogs::fqn.eq(fqn))
+            .limit(1)
+            .load::<Blog>(conn)?
+            .into_iter()
+            .next();
+        if let Some(from_db) = from_db {
+            Ok(from_db)
+        } else {
+            Blog::fetch_from_webfinger(conn, fqn)
         }
     }
 
@@ -243,7 +251,7 @@ impl Blog {
                     .public_key_publickey()?
                     .public_key_pem_string()?,
                 private_key: None,
-                // TODO: federate the two following properties
+                // TODO: federate the three following properties
                 banner_id: None,
                 icon_id: None,
                 summary_html: SafeString::new(""),
@@ -347,18 +355,6 @@ impl Blog {
                 Err(Error::NotFound)
             }
         })
-    }
-
-    pub fn get_fqn(&self, conn: &Connection) -> String {
-        if self.instance_id == Instance::get_local(conn).ok().expect("Blog::get_fqn: local instance error").id {
-            self.actor_id.clone()
-        } else {
-            format!(
-                "{}@{}",
-                self.actor_id,
-                self.get_instance(conn).ok().expect("Blog::get_fqn: instance error").public_domain
-            )
-        }
     }
 
     pub fn icon_url(&self, conn: &Connection) -> String {
@@ -670,7 +666,7 @@ pub(crate) mod tests {
             ).unwrap();
 
             assert_eq!(
-                Blog::find_local(conn, "SomeName").unwrap().id,
+                Blog::find_by_fqn(conn, "SomeName").unwrap().id,
                 blog.id
             );
 
@@ -694,7 +690,7 @@ pub(crate) mod tests {
                 ).unwrap(),
             ).unwrap();
 
-            assert_eq!(blog.get_fqn(conn), "SomeName");
+            assert_eq!(blog.fqn, "SomeName");
 
             Ok(())
         });

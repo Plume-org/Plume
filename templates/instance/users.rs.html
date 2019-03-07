@@ -9,9 +9,9 @@
     <h1>@i18n!(ctx.1, "Users")</h1>
 
     @tabs(&[
-    (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
-    (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
-    (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), true),
+        (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
+        (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
+        (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), true),
     ])
 
     <div class="list">
@@ -19,7 +19,7 @@
             <div class="flex">
                 @avatar(ctx.0, &user, Size::Small, false, ctx.1)
                 <p class="grow">
-                    <a href="@uri!(user::details: name = user.get_fqn(ctx.0))">@user.name(ctx.0)</a>
+                    <a href="@uri!(user::details: name = &user.fqn)">@user.name()</a>
                     <small>@format!("@{}", user.username)</small>
                 </p>
                 @if !user.is_admin {

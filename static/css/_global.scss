@@ -126,6 +126,10 @@ p.error {
   margin: 0px;
 }
 
+.user .avatar.medium {
+  margin-left: 0px;
+}
+
 .badge {
  	margin-right: 1em;
  	padding: 0.35em 1em;
@@ -307,6 +311,10 @@ figure {
   figcaption {
     padding: 1em;
   }
+
+  audio, video {
+    width: 100%;
+  }
 }
 
 .preview {
@@ -316,6 +324,30 @@ figure {
   width: auto;
   height: auto;
   margin-right: 20px;
+}
+
+.media-preview {
+  min-height: 8em;
+
+  &:not(.image) {
+    background-color: #7765E3;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 4em;
+  }
+
+  &.unknown {
+    background-image: url('/static/images/unknown-file.svg');
+    display: block;
+  }
+
+  &.audio {
+    background-image: url('/static/images/audio-file.svg');
+  }
+
+  &.video {
+    background-image: url('/static/images/video-file.svg');
+  }
 }
 
 /// Avatars

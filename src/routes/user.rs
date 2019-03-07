@@ -203,7 +203,7 @@ pub fn activity_details(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_local(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&*conn, &name).ok()?;
     Some(ActivityStream::new(user.to_activity(&*conn).ok()?))
 }
 
@@ -369,7 +369,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
 
 #[get("/@/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&*conn, &name).ok()?;
     user.outbox(&*conn).ok()
 }
 
@@ -381,7 +381,7 @@ pub fn inbox(
     headers: Headers,
     searcher: Searcher,
 ) -> Result<String, Option<status::BadRequest<&'static str>>> {
-    let user = User::find_local(&*conn, &name).map_err(|_| None)?;
+    let user = User::find_by_fqn(&*conn, &name).map_err(|_| None)?;
     let act = data.1.into_inner();
     let sig = data.0;
 
@@ -429,7 +429,7 @@ pub fn ap_followers(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&*conn, &name).ok()?;
     let followers = user
         .get_followers(&*conn).ok()?
         .into_iter()
