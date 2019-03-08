@@ -263,7 +263,7 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
             b,
             true,
             &*form,
-            form.draft.clone(),
+            form.draft,
             Some(post),
             errors.clone(),
             medias.clone(),

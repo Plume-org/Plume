@@ -489,7 +489,7 @@ impl User {
         Ok(json["items"]
             .as_array()
             .unwrap_or(&vec![])
-            .into_iter()
+            .iter()
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<T>>())
     }
@@ -512,7 +512,7 @@ impl User {
         Ok(json["items"]
             .as_array()
             .unwrap_or(&vec![])
-            .into_iter()
+            .iter()
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<String>>())
     }
@@ -746,7 +746,7 @@ impl User {
     pub fn avatar_url(&self, conn: &Connection) -> String {
         self.avatar_id.and_then(|id|
             Media::get(conn, id).and_then(|m| m.url(conn)).ok()
-        ).unwrap_or("/static/default-avatar.png".to_string())
+        ).unwrap_or_else(|| "/static/default-avatar.png".to_string())
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {

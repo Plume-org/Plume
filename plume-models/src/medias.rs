@@ -70,8 +70,8 @@ impl Media {
     pub fn page_for_user(conn: &Connection, user: &User, (min, max): (i32, i32)) -> Result<Vec<Media>> {
         medias::table
             .filter(medias::owner_id.eq(user.id))
-            .offset(min as i64)
-            .limit((max - min) as i64)
+            .offset(i64::from(min))
+            .limit(i64::from(max - min))
             .load::<Media>(conn)
             .map_err(Error::from)
     }

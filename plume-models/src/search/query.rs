@@ -226,26 +226,22 @@ impl PlumeQuery {
         query = query.trim();
         if query.is_empty() {
             ("", "")
-        } else {
-            if query.get(0..1).map(|v| v=="\"").unwrap_or(false) {
-                    if let Some(index) = query[1..].find('"') {
-                        query.split_at(index+2)
-                    } else {
-                        (query, "")
-                    }
-            } else if query.get(0..2).map(|v| v=="+\"" || v=="-\"").unwrap_or(false) {
-                    if let Some(index) = query[2..].find('"') {
-                        query.split_at(index+3)
-                    } else {
-                        (query, "")
-                    }
-            } else {
-                if let Some(index) = query.find(' ') {
-                    query.split_at(index)
+        } else if query.get(0..1).map(|v| v=="\"").unwrap_or(false) {
+                if let Some(index) = query[1..].find('"') {
+                    query.split_at(index+2)
                 } else {
                     (query, "")
                 }
-            }
+        } else if query.get(0..2).map(|v| v=="+\"" || v=="-\"").unwrap_or(false) {
+                if let Some(index) = query[2..].find('"') {
+                    query.split_at(index+3)
+                } else {
+                    (query, "")
+                }
+        } else if let Some(index) = query.find(' ') {
+            query.split_at(index)
+        } else {
+            (query, "")
         }
     }
 
@@ -290,7 +286,7 @@ impl PlumeQuery {
             let user_term = Term::from_field_text(field, &token[..pos]);
             let instance_term = Term::from_field_text(Searcher::schema().get_field("instance").unwrap(), &token[pos+1..]);
             Box::new(BooleanQuery::from(vec![
-                        (Occur::Must, Box::new(TermQuery::new(user_term, if field_name=="author" { IndexRecordOption::Basic } 
+                        (Occur::Must, Box::new(TermQuery::new(user_term, if field_name=="author" { IndexRecordOption::Basic }
                                                                          else { IndexRecordOption::WithFreqsAndPositions }
                                                                     )) as Box<dyn Query + 'static>),
                         (Occur::Must, Box::new(TermQuery::new(instance_term, IndexRecordOption::Basic))),
@@ -340,4 +336,3 @@ impl ToString for PlumeQuery {
         result
     }
 }
-

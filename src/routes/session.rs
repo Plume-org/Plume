@@ -161,10 +161,10 @@ pub fn password_reset_request(
             i18n!(intl.catalog, "Password reset"),
             i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link)
         ) {
-            match *mail.lock().unwrap() {
-                Some(ref mut mail) => { mail.send(message.into()).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
-                None => {}
-            }
+            if let Some(ref mut mail) = *mail.lock().unwrap() {
+                mail
+                    .send(message.into())
+                    .map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
         }
     }
     render!(session::password_reset_request_ok(
@@ -214,7 +214,7 @@ pub fn password_reset(
     form.validate()
         .and_then(|_| {
             let mut requests = requests.lock().unwrap();
-            let req = requests.iter().find(|x| x.id == token.clone()).ok_or(to_validation(0))?.clone();
+            let req = requests.iter().find(|x| x.id == token.clone()).ok_or_else(|| to_validation(0))?.clone();
             if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 { // Reset link is only valid for 2 hours
                 requests.retain(|r| *r != req);
                 let user = User::find_by_email(&*conn, &req.mail).map_err(to_validation)?;
