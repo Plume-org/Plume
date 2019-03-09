@@ -148,20 +148,6 @@ impl PlumeQuery {
         Default::default()
     }
 
-    /// Create a new Query from &str
-    /// Same as doing
-    /// ```rust
-    /// # extern crate plume_models;
-    /// # use plume_models::search::Query;
-    /// let mut q = Query::new();
-    /// q.parse_query("some query");
-    /// ```
-    pub fn from_str(query: &str) -> Self {
-        let mut res: Self = Default::default();
-
-        res.from_str_req(&query.trim());
-        res
-    }
 
     /// Parse a query string into this Query
     pub fn parse_query(&mut self, query: &str) -> &mut Self {
@@ -316,6 +302,25 @@ impl PlumeQuery {
     }
 }
 
+impl std::str::FromStr for PlumeQuery {
+
+    type Err = !;
+
+    /// Create a new Query from &str
+    /// Same as doing
+    /// ```rust
+    /// # extern crate plume_models;
+    /// # use plume_models::search::Query;
+    /// let mut q = Query::new();
+    /// q.parse_query("some query");
+    /// ```
+    fn from_str(query: &str) -> Result<PlumeQuery, !> {
+        let mut res: PlumeQuery = Default::default();
+
+        res.from_str_req(&query.trim());
+        Ok(res)
+    }
+}
 
 impl ToString for PlumeQuery {
     fn to_string(&self) -> String {

@@ -1,4 +1,5 @@
 #![feature(try_trait)]
+#![feature(never_type)]
 
 extern crate activitypub;
 extern crate ammonia;
