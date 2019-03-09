@@ -38,18 +38,16 @@ fn main() {
 /// It should normally be working fine even without this code
 /// But :focus-within is not yet supported by Webkit/Blink
 fn menu() {
-    document().get_element_by_id("menu")
-        .map(|button| {
-            document().get_element_by_id("content")
-                .map(|menu| {
-                    button.add_event_listener(|_: ClickEvent| {
-                        document().get_element_by_id("menu").map(|menu| menu.class_list().add("show"));
-                    });
-                    menu.add_event_listener(|_: ClickEvent| {
-                        document().get_element_by_id("menu").map(|menu| menu.class_list().remove("show"));
-                    });
-                })
-        });
+    if let Some(button) = document().get_element_by_id("menu") {
+        if let Some(menu) = document().get_element_by_id("content") {
+            button.add_event_listener(|_: ClickEvent| {
+                document().get_element_by_id("menu").map(|menu| menu.class_list().add("show"));
+            });
+            menu.add_event_listener(|_: ClickEvent| {
+                document().get_element_by_id("menu").map(|menu| menu.class_list().remove("show"));
+            });
+        }
+    }
 }
 
 /// Clear the URL of the search page before submitting request
