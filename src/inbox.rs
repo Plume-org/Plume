@@ -14,7 +14,7 @@ use failure::Error;
 use rocket::{
     data::*,
     http::Status,
-    Outcome::{self, *},
+    Outcome::*,
     Request,
 };
 use rocket_contrib::json::*;
@@ -129,7 +129,7 @@ pub trait Inbox {
                             _ => Err(InboxError::CantUndo)?,
                         }
                     } else {
-                        let link = act.undo_props.object.as_str().expect("Inbox::received: undo don't contain type and isn't Link");
+                        let link = act.undo_props.object.as_str().expect("Inbox::received: undo doesn't contain a type and isn't Link");
                         if let Ok(like) = likes::Like::find_by_ap_url(conn, link) {
                             likes::Like::delete_id(&like.ap_url, actor_id.as_ref(), conn).expect("Inbox::received: delete Like error");
                             Ok(())
@@ -146,7 +146,7 @@ pub trait Inbox {
                 }
                 "Update" => {
                     let act: Update = serde_json::from_value(act.clone())?;
-                    Post::handle_update(conn, &act.update_props.object_object()?, searcher).expect("Inbox::received: post update error");;
+                    Post::handle_update(conn, &act.update_props.object_object()?, searcher).expect("Inbox::received: post update error");
                     Ok(())
                 }
                 _ => Err(InboxError::InvalidType)?,
@@ -168,7 +168,7 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
     type Owned = String;
     type Borrowed = str;
 
-    fn transform(r: &Request, d: Data) -> Transform<Outcome<Self::Owned, (Status, Self::Error), Data>> {
+    fn transform(r: &Request, d: Data) -> Transform<rocket::data::Outcome<Self::Owned, Self::Error>> {
         let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
         let mut s = String::with_capacity(512);
         match d.open().take(size_limit).read_to_string(&mut s) {
@@ -177,7 +177,7 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
         }
     }
 
-    fn from_data(_: &Request, o: Transformed<'a, Self>) -> Outcome<Self, (Status, Self::Error), Data> {
+    fn from_data(_: &Request, o: Transformed<'a, Self>) -> rocket::data::Outcome<Self, Self::Error> {
         let string = o.borrowed()?;
         match serde_json::from_str(&string) {
             Ok(v) => Success(SignedJson(Digest::from_body(&string),Json(v))),
