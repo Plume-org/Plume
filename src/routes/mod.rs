@@ -45,7 +45,7 @@ impl Page {
         }
     }
 
-    pub fn limits(&self) -> (i32, i32) {
+    pub fn limits(self) -> (i32, i32) {
         ((self.0 - 1) * ITEMS_PER_PAGE, self.0 * ITEMS_PER_PAGE)
     }
 }
