@@ -19,7 +19,7 @@ pub mod notification_kind {
     pub const RESHARE: &str = "RESHARE";
 }
 
-#[derive(Clone, Queryable, Identifiable, Serialize)]
+#[derive(Clone, Queryable, Identifiable)]
 pub struct Notification {
     pub id: i32,
     pub user_id: i32,

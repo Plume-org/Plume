@@ -12,7 +12,7 @@ use schema::reshares;
 use users::User;
 use {Connection, Error, Result};
 
-#[derive(Clone, Serialize, Deserialize, Queryable, Identifiable)]
+#[derive(Clone, Queryable, Identifiable)]
 pub struct Reshare {
     pub id: i32,
     pub user_id: i32,

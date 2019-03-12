@@ -5,7 +5,7 @@ use schema::comment_seers;
 use users::User;
 use {Connection, Error, Result};
 
-#[derive(Queryable, Serialize, Clone)]
+#[derive(Queryable, Clone)]
 pub struct CommentSeers {
     pub id: i32,
     pub comment_id: i32,

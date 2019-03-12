@@ -25,7 +25,7 @@ use plume_models::{
 use Worker;
 use routes::errors::ErrorPage;
 
-#[derive(Default, FromForm, Debug, Validate, Serialize)]
+#[derive(Default, FromForm, Debug, Validate)]
 pub struct NewCommentForm {
     pub responding_to: Option<i32>,
     #[validate(length(min = "1", message = "Your comment can't be empty"))]

@@ -276,7 +276,7 @@ pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies, sear
     }
 }
 
-#[derive(Default, FromForm, Serialize, Validate)]
+#[derive(Default, FromForm, Validate)]
 #[validate(
     schema(
         function = "passwords_match",

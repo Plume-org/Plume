@@ -272,7 +272,7 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
     }
 }
 
-#[derive(Default, FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate)]
 pub struct NewPostForm {
     #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,

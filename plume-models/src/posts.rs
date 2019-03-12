@@ -34,7 +34,7 @@ use {ap_url, Connection, BASE_URL, Error, Result, ApiResult};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
-#[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct Post {
     pub id: i32,
