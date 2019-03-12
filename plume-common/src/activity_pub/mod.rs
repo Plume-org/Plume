@@ -1,4 +1,4 @@
-use activitypub::{Activity, Actor, Link, Object};
+use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
 use reqwest::Client;
 use rocket::{
@@ -106,7 +106,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .unwrap_or(Outcome::Forward(()))
     }
 }
-pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox + Actor>(
+pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox>(
     sender: &S,
     act: A,
     to: Vec<T>,

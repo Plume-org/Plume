@@ -5,7 +5,7 @@ use plume_common::activity_pub::Hashtag;
 use schema::tags;
 use {ap_url, Connection, Error, Result};
 
-#[derive(Clone, Identifiable, Serialize, Queryable)]
+#[derive(Clone, Identifiable, Queryable)]
 pub struct Tag {
     pub id: i32,
     pub tag: String,

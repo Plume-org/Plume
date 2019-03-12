@@ -1,6 +1,6 @@
 use activitypub::{
-    actor::Person, collection::OrderedCollection, object::Image, Activity, Actor, CustomObject,
-    Endpoint, Object,
+    actor::Person, collection::OrderedCollection, object::Image, Activity, CustomObject,
+    Endpoint,
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
@@ -44,7 +44,7 @@ use {ap_url, Connection, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, Debug, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -829,8 +829,6 @@ impl IntoId for User {
 }
 
 impl Eq for User {}
-impl Object for User {}
-impl Actor for User {}
 
 impl WithInbox for User {
     fn get_inbox_url(&self) -> String {

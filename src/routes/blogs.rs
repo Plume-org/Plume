@@ -66,7 +66,7 @@ pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
     )
 }
 
-#[derive(Default, FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate)]
 pub struct NewBlogForm {
     #[validate(custom(function = "valid_slug", message = "Invalid name"))]
     pub title: String,

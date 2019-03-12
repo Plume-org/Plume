@@ -13,7 +13,7 @@ use schema::medias;
 use users::User;
 use {ap_url, Connection, Error, Result};
 
-#[derive(Clone, Identifiable, Queryable, Serialize)]
+#[derive(Clone, Identifiable, Queryable)]
 pub struct Media {
     pub id: i32,
     pub file_path: String,

@@ -1,7 +1,6 @@
 use activitypub::{
     activity::{Accept, Follow as FollowAct, Undo},
     actor::Person,
-    Actor,
 };
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 
@@ -74,7 +73,7 @@ impl Follow {
 
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
-    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + Actor + IntoId>(
+    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + WithInbox + IntoId>(
         conn: &Connection,
         from: &B,
         target: &A,

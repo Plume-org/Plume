@@ -103,7 +103,7 @@ pub fn admin(conn: DbConn, admin: Admin, intl: I18n) -> Result<Ructe, ErrorPage>
     )))
 }
 
-#[derive(Clone, FromForm, Validate, Serialize)]
+#[derive(Clone, FromForm, Validate)]
 pub struct InstanceSettingsForm {
     #[validate(length(min = "1"))]
     pub name: String,

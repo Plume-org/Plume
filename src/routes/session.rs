@@ -29,7 +29,7 @@ pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n) -> R
     ))
 }
 
-#[derive(Default, FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate)]
 pub struct LoginForm {
     #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
     pub email_or_name: String,
