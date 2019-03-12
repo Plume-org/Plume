@@ -218,7 +218,7 @@ pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: 
 
 #[get("/nodeinfo/<version>")]
 pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
-    if version != "2.0" || version != "2.1" {
+    if version != "2.0" && version != "2.1" {
         return Err(ErrorPage::from(Error::NotFound));
     }
 
