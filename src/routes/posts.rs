@@ -24,7 +24,7 @@ use plume_models::{
     tags::*,
     users::User
 };
-use routes::{errors::ErrorPage, comments::NewCommentForm, ContentLen};
+use routes::{PlumeRocket, errors::ErrorPage, comments::NewCommentForm, ContentLen};
 use template_utils::Ructe;
 use Worker;
 use Searcher;
@@ -133,49 +133,53 @@ pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn edit(blog: String, slug: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let conn = rockets.conn;
+    let intl = rockets.intl;
     let b = Blog::find_by_fqn(&*conn, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
+    let user = rockets.user.unwrap();
 
     if !user.is_author_in(&*conn, &b)? {
-        Ok(render!(errors::not_authorized(
+        return Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
             i18n!(intl.catalog, "You are not author in this blog.")
         )))
-    } else {
-        let source = if !post.source.is_empty() {
-            post.source.clone()
-        } else {
-            post.content.get().clone() // fallback to HTML if the markdown was not stored
-        };
-
-        let medias = Media::for_user(&*conn, user.id)?;
-        let title = post.title.clone();
-        Ok(render!(posts::new(
-            &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "Edit {0}"; &title),
-            b,
-            true,
-            &NewPostForm {
-                title: post.title.clone(),
-                subtitle: post.subtitle.clone(),
-                content: source,
-                tags: Tag::for_post(&*conn, post.id)?
-                    .into_iter()
-                    .filter_map(|t| if !t.is_hashtag {Some(t.tag)} else {None})
-                    .collect::<Vec<String>>()
-                    .join(", "),
-                license: post.license.clone(),
-                draft: true,
-                cover: post.cover_id,
-            },
-            !post.published,
-            Some(post),
-            ValidationErrors::default(),
-            medias,
-            cl.0
-        )))
     }
+
+
+    let source = if !post.source.is_empty() {
+        post.source.clone()
+    } else {
+        post.content.get().clone() // fallback to HTML if the markdown was not stored
+    };
+
+    let medias = Media::for_user(&*conn, user.id)?;
+    let title = post.title.clone();
+    Ok(render!(posts::new(
+        &(&*conn, &intl.catalog, Some(user)),
+        i18n!(intl.catalog, "Edit {0}"; &title),
+        b,
+        true,
+        &NewPostForm {
+            title: post.title.clone(),
+            subtitle: post.subtitle.clone(),
+            content: source,
+            tags: Tag::for_post(&*conn, post.id)?
+                .into_iter()
+                .filter_map(|t| if !t.is_hashtag {Some(t.tag)} else {None})
+                .collect::<Vec<String>>()
+                .join(", "),
+            license: post.license.clone(),
+            draft: true,
+            cover: post.cover_id,
+        },
+        !post.published,
+        Some(post),
+        ValidationErrors::default(),
+        medias,
+        cl.0
+    )))
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]

@@ -8,9 +8,45 @@ use rocket::{
     request::{self, FromFormValue, FromRequest, Request},
     response::NamedFile,
 };
+use rocket_i18n::I18n;
 use std::path::{Path, PathBuf};
 
-use plume_models::{Connection, posts::Post};
+use plume_models::{
+    Connection,
+    users::User,
+    posts::Post,
+    db_conn::DbConn,
+};
+
+use Worker;
+use Searcher;
+
+pub struct PlumeRocket<'a> {
+    conn: DbConn,
+    intl: I18n,
+    searcher: Option<Searcher<'a>>,
+    user: Option<User>,
+    worker: Option<Worker<'a>>,
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket<'a> {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket<'a>, ()> {
+        let conn = request.guard::<DbConn>()?;
+        let intl = request.guard::<I18n>()?;
+        let user = Some(request.guard::<User>()?);
+        let worker = Some(request.guard::<Worker>()?);
+        let searcher = Some(request.guard::<Searcher>()?);
+        rocket::Outcome::Success(PlumeRocket {
+            conn,
+            intl,
+            user,
+            worker,
+            searcher,
+        })
+    }
+}
 
 const ITEMS_PER_PAGE: i32 = 12;
 
