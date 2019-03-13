@@ -208,7 +208,7 @@ impl PlumeQuery {
     }
 
     // split a string into a token and a rest
-    pub fn get_first_token<'a>(mut query: &'a str) -> (&'a str, &'a str) {
+    pub fn get_first_token(mut query: &str) -> (&str, &str) {
         query = query.trim();
         if query.is_empty() {
             ("", "")
@@ -244,22 +244,22 @@ impl PlumeQuery {
     fn from_str_req(&mut self, mut query: &str) -> &mut Self {
         query = query.trim_left();
         if query.is_empty() {
-            self
-        } else {
-            let occur = if query.get(0..1).map(|v| v=="+").unwrap_or(false) {
-                query = &query[1..];
-                Occur::Must
-            } else if query.get(0..1).map(|v| v=="-").unwrap_or(false) {
-                query = &query[1..];
-                Occur::MustNot
-            } else {
-                Occur::Should
-            };
-            gen_parser!(self, query, occur; normal: title, subtitle, content, tag,
-                            instance, author, blog, lang, license;
-                            date: after, before);
-            self.from_str_req(query)
+            return self
         }
+
+        let occur = if query.get(0..1).map(|v| v=="+").unwrap_or(false) {
+            query = &query[1..];
+            Occur::Must
+        } else if query.get(0..1).map(|v| v=="-").unwrap_or(false) {
+            query = &query[1..];
+            Occur::MustNot
+        } else {
+            Occur::Should
+        };
+        gen_parser!(self, query, occur; normal: title, subtitle, content, tag,
+                        instance, author, blog, lang, license;
+                        date: after, before);
+        self.from_str_req(query)
     }
 
     // map a token and it's field to a query
