@@ -24,6 +24,10 @@ msgstr ""
 msgid "Write your article here. Markdown is supported."
 msgstr ""
 
+# plume-front/src/editor.rs:46
+msgid "Around {} characters left"
+msgstr ""
+
 # plume-front/src/editor.rs:96
 msgid "Tags"
 msgstr ""
@@ -38,8 +42,4 @@ msgstr ""
 
 # plume-front/src/editor.rs:111
 msgid "Publish"
-msgstr ""
-
-# plume-front/src/editor.rs:46
-msgid "Around {} characters left"
 msgstr ""

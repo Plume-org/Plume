@@ -12,34 +12,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-# plume-front/src/editor.rs:53
+# plume-front/src/editor.rs:103
 msgid "Title"
 msgstr ""
 
-# plume-front/src/editor.rs:60
+# plume-front/src/editor.rs:104
 msgid "Subtitle or summary"
 msgstr ""
 
-# plume-front/src/editor.rs:67
+# plume-front/src/editor.rs:105
 msgid "Write your article here. Markdown is supported."
 msgstr ""
 
-# plume-front/src/editor.rs:96
+# plume-front/src/editor.rs:113
+msgid "Around {} characters left"
+msgstr ""
+
+# plume-front/src/editor.rs:143
 msgid "Tags"
 msgstr ""
 
-# plume-front/src/editor.rs:97
+# plume-front/src/editor.rs:144
 msgid "License"
 msgstr ""
 
-# plume-front/src/editor.rs:100
+# plume-front/src/editor.rs:147
 msgid "Cover"
 msgstr ""
 
-# plume-front/src/editor.rs:110
+# plume-front/src/editor.rs:157
 msgid "Publish"
-msgstr ""
-
-# plume-front/src/editor.rs:151
-msgid "Around {} characters left"
 msgstr ""

@@ -4,7 +4,6 @@ rls
 rls
 translations
 *.po~
-*.po~
 .env
 Rocket.toml
 !.gitkeep
