@@ -1,6 +1,4 @@
-use activitypub::{
-    activity::{Accept, Follow as FollowAct, Undo},
-};
+use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 
 use notifications::*;

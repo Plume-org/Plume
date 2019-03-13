@@ -6,20 +6,20 @@
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, recents: Vec<Post>, reshares: Vec<Post>)
 
-@:base(ctx, user.name(ctx.0), {}, {}, {
+@:base(ctx, user.name(), {}, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
-        (&uri!(user::details: name= user.get_fqn(ctx.0)).to_string(), i18n!(ctx.1, "Articles"), true),
-        (&uri!(user::followers: name = user.get_fqn(ctx.0), page = _).to_string(), i18n!(ctx.1, "Subscribers"), false),
-        (&uri!(user::followed: name = user.get_fqn(ctx.0), page = _).to_string(), i18n!(ctx.1, "Subscriptions"), false)
+        (&uri!(user::details: name = &user.fqn).to_string(), i18n!(ctx.1, "Articles"), true),
+        (&uri!(user::followers: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscribers"), false),
+        (&uri!(user::followed: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscriptions"), false)
     ])
 
     @if !recents.is_empty() {
     <div class="h-feed">
         <h2>
             <span class="p-name">@i18n!(ctx.1, "Latest articles")</span>
-            <small><a href="@uri!(user::atom_feed: name = user.get_fqn(ctx.0))" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
+            <small><a href="@uri!(user::atom_feed: name = &user.fqn))" title="@i18n!(ctx.1, "Atom feed")">@icon!("rss")</a></small>
         </h2>
         <div class="cards">
             @for article in recents {

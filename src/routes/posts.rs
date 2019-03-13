@@ -49,14 +49,14 @@ pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, res
                 warning: previous.clone().map(|p| p.spoiler_text).unwrap_or_default(),
                 content: previous.clone().and_then(|p| Some(format!(
                     "@{} {}",
-                    p.get_author(&*conn).ok()?.get_fqn(&*conn),
+                    p.get_author(&*conn).ok()?.fqn,
                     Mention::list_for_comment(&*conn, p.id).ok()?
                         .into_iter()
                         .filter_map(|m| {
                             let user = user.clone();
                             if let Ok(mentioned) = m.get_mentioned(&*conn) {
                                 if user.is_none() || mentioned.id != user.expect("posts::details_response: user error while listing mentions").id {
-                                    Some(format!("@{}", mentioned.get_fqn(&*conn)))
+                                    Some(format!("@{}", mentioned.fqn))
                                 } else {
                                     None
                                 }
@@ -275,7 +275,7 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
     }
 }
 
-#[derive(Default, FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate)]
 pub struct NewPostForm {
     #[validate(custom(function = "valid_slug", message = "Invalid title"))]
     pub title: String,

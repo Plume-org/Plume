@@ -34,7 +34,7 @@ use {ap_url, Connection, Context, BASE_URL, Error, Result, ApiResult};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
-#[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct Post {
     pub id: i32,
@@ -269,7 +269,7 @@ impl Post {
             post.ap_url = ap_url(&format!(
                 "{}/~/{}/{}/",
                 *BASE_URL,
-                post.get_blog(conn)?.get_fqn(conn),
+                post.get_blog(conn)?.fqn,
                 post.slug
             ));
             let _: Post = post.save_changes(conn)?;
@@ -793,7 +793,7 @@ impl Post {
 
     pub fn url(&self, conn: &Connection) -> Result<String> {
         let blog = self.get_blog(conn)?;
-        Ok(format!("/~/{}/{}", blog.get_fqn(conn), self.slug))
+        Ok(format!("/~/{}/{}", blog.fqn, self.slug))
     }
 
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {

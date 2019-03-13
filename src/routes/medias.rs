@@ -5,14 +5,17 @@ use rocket_i18n::I18n;
 use std::fs;
 use plume_models::{Error, db_conn::DbConn, medias::*, users::User};
 use template_utils::Ructe;
-use routes::errors::ErrorPage;
+use routes::{Page, errors::ErrorPage};
 
-#[get("/medias")]
-pub fn list(user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let medias = Media::for_user(&*conn, user.id)?;
+#[get("/medias?<page>")]
+pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let medias = Media::page_for_user(&*conn, &user, page.limits())?;
     Ok(render!(medias::index(
-        &(&*conn, &intl.catalog, Some(user)),
-        medias
+        &(&*conn, &intl.catalog, Some(user.clone())),
+        medias,
+        page.0,
+        Page::total(Media::count_for_user(&*conn, &user)? as i32)
     )))
 }
 
@@ -35,9 +38,19 @@ pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<
                 let filename = fields.get("file").and_then(|v| v.into_iter().next())
                     .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
                     .filename.clone();
-                let ext = filename.and_then(|f| f.rsplit('.').next().map(|ext| ext.to_owned()))
-                    .unwrap_or_else(|| "png".to_owned());
-                let dest = format!("static/media/{}.{}", GUID::rand().to_string(), ext);
+                // Remove extension if it contains something else than just letters and numbers
+                let ext = filename
+                    .and_then(|f| f
+                        .rsplit('.')
+                        .next()
+                        .and_then(|ext| if ext.chars().any(|c| !c.is_alphanumeric()) {
+                            None
+                        } else {
+                            Some(ext.to_lowercase())
+                        })
+                        .map(|ext| format!(".{}", ext))
+                    ).unwrap_or_default();
+                let dest = format!("static/media/{}{}", GUID::rand().to_string(), ext);
 
                 match fields["file"][0].data {
                     SavedData::Bytes(ref bytes) => fs::write(&dest, bytes).map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
@@ -99,7 +112,7 @@ pub fn delete(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> 
     if media.owner_id == user.id {
         media.delete(&*conn)?;
     }
-    Ok(Redirect::to(uri!(list)))
+    Ok(Redirect::to(uri!(list: page = _)))
 }
 
 #[post("/medias/<id>/avatar")]

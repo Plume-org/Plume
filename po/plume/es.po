@@ -229,6 +229,12 @@ msgstr "Edita tu cuenta"
 msgid "Your Profile"
 msgstr "Tu perfil"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Display name"
 msgstr ""
@@ -296,8 +302,9 @@ msgid ""
 "can, however, find a different one."
 msgstr ""
 
+#, fuzzy
 msgid "Articles"
-msgstr ""
+msgstr "Nueva publicación"
 
 msgid "Subscribers"
 msgstr ""
@@ -503,6 +510,14 @@ msgstr ""
 msgid "Content"
 msgstr "Contenido"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+msgid "Upload media"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
 msgstr ""
@@ -672,7 +687,13 @@ msgstr ""
 msgid "You don't have any media yet."
 msgstr ""
 
+msgid "Content warning: {0}"
+msgstr ""
+
 msgid "Delete"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Media upload"

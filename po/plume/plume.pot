@@ -36,11 +36,11 @@ msgstr ""
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:65
+# src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:135
+# src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
@@ -237,6 +237,12 @@ msgid "Edit your account"
 msgstr ""
 
 msgid "Your Profile"
+msgstr ""
+
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+msgid "Upload an avatar"
 msgstr ""
 
 # src/template_utils.rs:144
@@ -510,6 +516,12 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
+msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
+msgstr ""
+
+msgid "Upload media"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
 msgstr ""
@@ -668,7 +680,13 @@ msgstr ""
 msgid "You don't have any media yet."
 msgstr ""
 
+msgid "Content warning: {0}"
+msgstr ""
+
 msgid "Delete"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Media upload"

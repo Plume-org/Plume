@@ -9,7 +9,7 @@
 @:base(ctx, i18n!(ctx.1, "Media details"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media details")</h1>
     <section>
-        <a href="@uri!(medias::list)">@i18n!(ctx.1, "Go back to the gallery")</a>
+        <a href="@uri!(medias::list: page = _)">@i18n!(ctx.1, "Go back to the gallery")</a>
     </section>
 
     <section>

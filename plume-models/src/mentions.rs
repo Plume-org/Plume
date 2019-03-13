@@ -8,7 +8,7 @@ use schema::mentions;
 use users::User;
 use {Connection, Error, Result};
 
-#[derive(Clone, Queryable, Identifiable, Serialize, Deserialize)]
+#[derive(Clone, Queryable, Identifiable)]
 pub struct Mention {
     pub id: i32,
     pub mentioned_id: i32,
@@ -70,7 +70,7 @@ impl Mention {
             .set_href_string(user.ap_url.clone())?;
         mention
             .link_props
-            .set_name_string(format!("@{}", user.get_fqn(conn)))?;
+            .set_name_string(format!("@{}", user.fqn))?;
         Ok(mention)
     }
 

@@ -202,7 +202,7 @@ pub fn activity_details(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_local(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&*conn, &name).ok()?;
     Some(ActivityStream::new(user.to_activity(&*conn).ok()?))
 }
 
@@ -275,7 +275,7 @@ pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies, sear
     }
 }
 
-#[derive(Default, FromForm, Serialize, Validate)]
+#[derive(Default, FromForm, Validate)]
 #[validate(
     schema(
         function = "passwords_match",
@@ -368,7 +368,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
 
 #[get("/@/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&*conn, &name).ok()?;
     user.outbox(&*conn).ok()
 }
 
@@ -380,7 +380,7 @@ pub fn inbox(
     headers: Headers,
     searcher: Searcher,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    User::find_local(&*conn, &name)
+    User::find_by_fqn(&*conn, &name)
         .map_err(|_| status::BadRequest(Some("User not found")))?;
     inbox::handle_incoming(conn, data, headers, searcher)
 }
@@ -391,7 +391,7 @@ pub fn ap_followers(
     conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_local(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&*conn, &name).ok()?;
     let followers = user
         .get_followers(&*conn).ok()?
         .into_iter()

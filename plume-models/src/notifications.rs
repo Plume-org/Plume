@@ -19,7 +19,7 @@ pub mod notification_kind {
     pub const RESHARE: &str = "RESHARE";
 }
 
-#[derive(Clone, Queryable, Identifiable, Serialize)]
+#[derive(Clone, Queryable, Identifiable)]
 pub struct Notification {
     pub id: i32,
     pub user_id: i32,
@@ -81,7 +81,7 @@ impl Notification {
     pub fn get_url(&self, conn: &Connection) -> Option<String> {
         match self.kind.as_ref() {
             notification_kind::COMMENT => self.get_post(conn).and_then(|p| Some(format!("{}#comment-{}", p.url(conn).ok()?, self.object_id))),
-            notification_kind::FOLLOW => Some(format!("/@/{}/", self.get_actor(conn).ok()?.get_fqn(conn))),
+            notification_kind::FOLLOW => Some(format!("/@/{}/", self.get_actor(conn).ok()?.fqn)),
             notification_kind::MENTION => Mention::get(conn, self.object_id).and_then(|mention|
                 mention.get_post(conn).and_then(|p| p.url(conn))
                     .or_else(|_| {

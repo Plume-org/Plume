@@ -20,7 +20,7 @@ use schema::comments;
 use users::User;
 use {Connection, Context, Error, Result};
 
-#[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Comment {
     pub id: i32,
     pub content: SafeString,

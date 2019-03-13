@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume-front\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2018-06-15 16:33-0700\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# plume-front/src/editor.rs:57
+msgid "Title"
+msgstr "Title"
+
+# plume-front/src/editor.rs:61
+msgid "Subtitle or summary"
+msgstr ""
+
+# plume-front/src/editor.rs:68
+msgid "Write your article here. Markdown is supported."
+msgstr ""
+
+# plume-front/src/editor.rs:96
+msgid "Tags"
+msgstr ""
+
+# plume-front/src/editor.rs:97
+msgid "License"
+msgstr ""
+
+# plume-front/src/editor.rs:100
+msgid "Cover"
+msgstr ""
+
+# plume-front/src/editor.rs:111
+msgid "Publish"
+msgstr ""
+
+# plume-front/src/editor.rs:46
+msgid "Around {} characters left"
+msgstr ""

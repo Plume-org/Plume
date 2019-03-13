@@ -247,6 +247,13 @@ msgstr "Modifier votre compte"
 msgid "Your Profile"
 msgstr "Votre profil"
 
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+#, fuzzy
+msgid "Upload an avatar"
+msgstr "Utiliser comme avatar"
+
 #, fuzzy
 msgid "Display name"
 msgstr "Nom affiché"
@@ -329,8 +336,9 @@ msgstr ""
 msgid "Articles"
 msgstr "Articles"
 
+#, fuzzy
 msgid "Subscribers"
-msgstr ""
+msgstr "Description"
 
 #, fuzzy
 msgid "Subscriptions"
@@ -536,6 +544,15 @@ msgstr "Sous-titre"
 msgid "Content"
 msgstr "Contenu"
 
+msgid ""
+"You can upload medias to your gallery, and copy their Markdown code in your "
+"articles to insert them."
+msgstr ""
+
+#, fuzzy
+msgid "Upload media"
+msgstr "Téléverser"
+
 # src/template_utils.rs:143
 msgid "Tags, separated by commas"
 msgstr ""
@@ -730,8 +747,15 @@ msgstr "Téléverser"
 msgid "You don't have any media yet."
 msgstr "Vous n’avez pas encore de média."
 
+#, fuzzy
+msgid "Content warning: {0}"
+msgstr "Avertissement"
+
 msgid "Delete"
 msgstr "Supprimer"
+
+msgid "Details"
+msgstr ""
 
 msgid "Media upload"
 msgstr "Téléversement de média"

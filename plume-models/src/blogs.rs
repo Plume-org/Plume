@@ -1,4 +1,4 @@
-use activitypub::{actor::Group, collection::OrderedCollection, Actor, CustomObject, Object};
+use activitypub::{actor::Group, collection::OrderedCollection, CustomObject};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
@@ -30,7 +30,7 @@ use {Connection, Context, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -43,6 +43,7 @@ pub struct Blog {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
+    pub fqn: String,
 }
 
 #[derive(Default, Insertable)]
@@ -87,6 +88,15 @@ impl Blog {
                 "",
             );
         }
+
+        if inserted.fqn.is_empty() {
+            if instance.local {
+                inserted.fqn = inserted.actor_id.clone();
+            } else {
+                inserted.fqn = format!("{}@{}", inserted.actor_id, instance.public_domain);
+            }
+        }
+
         inserted.save_changes(conn).map_err(Error::from)
     });
     get!(blogs);
@@ -129,19 +139,17 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn find_local(conn: &Connection, name: &str) -> Result<Blog> {
-        Blog::find_by_name(conn, name, Instance::get_local(conn)?.id)
-    }
-
     pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<Blog> {
-        let mut split_fqn = fqn.split('@');
-        let actor = split_fqn.next().ok_or(Error::InvalidValue)?;
-        if let Some(domain) = split_fqn.next() { // remote blog
-            Instance::find_by_domain(conn, domain)
-                .and_then(|instance| Blog::find_by_name(conn, actor, instance.id))
-                .or_else(|_| Blog::fetch_from_webfinger(conn, fqn))
-        } else { // local blog
-            Blog::find_local(conn, actor)
+        let from_db = blogs::table
+            .filter(blogs::fqn.eq(fqn))
+            .limit(1)
+            .load::<Blog>(conn)?
+            .into_iter()
+            .next();
+        if let Some(from_db) = from_db {
+            Ok(from_db)
+        } else {
+            Blog::fetch_from_webfinger(conn, fqn)
         }
     }
 
@@ -326,18 +334,6 @@ impl Blog {
         })
     }
 
-    pub fn get_fqn(&self, conn: &Connection) -> String {
-        if self.instance_id == Instance::get_local(conn).ok().expect("Blog::get_fqn: local instance error").id {
-            self.actor_id.clone()
-        } else {
-            format!(
-                "{}@{}",
-                self.actor_id,
-                self.get_instance(conn).ok().expect("Blog::get_fqn: instance error").public_domain
-            )
-        }
-    }
-
     pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
         for post in Post::get_for_blog(conn, &self)? {
             post.delete(conn, searcher)?;
@@ -354,9 +350,6 @@ impl IntoId for Blog {
         Id::new(self.ap_url)
     }
 }
-
-impl Object for Blog {}
-impl Actor for Blog {}
 
 impl<'a> AsActor<&Context<'a>> for Blog {
     type Error = Error;
@@ -652,7 +645,7 @@ pub(crate) mod tests {
             ).unwrap();
 
             assert_eq!(
-                Blog::find_local(conn, "SomeName").unwrap().id,
+                Blog::find_by_fqn(conn, "SomeName").unwrap().id,
                 blog.id
             );
 
@@ -676,7 +669,7 @@ pub(crate) mod tests {
                 ).unwrap(),
             ).unwrap();
 
-            assert_eq!(blog.get_fqn(conn), "SomeName");
+            assert_eq!(blog.fqn, "SomeName");
 
             Ok(())
         });
