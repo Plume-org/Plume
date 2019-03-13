@@ -87,9 +87,9 @@ macro_rules! gen_to_string {
         $(
         for (occur, val) in &$self.$field {
             if val.contains(' ') {
-                $result.push_str(&format!("{}{}:\"{}\" ", Self::occur_to_str(&occur), stringify!($field), val));
+                $result.push_str(&format!("{}{}:\"{}\" ", Self::occur_to_str(*occur), stringify!($field), val));
             } else {
-                $result.push_str(&format!("{}{}:{} ", Self::occur_to_str(&occur), stringify!($field), val));
+                $result.push_str(&format!("{}{}:{} ", Self::occur_to_str(*occur), stringify!($field), val));
             }
         }
         )*
@@ -232,7 +232,7 @@ impl PlumeQuery {
     }
 
     // map each Occur state to a prefix
-    fn occur_to_str(occur: &Occur) -> &'static str {
+    fn occur_to_str(occur: Occur) -> &'static str {
         match occur {
             Occur::Should => "",
             Occur::Must => "+",
@@ -327,9 +327,9 @@ impl ToString for PlumeQuery {
         let mut result = String::new();
         for (occur, val) in &self.text {
             if val.contains(' ') {
-                result.push_str(&format!("{}\"{}\" ", Self::occur_to_str(&occur), val));
+                result.push_str(&format!("{}\"{}\" ", Self::occur_to_str(*occur), val));
             } else {
-                result.push_str(&format!("{}{} ", Self::occur_to_str(&occur), val));
+                result.push_str(&format!("{}{} ", Self::occur_to_str(*occur), val));
             }
         }
 
