@@ -10,7 +10,7 @@
     <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
         <span class="display-name p-name">@author.name()</span>
-        <small>@&author.fqn</small>
+        <small>@author.fqn</small>
 	    </a>
     @if let Some(ref ap_url) = comm.ap_url {
         <a class="u-url" href="@ap_url"></a>
