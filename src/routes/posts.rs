@@ -26,8 +26,6 @@ use plume_models::{
 };
 use routes::{PlumeRocket, errors::ErrorPage, comments::NewCommentForm, ContentLen};
 use template_utils::Ructe;
-use Worker;
-use Searcher;
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
 pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, ErrorPage> {
@@ -103,33 +101,36 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let conn = rockets.conn;
     let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let user = rockets.user.unwrap();
+    let intl = rockets.intl;
 
     if !user.is_author_in(&*conn, &b)? {
         // TODO actually return 403 error code
-        Ok(render!(errors::not_authorized(
+        return Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
             i18n!(intl.catalog, "You are not author in this blog.")
         )))
-    } else {
-        let medias = Media::for_user(&*conn, user.id)?;
-        Ok(render!(posts::new(
-            &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "New post"),
-            b,
-            false,
-            &NewPostForm {
-                license: Instance::get_local(&*conn)?.default_license,
-                ..NewPostForm::default()
-            },
-            true,
-            None,
-            ValidationErrors::default(),
-            medias,
-            cl.0
-        )))
     }
+
+    let medias = Media::for_user(&*conn, user.id)?;
+    Ok(render!(posts::new(
+        &(&*conn, &intl.catalog, Some(user)),
+        i18n!(intl.catalog, "New post"),
+        b,
+        false,
+        &NewPostForm {
+            license: Instance::get_local(&*conn)?.default_license,
+            ..NewPostForm::default()
+        },
+        true,
+        None,
+        ValidationErrors::default(),
+        medias,
+        cl.0
+    )))
 }
 
 #[get("/~/<blog>/<slug>/edit")]
@@ -183,10 +184,13 @@ pub fn edit(blog: String, slug: String, cl: ContentLen, rockets: PlumeRocket) ->
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
-pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: LenientForm<NewPostForm>, worker: Worker, conn: DbConn, intl: I18n, searcher: Searcher)
+pub fn update(blog: String, slug: String, cl: ContentLen, form: LenientForm<NewPostForm>, rockets: PlumeRocket)
     -> Result<Redirect, Ructe> {
+    let conn = rockets.conn;
     let b = Blog::find_by_fqn(&*conn, &blog).expect("post::update: blog error");
     let mut post = Post::find_by_slug(&*conn, &slug, b.id).expect("post::update: find by slug error");
+    let user = rockets.user.unwrap();
+    let intl = rockets.intl;
 
     let new_slug = if !post.published {
         form.title.to_string().to_kebab_case()
@@ -223,6 +227,8 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
                 false
             };
 
+            let searcher = rockets.searcher.unwrap();
+            let worker = rockets.worker.unwrap();
             post.slug = new_slug.clone();
             post.title = form.title.clone();
             post.subtitle = form.subtitle.clone();
@@ -300,9 +306,11 @@ pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<form>")]
-pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl: ContentLen, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher) -> Result<Redirect, Result<Ructe, ErrorPage>> {
+pub fn create(blog_name: String, form: LenientForm<NewPostForm>, cl: ContentLen, rockets: PlumeRocket) -> Result<Redirect, Result<Ructe, ErrorPage>> {
+    let conn = rockets.conn;
     let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
+    let user = rockets.user.unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -319,73 +327,76 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
     if errors.is_empty() {
         if !user.is_author_in(&*conn, &blog).expect("post::create: is author in error") {
             // actually it's not "Ok"…
-            Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
-        } else {
-            let (content, mentions, hashtags) = utils::md_to_html(
-                form.content.to_string().as_ref(),
-                &Instance::get_local(&conn).expect("post::create: local instance error").public_domain
-            );
-
-            let post = Post::insert(&*conn, NewPost {
-                blog_id: blog.id,
-                slug: slug.to_string(),
-                title: form.title.to_string(),
-                content: SafeString::new(&content),
-                published: !form.draft,
-                license: form.license.clone(),
-                ap_url: "".to_string(),
-                creation_date: None,
-                subtitle: form.subtitle.clone(),
-                source: form.content.clone(),
-                cover_id: form.cover,
-                },
-                &searcher,
-            ).expect("post::create: post save error");
-
-            PostAuthor::insert(&*conn, NewPostAuthor {
-                post_id: post.id,
-                author_id: user.id
-            }).expect("post::create: author save error");
-
-            let tags = form.tags.split(',')
-                .map(|t| t.trim().to_camel_case())
-                .filter(|t| !t.is_empty())
-                .collect::<HashSet<_>>();
-            for tag in tags {
-                Tag::insert(&*conn, NewTag {
-                    tag,
-                    is_hashtag: false,
-                    post_id: post.id
-                }).expect("post::create: tags save error");
-            }
-            for hashtag in hashtags {
-                Tag::insert(&*conn, NewTag {
-                    tag: hashtag.to_camel_case(),
-                    is_hashtag: true,
-                    post_id: post.id
-                }).expect("post::create: hashtags save error");
-            }
-
-            if post.published {
-                for m in mentions {
-                    Mention::from_activity(
-                        &*conn,
-                        &Mention::build_activity(&*conn, &m).expect("post::create: mention build error"),
-                        post.id,
-                        true,
-                        true
-                    ).expect("post::create: mention save error");
-                }
-
-                let act = post.create_activity(&*conn).expect("posts::create: activity error");
-                let dest = User::one_by_instance(&*conn).expect("posts::create: dest error");
-                worker.execute(move || broadcast(&user, act, dest));
-            }
-
-            Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)))
+            return Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
         }
+
+        let (content, mentions, hashtags) = utils::md_to_html(
+            form.content.to_string().as_ref(),
+            &Instance::get_local(&conn).expect("post::create: local instance error").public_domain
+        );
+
+        let searcher = rockets.searcher.unwrap();
+        let post = Post::insert(&*conn, NewPost {
+            blog_id: blog.id,
+            slug: slug.to_string(),
+            title: form.title.to_string(),
+            content: SafeString::new(&content),
+            published: !form.draft,
+            license: form.license.clone(),
+            ap_url: "".to_string(),
+            creation_date: None,
+            subtitle: form.subtitle.clone(),
+            source: form.content.clone(),
+            cover_id: form.cover,
+            },
+            &searcher,
+        ).expect("post::create: post save error");
+
+        PostAuthor::insert(&*conn, NewPostAuthor {
+            post_id: post.id,
+            author_id: user.id
+        }).expect("post::create: author save error");
+
+        let tags = form.tags.split(',')
+            .map(|t| t.trim().to_camel_case())
+            .filter(|t| !t.is_empty())
+            .collect::<HashSet<_>>();
+        for tag in tags {
+            Tag::insert(&*conn, NewTag {
+                tag,
+                is_hashtag: false,
+                post_id: post.id
+            }).expect("post::create: tags save error");
+        }
+        for hashtag in hashtags {
+            Tag::insert(&*conn, NewTag {
+                tag: hashtag.to_camel_case(),
+                is_hashtag: true,
+                post_id: post.id
+            }).expect("post::create: hashtags save error");
+        }
+
+        if post.published {
+            for m in mentions {
+                Mention::from_activity(
+                    &*conn,
+                    &Mention::build_activity(&*conn, &m).expect("post::create: mention build error"),
+                    post.id,
+                    true,
+                    true
+                ).expect("post::create: mention save error");
+            }
+
+            let act = post.create_activity(&*conn).expect("posts::create: activity error");
+            let dest = User::one_by_instance(&*conn).expect("posts::create: dest error");
+            let worker = rockets.worker.unwrap();
+            worker.execute(move || broadcast(&user, act, dest));
+        }
+
+        Ok(Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
+        let intl = rockets.intl;
         Err(Ok(render!(posts::new(
             &(&*conn, &intl.catalog, Some(user)),
             i18n!(intl.catalog, "New post"),
@@ -402,22 +413,28 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
 }
 
 #[post("/~/<blog_name>/<slug>/delete")]
-pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Result<Redirect, ErrorPage> {
+pub fn delete(blog_name: String, slug: String, rockets: PlumeRocket) -> Result<Redirect, ErrorPage> {
+    let conn = rockets.conn;
+    let user = rockets.user.unwrap();
     let post = Blog::find_by_fqn(&*conn, &blog_name)
         .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
 
     if let Ok(post) = post {
         if !post.get_authors(&*conn)?.into_iter().any(|a| a.id == user.id) {
-            Ok(Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _)))
-        } else {
-            let dest = User::one_by_instance(&*conn)?;
-            let delete_activity = post.delete(&(&conn, &searcher))?;
-            let user_c = user.clone();
-            worker.execute(move || broadcast(&user_c, delete_activity, dest));
-            worker.execute_after(Duration::from_secs(10*60), move || {user.rotate_keypair(&conn).expect("Failed to rotate keypair");});
-
-            Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
+            return Ok(Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _)))
         }
+
+        let searcher = rockets.searcher.unwrap();
+        let worker = rockets.worker.unwrap();
+
+        let dest = User::one_by_instance(&*conn)?;
+        let delete_activity = post.delete(&(&conn, &searcher))?;
+        let user_c = user.clone();
+
+        worker.execute(move || broadcast(&user_c, delete_activity, dest));
+        worker.execute_after(Duration::from_secs(10*60), move || {user.rotate_keypair(&conn).expect("Failed to rotate keypair");});
+
+        Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
     } else {
         Ok(Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)))
     }

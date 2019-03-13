@@ -17,19 +17,20 @@ use plume_models::{
     db_conn::DbConn,
     instance::Instance,
     posts::Post,
-    users::User
 };
-use routes::{Page, errors::ErrorPage};
+use routes::{Page, PlumeRocket, errors::ErrorPage};
 use template_utils::Ructe;
-use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
+    let conn = rockets.conn;
     let blog = Blog::find_by_fqn(&*conn, &name)?;
     let posts = Post::blog_page(&*conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(&*conn, &blog)?;
     let authors = &blog.list_authors(&*conn)?;
+    let user = rockets.user;
+    let intl = rockets.intl;
 
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
@@ -50,7 +51,11 @@ pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<Ac
 }
 
 #[get("/blogs/new")]
-pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
+pub fn new(rockets: PlumeRocket) -> Ructe {
+    let user = rockets.user.unwrap();
+    let intl = rockets.intl;
+    let conn = rockets.conn;
+
     render!(blogs::new(
         &(&*conn, &intl.catalog, Some(user)),
         &NewBlogForm::default(),
@@ -82,8 +87,11 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I18n) -> Result<Redirect, Ructe> {
+pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
+    let conn = rockets.conn;
+    let intl = rockets.intl;
+    let user = rockets.user.unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -122,8 +130,13 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe>{
+pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe>{
+    let conn = rockets.conn;
     let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
+    let user = rockets.user;
+    let intl = rockets.intl;
+    let searcher = rockets.searcher.unwrap();
+
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
