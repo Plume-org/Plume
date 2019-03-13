@@ -1,5 +1,5 @@
 #![recursion_limit="128"]
-#![feature(decl_macro, proc_macro_hygiene)]
+#![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
 extern crate gettext;
 #[macro_use]
@@ -29,7 +29,8 @@ lazy_static! {
 fn main() {
     menu();
     search();
-    editor::init();
+    editor::init()
+        .map_err(|e| console!(error, format!("Editor error: {:?}", e))).ok();
 }
 
 /// Toggle menu on mobile device
