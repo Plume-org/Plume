@@ -171,6 +171,8 @@ impl User {
             .select(post_authors::post_id)
             .load(conn)?;
         for post_id in all_their_posts_ids {
+            // this makes no sense (to me)
+            #[allow(clippy::op_ref)]
             let has_other_authors = post_authors::table
                 .filter(post_authors::post_id.eq(post_id))
                 .filter(post_authors::author_id.ne(self.id))
