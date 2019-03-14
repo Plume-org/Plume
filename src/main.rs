@@ -84,6 +84,8 @@ fn init_pool() -> Option<DbPool> {
 fn main() {
     let dbpool = init_pool().expect("main: database pool initialization error");
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
+    // we want a fast exit here, so
+    #[allow(clippy::match_wild_err_arm)]
     let searcher = match UnmanagedSearcher::open(&"search_index") {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(

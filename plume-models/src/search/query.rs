@@ -241,6 +241,9 @@ impl PlumeQuery {
     }
 
     // recursive parser for query string
+    // allow this clippy lint for now, until someone figures out how to
+    // refactor this better.
+    #[allow(clippy::wrong_self_convention)]
     fn from_str_req(&mut self, mut query: &str) -> &mut Self {
         query = query.trim_left();
         if query.is_empty() {
