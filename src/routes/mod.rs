@@ -1,3 +1,4 @@
+#![warn(clippy::too_many_arguments)]
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
     http::{

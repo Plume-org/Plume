@@ -1,3 +1,4 @@
+#![warn(clippy::too_many_arguments)]
 use rocket::{response::{self, Responder}, request::{Form, Request}};
 use rocket_contrib::json::Json;
 use serde_json;

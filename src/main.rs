@@ -1,3 +1,4 @@
+#![allow(clippy::too_many_arguments)]
 #![feature(decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
