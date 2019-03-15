@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 19:14\n"
+"PO-Revision-Date: 2019-03-15 21:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -26,11 +26,11 @@ msgstr "Podnadpis, nebo shrnutí"
 
 # plume-front/src/editor.rs:105
 msgid "Write your article here. Markdown is supported."
-msgstr ""
+msgstr "Napište sem svůj článek. Markdown je podporován."
 
 # plume-front/src/editor.rs:113
 msgid "Around {} characters left"
-msgstr ""
+msgstr "Zbývá kolem {} znaků"
 
 # plume-front/src/editor.rs:143
 msgid "Tags"
