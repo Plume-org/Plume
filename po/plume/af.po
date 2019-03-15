@@ -1,0 +1,741 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2019-03-15 15:16\n"
+"Last-Translator: AnaGelez <ana@gelez.xyz>\n"
+"Language-Team: Afrikaans\n"
+"Language: af_ZA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: plume\n"
+"X-Crowdin-Language: af\n"
+"X-Crowdin-File: /master/po/plume/plume.pot\n"
+
+# src/template_utils.rs:34
+msgid "{0} commented your article."
+msgstr ""
+
+# src/template_utils.rs:35
+msgid "{0} is subscribed to you."
+msgstr ""
+
+# src/template_utils.rs:36
+msgid "{0} liked your article."
+msgstr ""
+
+# src/template_utils.rs:37
+msgid "{0} mentioned you."
+msgstr ""
+
+# src/template_utils.rs:38
+msgid "{0} boosted your article."
+msgstr ""
+
+# src/template_utils.rs:68
+msgid "{0}'s avatar"
+msgstr ""
+
+# src/routes/blogs.rs:64
+msgid "You need to be logged in order to create a new blog"
+msgstr ""
+
+# src/routes/blogs.rs:134
+msgid "You are not allowed to delete this blog."
+msgstr ""
+
+# src/routes/likes.rs:41
+msgid "You need to be logged in order to like a post"
+msgstr ""
+
+# src/routes/notifications.rs:23
+msgid "You need to be logged in order to see your notifications"
+msgstr ""
+
+# src/routes/posts.rs:81
+msgid "This post isn't published yet."
+msgstr ""
+
+# src/routes/posts.rs:100
+msgid "You need to be logged in order to write a new post"
+msgstr ""
+
+# src/routes/posts.rs:113
+msgid "You are not author in this blog."
+msgstr ""
+
+# src/routes/posts.rs:119
+msgid "New post"
+msgstr ""
+
+# src/routes/posts.rs:156
+msgid "Edit {0}"
+msgstr ""
+
+# src/routes/reshares.rs:41
+msgid "You need to be logged in order to reshare a post"
+msgstr ""
+
+# src/routes/session.rs:161
+msgid "Password reset"
+msgstr ""
+
+# src/routes/session.rs:162
+msgid "Here is the link to reset your password: {0}"
+msgstr ""
+
+# src/routes/session.rs:222
+msgid "Your password was successfully reset."
+msgstr ""
+
+# src/routes/session.rs:224
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
+# src/routes/user.rs:126
+msgid "You need to be logged in order to access your dashboard"
+msgstr ""
+
+# src/routes/user.rs:159
+msgid "You need to be logged in order to subscribe to someone"
+msgstr ""
+
+# src/routes/user.rs:240
+msgid "You need to be logged in order to edit your profile"
+msgstr ""
+
+msgid "Plume"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "My account"
+msgstr ""
+
+msgid "Log In"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "About this instance"
+msgstr ""
+
+msgid "Source code"
+msgstr ""
+
+msgid "Matrix room"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Welcome on {}"
+msgstr ""
+
+msgid "Latest articles"
+msgstr ""
+
+msgid "Your feed"
+msgstr ""
+
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Administration of {0}"
+msgstr ""
+
+msgid "Instances"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Ban"
+msgstr ""
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+msgid "Articles from {}"
+msgstr ""
+
+msgid "Nothing to see here yet. Try to subscribe to more people."
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Name"
+msgstr ""
+
+# src/template_utils.rs:146
+msgid "Optional"
+msgstr ""
+
+msgid "Allow anyone to register here"
+msgstr ""
+
+msgid "Short description - byline"
+msgstr ""
+
+msgid "Markdown syntax is supported"
+msgstr ""
+
+msgid "Long description"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Default article license"
+msgstr ""
+
+msgid "Save these settings"
+msgstr ""
+
+msgid "About {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> users"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And connected to <em>{0}</em> other instances"
+msgstr ""
+
+msgid "Administred by"
+msgstr ""
+
+msgid "Runs Plume {0}"
+msgstr ""
+
+msgid "Edit your account"
+msgstr ""
+
+msgid "Your Profile"
+msgstr ""
+
+msgid "To change your avatar, upload it in your gallery and select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Display name"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Email"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Summary"
+msgstr ""
+
+msgid "Update account"
+msgstr ""
+
+msgid "Danger zone"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+
+msgid "Delete your account"
+msgstr ""
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+
+msgid "Your Dashboard"
+msgstr ""
+
+msgid "Your Blogs"
+msgstr ""
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+
+msgid "Start a new blog"
+msgstr ""
+
+msgid "Your Drafts"
+msgstr ""
+
+msgid "Your media"
+msgstr ""
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "Create your account"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Username"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Password confirmation"
+msgstr ""
+
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr ""
+
+msgid "Articles"
+msgstr ""
+
+msgid "Subscribers"
+msgstr ""
+
+msgid "Subscriptions"
+msgstr ""
+
+msgid "Atom feed"
+msgstr ""
+
+msgid "Recently boosted"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr ""
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "{0}'s subscriptions'"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Respond"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage various blogs from an unique website."
+msgstr ""
+
+msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "View all"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Your query"
+msgstr ""
+
+msgid "Advanced search"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Article title matching these words"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Subtitle matching these words"
+msgstr ""
+
+msgid "Subtitle - byline"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Content matching these words"
+msgstr ""
+
+msgid "Body content"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "From this date"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "To this date"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Containing these tags"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Posted on one of these instances"
+msgstr ""
+
+msgid "Instance domain"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Posted by one of these authors"
+msgstr ""
+
+msgid "Authors"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Posted on one of these blogs"
+msgstr ""
+
+msgid "Blog title"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Written in this language"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+# src/template_utils.rs:185
+msgid "Published under this license"
+msgstr ""
+
+msgid "Article license"
+msgstr ""
+
+msgid "Search result for \"{0}\""
+msgstr ""
+
+msgid "Search result"
+msgstr ""
+
+msgid "No result for your query"
+msgstr ""
+
+msgid "No more result for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "New password"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "E-mail"
+msgstr ""
+
+msgid "Send reset link"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Username or email"
+msgstr ""
+
+msgid "Publish"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Subtitle"
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
+msgstr ""
+
+msgid "Upload media"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Tags, separated by commas"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "License"
+msgstr ""
+
+# src/template_utils.rs:148
+msgid "Leave it empty to reserve all rights"
+msgstr ""
+
+msgid "Illustration"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "This is a draft, don't publish it yet."
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Update, or publish"
+msgstr ""
+
+msgid "Publish your post"
+msgstr ""
+
+msgid "Written by {0}"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete this article"
+msgstr ""
+
+msgid "All rights reserved."
+msgstr ""
+
+msgid "This article is under the {0} license."
+msgstr ""
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't like this anymore"
+msgstr ""
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One boost"
+msgid_plural "{0} boost"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't want to boost this anymore"
+msgstr ""
+
+msgid "Boost"
+msgstr ""
+
+msgid "Login or use your Fediverse account to interact with this article"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+# src/template_utils.rs:144
+msgid "Content warning"
+msgstr ""
+
+msgid "Your comment"
+msgstr ""
+
+msgid "Submit comment"
+msgstr ""
+
+msgid "No comments yet. Be the first to react!"
+msgstr ""
+
+msgid "Invalid CSRF token"
+msgstr ""
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "New Blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "There's one article on this blog"
+msgid_plural "There are {0} articles on this blog"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "New article"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+msgid "Articles tagged \"{0}\""
+msgstr ""
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Content warning: {0}"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Media upload"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr ""
+
+msgid "Leave it empty, if none is needed"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
+msgid "Media details"
+msgstr ""
+
+msgid "Go back to the gallery"
+msgstr ""
+
+msgid "Markdown syntax"
+msgstr ""
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr ""
+
+msgid "Use as avatar"
+msgstr ""
+
+msgid "Login to boost"
+msgstr ""
+
+msgid "Login to like"
+msgstr ""
+
