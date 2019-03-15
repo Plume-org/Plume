@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 13:42\n"
+"PO-Revision-Date: 2019-03-15 15:16\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:34
 msgid "{0} commented your article."
-msgstr ""
+msgstr "{0} commented on your article."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
@@ -66,7 +66,7 @@ msgstr ""
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "You are not an author of this blog."
 
 # src/routes/posts.rs:119
 msgid "New post"
@@ -511,6 +511,9 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Username or email"
+msgstr ""
+
+msgid "Publish"
 msgstr ""
 
 # src/template_utils.rs:144
