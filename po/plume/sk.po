@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 21:04\n"
+"PO-Revision-Date: 2019-03-15 21:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -38,23 +38,23 @@ msgstr "{0} povýšil/a tvoj článok."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "Maskot užívateľa {0}"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak chceš vytvoriť nový blog"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Nemáš povolenie vymazať tento blog."
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak si chceš obľúbiť príspevok"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak chceš vidieť oboznámenia, ktoré sú pre teba"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
@@ -539,7 +539,7 @@ msgstr ""
 
 # src/template_utils.rs:148
 msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "Ponechaj políčko prázdne, pre vyhradenie všetkých práv"
 
 msgid "Illustration"
 msgstr ""
@@ -569,7 +569,7 @@ msgid "Delete this article"
 msgstr "Vymaž tento článok"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Všetky práva vyhradné."
 
 msgid "This article is under the {0} license."
 msgstr ""
