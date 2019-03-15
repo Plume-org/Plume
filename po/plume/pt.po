@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:16\n"
+"PO-Revision-Date: 2019-03-15 15:45\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -30,7 +30,7 @@ msgstr ""
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} mencionou você."
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Você precisa estar logado para criar um novo blog"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
@@ -50,31 +50,31 @@ msgstr ""
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "Você precisa estar logado para gostar de um post"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Você precisa estar logado para ver suas notificações"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Este artigo ainda não foi publicado."
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
-msgstr ""
+msgstr "Você precisa estar logado para escrever um novo artigo"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "Você não é autor neste blog."
 
 # src/routes/posts.rs:119
 msgid "New post"
-msgstr ""
+msgstr "Novo artigo"
 
 # src/routes/posts.rs:156
 msgid "Edit {0}"
-msgstr ""
+msgstr "Mudar {0}"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
@@ -98,7 +98,7 @@ msgstr ""
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "Você precisa estar autenticado para acessar seu painel de controle"
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
@@ -106,7 +106,7 @@ msgstr ""
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Você precisa estar autenticado para editar seu perfil"
 
 msgid "Plume"
 msgstr ""
@@ -118,73 +118,73 @@ msgid "Search"
 msgstr ""
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Painel de controlo"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notificações"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Sair"
 
 msgid "My account"
-msgstr ""
+msgstr "A minha conta"
 
 msgid "Log In"
-msgstr ""
+msgstr "Entrar"
 
 msgid "Register"
-msgstr ""
+msgstr "Registrar"
 
 msgid "About this instance"
-msgstr ""
+msgstr "Sobre esta instância"
 
 msgid "Source code"
 msgstr ""
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Sala Matrix"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administração"
 
 msgid "Welcome on {}"
 msgstr ""
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Artigos recentes"
 
 msgid "Your feed"
-msgstr ""
+msgstr "Seu feed"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Feed federado"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Feed local"
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Administração de {0}"
 
 msgid "Instances"
-msgstr ""
+msgstr "Instâncias"
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuração"
 
 msgid "Users"
-msgstr ""
+msgstr "Usuários"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Desbloquear"
 
 msgid "Block"
-msgstr ""
+msgstr "Bloquear"
 
 msgid "Ban"
-msgstr ""
+msgstr "Expulsar"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Todos os artigos do Fediverse"
 
 msgid "Articles from {}"
 msgstr ""
@@ -194,11 +194,11 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 # src/template_utils.rs:146
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 msgid "Allow anyone to register here"
 msgstr ""
@@ -210,7 +210,7 @@ msgid "Markdown syntax is supported"
 msgstr ""
 
 msgid "Long description"
-msgstr ""
+msgstr "Descrição longa"
 
 # src/template_utils.rs:144
 msgid "Default article license"
@@ -220,28 +220,28 @@ msgid "Save these settings"
 msgstr ""
 
 msgid "About {0}"
-msgstr ""
+msgstr "Sobre {0}"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "Acolhe <em>{0}</em> pessoas"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "Quem escreveu <em>{0}</em> artigos"
 
 msgid "And connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "E está conectado a <em>{0}</em> outras instâncias"
 
 msgid "Administred by"
-msgstr ""
+msgstr "Administrado por"
 
 msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Editar sua conta"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Seu Perfil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
@@ -259,67 +259,67 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Summary"
-msgstr ""
+msgstr "Sumário"
 
 msgid "Update account"
-msgstr ""
+msgstr "Atualizar conta"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Zona de risco"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Cuidado, qualquer acção tomada aqui não pode ser anulada."
 
 msgid "Delete your account"
-msgstr ""
+msgstr "Suprimir sua conta"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "Seu Painel de Controle"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Seus Blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "Iniciar um novo blog"
 
 msgid "Your Drafts"
-msgstr ""
+msgstr "Os seus rascunhos"
 
 msgid "Your media"
-msgstr ""
+msgstr "Sua mídia"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Ir para a sua galeria"
 
 msgid "Create your account"
-msgstr ""
+msgstr "Criar a sua conta"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Criar uma conta"
 
 # src/template_utils.rs:144
 msgid "Username"
-msgstr ""
+msgstr "Nome de utilizador"
 
 # src/template_utils.rs:144
 msgid "Password"
-msgstr ""
+msgstr "Senha"
 
 # src/template_utils.rs:144
 msgid "Password confirmation"
-msgstr ""
+msgstr "Confirmação de senha"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "Artigos"
 
 msgid "Subscribers"
 msgstr ""
@@ -331,19 +331,19 @@ msgid "Atom feed"
 msgstr ""
 
 msgid "Recently boosted"
-msgstr ""
+msgstr "Recentemente partilhado"
 
 msgid "Admin"
-msgstr ""
+msgstr "Administrador"
 
 msgid "It is you"
-msgstr ""
+msgstr "É você"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Editar o seu perfil"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Abrir em {0}"
 
 msgid "Unsubscribe"
 msgstr ""
@@ -358,37 +358,37 @@ msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
-msgstr ""
+msgstr "Responder"
 
 msgid "Delete this comment"
 msgstr ""
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "O que é Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume é um motor de blogs descentralizado."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "Os autores podem gerenciar vários blogs a partir de um único site."
 
 msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Os artigos também são visíveis em outros sites Plume, e você pode interagir com eles diretamente de outras plataformas como Mastodon."
 
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Leia as regras detalhadas"
 
 msgid "View all"
-msgstr ""
+msgstr "Ver tudo"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Por {0}"
 
 msgid "Draft"
-msgstr ""
+msgstr "Rascunho"
 
 msgid "Your query"
 msgstr ""
@@ -401,7 +401,7 @@ msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 # src/template_utils.rs:185
 msgid "Subtitle matching these words"
@@ -507,21 +507,21 @@ msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
-msgstr ""
+msgstr "Entrar"
 
 # src/template_utils.rs:144
 msgid "Username or email"
-msgstr ""
+msgstr "Nome de usuário ou e-mail"
 
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
 # src/template_utils.rs:144
 msgid "Subtitle"
-msgstr ""
+msgstr "Subtítulo"
 
 msgid "Content"
-msgstr ""
+msgstr "Conteúdo"
 
 msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
 msgstr ""
@@ -542,16 +542,16 @@ msgid "Leave it empty to reserve all rights"
 msgstr ""
 
 msgid "Illustration"
-msgstr ""
+msgstr "Ilustração"
 
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "Este artigo é um rascunho, será publicado mais tarde."
 
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 msgid "Update, or publish"
 msgstr ""
@@ -560,30 +560,30 @@ msgid "Publish your post"
 msgstr ""
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Escrito por {0}"
 
 msgid "Edit"
-msgstr ""
+msgstr "Mudar"
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Suprimir este artigo"
 
 msgid "All rights reserved."
 msgstr ""
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Este artigo está sob a licença {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Uma pessoa gosta"
+msgstr[1] "{0} pessoas gostam"
 
 msgid "I don't like this anymore"
 msgstr ""
 
 msgid "Add yours"
-msgstr ""
+msgstr "Eu gosto"
 
 msgid "One boost"
 msgid_plural "{0} boost"
@@ -597,23 +597,23 @@ msgid "Boost"
 msgstr ""
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Faça login ou use sua conta Fediverse para interagir com este artigo"
 
 msgid "Comments"
-msgstr ""
+msgstr "Comentários"
 
 # src/template_utils.rs:144
 msgid "Content warning"
-msgstr ""
+msgstr "Alerta de conteúdo"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Seu comentário"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Submeter comentário"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Nenhum comentário ainda. Seja o primeiro a reagir!"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -625,10 +625,10 @@ msgid "Page not found"
 msgstr ""
 
 msgid "We couldn't find this page."
-msgstr ""
+msgstr "Não conseguimos encontrar esta página."
 
 msgid "The link that led you here may be broken."
-msgstr ""
+msgstr "Provavelmente seguiu uma ligação quebrada."
 
 msgid "The content you sent can't be processed."
 msgstr ""
@@ -637,25 +637,25 @@ msgid "Maybe it was too long."
 msgstr ""
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Você não está autorizado."
 
 msgid "Internal server error"
 msgstr ""
 
 msgid "Something broke on our side."
-msgstr ""
+msgstr "Algo partiu-se do nosso lado."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
+msgstr "Desculpa por isso. Se você acha que isso é um bug, por favor, relate-o."
 
 msgid "New Blog"
 msgstr ""
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Criar um blog"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Criar o blog"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -668,10 +668,10 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Ainda não há posts para ver."
 
 msgid "New article"
-msgstr ""
+msgstr "Novo artigo"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
@@ -680,31 +680,31 @@ msgid "Permanently delete this blog"
 msgstr ""
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Artigos marcados com \"{0}\""
 
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
 msgid "Upload"
-msgstr ""
+msgstr "Carregar"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Você ainda não tem nenhuma mídia."
 
 msgid "Content warning: {0}"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Suprimir"
 
 msgid "Details"
 msgstr ""
 
 msgid "Media upload"
-msgstr ""
+msgstr "Carregamento de mídia"
 
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
@@ -713,16 +713,16 @@ msgid "Leave it empty, if none is needed"
 msgstr ""
 
 msgid "File"
-msgstr ""
+msgstr "Ficheiro"
 
 msgid "Send"
-msgstr ""
+msgstr "Mandar"
 
 msgid "Media details"
-msgstr ""
+msgstr "Detalhes da mídia"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Voltar para a galeria"
 
 msgid "Markdown syntax"
 msgstr ""
@@ -731,7 +731,7 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Utilizar como avatar"
 
 msgid "Login to boost"
 msgstr ""
