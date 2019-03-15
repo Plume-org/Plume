@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 16:47\n"
+"PO-Revision-Date: 2019-03-15 18:25\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -58,7 +58,7 @@ msgstr "Necesitas iniciar sesión para ver tus notificaciones"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Esta publicación aún no está publicada."
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
@@ -66,7 +66,7 @@ msgstr "Necesitas iniciar sesión para publicar una publicación"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "No eres autor en este blog."
 
 # src/routes/posts.rs:119
 msgid "New post"
@@ -74,35 +74,35 @@ msgstr "Nueva publicación"
 
 # src/routes/posts.rs:156
 msgid "Edit {0}"
-msgstr ""
+msgstr "Editar {0}"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Necesitas estar conectado para republicar un mensaje"
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "Reiniciar contraseña"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Aquí está el enlace para restablecer tu contraseña: {0}"
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Su contraseña se ha restablecido correctamente."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Lo sentimos, pero el enlace expiró. Inténtalo de nuevo"
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "Necesitas estar conectado para acceder a tu panel de control"
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
-msgstr ""
+msgstr "Necesitas estar conectado para suscribirte a alguien"
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
