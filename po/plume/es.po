@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 18:25\n"
+"PO-Revision-Date: 2019-03-15 21:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -46,7 +46,7 @@ msgstr "Necesitas iniciar sesión para crear un nuevo blog"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "No está autorizado a eliminar este registro."
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
@@ -109,7 +109,7 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Necesitas iniciar sesión para poder editar tu peril"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "Menú"
@@ -118,7 +118,7 @@ msgid "Search"
 msgstr ""
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Panel"
 
 msgid "Notifications"
 msgstr "Notificaciones"
@@ -136,61 +136,61 @@ msgid "Register"
 msgstr "Registrar"
 
 msgid "About this instance"
-msgstr ""
+msgstr "Acerca de esta instancia"
 
 msgid "Source code"
-msgstr ""
+msgstr "Código fuente"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Sala de matriz"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administración"
 
 msgid "Welcome on {}"
-msgstr ""
+msgstr "Bienvenid@ a {}"
 
 msgid "Latest articles"
 msgstr "Últimas publicaciones"
 
 msgid "Your feed"
-msgstr ""
+msgstr "Tu Feed"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Feed federada"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Feed local"
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Administración de {0}"
 
 msgid "Instances"
-msgstr ""
+msgstr "Instancias"
 
 msgid "Configuration"
 msgstr "Configuración"
 
 msgid "Users"
-msgstr ""
+msgstr "Usuarios"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Desbloquear"
 
 msgid "Block"
-msgstr ""
+msgstr "Bloquear"
 
 msgid "Ban"
-msgstr ""
+msgstr "Banear"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Todos los artículos de la Fediverse"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Artículos de {}"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
-msgstr ""
+msgstr "Nada que ver aquí aún. Intenta suscribirte a más personas."
 
 # src/template_utils.rs:144
 msgid "Name"
@@ -198,41 +198,41 @@ msgstr "Nombre"
 
 # src/template_utils.rs:146
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Permite a cualquiera registrarse aquí"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "Una breve descripción - pie de autor"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Se puede utilizar la sintaxis Markdown"
 
 msgid "Long description"
-msgstr ""
+msgstr "Descripción larga"
 
 # src/template_utils.rs:144
 msgid "Default article license"
-msgstr ""
+msgstr "Licencia del artículo por defecto"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Guardar estos ajustes"
 
 msgid "About {0}"
-msgstr ""
+msgstr "Acerca de {0}"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "Hogar a <em>{0}</em> usuarios"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "Que escribieron <em>{0}</em> artículos"
 
 msgid "And connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "Y conectaron con <em>{0}</em> otras instancias"
 
 msgid "Administred by"
-msgstr ""
+msgstr "Administrado por"
 
 msgid "Runs Plume {0}"
 msgstr ""
@@ -244,10 +244,10 @@ msgid "Your Profile"
 msgstr "Tu perfil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
-msgstr ""
+msgstr "Para cambiar tu avatar, súbelo a tu galería y selecciona de ahí."
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "Subir un avatar"
 
 # src/template_utils.rs:144
 msgid "Display name"
@@ -265,19 +265,19 @@ msgid "Update account"
 msgstr "Actualizar cuenta"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Zona de peligro"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Tenga mucho cuidado, cualquier acción tomada aquí es irreversible."
 
 msgid "Delete your account"
-msgstr ""
+msgstr "Eliminar tu cuenta"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "Lo sentimos, pero como un administrador, no puede dejar su propia instancia."
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "Tu Tablero"
 
 msgid "Your Blogs"
 msgstr "Tus blogs"
