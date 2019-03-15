@@ -3,16 +3,18 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2018-12-14 12:48+0000\n"
-"Last-Translator: Marek Ľach <mareklach@outlook.com>\n"
-"Language-Team: English <https://translate.funkwhale.audio/projects/plume/"
-"Plume/en/>\n"
-"Language: en\n"
+"PO-Revision-Date: 2019-03-15 13:42\n"
+"Last-Translator: AnaGelez <ana@gelez.xyz>\n"
+"Language-Team: English\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.2.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: plume\n"
+"X-Crowdin-Language: en\n"
+"X-Crowdin-File: /master/po/plume/plume.pot\n"
 
 # src/template_utils.rs:34
 msgid "{0} commented your article."
@@ -38,11 +40,11 @@ msgstr ""
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:65
+# src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:136
+# src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
@@ -78,36 +80,36 @@ msgstr ""
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
-# src/routes/session.rs:147
+# src/routes/session.rs:161
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:156
+# src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:199
+# src/routes/session.rs:222
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:214
+# src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:131
+# src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
-# src/routes/user.rs:164
+# src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
-# src/routes/user.rs:227
+# src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
 msgid "Plume"
-msgstr "Plume"
+msgstr ""
 
 msgid "Menu"
 msgstr ""
@@ -313,9 +315,7 @@ msgstr ""
 msgid "Password confirmation"
 msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "Articles"
@@ -372,9 +372,7 @@ msgstr ""
 msgid "Authors can manage various blogs from an unique website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Home to <em>{0}</em> people"
@@ -498,9 +496,7 @@ msgstr ""
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -524,9 +520,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -579,8 +573,8 @@ msgstr ""
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] "One like"
-msgstr[1] "{0} likes"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "I don't like this anymore"
 msgstr ""
@@ -621,10 +615,7 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
 
 msgid "Page not found"
@@ -739,22 +730,9 @@ msgstr ""
 msgid "Use as avatar"
 msgstr ""
 
-#~ msgid "One Boost"
-#~ msgid_plural "{0} Boosts"
-#~ msgstr[0] "One boost"
-#~ msgstr[1] "{0} boosts"
+msgid "Login to boost"
+msgstr ""
 
-#~ msgid "One follower"
-#~ msgid_plural "{0} followers"
-#~ msgstr[0] "One follower"
-#~ msgstr[1] "{0} followers"
+msgid "Login to like"
+msgstr ""
 
-#~ msgid "One author in this blog: "
-#~ msgid_plural "{0} authors in this blog: "
-#~ msgstr[0] "This blog has one author "
-#~ msgstr[1] "There are {0} authors on this blog "
-
-#~ msgid "One article in this blog"
-#~ msgid_plural "{0} articles in this blog"
-#~ msgstr[0] "This blog has one article"
-#~ msgstr[1] "This blog has {0} articles"
