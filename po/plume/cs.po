@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:16\n"
+"PO-Revision-Date: 2019-03-15 15:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -26,7 +26,7 @@ msgstr "{0} vás odebírá."
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} si oblíbil/a váš článek."
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
@@ -82,7 +82,7 @@ msgstr ""
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "Obnovit heslo"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
@@ -112,46 +112,46 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Nabídka"
 
 msgid "Search"
-msgstr ""
+msgstr "Hledat"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Nástěnka"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Oznámení"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Odhlásit se"
 
 msgid "My account"
-msgstr ""
+msgstr "Můj účet"
 
 msgid "Log In"
-msgstr ""
+msgstr "Přihlásit se"
 
 msgid "Register"
-msgstr ""
+msgstr "Vytvořit účet"
 
 msgid "About this instance"
 msgstr ""
 
 msgid "Source code"
-msgstr ""
+msgstr "Zdrojový kód"
 
 msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Správa"
 
 msgid "Welcome on {}"
 msgstr ""
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Nejposlednejší články"
 
 msgid "Your feed"
 msgstr ""
@@ -163,25 +163,25 @@ msgid "Local feed"
 msgstr ""
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Správa {0}"
 
 msgid "Instances"
-msgstr ""
+msgstr "Instance"
 
 msgid "Configuration"
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
 msgid "Unblock"
 msgstr ""
 
 msgid "Block"
-msgstr ""
+msgstr "Blokovat"
 
 msgid "Ban"
-msgstr ""
+msgstr "Zakázat"
 
 msgid "All the articles of the Fediverse"
 msgstr ""
@@ -198,10 +198,10 @@ msgstr ""
 
 # src/template_utils.rs:146
 msgid "Optional"
-msgstr ""
+msgstr "Nepovinné"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Povolit komukoli se zde zaregistrovat"
 
 msgid "Short description - byline"
 msgstr ""
