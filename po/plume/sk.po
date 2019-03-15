@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 20:14\n"
+"PO-Revision-Date: 2019-03-15 21:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -22,7 +22,7 @@ msgstr "{0} komentoval/a tvoj článok."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} odoberá tvoje príspevky."
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
@@ -106,7 +106,7 @@ msgstr ""
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak chceš upraviť svoj profil"
 
 msgid "Plume"
 msgstr ""
@@ -142,7 +142,7 @@ msgid "Source code"
 msgstr "Zdrojový kód"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Matrix miestnosť"
 
 msgid "Administration"
 msgstr "Administrácia"
@@ -210,7 +210,7 @@ msgid "Markdown syntax is supported"
 msgstr "Markdown syntaxia je podporovaná"
 
 msgid "Long description"
-msgstr ""
+msgstr "Dlhý opis"
 
 # src/template_utils.rs:144
 msgid "Default article license"
@@ -262,13 +262,13 @@ msgid "Summary"
 msgstr "Súhrn"
 
 msgid "Update account"
-msgstr ""
+msgstr "Aktualizuj účet"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Riziková zóna"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné vziať späť."
 
 msgid "Delete your account"
 msgstr ""
@@ -334,13 +334,13 @@ msgid "Recently boosted"
 msgstr "Nedávno povýšené"
 
 msgid "Admin"
-msgstr ""
+msgstr "Správca"
 
 msgid "It is you"
 msgstr "Toto si ty"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Uprav svoj profil"
 
 msgid "Open on {0}"
 msgstr "Otvor na {0}"
@@ -355,7 +355,7 @@ msgid "{0}'s subscriptions'"
 msgstr ""
 
 msgid "{0}'s subscribers"
-msgstr ""
+msgstr "Odberatelia obsahu od {0}"
 
 msgid "Respond"
 msgstr "Odpovedz"
@@ -376,7 +376,7 @@ msgid "Articles are also visible on other Plume websites, and you can interact w
 msgstr "Články sú tiež viditeľné na iných Plume instanciách a môžeš s nimi interaktovať komunikovať priamo aj z iných federovaných platforiem, ako napríklad Mastodon."
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "Domov pre <em>{0}</em> ľudí"
 
 msgid "Read the detailed rules"
 msgstr "Prečítaj si podrobné pravidlá"
@@ -391,7 +391,7 @@ msgid "Draft"
 msgstr "Koncept"
 
 msgid "Your query"
-msgstr ""
+msgstr "Tvoje zadanie"
 
 msgid "Advanced search"
 msgstr "Pokročilé vyhľadávanie"
@@ -434,64 +434,64 @@ msgstr "Tagy"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these instances"
-msgstr ""
+msgstr "Uverejnené na jednej z týchto instancií"
 
 msgid "Instance domain"
-msgstr ""
+msgstr "Doména instancie"
 
 # src/template_utils.rs:185
 msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "Autori"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these blogs"
-msgstr ""
+msgstr "Uverejnené na jednom z týchto blogov"
 
 msgid "Blog title"
-msgstr ""
+msgstr "Názov blogu"
 
 # src/template_utils.rs:185
 msgid "Written in this language"
-msgstr ""
+msgstr "Písané v tomto jazyku"
 
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
 # src/template_utils.rs:185
 msgid "Published under this license"
-msgstr ""
+msgstr "Uverejnené pod touto licenciou"
 
 msgid "Article license"
 msgstr ""
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Výsledok hľadania pre \"{0}\""
 
 msgid "Search result"
-msgstr ""
+msgstr "Výsledok hľadania"
 
 msgid "No result for your query"
-msgstr ""
+msgstr "Žiadny výsledok pre tvoje zadanie"
 
 msgid "No more result for your query"
 msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Obnov svoje heslo"
 
 # src/template_utils.rs:144
 msgid "New password"
-msgstr ""
+msgstr "Nové heslo"
 
 # src/template_utils.rs:144
 msgid "Confirmation"
-msgstr ""
+msgstr "Potvrdenie"
 
 msgid "Update password"
-msgstr ""
+msgstr "Aktualizovať heslo"
 
 msgid "Check your inbox!"
 msgstr ""
@@ -566,7 +566,7 @@ msgid "Edit"
 msgstr "Uprav"
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Vymaž tento článok"
 
 msgid "All rights reserved."
 msgstr ""
