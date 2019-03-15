@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 20:14\n"
+"PO-Revision-Date: 2019-03-15 21:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "You need to be logged in for you to create a new blog"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
@@ -78,7 +78,7 @@ msgstr ""
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "You need to be logged in for you to reshare a post"
 
 # src/routes/session.rs:161
 msgid "Password reset"
@@ -98,15 +98,15 @@ msgstr ""
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "You need to be logged in for you to access your dashboard"
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
-msgstr ""
+msgstr "You need to be logged in for you to subscribe to someone"
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "You need to be logged in for you to edit your profile"
 
 msgid "Plume"
 msgstr ""
