@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-03-15 15:52\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -30,19 +30,19 @@ msgstr "Écrivez votre article ici. Vous pouvez utiliser du Markdown."
 
 # plume-front/src/editor.rs:113
 msgid "Around {} characters left"
-msgstr ""
+msgstr "Environ {} caractères restant"
 
 # plume-front/src/editor.rs:143
 msgid "Tags"
-msgstr ""
+msgstr "Étiquettes"
 
 # plume-front/src/editor.rs:144
 msgid "License"
-msgstr ""
+msgstr "Licence"
 
 # plume-front/src/editor.rs:147
 msgid "Cover"
-msgstr ""
+msgstr "Illustration"
 
 # plume-front/src/editor.rs:157
 msgid "Publish"
