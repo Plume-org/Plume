@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 21:54\n"
+"PO-Revision-Date: 2019-03-15 23:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -78,7 +78,7 @@ msgstr "Uprav {0}"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak chceš zdieľať príspevok"
 
 # src/routes/session.rs:161
 msgid "Password reset"
@@ -94,15 +94,15 @@ msgstr "Tvoje heslo bolo úspešne zmenené."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Prepáč, ale tento odkaz už expiroval. Skús to znova"
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, aby si sa dostal/a k svojej nástenke"
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak chceš odoberať niekoho príspevky"
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
@@ -572,7 +572,7 @@ msgid "All rights reserved."
 msgstr "Všetky práva vyhradné."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Tento článok je publikovaný pod licenciou {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
