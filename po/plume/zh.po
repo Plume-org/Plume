@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 13:42\n"
+"PO-Revision-Date: 2019-03-15 15:16\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
-"Language-Team: Chinese Traditional\n"
-"Language: zh_TW\n"
+"Language-Team: Chinese Simplified\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
-"X-Crowdin-Language: zh-TW\n"
+"X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
 # src/template_utils.rs:34
@@ -511,6 +511,9 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Username or email"
+msgstr ""
+
+msgid "Publish"
 msgstr ""
 
 # src/template_utils.rs:144
