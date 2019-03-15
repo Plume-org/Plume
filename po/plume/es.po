@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 21:04\n"
+"PO-Revision-Date: 2019-03-15 21:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -283,22 +283,22 @@ msgid "Your Blogs"
 msgstr "Tus blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Aún no tienes blog. Crea uno propio o pide unirte a uno."
 
 msgid "Start a new blog"
 msgstr "Iniciar un nuevo blog"
 
 msgid "Your Drafts"
-msgstr ""
+msgstr "Tus borradores"
 
 msgid "Your media"
 msgstr ""
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Ir a tu galería"
 
 msgid "Create your account"
-msgstr ""
+msgstr "Crea tu cuenta"
 
 msgid "Create an account"
 msgstr "Crear una cuenta"
@@ -316,13 +316,13 @@ msgid "Password confirmation"
 msgstr "Confirmación de contraseña"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
+msgstr "Lo sentimos, pero las inscripciones están cerradas en esta instancia. Sin embargo, puede encontrar una instancia distinta."
 
 msgid "Articles"
-msgstr ""
+msgstr "Artículos"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Suscriptores"
 
 msgid "Subscriptions"
 msgstr ""
@@ -491,10 +491,10 @@ msgid "Confirmation"
 msgstr ""
 
 msgid "Update password"
-msgstr ""
+msgstr "Actualizar contraseña"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Revise su bandeja de entrada!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
