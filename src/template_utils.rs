@@ -5,6 +5,8 @@ use templates::Html;
 
 pub use askama_escape::escape;
 
+pub static CACHE_NAME: &str = env!("CACHE_ID");
+
 pub type BaseContext<'a> = &'a(&'a Connection, &'a Catalog, Option<User>);
 
 pub type Ructe = Content<Vec<u8>>;

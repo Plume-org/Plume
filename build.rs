@@ -1,3 +1,4 @@
+extern crate plume_common;
 extern crate ructe;
 extern crate rsass;
 use ructe::*;
@@ -16,8 +17,11 @@ fn main() {
             .expect("Error during SCSS compilation")
     ).expect("Couldn't write CSS output");
 
+    let cache_id = plume_common::utils::random_hex();
     println!("cargo:rerun-if-changed=target/deploy/plume-front.wasm");
     copy("target/deploy/plume-front.wasm", "static/plume-front.wasm")
         .and_then(|_| read_to_string("target/deploy/plume-front.js"))
-        .and_then(|js| write("static/plume-front.js", js.replace("\"plume-front.wasm\"", "\"/static/plume-front.wasm\""))).ok();
+        .and_then(|js| write("static/plume-front.js", js.replace("\"plume-front.wasm\"", &format!("\"/static/cached/{}/plume-front.wasm\"", cache_id)))).ok();
+
+    println!("cargo:rustc-env=CACHE_ID={}", cache_id)
 }

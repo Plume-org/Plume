@@ -189,6 +189,7 @@ Then try to restart Plume.
             routes::session::password_reset_form,
             routes::session::password_reset,
 
+            routes::plume_static_files,
             routes::static_files,
 
             routes::tags::tag,
