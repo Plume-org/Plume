@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-03-15 16:47\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -18,27 +18,27 @@ msgstr ""
 
 # src/template_utils.rs:34
 msgid "{0} commented your article."
-msgstr ""
+msgstr "{0} ha comentado tu articulo."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} esta suscrito a tí."
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
-msgstr ""
+msgstr "A {0} le gustó tu artículo."
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} te ha mencionado."
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} impulsó tu artículo."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "Avatar de {0}"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
