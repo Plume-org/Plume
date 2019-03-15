@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:16\n"
+"PO-Revision-Date: 2019-03-15 15:46\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -514,7 +514,7 @@ msgid "Username or email"
 msgstr "Nombre de usuario o correo electrónico"
 
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
 # src/template_utils.rs:144
 msgid "Subtitle"
