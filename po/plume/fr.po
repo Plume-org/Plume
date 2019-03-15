@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-03-15 15:52\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} a aimé votre article."
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
@@ -34,27 +34,27 @@ msgstr "{0} vous a mentionné."
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} a boosté votre article."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "Avatar de {0}"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Vous devez vous connecter pour créer un nouveau blog"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Vous n'êtes pas autorisé⋅e à supprimer ce blog."
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "Vous devez vous connecter pour aimer un article"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "Vous devez vous connecter pour voir vos notifications"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
