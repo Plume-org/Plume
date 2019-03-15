@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:59\n"
+"PO-Revision-Date: 2019-03-15 19:14\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:34
 msgid "{0} commented your article."
-msgstr ""
+msgstr "{0} komentoval/a tvoj článok."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
@@ -26,15 +26,15 @@ msgstr ""
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} si obľúbil/a tvoj článok."
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} sa o tebe zmienil/a."
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} povýšil/a tvoj článok."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
@@ -58,23 +58,23 @@ msgstr ""
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Tento príspevok ešte nie je uverejnený."
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
-msgstr ""
+msgstr "Musíš byť prihlásený/á, ak chceš napísať nový príspevok"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "Nie si autorom tohto blogu."
 
 # src/routes/posts.rs:119
 msgid "New post"
-msgstr ""
+msgstr "Nový príspevok"
 
 # src/routes/posts.rs:156
 msgid "Edit {0}"
-msgstr ""
+msgstr "Uprav {0}"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
@@ -82,15 +82,15 @@ msgstr ""
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "Obnovenie hesla"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Tu je odkaz na obnovenie tvojho hesla: {0}"
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Tvoje heslo bolo úspešne zmenené."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
@@ -112,46 +112,46 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Ponuka"
 
 msgid "Search"
-msgstr ""
+msgstr "Vyhľadávanie"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Nástenka"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Oznámenia"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Odhlás sa"
 
 msgid "My account"
-msgstr ""
+msgstr "Môj účet"
 
 msgid "Log In"
-msgstr ""
+msgstr "Prihlás sa"
 
 msgid "Register"
-msgstr ""
+msgstr "Registrácia"
 
 msgid "About this instance"
-msgstr ""
+msgstr "O tejto instancii"
 
 msgid "Source code"
-msgstr ""
+msgstr "Zdrojový kód"
 
 msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Administrácia"
 
 msgid "Welcome on {}"
-msgstr ""
+msgstr "Vitaj na {}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Najnovšie články"
 
 msgid "Your feed"
 msgstr ""
@@ -169,25 +169,25 @@ msgid "Instances"
 msgstr ""
 
 msgid "Configuration"
-msgstr ""
+msgstr "Nastavenia"
 
 msgid "Users"
-msgstr ""
+msgstr "Užívatelia"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokuj"
 
 msgid "Block"
-msgstr ""
+msgstr "Blokuj"
 
 msgid "Ban"
-msgstr ""
+msgstr "Zakáž"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Všetky články vo Fediverse"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Články od {}"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
@@ -198,16 +198,16 @@ msgstr ""
 
 # src/template_utils.rs:146
 msgid "Optional"
-msgstr ""
+msgstr "Volitelné/Nepovinný údaj"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Umožni komukoľvek sa tu zaregistrovať"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "Stručný popis"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Markdown syntaxia je podporovaná"
 
 msgid "Long description"
 msgstr ""
@@ -217,16 +217,16 @@ msgid "Default article license"
 msgstr ""
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Ulož tieto nastavenia"
 
 msgid "About {0}"
-msgstr ""
+msgstr "O {0}"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "Domovom pre <em>{0}</em> užívateľov"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "Ktorí napísal <em>{0}</em> článkov"
 
 msgid "And connected to <em>{0}</em> other instances"
 msgstr ""
