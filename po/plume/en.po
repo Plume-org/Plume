@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:34\n"
+"PO-Revision-Date: 2019-03-15 15:46\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -50,11 +50,11 @@ msgstr ""
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
-msgstr ""
+msgstr "You need to be logged in to like a post"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr ""
+msgstr "You need to be logged in to see your notifications"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
@@ -62,7 +62,7 @@ msgstr ""
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
-msgstr "You need to be logged in, to write a new post"
+msgstr "You need to be logged in to write a new post"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
