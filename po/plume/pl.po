@@ -507,6 +507,9 @@ msgstr "Zaloguj się"
 msgid "Username or email"
 msgstr "Nazwa użytkownika lub adres e-mail"
 
+msgid "Publish"
+msgstr "Opublikuj"
+
 msgid "Subtitle"
 msgstr "Podtytuł"
 
@@ -846,9 +849,6 @@ msgstr "Użyj jako awataru"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Przejdźmy dalej!"
-
-#~ msgid "Publish"
-#~ msgstr "Opublikuj"
 
 #~ msgid "New Account"
 #~ msgstr "Nowe konto"

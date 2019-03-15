@@ -542,6 +542,9 @@ msgstr ""
 msgid "Username or email"
 msgstr "Nutzername oder E-Mail"
 
+msgid "Publish"
+msgstr "Veröffentlichen"
+
 msgid "Subtitle"
 msgstr "Untertitel"
 
@@ -900,9 +903,6 @@ msgstr "Als Avatar verwenden"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Los geht's!"
-
-#~ msgid "Publish"
-#~ msgstr "Veröffentlichen"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"

@@ -533,6 +533,9 @@ msgstr "ログイン"
 msgid "Username or email"
 msgstr "ユーザー名またはメールアドレス"
 
+msgid "Publish"
+msgstr "公開"
+
 msgid "Subtitle"
 msgstr "サブタイトル"
 
@@ -813,9 +816,6 @@ msgstr "アバターとして使う"
 
 #~ msgid "Create a post"
 #~ msgstr "記事を作成"
-
-#~ msgid "Publish"
-#~ msgstr "公開"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"

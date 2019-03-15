@@ -504,6 +504,9 @@ msgstr "Iniciar Sesión"
 msgid "Username or email"
 msgstr "Nombre de usuario o correo electrónico"
 
+msgid "Publish"
+msgstr "Publicar"
+
 msgid "Subtitle"
 msgstr ""
 
@@ -743,9 +746,6 @@ msgstr ""
 
 #~ msgid "Create a post"
 #~ msgstr "Crear una publicación"
-
-#~ msgid "Publish"
-#~ msgstr "Publicar"
 
 #~ msgid "Follow"
 #~ msgstr "Seguir"
