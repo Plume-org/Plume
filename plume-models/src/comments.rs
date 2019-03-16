@@ -9,7 +9,7 @@ use instance::Instance;
 use mentions::Mention;
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject},
+    inbox::{AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILTY,
 };
 use plume_common::utils;
@@ -91,11 +91,11 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<Note> {
+    pub fn to_activity(&self, c: &Context) -> Result<Note> {
         let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref(),
-                &Instance::get_local(conn)?.public_domain);
+                &Instance::get_local(c.conn)?.public_domain);
 
-        let author = User::get(conn, self.author_id)?;
+        let author = User::get(c.conn, self.author_id)?;
         let mut note = Note::default();
         let to = vec![Id::new(PUBLIC_VISIBILTY.to_string())];
 
@@ -107,8 +107,8 @@ impl Comment {
             .set_content_string(html)?;
         note.object_props
             .set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(
-                || Ok(Post::get(conn, self.post_id)?.ap_url),
-                |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
+                || Ok(Post::get(c.conn, self.post_id)?.ap_url),
+                |id| Ok(Comment::get(c.conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
             )?))?;
         note.object_props
             .set_published_string(chrono::Utc::now().to_rfc3339())?;
@@ -120,17 +120,16 @@ impl Comment {
             .set_tag_link_vec(
                 mentions
                     .into_iter()
-                    .filter_map(|m| Mention::build_activity(conn, &m).ok())
+                    .filter_map(|m| Mention::build_activity(c, &m).ok())
                     .collect::<Vec<link::Mention>>(),
             )?;
         Ok(note)
     }
 
-    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
-        let author =
-            User::get(conn, self.author_id)?;
+    pub fn create_activity(&self, c: &Context) -> Result<Create> {
+        let author = User::get(c.conn, self.author_id)?;
 
-        let note = self.to_activity(conn)?;
+        let note = self.to_activity(c)?;
         let mut act = Create::default();
         act.create_props
             .set_actor_link(author.into_id())?;
@@ -187,13 +186,18 @@ impl Comment {
     }
 }
 
-impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
+impl<'a> FromId<Context<'a>> for Comment {
     type Error = Error;
-    type Output = Self;
+    type Object = Note;
 
-    fn activity(c: &Context, actor: User, note: Note, _id: &str) -> Result<Self> {
+    fn from_db(c: &Context, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(c.conn, id)
+    }
+
+    fn from_activity(c: &Context, note: Note) -> Result<Self> {
         let conn = c.conn;
         let comm = {
+            dbg!("hey");
             let previous_url = note
                 .object_props
                 .in_reply_to
@@ -212,6 +216,7 @@ impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
                 is_public(&note.object_props.cc) ||
                 is_public(&note.object_props.bcc);
 
+            dbg!("hey 2");
             let comm = Comment::insert(
                 conn,
                 NewComment {
@@ -228,11 +233,16 @@ impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
                     in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
                     post_id: previous_comment.map(|c| c.post_id)
                         .or_else(|_| Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>)?,
-                    author_id: actor.id,
+                    author_id: User::from_id(c, &{
+                        let res: String = note.object_props.attributed_to_link::<Id>()?.into();
+                        res
+                    }, None)?.id,
                     sensitive: false, // TODO: "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
                     public_visibility
                 },
             )?;
+
+            dbg!("hey 3");
 
             // save mentions
             if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
@@ -251,6 +261,7 @@ impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
                         .ok();
                 }
             }
+            dbg!("hey 4");
             comm
         };
 
@@ -272,9 +283,9 @@ impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
             let bcc = receivers_ap_url(note.object_props.bcc.take());
 
             let receivers_ap_url = to.chain(cc).chain(bto).chain(bcc)
-                .collect::<HashSet<_>>()//remove duplicates (don't do a query more than once)
+                .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
                 .into_iter()
-                .map(|v| if let Ok(user) = User::get_or_fetch(c, &v) {
+                .map(|v| if let Ok(user) = User::from_id(c, &v, None) {
                     vec![user]
                 } else {
                     vec![]// TODO try to fetch collection
@@ -282,6 +293,7 @@ impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
                 .flatten()
                 .filter(|u| u.get_instance(conn).map(|i| i.local).unwrap_or(false))
                 .collect::<HashSet<User>>();//remove duplicates (prevent db error)
+            dbg!("hey 5");
 
             for user in &receivers_ap_url {
                 CommentSeers::insert(
@@ -295,25 +307,35 @@ impl<'a> AsObject<User, Create, Note, &Context<'a>> for Comment {
         }
 
         comm.notify(conn)?;
+        dbg!("hey 6");
         Ok(comm)
     }
 }
 
-impl<'a> AsObject<User, Delete, Note, &Context<'a>> for Comment {
+impl<'a> AsObject<User, Create, &Context<'a>> for Comment {
+    type Error = Error;
+    type Output = Self;
+
+    fn activity(self, _c: &Context, _actor: User, _id: &str) -> Result<Self> {
+        // The actual creation takes place in the FromId impl
+        Ok(self)
+    }
+}
+
+impl<'a> AsObject<User, Delete, &Context<'a>> for Comment {
     type Error = Error;
     type Output = ();
 
-    fn activity(c: &Context, actor: User, note: Note, _id: &str) -> Result<()> {
-        let conn = c.conn;
-        let comment = Comment::find_by_ap_url(conn, note.object_props.id_string()?.as_ref())?;
-        if comment.author_id == actor.id {
-            for m in Mention::list_for_comment(&conn, comment.id)? {
+    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
+        if self.author_id == actor.id {
+            let conn = c.conn;
+            for m in Mention::list_for_comment(&conn, self.id)? {
                 m.delete(conn)?;
             }
-            diesel::update(comments::table).filter(comments::in_response_to_id.eq(comment.id))
-                .set(comments::in_response_to_id.eq(comment.in_response_to_id))
+            diesel::update(comments::table).filter(comments::in_response_to_id.eq(self.id))
+                .set(comments::in_response_to_id.eq(self.in_response_to_id))
                 .execute(conn)?;
-            diesel::delete(&comment)
+            diesel::delete(&self)
                 .execute(conn)?;
             Ok(())
         } else {

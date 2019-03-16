@@ -1,4 +1,3 @@
-use activitypub::activity::*;
 use rocket::{
     data::*,
     http::Status,
@@ -7,72 +6,17 @@ use rocket::{
     response::status,
 };
 use rocket_contrib::json::*;
-use serde::Deserialize;
-use serde_json;
-
-use std::io::Read;
-
+use plume_models::{
+    Context, Error, db_conn:: DbConn, headers::Headers, inbox::inbox,
+    instance::Instance, users::User
+};
 use plume_common::activity_pub::{
-    inbox::{AsActor, Inbox},
+    inbox::FromId,
     request::Digest,
     sign::{verify_http_headers, Signable},
 };
-use plume_models::{
-    Context, comments::Comment, db_conn::DbConn, follows, headers::Headers,
-    instance::Instance, likes, posts::Post, reshares::Reshare,
-    users::User, search::Searcher, Connection, Error,
-};
-
-macro_rules! impl_into_inbox_result {
-    ( $( $t:ty => $variant:ident ),+ ) => {
-        $(
-            impl From<$t> for InboxResult {
-                fn from(x: $t) -> InboxResult {
-                    InboxResult::$variant(x)
-                }
-            }
-        )+
-    }
-}
-
-pub enum InboxResult {
-    Commented(Comment),
-    Followed(follows::Follow),
-    Liked(likes::Like),
-    Other,
-    Post(Post),
-    Reshared(Reshare),
-}
-
-impl From<()> for InboxResult {
-    fn from(_: ()) -> InboxResult {
-        InboxResult::Other
-    }
-}
-
-impl_into_inbox_result! {
-    Comment => Commented,
-    follows::Follow => Followed,
-    likes::Like => Liked,
-    Post => Post,
-    Reshare => Reshared
-}
-
-fn inbox(conn: &Connection, search: &Searcher, act: serde_json::Value) -> Result<InboxResult, Error> {
-    Inbox::handle(&Context::build(conn, search), act)
-        .with::<User, Announce, Post,            _>()
-        .with::<User, Create,   Comment,         _>()
-        .with::<User, Create,   Post,            _>()
-        .with::<User, Delete,   Comment,         _>()
-        .with::<User, Delete,   Post,            _>()
-        .with::<User, Follow,   User,            _>()
-        .with::<User, Like,     Post,            _>()
-        .with::<User, Undo,     Reshare,         _>()
-        .with::<User, Undo,     follows::Follow, _>()
-        .with::<User, Undo,     likes::Like,     _>()
-        .with::<User, Update,   Post,            _>()
-        .done()
-}
+use serde::Deserialize;
+use std::io::Read;
 
 pub fn handle_incoming(
     conn: DbConn,
@@ -88,7 +32,7 @@ pub fn handle_incoming(
         .or_else(|| activity["actor"]["id"].as_str())
         .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor = User::get_or_fetch(&Context::build(&conn, &searcher), actor_id)
+    let actor = User::from_id(&Context::build(&conn, &searcher), actor_id, None)
         .expect("instance::shared_inbox: user error");
     if !verify_http_headers(&actor, &headers.0, &sig).is_secure() &&
         !act.clone().verify(&actor) {

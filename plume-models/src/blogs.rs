@@ -7,18 +7,13 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
-use reqwest::{
-    header::{HeaderValue, ACCEPT},
-    Client,
-};
 use serde_json;
 use url::Url;
 use webfinger::*;
 
 use instance::*;
 use plume_common::activity_pub::{
-    ap_accept_header,
-    inbox::AsActor,
+    inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey,
 };
 use posts::Post;
@@ -26,7 +21,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, Context, BASE_URL, USE_HTTPS, Error, Result};
+use {Connection, Context, USE_HTTPS, Error, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -139,113 +134,32 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<Blog> {
+    pub fn find_by_fqn(c: &Context, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
             .limit(1)
-            .load::<Blog>(conn)?
+            .load::<Blog>(c.conn)?
             .into_iter()
             .next();
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            Blog::fetch_from_webfinger(conn, fqn)
+            Blog::fetch_from_webfinger(c, fqn)
         }
     }
 
-    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<Blog> {
+    fn fetch_from_webfinger(c: &Context, acct: &str) -> Result<Blog> {
         resolve(acct.to_owned(), *USE_HTTPS)?.links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
             .and_then(|l| {
-                Blog::fetch_from_url(
-                    conn,
-                    &l.href?
+                Blog::from_id(
+                    c,
+                    &l.href?,
+                    None
                 )
             })
-    }
-
-    fn fetch_from_url(conn: &Connection, url: &str) -> Result<Blog> {
-        let mut res = Client::new()
-            .get(url)
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
-
-        let text = &res.text()?;
-        let ap_sign: ApSignature =
-            serde_json::from_str(text)?;
-        let mut json: CustomGroup =
-            serde_json::from_str(text)?;
-        json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-        Blog::from_activity(
-            conn,
-            &json,
-            Url::parse(url)?.host_str()?,
-        )
-    }
-
-    fn from_activity(conn: &Connection, acct: &CustomGroup, inst: &str) -> Result<Blog> {
-        let instance = Instance::find_by_domain(conn, inst).or_else(|_|
-            Instance::insert(
-                conn,
-                NewInstance {
-                    public_domain: inst.to_owned(),
-                    name: inst.to_owned(),
-                    local: false,
-                    // We don't really care about all the following for remote instances
-                    long_description: SafeString::new(""),
-                    short_description: SafeString::new(""),
-                    default_license: String::new(),
-                    open_registrations: true,
-                    short_description_html: String::new(),
-                    long_description_html: String::new(),
-                },
-            )
-        )?;
-        Blog::insert(
-            conn,
-            NewBlog {
-                actor_id: acct
-                    .object
-                    .ap_actor_props
-                    .preferred_username_string()?,
-                title: acct
-                    .object
-                    .object_props
-                    .name_string()?,
-                outbox_url: acct
-                    .object
-                    .ap_actor_props
-                    .outbox_string()?,
-                inbox_url: acct
-                    .object
-                    .ap_actor_props
-                    .inbox_string()?,
-                summary: acct
-                    .object
-                    .object_props
-                    .summary_string()?,
-                instance_id: instance.id,
-                ap_url: acct
-                    .object
-                    .object_props
-                    .id_string()?,
-                public_key: acct
-                    .custom_props
-                    .public_key_publickey()?
-                    .public_key_pem_string()?,
-                private_key: None,
-            },
-        )
     }
 
     pub fn to_activity(&self, _conn: &Connection) -> Result<CustomGroup> {
@@ -351,22 +265,73 @@ impl IntoId for Blog {
     }
 }
 
-impl<'a> AsActor<&Context<'a>> for Blog {
+impl<'a> FromId<Context<'a>> for Blog {
     type Error = Error;
+    type Object = CustomGroup;
 
-    fn get_or_fetch<S>(c: &Context, id: S) -> Result<Self> where S: AsRef<str> {
-        let id = id.as_ref();
-        Blog::find_by_ap_url(c.conn, id).or_else(|_| {
-            // The requested blog was not in the DB
-            // We try to fetch it if it is remote
-            if Url::parse(id)?.host_str()? != BASE_URL.as_str() {
-                Blog::fetch_from_url(c.conn, id)
-            } else {
-                Err(Error::NotFound)
-            }
-        })
+    fn from_db(c: &Context, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(c.conn, id)
     }
 
+    fn from_activity(c: &Context, acct: CustomGroup) -> Result<Self> {
+        let url = Url::parse(&acct.object.object_props.id_string()?)?;
+        let inst = url.host_str()?;
+        let instance = Instance::find_by_domain(c.conn, inst).or_else(|_|
+            Instance::insert(
+                c.conn,
+                NewInstance {
+                    public_domain: inst.to_owned(),
+                    name: inst.to_owned(),
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: SafeString::new(""),
+                    short_description: SafeString::new(""),
+                    default_license: String::new(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new(),
+                },
+            )
+        )?;
+        Blog::insert(
+            c.conn,
+            NewBlog {
+                actor_id: acct
+                    .object
+                    .ap_actor_props
+                    .preferred_username_string()?,
+                title: acct
+                    .object
+                    .object_props
+                    .name_string()?,
+                outbox_url: acct
+                    .object
+                    .ap_actor_props
+                    .outbox_string()?,
+                inbox_url: acct
+                    .object
+                    .ap_actor_props
+                    .inbox_string()?,
+                summary: acct
+                    .object
+                    .object_props
+                    .summary_string()?,
+                instance_id: instance.id,
+                ap_url: acct
+                    .object
+                    .object_props
+                    .id_string()?,
+                public_key: acct
+                    .custom_props
+                    .public_key_publickey()?
+                    .public_key_pem_string()?,
+                private_key: None,
+            },
+        )
+    }
+}
+
+impl<'a> AsActor<&Context<'a>> for Blog {
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
@@ -645,7 +610,7 @@ pub(crate) mod tests {
             ).unwrap();
 
             assert_eq!(
-                Blog::find_by_fqn(conn, "SomeName").unwrap().id,
+                Blog::find_by_fqn(&Context::build(conn, &get_searcher()), "SomeName").unwrap().id,
                 blog.id
             );
 

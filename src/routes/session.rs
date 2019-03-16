@@ -12,10 +12,11 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use template_utils::Ructe;
 
 use plume_models::{
-    BASE_URL, Error,
+    BASE_URL, Context, Error,
     db_conn::DbConn,
     users::{User, AUTH_COOKIE}
 };
+use Searcher;
 use mail::{build_mail, Mailer};
 use routes::errors::ErrorPage;
 
@@ -38,9 +39,9 @@ pub struct LoginForm {
 }
 
 #[post("/login", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies, intl: I18n) -> Result<Redirect, Ructe> {
+pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe> {
     let user = User::find_by_email(&*conn, &form.email_or_name)
-        .or_else(|_| User::find_by_fqn(&*conn, &form.email_or_name));
+        .or_else(|_| User::find_by_fqn(&Context::build(&*conn, &*searcher), &form.email_or_name));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e

@@ -3,7 +3,8 @@ use rocket::response::Content;
 use serde_json;
 use webfinger::*;
 
-use plume_models::{BASE_URL, ap_url, db_conn::DbConn, blogs::Blog, users::User};
+use plume_models::{BASE_URL, ap_url, Context, db_conn::DbConn, blogs::Blog, users::User};
+use Searcher;
 
 #[get("/.well-known/nodeinfo")]
 pub fn nodeinfo() -> Content<String> {
@@ -33,23 +34,23 @@ pub fn host_meta() -> String {
 
 struct WebfingerResolver;
 
-impl Resolver<DbConn> for WebfingerResolver {
-    fn instance_domain<'a>() -> &'a str {
+impl<'a> Resolver<Context<'a>> for WebfingerResolver {
+    fn instance_domain<'b>() -> &'b str {
         BASE_URL.as_str()
     }
 
-    fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
-        User::find_by_fqn(&*conn, &acct)
-            .and_then(|usr| usr.webfinger(&*conn))
-            .or_else(|_| Blog::find_by_fqn(&*conn, &acct)
-                .and_then(|blog| blog.webfinger(&*conn))
+    fn find(acct: String, ctx: Context) -> Result<Webfinger, ResolverError> {
+        User::find_by_fqn(&ctx, &acct)
+            .and_then(|usr| usr.webfinger((&ctx).into()))
+            .or_else(|_| Blog::find_by_fqn(&ctx, &acct)
+                .and_then(|blog| blog.webfinger((&ctx).into()))
                 .or(Err(ResolverError::NotFound)))
     }
 }
 
 #[get("/.well-known/webfinger?<resource>")]
-pub fn webfinger(resource: String, conn: DbConn) -> Content<String> {
-    match WebfingerResolver::endpoint(resource, conn).and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound)) {
+pub fn webfinger(resource: String, conn: DbConn, searcher: Searcher) -> Content<String> {
+    match WebfingerResolver::endpoint(resource, Context::build(&*conn, &*searcher)).and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound)) {
         Ok(wf) => Content(ContentType::new("application", "jrd+json"), wf),
         Err(err) => Content(ContentType::new("text", "plain"), String::from(match err {
             ResolverError::InvalidResource => "Invalid resource. Make sure to request an acct: URI",

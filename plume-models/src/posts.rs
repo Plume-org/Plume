@@ -15,7 +15,7 @@ use std::collections::HashSet;
 use plume_api::posts::PostEndpoint;
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject},
+        inbox::{AsObject, FromId},
         broadcast, Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
     },
     utils::md_to_html,
@@ -225,7 +225,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             for m in mentions.into_iter() {
                 Mention::from_activity(
                     &*conn,
-                    &Mention::build_activity(&*conn, &m).map_err(|_| ApiError::NotFound("Couldn't build mentions".into()))?,
+                    &Mention::build_activity(&Context::build(&*conn, &*search), &m).map_err(|_| ApiError::NotFound("Couldn't build mentions".into()))?,
                     post.id,
                     true,
                     true
@@ -800,113 +800,6 @@ impl Post {
         self.cover_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
     }
 
-    pub fn from_activity(conn: &Connection, searcher: &Searcher, article: LicensedArticle) -> Result<Self> {
-        let license = article.custom_props.license_string().unwrap_or_default();
-        let article = article.object;
-        if let Ok(post) = Post::find_by_ap_url(
-            conn,
-            &article.object_props.id_string().unwrap_or_default(),
-        ) {
-            Ok(post)
-        } else {
-            let (blog, authors) = article
-                .object_props
-                .attributed_to_link_vec::<Id>()?
-                .into_iter()
-                .fold((None, vec![]), |(blog, mut authors), link| {
-                    let url: String = link.into();
-                    match User::get_or_fetch(&Context::build(conn, searcher), &url) {
-                        Ok(u) => {
-                            authors.push(u);
-                            (blog, authors)
-                        },
-                        Err(_) => {
-                            (blog.or_else(|| Blog::get_or_fetch(&Context::build(conn, searcher), &url).ok()), authors)
-                        },
-                    }
-                });
-
-            let cover = article
-                .object_props
-                .icon_object::<Image>()
-                .ok()
-                .and_then(|img| Media::from_activity(&Context::build(conn, searcher), &img).ok().map(|m| m.id));
-
-            let title = article
-                .object_props
-                .name_string()?;
-            let post = Post::insert(
-                conn,
-                NewPost {
-                    blog_id: blog?.id,
-                    slug: title.to_kebab_case(),
-                    title,
-                    content: SafeString::new(
-                        &article
-                            .object_props
-                            .content_string()?,
-                    ),
-                    published: true,
-                    license: license,
-                    // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                    ap_url: article.object_props.url_string().or_else(|_|
-                        article
-                            .object_props
-                            .id_string()
-                    )?,
-                    creation_date: Some(
-                        article
-                            .object_props
-                            .published_utctime()?
-                            .naive_utc(),
-                    ),
-                    subtitle: article
-                        .object_props
-                        .summary_string()?,
-                    source: article
-                        .ap_object_props
-                        .source_object::<Source>()?
-                        .content,
-                    cover_id: cover,
-                },
-                searcher,
-            )?;
-
-            for author in authors {
-                PostAuthor::insert(
-                    conn,
-                    NewPostAuthor {
-                        post_id: post.id,
-                        author_id: author.id,
-                    },
-                )?;
-            }
-
-            // save mentions and tags
-            let mut hashtags = md_to_html(&post.source, "")
-                .2
-                .into_iter()
-                .map(|s| s.to_camel_case())
-                .collect::<HashSet<_>>();
-            if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
-                for tag in tags {
-                    serde_json::from_value::<link::Mention>(tag.clone())
-                        .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
-                        .ok();
-
-                    serde_json::from_value::<Hashtag>(tag.clone())
-                        .map_err(Error::from)
-                        .and_then(|t| {
-                            let tag_name = t.name_string()?;
-                            Ok(Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name)))
-                        })
-                        .ok();
-                }
-            }
-            Ok(post)
-        }
-    }
-
     pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
         let mut act = Delete::default();
         act.delete_props
@@ -927,68 +820,206 @@ impl Post {
     }
 }
 
-impl<'a> AsObject<User, Create, LicensedArticle, &Context<'a>> for Post {
+impl<'a> FromId<Context<'a>> for Post {
     type Error = Error;
-    type Output = Post;
+    type Object = LicensedArticle;
 
-    fn activity(c: &Context, _actor: User, article: LicensedArticle, _id: &str) -> Result<Post> {
-        Post::from_activity(c.conn, c.searcher, article)
+    fn from_db(c: &Context, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(c.conn, id)
+    }
+
+    fn from_activity(c: &Context, article: LicensedArticle) -> Result<Self> {
+        let conn = c.conn;
+        let searcher = c.searcher;
+        let license = article.custom_props.license_string().unwrap_or_default();
+        let article = article.object;
+        
+        let (blog, authors) = article
+            .object_props
+            .attributed_to_link_vec::<Id>()?
+            .into_iter()
+            .fold((None, vec![]), |(blog, mut authors), link| {
+                let url: String = link.into();
+                match User::from_id(&Context::build(conn, searcher), &url, None) {
+                    Ok(u) => {
+                        authors.push(u);
+                        (blog, authors)
+                    },
+                    Err(_) => {
+                        (blog.or_else(|| Blog::from_id(&Context::build(conn, searcher), &url, None).ok()), authors)
+                    },
+                }
+            });
+
+        let cover = article
+            .object_props
+            .icon_object::<Image>()
+            .ok()
+            .and_then(|img| Media::from_activity(&Context::build(conn, searcher), &img).ok().map(|m| m.id));
+
+        let title = article
+            .object_props
+            .name_string()?;
+        let post = Post::insert(
+            conn,
+            NewPost {
+                blog_id: blog?.id,
+                slug: title.to_kebab_case(),
+                title,
+                content: SafeString::new(
+                    &article
+                        .object_props
+                        .content_string()?,
+                ),
+                published: true,
+                license: license,
+                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                ap_url: article.object_props.url_string().or_else(|_|
+                    article
+                        .object_props
+                        .id_string()
+                )?,
+                creation_date: Some(
+                    article
+                        .object_props
+                        .published_utctime()?
+                        .naive_utc(),
+                ),
+                subtitle: article
+                    .object_props
+                    .summary_string()?,
+                source: article
+                    .ap_object_props
+                    .source_object::<Source>()?
+                    .content,
+                cover_id: cover,
+            },
+            searcher,
+        )?;
+
+        for author in authors {
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: author.id,
+                },
+            )?;
+        }
+
+        // save mentions and tags
+        let mut hashtags = md_to_html(&post.source, "")
+            .2
+            .into_iter()
+            .map(|s| s.to_camel_case())
+            .collect::<HashSet<_>>();
+        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+            for tag in tags {
+                serde_json::from_value::<link::Mention>(tag.clone())
+                    .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
+                    .ok();
+
+                serde_json::from_value::<Hashtag>(tag.clone())
+                    .map_err(Error::from)
+                    .and_then(|t| {
+                        let tag_name = t.name_string()?;
+                        Ok(Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name)))
+                    })
+                    .ok();
+            }
+        }
+        Ok(post)
     }
 }
 
-impl<'a> AsObject<User, Delete, LicensedArticle, &Context<'a>> for Post {
+impl<'a> AsObject<User, Create, &Context<'a>> for Post {
+    type Error = Error;
+    type Output = Post;
+
+    fn activity(self, _c: &Context, _actor: User, _id: &str) -> Result<Post> {
+        // TODO: check that _actor is actually one of the author?
+        Ok(self)
+    }
+}
+
+impl<'a> AsObject<User, Delete, &Context<'a>> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity(c: &Context, actor: User, article: LicensedArticle, _id: &str) -> Result<()> {
-        let post = Post::find_by_ap_url(c.conn, &article.object.object_props.id_string()?)?;
-        let can_delete = post.get_authors(c.conn)?.into_iter().any(|a| actor.id == a.id);
+    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
+        let can_delete = self.get_authors(c.conn)?.into_iter().any(|a| actor.id == a.id);
         if can_delete {
-            post.delete(c.conn, c.searcher).map(|_| ())
+            self.delete(c.conn, c.searcher).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
     }
 }
 
-impl<'a> AsObject<User, Update, LicensedArticle, &Context<'a>> for Post {
+pub struct PostUpdate {
+    pub ap_url: String,
+    pub title: Option<String>,
+    pub subtitle: Option<String>,
+    pub content: Option<String>,
+    pub source: Option<String>,
+    pub license: Option<String>,
+    pub tags: Option<serde_json::Value>,
+}
+
+impl<'a> FromId<Context<'a>> for PostUpdate {
+    type Error = Error;
+    type Object = LicensedArticle;
+
+    fn from_db(_: &Context, _: &str) -> Result<Self> {
+        // Always fail because we always want to deserialize the AP object
+        Err(Error::NotFound)
+    }
+
+    fn from_activity(_c: &Context, updated: LicensedArticle) -> Result<Self> {
+        Ok(PostUpdate {
+            ap_url: updated.object.object_props.id_string()?,
+            title: updated.object.object_props.name_string().ok(),
+            subtitle: updated.object.object_props.summary_string().ok(),
+            content: updated.object.object_props.content_string().ok(),
+            source: updated.object.ap_object_props.source_object::<Source>().ok().map(|x| x.content),
+            license: updated.custom_props.license_string().ok(),
+            tags: updated.object.object_props.tag.clone(),
+        })
+    }
+}
+
+impl<'a> AsObject<User, Update, &Context<'a>> for PostUpdate {
     type Error = Error;
     type Output = ();
 
-    fn activity(c: &Context, actor: User, updated: LicensedArticle, _id: &str) -> Result<()> {
+    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
         let conn = c.conn;
         let searcher = c.searcher;
-        let id = updated.object
-            .object_props
-            .id_string()?;
-        let mut post = Post::find_by_ap_url(conn, &id)?;
+        let mut post = Post::from_id(c, &self.ap_url, None)?;
 
         if !post.is_author(conn, actor.id)? {
+            // TODO: maybe the author was added in the meantime
             return Err(Error::Unauthorized);
         }
 
-        if let Ok(title) = updated.object.object_props.name_string() {
+        if let Some(title) = self.title {
             post.slug = title.to_kebab_case();
             post.title = title;
         }
 
-        if let Ok(content) = updated.object.object_props.content_string() {
+        if let Some(content) = self.content {
             post.content = SafeString::new(&content);
         }
 
-        if let Ok(subtitle) = updated.object.object_props.summary_string() {
+        if let Some(subtitle) = self.subtitle {
             post.subtitle = subtitle;
         }
 
-        if let Ok(ap_url) = updated.object.object_props.url_string() {
-            post.ap_url = ap_url;
+        if let Some(source) = self.source {
+            post.source = source;
         }
 
-        if let Ok(source) = updated.object.ap_object_props.source_object::<Source>() {
-            post.source = source.content;
-        }
-
-        if let Ok(license) = updated.custom_props.license_string() {
+        if let Some(license) = self.license {
             post.license = license;
         }
 
@@ -997,7 +1028,7 @@ impl<'a> AsObject<User, Update, LicensedArticle, &Context<'a>> for Post {
             .into_iter()
             .map(|s| s.to_camel_case())
             .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(mention_tags)) = updated.object.object_props.tag.clone() {
+        if let Some(serde_json::Value::Array(mention_tags)) = self.tags {
             let mut mentions = vec![];
             let mut tags = vec![];
             let mut hashtags = vec![];

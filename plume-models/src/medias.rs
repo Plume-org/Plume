@@ -5,7 +5,7 @@ use guid_create::GUID;
 use reqwest;
 use std::{fs, path::Path};
 
-use plume_common::activity_pub::{Id, inbox::AsActor};
+use plume_common::activity_pub::{Id, inbox::FromId};
 
 use instance::Instance;
 use safe_string::SafeString;
@@ -208,7 +208,7 @@ impl Media {
                 remote_url: None,
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),
-                owner_id: User::get_or_fetch(
+                owner_id: User::from_id(
                     c,
                     image
                         .object_props
@@ -217,6 +217,7 @@ impl Media {
                         .into_iter()
                         .next()?
                         .as_ref(),
+                    None,
                 )?.id,
             },
         )

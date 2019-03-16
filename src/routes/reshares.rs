@@ -1,12 +1,12 @@
-use activitypub::activity::Undo;
 use rocket::response::{Redirect, Flash};
 use rocket_i18n::I18n;
 
-use plume_common::activity_pub::{broadcast, inbox::Inbox};
+use plume_common::activity_pub::broadcast;
 use plume_common::utils;
 use plume_models::{
     Context,
     Error,
+    inbox::inbox,
     blogs::Blog,
     db_conn::DbConn,
     posts::Post,
@@ -18,7 +18,7 @@ use {Searcher, Worker};
 
 #[post("/~/<blog>/<slug>/reshare")]
 pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Worker, searcher: Searcher) -> Result<Redirect, ErrorPage> {
-    let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let b = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.has_reshared(&*conn, &post)? {
@@ -31,9 +31,7 @@ pub fn create(blog: String, slug: String, user: User, conn: DbConn, worker: Work
     } else {
         let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id)?;
         let delete_act = reshare.build_undo(&*conn)?;
-        let _: Result<(), _> = Inbox::handle(&Context::build(&conn, &searcher), serde_json::to_value(&delete_act).map_err(Error::from)?)
-            .with::<User, Undo, Reshare, _>()
-            .done();
+        inbox(&conn, &searcher, serde_json::to_value(&delete_act).map_err(Error::from)?)?;
 
         let dest = User::one_by_instance(&*conn)?;
         worker.execute(move || broadcast(&user, delete_act, dest));

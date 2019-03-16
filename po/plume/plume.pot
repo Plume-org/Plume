@@ -36,15 +36,15 @@ msgstr ""
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:64
+# src/routes/blogs.rs:65
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:134
+# src/routes/blogs.rs:135
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/likes.rs:48
+# src/routes/likes.rs:46
 msgid "You need to be logged in order to like a post"
 msgstr ""
 
@@ -72,23 +72,23 @@ msgstr ""
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/reshares.rs:48
+# src/routes/reshares.rs:46
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
-# src/routes/session.rs:161
+# src/routes/session.rs:162
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:162
+# src/routes/session.rs:163
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:222
+# src/routes/session.rs:223
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:224
+# src/routes/session.rs:225
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgstr ""
 msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
-# src/routes/user.rs:239
+# src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 

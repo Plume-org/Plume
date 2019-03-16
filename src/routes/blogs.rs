@@ -12,6 +12,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
+    Context,
     blog_authors::*,
     blogs::*,
     db_conn::DbConn,
@@ -24,9 +25,9 @@ use template_utils::Ructe;
 use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>, searcher: Searcher) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let blog = Blog::find_by_fqn(&*conn, &name)?;
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &name)?;
     let posts = Post::blog_page(&*conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(&*conn, &blog)?;
     let authors = &blog.list_authors(&*conn)?;
@@ -44,8 +45,8 @@ pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page:
 }
 
 #[get("/~/<name>", rank = 1)]
-pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
+pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest, searcher: Searcher) -> Option<ActivityStream<CustomGroup>> {
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
 }
 
@@ -82,14 +83,14 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I18n) -> Result<Redirect, Ructe> {
+pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e
     };
-    if Blog::find_by_fqn(&*conn, &slug).is_ok() {
+    if Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &slug).is_ok() {
         errors.add("title", ValidationError {
             code: Cow::from("existing_slug"),
             message: Some(Cow::from("A blog with the same name already exists.")),
@@ -123,7 +124,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 
 #[post("/~/<name>/delete")]
 pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe>{
-    let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &name).expect("blog::delete: blog not found");
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
@@ -137,14 +138,14 @@ pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, search
 }
 
 #[get("/~/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
+pub fn outbox(name: String, conn: DbConn, searcher: Searcher) -> Option<ActivityStream<OrderedCollection>> {
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     Some(blog.outbox(&*conn).ok()?)
 }
 
 #[get("/~/<name>/atom.xml")]
-pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
+pub fn atom_feed(name: String, conn: DbConn, searcher: Searcher) -> Option<Content<String>> {
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
         .id(Instance::get_local(&*conn).ok()?

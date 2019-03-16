@@ -4,10 +4,10 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::AsObject,
+    inbox::{AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILTY,
 };
-use posts::{Post, LicensedArticle};
+use posts::Post;
 use schema::likes;
 use users::User;
 use {Connection, Context, Error, Result};
@@ -89,38 +89,64 @@ impl Like {
     }
 }
 
-impl<'a> AsObject<User, activity::Like, LicensedArticle, &Context<'a>> for Post {
+impl<'a> AsObject<User, activity::Like, &Context<'a>> for Post {
     type Error = Error;
-    type Output = ();
+    type Output = Like;
 
-    fn activity(c: &Context, actor: User, article: LicensedArticle, id: &str) -> Result<()> {
-        let post = Post::from_activity(&c.conn, &c.searcher, article)?;
+    fn activity(self, c: &Context, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             &c.conn,
             NewLike {
-                post_id: post.id,
+                post_id: self.id,
                 user_id: actor.id,
                 ap_url: id.to_string(),
             },
         )?;
         res.notify(&c.conn)?;
-        Ok(())
+        Ok(res)
     }
 }
 
-impl<'a> AsObject<User, activity::Undo, activity::Like, &Context<'a>> for Like {
+impl<'a> FromId<Context<'a>> for Like {
+    type Error = Error;
+    type Object = activity::Like;
+
+    fn from_db(c: &Context, id: &str) -> Result<Self> {
+        Like::find_by_ap_url(c.conn, id)
+    }
+
+    fn from_activity(c: &Context, act: activity::Like) -> Result<Self> {
+        let res = Like::insert(
+            &c.conn,
+            NewLike {
+                post_id: Post::from_id(c, &{
+                    let res: String = act.like_props.object_link::<Id>()?.into();
+                    res
+                }, None)?.id,
+                user_id: User::from_id(c, &{
+                    let res: String = act.like_props.actor_link::<Id>()?.into();
+                    res
+                }, None)?.id,
+                ap_url: act.object_props.id_string()?,
+            },
+        )?;
+        res.notify(&c.conn)?;
+        Ok(res)
+    }
+}
+
+impl<'a> AsObject<User, activity::Undo, &Context<'a>> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity(c: &Context, actor: User, like: activity::Like, _id: &str) -> Result<()> {
+    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
         let conn = c.conn;
-        let like = Like::find_by_ap_url(conn, &like.object_props.id_string()?)?;
-        if actor.id == like.user_id {
-            diesel::delete(&like)
+        if actor.id == self.user_id {
+            diesel::delete(&self)
                 .execute(conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, like.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
                 diesel::delete(&notif)
                     .execute(conn)?;
             }

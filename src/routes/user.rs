@@ -12,7 +12,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{
     broadcast,
-    inbox::AsActor,
+    inbox::FromId,
     ActivityStream, ApRequest, Id,
 };
 use plume_common::utils;
@@ -46,7 +46,7 @@ pub fn details(
     intl: I18n,
     searcher: Searcher,
 ) -> Result<Ructe, ErrorPage> {
-    let user = User::find_by_fqn(&*conn, &name)?;
+    let user = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name)?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
 
@@ -59,8 +59,7 @@ pub fn details(
                 match create_act.create_props.object_object::<LicensedArticle>() {
                     Ok(article) => {
                         Post::from_activity(
-                            &*fetch_articles_conn,
-                            &searcher_clone,
+                            &Context::build(&*fetch_articles_conn, &searcher_clone),
                             article,
                         ).expect("Article from remote user couldn't be saved");
                         println!("Fetched article from remote user");
@@ -77,7 +76,8 @@ pub fn details(
         let searcher_clone = searcher.clone();
         worker.execute(move || {
             for user_id in user_clone.fetch_followers_ids().expect("Remote user: fetching followers error") {
-                let follower = User::get_or_fetch(&Context::build(&*fetch_followers_conn, &searcher_clone), &user_id).expect("user::details: Couldn't fetch follower");
+                let follower = User::from_id(&Context::build(&*fetch_followers_conn, &searcher_clone), &user_id, None)
+                    .expect("user::details: Couldn't fetch follower");
                 follows::Follow::insert(
                     &*fetch_followers_conn,
                     follows::NewFollow {
@@ -128,8 +128,8 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-pub fn follow(name: String, conn: DbConn, user: User, worker: Worker) -> Result<Redirect, ErrorPage> {
-    let target = User::find_by_fqn(&*conn, &name)?;
+pub fn follow(name: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Result<Redirect, ErrorPage> {
+    let target = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name)?;
     if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.build_undo(&*conn)?;
         worker.execute(move || {
@@ -161,9 +161,9 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>", rank = 2)]
-pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n, searcher: Searcher) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&*conn, &name)?;
+    let user = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name)?;
     let followers_count = user.count_followers(&*conn)?;
 
     Ok(render!(users::followers(
@@ -179,9 +179,9 @@ pub fn followers(name: String, conn: DbConn, account: Option<User>, page: Option
 }
 
 #[get("/@/<name>/followed?<page>", rank = 2)]
-pub fn followed(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn followed(name: String, conn: DbConn, account: Option<User>, page: Option<Page>, intl: I18n, searcher: Searcher) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&*conn, &name)?;
+    let user = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name)?;
     let followed_count = user.count_followed(&*conn)?;
 
     Ok(render!(users::followed(
@@ -200,9 +200,10 @@ pub fn followed(name: String, conn: DbConn, account: Option<User>, page: Option<
 pub fn activity_details(
     name: String,
     conn: DbConn,
+    searcher: Searcher,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_by_fqn(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     Some(ActivityStream::new(user.to_activity(&*conn).ok()?))
 }
 
@@ -261,7 +262,7 @@ pub fn update(_name: String, conn: DbConn, user: User, form: LenientForm<UpdateU
 
 #[post("/@/<name>/delete")]
 pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies, searcher: Searcher) -> Result<Redirect, ErrorPage> {
-    let account = User::find_by_fqn(&*conn, &name)?;
+    let account = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name)?;
     if user.id == account.id {
         account.delete(&*conn, &searcher)?;
 
@@ -367,8 +368,8 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
 }
 
 #[get("/@/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&*conn, &name).ok()?;
+pub fn outbox(name: String, conn: DbConn, searcher: Searcher) -> Option<ActivityStream<OrderedCollection>> {
+    let user = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     user.outbox(&*conn).ok()
 }
 
@@ -380,7 +381,7 @@ pub fn inbox(
     headers: Headers,
     searcher: Searcher,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    User::find_by_fqn(&*conn, &name)
+    User::find_by_fqn(&Context::build(&*conn, &*searcher), &name)
         .map_err(|_| status::BadRequest(Some("User not found")))?;
     inbox::handle_incoming(conn, data, headers, searcher)
 }
@@ -389,9 +390,10 @@ pub fn inbox(
 pub fn ap_followers(
     name: String,
     conn: DbConn,
+    searcher: Searcher,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     let followers = user
         .get_followers(&*conn).ok()?
         .into_iter()
@@ -409,8 +411,8 @@ pub fn ap_followers(
 }
 
 #[get("/@/<name>/atom.xml")]
-pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let author = User::find_by_fqn(&*conn, &name).ok()?;
+pub fn atom_feed(name: String, conn: DbConn, searcher: Searcher) -> Option<Content<String>> {
+    let author = User::find_by_fqn(&Context::build(&*conn, &*searcher), &name).ok()?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
         .id(Instance::get_local(&*conn)

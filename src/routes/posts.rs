@@ -1,4 +1,3 @@
-use activitypub::activity::Delete;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::request::LenientForm;
@@ -10,7 +9,7 @@ use std::{
 };
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, inbox::Inbox};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
     Context,
@@ -18,6 +17,7 @@ use plume_models::{
     db_conn::DbConn,
     Error,
     comments::{Comment, CommentTree},
+    inbox::inbox,
     instance::Instance,
     medias::Media,
     mentions::Mention,
@@ -33,8 +33,8 @@ use Worker;
 use Searcher;
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
-pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let blog = Blog::find_by_fqn(&*conn, &blog)?;
+pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, responding_to: Option<i32>, intl: I18n, searcher: Searcher) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
     if post.published || post.get_authors(&*conn)?.into_iter().any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)) {
         let comments = CommentTree::from_post(&*conn, &post, user.as_ref())?;
@@ -87,8 +87,8 @@ pub fn details(blog: String, slug: String, conn: DbConn, user: Option<User>, res
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
-    let blog = Blog::find_by_fqn(&*conn, &blog).map_err(|_| None)?;
+pub fn activity_details(blog: String, slug: String, conn: DbConn, _ap: ApRequest, searcher: Searcher) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog).map_err(|_| None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).map_err(|_| None)?;
     if post.published {
         Ok(ActivityStream::new(post.to_activity(&*conn).map_err(|_| String::from("Post serialization error"))?))
@@ -106,8 +106,8 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let b = Blog::find_by_fqn(&*conn, &blog)?;
+pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n, searcher: Searcher) -> Result<Ructe, ErrorPage> {
+    let b = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog)?;
 
     if !user.is_author_in(&*conn, &b)? {
         // TODO actually return 403 error code
@@ -136,8 +136,8 @@ pub fn new(blog: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let b = Blog::find_by_fqn(&*conn, &blog)?;
+pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn, intl: I18n, searcher: Searcher) -> Result<Ructe, ErrorPage> {
+    let b = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.is_author_in(&*conn, &b)? {
@@ -184,7 +184,7 @@ pub fn edit(blog: String, slug: String, user: User, cl: ContentLen, conn: DbConn
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
 pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: LenientForm<NewPostForm>, worker: Worker, conn: DbConn, intl: I18n, searcher: Searcher)
     -> Result<Redirect, Ructe> {
-    let b = Blog::find_by_fqn(&*conn, &blog).expect("post::update: blog error");
+    let b = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog).expect("post::update: blog error");
     let mut post = Post::find_by_slug(&*conn, &slug, b.id).expect("post::update: find by slug error");
 
     let new_slug = if !post.published {
@@ -232,7 +232,7 @@ pub fn update(blog: String, slug: String, user: User, cl: ContentLen, form: Leni
             post.update(&*conn, &searcher).expect("post::update: update error");;
 
             if post.published {
-                post.update_mentions(&conn, mentions.into_iter().filter_map(|m| Mention::build_activity(&conn, &m).ok()).collect())
+                post.update_mentions(&conn, mentions.into_iter().filter_map(|m| Mention::build_activity(&Context::build(&*conn, &*searcher), &m).ok()).collect())
                     .expect("post::update: mentions error");;
             }
 
@@ -300,7 +300,7 @@ pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
 
 #[post("/~/<blog_name>/new", data = "<form>")]
 pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl: ContentLen, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher) -> Result<Redirect, Result<Ructe, ErrorPage>> {
-    let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("post::create: blog error");;
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
 
     let mut errors = match form.validate() {
@@ -369,7 +369,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
                 for m in mentions {
                     Mention::from_activity(
                         &*conn,
-                        &Mention::build_activity(&*conn, &m).expect("post::create: mention build error"),
+                        &Mention::build_activity(&Context::build(&*conn, &*searcher), &m).expect("post::create: mention build error"),
                         post.id,
                         true,
                         true
@@ -402,7 +402,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, user: User, cl:
 
 #[post("/~/<blog_name>/<slug>/delete")]
 pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker: Worker, searcher: Searcher) -> Result<Redirect, ErrorPage> {
-    let post = Blog::find_by_fqn(&*conn, &blog_name)
+    let post = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog_name)
         .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
 
     if let Ok(post) = post {
@@ -411,9 +411,7 @@ pub fn delete(blog_name: String, slug: String, conn: DbConn, user: User, worker:
         } else {
             let dest = User::one_by_instance(&*conn)?;
             let delete_activity = post.build_delete(&*conn)?;
-            Inbox::handle(&Context::build(&*conn, &searcher), serde_json::to_value(&delete_activity).map_err(Error::from)?)
-                .with::<User, Delete, Post, _>()
-                .done()?;
+            inbox(&*conn, &searcher, serde_json::to_value(&delete_activity).map_err(Error::from)?)?;
 
             let user_c = user.clone();
             worker.execute(move || broadcast(&user_c, delete_activity, dest));

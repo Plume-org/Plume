@@ -4,13 +4,12 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use notifications::*;
 use plume_common::activity_pub::{
     broadcast,
-    inbox::{AsActor, AsObject},
-    // inbox::{Deletable, FromActivity, Notify, WithInbox},
+    inbox::{AsActor, AsObject, FromId},
     sign::Signer,
     Id, IntoId,
 };
 use schema::follows;
-use users::{User, CustomPerson};
+use users::User;
 use {ap_url, Connection, Context, BASE_URL, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable, Associations, AsChangeset)]
@@ -135,29 +134,50 @@ impl Follow {
     }
 }
 
-impl<'a> AsObject<User, FollowAct, CustomPerson, &Context<'a>> for User {
+impl<'a> AsObject<User, FollowAct, &Context<'a>> for User {
     type Error = Error;
     type Output = Follow;
 
-    fn activity(c: &Context, actor: User, target: CustomPerson, id: &str) -> Result<Follow> {
-        let target = User::from_activity(c.conn, &target)?;
+    fn activity(self, c: &Context, actor: User, id: &str) -> Result<Follow> {
+        Follow::accept_follow(c.conn, &actor, &self, id.to_string(), actor.id, self.id)
+    }
+}
+
+impl<'a> FromId<Context<'a>> for Follow {
+    type Error = Error;
+    type Object = FollowAct;
+
+    fn from_db(c: &Context, id: &str) -> Result<Self> {
+        Follow::find_by_ap_url(c.conn, id)
+    }
+
+    fn from_activity(c: &Context, follow: FollowAct) -> Result<Self> {
+        let actor = User::from_id(c, &{
+            let res: String = follow.follow_props.actor_link::<Id>()?.into();
+            res
+        }, None)?;
+
+        let target = User::from_id(c, &{
+            let res: String = follow.follow_props.object_link::<Id>()?.into();
+            res
+        }, None)?;
+        let id = follow.object_props.id_string()?;
         Follow::accept_follow(c.conn, &actor, &target, id.to_string(), actor.id, target.id)
     }
 }
 
-impl<'a> AsObject<User, Undo, FollowAct, &Context<'a>> for Follow {
+impl<'a> AsObject<User, Undo, &Context<'a>> for Follow {
     type Error = Error;
     type Output = ();
 
-    fn activity(c: &Context, actor: User, follow: FollowAct, _id: &str) -> Result<()> {
+    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
         let conn = c.conn;
-        let follow = Follow::find_by_ap_url(conn, &follow.object_props.id_string()?)?;
-        if follow.follower_id == actor.id {
-            diesel::delete(&follow)
+        if self.follower_id == actor.id {
+            diesel::delete(&self)
                 .execute(conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, follow.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
                 diesel::delete(&notif)
                     .execute(conn)?;
             }

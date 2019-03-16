@@ -4,12 +4,14 @@ use serde_json;
 
 use plume_common::utils::random_hex;
 use plume_models::{
+    Context,
     Error,
     apps::App,
     api_tokens::*,
     db_conn::DbConn,
     users::User,
 };
+use Searcher;
 
 #[derive(Debug)]
 pub struct ApiError(Error);
@@ -46,10 +48,10 @@ pub struct OAuthRequest {
 }
 
 #[get("/oauth2?<query..>")]
-pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
+pub fn oauth(query: Form<OAuthRequest>, conn: DbConn, searcher: Searcher) -> Result<Json<serde_json::Value>, ApiError> {
     let app = App::find_by_client_id(&*conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::find_by_fqn(&*conn, &query.username) {
+        if let Ok(user) = User::find_by_fqn(&Context::build(&*conn, &*searcher), &query.username) {
             if user.auth(&query.password) {
                 let token = ApiToken::insert(&*conn, NewApiToken {
                     app_id: app.id,

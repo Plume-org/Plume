@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 /// Represents an ActivityPub inbox.
 ///
 /// It routes an incoming Activity through the registered handlers.
@@ -9,30 +11,50 @@
 /// # use activitypub::{actor::Person, activity::{Announce, Create}, object::Note};
 /// # use plume_common::activity_pub::inbox::*;
 /// # struct User;
+/// # impl FromId<()> for User {
+/// #     type Error = ();
+/// #     type Object = Person;
+/// #
+/// #     fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+/// #         Ok(User)
+/// #     }
+/// #
+/// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
+/// #         Ok(User)
+/// #     }
+/// # }
 /// # impl AsActor<&()> for User {
-/// #    type Error = ();
-/// #    fn get_or_fetch<S>(_: &(), _id: S) -> Result<Self, Self::Error> where S: AsRef<str> {
-/// #        Ok(User)
-/// #    }
 /// #    fn get_inbox_url(&self) -> String {
 /// #        String::new()
 /// #    }
 /// #    fn is_local(&self) -> bool { false }
 /// # }
 /// # struct Message;
-/// # impl AsObject<User, Create, Note, &()> for Message {
+/// # impl FromId<()> for Message {
+/// #     type Error = ();
+/// #     type Object = Note;
+/// #
+/// #     fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+/// #         Ok(Message)
+/// #     }
+/// #
+/// #     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
+/// #         Ok(Message)
+/// #     }
+/// # }
+/// # impl AsObject<User, Create, &()> for Message {
 /// #     type Error = ();
 /// #     type Output = ();
 /// #
-/// #     fn activity(_: &(), _actor: User, _obj: Note, _id: &str) -> Result<(), ()> {
+/// #     fn activity(self, _: &(), _actor: User, _id: &str) -> Result<(), ()> {
 /// #         Ok(())
 /// #     }
 /// # }
-/// # impl AsObject<User, Announce, Note, &()> for Message {
+/// # impl AsObject<User, Announce, &()> for Message {
 /// #     type Error = ();
 /// #     type Output = ();
 /// #
-/// #     fn activity(_: &(), _actor: User, _obj: Note, _id: &str) -> Result<(), ()> {
+/// #     fn activity(self, _: &(), _actor: User, _id: &str) -> Result<(), ()> {
 /// #         Ok(())
 /// #     }
 /// # }
@@ -48,11 +70,11 @@
 /// # let conn = ();
 /// #
 /// let result: Result<(), ()> = Inbox::handle(&conn, activity_json)
-///    .with::<User, Announce, Message, _>()
-///    .with::<User, Create,   Message, _>()
+///    .with::<User, Announce, Message>()
+///    .with::<User, Create,   Message>()
 ///    .done();
 /// ```
-pub enum Inbox<'a, C, E, R> where E: From<InboxError> {
+pub enum Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
     /// The activity has not been handled yet
     ///
     /// # Structure
@@ -60,7 +82,7 @@ pub enum Inbox<'a, C, E, R> where E: From<InboxError> {
     /// - the context to be passed to each handler.
     /// - the activity
     /// - the reason it has not been handled yet
-    NotHandled(&'a C, serde_json::Value, InboxError),
+    NotHandled(&'a C, serde_json::Value, InboxError<E>),
 
     /// A matching handler have been found but failed
     ///
@@ -75,23 +97,26 @@ pub enum Inbox<'a, C, E, R> where E: From<InboxError> {
 
 /// Possible reasons of inbox failure
 #[derive(Debug)]
-pub enum InboxError {
+pub enum InboxError<E: Debug> {
     /// None of the registered handlers matched
     NoMatch,
 
+    /// No ID was provided for the incoming activity, or it was not a string
+    InvalidID,
+
     /// The activity type matched for at least one handler, but then the actor was
     /// not of the expected type
-    InvalidActor,
+    InvalidActor(Option<E>),
 
     /// Activity and Actor types matched, but not the Object
-    InvalidObject,
+    InvalidObject(Option<E>),
 
     /// Error while dereferencing the object
     DerefError,
 }
 
-impl From<InboxError> for () {
-    fn from(_: InboxError) {
+impl<T: Debug> From<InboxError<T>> for () {
+    fn from(_: InboxError<T>) {
         ()
     }
 }
@@ -102,7 +127,7 @@ impl From<InboxError> for () {
  - E: Error
  - R: Result
 */
-impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError> {
+impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
 
     /// Creates a new `Inbox` to handle an incoming activity.
     ///
@@ -115,44 +140,45 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError> {
     }
 
     /// Registers an handler on this Inbox.
-    pub fn with<A, V, M, O>(self) -> Inbox<'a, C, E, R> where
-        A: AsActor<&'a C, Error=E>,
+    pub fn with<A, V, M>(self) -> Inbox<'a, C, E, R> where
+        A: AsActor<&'a C> + FromId<C, Error=E>,
         V: activitypub::Activity,
-        M: AsObject<A, V, O, &'a C, Error=E>,
+        M: AsObject<A, V, &'a C, Error=E> + FromId<C, Error=E>,
         M::Output: Into<R>,
-        O: activitypub::Object,
     {
         match self {
             Inbox::NotHandled(ctx, act, e) => {
                 if serde_json::from_value::<V>(act.clone()).is_ok() {
+                    let act_clone = act.clone();
+                    let act_id = match act_clone["id"].as_str() {
+                        Some(x) => x,
+                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidID),
+                    };
+
+                    // Get the actor ID
                     let actor_id = match get_id(act["actor"].clone()) {
                         Some(x) => x,
-                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor),
+                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
                     };
-                    let actor = match A::get_or_fetch(ctx, actor_id) {
+                    // Transform this actor to a model (see FromId for details about the from_id function)
+                    let actor = match A::from_id(ctx, &actor_id, serde_json::from_value(act["actor"].clone()).ok()) {
                         Ok(a) => a,
                         // If the actor was not found, go to the next handler
-                        Err(_) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor),
+                        Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e))),
                     };
 
-                    let act_id = match get_id(act["object"].clone()) {
+                    // Same logic for "object"
+                    let obj_id = match get_id(act["object"].clone()) {
                         Some(x) => x,
-                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject),
+                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None)),
                     };
-                    let obj: O = match serde_json::from_value(act["object"].clone()) {
+                    let obj = match M::from_id(ctx, &obj_id, serde_json::from_value(act["object"].clone()).map_err(|e| dbg!(e)).ok()) {
                         Ok(o) => o,
-                        // If the object was not of the expected type, try to dereference it
-                        // and if it is still not valid, go to the next handler
-                        Err(_) => match reqwest::get(&act_id)
-                            .map_err(|_| InboxError::DerefError)
-                            .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject))
-                        {
-                            Ok(o) => o,
-                            Err(err) => return Inbox::NotHandled(ctx, act, err),
-                        }
+                        Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e))),
                     };
 
-                    match M::activity(ctx, actor, obj, &act_id) {
+                    // Handle the activity
+                    match obj.activity(ctx, actor, &act_id) {
                         Ok(res) => Inbox::Handled(res.into()),
                         Err(e) => Inbox::Failed(e)
                     }
@@ -193,21 +219,65 @@ fn get_id<'a>(json: serde_json::Value) -> Option<String> {
     }
 }
 
+/// A trait for ActivityPub objects that can be retrieved or constructed from ID.
+///
+/// The two functions to implement are `from_activity` to create (and save) a new object
+/// of this type from its AP representation, and `from_db` to try to find it in the database
+/// using its ID.
+///
+/// When dealing with the "object" field of incoming activities, `Inbox` will try to see if it is
+/// a full object, and if so, save it with `from_activity`. If it is only an ID, it will try to find
+/// it in the database with `from_db`, and otherwise dereference (fetch) the full object and parse it
+/// with `from_activity`.
+pub trait FromId<C>: Sized {
+
+    /// The type representing a failure
+    type Error: From<InboxError<Self::Error>> + Debug;
+
+    /// The ActivityPub object type representing Self
+    type Object: activitypub::Object;
+
+    /// Tries to get an instance of `Self` from an ActivityPub ID.
+    ///
+    /// # Parameters
+    ///
+    /// - `ctx`: a context to get this instance (= a database in which to search)
+    /// - `id`: the ActivityPub ID of the object to find
+    /// - `object`: optional object that will be used if the object was not found in the database
+    ///   If absent, the ID will be dereferenced.
+    fn from_id(ctx: &C, id: &str, object: Option<Self::Object>) -> Result<Self, Self::Error> {
+        dbg!(object.is_some());
+        match Self::from_db(ctx, id) {
+            Ok(x) => Ok(x),
+            _ => match object {
+                Some(o) => Self::from_activity(ctx, o),
+                None => Self::from_activity(ctx, Self::deref(id)?),
+            },
+        }
+    }
+
+    /// Dereferences an ID
+    fn deref(id: &str) -> Result<Self::Object, Self::Error> {
+        dbg!(id);
+        reqwest::get(id)
+            .map_err(|_| InboxError::DerefError)
+            .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject(None)))
+            .map_err(Into::into)
+    }
+
+    /// Builds a `Self` from its ActivityPub representation
+    fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
+
+    /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
+    fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+}
+
 /// Should be implemented by anything representing an ActivityPub actor.
 ///
 /// # Type arguments
 ///
 /// - `C`: the context to be passed to this activity handler from the `Inbox` (usually a database connection)
 pub trait AsActor<C>: Sized {
-
-    /// What kind of error is returned when something fails
-    type Error;
-
-    /// Should return the actor with the given ID.
-    ///
-    /// This actor should be fetched if not present in DB.
-    fn get_or_fetch<S>(conn: C, id: S) -> Result<Self, Self::Error> where S: AsRef<str>;
-
     /// Return the URL of this actor's inbox
     fn get_inbox_url(&self) -> String;
 
@@ -236,14 +306,22 @@ pub trait AsActor<C>: Sized {
 ///
 /// ```rust
 /// # extern crate activitypub;
-/// # use activitypub::{activity::Create, object::Note};
-/// # use plume_common::activity_pub::inbox::{AsActor, AsObject};
+/// # use activitypub::{activity::Create, actor::Person, object::Note};
+/// # use plume_common::activity_pub::inbox::{AsActor, AsObject, FromId};
 /// # struct Account;
+/// # impl FromId<()> for Account {
+/// #     type Error = ();
+/// #     type Object = Person;
+/// #
+/// #     fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+/// #         Ok(Account)
+/// #     }
+/// #
+/// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
+/// #         Ok(Account)
+/// #     }
+/// # }
 /// # impl AsActor<()> for Account {
-/// #    type Error = ();
-/// #    fn get_or_fetch<S>(_: (), _id: S) -> Result<Self, Self::Error> where S: AsRef<str> {
-/// #        Ok(Account)
-/// #    }
 /// #    fn get_inbox_url(&self) -> String {
 /// #        String::new()
 /// #    }
@@ -254,22 +332,31 @@ pub trait AsActor<C>: Sized {
 ///     text: String,
 /// }
 ///
-/// impl AsObject<Account, Create, Note, ()> for Message {
+/// impl FromId<()> for Message {
+///     type Error = ();
+///     type Object = Note;
+///
+///     fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+///         Ok(Message { text: "From DB".into() })
+///     }
+///
+///     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
+///         Ok(Message { text: obj.object_props.content_string().map_err(|_| ())? })
+///     }
+/// }
+///
+/// impl AsObject<Account, Create, ()> for Message {
 ///     type Error = ();
 ///     type Output = ();
 ///
-///     fn activity(_: (), _actor: Account, obj: Note, _id: &str) -> Result<(), ()> {
-///         let msg = Message {
-///             text: obj.object_props.content_string().map_err(|_| ())?,
-///         };
-///         println!("New Note: {:?}", msg);
+///     fn activity(self, _: (), _actor: Account, _id: &str) -> Result<(), ()> {
+///         println!("New Note: {:?}", self);
 ///         Ok(())
 ///     }
 /// }
 /// ```
-pub trait AsObject<A, V, O, C>: Sized where
+pub trait AsObject<A, V, C>: Sized where
     V: activitypub::Activity,
-    O: activitypub::Object,
 {
 
     /// What kind of error is returned when something fails
@@ -285,11 +372,11 @@ pub trait AsObject<A, V, O, C>: Sized where
     ///
     /// # Parameters
     ///
+    /// - `self`: the object on which the activity acts
     /// - `ctx`: the context passed to `Inbox::handle`
     /// - `actor`: the actor who did this activity
-    /// - `obj`: the object of this activity
     /// - `id`: the ID of this activity
-    fn activity(ctx: C, actor: A, obj: O, id: &str) -> Result<Self::Output, Self::Error>;
+    fn activity(self, ctx: C, actor: A, id: &str) -> Result<Self::Output, Self::Error>;
 }
 
 #[cfg(test)]
@@ -302,13 +389,20 @@ mod tests {
     use super::*;
 
     struct MyActor;
-    impl AsActor<&()> for MyActor {
+    impl FromId<()> for MyActor {
         type Error = ();
+        type Object = Person;
 
-        fn get_or_fetch<S>(_: &(), _id: S) -> Result<Self, Self::Error> where S: AsRef<str> {
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(MyActor)
         }
 
+        fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
+            Ok(MyActor)
+        }
+    }
+
+    impl AsActor<&()> for MyActor {
         fn get_inbox_url(&self) -> String {
             String::from("https://test.ap/my-actor/inbox")
         }
@@ -319,41 +413,53 @@ mod tests {
     }
 
     struct MyObject;
-    impl AsObject<MyActor, Create, Note, &()> for MyObject {
+    impl FromId<()> for MyObject {
+        type Error = ();
+        type Object = Note;
+
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+            Ok(MyObject)
+        }
+
+        fn from_activity(_: &(), _obj: Note) -> Result<Self, Self::Error> {
+            Ok(MyObject)
+        }
+    }
+    impl AsObject<MyActor, Create, &()> for MyObject {
         type Error = ();
         type Output = ();
 
-        fn activity(_: &(), _actor: MyActor, _obj: Note, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is creating a Note");
             Ok(())
         }
     }
 
-    impl AsObject<MyActor, Like, Note, &()> for MyObject {
+    impl AsObject<MyActor, Like, &()> for MyObject {
         type Error = ();
         type Output = ();
 
-        fn activity(_: &(), _actor: MyActor, _obj: Note, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is liking a Note");
             Ok(())
         }
     }
 
-    impl AsObject<MyActor, Delete, Note, &()> for MyObject {
+    impl AsObject<MyActor, Delete, &()> for MyObject {
         type Error = ();
         type Output = ();
 
-        fn activity(_: &(), _actor: MyActor, _obj: Note, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is deleting a Note");
             Ok(())
         }
     }
 
-    impl AsObject<MyActor, Announce, Note, &()> for MyObject {
+    impl AsObject<MyActor, Announce, &()> for MyObject {
         type Error = ();
         type Output = ();
 
-        fn activity(_: &(), _actor: MyActor, _obj: Note, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is announcing a Note");
             Ok(())
         }
@@ -375,7 +481,7 @@ mod tests {
     fn test_inbox_basic() {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Create, MyObject, _>()
+            .with::<MyActor, Create, MyObject>()
             .done();
         assert!(res.is_ok());
     }
@@ -384,10 +490,10 @@ mod tests {
     fn test_inbox_multi_handlers() {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject, _>()
-            .with::<MyActor, Delete,   MyObject, _>()
-            .with::<MyActor, Create,   MyObject, _>()
-            .with::<MyActor, Like,     MyObject, _>()
+            .with::<MyActor, Announce, MyObject>()
+            .with::<MyActor, Delete,   MyObject>()
+            .with::<MyActor, Create,   MyObject>()
+            .with::<MyActor, Like,     MyObject>()
             .done();
         assert!(res.is_ok());
     }
@@ -397,20 +503,26 @@ mod tests {
         let act = serde_json::to_value(build_create()).unwrap();
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject, _>()
-            .with::<MyActor, Like,     MyObject, _>()
+            .with::<MyActor, Announce, MyObject>()
+            .with::<MyActor, Like,     MyObject>()
             .done();
         assert!(res.is_err());
     }
 
     struct FailingActor;
-    impl AsActor<&()> for FailingActor {
+    impl FromId<()> for FailingActor {
         type Error = ();
+        type Object = Person;
 
-        fn get_or_fetch<S>(_: &(), _id: S) -> Result<Self, Self::Error> where S: AsRef<str> {
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Err(())
         }
 
+        fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
+            Err(())
+        }
+    }
+    impl AsActor<&()> for FailingActor {
         fn get_inbox_url(&self) -> String {
             String::from("https://test.ap/failing-actor/inbox")
         }
@@ -420,11 +532,11 @@ mod tests {
         }
     }
 
-    impl AsObject<FailingActor, Create, Note, &()> for MyObject {
+    impl AsObject<FailingActor, Create, &()> for MyObject {
         type Error = ();
         type Output = ();
 
-        fn activity(_: &(), _actor: FailingActor, _obj: Note, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: FailingActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("FailingActor is creating a Note");
             Ok(())
         }
@@ -435,13 +547,13 @@ mod tests {
         let act = serde_json::to_value(build_create()).unwrap();
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject, _>()
+            .with::<FailingActor, Create, MyObject>()
             .done();
         assert!(res.is_err());
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject, _>()
-            .with::<MyActor,      Create, MyObject, _>()
+            .with::<FailingActor, Create, MyObject>()
+            .with::<MyActor,      Create, MyObject>()
             .done();
         assert!(res.is_ok());
     }

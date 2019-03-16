@@ -2,6 +2,7 @@ use activitypub::link;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
+use Context;
 use notifications::*;
 use posts::Post;
 use schema::mentions;
@@ -50,8 +51,8 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(conn: &Connection, ment: &str) -> Result<link::Mention> {
-        let user = User::find_by_fqn(conn, ment)?;
+    pub fn build_activity(c: &Context, ment: &str) -> Result<link::Mention> {
+        let user = User::find_by_fqn(c, ment)?;
         let mut mention = link::Mention::default();
         mention
             .link_props

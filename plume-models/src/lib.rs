@@ -50,7 +50,7 @@ pub type Connection = diesel::PgConnection;
 #[derive(Debug)]
 pub enum Error {
     Db(diesel::result::Error),
-    Inbox(InboxError),
+    Inbox(Box<InboxError<Error>>),
     InvalidValue,
     Io(std::io::Error),
     MissingApProperty,
@@ -139,9 +139,13 @@ impl From<std::io::Error> for Error {
     }
 }
 
-impl From<InboxError> for Error {
-    fn from(err: plume_common::activity_pub::inbox::InboxError) -> Error {
-        Error::Inbox(err)
+impl From<InboxError<Error>> for Error {
+    fn from(err: InboxError<Error>) -> Error {
+        match err {
+            InboxError::InvalidActor(Some(e)) |
+            InboxError::InvalidObject(Some(e)) => e,
+            e => Error::Inbox(Box::new(e)),
+        }
     }
 }
 
@@ -381,6 +385,7 @@ pub mod comment_seers;
 pub mod db_conn;
 pub mod follows;
 pub mod headers;
+pub mod inbox;
 pub mod instance;
 pub mod likes;
 pub mod medias;

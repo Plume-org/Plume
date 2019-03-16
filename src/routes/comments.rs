@@ -1,4 +1,4 @@
-use activitypub::{activity::Delete, object::Note};
+use activitypub::object::Note;
 use rocket::{
     request::LenientForm,
     response::Redirect
@@ -11,7 +11,7 @@ use std::time::Duration;
 
 use plume_common::{
     utils,
-    activity_pub::{broadcast, ApRequest, ActivityStream, inbox::Inbox}
+    activity_pub::{broadcast, ApRequest, ActivityStream}
 };
 use plume_models::{
     blogs::Blog,
@@ -19,6 +19,7 @@ use plume_models::{
     Context,
     db_conn::DbConn,
     Error,
+    inbox::inbox,
     instance::Instance,
     mentions::Mention,
     posts::Post,
@@ -38,9 +39,9 @@ pub struct NewCommentForm {
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<form>")]
-pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: Worker, intl: I18n)
+pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>, user: User, conn: DbConn, worker: Worker, intl: I18n, searcher: Searcher)
     -> Result<Redirect, Ructe> {
-    let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("comments::create: blog error");
+    let blog = Blog::find_by_fqn(&Context::build(&*conn, &*searcher), &blog_name).expect("comments::create: blog error");
     let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
     form.validate()
         .map(|_| {
@@ -58,13 +59,14 @@ pub fn create(blog_name: String, slug: String, form: LenientForm<NewCommentForm>
                 spoiler_text: form.warning.clone(),
                 public_visibility: true
             }).expect("comments::create: insert error");
-            let new_comment = comm.create_activity(&*conn).expect("comments::create: activity error");
+            let new_comment = comm.create_activity(&Context::build(&*conn, &*searcher))
+                .expect("comments::create: activity error");
 
             // save mentions
             for ment in mentions {
                 Mention::from_activity(
                     &*conn,
-                    &Mention::build_activity(&*conn, &ment).expect("comments::create: build mention error"),
+                    &Mention::build_activity(&Context::build(&*conn, &*searcher), &ment).expect("comments::create: build mention error"),
                     post.id,
                     true,
                     true
@@ -110,9 +112,7 @@ pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, wor
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&*conn)?;
             let delete_activity = comment.build_delete(&*conn)?;
-            Inbox::handle(&Context::build(&conn, &searcher), serde_json::to_value(&delete_activity).map_err(Error::from)?)
-                .with::<User, Delete, Comment, _>()
-                .done()?;
+            inbox(&conn, &searcher, serde_json::to_value(&delete_activity).map_err(Error::from)?)?;
 
             let user_c = user.clone();
             worker.execute(move || broadcast(&user_c, delete_activity, dest));
@@ -123,9 +123,9 @@ pub fn delete(blog: String, slug: String, id: i32, user: User, conn: DbConn, wor
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]
-pub fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn) -> Option<ActivityStream<Note>> {
+pub fn activity_pub(_blog: String, _slug: String, id: i32, _ap: ApRequest, conn: DbConn, searcher: Searcher) -> Option<ActivityStream<Note>> {
     Comment::get(&*conn, id)
-        .and_then(|c| c.to_activity(&*conn))
+        .and_then(|c| c.to_activity(&Context::build(&*conn, &*searcher)))
         .ok()
         .map(ActivityStream::new)
 }
