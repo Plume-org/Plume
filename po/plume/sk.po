@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 18:54\n"
+"PO-Revision-Date: 2019-03-16 19:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -109,7 +109,7 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "Musíš byť prihlásený/á, ak chceš upraviť svoj profil"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "Ponuka"
@@ -190,7 +190,7 @@ msgid "Articles from {}"
 msgstr "Články od {}"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
-msgstr ""
+msgstr "Ešte tu nič nieje vidieť. Skús začať odoberať obsah od viacero ľudí."
 
 # src/template_utils.rs:144
 msgid "Name"
@@ -210,7 +210,7 @@ msgid "Markdown syntax is supported"
 msgstr "Markdown syntaxia je podporovaná"
 
 msgid "Long description"
-msgstr "Dlhý opis"
+msgstr "Podrobný popis"
 
 # src/template_utils.rs:144
 msgid "Default article license"
@@ -283,7 +283,7 @@ msgid "Your Blogs"
 msgstr "Moje blogy"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Ešte nemáš žiaden blog. Vytvor si svoj vlastný, alebo požiadaj v niektorom o členstvo."
 
 msgid "Start a new blog"
 msgstr "Začni nový blog"
@@ -626,10 +626,10 @@ msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in
 msgstr ""
 
 msgid "Page not found"
-msgstr ""
+msgstr "Stránka nenájdená"
 
 msgid "We couldn't find this page."
-msgstr ""
+msgstr "Túto stránku sa nepodarilo nájsť."
 
 msgid "The link that led you here may be broken."
 msgstr ""
@@ -641,60 +641,60 @@ msgid "Maybe it was too long."
 msgstr ""
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Nemáš oprávnenie."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "Vnútorná chyba v rámci serveru"
 
 msgid "Something broke on our side."
-msgstr ""
+msgstr "Niečo sa pokazilo na našej strane."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 
 msgid "New Blog"
-msgstr ""
+msgstr "Nový blog"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Vytvor blog"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Vytvor blog"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Tento blog má jedného autora: "
+msgstr[1] "Tento blog má {0} autorov: "
+msgstr[2] "Tento blog má {0} autorov: "
+msgstr[3] "Tento blog má {0} autorov: "
 
 msgid "There's one article on this blog"
 msgid_plural "There are {0} articles on this blog"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Na tomto blogu je jeden článok"
+msgstr[1] "Na tomto blogu je {0} článkov"
+msgstr[2] "Na tomto blogu je {0} článkov"
+msgstr[3] "Na tomto blogu sú {0} články"
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Ešte tu nemožno vidieť žiadné príspevky."
 
 msgid "New article"
-msgstr ""
+msgstr "Nový článok"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné vziať späť."
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "Vymaž tento blog natrvalo"
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Články otagované pod \"{0}\""
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "Momentálne tu niesú žiadné články pod takýmto tagom"
 
 msgid "Upload"
-msgstr ""
+msgstr "Nahraj"
 
 msgid "You don't have any media yet."
 msgstr ""
@@ -703,16 +703,16 @@ msgid "Content warning: {0}"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Zmazať"
 
 msgid "Details"
-msgstr ""
+msgstr "Podrobnosti"
 
 msgid "Media upload"
 msgstr ""
 
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
