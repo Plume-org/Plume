@@ -146,49 +146,48 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
         M: AsObject<A, V, &'a C, Error=E> + FromId<C, Error=E>,
         M::Output: Into<R>,
     {
-        match self {
-            Inbox::NotHandled(ctx, act, e) => {
-                if serde_json::from_value::<V>(act.clone()).is_ok() {
-                    let act_clone = act.clone();
-                    let act_id = match act_clone["id"].as_str() {
-                        Some(x) => x,
-                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidID),
-                    };
+        if let Inbox::NotHandled(ctx, act, e) = self {
+            if serde_json::from_value::<V>(act.clone()).is_ok() {
+                let act_clone = act.clone();
+                let act_id = match act_clone["id"].as_str() {
+                    Some(x) => x,
+                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidID),
+                };
 
-                    // Get the actor ID
-                    let actor_id = match get_id(act["actor"].clone()) {
-                        Some(x) => x,
-                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
-                    };
-                    // Transform this actor to a model (see FromId for details about the from_id function)
-                    let actor = match A::from_id(ctx, &actor_id, serde_json::from_value(act["actor"].clone()).ok()) {
-                        Ok(a) => a,
-                        // If the actor was not found, go to the next handler
-                        Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e))),
-                    };
+                // Get the actor ID
+                let actor_id = match get_id(act["actor"].clone()) {
+                    Some(x) => x,
+                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
+                };
+                // Transform this actor to a model (see FromId for details about the from_id function)
+                let actor = match A::from_id(ctx, &actor_id, serde_json::from_value(act["actor"].clone()).ok()) {
+                    Ok(a) => a,
+                    // If the actor was not found, go to the next handler
+                    Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e))),
+                };
 
-                    // Same logic for "object"
-                    let obj_id = match get_id(act["object"].clone()) {
-                        Some(x) => x,
-                        None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None)),
-                    };
-                    let obj = match M::from_id(ctx, &obj_id, serde_json::from_value(act["object"].clone()).map_err(|e| dbg!(e)).ok()) {
-                        Ok(o) => o,
-                        Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e))),
-                    };
+                // Same logic for "object"
+                let obj_id = match get_id(act["object"].clone()) {
+                    Some(x) => x,
+                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None)),
+                };
+                let obj = match M::from_id(ctx, &obj_id, serde_json::from_value(act["object"].clone()).map_err(|e| dbg!(e)).ok()) {
+                    Ok(o) => o,
+                    Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e))),
+                };
 
-                    // Handle the activity
-                    match obj.activity(ctx, actor, &act_id) {
-                        Ok(res) => Inbox::Handled(res.into()),
-                        Err(e) => Inbox::Failed(e)
-                    }
-                } else {
-                    // If the Activity type is not matching the expected one for
-                    // this handler, try with the next one.
-                    Inbox::NotHandled(ctx, act, e)
+                // Handle the activity
+                match obj.activity(ctx, actor, &act_id) {
+                    Ok(res) => Inbox::Handled(res.into()),
+                    Err(e) => Inbox::Failed(e)
                 }
-            },
-            other => other
+            } else {
+                // If the Activity type is not matching the expected one for
+                // this handler, try with the next one.
+                Inbox::NotHandled(ctx, act, e)
+            }
+        } else {
+            self
         }
     }
 
