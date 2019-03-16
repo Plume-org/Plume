@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 01:03\n"
+"PO-Revision-Date: 2019-03-16 01:53\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -22,11 +22,11 @@ msgstr "{0} comentou o seu artigo."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} está subscrito."
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} gostou do seu artigo."
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
@@ -34,11 +34,11 @@ msgstr "{0} mencionou você."
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} impulsionou o seu artigo."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "Avatar do {0}"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
@@ -46,7 +46,7 @@ msgstr "Você precisa estar logado para criar um novo blog"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Não está autorizado a apagar este blog."
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
@@ -78,23 +78,23 @@ msgstr "Mudar {0}"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Tem de estar logado para repartilhar um post"
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "Redefinir palavra-passe"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Aqui está a ligação para redefinir sua senha: {0}"
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "A sua palavra-passe foi redefinida com sucesso."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Desculpe, mas a ligação expirou. Tente novamente"
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
