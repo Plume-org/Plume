@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 06:43\n"
+"PO-Revision-Date: 2019-03-16 07:33\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -34,7 +34,7 @@ msgstr "{0} sa o tebe zmienil/a."
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
-msgstr "{0} povýšil/a tvoj článok."
+msgstr "{0} vyzdvihli tvoj článok."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
@@ -331,7 +331,7 @@ msgid "Atom feed"
 msgstr ""
 
 msgid "Recently boosted"
-msgstr "Nedávno povýšené"
+msgstr "Nedávno vyzdvihnuté"
 
 msgid "Admin"
 msgstr "Správca"
@@ -465,7 +465,7 @@ msgid "Published under this license"
 msgstr "Uverejnené pod touto licenciou"
 
 msgid "Article license"
-msgstr ""
+msgstr "Článok je pod licenciou"
 
 msgid "Search result for \"{0}\""
 msgstr "Výsledok hľadania pre \"{0}\""
@@ -477,7 +477,7 @@ msgid "No result for your query"
 msgstr "Žiadny výsledok pre tvoje zadanie"
 
 msgid "No more result for your query"
-msgstr ""
+msgstr "Žiaden ďalší výsledok pre tvoje zadanie"
 
 msgid "Reset your password"
 msgstr "Obnov svoje heslo"
@@ -494,7 +494,7 @@ msgid "Update password"
 msgstr "Aktualizovať heslo"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Pozri si svoju Doručenú poštu!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
@@ -504,7 +504,7 @@ msgid "E-mail"
 msgstr ""
 
 msgid "Send reset link"
-msgstr ""
+msgstr "Pošli odkaz na obnovenie"
 
 msgid "Login"
 msgstr "Prihlás sa"
@@ -535,14 +535,14 @@ msgstr "Tagy, oddelené čiarkami"
 
 # src/template_utils.rs:144
 msgid "License"
-msgstr ""
+msgstr "Licencia"
 
 # src/template_utils.rs:148
 msgid "Leave it empty to reserve all rights"
 msgstr "Ponechaj políčko prázdne, pre vyhradenie všetkých práv"
 
 msgid "Illustration"
-msgstr ""
+msgstr "Ilustrácia"
 
 msgid "None"
 msgstr "Žiadne"
@@ -576,48 +576,48 @@ msgstr "Tento článok je publikovaný pod licenciou {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Jeden obľúbil"
+msgstr[1] "{0} obľúbilo"
+msgstr[2] "{0} obľúbili"
+msgstr[3] "{0} obľúbili"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Už sa mi to nepáči"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Pridaj svoj"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Jedno vyzdvihnutie"
+msgstr[1] "{0} vyzdvihnutí"
+msgstr[2] "{0} vyzdvihnutí"
+msgstr[3] "{0} vyzdvihnutia"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Toto už viac nechcem vyzdvihovať"
 
 msgid "Boost"
-msgstr ""
+msgstr "Vyzdvihni"
 
 msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Komentáre"
 
 # src/template_utils.rs:144
 msgid "Content warning"
-msgstr ""
+msgstr "Varovanie o obsahu"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Tvoj komentár"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Pošli komentár"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Zatiaľ žiadne komentáre. Buď prvý kto zareaguje!"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -742,7 +742,7 @@ msgid "Use as avatar"
 msgstr ""
 
 msgid "Login to boost"
-msgstr ""
+msgstr "Na vyzdvihnutie sa prihlás"
 
 msgid "Login to like"
 msgstr ""
