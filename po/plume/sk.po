@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 07:33\n"
+"PO-Revision-Date: 2019-03-16 18:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -328,7 +328,7 @@ msgid "Subscriptions"
 msgstr "Odoberané"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "Atom zdroj"
 
 msgid "Recently boosted"
 msgstr "Nedávno vyzdvihnuté"
@@ -352,7 +352,7 @@ msgid "Subscribe"
 msgstr "Odoberaj"
 
 msgid "{0}'s subscriptions'"
-msgstr ""
+msgstr "Odoberané užívateľom {0}"
 
 msgid "{0}'s subscribers"
 msgstr "Odberatelia obsahu od {0}"
@@ -367,10 +367,10 @@ msgid "What is Plume?"
 msgstr "Čo je to Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume je decentralizovanou blogovacou platformou."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "Autori môžu spravovať rôzne blogy, z osobitnej webstránky."
 
 msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
 msgstr "Články sú tiež viditeľné na iných Plume instanciách a môžeš s nimi interaktovať komunikovať priamo aj z iných federovaných platforiem, ako napríklad Mastodon."
@@ -501,7 +501,7 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "E-mail"
-msgstr ""
+msgstr "Emailová adresa"
 
 msgid "Send reset link"
 msgstr "Pošli odkaz na obnovenie"
@@ -527,7 +527,7 @@ msgid "You can upload medias to your gallery, and copy their Markdown code in yo
 msgstr ""
 
 msgid "Upload media"
-msgstr ""
+msgstr "Nahraj mediálne súbory"
 
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
@@ -601,7 +601,7 @@ msgid "Boost"
 msgstr "Vyzdvihni"
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Prihlás sa, alebo použi svoj účet v rámci Fediversa pre narábanie s týmto článkom"
 
 msgid "Comments"
 msgstr "Komentáre"
@@ -620,7 +620,7 @@ msgid "No comments yet. Be the first to react!"
 msgstr "Zatiaľ žiadne komentáre. Buď prvý kto zareaguje!"
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "Neplatný CSRF token"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
