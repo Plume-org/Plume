@@ -1060,7 +1060,7 @@ pub(crate) mod tests {
             ).unwrap();
             assert_eq!(updated.display_name, "new name");
             assert_eq!(updated.email.unwrap(), "em@il");
-            assert_eq!(updated.summary.get(), "<p>summary</p>");
+            assert_eq!(updated.summary_html.get(), "<p>summary</p>");
 
             Ok(())
         });
