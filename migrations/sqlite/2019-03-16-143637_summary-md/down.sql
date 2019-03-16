@@ -18,7 +18,7 @@ CREATE TABLE users2 (
     followers_endpoint VARCHAR NOT NULL DEFAULT '' UNIQUE,
     avatar_id INTEGER REFERENCES medias(id) ON DELETE SET NULL,
     last_fetched_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fqn TEXT NOT NULL DEFAULT ''
+    fqn TEXT NOT NULL DEFAULT '',
     CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
 
