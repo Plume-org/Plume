@@ -69,7 +69,6 @@ rev = "4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
 [build-dependencies]
 ructe = "0.5.6"
 rsass = "0.9"
-plume-common = {path = "plume-common"}
 
 [features]
 default = ["postgres"]
