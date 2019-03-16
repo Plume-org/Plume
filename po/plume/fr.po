@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 08:34\n"
+"PO-Revision-Date: 2019-03-16 09:24\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -251,7 +251,7 @@ msgstr "Téléverser un avatar"
 
 # src/template_utils.rs:144
 msgid "Display name"
-msgstr ""
+msgstr "Nom affiché"
 
 # src/template_utils.rs:144
 msgid "Email"
@@ -262,7 +262,7 @@ msgid "Summary"
 msgstr "Description"
 
 msgid "Update account"
-msgstr ""
+msgstr "Mettre à jour le compte"
 
 msgid "Danger zone"
 msgstr "Zone à risque"
@@ -280,7 +280,7 @@ msgid "Your Dashboard"
 msgstr "Votre tableau de bord"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Vos Blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
@@ -319,16 +319,16 @@ msgid "Apologies, but registrations are closed on this particular instance. You 
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "Articles"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Abonnés"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Abonnements"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "Flux atom"
 
 msgid "Recently boosted"
 msgstr "Récemment partagé"
@@ -337,25 +337,25 @@ msgid "Admin"
 msgstr "Administrateur"
 
 msgid "It is you"
-msgstr ""
+msgstr "C'est vous"
 
 msgid "Edit your profile"
 msgstr "Modifier votre profil"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Ouvrir sur {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Se désabonner"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "S'abonner"
 
 msgid "{0}'s subscriptions'"
-msgstr ""
+msgstr "{0}'s abonnements'"
 
 msgid "{0}'s subscribers"
-msgstr ""
+msgstr "{0}'s abonnés"
 
 msgid "Respond"
 msgstr "Répondre"
@@ -569,10 +569,10 @@ msgid "Delete this article"
 msgstr "Supprimer cet article"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Tous droits réservés."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Cet article est sous licence {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -580,7 +580,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Je n'aime plus cela"
 
 msgid "Add yours"
 msgstr ""
@@ -597,32 +597,32 @@ msgid "Boost"
 msgstr "Partager"
 
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Connectez-vous ou utilisez votre compte Fediverse pour interagir avec cet article"
 
 msgid "Comments"
-msgstr ""
+msgstr "Commentaires"
 
 # src/template_utils.rs:144
 msgid "Content warning"
 msgstr "Avertissement"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Votre commentaire"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Soumettre le commentaire"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Pas encore de commentaires. Soyez le premier à réagir !"
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "Jeton CSRF invalide"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr "Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les cookies sont activés dans votre navigateur, et essayez de recharger cette page. Si vous continuez à voir cette erreur, merci de la signaler."
 
 msgid "Page not found"
-msgstr ""
+msgstr "Page non trouvée"
 
 msgid "We couldn't find this page."
 msgstr "Page introuvable."
@@ -631,16 +631,16 @@ msgid "The link that led you here may be broken."
 msgstr "Vous avez probablement suivi un lien cassé."
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "Le contenu que vous avez envoyé ne peut pas être traité."
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Peut-être que c’était trop long."
 
 msgid "You are not authorized."
 msgstr "Vous n’avez pas les droits."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "Erreur interne du serveur"
 
 msgid "Something broke on our side."
 msgstr "Nous avons cassé quelque chose."
@@ -649,7 +649,7 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Nous sommes désolé⋅e⋅s. Si vous pensez que c’est un bogue, merci de le signaler."
 
 msgid "New Blog"
-msgstr ""
+msgstr "Nouveau Blog"
 
 msgid "Create a blog"
 msgstr "Créer un blog"
@@ -659,12 +659,12 @@ msgstr "Créer le blog"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
+msgstr[0] "Il y a un auteur sur ce blog: "
 msgstr[1] ""
 
 msgid "There's one article on this blog"
 msgid_plural "There are {0} articles on this blog"
-msgstr[0] ""
+msgstr[0] "Il y a un auteur sur ce blog"
 msgstr[1] ""
 
 msgid "No posts to see here yet."
@@ -677,34 +677,34 @@ msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "Supprimer définitivement ce blog"
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Articles marqués \"{0}\""
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "Il n'y a actuellement aucun article avec un tel tag"
 
 msgid "Upload"
 msgstr "Téléverser"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Vous n'avez pas encore de média."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "Avertissement du contenu : {0}"
 
 msgid "Delete"
 msgstr "Supprimer"
 
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
 msgid "Media upload"
 msgstr "Téléversement de média"
 
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
