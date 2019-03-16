@@ -225,7 +225,7 @@ pub fn edit(name: String, user: User, conn: DbConn, intl: I18n) -> Result<Ructe,
             UpdateUserForm {
                 display_name: user.display_name.clone(),
                 email: user.email.clone().unwrap_or_default(),
-                summary: user.summary.to_string(),
+                summary: user.summary,
             },
             ValidationErrors::default()
         )))
@@ -255,7 +255,7 @@ pub fn update(_name: String, conn: DbConn, user: User, form: LenientForm<UpdateU
         &*conn,
         if !form.display_name.is_empty() { form.display_name.clone() } else { user.display_name.clone() },
         if !form.email.is_empty() { form.email.clone() } else { user.email.clone().unwrap_or_default() },
-        if !form.summary.is_empty() { utils::md_to_html(&form.summary, "").0 } else { user.summary.to_string() },
+        if !form.summary.is_empty() { form.summary.clone() } else { user.summary.to_string() },
     )?;
     Ok(Redirect::to(uri!(me)))
 }
