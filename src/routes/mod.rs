@@ -1,6 +1,9 @@
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
-    http::{RawStr, Status, uri::{FromUriParam, Query}},
+    http::{
+        RawStr, Status, uri::{FromUriParam, Query},
+        hyper::header::{CacheControl, CacheDirective}
+    },
     Outcome,
     request::{self, FromFormValue, FromRequest, Request},
     response::NamedFile,
@@ -101,7 +104,24 @@ pub mod user;
 pub mod search;
 pub mod well_known;
 
-#[get("/static/<file..>", rank = 2)]
-pub fn static_files(file: PathBuf) -> Option<NamedFile> {
+#[derive(Responder)]
+#[response()]
+pub struct CachedFile {
+    inner: NamedFile,
+    cache_control: CacheControl
+}
+
+#[get("/static/cached/<_build_id>/<file..>", rank = 2)]
+pub fn plume_static_files(file: PathBuf, _build_id: &RawStr) -> Option<CachedFile> {
+    static_files(file)
+}
+
+#[get("/static/<file..>", rank = 3)]
+pub fn static_files(file: PathBuf) -> Option<CachedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
+        .map(|f|
+             CachedFile {
+                 inner: f,
+                 cache_control: CacheControl(vec![CacheDirective::MaxAge(60*60*24*30)])
+             })
 }
