@@ -124,7 +124,12 @@ impl Media {
     pub fn markdown(&self, conn: &Connection) -> Result<SafeString> {
         let url = self.url(conn)?;
         Ok(match self.category() {
-            MediaCategory::Image => SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url)),
+            MediaCategory::Image =>
+                if let Some(ref cw) = self.content_warning {
+                    SafeString::new(&format!("<details><summary>{}</summary>![{}]({})</details>", escape(cw), escape(&self.alt_text), url))
+                } else {
+                    SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url))
+                },
             MediaCategory::Audio | MediaCategory::Video => self.html(conn)?,
             MediaCategory::Unknown => SafeString::new(""),
         })
