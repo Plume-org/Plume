@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 23:04\n"
+"PO-Revision-Date: 2019-03-16 06:43\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -54,7 +54,7 @@ msgstr "Musíš byť prihlásený/á, ak si chceš obľúbiť príspevok"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr "Musíš byť prihlásený/á, ak chceš vidieť oboznámenia, ktoré sú pre teba"
+msgstr "Musíš byť prihlásený/á, ak chceš vidieť svoje oboznámenia"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
@@ -94,7 +94,7 @@ msgstr "Tvoje heslo bolo úspešne zmenené."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
-msgstr "Prepáč, ale tento odkaz už expiroval. Skús to znova"
+msgstr "Prepáč, ale tento odkaz už vypŕšal. Skús to znova"
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
@@ -121,7 +121,7 @@ msgid "Dashboard"
 msgstr "Nástenka"
 
 msgid "Notifications"
-msgstr "Oznámenia"
+msgstr "Oboznámenia"
 
 msgid "Log Out"
 msgstr "Odhlás sa"
@@ -154,13 +154,13 @@ msgid "Latest articles"
 msgstr "Najnovšie články"
 
 msgid "Your feed"
-msgstr ""
+msgstr "Tvoj kanál"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Federovaný kanál"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Miestny kanál"
 
 msgid "Administration of {0}"
 msgstr "Spravovanie {0}"
@@ -271,10 +271,10 @@ msgid "Be very careful, any action taken here can't be cancelled."
 msgstr "Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné vziať späť."
 
 msgid "Delete your account"
-msgstr ""
+msgstr "Vymaž svoj účet"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "Prepáč, ale ako jej správca, ty nemôžeš opustiť svoju vlastnú instanciu."
 
 msgid "Your Dashboard"
 msgstr "Moja nástenka"
@@ -298,10 +298,10 @@ msgid "Go to your gallery"
 msgstr "Prejdi do svojej galérie"
 
 msgid "Create your account"
-msgstr ""
+msgstr "Vytvor si účet"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Vytvoriť účet"
 
 # src/template_utils.rs:144
 msgid "Username"
@@ -401,11 +401,11 @@ msgid "Article title matching these words"
 msgstr "Názov článku zhodujúci sa s týmito slovami"
 
 msgid "Title"
-msgstr ""
+msgstr "Nadpis"
 
 # src/template_utils.rs:185
 msgid "Subtitle matching these words"
-msgstr ""
+msgstr "Podnadpis zhodujúci sa s týmito slovami"
 
 msgid "Subtitle - byline"
 msgstr "Podnadpis"
@@ -441,7 +441,7 @@ msgstr "Doména instancie"
 
 # src/template_utils.rs:185
 msgid "Posted by one of these authors"
-msgstr ""
+msgstr "Uverejnené jedným z týchto autorov"
 
 msgid "Authors"
 msgstr "Autori"
