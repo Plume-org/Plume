@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 21:54\n"
+"PO-Revision-Date: 2019-03-16 19:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -136,7 +136,7 @@ msgid "Register"
 msgstr "Vytvořit účet"
 
 msgid "About this instance"
-msgstr ""
+msgstr "O této instanci"
 
 msgid "Source code"
 msgstr "Zdrojový kód"
@@ -204,17 +204,17 @@ msgid "Allow anyone to register here"
 msgstr "Povolit komukoli se zde zaregistrovat"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "Stručný popis"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Markdown syntaxe je podporována"
 
 msgid "Long description"
-msgstr ""
+msgstr "Detailní popis"
 
 # src/template_utils.rs:144
 msgid "Default article license"
-msgstr ""
+msgstr "Výchozí licence článků"
 
 msgid "Save these settings"
 msgstr ""
