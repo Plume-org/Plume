@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 13:04\n"
+"PO-Revision-Date: 2019-03-16 14:02\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -66,7 +66,7 @@ msgstr ""
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
-msgstr ""
+msgstr "Vous n’êtes pas l’auteur de ce blog."
 
 # src/routes/posts.rs:119
 msgid "New post"
@@ -78,11 +78,11 @@ msgstr "Modifier {0}"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Vous devez être connecté pour repartager un message"
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "Réinitialisation du mot de passe"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
@@ -90,23 +90,23 @@ msgstr ""
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Votre mot de passe a été réinitialisé avec succès."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Désolé, mais le lien a expiré. Réessayez"
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
-msgstr ""
+msgstr "Vous devez être connecté pour accéder à votre tableau de bord"
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
-msgstr ""
+msgstr "Vous devez être connecté pour vous abonner à quelqu'un"
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
-msgstr ""
+msgstr "Vous devez être connecté pour modifier votre profil"
 
 msgid "Plume"
 msgstr "Plume"
@@ -190,7 +190,7 @@ msgid "Articles from {}"
 msgstr "Articles de {}"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
-msgstr ""
+msgstr "Rien à voir ici. Essayez de vous abonner à plus de personnes."
 
 # src/template_utils.rs:144
 msgid "Name"
@@ -207,7 +207,7 @@ msgid "Short description - byline"
 msgstr ""
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "La syntaxe Markdown est supportée"
 
 msgid "Long description"
 msgstr "Description longue"
@@ -229,7 +229,7 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Qui ont écrit <em>{0}</em> articles"
 
 msgid "And connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "Et connecté à <em>{0}</em> autres instances"
 
 msgid "Administred by"
 msgstr "Administré par"
@@ -244,7 +244,7 @@ msgid "Your Profile"
 msgstr "Votre Profile"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
-msgstr ""
+msgstr "Pour modifier votre avatar, téléversez-le dans votre galerie et sélectionner à partir de là."
 
 msgid "Upload an avatar"
 msgstr "Téléverser un avatar"
@@ -268,13 +268,13 @@ msgid "Danger zone"
 msgstr "Zone à risque"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Attention, toute action prise ici ne peut pas être annulée."
 
 msgid "Delete your account"
 msgstr "Supprimer votre compte"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "Désolé, mais en tant qu'administrateur, vous ne pouvez pas laisser votre propre instance."
 
 msgid "Your Dashboard"
 msgstr "Votre tableau de bord"
@@ -283,7 +283,7 @@ msgid "Your Blogs"
 msgstr "Vos Blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Vous n'avez pas encore de blog. Créez votre propre blog, ou demandez de vous joindre à un."
 
 msgid "Start a new blog"
 msgstr "Commencer un nouveau blog"
@@ -507,11 +507,11 @@ msgid "Send reset link"
 msgstr "Envoyer un lien de réinitialisation"
 
 msgid "Login"
-msgstr ""
+msgstr "Connexion"
 
 # src/template_utils.rs:144
 msgid "Username or email"
-msgstr ""
+msgstr "Nom d'utilisateur ou courriel"
 
 msgid "Publish"
 msgstr "Publier"
@@ -524,40 +524,40 @@ msgid "Content"
 msgstr "Contenu"
 
 msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
-msgstr ""
+msgstr "Vous pouvez télécharger des médias dans votre galerie, et copier leur code Markdown dans vos articles pour les insérer."
 
 msgid "Upload media"
-msgstr ""
+msgstr "Téléverser un média"
 
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
-msgstr ""
+msgstr "Mots-clés, séparés par des virgules"
 
 # src/template_utils.rs:144
 msgid "License"
-msgstr ""
+msgstr "Licence"
 
 # src/template_utils.rs:148
 msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "Laisser vide pour se réservent tous les droits"
 
 msgid "Illustration"
-msgstr ""
+msgstr "Illustration"
 
 msgid "None"
-msgstr ""
+msgstr "Aucun"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "C'est un brouillon, ne le publiez pas encore."
 
 msgid "Update"
-msgstr ""
+msgstr "Mettre à jour"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Mettre à jour, ou publier"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "Publiez votre message"
 
 msgid "Written by {0}"
 msgstr "Écrit par {0}"
