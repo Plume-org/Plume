@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 16:47\n"
+"PO-Revision-Date: 2019-03-16 08:34\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -109,19 +109,19 @@ msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menu"
 
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notifications"
 
 msgid "Log Out"
 msgstr "Se déconnecter"
@@ -145,10 +145,10 @@ msgid "Matrix room"
 msgstr "Salon Matrix"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administration"
 
 msgid "Welcome on {}"
-msgstr ""
+msgstr "Bienvenue sur {}"
 
 msgid "Latest articles"
 msgstr "Derniers articles"
@@ -157,19 +157,19 @@ msgid "Your feed"
 msgstr "Votre flux"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Flux fédéré"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Flux local"
 
 msgid "Administration of {0}"
 msgstr "Administration de {0}"
 
 msgid "Instances"
-msgstr ""
+msgstr "Instances"
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuration"
 
 msgid "Users"
 msgstr "Utilisateurs"
@@ -184,10 +184,10 @@ msgid "Ban"
 msgstr "Bannir"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Tout les articles du Fédiverse"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Articles de {}"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
@@ -201,7 +201,7 @@ msgid "Optional"
 msgstr "Optionnel"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Permettre à tous de s'enregistrer"
 
 msgid "Short description - byline"
 msgstr ""
@@ -214,10 +214,10 @@ msgstr "Description longue"
 
 # src/template_utils.rs:144
 msgid "Default article license"
-msgstr ""
+msgstr "Licence d'article par défaut"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Sauvegarder ces paramètres"
 
 msgid "About {0}"
 msgstr "À propos de {0}"
@@ -241,13 +241,13 @@ msgid "Edit your account"
 msgstr "Modifier votre compte"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Votre Profile"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "Téléverser un avatar"
 
 # src/template_utils.rs:144
 msgid "Display name"
