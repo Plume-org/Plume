@@ -80,7 +80,19 @@ fn init_widget(
     widget.focus();
     widget.blur();
 
+    filter_paste(&widget);
+
     Ok(widget)
+}
+
+fn filter_paste(elt: &HtmlElement) {
+    // Only insert text when pasting something
+    js! {
+        @{&elt}.addEventListener("paste", function (evt) {
+            evt.preventDefault();
+            document.execCommand("insertText", false, evt.clipboardData.getData("text"));
+        });
+    };
 }
 
 pub fn init() -> Result<(), EditorError> {
@@ -102,7 +114,7 @@ pub fn init() -> Result<(), EditorError> {
         // And pre-fill the new editor with this values
         let title = init_widget(&ed, "h1", i18n!(CATALOG, "Title"), title_val, true)?;
         let subtitle = init_widget(&ed, "h2", i18n!(CATALOG, "Subtitle or summary"), subtitle_val, true)?;
-        let content = init_widget(&ed, "article", i18n!(CATALOG, "Write your article here. Markdown is supported."), content_val.clone(), true)?;
+        let content = init_widget(&ed, "article", i18n!(CATALOG, "Write your article here. Markdown is supported."), content_val.clone(), false)?;
         js! { @{&content}.innerHTML = @{content_val}; };
 
         // character counter
