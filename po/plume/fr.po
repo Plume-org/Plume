@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 10:14\n"
+"PO-Revision-Date: 2019-03-16 13:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -494,17 +494,17 @@ msgid "Update password"
 msgstr "Mettre à jour le mot de passe"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Vérifiez votre boîte de réception!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Nous avons envoyé un mail à l'adresse que vous nous avez donnée, avec un lien pour réinitialiser votre mot de passe."
 
 # src/template_utils.rs:144
 msgid "E-mail"
-msgstr ""
+msgstr "Courriel"
 
 msgid "Send reset link"
-msgstr ""
+msgstr "Envoyer un lien de réinitialisation"
 
 msgid "Login"
 msgstr ""
