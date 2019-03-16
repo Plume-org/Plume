@@ -1,8 +1,39 @@
-extern crate plume_common;
 extern crate ructe;
 extern crate rsass;
 use ructe::*;
 use std::{env, fs::*, io::Write, path::PathBuf};
+use std::process::{Command, Stdio};
+
+fn compute_static_hash() -> String {
+    //"find static/ -type f ! -path 'static/media/*' | sort | xargs stat --printf='%n %Y\n' | sha256sum"
+
+    let find = Command::new("find")
+        .args(&["static/", "-type", "f", "!", "-path", "static/media/*"])
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed find command");
+
+    let sort = Command::new("sort")
+        .stdin(find.stdout.unwrap())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed sort command");
+
+    let xargs = Command::new("xargs")
+        .args(&["stat", "--printf='%n %Y\n'"])
+        .stdin(sort.stdout.unwrap())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed xargs command");
+
+    let sha = Command::new("sha256sum")
+        .stdin(xargs.stdout.unwrap())
+        .output()
+        .expect("failed sha256sum command");
+
+    String::from_utf8(sha.stdout).unwrap()
+}
+
 
 fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -17,7 +48,7 @@ fn main() {
             .expect("Error during SCSS compilation")
     ).expect("Couldn't write CSS output");
 
-    let cache_id = plume_common::utils::random_hex();
+    let cache_id = &compute_static_hash()[..8];
     println!("cargo:rerun-if-changed=target/deploy/plume-front.wasm");
     copy("target/deploy/plume-front.wasm", "static/plume-front.wasm")
         .and_then(|_| read_to_string("target/deploy/plume-front.js"))
