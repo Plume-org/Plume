@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 09:24\n"
+"PO-Revision-Date: 2019-03-16 10:14\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -361,7 +361,7 @@ msgid "Respond"
 msgstr "Répondre"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Supprimer ce commentaire"
 
 msgid "What is Plume?"
 msgstr "Qu’est-ce que Plume ?"
@@ -388,7 +388,7 @@ msgid "By {0}"
 msgstr "Par {0}"
 
 msgid "Draft"
-msgstr ""
+msgstr "Brouillon"
 
 msgid "Your query"
 msgstr "Votre recherche"
@@ -430,7 +430,7 @@ msgid "Containing these tags"
 msgstr "Avec ces tags"
 
 msgid "Tags"
-msgstr ""
+msgstr "Étiquettes"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these instances"
@@ -471,7 +471,7 @@ msgid "Search result for \"{0}\""
 msgstr ""
 
 msgid "Search result"
-msgstr ""
+msgstr "Résultats de la recherche"
 
 msgid "No result for your query"
 msgstr "Aucun résultat pour votre recherche"
@@ -480,18 +480,18 @@ msgid "No more result for your query"
 msgstr "Plus de résultats pour votre recherche"
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Réinitialiser votre mot de passe"
 
 # src/template_utils.rs:144
 msgid "New password"
-msgstr ""
+msgstr "Nouveau mot de passe"
 
 # src/template_utils.rs:144
 msgid "Confirmation"
-msgstr ""
+msgstr "Confirmation"
 
 msgid "Update password"
-msgstr ""
+msgstr "Mettre à jour le mot de passe"
 
 msgid "Check your inbox!"
 msgstr ""
@@ -707,10 +707,10 @@ msgid "Description"
 msgstr "Description"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "Utile pour les personnes malvoyantes, ainsi que pour les informations de licence"
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Laisser vide, si aucun n'est nécessaire"
 
 msgid "File"
 msgstr "Fichier"
@@ -719,19 +719,19 @@ msgid "Send"
 msgstr "Envoyer"
 
 msgid "Media details"
-msgstr ""
+msgstr "Détails du média"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Revenir à la galerie"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Syntaxe markdown"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Copiez-le dans vos articles, à insérer ce média :"
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Utiliser comme avatar"
 
 msgid "Login to boost"
 msgstr ""
