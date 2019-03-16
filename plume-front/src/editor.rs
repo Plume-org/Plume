@@ -72,7 +72,7 @@ fn init_widget(
     }
     widget.append_child(&document().create_text_node(&content));
     if disable_return {
-        widget.add_event_listener(no_return);        
+        widget.add_event_listener(no_return);
     }
 
     parent.append_child(&widget);
@@ -128,7 +128,7 @@ pub fn init() -> Result<(), EditorError> {
 
             popup.class_list().add("show").unwrap();
             bg.class_list().add("show").unwrap();
-        }));        
+        }));
     }
     Ok(())
 }
@@ -233,7 +233,7 @@ fn make_editable(tag: &'static str) -> Element {
     elt
 }
 
-fn placeholder<'a>(elt: HtmlElement, text: &'a str) -> HtmlElement {
+fn placeholder(elt: HtmlElement, text: &str) -> HtmlElement {
     elt.dataset().insert("placeholder", text).unwrap();
     elt.dataset().insert("edited", "false").unwrap();
 
@@ -248,7 +248,7 @@ fn placeholder<'a>(elt: HtmlElement, text: &'a str) -> HtmlElement {
 
             let ph = document().create_element("span").expect("Couldn't create placeholder");
             ph.class_list().add("placeholder").expect("Couldn't add class");
-            ph.append_child(&document().create_text_node(&elt.dataset().get("placeholder").unwrap_or(String::new())));
+            ph.append_child(&document().create_text_node(&elt.dataset().get("placeholder").unwrap_or_default()));
             elt.append_child(&ph);
         }
     }));
