@@ -142,7 +142,7 @@ pub fn init() -> Result<(), EditorError> {
             bg.class_list().add("show").unwrap();
         }));
 
-        show_errors();    
+        show_errors();
     }
     Ok(())
 }
@@ -201,8 +201,11 @@ fn init_popup(title: &HtmlElement, subtitle: &HtmlElement, content: &HtmlElement
     };
     button.append_child(&document().create_text_node(&i18n!(CATALOG, "Publish")));
     button.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+        title.focus(); // Remove the placeholder before publishing
         set_value("title", title.inner_text());
+        subtitle.focus();
         set_value("subtitle", subtitle.inner_text());
+        content.focus();
         set_value("editor-content", js!{ return @{&content}.innerHTML }.as_str().unwrap_or_default());
         set_value("tags", get_elt_value("popup-tags"));
         if let Some(draft) = document().get_element_by_id("popup-draft") {
