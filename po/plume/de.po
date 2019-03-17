@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-17 17:54\n"
+"PO-Revision-Date: 2019-03-17 18:44\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -118,7 +118,7 @@ msgid "Search"
 msgstr "Suche"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Übersicht"
 
 msgid "Notifications"
 msgstr "Benachrichtigungen"
@@ -217,7 +217,7 @@ msgid "Default article license"
 msgstr ""
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Diese Einstellungen speichern"
 
 msgid "About {0}"
 msgstr "Über {0}"
@@ -241,17 +241,17 @@ msgid "Edit your account"
 msgstr "Ändere deinen Account"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Dein Profil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "Einen Avatar hochladen"
 
 # src/template_utils.rs:144
 msgid "Display name"
-msgstr ""
+msgstr "Angezeigter Name"
 
 # src/template_utils.rs:144
 msgid "Email"
@@ -262,7 +262,7 @@ msgid "Summary"
 msgstr "Zusammenfassung"
 
 msgid "Update account"
-msgstr ""
+msgstr "Konto aktualisieren"
 
 msgid "Danger zone"
 msgstr "Gefahrenbereich"
@@ -280,7 +280,7 @@ msgid "Your Dashboard"
 msgstr "Dein Dashboard"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Deine Blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
@@ -334,7 +334,7 @@ msgid "Recently boosted"
 msgstr "Kürzlich geboostet"
 
 msgid "Admin"
-msgstr ""
+msgstr "Amin"
 
 msgid "It is you"
 msgstr ""
@@ -361,7 +361,7 @@ msgid "Respond"
 msgstr "Antworten"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Diesen Kommentar löschen"
 
 msgid "What is Plume?"
 msgstr "Was ist Plume?"
@@ -385,10 +385,10 @@ msgid "View all"
 msgstr "Alles anzeigen"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Von {0}"
 
 msgid "Draft"
-msgstr ""
+msgstr "Entwurf"
 
 msgid "Your query"
 msgstr ""
@@ -427,10 +427,10 @@ msgstr ""
 
 # src/template_utils.rs:185
 msgid "Containing these tags"
-msgstr ""
+msgstr "Beinhaltet diese Tags"
 
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these instances"
@@ -444,25 +444,25 @@ msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "Autoren"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
-msgstr ""
+msgstr "Blog-Titel"
 
 # src/template_utils.rs:185
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "Sprache"
 
 # src/template_utils.rs:185
 msgid "Published under this license"
-msgstr ""
+msgstr "Unter dieser Lizenz veröffentlicht"
 
 msgid "Article license"
 msgstr "Artikel-Lizenz"
@@ -501,17 +501,17 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "E-mail"
-msgstr ""
+msgstr "E-Mail"
 
 msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
-msgstr ""
+msgstr "Login"
 
 # src/template_utils.rs:144
 msgid "Username or email"
-msgstr ""
+msgstr "Benutzername oder E-Mail"
 
 msgid "Publish"
 msgstr "Veröffentlichen"
@@ -527,7 +527,7 @@ msgid "You can upload medias to your gallery, and copy their Markdown code in yo
 msgstr ""
 
 msgid "Upload media"
-msgstr ""
+msgstr "Medien hochladen"
 
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
@@ -535,7 +535,7 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "License"
-msgstr ""
+msgstr "Lizenz"
 
 # src/template_utils.rs:148
 msgid "Leave it empty to reserve all rights"
@@ -545,16 +545,16 @@ msgid "Illustration"
 msgstr ""
 
 msgid "None"
-msgstr ""
+msgstr "Keine"
 
 msgid "This is a draft, don't publish it yet."
 msgstr ""
 
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Aktualisieren oder veröffentlichen"
 
 msgid "Publish your post"
 msgstr ""
@@ -566,13 +566,13 @@ msgid "Edit"
 msgstr ""
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Diesen Artikel löschen"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Alle Rechte vorbehalten."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Dieser Artikel ist unter {0} lizensiert."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -580,14 +580,14 @@ msgstr[0] "Ein Like"
 msgstr[1] "{0} Likes"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Ich mag das nicht mehr"
 
 msgid "Add yours"
 msgstr ""
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
+msgstr[0] "Ein Boost"
 msgstr[1] ""
 
 msgid "I don't want to boost this anymore"
@@ -600,17 +600,17 @@ msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Kommentare"
 
 # src/template_utils.rs:144
 msgid "Content warning"
 msgstr "Warnhinweis zum Inhalt"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Ihr Kommentar"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Kommentar abschicken"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
@@ -622,7 +622,7 @@ msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in
 msgstr "Irgendetwas stimmt mit deinem CSRF token nicht. Vergewissere dich, dass Cookies in deinem Browser aktiviert sind und versuche diese Seite neu zu laden. Bitte melde diesen Fehler, falls er erneut auftritt."
 
 msgid "Page not found"
-msgstr ""
+msgstr "Seite nicht gefunden"
 
 msgid "We couldn't find this page."
 msgstr "Wir konnten diese Seite nicht finden."
@@ -640,7 +640,7 @@ msgid "You are not authorized."
 msgstr "Nicht berechtigt."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "Interner Serverfehler"
 
 msgid "Something broke on our side."
 msgstr "Bei dir ist etwas schief gegangen."
@@ -649,7 +649,7 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen gerne melden."
 
 msgid "New Blog"
-msgstr ""
+msgstr "Neuer Blog"
 
 msgid "Create a blog"
 msgstr "Erstelle einen Blog"
@@ -677,7 +677,7 @@ msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "Diesen Blog dauerhaft löschen"
 
 msgid "Articles tagged \"{0}\""
 msgstr ""
@@ -698,7 +698,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 msgid "Media upload"
 msgstr "Hochladen von Mediendateien"
@@ -719,10 +719,10 @@ msgid "Send"
 msgstr "Senden"
 
 msgid "Media details"
-msgstr ""
+msgstr "Medien-Details"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Zurück zur Galerie"
 
 msgid "Markdown syntax"
 msgstr ""
@@ -731,11 +731,11 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Als Avatar benutzen"
 
 msgid "Login to boost"
-msgstr ""
+msgstr "Einloggen zum boosten"
 
 msgid "Login to like"
-msgstr ""
+msgstr "Einloggen um zu liken"
 
