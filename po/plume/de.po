@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 17:35\n"
+"PO-Revision-Date: 2019-03-17 17:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -109,13 +109,13 @@ msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "Menü"
 
 msgid "Search"
-msgstr ""
+msgstr "Suche"
 
 msgid "Dashboard"
 msgstr ""
@@ -194,11 +194,11 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 # src/template_utils.rs:146
 msgid "Optional"
-msgstr ""
+msgstr "Optional"
 
 msgid "Allow anyone to register here"
 msgstr ""
@@ -220,7 +220,7 @@ msgid "Save these settings"
 msgstr ""
 
 msgid "About {0}"
-msgstr ""
+msgstr "Über {0}"
 
 msgid "Home to <em>{0}</em> users"
 msgstr ""
@@ -394,7 +394,7 @@ msgid "Your query"
 msgstr ""
 
 msgid "Advanced search"
-msgstr ""
+msgstr "Erweiterte Suche"
 
 # src/template_utils.rs:185
 msgid "Article title matching these words"
@@ -465,13 +465,13 @@ msgid "Published under this license"
 msgstr ""
 
 msgid "Article license"
-msgstr ""
+msgstr "Artikel-Lizenz"
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Suchergebnis für {0}"
 
 msgid "Search result"
-msgstr ""
+msgstr "Suchergebnis"
 
 msgid "No result for your query"
 msgstr ""
@@ -480,21 +480,21 @@ msgid "No more result for your query"
 msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 # src/template_utils.rs:144
 msgid "New password"
-msgstr ""
+msgstr "Neues Passwort"
 
 # src/template_utils.rs:144
 msgid "Confirmation"
-msgstr ""
+msgstr "Bestätigung"
 
 msgid "Update password"
-msgstr ""
+msgstr "Passwort aktualisieren"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Schauen sie in ihren Posteingang!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
