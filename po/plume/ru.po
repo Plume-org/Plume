@@ -548,6 +548,9 @@ msgstr "Имя пользователя или адрес электронной
 msgid "Publish"
 msgstr "Опубликовать"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "Подзаголовок"
 

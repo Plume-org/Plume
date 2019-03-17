@@ -96,6 +96,14 @@ fn filter_paste(elt: &HtmlElement) {
 }
 
 pub fn init() -> Result<(), EditorError> {
+    // Check if the user wants to use the basic editor
+    if let Some(x) = window().session_storage().get("basic-editor") {
+        if x == String::from("true") {
+            window().session_storage().remove("basic-editor");
+            return Ok(()); // And stop here if they don't want the fancy editor
+        }
+    }
+
     if let Some(ed) = document().get_element_by_id("plume-editor") {
         // Show the editor
         js!{ @{&ed}.style.display = "block"; };
@@ -143,8 +151,18 @@ pub fn init() -> Result<(), EditorError> {
         }));
 
         show_errors();
+        setup_close_button();
     }
     Ok(())
+}
+
+fn setup_close_button() {
+    if let Some(button) = document().get_element_by_id("close-editor") {
+        button.add_event_listener(|_: ClickEvent| {
+            window().session_storage().insert("basic-editor", "true").unwrap();
+            window().history().go(0).unwrap(); // Refresh the page
+        });
+    }
 }
 
 fn show_errors() {

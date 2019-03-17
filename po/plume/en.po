@@ -520,6 +520,9 @@ msgstr ""
 msgid "Publish"
 msgstr ""
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Subtitle"
 msgstr ""

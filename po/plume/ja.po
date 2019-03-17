@@ -536,6 +536,9 @@ msgstr "ユーザー名またはメールアドレス"
 msgid "Publish"
 msgstr "公開"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "サブタイトル"
 
