@@ -225,7 +225,7 @@ pub fn edit(name: String, user: User, conn: DbConn, intl: I18n) -> Result<Ructe,
             UpdateUserForm {
                 display_name: user.display_name.clone(),
                 email: user.email.clone().unwrap_or_default(),
-                summary: user.summary.to_string(),
+                summary: user.summary,
             },
             ValidationErrors::default()
         )))

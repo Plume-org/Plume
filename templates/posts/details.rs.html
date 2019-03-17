@@ -76,7 +76,7 @@
 		    <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
 		    <a rel="author" class="u-url" href="@author.ap_url"></a>
 		</h2>
-                <p>@Html(&author.summary)</h2>
+                <p>@Html(&author.summary_html)</h2>
             </div>
 	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
                 <form action="@uri!(user::follow: name = &author.fqn)" method="POST">

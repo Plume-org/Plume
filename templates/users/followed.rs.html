@@ -18,7 +18,7 @@
         @for follow in followed {
             <div class="card">
                 <h3><a href="@uri!(user::details: name = &follow.fqn)">@follow.name()</a> <small>@format!("@{}", &follow.fqn)</small></h3>
-                <main><p>@Html(follow.summary)</p></main>
+                <main><p>@Html(follow.summary_html)</p></main>
             </div>
         }
     </div>
