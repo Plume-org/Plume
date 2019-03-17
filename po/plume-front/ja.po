@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-03-17 16:24\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -18,27 +18,27 @@ msgstr ""
 
 # plume-front/src/editor.rs:103
 msgid "Title"
-msgstr ""
+msgstr "タイトル"
 
 # plume-front/src/editor.rs:104
 msgid "Subtitle or summary"
-msgstr ""
+msgstr "サブタイトルまたは概要"
 
 # plume-front/src/editor.rs:105
 msgid "Write your article here. Markdown is supported."
-msgstr ""
+msgstr "記事をここに書きます。Markdown がサポートされています。"
 
 # plume-front/src/editor.rs:113
 msgid "Around {} characters left"
-msgstr ""
+msgstr "残り約 {} 文字"
 
 # plume-front/src/editor.rs:143
 msgid "Tags"
-msgstr ""
+msgstr "タグ"
 
 # plume-front/src/editor.rs:144
 msgid "License"
-msgstr ""
+msgstr "ライセンス"
 
 # plume-front/src/editor.rs:147
 msgid "Cover"
@@ -46,5 +46,5 @@ msgstr ""
 
 # plume-front/src/editor.rs:157
 msgid "Publish"
-msgstr ""
+msgstr "公開"
 
