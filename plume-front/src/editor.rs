@@ -163,6 +163,23 @@ fn init_popup(title: &HtmlElement, subtitle: &HtmlElement, content: &HtmlElement
     popup.append_child(&cover_label);
     popup.append_child(&cover);
 
+    if let Some(draft_checkbox) = document().get_element_by_id("draft") {
+        let draft_label = document().create_element("label")?;
+        draft_label.set_attribute("for", "popup-draft")?;
+
+        let draft = document().create_element("input").unwrap();
+        js!{
+            @{&draft}.id = "popup-draft";
+            @{&draft}.name = "popup-draft";
+            @{&draft}.type = "checkbox";
+            @{&draft}.checked = @{&draft_checkbox}.checked;
+        };
+
+        draft_label.append_child(&draft);
+        draft_label.append_child(&document().create_text_node(&i18n!(CATALOG, "This is a draft")));
+        popup.append_child(&draft_label);
+    }
+
     let button = document().create_element("input")?;
     js!{
         @{&button}.type = "submit";
@@ -174,6 +191,11 @@ fn init_popup(title: &HtmlElement, subtitle: &HtmlElement, content: &HtmlElement
         set_value("subtitle", subtitle.inner_text());
         set_value("editor-content", js!{ return @{&content}.innerHTML }.as_str().unwrap_or_default());
         set_value("tags", get_elt_value("popup-tags"));
+        if let Some(draft) = document().get_element_by_id("popup-draft") {
+            js!{
+                document.getElementById("draft").checked = @{draft}.checked;
+            };
+        }
         let cover = document().get_element_by_id("cover").unwrap();
         cover.parent_element().unwrap().remove_child(&cover).ok();
         old_ed.append_child(&cover);

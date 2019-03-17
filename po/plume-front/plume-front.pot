@@ -40,6 +40,10 @@ msgstr ""
 msgid "Cover"
 msgstr ""
 
-# plume-front/src/editor.rs:169
+# plume-front/src/editor.rs:179
+msgid "This is a draft"
+msgstr ""
+
+# plume-front/src/editor.rs:186
 msgid "Publish"
 msgstr ""
