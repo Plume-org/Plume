@@ -28,22 +28,22 @@ msgstr ""
 msgid "Around {} characters left"
 msgstr ""
 
-# plume-front/src/editor.rs:155
+# plume-front/src/editor.rs:169
 msgid "Tags"
 msgstr ""
 
-# plume-front/src/editor.rs:156
+# plume-front/src/editor.rs:170
 msgid "License"
 msgstr ""
 
-# plume-front/src/editor.rs:159
+# plume-front/src/editor.rs:173
 msgid "Cover"
 msgstr ""
 
-# plume-front/src/editor.rs:179
+# plume-front/src/editor.rs:193
 msgid "This is a draft"
 msgstr ""
 
-# plume-front/src/editor.rs:186
+# plume-front/src/editor.rs:200
 msgid "Publish"
 msgstr ""

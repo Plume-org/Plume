@@ -140,9 +140,23 @@ pub fn init() -> Result<(), EditorError> {
 
             popup.class_list().add("show").unwrap();
             bg.class_list().add("show").unwrap();
-        }));        
+        }));
+
+        show_errors();    
     }
     Ok(())
+}
+
+fn show_errors() {
+    if let Ok(Some(header)) = document().query_selector("header") {
+        let list = document().create_element("header").unwrap();
+        list.class_list().add("messages").unwrap();
+        for error in document().query_selector_all("p.error").unwrap() {
+            error.parent_element().unwrap().remove_child(&error).unwrap();
+            list.append_child(&error);
+        }
+        header.parent_element().unwrap().insert_before(&list, &header.next_sibling().unwrap()).unwrap();
+    }
 }
 
 fn init_popup(title: &HtmlElement, subtitle: &HtmlElement, content: &HtmlElement, old_ed: &Element) -> Result<Element, EditorError> {
