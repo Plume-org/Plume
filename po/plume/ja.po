@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-03-17 15:34\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:34
 msgid "{0} commented your article."
-msgstr ""
+msgstr "{0} があなたの記事にコメントしました。"
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
@@ -26,19 +26,19 @@ msgstr ""
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} が、あなたの記事にいいねしました。"
 
 # src/template_utils.rs:37
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} があなたをメンションしました。"
 
 # src/template_utils.rs:38
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} が、あなたの記事をブーストしました。"
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "{0} のアバター"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
@@ -46,7 +46,7 @@ msgstr "新しいブログを作成するにはログインする必要があり
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "このブログを削除する権限がありません。"
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
@@ -74,15 +74,15 @@ msgstr "新しい記事"
 
 # src/routes/posts.rs:156
 msgid "Edit {0}"
-msgstr ""
+msgstr "{0} を編集"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "記事の再共有にはログインが必要です。"
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "パスワードのリセット"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
