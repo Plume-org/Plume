@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-16 14:02\n"
+"PO-Revision-Date: 2019-03-17 07:43\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -22,7 +22,7 @@ msgstr "{0} a commenté votre article."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} est abonné à vous."
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
@@ -62,7 +62,7 @@ msgstr "Cet article n’est pas encore publié."
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
-msgstr ""
+msgstr "Vous devez être connecté(e) pour écrire un nouvel article"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
@@ -86,7 +86,7 @@ msgstr "Réinitialisation du mot de passe"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Voici le lien pour réinitialiser votre mot de passe : {0}"
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
@@ -204,7 +204,7 @@ msgid "Allow anyone to register here"
 msgstr "Permettre à tous de s'enregistrer"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "Résumé - byline"
 
 msgid "Markdown syntax is supported"
 msgstr "La syntaxe Markdown est supportée"
@@ -316,7 +316,7 @@ msgid "Password confirmation"
 msgstr "Confirmation du mot de passe"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
+msgstr "Désolé, mais les inscriptions sont fermées sur cette instance en particulier. Vous pouvez, toutefois, en trouver une autre."
 
 msgid "Articles"
 msgstr "Articles"
@@ -370,13 +370,13 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume est un moteur de blog décentralisé."
 
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
+msgstr "Les auteurs peuvent gérer différents blogs à partir d'un site web unique."
 
 msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Les articles sont également visibles sur d'autres sites web avec Plume, et vous pouvez interagir avec eux directement à partir d'autres plateformes comme Mastodon."
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "Refuge de <em>{0}</em> personnes"
 
 msgid "Read the detailed rules"
 msgstr "Lire les règles détaillées"
@@ -408,7 +408,7 @@ msgid "Subtitle matching these words"
 msgstr "Sous-titre contenant ces mots"
 
 msgid "Subtitle - byline"
-msgstr ""
+msgstr "Sous-titre - byline"
 
 # src/template_utils.rs:185
 msgid "Content matching these words"
@@ -468,7 +468,7 @@ msgid "Article license"
 msgstr "Licence de l'article"
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Résultats de la recherche pour \"{0}\""
 
 msgid "Search result"
 msgstr "Résultats de la recherche"
@@ -576,22 +576,22 @@ msgstr "Cet article est sous licence {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un like"
+msgstr[1] "{0} likes"
 
 msgid "I don't like this anymore"
 msgstr "Je n'aime plus cela"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Ajouter le vôtre"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un repartage"
+msgstr[1] "{0} repartages"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Je ne veux plus le repartager"
 
 msgid "Boost"
 msgstr "Partager"
@@ -660,12 +660,12 @@ msgstr "Créer le blog"
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Il y a un auteur sur ce blog: "
-msgstr[1] ""
+msgstr[1] "Il y a {0} auteurs sur ce blog: "
 
 msgid "There's one article on this blog"
 msgid_plural "There are {0} articles on this blog"
 msgstr[0] "Il y a un auteur sur ce blog"
-msgstr[1] ""
+msgstr[1] "Il y a {0} auteurs sur ce blog"
 
 msgid "No posts to see here yet."
 msgstr "Aucun article pour le moment."
@@ -674,7 +674,7 @@ msgid "New article"
 msgstr "Nouvel article"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "Attention, toute action prise ici ne peut pas être annulée."
 
 msgid "Permanently delete this blog"
 msgstr "Supprimer définitivement ce blog"
@@ -734,8 +734,8 @@ msgid "Use as avatar"
 msgstr "Utiliser comme avatar"
 
 msgid "Login to boost"
-msgstr ""
+msgstr "Se connecter pour repartager"
 
 msgid "Login to like"
-msgstr ""
+msgstr "Connectez vous pour liker"
 
