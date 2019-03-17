@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-17 15:34\n"
+"PO-Revision-Date: 2019-03-17 16:24\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -86,15 +86,15 @@ msgstr "パスワードのリセット"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "こちらのリンクから、パスワードをリセットできます: {0}"
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "パスワードが正常にリセットされました。"
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "申し訳ありませんが、リンクの有効期限が切れています。もう一度お試しください"
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
@@ -109,13 +109,13 @@ msgid "You need to be logged in order to edit your profile"
 msgstr "自分のプロフィールを編集するにはログインする必要があります"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "メニュー"
 
 msgid "Search"
-msgstr ""
+msgstr "検索"
 
 msgid "Dashboard"
 msgstr "ダッシュボード"
@@ -148,7 +148,7 @@ msgid "Administration"
 msgstr "管理"
 
 msgid "Welcome on {}"
-msgstr ""
+msgstr "{} へようこそ"
 
 msgid "Latest articles"
 msgstr "最新記事"
@@ -163,7 +163,7 @@ msgid "Local feed"
 msgstr "このインスタンスのフィード"
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "{0} の管理"
 
 msgid "Instances"
 msgstr "インスタンス"
@@ -187,7 +187,7 @@ msgid "All the articles of the Fediverse"
 msgstr "Fediverse のすべての記事"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "{} の記事"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
@@ -220,22 +220,22 @@ msgid "Save these settings"
 msgstr ""
 
 msgid "About {0}"
-msgstr ""
+msgstr "{0} について"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "ユーザー登録者数<em>{0}</em> 人"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "記事投稿者数 <em>{0}</em>"
 
 msgid "And connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "他のインスタンスからの接続数 <em>{0}</em>"
 
 msgid "Administred by"
 msgstr "管理者"
 
 msgid "Runs Plume {0}"
-msgstr ""
+msgstr "Plume {0} を実行中"
 
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
@@ -480,31 +480,31 @@ msgid "No more result for your query"
 msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "パスワードをリセット"
 
 # src/template_utils.rs:144
 msgid "New password"
-msgstr ""
+msgstr "新しいパスワード"
 
 # src/template_utils.rs:144
 msgid "Confirmation"
-msgstr ""
+msgstr "確認"
 
 msgid "Update password"
-msgstr ""
+msgstr "パスワードを更新"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "受信トレイを確認してください！"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "指定した宛先に、パスワードをリセットするためのリンクを記載したメールを送信しました。"
 
 # src/template_utils.rs:144
 msgid "E-mail"
-msgstr ""
+msgstr "メール"
 
 msgid "Send reset link"
-msgstr ""
+msgstr "パスワードをリセットするリンクを送信"
 
 msgid "Login"
 msgstr "ログイン"
@@ -527,19 +527,19 @@ msgid "You can upload medias to your gallery, and copy their Markdown code in yo
 msgstr ""
 
 msgid "Upload media"
-msgstr ""
+msgstr "メディアをアップロード"
 
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
-msgstr ""
+msgstr "タグ (コンマ区切り)"
 
 # src/template_utils.rs:144
 msgid "License"
-msgstr ""
+msgstr "ライセンス"
 
 # src/template_utils.rs:148
 msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "すべての権利を保持するには空欄にしてください"
 
 msgid "Illustration"
 msgstr "図"
@@ -554,10 +554,10 @@ msgid "Update"
 msgstr "アップデート"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "更新または公開"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "記事を公開"
 
 msgid "Written by {0}"
 msgstr ""
@@ -572,7 +572,7 @@ msgid "All rights reserved."
 msgstr ""
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "この記事は、{0} ライセンスの元で公開されています。"
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -620,7 +620,7 @@ msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in
 msgstr "ご自身の CSRF トークンにおいて問題が発生しました。お使いのブラウザーで Cookie　が有効になっていることを確認して、このページを再読み込みしてみてください。このエラーメッセージが表示され続けた場合、問題を報告してください。"
 
 msgid "Page not found"
-msgstr ""
+msgstr "ページが見つかりません"
 
 msgid "We couldn't find this page."
 msgstr "このページは見つかりませんでした。"
