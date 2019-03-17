@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-03-17 18:44\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:103
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 # plume-front/src/editor.rs:104
 msgid "Subtitle or summary"
@@ -30,15 +30,15 @@ msgstr ""
 
 # plume-front/src/editor.rs:113
 msgid "Around {} characters left"
-msgstr ""
+msgstr "Ungefähr {} Zeichen übrig"
 
 # plume-front/src/editor.rs:143
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 # plume-front/src/editor.rs:144
 msgid "License"
-msgstr ""
+msgstr "Lizenz"
 
 # plume-front/src/editor.rs:147
 msgid "Cover"
@@ -46,5 +46,5 @@ msgstr ""
 
 # plume-front/src/editor.rs:157
 msgid "Publish"
-msgstr ""
+msgstr "Veröffentlichen"
 
