@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-17 16:24\n"
+"PO-Revision-Date: 2019-03-18 01:14\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -214,10 +214,10 @@ msgstr "長い説明"
 
 # src/template_utils.rs:144
 msgid "Default article license"
-msgstr ""
+msgstr "記事のデフォルトのライセンス"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "設定を保存"
 
 msgid "About {0}"
 msgstr "{0} について"
@@ -247,7 +247,7 @@ msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "アバターをアップロード"
 
 # src/template_utils.rs:144
 msgid "Display name"
