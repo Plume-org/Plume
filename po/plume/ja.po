@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 02:53\n"
+"PO-Revision-Date: 2019-03-18 04:24\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -22,7 +22,7 @@ msgstr "{0} があなたの記事にコメントしました。"
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} があなたをフォローしました。"
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
@@ -102,7 +102,7 @@ msgstr "ダッシュボードにアクセスするにはログインが必要で
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
-msgstr ""
+msgstr "誰かをフォローするにはログインが必要です"
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
@@ -190,7 +190,7 @@ msgid "Articles from {}"
 msgstr "{} の記事"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
-msgstr ""
+msgstr "まだここに表示できるものがありません。もっとたくさんの人をフォローしてみましょう。"
 
 # src/template_utils.rs:144
 msgid "Name"
