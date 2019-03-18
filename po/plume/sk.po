@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 13:04\n"
+"PO-Revision-Date: 2019-03-18 14:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -292,7 +292,7 @@ msgid "Your Drafts"
 msgstr "Tvoje koncepty"
 
 msgid "Your media"
-msgstr "Tvoje mediálne súbory"
+msgstr "Tvoje multimédiá"
 
 msgid "Go to your gallery"
 msgstr "Prejdi do svojej galérie"
@@ -527,7 +527,7 @@ msgid "You can upload medias to your gallery, and copy their Markdown code in yo
 msgstr ""
 
 msgid "Upload media"
-msgstr "Nahraj mediálne súbory"
+msgstr "Nahraj multimédiá"
 
 # src/template_utils.rs:144
 msgid "Tags, separated by commas"
@@ -635,7 +635,7 @@ msgid "The link that led you here may be broken."
 msgstr ""
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "Obsah, ktorý si odoslal/a nemožno spracovať."
 
 msgid "Maybe it was too long."
 msgstr "Možno to bolo príliš dlhé."
@@ -697,7 +697,7 @@ msgid "Upload"
 msgstr "Nahraj"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Nemáš nahraný ešte žiaden multimediálny obsah."
 
 msgid "Content warning: {0}"
 msgstr "Upozornenie o obsahu: {0}"
