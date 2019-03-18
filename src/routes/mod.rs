@@ -36,7 +36,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket<'a> {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket<'a>, ()> {
         let conn = request.guard::<DbConn>()?;
         let intl = request.guard::<I18n>()?;
-        let user = Some(request.guard::<User>()?);
+        let user = request.guard::<User>().succeeded();
         let worker = request.guard::<Worker>()?;
         let searcher = request.guard::<Searcher>()?;
         rocket::Outcome::Success(PlumeRocket {
