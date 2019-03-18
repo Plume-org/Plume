@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:45\n"
+"PO-Revision-Date: 2019-03-18 14:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -82,7 +82,7 @@ msgstr "Musisz się zalogować, aby udostępnić wpis"
 
 # src/routes/session.rs:161
 msgid "Password reset"
-msgstr ""
+msgstr "Resetowanie hasła"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
@@ -112,7 +112,7 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Menu"
 
 msgid "Search"
 msgstr "Szukaj"
@@ -346,10 +346,10 @@ msgid "Open on {0}"
 msgstr "Otwórz w {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Przestań subskrybować"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Subskrybować"
 
 msgid "{0}'s subscriptions'"
 msgstr ""
@@ -484,14 +484,14 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "New password"
-msgstr ""
+msgstr "Nowe hasło"
 
 # src/template_utils.rs:144
 msgid "Confirmation"
-msgstr ""
+msgstr "Potwierdzenie"
 
 msgid "Update password"
-msgstr ""
+msgstr "Zaktualizuj hasło"
 
 msgid "Check your inbox!"
 msgstr ""
@@ -504,7 +504,7 @@ msgid "E-mail"
 msgstr ""
 
 msgid "Send reset link"
-msgstr ""
+msgstr "Wyślij link do zresetowania hasła"
 
 msgid "Login"
 msgstr "Zaloguj się"
