@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 01:14\n"
+"PO-Revision-Date: 2019-03-18 02:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -251,7 +251,7 @@ msgstr "アバターをアップロード"
 
 # src/template_utils.rs:144
 msgid "Display name"
-msgstr ""
+msgstr "表示名"
 
 # src/template_utils.rs:144
 msgid "Email"
@@ -274,7 +274,7 @@ msgid "Delete your account"
 msgstr "アカウントを削除"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "申し訳ありませんが、管理者は自身のインスタンスから離脱できません。"
 
 msgid "Your Dashboard"
 msgstr "自分のダッシュボード"
@@ -343,7 +343,7 @@ msgid "Edit your profile"
 msgstr "自分のプロフィールを編集"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "{0} で開く"
 
 msgid "Unsubscribe"
 msgstr ""
@@ -361,7 +361,7 @@ msgid "Respond"
 msgstr "返信"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "このコメントを削除"
 
 msgid "What is Plume?"
 msgstr "Plume とは？"
@@ -376,7 +376,7 @@ msgid "Articles are also visible on other Plume websites, and you can interact w
 msgstr "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラットフォームから直接記事と関わることができます。"
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "ユーザー登録者数 <em>{0}</em> 人"
 
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
@@ -391,31 +391,31 @@ msgid "Draft"
 msgstr "下書き"
 
 msgid "Your query"
-msgstr ""
+msgstr "検索用語"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "高度な検索"
 
 # src/template_utils.rs:185
 msgid "Article title matching these words"
-msgstr ""
+msgstr "記事のタイトルに一致する語句"
 
 msgid "Title"
 msgstr "タイトル"
 
 # src/template_utils.rs:185
 msgid "Subtitle matching these words"
-msgstr ""
+msgstr "サブタイトルに一致する語句"
 
 msgid "Subtitle - byline"
-msgstr ""
+msgstr "サブタイトル - 投稿者名"
 
 # src/template_utils.rs:185
 msgid "Content matching these words"
-msgstr ""
+msgstr "内容に一致する語句"
 
 msgid "Body content"
-msgstr ""
+msgstr "本文の内容"
 
 # src/template_utils.rs:185
 msgid "From this date"
@@ -427,17 +427,17 @@ msgstr ""
 
 # src/template_utils.rs:185
 msgid "Containing these tags"
-msgstr ""
+msgstr "含まれるタグ"
 
 msgid "Tags"
-msgstr ""
+msgstr "タグ"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these instances"
-msgstr ""
+msgstr "以下のいずれかのインスタンスに投稿"
 
 msgid "Instance domain"
-msgstr ""
+msgstr "インスタンスのドメイン"
 
 # src/template_utils.rs:185
 msgid "Posted by one of these authors"
