@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 02:04\n"
+"PO-Revision-Date: 2019-03-18 02:53\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -42,7 +42,7 @@ msgstr "{0} のアバター"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
-msgstr "新しいブログを作成するにはログインする必要があります"
+msgstr "新しいブログを作成するにはログインが必要です"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
@@ -50,11 +50,11 @@ msgstr "このブログを削除する権限がありません。"
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
-msgstr "投稿をいいねするにはログインする必要があります"
+msgstr "投稿をいいねするにはログインが必要です"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr "通知を表示するにはログインする必要があります"
+msgstr "通知を表示するにはログインが必要です"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
@@ -62,7 +62,7 @@ msgstr "この投稿はまだ公開されていません。"
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
-msgstr "新しい記事を書くにはログインする必要があります"
+msgstr "新しい記事を書くにはログインが必要です"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
@@ -78,7 +78,7 @@ msgstr "{0} を編集"
 
 # src/routes/reshares.rs:41
 msgid "You need to be logged in order to reshare a post"
-msgstr "記事の再共有にはログインが必要です。"
+msgstr "記事を再共有するにはログインが必要です"
 
 # src/routes/session.rs:161
 msgid "Password reset"
@@ -98,7 +98,7 @@ msgstr "申し訳ありませんが、リンクの有効期限が切れていま
 
 # src/routes/user.rs:126
 msgid "You need to be logged in order to access your dashboard"
-msgstr "ダッシュボードにアクセスするにはログインする必要があります"
+msgstr "ダッシュボードにアクセスするにはログインが必要です"
 
 # src/routes/user.rs:159
 msgid "You need to be logged in order to subscribe to someone"
@@ -106,7 +106,7 @@ msgstr ""
 
 # src/routes/user.rs:240
 msgid "You need to be logged in order to edit your profile"
-msgstr "自分のプロフィールを編集するにはログインする必要があります"
+msgstr "自分のプロフィールを編集するにはログインが必要です"
 
 msgid "Plume"
 msgstr "Plume"
@@ -142,7 +142,7 @@ msgid "Source code"
 msgstr "ソースコード"
 
 msgid "Matrix room"
-msgstr "Matrix　ルーム"
+msgstr "Matrix ルーム"
 
 msgid "Administration"
 msgstr "管理"
@@ -204,10 +204,10 @@ msgid "Allow anyone to register here"
 msgstr ""
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "短い説明 - 投稿者名"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Markdown 記法に対応しています。"
 
 msgid "Long description"
 msgstr "長い説明"
@@ -385,7 +385,7 @@ msgid "View all"
 msgstr "すべて表示"
 
 msgid "By {0}"
-msgstr ""
+msgstr "投稿者 {0}"
 
 msgid "Draft"
 msgstr "下書き"
@@ -441,43 +441,43 @@ msgstr "インスタンスのドメイン"
 
 # src/template_utils.rs:185
 msgid "Posted by one of these authors"
-msgstr ""
+msgstr "以下のいずれかの投稿者が投稿"
 
 msgid "Authors"
-msgstr ""
+msgstr "投稿者"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these blogs"
-msgstr ""
+msgstr "以下のいずれかのブログに投稿"
 
 msgid "Blog title"
-msgstr ""
+msgstr "ブログのタイトル"
 
 # src/template_utils.rs:185
 msgid "Written in this language"
-msgstr ""
+msgstr "記事の言語"
 
 msgid "Language"
-msgstr ""
+msgstr "言語"
 
 # src/template_utils.rs:185
 msgid "Published under this license"
-msgstr ""
+msgstr "適用されているライセンス"
 
 msgid "Article license"
-msgstr ""
+msgstr "記事のライセンス"
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "\"{0}\" の検索結果"
 
 msgid "Search result"
-msgstr ""
+msgstr "検索結果"
 
 msgid "No result for your query"
-msgstr ""
+msgstr "検索結果はありません"
 
 msgid "No more result for your query"
-msgstr ""
+msgstr "これ以上の検索結果はありません"
 
 msgid "Reset your password"
 msgstr "パスワードをリセット"
@@ -560,7 +560,7 @@ msgid "Publish your post"
 msgstr "記事を公開"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "投稿者 {0}"
 
 msgid "Edit"
 msgstr "編集"
@@ -579,17 +579,17 @@ msgid_plural "{0} likes"
 msgstr[0] "{0} いいね"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "このいいねを取り消します"
 
 msgid "Add yours"
 msgstr "いいねする"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
+msgstr[0] "{0} ブースト"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "このブーストを取り消します"
 
 msgid "Boost"
 msgstr "ブースト"
@@ -611,10 +611,10 @@ msgid "Submit comment"
 msgstr "コメントを保存"
 
 msgid "No comments yet. Be the first to react!"
-msgstr "コメントがまだありません。最初のコメントを書きましょう！"
+msgstr "まだコメントがありません。最初のコメントを書きましょう！"
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "無効な CSRF トークンです"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr "ご自身の CSRF トークンにおいて問題が発生しました。お使いのブラウザーで Cookie　が有効になっていることを確認して、このページを再読み込みしてみてください。このエラーメッセージが表示され続けた場合、問題を報告してください。"
@@ -629,16 +629,16 @@ msgid "The link that led you here may be broken."
 msgstr "このリンクは切れている可能性があります。"
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "送信された内容を処理できません。"
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "長すぎる可能性があります。"
 
 msgid "You are not authorized."
 msgstr "認証されていません。"
 
 msgid "Internal server error"
-msgstr ""
+msgstr "内部サーバーエラー"
 
 msgid "Something broke on our side."
 msgstr "サーバー側で何らかの問題が発生しました。"
@@ -647,7 +647,7 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
 
 msgid "New Blog"
-msgstr ""
+msgstr "新しいブログ"
 
 msgid "Create a blog"
 msgstr "ブログを作成"
@@ -657,11 +657,11 @@ msgstr "ブログを作成"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
+msgstr[0] "このブログには {0} 人の投稿者がいます: "
 
 msgid "There's one article on this blog"
 msgid_plural "There are {0} articles on this blog"
-msgstr[0] ""
+msgstr[0] "このブログには {0} 件の記事があります"
 
 msgid "No posts to see here yet."
 msgstr "ここにはまだ表示できる投稿がありません。"
@@ -670,31 +670,31 @@ msgid "New article"
 msgstr "新しい記事"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "ここで行われた操作は元に戻せません。十分注意してください。"
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "このブログを完全に削除"
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "\"{0}\" タグがついた記事"
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "現在このタグがついた記事はありません"
 
 msgid "Upload"
 msgstr "アップロード"
 
 msgid "You don't have any media yet."
-msgstr "メディアがまだありません。"
+msgstr "まだメディアがありません。"
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "内容の警告: {0}"
 
 msgid "Delete"
 msgstr "削除"
 
 msgid "Details"
-msgstr ""
+msgstr "詳細"
 
 msgid "Media upload"
 msgstr "メディアのアップロード"
@@ -703,10 +703,10 @@ msgid "Description"
 msgstr "説明"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "ライセンス情報と同様に、視覚に障害のある方に役立ちます"
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "何も必要でない場合は、空欄にしてください"
 
 msgid "File"
 msgstr "ファイル"
@@ -721,17 +721,17 @@ msgid "Go back to the gallery"
 msgstr "ライブラリに戻る"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Markdown 記法"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "このメディアを挿入するには、これを記事にコピーしてください。"
 
 msgid "Use as avatar"
 msgstr "アバターとして使う"
 
 msgid "Login to boost"
-msgstr ""
+msgstr "ブースとするにはログインしてください"
 
 msgid "Login to like"
-msgstr ""
+msgstr "いいねするにはログインしてください"
 
