@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-17 08:34\n"
+"PO-Revision-Date: 2019-03-18 13:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -109,7 +109,7 @@ msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "Nabídka"
@@ -154,13 +154,13 @@ msgid "Latest articles"
 msgstr "Nejposlednejší články"
 
 msgid "Your feed"
-msgstr ""
+msgstr "Vaše zdroje"
 
 msgid "Federated feed"
 msgstr ""
 
 msgid "Local feed"
-msgstr ""
+msgstr "Místni zdroje"
 
 msgid "Administration of {0}"
 msgstr "Správa {0}"
@@ -220,7 +220,7 @@ msgid "Save these settings"
 msgstr "Uložit tyhle nastavení"
 
 msgid "About {0}"
-msgstr ""
+msgstr "O {0}"
 
 msgid "Home to <em>{0}</em> users"
 msgstr ""
@@ -232,16 +232,16 @@ msgid "And connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
-msgstr ""
+msgstr "Správcem je"
 
 msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Upravit váš účet"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Váš profil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
@@ -251,7 +251,7 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Display name"
-msgstr ""
+msgstr "Zobrazované jméno"
 
 # src/template_utils.rs:144
 msgid "Email"
@@ -259,19 +259,19 @@ msgstr ""
 
 # src/template_utils.rs:144
 msgid "Summary"
-msgstr ""
+msgstr "Souhrn"
 
 msgid "Update account"
-msgstr ""
+msgstr "Aktualizovat účet"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Nebezpečná zóna"
 
 msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
 msgid "Delete your account"
-msgstr ""
+msgstr "Smazat váš účet"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
@@ -280,28 +280,28 @@ msgid "Your Dashboard"
 msgstr ""
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Vaše Blogy"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "Začít nový blog"
 
 msgid "Your Drafts"
-msgstr ""
+msgstr "Váše návrhy"
 
 msgid "Your media"
-msgstr ""
+msgstr "Vaše média"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "Přejít do galerie"
 
 msgid "Create your account"
-msgstr ""
+msgstr "Vytvořit váš účet"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Vytvořit účet"
 
 # src/template_utils.rs:144
 msgid "Username"
