@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 12:15\n"
+"PO-Revision-Date: 2019-03-18 13:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -154,13 +154,13 @@ msgid "Latest articles"
 msgstr "Najnovšie články"
 
 msgid "Your feed"
-msgstr "Tvoj kanál"
+msgstr "Tvoje zdroje"
 
 msgid "Federated feed"
-msgstr "Federovaný kanál"
+msgstr "Federované zdroje"
 
 msgid "Local feed"
-msgstr "Miestny kanál"
+msgstr "Miestny zdroj"
 
 msgid "Administration of {0}"
 msgstr "Spravovanie {0}"
@@ -241,7 +241,7 @@ msgid "Edit your account"
 msgstr "Uprav svoj účet"
 
 msgid "Your Profile"
-msgstr "Môj profil"
+msgstr "Tvoj profil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
@@ -277,10 +277,10 @@ msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr "Prepáč, ale ako jej správca, ty nemôžeš opustiť svoju vlastnú instanciu."
 
 msgid "Your Dashboard"
-msgstr "Moja nástenka"
+msgstr "Tvoja nástenka"
 
 msgid "Your Blogs"
-msgstr "Moje blogy"
+msgstr "Tvoje blogy"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr "Ešte nemáš žiaden blog. Vytvor si svoj vlastný, alebo požiadaj v niektorom o členstvo."
@@ -289,7 +289,7 @@ msgid "Start a new blog"
 msgstr "Začni nový blog"
 
 msgid "Your Drafts"
-msgstr "Moje koncepty"
+msgstr "Tvoje koncepty"
 
 msgid "Your media"
 msgstr "Tvoje mediálne súbory"
@@ -638,7 +638,7 @@ msgid "The content you sent can't be processed."
 msgstr ""
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Možno to bolo príliš dlhé."
 
 msgid "You are not authorized."
 msgstr "Nemáš oprávnenie."
@@ -718,7 +718,7 @@ msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Nechaj prázdne, ak žiadna nieje potrebná"
 
 msgid "File"
 msgstr "Súbor"
@@ -727,23 +727,23 @@ msgid "Send"
 msgstr "Pošli"
 
 msgid "Media details"
-msgstr ""
+msgstr "Podrobnosti o médiálnom súbore"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Prejdi späť do galérie"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Markdown syntaxia"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Kód skopíruj do tvojho článku, pre vloženie tohto mediálneho súboru:"
 
 msgid "Use as avatar"
-msgstr ""
+msgstr "Použi ako avatar"
 
 msgid "Login to boost"
 msgstr "Na vyzdvihnutie sa prihlás"
 
 msgid "Login to like"
-msgstr ""
+msgstr "Prihlás sa pre obľúbenie"
 
