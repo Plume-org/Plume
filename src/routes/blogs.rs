@@ -135,7 +135,7 @@ pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe>{
     let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
     let user = rockets.user;
     let intl = rockets.intl;
-    let searcher = rockets.searcher.unwrap();
+    let searcher = rockets.searcher;
 
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         blog.delete(&conn, &searcher).expect("blog::expect: deletion error");

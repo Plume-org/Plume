@@ -227,8 +227,8 @@ pub fn update(blog: String, slug: String, cl: ContentLen, form: LenientForm<NewP
                 false
             };
 
-            let searcher = rockets.searcher.unwrap();
-            let worker = rockets.worker.unwrap();
+            let searcher = rockets.searcher;
+            let worker = rockets.worker;
             post.slug = new_slug.clone();
             post.title = form.title.clone();
             post.subtitle = form.subtitle.clone();
@@ -335,7 +335,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, cl: ContentLen,
             &Instance::get_local(&conn).expect("post::create: local instance error").public_domain
         );
 
-        let searcher = rockets.searcher.unwrap();
+        let searcher = rockets.searcher;
         let post = Post::insert(&*conn, NewPost {
             blog_id: blog.id,
             slug: slug.to_string(),
@@ -389,7 +389,7 @@ pub fn create(blog_name: String, form: LenientForm<NewPostForm>, cl: ContentLen,
 
             let act = post.create_activity(&*conn).expect("posts::create: activity error");
             let dest = User::one_by_instance(&*conn).expect("posts::create: dest error");
-            let worker = rockets.worker.unwrap();
+            let worker = rockets.worker;
             worker.execute(move || broadcast(&user, act, dest));
         }
 
@@ -424,8 +424,8 @@ pub fn delete(blog_name: String, slug: String, rockets: PlumeRocket) -> Result<R
             return Ok(Redirect::to(uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _)))
         }
 
-        let searcher = rockets.searcher.unwrap();
-        let worker = rockets.worker.unwrap();
+        let searcher = rockets.searcher;
+        let worker = rockets.worker;
 
         let dest = User::one_by_instance(&*conn)?;
         let delete_activity = post.delete(&(&conn, &searcher))?;

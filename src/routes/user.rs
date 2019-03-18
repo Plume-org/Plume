@@ -48,8 +48,8 @@ pub fn details(
     let user = User::find_by_fqn(&*conn, &name)?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
-    let searcher = rockets.searcher.unwrap();
-    let worker = rockets.worker.unwrap();
+    let searcher = rockets.searcher;
+    let worker = rockets.worker;
 
     if !user.get_instance(&*conn)?.local {
         // Fetch new articles
