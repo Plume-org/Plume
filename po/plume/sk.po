@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-19 12:59\n"
+"PO-Revision-Date: 2019-03-19 13:59\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -38,7 +38,7 @@ msgstr "{0} vyzdvihli tvoj článok."
 
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr "Maskot užívateľa {0}"
+msgstr "Avatar užívateľa {0}"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
@@ -244,10 +244,10 @@ msgid "Your Profile"
 msgstr "Tvoj profil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
-msgstr ""
+msgstr "Pre zmenu avataru ho nahraj do svojej galérie a potom ho odtiaľ zvoľ."
 
 msgid "Upload an avatar"
-msgstr "Nahraj maskota"
+msgstr "Nahraj avatar"
 
 # src/template_utils.rs:144
 msgid "Display name"
@@ -632,7 +632,7 @@ msgid "We couldn't find this page."
 msgstr "Túto stránku sa nepodarilo nájsť."
 
 msgid "The link that led you here may be broken."
-msgstr ""
+msgstr "Odkaz, ktorý ťa sem zaviedol je azda narušený."
 
 msgid "The content you sent can't be processed."
 msgstr "Obsah, ktorý si odoslal/a nemožno spracovať."
