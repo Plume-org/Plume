@@ -27,7 +27,7 @@ impl<'r> Responder<'r> for Ructe {
         let mut hasher = DefaultHasher::new();
         hasher.write(&self.0);
         let etag = format!("{:x}", hasher.finish());
-        if r.headers().get("If-None-Match").any(|s| &s[1..s.len()-1] == etag) {
+        if r.headers().get("If-None-Match").any(|s| s[1..s.len()-1] == etag) {
             Response::build()
                 .status(Status::NotModified)
                 .header(ETag(EntityTag::strong(etag)))

@@ -38,37 +38,34 @@ fn main() {
 /// It should normally be working fine even without this code
 /// But :focus-within is not yet supported by Webkit/Blink
 fn menu() {
-    document().get_element_by_id("menu")
-        .map(|button| {
-            document().get_element_by_id("content")
-                .map(|menu| {
-                    button.add_event_listener(|_: ClickEvent| {
-                        document().get_element_by_id("menu").map(|menu| menu.class_list().add("show"));
-                    });
-                    menu.add_event_listener(|_: ClickEvent| {
-                        document().get_element_by_id("menu").map(|menu| menu.class_list().remove("show"));
-                    });
-                })
-        });
+    if let Some(button) = document().get_element_by_id("menu") {
+        if let Some(menu) = document().get_element_by_id("content") {
+            button.add_event_listener(|_: ClickEvent| {
+                document().get_element_by_id("menu").map(|menu| menu.class_list().add("show"));
+            });
+            menu.add_event_listener(|_: ClickEvent| {
+                document().get_element_by_id("menu").map(|menu| menu.class_list().remove("show"));
+            });
+        }
+    }
 }
 
 /// Clear the URL of the search page before submitting request
 fn search() {
-    document().get_element_by_id("form")
-        .map(|form| {
-            form.add_event_listener(|_: SubmitEvent| {
-                document().query_selector_all("#form input").map(|inputs| {
-                    for input in inputs {
-                        js! {
-                            if (@{&input}.name === "") {
-                                @{&input}.name = @{&input}.id
-                            }
-                            if (@{&input}.name && !@{&input}.value) {
-                                @{&input}.name = "";
-                            }
+    if let Some(form) = document().get_element_by_id("form") {
+        form.add_event_listener(|_: SubmitEvent| {
+            document().query_selector_all("#form input").map(|inputs| {
+                for input in inputs {
+                    js! {
+                        if (@{&input}.name === "") {
+                            @{&input}.name = @{&input}.id
+                        }
+                        if (@{&input}.name && !@{&input}.value) {
+                            @{&input}.name = "";
                         }
                     }
-                }).ok();
-            });
+                }
+            }).ok();
         });
+    }
 }

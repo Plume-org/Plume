@@ -1,3 +1,4 @@
+#![warn(clippy::too_many_arguments)]
 use lettre_email::Email;
 use std::env;
 

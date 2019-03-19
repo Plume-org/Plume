@@ -27,17 +27,36 @@ jobs:
   include:
     - stage: build
       name: "Build front"
-      script: (cargo web -h || cargo install cargo-web) && cd plume-front && cargo web check
+      script: (cargo web -h || cargo install cargo-web) && cd plume-front && cargo clippy -- -D warnings && cargo web check
+      before_script: rustup component add clippy
+
     - stage: build
       name: "Build with postgresql"
       env:
         - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
-      script: cargo build --no-default-features --features="${FEATURES}" --release
+      script: cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
+      before_script: rustup component add clippy
+
+    - stage: build
+      name: "Build CLI with postgresql"
+      env:
+        - MIGRATION_DIR=migrations/postgres FEATURES=postgres DATABASE_URL=postgres://postgres@localhost/plume
+      script: cd plume-cli && cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
+      before_script: rustup component add clippy
     - stage: build
       name: "Build with sqlite"
       env:
         - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
-      script: cargo build --no-default-features --features="${FEATURES}" --release
+      script: cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
+      before_script: rustup component add clippy
+
+    - stage: build
+      name: "Build CLI with sqlite"
+      env:
+        - MIGRATION_DIR=migrations/sqlite   FEATURES=sqlite   DATABASE_URL=plume.sqlite3
+      script: cd plume-cli && cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
+      before_script: rustup component add clippy
+
     - stage: test and coverage
       name: "Test with potgresql backend"
       env:
@@ -48,6 +67,7 @@ jobs:
         - |
             cargo test --features "${FEATURES}" --no-default-features  --all --exclude plume-front &&
             ./script/compute_coverage.sh
+
     - stage: test and coverage
       name: "Test with Sqlite backend"
       env:
