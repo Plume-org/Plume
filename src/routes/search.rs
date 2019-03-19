@@ -2,13 +2,11 @@ use chrono::offset::Utc;
 use rocket::request::Form;
 use rocket_i18n::I18n;
 
-use plume_models::{
-    db_conn::DbConn, users::User,
-    search::Query};
+use plume_models::{db_conn::DbConn, search::Query, users::User};
 use routes::Page;
+use std::str::FromStr;
 use template_utils::Ructe;
 use Searcher;
-use std::str::FromStr;
 
 #[derive(Default, FromForm)]
 pub struct SearchQuery {
@@ -53,12 +51,19 @@ macro_rules! param_to_query {
     }
 }
 
-
 #[get("/search?<query..>")]
-pub fn search(query: Option<Form<SearchQuery>>, conn: DbConn, searcher: Searcher, user: Option<User>, intl: I18n) -> Ructe {
+pub fn search(
+    query: Option<Form<SearchQuery>>,
+    conn: DbConn,
+    searcher: Searcher,
+    user: Option<User>,
+    intl: I18n,
+) -> Ructe {
     let query = query.map(|f| f.into_inner()).unwrap_or_default();
     let page = query.page.unwrap_or_default();
-    let mut parsed_query = Query::from_str(&query.q.as_ref().map(|q| q.as_str()).unwrap_or_default()).unwrap_or_default();
+    let mut parsed_query =
+        Query::from_str(&query.q.as_ref().map(|q| q.as_str()).unwrap_or_default())
+            .unwrap_or_default();
 
     param_to_query!(query, parsed_query; normal: title, subtitle, content, tag,
               instance, author, blog, lang, license;

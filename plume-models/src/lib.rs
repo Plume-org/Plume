@@ -292,8 +292,8 @@ static DB_NAME: &str = "plume_tests";
 
 #[cfg(all(feature = "postgres", not(feature = "sqlite")))]
 lazy_static! {
-    pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME));
+    pub static ref DATABASE_URL: String = env::var("DATABASE_URL")
+        .unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME));
 }
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
@@ -336,7 +336,9 @@ mod tests {
             Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
         embedded_migrations::run(&conn).expect("Couldn't run migrations");
         #[cfg(feature = "sqlite")]
-        sql_query("PRAGMA foreign_keys = on;").execute(&conn).expect("PRAGMA foreign_keys fail");
+        sql_query("PRAGMA foreign_keys = on;")
+            .execute(&conn)
+            .expect("PRAGMA foreign_keys fail");
         conn
     }
 }
@@ -346,8 +348,8 @@ pub mod api_tokens;
 pub mod apps;
 pub mod blog_authors;
 pub mod blogs;
-pub mod comments;
 pub mod comment_seers;
+pub mod comments;
 pub mod db_conn;
 pub mod follows;
 pub mod headers;
@@ -360,7 +362,7 @@ pub mod post_authors;
 pub mod posts;
 pub mod reshares;
 pub mod safe_string;
-pub mod search;
 pub mod schema;
+pub mod search;
 pub mod tags;
 pub mod users;

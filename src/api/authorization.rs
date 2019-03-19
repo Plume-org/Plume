@@ -1,10 +1,10 @@
+use plume_models::{self, api_tokens::ApiToken};
 use rocket::{
-    Outcome,
     http::Status,
-    request::{self, FromRequest, Request}
+    request::{self, FromRequest, Request},
+    Outcome,
 };
 use std::marker::PhantomData;
-use plume_models::{self, api_tokens::ApiToken};
 
 // Actions
 pub trait Action {
@@ -33,22 +33,25 @@ impl Scope for plume_models::posts::Post {
     }
 }
 
-pub struct Authorization<A, S> (pub ApiToken, PhantomData<(A, S)>);
+pub struct Authorization<A, S>(pub ApiToken, PhantomData<(A, S)>);
 
 impl<'a, 'r, A, S> FromRequest<'a, 'r> for Authorization<A, S>
-where A: Action,
-      S: Scope
+where
+    A: Action,
+    S: Scope,
 {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Authorization<A, S>, ()> {
-        request.guard::<ApiToken>()
+        request
+            .guard::<ApiToken>()
             .map_failure(|_| (Status::Unauthorized, ()))
-            .and_then(|token| if token.can(A::to_str(), S::to_str()) {
-                Outcome::Success(Authorization(token, PhantomData))
-            } else {
-                Outcome::Failure((Status::Unauthorized, ()))
+            .and_then(|token| {
+                if token.can(A::to_str(), S::to_str()) {
+                    Outcome::Success(Authorization(token, PhantomData))
+                } else {
+                    Outcome::Failure((Status::Unauthorized, ()))
+                }
             })
     }
 }
-

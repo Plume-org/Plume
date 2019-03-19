@@ -10,8 +10,8 @@ extern crate chrono;
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
-extern crate hex;
 extern crate heck;
+extern crate hex;
 extern crate openssl;
 extern crate pulldown_cmark;
 extern crate reqwest;
