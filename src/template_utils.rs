@@ -1,19 +1,50 @@
 use plume_models::{Connection, notifications::*, users::User};
-use rocket::response::Content;
+
+use rocket::http::{Method, Status};
+use rocket::http::hyper::header::{ETag, EntityTag};
+use rocket::request::Request;
+use rocket::response::{self, Response, Responder, content::Html as HtmlCt};
 use rocket_i18n::Catalog;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::Hasher;
 use templates::Html;
 
 pub use askama_escape::escape;
 
+pub static CACHE_NAME: &str = env!("CACHE_ID");
+
 pub type BaseContext<'a> = &'a(&'a Connection, &'a Catalog, Option<User>);
 
-pub type Ructe = Content<Vec<u8>>;
+#[derive(Debug)]
+pub struct Ructe(pub Vec<u8>);
+
+impl<'r> Responder<'r> for Ructe {
+    fn respond_to(self, r: &Request) -> response::Result<'r> {
+        //if method is not Get or page contain a form, no caching
+        if r.method() != Method::Get || self.0.windows(6).any(|w| w == b"<form ") {
+            return HtmlCt(self.0).respond_to(r);
+        }
+        let mut hasher = DefaultHasher::new();
+        hasher.write(&self.0);
+        let etag = format!("{:x}", hasher.finish());
+        if r.headers().get("If-None-Match").any(|s| s[1..s.len()-1] == etag) {
+            Response::build()
+                .status(Status::NotModified)
+                .header(ETag(EntityTag::strong(etag)))
+                .ok()
+        } else {
+            Response::build()
+                .merge(HtmlCt(self.0).respond_to(r)?)
+                .header(ETag(EntityTag::strong(etag)))
+                .ok()
+        }
+    }
+}
 
 #[macro_export]
 macro_rules! render {
     ($group:tt :: $page:tt ( $( $param:expr ),* ) ) => {
         {
-            use rocket::{http::ContentType, response::Content};
             use templates;
 
             let mut res = vec![];
@@ -23,7 +54,7 @@ macro_rules! render {
                     $param
                 ),*
             ).unwrap();
-            Content(ContentType::HTML, res)
+            Ructe(res)
         }
     }
 }

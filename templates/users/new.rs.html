@@ -1,8 +1,9 @@
 @use templates::base;
 @use template_utils::*;
 @use routes::user::NewUserForm;
-@use validator::ValidationErrors;
+@use validator::{ValidationErrors, ValidationErrorsKind};
 @use routes::*;
+@use std::borrow::Cow;
 
 @(ctx: BaseContext, enabled: bool, form: &NewUserForm, errors: ValidationErrors)
 
@@ -13,6 +14,9 @@
             @input!(ctx.1, username (text), "Username", form, errors.clone(), "minlenght=\"1\"")
             @input!(ctx.1, email (text), "Email", form, errors.clone())
             @input!(ctx.1, password (password), "Password", form, errors.clone(), "minlenght=\"8\"")
+            @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("__all__") {
+	        <p class="error">@errs[0].message.as_ref().unwrap_or(&Cow::from("Unknown error"))</p>
+            }
             @input!(ctx.1, password_confirmation (password), "Password confirmation", form, errors, "minlenght=\"8\"")
 
             <input type="submit" value="@i18n!(ctx.1, "Create your account")" />

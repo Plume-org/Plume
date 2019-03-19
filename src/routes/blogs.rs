@@ -20,23 +20,25 @@ use plume_models::{
     medias::Media,
     posts::Post,
     safe_string::SafeString,
-    users::User
+    users::User,
 };
-use routes::{Page, errors::ErrorPage};
+use routes::{Page, PlumeRocket, errors::ErrorPage};
 use template_utils::Ructe;
-use Searcher;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(intl: I18n, name: String, conn: DbConn, user: Option<User>, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
+    let conn = rockets.conn;
     let blog = Blog::find_by_fqn(&*conn, &name)?;
     let posts = Post::blog_page(&*conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(&*conn, &blog)?;
     let authors = &blog.list_authors(&*conn)?;
+    let user = rockets.user;
+    let intl = rockets.intl;
 
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
-        &blog,
+        blog,
         authors,
         page.0,
         Page::total(articles_count as i32),
@@ -51,7 +53,11 @@ pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<Ac
 }
 
 #[get("/blogs/new")]
-pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
+pub fn new(rockets: PlumeRocket) -> Ructe {
+    let user = rockets.user.unwrap();
+    let intl = rockets.intl;
+    let conn = rockets.conn;
+
     render!(blogs::new(
         &(&*conn, &intl.catalog, Some(user)),
         &NewBlogForm::default(),
@@ -67,7 +73,7 @@ pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
     )
 }
 
-#[derive(Default, FromForm, Validate, Serialize)]
+#[derive(Default, FromForm, Validate)]
 pub struct NewBlogForm {
     #[validate(custom(function = "valid_slug", message = "Invalid name"))]
     pub title: String,
@@ -83,8 +89,11 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I18n) -> Result<Redirect, Ructe> {
+pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
+    let conn = rockets.conn;
+    let intl = rockets.intl;
+    let user = rockets.user.unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -123,8 +132,13 @@ pub fn create(conn: DbConn, form: LenientForm<NewBlogForm>, user: User, intl: I1
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(conn: DbConn, name: String, user: Option<User>, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe>{
+pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe>{
+    let conn = rockets.conn;
     let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
+    let user = rockets.user;
+    let intl = rockets.intl;
+    let searcher = rockets.searcher;
+
     if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
         blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
@@ -173,6 +187,11 @@ pub fn edit(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Resul
     }
 }
 
+/// Returns true if the media is owned by `user` and is a picture
+fn check_media(conn: DbConn, id: i32, user: &User) -> bool {
+    Media::get(&*conn, id)
+}
+
 #[put("/~/<name>/edit", data = "<form>")]
 pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: LenientForm<EditForm>) -> Result<Redirect, Ructe> {
     let mut blog = Blog::find_by_fqn(&*conn, &name).expect("blog::update: blog not found");
@@ -180,6 +199,27 @@ pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: 
         let user = user.expect("blogs::edit: User was None while it shouldn't");
         form.validate()
             .and_then(|_| {
+                if !check_media(conn, form.icon, &user) {
+                    let mut errors = ValidationErrors::new();
+                    errors.add("", ValidationError {
+                        code: Cow::from("icon"),
+                        message: Some(Cow::from(@i18n!(intl.catalog, "You can't use this media as blog icon."))),
+                        params: HashMap::new()
+                    });
+                    return Err(errors);
+                }
+
+                if !check_media(conn, form.banner, &user) {
+                    let mut errors = ValidationErrors::new();
+                    errors.add("", ValidationError {
+                        code: Cow::from("banner"),
+                        message: Some(Cow::from(@i18n!(intl.catalog, "You can't use this media as blog banner."))),
+                        params: HashMap::new()
+                    });
+                    errors
+                    return Err(errors);
+                }
+
                 blog.title = form.title.clone();
                 blog.summary = form.summary.clone();
                 blog.summary_html = SafeString::new(&utils::md_to_html(&form.summary, "", true).0);

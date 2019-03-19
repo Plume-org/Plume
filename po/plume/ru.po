@@ -556,6 +556,9 @@ msgstr ""
 msgid "Username or email"
 msgstr "Имя пользователя или адрес электронной почты"
 
+msgid "Publish"
+msgstr "Опубликовать"
+
 msgid "Subtitle"
 msgstr "Подзаголовок"
 
@@ -946,9 +949,6 @@ msgstr "Использовать как аватар"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Поехали!"
-
-#~ msgid "Publish"
-#~ msgstr "Опубликовать"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"

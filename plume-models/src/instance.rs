@@ -9,7 +9,7 @@ use schema::{instances, users};
 use users::User;
 use {Connection, Error, Result};
 
-#[derive(Clone, Identifiable, Queryable, Serialize)]
+#[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
     pub id: i32,
     pub public_domain: String,

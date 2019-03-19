@@ -5,7 +5,7 @@
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, blog: &Blog, authors: &Vec<User>, page: i32, n_pages: i32, posts: Vec<Post>)
+@(ctx: BaseContext, blog: Blog, authors: &[User], page: i32, n_pages: i32, posts: Vec<Post>)
 
 @:base(ctx, blog.title.clone(), {}, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
@@ -19,9 +19,9 @@
     }
 </div>
 <div class="h-feed">
-    @if blog.banner_id.is_some() {
-        <div class="cover" style="background-image: url('@Html(blog.banner_url(ctx.0).unwrap_or_default())')"></div>
-        <img class="hidden u-photo" src="@blog.banner_url(ctx.0).unwrap_or_default()"/>
+    @if let Some(banner_url) = blog.banner_url(ctx.0) {
+        <div class="cover" style="background-image: url('@Html(banner_url)')"></div>
+        <img class="hidden u-photo" src="@banner_url"/>
     }
     <div class="h-card">
         <div class="user">
@@ -56,7 +56,7 @@
             @i18n!(ctx.1, "Latest articles")
             <small><a href="@uri!(blogs::atom_feed: name = &blog.fqn)" title="Atom feed">@icon!("rss")</a></small>
         </h2>
-        @if posts.len() < 1 {
+        @if posts.is_empty() {
             <p>@i18n!(ctx.1, "No posts to see here yet.")</p>
         }
         <div class="cards">

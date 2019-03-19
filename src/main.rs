@@ -1,3 +1,4 @@
+#![allow(clippy::too_many_arguments)]
 #![feature(decl_macro, proc_macro_hygiene)]
 
 extern crate activitypub;
@@ -29,8 +30,6 @@ extern crate rocket_csrf;
 extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
 extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 extern crate serde_qs;
@@ -85,6 +84,8 @@ fn init_pool() -> Option<DbPool> {
 fn main() {
     let dbpool = init_pool().expect("main: database pool initialization error");
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
+    // we want a fast exit here, so
+    #[allow(clippy::match_wild_err_arm)]
     let searcher = match UnmanagedSearcher::open(&"search_index") {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(
@@ -193,6 +194,7 @@ Then try to restart Plume.
             routes::session::password_reset_form,
             routes::session::password_reset,
 
+            routes::plume_static_files,
             routes::static_files,
 
             routes::tags::tag,

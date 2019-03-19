@@ -1,4 +1,4 @@
-use activitypub::{actor::Group, collection::OrderedCollection, Actor, CustomObject, Object, object::Image};
+use activitypub::{actor::Group, collection::OrderedCollection, CustomObject, object::Image};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
@@ -31,7 +31,7 @@ use {Connection, BASE_URL, USE_HTTPS, Error, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
-#[derive(Queryable, Identifiable, Serialize, Deserialize, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
@@ -458,9 +458,6 @@ impl IntoId for Blog {
         Id::new(self.ap_url)
     }
 }
-
-impl Object for Blog {}
-impl Actor for Blog {}
 
 impl WithInbox for Blog {
     fn get_inbox_url(&self) -> String {

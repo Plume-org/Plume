@@ -35,7 +35,7 @@ pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<
             SaveResult::Full(entries) => {
                 let fields = entries.fields;
 
-                let filename = fields.get("file").and_then(|v| v.into_iter().next())
+                let filename = fields.get("file").and_then(|v| v.iter().next())
                     .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
                     .filename.clone();
                 // Remove extension if it contains something else than just letters and numbers

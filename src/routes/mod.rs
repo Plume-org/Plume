@@ -1,13 +1,53 @@
+#![warn(clippy::too_many_arguments)]
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
-    http::{RawStr, Status, uri::{FromUriParam, Query}},
+    http::{
+        RawStr, Status, uri::{FromUriParam, Query},
+        hyper::header::{CacheControl, CacheDirective}
+    },
     Outcome,
     request::{self, FromFormValue, FromRequest, Request},
     response::NamedFile,
 };
+use rocket_i18n::I18n;
 use std::path::{Path, PathBuf};
 
-use plume_models::{Connection, posts::Post};
+use plume_models::{
+    Connection,
+    users::User,
+    posts::Post,
+    db_conn::DbConn,
+};
+
+use Worker;
+use Searcher;
+
+pub struct PlumeRocket<'a> {
+    conn: DbConn,
+    intl: I18n,
+    user: Option<User>,
+    searcher: Searcher<'a>,
+    worker: Worker<'a>,
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket<'a> {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket<'a>, ()> {
+        let conn = request.guard::<DbConn>()?;
+        let intl = request.guard::<I18n>()?;
+        let user = request.guard::<User>().succeeded();
+        let worker = request.guard::<Worker>()?;
+        let searcher = request.guard::<Searcher>()?;
+        rocket::Outcome::Success(PlumeRocket {
+            conn,
+            intl,
+            user,
+            worker,
+            searcher,
+        })
+    }
+}
 
 const ITEMS_PER_PAGE: i32 = 12;
 
@@ -42,7 +82,7 @@ impl Page {
         }
     }
 
-    pub fn limits(&self) -> (i32, i32) {
+    pub fn limits(self) -> (i32, i32) {
         ((self.0 - 1) * ITEMS_PER_PAGE, self.0 * ITEMS_PER_PAGE)
     }
 }
@@ -101,7 +141,24 @@ pub mod user;
 pub mod search;
 pub mod well_known;
 
-#[get("/static/<file..>", rank = 2)]
-pub fn static_files(file: PathBuf) -> Option<NamedFile> {
+#[derive(Responder)]
+#[response()]
+pub struct CachedFile {
+    inner: NamedFile,
+    cache_control: CacheControl
+}
+
+#[get("/static/cached/<_build_id>/<file..>", rank = 2)]
+pub fn plume_static_files(file: PathBuf, _build_id: &RawStr) -> Option<CachedFile> {
+    static_files(file)
+}
+
+#[get("/static/<file..>", rank = 3)]
+pub fn static_files(file: PathBuf) -> Option<CachedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
+        .map(|f|
+             CachedFile {
+                 inner: f,
+                 cache_control: CacheControl(vec![CacheDirective::MaxAge(60*60*24*30)])
+             })
 }

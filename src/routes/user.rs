@@ -23,7 +23,7 @@ use plume_models::{
     blogs::Blog, db_conn::DbConn, follows, headers::Headers, instance::Instance, posts::{LicensedArticle, Post},
     reshares::Reshare, users::*,
 };
-use routes::{Page, errors::ErrorPage};
+use routes::{Page, PlumeRocket, errors::ErrorPage};
 use template_utils::Ructe;
 use Worker;
 use Searcher;
@@ -39,18 +39,17 @@ pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 #[get("/@/<name>", rank = 2)]
 pub fn details(
     name: String,
-    conn: DbConn,
-    account: Option<User>,
-    worker: Worker,
+    rockets: PlumeRocket,
     fetch_articles_conn: DbConn,
     fetch_followers_conn: DbConn,
     update_conn: DbConn,
-    intl: I18n,
-    searcher: Searcher,
 ) -> Result<Ructe, ErrorPage> {
+    let conn = rockets.conn;
     let user = User::find_by_fqn(&*conn, &name)?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
+    let searcher = rockets.searcher;
+    let worker = rockets.worker;
 
     if !user.get_instance(&*conn)?.local {
         // Fetch new articles
@@ -99,6 +98,8 @@ pub fn details(
         }
     }
 
+    let account = rockets.user;
+    let intl = rockets.intl;
     Ok(render!(users::details(
         &(&*conn, &intl.catalog, account.clone()),
         user.clone(),
@@ -225,7 +226,7 @@ pub fn edit(name: String, user: User, conn: DbConn, intl: I18n) -> Result<Ructe,
             UpdateUserForm {
                 display_name: user.display_name.clone(),
                 email: user.email.clone().unwrap_or_default(),
-                summary: user.summary.to_string(),
+                summary: user.summary,
             },
             ValidationErrors::default()
         )))
@@ -276,7 +277,7 @@ pub fn delete(name: String, conn: DbConn, user: User, mut cookies: Cookies, sear
     }
 }
 
-#[derive(Default, FromForm, Serialize, Validate)]
+#[derive(Default, FromForm, Validate)]
 #[validate(
     schema(
         function = "passwords_match",

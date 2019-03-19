@@ -20,7 +20,7 @@ use schema::comments;
 use users::User;
 use {Connection, Error, Result};
 
-#[derive(Queryable, Identifiable, Serialize, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Comment {
     pub id: i32,
     pub content: SafeString,
@@ -92,8 +92,11 @@ impl Comment {
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<Note> {
-        let (html, mentions, _hashtags) = utils::md_to_html(self.content.get().as_ref(),
-                &Instance::get_local(conn)?.public_domain, false);
+        let (html, mentions, _hashtags) = utils::md_to_html(
+            self.content.get().as_ref(),
+            &Instance::get_local(conn)?.public_domain,
+            true,
+        );
 
         let author = User::get(conn, self.author_id)?;
         let mut note = Note::default();

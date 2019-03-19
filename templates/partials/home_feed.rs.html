@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, articles: Vec<Post>, link: &str, title: String)
 
-@if articles.len() > 0 {
+@if !articles.is_empty() {
 <div class="h-feed">
     <h2><span class="p-name">@title</span> &mdash; <a href="@link">@i18n!(ctx.1, "View all")</a></h2>
     <div class="cards spaced">

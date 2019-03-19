@@ -103,7 +103,7 @@ pub fn admin(conn: DbConn, admin: Admin, intl: I18n) -> Result<Ructe, ErrorPage>
     )))
 }
 
-#[derive(Clone, FromForm, Validate, Serialize)]
+#[derive(Clone, FromForm, Validate)]
 pub struct InstanceSettingsForm {
     #[validate(length(min = "1"))]
     pub name: String,
@@ -218,7 +218,7 @@ pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: 
 
 #[get("/nodeinfo/<version>")]
 pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
-    if version != "2.0" || version != "2.1" {
+    if version != "2.0" && version != "2.1" {
         return Err(ErrorPage::from(Error::NotFound));
     }
 

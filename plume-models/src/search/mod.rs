@@ -9,6 +9,7 @@ pub use self::query::PlumeQuery as Query;
 pub(crate) mod tests {
     use super::{Query, Searcher};
     use std::env::temp_dir;
+    use std::str::FromStr;
     use diesel::Connection;
 
     use plume_common::activity_pub::inbox::Deletable;
@@ -65,7 +66,7 @@ pub(crate) mod tests {
             ("after:2017-11-05 after:2018-01-01", "after:2018-01-01"),
         ];
         for (source, res) in vector {
-            assert_eq!(&Query::from_str(source).to_string(), res);
+            assert_eq!(&Query::from_str(source).unwrap().to_string(), res);
             assert_eq!(Query::new().parse_query(source).to_string(), res);
         }
     }
@@ -141,18 +142,18 @@ pub(crate) mod tests {
             }).unwrap();
 
             searcher.commit();
-            assert_eq!(searcher.search_document(conn, Query::from_str(&title), (0,1))[0].id, post.id);
+            assert_eq!(searcher.search_document(conn, Query::from_str(&title).unwrap(), (0,1))[0].id, post.id);
 
             let newtitle = random_hex()[..8].to_owned();
             post.title = newtitle.clone();
             post.update(conn, &searcher).unwrap();
             searcher.commit();
-            assert_eq!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1))[0].id, post.id);
-            assert!(searcher.search_document(conn, Query::from_str(&title), (0,1)).is_empty());
+            assert_eq!(searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0,1))[0].id, post.id);
+            assert!(searcher.search_document(conn, Query::from_str(&title).unwrap(), (0,1)).is_empty());
 
             post.delete(&(conn, &searcher)).unwrap();
             searcher.commit();
-            assert!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1)).is_empty());
+            assert!(searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0,1)).is_empty());
 
             Ok(())
         });

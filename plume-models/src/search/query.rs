@@ -87,9 +87,9 @@ macro_rules! gen_to_string {
         $(
         for (occur, val) in &$self.$field {
             if val.contains(' ') {
-                $result.push_str(&format!("{}{}:\"{}\" ", Self::occur_to_str(&occur), stringify!($field), val));
+                $result.push_str(&format!("{}{}:\"{}\" ", Self::occur_to_str(*occur), stringify!($field), val));
             } else {
-                $result.push_str(&format!("{}{}:{} ", Self::occur_to_str(&occur), stringify!($field), val));
+                $result.push_str(&format!("{}{}:{} ", Self::occur_to_str(*occur), stringify!($field), val));
             }
         }
         )*
@@ -148,20 +148,6 @@ impl PlumeQuery {
         Default::default()
     }
 
-    /// Create a new Query from &str
-    /// Same as doing
-    /// ```rust
-    /// # extern crate plume_models;
-    /// # use plume_models::search::Query;
-    /// let mut q = Query::new();
-    /// q.parse_query("some query");
-    /// ```
-    pub fn from_str(query: &str) -> Self {
-        let mut res: Self = Default::default();
-
-        res.from_str_req(&query.trim());
-        res
-    }
 
     /// Parse a query string into this Query
     pub fn parse_query(&mut self, query: &str) -> &mut Self {
@@ -222,35 +208,31 @@ impl PlumeQuery {
     }
 
     // split a string into a token and a rest
-    pub fn get_first_token<'a>(mut query: &'a str) -> (&'a str, &'a str) {
+    pub fn get_first_token(mut query: &str) -> (&str, &str) {
         query = query.trim();
         if query.is_empty() {
             ("", "")
-        } else {
-            if query.get(0..1).map(|v| v=="\"").unwrap_or(false) {
-                    if let Some(index) = query[1..].find('"') {
-                        query.split_at(index+2)
-                    } else {
-                        (query, "")
-                    }
-            } else if query.get(0..2).map(|v| v=="+\"" || v=="-\"").unwrap_or(false) {
-                    if let Some(index) = query[2..].find('"') {
-                        query.split_at(index+3)
-                    } else {
-                        (query, "")
-                    }
-            } else {
-                if let Some(index) = query.find(' ') {
-                    query.split_at(index)
+        } else if query.get(0..1).map(|v| v=="\"").unwrap_or(false) {
+                if let Some(index) = query[1..].find('"') {
+                    query.split_at(index+2)
                 } else {
                     (query, "")
                 }
-            }
+        } else if query.get(0..2).map(|v| v=="+\"" || v=="-\"").unwrap_or(false) {
+                if let Some(index) = query[2..].find('"') {
+                    query.split_at(index+3)
+                } else {
+                    (query, "")
+                }
+        } else if let Some(index) = query.find(' ') {
+            query.split_at(index)
+        } else {
+            (query, "")
         }
     }
 
     // map each Occur state to a prefix
-    fn occur_to_str(occur: &Occur) -> &'static str {
+    fn occur_to_str(occur: Occur) -> &'static str {
         match occur {
             Occur::Should => "",
             Occur::Must => "+",
@@ -259,25 +241,28 @@ impl PlumeQuery {
     }
 
     // recursive parser for query string
+    // allow this clippy lint for now, until someone figures out how to
+    // refactor this better.
+    #[allow(clippy::wrong_self_convention)]
     fn from_str_req(&mut self, mut query: &str) -> &mut Self {
         query = query.trim_left();
         if query.is_empty() {
-            self
-        } else {
-            let occur = if query.get(0..1).map(|v| v=="+").unwrap_or(false) {
-                query = &query[1..];
-                Occur::Must
-            } else if query.get(0..1).map(|v| v=="-").unwrap_or(false) {
-                query = &query[1..];
-                Occur::MustNot
-            } else {
-                Occur::Should
-            };
-            gen_parser!(self, query, occur; normal: title, subtitle, content, tag,
-                            instance, author, blog, lang, license;
-                            date: after, before);
-            self.from_str_req(query)
+            return self
         }
+
+        let occur = if query.get(0..1).map(|v| v=="+").unwrap_or(false) {
+            query = &query[1..];
+            Occur::Must
+        } else if query.get(0..1).map(|v| v=="-").unwrap_or(false) {
+            query = &query[1..];
+            Occur::MustNot
+        } else {
+            Occur::Should
+        };
+        gen_parser!(self, query, occur; normal: title, subtitle, content, tag,
+                        instance, author, blog, lang, license;
+                        date: after, before);
+        self.from_str_req(query)
     }
 
     // map a token and it's field to a query
@@ -290,7 +275,7 @@ impl PlumeQuery {
             let user_term = Term::from_field_text(field, &token[..pos]);
             let instance_term = Term::from_field_text(Searcher::schema().get_field("instance").unwrap(), &token[pos+1..]);
             Box::new(BooleanQuery::from(vec![
-                        (Occur::Must, Box::new(TermQuery::new(user_term, if field_name=="author" { IndexRecordOption::Basic } 
+                        (Occur::Must, Box::new(TermQuery::new(user_term, if field_name=="author" { IndexRecordOption::Basic }
                                                                          else { IndexRecordOption::WithFreqsAndPositions }
                                                                     )) as Box<dyn Query + 'static>),
                         (Occur::Must, Box::new(TermQuery::new(instance_term, IndexRecordOption::Basic))),
@@ -320,15 +305,34 @@ impl PlumeQuery {
     }
 }
 
+impl std::str::FromStr for PlumeQuery {
+
+    type Err = !;
+
+    /// Create a new Query from &str
+    /// Same as doing
+    /// ```rust
+    /// # extern crate plume_models;
+    /// # use plume_models::search::Query;
+    /// let mut q = Query::new();
+    /// q.parse_query("some query");
+    /// ```
+    fn from_str(query: &str) -> Result<PlumeQuery, !> {
+        let mut res: PlumeQuery = Default::default();
+
+        res.from_str_req(&query.trim());
+        Ok(res)
+    }
+}
 
 impl ToString for PlumeQuery {
     fn to_string(&self) -> String {
         let mut result = String::new();
         for (occur, val) in &self.text {
             if val.contains(' ') {
-                result.push_str(&format!("{}\"{}\" ", Self::occur_to_str(&occur), val));
+                result.push_str(&format!("{}\"{}\" ", Self::occur_to_str(*occur), val));
             } else {
-                result.push_str(&format!("{}{} ", Self::occur_to_str(&occur), val));
+                result.push_str(&format!("{}{} ", Self::occur_to_str(*occur), val));
             }
         }
 
@@ -340,4 +344,3 @@ impl ToString for PlumeQuery {
         result
     }
 }
-

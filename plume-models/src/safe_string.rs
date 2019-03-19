@@ -24,7 +24,7 @@ lazy_static! {
             .url_relative(UrlRelative::Custom(Box::new(url_add_prefix)))
             .add_tag_attributes(
                 "iframe",
-                [ "width", "height", "src", "frameborder" ].iter().map(|&v| v),
+                [ "width", "height", "src", "frameborder" ].iter().cloned(),
             )
             .add_tag_attributes(
                 "video",

@@ -19,7 +19,8 @@
 
             @input!(ctx.1, display_name (text), "Display name", form, errors.clone())
             @input!(ctx.1, email (text), "Email", form, errors.clone())
-            @input!(ctx.1, summary (text), "Summary", form, errors)
+            <label for="summary">@i18n!(ctx.1, "Summary")</label>
+            <textarea id="summary" name="summary">@form.summary</textarea>
 
             <input type="submit" value="@i18n!(ctx.1, "Update account")"/>
         </form>

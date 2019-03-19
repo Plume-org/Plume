@@ -549,6 +549,9 @@ msgstr ""
 msgid "Username or email"
 msgstr "Usuaria ou correo-e"
 
+msgid "Publish"
+msgstr "Publicar"
+
 msgid "Subtitle"
 msgstr "Subtítulo"
 
@@ -933,9 +936,6 @@ msgstr "Utilizar como avatar"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Imos!"
-
-#~ msgid "Publish"
-#~ msgstr "Publicar"
 
 #~ msgid "New Account"
 #~ msgstr "Nova conta"
