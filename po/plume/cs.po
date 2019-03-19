@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-19 22:35\n"
+"PO-Revision-Date: 2019-03-19 23:25\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -274,7 +274,7 @@ msgid "Delete your account"
 msgstr "Smazat váš účet"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "Omlouváme se, ale jako administrátor nemůžete opustit svou vlastní instanci."
 
 msgid "Your Dashboard"
 msgstr ""
@@ -305,11 +305,11 @@ msgstr "Vytvořit účet"
 
 # src/template_utils.rs:144
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 # src/template_utils.rs:144
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 # src/template_utils.rs:144
 msgid "Password confirmation"
@@ -319,13 +319,13 @@ msgid "Apologies, but registrations are closed on this particular instance. You 
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "Články"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Odběratelé"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Odběry"
 
 msgid "Atom feed"
 msgstr ""
@@ -334,22 +334,22 @@ msgid "Recently boosted"
 msgstr ""
 
 msgid "Admin"
-msgstr ""
+msgstr "Administrátor"
 
 msgid "It is you"
-msgstr ""
+msgstr "To jste vy"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Upravit profil"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Otevřít na {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Odhlásit se z odběru"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Přihlásit se k odběru"
 
 msgid "{0}'s subscriptions'"
 msgstr ""
@@ -358,16 +358,16 @@ msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
-msgstr ""
+msgstr "Odpovědět"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Odstranit tento komentář"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Co je Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume je decentralizovaný blogování systém."
 
 msgid "Authors can manage various blogs from an unique website."
 msgstr ""
@@ -376,7 +376,7 @@ msgid "Articles are also visible on other Plume websites, and you can interact w
 msgstr ""
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "Domov pro <em>{0}</em> lidí"
 
 msgid "Read the detailed rules"
 msgstr ""
@@ -444,54 +444,54 @@ msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "Autoři"
 
 # src/template_utils.rs:185
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
-msgstr ""
+msgstr "Název blogu"
 
 # src/template_utils.rs:185
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
 # src/template_utils.rs:185
 msgid "Published under this license"
-msgstr ""
+msgstr "Publikováno pod touto licenci"
 
 msgid "Article license"
-msgstr ""
+msgstr "Licence článku"
 
 msgid "Search result for \"{0}\""
 msgstr ""
 
 msgid "Search result"
-msgstr ""
+msgstr "Výsledek hledání"
 
 msgid "No result for your query"
-msgstr ""
+msgstr "Žádný výsledek nenalzen pro váš dotaz"
 
 msgid "No more result for your query"
 msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Obnovte své heslo"
 
 # src/template_utils.rs:144
 msgid "New password"
-msgstr ""
+msgstr "Nové heslo"
 
 # src/template_utils.rs:144
 msgid "Confirmation"
-msgstr ""
+msgstr "Potvrzení"
 
 msgid "Update password"
-msgstr ""
+msgstr "Aktualizovat heslo"
 
 msgid "Check your inbox!"
 msgstr ""
@@ -507,21 +507,21 @@ msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
-msgstr ""
+msgstr "Přihlášení"
 
 # src/template_utils.rs:144
 msgid "Username or email"
-msgstr ""
+msgstr "Uživatelské jméno, nebo email"
 
 msgid "Publish"
-msgstr ""
+msgstr "Zveřejnit"
 
 # src/template_utils.rs:144
 msgid "Subtitle"
-msgstr ""
+msgstr "Podtitul"
 
 msgid "Content"
-msgstr ""
+msgstr "Obsah"
 
 msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
 msgstr ""
