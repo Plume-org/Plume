@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-19 13:59\n"
+"PO-Revision-Date: 2019-03-19 23:25\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -66,7 +66,7 @@ msgstr "You need to be logged in to write a new post"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
-msgstr "You are not an author of this blog."
+msgstr "You are not an author on this blog."
 
 # src/routes/posts.rs:119
 msgid "New post"
@@ -184,7 +184,7 @@ msgid "Ban"
 msgstr ""
 
 msgid "All the articles of the Fediverse"
-msgstr "All articles from the Fediverse"
+msgstr "All the articles from the Fediverse"
 
 msgid "Articles from {}"
 msgstr ""
