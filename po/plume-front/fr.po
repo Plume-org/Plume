@@ -12,6 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+# plume-front/src/editor.rs:109
+msgid "Open the fancy editor"
+msgstr ""
+
 # plume-front/src/editor.rs:57
 msgid "Title"
 msgstr "Titre"

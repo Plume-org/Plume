@@ -97,13 +97,29 @@ fn filter_paste(elt: &HtmlElement) {
 
 pub fn init() -> Result<(), EditorError> {
     // Check if the user wants to use the basic editor
-    if let Some(x) = window().session_storage().get("basic-editor") {
-        if x == String::from("true") {
-            window().session_storage().remove("basic-editor");
-            return Ok(()); // And stop here if they don't want the fancy editor
+    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
+        if basic_editor == String::from("true") {
+            if let Some(editor) = document().get_element_by_id("plume-fallback-editor") {
+                if let Ok(Some(title_label)) = document().query_selector("label[for=title]") {
+                    let editor_button = document().create_element("a")?;
+                    js!{ @{&editor_button}.href = "#"; }
+                    editor_button.add_event_listener(|_: ClickEvent| {
+                        window().local_storage().remove("basic-editor");
+                        window().history().go(0).ok(); // refresh
+                    });
+                    editor_button.append_child(&document().create_text_node(&i18n!(CATALOG, "Open the fancy editor")));
+                    editor.insert_before(&editor_button, &title_label).ok();
+                    return Ok(());
+                }
+            }
         }
     }
 
+    // If we didn't returned above
+    init_editor()
+}
+
+fn init_editor() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-editor") {
         // Show the editor
         js!{ @{&ed}.style.display = "block"; };
@@ -159,7 +175,7 @@ pub fn init() -> Result<(), EditorError> {
 fn setup_close_button() {
     if let Some(button) = document().get_element_by_id("close-editor") {
         button.add_event_listener(|_: ClickEvent| {
-            window().session_storage().insert("basic-editor", "true").unwrap();
+            window().local_storage().insert("basic-editor", "true").unwrap();
             window().history().go(0).unwrap(); // Refresh the page
         });
     }
