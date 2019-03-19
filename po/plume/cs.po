@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 15:50\n"
+"PO-Revision-Date: 2019-03-19 22:35\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -247,7 +247,7 @@ msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "Nahrát avatara"
 
 # src/template_utils.rs:144
 msgid "Display name"
@@ -268,7 +268,7 @@ msgid "Danger zone"
 msgstr "Nebezpečná zóna"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Buďte velmi opatrní, jakákoli akce, která zde bude přijata, nemůže být zrušena."
 
 msgid "Delete your account"
 msgstr "Smazat váš účet"
