@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-19 13:59\n"
+"PO-Revision-Date: 2019-03-19 22:35\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -497,7 +497,7 @@ msgid "Check your inbox!"
 msgstr "Pozri si svoju Doručenú poštu!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Email s odkazom na obnovenie hesla bol odoslaný na adresu, ktorú si nám dal/a."
 
 # src/template_utils.rs:144
 msgid "E-mail"
