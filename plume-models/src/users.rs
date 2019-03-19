@@ -171,7 +171,8 @@ impl User {
             .select(post_authors::post_id)
             .load(conn)?;
         for post_id in all_their_posts_ids {
-            // this makes no sense (to me)
+            // disabling this lint, because otherwise we'd have to turn it on
+            // the head, and make it even harder to follow!
             #[allow(clippy::op_ref)]
             let has_other_authors = post_authors::table
                 .filter(post_authors::post_id.eq(post_id))
