@@ -279,8 +279,7 @@ mod config;
 pub use config::CONFIG;
 
 pub fn ap_url(url: &str) -> String {
-    let scheme = if CONFIG.use_https { "https" } else { "http" };
-    format!("{}://{}", scheme, url)
+    format!("https://{}", url)
 }
 
 #[cfg(test)]

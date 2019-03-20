@@ -44,7 +44,7 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket::{config::Limits, Config, State};
+use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
@@ -127,21 +127,14 @@ Then try to restart Plume
     })
     .expect("Error setting Ctrl-c handler");
 
-    let mut config = Config::active().unwrap();
-    config.set_address(CONFIG.rocket.address.clone()).unwrap();
-    config.set_port(CONFIG.rocket.port);
-    config.set_secret_key(CONFIG.rocket.secret_key.clone().expect("No ROCKET_SECRET_KEY was provided")).unwrap();
-    config.set_limits(Limits::new()
-                      .limit("forms", CONFIG.rocket.form_size * 1024)
-                      .limit("json", CONFIG.rocket.activity_size * 1024));
 
     let mail = mail::init();
-    if mail.is_none() && config.environment.is_prod() {
+    if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
         println!("Warning: the email server is not configured (or not completely).");
         println!("Please refer to the documentation to see how to configure it.");
     }
 
-    rocket::custom(config)
+    rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",
             routes![

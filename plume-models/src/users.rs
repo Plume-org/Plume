@@ -239,7 +239,7 @@ impl User {
     }
 
     fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<User> {
-        let link = resolve(acct.to_owned(), CONFIG.use_https)?
+        let link = resolve(acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))

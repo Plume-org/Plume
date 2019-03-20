@@ -142,7 +142,7 @@ impl Blog {
     }
 
     fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<Blog> {
-        resolve(acct.to_owned(), CONFIG.use_https)?
+        resolve(acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
