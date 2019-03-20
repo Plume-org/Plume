@@ -1,8 +1,7 @@
-use chrono::{Datelike, naive::NaiveDate, offset::Utc};
-use tantivy::{query::*, schema::*, Term};
-use std::{cmp,ops::Bound};
+use chrono::{naive::NaiveDate, offset::Utc, Datelike};
 use search::searcher::Searcher;
-
+use std::{cmp, ops::Bound};
+use tantivy::{query::*, schema::*, Term};
 
 //Generate functions for advanced search
 macro_rules! gen_func {
@@ -142,12 +141,10 @@ pub struct PlumeQuery {
 }
 
 impl PlumeQuery {
-
     /// Create a new empty Query
     pub fn new() -> Self {
         Default::default()
     }
-
 
     /// Parse a query string into this Query
     pub fn parse_query(&mut self, query: &str) -> &mut Self {
@@ -160,9 +157,11 @@ impl PlumeQuery {
         gen_to_query!(self, result; normal: title, subtitle, content, tag;
                       oneoff: instance, author, blog, lang, license);
 
-        for (occur, token) in self.text { // text entries need to be added as multiple Terms
+        for (occur, token) in self.text {
+            // text entries need to be added as multiple Terms
             match occur {
-                Occur::Must => { // a Must mean this must be in one of title subtitle or content, not in all 3
+                Occur::Must => {
+                    // a Must mean this must be in one of title subtitle or content, not in all 3
                     let subresult = vec![
                         (Occur::Should, Self::token_to_query(&token, "title")),
                         (Occur::Should, Self::token_to_query(&token, "subtitle")),
@@ -170,20 +169,26 @@ impl PlumeQuery {
                     ];
 
                     result.push((Occur::Must, Box::new(BooleanQuery::from(subresult))));
-                },
+                }
                 occur => {
                     result.push((occur, Self::token_to_query(&token, "title")));
                     result.push((occur, Self::token_to_query(&token, "subtitle")));
                     result.push((occur, Self::token_to_query(&token, "content")));
-                },
+                }
             }
         }
 
-        if self.before.is_some() || self.after.is_some() { // if at least one range bound is provided
-            let after = self.after.unwrap_or_else(|| i64::from(NaiveDate::from_ymd(2000, 1, 1).num_days_from_ce()));
-            let before = self.before.unwrap_or_else(|| i64::from(Utc::today().num_days_from_ce()));
+        if self.before.is_some() || self.after.is_some() {
+            // if at least one range bound is provided
+            let after = self
+                .after
+                .unwrap_or_else(|| i64::from(NaiveDate::from_ymd(2000, 1, 1).num_days_from_ce()));
+            let before = self
+                .before
+                .unwrap_or_else(|| i64::from(Utc::today().num_days_from_ce()));
             let field = Searcher::schema().get_field("creation_date").unwrap();
-            let range = RangeQuery::new_i64_bounds(field, Bound::Included(after), Bound::Included(before));
+            let range =
+                RangeQuery::new_i64_bounds(field, Bound::Included(after), Bound::Included(before));
             result.push((Occur::Must, Box::new(range)));
         }
 
@@ -195,14 +200,18 @@ impl PlumeQuery {
 
     // documents newer than the provided date will be ignored
     pub fn before<D: Datelike>(&mut self, date: &D) -> &mut Self {
-        let before = self.before.unwrap_or_else(|| i64::from(Utc::today().num_days_from_ce()));
+        let before = self
+            .before
+            .unwrap_or_else(|| i64::from(Utc::today().num_days_from_ce()));
         self.before = Some(cmp::min(before, i64::from(date.num_days_from_ce())));
         self
     }
 
     // documents older than the provided date will be ignored
     pub fn after<D: Datelike>(&mut self, date: &D) -> &mut Self {
-        let after = self.after.unwrap_or_else(|| i64::from(NaiveDate::from_ymd(2000, 1, 1).num_days_from_ce()));
+        let after = self
+            .after
+            .unwrap_or_else(|| i64::from(NaiveDate::from_ymd(2000, 1, 1).num_days_from_ce()));
         self.after = Some(cmp::max(after, i64::from(date.num_days_from_ce())));
         self
     }
@@ -212,18 +221,22 @@ impl PlumeQuery {
         query = query.trim();
         if query.is_empty() {
             ("", "")
-        } else if query.get(0..1).map(|v| v=="\"").unwrap_or(false) {
-                if let Some(index) = query[1..].find('"') {
-                    query.split_at(index+2)
-                } else {
-                    (query, "")
-                }
-        } else if query.get(0..2).map(|v| v=="+\"" || v=="-\"").unwrap_or(false) {
-                if let Some(index) = query[2..].find('"') {
-                    query.split_at(index+3)
-                } else {
-                    (query, "")
-                }
+        } else if query.get(0..1).map(|v| v == "\"").unwrap_or(false) {
+            if let Some(index) = query[1..].find('"') {
+                query.split_at(index + 2)
+            } else {
+                (query, "")
+            }
+        } else if query
+            .get(0..2)
+            .map(|v| v == "+\"" || v == "-\"")
+            .unwrap_or(false)
+        {
+            if let Some(index) = query[2..].find('"') {
+                query.split_at(index + 3)
+            } else {
+                (query, "")
+            }
         } else if let Some(index) = query.find(' ') {
             query.split_at(index)
         } else {
@@ -247,13 +260,13 @@ impl PlumeQuery {
     fn from_str_req(&mut self, mut query: &str) -> &mut Self {
         query = query.trim_left();
         if query.is_empty() {
-            return self
+            return self;
         }
 
-        let occur = if query.get(0..1).map(|v| v=="+").unwrap_or(false) {
+        let occur = if query.get(0..1).map(|v| v == "+").unwrap_or(false) {
             query = &query[1..];
             Occur::Must
-        } else if query.get(0..1).map(|v| v=="-").unwrap_or(false) {
+        } else if query.get(0..1).map(|v| v == "-").unwrap_or(false) {
             query = &query[1..];
             Occur::MustNot
         } else {
@@ -270,31 +283,59 @@ impl PlumeQuery {
         let token = token.to_lowercase();
         let token = token.as_str();
         let field = Searcher::schema().get_field(field_name).unwrap();
-        if token.contains('@') && (field_name=="author" || field_name=="blog") {
+        if token.contains('@') && (field_name == "author" || field_name == "blog") {
             let pos = token.find('@').unwrap();
             let user_term = Term::from_field_text(field, &token[..pos]);
-            let instance_term = Term::from_field_text(Searcher::schema().get_field("instance").unwrap(), &token[pos+1..]);
+            let instance_term = Term::from_field_text(
+                Searcher::schema().get_field("instance").unwrap(),
+                &token[pos + 1..],
+            );
             Box::new(BooleanQuery::from(vec![
-                        (Occur::Must, Box::new(TermQuery::new(user_term, if field_name=="author" { IndexRecordOption::Basic }
-                                                                         else { IndexRecordOption::WithFreqsAndPositions }
-                                                                    )) as Box<dyn Query + 'static>),
-                        (Occur::Must, Box::new(TermQuery::new(instance_term, IndexRecordOption::Basic))),
+                (
+                    Occur::Must,
+                    Box::new(TermQuery::new(
+                        user_term,
+                        if field_name == "author" {
+                            IndexRecordOption::Basic
+                        } else {
+                            IndexRecordOption::WithFreqsAndPositions
+                        },
+                    )) as Box<dyn Query + 'static>,
+                ),
+                (
+                    Occur::Must,
+                    Box::new(TermQuery::new(instance_term, IndexRecordOption::Basic)),
+                ),
             ]))
-        } else if token.contains(' ') { // phrase query
+        } else if token.contains(' ') {
+            // phrase query
             match field_name {
-                "instance" | "author" | "tag" => // phrase query are not available on these fields, treat it as multiple Term queries
-                    Box::new(BooleanQuery::from(token.split_whitespace()
-                                               .map(|token| {
-                                                   let term = Term::from_field_text(field, token);
-                                                   (Occur::Should, Box::new(TermQuery::new(term, IndexRecordOption::Basic))
-                                                                   as Box<dyn Query + 'static>)
-                                               })
-                                               .collect::<Vec<_>>())),
-                _ => Box::new(PhraseQuery::new(token.split_whitespace()
-                                               .map(|token| Term::from_field_text(field, token))
-                                               .collect()))
+                "instance" | "author" | "tag" =>
+                // phrase query are not available on these fields, treat it as multiple Term queries
+                {
+                    Box::new(BooleanQuery::from(
+                        token
+                            .split_whitespace()
+                            .map(|token| {
+                                let term = Term::from_field_text(field, token);
+                                (
+                                    Occur::Should,
+                                    Box::new(TermQuery::new(term, IndexRecordOption::Basic))
+                                        as Box<dyn Query + 'static>,
+                                )
+                            })
+                            .collect::<Vec<_>>(),
+                    ))
+                }
+                _ => Box::new(PhraseQuery::new(
+                    token
+                        .split_whitespace()
+                        .map(|token| Term::from_field_text(field, token))
+                        .collect(),
+                )),
             }
-        } else { // Term Query
+        } else {
+            // Term Query
             let term = Term::from_field_text(field, token);
             let index_option = match field_name {
                 "instance" | "author" | "tag" => IndexRecordOption::Basic,
@@ -306,7 +347,6 @@ impl PlumeQuery {
 }
 
 impl std::str::FromStr for PlumeQuery {
-
     type Err = !;
 
     /// Create a new Query from &str
@@ -340,7 +380,7 @@ impl ToString for PlumeQuery {
                       instance, author, blog, lang, license;
                       date: before, after);
 
-        result.pop();// remove trailing ' '
+        result.pop(); // remove trailing ' '
         result
     }
 }

@@ -1,12 +1,12 @@
 use base64;
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
-use reqwest::header::{ACCEPT, CONTENT_TYPE, DATE, HeaderMap, HeaderValue, USER_AGENT};
+use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};
 use std::ops::Deref;
 use std::time::SystemTime;
 
-use activity_pub::{AP_CONTENT_TYPE, ap_accept_header};
 use activity_pub::sign::Signer;
+use activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
 
 const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
@@ -42,7 +42,7 @@ impl Digest {
     }
 
     pub fn verify_header(&self, other: &Digest) -> bool {
-        self.value()==other.value()
+        self.value() == other.value()
     }
 
     pub fn algorithm(&self) -> &str {
@@ -57,7 +57,8 @@ impl Digest {
         let pos = self
             .0
             .find('=')
-            .expect("Digest::value: invalid header error") + 1;
+            .expect("Digest::value: invalid header error")
+            + 1;
         base64::decode(&self.0[pos..]).expect("Digest::value: invalid encoding error")
     }
 
@@ -75,8 +76,11 @@ impl Digest {
     }
 
     pub fn from_body(body: &str) -> Self {
-        let mut hasher = Hasher::new(MessageDigest::sha256()).expect("Digest::digest: initialization error");
-        hasher.update(body.as_bytes()).expect("Digest::digest: content insertion error");
+        let mut hasher =
+            Hasher::new(MessageDigest::sha256()).expect("Digest::digest: initialization error");
+        hasher
+            .update(body.as_bytes())
+            .expect("Digest::digest: content insertion error");
         let res = base64::encode(&hasher.finish().expect("Digest::digest: finalizing error"));
         Digest(format!("SHA-256={}", res))
     }
@@ -99,7 +103,8 @@ pub fn headers() -> HeaderMap {
                 .into_iter()
                 .collect::<Vec<_>>()
                 .join(", "),
-        ).expect("request::headers: accept error"),
+        )
+        .expect("request::headers: accept error"),
     );
     headers.insert(CONTENT_TYPE, HeaderValue::from_static(AP_CONTENT_TYPE));
     headers
