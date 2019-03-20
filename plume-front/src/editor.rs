@@ -107,7 +107,7 @@ pub fn init() -> Result<(), EditorError> {
                         window().local_storage().remove("basic-editor");
                         window().history().go(0).ok(); // refresh
                     });
-                    editor_button.append_child(&document().create_text_node(&i18n!(CATALOG, "Open the fancy editor")));
+                    editor_button.append_child(&document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")));
                     editor.insert_before(&editor_button, &title_label).ok();
                     return Ok(());
                 }

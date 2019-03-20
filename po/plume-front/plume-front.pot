@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 # plume-front/src/editor.rs:110
-msgid "Open the fancy editor"
+msgid "Open the rich text editor"
 msgstr ""
 
 # plume-front/src/editor.rs:139
