@@ -435,7 +435,7 @@ impl Blog {
     pub fn icon_url(&self, conn: &Connection) -> String {
         self.icon_id.and_then(|id|
             Media::get(conn, id).and_then(|m| m.url(conn)).ok()
-        ).unwrap_or("/static/default-avatar.png".to_string())
+        ).unwrap_or_else(|| "/static/default-avatar.png".to_string())
     }
 
     pub fn banner_url(&self, conn: &Connection) -> Option<String> {

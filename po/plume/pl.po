@@ -43,6 +43,14 @@ msgstr "Nie masz uprawnień do usunięcia tego bloga."
 msgid "You are not allowed to edit this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
 msgid "You need to be logged in order to like a post"
 msgstr "Musisz się zalogować, aby polubić wpis"
 

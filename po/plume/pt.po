@@ -48,6 +48,14 @@ msgstr "Você não é autor neste blog."
 msgid "You are not allowed to edit this blog."
 msgstr "Você não é autor neste blog."
 
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Você não é autor neste blog."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Você não é autor neste blog."
+
 msgid "You need to be logged in order to like a post"
 msgstr "Você precisa estar logado para gostar de um post"
 

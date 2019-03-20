@@ -48,6 +48,14 @@ msgid "You are not allowed to edit this blog."
 msgstr "Vostede non é autora en este blog."
 
 #, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Vostede non é autora en este blog."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Vostede non é autora en este blog."
+
+#, fuzzy
 msgid "You need to be logged in order to like a post"
 msgstr "Debe estar conectada para gustar unha entrada"
 

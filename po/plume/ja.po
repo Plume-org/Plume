@@ -49,6 +49,14 @@ msgstr "あなたはこのブログの作者ではありません。"
 msgid "You are not allowed to edit this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "あなたはこのブログの作者ではありません。"
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "あなたはこのブログの作者ではありません。"
+
 msgid "You need to be logged in order to like a post"
 msgstr "投稿をいいねするにはログインする必要があります"
 

@@ -49,6 +49,14 @@ msgstr "لست مِن محرري هذه المدونة."
 msgid "You are not allowed to edit this blog."
 msgstr "لست مِن محرري هذه المدونة."
 
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "لست مِن محرري هذه المدونة."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "لست مِن محرري هذه المدونة."
+
 msgid "You need to be logged in order to like a post"
 msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
 

@@ -20,7 +20,7 @@
 </div>
 <div class="h-feed">
     @if let Some(banner_url) = blog.banner_url(ctx.0) {
-        <div class="cover" style="background-image: url('@Html(banner_url)')"></div>
+        <div class="cover" style="background-image: url('@Html(banner_url.clone())')"></div>
         <img class="hidden u-photo" src="@banner_url"/>
     }
     <div class="h-card">

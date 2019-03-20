@@ -51,6 +51,14 @@ msgid "You are not allowed to edit this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
 msgid "You need to be logged in order to like a post"
 msgstr "Du må være logget inn for å like et innlegg"
 

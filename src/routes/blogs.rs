@@ -13,11 +13,12 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
+    Connection,
     blog_authors::*,
     blogs::*,
     db_conn::DbConn,
     instance::Instance,
-    medias::Media,
+    medias::*,
     posts::Post,
     safe_string::SafeString,
     users::User,
@@ -188,8 +189,12 @@ pub fn edit(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Resul
 }
 
 /// Returns true if the media is owned by `user` and is a picture
-fn check_media(conn: DbConn, id: i32, user: &User) -> bool {
-    Media::get(&*conn, id)
+fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
+    if let Ok(media) = Media::get(conn, id) {
+        media.owner_id == user.id && media.category() == MediaCategory::Image
+    } else {
+        false
+    }
 }
 
 #[put("/~/<name>/edit", data = "<form>")]
@@ -199,25 +204,28 @@ pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: 
         let user = user.expect("blogs::edit: User was None while it shouldn't");
         form.validate()
             .and_then(|_| {
-                if !check_media(conn, form.icon, &user) {
-                    let mut errors = ValidationErrors::new();
-                    errors.add("", ValidationError {
-                        code: Cow::from("icon"),
-                        message: Some(Cow::from(@i18n!(intl.catalog, "You can't use this media as blog icon."))),
-                        params: HashMap::new()
-                    });
-                    return Err(errors);
+                if let Some(icon) = form.icon {
+                    if !check_media(&*conn, icon, &user) {
+                        let mut errors = ValidationErrors::new();
+                        errors.add("", ValidationError {
+                            code: Cow::from("icon"),
+                            message: Some(Cow::from(i18n!(intl.catalog, "You can't use this media as blog icon."))),
+                            params: HashMap::new()
+                        });
+                        return Err(errors);
+                    }
                 }
 
-                if !check_media(conn, form.banner, &user) {
-                    let mut errors = ValidationErrors::new();
-                    errors.add("", ValidationError {
-                        code: Cow::from("banner"),
-                        message: Some(Cow::from(@i18n!(intl.catalog, "You can't use this media as blog banner."))),
-                        params: HashMap::new()
-                    });
-                    errors
-                    return Err(errors);
+                if let Some(banner) = form.banner {
+                    if !check_media(&*conn, banner, &user) {
+                        let mut errors = ValidationErrors::new();
+                        errors.add("", ValidationError {
+                            code: Cow::from("banner"),
+                            message: Some(Cow::from(i18n!(intl.catalog, "You can't use this media as blog banner."))),
+                            params: HashMap::new()
+                        });
+                        return Err(errors);
+                    }
                 }
 
                 blog.title = form.title.clone();

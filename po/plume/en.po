@@ -50,6 +50,14 @@ msgstr ""
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
+# src/main.rs:1
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/main.rs:1
+msgid "You can't use this media as blog banner."
+msgstr ""
+
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
 msgstr ""

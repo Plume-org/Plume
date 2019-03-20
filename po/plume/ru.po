@@ -50,6 +50,14 @@ msgid "You are not allowed to edit this blog."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Вы не автор этого блога."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Вы не автор этого блога."
+
+#, fuzzy
 msgid "You need to be logged in order to like a post"
 msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
 
