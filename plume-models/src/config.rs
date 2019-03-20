@@ -16,7 +16,7 @@ pub struct Config {
 pub struct RocketConfig {
     pub address: String,
     pub port: u16,
-    pub secret_key: String,
+    pub secret_key: Option<String>,
     pub form_size: u64,
     pub activity_size: u64
 }
@@ -42,7 +42,7 @@ lazy_static! {
         rocket: RocketConfig {
             address: var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned()),
             port: var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(7878),
-            secret_key: var("ROCKET_SECRET_KEY").expect("No secret key was provided"),
+            secret_key: var("ROCKET_SECRET_KEY").ok(),
             form_size: var("FORM_SIZE").unwrap_or_else(|_| "32".to_owned()).parse::<u64>().unwrap(),
             activity_size: var("ACTIVITY_SIZE").unwrap_or_else(|_| "1024".to_owned()).parse::<u64>().unwrap(),
         }

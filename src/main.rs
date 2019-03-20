@@ -117,7 +117,7 @@ Then try to restart Plume.
     let mut config = Config::active().unwrap();
     config.set_address(CONFIG.rocket.address.clone()).unwrap();
     config.set_port(CONFIG.rocket.port);
-    config.set_secret_key(CONFIG.rocket.secret_key.clone()).unwrap();
+    config.set_secret_key(CONFIG.rocket.secret_key.clone().expect("No ROCKET_SECRET_KEY was provided")).unwrap();
     config.set_limits(Limits::new()
                       .limit("forms", CONFIG.rocket.form_size * 1024)
                       .limit("json", CONFIG.rocket.activity_size * 1024));

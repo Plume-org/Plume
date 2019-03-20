@@ -204,7 +204,7 @@ mod tests {
             .expect("Couldn't insert new follow");
             assert_eq!(
                 follow.ap_url,
-                format!("https://{}/follows/{}", *BASE_URL, follow.id)
+                format!("https://{}/follows/{}", CONFIG.base_url, follow.id)
             );
 
             let follow = Follow::insert(
