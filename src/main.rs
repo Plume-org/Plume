@@ -42,12 +42,11 @@ use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     search::{Searcher as UnmanagedSearcher, SearcherError},
-    Connection, Error, DATABASE_URL,
+    Connection, Error, CONFIG,
 };
 use rocket::{config::Limits, Config, State};
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
-use std::env;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -72,7 +71,7 @@ type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 fn init_pool() -> Option<DbPool> {
     dotenv::dotenv().ok();
 
-    let manager = ConnectionManager::<Connection>::new(DATABASE_URL.as_str());
+    let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
         .build(manager)
@@ -116,29 +115,12 @@ Then try to restart Plume.
     .expect("Error setting Ctrl-c handler");
 
     let mut config = Config::active().unwrap();
-    config
-        .set_address(env::var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned()))
-        .unwrap();
-    config.set_port(
-        env::var("ROCKET_PORT")
-            .ok()
-            .map(|s| s.parse::<u16>().unwrap())
-            .unwrap_or(7878),
-    );
-    let _ = env::var("ROCKET_SECRET_KEY").map(|k| config.set_secret_key(k).unwrap());
-    let form_size = &env::var("FORM_SIZE")
-        .unwrap_or_else(|_| "32".to_owned())
-        .parse::<u64>()
-        .unwrap();
-    let activity_size = &env::var("ACTIVITY_SIZE")
-        .unwrap_or_else(|_| "1024".to_owned())
-        .parse::<u64>()
-        .unwrap();
-    config.set_limits(
-        Limits::new()
-            .limit("forms", form_size * 1024)
-            .limit("json", activity_size * 1024),
-    );
+    config.set_address(CONFIG.rocket.address.clone()).unwrap();
+    config.set_port(CONFIG.rocket.port);
+    config.set_secret_key(CONFIG.rocket.secret_key.clone()).unwrap();
+    config.set_limits(Limits::new()
+                      .limit("forms", CONFIG.rocket.form_size * 1024)
+                      .limit("json", CONFIG.rocket.activity_size * 1024));
 
     let mail = mail::init();
     if mail.is_none() && config.environment.is_prod() {

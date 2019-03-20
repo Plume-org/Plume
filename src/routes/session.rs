@@ -19,7 +19,7 @@ use mail::{build_mail, Mailer};
 use plume_models::{
     db_conn::DbConn,
     users::{User, AUTH_COOKIE},
-    Error, BASE_URL,
+    Error, CONFIG,
 };
 use routes::errors::ErrorPage;
 
@@ -175,7 +175,7 @@ pub fn password_reset_request(
             creation_date: Instant::now(),
         });
 
-        let link = format!("https://{}/password-reset/{}", *BASE_URL, id);
+        let link = format!("https://{}/password-reset/{}", CONFIG.base_url, id);
         if let Some(message) = build_mail(
             form.email.clone(),
             i18n!(intl.catalog, "Password reset"),

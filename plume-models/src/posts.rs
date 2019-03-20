@@ -31,7 +31,7 @@ use schema::posts;
 use search::Searcher;
 use tags::*;
 use users::User;
-use {ap_url, ApiResult, Connection, Error, Result, BASE_URL};
+use {ap_url, ApiResult, Connection, Error, Result, CONFIG};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -354,7 +354,7 @@ impl Post {
         if post.ap_url.is_empty() {
             post.ap_url = ap_url(&format!(
                 "{}/~/{}/{}/",
-                *BASE_URL,
+                CONFIG.base_url,
                 post.get_blog(conn)?.fqn,
                 post.slug
             ));
