@@ -34,6 +34,11 @@ lazy_static! {
                 "postgres://plume:plume@localhost/{}",
                 DB_NAME
                 )),
+        #[cfg(feature = "sqlite")]
+        database_url: var("DATABASE_URL").unwrap_or_else(|_| format!(
+                "{}.sqlite",
+                DB_NAME
+                )),
         rocket: RocketConfig {
             address: var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned()),
             port: var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(7878),
