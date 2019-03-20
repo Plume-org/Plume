@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 15:50\n"
+"PO-Revision-Date: 2019-03-20 01:13\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -22,7 +22,7 @@ msgstr "{0} skomentował(a) Twój artykuł."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} jest subskrybentem do ciebie."
 
 # src/template_utils.rs:36
 msgid "{0} liked your article."
@@ -86,11 +86,11 @@ msgstr "Resetowanie hasła"
 
 # src/routes/session.rs:162
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Tutaj jest link do zresetowania hasła: {0}"
 
 # src/routes/session.rs:222
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Twoje hasło zostało pomyślnie zresetowane."
 
 # src/routes/session.rs:224
 msgid "Sorry, but the link expired. Try again"
