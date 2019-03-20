@@ -10,6 +10,7 @@ pub struct Config {
     pub use_https: bool,
     pub db_name: &'static str,
     pub database_url: String,
+    pub search_index: String,
     pub rocket: RocketConfig,
 }
 
@@ -39,6 +40,7 @@ lazy_static! {
                 "{}.sqlite",
                 DB_NAME
                 )),
+        search_index: var("SEARCH_INDEX").unwrap_or_else(|_| "search_index".to_owned()),
         rocket: RocketConfig {
             address: var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned()),
             port: var("ROCKET_PORT").ok().map(|s| s.parse::<u16>().unwrap()).unwrap_or(7878),

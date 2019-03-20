@@ -83,7 +83,7 @@ fn main() {
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     #[allow(clippy::match_wild_err_arm)]
-    let searcher = match UnmanagedSearcher::open(&"search_index") {
+    let searcher = match UnmanagedSearcher::open(&CONFIG.search_index) {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(
                 r#"Your search index is locked. Plume can't start. To fix this issue
