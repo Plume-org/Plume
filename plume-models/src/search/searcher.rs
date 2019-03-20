@@ -183,7 +183,7 @@ impl Searcher {
         let res = searcher.search(&query.into_query(), &collector).unwrap();
 
         res.get(min as usize..).unwrap_or(&[])
-            .into_iter()
+            .iter()
             .filter_map(|(_,doc_add)| {
                 let doc = searcher.doc(*doc_add).ok()?;
                 let id = doc.get_first(post_id)?;

@@ -5,7 +5,7 @@
 @use template_utils::*;
 @use routes::*;
 
-@(ctx: BaseContext, blog: Blog, authors: &Vec<User>, total_articles: i64, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
+@(ctx: BaseContext, blog: Blog, authors: &[User], total_articles: i64, page: i32, n_pages: i32, is_author: bool, posts: Vec<Post>)
 
 @:base(ctx, blog.title.clone(), {}, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
@@ -36,7 +36,7 @@
             @i18n!(ctx.1, "Latest articles")
             <small><a href="@uri!(blogs::atom_feed: name = &blog.fqn)" title="Atom feed">@icon!("rss")</a></small>
         </h2>
-        @if posts.len() < 1 {
+        @if posts.is_empty() {
             <p>@i18n!(ctx.1, "No posts to see here yet.")</p>
         }
         @if is_author {

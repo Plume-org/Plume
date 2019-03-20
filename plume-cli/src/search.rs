@@ -60,13 +60,7 @@ fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let path = Path::new(path).join("search_index");
 
     let can_do = match read_dir(path.clone()) { // try to read the directory specified
-        Ok(mut contents) => {
-            if contents.next().is_none()  {
-                true
-            } else {
-                false
-            }
-        },
+        Ok(mut contents) =>  contents.next().is_none(),
         Err(e) => if e.kind() == ErrorKind::NotFound {
             true
         } else {
@@ -107,5 +101,3 @@ fn unlock<'a>(args: &ArgMatches<'a>) {
 
     remove_file(path).unwrap();
 }
-
-

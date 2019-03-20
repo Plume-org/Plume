@@ -17,6 +17,7 @@ use plume_common::activity_pub::{
     sign::{gen_keypair, Signer},
     ActivityStream, ApSignature, Id, IntoId, PublicKey,
 };
+use plume_common::utils;
 use reqwest::{
     header::{HeaderValue, ACCEPT},
     Client,
@@ -52,7 +53,7 @@ pub struct User {
     pub outbox_url: String,
     pub inbox_url: String,
     pub is_admin: bool,
-    pub summary: SafeString,
+    pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
@@ -65,6 +66,7 @@ pub struct User {
     pub avatar_id: Option<i32>,
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
+    pub summary_html: SafeString,
 }
 
 #[derive(Default, Insertable)]
@@ -75,7 +77,7 @@ pub struct NewUser {
     pub outbox_url: String,
     pub inbox_url: String,
     pub is_admin: bool,
-    pub summary: SafeString,
+    pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
     pub instance_id: i32,
@@ -85,6 +87,7 @@ pub struct NewUser {
     pub shared_inbox_url: Option<String>,
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
+    pub summary_html: SafeString,
 }
 
 pub const AUTH_COOKIE: &str = "user_id";
@@ -168,6 +171,9 @@ impl User {
             .select(post_authors::post_id)
             .load(conn)?;
         for post_id in all_their_posts_ids {
+            // disabling this lint, because otherwise we'd have to turn it on
+            // the head, and make it even harder to follow!
+            #[allow(clippy::op_ref)]
             let has_other_authors = post_authors::table
                 .filter(post_authors::post_id.eq(post_id))
                 .filter(post_authors::author_id.ne(self.id))
@@ -212,6 +218,7 @@ impl User {
             .set((
                 users::display_name.eq(name),
                 users::email.eq(email),
+                users::summary_html.eq(utils::md_to_html(&summary,"").0),
                 users::summary.eq(summary),
             ))
             .execute(conn)?;
@@ -320,7 +327,12 @@ impl User {
                     .ap_actor_props
                     .inbox_string()?,
                 is_admin: false,
-                summary: SafeString::new(
+                summary:acct
+                    .object
+                    .object_props
+                    .summary_string()
+                    .unwrap_or_default(),
+                summary_html: SafeString::new(
                     &acct
                         .object
                         .object_props
@@ -480,7 +492,7 @@ impl User {
         Ok(json["items"]
             .as_array()
             .unwrap_or(&vec![])
-            .into_iter()
+            .iter()
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<T>>())
     }
@@ -503,7 +515,7 @@ impl User {
         Ok(json["items"]
             .as_array()
             .unwrap_or(&vec![])
-            .into_iter()
+            .iter()
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<String>>())
     }
@@ -684,7 +696,7 @@ impl User {
             .set_name_string(self.display_name.clone())?;
         actor
             .object_props
-            .set_summary_string(self.summary.get().clone())?;
+            .set_summary_string(self.summary_html.get().clone())?;
         actor
             .object_props
             .set_url_string(self.ap_url.clone())?;
@@ -737,7 +749,7 @@ impl User {
     pub fn avatar_url(&self, conn: &Connection) -> String {
         self.avatar_id.and_then(|id|
             Media::get(conn, id).and_then(|m| m.url(conn)).ok()
-        ).unwrap_or("/static/default-avatar.png".to_string())
+        ).unwrap_or_else(|| "/static/default-avatar.png".to_string())
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {
@@ -902,7 +914,8 @@ impl NewUser {
                 username,
                 display_name,
                 is_admin,
-                summary: SafeString::new(summary),
+                summary: summary.to_owned(),
+                summary_html: SafeString::new(&utils::md_to_html(&summary,"").0),
                 email: Some(email),
                 hashed_password: Some(password),
                 instance_id: Instance::get_local(conn)?.id,
@@ -1050,7 +1063,7 @@ pub(crate) mod tests {
             ).unwrap();
             assert_eq!(updated.display_name, "new name");
             assert_eq!(updated.email.unwrap(), "em@il");
-            assert_eq!(updated.summary.get(), "<p>summary</p>");
+            assert_eq!(updated.summary_html.get(), "<p>summary</p>");
 
             Ok(())
         });

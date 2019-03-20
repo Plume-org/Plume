@@ -127,11 +127,11 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
                 published: Some(p.published),
                 creation_date: Some(p.creation_date.format("%Y-%m-%d").to_string()),
                 license: Some(p.license.clone()),
-                tags: Some(Tag::for_post(conn, p.id).unwrap_or(vec![]).into_iter().map(|t| t.tag).collect()),
+                tags: Some(Tag::for_post(conn, p.id).unwrap_or_else(|_| vec![]).into_iter().map(|t| t.tag).collect()),
                 cover_id: p.cover_id,
             })
             .collect()
-        ).unwrap_or(vec![])
+        ).unwrap_or_else(|_| vec![])
     }
 
     fn update(
@@ -146,7 +146,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let user_id = user_id.expect("Post as Provider::delete: not authenticated");
         if let Ok(post) = Post::get(conn, id) {
             if post.is_author(conn, user_id).unwrap_or(false) {
-                post.delete(&(conn, search)).ok().expect("Post as Provider::delete: delete error");
+                post.delete(&(conn, search)).expect("Post as Provider::delete: delete error");
             }
         }
     }
@@ -168,7 +168,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let domain = &Instance::get_local(&conn)
             .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
             .public_domain;
-        let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref(), domain);
+        let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or_default().clone().as_ref(), domain);
 
         let author = User::get(conn, user_id.expect("<Post as Provider>::create: no user_id error"))
             .map_err(|_| ApiError::NotFound("Author not found".into()))?;
@@ -185,16 +185,16 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
 
         let post = Post::insert(conn, NewPost {
             blog_id: blog,
-            slug: slug,
-            title: title,
+            slug,
+            title,
             content: SafeString::new(content.as_ref()),
             published: query.published.unwrap_or(true),
-            license: query.license.unwrap_or(Instance::get_local(conn)
+            license: query.license.unwrap_or_else(|| Instance::get_local(conn)
                 .map(|i| i.default_license)
-                .unwrap_or(String::from("CC-BY-SA"))),
+                .unwrap_or_else(|_| String::from("CC-BY-SA"))),
             creation_date: date,
             ap_url: String::new(),
-            subtitle: query.subtitle.unwrap_or(String::new()),
+            subtitle: query.subtitle.unwrap_or_default(),
             source: query.source.expect("Post API::create: no source error"),
             cover_id: query.cover_id,
         }, search).map_err(|_| ApiError::NotFound("Creation error".into()))?;
@@ -207,7 +207,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         if let Some(tags) = query.tags {
             for tag in tags {
                 Tag::insert(conn, NewTag {
-                    tag: tag,
+                    tag,
                     is_hashtag: false,
                     post_id: post.id
                 }).map_err(|_| ApiError::NotFound("Error saving tags".into()))?;
@@ -311,7 +311,7 @@ impl Post {
             .load(conn)?
             .iter()
             .next()
-            .map(|x| *x)
+            .cloned()
             .ok_or(Error::NotFound)
     }
 
@@ -908,7 +908,7 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                             .content_string()?,
                     ),
                     published: true,
-                    license: license,
+                    license,
                     // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
                     ap_url: article.object_props.url_string().or_else(|_|
                         article

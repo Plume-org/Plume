@@ -203,6 +203,7 @@ table! {
         avatar_id -> Nullable<Int4>,
         last_fetched_date -> Timestamp,
         fqn -> Text,
+        summary_html -> Text,
     }
 }
 
