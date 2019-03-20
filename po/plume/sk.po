@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-19 22:35\n"
+"PO-Revision-Date: 2019-03-20 02:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -42,7 +42,7 @@ msgstr "Avatar užívateľa {0}"
 
 # src/routes/blogs.rs:64
 msgid "You need to be logged in order to create a new blog"
-msgstr "Musíš byť prihlásený/á, ak chceš vytvoriť nový blog"
+msgstr "Ak chceš vytvoriť nový blog, musíš byť prihlásený/á"
 
 # src/routes/blogs.rs:134
 msgid "You are not allowed to delete this blog."
@@ -50,11 +50,11 @@ msgstr "Nemáš povolenie vymazať tento blog."
 
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
-msgstr "Musíš byť prihlásený/á, ak si chceš obľúbiť príspevok"
+msgstr "Ak si chceš obľúbiť príspevok, musíš byť prihlásený/á"
 
 # src/routes/notifications.rs:23
 msgid "You need to be logged in order to see your notifications"
-msgstr "Musíš byť prihlásený/á, ak chceš vidieť svoje oboznámenia"
+msgstr "Ak chceš vidieť svoje notifikácie, musíš byť prihlásený/á"
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
@@ -62,7 +62,7 @@ msgstr "Tento príspevok ešte nie je uverejnený."
 
 # src/routes/posts.rs:100
 msgid "You need to be logged in order to write a new post"
-msgstr "Musíš byť prihlásený/á, ak chceš napísať nový príspevok"
+msgstr "Ak chceš napísať nový príspevok, musíš byť prihlásený/á"
 
 # src/routes/posts.rs:113
 msgid "You are not author in this blog."
