@@ -1,3 +1,4 @@
+@use plume_models::CONFIG;
 @use template_utils::*;
 @use routes::*;
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
@@ -11,7 +12,7 @@
         <link rel="stylesheet" href="@uri!(plume_static_files: file = "css/main.css", _build_id = CACHE_NAME)" />
         <link rel="stylesheet" href="@uri!(plume_static_files: file = "css/feather.css", _build_id = CACHE_NAME)" />
         <link rel="manifest" href="@uri!(instance::web_manifest)" />
-        <link rel="icon" type="image/png" href="@uri!(plume_static_files: file = "icons/trwnh/feather-filled/plumeFeatherFilled64.png", _build_id = CACHE_NAME)">
+        <link rel="icon" type="image/png" href="@uri!(plume_static_files: file = CONFIG.logo.favicon.as_str(), _build_id = CACHE_NAME)">
         @:head()
     </head>
     <body>
@@ -22,7 +23,7 @@
             <div id="content">
                 <nav>
                     <a href="@uri!(instance::index)" class="title">
-                        <img src="@uri!(plume_static_files: file = "icons/trwnh/feather/plumeFeather256.png", _build_id = CACHE_NAME)">
+                        <img src="@uri!(plume_static_files: file = CONFIG.logo.main.as_str(), _build_id = CACHE_NAME)">
                         <p>@i18n!(ctx.1, "Plume")</p>
                     </a>
                     <hr/>
