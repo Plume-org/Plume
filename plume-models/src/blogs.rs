@@ -27,7 +27,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, BASE_URL, USE_HTTPS, Error, Result};
+use {Connection, Error, Result, CONFIG};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -73,27 +73,15 @@ impl Blog {
     insert!(blogs, NewBlog, |inserted, conn| {
         let instance = inserted.get_instance(conn)?;
         if inserted.outbox_url.is_empty() {
-            inserted.outbox_url = instance.compute_box(
-                BLOG_PREFIX,
-                &inserted.actor_id,
-                "outbox",
-            );
+            inserted.outbox_url = instance.compute_box(BLOG_PREFIX, &inserted.actor_id, "outbox");
         }
 
         if inserted.inbox_url.is_empty() {
-            inserted.inbox_url = instance.compute_box(
-                BLOG_PREFIX,
-                &inserted.actor_id,
-                "inbox",
-            );
+            inserted.inbox_url = instance.compute_box(BLOG_PREFIX, &inserted.actor_id, "inbox");
         }
 
         if inserted.ap_url.is_empty() {
-            inserted.ap_url = instance.compute_box(
-                BLOG_PREFIX,
-                &inserted.actor_id,
-                "",
-            );
+            inserted.ap_url = instance.compute_box(BLOG_PREFIX, &inserted.actor_id, "");
         }
 
         if inserted.fqn.is_empty() {
@@ -161,16 +149,12 @@ impl Blog {
     }
 
     fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<Blog> {
-        resolve(acct.to_owned(), *USE_HTTPS)?.links
+        resolve(acct.to_owned(), true)?
+            .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
-            .and_then(|l| {
-                Blog::fetch_from_url(
-                    conn,
-                    &l.href?
-                )
-            })
+            .and_then(|l| Blog::fetch_from_url(conn, &l.href?))
     }
 
     fn fetch_from_url(conn: &Connection, url: &str) -> Result<Blog> {
@@ -188,20 +172,14 @@ impl Blog {
             .send()?;
 
         let text = &res.text()?;
-        let ap_sign: ApSignature =
-            serde_json::from_str(text)?;
-        let mut json: CustomGroup =
-            serde_json::from_str(text)?;
+        let ap_sign: ApSignature = serde_json::from_str(text)?;
+        let mut json: CustomGroup = serde_json::from_str(text)?;
         json.custom_props = ap_sign; // without this workaround, publicKey is not correctly deserialized
-        Blog::from_activity(
-            conn,
-            &json,
-            Url::parse(url)?.host_str()?,
-        )
+        Blog::from_activity(conn, &json, Url::parse(url)?.host_str()?)
     }
 
     fn from_activity(conn: &Connection, acct: &CustomGroup, inst: &str) -> Result<Blog> {
-        let instance = Instance::find_by_domain(conn, inst).or_else(|_|
+        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
                 conn,
                 NewInstance {
@@ -217,7 +195,7 @@ impl Blog {
                     long_description_html: String::new(),
                 },
             )
-        )?;
+        })?;
 
         let icon_id = acct.object
             .object_props
@@ -248,32 +226,13 @@ impl Blog {
         Blog::insert(
             conn,
             NewBlog {
-                actor_id: acct
-                    .object
-                    .ap_actor_props
-                    .preferred_username_string()?,
-                title: acct
-                    .object
-                    .object_props
-                    .name_string()?,
-                outbox_url: acct
-                    .object
-                    .ap_actor_props
-                    .outbox_string()?,
-                inbox_url: acct
-                    .object
-                    .ap_actor_props
-                    .inbox_string()?,
-                summary: acct
-                    .object
-                    .ap_object_props
-                    .source_object::<Source>()?
-                    .content,
+                actor_id: acct.object.ap_actor_props.preferred_username_string()?,
+                title: acct.object.object_props.name_string()?,
+                outbox_url: acct.object.ap_actor_props.outbox_string()?,
+                inbox_url: acct.object.ap_actor_props.inbox_string()?,
+                summary: acct.object.object_props.summary_string()?,
                 instance_id: instance.id,
-                ap_url: acct
-                    .object
-                    .object_props
-                    .id_string()?,
+                ap_url: acct.object.object_props.id_string()?,
                 public_key: acct
                     .custom_props
                     .public_key_publickey()?
@@ -293,8 +252,7 @@ impl Blog {
         let mut blog = Group::default();
         blog.ap_actor_props
             .set_preferred_username_string(self.actor_id.clone())?;
-        blog.object_props
-            .set_name_string(self.title.clone())?;
+        blog.object_props.set_name_string(self.title.clone())?;
         blog.ap_actor_props
             .set_outbox_string(self.outbox_url.clone())?;
         blog.ap_actor_props
@@ -350,15 +308,11 @@ impl Blog {
             .set_id_string(self.ap_url.clone())?;
 
         let mut public_key = PublicKey::default();
-        public_key
-            .set_id_string(format!("{}#main-key", self.ap_url))?;
-        public_key
-            .set_owner_string(self.ap_url.clone())?;
-        public_key
-            .set_public_key_pem_string(self.public_key.clone())?;
+        public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
+        public_key.set_owner_string(self.ap_url.clone())?;
+        public_key.set_public_key_pem_string(self.public_key.clone())?;
         let mut ap_signature = ApSignature::default();
-        ap_signature
-            .set_public_key_publickey(public_key)?;
+        ap_signature.set_public_key_publickey(public_key)?;
 
         Ok(CustomGroup::new(blog, ap_signature))
     }
@@ -376,13 +330,10 @@ impl Blog {
     }
 
     pub fn get_keypair(&self) -> Result<PKey<Private>> {
-        PKey::from_rsa(
-            Rsa::private_key_from_pem(
-                self.private_key
-                    .clone()?
-                    .as_ref(),
-            )?,
-        ).map_err(Error::from)
+        PKey::from_rsa(Rsa::private_key_from_pem(
+            self.private_key.clone()?.as_ref(),
+        )?)
+        .map_err(Error::from)
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {
@@ -424,7 +375,7 @@ impl Blog {
         Blog::find_by_ap_url(conn, url).or_else(|_| {
             // The requested blog was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(url)?.host_str()? != BASE_URL.as_str() {
+            if Url::parse(url)?.host_str()? != CONFIG.base_url.as_str() {
                 Blog::fetch_from_url(conn, url)
             } else {
                 Err(Error::NotFound)
@@ -482,25 +433,16 @@ impl sign::Signer for Blog {
 
     fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
         let key = self.get_keypair()?;
-        let mut signer =
-            Signer::new(MessageDigest::sha256(), &key)?;
-        signer
-            .update(to_sign.as_bytes())?;
-        signer
-            .sign_to_vec()
-            .map_err(Error::from)
+        let mut signer = Signer::new(MessageDigest::sha256(), &key)?;
+        signer.update(to_sign.as_bytes())?;
+        signer.sign_to_vec().map_err(Error::from)
     }
 
     fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
-        let key = PKey::from_rsa(
-            Rsa::public_key_from_pem(self.public_key.as_ref())?
-        )?;
+        let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = Verifier::new(MessageDigest::sha256(), &key)?;
-        verifier
-            .update(data.as_bytes())?;
-        verifier
-            .verify(&signature)
-            .map_err(Error::from)
+        verifier.update(data.as_bytes())?;
+        verifier.verify(&signature).map_err(Error::from)
     }
 }
 
@@ -530,32 +472,47 @@ pub(crate) mod tests {
     use blog_authors::*;
     use diesel::Connection;
     use instance::tests as instance_tests;
+    use search::tests::get_searcher;
     use tests::db;
     use users::tests as usersTests;
-    use search::tests::get_searcher;
     use Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Blog>) {
         instance_tests::fill_database(conn);
         let users = usersTests::fill_database(conn);
-        let blog1 = Blog::insert(conn, NewBlog::new_local(
-            "BlogName".to_owned(),
-            "Blog name".to_owned(),
-            "This is a small blog".to_owned(),
-            Instance::get_local(conn).unwrap().id
-        ).unwrap()).unwrap();
-        let blog2 = Blog::insert(conn, NewBlog::new_local(
+        let blog1 = Blog::insert(
+            conn,
+            NewBlog::new_local(
+                "BlogName".to_owned(),
+                "Blog name".to_owned(),
+                "This is a small blog".to_owned(),
+                Instance::get_local(conn).unwrap().id,
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let blog2 = Blog::insert(
+            conn,
+            NewBlog::new_local(
                 "MyBlog".to_owned(),
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
-                Instance::get_local(conn).unwrap().id
-        ).unwrap()).unwrap();
-        let blog3 = Blog::insert(conn, NewBlog::new_local(
+                Instance::get_local(conn).unwrap().id,
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let blog3 = Blog::insert(
+            conn,
+            NewBlog::new_local(
                 "WhyILikePlume".to_owned(),
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
-                Instance::get_local(conn).unwrap().id
-        ).unwrap()).unwrap();
+                Instance::get_local(conn).unwrap().id,
+            )
+            .unwrap(),
+        )
+        .unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -564,7 +521,8 @@ pub(crate) mod tests {
                 author_id: users[0].id,
                 is_owner: true,
             },
-        ).unwrap();
+        )
+        .unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -573,7 +531,8 @@ pub(crate) mod tests {
                 author_id: users[1].id,
                 is_owner: false,
             },
-        ).unwrap();
+        )
+        .unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -582,7 +541,8 @@ pub(crate) mod tests {
                 author_id: users[1].id,
                 is_owner: true,
             },
-        ).unwrap();
+        )
+        .unwrap();
 
         BlogAuthor::insert(
             conn,
@@ -591,8 +551,9 @@ pub(crate) mod tests {
                 author_id: users[2].id,
                 is_owner: true,
             },
-        ).unwrap();
-        (users, vec![ blog1, blog2, blog3 ])
+        )
+        .unwrap();
+        (users, vec![blog1, blog2, blog3])
     }
 
     #[test]
@@ -607,11 +568,16 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id
-                ).unwrap(),
-            ).unwrap();
+                    Instance::get_local(conn).unwrap().id,
+                )
+                .unwrap(),
+            )
+            .unwrap();
 
-            assert_eq!(blog.get_instance(conn).unwrap().id, Instance::get_local(conn).unwrap().id);
+            assert_eq!(
+                blog.get_instance(conn).unwrap().id,
+                Instance::get_local(conn).unwrap().id
+            );
             // TODO add tests for remote instance
 
             Ok(())
@@ -631,18 +597,22 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local(conn).unwrap().id,
-                ).unwrap(),
-            ).unwrap();
+                )
+                .unwrap(),
+            )
+            .unwrap();
             let b2 = Blog::insert(
                 conn,
                 NewBlog::new_local(
                     "Blog".to_owned(),
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id
-                ).unwrap(),
-            ).unwrap();
-            let blog = vec![ b1, b2 ];
+                    Instance::get_local(conn).unwrap().id,
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            let blog = vec![b1, b2];
 
             BlogAuthor::insert(
                 conn,
@@ -651,7 +621,8 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -660,7 +631,8 @@ pub(crate) mod tests {
                     author_id: user[1].id,
                     is_owner: false,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -669,53 +641,46 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
-            assert!(
-                blog[0]
-                    .list_authors(conn).unwrap()
-                    .iter()
-                    .any(|a| a.id == user[0].id)
-            );
-            assert!(
-                blog[0]
-                    .list_authors(conn).unwrap()
-                    .iter()
-                    .any(|a| a.id == user[1].id)
-            );
-            assert!(
-                blog[1]
-                    .list_authors(conn).unwrap()
-                    .iter()
-                    .any(|a| a.id == user[0].id)
-            );
-            assert!(
-                !blog[1]
-                    .list_authors(conn).unwrap()
-                    .iter()
-                    .any(|a| a.id == user[1].id)
-            );
+            assert!(blog[0]
+                .list_authors(conn)
+                .unwrap()
+                .iter()
+                .any(|a| a.id == user[0].id));
+            assert!(blog[0]
+                .list_authors(conn)
+                .unwrap()
+                .iter()
+                .any(|a| a.id == user[1].id));
+            assert!(blog[1]
+                .list_authors(conn)
+                .unwrap()
+                .iter()
+                .any(|a| a.id == user[0].id));
+            assert!(!blog[1]
+                .list_authors(conn)
+                .unwrap()
+                .iter()
+                .any(|a| a.id == user[1].id));
 
-            assert!(
-                Blog::find_for_author(conn, &user[0]).unwrap()
-                    .iter()
-                    .any(|b| b.id == blog[0].id)
-            );
-            assert!(
-                Blog::find_for_author(conn, &user[1]).unwrap()
-                    .iter()
-                    .any(|b| b.id == blog[0].id)
-            );
-            assert!(
-                Blog::find_for_author(conn, &user[0]).unwrap()
-                    .iter()
-                    .any(|b| b.id == blog[1].id)
-            );
-            assert!(
-                !Blog::find_for_author(conn, &user[1]).unwrap()
-                    .iter()
-                    .any(|b| b.id == blog[1].id)
-            );
+            assert!(Blog::find_for_author(conn, &user[0])
+                .unwrap()
+                .iter()
+                .any(|b| b.id == blog[0].id));
+            assert!(Blog::find_for_author(conn, &user[1])
+                .unwrap()
+                .iter()
+                .any(|b| b.id == blog[0].id));
+            assert!(Blog::find_for_author(conn, &user[0])
+                .unwrap()
+                .iter()
+                .any(|b| b.id == blog[1].id));
+            assert!(!Blog::find_for_author(conn, &user[1])
+                .unwrap()
+                .iter()
+                .any(|b| b.id == blog[1].id));
 
             Ok(())
         });
@@ -734,13 +699,12 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local(conn).unwrap().id,
-                ).unwrap(),
-            ).unwrap();
+                )
+                .unwrap(),
+            )
+            .unwrap();
 
-            assert_eq!(
-                Blog::find_by_fqn(conn, "SomeName").unwrap().id,
-                blog.id
-            );
+            assert_eq!(Blog::find_by_fqn(conn, "SomeName").unwrap().id, blog.id);
 
             Ok(())
         });
@@ -759,8 +723,10 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local(conn).unwrap().id,
-                ).unwrap(),
-            ).unwrap();
+                )
+                .unwrap(),
+            )
+            .unwrap();
 
             assert_eq!(blog.fqn, "SomeName");
 
@@ -795,8 +761,10 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local(conn).unwrap().id,
-                ).unwrap(),
-            ).unwrap();
+                )
+                .unwrap(),
+            )
+            .unwrap();
             let b2 = Blog::insert(
                 conn,
                 NewBlog::new_local(
@@ -804,9 +772,11 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
                     Instance::get_local(conn).unwrap().id,
-                ).unwrap(),
-            ).unwrap();
-            let blog = vec![ b1, b2 ];
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            let blog = vec![b1, b2];
 
             BlogAuthor::insert(
                 conn,
@@ -815,7 +785,8 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -824,7 +795,8 @@ pub(crate) mod tests {
                     author_id: user[1].id,
                     is_owner: false,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
             BlogAuthor::insert(
                 conn,
@@ -833,7 +805,8 @@ pub(crate) mod tests {
                     author_id: user[0].id,
                     is_owner: true,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
             user[0].delete(conn, &searcher).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_ok());

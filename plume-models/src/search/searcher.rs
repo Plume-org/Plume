@@ -5,15 +5,14 @@ use Connection;
 
 use chrono::Datelike;
 use itertools::Itertools;
+use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 use tantivy::{
-    collector::TopDocs, directory::MmapDirectory,
-    schema::*, tokenizer::*, Index, IndexWriter, Term
+    collector::TopDocs, directory::MmapDirectory, schema::*, tokenizer::*, Index, IndexWriter, Term,
 };
 use whatlang::{detect as detect_lang, Lang};
-use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 
-use search::query::PlumeQuery;
 use super::tokenizer;
+use search::query::PlumeQuery;
 use Result;
 
 #[derive(Debug)]
@@ -31,20 +30,23 @@ pub struct Searcher {
 
 impl Searcher {
     pub fn schema() -> Schema {
-        let tag_indexing = TextOptions::default()
-            .set_indexing_options(TextFieldIndexing::default()
-                                  .set_tokenizer("whitespace_tokenizer")
-                                  .set_index_option(IndexRecordOption::Basic));
+        let tag_indexing = TextOptions::default().set_indexing_options(
+            TextFieldIndexing::default()
+                .set_tokenizer("whitespace_tokenizer")
+                .set_index_option(IndexRecordOption::Basic),
+        );
 
-        let content_indexing = TextOptions::default()
-            .set_indexing_options(TextFieldIndexing::default()
-                                  .set_tokenizer("content_tokenizer")
-                                  .set_index_option(IndexRecordOption::WithFreqsAndPositions));
+        let content_indexing = TextOptions::default().set_indexing_options(
+            TextFieldIndexing::default()
+                .set_tokenizer("content_tokenizer")
+                .set_index_option(IndexRecordOption::WithFreqsAndPositions),
+        );
 
-        let property_indexing = TextOptions::default()
-            .set_indexing_options(TextFieldIndexing::default()
-                                  .set_tokenizer("property_tokenizer")
-                                  .set_index_option(IndexRecordOption::WithFreqsAndPositions));
+        let property_indexing = TextOptions::default().set_indexing_options(
+            TextFieldIndexing::default()
+                .set_tokenizer("property_tokenizer")
+                .set_index_option(IndexRecordOption::WithFreqsAndPositions),
+        );
 
         let mut schema_builder = SchemaBuilder::default();
 
@@ -66,56 +68,65 @@ impl Searcher {
         schema_builder.build()
     }
 
-
     pub fn create(path: &AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer = tokenizer::WhitespaceTokenizer
-            .filter(LowerCaser);
+        let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
 
         let content_tokenizer = SimpleTokenizer
             .filter(RemoveLongFilter::limit(40))
             .filter(LowerCaser);
 
-        let property_tokenizer = NgramTokenizer::new(2, 8, false)
-            .filter(LowerCaser);
+        let property_tokenizer = NgramTokenizer::new(2, 8, false).filter(LowerCaser);
 
         let schema = Self::schema();
 
         create_dir_all(path).map_err(|_| SearcherError::IndexCreationError)?;
-        let index = Index::create(MmapDirectory::open(path).map_err(|_| SearcherError::IndexCreationError)?, schema).map_err(|_| SearcherError::IndexCreationError)?;
+        let index = Index::create(
+            MmapDirectory::open(path).map_err(|_| SearcherError::IndexCreationError)?,
+            schema,
+        )
+        .map_err(|_| SearcherError::IndexCreationError)?;
 
         {
             let tokenizer_manager = index.tokenizers();
             tokenizer_manager.register("whitespace_tokenizer", whitespace_tokenizer);
             tokenizer_manager.register("content_tokenizer", content_tokenizer);
             tokenizer_manager.register("property_tokenizer", property_tokenizer);
-        }//to please the borrow checker
+        } //to please the borrow checker
         Ok(Self {
-            writer: Mutex::new(Some(index.writer(50_000_000).map_err(|_| SearcherError::WriteLockAcquisitionError)?)),
-            index
+            writer: Mutex::new(Some(
+                index
+                    .writer(50_000_000)
+                    .map_err(|_| SearcherError::WriteLockAcquisitionError)?,
+            )),
+            index,
         })
     }
 
     pub fn open(path: &AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer = tokenizer::WhitespaceTokenizer
-            .filter(LowerCaser);
+        let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
 
         let content_tokenizer = SimpleTokenizer
             .filter(RemoveLongFilter::limit(40))
             .filter(LowerCaser);
 
-        let property_tokenizer = NgramTokenizer::new(2, 8, false)
-            .filter(LowerCaser);
+        let property_tokenizer = NgramTokenizer::new(2, 8, false).filter(LowerCaser);
 
-        let index = Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?).map_err(|_| SearcherError::IndexOpeningError)?;
+        let index =
+            Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?)
+                .map_err(|_| SearcherError::IndexOpeningError)?;
 
         {
             let tokenizer_manager = index.tokenizers();
             tokenizer_manager.register("whitespace_tokenizer", whitespace_tokenizer);
             tokenizer_manager.register("content_tokenizer", content_tokenizer);
             tokenizer_manager.register("property_tokenizer", property_tokenizer);
-        }//to please the borrow checker
-        let mut writer = index.writer(50_000_000).map_err(|_| SearcherError::WriteLockAcquisitionError)?;
-        writer.garbage_collect_files().map_err(|_| SearcherError::IndexEditionError)?;
+        } //to please the borrow checker
+        let mut writer = index
+            .writer(50_000_000)
+            .map_err(|_| SearcherError::WriteLockAcquisitionError)?;
+        writer
+            .garbage_collect_files()
+            .map_err(|_| SearcherError::IndexEditionError)?;
         Ok(Self {
             writer: Mutex::new(Some(writer)),
             index,
@@ -173,18 +184,24 @@ impl Searcher {
         self.add_document(conn, post)
     }
 
-    pub fn search_document(&self, conn: &Connection, query: PlumeQuery, (min, max): (i32, i32)) -> Vec<Post>{
+    pub fn search_document(
+        &self,
+        conn: &Connection,
+        query: PlumeQuery,
+        (min, max): (i32, i32),
+    ) -> Vec<Post> {
         let schema = self.index.schema();
         let post_id = schema.get_field("post_id").unwrap();
 
-        let collector = TopDocs::with_limit(cmp::max(1,max) as usize);
+        let collector = TopDocs::with_limit(cmp::max(1, max) as usize);
 
         let searcher = self.index.searcher();
         let res = searcher.search(&query.into_query(), &collector).unwrap();
 
-        res.get(min as usize..).unwrap_or(&[])
+        res.get(min as usize..)
+            .unwrap_or(&[])
             .iter()
-            .filter_map(|(_,doc_add)| {
+            .filter_map(|(_, doc_add)| {
                 let doc = searcher.doc(*doc_add).ok()?;
                 let id = doc.get_first(post_id)?;
                 Post::get(conn, id.i64_value() as i32).ok()

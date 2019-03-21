@@ -4,26 +4,16 @@ use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
     request::LenientForm,
-    response::{Redirect, Flash, content::Content}
+    response::{content::Content, Flash, Redirect},
 };
 use rocket_i18n::I18n;
-use std::{collections::HashMap, borrow::Cow};
+use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
-use plume_models::{
-    Connection,
-    blog_authors::*,
-    blogs::*,
-    db_conn::DbConn,
-    instance::Instance,
-    medias::*,
-    posts::Post,
-    safe_string::SafeString,
-    users::User,
-};
-use routes::{Page, PlumeRocket, errors::ErrorPage};
+use plume_models::{Connection, blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, medias::*, posts::Post, safe_string::SafeString, users::User};
+use routes::{errors::ErrorPage, Page, PlumeRocket};
 use template_utils::Ructe;
 
 #[get("/~/<name>?<page>", rank = 2)]
@@ -48,7 +38,11 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
 }
 
 #[get("/~/<name>", rank = 1)]
-pub fn activity_details(name: String, conn: DbConn, _ap: ApRequest) -> Option<ActivityStream<CustomGroup>> {
+pub fn activity_details(
+    name: String,
+    conn: DbConn,
+    _ap: ApRequest,
+) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
 }
@@ -67,10 +61,13 @@ pub fn new(rockets: PlumeRocket) -> Ructe {
 }
 
 #[get("/blogs/new", rank = 2)]
-pub fn new_auth(i18n: I18n) -> Flash<Redirect>{
+pub fn new_auth(i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        &i18n!(i18n.catalog, "You need to be logged in order to create a new blog"),
-        uri!(new)
+        &i18n!(
+            i18n.catalog,
+            "You need to be logged in order to create a new blog"
+        ),
+        uri!(new),
     )
 }
 
@@ -98,29 +95,43 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
-        Err(e) => e
+        Err(e) => e,
     };
     if Blog::find_by_fqn(&*conn, &slug).is_ok() {
-        errors.add("title", ValidationError {
-            code: Cow::from("existing_slug"),
-            message: Some(Cow::from("A blog with the same name already exists.")),
-            params: HashMap::new()
-        });
+        errors.add(
+            "title",
+            ValidationError {
+                code: Cow::from("existing_slug"),
+                message: Some(Cow::from("A blog with the same name already exists.")),
+                params: HashMap::new(),
+            },
+        );
     }
 
     if errors.is_empty() {
-        let blog = Blog::insert(&*conn, NewBlog::new_local(
-            slug.clone(),
-            form.title.to_string(),
-            String::from(""),
-            Instance::get_local(&*conn).expect("blog::create: instance error").id
-        ).expect("blog::create: new local error")).expect("blog::create:  error");
+        let blog = Blog::insert(
+            &*conn,
+            NewBlog::new_local(
+                slug.clone(),
+                form.title.to_string(),
+                String::from(""),
+                Instance::get_local(&*conn)
+                    .expect("blog::create: instance error")
+                    .id,
+            )
+            .expect("blog::create: new local error"),
+        )
+        .expect("blog::create:  error");
 
-        BlogAuthor::insert(&*conn, NewBlogAuthor {
-            blog_id: blog.id,
-            author_id: user.id,
-            is_owner: true
-        }).expect("blog::create: author error");
+        BlogAuthor::insert(
+            &*conn,
+            NewBlogAuthor {
+                blog_id: blog.id,
+                author_id: user.id,
+                is_owner: true,
+            },
+        )
+        .expect("blog::create: author error");
 
         Ok(Redirect::to(uri!(details: name = slug.clone(), page = _)))
     } else {
@@ -133,15 +144,20 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe>{
+pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
     let conn = rockets.conn;
     let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
     let user = rockets.user;
     let intl = rockets.intl;
     let searcher = rockets.searcher;
 
-    if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
-        blog.delete(&conn, &searcher).expect("blog::expect: deletion error");
+    if user
+        .clone()
+        .and_then(|u| u.is_author_in(&*conn, &blog).ok())
+        .unwrap_or(false)
+    {
+        blog.delete(&conn, &searcher)
+            .expect("blog::expect: deletion error");
         Ok(Redirect::to(uri!(super::instance::index)))
     } else {
         // TODO actually return 403 error code
@@ -266,12 +282,20 @@ pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
     let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
-        .id(Instance::get_local(&*conn).ok()?
+        .id(Instance::get_local(&*conn)
+            .ok()?
             .compute_box("~", &name, "atom.xml"))
-        .entries(Post::get_recents_for_blog(&*conn, &blog, 15).ok()?
-            .into_iter()
-            .map(|p| super::post_to_atom(p, &*conn))
-            .collect::<Vec<Entry>>())
-        .build().ok()?;
-    Some(Content(ContentType::new("application", "atom+xml"), feed.to_string()))
+        .entries(
+            Post::get_recents_for_blog(&*conn, &blog, 15)
+                .ok()?
+                .into_iter()
+                .map(|p| super::post_to_atom(p, &*conn))
+                .collect::<Vec<Entry>>(),
+        )
+        .build()
+        .ok()?;
+    Some(Content(
+        ContentType::new("application", "atom+xml"),
+        feed.to_string(),
+    ))
 }

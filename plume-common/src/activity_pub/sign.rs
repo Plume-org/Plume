@@ -1,7 +1,6 @@
 use super::request;
 use base64;
-use chrono::{DateTime, Duration,
-    naive::NaiveDateTime, Utc};
+use chrono::{naive::NaiveDateTime, DateTime, Duration, Utc};
 use hex;
 use openssl::{pkey::PKey, rsa::Rsa, sha::sha256};
 use rocket::http::HeaderMap;
@@ -57,9 +56,10 @@ impl Signable for serde_json::Value {
 
         let options_hash = Self::hash(
             &json!({
-            "@context": "https://w3id.org/identity/v1",
-            "created": creation_date
-        }).to_string(),
+                "@context": "https://w3id.org/identity/v1",
+                "created": creation_date
+            })
+            .to_string(),
         );
         let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
@@ -91,7 +91,8 @@ impl Signable for serde_json::Value {
             &json!({
                 "@context": "https://w3id.org/identity/v1",
                 "created": creation_date
-            }).to_string(),
+            })
+            .to_string(),
         );
         let creation_date = creation_date.as_str();
         if creation_date.is_none() {
@@ -169,7 +170,10 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
         .collect::<Vec<_>>()
         .join("\n");
 
-    if !sender.verify(&h, &base64::decode(signature).unwrap_or_default()).unwrap_or(false) {
+    if !sender
+        .verify(&h, &base64::decode(signature).unwrap_or_default())
+        .unwrap_or(false)
+    {
         return SignatureValidity::Invalid;
     }
     if !headers.contains(&"digest") {
