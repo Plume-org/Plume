@@ -33,8 +33,6 @@ extern crate whatlang;
 #[macro_use]
 extern crate diesel_migrations;
 
-use std::env;
-
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
 compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
 #[cfg(all(feature = "sqlite", feature = "postgres"))]
@@ -277,34 +275,11 @@ macro_rules! last {
     };
 }
 
-lazy_static! {
-    pub static ref BASE_URL: String = env::var("BASE_URL").unwrap_or_else(|_| format!(
-        "127.0.0.1:{}",
-        env::var("ROCKET_PORT").unwrap_or_else(|_| String::from("8000"))
-    ));
-    pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
-}
-
-#[cfg(not(test))]
-static DB_NAME: &str = "plume";
-#[cfg(test)]
-static DB_NAME: &str = "plume_tests";
-
-#[cfg(all(feature = "postgres", not(feature = "sqlite")))]
-lazy_static! {
-    pub static ref DATABASE_URL: String = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME));
-}
-
-#[cfg(all(feature = "sqlite", not(feature = "postgres")))]
-lazy_static! {
-    pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").unwrap_or_else(|_| format!("{}.sqlite", DB_NAME));
-}
+mod config;
+pub use config::CONFIG;
 
 pub fn ap_url(url: &str) -> String {
-    let scheme = if *USE_HTTPS { "https" } else { "http" };
-    format!("{}://{}", scheme, url)
+    format!("https://{}", url)
 }
 
 #[cfg(test)]
@@ -312,7 +287,7 @@ pub fn ap_url(url: &str) -> String {
 mod tests {
     use diesel::{dsl::sql_query, Connection, RunQueryDsl};
     use Connection as Conn;
-    use DATABASE_URL;
+    use CONFIG;
 
     #[cfg(feature = "sqlite")]
     embed_migrations!("../migrations/sqlite");
@@ -333,7 +308,7 @@ mod tests {
 
     pub fn db() -> Conn {
         let conn =
-            Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
+            Conn::establish(CONFIG.database_url.as_str()).expect("Couldn't connect to the database");
         embedded_migrations::run(&conn).expect("Couldn't run migrations");
         #[cfg(feature = "sqlite")]
         sql_query("PRAGMA foreign_keys = on;")

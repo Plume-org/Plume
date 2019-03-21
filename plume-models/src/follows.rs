@@ -14,7 +14,7 @@ use plume_common::activity_pub::{
 };
 use schema::follows;
 use users::User;
-use {ap_url, Connection, Error, Result, BASE_URL};
+use {ap_url, Connection, Error, Result, CONFIG};
 
 #[derive(Clone, Queryable, Identifiable, Associations, AsChangeset)]
 #[belongs_to(User, foreign_key = "following_id")]
@@ -36,7 +36,7 @@ pub struct NewFollow {
 impl Follow {
     insert!(follows, NewFollow, |inserted, conn| {
         if inserted.ap_url.is_empty() {
-            inserted.ap_url = ap_url(&format!("{}/follows/{}", *BASE_URL, inserted.id));
+            inserted.ap_url = ap_url(&format!("{}/follows/{}", CONFIG.base_url, inserted.id));
             inserted.save_changes(conn).map_err(Error::from)
         } else {
             Ok(inserted)
@@ -88,7 +88,7 @@ impl Follow {
         )?;
 
         let mut accept = Accept::default();
-        let accept_id = ap_url(&format!("{}/follow/{}/accept", BASE_URL.as_str(), &res.id));
+        let accept_id = ap_url(&format!("{}/follow/{}/accept", CONFIG.base_url.as_str(), &res.id));
         accept.object_props.set_id_string(accept_id)?;
         accept.object_props.set_to_link(from.clone().into_id())?;
         accept.object_props.set_cc_link_vec::<Id>(vec![])?;
@@ -204,7 +204,7 @@ mod tests {
             .expect("Couldn't insert new follow");
             assert_eq!(
                 follow.ap_url,
-                format!("https://{}/follows/{}", *BASE_URL, follow.id)
+                format!("https://{}/follows/{}", CONFIG.base_url, follow.id)
             );
 
             let follow = Follow::insert(

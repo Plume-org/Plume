@@ -26,7 +26,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, Error, Result, BASE_URL, USE_HTTPS};
+use {Connection, Error, Result, CONFIG};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -142,7 +142,7 @@ impl Blog {
     }
 
     fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<Blog> {
-        resolve(acct.to_owned(), *USE_HTTPS)?
+        resolve(acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
@@ -288,7 +288,7 @@ impl Blog {
         Blog::find_by_ap_url(conn, url).or_else(|_| {
             // The requested blog was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(url)?.host_str()? != BASE_URL.as_str() {
+            if Url::parse(url)?.host_str()? != CONFIG.base_url.as_str() {
                 Blog::fetch_from_url(conn, url)
             } else {
                 Err(Error::NotFound)

@@ -1,7 +1,7 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use plume_models::{posts::Post, schema::posts, search::Searcher, Connection};
+use plume_models::{posts::Post, schema::posts, search::Searcher, Connection, CONFIG};
 use std::fs::{read_dir, remove_file};
 use std::io::ErrorKind;
 use std::path::Path;
@@ -64,9 +64,9 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
 }
 
 fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let path = args.value_of("path").unwrap_or(".");
+    let path = args.value_of("path").map(|p| Path::new(p).join("search_index"))
+        .unwrap_or_else(|| Path::new(&CONFIG.search_index).to_path_buf());
     let force = args.is_present("force");
-    let path = Path::new(path).join("search_index");
 
     let can_do = match read_dir(path.clone()) {
         // try to read the directory specified

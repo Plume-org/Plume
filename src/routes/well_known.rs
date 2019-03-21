@@ -3,7 +3,7 @@ use rocket::response::Content;
 use serde_json;
 use webfinger::*;
 
-use plume_models::{ap_url, blogs::Blog, db_conn::DbConn, users::User, BASE_URL};
+use plume_models::{ap_url, blogs::Blog, db_conn::DbConn, users::User, CONFIG};
 
 #[get("/.well-known/nodeinfo")]
 pub fn nodeinfo() -> Content<String> {
@@ -13,11 +13,11 @@ pub fn nodeinfo() -> Content<String> {
             "links": [
                 {
                     "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0",
-                    "href": ap_url(&format!("{domain}/nodeinfo/2.0", domain = BASE_URL.as_str()))
+                    "href": ap_url(&format!("{domain}/nodeinfo/2.0", domain = CONFIG.base_url.as_str()))
                 },
                 {
                     "rel": "http://nodeinfo.diaspora.software/ns/schema/2.1",
-                    "href": ap_url(&format!("{domain}/nodeinfo/2.1", domain = BASE_URL.as_str()))
+                    "href": ap_url(&format!("{domain}/nodeinfo/2.1", domain = CONFIG.base_url.as_str()))
                 }
             ]
         })
@@ -36,7 +36,7 @@ pub fn host_meta() -> String {
     "#,
         url = ap_url(&format!(
             "{domain}/.well-known/webfinger?resource={{uri}}",
-            domain = BASE_URL.as_str()
+            domain = CONFIG.base_url.as_str()
         ))
     )
 }
@@ -45,7 +45,7 @@ struct WebfingerResolver;
 
 impl Resolver<DbConn> for WebfingerResolver {
     fn instance_domain<'a>() -> &'a str {
-        BASE_URL.as_str()
+        CONFIG.base_url.as_str()
     }
 
     fn find(acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {

@@ -42,12 +42,11 @@ use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     search::{Searcher as UnmanagedSearcher, SearcherError},
-    Connection, Error, DATABASE_URL,
+    Connection, Error, CONFIG,
 };
-use rocket::{config::Limits, Config, State};
+use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
-use std::env;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -72,7 +71,7 @@ type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 fn init_pool() -> Option<DbPool> {
     dotenv::dotenv().ok();
 
-    let manager = ConnectionManager::<Connection>::new(DATABASE_URL.as_str());
+    let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
         .build(manager)
@@ -84,15 +83,28 @@ fn main() {
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     #[allow(clippy::match_wild_err_arm)]
-    let searcher = match UnmanagedSearcher::open(&"search_index") {
+    let searcher = match UnmanagedSearcher::open(&CONFIG.search_index) {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(
-                r#"Your search index is locked. Plume can't start. To fix this issue
+                r#"
+Your search index is locked. Plume can't start. To fix this issue
 make sure no other Plume instance is started, and run:
 
     plm search unlock
 
 Then try to restart Plume.
+"#
+            ),
+            SearcherError::IndexOpeningError => panic!(
+                r#"
+Plume was unable to open the search index. If you created the index
+before, make sure to run Plume in the directory it was created, or 
+to set SEARCH_INDEX accordingly. If you did not create the search 
+index, run this command:
+
+    plm search init
+
+Then try to restart Plume
 "#
             ),
             e => Err(e).unwrap(),
@@ -115,38 +127,14 @@ Then try to restart Plume.
     })
     .expect("Error setting Ctrl-c handler");
 
-    let mut config = Config::active().unwrap();
-    config
-        .set_address(env::var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned()))
-        .unwrap();
-    config.set_port(
-        env::var("ROCKET_PORT")
-            .ok()
-            .map(|s| s.parse::<u16>().unwrap())
-            .unwrap_or(7878),
-    );
-    let _ = env::var("ROCKET_SECRET_KEY").map(|k| config.set_secret_key(k).unwrap());
-    let form_size = &env::var("FORM_SIZE")
-        .unwrap_or_else(|_| "32".to_owned())
-        .parse::<u64>()
-        .unwrap();
-    let activity_size = &env::var("ACTIVITY_SIZE")
-        .unwrap_or_else(|_| "1024".to_owned())
-        .parse::<u64>()
-        .unwrap();
-    config.set_limits(
-        Limits::new()
-            .limit("forms", form_size * 1024)
-            .limit("json", activity_size * 1024),
-    );
 
     let mail = mail::init();
-    if mail.is_none() && config.environment.is_prod() {
+    if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
         println!("Warning: the email server is not configured (or not completely).");
         println!("Please refer to the documentation to see how to configure it.");
     }
 
-    rocket::custom(config)
+    rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",
             routes![

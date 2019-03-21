@@ -43,7 +43,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
-use {ap_url, Connection, Error, Result, BASE_URL, USE_HTTPS};
+use {ap_url, Connection, Error, Result, CONFIG};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -239,7 +239,7 @@ impl User {
     }
 
     fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<User> {
-        let link = resolve(acct.to_owned(), *USE_HTTPS)?
+        let link = resolve(acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
@@ -683,7 +683,7 @@ impl User {
             .set_followers_string(self.followers_endpoint.clone())?;
 
         let mut endpoints = Endpoint::default();
-        endpoints.set_shared_inbox_string(ap_url(&format!("{}/inbox/", BASE_URL.as_str())))?;
+        endpoints.set_shared_inbox_string(ap_url(&format!("{}/inbox/", CONFIG.base_url.as_str())))?;
         actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
 
         let mut public_key = PublicKey::default();
@@ -749,7 +749,7 @@ impl User {
         User::find_by_ap_url(conn, url).or_else(|_| {
             // The requested user was not in the DB
             // We try to fetch it if it is remote
-            if Url::parse(&url)?.host_str()? != BASE_URL.as_str() {
+            if Url::parse(&url)?.host_str()? != CONFIG.base_url.as_str() {
                 User::fetch_from_url(conn, url)
             } else {
                 Err(Error::NotFound)
