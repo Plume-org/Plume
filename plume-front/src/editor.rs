@@ -98,7 +98,7 @@ fn filter_paste(elt: &HtmlElement) {
 pub fn init() -> Result<(), EditorError> {
     // Check if the user wants to use the basic editor
     if let Some(basic_editor) = window().local_storage().get("basic-editor") {
-        if basic_editor == String::from("true") {
+        if basic_editor == "true" {
             if let Some(editor) = document().get_element_by_id("plume-fallback-editor") {
                 if let Ok(Some(title_label)) = document().query_selector("label[for=title]") {
                     let editor_button = document().create_element("a")?;
@@ -318,7 +318,7 @@ fn make_editable(tag: &'static str) -> Element {
     elt
 }
 
-fn placeholder<'a>(elt: HtmlElement, text: &'a str) -> HtmlElement {
+fn placeholder(elt: HtmlElement, text: &str) -> HtmlElement {
     elt.dataset().insert("placeholder", text).unwrap();
     elt.dataset().insert("edited", "false").unwrap();
 
@@ -333,7 +333,7 @@ fn placeholder<'a>(elt: HtmlElement, text: &'a str) -> HtmlElement {
 
             let ph = document().create_element("span").expect("Couldn't create placeholder");
             ph.class_list().add("placeholder").expect("Couldn't add class");
-            ph.append_child(&document().create_text_node(&elt.dataset().get("placeholder").unwrap_or(String::new())));
+            ph.append_child(&document().create_text_node(&elt.dataset().get("placeholder").unwrap_or_default()));
             elt.append_child(&ph);
         }
     }));

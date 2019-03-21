@@ -54,21 +54,20 @@ fn menu() {
 
 /// Clear the URL of the search page before submitting request
 fn search() {
-    document().get_element_by_id("form")
-        .map(|form| {
-            form.add_event_listener(|_: SubmitEvent| {
-                document().query_selector_all("#form input").map(|inputs| {
-                    for input in inputs {
-                        js! {
-                            if (@{&input}.name === "") {
-                                @{&input}.name = @{&input}.id
-                            }
-                            if (@{&input}.name && !@{&input}.value) {
-                                @{&input}.name = "";
-                            }
+    if let Some(form) = document().get_element_by_id("form") {
+        form.add_event_listener(|_: SubmitEvent| {
+            document().query_selector_all("#form input").map(|inputs| {
+                for input in inputs {
+                    js! {
+                        if (@{&input}.name === "") {
+                            @{&input}.name = @{&input}.id
+                        }
+                        if (@{&input}.name && !@{&input}.value) {
+                            @{&input}.name = "";
                         }
                     }
-                }).ok();
-            });
+                }
+            }).ok();
         });
+    }
 }
