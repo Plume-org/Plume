@@ -11,9 +11,9 @@ use inbox::{Inbox, SignedJson};
 use plume_common::activity_pub::sign::{verify_http_headers, Signable};
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
-    safe_string::SafeString, users::User, Error,
+    safe_string::SafeString, users::User, Error, CONFIG
 };
-use routes::{errors::ErrorPage, Page};
+use routes::{errors::ErrorPage, Page, rocket_uri_macro_static_files};
 use template_utils::Ructe;
 use Searcher;
 
@@ -326,50 +326,8 @@ pub fn web_manifest(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> 
         "background_color": String::from("#f4f4f4"),
         "theme_color": String::from("#7765e3"),
         "categories": [String::from("social")],
-        "icons": [
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather48.png",
-                "sizes": "48x48",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather72.png",
-                "sizes": "72x72",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather96.png",
-                "sizes": "96x96",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather144.png",
-                "sizes": "144x144",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather160.png",
-                "sizes": "160x160",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather192.png",
-                "sizes": "192x192",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather256.png",
-                "sizes": "256x256",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather512.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather.svg"
-            }
-        ]
+        "icons": CONFIG.logo.other.iter()
+            .map(|i| i.with_prefix(&uri!(static_files: file = "").to_string()))
+            .collect::<Vec<_>>()
     })))
 }
