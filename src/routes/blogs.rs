@@ -12,7 +12,10 @@ use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
-use plume_models::{Connection, blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, medias::*, posts::Post, safe_string::SafeString, users::User};
+use plume_models::{
+    blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, medias::*, posts::Post,
+    safe_string::SafeString, users::User, Connection,
+};
 use routes::{errors::ErrorPage, Page, PlumeRocket};
 use template_utils::Ructe;
 
@@ -178,9 +181,18 @@ pub struct EditForm {
 }
 
 #[get("/~/<name>/edit")]
-pub fn edit(conn: DbConn, name: String, user: Option<User>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn edit(
+    conn: DbConn,
+    name: String,
+    user: Option<User>,
+    intl: I18n,
+) -> Result<Ructe, ErrorPage> {
     let blog = Blog::find_by_fqn(&*conn, &name)?;
-    if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
+    if user
+        .clone()
+        .and_then(|u| u.is_author_in(&*conn, &blog).ok())
+        .unwrap_or(false)
+    {
         let user = user.expect("blogs::edit: User was None while it shouldn't");
         let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
         Ok(render!(blogs::edit(
@@ -214,20 +226,36 @@ fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
 }
 
 #[put("/~/<name>/edit", data = "<form>")]
-pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: LenientForm<EditForm>) -> Result<Redirect, Ructe> {
+pub fn update(
+    conn: DbConn,
+    name: String,
+    user: Option<User>,
+    intl: I18n,
+    form: LenientForm<EditForm>,
+) -> Result<Redirect, Ructe> {
     let mut blog = Blog::find_by_fqn(&*conn, &name).expect("blog::update: blog not found");
-    if user.clone().and_then(|u| u.is_author_in(&*conn, &blog).ok()).unwrap_or(false) {
+    if user
+        .clone()
+        .and_then(|u| u.is_author_in(&*conn, &blog).ok())
+        .unwrap_or(false)
+    {
         let user = user.expect("blogs::edit: User was None while it shouldn't");
         form.validate()
             .and_then(|_| {
                 if let Some(icon) = form.icon {
                     if !check_media(&*conn, icon, &user) {
                         let mut errors = ValidationErrors::new();
-                        errors.add("", ValidationError {
-                            code: Cow::from("icon"),
-                            message: Some(Cow::from(i18n!(intl.catalog, "You can't use this media as blog icon."))),
-                            params: HashMap::new()
-                        });
+                        errors.add(
+                            "",
+                            ValidationError {
+                                code: Cow::from("icon"),
+                                message: Some(Cow::from(i18n!(
+                                    intl.catalog,
+                                    "You can't use this media as blog icon."
+                                ))),
+                                params: HashMap::new(),
+                            },
+                        );
                         return Err(errors);
                     }
                 }
@@ -235,11 +263,17 @@ pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: 
                 if let Some(banner) = form.banner {
                     if !check_media(&*conn, banner, &user) {
                         let mut errors = ValidationErrors::new();
-                        errors.add("", ValidationError {
-                            code: Cow::from("banner"),
-                            message: Some(Cow::from(i18n!(intl.catalog, "You can't use this media as blog banner."))),
-                            params: HashMap::new()
-                        });
+                        errors.add(
+                            "",
+                            ValidationError {
+                                code: Cow::from("banner"),
+                                message: Some(Cow::from(i18n!(
+                                    intl.catalog,
+                                    "You can't use this media as blog banner."
+                                ))),
+                                params: HashMap::new(),
+                            },
+                        );
                         return Err(errors);
                     }
                 }
@@ -249,7 +283,8 @@ pub fn update(conn: DbConn, name: String, user: Option<User>, intl: I18n, form: 
                 blog.summary_html = SafeString::new(&utils::md_to_html(&form.summary, "", true).0);
                 blog.icon_id = form.icon;
                 blog.banner_id = form.banner;
-                blog.save_changes::<Blog>(&*conn).expect("Couldn't save blog changes");
+                blog.save_changes::<Blog>(&*conn)
+                    .expect("Couldn't save blog changes");
                 Ok(Redirect::to(uri!(details: name = name, page = _)))
             })
             .map_err(|err| {

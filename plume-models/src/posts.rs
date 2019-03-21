@@ -210,7 +210,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let (content, mentions, hashtags) = md_to_html(
             query.source.clone().unwrap_or_default().clone().as_ref(),
             domain,
-            false
+            false,
         );
 
         let author = User::get(

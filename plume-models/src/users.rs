@@ -683,7 +683,8 @@ impl User {
             .set_followers_string(self.followers_endpoint.clone())?;
 
         let mut endpoints = Endpoint::default();
-        endpoints.set_shared_inbox_string(ap_url(&format!("{}/inbox/", CONFIG.base_url.as_str())))?;
+        endpoints
+            .set_shared_inbox_string(ap_url(&format!("{}/inbox/", CONFIG.base_url.as_str())))?;
         actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
 
         let mut public_key = PublicKey::default();

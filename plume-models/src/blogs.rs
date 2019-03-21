@@ -1,4 +1,4 @@
-use activitypub::{actor::Group, collection::OrderedCollection, CustomObject, object::Image};
+use activitypub::{actor::Group, collection::OrderedCollection, object::Image, CustomObject};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
@@ -16,12 +16,12 @@ use url::Url;
 use webfinger::*;
 
 use instance::*;
-use plume_common::activity_pub::{
-    ap_accept_header, Source,
-    inbox::{Deletable, WithInbox},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey,
-};
 use medias::Media;
+use plume_common::activity_pub::{
+    ap_accept_header,
+    inbox::{Deletable, WithInbox},
+    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
+};
 use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
@@ -197,29 +197,35 @@ impl Blog {
             )
         })?;
 
-        let icon_id = acct.object
+        let icon_id = acct
+            .object
             .object_props
-            .icon_image().ok()
+            .icon_image()
+            .ok()
             .and_then(|icon| {
                 let owner: String = icon.object_props.attributed_to_link::<Id>().ok()?.into();
                 Media::save_remote(
                     conn,
                     icon.object_props.url_string().ok()?,
                     &User::from_url(conn, &owner).ok()?,
-                ).ok()
+                )
+                .ok()
             })
             .map(|m| m.id);
 
-        let banner_id = acct.object
+        let banner_id = acct
+            .object
             .object_props
-            .image_image().ok()
+            .image_image()
+            .ok()
             .and_then(|banner| {
                 let owner: String = banner.object_props.attributed_to_link::<Id>().ok()?.into();
                 Media::save_remote(
                     conn,
                     banner.object_props.url_string().ok()?,
                     &User::from_url(conn, &owner).ok()?,
-                ).ok()
+                )
+                .ok()
             })
             .map(|m| m.id);
 
@@ -240,10 +246,7 @@ impl Blog {
                 private_key: None,
                 banner_id: banner_id,
                 icon_id: icon_id,
-                summary_html: SafeString::new(&acct
-                    .object
-                    .object_props
-                    .summary_string()?),
+                summary_html: SafeString::new(&acct.object.object_props.summary_string()?),
             },
         )
     }
@@ -259,53 +262,46 @@ impl Blog {
             .set_inbox_string(self.inbox_url.clone())?;
         blog.object_props
             .set_summary_string(self.summary_html.to_string())?;
-        blog
-            .ap_object_props
-            .set_source_object(Source {
-                content: self.summary.clone(),
-                media_type: String::from("text/markdown"),
-            })?;
+        blog.ap_object_props.set_source_object(Source {
+            content: self.summary.clone(),
+            media_type: String::from("text/markdown"),
+        })?;
 
         let mut icon = Image::default();
-        icon
-            .object_props
-            .set_url_string(
-                self.icon_id
-                    .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
-                    .unwrap_or_default(),
-            )?;
-        icon
-            .object_props
-            .set_attributed_to_link(
-                self.icon_id
-                    .and_then(|id| Media::get(conn, id).and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id())).ok())
-                    .unwrap_or(Id::new(String::new()))
-            )?;
-        blog
-            .object_props
-            .set_icon_object(icon)?;
+        icon.object_props.set_url_string(
+            self.icon_id
+                .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+                .unwrap_or_default(),
+        )?;
+        icon.object_props.set_attributed_to_link(
+            self.icon_id
+                .and_then(|id| {
+                    Media::get(conn, id)
+                        .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
+                        .ok()
+                })
+                .unwrap_or(Id::new(String::new())),
+        )?;
+        blog.object_props.set_icon_object(icon)?;
 
         let mut banner = Image::default();
-        banner
-            .object_props
-            .set_url_string(
-                self.banner_id
-                    .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
-                    .unwrap_or_default(),
-            )?;
-        banner
-            .object_props
-            .set_attributed_to_link(
-                self.banner_id
-                    .and_then(|id| Media::get(conn, id).and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id())).ok())
-                    .unwrap_or(Id::new(String::new()))
-            )?;
-        blog
-            .object_props
-            .set_image_object(banner)?;
+        banner.object_props.set_url_string(
+            self.banner_id
+                .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+                .unwrap_or_default(),
+        )?;
+        banner.object_props.set_attributed_to_link(
+            self.banner_id
+                .and_then(|id| {
+                    Media::get(conn, id)
+                        .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
+                        .ok()
+                })
+                .unwrap_or(Id::new(String::new())),
+        )?;
+        blog.object_props.set_image_object(banner)?;
 
-        blog.object_props
-            .set_id_string(self.ap_url.clone())?;
+        blog.object_props.set_id_string(self.ap_url.clone())?;
 
         let mut public_key = PublicKey::default();
         public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
@@ -384,13 +380,15 @@ impl Blog {
     }
 
     pub fn icon_url(&self, conn: &Connection) -> String {
-        self.icon_id.and_then(|id|
-            Media::get(conn, id).and_then(|m| m.url(conn)).ok()
-        ).unwrap_or_else(|| "/static/default-avatar.png".to_string())
+        self.icon_id
+            .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+            .unwrap_or_else(|| "/static/default-avatar.png".to_string())
     }
 
     pub fn banner_url(&self, conn: &Connection) -> Option<String> {
-        self.banner_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
+        self.banner_id
+            .and_then(|i| Media::get(conn, i).ok())
+            .and_then(|c| c.url(conn).ok())
     }
 
     pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {

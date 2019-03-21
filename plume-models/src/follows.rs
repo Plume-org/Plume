@@ -34,14 +34,16 @@ pub struct NewFollow {
 }
 
 impl Follow {
-    insert!(follows, NewFollow, |inserted, conn| {
-        if inserted.ap_url.is_empty() {
+    insert!(
+        follows,
+        NewFollow,
+        |inserted, conn| if inserted.ap_url.is_empty() {
             inserted.ap_url = ap_url(&format!("{}/follows/{}", CONFIG.base_url, inserted.id));
             inserted.save_changes(conn).map_err(Error::from)
         } else {
             Ok(inserted)
         }
-    });
+    );
     get!(follows);
     find_by!(follows, find_by_ap_url, ap_url as &str);
 
@@ -88,7 +90,11 @@ impl Follow {
         )?;
 
         let mut accept = Accept::default();
-        let accept_id = ap_url(&format!("{}/follow/{}/accept", CONFIG.base_url.as_str(), &res.id));
+        let accept_id = ap_url(&format!(
+            "{}/follow/{}/accept",
+            CONFIG.base_url.as_str(),
+            &res.id
+        ));
         accept.object_props.set_id_string(accept_id)?;
         accept.object_props.set_to_link(from.clone().into_id())?;
         accept.object_props.set_cc_link_vec::<Id>(vec![])?;

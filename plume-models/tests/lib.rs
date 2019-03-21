@@ -14,7 +14,8 @@ embed_migrations!("../migrations/sqlite");
 embed_migrations!("../migrations/postgres");
 
 fn db() -> Conn {
-    let conn = Conn::establish(CONFIG.database_url.as_str()).expect("Couldn't connect to the database");
+    let conn =
+        Conn::establish(CONFIG.database_url.as_str()).expect("Couldn't connect to the database");
     embedded_migrations::run(&conn).expect("Couldn't run migrations");
     conn
 }
