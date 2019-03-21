@@ -80,6 +80,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     match args.subcommand() {
         ("new", Some(x)) => new(x, conn),
         ("reset-password", Some(x)) => reset_password(x, conn),
+        ("", None) => command().print_help().unwrap(),
         _ => println!("Unknown subcommand"),
     }
 }
