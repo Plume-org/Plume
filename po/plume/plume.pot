@@ -36,23 +36,23 @@ msgstr ""
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:67
+# src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:166
+# src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:202
+# src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:228
+# src/routes/blogs.rs:253
 msgid "You can't use this media as blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:240
+# src/routes/blogs.rs:271
 msgid "You can't use this media as blog banner."
 msgstr ""
 

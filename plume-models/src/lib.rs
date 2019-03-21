@@ -234,7 +234,7 @@ macro_rules! insert {
     ($table:ident, $from:ident) => {
         insert!($table, $from, |x, _conn| Ok(x));
     };
-    ($table:ident, $from:ident, |$val:ident, $conn:ident | $after:block) => {
+    ($table:ident, $from:ident, |$val:ident, $conn:ident | $( $after:tt )+) => {
         last!($table);
 
         pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
@@ -244,7 +244,7 @@ macro_rules! insert {
             #[allow(unused_mut)]
             let mut $val = Self::last(conn)?;
             let $conn = conn;
-            $after
+            $( $after )+
         }
     };
 }

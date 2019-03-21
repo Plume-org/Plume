@@ -244,8 +244,8 @@ impl Blog {
                     .public_key_publickey()?
                     .public_key_pem_string()?,
                 private_key: None,
-                banner_id: banner_id,
-                icon_id: icon_id,
+                banner_id,
+                icon_id,
                 summary_html: SafeString::new(&acct.object.object_props.summary_string()?),
             },
         )
@@ -280,7 +280,7 @@ impl Blog {
                         .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
                         .ok()
                 })
-                .unwrap_or(Id::new(String::new())),
+                .unwrap_or_else(|| Id::new(String::new())),
         )?;
         blog.object_props.set_icon_object(icon)?;
 
@@ -297,7 +297,7 @@ impl Blog {
                         .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
                         .ok()
                 })
-                .unwrap_or(Id::new(String::new())),
+                .unwrap_or_else(|| Id::new(String::new())),
         )?;
         blog.object_props.set_image_object(banner)?;
 
