@@ -33,6 +33,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let conn = conn;
     match args.subcommand() {
         ("new", Some(x)) => new(x, conn),
+        ("", None) => command().print_help().unwrap(),
         _ => println!("Unknown subcommand"),
     }
 }

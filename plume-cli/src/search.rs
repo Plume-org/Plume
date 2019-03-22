@@ -59,6 +59,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         ("init", Some(x)) => init(x, conn),
         ("refill", Some(x)) => refill(x, conn, None),
         ("unlock", Some(x)) => unlock(x),
+        ("", None) => command().print_help().unwrap(),
         _ => println!("Unknown subcommand"),
     }
 }

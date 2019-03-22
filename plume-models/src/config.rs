@@ -1,6 +1,7 @@
+use rocket::Config as RocketConfig;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
-use std::env::var;
+use std::env::{self, var};
 
 #[cfg(not(test))]
 const DB_NAME: &str = "plume";
@@ -9,10 +10,11 @@ const DB_NAME: &str = "plume_tests";
 
 pub struct Config {
     pub base_url: String,
-    pub db_name: &'static str,
     pub database_url: String,
+    pub db_name: &'static str,
     pub search_index: String,
     pub rocket: Result<RocketConfig, RocketError>,
+    pub logo: LogoConfig,
 }
 
 #[derive(Debug, Clone)]
@@ -55,6 +57,128 @@ fn get_rocket_config() -> Result<RocketConfig, RocketError> {
     Ok(c)
 }
 
+pub struct LogoConfig {
+    pub main: String,
+    pub favicon: String,
+    pub other: Vec<Icon> //url, size, type
+}
+
+#[derive(Serialize)]
+pub struct Icon {
+    pub src: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sizes: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "type")]
+    pub image_type: Option<String>,
+}
+
+impl Icon {
+    pub fn with_prefix(&self, prefix: &str) -> Icon {
+        Icon {
+            src: format!("{}/{}", prefix, self.src),
+            sizes: self.sizes.clone(),
+            image_type: self.image_type.clone(),
+        }
+    }
+}
+
+
+
+impl Default for LogoConfig {
+    fn default() -> Self {
+        let to_icon = |(src, sizes, image_type): &(&str, Option<&str>, Option<&str>)| Icon {
+            src: str::to_owned(src),
+            sizes: sizes.map(str::to_owned),
+            image_type: image_type.map(str::to_owned)
+        };
+        let icons = [
+            (
+                "icons/trwnh/feather/plumeFeather48.png",
+                Some("48x48"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather72.png",
+                Some("72x72"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather96.png",
+                Some("96x96"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather144.png",
+                Some("144x144"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather160.png",
+                Some("160x160"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather192.png",
+                Some("192x192"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather256.png",
+                Some("256x256"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather512.png",
+                Some("512x512"),
+                Some("image/png"),
+            ),
+            (
+                "icons/trwnh/feather/plumeFeather.svg",
+                None,
+                None,
+            )
+        ].iter().map(to_icon).collect();
+
+        let custom_main = var("PLUME_LOGO").ok();
+        let custom_favicon = var("PLUME_LOGO_FAVICON").ok().or_else(|| custom_main.clone());
+        let other = if let Some(main) = custom_main.clone() {
+            let ext = |path: &str| match path.rsplitn(2, '.').next() {
+                Some("png") => Some("image/png".to_owned()),
+                Some("jpg")| Some("jpeg") => Some("image/jpeg".to_owned()),
+                Some("svg") => Some("image/svg+xml".to_owned()),
+                Some("webp") => Some("image/webp".to_owned()),
+                _ => None,
+            };
+            let mut custom_icons = env::vars()
+                .filter_map(|(var, val)| if var.starts_with("PLUME_LOGO_") {
+                    Some((var[11..].to_owned(), val))
+                } else { None })
+                .filter_map(|(var, val)| var.parse::<u64>().ok().map(|var| (var,val)))
+                .map(|(dim,src)| Icon {
+                    image_type: ext(&src),
+                    src,
+                    sizes: Some(format!("{}x{}", dim, dim)),
+                })
+                .collect::<Vec<_>>();
+            custom_icons.push(Icon {
+                image_type: ext(&main),
+                src: main,
+                sizes: None,
+            });
+            custom_icons
+        } else {
+            icons
+        };
+
+        LogoConfig {
+            main: custom_main.unwrap_or_else(|| "icons/trwnh/feather/plumeFeather256.png".to_owned()),
+            favicon: custom_favicon.unwrap_or_else(|| "icons/trwnh/feather-filled/plumeFeatherFilled64.png".to_owned()),
+            other,
+        }
+    }
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -68,6 +192,7 @@ lazy_static! {
         #[cfg(feature = "sqlite")]
         database_url: var("DATABASE_URL").unwrap_or_else(|_| format!("{}.sqlite", DB_NAME)),
         search_index: var("SEARCH_INDEX").unwrap_or_else(|_| "search_index".to_owned()),
-        rocket: get_rocket_config()
+        rocket: get_rocket_config(),
+        logo: LogoConfig::default(),
     };
 }

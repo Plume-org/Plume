@@ -1,5 +1,6 @@
 #![feature(try_trait)]
 #![feature(never_type)]
+#![feature(custom_attribute)]
 
 extern crate activitypub;
 extern crate ammonia;
@@ -21,6 +22,8 @@ extern crate reqwest;
 extern crate rocket;
 extern crate scheduled_thread_pool;
 extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 #[macro_use]
