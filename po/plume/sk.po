@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-20 12:50\n"
+"PO-Revision-Date: 2019-03-22 19:06\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -16,95 +16,107 @@ msgstr ""
 "X-Crowdin-Language: sk\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-# src/template_utils.rs:34
+# src/template_utils.rs:68
 msgid "{0} commented your article."
 msgstr "{0} komentoval/a tvoj článok."
 
-# src/template_utils.rs:35
+# src/template_utils.rs:69
 msgid "{0} is subscribed to you."
 msgstr "{0} odoberá tvoje príspevky."
 
-# src/template_utils.rs:36
+# src/template_utils.rs:70
 msgid "{0} liked your article."
 msgstr "{0} si obľúbil/a tvoj článok."
 
-# src/template_utils.rs:37
+# src/template_utils.rs:71
 msgid "{0} mentioned you."
 msgstr "{0} sa o tebe zmienil/a."
 
-# src/template_utils.rs:38
+# src/template_utils.rs:72
 msgid "{0} boosted your article."
 msgstr "{0} vyzdvihli tvoj článok."
 
-# src/template_utils.rs:68
+# src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "Avatar užívateľa {0}"
 
-# src/routes/blogs.rs:64
+# src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
 msgstr "Ak chceš vytvoriť nový blog, musíš byť prihlásený/á"
 
-# src/routes/blogs.rs:134
+# src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
 msgstr "Nemáš povolenie vymazať tento blog."
 
-# src/routes/likes.rs:41
+# src/routes/blogs.rs:214
+msgid "You are not allowed to edit this blog."
+msgstr ""
+
+# src/routes/blogs.rs:253
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/routes/blogs.rs:271
+msgid "You can't use this media as blog banner."
+msgstr ""
+
+# src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
 msgstr "Ak si chceš obľúbiť príspevok, musíš byť prihlásený/á"
 
-# src/routes/notifications.rs:23
+# src/routes/notifications.rs:29
 msgid "You need to be logged in order to see your notifications"
 msgstr "Ak chceš vidieť svoje notifikácie, musíš byť prihlásený/á"
 
-# src/routes/posts.rs:81
+# src/routes/posts.rs:92
 msgid "This post isn't published yet."
 msgstr "Tento príspevok ešte nie je uverejnený."
 
-# src/routes/posts.rs:100
+# src/routes/posts.rs:120
 msgid "You need to be logged in order to write a new post"
 msgstr "Ak chceš napísať nový príspevok, musíš byť prihlásený/á"
 
-# src/routes/posts.rs:113
+# src/routes/posts.rs:138
 msgid "You are not author in this blog."
 msgstr "Nie si autorom tohto blogu."
 
-# src/routes/posts.rs:119
+# src/routes/posts.rs:145
 msgid "New post"
 msgstr "Nový príspevok"
 
-# src/routes/posts.rs:156
+# src/routes/posts.rs:190
 msgid "Edit {0}"
 msgstr "Uprav {0}"
 
-# src/routes/reshares.rs:41
+# src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
 msgstr "Musíš byť prihlásený/á, ak chceš zdieľať príspevok"
 
-# src/routes/session.rs:161
+# src/routes/session.rs:181
 msgid "Password reset"
 msgstr "Obnovenie hesla"
 
-# src/routes/session.rs:162
+# src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
 msgstr "Tu je odkaz na obnovenie tvojho hesla: {0}"
 
-# src/routes/session.rs:222
+# src/routes/session.rs:259
 msgid "Your password was successfully reset."
 msgstr "Tvoje heslo bolo úspešne zmenené."
 
-# src/routes/session.rs:224
+# src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
 msgstr "Prepáč, ale tento odkaz už vypŕšal. Skús to znova"
 
-# src/routes/user.rs:126
+# src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Musíš byť prihlásený/á, aby si sa dostal/a k svojej nástenke"
 
-# src/routes/user.rs:159
+# src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
 msgstr "Musíš byť prihlásený/á, ak chceš odoberať niekoho príspevky"
 
-# src/routes/user.rs:240
+# src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
 msgstr "Musíš byť prihlásený/á, ak chceš upraviť svoj profil"
 
@@ -192,11 +204,11 @@ msgstr "Články od {}"
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "Ešte tu nič nieje vidieť. Skús začať odoberať obsah od viacero ľudí."
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Name"
 msgstr "Pomenovanie"
 
-# src/template_utils.rs:146
+# src/template_utils.rs:220
 msgid "Optional"
 msgstr "Volitelné/Nepovinný údaj"
 
@@ -212,7 +224,7 @@ msgstr "Markdown syntaxia je podporovaná"
 msgid "Long description"
 msgstr "Podrobný popis"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Default article license"
 msgstr "Predvolená licencia článkov"
 
@@ -249,15 +261,14 @@ msgstr "Pre zmenu avataru ho nahraj do svojej galérie a potom ho odtiaľ zvoľ.
 msgid "Upload an avatar"
 msgstr "Nahraj avatar"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Display name"
 msgstr "Zobrazované meno"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Email"
 msgstr "Emailová adresa"
 
-# src/template_utils.rs:144
 msgid "Summary"
 msgstr "Súhrn"
 
@@ -303,15 +314,15 @@ msgstr "Vytvor si účet"
 msgid "Create an account"
 msgstr "Vytvoriť účet"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username"
 msgstr "Užívateľské meno"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password"
 msgstr "Heslo"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password confirmation"
 msgstr "Potvrdenie hesla"
 
@@ -381,6 +392,12 @@ msgstr "Domov pre <em>{0}</em> ľudí"
 msgid "Read the detailed rules"
 msgstr "Prečítaj si podrobné pravidlá"
 
+msgid "None"
+msgstr "Žiadne"
+
+msgid "No description"
+msgstr ""
+
 msgid "View all"
 msgstr "Zobraz všetky"
 
@@ -396,71 +413,71 @@ msgstr "Tvoje zadanie"
 msgid "Advanced search"
 msgstr "Pokročilé vyhľadávanie"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr "Názov článku zhodujúci sa s týmito slovami"
 
 msgid "Title"
 msgstr "Nadpis"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Subtitle matching these words"
 msgstr "Podnadpis zhodujúci sa s týmito slovami"
 
 msgid "Subtitle - byline"
 msgstr "Podnadpis"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Content matching these words"
 msgstr "Obsah zodpovedajúci týmto slovám"
 
 msgid "Body content"
 msgstr "Obsah tela článku"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "From this date"
 msgstr "Od tohto dátumu"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "To this date"
 msgstr "Do tohto dátumu"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Containing these tags"
 msgstr "Obsahuje tieto tagy"
 
 msgid "Tags"
 msgstr "Tagy"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these instances"
 msgstr "Uverejnené na jednej z týchto instancií"
 
 msgid "Instance domain"
 msgstr "Doména instancie"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted by one of these authors"
 msgstr "Uverejnené jedným z týchto autorov"
 
 msgid "Authors"
 msgstr "Autori"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr "Uverejnené na jednom z týchto blogov"
 
 msgid "Blog title"
 msgstr "Názov blogu"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Written in this language"
 msgstr "Písané v tomto jazyku"
 
 msgid "Language"
 msgstr "Jazyk"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Published under this license"
 msgstr "Uverejnené pod touto licenciou"
 
@@ -482,11 +499,11 @@ msgstr "Žiaden ďalší výsledok pre tvoje zadanie"
 msgid "Reset your password"
 msgstr "Obnov svoje heslo"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "New password"
 msgstr "Nové heslo"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Confirmation"
 msgstr "Potvrdenie"
 
@@ -499,7 +516,7 @@ msgstr "Pozri si svoju Doručenú poštu!"
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr "Email s odkazom na obnovenie hesla bol odoslaný na adresu, ktorú si nám dal/a."
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "E-mail"
 msgstr "Emailová adresa"
 
@@ -509,14 +526,14 @@ msgstr "Pošli odkaz na obnovenie"
 msgid "Login"
 msgstr "Prihlás sa"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username or email"
 msgstr "Používateľské meno, alebo email"
 
 msgid "Publish"
 msgstr "Zverejni"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "Podnadpis"
 
@@ -529,23 +546,20 @@ msgstr ""
 msgid "Upload media"
 msgstr "Nahraj multimédiá"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Tags, separated by commas"
 msgstr "Tagy, oddelené čiarkami"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "License"
 msgstr "Licencia"
 
-# src/template_utils.rs:148
+# src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
 msgstr "Ponechaj políčko prázdne, pre vyhradenie všetkých práv"
 
 msgid "Illustration"
 msgstr "Ilustrácia"
-
-msgid "None"
-msgstr "Žiadne"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "Toto je zatiaľ iba koncept, ešte ho nezverejňovať."
@@ -606,7 +620,7 @@ msgstr "Prihlás sa, alebo použi svoj účet v rámci Fediversa pre narábanie 
 msgid "Comments"
 msgstr "Komentáre"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Content warning"
 msgstr "Varovanie o obsahu"
 
@@ -652,6 +666,33 @@ msgstr "Niečo sa pokazilo na našej strane."
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Prepáč ohľadom toho. Ak si myslíš, že ide o chybu, prosím nahlás ju."
 
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr "Popis"
+
+msgid "You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné vziať späť."
+
+msgid "Permanently delete this blog"
+msgstr "Vymaž tento blog natrvalo"
+
 msgid "New Blog"
 msgstr "Nový blog"
 
@@ -661,6 +702,12 @@ msgstr "Vytvor blog"
 msgid "Create blog"
 msgstr "Vytvor blog"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Nový článok"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Tento blog má jedného autora: "
@@ -668,24 +715,8 @@ msgstr[1] "Tento blog má {0} autorov: "
 msgstr[2] "Tento blog má {0} autorov: "
 msgstr[3] "Tento blog má {0} autorov: "
 
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Na tomto blogu je jeden článok"
-msgstr[1] "Na tomto blogu je {0} článkov"
-msgstr[2] "Na tomto blogu je {0} článkov"
-msgstr[3] "Na tomto blogu sú {0} články"
-
 msgid "No posts to see here yet."
 msgstr "Ešte tu nemožno vidieť žiadné príspevky."
-
-msgid "New article"
-msgstr "Nový článok"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné vziať späť."
-
-msgid "Permanently delete this blog"
-msgstr "Vymaž tento blog natrvalo"
 
 msgid "Articles tagged \"{0}\""
 msgstr "Články otagované pod \"{0}\""
@@ -710,9 +741,6 @@ msgstr "Podrobnosti"
 
 msgid "Media upload"
 msgstr "Nahrávanie mediálnych súborov"
-
-msgid "Description"
-msgstr "Popis"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "Užitočné pre zrakovo postihnutých ľudí, ako aj pre informácie o licencii"
