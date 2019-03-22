@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-22 22:22\n"
+"PO-Revision-Date: 2019-03-22 23:14\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -50,11 +50,11 @@ msgstr "Nemáš povolenie vymazať tento blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Nemáš dovolené upravovať tento blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as blog icon."
-msgstr ""
+msgstr "Tento mediálny súbor nemožno použiť ako ikonku pre blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as blog banner."
@@ -682,7 +682,7 @@ msgid "Blog icon"
 msgstr "Ikonka blogu"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "Banner blogu"
 
 msgid "Update blog"
 msgstr "Aktualizuj blog"
@@ -703,7 +703,7 @@ msgid "Create blog"
 msgstr "Vytvor blog"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "Ikonka pre {}"
 
 msgid "New article"
 msgstr "Nový článok"
