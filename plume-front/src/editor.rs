@@ -170,19 +170,18 @@ fn init_editor() -> Result<(), EditorError> {
             }), 0);
         }));
 
-        document().get_element_by_id("publish")?.add_event_listener(
-            mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
-                let popup = document().get_element_by_id("publish-popup").or_else(||
-                        init_popup(&title, &subtitle, &content, &old_ed).ok()
-                    ).unwrap();
-                let bg = document().get_element_by_id("popup-bg").or_else(||
-                        init_popup_bg().ok()
-                    ).unwrap();
+        document().get_element_by_id("publish")?.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+            let popup = document().get_element_by_id("publish-popup").or_else(||
+                    init_popup(&title, &subtitle, &content, &old_ed).ok()
+                ).unwrap();
+            let bg = document().get_element_by_id("popup-bg").or_else(||
+                    init_popup_bg().ok()
+                ).unwrap();
 
-                popup.class_list().add("show").unwrap();
-                bg.class_list().add("show").unwrap();
-            }),
-        );
+            popup.class_list().add("show").unwrap();
+            bg.class_list().add("show").unwrap();
+        }));
+
         show_errors();
         setup_close_button();
     }
