@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-20 01:13\n"
+"PO-Revision-Date: 2019-03-22 19:06\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -16,95 +16,107 @@ msgstr ""
 "X-Crowdin-Language: pl\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-# src/template_utils.rs:34
+# src/template_utils.rs:68
 msgid "{0} commented your article."
 msgstr "{0} skomentował(a) Twój artykuł."
 
-# src/template_utils.rs:35
+# src/template_utils.rs:69
 msgid "{0} is subscribed to you."
 msgstr "{0} jest subskrybentem do ciebie."
 
-# src/template_utils.rs:36
+# src/template_utils.rs:70
 msgid "{0} liked your article."
 msgstr "{0} polubił(a) Twój artykuł."
 
-# src/template_utils.rs:37
+# src/template_utils.rs:71
 msgid "{0} mentioned you."
 msgstr "{0} wspomniał(a) o Tobie."
 
-# src/template_utils.rs:38
+# src/template_utils.rs:72
 msgid "{0} boosted your article."
 msgstr "{0} podbił(a) Twój artykuł."
 
-# src/template_utils.rs:68
+# src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "Awatar {0}"
 
-# src/routes/blogs.rs:64
+# src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
 msgstr "Musisz się zalogować, aby utworzyć bloga"
 
-# src/routes/blogs.rs:134
+# src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
-# src/routes/likes.rs:41
+# src/routes/blogs.rs:214
+msgid "You are not allowed to edit this blog."
+msgstr ""
+
+# src/routes/blogs.rs:253
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/routes/blogs.rs:271
+msgid "You can't use this media as blog banner."
+msgstr ""
+
+# src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
 msgstr "Musisz się zalogować, aby polubić wpis"
 
-# src/routes/notifications.rs:23
+# src/routes/notifications.rs:29
 msgid "You need to be logged in order to see your notifications"
 msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
 
-# src/routes/posts.rs:81
+# src/routes/posts.rs:92
 msgid "This post isn't published yet."
 msgstr "Ten wpis nie został jeszcze opublikowany."
 
-# src/routes/posts.rs:100
+# src/routes/posts.rs:120
 msgid "You need to be logged in order to write a new post"
 msgstr "Musisz się zalogować, aby utworzyć wpis"
 
-# src/routes/posts.rs:113
+# src/routes/posts.rs:138
 msgid "You are not author in this blog."
 msgstr "Nie jesteś autorem tego bloga."
 
-# src/routes/posts.rs:119
+# src/routes/posts.rs:145
 msgid "New post"
 msgstr "Nowy wpis"
 
-# src/routes/posts.rs:156
+# src/routes/posts.rs:190
 msgid "Edit {0}"
 msgstr "Edytuj {0}"
 
-# src/routes/reshares.rs:41
+# src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
 msgstr "Musisz się zalogować, aby udostępnić wpis"
 
-# src/routes/session.rs:161
+# src/routes/session.rs:181
 msgid "Password reset"
 msgstr "Resetowanie hasła"
 
-# src/routes/session.rs:162
+# src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
 msgstr "Tutaj jest link do zresetowania hasła: {0}"
 
-# src/routes/session.rs:222
+# src/routes/session.rs:259
 msgid "Your password was successfully reset."
 msgstr "Twoje hasło zostało pomyślnie zresetowane."
 
-# src/routes/session.rs:224
+# src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:126
+# src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
 msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
 
-# src/routes/user.rs:159
+# src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
-# src/routes/user.rs:240
+# src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
 msgstr "Musisz się zalogować, aby móc edytować swój profil"
 
@@ -192,11 +204,11 @@ msgstr "Artykuły z {}"
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Name"
 msgstr "Nazwa"
 
-# src/template_utils.rs:146
+# src/template_utils.rs:220
 msgid "Optional"
 msgstr "Nieobowiązkowe"
 
@@ -212,7 +224,7 @@ msgstr "Składnia Markdown jest obsługiwana"
 msgid "Long description"
 msgstr "Szczegółowy opis"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Default article license"
 msgstr "Domyślna licencja artykułów"
 
@@ -249,15 +261,14 @@ msgstr ""
 msgid "Upload an avatar"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Display name"
 msgstr "Nazwa wyświetlana"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Email"
 msgstr "Adres e-mail"
 
-# src/template_utils.rs:144
 msgid "Summary"
 msgstr "Opis"
 
@@ -303,15 +314,15 @@ msgstr "Utwórz konto"
 msgid "Create an account"
 msgstr "Utwórz nowe konto"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password"
 msgstr "Hasło"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password confirmation"
 msgstr "Potwierdzenie hasła"
 
@@ -381,6 +392,12 @@ msgstr "Używana przez <em>{0}</em> użytkowników"
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
 
+msgid "None"
+msgstr "Brak"
+
+msgid "No description"
+msgstr ""
+
 msgid "View all"
 msgstr "Zobacz wszystko"
 
@@ -396,71 +413,71 @@ msgstr "Twoje kryterium"
 msgid "Advanced search"
 msgstr "Zaawansowane wyszukiwanie"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr "Tytuł artykułu pasujący do tych słów"
 
 msgid "Title"
 msgstr "Tytuł"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Subtitle matching these words"
 msgstr "Podtytuł artykułu pasujący do tych słów"
 
 msgid "Subtitle - byline"
 msgstr "Podtytuł"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Content matching these words"
 msgstr "Zawartość pasująca do tych słów"
 
 msgid "Body content"
 msgstr "Zawartość wpisu"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "From this date"
 msgstr "Od tej daty"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "To this date"
 msgstr "Do tej daty"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Containing these tags"
 msgstr "Zawierający te tagi"
 
 msgid "Tags"
 msgstr "Tagi"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these instances"
 msgstr "Opublikowany na jednej z tych instancji"
 
 msgid "Instance domain"
 msgstr "Domena instancji"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted by one of these authors"
 msgstr "Opublikowany przez jednego z tych autorów"
 
 msgid "Authors"
 msgstr "Autorzy"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr "Opublikowany na jednym z tych blogów"
 
 msgid "Blog title"
 msgstr "Tytuł bloga"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Written in this language"
 msgstr "Napisany w tym języku"
 
 msgid "Language"
 msgstr "Język"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Published under this license"
 msgstr "Opublikowany na tej licencji"
 
@@ -482,11 +499,11 @@ msgstr "Nie ma więcej wyników pasujących do tych kryteriów"
 msgid "Reset your password"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "New password"
 msgstr "Nowe hasło"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Confirmation"
 msgstr "Potwierdzenie"
 
@@ -499,7 +516,7 @@ msgstr ""
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "E-mail"
 msgstr ""
 
@@ -509,14 +526,14 @@ msgstr "Wyślij link do zresetowania hasła"
 msgid "Login"
 msgstr "Zaloguj się"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username or email"
 msgstr "Nazwa użytkownika lub adres e-mail"
 
 msgid "Publish"
 msgstr "Opublikuj"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "Podtytuł"
 
@@ -529,23 +546,20 @@ msgstr ""
 msgid "Upload media"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Tags, separated by commas"
 msgstr "Tagi, oddzielone przecinkami"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "License"
 msgstr "Licencja"
 
-# src/template_utils.rs:148
+# src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
 msgstr "Pozostawienie pustego jest równe zastrzeżeniu wszystkich praw"
 
 msgid "Illustration"
 msgstr "Ilustracja"
-
-msgid "None"
-msgstr "Brak"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "To jest szkic, nie publikuj go jeszcze."
@@ -606,7 +620,7 @@ msgstr "Zaloguj się lub użyj konta w Fediwersum, aby wejść w interakcje z ty
 msgid "Comments"
 msgstr "Komentarze"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Content warning"
 msgstr "Ostrzeżenie o zawartości"
 
@@ -652,6 +666,33 @@ msgstr "Coś poszło nie tak."
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Przepraszamy. Jeżeli uważasz że wystąpił błąd, prosimy o zgłoszenie go."
 
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr "Opis"
+
+msgid "You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
+
+msgid "Permanently delete this blog"
+msgstr "Bezpowrotnie usuń ten blog"
+
 msgid "New Blog"
 msgstr "Nowy blog"
 
@@ -661,6 +702,12 @@ msgstr "Utwórz blog"
 msgid "Create blog"
 msgstr "Utwórz blog"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Nowy artykuł"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Ten blog ma jednego autora: "
@@ -668,24 +715,8 @@ msgstr[1] "Ten blog ma {0} autorów: "
 msgstr[2] "Ten blog ma {0} autorów: "
 msgstr[3] ""
 
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Jeden artykuł na tym blogu"
-msgstr[1] "{0} artykuły na tym blogu"
-msgstr[2] "{0} artykułów na tym blogu"
-msgstr[3] ""
-
 msgid "No posts to see here yet."
 msgstr "Brak wpisów do wyświetlenia."
-
-msgid "New article"
-msgstr "Nowy artykuł"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
-
-msgid "Permanently delete this blog"
-msgstr "Bezpowrotnie usuń ten blog"
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artykuły oznaczone „{0}”"
@@ -710,9 +741,6 @@ msgstr ""
 
 msgid "Media upload"
 msgstr "Wysyłanie zawartości multimedialnej"
-
-msgid "Description"
-msgstr "Opis"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "Przydatny dla osób z problemami ze wzrokiem oraz do umieszczenia informacji o licencji"
