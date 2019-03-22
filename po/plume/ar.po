@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:45\n"
+"PO-Revision-Date: 2019-03-22 19:07\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -16,95 +16,107 @@ msgstr ""
 "X-Crowdin-Language: ar\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-# src/template_utils.rs:34
+# src/template_utils.rs:68
 msgid "{0} commented your article."
 msgstr ""
 
-# src/template_utils.rs:35
+# src/template_utils.rs:69
 msgid "{0} is subscribed to you."
 msgstr ""
 
-# src/template_utils.rs:36
+# src/template_utils.rs:70
 msgid "{0} liked your article."
 msgstr ""
 
-# src/template_utils.rs:37
+# src/template_utils.rs:71
 msgid "{0} mentioned you."
 msgstr "أشار إليك {0}."
 
-# src/template_utils.rs:38
+# src/template_utils.rs:72
 msgid "{0} boosted your article."
 msgstr ""
 
-# src/template_utils.rs:68
+# src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:64
+# src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
 msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
 
-# src/routes/blogs.rs:134
+# src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/likes.rs:41
+# src/routes/blogs.rs:214
+msgid "You are not allowed to edit this blog."
+msgstr ""
+
+# src/routes/blogs.rs:253
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/routes/blogs.rs:271
+msgid "You can't use this media as blog banner."
+msgstr ""
+
+# src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
 msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
 
-# src/routes/notifications.rs:23
+# src/routes/notifications.rs:29
 msgid "You need to be logged in order to see your notifications"
 msgstr "يجب عليك تسجيل الدخول للإطلاع على إشعاراتك"
 
-# src/routes/posts.rs:81
+# src/routes/posts.rs:92
 msgid "This post isn't published yet."
 msgstr "هذا المقال ليس منشورا بعد."
 
-# src/routes/posts.rs:100
+# src/routes/posts.rs:120
 msgid "You need to be logged in order to write a new post"
 msgstr "يشترط عليك تسجيل الدخول لكتابة مقال جديد"
 
-# src/routes/posts.rs:113
+# src/routes/posts.rs:138
 msgid "You are not author in this blog."
 msgstr "لست مِن محرري هذه المدونة."
 
-# src/routes/posts.rs:119
+# src/routes/posts.rs:145
 msgid "New post"
 msgstr "منشور جديد"
 
-# src/routes/posts.rs:156
+# src/routes/posts.rs:190
 msgid "Edit {0}"
 msgstr "تعديل {0}"
 
-# src/routes/reshares.rs:41
+# src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
-# src/routes/session.rs:161
+# src/routes/session.rs:181
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:162
+# src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:222
+# src/routes/session.rs:259
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:224
+# src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:126
+# src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
 msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
 
-# src/routes/user.rs:159
+# src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
-# src/routes/user.rs:240
+# src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
 msgstr "يجب عليك تسجيل الدخول أولا قصد تعديل صفحتك الشخصية"
 
@@ -192,11 +204,11 @@ msgstr ""
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Name"
 msgstr "الاسم"
 
-# src/template_utils.rs:146
+# src/template_utils.rs:220
 msgid "Optional"
 msgstr "اختياري"
 
@@ -212,7 +224,7 @@ msgstr ""
 msgid "Long description"
 msgstr "الوصف الطويل"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Default article license"
 msgstr ""
 
@@ -249,15 +261,14 @@ msgstr ""
 msgid "Upload an avatar"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Display name"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Email"
 msgstr "البريد الالكتروني"
 
-# src/template_utils.rs:144
 msgid "Summary"
 msgstr "الملخص"
 
@@ -303,15 +314,15 @@ msgstr "انشئ حسابك"
 msgid "Create an account"
 msgstr "انشئ حسابا"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username"
 msgstr "اسم المستخدم"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password"
 msgstr "كلمة السر"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password confirmation"
 msgstr "تأكيد الكلمة السرية"
 
@@ -381,6 +392,12 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr "إقرأ القواعد بالتفصيل"
 
+msgid "None"
+msgstr "لا شيء"
+
+msgid "No description"
+msgstr ""
+
 msgid "View all"
 msgstr "عرضها كافة"
 
@@ -396,71 +413,71 @@ msgstr ""
 msgid "Advanced search"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
 msgstr "العنوان"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Subtitle matching these words"
 msgstr ""
 
 msgid "Subtitle - byline"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Content matching these words"
 msgstr ""
 
 msgid "Body content"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "From this date"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "To this date"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Containing these tags"
 msgstr ""
 
 msgid "Tags"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Instance domain"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
 msgstr ""
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Published under this license"
 msgstr ""
 
@@ -482,11 +499,11 @@ msgstr ""
 msgid "Reset your password"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "New password"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Confirmation"
 msgstr ""
 
@@ -499,7 +516,7 @@ msgstr ""
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "E-mail"
 msgstr ""
 
@@ -509,14 +526,14 @@ msgstr ""
 msgid "Login"
 msgstr "تسجيل الدخول"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
 msgid "Publish"
 msgstr "انشر"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
 
@@ -529,23 +546,20 @@ msgstr ""
 msgid "Upload media"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Tags, separated by commas"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "License"
 msgstr ""
 
-# src/template_utils.rs:148
+# src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
 msgstr ""
 
 msgid "Illustration"
 msgstr "الصورة الإيضاحية"
-
-msgid "None"
-msgstr "لا شيء"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "هذه مُسودّة، لا تقم بنشرها الآن."
@@ -610,7 +624,7 @@ msgstr "قم بتسجيل الدخول أو استخدم حسابك على ال�
 msgid "Comments"
 msgstr "التعليقات"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Content warning"
 msgstr "تحذير عن المحتوى"
 
@@ -656,6 +670,33 @@ msgstr "حصل خطأ ما مِن جهتنا."
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "نعتذر عن الإزعاج. إن كنت تضن أن هذه مشكلة، يرجى إبلاغنا."
 
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
 msgid "New Blog"
 msgstr ""
 
@@ -664,6 +705,12 @@ msgstr "انشئ مدونة"
 
 msgid "Create blog"
 msgstr "انشاء مدونة"
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "مقال جديد"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -674,26 +721,8 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
-
 msgid "No posts to see here yet."
 msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
-
-msgid "New article"
-msgstr "مقال جديد"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr ""
 
 msgid "Articles tagged \"{0}\""
 msgstr "المقالات الموسومة بـ \"{0}\""
@@ -718,9 +747,6 @@ msgstr ""
 
 msgid "Media upload"
 msgstr "إرسال الوسائط"
-
-msgid "Description"
-msgstr "الوصف"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
