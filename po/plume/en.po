@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-22 19:06\n"
+"PO-Revision-Date: 2019-03-22 22:22\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -54,11 +54,11 @@ msgstr ""
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as blog icon."
-msgstr ""
+msgstr "You can't use this media as a blog icon."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as blog banner."
-msgstr ""
+msgstr "You can't use this media as a blog banner."
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
