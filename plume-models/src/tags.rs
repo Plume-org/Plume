@@ -38,7 +38,12 @@ impl Tag {
         Ok(ht)
     }
 
-    pub fn from_activity(conn: &Connection, tag: &Hashtag, post: i32, is_hashtag: bool) -> Result<Tag> {
+    pub fn from_activity(
+        conn: &Connection,
+        tag: &Hashtag,
+        post: i32,
+        is_hashtag: bool,
+    ) -> Result<Tag> {
         Tag::insert(
             conn,
             NewTag {

@@ -3,11 +3,7 @@ use rocket_contrib::json::Json;
 use serde_json;
 
 use plume_api::apps::AppEndpoint;
-use plume_models::{
-    Connection,
-    db_conn::DbConn,
-    apps::App,
-};
+use plume_models::{apps::App, db_conn::DbConn, Connection};
 
 #[post("/apps", data = "<data>")]
 pub fn create(conn: DbConn, data: Json<AppEndpoint>) -> Json<serde_json::Value> {

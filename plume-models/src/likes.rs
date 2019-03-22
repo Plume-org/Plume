@@ -38,21 +38,13 @@ impl Like {
     pub fn to_activity(&self, conn: &Connection) -> Result<activity::Like> {
         let mut act = activity::Like::default();
         act.like_props
-            .set_actor_link(
-                User::get(conn, self.user_id)?
-                    .into_id(),
-            )?;
+            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
         act.like_props
-            .set_object_link(
-                Post::get(conn, self.post_id)?
-                    .into_id(),
-            )?;
+            .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
-        act.object_props
-            .set_id_string(self.ap_url.clone())?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_id_string(self.ap_url.clone())?;
 
         Ok(act)
     }
@@ -62,18 +54,8 @@ impl FromActivity<activity::Like, Connection> for Like {
     type Error = Error;
 
     fn from_activity(conn: &Connection, like: activity::Like, _actor: Id) -> Result<Like> {
-        let liker = User::from_url(
-            conn,
-            like.like_props
-                .actor
-                .as_str()?,
-        )?;
-        let post = Post::find_by_ap_url(
-            conn,
-            like.like_props
-                .object
-                .as_str()?,
-        )?;
+        let liker = User::from_url(conn, like.like_props.actor.as_str()?)?;
+        let post = Post::find_by_ap_url(conn, like.like_props.object.as_str()?)?;
         let res = Like::insert(
             conn,
             NewLike {
@@ -110,26 +92,22 @@ impl Deletable<Connection, activity::Undo> for Like {
     type Error = Error;
 
     fn delete(&self, conn: &Connection) -> Result<activity::Undo> {
-        diesel::delete(self)
-            .execute(conn)?;
+        diesel::delete(self).execute(conn)?;
 
         // delete associated notification if any
         if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
-            diesel::delete(&notif)
-                .execute(conn)?;
+            diesel::delete(&notif).execute(conn)?;
         }
 
         let mut act = activity::Undo::default();
         act.undo_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id(),)?;
-        act.undo_props
-            .set_object_object(self.to_activity(conn)?)?;
+            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
+        act.undo_props.set_object_object(self.to_activity(conn)?)?;
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
 
         Ok(act)
     }
@@ -151,7 +129,7 @@ impl NewLike {
         NewLike {
             post_id: p.id,
             user_id: u.id,
-            ap_url
+            ap_url,
         }
     }
 }

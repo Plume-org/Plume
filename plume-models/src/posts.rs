@@ -1,8 +1,8 @@
 use activitypub::{
-    CustomObject,
     activity::{Create, Delete, Update},
     link,
     object::{Article, Image, Tombstone},
+    CustomObject,
 };
 use canapi::{Error as ApiError, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
@@ -12,25 +12,26 @@ use scheduled_thread_pool::ScheduledThreadPool as Worker;
 use serde_json;
 use std::collections::HashSet;
 
-use plume_api::posts::PostEndpoint;
-use plume_common::{
-    activity_pub::{
-        inbox::{Deletable, FromActivity},
-        broadcast, Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
-    },
-    utils::md_to_html,
-};
 use blogs::Blog;
 use instance::Instance;
 use medias::Media;
 use mentions::Mention;
+use plume_api::posts::PostEndpoint;
+use plume_common::{
+    activity_pub::{
+        broadcast,
+        inbox::{Deletable, FromActivity},
+        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
+    },
+    utils::md_to_html,
+};
 use post_authors::*;
 use safe_string::SafeString;
-use search::Searcher;
 use schema::posts;
+use search::Searcher;
 use tags::*;
 use users::User;
-use {ap_url, Connection, BASE_URL, Error, Result, ApiResult};
+use {ap_url, ApiResult, Connection, Error, Result, CONFIG};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -75,7 +76,11 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         id: i32,
     ) -> ApiResult<PostEndpoint> {
         if let Ok(post) = Post::get(conn, id) {
-            if !post.published && !user_id.map(|u| post.is_author(conn, u).unwrap_or(false)).unwrap_or(false) {
+            if !post.published
+                && !user_id
+                    .map(|u| post.is_author(conn, u).unwrap_or(false))
+                    .unwrap_or(false)
+            {
                 return Err(ApiError::Authorization(
                     "You are not authorized to access this post yet.".to_string(),
                 ));
@@ -86,12 +91,23 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
                 subtitle: Some(post.subtitle.clone()),
                 content: Some(post.content.get().clone()),
                 source: Some(post.source.clone()),
-                author: Some(post.get_authors(conn).map_err(|_| ApiError::NotFound("Authors not found".into()))?[0].username.clone()),
+                author: Some(
+                    post.get_authors(conn)
+                        .map_err(|_| ApiError::NotFound("Authors not found".into()))?[0]
+                        .username
+                        .clone(),
+                ),
                 blog_id: Some(post.blog_id),
                 published: Some(post.published),
                 creation_date: Some(post.creation_date.format("%Y-%m-%d").to_string()),
                 license: Some(post.license.clone()),
-                tags: Some(Tag::for_post(conn, post.id).map_err(|_| ApiError::NotFound("Tags not found".into()))?.into_iter().map(|t| t.tag).collect()),
+                tags: Some(
+                    Tag::for_post(conn, post.id)
+                        .map_err(|_| ApiError::NotFound("Tags not found".into()))?
+                        .into_iter()
+                        .map(|t| t.tag)
+                        .collect(),
+                ),
                 cover_id: post.cover_id,
             })
         } else {
@@ -114,24 +130,39 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             query = query.filter(posts::content.eq(content));
         }
 
-        query.get_results::<Post>(*conn).map(|ps| ps.into_iter()
-            .filter(|p| p.published || user_id.map(|u| p.is_author(conn, u).unwrap_or(false)).unwrap_or(false))
-            .map(|p| PostEndpoint {
-                id: Some(p.id),
-                title: Some(p.title.clone()),
-                subtitle: Some(p.subtitle.clone()),
-                content: Some(p.content.get().clone()),
-                source: Some(p.source.clone()),
-                author: Some(p.get_authors(conn).unwrap_or_default()[0].username.clone()),
-                blog_id: Some(p.blog_id),
-                published: Some(p.published),
-                creation_date: Some(p.creation_date.format("%Y-%m-%d").to_string()),
-                license: Some(p.license.clone()),
-                tags: Some(Tag::for_post(conn, p.id).unwrap_or(vec![]).into_iter().map(|t| t.tag).collect()),
-                cover_id: p.cover_id,
+        query
+            .get_results::<Post>(*conn)
+            .map(|ps| {
+                ps.into_iter()
+                    .filter(|p| {
+                        p.published
+                            || user_id
+                                .map(|u| p.is_author(conn, u).unwrap_or(false))
+                                .unwrap_or(false)
+                    })
+                    .map(|p| PostEndpoint {
+                        id: Some(p.id),
+                        title: Some(p.title.clone()),
+                        subtitle: Some(p.subtitle.clone()),
+                        content: Some(p.content.get().clone()),
+                        source: Some(p.source.clone()),
+                        author: Some(p.get_authors(conn).unwrap_or_default()[0].username.clone()),
+                        blog_id: Some(p.blog_id),
+                        published: Some(p.published),
+                        creation_date: Some(p.creation_date.format("%Y-%m-%d").to_string()),
+                        license: Some(p.license.clone()),
+                        tags: Some(
+                            Tag::for_post(conn, p.id)
+                                .unwrap_or_else(|_| vec![])
+                                .into_iter()
+                                .map(|t| t.tag)
+                                .collect(),
+                        ),
+                        cover_id: p.cover_id,
+                    })
+                    .collect()
             })
-            .collect()
-        ).unwrap_or(vec![])
+            .unwrap_or_else(|_| vec![])
     }
 
     fn update(
@@ -142,11 +173,15 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         unimplemented!()
     }
 
-    fn delete((conn, _worker, search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>), id: i32) {
+    fn delete(
+        (conn, _worker, search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
+        id: i32,
+    ) {
         let user_id = user_id.expect("Post as Provider::delete: not authenticated");
         if let Ok(post) = Post::get(conn, id) {
             if post.is_author(conn, user_id).unwrap_or(false) {
-                post.delete(&(conn, search)).ok().expect("Post as Provider::delete: delete error");
+                post.delete(&(conn, search))
+                    .expect("Post as Provider::delete: delete error");
             }
         }
     }
@@ -156,84 +191,124 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         query: PostEndpoint,
     ) -> ApiResult<PostEndpoint> {
         if user_id.is_none() {
-            return Err(ApiError::Authorization("You are not authorized to create new articles.".to_string()));
+            return Err(ApiError::Authorization(
+                "You are not authorized to create new articles.".to_string(),
+            ));
         }
 
         let title = query.title.clone().expect("No title for new post in API");
         let slug = query.title.unwrap().to_kebab_case();
 
-        let date = query.creation_date.clone()
-            .and_then(|d| NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok());
+        let date = query.creation_date.clone().and_then(|d| {
+            NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S")
+                .ok()
+        });
 
         let domain = &Instance::get_local(&conn)
             .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
             .public_domain;
-        let (content, mentions, hashtags) = md_to_html(query.source.clone().unwrap_or(String::new()).clone().as_ref(), domain);
+        let (content, mentions, hashtags) = md_to_html(
+            query.source.clone().unwrap_or_default().clone().as_ref(),
+            domain,
+        );
 
-        let author = User::get(conn, user_id.expect("<Post as Provider>::create: no user_id error"))
-            .map_err(|_| ApiError::NotFound("Author not found".into()))?;
+        let author = User::get(
+            conn,
+            user_id.expect("<Post as Provider>::create: no user_id error"),
+        )
+        .map_err(|_| ApiError::NotFound("Author not found".into()))?;
         let blog = match query.blog_id {
             Some(x) => x,
-            None => Blog::find_for_author(conn, &author).map_err(|_| ApiError::NotFound("No default blog".into()))?[0].id
+            None => {
+                Blog::find_for_author(conn, &author)
+                    .map_err(|_| ApiError::NotFound("No default blog".into()))?[0]
+                    .id
+            }
         };
 
         if Post::find_by_slug(conn, &slug, blog).is_ok() {
             // Not an actual authorization problem, but we have nothing better for now…
             // TODO: add another error variant to canapi and add it there
-            return Err(ApiError::Authorization("A post with the same slug already exists".to_string()));
+            return Err(ApiError::Authorization(
+                "A post with the same slug already exists".to_string(),
+            ));
         }
 
-        let post = Post::insert(conn, NewPost {
-            blog_id: blog,
-            slug: slug,
-            title: title,
-            content: SafeString::new(content.as_ref()),
-            published: query.published.unwrap_or(true),
-            license: query.license.unwrap_or(Instance::get_local(conn)
-                .map(|i| i.default_license)
-                .unwrap_or(String::from("CC-BY-SA"))),
-            creation_date: date,
-            ap_url: String::new(),
-            subtitle: query.subtitle.unwrap_or(String::new()),
-            source: query.source.expect("Post API::create: no source error"),
-            cover_id: query.cover_id,
-        }, search).map_err(|_| ApiError::NotFound("Creation error".into()))?;
+        let post = Post::insert(
+            conn,
+            NewPost {
+                blog_id: blog,
+                slug,
+                title,
+                content: SafeString::new(content.as_ref()),
+                published: query.published.unwrap_or(true),
+                license: query.license.unwrap_or_else(|| {
+                    Instance::get_local(conn)
+                        .map(|i| i.default_license)
+                        .unwrap_or_else(|_| String::from("CC-BY-SA"))
+                }),
+                creation_date: date,
+                ap_url: String::new(),
+                subtitle: query.subtitle.unwrap_or_default(),
+                source: query.source.expect("Post API::create: no source error"),
+                cover_id: query.cover_id,
+            },
+            search,
+        )
+        .map_err(|_| ApiError::NotFound("Creation error".into()))?;
 
-        PostAuthor::insert(conn, NewPostAuthor {
-            author_id: author.id,
-            post_id: post.id
-        }).map_err(|_| ApiError::NotFound("Error saving authors".into()))?;
+        PostAuthor::insert(
+            conn,
+            NewPostAuthor {
+                author_id: author.id,
+                post_id: post.id,
+            },
+        )
+        .map_err(|_| ApiError::NotFound("Error saving authors".into()))?;
 
         if let Some(tags) = query.tags {
             for tag in tags {
-                Tag::insert(conn, NewTag {
-                    tag: tag,
-                    is_hashtag: false,
-                    post_id: post.id
-                }).map_err(|_| ApiError::NotFound("Error saving tags".into()))?;
+                Tag::insert(
+                    conn,
+                    NewTag {
+                        tag,
+                        is_hashtag: false,
+                        post_id: post.id,
+                    },
+                )
+                .map_err(|_| ApiError::NotFound("Error saving tags".into()))?;
             }
         }
         for hashtag in hashtags {
-            Tag::insert(conn, NewTag {
-                tag: hashtag.to_camel_case(),
-                is_hashtag: true,
-                post_id: post.id
-            }).map_err(|_| ApiError::NotFound("Error saving hashtags".into()))?;
+            Tag::insert(
+                conn,
+                NewTag {
+                    tag: hashtag.to_camel_case(),
+                    is_hashtag: true,
+                    post_id: post.id,
+                },
+            )
+            .map_err(|_| ApiError::NotFound("Error saving hashtags".into()))?;
         }
 
         if post.published {
             for m in mentions.into_iter() {
                 Mention::from_activity(
                     &*conn,
-                    &Mention::build_activity(&*conn, &m).map_err(|_| ApiError::NotFound("Couldn't build mentions".into()))?,
+                    &Mention::build_activity(&*conn, &m)
+                        .map_err(|_| ApiError::NotFound("Couldn't build mentions".into()))?,
                     post.id,
                     true,
-                    true
-                ).map_err(|_| ApiError::NotFound("Error saving mentions".into()))?;
+                    true,
+                )
+                .map_err(|_| ApiError::NotFound("Error saving mentions".into()))?;
             }
 
-            let act = post.create_activity(&*conn).map_err(|_| ApiError::NotFound("Couldn't create activity".into()))?;
-            let dest = User::one_by_instance(&*conn).map_err(|_| ApiError::NotFound("Couldn't list remote instances".into()))?;
+            let act = post
+                .create_activity(&*conn)
+                .map_err(|_| ApiError::NotFound("Couldn't create activity".into()))?;
+            let dest = User::one_by_instance(&*conn)
+                .map_err(|_| ApiError::NotFound("Couldn't list remote instances".into()))?;
             worker.execute(move || broadcast(&author, act, dest));
         }
 
@@ -243,12 +318,23 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             subtitle: Some(post.subtitle.clone()),
             content: Some(post.content.get().clone()),
             source: Some(post.source.clone()),
-            author: Some(post.get_authors(conn).map_err(|_| ApiError::NotFound("No authors".into()))?[0].username.clone()),
+            author: Some(
+                post.get_authors(conn)
+                    .map_err(|_| ApiError::NotFound("No authors".into()))?[0]
+                    .username
+                    .clone(),
+            ),
             blog_id: Some(post.blog_id),
             published: Some(post.published),
             creation_date: Some(post.creation_date.format("%Y-%m-%d").to_string()),
             license: Some(post.license.clone()),
-            tags: Some(Tag::for_post(conn, post.id).map_err(|_| ApiError::NotFound("Tags not found".into()))?.into_iter().map(|t| t.tag).collect()),
+            tags: Some(
+                Tag::for_post(conn, post.id)
+                    .map_err(|_| ApiError::NotFound("Tags not found".into()))?
+                    .into_iter()
+                    .map(|t| t.tag)
+                    .collect(),
+            ),
             cover_id: post.cover_id,
         })
     }
@@ -268,7 +354,7 @@ impl Post {
         if post.ap_url.is_empty() {
             post.ap_url = ap_url(&format!(
                 "{}/~/{}/{}/",
-                *BASE_URL,
+                CONFIG.base_url,
                 post.get_blog(conn)?.fqn,
                 post.slug
             ));
@@ -279,15 +365,17 @@ impl Post {
         Ok(post)
     }
     pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
-        diesel::update(self)
-            .set(self)
-            .execute(conn)?;
+        diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
         searcher.update_document(conn, &post)?;
         Ok(post)
     }
 
-    pub fn list_by_tag(conn: &Connection, tag: String, (min, max): (i32, i32)) -> Result<Vec<Post>> {
+    pub fn list_by_tag(
+        conn: &Connection,
+        tag: String,
+        (min, max): (i32, i32),
+    ) -> Result<Vec<Post>> {
         use schema::tags;
 
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
@@ -311,7 +399,7 @@ impl Post {
             .load(conn)?
             .iter()
             .next()
-            .map(|x| *x)
+            .cloned()
             .ok_or(Error::NotFound)
     }
 
@@ -349,7 +437,11 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn get_recents_for_author(conn: &Connection, author: &User, limit: i64) -> Result<Vec<Post>> {
+    pub fn get_recents_for_author(
+        conn: &Connection,
+        author: &User,
+        limit: i64,
+    ) -> Result<Vec<Post>> {
         use schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
@@ -481,7 +573,8 @@ impl Post {
         Ok(PostAuthor::belonging_to(self)
             .filter(post_authors::author_id.eq(author_id))
             .count()
-            .get_result::<i64>(conn)? > 0)
+            .get_result::<i64>(conn)?
+            > 0)
     }
 
     pub fn get_blog(&self, conn: &Connection) -> Result<Blog> {
@@ -529,7 +622,7 @@ impl Post {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
         let cc = self.get_receivers_urls(conn)?;
-        let to  = vec![PUBLIC_VISIBILTY.to_string()];
+        let to = vec![PUBLIC_VISIBILTY.to_string()];
 
         let mut mentions_json = Mention::list_for_post(conn, self.id)?
             .into_iter()
@@ -542,12 +635,8 @@ impl Post {
         mentions_json.append(&mut tags_json);
 
         let mut article = Article::default();
-        article
-            .object_props
-            .set_name_string(self.title.clone())?;
-        article
-            .object_props
-            .set_id_string(self.ap_url.clone())?;
+        article.object_props.set_name_string(self.title.clone())?;
+        article.object_props.set_id_string(self.ap_url.clone())?;
 
         let mut authors = self
             .get_authors(conn)?
@@ -561,12 +650,10 @@ impl Post {
         article
             .object_props
             .set_content_string(self.content.get().clone())?;
-        article
-            .ap_object_props
-            .set_source_object(Source {
-                content: self.source.clone(),
-                media_type: String::from("text/markdown"),
-            })?;
+        article.ap_object_props.set_source_object(Source {
+            content: self.source.clone(),
+            media_type: String::from("text/markdown"),
+        })?;
         article
             .object_props
             .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
@@ -578,31 +665,20 @@ impl Post {
         if let Some(media_id) = self.cover_id {
             let media = Media::get(conn, media_id)?;
             let mut cover = Image::default();
-            cover
-                .object_props
-                .set_url_string(media.url(conn)?)?;
+            cover.object_props.set_url_string(media.url(conn)?)?;
             if media.sensitive {
                 cover
                     .object_props
                     .set_summary_string(media.content_warning.unwrap_or_default())?;
             }
+            cover.object_props.set_content_string(media.alt_text)?;
             cover
                 .object_props
-                .set_content_string(media.alt_text)?;
-            cover
-                .object_props
-                .set_attributed_to_link_vec(vec![
-                    User::get(conn, media.owner_id)?
-                        .into_id(),
-                ])?;
-            article
-                .object_props
-                .set_icon_object(cover)?;
+                .set_attributed_to_link_vec(vec![User::get(conn, media.owner_id)?.into_id()])?;
+            article.object_props.set_icon_object(cover)?;
         }
 
-        article
-            .object_props
-            .set_url_string(self.ap_url.clone())?;
+        article.object_props.set_url_string(self.ap_url.clone())?;
         article
             .object_props
             .set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect())?;
@@ -620,52 +696,39 @@ impl Post {
         act.object_props
             .set_id_string(format!("{}activity", self.ap_url))?;
         act.object_props
-            .set_to_link_vec::<Id>(
-                article.object
-                    .object_props
-                    .to_link_vec()?,
-            )?;
+            .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
         act.object_props
-            .set_cc_link_vec::<Id>(
-                article.object
-                    .object_props
-                    .cc_link_vec()?,
-            )?;
+            .set_cc_link_vec::<Id>(article.object.object_props.cc_link_vec()?)?;
         act.create_props
             .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
-        act.create_props
-            .set_object_object(article)?;
+        act.create_props.set_object_object(article)?;
         Ok(act)
     }
 
     pub fn update_activity(&self, conn: &Connection) -> Result<Update> {
         let article = self.to_activity(conn)?;
         let mut act = Update::default();
+        act.object_props.set_id_string(format!(
+            "{}/update-{}",
+            self.ap_url,
+            Utc::now().timestamp()
+        ))?;
         act.object_props
-            .set_id_string(format!("{}/update-{}", self.ap_url, Utc::now().timestamp()))?;
+            .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
         act.object_props
-            .set_to_link_vec::<Id>(
-                article.object
-                    .object_props
-                    .to_link_vec()?,
-            )?;
-        act.object_props
-            .set_cc_link_vec::<Id>(
-                article.object
-                    .object_props
-                    .cc_link_vec()?,
-            )?;
+            .set_cc_link_vec::<Id>(article.object.object_props.cc_link_vec()?)?;
         act.update_props
             .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
-        act.update_props
-            .set_object_object(article)?;
+        act.update_props.set_object_object(article)?;
         Ok(act)
     }
 
-    pub fn handle_update(conn: &Connection, updated: &LicensedArticle, searcher: &Searcher) -> Result<()> {
-        let id = updated.object
-            .object_props
-            .id_string()?;
+    pub fn handle_update(
+        conn: &Connection,
+        updated: &LicensedArticle,
+        searcher: &Searcher,
+    ) -> Result<()> {
+        let id = updated.object.object_props.id_string()?;
         let mut post = Post::find_by_ap_url(conn, &id)?;
 
         if let Ok(title) = updated.object.object_props.name_string() {
@@ -698,7 +761,9 @@ impl Post {
             .into_iter()
             .map(|s| s.to_camel_case())
             .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(mention_tags)) = updated.object.object_props.tag.clone() {
+        if let Some(serde_json::Value::Array(mention_tags)) =
+            updated.object.object_props.tag.clone()
+        {
             let mut mentions = vec![];
             let mut tags = vec![];
             let mut hashtags = vec![];
@@ -710,8 +775,7 @@ impl Post {
                 serde_json::from_value::<Hashtag>(tag.clone())
                     .map_err(Error::from)
                     .and_then(|t| {
-                        let tag_name = t
-                            .name_string()?;
+                        let tag_name = t.name_string()?;
                         if txt_hashtags.remove(&tag_name) {
                             hashtags.push(t);
                         } else {
@@ -854,20 +918,25 @@ impl Post {
     }
 
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {
-        self.cover_id.and_then(|i| Media::get(conn, i).ok()).and_then(|c| c.url(conn).ok())
+        self.cover_id
+            .and_then(|i| Media::get(conn, i).ok())
+            .and_then(|c| c.url(conn).ok())
     }
 }
 
 impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post {
     type Error = Error;
 
-    fn from_activity((conn, searcher): &(&'a Connection, &'a Searcher), article: LicensedArticle, _actor: Id) -> Result<Post> {
+    fn from_activity(
+        (conn, searcher): &(&'a Connection, &'a Searcher),
+        article: LicensedArticle,
+        _actor: Id,
+    ) -> Result<Post> {
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
-        if let Ok(post) = Post::find_by_ap_url(
-            conn,
-            &article.object_props.id_string().unwrap_or_default(),
-        ) {
+        if let Ok(post) =
+            Post::find_by_ap_url(conn, &article.object_props.id_string().unwrap_or_default())
+        {
             Ok(post)
         } else {
             let (blog, authors) = article
@@ -880,10 +949,8 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                         Ok(u) => {
                             authors.push(u);
                             (blog, authors)
-                        },
-                        Err(_) => {
-                            (blog.or_else(|| Blog::from_url(conn, &url).ok()), authors)
-                        },
+                        }
+                        Err(_) => (blog.or_else(|| Blog::from_url(conn, &url).ok()), authors),
                     }
                 });
 
@@ -893,41 +960,24 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                 .ok()
                 .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
 
-            let title = article
-                .object_props
-                .name_string()?;
+            let title = article.object_props.name_string()?;
             let post = Post::insert(
                 conn,
                 NewPost {
                     blog_id: blog?.id,
                     slug: title.to_kebab_case(),
                     title,
-                    content: SafeString::new(
-                        &article
-                            .object_props
-                            .content_string()?,
-                    ),
+                    content: SafeString::new(&article.object_props.content_string()?),
                     published: true,
-                    license: license,
+                    license,
                     // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                    ap_url: article.object_props.url_string().or_else(|_|
-                        article
-                            .object_props
-                            .id_string()
-                    )?,
-                    creation_date: Some(
-                        article
-                            .object_props
-                            .published_utctime()?
-                            .naive_utc(),
-                    ),
-                    subtitle: article
+                    ap_url: article
                         .object_props
-                        .summary_string()?,
-                    source: article
-                        .ap_object_props
-                        .source_object::<Source>()?
-                        .content,
+                        .url_string()
+                        .or_else(|_| article.object_props.id_string())?,
+                    creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
+                    subtitle: article.object_props.summary_string()?,
+                    source: article.ap_object_props.source_object::<Source>()?.content,
                     cover_id: cover,
                 },
                 searcher,
@@ -959,7 +1009,12 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
                         .map_err(Error::from)
                         .and_then(|t| {
                             let tag_name = t.name_string()?;
-                            Ok(Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name)))
+                            Ok(Tag::from_activity(
+                                conn,
+                                &t,
+                                post.id,
+                                hashtags.remove(&tag_name),
+                            ))
                         })
                         .ok();
                 }
@@ -978,11 +1033,8 @@ impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
             .set_actor_link(self.get_authors(conn)?[0].clone().into_id())?;
 
         let mut tombstone = Tombstone::default();
-        tombstone
-            .object_props
-            .set_id_string(self.ap_url.clone())?;
-        act.delete_props
-            .set_object_object(tombstone)?;
+        tombstone.object_props.set_id_string(self.ap_url.clone())?;
+        act.delete_props.set_object_object(tombstone)?;
 
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
@@ -992,16 +1044,22 @@ impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
         for m in Mention::list_for_post(&conn, self.id)? {
             m.delete(conn)?;
         }
-        diesel::delete(self)
-            .execute(*conn)?;
+        diesel::delete(self).execute(*conn)?;
         searcher.delete_document(self);
         Ok(act)
     }
 
-    fn delete_id(id: &str, actor_id: &str, (conn, searcher): &(&Connection, &Searcher)) -> Result<Delete> {
+    fn delete_id(
+        id: &str,
+        actor_id: &str,
+        (conn, searcher): &(&Connection, &Searcher),
+    ) -> Result<Delete> {
         let actor = User::find_by_ap_url(conn, actor_id)?;
         let post = Post::find_by_ap_url(conn, id)?;
-        let can_delete = post.get_authors(conn)?.into_iter().any(|a| actor.id == a.id);
+        let can_delete = post
+            .get_authors(conn)?
+            .into_iter()
+            .any(|a| actor.id == a.id);
         if can_delete {
             post.delete(&(conn, searcher))
         } else {

@@ -1,4 +1,7 @@
-use stdweb::{unstable::{TryInto, TryFrom}, web::{*, html_element::*, event::*}};
+use stdweb::{
+    unstable::{TryFrom, TryInto},
+    web::{event::*, html_element::*, *},
+};
 use CATALOG;
 
 macro_rules! mv {
@@ -14,7 +17,8 @@ fn get_elt_value(id: &'static str) -> String {
     let elt = document().get_element_by_id(id).unwrap();
     let inp: Result<InputElement, _> = elt.clone().try_into();
     let textarea: Result<TextAreaElement, _> = elt.try_into();
-    inp.map(|i| i.raw_value()).unwrap_or_else(|_| textarea.unwrap().value())
+    inp.map(|i| i.raw_value())
+        .unwrap_or_else(|_| textarea.unwrap().value())
 }
 
 fn set_value<S: AsRef<str>>(id: &'static str, val: S) {
@@ -64,7 +68,7 @@ fn init_widget(
     tag: &'static str,
     placeholder_text: String,
     content: String,
-    disable_return: bool
+    disable_return: bool,
 ) -> Result<HtmlElement, EditorError> {
     let widget = placeholder(make_editable(tag).try_into()?, &placeholder_text);
     if !content.is_empty() {
@@ -72,7 +76,7 @@ fn init_widget(
     }
     widget.append_child(&document().create_text_node(&content));
     if disable_return {
-        widget.add_event_listener(no_return);        
+        widget.add_event_listener(no_return);
     }
 
     parent.append_child(&widget);
@@ -122,7 +126,7 @@ pub fn init() -> Result<(), EditorError> {
 fn init_editor() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-editor") {
         // Show the editor
-        js!{ @{&ed}.style.display = "block"; };
+        js! { @{&ed}.style.display = "block"; };
         // And hide the HTML-only fallback
         let old_ed = document().get_element_by_id("plume-fallback-editor")?;
         let old_title = document().get_element_by_id("plume-editor-title")?;
@@ -137,8 +141,20 @@ fn init_editor() -> Result<(), EditorError> {
         let content_val = get_elt_value("editor-content");
         // And pre-fill the new editor with this values
         let title = init_widget(&ed, "h1", i18n!(CATALOG, "Title"), title_val, true)?;
-        let subtitle = init_widget(&ed, "h2", i18n!(CATALOG, "Subtitle or summary"), subtitle_val, true)?;
-        let content = init_widget(&ed, "article", i18n!(CATALOG, "Write your article here. Markdown is supported."), content_val.clone(), false)?;
+        let subtitle = init_widget(
+            &ed,
+            "h2",
+            i18n!(CATALOG, "Subtitle or summary"),
+            subtitle_val,
+            true,
+        )?;
+        let content = init_widget(
+            &ed,
+            "article",
+            i18n!(CATALOG, "Write your article here. Markdown is supported."),
+            content_val.clone(),
+            false,
+        )?;
         js! { @{&content}.innerHTML = @{content_val}; };
 
         // character counter
@@ -154,18 +170,19 @@ fn init_editor() -> Result<(), EditorError> {
             }), 0);
         }));
 
-        document().get_element_by_id("publish")?.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
-            let popup = document().get_element_by_id("publish-popup").or_else(||
-                    init_popup(&title, &subtitle, &content, &old_ed).ok()
-                ).unwrap();
-            let bg = document().get_element_by_id("popup-bg").or_else(||
-                    init_popup_bg().ok()
-                ).unwrap();
+        document().get_element_by_id("publish")?.add_event_listener(
+            mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+                let popup = document().get_element_by_id("publish-popup").or_else(||
+                        init_popup(&title, &subtitle, &content, &old_ed).ok()
+                    ).unwrap();
+                let bg = document().get_element_by_id("popup-bg").or_else(||
+                        init_popup_bg().ok()
+                    ).unwrap();
 
-            popup.class_list().add("show").unwrap();
-            bg.class_list().add("show").unwrap();
-        }));
-
+                popup.class_list().add("show").unwrap();
+                bg.class_list().add("show").unwrap();
+            }),
+        );
         show_errors();
         setup_close_button();
     }
@@ -193,12 +210,21 @@ fn show_errors() {
     }
 }
 
-fn init_popup(title: &HtmlElement, subtitle: &HtmlElement, content: &HtmlElement, old_ed: &Element) -> Result<Element, EditorError> {
+fn init_popup(
+    title: &HtmlElement,
+    subtitle: &HtmlElement,
+    content: &HtmlElement,
+    old_ed: &Element,
+) -> Result<Element, EditorError> {
     let popup = document().create_element("div")?;
     popup.class_list().add("popup")?;
     popup.set_attribute("id", "publish-popup")?;
 
-    let tags = get_elt_value("tags").split(',').map(str::trim).map(str::to_string).collect::<Vec<_>>();
+    let tags = get_elt_value("tags")
+        .split(',')
+        .map(str::trim)
+        .map(str::to_string)
+        .collect::<Vec<_>>();
     let license = get_elt_value("license");
     make_input(&i18n!(CATALOG, "Tags"), "popup-tags", &popup).set_raw_value(&tags.join(", "));
     make_input(&i18n!(CATALOG, "License"), "popup-license", &popup).set_raw_value(&license);
@@ -229,7 +255,7 @@ fn init_popup(title: &HtmlElement, subtitle: &HtmlElement, content: &HtmlElement
     }
 
     let button = document().create_element("input")?;
-    js!{
+    js! {
         @{&button}.type = "submit";
         @{&button}.value = @{i18n!(CATALOG, "Publish")};
     };
@@ -274,7 +300,10 @@ fn init_popup_bg() -> Result<Element, EditorError> {
 fn chars_left(selector: &str, content: &HtmlElement) -> Option<i32> {
     match document().query_selector(selector) {
         Ok(Some(form)) => HtmlElement::try_from(form).ok().and_then(|form| {
-            if let Some(len) = form.get_attribute("content-size").and_then(|s| s.parse::<i32>().ok()) {
+            if let Some(len) = form
+                .get_attribute("content-size")
+                .and_then(|s| s.parse::<i32>().ok())
+            {
                 (js! {
                     let x = encodeURIComponent(@{content}.innerHTML)
                         .replace(/%20/g, "+")
@@ -283,7 +312,10 @@ fn chars_left(selector: &str, content: &HtmlElement) -> Option<i32> {
                         .length + 2;
                     console.log(x);
                     return x;
-                }).try_into().map(|c: i32| len - c).ok()
+                })
+                .try_into()
+                .map(|c: i32| len - c)
+                .ok()
             } else {
                 None
             }
@@ -303,7 +335,11 @@ fn make_input(label_text: &str, name: &'static str, form: &Element) -> InputElem
     label.append_child(&document().create_text_node(label_text));
     label.set_attribute("for", name).unwrap();
 
-    let inp: InputElement = document().create_element("input").unwrap().try_into().unwrap();
+    let inp: InputElement = document()
+        .create_element("input")
+        .unwrap()
+        .try_into()
+        .unwrap();
     inp.set_attribute("name", name).unwrap();
     inp.set_attribute("id", name).unwrap();
 
@@ -313,8 +349,11 @@ fn make_input(label_text: &str, name: &'static str, form: &Element) -> InputElem
 }
 
 fn make_editable(tag: &'static str) -> Element {
-    let elt = document().create_element(tag).expect("Couldn't create editable element");
-    elt.set_attribute("contenteditable", "true").expect("Couldn't make element editable");
+    let elt = document()
+        .create_element(tag)
+        .expect("Couldn't create editable element");
+    elt.set_attribute("contenteditable", "true")
+        .expect("Couldn't make element editable");
     elt
 }
 

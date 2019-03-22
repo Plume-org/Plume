@@ -28,7 +28,7 @@
         @input!(ctx.1, subtitle (optional text), "Subtitle", form, errors.clone(), "")
 
         @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("content") {
-            @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or(Cow::from("Unknown error")))
+            @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or_else(|| Cow::from("Unknown error")))
         }
 
         <label for="editor-content">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>

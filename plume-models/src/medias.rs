@@ -62,16 +62,18 @@ impl Media {
     list_by!(medias, for_user, owner_id as i32);
 
     pub fn list_all_medias(conn: &Connection) -> Result<Vec<Media>> {
-        medias::table
-            .load::<Media>(conn)
-            .map_err(Error::from)
+        medias::table.load::<Media>(conn).map_err(Error::from)
     }
 
-    pub fn page_for_user(conn: &Connection, user: &User, (min, max): (i32, i32)) -> Result<Vec<Media>> {
+    pub fn page_for_user(
+        conn: &Connection,
+        user: &User,
+        (min, max): (i32, i32),
+    ) -> Result<Vec<Media>> {
         medias::table
             .filter(medias::owner_id.eq(user.id))
-            .offset(min as i64)
-            .limit((max - min) as i64)
+            .offset(i64::from(min))
+            .limit(i64::from(max - min))
             .load::<Media>(conn)
             .map_err(Error::from)
     }
@@ -124,7 +126,9 @@ impl Media {
     pub fn markdown(&self, conn: &Connection) -> Result<SafeString> {
         let url = self.url(conn)?;
         Ok(match self.category() {
-            MediaCategory::Image => SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url)),
+            MediaCategory::Image => {
+                SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url))
+            }
             MediaCategory::Audio | MediaCategory::Video => self.html(conn)?,
             MediaCategory::Unknown => SafeString::new(""),
         })
@@ -216,7 +220,8 @@ impl Media {
                         .into_iter()
                         .next()?
                         .as_ref(),
-                )?.id,
+                )?
+                .id,
             },
         )
     }
@@ -249,37 +254,41 @@ pub(crate) mod tests {
         let f2 = "static/media/2.mp3".to_owned();
         fs::write(f1.clone(), []).unwrap();
         fs::write(f2.clone(), []).unwrap();
-        (users, vec![
-            NewMedia {
-                file_path: f1,
-                alt_text: "some alt".to_owned(),
-                is_remote: false,
-                remote_url: None,
-                sensitive: false,
-                content_warning: None,
-                owner_id: user_one,
-            },
-            NewMedia {
-                file_path: f2,
-                alt_text: "alt message".to_owned(),
-                is_remote: false,
-                remote_url: None,
-                sensitive: true,
-                content_warning: Some("Content warning".to_owned()),
-                owner_id: user_one,
-            },
-            NewMedia {
-                file_path: "".to_owned(),
-                alt_text: "another alt".to_owned(),
-                is_remote: true,
-                remote_url: Some("https://example.com/".to_owned()),
-                sensitive: false,
-                content_warning: None,
-                owner_id: user_two,
-            },
-        ].into_iter()
+        (
+            users,
+            vec![
+                NewMedia {
+                    file_path: f1,
+                    alt_text: "some alt".to_owned(),
+                    is_remote: false,
+                    remote_url: None,
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: user_one,
+                },
+                NewMedia {
+                    file_path: f2,
+                    alt_text: "alt message".to_owned(),
+                    is_remote: false,
+                    remote_url: None,
+                    sensitive: true,
+                    content_warning: Some("Content warning".to_owned()),
+                    owner_id: user_one,
+                },
+                NewMedia {
+                    file_path: "".to_owned(),
+                    alt_text: "another alt".to_owned(),
+                    is_remote: true,
+                    remote_url: Some("https://example.com/".to_owned()),
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: user_two,
+                },
+            ]
+            .into_iter()
             .map(|nm| Media::insert(conn, nm).unwrap())
-            .collect())
+            .collect(),
+        )
     }
 
     pub(crate) fn clean(conn: &Conn) {
@@ -311,7 +320,8 @@ pub(crate) mod tests {
                     content_warning: None,
                     owner_id: user,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
             assert!(Path::new(&path).exists());
             media.delete(conn).unwrap();
@@ -346,29 +356,26 @@ pub(crate) mod tests {
                     content_warning: None,
                     owner_id: u1.id,
                 },
-            ).unwrap();
+            )
+            .unwrap();
 
-            assert!(
-                Media::for_user(conn, u1.id).unwrap()
-                    .iter()
-                    .any(|m| m.id == media.id)
-            );
-            assert!(
-                !Media::for_user(conn, u2.id).unwrap()
-                    .iter()
-                    .any(|m| m.id == media.id)
-            );
+            assert!(Media::for_user(conn, u1.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
+            assert!(!Media::for_user(conn, u2.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
             media.set_owner(conn, u2).unwrap();
-            assert!(
-                !Media::for_user(conn, u1.id).unwrap()
-                    .iter()
-                    .any(|m| m.id == media.id)
-            );
-            assert!(
-                Media::for_user(conn, u2.id).unwrap()
-                    .iter()
-                    .any(|m| m.id == media.id)
-            );
+            assert!(!Media::for_user(conn, u1.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
+            assert!(Media::for_user(conn, u2.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
 
             clean(conn);
 

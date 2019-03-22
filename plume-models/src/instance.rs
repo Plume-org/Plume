@@ -20,7 +20,7 @@ pub struct Instance {
     pub open_registrations: bool,
     pub short_description: SafeString,
     pub long_description: SafeString,
-    pub default_license : String,
+    pub default_license: String,
     pub long_description_html: SafeString,
     pub short_description_html: SafeString,
 }
@@ -46,7 +46,8 @@ impl Instance {
             .limit(1)
             .load::<Instance>(conn)?
             .into_iter()
-            .nth(0).ok_or(Error::NotFound)
+            .nth(0)
+            .ok_or(Error::NotFound)
     }
 
     pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
@@ -109,12 +110,7 @@ impl Instance {
             .map_err(Error::from)
     }
 
-    pub fn compute_box(
-        &self,
-        prefix: &str,
-        name: &str,
-        box_name: &str,
-    ) -> String {
+    pub fn compute_box(&self, prefix: &str, name: &str, box_name: &str) -> String {
         ap_url(&format!(
             "{instance}/{prefix}/{name}/{box_name}",
             instance = self.public_domain,
@@ -209,15 +205,16 @@ pub(crate) mod tests {
                 open_registrations: true,
                 public_domain: "3plu.me".to_string(),
             },
-        ].into_iter()
-            .map(|inst| {
-                (
-                    inst.clone(),
-                    Instance::find_by_domain(conn, &inst.public_domain)
-                        .unwrap_or_else(|_| Instance::insert(conn, inst).unwrap()),
-                )
-            })
-            .collect()
+        ]
+        .into_iter()
+        .map(|inst| {
+            (
+                inst.clone(),
+                Instance::find_by_domain(conn, &inst.public_domain)
+                    .unwrap_or_else(|_| Instance::insert(conn, inst).unwrap()),
+            )
+        })
+        .collect()
     }
 
     #[test]
@@ -244,8 +241,14 @@ pub(crate) mod tests {
                     public_domain
                 ]
             );
-            assert_eq!(res.long_description_html.get(), &inserted.long_description_html);
-            assert_eq!(res.short_description_html.get(), &inserted.short_description_html);
+            assert_eq!(
+                res.long_description_html.get(),
+                &inserted.long_description_html
+            );
+            assert_eq!(
+                res.short_description_html.get(),
+                &inserted.short_description_html
+            );
 
             Ok(())
         });
@@ -282,8 +285,14 @@ pub(crate) mod tests {
                             public_domain
                         ]
                     );
-                    assert_eq!(&newinst.long_description_html, inst.long_description_html.get());
-                    assert_eq!(&newinst.short_description_html, inst.short_description_html.get());
+                    assert_eq!(
+                        &newinst.long_description_html,
+                        inst.long_description_html.get()
+                    );
+                    assert_eq!(
+                        &newinst.short_description_html,
+                        inst.short_description_html.get()
+                    );
                 });
 
             let page = Instance::page(conn, (0, 2)).unwrap();
@@ -292,7 +301,9 @@ pub(crate) mod tests {
             let page2 = &page[1];
             assert!(page1.public_domain <= page2.public_domain);
 
-            let mut last_domaine: String = Instance::page(conn, (0, 1)).unwrap()[0].public_domain.clone();
+            let mut last_domaine: String = Instance::page(conn, (0, 1)).unwrap()[0]
+                .public_domain
+                .clone();
             for i in 1..inserted.len() as i32 {
                 let page = Instance::page(conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
@@ -326,11 +337,13 @@ pub(crate) mod tests {
                 0
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)).unwrap(),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain))
+                    .unwrap(),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)).unwrap(),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain))
+                    .unwrap(),
                 Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
@@ -340,11 +353,13 @@ pub(crate) mod tests {
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.blocked, blocked);
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain)).unwrap(),
+                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain))
+                    .unwrap(),
                 inst.blocked
             );
             assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain)).unwrap(),
+                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain))
+                    .unwrap(),
                 Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
                     .map(|inst| inst.blocked)
                     .unwrap_or(false)
@@ -375,7 +390,8 @@ pub(crate) mod tests {
                 false,
                 SafeString::new("[short](#link)"),
                 SafeString::new("[long_description](/with_link)"),
-            ).unwrap();
+            )
+            .unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.name, "NewName".to_owned());
             assert_eq!(inst.open_registrations, false);

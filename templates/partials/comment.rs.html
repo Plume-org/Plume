@@ -5,12 +5,12 @@
 @(ctx: BaseContext, comment_tree: &CommentTree, in_reply_to: Option<&str>, blog: &str, slug: &str)
 
 @if let Some(ref comm) = Some(&comment_tree.comment) {
-@if let Some(author) = comm.get_author(ctx.0).ok() {
+@if let Ok(author) = comm.get_author(ctx.0) {
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)">
         @avatar(ctx.0, &author, Size::Small, true, ctx.1)
         <span class="display-name p-name">@author.name()</span>
-        <small>@&author.fqn</small>
+        <small>@author.fqn</small>
 	    </a>
     @if let Some(ref ap_url) = comm.ap_url {
         <a class="u-url" href="@ap_url"></a>
