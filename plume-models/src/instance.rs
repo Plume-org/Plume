@@ -128,8 +128,8 @@ impl Instance {
         short_description: SafeString,
         long_description: SafeString,
     ) -> Result<()> {
-        let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain);
-        let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain);
+        let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain, true);
+        let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain, false);
         diesel::update(self)
             .set((
                 instances::name.eq(name),

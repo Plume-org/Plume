@@ -1,5 +1,6 @@
 use activitypub::collection::OrderedCollection;
 use atom_syndication::{Entry, FeedBuilder};
+use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
     request::LenientForm,
@@ -11,7 +12,10 @@ use validator::{Validate, ValidationError, ValidationErrors};
 
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
-use plume_models::{blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, posts::Post};
+use plume_models::{
+    blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, medias::*, posts::Post,
+    safe_string::SafeString, users::User, Connection,
+};
 use routes::{errors::ErrorPage, Page, PlumeRocket};
 use template_utils::Ructe;
 
@@ -28,13 +32,10 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
 
     Ok(render!(blogs::details(
         &(&*conn, &intl.catalog, user.clone()),
-        blog.clone(),
+        blog,
         authors,
-        articles_count,
         page.0,
         Page::total(articles_count as i32),
-        user.and_then(|x| x.is_author_in(&*conn, &blog).ok())
-            .unwrap_or(false),
         posts
     )))
 }
@@ -166,6 +167,141 @@ pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
         Err(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, user),
             i18n!(intl.catalog, "You are not allowed to delete this blog.")
+        )))
+    }
+}
+
+#[derive(FromForm, Validate)]
+pub struct EditForm {
+    #[validate(custom(function = "valid_slug", message = "Invalid name"))]
+    pub title: String,
+    pub summary: String,
+    pub icon: Option<i32>,
+    pub banner: Option<i32>,
+}
+
+#[get("/~/<name>/edit")]
+pub fn edit(
+    conn: DbConn,
+    name: String,
+    user: Option<User>,
+    intl: I18n,
+) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_by_fqn(&*conn, &name)?;
+    if user
+        .clone()
+        .and_then(|u| u.is_author_in(&*conn, &blog).ok())
+        .unwrap_or(false)
+    {
+        let user = user.expect("blogs::edit: User was None while it shouldn't");
+        let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
+        Ok(render!(blogs::edit(
+            &(&*conn, &intl.catalog, Some(user)),
+            &blog,
+            medias,
+            &EditForm {
+                title: blog.title.clone(),
+                summary: blog.summary.clone(),
+                icon: blog.icon_id,
+                banner: blog.banner_id,
+            },
+            ValidationErrors::default()
+        )))
+    } else {
+        // TODO actually return 403 error code
+        Ok(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user),
+            i18n!(intl.catalog, "You are not allowed to edit this blog.")
+        )))
+    }
+}
+
+/// Returns true if the media is owned by `user` and is a picture
+fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
+    if let Ok(media) = Media::get(conn, id) {
+        media.owner_id == user.id && media.category() == MediaCategory::Image
+    } else {
+        false
+    }
+}
+
+#[put("/~/<name>/edit", data = "<form>")]
+pub fn update(
+    conn: DbConn,
+    name: String,
+    user: Option<User>,
+    intl: I18n,
+    form: LenientForm<EditForm>,
+) -> Result<Redirect, Ructe> {
+    let mut blog = Blog::find_by_fqn(&*conn, &name).expect("blog::update: blog not found");
+    if user
+        .clone()
+        .and_then(|u| u.is_author_in(&*conn, &blog).ok())
+        .unwrap_or(false)
+    {
+        let user = user.expect("blogs::edit: User was None while it shouldn't");
+        form.validate()
+            .and_then(|_| {
+                if let Some(icon) = form.icon {
+                    if !check_media(&*conn, icon, &user) {
+                        let mut errors = ValidationErrors::new();
+                        errors.add(
+                            "",
+                            ValidationError {
+                                code: Cow::from("icon"),
+                                message: Some(Cow::from(i18n!(
+                                    intl.catalog,
+                                    "You can't use this media as blog icon."
+                                ))),
+                                params: HashMap::new(),
+                            },
+                        );
+                        return Err(errors);
+                    }
+                }
+
+                if let Some(banner) = form.banner {
+                    if !check_media(&*conn, banner, &user) {
+                        let mut errors = ValidationErrors::new();
+                        errors.add(
+                            "",
+                            ValidationError {
+                                code: Cow::from("banner"),
+                                message: Some(Cow::from(i18n!(
+                                    intl.catalog,
+                                    "You can't use this media as blog banner."
+                                ))),
+                                params: HashMap::new(),
+                            },
+                        );
+                        return Err(errors);
+                    }
+                }
+
+                blog.title = form.title.clone();
+                blog.summary = form.summary.clone();
+                blog.summary_html = SafeString::new(&utils::md_to_html(&form.summary, "", true).0);
+                blog.icon_id = form.icon;
+                blog.banner_id = form.banner;
+                blog.save_changes::<Blog>(&*conn)
+                    .expect("Couldn't save blog changes");
+                Ok(Redirect::to(uri!(details: name = name, page = _)))
+            })
+            .map_err(|err| {
+                let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
+                render!(blogs::edit(
+                    &(&*conn, &intl.catalog, Some(user)),
+                    &blog,
+                    medias,
+                    &*form,
+                    err
+                ))
+            })
+    } else {
+        // TODO actually return 403 error code
+        Err(render!(errors::not_authorized(
+            &(&*conn, &intl.catalog, user),
+            i18n!(intl.catalog, "You are not allowed to edit this blog.")
         )))
     }
 }

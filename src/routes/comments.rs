@@ -44,6 +44,7 @@ pub fn create(
                 &Instance::get_local(&conn)
                     .expect("comments::create: local instance error")
                     .public_domain,
+                true,
             );
             let comm = Comment::insert(
                 &*conn,

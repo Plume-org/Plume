@@ -44,6 +44,18 @@ msgid "You are not allowed to delete this blog."
 msgstr "Vostede non é autora en este blog."
 
 #, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "Vostede non é autora en este blog."
+
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Vostede non é autora en este blog."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Vostede non é autora en este blog."
+
+#, fuzzy
 msgid "You need to be logged in order to like a post"
 msgstr "Debe estar conectada para gustar unha entrada"
 
@@ -405,6 +417,13 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr "Lea o detalle das normas"
 
+msgid "None"
+msgstr ""
+
+#, fuzzy
+msgid "No description"
+msgstr "Descrición longa"
+
 msgid "View all"
 msgstr "Ver todos"
 
@@ -572,9 +591,6 @@ msgstr "Deixar baldeiro si non hai ningunha"
 msgid "Illustration"
 msgstr "Administración"
 
-msgid "None"
-msgstr ""
-
 msgid "This is a draft, don't publish it yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
@@ -697,6 +713,39 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Lamentálmolo. Si cree que é un bug, infórmenos por favor."
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "Editar"
+
+msgid "Description"
+msgstr "Descrición"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "Subir"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Crear blog"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Sexa coidadosa, as accións tomadas non se poden restablecer."
+
+#, fuzzy
+msgid "Permanently delete this blog"
+msgstr "Borrar este blog"
+
+#, fuzzy
 msgid "New Blog"
 msgstr "Novo blog"
 
@@ -706,31 +755,20 @@ msgstr "Crear un blog"
 msgid "Create blog"
 msgstr "Crear blog"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Novo artigo"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Unha autora en este blog: "
 msgstr[1] "{0} autoras en este blog: "
 
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Un artigo en este blog"
-msgstr[1] "{0} artigos en este blog"
-
 msgid "No posts to see here yet."
 msgstr "Aínda non hai entradas publicadas"
-
-msgid "New article"
-msgstr "Novo artigo"
-
-#, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Sexa coidadosa, as accións tomadas non se poden restablecer."
-
-#, fuzzy
-msgid "Permanently delete this blog"
-msgstr "Borrar este blog"
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -758,9 +796,6 @@ msgstr ""
 
 msgid "Media upload"
 msgstr "Subir medios"
-
-msgid "Description"
-msgstr "Descrición"
 
 #, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
@@ -794,6 +829,12 @@ msgstr "Copie para incrustar este contido nos seus artigos"
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Utilizar como avatar"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Un artigo en este blog"
+#~ msgstr[1] "{0} artigos en este blog"
 
 #, fuzzy
 #~ msgid "{0}'s followers"

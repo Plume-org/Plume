@@ -1,0 +1,25 @@
+@use template_utils::*;
+@use plume_models::medias::*;
+
+@(ctx: BaseContext, id: &str, title: String, optional: bool, medias: Vec<Media>, selected: Option<i32>)
+
+<label for="@id">
+	@title
+	@if optional {
+		<small>@i18n!(ctx.1, "Optional")</small>
+	}
+</label>
+<select id="@id" name="@id">
+    <option value="none" @if selected.is_none() { selected }>@i18n!(ctx.1, "None")</option>
+    @for media in medias {
+        @if media.category() == MediaCategory::Image {
+            <option value="@media.id" @if selected.map(|c| c == media.id).unwrap_or(false) { selected }>
+                @if !media.alt_text.is_empty() {
+                    @media.alt_text
+                } else {
+                    @media.content_warning.unwrap_or(i18n!(ctx.1, "No description"))
+                }
+            </option>
+        }
+    }
+</select>

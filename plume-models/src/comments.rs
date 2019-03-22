@@ -106,6 +106,7 @@ impl Comment {
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
             &Instance::get_local(conn)?.public_domain,
+            true,
         );
 
         let author = User::get(conn, self.author_id)?;

@@ -65,7 +65,9 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
 }
 
 fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let path = args.value_of("path").map(|p| Path::new(p).join("search_index"))
+    let path = args
+        .value_of("path")
+        .map(|p| Path::new(p).join("search_index"))
         .unwrap_or_else(|| Path::new(&CONFIG.search_index).to_path_buf());
     let force = args.is_present("force");
 

@@ -129,3 +129,7 @@ form.new-post {
   input[type="submit"]:hover { background: $lightgray; }
   -webkit-appearance: none;
 }
+
+.button + .button {
+  margin-left: 1em;
+}

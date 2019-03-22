@@ -263,6 +263,7 @@ pub fn update(
                 &Instance::get_local(&conn)
                     .expect("posts::update: Error getting local instance")
                     .public_domain,
+                false,
             );
 
             // update publication date if when this article is no longer a draft
@@ -422,6 +423,7 @@ pub fn create(
             &Instance::get_local(&conn)
                 .expect("post::create: local instance error")
                 .public_domain,
+            false,
         );
 
         let searcher = rockets.searcher;
