@@ -1,4 +1,3 @@
-use rocket::Config as RocketConfig;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::env::{self, var};

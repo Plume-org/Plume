@@ -32,6 +32,7 @@ use {Connection, Error, Result, CONFIG};
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
+#[changeset_options(treat_none_as_null = "true")]
 pub struct Blog {
     pub id: i32,
     pub actor_id: String,
