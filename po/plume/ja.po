@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 05:14\n"
+"PO-Revision-Date: 2019-03-22 19:06\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -16,95 +16,107 @@ msgstr ""
 "X-Crowdin-Language: ja\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-# src/template_utils.rs:34
+# src/template_utils.rs:68
 msgid "{0} commented your article."
 msgstr "{0} さんがあなたの投稿にコメントしました。"
 
-# src/template_utils.rs:35
+# src/template_utils.rs:69
 msgid "{0} is subscribed to you."
 msgstr "{0} さんがあなたをフォローしました。"
 
-# src/template_utils.rs:36
+# src/template_utils.rs:70
 msgid "{0} liked your article."
 msgstr "{0} さんがあなたの投稿にいいねしました。"
 
-# src/template_utils.rs:37
+# src/template_utils.rs:71
 msgid "{0} mentioned you."
 msgstr "{0} さんがあなたをメンションしました。"
 
-# src/template_utils.rs:38
+# src/template_utils.rs:72
 msgid "{0} boosted your article."
 msgstr "{0} さんがあなたの投稿をブーストしました。"
 
-# src/template_utils.rs:68
+# src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "{0} さんのアバター"
 
-# src/routes/blogs.rs:64
+# src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
 msgstr "新しいブログを作成するにはログインが必要です"
 
-# src/routes/blogs.rs:134
+# src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
 msgstr "このブログを削除する権限がありません。"
 
-# src/routes/likes.rs:41
+# src/routes/blogs.rs:214
+msgid "You are not allowed to edit this blog."
+msgstr ""
+
+# src/routes/blogs.rs:253
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/routes/blogs.rs:271
+msgid "You can't use this media as blog banner."
+msgstr ""
+
+# src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
 msgstr "投稿をいいねするにはログインが必要です"
 
-# src/routes/notifications.rs:23
+# src/routes/notifications.rs:29
 msgid "You need to be logged in order to see your notifications"
 msgstr "通知を表示するにはログインが必要です"
 
-# src/routes/posts.rs:81
+# src/routes/posts.rs:92
 msgid "This post isn't published yet."
 msgstr "この投稿はまだ公開されていません。"
 
-# src/routes/posts.rs:100
+# src/routes/posts.rs:120
 msgid "You need to be logged in order to write a new post"
 msgstr "新しい投稿を書くにはログインが必要です"
 
-# src/routes/posts.rs:113
+# src/routes/posts.rs:138
 msgid "You are not author in this blog."
 msgstr "あなたはこのブログの投稿者ではありません。"
 
-# src/routes/posts.rs:119
+# src/routes/posts.rs:145
 msgid "New post"
 msgstr "新しい投稿"
 
-# src/routes/posts.rs:156
+# src/routes/posts.rs:190
 msgid "Edit {0}"
 msgstr "{0} を編集"
 
-# src/routes/reshares.rs:41
+# src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
 msgstr "投稿を再共有するにはログインが必要です"
 
-# src/routes/session.rs:161
+# src/routes/session.rs:181
 msgid "Password reset"
 msgstr "パスワードのリセット"
 
-# src/routes/session.rs:162
+# src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
 msgstr "こちらのリンクから、パスワードをリセットできます: {0}"
 
-# src/routes/session.rs:222
+# src/routes/session.rs:259
 msgid "Your password was successfully reset."
 msgstr "パスワードが正常にリセットされました。"
 
-# src/routes/session.rs:224
+# src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
 msgstr "申し訳ありませんが、リンクの有効期限が切れています。もう一度お試しください"
 
-# src/routes/user.rs:126
+# src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
 msgstr "ダッシュボードにアクセスするにはログインが必要です"
 
-# src/routes/user.rs:159
+# src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
 msgstr "誰かをフォローするにはログインが必要です"
 
-# src/routes/user.rs:240
+# src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
 msgstr "自分のプロフィールを編集するにはログインが必要です"
 
@@ -192,11 +204,11 @@ msgstr "{} の投稿"
 msgid "Nothing to see here yet. Try to subscribe to more people."
 msgstr "ここに表示できるものはまだありません。もっとたくさんの人をフォローしてみましょう。"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Name"
 msgstr "名前"
 
-# src/template_utils.rs:146
+# src/template_utils.rs:220
 msgid "Optional"
 msgstr "省略可"
 
@@ -212,7 +224,7 @@ msgstr "Markdown 記法に対応しています。"
 msgid "Long description"
 msgstr "長い説明"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Default article license"
 msgstr "投稿のデフォルトのライセンス"
 
@@ -249,15 +261,14 @@ msgstr "アバターを変更するには、ギャラリーでアップロード
 msgid "Upload an avatar"
 msgstr "アバターをアップロード"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Display name"
 msgstr "表示名"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Email"
 msgstr "メールアドレス"
 
-# src/template_utils.rs:144
 msgid "Summary"
 msgstr "概要"
 
@@ -303,15 +314,15 @@ msgstr "アカウントを作成"
 msgid "Create an account"
 msgstr "アカウントを作成"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username"
 msgstr "ユーザー名"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password"
 msgstr "パスワード"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Password confirmation"
 msgstr "パスワードの確認"
 
@@ -381,6 +392,12 @@ msgstr "ユーザー登録者数 <em>{0}</em> 人"
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
 
+msgid "None"
+msgstr "なし"
+
+msgid "No description"
+msgstr ""
+
 msgid "View all"
 msgstr "すべて表示"
 
@@ -396,71 +413,71 @@ msgstr "検索用語"
 msgid "Advanced search"
 msgstr "高度な検索"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr "投稿のタイトルに一致する語句"
 
 msgid "Title"
 msgstr "タイトル"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Subtitle matching these words"
 msgstr "サブタイトルに一致する語句"
 
 msgid "Subtitle - byline"
 msgstr "サブタイトル - 投稿者名"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Content matching these words"
 msgstr "内容に一致する語句"
 
 msgid "Body content"
 msgstr "本文の内容"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "From this date"
 msgstr "この日付以降を検索"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "To this date"
 msgstr "この日付以前を検索"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Containing these tags"
 msgstr "含まれるタグ"
 
 msgid "Tags"
 msgstr "タグ"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these instances"
 msgstr "以下のいずれかのインスタンスに投稿"
 
 msgid "Instance domain"
 msgstr "インスタンスのドメイン"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted by one of these authors"
 msgstr "以下のいずれかの投稿者が投稿"
 
 msgid "Authors"
 msgstr "投稿者"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr "以下のいずれかのブログに投稿"
 
 msgid "Blog title"
 msgstr "ブログのタイトル"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Written in this language"
 msgstr "投稿の言語"
 
 msgid "Language"
 msgstr "言語"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Published under this license"
 msgstr "適用されているライセンス"
 
@@ -482,11 +499,11 @@ msgstr "これ以上の検索結果はありません"
 msgid "Reset your password"
 msgstr "パスワードをリセット"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "New password"
 msgstr "新しいパスワード"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Confirmation"
 msgstr "確認"
 
@@ -499,7 +516,7 @@ msgstr "受信トレイを確認してください！"
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr "指定された宛先に、パスワードをリセットするためのリンクを記載したメールを送信しました。"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "E-mail"
 msgstr "メール"
 
@@ -509,14 +526,14 @@ msgstr "パスワードをリセットするリンクを送信"
 msgid "Login"
 msgstr "ログイン"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Username or email"
 msgstr "ユーザー名またはメールアドレス"
 
 msgid "Publish"
 msgstr "公開"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "サブタイトル"
 
@@ -529,23 +546,20 @@ msgstr "メディアをギャラリーにアップロードして、その Markd
 msgid "Upload media"
 msgstr "メディアをアップロード"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Tags, separated by commas"
 msgstr "タグ (コンマ区切り)"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "License"
 msgstr "ライセンス"
 
-# src/template_utils.rs:148
+# src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
 msgstr "すべての権利を保持するには空欄にしてください"
 
 msgid "Illustration"
 msgstr "図"
-
-msgid "None"
-msgstr "なし"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "これは下書きなので、まだ公開しないでください。"
@@ -600,7 +614,7 @@ msgstr "この投稿と関わるには、ログインするか Fediverse アカ�
 msgid "Comments"
 msgstr "コメント"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Content warning"
 msgstr "コンテンツの警告"
 
@@ -646,6 +660,33 @@ msgstr "サーバー側で何らかの問題が発生しました。"
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
 
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr "説明"
+
+msgid "You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "ここで行われた操作は元に戻せません。十分注意してください。"
+
+msgid "Permanently delete this blog"
+msgstr "このブログを完全に削除"
+
 msgid "New Blog"
 msgstr "新しいブログ"
 
@@ -655,25 +696,18 @@ msgstr "ブログを作成"
 msgid "Create blog"
 msgstr "ブログを作成"
 
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "このブログには {0} 人の投稿者がいます: "
-
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "このブログには {0} 件の投稿があります"
-
-msgid "No posts to see here yet."
-msgstr "ここには表示できる投稿はまだありません。"
+msgid "{}'s icon"
+msgstr ""
 
 msgid "New article"
 msgstr "新しい投稿"
 
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "ここで行われた操作は元に戻せません。十分注意してください。"
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "このブログには {0} 人の投稿者がいます: "
 
-msgid "Permanently delete this blog"
-msgstr "このブログを完全に削除"
+msgid "No posts to see here yet."
+msgstr "ここには表示できる投稿はまだありません。"
 
 msgid "Articles tagged \"{0}\""
 msgstr "\"{0}\" タグがついた投稿"
@@ -698,9 +732,6 @@ msgstr "詳細"
 
 msgid "Media upload"
 msgstr "メディアのアップロード"
-
-msgid "Description"
-msgstr "説明"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "ライセンス情報と同様に、視覚に障害のある方に役立ちます"
