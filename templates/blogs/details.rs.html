@@ -43,9 +43,8 @@
             <main class="user-summary">
                 <p>
                     @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
-                    @for author in authors {
-                        <a class="author p-author" href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
-                    }
+                    @for (i, author) in authors.iter().enumerate() {@if i >= 1 {, }
+                    <a class="author p-author" href="@uri!(user::details: name = &author.fqn)">@author.name()</a>}
                 </p>
                 @Html(blog.summary_html.clone())
             </main>
