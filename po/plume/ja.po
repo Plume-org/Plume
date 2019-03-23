@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-22 19:06\n"
+"PO-Revision-Date: 2019-03-23 02:33\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -50,15 +50,15 @@ msgstr "このブログを削除する権限がありません。"
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "このブログを編集する権限がありません。"
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as blog icon."
-msgstr ""
+msgstr "このメディアはブログアイコンに使用できません。"
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as blog banner."
-msgstr ""
+msgstr "このメディアはブログバナーに使用できません。"
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
@@ -396,7 +396,7 @@ msgid "None"
 msgstr "なし"
 
 msgid "No description"
-msgstr ""
+msgstr "説明がありません"
 
 msgid "View all"
 msgstr "すべて表示"
@@ -661,25 +661,25 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "\"{}\" を編集"
 
 msgid "Description"
 msgstr "説明"
 
 msgid "You can upload images to your gallery, to use them as blog icons or banners."
-msgstr ""
+msgstr "ギャラリーにアップロードした画像を、ブログアイコンやバナーに使用できます。"
 
 msgid "Upload images"
-msgstr ""
+msgstr "画像をアップロード"
 
 msgid "Blog icon"
-msgstr ""
+msgstr "ブログアイコン"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "ブログバナー"
 
 msgid "Update blog"
-msgstr ""
+msgstr "ブログを更新"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr "ここで行われた操作は元に戻せません。十分注意してください。"
@@ -697,7 +697,7 @@ msgid "Create blog"
 msgstr "ブログを作成"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "{} さんのアイコン"
 
 msgid "New article"
 msgstr "新しい投稿"
