@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-24 13:14\n"
+"PO-Revision-Date: 2019-03-24 18:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -90,7 +90,7 @@ msgstr "Uprav {0}"
 
 # src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
-msgstr "Musíš byť prihlásený/á, ak chceš zdieľať príspevok"
+msgstr "Ak chceš zdieľať príspevok, musíš byť prihlásený/á"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -114,7 +114,7 @@ msgstr "Musíš byť prihlásený/á, aby si sa dostal/a k svojej nástenke"
 
 # src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
-msgstr "Musíš byť prihlásený/á, ak chceš odoberať niekoho príspevky"
+msgstr "Ak chceš odoberať niekoho príspevky, musíš byť prihlásený/á"
 
 # src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
