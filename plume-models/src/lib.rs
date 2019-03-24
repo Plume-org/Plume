@@ -156,40 +156,6 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub type ApiResult<T> = std::result::Result<T, canapi::Error>;
 
-use rocket::{
-    request::{self, FromRequest, Request},
-    Outcome, State,
-};
-use std::sync::Arc;
-
-/// Common context needed by most routes and operations on models
-pub struct PlumeRocket {
-    pub conn: db_conn::DbConn,
-    pub intl: rocket_i18n::I18n,
-    pub user: Option<users::User>,
-    pub searcher: Arc<search::Searcher>,
-    pub worker: Arc<scheduled_thread_pool::ScheduledThreadPool>,
-}
-
-impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket {
-    type Error = ();
-
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket, ()> {
-        let conn = request.guard::<db_conn::DbConn>()?;
-        let intl = request.guard::<rocket_i18n::I18n>()?;
-        let user = request.guard::<users::User>().succeeded();
-        let worker = request.guard::<State<Arc<scheduled_thread_pool::ScheduledThreadPool>>>()?;
-        let searcher = request.guard::<State<Arc<search::Searcher>>>()?;
-        Outcome::Success(PlumeRocket {
-            conn,
-            intl,
-            user,
-            worker: worker.clone(),
-            searcher: searcher.clone(),
-        })
-    }
-}
-
 /// Adds a function to a model, that returns the first
 /// matching row for a given list of fields.
 ///
@@ -383,12 +349,6 @@ mod tests {
             searcher: Arc::new(search::tests::get_searcher()),
             worker: Arc::new(ScheduledThreadPool::new(2)),
             user: None,
-            intl: rocket_i18n::I18n {
-                catalog: rocket_i18n::Catalog::parse(
-                    &include_bytes!("../../translations/en/LC_MESSAGES/plume.mo")[..],
-                )
-                .unwrap(),
-            },
         }
     }
 }
@@ -409,6 +369,7 @@ pub mod likes;
 pub mod medias;
 pub mod mentions;
 pub mod notifications;
+pub mod plume_rocket;
 pub mod post_authors;
 pub mod posts;
 pub mod reshares;
@@ -417,3 +378,4 @@ pub mod schema;
 pub mod search;
 pub mod tags;
 pub mod users;
+pub use plume_rocket::PlumeRocket;
