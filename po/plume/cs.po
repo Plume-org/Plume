@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-22 19:06\n"
+"PO-Revision-Date: 2019-03-24 12:23\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -247,7 +247,7 @@ msgid "Administred by"
 msgstr "Správcem je"
 
 msgid "Runs Plume {0}"
-msgstr ""
+msgstr "Beží na Plume {0}"
 
 msgid "Edit your account"
 msgstr "Upravit váš účet"
@@ -324,10 +324,10 @@ msgstr "Heslo"
 
 # src/template_utils.rs:217
 msgid "Password confirmation"
-msgstr ""
+msgstr "Potvrzení hesla"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
+msgstr "Omlouváme se, ale registrace je uzavřena na této konkrétní instanci. Můžete však najít jinou."
 
 msgid "Articles"
 msgstr "Články"
@@ -405,27 +405,27 @@ msgid "By {0}"
 msgstr ""
 
 msgid "Draft"
-msgstr ""
+msgstr "Koncept"
 
 msgid "Your query"
-msgstr ""
+msgstr "Váš dotaz"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "Pokročilé vyhledávání"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
-msgstr ""
+msgstr "Nadpis"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
 msgstr ""
 
 msgid "Subtitle - byline"
-msgstr ""
+msgstr "Podnadpis"
 
 # src/template_utils.rs:305
 msgid "Content matching these words"
