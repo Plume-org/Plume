@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-22 19:06\n"
+"PO-Revision-Date: 2019-03-24 07:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -50,15 +50,15 @@ msgstr "Vous n'êtes pas autorisé⋅e à supprimer ce blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Vous n'êtes pas autorisé à éditer ce blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as blog icon."
-msgstr ""
+msgstr "Vous ne pouvez pas utiliser ce média comme icône de blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as blog banner."
-msgstr ""
+msgstr "Vous ne pouvez pas utiliser ce média comme bannière de blog."
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
@@ -396,7 +396,7 @@ msgid "None"
 msgstr "Aucun"
 
 msgid "No description"
-msgstr ""
+msgstr "Aucune description"
 
 msgid "View all"
 msgstr "Tout afficher"
