@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-24 13:14\n"
+"PO-Revision-Date: 2019-03-24 20:08\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -390,19 +390,19 @@ msgid "Home to <em>{0}</em> people"
 msgstr "Domov pro <em>{0}</em> lidí"
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Přečtěte si podrobná pravidla"
 
 msgid "None"
-msgstr ""
+msgstr "Žádné"
 
 msgid "No description"
-msgstr ""
+msgstr "Bez popisu"
 
 msgid "View all"
-msgstr ""
+msgstr "Zobrazit všechny"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Od {0}"
 
 msgid "Draft"
 msgstr "Koncept"
@@ -447,7 +447,7 @@ msgid "Containing these tags"
 msgstr ""
 
 msgid "Tags"
-msgstr ""
+msgstr "Tagy"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these instances"
