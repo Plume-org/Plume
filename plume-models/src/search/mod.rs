@@ -1,23 +1,22 @@
-mod searcher;
 mod query;
+mod searcher;
 mod tokenizer;
-pub use self::searcher::*;
 pub use self::query::PlumeQuery as Query;
-
+pub use self::searcher::*;
 
 #[cfg(test)]
 pub(crate) mod tests {
     use super::{Query, Searcher};
-    use std::env::temp_dir;
     use diesel::Connection;
+    use std::env::temp_dir;
+    use std::str::FromStr;
 
-    use plume_common::utils::random_hex;
     use blogs::tests::fill_database;
-    use posts::{NewPost, Post};
+    use plume_common::utils::random_hex;
     use post_authors::*;
+    use posts::{NewPost, Post};
     use safe_string::SafeString;
     use tests::db;
-
 
     pub(crate) fn get_searcher() -> Searcher {
         let dir = temp_dir().join("plume-test");
@@ -25,7 +24,8 @@ pub(crate) mod tests {
             Searcher::open(&dir)
         } else {
             Searcher::create(&dir)
-        }.unwrap()
+        }
+        .unwrap()
     }
 
     #[test]
@@ -64,7 +64,7 @@ pub(crate) mod tests {
             ("after:2017-11-05 after:2018-01-01", "after:2018-01-01"),
         ];
         for (source, res) in vector {
-            assert_eq!(&Query::from_str(source).to_string(), res);
+            assert_eq!(&Query::from_str(source).unwrap().to_string(), res);
             assert_eq!(Query::new().parse_query(source).to_string(), res);
         }
     }
@@ -96,7 +96,9 @@ pub(crate) mod tests {
 
     #[test]
     fn open() {
-        {get_searcher()};//make sure $tmp/plume-test-tantivy exist
+        {
+            get_searcher()
+        }; //make sure $tmp/plume-test-tantivy exist
 
         let dir = temp_dir().join("plume-test");
         Searcher::open(&dir).unwrap();
@@ -107,8 +109,10 @@ pub(crate) mod tests {
         let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
 
         assert!(Searcher::open(&dir).is_err());
-        {Searcher::create(&dir).unwrap();}
-        Searcher::open(&dir).unwrap();//verify it's well created
+        {
+            Searcher::create(&dir).unwrap();
+        }
+        Searcher::open(&dir).unwrap(); //verify it's well created
     }
 
     #[test]
@@ -121,37 +125,56 @@ pub(crate) mod tests {
 
             let title = random_hex()[..8].to_owned();
 
-            let mut post = Post::insert(conn, NewPost {
-                blog_id: blog.id,
-                slug: title.clone(),
-                title: title.clone(),
-                content: SafeString::new(""),
-                published: true,
-                license: "CC-BY-SA".to_owned(),
-                ap_url: "".to_owned(),
-                creation_date: None,
-                subtitle: "".to_owned(),
-                source: "".to_owned(),
-                cover_id: None,
-            }, &searcher).unwrap();
-            PostAuthor::insert(conn, NewPostAuthor {
-                post_id: post.id,
-                author_id: author.id,
-            }).unwrap();
+            let mut post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog.id,
+                    slug: title.clone(),
+                    title: title.clone(),
+                    content: SafeString::new(""),
+                    published: true,
+                    license: "CC-BY-SA".to_owned(),
+                    ap_url: "".to_owned(),
+                    creation_date: None,
+                    subtitle: "".to_owned(),
+                    source: "".to_owned(),
+                    cover_id: None,
+                },
+                &searcher,
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: author.id,
+                },
+            )
+            .unwrap();
 
             searcher.commit();
-            assert_eq!(searcher.search_document(conn, Query::from_str(&title), (0,1))[0].id, post.id);
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
+                post.id
+            );
 
             let newtitle = random_hex()[..8].to_owned();
             post.title = newtitle.clone();
             post.update(conn, &searcher).unwrap();
             searcher.commit();
-            assert_eq!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1))[0].id, post.id);
-            assert!(searcher.search_document(conn, Query::from_str(&title), (0,1)).is_empty());
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
+                post.id
+            );
+            assert!(searcher
+                .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
+                .is_empty());
 
             post.delete(conn, &searcher).unwrap();
             searcher.commit();
-            assert!(searcher.search_document(conn, Query::from_str(&newtitle), (0,1)).is_empty());
+            assert!(searcher
+                .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
+                .is_empty());
 
             Ok(())
         });

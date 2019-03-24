@@ -10,7 +10,7 @@ use plume_common::activity_pub::{
 use posts::Post;
 use schema::likes;
 use users::User;
-use {Connection, Context, Error, Result};
+use {Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Like {
@@ -38,21 +38,13 @@ impl Like {
     pub fn to_activity(&self, conn: &Connection) -> Result<activity::Like> {
         let mut act = activity::Like::default();
         act.like_props
-            .set_actor_link(
-                User::get(conn, self.user_id)?
-                    .into_id(),
-            )?;
+            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
         act.like_props
-            .set_object_link(
-                Post::get(conn, self.post_id)?
-                    .into_id(),
-            )?;
+            .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
-        act.object_props
-            .set_id_string(self.ap_url.clone())?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_id_string(self.ap_url.clone())?;
 
         Ok(act)
     }
@@ -75,25 +67,23 @@ impl Like {
     pub fn build_undo(&self, conn: &Connection) -> Result<activity::Undo> {
         let mut act = activity::Undo::default();
         act.undo_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id(),)?;
-        act.undo_props
-            .set_object_object(self.to_activity(conn)?)?;
+            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
+        act.undo_props.set_object_object(self.to_activity(conn)?)?;
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
 
         Ok(act)
     }
 }
 
-impl<'a> AsObject<User, activity::Like, &Context<'a>> for Post {
+impl AsObject<User, activity::Like, &PlumeRocket> for Post {
     type Error = Error;
     type Output = Like;
 
-    fn activity(self, c: &Context, actor: User, id: &str) -> Result<Like> {
+    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             &c.conn,
             NewLike {
@@ -107,26 +97,36 @@ impl<'a> AsObject<User, activity::Like, &Context<'a>> for Post {
     }
 }
 
-impl<'a> FromId<Context<'a>> for Like {
+impl FromId<PlumeRocket> for Like {
     type Error = Error;
     type Object = activity::Like;
 
-    fn from_db(c: &Context, id: &str) -> Result<Self> {
-        Like::find_by_ap_url(c.conn, id)
+    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+        Like::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &Context, act: activity::Like) -> Result<Self> {
+    fn from_activity(c: &PlumeRocket, act: activity::Like) -> Result<Self> {
         let res = Like::insert(
             &c.conn,
             NewLike {
-                post_id: Post::from_id(c, &{
-                    let res: String = act.like_props.object_link::<Id>()?.into();
-                    res
-                }, None)?.id,
-                user_id: User::from_id(c, &{
-                    let res: String = act.like_props.actor_link::<Id>()?.into();
-                    res
-                }, None)?.id,
+                post_id: Post::from_id(
+                    c,
+                    &{
+                        let res: String = act.like_props.object_link::<Id>()?.into();
+                        res
+                    },
+                    None,
+                )?
+                .id,
+                user_id: User::from_id(
+                    c,
+                    &{
+                        let res: String = act.like_props.actor_link::<Id>()?.into();
+                        res
+                    },
+                    None,
+                )?
+                .id,
                 ap_url: act.object_props.id_string()?,
             },
         )?;
@@ -135,20 +135,18 @@ impl<'a> FromId<Context<'a>> for Like {
     }
 }
 
-impl<'a> AsObject<User, activity::Undo, &Context<'a>> for Like {
+impl AsObject<User, activity::Undo, &PlumeRocket> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
-        let conn = c.conn;
+    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+        let conn = &*c.conn;
         if actor.id == self.user_id {
-            diesel::delete(&self)
-                .execute(conn)?;
+            diesel::delete(&self).execute(conn)?;
 
             // delete associated notification if any
             if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
-                diesel::delete(&notif)
-                    .execute(conn)?;
+                diesel::delete(&notif).execute(conn)?;
             }
             Ok(())
         } else {
@@ -164,7 +162,7 @@ impl NewLike {
         NewLike {
             post_id: p.id,
             user_id: u.id,
-            ap_url
+            ap_url,
         }
     }
 }

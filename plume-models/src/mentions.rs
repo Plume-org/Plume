@@ -2,11 +2,11 @@ use activitypub::link;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
-use Context;
 use notifications::*;
 use posts::Post;
 use schema::mentions;
 use users::User;
+use PlumeRocket;
 use {Connection, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
@@ -37,11 +37,15 @@ impl Mention {
     }
 
     pub fn get_post(&self, conn: &Connection) -> Result<Post> {
-        self.post_id.ok_or(Error::NotFound).and_then(|id| Post::get(conn, id))
+        self.post_id
+            .ok_or(Error::NotFound)
+            .and_then(|id| Post::get(conn, id))
     }
 
     pub fn get_comment(&self, conn: &Connection) -> Result<Comment> {
-        self.comment_id.ok_or(Error::NotFound).and_then(|id| Comment::get(conn, id))
+        self.comment_id
+            .ok_or(Error::NotFound)
+            .and_then(|id| Comment::get(conn, id))
     }
 
     pub fn get_user(&self, conn: &Connection) -> Result<User> {
@@ -51,24 +55,18 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(c: &Context, ment: &str) -> Result<link::Mention> {
+    pub fn build_activity(c: &PlumeRocket, ment: &str) -> Result<link::Mention> {
         let user = User::find_by_fqn(c, ment)?;
         let mut mention = link::Mention::default();
-        mention
-            .link_props
-            .set_href_string(user.ap_url)?;
-        mention
-            .link_props
-            .set_name_string(format!("@{}", ment))?;
+        mention.link_props.set_href_string(user.ap_url)?;
+        mention.link_props.set_name_string(format!("@{}", ment))?;
         Ok(mention)
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
         let user = self.get_mentioned(conn)?;
         let mut mention = link::Mention::default();
-        mention
-            .link_props
-            .set_href_string(user.ap_url.clone())?;
+        mention.link_props.set_href_string(user.ap_url.clone())?;
         mention
             .link_props
             .set_name_string(format!("@{}", user.fqn))?;
@@ -138,6 +136,7 @@ impl Mention {
                 object_id: self.id,
                 user_id: m.id,
             },
-        ).map(|_| ())
+        )
+        .map(|_| ())
     }
 }

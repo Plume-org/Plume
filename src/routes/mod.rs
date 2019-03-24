@@ -1,13 +1,18 @@
+#![warn(clippy::too_many_arguments)]
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
-    http::{RawStr, Status, uri::{FromUriParam, Query}},
-    Outcome,
+    http::{
+        hyper::header::{CacheControl, CacheDirective},
+        uri::{FromUriParam, Query},
+        RawStr, Status,
+    },
     request::{self, FromFormValue, FromRequest, Request},
     response::NamedFile,
+    Outcome,
 };
 use std::path::{Path, PathBuf};
 
-use plume_models::{Connection, posts::Post};
+use plume_models::{posts::Post, Connection};
 
 const ITEMS_PER_PAGE: i32 = 12;
 
@@ -42,7 +47,7 @@ impl Page {
         }
     }
 
-    pub fn limits(&self) -> (i32, i32) {
+    pub fn limits(self) -> (i32, i32) {
         ((self.0 - 1) * ITEMS_PER_PAGE, self.0 * ITEMS_PER_PAGE)
     }
 }
@@ -60,7 +65,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for ContentLen {
     }
 }
 
-
 impl Default for Page {
     fn default() -> Self {
         Page(1)
@@ -70,20 +74,33 @@ impl Default for Page {
 pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
     EntryBuilder::default()
         .title(format!("<![CDATA[{}]]>", post.title))
-        .content(ContentBuilder::default()
-            .value(format!("<![CDATA[{}]]>", *post.content.get()))
-            .src(post.ap_url.clone())
-            .content_type("html".to_string())
-            .build().expect("Atom feed: content error"))
-        .authors(post.get_authors(&*conn).expect("Atom feed: author error")
-            .into_iter()
-            .map(|a| PersonBuilder::default()
-                .name(a.display_name)
-                .uri(a.ap_url)
-                .build().expect("Atom feed: author error"))
-            .collect::<Vec<Person>>())
-        .links(vec![LinkBuilder::default().href(post.ap_url).build().expect("Atom feed: link error")])
-        .build().expect("Atom feed: entry error")
+        .content(
+            ContentBuilder::default()
+                .value(format!("<![CDATA[{}]]>", *post.content.get()))
+                .src(post.ap_url.clone())
+                .content_type("html".to_string())
+                .build()
+                .expect("Atom feed: content error"),
+        )
+        .authors(
+            post.get_authors(&*conn)
+                .expect("Atom feed: author error")
+                .into_iter()
+                .map(|a| {
+                    PersonBuilder::default()
+                        .name(a.display_name)
+                        .uri(a.ap_url)
+                        .build()
+                        .expect("Atom feed: author error")
+                })
+                .collect::<Vec<Person>>(),
+        )
+        .links(vec![LinkBuilder::default()
+            .href(post.ap_url)
+            .build()
+            .expect("Atom feed: link error")])
+        .build()
+        .expect("Atom feed: entry error")
 }
 
 pub mod blogs;
@@ -95,13 +112,30 @@ pub mod medias;
 pub mod notifications;
 pub mod posts;
 pub mod reshares;
+pub mod search;
 pub mod session;
 pub mod tags;
 pub mod user;
-pub mod search;
 pub mod well_known;
 
-#[get("/static/<file..>", rank = 2)]
-pub fn static_files(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("static/").join(file)).ok()
+#[derive(Responder)]
+#[response()]
+pub struct CachedFile {
+    inner: NamedFile,
+    cache_control: CacheControl,
+}
+
+#[get("/static/cached/<_build_id>/<file..>", rank = 2)]
+pub fn plume_static_files(file: PathBuf, _build_id: &RawStr) -> Option<CachedFile> {
+    static_files(file)
+}
+
+#[get("/static/<file..>", rank = 3)]
+pub fn static_files(file: PathBuf) -> Option<CachedFile> {
+    NamedFile::open(Path::new("static/").join(file))
+        .ok()
+        .map(|f| CachedFile {
+            inner: f,
+            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+        })
 }

@@ -10,7 +10,7 @@ use plume_common::activity_pub::{
 use posts::Post;
 use schema::reshares;
 use users::User;
-use {Connection, Context, Error, Result};
+use {Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Reshare {
@@ -40,7 +40,11 @@ impl Reshare {
         post_id as i32
     );
 
-    pub fn get_recents_for_author(conn: &Connection, user: &User, limit: i64) -> Result<Vec<Reshare>> {
+    pub fn get_recents_for_author(
+        conn: &Connection,
+        user: &User,
+        limit: i64,
+    ) -> Result<Vec<Reshare>> {
         reshares::table
             .filter(reshares::user_id.eq(user.id))
             .order(reshares::creation_date.desc())
@@ -63,12 +67,10 @@ impl Reshare {
             .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
         act.announce_props
             .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
-        act.object_props
-            .set_id_string(self.ap_url.clone())?;
+        act.object_props.set_id_string(self.ap_url.clone())?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
 
         Ok(act)
     }
@@ -92,25 +94,23 @@ impl Reshare {
         let mut act = Undo::default();
         act.undo_props
             .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.undo_props
-            .set_object_object(self.to_activity(conn)?)?;
+        act.undo_props.set_object_object(self.to_activity(conn)?)?;
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
 
         Ok(act)
     }
 }
 
-impl<'a> AsObject<User, Announce, &Context<'a>> for Post {
+impl AsObject<User, Announce, &PlumeRocket> for Post {
     type Error = Error;
     type Output = Reshare;
 
-    fn activity(self, c: &Context, actor: User, id: &str) -> Result<Reshare> {
-        let conn = c.conn;
+    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Reshare> {
+        let conn = &*c.conn;
         let reshare = Reshare::insert(
             conn,
             NewReshare {
@@ -124,26 +124,36 @@ impl<'a> AsObject<User, Announce, &Context<'a>> for Post {
     }
 }
 
-impl<'a> FromId<Context<'a>> for Reshare {
+impl FromId<PlumeRocket> for Reshare {
     type Error = Error;
     type Object = Announce;
 
-    fn from_db(c: &Context, id: &str) -> Result<Self> {
-        Reshare::find_by_ap_url(c.conn, id)
+    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+        Reshare::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &Context, act: Announce) -> Result<Self> {
+    fn from_activity(c: &PlumeRocket, act: Announce) -> Result<Self> {
         let res = Reshare::insert(
             &c.conn,
             NewReshare {
-                post_id: Post::from_id(c, &{
-                    let res: String = act.announce_props.object_link::<Id>()?.into();
-                    res
-                }, None)?.id,
-                user_id: User::from_id(c, &{
-                    let res: String = act.announce_props.actor_link::<Id>()?.into();
-                    res
-                }, None)?.id,
+                post_id: Post::from_id(
+                    c,
+                    &{
+                        let res: String = act.announce_props.object_link::<Id>()?.into();
+                        res
+                    },
+                    None,
+                )?
+                .id,
+                user_id: User::from_id(
+                    c,
+                    &{
+                        let res: String = act.announce_props.actor_link::<Id>()?.into();
+                        res
+                    },
+                    None,
+                )?
+                .id,
                 ap_url: act.object_props.id_string()?,
             },
         )?;
@@ -152,20 +162,18 @@ impl<'a> FromId<Context<'a>> for Reshare {
     }
 }
 
-impl<'a> AsObject<User, Undo, &Context<'a>> for Reshare {
+impl AsObject<User, Undo, &PlumeRocket> for Reshare {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &Context, actor: User, _id: &str) -> Result<()> {
-        let conn = c.conn;
+    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+        let conn = &*c.conn;
         if actor.id == self.user_id {
-            diesel::delete(&self)
-                .execute(conn)?;
+            diesel::delete(&self).execute(conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
-                diesel::delete(&notif)
-                    .execute(conn)?;
+            if let Ok(notif) = Notification::find(&conn, notification_kind::RESHARE, self.id) {
+                diesel::delete(&notif).execute(conn)?;
             }
 
             Ok(())
@@ -181,7 +189,7 @@ impl NewReshare {
         NewReshare {
             post_id: p.id,
             user_id: u.id,
-            ap_url
+            ap_url,
         }
     }
 }

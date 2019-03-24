@@ -23,8 +23,8 @@
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="h-entry">
-    <h1 class="article p-name">@&article.title</h1>
-    <h2 class="article p-summary">@&article.subtitle</h2>
+    <h1 class="article p-name">@article.title</h1>
+    <h2 class="article p-summary">@article.subtitle</h2>
     <div class="article-info">
         <span class="author">
             @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
@@ -47,7 +47,7 @@
     </div>
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
-	<img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()" />
+        <img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
     }
     <article class="e-content">
         @Html(&article.content)
@@ -76,7 +76,7 @@
 		    <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
 		    <a rel="author" class="u-url" href="@author.ap_url"></a>
 		</h2>
-                <p>@Html(&author.summary)</h2>
+                <p>@Html(&author.summary_html)</h2>
             </div>
 	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
                 <form action="@uri!(user::follow: name = &author.fqn)" method="POST">

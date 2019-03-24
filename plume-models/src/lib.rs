@@ -1,4 +1,6 @@
 #![feature(try_trait)]
+#![feature(never_type)]
+#![feature(custom_attribute)]
 
 extern crate activitypub;
 extern crate ammonia;
@@ -18,8 +20,11 @@ extern crate plume_api;
 extern crate plume_common;
 extern crate reqwest;
 extern crate rocket;
+extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
 extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 #[macro_use]
@@ -32,7 +37,6 @@ extern crate whatlang;
 #[macro_use]
 extern crate diesel_migrations;
 
-use std::env;
 use plume_common::activity_pub::inbox::InboxError;
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
@@ -142,8 +146,7 @@ impl From<std::io::Error> for Error {
 impl From<InboxError<Error>> for Error {
     fn from(err: InboxError<Error>) -> Error {
         match err {
-            InboxError::InvalidActor(Some(e)) |
-            InboxError::InvalidObject(Some(e)) => e,
+            InboxError::InvalidActor(Some(e)) | InboxError::InvalidObject(Some(e)) => e,
             e => Error::Inbox(Box::new(e)),
         }
     }
@@ -153,24 +156,37 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub type ApiResult<T> = std::result::Result<T, canapi::Error>;
 
-/// Context manipulated by models
-pub struct Context<'a> {
-    conn: &'a Connection,
-    searcher: &'a search::Searcher,
+use rocket::{
+    request::{self, FromRequest, Request},
+    Outcome, State,
+};
+use std::sync::Arc;
+
+/// Common context needed by most routes and operations on models
+pub struct PlumeRocket {
+    pub conn: db_conn::DbConn,
+    pub intl: rocket_i18n::I18n,
+    pub user: Option<users::User>,
+    pub searcher: Arc<search::Searcher>,
+    pub worker: Arc<scheduled_thread_pool::ScheduledThreadPool>,
 }
 
-impl<'a> Context<'a> {
-    pub fn build(conn: &'a Connection, searcher: &'a search::Searcher) -> Self {
-        Context {
-            conn: conn,
-            searcher: searcher,
-        }
-    }
-}
+impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket {
+    type Error = ();
 
-impl<'a> Into<&'a Connection> for &Context<'a> {
-    fn into(self) -> &'a Connection {
-        self.conn
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket, ()> {
+        let conn = request.guard::<db_conn::DbConn>()?;
+        let intl = request.guard::<rocket_i18n::I18n>()?;
+        let user = request.guard::<users::User>().succeeded();
+        let worker = request.guard::<State<Arc<scheduled_thread_pool::ScheduledThreadPool>>>()?;
+        let searcher = request.guard::<State<Arc<search::Searcher>>>()?;
+        Outcome::Success(PlumeRocket {
+            conn,
+            intl,
+            user,
+            worker: worker.clone(),
+            searcher: searcher.clone(),
+        })
     }
 }
 
@@ -266,9 +282,9 @@ macro_rules! get {
 /// ```
 macro_rules! insert {
     ($table:ident, $from:ident) => {
-        insert!($table, $from, |x, _conn| { Ok(x) });
+        insert!($table, $from, |x, _conn| Ok(x));
     };
-    ($table:ident, $from:ident, |$val:ident, $conn:ident | $after:block) => {
+    ($table:ident, $from:ident, |$val:ident, $conn:ident | $( $after:tt )+) => {
         last!($table);
 
         pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
@@ -278,7 +294,7 @@ macro_rules! insert {
             #[allow(unused_mut)]
             let mut $val = Self::last(conn)?;
             let $conn = conn;
-            $after
+            $( $after )+
         }
     };
 }
@@ -309,44 +325,25 @@ macro_rules! last {
     };
 }
 
-lazy_static! {
-    pub static ref BASE_URL: String = env::var("BASE_URL").unwrap_or_else(|_| format!(
-        "127.0.0.1:{}",
-        env::var("ROCKET_PORT").unwrap_or_else(|_| String::from("8000"))
-    ));
-    pub static ref USE_HTTPS: bool = env::var("USE_HTTPS").map(|val| val == "1").unwrap_or(true);
-}
-
-#[cfg(not(test))]
-static DB_NAME: &str = "plume";
-#[cfg(test)]
-static DB_NAME: &str = "plume_tests";
-
-#[cfg(all(feature = "postgres", not(feature = "sqlite")))]
-lazy_static! {
-    pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME));
-}
-
-#[cfg(all(feature = "sqlite", not(feature = "postgres")))]
-lazy_static! {
-    pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").unwrap_or_else(|_| format!("{}.sqlite", DB_NAME));
-}
+mod config;
+pub use config::CONFIG;
 
 pub fn ap_url(url: &str) -> String {
-    let scheme = if *USE_HTTPS { "https" } else { "http" };
-    format!("{}://{}", scheme, url)
+    format!("https://{}", url)
 }
 
 #[cfg(test)]
 #[macro_use]
 mod tests {
+    use db_conn;
+    use diesel::r2d2::ConnectionManager;
     #[cfg(feature = "sqlite")]
     use diesel::{dsl::sql_query, RunQueryDsl};
-    use diesel::Connection;
+    use scheduled_thread_pool::ScheduledThreadPool;
+    use search;
+    use std::sync::Arc;
     use Connection as Conn;
-    use DATABASE_URL;
+    use CONFIG;
 
     #[cfg(feature = "sqlite")]
     embed_migrations!("../migrations/sqlite");
@@ -365,13 +362,34 @@ mod tests {
         };
     }
 
-    pub fn db() -> Conn {
-        let conn =
-            Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
-        embedded_migrations::run(&conn).expect("Couldn't run migrations");
-        #[cfg(feature = "sqlite")]
-        sql_query("PRAGMA foreign_keys = on;").execute(&conn).expect("PRAGMA foreign_keys fail");
-        conn
+    pub fn db<'a>() -> db_conn::DbConn {
+        db_conn::DbConn((*DB_POOL).get().unwrap())
+    }
+
+    lazy_static! {
+        static ref DB_POOL: db_conn::DbPool = {
+            let pool = db_conn::DbPool::builder()
+                .connection_customizer(Box::new(db_conn::PragmaForeignKey))
+                .build(ConnectionManager::<Conn>::new(CONFIG.database_url.as_str()))
+                .unwrap();
+            embedded_migrations::run(&*pool.get().unwrap()).expect("Migrations error");
+            pool
+        };
+    }
+
+    pub fn rockets() -> super::PlumeRocket {
+        super::PlumeRocket {
+            conn: db_conn::DbConn((*DB_POOL).get().unwrap()),
+            searcher: Arc::new(search::tests::get_searcher()),
+            worker: Arc::new(ScheduledThreadPool::new(2)),
+            user: None,
+            intl: rocket_i18n::I18n {
+                catalog: rocket_i18n::Catalog::parse(
+                    &include_bytes!("../../translations/en/LC_MESSAGES/plume.mo")[..],
+                )
+                .unwrap(),
+            },
+        }
     }
 }
 
@@ -380,8 +398,8 @@ pub mod api_tokens;
 pub mod apps;
 pub mod blog_authors;
 pub mod blogs;
-pub mod comments;
 pub mod comment_seers;
+pub mod comments;
 pub mod db_conn;
 pub mod follows;
 pub mod headers;
@@ -395,7 +413,7 @@ pub mod post_authors;
 pub mod posts;
 pub mod reshares;
 pub mod safe_string;
-pub mod search;
 pub mod schema;
+pub mod search;
 pub mod tags;
 pub mod users;

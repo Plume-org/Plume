@@ -40,8 +40,24 @@ msgstr ""
 msgid "You need to be logged in order to create a new blog"
 msgstr "Necesitas iniciar sesión para crear un nuevo blog"
 
+# src/routes/blogs.rs:111
+msgid "A blog with the same name already exists."
+msgstr ""
+
 # src/routes/blogs.rs:136
 msgid "You are not allowed to delete this blog."
+msgstr ""
+
+# src/routes/blogs.rs:170
+msgid "You are not allowed to edit this blog."
+msgstr ""
+
+# src/main.rs:1
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/main.rs:1
+msgid "You can't use this media as blog banner."
 msgstr ""
 
 msgid "You need to be logged in order to like a post"
@@ -368,6 +384,12 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
 msgid "View all"
 msgstr ""
 
@@ -504,6 +526,9 @@ msgstr "Iniciar Sesión"
 msgid "Username or email"
 msgstr "Nombre de usuario o correo electrónico"
 
+msgid "Publish"
+msgstr "Publicar"
+
 msgid "Subtitle"
 msgstr ""
 
@@ -531,9 +556,6 @@ msgid "Leave it empty to reserve all rights"
 msgstr ""
 
 msgid "Illustration"
-msgstr ""
-
-msgid "None"
 msgstr ""
 
 msgid "This is a draft, don't publish it yet."
@@ -642,6 +664,35 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 "Disculpe la molestia. Si cree que esto es un defecto, por favor repórtalo."
 
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Crear el blog"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
 #, fuzzy
 msgid "New Blog"
 msgstr "Nuevo blog"
@@ -652,28 +703,20 @@ msgstr "Crear un blog"
 msgid "Create blog"
 msgstr "Crear el blog"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Nueva publicación"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
 msgstr[0] ""
 msgstr[1] ""
 
 #, fuzzy
 msgid "No posts to see here yet."
 msgstr "No hay publicaciones para ver aquí ahora."
-
-msgid "New article"
-msgstr "Nueva publicación"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr ""
 
 msgid "Articles tagged \"{0}\""
 msgstr ""
@@ -697,9 +740,6 @@ msgid "Details"
 msgstr ""
 
 msgid "Media upload"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Useful for visually impaired people, as well as licensing information"
@@ -743,9 +783,6 @@ msgstr ""
 
 #~ msgid "Create a post"
 #~ msgstr "Crear una publicación"
-
-#~ msgid "Publish"
-#~ msgstr "Publicar"
 
 #~ msgid "Follow"
 #~ msgstr "Seguir"

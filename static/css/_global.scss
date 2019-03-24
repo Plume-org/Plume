@@ -4,13 +4,24 @@ html, body {
  	background: $background;
  	color: $black;
  	font-family: $route159;
+        ::selection {
+		background: $lightpurple;
+        }
+	::-moz-selection {
+		background: $lightpurple;
+	}
 }
 
 a, a:visited {
  	color: $purple;
  	text-decoration: none;
 }
-
+a::selection { 
+	color: $white;
+}
+a::-moz-selection {
+	color: $white;
+}
 small {
  	margin-left: 1em;
  	color: transparentize($black, 0.6);
@@ -124,6 +135,10 @@ p.error {
  	flex-direction: row;
  	align-items: center;
   margin: 0px;
+}
+
+.user .avatar.medium {
+  margin-left: 0px;
 }
 
 .badge {

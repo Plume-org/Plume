@@ -74,7 +74,10 @@ use std::fmt::Debug;
 ///    .with::<User, Create,   Message>()
 ///    .done();
 /// ```
-pub enum Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
+pub enum Inbox<'a, C, E, R>
+where
+    E: From<InboxError<E>> + Debug,
+{
     /// The activity has not been handled yet
     ///
     /// # Structure
@@ -116,9 +119,7 @@ pub enum InboxError<E: Debug> {
 }
 
 impl<T: Debug> From<InboxError<T>> for () {
-    fn from(_: InboxError<T>) {
-        ()
-    }
+    fn from(_: InboxError<T>) {}
 }
 
 /*
@@ -127,8 +128,10 @@ impl<T: Debug> From<InboxError<T>> for () {
  - E: Error
  - R: Result
 */
-impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
-
+impl<'a, C, E, R> Inbox<'a, C, E, R>
+where
+    E: From<InboxError<E>> + Debug,
+{
     /// Creates a new `Inbox` to handle an incoming activity.
     ///
     /// # Parameters
@@ -140,10 +143,11 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
     }
 
     /// Registers an handler on this Inbox.
-    pub fn with<A, V, M>(self) -> Inbox<'a, C, E, R> where
-        A: AsActor<&'a C> + FromId<C, Error=E>,
+    pub fn with<A, V, M>(self) -> Inbox<'a, C, E, R>
+    where
+        A: AsActor<&'a C> + FromId<C, Error = E>,
         V: activitypub::Activity,
-        M: AsObject<A, V, &'a C, Error=E> + FromId<C, Error=E>,
+        M: AsObject<A, V, &'a C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
         if let Inbox::NotHandled(ctx, act, e) = self {
@@ -160,7 +164,11 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
                     None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
                 };
                 // Transform this actor to a model (see FromId for details about the from_id function)
-                let actor = match A::from_id(ctx, &actor_id, serde_json::from_value(act["actor"].clone()).ok()) {
+                let actor = match A::from_id(
+                    ctx,
+                    &actor_id,
+                    serde_json::from_value(act["actor"].clone()).ok(),
+                ) {
                     Ok(a) => a,
                     // If the actor was not found, go to the next handler
                     Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e))),
@@ -171,15 +179,23 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
                     Some(x) => x,
                     None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None)),
                 };
-                let obj = match M::from_id(ctx, &obj_id, serde_json::from_value(act["object"].clone()).map_err(|e| dbg!(e)).ok()) {
+                let obj = match M::from_id(
+                    ctx,
+                    &obj_id,
+                    serde_json::from_value(act["object"].clone())
+                        .map_err(|e| dbg!(e))
+                        .ok(),
+                ) {
                     Ok(o) => o,
-                    Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e))),
+                    Err(e) => {
+                        return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e)));
+                    }
                 };
 
                 // Handle the activity
                 match obj.activity(ctx, actor, &act_id) {
                     Ok(res) => Inbox::Handled(res.into()),
-                    Err(e) => Inbox::Failed(e)
+                    Err(e) => Inbox::Failed(e),
                 }
             } else {
                 // If the Activity type is not matching the expected one for
@@ -210,7 +226,7 @@ impl<'a, C, E, R> Inbox<'a, C, E, R> where E: From<InboxError<E>> + Debug {
 ///
 /// This function panics if the value is neither a string nor an object with an
 /// `id` field that is a string.
-fn get_id<'a>(json: serde_json::Value) -> Option<String> {
+fn get_id(json: serde_json::Value) -> Option<String> {
     match json {
         serde_json::Value::String(s) => Some(s),
         serde_json::Value::Object(map) => map.get("id")?.as_str().map(ToString::to_string),
@@ -229,7 +245,6 @@ fn get_id<'a>(json: serde_json::Value) -> Option<String> {
 /// it in the database with `from_db`, and otherwise dereference (fetch) the full object and parse it
 /// with `from_activity`.
 pub trait FromId<C>: Sized {
-
     /// The type representing a failure
     type Error: From<InboxError<Self::Error>> + Debug;
 
@@ -354,10 +369,10 @@ pub trait AsActor<C>: Sized {
 ///     }
 /// }
 /// ```
-pub trait AsObject<A, V, C>: Sized where
+pub trait AsObject<A, V, C>: Sized
+where
     V: activitypub::Activity,
 {
-
     /// What kind of error is returned when something fails
     type Error;
 
@@ -380,12 +395,8 @@ pub trait AsObject<A, V, C>: Sized where
 
 #[cfg(test)]
 mod tests {
-    use activitypub::{
-        activity::*,
-        actor::Person,
-        object::Note,
-    };
     use super::*;
+    use activitypub::{activity::*, actor::Person, object::Note};
 
     struct MyActor;
     impl FromId<()> for MyActor {
@@ -466,12 +477,19 @@ mod tests {
 
     fn build_create() -> Create {
         let mut act = Create::default();
-        act.object_props.set_id_string(String::from("https://test.ap/activity")).unwrap();
+        act.object_props
+            .set_id_string(String::from("https://test.ap/activity"))
+            .unwrap();
         let mut person = Person::default();
-        person.object_props.set_id_string(String::from("https://test.ap/actor")).unwrap();
+        person
+            .object_props
+            .set_id_string(String::from("https://test.ap/actor"))
+            .unwrap();
         act.create_props.set_actor_object(person).unwrap();
         let mut note = Note::default();
-        note.object_props.set_id_string(String::from("https://test.ap/note")).unwrap();
+        note.object_props
+            .set_id_string(String::from("https://test.ap/note"))
+            .unwrap();
         act.create_props.set_object_object(note).unwrap();
         act
     }
@@ -490,9 +508,9 @@ mod tests {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
             .with::<MyActor, Announce, MyObject>()
-            .with::<MyActor, Delete,   MyObject>()
-            .with::<MyActor, Create,   MyObject>()
-            .with::<MyActor, Like,     MyObject>()
+            .with::<MyActor, Delete, MyObject>()
+            .with::<MyActor, Create, MyObject>()
+            .with::<MyActor, Like, MyObject>()
             .done();
         assert!(res.is_ok());
     }
@@ -503,7 +521,7 @@ mod tests {
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
             .with::<MyActor, Announce, MyObject>()
-            .with::<MyActor, Like,     MyObject>()
+            .with::<MyActor, Like, MyObject>()
             .done();
         assert!(res.is_err());
     }
@@ -535,7 +553,12 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity(self, _: &(), _actor: FailingActor, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity(
+            self,
+            _: &(),
+            _actor: FailingActor,
+            _id: &str,
+        ) -> Result<Self::Output, Self::Error> {
             println!("FailingActor is creating a Note");
             Ok(())
         }
@@ -552,7 +575,7 @@ mod tests {
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
             .with::<FailingActor, Create, MyObject>()
-            .with::<MyActor,      Create, MyObject>()
+            .with::<MyActor, Create, MyObject>()
             .done();
         assert!(res.is_ok());
     }

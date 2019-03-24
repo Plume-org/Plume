@@ -1,23 +1,26 @@
 use lettre::Transport;
-use rocket::{
-    State,
-    http::{Cookie, Cookies, SameSite, uri::Uri},
-    response::Redirect,
-    request::{LenientForm, FlashMessage, Form}
-};
 use rocket::http::ext::IntoOwned;
-use rocket_i18n::I18n;
-use std::{borrow::Cow, sync::{Arc, Mutex}, time::Instant};
-use validator::{Validate, ValidationError, ValidationErrors};
-use template_utils::Ructe;
-
-use plume_models::{
-    BASE_URL, Context, Error,
-    db_conn::DbConn,
-    users::{User, AUTH_COOKIE}
+use rocket::{
+    http::{uri::Uri, Cookie, Cookies, SameSite},
+    request::{FlashMessage, Form, LenientForm},
+    response::Redirect,
+    State,
 };
-use Searcher;
+use rocket_i18n::I18n;
+use std::{
+    borrow::Cow,
+    sync::{Arc, Mutex},
+    time::Instant,
+};
+use template_utils::Ructe;
+use validator::{Validate, ValidationError, ValidationErrors};
+
 use mail::{build_mail, Mailer};
+use plume_models::{
+    db_conn::DbConn,
+    users::{User, AUTH_COOKIE},
+    Error, PlumeRocket, CONFIG,
+};
 use routes::errors::ErrorPage;
 
 #[get("/login?<m>")]
@@ -35,16 +38,22 @@ pub struct LoginForm {
     #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
     pub email_or_name: String,
     #[validate(length(min = "1", message = "Your password can't be empty"))]
-    pub password: String
+    pub password: String,
 }
 
 #[post("/login", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMessage>, mut cookies: Cookies, intl: I18n, searcher: Searcher) -> Result<Redirect, Ructe> {
+pub fn create(
+    form: LenientForm<LoginForm>,
+    flash: Option<FlashMessage>,
+    mut cookies: Cookies,
+    rockets: PlumeRocket,
+) -> Result<Redirect, Ructe> {
+    let conn = &*rockets.conn;
     let user = User::find_by_email(&*conn, &form.email_or_name)
-        .or_else(|_| User::find_by_fqn(&Context::build(&*conn, &*searcher), &form.email_or_name));
+        .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
-        Err(e) => e
+        Err(e) => e,
     };
 
     let user_id = if let Ok(user) = user {
@@ -59,7 +68,9 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
     } else {
         // Fake password verification, only to avoid different login times
         // that could be used to see if an email adress is registered or not
-        User::get(&*conn, 1).map(|u| u.auth(&form.password)).expect("No user is registered");
+        User::get(&*conn, 1)
+            .map(|u| u.auth(&form.password))
+            .expect("No user is registered");
 
         let mut err = ValidationError::new("invalid_login");
         err.message = Some(Cow::from("Invalid username or password"));
@@ -68,30 +79,36 @@ pub fn create(conn: DbConn, form: LenientForm<LoginForm>, flash: Option<FlashMes
     };
 
     if errors.is_empty() {
-        cookies.add_private(Cookie::build(AUTH_COOKIE, user_id)
-                                            .same_site(SameSite::Lax)
-                                            .finish());
+        cookies.add_private(
+            Cookie::build(AUTH_COOKIE, user_id)
+                .same_site(SameSite::Lax)
+                .finish(),
+        );
         let destination = flash
-            .and_then(|f| if f.name() == "callback" {
-                Some(f.msg().to_owned())
-            } else {
-                None
+            .and_then(|f| {
+                if f.name() == "callback" {
+                    Some(f.msg().to_owned())
+                } else {
+                    None
+                }
             })
             .unwrap_or_else(|| "/".to_owned());
 
         let uri = Uri::parse(&destination)
             .map(|x| x.into_owned())
-            .map_err(|_| render!(session::login(
-                &(&*conn, &intl.catalog, None),
-                None,
-                &*form,
-                errors
-            )))?;
+            .map_err(|_| {
+                render!(session::login(
+                    &(&*conn, &rockets.intl.catalog, None),
+                    None,
+                    &*form,
+                    errors
+                ))
+            })?;
 
         Ok(Redirect::to(uri))
     } else {
         Err(render!(session::login(
-            &(&*conn, &intl.catalog, None),
+            &(&*conn, &rockets.intl.catalog, None),
             None,
             &*form,
             errors
@@ -141,13 +158,15 @@ pub fn password_reset_request(
     intl: I18n,
     mail: State<Arc<Mutex<Mailer>>>,
     form: Form<ResetForm>,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>
+    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
 ) -> Ructe {
     let mut requests = requests.lock().unwrap();
     // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
     requests.retain(|r| r.creation_date.elapsed().as_secs() < 24 * 60 * 60);
 
-    if User::find_by_email(&*conn, &form.email).is_ok() && !requests.iter().any(|x| x.mail == form.email.clone()) {
+    if User::find_by_email(&*conn, &form.email).is_ok()
+        && !requests.iter().any(|x| x.mail == form.email.clone())
+    {
         let id = plume_common::utils::random_hex();
 
         requests.push(ResetRequest {
@@ -156,26 +175,39 @@ pub fn password_reset_request(
             creation_date: Instant::now(),
         });
 
-        let link = format!("https://{}/password-reset/{}", *BASE_URL, id);
+        let link = format!("https://{}/password-reset/{}", CONFIG.base_url, id);
         if let Some(message) = build_mail(
             form.email.clone(),
             i18n!(intl.catalog, "Password reset"),
-            i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link)
+            i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link),
         ) {
-            match *mail.lock().unwrap() {
-                Some(ref mut mail) => { mail.send(message.into()).map_err(|_| eprintln!("Couldn't send password reset mail")).ok(); }
-                None => {}
+            if let Some(ref mut mail) = *mail.lock().unwrap() {
+                mail.send(message.into())
+                    .map_err(|_| eprintln!("Couldn't send password reset mail"))
+                    .ok();
             }
         }
     }
-    render!(session::password_reset_request_ok(
-        &(&*conn, &intl.catalog, None)
-    ))
+    render!(session::password_reset_request_ok(&(
+        &*conn,
+        &intl.catalog,
+        None
+    )))
 }
 
 #[get("/password-reset/<token>")]
-pub fn password_reset_form(conn: DbConn, intl: I18n, token: String, requests: State<Arc<Mutex<Vec<ResetRequest>>>>) -> Result<Ructe, ErrorPage> {
-    requests.lock().unwrap().iter().find(|x| x.id == token.clone()).ok_or(Error::NotFound)?;
+pub fn password_reset_form(
+    conn: DbConn,
+    intl: I18n,
+    token: String,
+    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+) -> Result<Ructe, ErrorPage> {
+    requests
+        .lock()
+        .unwrap()
+        .iter()
+        .find(|x| x.id == token.clone())
+        .ok_or(Error::NotFound)?;
     Ok(render!(session::password_reset(
         &(&*conn, &intl.catalog, None),
         &NewPasswordForm::default(),
@@ -184,13 +216,11 @@ pub fn password_reset_form(conn: DbConn, intl: I18n, token: String, requests: St
 }
 
 #[derive(FromForm, Default, Validate)]
-#[validate(
-    schema(
-        function = "passwords_match",
-        skip_on_field_errors = "false",
-        message = "Passwords are not matching"
-    )
-)]
+#[validate(schema(
+    function = "passwords_match",
+    skip_on_field_errors = "false",
+    message = "Passwords are not matching"
+))]
 pub struct NewPasswordForm {
     pub password: String,
     pub password_confirmation: String,
@@ -210,19 +240,28 @@ pub fn password_reset(
     intl: I18n,
     token: String,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
-    form: Form<NewPasswordForm>
+    form: Form<NewPasswordForm>,
 ) -> Result<Redirect, Ructe> {
     form.validate()
         .and_then(|_| {
             let mut requests = requests.lock().unwrap();
-            let req = requests.iter().find(|x| x.id == token.clone()).ok_or(to_validation(0))?.clone();
-            if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 { // Reset link is only valid for 2 hours
+            let req = requests
+                .iter()
+                .find(|x| x.id == token.clone())
+                .ok_or_else(|| to_validation(0))?
+                .clone();
+            if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 {
+                // Reset link is only valid for 2 hours
                 requests.retain(|r| *r != req);
                 let user = User::find_by_email(&*conn, &req.mail).map_err(to_validation)?;
                 user.reset_password(&*conn, &form.password).ok();
-                Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Your password was successfully reset."))))
+                Ok(Redirect::to(uri!(
+                    new: m = i18n!(intl.catalog, "Your password was successfully reset.")
+                )))
             } else {
-                Ok(Redirect::to(uri!(new: m = i18n!(intl.catalog, "Sorry, but the link expired. Try again"))))
+                Ok(Redirect::to(uri!(
+                    new: m = i18n!(intl.catalog, "Sorry, but the link expired. Try again")
+                )))
             }
         })
         .map_err(|err| {
@@ -236,10 +275,13 @@ pub fn password_reset(
 
 fn to_validation<T>(_: T) -> ValidationErrors {
     let mut errors = ValidationErrors::new();
-    errors.add("", ValidationError {
-        code: Cow::from("server_error"),
-        message: Some(Cow::from("An unknown error occured")),
-        params: std::collections::HashMap::new()
-    });
+    errors.add(
+        "",
+        ValidationError {
+            code: Cow::from("server_error"),
+            message: Some(Cow::from("An unknown error occured")),
+            params: std::collections::HashMap::new(),
+        },
+    );
     errors
 }

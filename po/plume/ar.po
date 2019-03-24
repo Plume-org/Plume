@@ -41,8 +41,23 @@ msgstr "الصورة الرمزية لـ {0}"
 msgid "You need to be logged in order to create a new blog"
 msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
 
+msgid "A blog with the same name already exists."
+msgstr "هناك مدونة تحمل نفس التسمية."
+
 #, fuzzy
 msgid "You are not allowed to delete this blog."
+msgstr "لست مِن محرري هذه المدونة."
+
+#, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "لست مِن محرري هذه المدونة."
+
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "لست مِن محرري هذه المدونة."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
 msgstr "لست مِن محرري هذه المدونة."
 
 msgid "You need to be logged in order to like a post"
@@ -388,6 +403,13 @@ msgstr "يستضيف <em>{0}</em> مستخدمين"
 msgid "Read the detailed rules"
 msgstr "إقرأ القواعد بالتفصيل"
 
+msgid "None"
+msgstr "لا شيء"
+
+#, fuzzy
+msgid "No description"
+msgstr "الوصف الطويل"
+
 msgid "View all"
 msgstr "عرضها كافة"
 
@@ -528,6 +550,9 @@ msgstr "تسجيل الدخول"
 msgid "Username or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
+msgid "Publish"
+msgstr "انشر"
+
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
 
@@ -557,9 +582,6 @@ msgstr ""
 
 msgid "Illustration"
 msgstr "الصورة الإيضاحية"
-
-msgid "None"
-msgstr "لا شيء"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "هذه مُسودّة، لا تقم بنشرها الآن."
@@ -680,6 +702,39 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "نعتذر عن الإزعاج. إن كنت تضن أن هذه مشكلة، يرجى إبلاغنا."
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "تعديل {0}"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "إرسال"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "انشاء مدونة"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "نوخى الحذر هنا، فكل إجراء تأخذه هنا لا يمكن الغاؤه."
+
+#, fuzzy
+msgid "Permanently delete this blog"
+msgstr "احذف هذه المدونة"
+
+#, fuzzy
 msgid "New Blog"
 msgstr "مدونة جديدة"
 
@@ -688,6 +743,12 @@ msgstr "انشئ مدونة"
 
 msgid "Create blog"
 msgstr "انشاء مدونة"
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "مقال جديد"
 
 #, fuzzy
 msgid "There's one author on this blog: "
@@ -699,29 +760,8 @@ msgstr[3] "{0} مؤلف على هذه المدونة: "
 msgstr[4] "{0} مؤلفون على هذه المدونة: "
 msgstr[5] "{0} كُتاب على هذه المدونة: "
 
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "لا مقال على هذه المدونة"
-msgstr[1] "{0} مقال على هذه المدونة"
-msgstr[2] "مقالَين على هذه المدونة"
-msgstr[3] "{0} مقالات على هذه المدونة"
-msgstr[4] "{0} مقالات على هذه المدونة"
-msgstr[5] "{0} مقالات على هذه المدونة"
-
 msgid "No posts to see here yet."
 msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
-
-msgid "New article"
-msgstr "مقال جديد"
-
-#, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "نوخى الحذر هنا، فكل إجراء تأخذه هنا لا يمكن الغاؤه."
-
-#, fuzzy
-msgid "Permanently delete this blog"
-msgstr "احذف هذه المدونة"
 
 msgid "Articles tagged \"{0}\""
 msgstr "المقالات الموسومة بـ \"{0}\""
@@ -749,9 +789,6 @@ msgstr "تفاصيل الصورة"
 
 msgid "Media upload"
 msgstr "إرسال الوسائط"
-
-msgid "Description"
-msgstr "الوصف"
 
 #, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
@@ -783,6 +820,16 @@ msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض ال
 
 msgid "Use as avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "لا مقال على هذه المدونة"
+#~ msgstr[1] "{0} مقال على هذه المدونة"
+#~ msgstr[2] "مقالَين على هذه المدونة"
+#~ msgstr[3] "{0} مقالات على هذه المدونة"
+#~ msgstr[4] "{0} مقالات على هذه المدونة"
+#~ msgstr[5] "{0} مقالات على هذه المدونة"
 
 #~ msgid "{0}'s followers"
 #~ msgstr "{0} متابِعون"
@@ -819,9 +866,6 @@ msgstr "استخدمها كصورة رمزية"
 #~ msgid "Create a post"
 #~ msgstr "انشئ منشورا"
 
-#~ msgid "Publish"
-#~ msgstr "انشر"
-
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"
 #~ msgstr[0] "دون متابِع"
@@ -854,9 +898,6 @@ msgstr "استخدمها كصورة رمزية"
 
 #~ msgid "Invalid name"
 #~ msgstr "اسم غير صالح"
-
-#~ msgid "A blog with the same name already exists."
-#~ msgstr "هناك مدونة تحمل نفس التسمية."
 
 #~ msgid "Your comment can't be empty"
 #~ msgstr "لا يمكن ترك التعليق فارغا"
