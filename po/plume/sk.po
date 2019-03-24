@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-22 23:14\n"
+"PO-Revision-Date: 2019-03-24 12:23\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -54,11 +54,11 @@ msgstr "Nemáš dovolené upravovať tento blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as blog icon."
-msgstr "Tento mediálny súbor nemožno použiť ako ikonku pre blog."
+msgstr "Tento mediálny súbor nemôžeš použiť ako ikonku pre blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as blog banner."
-msgstr ""
+msgstr "Tento mediálny súbor nemôžeš použiť ako záhlavie pre blog."
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
@@ -673,7 +673,7 @@ msgid "Description"
 msgstr "Popis"
 
 msgid "You can upload images to your gallery, to use them as blog icons or banners."
-msgstr ""
+msgstr "Do svojej galérie môžeš nahrávať obrázky, ktoré sa potom dajú použiť aj ako ikonky a hlavičky pre blogy."
 
 msgid "Upload images"
 msgstr "Nahraj obrázky"
