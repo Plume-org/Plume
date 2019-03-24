@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-24 18:54\n"
+"PO-Revision-Date: 2019-03-24 20:08\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -110,7 +110,7 @@ msgstr "Prepáč, ale tento odkaz už vypŕšal. Skús to znova"
 
 # src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
-msgstr "Musíš byť prihlásený/á, aby si sa dostal/a k svojej nástenke"
+msgstr "Aby si sa dostal/a k svojej nástenke, musíš byť prihlásený/á"
 
 # src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
@@ -118,7 +118,7 @@ msgstr "Ak chceš odoberať niekoho príspevky, musíš byť prihlásený/á"
 
 # src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
-msgstr "Musíš byť prihlásený/á, ak chceš upraviť svoj profil"
+msgstr "Ak chceš upraviť svoj profil, musíš byť prihlásený/á"
 
 msgid "Plume"
 msgstr "Plume"
