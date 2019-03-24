@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-24 07:04\n"
+"PO-Revision-Date: 2019-03-24 07:59\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -663,25 +663,25 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Nous sommes désolé⋅e⋅s. Si vous pensez que c’est un bogue, merci de le signaler."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Modifier \"{}\""
 
 msgid "Description"
 msgstr "Description"
 
 msgid "You can upload images to your gallery, to use them as blog icons or banners."
-msgstr ""
+msgstr "Vous pouvez téléverser des images dans votre galerie, pour les utiliser comme icônes de blog ou bannières."
 
 msgid "Upload images"
-msgstr ""
+msgstr "Téléverser des images"
 
 msgid "Blog icon"
-msgstr ""
+msgstr "Icône de blog"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "Bannière de blog"
 
 msgid "Update blog"
-msgstr ""
+msgstr "Mettre à jour le blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr "Attention, toute action prise ici ne peut pas être annulée."
@@ -699,7 +699,7 @@ msgid "Create blog"
 msgstr "Créer le blog"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "icône de {}"
 
 msgid "New article"
 msgstr "Nouvel article"
