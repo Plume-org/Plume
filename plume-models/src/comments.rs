@@ -310,7 +310,6 @@ impl FromId<PlumeRocket> for Comment {
         }
 
         comm.notify(conn)?;
-        dbg!("hey 6");
         Ok(comm)
     }
 }
@@ -330,20 +329,20 @@ impl AsObject<User, Delete, &PlumeRocket> for Comment {
     type Output = ();
 
     fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
-        if self.author_id == actor.id {
-            let conn = &*c.conn;
-            for m in Mention::list_for_comment(&conn, self.id)? {
-                m.delete(conn)?;
-            }
-            diesel::update(comments::table)
-                .filter(comments::in_response_to_id.eq(self.id))
-                .set(comments::in_response_to_id.eq(self.in_response_to_id))
-                .execute(conn)?;
-            diesel::delete(&self).execute(conn)?;
-            Ok(())
-        } else {
-            Err(Error::Unauthorized)
+        if self.author_id != actor.id {
+            return Err(Error::Unauthorized);
         }
+
+        let conn = &*c.conn;
+        for m in Mention::list_for_comment(&conn, self.id)? {
+            m.delete(conn)?;
+        }
+        diesel::update(comments::table)
+            .filter(comments::in_response_to_id.eq(self.id))
+            .set(comments::in_response_to_id.eq(self.in_response_to_id))
+            .execute(conn)?;
+        diesel::delete(&self).execute(conn)?;
+        Ok(())
     }
 }
 
