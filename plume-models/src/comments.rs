@@ -330,10 +330,14 @@ impl<'a> Deletable<Connection, Delete> for Comment {
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
 
-        for m in Mention::list_for_comment(&conn, self.id)? {
+        for m in Mention::list_for_comment(conn, self.id)? {
+            for n in Notification::find_for_mention(conn, &m)? {
+                n.delete(conn)?;
+            }
             m.delete(conn)?;
         }
-        for n in Notification::find_for_comment(&conn, &self)? {
+
+        for n in Notification::find_for_comment(conn, &self)? {
             n.delete(conn)?;
         }
 
