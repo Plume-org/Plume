@@ -152,7 +152,7 @@ msgstr "Sala Matrix"
 msgid "Administration"
 msgstr "Administración"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 #, fuzzy

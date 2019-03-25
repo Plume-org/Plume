@@ -148,7 +148,7 @@ msgid "Administration"
 msgstr "الإدارة"
 
 #, fuzzy
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr "أهلا بكم على {0}"
 
 msgid "Latest articles"
