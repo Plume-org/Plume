@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-25 07:58\n"
+"PO-Revision-Date: 2019-03-25 14:27\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -160,7 +160,7 @@ msgid "Administration"
 msgstr "Správa"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Vítejte na {}"
 
 msgid "Latest articles"
 msgstr "Nejposlednejší články"
@@ -454,7 +454,7 @@ msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Instance domain"
-msgstr ""
+msgstr "Doména instance"
 
 # src/template_utils.rs:305
 msgid "Posted by one of these authors"
@@ -472,7 +472,7 @@ msgstr "Název blogu"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
-msgstr ""
+msgstr "Napsané tomto jazyce"
 
 msgid "Language"
 msgstr "Jazyk"
@@ -485,7 +485,7 @@ msgid "Article license"
 msgstr "Licence článku"
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Výsledky hledání pro \"{0}\""
 
 msgid "Search result"
 msgstr "Výsledek hledání"
@@ -494,7 +494,7 @@ msgid "No result for your query"
 msgstr "Žádný výsledek nenalzen pro váš dotaz"
 
 msgid "No more result for your query"
-msgstr ""
+msgstr "Žádné další výsledeky pro váš dotaz"
 
 msgid "Reset your password"
 msgstr "Obnovte své heslo"
@@ -511,7 +511,7 @@ msgid "Update password"
 msgstr "Aktualizovat heslo"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Zkontrolujte svou příchozí poštu!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
