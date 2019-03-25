@@ -148,7 +148,7 @@ msgstr "Matrix　ルーム"
 msgid "Administration"
 msgstr "管理"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"

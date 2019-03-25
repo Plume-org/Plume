@@ -155,7 +155,7 @@ msgstr "Salon Matrix"
 msgid "Administration"
 msgstr "Administration"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"

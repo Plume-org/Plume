@@ -147,7 +147,7 @@ msgid "Administration"
 msgstr ""
 
 #, fuzzy
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr "Bienvenido(a) a {0}"
 
 msgid "Latest articles"

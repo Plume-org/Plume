@@ -7,7 +7,7 @@
 @(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
 
 @:base(ctx, instance.name.clone(), {}, {}, {
-  <h1>@i18n!(ctx.1, "Welcome on {}"; instance.name.as_str())</h1>
+  <h1>@i18n!(ctx.1, "Welcome to {}"; instance.name.as_str())</h1>
 
      @if ctx.2.is_some() {
         @tabs(&[

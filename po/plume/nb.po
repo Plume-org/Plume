@@ -157,7 +157,7 @@ msgstr "Snakkerom"
 msgid "Administration"
 msgstr "Administrasjon"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"

@@ -140,7 +140,7 @@ msgstr "Pokój Matrix.org"
 msgid "Administration"
 msgstr "Administracja"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr "Witamy na {}"
 
 msgid "Latest articles"
