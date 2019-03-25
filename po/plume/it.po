@@ -155,7 +155,7 @@ msgstr "Stanza Matrix"
 msgid "Administration"
 msgstr "Amministrazione"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 #, fuzzy

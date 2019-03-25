@@ -88,7 +88,7 @@ impl Digest {
 
 pub fn headers() -> HeaderMap {
     let date: DateTime<Utc> = SystemTime::now().into();
-    let date = format!("{}", date.format("%a, %d %b %Y %T %Z"));
+    let date = format!("{}", date.format("%a, %d %b %Y %T GMT"));
 
     let mut headers = HeaderMap::new();
     headers.insert(USER_AGENT, HeaderValue::from_static(PLUME_USER_AGENT));
