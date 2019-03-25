@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-25 14:27\n"
+"PO-Revision-Date: 2019-03-25 15:29\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -199,10 +199,10 @@ msgid "All the articles of the Fediverse"
 msgstr "Všechny články z Fediversa"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Články z {}"
 
 msgid "Nothing to see here yet. Try to subscribe to more people."
-msgstr ""
+msgstr "Ještě tu nic není k vidění. Zkuste odebírat obsah od více lidí."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -238,7 +238,7 @@ msgid "Home to <em>{0}</em> users"
 msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "Co napsali <em>{0}</em> článků"
 
 msgid "And connected to <em>{0}</em> other instances"
 msgstr ""
@@ -472,7 +472,7 @@ msgstr "Název blogu"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
-msgstr "Napsané tomto jazyce"
+msgstr "Napsané v tomto jazyce"
 
 msgid "Language"
 msgstr "Jazyk"
