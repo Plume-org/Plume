@@ -152,7 +152,7 @@ impl Comment {
         Ok(act)
     }
 
-    fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &Connection) -> Result<()> {
         for author in self.get_post(conn)?.get_authors(conn)? {
             Notification::insert(
                 conn,
@@ -333,15 +333,22 @@ impl AsObject<User, Delete, &PlumeRocket> for Comment {
             return Err(Error::Unauthorized);
         }
 
-        let conn = &*c.conn;
-        for m in Mention::list_for_comment(&conn, self.id)? {
-            m.delete(conn)?;
+        for m in Mention::list_for_comment(&c.conn, self.id)? {
+            for n in Notification::find_for_mention(&c.conn, &m)? {
+                n.delete(&c.conn)?;
+            }
+            m.delete(&c.conn)?;
         }
+
+        for n in Notification::find_for_comment(&c.conn, &self)? {
+            n.delete(&c.conn)?;
+        }
+
         diesel::update(comments::table)
             .filter(comments::in_response_to_id.eq(self.id))
             .set(comments::in_response_to_id.eq(self.in_response_to_id))
-            .execute(conn)?;
-        diesel::delete(&self).execute(conn)?;
+            .execute(&*c.conn)?;
+        diesel::delete(&self).execute(&*c.conn)?;
         Ok(())
     }
 }

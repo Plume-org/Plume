@@ -57,6 +57,7 @@ pub fn create(
                 },
             )
             .expect("comments::create: insert error");
+            comm.notify(&*conn).expect("comments::create: notify error");
             let new_comment = comm
                 .create_activity(&rockets)
                 .expect("comments::create: activity error");
@@ -67,8 +68,8 @@ pub fn create(
                     &*conn,
                     &Mention::build_activity(&rockets, &ment)
                         .expect("comments::create: build mention error"),
-                    post.id,
-                    true,
+                    comm.id,
+                    false,
                     true,
                 )
                 .expect("comments::create: mention save error");

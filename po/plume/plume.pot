@@ -36,11 +36,11 @@ msgstr ""
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:73
+# src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
 msgstr ""
 
-# src/routes/blogs.rs:111
+# src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
 msgstr ""
 
@@ -48,19 +48,19 @@ msgstr ""
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:216
+# src/routes/blogs.rs:217
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:255
+# src/routes/blogs.rs:262
 msgid "You can't use this media as blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:273
+# src/routes/blogs.rs:280
 msgid "You can't use this media as blog banner."
 msgstr ""
 
-# src/routes/likes.rs:53
+# src/routes/likes.rs:52
 msgid "You need to be logged in order to like a post"
 msgstr ""
 
@@ -68,27 +68,27 @@ msgstr ""
 msgid "You need to be logged in order to see your notifications"
 msgstr ""
 
-# src/routes/posts.rs:94
+# src/routes/posts.rs:93
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:123
+# src/routes/posts.rs:122
 msgid "You need to be logged in order to write a new post"
 msgstr ""
 
-# src/routes/posts.rs:141
+# src/routes/posts.rs:140
 msgid "You are not author in this blog."
 msgstr ""
 
-# src/routes/posts.rs:148
+# src/routes/posts.rs:147
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:193
+# src/routes/posts.rs:192
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/reshares.rs:53
+# src/routes/reshares.rs:52
 msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
@@ -108,15 +108,15 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:142
+# src/routes/user.rs:135
 msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
-# src/routes/user.rs:183
+# src/routes/user.rs:174
 msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
-# src/routes/user.rs:281
+# src/routes/user.rs:274
 msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
