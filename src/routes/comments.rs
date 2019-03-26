@@ -7,7 +7,11 @@ use validator::Validate;
 use std::time::Duration;
 
 use plume_common::{
-    activity_pub::{broadcast, inbox::Deletable, ActivityStream, ApRequest},
+    activity_pub::{
+        broadcast,
+        inbox::{Deletable, Notify},
+        ActivityStream, ApRequest,
+    },
     utils,
 };
 use plume_models::{
@@ -60,6 +64,7 @@ pub fn create(
                 },
             )
             .expect("comments::create: insert error");
+            comm.notify(&*conn).expect("comments::create: notify error");
             let new_comment = comm
                 .create_activity(&*conn)
                 .expect("comments::create: activity error");
@@ -70,8 +75,8 @@ pub fn create(
                     &*conn,
                     &Mention::build_activity(&*conn, &ment)
                         .expect("comments::create: build mention error"),
-                    post.id,
-                    true,
+                    comm.id,
+                    false,
                     true,
                 )
                 .expect("comments::create: mention save error");
