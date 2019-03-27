@@ -235,9 +235,9 @@ macro_rules! get {
 /// ```
 macro_rules! insert {
     ($table:ident, $from:ident) => {
-        insert!($table, $from, |x, _conn| { Ok(x) });
+        insert!($table, $from, |x, _conn| Ok(x));
     };
-    ($table:ident, $from:ident, |$val:ident, $conn:ident | $after:block) => {
+    ($table:ident, $from:ident, |$val:ident, $conn:ident | $( $after:tt )+) => {
         last!($table);
 
         pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
@@ -247,7 +247,7 @@ macro_rules! insert {
             #[allow(unused_mut)]
             let mut $val = Self::last(conn)?;
             let $conn = conn;
-            $after
+            $( $after )+
         }
     };
 }
@@ -310,8 +310,8 @@ mod tests {
     }
 
     pub fn db() -> Conn {
-        let conn =
-            Conn::establish(CONFIG.database_url.as_str()).expect("Couldn't connect to the database");
+        let conn = Conn::establish(CONFIG.database_url.as_str())
+            .expect("Couldn't connect to the database");
         embedded_migrations::run(&conn).expect("Couldn't run migrations");
         #[cfg(feature = "sqlite")]
         sql_query("PRAGMA foreign_keys = on;")

@@ -106,6 +106,7 @@ impl Comment {
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
             &Instance::get_local(conn)?.public_domain,
+            true,
         );
 
         let author = User::get(conn, self.author_id)?;
@@ -329,9 +330,17 @@ impl<'a> Deletable<Connection, Delete> for Comment {
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
 
-        for m in Mention::list_for_comment(&conn, self.id)? {
+        for m in Mention::list_for_comment(conn, self.id)? {
+            for n in Notification::find_for_mention(conn, &m)? {
+                n.delete(conn)?;
+            }
             m.delete(conn)?;
         }
+
+        for n in Notification::find_for_comment(conn, &self)? {
+            n.delete(conn)?;
+        }
+
         diesel::update(comments::table)
             .filter(comments::in_response_to_id.eq(self.id))
             .set(comments::in_response_to_id.eq(self.in_response_to_id))

@@ -210,6 +210,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let (content, mentions, hashtags) = md_to_html(
             query.source.clone().unwrap_or_default().clone().as_ref(),
             domain,
+            false,
         );
 
         let author = User::get(
@@ -756,7 +757,7 @@ impl Post {
             post.license = license;
         }
 
-        let mut txt_hashtags = md_to_html(&post.source, "")
+        let mut txt_hashtags = md_to_html(&post.source, "", false)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
@@ -994,7 +995,7 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
             }
 
             // save mentions and tags
-            let mut hashtags = md_to_html(&post.source, "")
+            let mut hashtags = md_to_html(&post.source, "", false)
                 .2
                 .into_iter()
                 .map(|s| s.to_camel_case())

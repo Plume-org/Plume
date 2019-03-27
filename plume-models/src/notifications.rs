@@ -48,6 +48,22 @@ impl Notification {
             .map_err(Error::from)
     }
 
+    pub fn find_for_mention(conn: &Connection, mention: &Mention) -> Result<Vec<Notification>> {
+        notifications::table
+            .filter(notifications::kind.eq(notification_kind::MENTION))
+            .filter(notifications::object_id.eq(mention.id))
+            .load::<Notification>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn find_for_comment(conn: &Connection, comment: &Comment) -> Result<Vec<Notification>> {
+        notifications::table
+            .filter(notifications::kind.eq(notification_kind::COMMENT))
+            .filter(notifications::object_id.eq(comment.id))
+            .load::<Notification>(conn)
+            .map_err(Error::from)
+    }
+
     pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))

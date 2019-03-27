@@ -127,7 +127,6 @@ Then try to restart Plume
     })
     .expect("Error setting Ctrl-c handler");
 
-
     let mail = mail::init();
     if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
         println!("Warning: the email server is not configured (or not completely).");
@@ -145,6 +144,8 @@ Then try to restart Plume
                 routes::blogs::new_auth,
                 routes::blogs::create,
                 routes::blogs::delete,
+                routes::blogs::edit,
+                routes::blogs::update,
                 routes::blogs::atom_feed,
                 routes::comments::create,
                 routes::comments::delete,

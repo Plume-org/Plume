@@ -46,6 +46,18 @@ msgid "You are not allowed to delete this blog."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "Вы не автор этого блога."
+
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Вы не автор этого блога."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Вы не автор этого блога."
+
+#, fuzzy
 msgid "You need to be logged in order to like a post"
 msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
 
@@ -142,7 +154,7 @@ msgstr "Комната в Matrix"
 msgid "Administration"
 msgstr "Администрирование"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 #, fuzzy
@@ -412,6 +424,13 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr "Прочитать подробные правила"
 
+msgid "None"
+msgstr "Нет"
+
+#, fuzzy
+msgid "No description"
+msgstr "Длинное описание"
+
 msgid "View all"
 msgstr "Показать все"
 
@@ -581,9 +600,6 @@ msgstr "Оставьте пустым если нет"
 msgid "Illustration"
 msgstr "Иллюстрация"
 
-msgid "None"
-msgstr "Нет"
-
 #, fuzzy
 msgid "This is a draft, don't publish it yet."
 msgstr "Этот пост ещё не опубликован."
@@ -710,34 +726,29 @@ msgstr ""
 "ней."
 
 #, fuzzy
-msgid "New Blog"
-msgstr "Новый блог"
+msgid "Edit \"{}\""
+msgstr "Редактировать"
 
-msgid "Create a blog"
-msgstr "Создать блог"
+msgid "Description"
+msgstr "Описание"
 
-msgid "Create blog"
-msgstr "Создать блог"
-
-#, fuzzy
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Один автор в этом блоге: "
-msgstr[1] "{0} автора в этом блоге: "
-msgstr[2] "{0} авторов в этом блоге: "
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
 
 #, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Один пост в этом блоге"
-msgstr[1] "{0} поста в этом блоге"
-msgstr[2] "{0} постов в этом блоге"
+msgid "Upload images"
+msgstr "Загрузить"
 
-msgid "No posts to see here yet."
-msgstr "Здесь пока нет постов."
+msgid "Blog icon"
+msgstr ""
 
-msgid "New article"
-msgstr "Новая статья"
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Создать блог"
 
 #, fuzzy
 msgid "Be very careful, any action taken here can't be reversed."
@@ -747,6 +758,32 @@ msgstr ""
 #, fuzzy
 msgid "Permanently delete this blog"
 msgstr "Удалить этот блог"
+
+#, fuzzy
+msgid "New Blog"
+msgstr "Новый блог"
+
+msgid "Create a blog"
+msgstr "Создать блог"
+
+msgid "Create blog"
+msgstr "Создать блог"
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Новая статья"
+
+#, fuzzy
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Один автор в этом блоге: "
+msgstr[1] "{0} автора в этом блоге: "
+msgstr[2] "{0} авторов в этом блоге: "
+
+msgid "No posts to see here yet."
+msgstr "Здесь пока нет постов."
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -776,9 +813,6 @@ msgstr "Детали медиафайла"
 
 msgid "Media upload"
 msgstr "Загрузка медиафайлов"
-
-msgid "Description"
-msgstr "Описание"
 
 #, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
@@ -810,6 +844,13 @@ msgstr ""
 #, fuzzy
 msgid "Use as avatar"
 msgstr "Использовать как аватар"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Один пост в этом блоге"
+#~ msgstr[1] "{0} поста в этом блоге"
+#~ msgstr[2] "{0} постов в этом блоге"
 
 #, fuzzy
 #~ msgid "{0}'s followers"

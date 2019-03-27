@@ -17,7 +17,11 @@
         <div class="cards">
             @for blog in blogs {
                 <div class="card">
+                    @if blog.banner_id.is_some() {
+                        <div class="cover" style="background-image: url('@Html(blog.banner_url(ctx.0).unwrap_or_default())')"></div>
+                    }
                     <h3><a href="@uri!(blogs::details: name = blog.actor_id, page = _)">@blog.title</a></h3>
+                    <main><p>@Html(blog.summary_html)</p></main>
                 </div>
             }
         </div>

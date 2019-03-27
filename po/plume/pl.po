@@ -39,6 +39,18 @@ msgstr "Musisz się zalogować, aby utworzyć bloga"
 msgid "You are not allowed to delete this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
+#, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
 msgid "You need to be logged in order to like a post"
 msgstr "Musisz się zalogować, aby polubić wpis"
 
@@ -128,7 +140,7 @@ msgstr "Pokój Matrix.org"
 msgid "Administration"
 msgstr "Administracja"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr "Witamy na {}"
 
 msgid "Latest articles"
@@ -370,6 +382,13 @@ msgstr "Używana przez <em>{0}</em> użytkowników"
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
 
+msgid "None"
+msgstr "Brak"
+
+#, fuzzy
+msgid "No description"
+msgstr "Szczegółowy opis"
+
 msgid "View all"
 msgstr "Zobacz wszystko"
 
@@ -542,9 +561,6 @@ msgstr "Pozostawienie pustego jest równe zastrzeżeniu wszystkich praw"
 msgid "Illustration"
 msgstr "Ilustracja"
 
-msgid "None"
-msgstr "Brak"
-
 msgid "This is a draft, don't publish it yet."
 msgstr "To jest szkic, nie publikuj go jeszcze."
 
@@ -656,6 +672,38 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 "Przepraszamy. Jeżeli uważasz że wystąpił błąd, prosimy o zgłoszenie go."
 
+#, fuzzy
+msgid "Edit \"{}\""
+msgstr "Edytuj {0}"
+
+msgid "Description"
+msgstr "Opis"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "Wyślij"
+
+#, fuzzy
+msgid "Blog icon"
+msgstr "Tytuł bloga"
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Utwórz blog"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
+
+msgid "Permanently delete this blog"
+msgstr "Bezpowrotnie usuń ten blog"
+
 msgid "New Blog"
 msgstr "Nowy blog"
 
@@ -665,29 +713,20 @@ msgstr "Utwórz blog"
 msgid "Create blog"
 msgstr "Utwórz blog"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Nowy artykuł"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Ten blog ma jednego autora: "
 msgstr[1] "Ten blog ma {0} autorów: "
 msgstr[2] "Ten blog ma {0} autorów: "
 
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Jeden artykuł na tym blogu"
-msgstr[1] "{0} artykuły na tym blogu"
-msgstr[2] "{0} artykułów na tym blogu"
-
 msgid "No posts to see here yet."
 msgstr "Brak wpisów do wyświetlenia."
-
-msgid "New article"
-msgstr "Nowy artykuł"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
-
-msgid "Permanently delete this blog"
-msgstr "Bezpowrotnie usuń ten blog"
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artykuły oznaczone „{0}”"
@@ -714,9 +753,6 @@ msgstr "Szczegóły zawartości multimedialnej"
 
 msgid "Media upload"
 msgstr "Wysyłanie zawartości multimedialnej"
-
-msgid "Description"
-msgstr "Opis"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
@@ -746,6 +782,12 @@ msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialn
 
 msgid "Use as avatar"
 msgstr "Użyj jako awataru"
+
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Jeden artykuł na tym blogu"
+#~ msgstr[1] "{0} artykuły na tym blogu"
+#~ msgstr[2] "{0} artykułów na tym blogu"
 
 #~ msgid "{0}'s followers"
 #~ msgstr "Obserwujący {0}"

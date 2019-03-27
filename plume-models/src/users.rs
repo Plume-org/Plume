@@ -209,7 +209,7 @@ impl User {
             .set((
                 users::display_name.eq(name),
                 users::email.eq(email),
-                users::summary_html.eq(utils::md_to_html(&summary, "").0),
+                users::summary_html.eq(utils::md_to_html(&summary, "", false).0),
                 users::summary.eq(summary),
             ))
             .execute(conn)?;
@@ -683,7 +683,8 @@ impl User {
             .set_followers_string(self.followers_endpoint.clone())?;
 
         let mut endpoints = Endpoint::default();
-        endpoints.set_shared_inbox_string(ap_url(&format!("{}/inbox/", CONFIG.base_url.as_str())))?;
+        endpoints
+            .set_shared_inbox_string(ap_url(&format!("{}/inbox/", CONFIG.base_url.as_str())))?;
         actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
 
         let mut public_key = PublicKey::default();
@@ -867,7 +868,7 @@ impl NewUser {
                 display_name,
                 is_admin,
                 summary: summary.to_owned(),
-                summary_html: SafeString::new(&utils::md_to_html(&summary, "").0),
+                summary_html: SafeString::new(&utils::md_to_html(&summary, "", false).0),
                 email: Some(email),
                 hashed_password: Some(password),
                 instance_id: Instance::get_local(conn)?.id,

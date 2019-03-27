@@ -47,6 +47,18 @@ msgid "You are not allowed to delete this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
+msgid "You can't use this media as blog icon."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
+msgid "You can't use this media as blog banner."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
 msgid "You need to be logged in order to like a post"
 msgstr "Du må være logget inn for å like et innlegg"
 
@@ -145,7 +157,7 @@ msgstr "Snakkerom"
 msgid "Administration"
 msgstr "Administrasjon"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"
@@ -411,6 +423,13 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr "Les reglene"
 
+msgid "None"
+msgstr ""
+
+#, fuzzy
+msgid "No description"
+msgstr "Lang beskrivelse"
+
 msgid "View all"
 msgstr ""
 
@@ -603,9 +622,6 @@ msgstr ""
 msgid "Illustration"
 msgstr "Administrasjon"
 
-msgid "None"
-msgstr ""
-
 msgid "This is a draft, don't publish it yet."
 msgstr ""
 
@@ -724,6 +740,38 @@ msgstr ""
 "til oss."
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "Kommentér \"{0}\""
+
+#, fuzzy
+msgid "Description"
+msgstr "Lang beskrivelse"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "Din kommentar"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Opprett blogg"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+#, fuzzy
 msgid "New Blog"
 msgstr "Ny blogg"
 
@@ -733,29 +781,20 @@ msgstr "Lag en ny blogg"
 msgid "Create blog"
 msgstr "Opprett blogg"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Ny artikkel"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Én forfatter av denne bloggen: "
 msgstr[1] "{0} forfattere av denne bloggen: "
 
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Én artikkel i denne bloggen"
-msgstr[1] "{0} artikler i denne bloggen"
-
 msgid "No posts to see here yet."
 msgstr "Ingen innlegg å vise enda."
-
-msgid "New article"
-msgstr "Ny artikkel"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr ""
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -782,10 +821,6 @@ msgstr ""
 
 msgid "Media upload"
 msgstr ""
-
-#, fuzzy
-msgid "Description"
-msgstr "Lang beskrivelse"
 
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
@@ -814,6 +849,12 @@ msgstr ""
 
 msgid "Use as avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Én artikkel i denne bloggen"
+#~ msgstr[1] "{0} artikler i denne bloggen"
 
 #, fuzzy
 #~ msgid "{0}'s followers"

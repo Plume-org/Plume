@@ -46,6 +46,18 @@ msgstr ""
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
+# src/routes/blogs.rs:170
+msgid "You are not allowed to edit this blog."
+msgstr ""
+
+# src/main.rs:1
+msgid "You can't use this media as blog icon."
+msgstr ""
+
+# src/main.rs:1
+msgid "You can't use this media as blog banner."
+msgstr ""
+
 # src/routes/likes.rs:41
 msgid "You need to be logged in order to like a post"
 msgstr ""
@@ -145,7 +157,7 @@ msgstr ""
 msgid "Administration"
 msgstr ""
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"
@@ -383,6 +395,12 @@ msgstr ""
 msgid "Read the detailed rules"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
 msgid "View all"
 msgstr ""
 
@@ -553,9 +571,6 @@ msgstr ""
 msgid "Illustration"
 msgstr ""
 
-msgid "None"
-msgstr ""
-
 msgid "This is a draft, don't publish it yet."
 msgstr ""
 
@@ -660,6 +675,34 @@ msgstr ""
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
 msgid "New Blog"
 msgstr ""
 
@@ -669,26 +712,18 @@ msgstr ""
 msgid "Create blog"
 msgstr ""
 
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "No posts to see here yet."
+msgid "{}'s icon"
 msgstr ""
 
 msgid "New article"
 msgstr ""
 
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
 
-msgid "Permanently delete this blog"
+msgid "No posts to see here yet."
 msgstr ""
 
 msgid "Articles tagged \"{0}\""
@@ -713,9 +748,6 @@ msgid "Details"
 msgstr ""
 
 msgid "Media upload"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Useful for visually impaired people, as well as licensing information"
