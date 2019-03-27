@@ -260,7 +260,6 @@ pub trait FromId<C>: Sized {
     /// - `object`: optional object that will be used if the object was not found in the database
     ///   If absent, the ID will be dereferenced.
     fn from_id(ctx: &C, id: &str, object: Option<Self::Object>) -> Result<Self, Self::Error> {
-        dbg!(object.is_some());
         match Self::from_db(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
@@ -272,7 +271,6 @@ pub trait FromId<C>: Sized {
 
     /// Dereferences an ID
     fn deref(id: &str) -> Result<Self::Object, Self::Error> {
-        dbg!(id);
         reqwest::get(id)
             .map_err(|_| InboxError::DerefError)
             .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject(None)))

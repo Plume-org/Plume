@@ -367,7 +367,7 @@ impl FromId<PlumeRocket> for Blog {
                 title: acct.object.object_props.name_string()?,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                summary: acct.object.object_props.summary_string()?,
+                summary: acct.object.ap_object_props.source_object::<Source>()?.content,
                 instance_id: instance.id,
                 ap_url: acct.object.object_props.id_string()?,
                 public_key: acct
@@ -445,6 +445,7 @@ pub(crate) mod tests {
     use blog_authors::*;
     use diesel::Connection;
     use instance::tests as instance_tests;
+    use medias::NewMedia;
     use search::tests::get_searcher;
     use tests::{db, rockets};
     use users::tests as usersTests;
@@ -789,6 +790,54 @@ pub(crate) mod tests {
             assert!(Blog::get(conn, blog[1].id).is_err());
             user[1].delete(conn, &searcher).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_err());
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn self_federation() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, mut blogs) = fill_database(conn);
+            blogs[0].icon_id = Some(Media::insert(conn, NewMedia {
+                file_path: "aaa.png".into(),
+                alt_text: String::new(),
+                is_remote: false,
+                remote_url: None,
+                sensitive: false,
+                content_warning: None,
+                owner_id: users[0].id,
+            }).unwrap().id);
+            blogs[0].banner_id = Some(Media::insert(conn, NewMedia {
+                file_path: "bbb.png".into(),
+                alt_text: String::new(),
+                is_remote: false,
+                remote_url: None,
+                sensitive: false,
+                content_warning: None,
+                owner_id: users[0].id,
+            }).unwrap().id);
+            let _: Blog = blogs[0].save_changes(conn).unwrap();
+
+            let ap_repr = blogs[0].to_activity(conn).unwrap();
+            blogs[0].delete(conn, &*r.searcher).unwrap();
+            let blog = Blog::from_activity(&r, ap_repr).unwrap();
+
+            assert_eq!(blog.actor_id, blogs[0].actor_id);
+            assert_eq!(blog.title, blogs[0].title);
+            assert_eq!(blog.summary, blogs[0].summary);
+            assert_eq!(blog.outbox_url, blogs[0].outbox_url);
+            assert_eq!(blog.inbox_url, blogs[0].inbox_url);
+            assert_eq!(blog.instance_id, blogs[0].instance_id);
+            assert_eq!(blog.creation_date, blogs[0].creation_date);
+            assert_eq!(blog.ap_url, blogs[0].ap_url);
+            assert_eq!(blog.public_key, blogs[0].public_key);
+            assert_eq!(blog.fqn, blogs[0].fqn);
+            assert_eq!(blog.summary_html, blogs[0].summary_html);
+            assert_eq!(blog.icon_url(conn), blogs[0].icon_url(conn));
+            assert_eq!(blog.banner_url(conn), blogs[0].banner_url(conn));
 
             Ok(())
         });

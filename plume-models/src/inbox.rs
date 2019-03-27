@@ -63,7 +63,7 @@ pub fn inbox(ctx: &PlumeRocket, act: serde_json::Value) -> Result<InboxResult, E
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::InboxResult;
     use crate::blogs::tests::fill_database as blog_fill_db;
     use crate::safe_string::SafeString;
@@ -71,7 +71,7 @@ mod tests {
     use crate::PlumeRocket;
     use diesel::Connection;
 
-    fn fill_database(
+    pub fn fill_database(
         rockets: &PlumeRocket,
     ) -> (
         Vec<crate::posts::Post>,
@@ -114,7 +114,7 @@ mod tests {
     }
 
     #[test]
-    fn test_announce_post() {
+    fn announce_post() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
@@ -140,7 +140,7 @@ mod tests {
     }
 
     #[test]
-    fn test_create_comment() {
+    fn create_comment() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
@@ -175,7 +175,7 @@ mod tests {
     }
 
     #[test]
-    fn test_create_post() {
+    fn create_post() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
@@ -217,7 +217,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_comment() {
+    fn delete_comment() {
         use crate::comments::*;
 
         let r = rockets();
@@ -260,7 +260,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_post() {
+    fn delete_post() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
@@ -287,7 +287,7 @@ mod tests {
     }
 
     #[test]
-    fn test_follow() {
+    fn follow() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
@@ -313,7 +313,7 @@ mod tests {
     }
 
     #[test]
-    fn test_like() {
+    fn like() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
@@ -339,7 +339,7 @@ mod tests {
     }
 
     #[test]
-    fn test_undo_reshare() {
+    fn undo_reshare() {
         use crate::reshares::*;
 
         let r = rockets();
@@ -378,7 +378,7 @@ mod tests {
     }
 
     #[test]
-    fn test_undo_follow() {
+    fn undo_follow() {
         use crate::follows::*;
 
         let r = rockets();
@@ -417,7 +417,7 @@ mod tests {
     }
 
     #[test]
-    fn test_undo_like() {
+    fn undo_like() {
         use crate::likes::*;
 
         let r = rockets();
@@ -456,7 +456,7 @@ mod tests {
     }
 
     #[test]
-    fn test_update_post() {
+    fn update_post() {
         let r = rockets();
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {

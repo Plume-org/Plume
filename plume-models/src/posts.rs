@@ -1119,3 +1119,90 @@ impl IntoId for Post {
         Id::new(self.ap_url.clone())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use diesel::Connection;
+    use super::*;
+    use crate::safe_string::SafeString;
+    use crate::tests::rockets;
+    use crate::inbox::{inbox, InboxResult, tests::fill_database};
+
+    // creates a post, get it's Create activity, delete the post,
+    // "send" the Create to the inbox, and check it works
+    #[test]
+    fn self_federation() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (_, users, blogs) = fill_database(&r);
+            let post = Post::insert(conn, NewPost {
+                blog_id: blogs[0].id,
+                slug: "yo".into(),
+                title: "Yo".into(),
+                content: SafeString::new("Hello"),
+                published: true,
+                license: "WTFPL".to_string(),
+                creation_date: None,
+                ap_url: String::new(), // automatically updated when inserting
+                subtitle: "Testing".into(),
+                source: "Hello".into(),
+                cover_id: None,
+            }, &r.searcher).unwrap();
+            PostAuthor::insert(conn, NewPostAuthor {
+                post_id: post.id,
+                author_id: users[0].id,
+            }).unwrap();
+            let create = post.create_activity(conn).unwrap();
+            post.delete(conn, &r.searcher).unwrap();
+
+            match inbox(&r, serde_json::to_value(create).unwrap()).unwrap() {
+                InboxResult::Post(p) => {
+                    assert!(p.is_author(conn, users[0].id).unwrap());
+                    assert_eq!(p.source, "Hello".to_owned());
+                    assert_eq!(p.blog_id, blogs[0].id);
+                    assert_eq!(p.content, SafeString::new("Hello"));
+                    assert_eq!(p.subtitle, "Testing".to_owned());
+                    assert_eq!(p.title, "Yo".to_owned());
+                }
+                _ => panic!("Unexpected result"),
+            };
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn licensed_article_serde() {
+        let mut article = Article::default();
+        article.object_props.set_id_string("Yo".into()).unwrap();
+        let mut license = Licensed::default();
+        license.set_license_string("WTFPL".into()).unwrap();
+        let full_article = LicensedArticle::new(article, license);
+
+        let json = serde_json::to_value(full_article).unwrap();
+        let article_from_json: LicensedArticle = serde_json::from_value(json).unwrap();
+        assert_eq!("Yo", &article_from_json.object.object_props.id_string().unwrap());
+        assert_eq!("WTFPL", &article_from_json.custom_props.license_string().unwrap());
+    }
+
+    #[test]
+    fn licensed_article_deserialization() {
+        let json = json!({
+            "type": "Article",
+            "id": "https://plu.me/~/Blog/my-article",
+            "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
+            "content": "Hello.",
+            "name": "My Article",
+            "summary": "Bye.",
+            "source": {
+                "content": "Hello.",
+                "mediaType": "text/markdown"
+            },
+            "published": "2014-12-12T12:12:12Z",
+            "to": [plume_common::activity_pub::PUBLIC_VISIBILTY]
+        });
+        let article: LicensedArticle = serde_json::from_value(json).unwrap();
+        assert_eq!("https://plu.me/~/Blog/my-article", &article.object.object_props.id_string().unwrap());
+    }
+}

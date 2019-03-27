@@ -43,7 +43,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
-use {ap_url, Connection, Error, PlumeRocket, Result, CONFIG};
+use {ap_url, Connection, Error, PlumeRocket, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -593,10 +593,12 @@ impl User {
             .ap_actor_props
             .set_followers_string(self.followers_endpoint.clone())?;
 
-        let mut endpoints = Endpoint::default();
-        endpoints
-            .set_shared_inbox_string(ap_url(&format!("{}/inbox/", CONFIG.base_url.as_str())))?;
-        actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
+        if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
+            let mut endpoints = Endpoint::default();
+            endpoints
+                .set_shared_inbox_string(shared_inbox_url)?;
+            actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
+        }
 
         let mut public_key = PublicKey::default();
         public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
@@ -1078,6 +1080,34 @@ pub(crate) mod tests {
                     .len() as i64,
                 User::count_local(conn).unwrap()
             );
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn self_federation() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let users = fill_database(conn);
+
+            let ap_repr = users[0].to_activity(conn).unwrap();
+            users[0].delete(conn, &*r.searcher).unwrap();
+            let user = User::from_activity(&r, ap_repr).unwrap();
+
+            assert_eq!(user.username, users[0].username);
+            assert_eq!(user.display_name, users[0].display_name);
+            assert_eq!(user.outbox_url, users[0].outbox_url);
+            assert_eq!(user.inbox_url, users[0].inbox_url);
+            assert_eq!(user.instance_id, users[0].instance_id);
+            assert_eq!(user.ap_url, users[0].ap_url);
+            assert_eq!(user.public_key, users[0].public_key);
+            assert_eq!(user.shared_inbox_url, users[0].shared_inbox_url);
+            assert_eq!(user.followers_endpoint, users[0].followers_endpoint);
+            assert_eq!(user.avatar_url(conn), users[0].avatar_url(conn));
+            assert_eq!(user.fqn, users[0].fqn);
+            assert_eq!(user.summary_html, users[0].summary_html);
 
             Ok(())
         });
