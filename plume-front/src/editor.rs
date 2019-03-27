@@ -265,7 +265,20 @@ fn init_popup(
         subtitle.focus();
         set_value("subtitle", subtitle.inner_text());
         content.focus();
-        set_value("editor-content", js!{ return @{&content}.innerHTML }.as_str().unwrap_or_default());
+        set_value("editor-content", content.child_nodes().iter().fold(String::new(), |md, ch| {
+            let to_append = match ch.node_type() {
+                NodeType::Element => {
+                    if js!{ return @{&ch}.tagName; } == "DIV" {
+                        (js!{ return @{&ch}.innerHTML; }).try_into().unwrap_or_default()
+                    } else {
+                        (js!{ return @{&ch}.outerHTML; }).try_into().unwrap_or_default()
+                    }
+                },
+                NodeType::Text => ch.node_value().unwrap_or_default(),
+                _ => unreachable!(),
+            };
+            format!("{}\n\n{}", md, to_append)
+        }));
         set_value("tags", get_elt_value("popup-tags"));
         if let Some(draft) = document().get_element_by_id("popup-draft") {
             js!{
