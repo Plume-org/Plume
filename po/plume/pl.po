@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-25 15:29\n"
+"PO-Revision-Date: 2019-03-28 11:12\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -106,7 +106,7 @@ msgstr "Twoje hasło zostało pomyślnie zresetowane."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Przepraszam, ale link wygasł. Spróbuj ponownie"
 
 # src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
@@ -511,14 +511,14 @@ msgid "Update password"
 msgstr "Zaktualizuj hasło"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Sprawdź do swoją skrzynki odbiorczej!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Wysłaliśmy maila na adres, który nam podałeś, z linkiem do zresetowania hasła."
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "Adres e-mail"
 
 msgid "Send reset link"
 msgstr "Wyślij link do zresetowania hasła"
@@ -667,7 +667,7 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Przepraszamy. Jeżeli uważasz że wystąpił błąd, prosimy o zgłoszenie go."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Edytuj \"{}\""
 
 msgid "Description"
 msgstr "Opis"
@@ -685,7 +685,7 @@ msgid "Blog banner"
 msgstr ""
 
 msgid "Update blog"
-msgstr ""
+msgstr "Aktualizuj bloga"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
