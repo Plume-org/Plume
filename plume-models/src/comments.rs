@@ -234,7 +234,7 @@ impl FromId<PlumeRocket> for Comment {
                         None,
                     )?
                     .id,
-                    sensitive: false, // TODO: "sensitive" is not a standard property, we need to think about how to support it with the activitypub crate
+                    sensitive: note.object_props.summary_string().is_ok(),
                     public_visibility,
                 },
             )?;
@@ -376,5 +376,53 @@ impl CommentTree {
             .filter_map(|c| Self::from_comment(conn, c, user).ok())
             .collect();
         Ok(CommentTree { comment, responses })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use diesel::Connection;
+    use super::*;
+    use crate::safe_string::SafeString;
+    use crate::tests::rockets;
+    use crate::inbox::{inbox, InboxResult, tests::fill_database};
+
+    // creates a post, get it's Create activity, delete the post,
+    // "send" the Create to the inbox, and check it works
+    #[test]
+    fn self_federation() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (posts, users, _) = fill_database(&r);
+
+            let original_comm = Comment::insert(conn, NewComment {
+                content: SafeString::new("My comment"),
+                in_response_to_id: None,
+                post_id: posts[0].id,
+                author_id: users[0].id,
+                ap_url: None,
+                sensitive: true,
+                spoiler_text: "My CW".into(),
+                public_visibility: true,
+            }).unwrap();
+            let act = original_comm.create_activity(&r).unwrap();
+            inbox(&r, serde_json::to_value(original_comm.build_delete(conn).unwrap()).unwrap()).unwrap();
+
+            match inbox(&r, serde_json::to_value(act).unwrap()).unwrap() {
+                InboxResult::Commented(c) => {
+                    // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
+                    assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);
+                    assert_eq!(c.post_id, original_comm.post_id);
+                    assert_eq!(c.author_id, original_comm.author_id);
+                    assert_eq!(c.ap_url, original_comm.ap_url);
+                    assert_eq!(c.spoiler_text, original_comm.spoiler_text);
+                    assert_eq!(c.public_visibility, original_comm.public_visibility);
+                }
+                _ => panic!("Unexpected result"),
+            };
+
+            Ok(())
+        });
     }
 }
