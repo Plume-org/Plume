@@ -831,7 +831,6 @@ pub(crate) mod tests {
             assert_eq!(blog.outbox_url, blogs[0].outbox_url);
             assert_eq!(blog.inbox_url, blogs[0].inbox_url);
             assert_eq!(blog.instance_id, blogs[0].instance_id);
-            assert_eq!(blog.creation_date, blogs[0].creation_date);
             assert_eq!(blog.ap_url, blogs[0].ap_url);
             assert_eq!(blog.public_key, blogs[0].public_key);
             assert_eq!(blog.fqn, blogs[0].fqn);
