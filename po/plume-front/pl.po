@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-18 15:50\n"
+"PO-Revision-Date: 2019-03-28 11:12\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -30,7 +30,7 @@ msgstr "Napisz swój artykuł tutaj. Markdown jest obsługiwany."
 
 # plume-front/src/editor.rs:113
 msgid "Around {} characters left"
-msgstr ""
+msgstr "Pozostało w okolicy {} znaków"
 
 # plume-front/src/editor.rs:143
 msgid "Tags"
@@ -42,7 +42,7 @@ msgstr "Licencja"
 
 # plume-front/src/editor.rs:147
 msgid "Cover"
-msgstr ""
+msgstr "Okładka"
 
 # plume-front/src/editor.rs:157
 msgid "Publish"
