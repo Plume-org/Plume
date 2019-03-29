@@ -31,7 +31,7 @@
     <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
     @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
         <form class="inline icon icon-trash" method="post" action="@uri!(comments::delete: blog = blog, slug = slug, id = comm.id)">
-            <input onclick="return confirm('Are you sure you?')" type="submit" value="@i18n!(ctx.1, "Delete this comment")">
+            <input onclick="return confirm('Are you sure?')" type="submit" value="@i18n!(ctx.1, "Delete this comment")">
 	    </form>
     }
     @for res in &comment_tree.responses {
