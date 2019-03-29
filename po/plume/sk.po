@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 19:15\n"
+"PO-Revision-Date: 2019-03-29 20:56\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} komentoval/a tvoj článok."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -54,11 +54,11 @@ msgstr "Nemáš dovolené upravovať tento blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Tento mediálny súbor nemožno použiť ako ikonku pre blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Tento mediálny súbor nemožno použiť ako záhlavie pre blog."
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
@@ -78,7 +78,7 @@ msgstr "Ak chceš napísať nový príspevok, musíš byť prihlásený/á"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Nie si autorom na tomto blogu."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -202,7 +202,7 @@ msgid "Articles from {}"
 msgstr "Články od {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "Ešte tu nič nieje vidieť. Skús začať odoberať obsah od viacero ľudí."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -372,7 +372,7 @@ msgid "Respond"
 msgstr "Odpovedz"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Ste si istý/á?"
 
 msgid "Delete this comment"
 msgstr "Vymaž tento komentár"
@@ -497,7 +497,7 @@ msgid "No result for your query"
 msgstr "Žiadny výsledok pre tvoje zadanie"
 
 msgid "No more results for your query"
-msgstr ""
+msgstr "Žiadne ďalšie výsledky pre tvoje zadanie"
 
 msgid "Reset your password"
 msgstr "Obnov svoje heslo"
@@ -544,7 +544,7 @@ msgid "Content"
 msgstr "Obsah"
 
 msgid "You can upload media to your gallery, and copy their Markdown code in your articles to insert them."
-msgstr ""
+msgstr "Do galérie môžeš nahrávať multimédiá, a potom skopírovať ich Markdown syntaxiu aby si ich vložil/a do svojích článkov."
 
 msgid "Upload media"
 msgstr "Nahraj multimédiá"
