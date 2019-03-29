@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 19:15\n"
+"PO-Revision-Date: 2019-03-29 20:56\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} skomentował(a) Twój artykuł."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -54,7 +54,7 @@ msgstr "Nie masz uprawnień edytować tego bloga."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Nie możesz użyć tego nośnika jako ikony blogu."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
@@ -78,7 +78,7 @@ msgstr "Musisz się zalogować, aby utworzyć wpis"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Nie jesteś autorem tego bloga."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -497,7 +497,7 @@ msgid "No result for your query"
 msgstr "Brak wyników dla tego kryterium"
 
 msgid "No more results for your query"
-msgstr ""
+msgstr "Nie ma więcej wyników pasujących do tych kryteriów"
 
 msgid "Reset your password"
 msgstr "Zmień swoje hasło"
