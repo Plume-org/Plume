@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 08:16\n"
+"PO-Revision-Date: 2019-03-29 09:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -82,7 +82,7 @@ msgstr ""
 
 # src/routes/posts.rs:145
 msgid "New post"
-msgstr ""
+msgstr "Apunt nou"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
@@ -94,7 +94,7 @@ msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Reinicialització de contrasenya"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
@@ -124,46 +124,46 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Menú"
 
 msgid "Search"
-msgstr ""
+msgstr "Cerca"
 
 msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notificacions"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Finalitza la sessió"
 
 msgid "My account"
-msgstr ""
+msgstr "El meu compte"
 
 msgid "Log In"
-msgstr ""
+msgstr "Inicia la sessió"
 
 msgid "Register"
-msgstr ""
+msgstr "Registre"
 
 msgid "About this instance"
-msgstr ""
+msgstr "Quant a aquesta instància"
 
 msgid "Source code"
-msgstr ""
+msgstr "Codi font"
 
 msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Administració"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Us donem la benvinguda a {}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Darrers articles"
 
 msgid "Your feed"
 msgstr ""
@@ -178,19 +178,19 @@ msgid "Administration of {0}"
 msgstr ""
 
 msgid "Instances"
-msgstr ""
+msgstr "Instàncies"
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuració"
 
 msgid "Users"
-msgstr ""
+msgstr "Usuaris"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Desbloca"
 
 msgid "Block"
-msgstr ""
+msgstr "Bloca"
 
 msgid "Ban"
 msgstr ""
@@ -206,11 +206,11 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 # src/template_utils.rs:220
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 msgid "Allow anyone to register here"
 msgstr ""
@@ -232,7 +232,7 @@ msgid "Save these settings"
 msgstr ""
 
 msgid "About {0}"
-msgstr ""
+msgstr "Quant a {0}"
 
 msgid "Home to <em>{0}</em> users"
 msgstr ""
@@ -253,7 +253,7 @@ msgid "Edit your account"
 msgstr ""
 
 msgid "Your Profile"
-msgstr ""
+msgstr "El vostre perfil"
 
 msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
@@ -267,13 +267,13 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Adreça electrònica"
 
 msgid "Summary"
-msgstr ""
+msgstr "Resum"
 
 msgid "Update account"
-msgstr ""
+msgstr "Actualitza el compte"
 
 msgid "Danger zone"
 msgstr ""
@@ -291,7 +291,7 @@ msgid "Your Dashboard"
 msgstr ""
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Els vostres blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
@@ -316,27 +316,27 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Username"
-msgstr ""
+msgstr "Nom d’usuari"
 
 # src/template_utils.rs:217
 msgid "Password"
-msgstr ""
+msgstr "Contrasenya"
 
 # src/template_utils.rs:217
 msgid "Password confirmation"
-msgstr ""
+msgstr "Confirmació de la contrasenya"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "Articles"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Subscriptors"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Subscripcions"
 
 msgid "Atom feed"
 msgstr ""
@@ -372,10 +372,10 @@ msgid "Respond"
 msgstr ""
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Suprimeix aquest comentari"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Què és el Plume?"
 
 msgid "Plume is a decentralized blogging engine."
 msgstr ""
@@ -393,32 +393,32 @@ msgid "Read the detailed rules"
 msgstr ""
 
 msgid "None"
-msgstr ""
+msgstr "Cap"
 
 msgid "No description"
-msgstr ""
+msgstr "Cap descripció"
 
 msgid "View all"
-msgstr ""
+msgstr "Mostra-ho tot"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Per {0}"
 
 msgid "Draft"
-msgstr ""
+msgstr "Esborrany"
 
 msgid "Your query"
 msgstr ""
 
 msgid "Advanced search"
-msgstr ""
+msgstr "Cerca avançada"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
-msgstr ""
+msgstr "Títol"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
@@ -461,84 +461,84 @@ msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "Autors"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
-msgstr ""
+msgstr "Títol del blog"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
-msgstr ""
+msgstr "Escrit en aquesta llengua"
 
 msgid "Language"
-msgstr ""
+msgstr "Llengua"
 
 # src/template_utils.rs:305
 msgid "Published under this license"
-msgstr ""
+msgstr "Publicat segons aquesta llicència"
 
 msgid "Article license"
 msgstr ""
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Resultats de la cerca «{0}»"
 
 msgid "Search result"
-msgstr ""
+msgstr "Resultats de la cerca"
 
 msgid "No result for your query"
-msgstr ""
+msgstr "La vostra consulta no ha produït cap resultat"
 
 msgid "No more result for your query"
 msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Reinicialitza la contrasenya"
 
 # src/template_utils.rs:217
 msgid "New password"
-msgstr ""
+msgstr "Contrasenya nova"
 
 # src/template_utils.rs:217
 msgid "Confirmation"
-msgstr ""
+msgstr "Confirmació"
 
 msgid "Update password"
-msgstr ""
+msgstr "Actualitza la contrasenya"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Reviseu la vostra safata d’entrada."
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "Adreça electrónica"
 
 msgid "Send reset link"
 msgstr ""
 
 msgid "Login"
-msgstr ""
+msgstr "Inicia la sessió"
 
 # src/template_utils.rs:217
 msgid "Username or email"
-msgstr ""
+msgstr "Nom d’usuari o adreça electrònica"
 
 msgid "Publish"
-msgstr ""
+msgstr "Publica"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
-msgstr ""
+msgstr "Subtítol"
 
 msgid "Content"
-msgstr ""
+msgstr "Contingut"
 
 msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
 msgstr ""
@@ -565,25 +565,25 @@ msgid "This is a draft, don't publish it yet."
 msgstr ""
 
 msgid "Update"
-msgstr ""
+msgstr "Actualitza"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Actualitza o publica"
 
 msgid "Publish your post"
 msgstr ""
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Escrit per {0}"
 
 msgid "Edit"
-msgstr ""
+msgstr "Edita"
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Suprimeix aquest article"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Tots els drets reservats."
 
 msgid "This article is under the {0} license."
 msgstr ""
@@ -594,7 +594,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Això ja no m’agrada"
 
 msgid "Add yours"
 msgstr ""
@@ -614,17 +614,17 @@ msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Comentaris"
 
 # src/template_utils.rs:217
 msgid "Content warning"
 msgstr ""
 
 msgid "Your comment"
-msgstr ""
+msgstr "El vostre comentari"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Envia el comentari"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
@@ -663,10 +663,10 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Edita «{}»"
 
 msgid "Description"
-msgstr ""
+msgstr "Descripció"
 
 msgid "You can upload images to your gallery, to use them as blog icons or banners."
 msgstr ""
@@ -681,45 +681,45 @@ msgid "Blog banner"
 msgstr ""
 
 msgid "Update blog"
-msgstr ""
+msgstr "Actualitza el blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "Suprimeix permanentment aquest blog"
 
 msgid "New Blog"
-msgstr ""
+msgstr "Blog nou"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Crea un blog"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Crea un blog"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "Icona per a {}"
 
 msgid "New article"
-msgstr ""
+msgstr "Article nou"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hi ha 1 autor en aquest blog: "
+msgstr[1] "Hi ha {0} autors en aquest blog: "
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Encara no hi ha cap apunt."
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Articles amb l’etiqueta «{0}»"
 
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
 msgid "Upload"
-msgstr ""
+msgstr "Puja"
 
 msgid "You don't have any media yet."
 msgstr ""
@@ -728,10 +728,10 @@ msgid "Content warning: {0}"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Suprimeix"
 
 msgid "Details"
-msgstr ""
+msgstr "Detalls"
 
 msgid "Media upload"
 msgstr ""
@@ -743,19 +743,19 @@ msgid "Leave it empty, if none is needed"
 msgstr ""
 
 msgid "File"
-msgstr ""
+msgstr "Fitxer"
 
 msgid "Send"
-msgstr ""
+msgstr "Envia"
 
 msgid "Media details"
-msgstr ""
+msgstr "Detalls del fitxer multimèdia"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Torna a la galeria"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Sintaxi Markdown"
 
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
