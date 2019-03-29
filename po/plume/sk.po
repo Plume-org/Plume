@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-28 11:11\n"
+"PO-Revision-Date: 2019-03-29 19:15\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -17,8 +17,8 @@ msgstr ""
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
 # src/template_utils.rs:68
-msgid "{0} commented your article."
-msgstr "{0} komentoval/a tvoj článok."
+msgid "{0} commented on your article."
+msgstr ""
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -53,12 +53,12 @@ msgid "You are not allowed to edit this blog."
 msgstr "Nemáš dovolené upravovať tento blog."
 
 # src/routes/blogs.rs:253
-msgid "You can't use this media as blog icon."
-msgstr "Tento mediálny súbor nemôžeš použiť ako ikonku pre blog."
+msgid "You can't use this media as a blog icon."
+msgstr ""
 
 # src/routes/blogs.rs:271
-msgid "You can't use this media as blog banner."
-msgstr "Tento mediálny súbor nemôžeš použiť ako záhlavie pre blog."
+msgid "You can't use this media as a blog banner."
+msgstr ""
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
@@ -77,8 +77,8 @@ msgid "You need to be logged in order to write a new post"
 msgstr "Ak chceš napísať nový príspevok, musíš byť prihlásený/á"
 
 # src/routes/posts.rs:138
-msgid "You are not author in this blog."
-msgstr "Nie si autorom tohto blogu."
+msgid "You are not an author of this blog."
+msgstr ""
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -201,8 +201,8 @@ msgstr "Všetky články vo Fediverse"
 msgid "Articles from {}"
 msgstr "Články od {}"
 
-msgid "Nothing to see here yet. Try to subscribe to more people."
-msgstr "Ešte tu nič nieje vidieť. Skús začať odoberať obsah od viacero ľudí."
+msgid "Nothing to see here yet. Try subscribing to more people."
+msgstr ""
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -371,6 +371,9 @@ msgstr "Odberatelia obsahu od {0}"
 msgid "Respond"
 msgstr "Odpovedz"
 
+msgid "Are you sure?"
+msgstr ""
+
 msgid "Delete this comment"
 msgstr "Vymaž tento komentár"
 
@@ -493,8 +496,8 @@ msgstr "Výsledok hľadania"
 msgid "No result for your query"
 msgstr "Žiadny výsledok pre tvoje zadanie"
 
-msgid "No more result for your query"
-msgstr "Žiaden ďalší výsledok pre tvoje zadanie"
+msgid "No more results for your query"
+msgstr ""
 
 msgid "Reset your password"
 msgstr "Obnov svoje heslo"
@@ -540,8 +543,8 @@ msgstr "Podnadpis"
 msgid "Content"
 msgstr "Obsah"
 
-msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
-msgstr "Do galérie môžeš nahrávať multimédiá, a potom skopírovať ich Markdown syntaxiu aby si ich vložil/a do svojích článkov."
+msgid "You can upload media to your gallery, and copy their Markdown code in your articles to insert them."
+msgstr ""
 
 msgid "Upload media"
 msgstr "Nahraj multimédiá"
