@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-25 07:58\n"
+"PO-Revision-Date: 2019-03-29 08:16\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented your article."
-msgstr ""
+msgstr "{0} ha comentat el vostre article."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -26,11 +26,11 @@ msgstr ""
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr ""
+msgstr "A {0} l’ha agradat el vostre article."
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} us ha esmentat."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Heu d’iniciar una sessió per a crear un blog nou"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
