@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 19:15\n"
+"PO-Revision-Date: 2019-03-29 21:47\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} komentoval/a váš článek."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Musíte být přihlášeni, abyste mohli vytvořit nový blog"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -50,7 +50,7 @@ msgstr "Nemáte oprávnění zmazat tento blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Nemáte oprávnění upravovat tento blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
@@ -90,7 +90,7 @@ msgstr "Upravit {0}"
 
 # src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Musíte být přihlášeni, abyste mohli sdílet příspěvek"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -102,7 +102,7 @@ msgstr ""
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Vaše heslo bylo úspěšně obnoveno."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
@@ -235,7 +235,7 @@ msgid "About {0}"
 msgstr "O {0}"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "Domov pro <em>{0}</em> uživatelů"
 
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "Co napsali <em>{0}</em> článků"
@@ -372,7 +372,7 @@ msgid "Respond"
 msgstr "Odpovědět"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Jste si jisti?"
 
 msgid "Delete this comment"
 msgstr "Odstranit tento komentář"
@@ -439,7 +439,7 @@ msgstr ""
 
 # src/template_utils.rs:305
 msgid "From this date"
-msgstr ""
+msgstr "Od tohoto data"
 
 # src/template_utils.rs:305
 msgid "To this date"
@@ -497,7 +497,7 @@ msgid "No result for your query"
 msgstr "Žádný výsledek nenalzen pro váš dotaz"
 
 msgid "No more results for your query"
-msgstr ""
+msgstr "Žádné další výsledeky pro váše zadaní"
 
 msgid "Reset your password"
 msgstr "Obnovte své heslo"
@@ -521,10 +521,10 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "E-mail"
 
 msgid "Send reset link"
-msgstr ""
+msgstr "Poslat odkaz pro obnovení"
 
 msgid "Login"
 msgstr "Přihlášení"
@@ -555,26 +555,26 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "License"
-msgstr ""
+msgstr "Licence"
 
 # src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "Nechte políčko prázdné pro vyhrazení všech práv"
 
 msgid "Illustration"
-msgstr ""
+msgstr "Ilustrace"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "Tohle je koncept, neveřejnit ho ještě."
 
 msgid "Update"
-msgstr ""
+msgstr "Aktualizovat"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Aktualizovat, nebo publikovat"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "Publikovat svůj příspěvek"
 
 msgid "Written by {0}"
 msgstr ""
