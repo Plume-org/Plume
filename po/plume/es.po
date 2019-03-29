@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Weblate 3.2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} gusto tu publicación"
 
 # src/template_utils.rs:35
@@ -48,12 +48,12 @@ msgstr ""
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/main.rs:1
-msgid "You can't use this media as blog icon."
+# src/routes/blogs.rs:253
+msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/main.rs:1
-msgid "You can't use this media as blog banner."
+# src/routes/blogs.rs:271
+msgid "You can't use this media as a blog banner."
 msgstr ""
 
 msgid "You need to be logged in order to like a post"
@@ -68,7 +68,8 @@ msgstr ""
 msgid "You need to be logged in order to write a new post"
 msgstr "Necesitas iniciar sesión para publicar una publicación"
 
-msgid "You are not author in this blog."
+# src/routes/posts.rs:138
+msgid "You are not an author of this blog."
 msgstr ""
 
 msgid "New post"
@@ -189,7 +190,7 @@ msgstr ""
 msgid "Articles from {}"
 msgstr ""
 
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 msgid "Name"
@@ -357,6 +358,9 @@ msgstr ""
 msgid "Respond"
 msgstr "Responder"
 
+msgid "Are you sure?"
+msgstr ""
+
 msgid "Delete this comment"
 msgstr ""
 
@@ -483,7 +487,7 @@ msgstr ""
 msgid "No result for your query"
 msgstr ""
 
-msgid "No more result for your query"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Reset your password"
@@ -532,7 +536,7 @@ msgid "Content"
 msgstr "Contenido"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 

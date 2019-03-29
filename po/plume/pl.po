@@ -14,7 +14,8 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-msgid "{0} commented your article."
+#, fuzzy
+msgid "{0} commented on your article."
 msgstr "{0} skomentował(a) Twój artykuł."
 
 # src/template_utils.rs:35
@@ -44,11 +45,11 @@ msgid "You are not allowed to edit this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
 #, fuzzy
-msgid "You can't use this media as blog icon."
+msgid "You can't use this media as a blog icon."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
 #, fuzzy
-msgid "You can't use this media as blog banner."
+msgid "You can't use this media as a blog banner."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
 msgid "You need to be logged in order to like a post"
@@ -63,7 +64,8 @@ msgstr "Ten wpis nie został jeszcze opublikowany."
 msgid "You need to be logged in order to write a new post"
 msgstr "Musisz się zalogować, aby utworzyć wpis"
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author of this blog."
 msgstr "Nie jesteś autorem tego bloga."
 
 msgid "New post"
@@ -183,7 +185,7 @@ msgid "Articles from {}"
 msgstr "Artykuły z {}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr "Nie ma tutaj niczego. Spróbuj zacząć śledzić więcej osób."
 
 msgid "Name"
@@ -357,6 +359,9 @@ msgstr "Opis"
 msgid "Respond"
 msgstr "Odpowiedz"
 
+msgid "Are you sure?"
+msgstr ""
+
 msgid "Delete this comment"
 msgstr "Usuń ten komentarz"
 
@@ -487,7 +492,8 @@ msgstr "Wyniki wyszukiwania"
 msgid "No result for your query"
 msgstr "Brak wyników dla tego kryterium"
 
-msgid "No more result for your query"
+#, fuzzy
+msgid "No more results for your query"
 msgstr "Nie ma więcej wyników pasujących do tych kryteriów"
 
 msgid "Reset your password"
@@ -536,7 +542,7 @@ msgid "Content"
 msgstr "Zawartość"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 

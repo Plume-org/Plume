@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Weblate 3.2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} comentou o seu artigo"
 
 # src/template_utils.rs:35
@@ -49,11 +49,11 @@ msgid "You are not allowed to edit this blog."
 msgstr "Você não é autor neste blog."
 
 #, fuzzy
-msgid "You can't use this media as blog icon."
+msgid "You can't use this media as a blog icon."
 msgstr "Você não é autor neste blog."
 
 #, fuzzy
-msgid "You can't use this media as blog banner."
+msgid "You can't use this media as a blog banner."
 msgstr "Você não é autor neste blog."
 
 msgid "You need to be logged in order to like a post"
@@ -68,7 +68,8 @@ msgstr "Este artigo ainda não foi publicado."
 msgid "You need to be logged in order to write a new post"
 msgstr "Você precisa estar logado para escrever um novo artigo"
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author of this blog."
 msgstr "Você não é autor neste blog."
 
 msgid "New post"
@@ -191,7 +192,7 @@ msgid "Articles from {}"
 msgstr "Artigos de {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr "Ainda não há nada para ver aqui. Tente seguir mais pessoas."
 
 msgid "Name"
@@ -373,6 +374,9 @@ msgstr "Descrição"
 msgid "Respond"
 msgstr "Responder"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "Suprimir este blog"
@@ -508,8 +512,9 @@ msgstr ""
 msgid "No result for your query"
 msgstr "Ir para a sua galeria"
 
-msgid "No more result for your query"
-msgstr ""
+#, fuzzy
+msgid "No more results for your query"
+msgstr "Ir para a sua galeria"
 
 msgid "Reset your password"
 msgstr ""
@@ -557,7 +562,7 @@ msgid "Content"
 msgstr "Conteúdo"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 

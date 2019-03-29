@@ -135,7 +135,7 @@ pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, 
         // TODO actually return 403 error code
         return Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "You are not author in this blog.")
+            i18n!(intl.catalog, "You are not an author of this blog.")
         )));
     }
 
@@ -173,7 +173,7 @@ pub fn edit(
     if !user.is_author_in(&*conn, &b)? {
         return Ok(render!(errors::not_authorized(
             &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "You are not author in this blog.")
+            i18n!(intl.catalog, "You are not an author of this blog.")
         )));
     }
 

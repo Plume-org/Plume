@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} прокомментировал(а) вашу статью"
 
 # src/template_utils.rs:35
@@ -50,11 +50,11 @@ msgid "You are not allowed to edit this blog."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
-msgid "You can't use this media as blog icon."
+msgid "You can't use this media as a blog icon."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
-msgid "You can't use this media as blog banner."
+msgid "You can't use this media as a blog banner."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
@@ -73,7 +73,7 @@ msgid "You need to be logged in order to write a new post"
 msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author of this blog."
 msgstr "Вы не автор этого блога."
 
 msgid "New post"
@@ -206,7 +206,7 @@ msgid "Articles from {}"
 msgstr "Статьи с {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 "Пока что здесь ничего нет. Попробуйте подписаться на большее число людей."
 
@@ -396,6 +396,9 @@ msgstr "Описание"
 msgid "Respond"
 msgstr "Ответить"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "Удалить этот блог"
@@ -524,8 +527,9 @@ msgstr ""
 msgid "No result for your query"
 msgstr "Перейти в вашу галерею"
 
-msgid "No more result for your query"
-msgstr ""
+#, fuzzy
+msgid "No more results for your query"
+msgstr "Перейти в вашу галерею"
 
 msgid "Reset your password"
 msgstr ""
@@ -574,7 +578,7 @@ msgid "Content"
 msgstr "Содержимое"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 

@@ -17,7 +17,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.7\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} a commenté votre article"
 
 # src/template_utils.rs:35
@@ -52,11 +52,11 @@ msgid "You are not allowed to edit this blog."
 msgstr "Vous n’êtes pas auteur⋅ice dans ce blog."
 
 #, fuzzy
-msgid "You can't use this media as blog icon."
+msgid "You can't use this media as a blog icon."
 msgstr "Vous n’êtes pas auteur⋅ice dans ce blog."
 
 #, fuzzy
-msgid "You can't use this media as blog banner."
+msgid "You can't use this media as a blog banner."
 msgstr "Vous n’êtes pas auteur⋅ice dans ce blog."
 
 #, fuzzy
@@ -75,7 +75,7 @@ msgid "You need to be logged in order to write a new post"
 msgstr "Vous devez vous connecter pour écrire un article"
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author of this blog."
 msgstr "Vous n’êtes pas auteur⋅ice dans ce blog."
 
 msgid "New post"
@@ -201,7 +201,7 @@ msgid "Articles from {}"
 msgstr "Articles de {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr "Rien par ici pour le moment. Essayez de suivre plus de monde."
 
 msgid "Name"
@@ -393,6 +393,9 @@ msgstr "Description"
 msgid "Respond"
 msgstr "Répondre"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "Supprimer ce blog"
@@ -517,7 +520,8 @@ msgstr ""
 msgid "No result for your query"
 msgstr "Aucun résultat pour votre recherche"
 
-msgid "No more result for your query"
+#, fuzzy
+msgid "No more results for your query"
 msgstr "Plus de résultats pour votre recherche"
 
 msgid "Reset your password"
@@ -567,7 +571,7 @@ msgid "Content"
 msgstr "Contenu"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 
