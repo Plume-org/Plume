@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-25 07:58\n"
+"PO-Revision-Date: 2019-03-29 19:15\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -17,8 +17,8 @@ msgstr ""
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
 # src/template_utils.rs:68
-msgid "{0} commented your article."
-msgstr "{0} commented on your article."
+msgid "{0} commented on your article."
+msgstr ""
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -53,12 +53,12 @@ msgid "You are not allowed to edit this blog."
 msgstr ""
 
 # src/routes/blogs.rs:253
-msgid "You can't use this media as blog icon."
-msgstr "You can't use this media as a blog icon."
+msgid "You can't use this media as a blog icon."
+msgstr ""
 
 # src/routes/blogs.rs:271
-msgid "You can't use this media as blog banner."
-msgstr "You can't use this media as a blog banner."
+msgid "You can't use this media as a blog banner."
+msgstr ""
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
@@ -77,8 +77,8 @@ msgid "You need to be logged in order to write a new post"
 msgstr "You need to be logged in to write a new post"
 
 # src/routes/posts.rs:138
-msgid "You are not author in this blog."
-msgstr "You are not an author on this blog."
+msgid "You are not an author of this blog."
+msgstr ""
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -201,7 +201,7 @@ msgstr "All the articles from the Fediverse"
 msgid "Articles from {}"
 msgstr ""
 
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:217
@@ -371,6 +371,9 @@ msgstr ""
 msgid "Respond"
 msgstr ""
 
+msgid "Are you sure?"
+msgstr ""
+
 msgid "Delete this comment"
 msgstr ""
 
@@ -493,7 +496,7 @@ msgstr ""
 msgid "No result for your query"
 msgstr ""
 
-msgid "No more result for your query"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Reset your password"
@@ -540,8 +543,8 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them."
-msgstr "You can upload medias to your gallery, and then copy their Markdown code into your articles to insert them."
+msgid "You can upload media to your gallery, and copy their Markdown code in your articles to insert them."
+msgstr ""
 
 msgid "Upload media"
 msgstr ""
