@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Weblate 3.2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{{ data }} があなたの記事にコメントしました"
 
 # src/template_utils.rs:35
@@ -50,11 +50,11 @@ msgid "You are not allowed to edit this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
 #, fuzzy
-msgid "You can't use this media as blog icon."
+msgid "You can't use this media as a blog icon."
 msgstr "あなたはこのブログの作者ではありません。"
 
 #, fuzzy
-msgid "You can't use this media as blog banner."
+msgid "You can't use this media as a blog banner."
 msgstr "あなたはこのブログの作者ではありません。"
 
 msgid "You need to be logged in order to like a post"
@@ -69,7 +69,8 @@ msgstr "この投稿はまだ公開されていません。"
 msgid "You need to be logged in order to write a new post"
 msgstr "新しい記事を書くにはログインする必要があります"
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author of this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
 msgid "New post"
@@ -193,7 +194,7 @@ msgid "Articles from {}"
 msgstr "{{ instance.name }} の記事"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 "ここにはまだ表示できるものがありません。他の人をもっとフォローしてみてくださ"
 "い。"
@@ -381,6 +382,9 @@ msgstr "説明"
 msgid "Respond"
 msgstr "返信"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "このブログを削除"
@@ -515,8 +519,9 @@ msgstr ""
 msgid "No result for your query"
 msgstr "ギャラリーを参照"
 
-msgid "No more result for your query"
-msgstr ""
+#, fuzzy
+msgid "No more results for your query"
+msgstr "ギャラリーを参照"
 
 msgid "Reset your password"
 msgstr ""
@@ -564,7 +569,7 @@ msgid "Content"
 msgstr "コメント"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 
