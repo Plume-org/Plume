@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 20:56\n"
+"PO-Revision-Date: 2019-03-29 21:47\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -202,7 +202,7 @@ msgid "Articles from {}"
 msgstr "Artykuły z {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "Nic tu nie jeszcze do zobaczenia. Spróbuj subskrybować więcej osób."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -372,7 +372,7 @@ msgid "Respond"
 msgstr "Odpowiedz"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Czy jesteś pewny?"
 
 msgid "Delete this comment"
 msgstr "Usuń ten komentarz"
@@ -682,7 +682,7 @@ msgid "Upload images"
 msgstr ""
 
 msgid "Blog icon"
-msgstr ""
+msgstr "Ikona blog"
 
 msgid "Blog banner"
 msgstr ""
@@ -776,5 +776,5 @@ msgid "Login to boost"
 msgstr ""
 
 msgid "Login to like"
-msgstr ""
+msgstr "Zaloguj się, aby polubić"
 
