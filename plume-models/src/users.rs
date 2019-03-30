@@ -731,23 +731,17 @@ impl FromId<PlumeRocket> for User {
             )
         })?;
 
-        if acct
-            .object
-            .ap_actor_props
-            .preferred_username_string()?
-            .contains(&['<', '>', '&', '@', '\'', '"'][..])
-        {
+        let username = acct.object.ap_actor_props.preferred_username_string()?;
+
+        if username.contains(&['<', '>', '&', '@', '\'', '"'][..]) {
             return Err(Error::InvalidValue);
         }
+
         let user = User::insert(
             &c.conn,
             NewUser {
-                username: acct
-                    .object
-                    .ap_actor_props
-                    .preferred_username_string()
-                    .unwrap(),
-                display_name: acct.object.object_props.name_string()?,
+                display_name: acct.object.object_props.name_string().unwrap_or(username.clone()),
+                username,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
                 is_admin: false,
@@ -783,19 +777,19 @@ impl FromId<PlumeRocket> for User {
             },
         )?;
 
-        let avatar = Media::save_remote(
-            &c.conn,
-            acct.object
-                .object_props
-                .icon_image()?
-                .object_props
-                .url_string()?,
-            &user,
-        );
+        if let Ok(icon) = acct.object.object_props.icon_image() {
+            if let Ok(url) = icon.object_props.url_string() {
+                let avatar = Media::save_remote(
+                    &c.conn,
+                    url,
+                    &user,
+                );
 
-        if let Ok(avatar) = avatar {
-            user.set_avatar(&c.conn, avatar.id)?;
-        }
+                if let Ok(avatar) = avatar {
+                    user.set_avatar(&c.conn, avatar.id)?;
+                }
+            }
+        }        
 
         Ok(user)
     }

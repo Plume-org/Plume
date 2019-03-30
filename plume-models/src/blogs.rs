@@ -138,8 +138,6 @@ impl Blog {
             .into_iter()
             .next();
         if let Some(from_db) = from_db {
-            dbg!("found fqn");
-            dbg!(fqn);
             Ok(from_db)
         } else {
             Blog::fetch_from_webfinger(c, fqn)
@@ -360,14 +358,15 @@ impl FromId<PlumeRocket> for Blog {
             })
             .map(|m| m.id);
 
+        let name = acct.object.ap_actor_props.preferred_username_string()?;
         Blog::insert(
             &c.conn,
             NewBlog {
-                actor_id: acct.object.ap_actor_props.preferred_username_string()?,
-                title: acct.object.object_props.name_string()?,
+                actor_id: name.clone(),
+                title: acct.object.object_props.name_string().unwrap_or(name),
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                summary: acct.object.ap_object_props.source_object::<Source>()?.content,
+                summary: acct.object.ap_object_props.source_object::<Source>().map(|s| s.content).unwrap_or_default(),
                 instance_id: instance.id,
                 ap_url: acct.object.object_props.id_string()?,
                 public_key: acct
@@ -377,7 +376,7 @@ impl FromId<PlumeRocket> for Blog {
                 private_key: None,
                 banner_id,
                 icon_id,
-                summary_html: SafeString::new(&acct.object.object_props.summary_string()?),
+                summary_html: SafeString::new(&acct.object.object_props.summary_string().unwrap_or_default()),
             },
         )
     }
