@@ -740,7 +740,7 @@ impl FromId<PlumeRocket> for User {
         let user = User::insert(
             &c.conn,
             NewUser {
-                display_name: acct.object.object_props.name_string().unwrap_or(username.clone()),
+                display_name: acct.object.object_props.name_string().unwrap_or_else(|| username.clone()),
                 username,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
