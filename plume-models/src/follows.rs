@@ -114,7 +114,7 @@ impl FromActivity<FollowAct, Connection> for Follow {
         let from_id = follow
             .follow_props
             .actor_link::<Id>()
-            .map(|l| l.into())
+            .map(Into::into)
             .or_else(|_| {
                 Ok(follow
                     .follow_props
