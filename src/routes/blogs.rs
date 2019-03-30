@@ -260,7 +260,7 @@ pub fn update(
                                 code: Cow::from("icon"),
                                 message: Some(Cow::from(i18n!(
                                     intl,
-                                    "You can't use this media as blog icon."
+                                    "You can't use this media as a blog icon."
                                 ))),
                                 params: HashMap::new(),
                             },
@@ -278,7 +278,7 @@ pub fn update(
                                 code: Cow::from("banner"),
                                 message: Some(Cow::from(i18n!(
                                     intl,
-                                    "You can't use this media as blog banner."
+                                    "You can't use this media as a blog banner."
                                 ))),
                                 params: HashMap::new(),
                             },

@@ -38,7 +38,7 @@
             <a href="@uri!(posts::edit: blog = &blog.fqn, slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
             &mdash;
             <form class="inline" method="post" action="@uri!(posts::delete: blog_name = &blog.fqn, slug = &article.slug)">
-                <input onclick="return confirm('Are you sure you?')" type="submit" value="@i18n!(ctx.1, "Delete this article")">
+                <input onclick="return confirm('@i18n!(ctx.1, "Are you sure?")')" type="submit" value="@i18n!(ctx.1, "Delete this article")">
             </form>
         }
         @if !article.published {

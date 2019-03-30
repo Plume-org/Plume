@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Weblate 3.2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} la inn en kommentar til artikkelen din"
 
 # src/template_utils.rs:35
@@ -55,11 +55,11 @@ msgid "You are not allowed to edit this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
-msgid "You can't use this media as blog icon."
+msgid "You can't use this media as a blog icon."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
-msgid "You can't use this media as blog banner."
+msgid "You can't use this media as a blog banner."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
@@ -78,7 +78,7 @@ msgid "You need to be logged in order to write a new post"
 msgstr "Du må være logget inn for å skrive et nytt innlegg"
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author of this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
 msgid "New post"
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Articles from {}"
 msgstr "Om {0}"
 
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -398,6 +398,9 @@ msgstr "Lang beskrivelse"
 msgid "Respond"
 msgstr "Svar"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "Siste artikler"
@@ -548,7 +551,7 @@ msgstr ""
 msgid "No result for your query"
 msgstr ""
 
-msgid "No more result for your query"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Reset your password"
@@ -599,7 +602,7 @@ msgid "Content"
 msgstr "Innhold"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code in your "
 "articles to insert them."
 msgstr ""
 
