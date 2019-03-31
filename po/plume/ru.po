@@ -843,7 +843,7 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 #, fuzzy
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Использовать как аватар"
 
 #, fuzzy
