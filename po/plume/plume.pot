@@ -69,7 +69,7 @@ msgid "This post isn't published yet."
 msgstr ""
 
 # src/routes/posts.rs:120
-msgid "To write a new post, you need to be logged in"
+msgid "You need to be logged in order to write a new post"
 msgstr ""
 
 # src/routes/posts.rs:138
@@ -85,7 +85,7 @@ msgid "Edit {0}"
 msgstr ""
 
 # src/routes/reshares.rs:47
-msgid "To reshare a post, you need to be logged in"
+msgid "You need to be logged in order to reshare a post"
 msgstr ""
 
 # src/routes/session.rs:181
@@ -105,15 +105,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 # src/routes/user.rs:148
-msgid "To access your dashboard, you need to be logged in"
+msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
 # src/routes/user.rs:187
-msgid "To subscribe to someone, you need to be logged in"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
 # src/routes/user.rs:287
-msgid "To edit your profile, you need to be logged in"
+msgid "You need to be logged in order to edit your profile"
 msgstr ""
 
 msgid "Plume"
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
-msgid "To change your avatar, upload it in your gallery and then select from there."
+msgid "To change your avatar, upload it in your gallery and select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -522,7 +522,7 @@ msgstr ""
 msgid "Send reset link"
 msgstr ""
 
-msgid "Log in"
+msgid "Login"
 msgstr ""
 
 # src/template_utils.rs:217
