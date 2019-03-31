@@ -37,7 +37,7 @@ msgstr "{0} gusto tu publicación"
 msgid "{0}'s avatar"
 msgstr ""
 
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Necesitas iniciar sesión para crear un nuevo blog"
 
 # src/routes/blogs.rs:136
@@ -56,16 +56,16 @@ msgstr ""
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Necesitas iniciar sesión para gustar una publicación"
 
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Necesitas iniciar sesión para ver tus notificaciones"
 
 msgid "This post isn't published yet."
 msgstr ""
 
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Necesitas iniciar sesión para publicar una publicación"
 
 # src/routes/posts.rs:138
@@ -79,7 +79,7 @@ msgid "Edit {0}"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Necesitas iniciar sesión para gustar una publicación"
 
 #, fuzzy
@@ -98,14 +98,14 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Necesitas iniciar sesión para seguir a alguien"
 
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Necesitas iniciar sesión para poder editar tu peril"
 
 msgid "Plume"
@@ -417,7 +417,7 @@ msgstr "Título"
 msgid "Subtitle matching these words"
 msgstr ""
 
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr ""
 
 # src/template_utils.rs:185
@@ -520,7 +520,7 @@ msgstr "Correo electrónico"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr "Iniciar Sesión"
 
 msgid "Username or email"
@@ -536,7 +536,7 @@ msgid "Content"
 msgstr "Contenido"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -671,7 +671,7 @@ msgid "Description"
 msgstr ""
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 msgid "Upload images"
@@ -807,7 +807,7 @@ msgstr ""
 #~ msgid "Create account"
 #~ msgstr "Crea una cuenta"
 
-#~ msgid "You need to be logged in order to post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Necesitas iniciar sesión para publicar un comentario"
 
 #~ msgid "{0} started following you"
