@@ -236,7 +236,7 @@ msgstr "Edytuj swoje konto"
 msgid "Your Profile"
 msgstr "Twój profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -418,7 +418,7 @@ msgstr "Tytuł"
 msgid "Subtitle matching these words"
 msgstr "Podtytuł artykułu pasujący do tych słów"
 
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "Podtytuł"
 
 # #-#-#-#-#  pl.po (plume)  #-#-#-#-#
@@ -526,10 +526,10 @@ msgstr "Adres e-mail"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr "Zaloguj się"
 
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Nazwa użytkownika lub adres e-mail"
 
 msgid "Publish"
@@ -542,7 +542,7 @@ msgid "Content"
 msgstr "Zawartość"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -683,7 +683,7 @@ msgid "Description"
 msgstr "Opis"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -830,11 +830,11 @@ msgstr "Użyj jako awataru"
 
 #, fuzzy
 #~ msgid "Create an article"
-#~ msgstr "Utwórz nowe konto"
+#~ msgstr "Utwórz nowy konto"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
-#~ msgstr "Musisz się zalogować, aby utworzyć wpis"
+#~ msgid "To like a post, you need to be logged in"
+#~ msgstr "Musisz się zalogować, aby polubić wpis"
 
 #, fuzzy
 #~ msgid "{0} gave a boost to your article"
@@ -871,7 +871,7 @@ msgstr "Użyj jako awataru"
 #, fuzzy
 #~ msgid ""
 #~ "Plume is a decentralized blogging engine and a member of the Fediverse."
-#~ msgstr "Plume jest zdecentralizowanym silnikiem blogowym."
+#~ msgstr "Plume jest zdecentralizowanym silnikiem blogowym i i członkiem Fediverse."
 
 #, fuzzy
 #~ msgid "Log In to like"
@@ -904,10 +904,10 @@ msgstr "Użyj jako awataru"
 #~ msgid "Create account"
 #~ msgstr "Utwórz konto"
 
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Musisz się zalogować, aby umieścić komentarz"
 
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "Musisz się zalogować, aby podbić wpis"
 
 #~ msgid "Invalid username, or password"
@@ -932,8 +932,7 @@ msgstr "Użyj jako awataru"
 #~ msgstr "Wpis o tym tytule już istnieje."
 
 #~ msgid "We need an email, or a username to identify you"
-#~ msgstr ""
-#~ "Potrzebujemy nazwy użytkownika lub adresu e-mail, aby Cię identyfikować"
+#~ msgstr "Potrzebujemy adresu e-mail, lub nazwy użytkownika, aby Cię identyfikować"
 
 #~ msgid "Your password field can't be empty"
 #~ msgstr "Twoje hasło nie może być puste"
@@ -977,7 +976,7 @@ msgstr "Użyj jako awataru"
 #~ msgid "Create a post"
 #~ msgstr "Utwórz wpis"
 
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "To like a post, you need to be signed in"
 #~ msgstr "Musisz się zalogować, aby polubić wpis"
 
 #~ msgid "Passwords are not matching"
