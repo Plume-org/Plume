@@ -961,7 +961,7 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Account erstellen"
 
 #, fuzzy
-#~ msgid "You need to be logged in, so that you can post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Du musst eingeloggt sein, um einen Kommentar zu schreiben"
 
 #, fuzzy
