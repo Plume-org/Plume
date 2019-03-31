@@ -412,7 +412,7 @@ msgstr "Autoren können verschiedene Blogs von einer Website aus verwalten."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "Artikel sind auch auf anderen Plume-Websites sichtbar und es ist möglich aus "
