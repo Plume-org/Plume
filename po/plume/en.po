@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-31 12:04\n"
+"PO-Revision-Date: 2019-03-31 19:34\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
-msgstr "You need to be logged in to create a new blog"
+msgstr ""
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -62,11 +62,11 @@ msgstr ""
 
 # src/routes/likes.rs:47
 msgid "You need to be logged in order to like a post"
-msgstr "You need to be logged in to like a post"
+msgstr ""
 
 # src/routes/notifications.rs:29
 msgid "You need to be logged in order to see your notifications"
-msgstr "You need to be logged in to see your notifications"
+msgstr ""
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,7 +74,7 @@ msgstr ""
 
 # src/routes/posts.rs:120
 msgid "You need to be logged in order to write a new post"
-msgstr "You need to be logged in to write a new post"
+msgstr ""
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
@@ -90,7 +90,7 @@ msgstr ""
 
 # src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
-msgstr "You need to be logged in for you to reshare a post"
+msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -106,19 +106,19 @@ msgstr ""
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr "Sorry, but the link already expired. Try again"
+msgstr ""
 
 # src/routes/user.rs:148
 msgid "You need to be logged in order to access your dashboard"
-msgstr "You need to be logged in, to access your dashboard"
+msgstr ""
 
 # src/routes/user.rs:187
 msgid "You need to be logged in order to subscribe to someone"
-msgstr "You need to be logged in, to subscribe to someone"
+msgstr ""
 
 # src/routes/user.rs:287
 msgid "You need to be logged in order to edit your profile"
-msgstr "You need to be logged in, to edit your profile"
+msgstr ""
 
 msgid "Plume"
 msgstr ""
@@ -196,7 +196,7 @@ msgid "Ban"
 msgstr ""
 
 msgid "All the articles of the Fediverse"
-msgstr "All the articles from the Fediverse"
+msgstr ""
 
 msgid "Articles from {}"
 msgstr ""
@@ -256,7 +256,7 @@ msgid "Your Profile"
 msgstr ""
 
 msgid "To change your avatar, upload it in your gallery and select from there."
-msgstr "To change your avatar, upload it into your gallery, then select from there."
+msgstr ""
 
 msgid "Upload an avatar"
 msgstr ""
@@ -387,7 +387,7 @@ msgid "Authors can manage various blogs from an unique website."
 msgstr ""
 
 msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
-msgstr "Articles are also visible on other Plume instances, and you can interact with them directly from other federated platforms, like Mastodon."
+msgstr ""
 
 msgid "Home to <em>{0}</em> people"
 msgstr ""
@@ -524,7 +524,7 @@ msgid "E-mail"
 msgstr ""
 
 msgid "Send reset link"
-msgstr "Send password reset link"
+msgstr ""
 
 msgid "Login"
 msgstr ""
@@ -725,7 +725,7 @@ msgid "Upload"
 msgstr ""
 
 msgid "You don't have any media yet."
-msgstr "You don't have any media uploaded yet."
+msgstr ""
 
 msgid "Content warning: {0}"
 msgstr ""
