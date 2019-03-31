@@ -458,7 +458,7 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 #, fuzzy
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "Untertitel"
 
 msgid "Content matching these words"
@@ -575,7 +575,7 @@ msgid "Content"
 msgstr "Inhalt"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
