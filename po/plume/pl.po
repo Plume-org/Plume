@@ -375,7 +375,7 @@ msgid "Authors can manage various blogs from an unique website."
 msgstr "Autorzy mogą zarządzać blogami ze specjalnej strony."
 
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "Artykuły są widoczne na innych stronach Plume, możesz też wejść w interakcje "
