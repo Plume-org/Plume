@@ -847,7 +847,7 @@ msgstr "Du kan bruke markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr ""
 
 #, fuzzy
@@ -952,7 +952,7 @@ msgstr ""
 #~ msgstr "Ugyldig epost"
 
 #, fuzzy
-#~ msgid "Log In to like"
+#~ msgid "Log in to like"
 #~ msgstr "Logg inn"
 
 #, fuzzy
@@ -967,5 +967,5 @@ msgstr ""
 #~ msgstr "Lag et nytt innlegg"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "To like a post, you need to be signed in"
 #~ msgstr "Du må være logget inn for å like et innlegg"
