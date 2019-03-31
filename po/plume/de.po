@@ -37,7 +37,7 @@ msgid "{0}'s avatar"
 msgstr "{0}'s Avatar'"
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
 #, fuzzy
@@ -57,18 +57,18 @@ msgid "You can't use this media as a blog banner."
 msgstr "Du bist kein Autor in diesem Blog."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
 
 msgid "This post isn't published yet."
 msgstr "Dieser Beitrag ist noch nicht veröffentlicht."
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
 #, fuzzy
@@ -83,7 +83,7 @@ msgid "Edit {0}"
 msgstr "Bearbeiten"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
 
 #, fuzzy
@@ -103,15 +103,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um dein Dashboard zu sehen"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um jemandem zu folgen"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um dein Profil zu editieren"
 
 msgid "Plume"
@@ -260,7 +260,7 @@ msgstr "Ändere deinen Account"
 msgid "Your Profile"
 msgstr "Dein Profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -1011,7 +1011,7 @@ msgstr "Als Avatar verwenden"
 #~ msgid "Login to like"
 #~ msgstr "Um zu liken, musst du eingeloggt sein"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Um zu boosten, musst du eingeloggt sein"
 
 #~ msgid "Create a post"
