@@ -558,11 +558,11 @@ msgstr "E-Mail"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr ""
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Nutzername oder E-Mail"
 
 msgid "Publish"
@@ -658,7 +658,7 @@ msgid "Boost"
 msgstr "Boosten"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in or use your Fediverse account to interact with this article"
 msgstr ""
 "Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
 "interagieren"
