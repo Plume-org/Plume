@@ -399,7 +399,7 @@ msgid "Authors can manage various blogs from an unique website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
 
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラット"
