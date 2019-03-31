@@ -882,7 +882,7 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Erstelle einen Account"
 
 #, fuzzy
-#~ msgid "To like a post, you need to be signed in"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
 #, fuzzy
