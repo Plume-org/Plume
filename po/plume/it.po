@@ -1012,5 +1012,5 @@ msgstr "Usa come avatar"
 #~ msgstr "Crea un post"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Devi effettuare l'accesso per mettere mi piace ad un post"
