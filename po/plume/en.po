@@ -39,7 +39,7 @@ msgid "{0}'s avatar"
 msgstr ""
 
 # src/routes/blogs.rs:65
-msgid "You need to be logged in order to create a new blog"
+msgid "You need to be logged in, to create a new blog"
 msgstr ""
 
 # src/routes/blogs.rs:136
@@ -59,11 +59,11 @@ msgid "You can't use this media as a blog banner."
 msgstr ""
 
 # src/routes/likes.rs:41
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in to like a post"
 msgstr ""
 
 # src/routes/notifications.rs:23
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
 # src/routes/posts.rs:81
@@ -71,7 +71,7 @@ msgid "This post isn't published yet."
 msgstr ""
 
 # src/routes/posts.rs:100
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr ""
 
 # src/routes/posts.rs:113
@@ -87,7 +87,7 @@ msgid "Edit {0}"
 msgstr ""
 
 # src/routes/reshares.rs:41
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in."
 msgstr ""
 
 # src/routes/session.rs:147
@@ -111,11 +111,11 @@ msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
 # src/routes/user.rs:164
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:227
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
 msgid "Plume"
