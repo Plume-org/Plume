@@ -39,7 +39,7 @@ msgid "{0}'s avatar"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Du må være logget inn for å lage en ny blogg"
 
 #, fuzzy
@@ -59,10 +59,10 @@ msgid "You can't use this media as a blog banner."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Du må være logget inn for å like et innlegg"
 
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Du må være logget inn for å se meldingene dine"
 
 # src/routes/posts.rs:81
@@ -70,7 +70,7 @@ msgid "This post isn't published yet."
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Du må være logget inn for å skrive et nytt innlegg"
 
 #, fuzzy
@@ -85,7 +85,7 @@ msgid "Edit {0}"
 msgstr "Kommentér \"{0}\""
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Du må være logget inn for å se meldingene dine"
 
 #, fuzzy
@@ -105,15 +105,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Du må være logget inn for å redigere profilen din"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Du må være logget inn for å følge noen"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Du må være logget inn for å redigere profilen din"
 
 msgid "Plume"
@@ -265,7 +265,7 @@ msgstr "Rediger kontoen din"
 msgid "Your Profile"
 msgstr "Din profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -580,7 +580,7 @@ msgstr "Epost"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr "Logg inn"
 
 #, fuzzy
@@ -598,7 +598,7 @@ msgid "Content"
 msgstr "Innhold"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -678,7 +678,7 @@ msgid "Boost"
 msgstr ""
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
 
@@ -748,7 +748,7 @@ msgid "Description"
 msgstr "Lang beskrivelse"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -913,11 +913,11 @@ msgstr ""
 #~ msgstr "Oppdater konto"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Du må være logget inn for å skrive et nytt innlegg"
 
 #, fuzzy
-#~ msgid "You need to be logged in, so that you can see your notifications"
+#~ msgid "To see your notifications, you need to be logged in"
 #~ msgstr "Du må være logget inn for å se meldingene dine"
 
 #, fuzzy
