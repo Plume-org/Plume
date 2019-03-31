@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 19:15\n"
+"PO-Revision-Date: 2019-03-31 12:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
-msgstr "You need to be logged in for you to create a new blog"
+msgstr "You need to be logged in to create a new blog"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
