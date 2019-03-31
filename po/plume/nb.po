@@ -414,7 +414,7 @@ msgstr "Forfattere kan administrere forskjellige blogger fra en unik webside."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "Artiklene er også synlige på andre websider som kjører Plume, og du kan "
