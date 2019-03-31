@@ -382,7 +382,7 @@ msgstr ""
 msgid "Authors can manage various blogs from an unique website."
 msgstr ""
 
-msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Home to <em>{0}</em> people"
