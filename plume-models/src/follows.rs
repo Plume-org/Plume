@@ -83,7 +83,7 @@ impl Follow {
         conn: &Connection,
         from: &B,
         target: &A,
-        follow: String,
+        follow: FollowAct,
         from_id: i32,
         target_id: i32,
     ) -> Result<Follow> {
@@ -92,7 +92,7 @@ impl Follow {
             NewFollow {
                 follower_id: from_id,
                 following_id: target_id,
-                ap_url: follow.clone(),
+                ap_url: follow.object_props.id_string()?,
             },
         )?;
         res.notify(conn)?;
@@ -109,7 +109,7 @@ impl Follow {
         accept
             .accept_props
             .set_actor_link::<Id>(target.clone().into_id())?;
-        accept.accept_props.set_object_link(Id::new(follow))?;
+        accept.accept_props.set_object_object(follow)?;
         broadcast(&*target, accept, vec![from.clone()]);
         Ok(res)
     }
@@ -131,7 +131,12 @@ impl AsObject<User, FollowAct, &PlumeRocket> for User {
     type Output = Follow;
 
     fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Follow> {
-        Follow::accept_follow(&c.conn, &actor, &self, id.to_string(), actor.id, self.id)
+        // Mastodon (at least) requires the full Follow object when accepting it,
+        // so we rebuilt it here
+        let mut follow = FollowAct::default();
+        follow.object_props.set_id_string(id.to_string())?;
+        follow.follow_props.set_actor_link::<Id>(actor.clone().into_id())?;
+        Follow::accept_follow(&c.conn, &actor, &self, follow, actor.id, self.id)
     }
 }
 
@@ -161,12 +166,11 @@ impl FromId<PlumeRocket> for Follow {
             },
             None,
         )?;
-        let id = follow.object_props.id_string()?;
         Follow::accept_follow(
             &c.conn,
             &actor,
             &target,
-            id.to_string(),
+            follow,
             actor.id,
             target.id,
         )
