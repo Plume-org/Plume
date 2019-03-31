@@ -446,7 +446,7 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 #, fuzzy
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "サブタイトル"
 
 # src/template_utils.rs:185
@@ -553,10 +553,10 @@ msgstr "メールアドレス"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr "ログイン"
 
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
 msgid "Publish"
@@ -569,7 +569,7 @@ msgid "Content"
 msgstr "コメント"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -644,7 +644,7 @@ msgstr "もうこれをブーストしたくありません"
 msgid "Boost"
 msgstr "ブースト"
 
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "この記事と関わるにはログインするか Fediverse アカウントを使用してください"
 
@@ -712,7 +712,7 @@ msgid "Description"
 msgstr "説明"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -817,7 +817,7 @@ msgstr "Markdown コード"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "このメディアを記事に挿入するには、自分の記事にコピーしてください。"
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "アバターとして使う"
 
 #, fuzzy
@@ -875,13 +875,13 @@ msgstr "アバターとして使う"
 #~ msgid "Create account"
 #~ msgstr "アカウントを作成"
 
-#~ msgid "You need to be logged in order to post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "コメントを投稿するにはログインする必要があります"
 
-#~ msgid "You need to be logged in order to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "投稿をブーストするにはログインする必要があります"
 
-#~ msgid "Invalid username or password"
+#~ msgid "Invalid username, or password"
 #~ msgstr "ユーザー名またはパスワードが間違っています"
 
 #, fuzzy
@@ -906,7 +906,7 @@ msgstr "アバターとして使う"
 #~ msgid "A post with the same title already exists."
 #~ msgstr "同じタイトルの投稿がすでに存在します。"
 
-#~ msgid "We need an email or a username to identify you"
+#~ msgid "We need an email, or a username to identify you"
 #~ msgstr "あなたを識別するために、メールアドレスかユーザー名が必要です"
 
 #~ msgid "Passwords are not matching"
@@ -927,10 +927,10 @@ msgstr "アバターとして使う"
 #~ msgid "Next page"
 #~ msgstr "次のページ"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "いいねするにはログインしてください"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "ブーストするにはログインしてください"
 
 #~ msgid "Welcome to {{ instance_name | escape }}"
