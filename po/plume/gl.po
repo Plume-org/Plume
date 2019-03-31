@@ -36,8 +36,8 @@ msgid "{0}'s avatar"
 msgstr "Avatar de {{ name}}"
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
-msgstr "Debe estar conectada para escribir un novo artigo"
+msgid "To create a new blog, you need to be logged in"
+msgstr "Debe estar conectada para crear un novo blogue"
 
 #, fuzzy
 msgid "You are not allowed to delete this blog."
@@ -82,8 +82,8 @@ msgid "Edit {0}"
 msgstr "Editar"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "Debe estar conectada para ver as súas notificacións"
+msgid "To reshare a post, you need to be logged in"
+msgstr "Debe estar conectada para compartir unha artigo"
 
 #, fuzzy
 msgid "Password reset"
@@ -102,15 +102,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Debe estar conectada para acceder ao seu taboleiro"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Debe estar conectada para seguir a alguén"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Debe estar conectada para editar o seu perfil"
 
 msgid "Plume"
@@ -259,7 +259,7 @@ msgstr "Edite a súa conta"
 msgid "Your Profile"
 msgstr "O seu perfil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -558,7 +558,7 @@ msgid "Login"
 msgstr ""
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Usuaria ou correo-e"
 
 msgid "Publish"
@@ -571,7 +571,7 @@ msgid "Content"
 msgstr "Contido"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -875,7 +875,7 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Crear unha conta"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Debe estar conectada para escribir un novo artigo"
 
 #, fuzzy
@@ -956,11 +956,11 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Crear conta"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "To post a comment, you need to be signed in"
 #~ msgstr "Debe estar conectada para publicar un comentario"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "Precisa estar conectada para promover un artigo"
 
 #, fuzzy
@@ -1009,5 +1009,5 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Crear unha entrada"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "To like a post, you need to be signed in"
 #~ msgstr "Debe estar conectada para gustar unha entrada"
