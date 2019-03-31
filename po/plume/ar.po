@@ -646,7 +646,7 @@ msgstr "لا أريد مشاركة هذا"
 msgid "Boost"
 msgstr "رقّي"
 
-msgid "Log in or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
 "المقال"
@@ -883,10 +883,10 @@ msgstr "استخدمها كصورة رمزية"
 #~ msgid "Create account"
 #~ msgstr "انشئ حسابا"
 
-#~ msgid "You need to be logged in, to post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "يجب عليك تسجيل الدخول إن كنت تريد نشر تعليق"
 
-#~ msgid "You need to be logged in, to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "يجب تسجيل الدخول أولا قصد مشاركة أي مقال"
 
 #~ msgid "Invalid username or password"
