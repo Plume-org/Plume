@@ -732,7 +732,7 @@ msgid "Description"
 msgstr "Beschreibung"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -840,7 +840,7 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 
 #, fuzzy
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Als Avatar verwenden"
 
 #, fuzzy
@@ -1018,5 +1018,5 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Beitrag erstellen"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to like a post"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
