@@ -37,7 +37,7 @@ msgid "{0}'s avatar"
 msgstr "{0}'s Avatar'"
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
 #, fuzzy
@@ -57,18 +57,18 @@ msgid "You can't use this media as a blog banner."
 msgstr "Du bist kein Autor in diesem Blog."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
 
 msgid "This post isn't published yet."
 msgstr "Dieser Beitrag ist noch nicht veröffentlicht."
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
 #, fuzzy
@@ -83,7 +83,7 @@ msgid "Edit {0}"
 msgstr "Bearbeiten"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um deine Benachrichtigungen zu sehen"
 
 #, fuzzy
@@ -103,15 +103,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um dein Dashboard zu sehen"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um jemandem zu folgen"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Du musst eingeloggt sein, um dein Profil zu editieren"
 
 msgid "Plume"
@@ -260,7 +260,7 @@ msgstr "Ändere deinen Account"
 msgid "Your Profile"
 msgstr "Dein Profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -412,7 +412,7 @@ msgstr "Autoren können verschiedene Blogs von einer Website aus verwalten."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "Artikel sind auch auf anderen Plume-Websites sichtbar und es ist möglich aus "
@@ -458,7 +458,7 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 #, fuzzy
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "Untertitel"
 
 msgid "Content matching these words"
@@ -562,7 +562,7 @@ msgid "Login"
 msgstr ""
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Nutzername oder E-Mail"
 
 msgid "Publish"
@@ -575,7 +575,7 @@ msgid "Content"
 msgstr "Inhalt"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -592,7 +592,7 @@ msgid "License"
 msgstr ""
 
 # src/template_utils.rs:148
-msgid "Leave it empty to reserve all rights"
+msgid "Leave it empty, to reserve all rights"
 msgstr ""
 
 #, fuzzy
@@ -658,7 +658,7 @@ msgid "Boost"
 msgstr "Boosten"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
 "interagieren"
@@ -732,7 +732,7 @@ msgid "Description"
 msgstr "Beschreibung"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -751,8 +751,7 @@ msgstr "Blog erstellen"
 
 #, fuzzy
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-"Sei umsichtig, jede ausgeführte Aktion kann hier nicht abgebrochen werden."
+msgstr "Sei umsichtig, jede ausgeführte Aktion kann hier nicht abgebrochen werden."
 
 #, fuzzy
 msgid "Permanently delete this blog"
@@ -840,7 +839,7 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr "Um diese Mediendatei einzufügen, kopiere sie in deine Artikel."
 
 #, fuzzy
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Als Avatar verwenden"
 
 #, fuzzy
@@ -883,7 +882,7 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Erstelle einen Account"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgid "To like a post, you need to be signed in"
 #~ msgstr "Du musst eingeloggt sein, um einen neuen Beitrag zu schreiben"
 
 #, fuzzy
@@ -929,11 +928,11 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Plume ist eine dezentrale Blogging-Engine."
 
 #, fuzzy
-#~ msgid "Log In to like"
+#~ msgid "Log in to like"
 #~ msgstr "Um zu liken, musst du eingeloggt sein"
 
 #, fuzzy
-#~ msgid "Log In to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Um zu boosten, musst du eingeloggt sein"
 
 #, fuzzy
@@ -1008,15 +1007,15 @@ msgstr "Als Avatar verwenden"
 #~ msgid "The password should be at least 8 characters long"
 #~ msgstr "Passwort sollte mindestens 8 Zeichen lang sein"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Um zu liken, musst du eingeloggt sein"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Um zu boosten, musst du eingeloggt sein"
 
 #~ msgid "Create a post"
 #~ msgstr "Beitrag erstellen"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
