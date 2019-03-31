@@ -38,7 +38,7 @@ msgstr "قام {0} بترقية مقالك"
 msgid "{0}'s avatar"
 msgstr "الصورة الرمزية لـ {0}"
 
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
 
 #, fuzzy
@@ -57,16 +57,16 @@ msgstr "لست مِن محرري هذه المدونة."
 msgid "You can't use this media as a blog banner."
 msgstr "لست مِن محرري هذه المدونة."
 
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
 
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول للإطلاع على إشعاراتك"
 
 msgid "This post isn't published yet."
 msgstr "هذا المقال ليس منشورا بعد."
 
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "يشترط عليك تسجيل الدخول لكتابة مقال جديد"
 
 #, fuzzy
@@ -80,7 +80,7 @@ msgid "Edit {0}"
 msgstr "تعديل {0}"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
 
 #, fuzzy
@@ -99,14 +99,14 @@ msgstr "لا يمكن ترك خانة الكلمة السرية فارغة"
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "يجب عليك أولا تسجيل الدخول قصد متابعة شخص آخر"
 
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول أولا قصد تعديل صفحتك الشخصية"
 
 msgid "Plume"
