@@ -38,7 +38,7 @@ msgstr "{{ data }} があなたの記事をブーストしました"
 msgid "{0}'s avatar"
 msgstr "{{ name}} のアバター"
 
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "新しいブログを作成するにはログインする必要があります"
 
 #, fuzzy
@@ -60,13 +60,13 @@ msgstr "あなたはこのブログの作者ではありません。"
 msgid "You need to be logged in order to like a post"
 msgstr "投稿をいいねするにはログインする必要があります"
 
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "通知を表示するにはログインする必要があります"
 
 msgid "This post isn't published yet."
 msgstr "この投稿はまだ公開されていません。"
 
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "新しい記事を書くにはログインする必要があります"
 
 #, fuzzy
@@ -81,7 +81,7 @@ msgid "Edit {0}"
 msgstr "編集"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "投稿をいいねするにはログインする必要があります"
 
 #, fuzzy
@@ -100,14 +100,14 @@ msgstr "パスワードは空にできません"
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "ダッシュボードにアクセスするにはログインする必要があります"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "他の人をフォローするにはログインする必要があります"
 
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "自分のプロフィールを編集するにはログインする必要があります"
 
 msgid "Plume"
@@ -254,7 +254,7 @@ msgstr "自分のアカウントを編集"
 msgid "Your Profile"
 msgstr "自分のプロフィール"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
