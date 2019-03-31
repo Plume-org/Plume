@@ -546,7 +546,7 @@ msgstr "البريد الالكتروني"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr "تسجيل الدخول"
 
 msgid "Username or email"
@@ -646,7 +646,7 @@ msgstr "لا أريد مشاركة هذا"
 msgid "Boost"
 msgstr "رقّي"
 
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in or use your Fediverse account to interact with this article"
 msgstr ""
 "قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
 "المقال"
