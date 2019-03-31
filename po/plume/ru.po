@@ -38,7 +38,7 @@ msgid "{0}'s avatar"
 msgstr "Аватар {0}"
 
 #, fuzzy
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
@@ -58,18 +58,18 @@ msgid "You can't use this media as a blog banner."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Вы должны войти чтобы просматривать ваши уведомления"
 
 msgid "This post isn't published yet."
 msgstr "Этот пост ещё не опубликован."
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
@@ -84,7 +84,7 @@ msgid "Edit {0}"
 msgstr "Редактировать"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Вы должны войти чтобы просматривать ваши уведомления"
 
 #, fuzzy
@@ -104,15 +104,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Вы должны войти чтобы подписаться на кого-либо"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Вы должны войти чтобы редактировать ваш профиль"
 
 msgid "Plume"
@@ -561,8 +561,8 @@ msgstr "Электронная почта"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
-msgstr ""
+msgid "Log in"
+msgstr "Авторизоваться"
 
 #, fuzzy
 msgid "Username or email"
@@ -578,7 +578,7 @@ msgid "Content"
 msgstr "Содержимое"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -659,7 +659,7 @@ msgid "Boost"
 msgstr "Продвинуть"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Войдите или используйте свой Fediverse-аккаунт, чтобы взаимодействовать с "
 "этой статьёй"
@@ -734,7 +734,7 @@ msgid "Description"
 msgstr "Описание"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -888,7 +888,7 @@ msgstr "Использовать как аватар"
 #~ msgstr "Создать новый аккаунт"
 
 #, fuzzy
-#~ msgid "You need to be signed in, to be able to like a post"
+#~ msgid "To like a post, you need to be signed in"
 #~ msgstr "Вы должны войти чтобы написать новый пост"
 
 #, fuzzy
@@ -975,11 +975,11 @@ msgstr "Использовать как аватар"
 #~ msgstr "Создать аккаунт"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Вы должны войти чтобы оставлять комментарии"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "Вы должны войти чтобы продвинуть пост"
 
 #, fuzzy
@@ -1021,11 +1021,11 @@ msgstr "Использовать как аватар"
 #~ msgstr "Неправильный адрес электронной почты"
 
 #, fuzzy
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Войдите, чтобы отмечать понравившиеся посты"
 
 #, fuzzy
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Войдите, чтобы продвигать посты"
 
 #, fuzzy
@@ -1036,5 +1036,5 @@ msgstr "Использовать как аватар"
 #~ msgstr "Создать пост"
 
 #, fuzzy
-#~ msgid "You need to be signed in, in order for you to like a post"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
