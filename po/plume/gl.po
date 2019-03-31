@@ -724,7 +724,7 @@ msgid "Description"
 msgstr "Descrición"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
