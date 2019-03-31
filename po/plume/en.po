@@ -59,7 +59,7 @@ msgid "You can't use this media as a blog banner."
 msgstr ""
 
 # src/routes/likes.rs:41
-msgid "To like a post, you need to be logged in to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr ""
 
 # src/routes/notifications.rs:23
@@ -107,7 +107,7 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 # src/routes/user.rs:131
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:164
@@ -253,7 +253,7 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
