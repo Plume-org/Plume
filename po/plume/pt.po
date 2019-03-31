@@ -549,7 +549,7 @@ msgstr ""
 msgid "Log in"
 msgstr "Entrar"
 
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Nome de usuário ou e-mail"
 
 msgid "Publish"
