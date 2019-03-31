@@ -415,7 +415,7 @@ msgstr "Авторы могут управлять различными блог
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "Статьи также видны на других сайтах Plume и вы можете взаимодействовать с "
