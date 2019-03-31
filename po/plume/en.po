@@ -253,7 +253,7 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
-msgid "To change your avatar, upload it to your gallery and then select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -549,7 +549,7 @@ msgid "Content"
 msgstr ""
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
