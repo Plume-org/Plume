@@ -56,18 +56,18 @@ msgid "You can't use this media as a blog banner."
 msgstr "Non sei l'autore di questo blog."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Devi effettuare l'accesso per mettere mi piace ad un post"
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Devi effettuare l'accesso per vedere le tue notifiche"
 
 msgid "This post isn't published yet."
 msgstr "Questo post non è ancora stato pubblicato."
 
 #, fuzzy
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Devi effettuare l'accesso per scrivere un post"
 
 #, fuzzy
@@ -82,7 +82,7 @@ msgid "Edit {0}"
 msgstr "Modifica"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Devi effettuare l'accesso per vedere le tue notifiche"
 
 #, fuzzy
@@ -102,15 +102,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Devi effettuare l'accesso per accedere al tuo pannello"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Devi effettuare l'accesso per seguire qualcuno"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Devi effettuare l'accesso per modificare il tuo profilo"
 
 msgid "Plume"
@@ -561,7 +561,7 @@ msgid "Login"
 msgstr ""
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Nome utente o email"
 
 msgid "Publish"
@@ -574,7 +574,7 @@ msgid "Content"
 msgstr "Contenuto"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -959,11 +959,11 @@ msgstr "Usa come avatar"
 #~ msgstr "Crea account"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Devi effettuare l'accesso per commentare"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "Devi effettuare l'accesso per boostare un post"
 
 #, fuzzy
@@ -1002,10 +1002,10 @@ msgstr "Usa come avatar"
 #~ msgid "The password should be at least 8 characters long"
 #~ msgstr "Le password devono essere lunghe almeno 8 caratteri"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Accedi per mettere mi piace"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Accedi per boostare"
 
 #~ msgid "Create a post"
