@@ -454,7 +454,7 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 #, fuzzy
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "Subtítulo"
 
 msgid "Content matching these words"
