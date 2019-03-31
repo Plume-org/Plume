@@ -531,11 +531,11 @@ msgstr ""
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr ""
 
 # src/template_utils.rs:144
-msgid "Username or email"
+msgid "Username, or email"
 msgstr ""
 
 msgid "Publish"
