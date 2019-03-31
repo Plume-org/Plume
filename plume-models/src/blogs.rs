@@ -359,6 +359,10 @@ impl FromId<PlumeRocket> for Blog {
             .map(|m| m.id);
 
         let name = acct.object.ap_actor_props.preferred_username_string()?;
+        if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+            return Err(Error::InvalidValue);
+        }
+
         Blog::insert(
             &c.conn,
             NewBlog {

@@ -733,7 +733,7 @@ impl FromId<PlumeRocket> for User {
 
         let username = acct.object.ap_actor_props.preferred_username_string()?;
 
-        if username.contains(&['<', '>', '&', '@', '\'', '"'][..]) {
+        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
             return Err(Error::InvalidValue);
         }
 
