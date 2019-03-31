@@ -37,7 +37,7 @@ msgstr "{0} partilhou o seu artigo"
 msgid "{0}'s avatar"
 msgstr "Avatar de {0}"
 
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Você precisa estar logado para criar um novo blog"
 
 #, fuzzy
@@ -56,16 +56,16 @@ msgstr "Você não é autor neste blog."
 msgid "You can't use this media as a blog banner."
 msgstr "Você não é autor neste blog."
 
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr "Você precisa estar logado para gostar de um post"
 
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr "Você precisa estar logado para ver suas notificações"
 
 msgid "This post isn't published yet."
 msgstr "Este artigo ainda não foi publicado."
 
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr "Você precisa estar logado para escrever um novo artigo"
 
 #, fuzzy
@@ -79,7 +79,7 @@ msgid "Edit {0}"
 msgstr "Mudar {0}"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Você precisa estar logado para gostar de um post"
 
 #, fuzzy
@@ -98,14 +98,14 @@ msgstr "Sua senha não pode estar vazia"
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Você precisa estar autenticado para acessar seu painel de controle"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Você precisa estar autenticado para poder seguir alguém"
 
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Você precisa estar autenticado para editar seu perfil"
 
 msgid "Plume"
@@ -248,7 +248,7 @@ msgstr "Editar sua conta"
 msgid "Your Profile"
 msgstr "Seu Perfil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
