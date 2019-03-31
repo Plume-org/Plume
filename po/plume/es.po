@@ -766,7 +766,7 @@ msgstr ""
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr ""
 
 #~ msgid "Comment \"{0}\""
