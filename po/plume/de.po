@@ -961,11 +961,11 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Account erstellen"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "You need to be logged in, so that you can post a comment"
 #~ msgstr "Du musst eingeloggt sein, um einen Kommentar zu schreiben"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "You need to be logged in, to be able to boost a post"
 #~ msgstr "Du musst eingeloggt sein, um einen Beitrag zu boosten"
 
 #, fuzzy
@@ -1018,5 +1018,5 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Beitrag erstellen"
 
 #, fuzzy
-#~ msgid "You need to be signed in, for you to like a post"
+#~ msgid "You need to be signed in, to like a post"
 #~ msgstr "Du musst eingeloggt sein, um einen Beitrag zu Liken"
