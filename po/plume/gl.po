@@ -956,7 +956,7 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Crear conta"
 
 #, fuzzy
-#~ msgid "To post a comment, you need to be signed in"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Debe estar conectada para publicar un comentario"
 
 #, fuzzy
