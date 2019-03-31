@@ -14,7 +14,7 @@ msgstr ""
 
 #, fuzzy
 msgid "{0} commented on your article."
-msgstr "{0} comentou o seu artigo"
+msgstr "{0} comentou o seu artigo."
 
 # src/template_utils.rs:35
 msgid "{0} is subscribed to you."
@@ -408,7 +408,7 @@ msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
+"Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 "Os artigos son visibles tamén en outros sitios Plume, e pode interactuar "
