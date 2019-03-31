@@ -620,7 +620,7 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
