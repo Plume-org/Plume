@@ -1,3 +1,4 @@
+use reqwest::header::{ACCEPT, HeaderValue};
 use std::fmt::Debug;
 
 /// Represents an ActivityPub inbox.
@@ -271,7 +272,18 @@ pub trait FromId<C>: Sized {
 
     /// Dereferences an ID
     fn deref(id: &str) -> Result<Self::Object, Self::Error> {
-        reqwest::get(id)
+        reqwest::Client::new()
+            .get(id)
+            .header(
+                ACCEPT,
+                HeaderValue::from_str(
+                    &super::ap_accept_header()
+                        .into_iter()
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                ).map_err(|_| InboxError::DerefError)?,
+            )
+            .send()
             .map_err(|_| InboxError::DerefError)
             .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject(None)))
             .map_err(Into::into)
