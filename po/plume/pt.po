@@ -439,7 +439,7 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 #, fuzzy
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "Subtítulo"
 
 # src/template_utils.rs:185
@@ -546,7 +546,7 @@ msgstr "Email"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr "Entrar"
 
 msgid "Username or email"
@@ -562,7 +562,7 @@ msgid "Content"
 msgstr "Conteúdo"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -637,7 +637,7 @@ msgstr "Eu não quero mais puxar isto"
 msgid "Boost"
 msgstr ""
 
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr "Faça login ou use sua conta Fediverse para interagir com este artigo"
 
 msgid "Comments"
@@ -701,7 +701,7 @@ msgid "Description"
 msgstr "Descrição"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -805,7 +805,7 @@ msgstr "Código Markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "Copie-o em seus artigos para inserir esta mídia."
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
 
 #, fuzzy
@@ -860,13 +860,13 @@ msgstr "Utilizar como avatar"
 #~ msgid "Create account"
 #~ msgstr "Criar conta"
 
-#~ msgid "You need to be logged in order to post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Você precisa estar logado para enviar um comentário"
 
-#~ msgid "You need to be logged in order to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "Você precisa estar autenticado para compartilhar um artigo"
 
-#~ msgid "Invalid username or password"
+#~ msgid "Invalid username, or password"
 #~ msgstr "Nome de usuário ou senha inválidos"
 
 #~ msgid "We couldn&#x27;t find this page."
@@ -906,5 +906,5 @@ msgstr "Utilizar como avatar"
 #~ msgid "Next page"
 #~ msgstr "Próxima página"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Entrar para gostar"
