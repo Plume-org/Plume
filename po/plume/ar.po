@@ -439,7 +439,7 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 #, fuzzy
-msgid "Subtitle - byline"
+msgid "Subtitle"
 msgstr "العنوان الثانوي"
 
 # src/template_utils.rs:185
@@ -562,7 +562,7 @@ msgid "Content"
 msgstr "المحتوى"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
