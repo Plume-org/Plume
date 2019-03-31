@@ -249,7 +249,7 @@ msgstr "تعديل حسابك"
 msgid "Your Profile"
 msgstr "ملفك الشخصي"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
