@@ -831,7 +831,7 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr "Copie para incrustar este contido nos seus artigos"
 
 #, fuzzy
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
 
 #, fuzzy
