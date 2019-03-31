@@ -151,7 +151,7 @@ where
         M: AsObject<A, V, &'a C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
-        if let Inbox::NotHandled(ctx, act, e) = self {
+        if let Inbox::NotHandled(ctx, mut act, e) = self {
             if serde_json::from_value::<V>(act.clone()).is_ok() {
                 let act_clone = act.clone();
                 let act_id = match act_clone["id"].as_str() {
@@ -172,7 +172,12 @@ where
                 ) {
                     Ok(a) => a,
                     // If the actor was not found, go to the next handler
-                    Err(e) => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e))),
+                    Err((json, e)) => {
+                        if let Some(json) = json {
+                            act["actor"] = json;
+                        }
+                        return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)))
+                    },
                 };
 
                 // Same logic for "object"
@@ -183,12 +188,13 @@ where
                 let obj = match M::from_id(
                     ctx,
                     &obj_id,
-                    serde_json::from_value(act["object"].clone())
-                        .map_err(|e| dbg!(e))
-                        .ok(),
+                    serde_json::from_value(act["object"].clone()).ok(),
                 ) {
                     Ok(o) => o,
-                    Err(e) => {
+                    Err((json, e)) => {
+                        if let Some(json) = json {
+                            act["object"] = json;
+                        }
                         return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e)));
                     }
                 };
@@ -260,18 +266,18 @@ pub trait FromId<C>: Sized {
     /// - `id`: the ActivityPub ID of the object to find
     /// - `object`: optional object that will be used if the object was not found in the database
     ///   If absent, the ID will be dereferenced.
-    fn from_id(ctx: &C, id: &str, object: Option<Self::Object>) -> Result<Self, Self::Error> {
+    fn from_id(ctx: &C, id: &str, object: Option<Self::Object>) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
         match Self::from_db(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
-                Some(o) => Self::from_activity(ctx, o),
-                None => Self::from_activity(ctx, Self::deref(id)?),
+                Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
+                None => Self::from_activity(ctx, Self::deref(id)?).map_err(|e| (None, e)),
             },
         }
     }
 
     /// Dereferences an ID
-    fn deref(id: &str) -> Result<Self::Object, Self::Error> {
+    fn deref(id: &str) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
         reqwest::Client::new()
             .get(id)
             .header(
@@ -281,12 +287,15 @@ pub trait FromId<C>: Sized {
                         .into_iter()
                         .collect::<Vec<_>>()
                         .join(", "),
-                ).map_err(|_| InboxError::DerefError)?,
+                ).map_err(|_| (None, InboxError::DerefError.into()))?,
             )
             .send()
-            .map_err(|_| InboxError::DerefError)
-            .and_then(|mut r| r.json().map_err(|_| InboxError::InvalidObject(None)))
-            .map_err(Into::into)
+            .map_err(|_| (None, InboxError::DerefError))
+            .and_then(|mut r| {
+                let json: serde_json::Value = r.json().map_err(|_| (None, InboxError::InvalidObject(None)))?;
+                serde_json::from_value(json.clone()).map_err(|_| (Some(json), InboxError::InvalidObject(None)))
+            })
+            .map_err(|(json, e)| (json, e.into()))
     }
 
     /// Builds a `Self` from its ActivityPub representation
