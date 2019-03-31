@@ -39,7 +39,7 @@ msgid "{0}'s avatar"
 msgstr ""
 
 # src/routes/blogs.rs:65
-msgid "You need to be logged in, to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
 # src/routes/blogs.rs:136
@@ -59,7 +59,7 @@ msgid "You can't use this media as a blog banner."
 msgstr ""
 
 # src/routes/likes.rs:41
-msgid "To like a post, you need to be logged in"
+msgid "You need to be logged in order to like a post"
 msgstr ""
 
 # src/routes/notifications.rs:23
@@ -87,7 +87,7 @@ msgid "Edit {0}"
 msgstr ""
 
 # src/routes/reshares.rs:41
-msgid "To reshare a post, you need to be logged in."
+msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
 # src/routes/session.rs:147
@@ -107,11 +107,11 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 # src/routes/user.rs:131
-msgid "To access your dashboard, you need to be logged in"
+msgid "You need to be logged in order to access your dashboard"
 msgstr ""
 
 # src/routes/user.rs:164
-msgid "To subscribe to someone, you need to be logged in"
+msgid "You need to be logged in order to subscribe to someone"
 msgstr ""
 
 # src/routes/user.rs:227
@@ -531,11 +531,11 @@ msgstr ""
 msgid "Send reset link"
 msgstr ""
 
-msgid "Log in"
+msgid "Login"
 msgstr ""
 
 # src/template_utils.rs:144
-msgid "Username, or email"
+msgid "Username or email"
 msgstr ""
 
 msgid "Publish"
@@ -620,7 +620,7 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid "Log in or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
@@ -774,7 +774,7 @@ msgstr ""
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Use as an avatar"
+msgid "Use as avatar"
 msgstr ""
 
 #~ msgid "One Boost"
@@ -787,12 +787,12 @@ msgstr ""
 #~ msgstr[0] "One follower"
 #~ msgstr[1] "{0} followers"
 
-#~ msgid "One author in this blog: "
-#~ msgid_plural "{0} authors in this blog: "
+#~ msgid "This blog has one author: "
+#~ msgid_plural "{0} authors on this blog: "
 #~ msgstr[0] "This blog has one author "
 #~ msgstr[1] "There are {0} authors on this blog "
 
-#~ msgid "One article in this blog"
-#~ msgid_plural "{0} articles in this blog"
+#~ msgid "One article on this blog"
+#~ msgid_plural "{0} articles on this blog"
 #~ msgstr[0] "This blog has one article"
 #~ msgstr[1] "This blog has {0} articles"
