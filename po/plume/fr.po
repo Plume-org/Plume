@@ -85,8 +85,8 @@ msgid "Edit {0}"
 msgstr "Modifier {0}"
 
 #, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "Vous devez vous connecter pour voir vos notifications"
+msgid "To reshare a post, you need to be logged in"
+msgstr "Vous devez vous connecter pour repartager une publication"
 
 #, fuzzy
 msgid "Password reset"
@@ -105,15 +105,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 #, fuzzy
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Vous devez vous connecter pour accéder à votre tableau de bord"
 
 #, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr "Vous devez vous connecter pour suivre quelqu’un"
 
 #, fuzzy
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Vous devez vous connecter pour modifier votre profil"
 
 msgid "Plume"
@@ -554,7 +554,7 @@ msgstr "Adresse électronique"
 msgid "Send reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr ""
 
 #, fuzzy
@@ -571,7 +571,7 @@ msgid "Content"
 msgstr "Contenu"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
+"You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -652,7 +652,7 @@ msgid "Boost"
 msgstr "Partager"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Connectez-vous ou utilisez votre compte sur le Fediverse pour interagir avec "
 "cet article"
@@ -931,7 +931,7 @@ msgstr "Utiliser comme avatar"
 #~ msgstr "Connectez-vous pour aimer"
 
 #, fuzzy
-#~ msgid "Log In to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Connectez-vous pour partager"
 
 #, fuzzy
@@ -954,11 +954,11 @@ msgstr "Utiliser comme avatar"
 #~ msgstr "Créer mon compte"
 
 #, fuzzy
-#~ msgid "You need to be signed in, so that you can post a comment"
+#~ msgid "To post a comment, you need to be logged in"
 #~ msgstr "Vous devez vous connecter pour commenter"
 
 #, fuzzy
-#~ msgid "You need to be logged in, for you to be able to boost a post"
+#~ msgid "To boost a post, you need to be logged in"
 #~ msgstr "Vous devez vous connecter pour partager un article"
 
 #, fuzzy
