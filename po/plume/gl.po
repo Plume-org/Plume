@@ -999,15 +999,15 @@ msgstr "Utilizar como avatar"
 #~ msgid "The password should be at least 8 characters long"
 #~ msgstr "O contrasinal debe ter ao menos 8 caracteres"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "Conéctese para gostar"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "Conéctese para promover"
 
 #~ msgid "Create a post"
 #~ msgstr "Crear unha entrada"
 
 #, fuzzy
-#~ msgid "To like a post, you need to be signed in"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Debe estar conectada para gustar unha entrada"
