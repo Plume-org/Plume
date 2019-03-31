@@ -883,10 +883,10 @@ msgstr "استخدمها كصورة رمزية"
 #~ msgid "Create account"
 #~ msgstr "انشئ حسابا"
 
-#~ msgid "You need to be logged in order to post a comment"
+#~ msgid "You need to be logged in, to post a comment"
 #~ msgstr "يجب عليك تسجيل الدخول إن كنت تريد نشر تعليق"
 
-#~ msgid "You need to be logged in order to boost a post"
+#~ msgid "You need to be logged in, to boost a post"
 #~ msgstr "يجب تسجيل الدخول أولا قصد مشاركة أي مقال"
 
 #~ msgid "Invalid username or password"
@@ -910,7 +910,7 @@ msgstr "استخدمها كصورة رمزية"
 #~ msgid "A post with the same title already exists."
 #~ msgstr "هناك مقال يحمل نفس العنوان."
 
-#~ msgid "We need an email or a username to identify you"
+#~ msgid "We need an email, or a username to identify you"
 #~ msgstr "نحن بحاجة إلى عنوان بريد إلكتروني أو اسم مستخدم للتعرف عليك"
 
 #~ msgid "Passwords are not matching"
@@ -931,8 +931,8 @@ msgstr "استخدمها كصورة رمزية"
 #~ msgid "Next page"
 #~ msgstr "الصفحة التالية"
 
-#~ msgid "Login to like"
+#~ msgid "Log in to like"
 #~ msgstr "قم بتسجيل الدخول قصد الإعجاب به"
 
-#~ msgid "Login to boost"
+#~ msgid "Log in to boost"
 #~ msgstr "قم بتسجيل الدخول قصد مشاركته"
