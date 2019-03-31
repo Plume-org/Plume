@@ -143,7 +143,7 @@ impl FromId<PlumeRocket> for Reshare {
                         res
                     },
                     None,
-                )?
+                ).map_err(|(_, e)| e)?
                 .id,
                 user_id: User::from_id(
                     c,
@@ -152,7 +152,7 @@ impl FromId<PlumeRocket> for Reshare {
                         res
                     },
                     None,
-                )?
+                ).map_err(|(_, e)| e)?
                 .id,
                 ap_url: act.object_props.id_string()?,
             },

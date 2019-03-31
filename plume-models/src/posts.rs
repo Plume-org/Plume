@@ -1049,7 +1049,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
     fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
         let searcher = &c.searcher;
-        let mut post = Post::from_id(c, &self.ap_url, None)?;
+        let mut post = Post::from_id(c, &self.ap_url, None).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

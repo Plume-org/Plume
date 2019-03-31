@@ -232,7 +232,7 @@ impl FromId<PlumeRocket> for Comment {
                             res
                         },
                         None,
-                    )?
+                    ).map_err(|(_, e)| e)?
                     .id,
                     sensitive: note.object_props.summary_string().is_ok(),
                     public_visibility,

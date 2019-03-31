@@ -244,7 +244,7 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(c, link.href.as_ref()?, None)
+        User::from_id(c, link.href.as_ref()?, None).map_err(|(_, e)| e)
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {

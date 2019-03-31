@@ -156,7 +156,7 @@ impl FromId<PlumeRocket> for Follow {
                 res
             },
             None,
-        )?;
+        ).map_err(|(_, e)| e)?;
 
         let target = User::from_id(
             c,
@@ -165,7 +165,7 @@ impl FromId<PlumeRocket> for Follow {
                 res
             },
             None,
-        )?;
+        ).map_err(|(_, e)| e)?;
         Follow::accept_follow(
             &c.conn,
             &actor,

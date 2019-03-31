@@ -150,7 +150,7 @@ impl Blog {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
-            .and_then(|l| Blog::from_id(c, &l.href?, None))
+            .and_then(|l| Blog::from_id(c, &l.href?, None).map_err(|(_, e)| e))
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
