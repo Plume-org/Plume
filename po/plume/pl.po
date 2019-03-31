@@ -34,7 +34,7 @@ msgstr "{0} podbił(a) Twój artykuł."
 msgid "{0}'s avatar"
 msgstr "Awatar {0}"
 
-msgid "You need to be logged in order to create a new blog"
+msgid "To create a new blog, you need to be logged in"
 msgstr "Musisz się zalogować, aby utworzyć bloga"
 
 msgid "You are not allowed to delete this blog."
@@ -74,7 +74,7 @@ msgstr "Nowy wpis"
 msgid "Edit {0}"
 msgstr "Edytuj {0}"
 
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr "Musisz się zalogować, aby udostępnić wpis"
 
 #, fuzzy
@@ -93,14 +93,14 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
 
 #, fuzzy
 msgid "You need to be logged in order to subscribe to someone"
 msgstr "Musisz się zalogować, aby zacząć obserwować innych"
 
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr "Musisz się zalogować, aby móc edytować swój profil"
 
 msgid "Plume"
@@ -783,7 +783,7 @@ msgstr "Kod Markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialną:"
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Użyj jako awataru"
 
 #~ msgid "There's one article on this blog"
@@ -976,7 +976,7 @@ msgstr "Użyj jako awataru"
 #~ msgid "Create a post"
 #~ msgstr "Utwórz wpis"
 
-#~ msgid "To like a post, you need to be signed in"
+#~ msgid "To like a post, you need to be logged in"
 #~ msgstr "Musisz się zalogować, aby polubić wpis"
 
 #~ msgid "Passwords are not matching"
