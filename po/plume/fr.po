@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 19:15\n"
+"PO-Revision-Date: 2019-04-01 09:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -90,7 +90,7 @@ msgstr "Modifier {0}"
 
 # src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
-msgstr "Vous devez être connecté pour repartager un message"
+msgstr "Vous devez vous connecter pour repartager une article"
 
 # src/routes/session.rs:181
 msgid "Password reset"
