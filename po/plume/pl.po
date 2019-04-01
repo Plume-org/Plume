@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 21:47\n"
+"PO-Revision-Date: 2019-04-01 10:17\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -74,7 +74,7 @@ msgstr "Ten wpis nie został jeszcze opublikowany."
 
 # src/routes/posts.rs:120
 msgid "You need to be logged in order to write a new post"
-msgstr "Musisz się zalogować, aby utworzyć wpis"
+msgstr "Musisz się zalogować, aby utworzyć nowy wpis"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
