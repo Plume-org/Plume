@@ -27,7 +27,7 @@ pub fn notifications_auth(i18n: I18n, page: Option<Page>) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(
             i18n.catalog,
-            "You need to be logged in order to see your notifications"
+            "To see your notifications, you need to be logged in"
         ),
         uri!(notifications: page = page),
     )
