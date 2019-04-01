@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 09:26\n"
+"PO-Revision-Date: 2019-04-01 18:12\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Galician\n"
 "Language: gl_ES\n"
@@ -41,8 +41,8 @@ msgid "{0}'s avatar"
 msgstr ""
 
 # src/routes/blogs.rs:70
-msgid "You need to be logged in order to create a new blog"
-msgstr "Debe estar conectada para crear un novo blogue"
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -61,11 +61,11 @@ msgid "You can't use this media as a blog banner."
 msgstr ""
 
 # src/routes/likes.rs:47
-msgid "You need to be logged in order to like a post"
+msgid "To like a post, you need to be logged in"
 msgstr ""
 
 # src/routes/notifications.rs:29
-msgid "You need to be logged in order to see your notifications"
+msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
 # src/routes/posts.rs:92
@@ -73,7 +73,7 @@ msgid "This post isn't published yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
 # src/routes/posts.rs:120
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr ""
 
 # src/routes/posts.rs:138
@@ -89,8 +89,8 @@ msgid "Edit {0}"
 msgstr ""
 
 # src/routes/reshares.rs:47
-msgid "You need to be logged in order to reshare a post"
-msgstr "Debe estar conectada para compartir unha artigo"
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -109,15 +109,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 # src/routes/user.rs:148
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:187
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:287
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
 msgid "Plume"
@@ -255,7 +255,7 @@ msgstr "Edite a súa conta"
 msgid "Your Profile"
 msgstr ""
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -383,10 +383,10 @@ msgstr "Qué é Plume?"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume é un motor de publicación descentralizada."
 
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr ""
 
-msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Home to <em>{0}</em> people"
@@ -523,7 +523,7 @@ msgstr ""
 msgid "E-mail"
 msgstr ""
 
-msgid "Send reset link"
+msgid "Send password reset link"
 msgstr ""
 
 msgid "Login"
@@ -543,7 +543,7 @@ msgstr "Subtítulo"
 msgid "Content"
 msgstr "Contido"
 
-msgid "You can upload media to your gallery, and copy their Markdown code in your articles to insert them."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -613,7 +613,7 @@ msgstr ""
 msgid "Boost"
 msgstr "Promover"
 
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
@@ -671,7 +671,7 @@ msgstr ""
 msgid "Description"
 msgstr "Descrición"
 
-msgid "You can upload images to your gallery, to use them as blog icons or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 msgid "Upload images"
@@ -763,12 +763,12 @@ msgstr ""
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr ""
 
-msgid "Login to boost"
+msgid "Log in to boost"
 msgstr ""
 
-msgid "Login to like"
+msgid "Log in to like"
 msgstr ""
 
