@@ -35,9 +35,9 @@ msgstr "{0} promoveron o seu artigo"
 msgid "{0}'s avatar"
 msgstr "Avatar de {{ name}}"
 
-#, fuzzy
-msgid "You need to be logged in order to create a new blog"
-msgstr "Debe estar conectada para escribir un novo artigo"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not allowed to delete this blog."
@@ -55,20 +55,20 @@ msgstr "Vostede non é autora en este blog."
 msgid "You can't use this media as a blog banner."
 msgstr "Vostede non é autora en este blog."
 
-#, fuzzy
-msgid "You need to be logged in order to like a post"
-msgstr "Debe estar conectada para gustar unha entrada"
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to see your notifications"
-msgstr "Debe estar conectada para ver as súas notificacións"
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
-#, fuzzy
-msgid "You need to be logged in order to write a new post"
-msgstr "Debe estar conectada para escribir un novo artigo"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not an author of this blog."
@@ -81,9 +81,9 @@ msgstr "Nova entrada"
 msgid "Edit {0}"
 msgstr "Editar"
 
-#, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "Debe estar conectada para ver as súas notificacións"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -101,17 +101,17 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to access your dashboard"
-msgstr "Debe estar conectada para acceder ao seu taboleiro"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "Debe estar conectada para seguir a alguén"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to edit your profile"
-msgstr "Debe estar conectada para editar o seu perfil"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -259,7 +259,8 @@ msgstr "Edite a súa conta"
 msgid "Your Profile"
 msgstr "O seu perfil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -403,13 +404,13 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume é un motor de publicación descentralizada."
 
 #, fuzzy
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "Os artigos son visibles tamén en outros sitios Plume, e pode interactuar "
 "coneles desde outras plataformas como Mastadon."
@@ -551,8 +552,9 @@ msgstr ""
 msgid "E-mail"
 msgstr "Correo-e"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "Contrasinal"
 
 msgid "Login"
 msgstr ""
@@ -571,8 +573,8 @@ msgid "Content"
 msgstr "Contido"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -652,7 +654,7 @@ msgid "Boost"
 msgstr "Promover"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Conéctese ou utilice a súa conta no fediverso para interactuar con este "
 "artigo"
@@ -724,7 +726,7 @@ msgid "Description"
 msgstr "Descrición"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -831,8 +833,40 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr "Copie para incrustar este contido nos seus artigos"
 
 #, fuzzy
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "Debe estar conectada para escribir un novo artigo"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "Debe estar conectada para gustar unha entrada"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "Debe estar conectada para ver as súas notificacións"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "Debe estar conectada para escribir un novo artigo"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Debe estar conectada para ver as súas notificacións"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "Debe estar conectada para acceder ao seu taboleiro"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "Debe estar conectada para seguir a alguén"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "Debe estar conectada para editar o seu perfil"
 
 #, fuzzy
 #~ msgid "There's one article on this blog"
