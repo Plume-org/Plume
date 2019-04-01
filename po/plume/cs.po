@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 21:47\n"
+"PO-Revision-Date: 2019-04-01 11:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -586,7 +586,7 @@ msgid "Delete this article"
 msgstr ""
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Všechna práva vyhrazena."
 
 msgid "This article is under the {0} license."
 msgstr ""
@@ -621,7 +621,7 @@ msgid "Login or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Komentáře"
 
 # src/template_utils.rs:217
 msgid "Content warning"
@@ -634,7 +634,7 @@ msgid "Submit comment"
 msgstr ""
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Zatím bez komentáře. Buďte první, kdo zareaguje!"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -643,7 +643,7 @@ msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in
 msgstr ""
 
 msgid "Page not found"
-msgstr ""
+msgstr "Stránka nenalezena"
 
 msgid "We couldn't find this page."
 msgstr ""
@@ -658,7 +658,7 @@ msgid "Maybe it was too long."
 msgstr ""
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Nemáte oprávnění."
 
 msgid "Internal server error"
 msgstr ""
@@ -673,13 +673,13 @@ msgid "Edit \"{}\""
 msgstr ""
 
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 msgid "You can upload images to your gallery, to use them as blog icons or banners."
 msgstr ""
 
 msgid "Upload images"
-msgstr ""
+msgstr "Nahrát obrázky"
 
 msgid "Blog icon"
 msgstr ""
@@ -752,10 +752,10 @@ msgid "Leave it empty, if none is needed"
 msgstr ""
 
 msgid "File"
-msgstr ""
+msgstr "Soubor"
 
 msgid "Send"
-msgstr ""
+msgstr "Odeslat"
 
 msgid "Media details"
 msgstr ""
