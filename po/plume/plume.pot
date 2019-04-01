@@ -69,7 +69,7 @@ msgid "This post isn't published yet."
 msgstr ""
 
 # src/routes/posts.rs:120
-msgid "You need to be logged in order to write a new post"
+msgid "To write a new post, you need to be logged in"
 msgstr ""
 
 # src/routes/posts.rs:138
@@ -85,7 +85,7 @@ msgid "Edit {0}"
 msgstr ""
 
 # src/routes/reshares.rs:47
-msgid "You need to be logged in order to reshare a post"
+msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
 # src/routes/session.rs:181
