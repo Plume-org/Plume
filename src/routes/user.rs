@@ -146,7 +146,7 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(
             i18n.catalog,
-            "You need to be logged in order to access your dashboard"
+            "To access your dashboard, you need to be logged in"
         ),
         uri!(dashboard),
     )
@@ -185,7 +185,7 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(
             i18n.catalog,
-            "You need to be logged in order to subscribe to someone"
+            "To subscribe to someone, you need to be logged in"
         ),
         uri!(follow: name = name),
     )
@@ -285,7 +285,7 @@ pub fn edit_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(
             i18n.catalog,
-            "You need to be logged in order to edit your profile"
+            "To edit your profile, you need to be logged in"
         ),
         uri!(edit: name = name),
     )
