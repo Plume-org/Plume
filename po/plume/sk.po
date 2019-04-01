@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 18:12\n"
+"PO-Revision-Date: 2019-04-01 19:11\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -42,7 +42,7 @@ msgstr "Avatar užívateľa {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Aby si vytvoril/a nový blog, musíš sa prihlásiť"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -62,11 +62,11 @@ msgstr "Tento mediálny súbor nemožno použiť ako záhlavie pre blog."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Aby si si obľúbil/a príspevok, musíš sa prihlásiť"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Aby si videl/a notifikácie, musíš sa prihlásiť"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,7 +74,7 @@ msgstr "Tento príspevok ešte nie je uverejnený."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Pre napísanie nového príspevku sa musíš prihlásiť"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
@@ -90,7 +90,7 @@ msgstr "Uprav {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Na zdieľanie príspevku sa musíš prihlásiť"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -110,15 +110,15 @@ msgstr "Prepáč, ale tento odkaz už vypŕšal. Skús to znova"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Pre prístup ku hlavnému rozhraniu sa musíš prihlásiť"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Ak chceš niekoho odoberať, musíš sa prihlásiť"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Na upravenie tvojho profilu sa musíš prihlásiť"
 
 msgid "Plume"
 msgstr "Plume"
@@ -256,7 +256,7 @@ msgid "Your Profile"
 msgstr "Tvoj profil"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
+msgstr "Pre zmenu tvojho avataru ho nahraj do svojej galérie a potom ho odtiaľ zvoľ."
 
 msgid "Upload an avatar"
 msgstr "Nahraj avatar"
@@ -384,10 +384,10 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume je decentralizovanou blogovacou platformou."
 
 msgid "Authors can manage various blogs, each as an unique website."
-msgstr ""
+msgstr "Autori môžu spravovať rôzne blogy, každý ako osobitnú webstránku."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Články sú tiež viditeľné na iných Plume instanciách a môžeš s nimi interaktovať priamo aj z iných federovaných platforiem, ako napríklad Mastodon."
 
 msgid "Home to <em>{0}</em> people"
 msgstr "Domov pre <em>{0}</em> ľudí"
@@ -524,7 +524,7 @@ msgid "E-mail"
 msgstr "Emailová adresa"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "Pošli odkaz na obnovu hesla"
 
 msgid "Login"
 msgstr "Prihlás sa"
@@ -544,7 +544,7 @@ msgid "Content"
 msgstr "Obsah"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr ""
+msgstr "Do svojej galérie môžeš nahrávať multimédiá, a potom skopírovať ich Markdown syntaxiu do tvojích článkov, aby si ich vložil/a."
 
 msgid "Upload media"
 msgstr "Nahraj multimédiá"
@@ -618,7 +618,7 @@ msgid "Boost"
 msgstr "Vyzdvihni"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Prihlás sa, alebo použi svoj účet v rámci Fediversa pre narábanie s týmto článkom"
 
 msgid "Comments"
 msgstr "Komentáre"
@@ -676,7 +676,7 @@ msgid "Description"
 msgstr "Popis"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "Do svojej galérie môžeš nahrávať obrázky, ktoré sa potom dajú použiť aj ako ikonky, či záhlavie pre blogy."
 
 msgid "Upload images"
 msgstr "Nahraj obrázky"
@@ -770,11 +770,11 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr "Kód skopíruj do tvojho článku, pre vloženie tohto mediálneho súboru:"
 
 msgid "Use as an avatar"
-msgstr ""
+msgstr "Použi ako avatar"
 
 msgid "Log in to boost"
-msgstr ""
+msgstr "Pre vyzdvihnutie sa prihlás"
 
 msgid "Log in to like"
-msgstr ""
+msgstr "Na obľúbenie sa prihlás"
 
