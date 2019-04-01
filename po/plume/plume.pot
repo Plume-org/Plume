@@ -105,15 +105,15 @@ msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 # src/routes/user.rs:148
-msgid "You need to be logged in order to access your dashboard"
+msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:187
-msgid "You need to be logged in order to subscribe to someone"
+msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:287
-msgid "You need to be logged in order to edit your profile"
+msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
 msgid "Plume"
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid "To change your avatar, upload it in your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
