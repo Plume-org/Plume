@@ -334,11 +334,9 @@ msgid "Password confirmation"
 msgstr "Confirmación do contrasinal"
 
 #, fuzzy
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
+msgid "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
-msgstr ""
-"Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar "
+msgstr "Lamentámolo, pero o rexistro está pechado en esta instancia. Intente atopar "
 "outra"
 
 msgid "Articles"
@@ -407,11 +405,9 @@ msgid "Authors can manage various blogs from an unique website."
 msgstr "As autoras poden xestionar varios blogs desde un único sitio web."
 
 #, fuzzy
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact with "
+msgid "Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr ""
-"Os artigos son visibles tamén en outros sitios Plume, e pode interactuar "
+msgstr "Os artigos son visibles tamén en outros sitios Plume, e pode interactuar "
 "coneles desde outras plataformas como Mastadon."
 
 msgid "Home to <em>{0}</em> people"
@@ -653,8 +649,7 @@ msgstr "Promover"
 
 #, fuzzy
 msgid "Login or use your Fediverse account to interact with this article"
-msgstr ""
-"Conéctese ou utilice a súa conta no fediverso para interactuar con este "
+msgstr "Conéctese ou utilice a súa conta no fediverso para interactuar con este "
 "artigo"
 
 #, fuzzy
@@ -680,12 +675,10 @@ msgstr "Sen comentarios. Sexa a primeira e comentar!"
 msgid "Invalid CSRF token"
 msgstr "Testemuño CSRF non válido"
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
-msgstr ""
-"Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas "
+msgstr "Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas "
 "no navegador, e recargue a páxina. Si persiste o aviso de este fallo,  "
 "informe por favor."
 
@@ -723,8 +716,7 @@ msgstr "Editar"
 msgid "Description"
 msgstr "Descrición"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -920,8 +912,7 @@ msgstr "Utilizar como avatar"
 #~ msgstr "Axustes da instancia"
 
 #, fuzzy
-#~ msgid ""
-#~ "Plume is a decentralized blogging engine and a member of the Fediverse."
+#~ msgid "Plume is a decentralized blogging engine and a member of the Fediverse."
 #~ msgstr "Plume é un motor de publicación descentralizada."
 
 #, fuzzy
