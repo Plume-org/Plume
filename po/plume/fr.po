@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 14:26\n"
+"PO-Revision-Date: 2019-04-01 18:13\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -41,8 +41,8 @@ msgid "{0}'s avatar"
 msgstr "Avatar de {0}"
 
 # src/routes/blogs.rs:70
-msgid "You need to be logged in order to create a new blog"
-msgstr "Vous devez vous connecter pour créer un nouveau blog"
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -61,20 +61,20 @@ msgid "You can't use this media as a blog banner."
 msgstr ""
 
 # src/routes/likes.rs:47
-msgid "You need to be logged in order to like a post"
-msgstr "Vous devez vous connecter pour aimer un article"
+msgid "To like a post, you need to be logged in"
+msgstr ""
 
 # src/routes/notifications.rs:29
-msgid "You need to be logged in order to see your notifications"
-msgstr "Vous devez vous connecter pour voir vos notifications"
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
 msgstr "Cet article n’est pas encore publié."
 
 # src/routes/posts.rs:120
-msgid "You need to be logged in order to write a new post"
-msgstr "Vous devez être connecté(e) pour écrire un nouvel article"
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
@@ -89,8 +89,8 @@ msgid "Edit {0}"
 msgstr "Modifier {0}"
 
 # src/routes/reshares.rs:47
-msgid "You need to be logged in order to reshare a post"
-msgstr "Vous devez être connecté pour repartager une article"
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -109,16 +109,16 @@ msgid "Sorry, but the link expired. Try again"
 msgstr "Désolé, mais le lien a expiré. Réessayez"
 
 # src/routes/user.rs:148
-msgid "You need to be logged in order to access your dashboard"
-msgstr "Vous devez être connecté pour accéder à votre tableau de bord"
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
 # src/routes/user.rs:187
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "Vous devez être connecté pour vous abonner à quelqu'un"
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
 # src/routes/user.rs:287
-msgid "You need to be logged in order to edit your profile"
-msgstr "Vous devez être connecté pour modifier votre profil"
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -255,8 +255,8 @@ msgstr "Modifier votre compte"
 msgid "Your Profile"
 msgstr "Votre Profile"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
-msgstr "Pour modifier votre avatar, téléversez-le dans votre galerie et sélectionner à partir de là."
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
 
 msgid "Upload an avatar"
 msgstr "Téléverser un avatar"
@@ -383,11 +383,11 @@ msgstr "Qu’est-ce que Plume ?"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume est un moteur de blog décentralisé."
 
-msgid "Authors can manage various blogs from an unique website."
-msgstr "Les auteurs peuvent gérer différents blogs à partir d'un site web unique."
+msgid "Authors can manage various blogs, each as an unique website."
+msgstr ""
 
-msgid "Articles are also visible on other Plume websites, and you can interact with them directly from other platforms like Mastodon."
-msgstr "Les articles sont également visibles sur d'autres sites web avec Plume, et vous pouvez interagir avec eux directement à partir d'autres plateformes comme Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgstr ""
 
 msgid "Home to <em>{0}</em> people"
 msgstr "Refuge de <em>{0}</em> personnes"
@@ -523,8 +523,8 @@ msgstr "Nous avons envoyé un mail à l'adresse que vous nous avez donnée, avec
 msgid "E-mail"
 msgstr "Courriel"
 
-msgid "Send reset link"
-msgstr "Envoyer un lien de réinitialisation"
+msgid "Send password reset link"
+msgstr ""
 
 msgid "Login"
 msgstr "Connexion"
@@ -543,7 +543,7 @@ msgstr "Sous-titre"
 msgid "Content"
 msgstr "Contenu"
 
-msgid "You can upload media to your gallery, and copy their Markdown code in your articles to insert them."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -613,8 +613,8 @@ msgstr "Je ne veux plus le repartager"
 msgid "Boost"
 msgstr "Partager"
 
-msgid "Login or use your Fediverse account to interact with this article"
-msgstr "Connectez-vous ou utilisez votre compte Fediverse pour interagir avec cet article"
+msgid "Log in, or use your Fediverse account to interact with this article"
+msgstr ""
 
 msgid "Comments"
 msgstr "Commentaires"
@@ -671,8 +671,8 @@ msgstr "Modifier \"{}\""
 msgid "Description"
 msgstr "Description"
 
-msgid "You can upload images to your gallery, to use them as blog icons or banners."
-msgstr "Vous pouvez téléverser des images dans votre galerie, pour les utiliser comme icônes de blog ou bannières."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
 
 msgid "Upload images"
 msgstr "Téléverser des images"
@@ -763,12 +763,12 @@ msgstr "Syntaxe markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "Copiez-le dans vos articles, à insérer ce média :"
 
-msgid "Use as avatar"
-msgstr "Utiliser comme avatar"
+msgid "Use as an avatar"
+msgstr ""
 
-msgid "Login to boost"
-msgstr "Se connecter pour repartager"
+msgid "Log in to boost"
+msgstr ""
 
-msgid "Login to like"
-msgstr "Connectez vous pour liker"
+msgid "Log in to like"
+msgstr ""
 
