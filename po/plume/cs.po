@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 19:11\n"
+"PO-Revision-Date: 2019-04-01 20:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -454,7 +454,7 @@ msgstr "Tagy"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these instances"
-msgstr ""
+msgstr "Zveřejněno na jedné z těchto instancí"
 
 msgid "Instance domain"
 msgstr "Doména instance"
@@ -468,7 +468,7 @@ msgstr "Autoři"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
-msgstr ""
+msgstr "Zveřejněno na jedném z těchto blogů"
 
 msgid "Blog title"
 msgstr "Název blogu"
@@ -524,7 +524,7 @@ msgid "E-mail"
 msgstr "E-mail"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "Poslat odkaz na obnovení hesla"
 
 msgid "Login"
 msgstr "Přihlášení"
@@ -547,7 +547,7 @@ msgid "You can upload media to your gallery, and then copy their Markdown code i
 msgstr ""
 
 msgid "Upload media"
-msgstr ""
+msgstr "Nahrát média"
 
 # src/template_utils.rs:217
 msgid "Tags, separated by commas"
@@ -577,19 +577,19 @@ msgid "Publish your post"
 msgstr "Publikovat svůj příspěvek"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Napsal/a {0}"
 
 msgid "Edit"
-msgstr ""
+msgstr "Upravit"
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Vymazat tento článek"
 
 msgid "All rights reserved."
 msgstr "Všechna práva vyhrazena."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Tento článek je pod {0} licencí."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -602,7 +602,7 @@ msgid "I don't like this anymore"
 msgstr ""
 
 msgid "Add yours"
-msgstr ""
+msgstr "Přidejte váš"
 
 msgid "One boost"
 msgid_plural "{0} boost"
