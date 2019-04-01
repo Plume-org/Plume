@@ -14,7 +14,7 @@
     <form method="post" action="@uri!(session::create)">
         @input!(ctx.1, email_or_name (text), "Username, or email", form, errors.clone(), "minlenght=\"1\"")
         @input!(ctx.1, password (password), "Password", form, errors, "minlenght=\"1\"")
-        <input type="submit" value="@i18n!(ctx.1, "Login")" />
+        <input type="submit" value="@i18n!(ctx.1, "Log in")" />
     </form>
     <a href="@uri!(session::password_reset_request_form)">Forgot your password?</a>
 })
