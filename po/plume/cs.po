@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 18:13\n"
+"PO-Revision-Date: 2019-04-01 19:11\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Pro vytvoření nového blogu musíte být přihlášeni"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -54,7 +54,7 @@ msgstr "Nemáte oprávnění upravovat tento blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Toto médium nemůžete použít jako ikonu blogu."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
@@ -74,11 +74,11 @@ msgstr "Tento příspěvek ještě není publikován."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "K napsaní nového příspěvku musíte být přihlášeni"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Nejste autorem tohto blogu."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -90,7 +90,7 @@ msgstr "Upravit {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Pro sdílení příspěvku musíte být přihlášeni"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -98,7 +98,7 @@ msgstr "Obnovit heslo"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Zde je odkaz na obnovení vášho hesla: {0}"
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
@@ -106,7 +106,7 @@ msgstr "Vaše heslo bylo úspěšně obnoveno."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Omlouváme se, ale odkaz vypršel. Zkuste to znovu"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
@@ -114,11 +114,11 @@ msgstr ""
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Chcete-li někoho odebírat, musíte být přihlášeni"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Pro úpravu vášho profilu musíte být přihlášeni"
 
 msgid "Plume"
 msgstr "Plume"
@@ -256,7 +256,7 @@ msgid "Your Profile"
 msgstr "Váš profil"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
+msgstr "Chcete-li změnit svůj avatar, nahrejte ho do své galérie a pak ho odtud zvolte."
 
 msgid "Upload an avatar"
 msgstr "Nahrát avatara"
@@ -443,7 +443,7 @@ msgstr "Od tohoto data"
 
 # src/template_utils.rs:305
 msgid "To this date"
-msgstr ""
+msgstr "Do tohoto data"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
