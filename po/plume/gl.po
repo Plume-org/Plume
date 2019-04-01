@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-29 19:15\n"
+"PO-Revision-Date: 2019-04-01 09:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Galician\n"
 "Language: gl_ES\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "You need to be logged in order to create a new blog"
-msgstr ""
+msgstr "Debe estar conectada para crear un novo blogue"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -90,7 +90,7 @@ msgstr ""
 
 # src/routes/reshares.rs:47
 msgid "You need to be logged in order to reshare a post"
-msgstr ""
+msgstr "Debe estar conectada para compartir unha artigo"
 
 # src/routes/session.rs:181
 msgid "Password reset"
