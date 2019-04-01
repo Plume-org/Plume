@@ -285,16 +285,14 @@ msgstr "Zone à risque"
 
 #, fuzzy
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-"Faites très attention, aucune action entreprise ici ne pourra être annulée."
+msgstr "Faites très attention, aucune action entreprise ici ne pourra être annulée."
 
 msgid "Delete your account"
 msgstr "Supprimer votre compte"
 
 #, fuzzy
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-"Désolé, mais en tant qu’administrateur, vous ne pouvez pas quitter votre "
+msgstr "Désolé, mais en tant qu’administrateur, vous ne pouvez pas quitter votre "
 "instance."
 
 msgid "Your Dashboard"
@@ -306,8 +304,7 @@ msgstr "Vos blogs"
 
 #, fuzzy
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-"Vous n’avez pas encore de blog. Créez le votre, ou demandez à en rejoindre "
+msgstr "Vous n’avez pas encore de blog. Créez le votre, ou demandez à en rejoindre "
 "un."
 
 msgid "Start a new blog"
@@ -338,11 +335,9 @@ msgid "Password confirmation"
 msgstr "Confirmation du mot de passe"
 
 #, fuzzy
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
+msgid "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
-msgstr ""
-"Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d’en "
+msgstr "Désolé, mais les inscriptions sont fermées sur cette instance. Essayez d’en "
 "trouver une autre."
 
 msgid "Articles"
@@ -408,15 +403,12 @@ msgstr "Plume est un moteur de blog décentralisé."
 
 #, fuzzy
 msgid "Authors can manage various blogs from an unique website."
-msgstr ""
-"Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d’un même site."
+msgstr "Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d’un même site."
 
 #, fuzzy
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact with "
+msgid "Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr ""
-"Les articles sont également visibles sur d’autres sites Plume, et vous "
+msgstr "Les articles sont également visibles sur d’autres sites Plume, et vous "
 "pouvez interagir avec directement depuis d’autres plateformes telles que "
 "Mastodon."
 
@@ -542,8 +534,7 @@ msgstr "Mettre à jour mes informations"
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
+msgid "We sent a mail to the address you gave us, with a link to reset your "
 "password."
 msgstr ""
 
@@ -570,8 +561,7 @@ msgstr "Sous-titre"
 msgid "Content"
 msgstr "Contenu"
 
-msgid ""
-"You can upload media to your gallery, and copy their Markdown code into your "
+msgid "You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -653,8 +643,7 @@ msgstr "Partager"
 
 #, fuzzy
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
-"Connectez-vous ou utilisez votre compte sur le Fediverse pour interagir avec "
+msgstr "Connectez-vous ou utilisez votre compte sur le Fediverse pour interagir avec "
 "cet article"
 
 #, fuzzy
@@ -680,12 +669,10 @@ msgstr "Pas encore de commentaires. Soyez læ premier⋅ère à réagir !"
 msgid "Invalid CSRF token"
 msgstr "Jeton CSRF invalide."
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
-msgstr ""
-"Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les cookies "
+msgstr "Quelque chose ne va pas avec votre jeton CSRF. Assurez-vous que les cookies "
 "sont activés dans votre navigateur, et essayez de recharger cette page. Si "
 "vous continuez à voir cette erreur, merci de la signaler."
 
@@ -714,8 +701,7 @@ msgid "Something broke on our side."
 msgstr "Nous avons cassé quelque chose."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-"Nous sommes désolé⋅e⋅s. Si vous pensez que c’est un bogue, merci de le "
+msgstr "Nous sommes désolé⋅e⋅s. Si vous pensez que c’est un bogue, merci de le "
 "signaler."
 
 #, fuzzy
@@ -725,8 +711,7 @@ msgstr "Modifier {0}"
 msgid "Description"
 msgstr "Description"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -746,8 +731,7 @@ msgstr "Créer le blog"
 
 #, fuzzy
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-"Faites très attention, aucune action entreprise ici ne pourra être annulée."
+msgstr "Faites très attention, aucune action entreprise ici ne pourra être annulée."
 
 #, fuzzy
 msgid "Permanently delete this blog"
@@ -922,8 +906,7 @@ msgstr "Utiliser comme avatar"
 #~ msgstr "Paramètres de l’instance"
 
 #, fuzzy
-#~ msgid ""
-#~ "Plume is a decentralized blogging engine and a member of the Fediverse."
+#~ msgid "Plume is a decentralized blogging engine and a member of the Fediverse."
 #~ msgstr "Plume est un moteur de blog décentralisé."
 
 #, fuzzy
@@ -986,8 +969,7 @@ msgstr "Utiliser comme avatar"
 
 #, fuzzy
 #~ msgid "We need an email, or a username to identify you"
-#~ msgstr ""
-#~ "Nous avons besoin d’une adresse électronique ou d’un nom d’utilisateur "
+#~ msgstr "Nous avons besoin d’une adresse électronique ou d’un nom d’utilisateur "
 #~ "pour vous identifier"
 
 #, fuzzy
