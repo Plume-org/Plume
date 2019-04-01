@@ -7,7 +7,8 @@ use chrono::Datelike;
 use itertools::Itertools;
 use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 use tantivy::{
-    collector::TopDocs, directory::MmapDirectory, schema::*, tokenizer::*, Index, IndexWriter, Term,
+    collector::TopDocs, directory::MmapDirectory, schema::*, tokenizer::*, Index, IndexReader,
+    IndexWriter, ReloadPolicy, Term,
 };
 use whatlang::{detect as detect_lang, Lang};
 
@@ -25,6 +26,7 @@ pub enum SearcherError {
 
 pub struct Searcher {
     index: Index,
+    reader: IndexReader,
     writer: Mutex<Option<IndexWriter>>,
 }
 
@@ -50,8 +52,8 @@ impl Searcher {
 
         let mut schema_builder = SchemaBuilder::default();
 
-        schema_builder.add_i64_field("post_id", INT_STORED | INT_INDEXED);
-        schema_builder.add_i64_field("creation_date", INT_INDEXED);
+        schema_builder.add_i64_field("post_id", STORED | INDEXED);
+        schema_builder.add_i64_field("creation_date", INDEXED);
 
         schema_builder.add_text_field("instance", tag_indexing.clone());
         schema_builder.add_text_field("author", tag_indexing.clone());
@@ -98,6 +100,11 @@ impl Searcher {
                     .writer(50_000_000)
                     .map_err(|_| SearcherError::WriteLockAcquisitionError)?,
             )),
+            reader: index
+                .reader_builder()
+                .reload_policy(ReloadPolicy::Manual)
+                .try_into()
+                .map_err(|_| SearcherError::IndexCreationError)?,
             index,
         })
     }
@@ -129,6 +136,11 @@ impl Searcher {
             .map_err(|_| SearcherError::IndexEditionError)?;
         Ok(Self {
             writer: Mutex::new(Some(writer)),
+            reader: index
+                .reader_builder()
+                .reload_policy(ReloadPolicy::Manual)
+                .try_into()
+                .map_err(|_| SearcherError::IndexCreationError)?,
             index,
         })
     }
@@ -195,7 +207,7 @@ impl Searcher {
 
         let collector = TopDocs::with_limit(cmp::max(1, max) as usize);
 
-        let searcher = self.index.searcher();
+        let searcher = self.reader.searcher();
         let res = searcher.search(&query.into_query(), &collector).unwrap();
 
         res.get(min as usize..)
@@ -213,7 +225,7 @@ impl Searcher {
     pub fn commit(&self) {
         let mut writer = self.writer.lock().unwrap();
         writer.as_mut().unwrap().commit().unwrap();
-        self.index.load_searchers().unwrap();
+        self.reader.reload().unwrap();
     }
 
     pub fn drop_writer(&self) {

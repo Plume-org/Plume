@@ -82,7 +82,7 @@ pub fn md_to_html(
             *state = s;
             Some(res)
         })
-        .flat_map(|v| v.into_iter())
+        .flat_map(IntoIterator::into_iter)
         // Ignore headings, images, and tables if inline = true
         .scan(vec![], |state: &mut Vec<Tag>, evt| {
             if inline {

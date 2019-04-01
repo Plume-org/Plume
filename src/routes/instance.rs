@@ -11,9 +11,9 @@ use inbox::{Inbox, SignedJson};
 use plume_common::activity_pub::sign::{verify_http_headers, Signable};
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
-    safe_string::SafeString, users::User, Error, CONFIG
+    safe_string::SafeString, users::User, Error, CONFIG,
 };
-use routes::{errors::ErrorPage, Page, rocket_uri_macro_static_files};
+use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
 use template_utils::Ructe;
 use Searcher;
 

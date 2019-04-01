@@ -258,7 +258,7 @@ impl PlumeQuery {
     // refactor this better.
     #[allow(clippy::wrong_self_convention)]
     fn from_str_req(&mut self, mut query: &str) -> &mut Self {
-        query = query.trim_left();
+        query = query.trim_start();
         if query.is_empty() {
             return self;
         }

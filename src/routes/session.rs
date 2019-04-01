@@ -95,7 +95,7 @@ pub fn create(
             .unwrap_or_else(|| "/".to_owned());
 
         let uri = Uri::parse(&destination)
-            .map(|x| x.into_owned())
+            .map(IntoOwned::into_owned)
             .map_err(|_| {
                 render!(session::login(
                     &(&*conn, &intl.catalog, None),
