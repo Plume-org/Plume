@@ -387,8 +387,7 @@ msgstr ""
 msgid "Authors can manage various blogs from an unique website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact with "
+msgid "Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
 msgstr ""
 
@@ -519,8 +518,7 @@ msgstr ""
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
+msgid "We sent a mail to the address you gave us, with a link to reset your "
 "password."
 msgstr ""
 
@@ -535,7 +533,7 @@ msgid "Login"
 msgstr ""
 
 # src/template_utils.rs:144
-msgid "Username or email"
+msgid "Username, or email"
 msgstr ""
 
 msgid "Publish"
@@ -548,8 +546,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid ""
-"You can upload media to your gallery, and copy their Markdown code into your "
+msgid "You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -642,8 +639,7 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
@@ -681,8 +677,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 msgid "Upload images"
