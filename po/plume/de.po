@@ -307,8 +307,7 @@ msgstr "Deine Blogs"
 
 #, fuzzy
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-"Du hast bisher keinen Blog. Erstelle deinen eigenen oder tritt einem Blog "
+msgstr "Du hast bisher keinen Blog. Erstelle deinen eigenen oder tritt einem Blog "
 "bei."
 
 msgid "Start a new blog"
@@ -340,11 +339,9 @@ msgid "Password confirmation"
 msgstr "Passwort Wiederholung"
 
 #, fuzzy
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
+msgid "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
-msgstr ""
-"Tut mir leid. Auf dieser Instanz sind Registrierungen derzeit nicht möglich. "
+msgstr "Tut mir leid. Auf dieser Instanz sind Registrierungen derzeit nicht möglich. "
 "Es gibt aber noch andere"
 
 msgid "Articles"
@@ -411,11 +408,9 @@ msgid "Authors can manage various blogs from an unique website."
 msgstr "Autoren können verschiedene Blogs von einer Website aus verwalten."
 
 #, fuzzy
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact with "
+msgid "Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr ""
-"Artikel sind auch auf anderen Plume-Websites sichtbar und es ist möglich aus "
+msgstr "Artikel sind auch auf anderen Plume-Websites sichtbar und es ist möglich aus "
 "anderen Plattformen wie Mastodon mit diesen zu interagieren."
 
 msgid "Home to <em>{0}</em> people"
@@ -546,8 +541,7 @@ msgstr "Account aktualisieren"
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
+msgid "We sent a mail to the address you gave us, with a link to reset your "
 "password."
 msgstr ""
 
@@ -574,8 +568,7 @@ msgstr "Untertitel"
 msgid "Content"
 msgstr "Inhalt"
 
-msgid ""
-"You can upload media to your gallery, and copy their Markdown code into your "
+msgid "You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -659,8 +652,7 @@ msgstr "Boosten"
 
 #, fuzzy
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
-"Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
+msgstr "Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
 "interagieren"
 
 #, fuzzy
@@ -686,12 +678,10 @@ msgstr "Bisher keine Kommentare. Schreibe die erste Reaktion!"
 msgid "Invalid CSRF token"
 msgstr "Ungültiger CSRF token."
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
-msgstr ""
-"Irgendetwas stimmt mit deinem CSRF token nicht. Vergewissere dich, dass "
+msgstr "Irgendetwas stimmt mit deinem CSRF token nicht. Vergewissere dich, dass "
 "Cookies in deinem Browser aktiviert sind und versuche diese Seite neu zu "
 "laden. Bitte melde diesen Fehler, falls er erneut auftritt."
 
@@ -720,8 +710,7 @@ msgid "Something broke on our side."
 msgstr "Bei dir ist etwas schief gegangen."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-"Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen "
+msgstr "Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen "
 "gerne melden."
 
 #, fuzzy
@@ -731,8 +720,7 @@ msgstr "Bearbeiten"
 msgid "Description"
 msgstr "Beschreibung"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -923,8 +911,7 @@ msgstr "Als Avatar verwenden"
 #~ msgstr "Instanz-Einstellungen"
 
 #, fuzzy
-#~ msgid ""
-#~ "Plume is a decentralized blogging engine and a member of the Fediverse."
+#~ msgid "Plume is a decentralized blogging engine and a member of the Fediverse."
 #~ msgstr "Plume ist eine dezentrale Blogging-Engine."
 
 #, fuzzy
