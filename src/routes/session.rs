@@ -35,7 +35,7 @@ pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n) -> R
 
 #[derive(Default, FromForm, Validate)]
 pub struct LoginForm {
-    #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
+    #[validate(length(min = "1", message = "We need an email, or a username to identify you"))]
     pub email_or_name: String,
     #[validate(length(min = "1", message = "Your password can't be empty"))]
     pub password: String,
@@ -73,7 +73,7 @@ pub fn create(
             .expect("No user is registered");
 
         let mut err = ValidationError::new("invalid_login");
-        err.message = Some(Cow::from("Invalid username or password"));
+        err.message = Some(Cow::from("Invalid username, or password"));
         errors.add("email_or_name", err);
         String::new()
     };
