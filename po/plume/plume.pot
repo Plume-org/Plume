@@ -539,6 +539,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
+# templates/posts/new.rs:38
 msgid "You can upload media to your gallery, and copy their Markdown code into your articles to insert them."
 msgstr ""
 
