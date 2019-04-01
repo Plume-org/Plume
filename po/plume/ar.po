@@ -320,11 +320,9 @@ msgid "Password confirmation"
 msgstr "تأكيد الكلمة السرية"
 
 #, fuzzy
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
+msgid "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
-msgstr ""
-"عذرا، إن تسجيل الحسابات الجديدة غير ممكن حاليا على مثيل الخادوم هذا. يرجى "
+msgstr "عذرا، إن تسجيل الحسابات الجديدة غير ممكن حاليا على مثيل الخادوم هذا. يرجى "
 "المحاولة على مثيل خادم آخر"
 
 msgid "Articles"
@@ -390,11 +388,9 @@ msgstr "بلوم محرك لامركزي للمدونات."
 msgid "Authors can manage various blogs from an unique website."
 msgstr "يمكن للمدونين إدارة عدة مدونات مِن موقع ويب وحيد."
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact with "
+msgid "Articles are also visible on other Plume instances, and you can interact with "
 "them directly from other platforms like Mastodon."
-msgstr ""
-"ستكون المقالات معروضة كذلك على مواقع بلوم الأخرى، و يمكنكم التفاعل معها "
+msgstr "ستكون المقالات معروضة كذلك على مواقع بلوم الأخرى، و يمكنكم التفاعل معها "
 "مباشرة عبر أية منصة أخرى مثل ماستدون."
 
 #, fuzzy
@@ -534,8 +530,7 @@ msgstr "تحديث الحساب"
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
+msgid "We sent a mail to the address you gave us, with a link to reset your "
 "password."
 msgstr ""
 
@@ -561,8 +556,7 @@ msgstr "العنوان الثانوي"
 msgid "Content"
 msgstr "المحتوى"
 
-msgid ""
-"You can upload media to your gallery, and copy their Markdown code into your "
+msgid "You can upload media to your gallery, and copy their Markdown code into your "
 "articles to insert them."
 msgstr ""
 
@@ -647,8 +641,7 @@ msgid "Boost"
 msgstr "رقّي"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
-"قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
+msgstr "قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
 "المقال"
 
 msgid "Comments"
@@ -670,8 +663,7 @@ msgstr "لا توجد هناك تعليقات بعد. كن أول مَن يتف�
 msgid "Invalid CSRF token"
 msgstr "رمز CSRF غير صالح."
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in "
 "you browser, and try reloading this page. If you continue to see this error "
 "message, please report it."
 msgstr ""
@@ -710,8 +702,7 @@ msgstr "تعديل {0}"
 msgid "Description"
 msgstr "الوصف"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
