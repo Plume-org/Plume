@@ -137,7 +137,7 @@ aliases:
           command: ./script/run_unit_test.sh
       - run:
           name: upload coverage
-          command: ./script/upload_coverage.sh
+          command: ./script/upload_coverage.sh unit
       - *save_cache_plume_dead_code
 
   - &test_browser
@@ -160,7 +160,7 @@ aliases:
             BROWSER: firefox
       - run:
           name: upload coverage
-          command: ./script/upload_coverage.sh
+          command: ./script/upload_coverage.sh integration
       - *save_cache_plume_dead_code
 
 jobs:
