@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 18:13\n"
+"PO-Revision-Date: 2019-04-02 12:53\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -42,7 +42,7 @@ msgstr "{0} さんのアバター"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "新しいブログを作成するにはログインが必要です"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -62,11 +62,11 @@ msgstr "このメディアはブログバナーに使用できません。"
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "投稿をいいねするにはログインが必要です"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "通知を表示するにはログインが必要です"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,7 +74,7 @@ msgstr "この投稿はまだ公開されていません。"
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "新しい投稿を書くにはログインが必要です"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
