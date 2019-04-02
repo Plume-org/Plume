@@ -15,7 +15,7 @@ $plm search init
 
 kcov --exclude-pattern=/.cargo,/usr/lib --verify target/cov/plume plume &
 
-until curl http://localhost:7878/test/health -f; do sleep 1; done
+until curl http://localhost:7878/test/health -f; do sleep 1; done 2>/dev/null >/dev/null
 
 python3 script/run_browser_test.py
 
