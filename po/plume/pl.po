@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-01 20:05\n"
+"PO-Revision-Date: 2019-04-02 08:15\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -62,7 +62,7 @@ msgstr "Nie możesz użyć tego nośnika jako banner na blogu."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Aby polubić post, musisz być zalogowany"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
