@@ -248,7 +248,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
@@ -563,11 +563,12 @@ msgstr "Электронная почта"
 msgid "Send password reset link"
 msgstr "Пароль"
 
-msgid "Login"
-msgstr ""
+#, fuzzy
+msgid "Log in"
+msgstr "Войти"
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Имя пользователя или адрес электронной почты"
 
 msgid "Publish"

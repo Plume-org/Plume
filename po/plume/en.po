@@ -238,7 +238,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
@@ -532,11 +532,11 @@ msgstr ""
 msgid "Send password reset link"
 msgstr ""
 
-msgid "Login"
+msgid "Log in"
 msgstr ""
 
-# src/template_utils.rs:144
-msgid "Username or email"
+# src/template_utils.rs:217
+msgid "Username, or email"
 msgstr ""
 
 msgid "Publish"

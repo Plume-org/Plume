@@ -233,7 +233,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
@@ -528,10 +528,12 @@ msgstr "Correo electrónico"
 msgid "Send password reset link"
 msgstr "Contraseña"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "Iniciar Sesión"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "Nombre de usuario o correo electrónico"
 
 msgid "Publish"
@@ -776,6 +778,9 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#~ msgid "Login"
+#~ msgstr "Iniciar Sesión"
 
 #~ msgid "You need to be logged in order to create a new blog"
 #~ msgstr "Necesitas iniciar sesión para crear un nuevo blog"

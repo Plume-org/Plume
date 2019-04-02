@@ -239,7 +239,8 @@ msgstr "Acolhe <em>{0}</em> pessoas"
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "Quem escreveu <em>{0}</em> artigos"
 
-msgid "And connected to <em>{0}</em> other instances"
+#, fuzzy
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr "E está conectado a <em>{0}</em> outras instâncias"
 
 msgid "Administred by"
@@ -556,10 +557,12 @@ msgstr "Email"
 msgid "Send password reset link"
 msgstr "Senha"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "Entrar"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "Nome de usuário ou e-mail"
 
 msgid "Publish"
@@ -819,6 +822,9 @@ msgstr "Copie-o em seus artigos para inserir esta mídia."
 #, fuzzy
 msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
+
+#~ msgid "Login"
+#~ msgstr "Entrar"
 
 #~ msgid "You need to be logged in order to create a new blog"
 #~ msgstr "Você precisa estar logado para criar um novo blog"
