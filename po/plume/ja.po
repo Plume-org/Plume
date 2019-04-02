@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 12:53\n"
+"PO-Revision-Date: 2019-04-02 13:39\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -90,7 +90,7 @@ msgstr "{0} を編集"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "投稿を再共有するにはログインが必要です"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -110,15 +110,15 @@ msgstr "申し訳ありませんが、リンクの有効期限が切れていま
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "ダッシュボードにアクセスするにはログインが必要です"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "誰かをフォローするにはログインが必要です"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "プロフィールを編集するにはログインが必要です"
 
 msgid "Plume"
 msgstr "Plume"
@@ -240,7 +240,7 @@ msgstr "ユーザー登録者数<em>{0}</em> 人"
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "投稿記事数 <em>{0}</em> 件"
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr "他のインスタンスからの接続数 <em>{0}</em>"
 
 msgid "Administred by"
@@ -256,7 +256,7 @@ msgid "Your Profile"
 msgstr "プロフィール"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
+msgstr "アバターを変更するには、ギャラリーにアップロードして選択してください。"
 
 msgid "Upload an avatar"
 msgstr "アバターをアップロード"
@@ -387,7 +387,7 @@ msgid "Authors can manage various blogs, each as an unique website."
 msgstr ""
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "投稿は他の Plume インスタンスからも閲覧可能であり、Mastdon のように他のプラットフォームから直接記事にアクセスできます。"
 
 msgid "Home to <em>{0}</em> people"
 msgstr "ユーザー登録者数 <em>{0}</em> 人"
@@ -524,13 +524,13 @@ msgid "E-mail"
 msgstr "メール"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "パスワードリセットリンクを送信"
 
-msgid "Login"
+msgid "Log in"
 msgstr "ログイン"
 
 # src/template_utils.rs:217
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
 msgid "Publish"
@@ -544,7 +544,7 @@ msgid "Content"
 msgstr "コンテンツ"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr ""
+msgstr "メディアをギャラリーにアップロードして、その Markdown コードをコピーして投稿に挿入できます。"
 
 msgid "Upload media"
 msgstr "メディアをアップロード"
@@ -612,7 +612,7 @@ msgid "Boost"
 msgstr "ブースト"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "この記事と関わるにはログインするか Fediverse アカウントを使用してください"
 
 msgid "Comments"
 msgstr "コメント"
@@ -670,7 +670,7 @@ msgid "Description"
 msgstr "説明"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "ギャラリーにアップロードした画像を、ブログアイコンやバナーに使用できます。"
 
 msgid "Upload images"
 msgstr "画像をアップロード"
@@ -761,11 +761,11 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr "このメディアを挿入するには、これを投稿にコピーしてください。"
 
 msgid "Use as an avatar"
-msgstr ""
+msgstr "アバターとして使う"
 
 msgid "Log in to boost"
-msgstr ""
+msgstr "ブーストするにはログインしてください"
 
 msgid "Log in to like"
-msgstr ""
+msgstr "いいねするにはログインしてください"
 
