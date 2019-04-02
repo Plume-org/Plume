@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:40\n"
+"PO-Revision-Date: 2019-04-02 14:25\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -241,7 +241,7 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Ktorí napísal <em>{0}</em> článkov"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "A sú pripojení k <em>{0}</em> ďalším instanciám"
 
 msgid "Administred by"
 msgstr "Správcom je"
@@ -527,11 +527,11 @@ msgid "Send password reset link"
 msgstr "Pošli odkaz na obnovu hesla"
 
 msgid "Log in"
-msgstr ""
+msgstr "Prihlás sa"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Používateľské meno, alebo email"
 
 msgid "Publish"
 msgstr "Zverejni"
