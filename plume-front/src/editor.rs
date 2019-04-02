@@ -108,7 +108,7 @@ pub fn init() -> Result<(), EditorError> {
         let subtitle = init_widget(
             &ed,
             "h2",
-            i18n!(CATALOG, "Subtitle or summary"),
+            i18n!(CATALOG, "Subtitle, or summary"),
             subtitle_val,
             true,
         )?;
@@ -269,7 +269,7 @@ fn make_editable(tag: &'static str) -> Element {
         .create_element(tag)
         .expect("Couldn't create editable element");
     elt.set_attribute("contenteditable", "true")
-        .expect("Couldn't make element editable");
+        .expect("Couldn't make the element editable");
     elt
 }
 

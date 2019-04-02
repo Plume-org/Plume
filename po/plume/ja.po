@@ -243,7 +243,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
@@ -563,10 +563,12 @@ msgstr "メールアドレス"
 msgid "Send password reset link"
 msgstr "パスワード"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "ログイン"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
 msgid "Publish"
@@ -831,6 +833,9 @@ msgstr "このメディアを記事に挿入するには、自分の記事にコ
 #, fuzzy
 msgid "Use as an avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "Login"
+#~ msgstr "ログイン"
 
 #~ msgid "You need to be logged in order to create a new blog"
 #~ msgstr "新しいブログを作成するにはログインする必要があります"

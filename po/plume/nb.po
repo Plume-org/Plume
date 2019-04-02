@@ -249,7 +249,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 #, fuzzy
@@ -583,11 +583,12 @@ msgstr "Epost"
 msgid "Send password reset link"
 msgstr "Passord"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "Logg inn"
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Brukernavn eller epost"
 
 msgid "Publish"
@@ -852,6 +853,9 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#~ msgid "Login"
+#~ msgstr "Logg inn"
 
 #, fuzzy
 #~ msgid "You need to be logged in order to create a new blog"

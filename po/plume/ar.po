@@ -240,7 +240,8 @@ msgstr "يستضيف <em>{0}</em> مستخدمين"
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "قاموا بتحرير <em>{0}</em> مقالات"
 
-msgid "And connected to <em>{0}</em> other instances"
+#, fuzzy
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr "ومتصل بـ <em>{0}</em> مثيلات خوادم أخرى"
 
 msgid "Administred by"
@@ -556,10 +557,12 @@ msgstr "البريد الالكتروني"
 msgid "Send password reset link"
 msgstr "كلمة السر"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "تسجيل الدخول"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
 msgid "Publish"
@@ -834,6 +837,9 @@ msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض ال
 #, fuzzy
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#~ msgid "Login"
+#~ msgstr "تسجيل الدخول"
 
 #~ msgid "You need to be logged in order to create a new blog"
 #~ msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"

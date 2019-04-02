@@ -59,7 +59,7 @@ pub fn create(
     let user_id = if let Ok(user) = user {
         if !user.auth(&form.password) {
             let mut err = ValidationError::new("invalid_login");
-            err.message = Some(Cow::from("Invalid username or password"));
+            err.message = Some(Cow::from("Invalid username, or password"));
             errors.add("email_or_name", err);
             String::new()
         } else {
