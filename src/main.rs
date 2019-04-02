@@ -272,11 +272,6 @@ Then try to restart Plume
         );
 
     #[cfg(feature = "test")]
-    let rocket = rocket.mount(
-        "/test",
-        routes![
-            test_routes::health,
-        ],
-    );
+    let rocket = rocket.mount("/test", routes![test_routes::health,]);
     rocket.launch();
 }

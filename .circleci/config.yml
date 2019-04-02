@@ -147,13 +147,15 @@ aliases:
       - *restore_cache_plume_dead_code
       - run:
           name: install server
-          command: cargo install --debug --no-default-features --features="${FEATURES}",test || cargo install --debug --no-default-features --features="${FEATURES}",test
+          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . || cargo install --debug --no-default-features --features="${FEATURES}",test --path .
       - run:
           name: install plm
-          command: cargo install --debug --no-default-features --features="${FEATURES}",test -p plume-cli || cargo install --debug --no-default-features --features="${FEATURES}",test -p plume-cli
+          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli
       - run:
           name: run test
           command: ./script/run_browser_test.sh
+          environment:
+            BROWSER: firefox
       - run:
           name: upload coverage
           command: ./script/upload_coverage.sh
@@ -206,12 +208,12 @@ jobs:
     <<: *env_sqlite
     <<: *test_unit
 
-  test_browser_firefox_postgrsql:
+  test_browser_postgresql:
     <<: *postgresql_selenium
     <<: *env_postgresql
     <<: *test_browser
 
-  test_browser_firefox_sqlite:
+  test_browser_sqlite:
     <<: *selenium
     <<: *env_sqlite
     <<: *test_browser
@@ -239,3 +241,9 @@ workflows:
       - test_unit_sqlite:
           requires:
             - download_deps
+      - test_browser_postgresql:
+          requires:
+            - build_web
+      - test_browser_sqlite:
+          requires:
+            - build_web

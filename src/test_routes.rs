@@ -1,3 +1,2 @@
 #[get("/health")]
-pub fn health() {
-}
+pub fn health() {}
