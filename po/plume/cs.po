@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:39\n"
+"PO-Revision-Date: 2019-04-02 14:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -202,7 +202,7 @@ msgid "Articles from {}"
 msgstr "Články z {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "Ještě tu nic není k vidění. Zkuste odebírat obsah od více lidí."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -267,7 +267,7 @@ msgstr "Zobrazované jméno"
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Summary"
 msgstr "Souhrn"
@@ -517,7 +517,7 @@ msgid "Check your inbox!"
 msgstr "Zkontrolujte svou příchozí poštu!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Zaslali jsme email na adresu, kterou jste nám dodali, s odkazem na obnovu vášho hesla."
 
 # src/template_utils.rs:217
 msgid "E-mail"
@@ -527,7 +527,7 @@ msgid "Send password reset link"
 msgstr "Poslat odkaz na obnovení hesla"
 
 msgid "Log in"
-msgstr ""
+msgstr "Přihlásit se"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
@@ -618,20 +618,20 @@ msgid "Boost"
 msgstr ""
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Přihlasit se, nebo použít váš Fediverse účet k interakci s tímto článkem"
 
 msgid "Comments"
 msgstr "Komentáře"
 
 # src/template_utils.rs:217
 msgid "Content warning"
-msgstr ""
+msgstr "Varování o obsahu"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Váš komentář"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Odeslat komentář"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Zatím bez komentáře. Buďte první, kdo zareaguje!"
