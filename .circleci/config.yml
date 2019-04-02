@@ -2,7 +2,7 @@ version: 2.1
 
 aliases:
   - &plume-docker
-    image: plumeorg/plume-buildenv:v0.0.4
+    image: plumeorg/plume-buildenv:v0.0.5
   - &defaults
     docker:
       - *plume-docker

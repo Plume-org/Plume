@@ -14,10 +14,12 @@ $plm users new -n admin -N 'Admin' -e 'email@exemple.com' -p 'password'
 $plm search init
 
 kcov --exclude-pattern=/.cargo,/usr/lib --verify target/cov/plume plume &
+caddy -conf /Caddyfile &
 
 until curl http://localhost:7878/test/health -f; do sleep 1; done 2>/dev/null >/dev/null
 
 python3 script/run_browser_test.py
 
-kill -SIGINT %1
+kill -SIGINT  %1
+kill -SIGKILL %2
 wait

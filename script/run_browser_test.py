@@ -8,15 +8,15 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 class Browser(unittest.TestCase):
     def setUp(self):
         if os.environ["BROWSER"] == "firefox":
-            self.driver = webdriver.Remote(
-                command_executor='http://localhost:24444/wd/hub',
-                desired_capabilities=DesiredCapabilities.FIREFOX)
+            capabilities=DesiredCapabilities.FIREFOX
         elif os.environ["BROWSER"] == "chrome":
-            self.driver = webdriver.Remote(
-                command_executor='http://localhost:24444/wd/hub',
-                desired_capabilities=DesiredCapabilities.CHROME)
+            capabilities=DesiredCapabilities.CHROME
         else:
             raise Exception("No browser was requested")
+        capabilities['acceptSslCerts'] = True
+        self.driver = webdriver.Remote(
+            command_executor='http://localhost:24444/wd/hub',
+            desired_capabilities=capabilities)
     def tearDown(self):
         self.driver.close()
 
@@ -24,7 +24,7 @@ class Browser(unittest.TestCase):
 class PythonOrgSearch(Browser):
     def test_search_in_python_org(self):
         driver = self.driver
-        driver.get("http://localhost:7878/")
+        driver.get("https://localhost/")
         self.assertIn("plume-test", driver.title)
 
 

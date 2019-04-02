@@ -26,3 +26,7 @@ RUN echo "W3RhcmdldC54ODZfNjQtdW5rbm93bi1saW51eC1nbnVdCnJ1c3RmbGFncyA9IFsiLUNsaW
 
 #install selenium for front end tests
 RUN pip3 install selenium
+
+#install and configure caddy
+RUN curl https://getcaddy.com | bash -s personal
+COPY Caddyfile /Caddyfile
