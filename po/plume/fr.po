@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:39\n"
+"PO-Revision-Date: 2019-04-02 14:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -241,7 +241,7 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Qui ont écrit <em>{0}</em> articles"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "Et sont connecté⋅es à <em>{0}</em> autres instances"
 
 msgid "Administred by"
 msgstr "Administré par"
@@ -527,11 +527,11 @@ msgid "Send password reset link"
 msgstr "Envoyer un lien pour réinitialiser le mot de passe"
 
 msgid "Log in"
-msgstr ""
+msgstr "Se connecter"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Nom d'utilisateur⋅ice ou e-mail"
 
 msgid "Publish"
 msgstr "Publier"
