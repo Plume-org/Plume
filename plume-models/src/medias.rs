@@ -190,7 +190,7 @@ impl Media {
         let ext = remote_url
             .rsplit('.')
             .next()
-            .map(|ext| ext.to_owned())
+            .map(ToOwned::to_owned)
             .unwrap_or_else(|| String::from("png"));
         let path =
             Path::new("static")

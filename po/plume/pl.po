@@ -34,8 +34,9 @@ msgstr "{0} podbił(a) Twój artykuł."
 msgid "{0}'s avatar"
 msgstr "Awatar {0}"
 
-msgid "You need to be logged in order to create a new blog"
-msgstr "Musisz się zalogować, aby utworzyć bloga"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 msgid "A blog with the same name already exists."
 msgstr "Blog o tej nazwie już istnieje."
@@ -55,17 +56,20 @@ msgstr "Nie masz uprawnień do usunięcia tego bloga."
 msgid "You can't use this media as a blog banner."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
-msgid "You need to be logged in order to like a post"
-msgstr "Musisz się zalogować, aby polubić wpis"
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to see your notifications"
-msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "Ten wpis nie został jeszcze opublikowany."
 
-msgid "You need to be logged in order to write a new post"
-msgstr "Musisz się zalogować, aby utworzyć wpis"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not an author of this blog."
@@ -77,8 +81,9 @@ msgstr "Nowy wpis"
 msgid "Edit {0}"
 msgstr "Edytuj {0}"
 
-msgid "You need to be logged in order to reshare a post"
-msgstr "Musisz się zalogować, aby udostępnić wpis"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -96,15 +101,17 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
-msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "Musisz się zalogować, aby zacząć obserwować innych"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to edit your profile"
-msgstr "Musisz się zalogować, aby móc edytować swój profil"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -224,7 +231,8 @@ msgstr "Używana przez <em>{0}</em> użytkowników"
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "Którzy napisali <em>{0}</em> artykułów"
 
-msgid "And connected to <em>{0}</em> other instances"
+#, fuzzy
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr "Połączona z <em>{0}</em> innych instancji"
 
 msgid "Administred by"
@@ -239,7 +247,8 @@ msgstr "Edytuj swoje konto"
 msgid "Your Profile"
 msgstr "Twój profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -374,12 +383,14 @@ msgstr "Czym jest Plume?"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume jest zdecentralizowanym silnikiem blogowym."
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "Autorzy mogą zarządzać blogami ze specjalnej strony."
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "Artykuły są widoczne na innych stronach Plume, możesz też wejść w interakcje "
 "z nimi na platformach takich jak Mastodon."
@@ -526,13 +537,16 @@ msgstr ""
 msgid "E-mail"
 msgstr "Adres e-mail"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "Hasło"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "Zaloguj się"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "Nazwa użytkownika lub adres e-mail"
 
 msgid "Publish"
@@ -545,8 +559,8 @@ msgid "Content"
 msgstr "Zawartość"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -618,7 +632,8 @@ msgstr "Nie chcę tego podbijać"
 msgid "Boost"
 msgstr "Podbij"
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Zaloguj się lub użyj konta w Fediwersum, aby wejść w interakcje z tym "
 "artykułem"
@@ -686,7 +701,7 @@ msgid "Description"
 msgstr "Opis"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -786,8 +801,37 @@ msgstr "Kod Markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialną:"
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "Użyj jako awataru"
+
+#~ msgid "Login"
+#~ msgstr "Zaloguj się"
+
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "Musisz się zalogować, aby utworzyć bloga"
+
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "Musisz się zalogować, aby polubić wpis"
+
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
+
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "Musisz się zalogować, aby utworzyć wpis"
+
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Musisz się zalogować, aby udostępnić wpis"
+
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "Musisz się zalogować, aby zacząć obserwować innych"
+
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "Musisz się zalogować, aby móc edytować swój profil"
 
 #~ msgid "There's one article on this blog"
 #~ msgid_plural "There are {0} articles on this blog"

@@ -38,8 +38,9 @@ msgstr "{{ data }} があなたの記事をブーストしました"
 msgid "{0}'s avatar"
 msgstr "{{ name}} のアバター"
 
-msgid "You need to be logged in order to create a new blog"
-msgstr "新しいブログを作成するにはログインする必要があります"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 msgid "A blog with the same name already exists."
 msgstr "同じ名前のブログがすでに存在します。"
@@ -60,17 +61,20 @@ msgstr "あなたはこのブログの作者ではありません。"
 msgid "You can't use this media as a blog banner."
 msgstr "あなたはこのブログの作者ではありません。"
 
-msgid "You need to be logged in order to like a post"
-msgstr "投稿をいいねするにはログインする必要があります"
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to see your notifications"
-msgstr "通知を表示するにはログインする必要があります"
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "この投稿はまだ公開されていません。"
 
-msgid "You need to be logged in order to write a new post"
-msgstr "新しい記事を書くにはログインする必要があります"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not an author of this blog."
@@ -83,9 +87,9 @@ msgstr "新しい記事"
 msgid "Edit {0}"
 msgstr "編集"
 
-#, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "投稿をいいねするにはログインする必要があります"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -103,15 +107,17 @@ msgstr "パスワードは空にできません"
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
-msgstr "ダッシュボードにアクセスするにはログインする必要があります"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "他の人をフォローするにはログインする必要があります"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to edit your profile"
-msgstr "自分のプロフィールを編集するにはログインする必要があります"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -240,7 +246,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
@@ -257,7 +263,8 @@ msgstr "自分のアカウントを編集"
 msgid "Your Profile"
 msgstr "自分のプロフィール"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -398,12 +405,14 @@ msgstr "Plume とは？"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume は分散型ブログエンジンです。"
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラット"
 "フォームから直接記事と関わることができます。"
@@ -553,13 +562,16 @@ msgstr ""
 msgid "E-mail"
 msgstr "メールアドレス"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "パスワード"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "ログイン"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
 msgid "Publish"
@@ -572,8 +584,8 @@ msgid "Content"
 msgstr "コメント"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -647,7 +659,8 @@ msgstr "もうこれをブーストしたくありません"
 msgid "Boost"
 msgstr "ブースト"
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "この記事と関わるにはログインするか Fediverse アカウントを使用してください"
 
@@ -715,7 +728,7 @@ msgid "Description"
 msgstr "説明"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -820,8 +833,38 @@ msgstr "Markdown コード"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "このメディアを記事に挿入するには、自分の記事にコピーしてください。"
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "Login"
+#~ msgstr "ログイン"
+
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "新しいブログを作成するにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "投稿をいいねするにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "通知を表示するにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "新しい記事を書くにはログインする必要があります"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "投稿をいいねするにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "ダッシュボードにアクセスするにはログインする必要があります"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "他の人をフォローするにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "自分のプロフィールを編集するにはログインする必要があります"
 
 #, fuzzy
 #~ msgid "There's one article on this blog"

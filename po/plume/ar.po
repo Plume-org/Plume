@@ -38,8 +38,9 @@ msgstr "قام {0} بترقية مقالك"
 msgid "{0}'s avatar"
 msgstr "الصورة الرمزية لـ {0}"
 
-msgid "You need to be logged in order to create a new blog"
-msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 msgid "A blog with the same name already exists."
 msgstr "هناك مدونة تحمل نفس التسمية."
@@ -60,17 +61,20 @@ msgstr "لست مِن محرري هذه المدونة."
 msgid "You can't use this media as a blog banner."
 msgstr "لست مِن محرري هذه المدونة."
 
-msgid "You need to be logged in order to like a post"
-msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to see your notifications"
-msgstr "يجب عليك تسجيل الدخول للإطلاع على إشعاراتك"
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "هذا المقال ليس منشورا بعد."
 
-msgid "You need to be logged in order to write a new post"
-msgstr "يشترط عليك تسجيل الدخول لكتابة مقال جديد"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not an author of this blog."
@@ -82,9 +86,9 @@ msgstr "منشور جديد"
 msgid "Edit {0}"
 msgstr "تعديل {0}"
 
-#, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -102,15 +106,17 @@ msgstr "لا يمكن ترك خانة الكلمة السرية فارغة"
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
-msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "يجب عليك أولا تسجيل الدخول قصد متابعة شخص آخر"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to edit your profile"
-msgstr "يجب عليك تسجيل الدخول أولا قصد تعديل صفحتك الشخصية"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -237,7 +243,8 @@ msgstr "يستضيف <em>{0}</em> مستخدمين"
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "قاموا بتحرير <em>{0}</em> مقالات"
 
-msgid "And connected to <em>{0}</em> other instances"
+#, fuzzy
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr "ومتصل بـ <em>{0}</em> مثيلات خوادم أخرى"
 
 msgid "Administred by"
@@ -252,7 +259,8 @@ msgstr "تعديل حسابك"
 msgid "Your Profile"
 msgstr "ملفك الشخصي"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -390,12 +398,14 @@ msgstr "ما هو بلوم Plume؟"
 msgid "Plume is a decentralized blogging engine."
 msgstr "بلوم محرك لامركزي للمدونات."
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "يمكن للمدونين إدارة عدة مدونات مِن موقع ويب وحيد."
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "ستكون المقالات معروضة كذلك على مواقع بلوم الأخرى، و يمكنكم التفاعل معها "
 "مباشرة عبر أية منصة أخرى مثل ماستدون."
@@ -546,13 +556,16 @@ msgstr ""
 msgid "E-mail"
 msgstr "البريد الالكتروني"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "كلمة السر"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "تسجيل الدخول"
 
-msgid "Username or email"
+#, fuzzy
+msgid "Username, or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
 msgid "Publish"
@@ -565,8 +578,8 @@ msgid "Content"
 msgstr "المحتوى"
 
 msgid ""
-"You can upload media to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -649,7 +662,8 @@ msgstr "لا أريد مشاركة هذا"
 msgid "Boost"
 msgstr "رقّي"
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
 "المقال"
@@ -714,7 +728,7 @@ msgid "Description"
 msgstr "الوصف"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons or banners."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 #, fuzzy
@@ -823,8 +837,38 @@ msgstr "شيفرة ماركداون"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض الصورة."
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#~ msgid "Login"
+#~ msgstr "تسجيل الدخول"
+
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
+
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
+
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "يجب عليك تسجيل الدخول للإطلاع على إشعاراتك"
+
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "يشترط عليك تسجيل الدخول لكتابة مقال جديد"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
+
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "يجب عليك أولا تسجيل الدخول قصد متابعة شخص آخر"
+
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "يجب عليك تسجيل الدخول أولا قصد تعديل صفحتك الشخصية"
 
 #, fuzzy
 #~ msgid "There's one article on this blog"

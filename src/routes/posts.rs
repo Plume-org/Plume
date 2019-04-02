@@ -120,7 +120,7 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(
             i18n.catalog,
-            "You need to be logged in order to write a new post"
+            "To write a new post, you need to be logged in"
         ),
         uri!(new: blog = blog),
     )

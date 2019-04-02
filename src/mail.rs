@@ -86,7 +86,7 @@ pub fn build_mail(dest: String, subject: String, body: String) -> Option<Email> 
                         env::var("MAIL_SERVER")?
                     )) as Result<_, env::VarError>
                 })
-                .expect("Mail server is not correctly configured"),
+                .expect("The email server is not configured correctly"),
         )
         .to(dest)
         .subject(subject)

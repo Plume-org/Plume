@@ -35,7 +35,7 @@ pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n) -> R
 
 #[derive(Default, FromForm, Validate)]
 pub struct LoginForm {
-    #[validate(length(min = "1", message = "We need an email or a username to identify you"))]
+    #[validate(length(min = "1", message = "We need an email, or a username to identify you"))]
     pub email_or_name: String,
     #[validate(length(min = "1", message = "Your password can't be empty"))]
     pub password: String,
@@ -59,7 +59,7 @@ pub fn create(
     let user_id = if let Ok(user) = user {
         if !user.auth(&form.password) {
             let mut err = ValidationError::new("invalid_login");
-            err.message = Some(Cow::from("Invalid username or password"));
+            err.message = Some(Cow::from("Invalid username, or password"));
             errors.add("email_or_name", err);
             String::new()
         } else {
@@ -73,7 +73,7 @@ pub fn create(
             .expect("No user is registered");
 
         let mut err = ValidationError::new("invalid_login");
-        err.message = Some(Cow::from("Invalid username or password"));
+        err.message = Some(Cow::from("Invalid username, or password"));
         errors.add("email_or_name", err);
         String::new()
     };
@@ -95,7 +95,7 @@ pub fn create(
             .unwrap_or_else(|| "/".to_owned());
 
         let uri = Uri::parse(&destination)
-            .map(|x| x.into_owned())
+            .map(IntoOwned::into_owned)
             .map_err(|_| {
                 render!(session::login(
                     &(&*conn, &rockets.intl.catalog, None),
@@ -183,7 +183,7 @@ pub fn password_reset_request(
         ) {
             if let Some(ref mut mail) = *mail.lock().unwrap() {
                 mail.send(message.into())
-                    .map_err(|_| eprintln!("Couldn't send password reset mail"))
+                    .map_err(|_| eprintln!("Couldn't send password reset email"))
                     .ok();
             }
         }
