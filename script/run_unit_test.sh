@@ -8,4 +8,3 @@ for file in target/debug/*-*[^\.d]; do
 		kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$filename" "$file"
 	fi
 done
-bash <(curl -s https://codecov.io/bash)
