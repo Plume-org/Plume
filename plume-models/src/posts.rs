@@ -1122,11 +1122,11 @@ impl IntoId for Post {
 
 #[cfg(test)]
 mod tests {
-    use diesel::Connection;
     use super::*;
+    use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
     use crate::tests::rockets;
-    use crate::inbox::{inbox, InboxResult, tests::fill_database};
+    use diesel::Connection;
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
@@ -1136,23 +1136,32 @@ mod tests {
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
             let (_, users, blogs) = fill_database(&r);
-            let post = Post::insert(conn, NewPost {
-                blog_id: blogs[0].id,
-                slug: "yo".into(),
-                title: "Yo".into(),
-                content: SafeString::new("Hello"),
-                published: true,
-                license: "WTFPL".to_string(),
-                creation_date: None,
-                ap_url: String::new(), // automatically updated when inserting
-                subtitle: "Testing".into(),
-                source: "Hello".into(),
-                cover_id: None,
-            }, &r.searcher).unwrap();
-            PostAuthor::insert(conn, NewPostAuthor {
-                post_id: post.id,
-                author_id: users[0].id,
-            }).unwrap();
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "yo".into(),
+                    title: "Yo".into(),
+                    content: SafeString::new("Hello"),
+                    published: true,
+                    license: "WTFPL".to_string(),
+                    creation_date: None,
+                    ap_url: String::new(), // automatically updated when inserting
+                    subtitle: "Testing".into(),
+                    source: "Hello".into(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: users[0].id,
+                },
+            )
+            .unwrap();
             let create = post.create_activity(conn).unwrap();
             post.delete(conn, &r.searcher).unwrap();
 
@@ -1182,8 +1191,14 @@ mod tests {
 
         let json = serde_json::to_value(full_article).unwrap();
         let article_from_json: LicensedArticle = serde_json::from_value(json).unwrap();
-        assert_eq!("Yo", &article_from_json.object.object_props.id_string().unwrap());
-        assert_eq!("WTFPL", &article_from_json.custom_props.license_string().unwrap());
+        assert_eq!(
+            "Yo",
+            &article_from_json.object.object_props.id_string().unwrap()
+        );
+        assert_eq!(
+            "WTFPL",
+            &article_from_json.custom_props.license_string().unwrap()
+        );
     }
 
     #[test]
@@ -1203,6 +1218,9 @@ mod tests {
             "to": [plume_common::activity_pub::PUBLIC_VISIBILTY]
         });
         let article: LicensedArticle = serde_json::from_value(json).unwrap();
-        assert_eq!("https://plu.me/~/Blog/my-article", &article.object.object_props.id_string().unwrap());
+        assert_eq!(
+            "https://plu.me/~/Blog/my-article",
+            &article.object.object_props.id_string().unwrap()
+        );
     }
 }

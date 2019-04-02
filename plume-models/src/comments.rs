@@ -232,7 +232,8 @@ impl FromId<PlumeRocket> for Comment {
                             res
                         },
                         None,
-                    ).map_err(|(_, e)| e)?
+                    )
+                    .map_err(|(_, e)| e)?
                     .id,
                     sensitive: note.object_props.summary_string().is_ok(),
                     public_visibility,
@@ -381,11 +382,11 @@ impl CommentTree {
 
 #[cfg(test)]
 mod tests {
-    use diesel::Connection;
     use super::*;
+    use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
     use crate::tests::rockets;
-    use crate::inbox::{inbox, InboxResult, tests::fill_database};
+    use diesel::Connection;
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
@@ -396,18 +397,26 @@ mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let (posts, users, _) = fill_database(&r);
 
-            let original_comm = Comment::insert(conn, NewComment {
-                content: SafeString::new("My comment"),
-                in_response_to_id: None,
-                post_id: posts[0].id,
-                author_id: users[0].id,
-                ap_url: None,
-                sensitive: true,
-                spoiler_text: "My CW".into(),
-                public_visibility: true,
-            }).unwrap();
+            let original_comm = Comment::insert(
+                conn,
+                NewComment {
+                    content: SafeString::new("My comment"),
+                    in_response_to_id: None,
+                    post_id: posts[0].id,
+                    author_id: users[0].id,
+                    ap_url: None,
+                    sensitive: true,
+                    spoiler_text: "My CW".into(),
+                    public_visibility: true,
+                },
+            )
+            .unwrap();
             let act = original_comm.create_activity(&r).unwrap();
-            inbox(&r, serde_json::to_value(original_comm.build_delete(conn).unwrap()).unwrap()).unwrap();
+            inbox(
+                &r,
+                serde_json::to_value(original_comm.build_delete(conn).unwrap()).unwrap(),
+            )
+            .unwrap();
 
             match inbox(&r, serde_json::to_value(act).unwrap()).unwrap() {
                 InboxResult::Commented(c) => {

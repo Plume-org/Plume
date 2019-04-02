@@ -1,4 +1,4 @@
-use reqwest::header::{ACCEPT, HeaderValue};
+use reqwest::header::{HeaderValue, ACCEPT};
 use std::fmt::Debug;
 
 /// Represents an ActivityPub inbox.
@@ -176,8 +176,8 @@ where
                         if let Some(json) = json {
                             act["actor"] = json;
                         }
-                        return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)))
-                    },
+                        return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)));
+                    }
                 };
 
                 // Same logic for "object"
@@ -266,7 +266,11 @@ pub trait FromId<C>: Sized {
     /// - `id`: the ActivityPub ID of the object to find
     /// - `object`: optional object that will be used if the object was not found in the database
     ///   If absent, the ID will be dereferenced.
-    fn from_id(ctx: &C, id: &str, object: Option<Self::Object>) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
+    fn from_id(
+        ctx: &C,
+        id: &str,
+        object: Option<Self::Object>,
+    ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
         match Self::from_db(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
@@ -287,13 +291,17 @@ pub trait FromId<C>: Sized {
                         .into_iter()
                         .collect::<Vec<_>>()
                         .join(", "),
-                ).map_err(|_| (None, InboxError::DerefError.into()))?,
+                )
+                .map_err(|_| (None, InboxError::DerefError.into()))?,
             )
             .send()
             .map_err(|_| (None, InboxError::DerefError))
             .and_then(|mut r| {
-                let json: serde_json::Value = r.json().map_err(|_| (None, InboxError::InvalidObject(None)))?;
-                serde_json::from_value(json.clone()).map_err(|_| (Some(json), InboxError::InvalidObject(None)))
+                let json: serde_json::Value = r
+                    .json()
+                    .map_err(|_| (None, InboxError::InvalidObject(None)))?;
+                serde_json::from_value(json.clone())
+                    .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
             })
             .map_err(|(json, e)| (json, e.into()))
     }

@@ -222,7 +222,8 @@ impl Media {
                         .next()?
                         .as_ref(),
                     None,
-                ).map_err(|(_, e)| e)?
+                )
+                .map_err(|(_, e)| e)?
                 .id,
             },
         )

@@ -2,15 +2,15 @@ pub use self::module::PlumeRocket;
 
 #[cfg(not(test))]
 mod module {
+    use crate::db_conn::DbConn;
+    use crate::search;
+    use crate::users;
     use rocket::{
         request::{self, FromRequest, Request},
         Outcome, State,
     };
-    use std::sync::Arc;
-    use crate::db_conn::DbConn;
-    use crate::users;
-    use crate::search;
     use scheduled_thread_pool::ScheduledThreadPool;
+    use std::sync::Arc;
 
     /// Common context needed by most routes and operations on models
     pub struct PlumeRocket {
@@ -43,15 +43,15 @@ mod module {
 
 #[cfg(test)]
 mod module {
+    use crate::db_conn::DbConn;
+    use crate::search;
+    use crate::users;
     use rocket::{
         request::{self, FromRequest, Request},
         Outcome, State,
     };
-    use std::sync::Arc;
-    use crate::db_conn::DbConn;
-    use crate::users;
-    use crate::search;
     use scheduled_thread_pool::ScheduledThreadPool;
+    use std::sync::Arc;
 
     /// Common context needed by most routes and operations on models
     pub struct PlumeRocket {

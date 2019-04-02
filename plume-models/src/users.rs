@@ -595,8 +595,7 @@ impl User {
 
         if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
             let mut endpoints = Endpoint::default();
-            endpoints
-                .set_shared_inbox_string(shared_inbox_url)?;
+            endpoints.set_shared_inbox_string(shared_inbox_url)?;
             actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
         }
 
@@ -740,7 +739,11 @@ impl FromId<PlumeRocket> for User {
         let user = User::insert(
             &c.conn,
             NewUser {
-                display_name: acct.object.object_props.name_string().unwrap_or_else(|_| username.clone()),
+                display_name: acct
+                    .object
+                    .object_props
+                    .name_string()
+                    .unwrap_or_else(|_| username.clone()),
                 username,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
@@ -779,17 +782,13 @@ impl FromId<PlumeRocket> for User {
 
         if let Ok(icon) = acct.object.object_props.icon_image() {
             if let Ok(url) = icon.object_props.url_string() {
-                let avatar = Media::save_remote(
-                    &c.conn,
-                    url,
-                    &user,
-                );
+                let avatar = Media::save_remote(&c.conn, url, &user);
 
                 if let Ok(avatar) = avatar {
                     user.set_avatar(&c.conn, avatar.id)?;
                 }
             }
-        }        
+        }
 
         Ok(user)
     }

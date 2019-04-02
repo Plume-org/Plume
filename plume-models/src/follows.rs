@@ -135,7 +135,9 @@ impl AsObject<User, FollowAct, &PlumeRocket> for User {
         // so we rebuilt it here
         let mut follow = FollowAct::default();
         follow.object_props.set_id_string(id.to_string())?;
-        follow.follow_props.set_actor_link::<Id>(actor.clone().into_id())?;
+        follow
+            .follow_props
+            .set_actor_link::<Id>(actor.clone().into_id())?;
         Follow::accept_follow(&c.conn, &actor, &self, follow, actor.id, self.id)
     }
 }
@@ -156,7 +158,8 @@ impl FromId<PlumeRocket> for Follow {
                 res
             },
             None,
-        ).map_err(|(_, e)| e)?;
+        )
+        .map_err(|(_, e)| e)?;
 
         let target = User::from_id(
             c,
@@ -165,15 +168,9 @@ impl FromId<PlumeRocket> for Follow {
                 res
             },
             None,
-        ).map_err(|(_, e)| e)?;
-        Follow::accept_follow(
-            &c.conn,
-            &actor,
-            &target,
-            follow,
-            actor.id,
-            target.id,
         )
+        .map_err(|(_, e)| e)?;
+        Follow::accept_follow(&c.conn, &actor, &target, follow, actor.id, target.id)
     }
 }
 

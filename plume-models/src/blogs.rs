@@ -370,7 +370,12 @@ impl FromId<PlumeRocket> for Blog {
                 title: acct.object.object_props.name_string().unwrap_or(name),
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                summary: acct.object.ap_object_props.source_object::<Source>().map(|s| s.content).unwrap_or_default(),
+                summary: acct
+                    .object
+                    .ap_object_props
+                    .source_object::<Source>()
+                    .map(|s| s.content)
+                    .unwrap_or_default(),
                 instance_id: instance.id,
                 ap_url: acct.object.object_props.id_string()?,
                 public_key: acct
@@ -380,7 +385,13 @@ impl FromId<PlumeRocket> for Blog {
                 private_key: None,
                 banner_id,
                 icon_id,
-                summary_html: SafeString::new(&acct.object.object_props.summary_string().unwrap_or_default()),
+                summary_html: SafeString::new(
+                    &acct
+                        .object
+                        .object_props
+                        .summary_string()
+                        .unwrap_or_default(),
+                ),
             },
         )
     }
@@ -804,24 +815,38 @@ pub(crate) mod tests {
         let conn = &*r.conn;
         conn.test_transaction::<_, (), _>(|| {
             let (users, mut blogs) = fill_database(conn);
-            blogs[0].icon_id = Some(Media::insert(conn, NewMedia {
-                file_path: "aaa.png".into(),
-                alt_text: String::new(),
-                is_remote: false,
-                remote_url: None,
-                sensitive: false,
-                content_warning: None,
-                owner_id: users[0].id,
-            }).unwrap().id);
-            blogs[0].banner_id = Some(Media::insert(conn, NewMedia {
-                file_path: "bbb.png".into(),
-                alt_text: String::new(),
-                is_remote: false,
-                remote_url: None,
-                sensitive: false,
-                content_warning: None,
-                owner_id: users[0].id,
-            }).unwrap().id);
+            blogs[0].icon_id = Some(
+                Media::insert(
+                    conn,
+                    NewMedia {
+                        file_path: "aaa.png".into(),
+                        alt_text: String::new(),
+                        is_remote: false,
+                        remote_url: None,
+                        sensitive: false,
+                        content_warning: None,
+                        owner_id: users[0].id,
+                    },
+                )
+                .unwrap()
+                .id,
+            );
+            blogs[0].banner_id = Some(
+                Media::insert(
+                    conn,
+                    NewMedia {
+                        file_path: "bbb.png".into(),
+                        alt_text: String::new(),
+                        is_remote: false,
+                        remote_url: None,
+                        sensitive: false,
+                        content_warning: None,
+                        owner_id: users[0].id,
+                    },
+                )
+                .unwrap()
+                .id,
+            );
             let _: Blog = blogs[0].save_changes(conn).unwrap();
 
             let ap_repr = blogs[0].to_activity(conn).unwrap();
