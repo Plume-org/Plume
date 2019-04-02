@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 17:35\n"
+"PO-Revision-Date: 2019-04-02 21:51\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -447,7 +447,7 @@ msgstr "Do tohoto data"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
-msgstr ""
+msgstr "Obsahuje tyto tagy"
 
 msgid "Tags"
 msgstr "Tagy"
@@ -461,7 +461,7 @@ msgstr "Doména instance"
 
 # src/template_utils.rs:305
 msgid "Posted by one of these authors"
-msgstr ""
+msgstr "Zveřejněno na jedném z těchto autorů"
 
 msgid "Authors"
 msgstr "Autoři"
@@ -531,7 +531,7 @@ msgstr "Přihlásit se"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Uživatelské jméno, nebo email"
 
 msgid "Publish"
 msgstr "Zveřejnit"
@@ -599,7 +599,7 @@ msgstr[2] ""
 msgstr[3] ""
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Tohle se mi už nelíbí"
 
 msgid "Add yours"
 msgstr "Přidejte váš"
