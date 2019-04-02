@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 import unittest,os
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
 
 class Browser(unittest.TestCase):
     def setUp(self):
@@ -20,13 +18,5 @@ class Browser(unittest.TestCase):
     def tearDown(self):
         self.driver.close()
 
-
-class PythonOrgSearch(Browser):
-    def test_search_in_python_org(self):
-        driver = self.driver
-        driver.get("https://localhost/")
-        self.assertIn("plume-test", driver.title)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def get(self, url):
+        return self.driver.get("https://localhost" + url)

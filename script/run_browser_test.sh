@@ -18,7 +18,8 @@ caddy -conf /Caddyfile &
 
 until curl http://localhost:7878/test/health -f; do sleep 1; done 2>/dev/null >/dev/null
 
-python3 script/run_browser_test.py
+cd $(dirname $0)/browser_test/
+python3 -m unittest *.py
 
 kill -SIGINT  %1
 kill -SIGKILL %2
