@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 10:26\n"
+"PO-Revision-Date: 2019-04-03 17:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -26,7 +26,7 @@ msgstr "Untertitel oder Übersicht"
 
 # plume-front/src/editor.rs:105
 msgid "Write your article here. Markdown is supported."
-msgstr ""
+msgstr "Schreibe deinen Artikel hier. Markdown ist unterstützt."
 
 # plume-front/src/editor.rs:113
 msgid "Around {} characters left"
