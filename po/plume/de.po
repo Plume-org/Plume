@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 16:25\n"
+"PO-Revision-Date: 2019-04-03 17:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -34,7 +34,7 @@ msgstr "{0} hat dich erwähnt."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr "{0} hat Ihren Artikel geteilt."
+msgstr "{0} hat deinen Artikel geboosted."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
@@ -273,7 +273,7 @@ msgid "Summary"
 msgstr "Zusammenfassung"
 
 msgid "Update account"
-msgstr "Konto aktualisieren"
+msgstr "Account aktualisieren"
 
 msgid "Danger zone"
 msgstr "Gefahrenbereich"
@@ -600,12 +600,12 @@ msgid "I don't like this anymore"
 msgstr "Ich mag das nicht mehr"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Füge deins hinzu"
 
 msgid "One boost"
 msgid_plural "{0} boost"
 msgstr[0] "Ein Boost"
-msgstr[1] ""
+msgstr[1] "{0} boosts"
 
 msgid "I don't want to boost this anymore"
 msgstr "Ich möchte das nicht mehr boosten"
@@ -614,7 +614,7 @@ msgid "Boost"
 msgstr "Boosten"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Melde dich an oder nutze dein Fediverse-Konto, um mit diesem Artikel zu interagieren"
 
 msgid "Comments"
 msgstr "Kommentare"
@@ -630,10 +630,10 @@ msgid "Submit comment"
 msgstr "Kommentar abschicken"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Noch keine Kommentare. Sei der erste, der reagiert!"
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "Ungültiges CSRF-Token"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr "Irgendetwas stimmt mit deinem CSRF token nicht. Vergewissere dich, dass Cookies in deinem Browser aktiviert sind und versuche diese Seite neu zu laden. Bitte melde diesen Fehler, falls er erneut auftritt."
@@ -648,10 +648,10 @@ msgid "The link that led you here may be broken."
 msgstr "Der Link, welcher dich hier her führte, ist wohl kaputt."
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "Der von dir gesendete Inhalt kann nicht verarbeitet werden."
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Vielleicht war es zu lang."
 
 msgid "You are not authorized."
 msgstr "Nicht berechtigt."
@@ -666,28 +666,28 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Entschuldige. Wenn du denkst einen Bug gefunden zu haben, kannst du diesen gerne melden."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Bearbeite \"{}\""
 
 msgid "Description"
 msgstr "Beschreibung"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "Du kannst Bilder in deine Gallerie hochladen, um sie als Blog-Icons oder Banner zu verwenden."
 
 msgid "Upload images"
-msgstr ""
+msgstr "Bilder hochladen"
 
 msgid "Blog icon"
-msgstr ""
+msgstr "Blog-Icon"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "Blog-Banner"
 
 msgid "Update blog"
-msgstr ""
+msgstr "Blog aktualisieren"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "Sei sehr vorsichtig, jede Handlung hier kann nicht rückgängig gemacht werden."
 
 msgid "Permanently delete this blog"
 msgstr "Diesen Blog dauerhaft löschen"
@@ -702,33 +702,33 @@ msgid "Create blog"
 msgstr "Blog erstellen"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "{}'s Icon"
 
 msgid "New article"
 msgstr "Neuer Artikel"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Es gibt einen Autor auf diesem Blog: "
+msgstr[1] "Es gibt {0} Autorren auf diesem Blog: "
 
 msgid "No posts to see here yet."
 msgstr "Bisher keine Artikel vorhanden."
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Artikel, die mit \"{0}\" getaggt sind"
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "Es gibt derzeit keine Artikel mit einem solchen Tag"
 
 msgid "Upload"
 msgstr "Hochladen"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Du hast noch keine Medien."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "Warnhinweis zum Inhalt: {0}"
 
 msgid "Delete"
 msgstr "Löschen"
@@ -740,10 +740,10 @@ msgid "Media upload"
 msgstr "Hochladen von Mediendateien"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "Nützlich für sehbehinderte Menschen sowie Lizenzinformationen"
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Leer lassen, falls nicht benötigt"
 
 msgid "File"
 msgstr "Datei"
@@ -758,17 +758,17 @@ msgid "Go back to the gallery"
 msgstr "Zurück zur Galerie"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Markdown-Syntax"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Kopiere das in deine Artikel, um dieses Medium einzufügen:"
 
 msgid "Use as an avatar"
 msgstr "Als Profilbild nutzen"
 
 msgid "Log in to boost"
-msgstr ""
+msgstr "Melde dich an zum boosten"
 
 msgid "Log in to like"
-msgstr ""
+msgstr "Melde dich an zum liken"
 
