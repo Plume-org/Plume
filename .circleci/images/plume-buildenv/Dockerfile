@@ -22,7 +22,7 @@ RUN curl -L https://github.com/SimonKagstrom/kcov/archive/master.tar.gz | tar xz
     make install && cd ../.. && rm -rf kcov-master
 
 #set some compilation parametters
-RUN echo "W3RhcmdldC54ODZfNjQtdW5rbm93bi1saW51eC1nbnVdCnJ1c3RmbGFncyA9IFsiLUNsaW5rLWRlYWQtY29kZSIsICItQ2xpbmstYXJncz0tWGxpbmtlciAtLW5vLWtlZXAtbWVtb3J5IC1YbGlua2VyIC0tcmVkdWNlLW1lbW9yeS1vdmVyaGVhZHMiXQoK" | base64 -d >> ~/.cargo/config
+COPY cargo_config /root/.cargo/config
 
 #install selenium for front end tests
 RUN pip3 install selenium

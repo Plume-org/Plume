@@ -41,14 +41,12 @@ aliases:
 
   - &env_postgresql
     environment:
-      MIGRATION_DIR: migrations/postgres
       MIGRATION_DIRECTORY: migrations/postgres
       FEATURES: postgres
       DATABASE_URL: postgres://postgres@localhost/plume
       RUST_TEST_THREADS: 1
   - &env_sqlite
     environment:
-      MIGRATION_DIR: migrations/sqlite
       MIGRATION_DIRECTORY: migrations/sqlite
       FEATURES: sqlite
       DATABASE_URL: plume.sqlite3
