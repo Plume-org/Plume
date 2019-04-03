@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 10:26\n"
+"PO-Revision-Date: 2019-04-03 14:49\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -42,7 +42,7 @@ msgstr "{0}'s Avatar"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Um einen neuen Blog zu erstellen, müssen Sie angemeldet sein"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -50,19 +50,19 @@ msgstr "Sie dürfen diesen Blog nicht löschen."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Ihnen fehlt die Berechtigung, um diesen Blog zu bearbeiten."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Sie können dieses Medium nicht als ein Blog-Icon verwenden."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Sie können dieses Medium nicht als einen Blog-Banner verwenden."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Um einen Post zu liken, müssen Sie angemeldet sein"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
