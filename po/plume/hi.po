@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 15:37\n"
+"PO-Revision-Date: 2019-04-03 16:25\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr "{0} ने आपके article पे कॉमेंट किया है"
+msgstr "{0} ने आपके लेख पे कॉमेंट किया है"
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -26,15 +26,15 @@ msgstr "{0} ने आपको सब्सक्राइब किया ह�
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr "{0} ने आपके article को like किया"
+msgstr "{0} ने आपके लेख को लाइक किया"
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr "{0} ने आपको mention किया"
+msgstr "{0} ने आपको मेंशन किया"
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr "{0} ने आपके article को boost किया"
+msgstr "{0} ने आपके आर्टिकल को बूस्ट किया"
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
@@ -42,15 +42,15 @@ msgstr "{0} का avtar"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr "नया blog बनाने के लिए आपको log in करना होगा"
+msgstr "नया ब्लॉग बनाने के लिए आपको लोग इन करना होगा"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
-msgstr "आपको ये blog delete करने की अनुमति नहीं है"
+msgstr "आपको ये ब्लॉग डिलीट करने की अनुमति नहीं है"
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr "आपको ये blog edit करने की अनुमति नहीं है"
+msgstr "आपको ये ब्लॉग में बदलाव करने की अनुमति नहीं है"
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
