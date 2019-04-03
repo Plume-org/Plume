@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:40\n"
+"PO-Revision-Date: 2019-04-03 17:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} a comentat pe articolul tău."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} este abonat la tine."
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
@@ -30,7 +30,7 @@ msgstr ""
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} te-a menționat."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
@@ -86,15 +86,15 @@ msgstr ""
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
-msgstr ""
+msgstr "Editare {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Pentru a redistribui un post, trebuie să fii logat"
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Resetare parolă"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
@@ -102,7 +102,7 @@ msgstr ""
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Parola dumneavoastră a fost resetată cu succes."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
@@ -121,43 +121,43 @@ msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Meniu"
 
 msgid "Search"
-msgstr ""
+msgstr "Caută"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Tablou de bord"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notificări"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Deconectare"
 
 msgid "My account"
-msgstr ""
+msgstr "Contul meu"
 
 msgid "Log In"
-msgstr ""
+msgstr "Autentificare"
 
 msgid "Register"
-msgstr ""
+msgstr "Înregistrare"
 
 msgid "About this instance"
-msgstr ""
+msgstr "Despre această instanță"
 
 msgid "Source code"
-msgstr ""
+msgstr "Cod sursă"
 
 msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Administrație"
 
 msgid "Welcome to {}"
 msgstr ""
@@ -178,25 +178,25 @@ msgid "Administration of {0}"
 msgstr ""
 
 msgid "Instances"
-msgstr ""
+msgstr "Instanțe"
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configurare"
 
 msgid "Users"
-msgstr ""
+msgstr "Utilizatori"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Deblochează"
 
 msgid "Block"
-msgstr ""
+msgstr "Bloc"
 
 msgid "Ban"
-msgstr ""
+msgstr "Interzice"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Toate articolele Fediverse"
 
 msgid "Articles from {}"
 msgstr ""
