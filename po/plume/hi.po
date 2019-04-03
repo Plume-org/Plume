@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 09:36\n"
+"PO-Revision-Date: 2019-04-03 15:37\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr "{0} ने आपके article पे comment किया है"
+msgstr "{0} ने आपके article पे कॉमेंट किया है"
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
-msgstr "{0} ने आपको subscribe किया है"
+msgstr "{0} ने आपको सब्सक्राइब किया है"
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
@@ -94,37 +94,37 @@ msgstr "Post reshare करने के लिए आपको log in करन
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "पासवर्ड रीसेट करें"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "आपका पासवर्ड रिसेट करने का लिंक: {0}"
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "आपका पासवर्ड रिसेट कर दिया गया है"
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "क्षमा करें, लेकिन लिंक इस्तेमाल करने की अवधि समाप्त हो चुकी है. फिर कोशिश करें"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "डैशबोर्ड पर जाने के लिए, लोग इन करें"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "सब्सक्राइब करने के लिए, लोग इन करें"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "प्रोफाइल में बदलाव करने के लिए, लोग इन करें"
 
 msgid "Plume"
-msgstr ""
+msgstr "प्लूम"
 
 msgid "Menu"
-msgstr ""
+msgstr "मेंन्यू"
 
 msgid "Search"
 msgstr ""
