@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-03-15 15:46\n"
+"PO-Revision-Date: 2019-04-03 11:16\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 # plume-front/src/editor.rs:103
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 # plume-front/src/editor.rs:104
 msgid "Subtitle or summary"
-msgstr ""
+msgstr "Subtítulo o resumen"
 
 # plume-front/src/editor.rs:105
 msgid "Write your article here. Markdown is supported."
@@ -38,13 +38,13 @@ msgstr ""
 
 # plume-front/src/editor.rs:144
 msgid "License"
-msgstr ""
+msgstr "Licencia"
 
 # plume-front/src/editor.rs:147
 msgid "Cover"
-msgstr ""
+msgstr "Cobertura"
 
 # plume-front/src/editor.rs:157
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
