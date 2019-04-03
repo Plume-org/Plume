@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 08:42\n"
+"PO-Revision-Date: 2019-04-03 09:36\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -62,35 +62,35 @@ msgstr "इस media को blog banner के लिए इस्तेमा�
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Post को like करने के लिए आपको log in करना होगा"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Notifications देखने के लिए आपको log in करना होगा"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "इस post को publish नहीं किया गया है"
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "नया post लिखने के लिए आपको log in करना होगा"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "आप इस blog के लेखक नहीं हैं"
 
 # src/routes/posts.rs:145
 msgid "New post"
-msgstr ""
+msgstr "नया post"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
-msgstr ""
+msgstr "Edit करें {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Post reshare करने के लिए आपको log in करना होगा"
 
 # src/routes/session.rs:181
 msgid "Password reset"
