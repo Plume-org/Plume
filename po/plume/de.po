@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 20:45\n"
+"PO-Revision-Date: 2019-04-03 10:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -34,7 +34,7 @@ msgstr "{0} hat dich erwähnt."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} hat Ihren Artikel geteilt."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
@@ -78,7 +78,7 @@ msgstr ""
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Sie sind kein Autor dieses Blogs."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -86,7 +86,7 @@ msgstr "Neuer Beitrag"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
-msgstr ""
+msgstr "Bearbeiten {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
@@ -94,15 +94,15 @@ msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Hier ist der Link, um Ihr Passwort zurückzusetzen: {0}"
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Ihr Passwort wurde erfolgreich zurückgesetzt."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
@@ -157,25 +157,25 @@ msgid "Matrix room"
 msgstr "Matrix-Raum"
 
 msgid "Administration"
-msgstr ""
+msgstr "Verwaltung"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Willkommen zu {}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Aktuelle Artikel"
 
 msgid "Your feed"
-msgstr ""
+msgstr "Ihre Zeitleiste"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Föderierte Zeitleiste"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Lokale Zeitleiste"
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Verwaltung von {0}"
 
 msgid "Instances"
 msgstr "Instanzen"
@@ -190,10 +190,10 @@ msgid "Unblock"
 msgstr "Blockade aufheben"
 
 msgid "Block"
-msgstr ""
+msgstr "Blockieren"
 
 msgid "Ban"
-msgstr ""
+msgstr "Verbieten"
 
 msgid "All the articles of the Fediverse"
 msgstr ""
@@ -303,7 +303,7 @@ msgid "Your Drafts"
 msgstr "Deine Entwürfe"
 
 msgid "Your media"
-msgstr ""
+msgstr "Ihre Medien"
 
 msgid "Go to your gallery"
 msgstr "Zu deiner Gallerie"
