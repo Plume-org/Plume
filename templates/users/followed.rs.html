@@ -5,7 +5,7 @@
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, followed: Vec<User>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "{0}'s subscriptions'"; user.name()), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "{0}'s subscriptions"; user.name()), {}, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
