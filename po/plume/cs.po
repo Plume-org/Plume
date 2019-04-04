@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 22:24\n"
+"PO-Revision-Date: 2019-04-04 08:08\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -342,7 +342,7 @@ msgid "Atom feed"
 msgstr ""
 
 msgid "Recently boosted"
-msgstr ""
+msgstr "Nedávno podpořené"
 
 msgid "Admin"
 msgstr "Administrátor"
@@ -670,7 +670,7 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Upravit \"{}\""
 
 msgid "Description"
 msgstr "Popis"
@@ -688,7 +688,7 @@ msgid "Blog banner"
 msgstr ""
 
 msgid "Update blog"
-msgstr ""
+msgstr "Aktualizovat blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
@@ -697,25 +697,25 @@ msgid "Permanently delete this blog"
 msgstr ""
 
 msgid "New Blog"
-msgstr ""
+msgstr "Nový Blog"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Vytvořit blog"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Vytvořit blog"
 
 msgid "{}'s icon"
 msgstr ""
 
 msgid "New article"
-msgstr ""
+msgstr "Nový článek"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Na tomto blogu je jeden autor: "
+msgstr[1] "Na tomto blogu je {0} autorů: "
+msgstr[2] "Na tomto blogu je {0} autorů: "
 msgstr[3] ""
 
 msgid "No posts to see here yet."
@@ -728,19 +728,19 @@ msgid "There are currently no articles with such a tag"
 msgstr ""
 
 msgid "Upload"
-msgstr ""
+msgstr "Nahrát"
 
 msgid "You don't have any media yet."
 msgstr "Zatím nemáte nahrané žádné média."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "Upozornení na obsah: {0}"
 
 msgid "Delete"
-msgstr ""
+msgstr "Smazat"
 
 msgid "Details"
-msgstr ""
+msgstr "Podrobnosti"
 
 msgid "Media upload"
 msgstr "Nahrávaní médií"
