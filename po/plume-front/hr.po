@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 06:17\n"
+"PO-Revision-Date: 2019-04-04 07:08\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:103
 msgid "Title"
-msgstr ""
+msgstr "Naslov"
 
 # plume-front/src/editor.rs:104
 msgid "Subtitle or summary"
@@ -38,7 +38,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:144
 msgid "License"
-msgstr ""
+msgstr "Licenca"
 
 # plume-front/src/editor.rs:147
 msgid "Cover"
