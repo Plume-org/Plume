@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 07:08\n"
+"PO-Revision-Date: 2019-04-04 08:08\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -46,5 +46,5 @@ msgstr ""
 
 # plume-front/src/editor.rs:157
 msgid "Publish"
-msgstr ""
+msgstr "Objavi"
 
