@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 11:37\n"
+"PO-Revision-Date: 2019-04-04 12:38\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -94,7 +94,7 @@ msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Poništavanje zaporke"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
@@ -133,7 +133,7 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Obavijesti"
 
 msgid "Log Out"
 msgstr "Odjaviti se"
@@ -151,7 +151,7 @@ msgid "About this instance"
 msgstr ""
 
 msgid "Source code"
-msgstr ""
+msgstr "Izvorni kod"
 
 msgid "Matrix room"
 msgstr ""
