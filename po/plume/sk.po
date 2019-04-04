@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 12:38\n"
+"PO-Revision-Date: 2019-04-04 13:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -435,7 +435,7 @@ msgid "Content matching these words"
 msgstr "Obsah zodpovedajúci týmto slovám"
 
 msgid "Body content"
-msgstr "Obsah tela článku"
+msgstr "Obsah článku"
 
 # src/template_utils.rs:305
 msgid "From this date"
