@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 13:47\n"
+"PO-Revision-Date: 2019-04-04 04:34\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Galician\n"
 "Language: gl_ES\n"
@@ -46,27 +46,27 @@ msgstr "Para crear un novo blog debe estar conectada"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Vostede non ten permiso para eliminar este blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Vostede non pode editar este blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Vostede non pode utilizar este medio como icona do blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Vostede non pode utilizar este medio como banner do blog."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Para darlle a gústame, debe estar conectada"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Para ver as súas notificacións, debe estar conectada"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,11 +74,11 @@ msgstr "Esto é un borrador, non publicar por agora."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Para escribir un novo artigo, debe estar conectada"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Vostede non é autora de este blog."
 
 # src/routes/posts.rs:145
 msgid "New post"
