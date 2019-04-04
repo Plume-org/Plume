@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 12:38\n"
+"PO-Revision-Date: 2019-04-04 13:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -206,7 +206,7 @@ msgstr "Ještě tu nic není k vidění. Zkuste odebírat obsah od více lidí."
 
 # src/template_utils.rs:217
 msgid "Name"
-msgstr ""
+msgstr "Pojmenování"
 
 # src/template_utils.rs:220
 msgid "Optional"
@@ -435,7 +435,7 @@ msgid "Content matching these words"
 msgstr "Obsah odpovídající těmto slovům"
 
 msgid "Body content"
-msgstr ""
+msgstr "Tělo článku"
 
 # src/template_utils.rs:305
 msgid "From this date"
