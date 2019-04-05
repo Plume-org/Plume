@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:39\n"
+"PO-Revision-Date: 2019-04-05 14:51\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Esperanto\n"
 "Language: eo_UY\n"
@@ -70,7 +70,7 @@ msgstr ""
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Ĉi tiu skribaĵo ankoraŭ ne estas eldonita."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
