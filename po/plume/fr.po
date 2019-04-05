@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 14:26\n"
+"PO-Revision-Date: 2019-04-05 14:51\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -428,7 +428,7 @@ msgid "Subtitle matching these words"
 msgstr "Sous-titre contenant ces mots"
 
 msgid "Subtitle - byline"
-msgstr "Sous-titre - byline"
+msgstr "Sous-titre - signature"
 
 # src/template_utils.rs:305
 msgid "Content matching these words"
