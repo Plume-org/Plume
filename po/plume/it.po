@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:39\n"
+"PO-Revision-Date: 2019-04-05 07:34\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -18,15 +18,15 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} ha commentato il tuo articolo."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} si è iscritto a te."
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} ha apprezzato il tuo articolo."
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
@@ -34,39 +34,39 @@ msgstr "{0} ti ha menzionato."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} ha boostato il tuo articolo."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "Avatar di {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Per creare un nuovo blog, devi avere effettuato l'accesso"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Non ti è consentito di eliminare questo blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Non ti è consentito modificare questo blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Non puoi utilizzare questo media come icona del blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Non puoi utilizzare questo media come copertina del blog."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Per mettere mi piace ad un post, devi avere effettuato l'accesso"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Per vedere le tue notifiche, devi avere effettuato l'accesso"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,11 +74,11 @@ msgstr "Questo post non è ancora stato pubblicato."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Per scrivere un nuovo post, devi avere effettuato l'accesso"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Non sei un autore di questo blog."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -86,48 +86,48 @@ msgstr "Nuovo post"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
-msgstr ""
+msgstr "Modifica {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Per ricondividere un post, devi avere effettuato l'accesso"
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Reimposta password"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Qui c'è il collegamento per reimpostare la tua password: {0}"
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "La tua password è stata reimpostata con successo."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "Spiacente, ma il collegamento è scaduto. Riprova"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Per accedere al tuo pannello, devi avere effettuato l'accesso"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Per iscriverti a qualcuno, devi avere effettuato l'accesso"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Per modificare il tuo profilo, devi avere effettuato l'accesso"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menu"
 
 msgid "Search"
-msgstr ""
+msgstr "Cerca"
 
 msgid "Dashboard"
 msgstr "Pannello"
@@ -160,22 +160,22 @@ msgid "Administration"
 msgstr "Amministrazione"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Benvenuto su {}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Ultimi articoli"
 
 msgid "Your feed"
-msgstr ""
+msgstr "Il tuo flusso"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "Flusso federato"
 
 msgid "Local feed"
-msgstr ""
+msgstr "Flusso locale"
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Amministrazione di {0}"
 
 msgid "Instances"
 msgstr "Istanze"
@@ -190,19 +190,19 @@ msgid "Unblock"
 msgstr "Sblocca"
 
 msgid "Block"
-msgstr ""
+msgstr "Blocca"
 
 msgid "Ban"
-msgstr ""
+msgstr "Bandisci"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Tutti gli articoli del Fediverso"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Articoli da {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "Ancora niente da vedere qui. Prova ad iscriverti a più persone."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -213,35 +213,35 @@ msgid "Optional"
 msgstr "Opzionale"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Permetti a chiunque di registrarsi qui"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "Descrizione breve - firma"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "La sintassi Markdown è supportata"
 
 msgid "Long description"
 msgstr "Descrizione lunga"
 
 # src/template_utils.rs:217
 msgid "Default article license"
-msgstr ""
+msgstr "Licenza predefinita degli articoli"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Salva queste impostazioni"
 
 msgid "About {0}"
-msgstr ""
+msgstr "A proposito di {0}"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "Casa di <em>{0}</em> utenti"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "Che hanno scritto <em>{0}</em> articoli"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "E sono connessi ad altre <em>{0}</em> istanze"
 
 msgid "Administred by"
 msgstr "Amministrata da"
@@ -253,13 +253,13 @@ msgid "Edit your account"
 msgstr "Modifica il tuo account"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Il Tuo Profilo"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
+msgstr "Per modificare la tua immagine di profilo, caricala nella tua galleria e poi selezionala da là."
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "Carica un'immagine di profilo"
 
 # src/template_utils.rs:217
 msgid "Display name"
