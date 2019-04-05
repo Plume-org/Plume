@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 09:16\n"
+"PO-Revision-Date: 2019-04-05 10:07\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -263,7 +263,7 @@ msgstr "Carica un'immagine di profilo"
 
 # src/template_utils.rs:217
 msgid "Display name"
-msgstr ""
+msgstr "Nome visualizzato"
 
 # src/template_utils.rs:217
 msgid "Email"
@@ -396,7 +396,7 @@ msgid "Read the detailed rules"
 msgstr "Leggi le regole dettagliate"
 
 msgid "None"
-msgstr ""
+msgstr "Nessuna"
 
 msgid "No description"
 msgstr "Nessuna descrizione"
@@ -562,7 +562,7 @@ msgid "Leave it empty to reserve all rights"
 msgstr "Lascia vuoto per riservarti tutti i diritti"
 
 msgid "Illustration"
-msgstr ""
+msgstr "Illustrazione"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "Questa è una bozza, non pubblicarla ancora."
@@ -593,11 +593,11 @@ msgstr "Questo articolo è rilasciato con licenza {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] "{0} mi piace"
+msgstr[0] "Un mi piace"
 msgstr[1] "{0} mi piace"
 
 msgid "I don't like this anymore"
-msgstr "Non mi piace più"
+msgstr "Non mi piace più questo"
 
 msgid "Add yours"
 msgstr "Aggiungi il tuo"
@@ -608,38 +608,38 @@ msgstr[0] "Un boost"
 msgstr[1] "{0} boost"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Non voglio più boostare questo"
 
 msgid "Boost"
-msgstr ""
+msgstr "Boost"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Accedi, o utilizza il tuo account Fediverse per interagire con questo articolo"
 
 msgid "Comments"
-msgstr ""
+msgstr "Commenti"
 
 # src/template_utils.rs:217
 msgid "Content warning"
 msgstr "Avviso di contenuto sensibile"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Il tuo commento"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Invia commento"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Ancora nessun commento. Sii il primo ad aggiungere la tua reazione!"
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "Token CSRF non valido"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr "Qualcosa è andato storto con il tuo token CSRF. Assicurati di aver abilitato i cookies nel tuo browser, e prova a ricaricare questa pagina. Se l'errore si dovesse ripresentare, per favore segnalacelo."
 
 msgid "Page not found"
-msgstr ""
+msgstr "Pagina non trovata"
 
 msgid "We couldn't find this page."
 msgstr "Non riusciamo a trovare questa pagina."
@@ -648,16 +648,16 @@ msgid "The link that led you here may be broken."
 msgstr "Il collegamento che ti ha portato qui potrebbe non essere valido."
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "Il contenuto che hai inviato non può essere processato."
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Probabilmente era troppo lungo."
 
 msgid "You are not authorized."
 msgstr "Non sei autorizzato."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "Errore interno del server"
 
 msgid "Something broke on our side."
 msgstr "Qualcosa non va da questo lato."
@@ -666,16 +666,16 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Scusa per questo. Se pensi sia un bug, per favore segnalacelo."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Modifica \"{}\""
 
 msgid "Description"
 msgstr "Descrizione"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "Puoi caricare immagini nella tua galleria, ed utilizzarle come icone del blog, o copertine."
 
 msgid "Upload images"
-msgstr ""
+msgstr "Carica immagini"
 
 msgid "Blog icon"
 msgstr "Icona del blog"
