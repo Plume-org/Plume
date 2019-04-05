@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 12:38\n"
+"PO-Revision-Date: 2019-04-05 06:01\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -175,7 +175,7 @@ msgid "Local feed"
 msgstr ""
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Administracija od {0}"
 
 msgid "Instances"
 msgstr ""
@@ -199,7 +199,7 @@ msgid "All the articles of the Fediverse"
 msgstr ""
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Članci iz {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
@@ -219,10 +219,10 @@ msgid "Short description - byline"
 msgstr ""
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Markdown sintaksa je podržana"
 
 msgid "Long description"
-msgstr ""
+msgstr "Dugi opis"
 
 # src/template_utils.rs:217
 msgid "Default article license"
@@ -232,7 +232,7 @@ msgid "Save these settings"
 msgstr ""
 
 msgid "About {0}"
-msgstr ""
+msgstr "O {0}"
 
 msgid "Home to <em>{0}</em> users"
 msgstr ""
