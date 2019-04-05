@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 16:05\n"
+"PO-Revision-Date: 2019-04-05 16:51\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Esperanto\n"
 "Language: eo_UY\n"
@@ -291,13 +291,13 @@ msgid "Your Dashboard"
 msgstr ""
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Viaj Blogoj"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "Ekigi novan blogon"
 
 msgid "Your Drafts"
 msgstr ""
@@ -345,7 +345,7 @@ msgid "Recently boosted"
 msgstr ""
 
 msgid "Admin"
-msgstr ""
+msgstr "Administristo"
 
 msgid "It is you"
 msgstr "Ĝi estas vi"
@@ -464,28 +464,28 @@ msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "Verkistoj"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
-msgstr ""
+msgstr "Blogtitolo"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "Lingvo"
 
 # src/template_utils.rs:305
 msgid "Published under this license"
-msgstr ""
+msgstr "Eldonita sub ĉi tiu permesilo"
 
 msgid "Article license"
-msgstr ""
+msgstr "Artikola permesilo"
 
 msgid "Search result for \"{0}\""
 msgstr ""
@@ -527,14 +527,14 @@ msgid "Send password reset link"
 msgstr ""
 
 msgid "Log in"
-msgstr ""
+msgstr "Ensaluti"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
 msgstr ""
 
 msgid "Publish"
-msgstr ""
+msgstr "Eldoni"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
@@ -580,7 +580,7 @@ msgid "Written by {0}"
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "Redakti"
 
 msgid "Delete this article"
 msgstr ""
@@ -651,7 +651,7 @@ msgid "The content you sent can't be processed."
 msgstr ""
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Eble ĝi estis tro longa."
 
 msgid "You are not authorized."
 msgstr ""
@@ -699,7 +699,7 @@ msgid "Create a blog"
 msgstr ""
 
 msgid "Create blog"
-msgstr ""
+msgstr "Krei blogon"
 
 msgid "{}'s icon"
 msgstr ""
@@ -749,7 +749,7 @@ msgid "File"
 msgstr ""
 
 msgid "Send"
-msgstr ""
+msgstr "Sendi"
 
 msgid "Media details"
 msgstr ""
