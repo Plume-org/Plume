@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 14:51\n"
+"PO-Revision-Date: 2019-04-05 16:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Esperanto\n"
 "Language: eo_UY\n"
@@ -50,7 +50,7 @@ msgstr ""
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Vi ne estas permesita redakti ĉi tiun blogon."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
@@ -74,15 +74,15 @@ msgstr "Ĉi tiu skribaĵo ankoraŭ ne estas eldonita."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Skribi novan skribaĵo, vi bezonas ensaluti vin"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Vi ne estas la verkisto de ĉi tiu blogo."
 
 # src/routes/posts.rs:145
 msgid "New post"
-msgstr ""
+msgstr "Nova skribaĵo"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
@@ -127,7 +127,7 @@ msgid "Menu"
 msgstr ""
 
 msgid "Search"
-msgstr ""
+msgstr "Serĉi"
 
 msgid "Dashboard"
 msgstr ""
@@ -136,13 +136,13 @@ msgid "Notifications"
 msgstr ""
 
 msgid "Log Out"
-msgstr ""
+msgstr "Elsaluti"
 
 msgid "My account"
-msgstr ""
+msgstr "Mia konto"
 
 msgid "Log In"
-msgstr ""
+msgstr "Ensaluti"
 
 msgid "Register"
 msgstr ""
@@ -253,7 +253,7 @@ msgid "Edit your account"
 msgstr ""
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Via profilo"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
@@ -267,7 +267,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Retpoŝtadreso"
 
 msgid "Summary"
 msgstr ""
@@ -316,11 +316,11 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Username"
-msgstr ""
+msgstr "Uzantnomo"
 
 # src/template_utils.rs:217
 msgid "Password"
-msgstr ""
+msgstr "Pasvorto"
 
 # src/template_utils.rs:217
 msgid "Password confirmation"
@@ -348,19 +348,19 @@ msgid "Admin"
 msgstr ""
 
 msgid "It is you"
-msgstr ""
+msgstr "Ĝi estas vi"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Redakti vian profilon"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Malfermi en {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Malaboni"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Aboni"
 
 msgid "{0}'s subscriptions'"
 msgstr ""
@@ -369,7 +369,7 @@ msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
-msgstr ""
+msgstr "Respondi"
 
 msgid "Are you sure?"
 msgstr ""
