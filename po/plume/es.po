@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 14:51\n"
+"PO-Revision-Date: 2019-04-05 16:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -633,67 +633,67 @@ msgid "No comments yet. Be the first to react!"
 msgstr ""
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "Token CSRF inválido"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr ""
+msgstr "Hay un problema con su token CSRF. Asegúrase de que las cookies están habilitadas en su navegador, e intente recargar esta página. Si sigue viendo este mensaje de error, por favor infórmelo."
 
 msgid "Page not found"
-msgstr ""
+msgstr "Página no encontrada"
 
 msgid "We couldn't find this page."
-msgstr ""
+msgstr "No pudimos encontrar esta página."
 
 msgid "The link that led you here may be broken."
-msgstr ""
+msgstr "El enlace que le llevó aquí puede estar roto."
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "El contenido que envió no puede ser procesado."
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Quizás fue demasiado largo."
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "No está autorizado."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "Error interno del servidor"
 
 msgid "Something broke on our side."
-msgstr ""
+msgstr "Algo ha salido mal de nuestro lado."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Disculpe la molestia. Si cree que esto es un defecto, por favor repórtalo."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Editar \"{}\""
 
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "Puede subir imágenes a su galería, para usarlas como iconos de blog, o banderas."
 
 msgid "Upload images"
-msgstr ""
+msgstr "Subir imágenes"
 
 msgid "Blog icon"
-msgstr ""
+msgstr "Icono del blog"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "Bandera del blog"
 
 msgid "Update blog"
-msgstr ""
+msgstr "Actualizar el blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "Tenga mucho cuidado, cualquier acción que se tome aquí no puede ser invertida."
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "Eliminar permanentemente este blog"
 
 msgid "New Blog"
-msgstr ""
+msgstr "Nuevo Blog"
 
 msgid "Create a blog"
 msgstr "Crear un blog"
@@ -702,69 +702,69 @@ msgid "Create blog"
 msgstr "Crear el blog"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "Icono de {}"
 
 msgid "New article"
 msgstr "Nueva publicación"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hay un autor en este blog: "
+msgstr[1] "Hay {0} autores en este blog: "
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Ningún artículo aún."
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Artículos etiquetados \"{0}\""
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "Actualmente, no hay artículo con esa etiqueta"
 
 msgid "Upload"
-msgstr ""
+msgstr "Subir"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Todavía no tiene ningún medio."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "Aviso de contenido: {0}"
 
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 msgid "Details"
-msgstr ""
+msgstr "Detalles"
 
 msgid "Media upload"
-msgstr ""
+msgstr "Subir medios"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "Útil para personas con discapacidad visual, tanto como información de licencias"
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Dejarlo vacío, si no se necesita nada"
 
 msgid "File"
-msgstr ""
+msgstr "Archivo"
 
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 msgid "Media details"
-msgstr ""
+msgstr "Detalles de los archivos multimedia"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Volver a la galería"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Sintaxis Markdown"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Cópielo en sus artículos, para insertar este medio:"
 
 msgid "Use as an avatar"
-msgstr ""
+msgstr "Usar como avatar"
 
 msgid "Log in to boost"
 msgstr ""
