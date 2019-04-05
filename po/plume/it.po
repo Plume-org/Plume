@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 07:34\n"
+"PO-Revision-Date: 2019-04-05 08:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -267,34 +267,34 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Summary"
 msgstr "Riepilogo"
 
 msgid "Update account"
-msgstr ""
+msgstr "Aggiorna account"
 
 msgid "Danger zone"
 msgstr "Zona pericolosa"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "Fai molta attenzione, qualsiasi scelta fatta qui non può essere annullata."
 
 msgid "Delete your account"
 msgstr "Elimina il tuo account"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "Spiacente, ma come amministratore, non puoi lasciare la tua istanza."
 
 msgid "Your Dashboard"
 msgstr "Il tuo Pannello"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "I Tuoi Blog"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Non hai ancora nessun blog. Creane uno tuo, o chiedi di unirti ad uno esistente."
 
 msgid "Start a new blog"
 msgstr "Inizia un nuovo blog"
@@ -320,7 +320,7 @@ msgstr "Nome utente"
 
 # src/template_utils.rs:217
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 # src/template_utils.rs:217
 msgid "Password confirmation"
@@ -333,13 +333,13 @@ msgid "Articles"
 msgstr "Articoli"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Iscritti"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Sottoscrizioni"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "Flusso Atom"
 
 msgid "Recently boosted"
 msgstr "Boostato recentemente"
@@ -348,19 +348,19 @@ msgid "Admin"
 msgstr "Amministratore"
 
 msgid "It is you"
-msgstr ""
+msgstr "Sei tu"
 
 msgid "Edit your profile"
 msgstr "Modifica il tuo profilo"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Apri su {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Annulla iscrizione"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Iscriviti"
 
 msgid "{0}'s subscriptions'"
 msgstr ""
@@ -372,10 +372,10 @@ msgid "Respond"
 msgstr "Rispondi"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sei sicuro?"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Elimina questo commento"
 
 msgid "What is Plume?"
 msgstr "Cos'è Plume?"
@@ -384,13 +384,13 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume è un motore di blog decentralizzato."
 
 msgid "Authors can manage various blogs, each as an unique website."
-msgstr ""
+msgstr "Gli autori possono gestire vari blog, ognuno come fosse un sito web unico."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Gli articoli sono anche visibili su altre istanze Plume, e puoi interagire con loro direttamente da altre piattaforme come Mastodon."
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "Casa di <em>{0}</em> persone"
 
 msgid "Read the detailed rules"
 msgstr "Leggi le regole dettagliate"
