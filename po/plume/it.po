@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 08:26\n"
+"PO-Revision-Date: 2019-04-05 09:16\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -327,7 +327,7 @@ msgid "Password confirmation"
 msgstr "Conferma password"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
+msgstr "Spiacenti, ma le registrazioni sono chiuse per questa istanza. Puoi comunque trovarne un'altra."
 
 msgid "Articles"
 msgstr "Articoli"
@@ -363,10 +363,10 @@ msgid "Subscribe"
 msgstr "Iscriviti"
 
 msgid "{0}'s subscriptions'"
-msgstr ""
+msgstr "Sottoscrizioni di {0}"
 
 msgid "{0}'s subscribers"
-msgstr ""
+msgstr "Iscritti di {0}"
 
 msgid "Respond"
 msgstr "Rispondi"
@@ -399,139 +399,139 @@ msgid "None"
 msgstr ""
 
 msgid "No description"
-msgstr ""
+msgstr "Nessuna descrizione"
 
 msgid "View all"
 msgstr "Vedi tutto"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Da {0}"
 
 msgid "Draft"
-msgstr ""
+msgstr "Bozza"
 
 msgid "Your query"
-msgstr ""
+msgstr "La tua richesta"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "Ricerca avanzata"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
-msgstr ""
+msgstr "Titoli di articolo che corrispondono a queste parole"
 
 msgid "Title"
 msgstr "Titolo"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
-msgstr ""
+msgstr "Sottotitoli che corrispondono a queste parole"
 
 msgid "Subtitle - byline"
-msgstr ""
+msgstr "Sottotitolo - firma"
 
 # src/template_utils.rs:305
 msgid "Content matching these words"
-msgstr ""
+msgstr "Contenuti che corrispondono a queste parole"
 
 msgid "Body content"
-msgstr ""
+msgstr "Contenuto del testo"
 
 # src/template_utils.rs:305
 msgid "From this date"
-msgstr ""
+msgstr "Da questa data"
 
 # src/template_utils.rs:305
 msgid "To this date"
-msgstr ""
+msgstr "A questa data"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
-msgstr ""
+msgstr "Contenente queste etichette"
 
 msgid "Tags"
-msgstr ""
+msgstr "Etichette"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these instances"
-msgstr ""
+msgstr "Pubblicato su una di queste istanze"
 
 msgid "Instance domain"
-msgstr ""
+msgstr "Dominio dell'istanza"
 
 # src/template_utils.rs:305
 msgid "Posted by one of these authors"
-msgstr ""
+msgstr "Pubblicato da uno di questi autori"
 
 msgid "Authors"
-msgstr ""
+msgstr "Autori"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
-msgstr ""
+msgstr "Pubblicato da uno di questi blog"
 
 msgid "Blog title"
-msgstr ""
+msgstr "Titolo del blog"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
-msgstr ""
+msgstr "Scritto in questa lingua"
 
 msgid "Language"
-msgstr ""
+msgstr "Lingua"
 
 # src/template_utils.rs:305
 msgid "Published under this license"
-msgstr ""
+msgstr "Pubblicato sotto questa licenza"
 
 msgid "Article license"
-msgstr ""
+msgstr "Licenza dell'articolo"
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Risultati della ricerca per \"{0}\""
 
 msgid "Search result"
-msgstr ""
+msgstr "Risultati della ricerca"
 
 msgid "No result for your query"
-msgstr ""
+msgstr "Nessun risultato per la tua ricerca"
 
 msgid "No more results for your query"
-msgstr ""
+msgstr "Nessun altro risultato per la tua ricerca"
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Reimposta la tua password"
 
 # src/template_utils.rs:217
 msgid "New password"
-msgstr ""
+msgstr "Nuova password"
 
 # src/template_utils.rs:217
 msgid "Confirmation"
-msgstr ""
+msgstr "Conferma"
 
 msgid "Update password"
-msgstr ""
+msgstr "Aggiorna password"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Controlla la tua casella di posta in arrivo!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Ti abbiamo inviato una mail all'indirizzo che ci hai fornito, con il collegamento per reimpostare la tua password."
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "E-mail"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "Invia collegamento per reimpostare la password"
 
 msgid "Log in"
-msgstr ""
+msgstr "Accedi"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Nome utente, o email"
 
 msgid "Publish"
 msgstr "Pubblica"
@@ -544,22 +544,22 @@ msgid "Content"
 msgstr "Contenuto"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr ""
+msgstr "Puoi caricare media nella tua galleria, e poi copiare il loro codice Markdown nei tuoi articoli per inserirli."
 
 msgid "Upload media"
-msgstr ""
+msgstr "Carica media"
 
 # src/template_utils.rs:217
 msgid "Tags, separated by commas"
-msgstr ""
+msgstr "Etichette, separate da virgole"
 
 # src/template_utils.rs:217
 msgid "License"
-msgstr ""
+msgstr "Licenza"
 
 # src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "Lascia vuoto per riservarti tutti i diritti"
 
 msgid "Illustration"
 msgstr ""
@@ -568,44 +568,44 @@ msgid "This is a draft, don't publish it yet."
 msgstr "Questa è una bozza, non pubblicarla ancora."
 
 msgid "Update"
-msgstr ""
+msgstr "Aggiorna"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Aggiorna, o pubblica"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "Pubblica il tuo post"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Scritto da {0}"
 
 msgid "Edit"
-msgstr ""
+msgstr "Modifica"
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Elimina questo articolo"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Tutti i diritti riservati."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Questo articolo è rilasciato con licenza {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} mi piace"
+msgstr[1] "{0} mi piace"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Non mi piace più"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Aggiungi il tuo"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un boost"
+msgstr[1] "{0} boost"
 
 msgid "I don't want to boost this anymore"
 msgstr ""
@@ -678,22 +678,22 @@ msgid "Upload images"
 msgstr ""
 
 msgid "Blog icon"
-msgstr ""
+msgstr "Icona del blog"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "Copertina del blog"
 
 msgid "Update blog"
-msgstr ""
+msgstr "Aggiorna blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "Fai molta attenzione, qualsiasi scelta fatta qui non può essere annullata."
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "Elimina permanentemente questo blog"
 
 msgid "New Blog"
-msgstr ""
+msgstr "Nuovo Blog"
 
 msgid "Create a blog"
 msgstr "Crea un blog"
@@ -702,73 +702,73 @@ msgid "Create blog"
 msgstr "Crea blog"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "Icona di {}"
 
 msgid "New article"
 msgstr "Nuovo articolo"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "C'è un autore su questo blog: "
+msgstr[1] "Ci sono {0} autori su questo blog: "
 
 msgid "No posts to see here yet."
 msgstr "Nessun post da mostrare qui."
 
 msgid "Articles tagged \"{0}\""
-msgstr ""
+msgstr "Articoli etichettati \"{0}\""
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "Attualmente non ci sono articoli con quest'etichetta"
 
 msgid "Upload"
 msgstr "Carica"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Non hai ancora nessun media."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "Avviso di contenuto sensibile: {0}"
 
 msgid "Delete"
 msgstr "Elimina"
 
 msgid "Details"
-msgstr ""
+msgstr "Dettagli"
 
 msgid "Media upload"
 msgstr "Caricamento di un media"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "Utile per persone ipovedenti, ed anche per informazioni sulla licenza"
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Lascia vuoto, se non è necessario"
 
 msgid "File"
-msgstr ""
+msgstr "File"
 
 msgid "Send"
 msgstr "Invia"
 
 msgid "Media details"
-msgstr ""
+msgstr "Dettagli media"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Torna alla galleria"
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Sintassi Markdown"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Copialo nei tuoi articoli, per inserire questo media:"
 
 msgid "Use as an avatar"
-msgstr ""
+msgstr "Usa come immagine di profilo"
 
 msgid "Log in to boost"
-msgstr ""
+msgstr "Accedi per boostare"
 
 msgid "Log in to like"
-msgstr ""
+msgstr "Accedi per mettere mi piace"
 
