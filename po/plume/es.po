@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:40\n"
+"PO-Revision-Date: 2019-04-05 13:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} ha comentado su artículo."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -42,7 +42,7 @@ msgstr "Avatar de {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Para crear un nuevo blog, necesita estar logueado"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -50,11 +50,11 @@ msgstr "No está autorizado a eliminar este registro."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "No tiene permiso para editar este blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "No puede usar este medio como un icono del blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
