@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 13:58\n"
+"PO-Revision-Date: 2019-04-05 14:51\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -54,11 +54,11 @@ msgstr "No tiene permiso para editar este blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr "No puede usar este medio como un icono del blog."
+msgstr "No puede usar este medio como icono del blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "No puede usar este medio como bandera del blog."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
@@ -66,7 +66,7 @@ msgstr ""
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Para ver tus notificaciones, necesitas estar conectado"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,11 +74,11 @@ msgstr "Esta publicación aún no está publicada."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Para escribir un nuevo artículo, necesita estar logueado"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "No es un autor de este blog."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -90,7 +90,7 @@ msgstr "Editar {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Para compartir un artículo, necesita estar logueado"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -110,15 +110,15 @@ msgstr "Lo sentimos, pero el enlace expiró. Inténtalo de nuevo"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Para acceder a su panel de control, necesita estar logueado"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Para suscribirse a alguien, necesita estar logueado"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Para editar su perfil, necesita estar logueado"
 
 msgid "Plume"
 msgstr "Plume"
@@ -160,7 +160,7 @@ msgid "Administration"
 msgstr "Administración"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Bienvenido a {}"
 
 msgid "Latest articles"
 msgstr "Últimas publicaciones"
@@ -202,7 +202,7 @@ msgid "Articles from {}"
 msgstr "Artículos de {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "Nada que ver aquí aún. Intente suscribirse a más personas."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -241,13 +241,13 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Que escribieron <em>{0}</em> artículos"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "Y están conectados a <em>{0}</em> otras instancias"
 
 msgid "Administred by"
 msgstr "Administrado por"
 
 msgid "Runs Plume {0}"
-msgstr ""
+msgstr "Ejecuta Pluma {0}"
 
 msgid "Edit your account"
 msgstr "Edita tu cuenta"
@@ -256,7 +256,7 @@ msgid "Your Profile"
 msgstr "Tu perfil"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
+msgstr "Para cambiar tu avatar, súbalo a su galería y seleccione de ahí."
 
 msgid "Upload an avatar"
 msgstr "Subir un avatar"
@@ -336,16 +336,16 @@ msgid "Subscribers"
 msgstr "Suscriptores"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Suscripciones"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "Fuente Atom"
 
 msgid "Recently boosted"
-msgstr ""
+msgstr "Compartido recientemente"
 
 msgid "Admin"
-msgstr ""
+msgstr "Administrador"
 
 msgid "It is you"
 msgstr "Eres tú"
@@ -357,93 +357,93 @@ msgid "Open on {0}"
 msgstr "Abrir en {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Cancelar suscripción"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Subscribirse"
 
 msgid "{0}'s subscriptions'"
-msgstr ""
+msgstr "{0}'s suscripciones'"
 
 msgid "{0}'s subscribers"
-msgstr ""
+msgstr "{0}'s suscriptores"
 
 msgid "Respond"
 msgstr "Responder"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Está seguro?"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Eliminar este comentario"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "¿Qué es Plume?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Plume es un motor de blogs descentralizado."
 
 msgid "Authors can manage various blogs, each as an unique website."
-msgstr ""
+msgstr "Los autores pueden administrar varios blogs, cada uno como un sitio web único."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Los artículos también son visibles en otras instancias de Plume, y puede interactuar con ellos directamente desde otras plataformas como Mastodon."
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "Hogar de <em>{0}</em> usuarios"
 
 msgid "Read the detailed rules"
-msgstr ""
+msgstr "Leer las reglas detalladas"
 
 msgid "None"
-msgstr ""
+msgstr "Ninguno"
 
 msgid "No description"
-msgstr ""
+msgstr "Ninguna descripción"
 
 msgid "View all"
-msgstr ""
+msgstr "Ver todo"
 
 msgid "By {0}"
-msgstr ""
+msgstr "Por {0}"
 
 msgid "Draft"
-msgstr ""
+msgstr "Borrador"
 
 msgid "Your query"
-msgstr ""
+msgstr "Su consulta"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "Búsqueda avanzada"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
-msgstr ""
+msgstr "Título del artículo que coincide con estas palabras"
 
 msgid "Title"
 msgstr "Título"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
-msgstr ""
+msgstr "Subtítulo que coincide con estas palabras"
 
 msgid "Subtitle - byline"
-msgstr ""
+msgstr "Subtítulo - firma"
 
 # src/template_utils.rs:305
 msgid "Content matching these words"
-msgstr ""
+msgstr "Contenido que coincide con estas palabras"
 
 msgid "Body content"
-msgstr ""
+msgstr "Contenido"
 
 # src/template_utils.rs:305
 msgid "From this date"
-msgstr ""
+msgstr "Desde esta fecha"
 
 # src/template_utils.rs:305
 msgid "To this date"
-msgstr ""
+msgstr "Hasta esta fecha"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
