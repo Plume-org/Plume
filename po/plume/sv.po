@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-02 13:40\n"
+"PO-Revision-Date: 2019-04-05 14:51\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -18,39 +18,39 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} kommenterade på din artikel."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} abbonerar på dig."
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} gillade din artikel."
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} nämnde dig."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} boostade din artikel."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "{0}s avatar"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "För att skapa en ny blogg måste du vara inloggad"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Du har inte tillstånd att ta bort den här bloggen."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Du har inte tillstånd att redigera den här bloggen."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
