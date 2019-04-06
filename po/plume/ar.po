@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 07:34\n"
+"PO-Revision-Date: 2019-04-06 10:48\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -127,7 +127,7 @@ msgid "Menu"
 msgstr "القائمة"
 
 msgid "Search"
-msgstr "تقص"
+msgstr "البحث"
 
 msgid "Dashboard"
 msgstr "لوح المراقبة"
@@ -145,7 +145,7 @@ msgid "Log In"
 msgstr "تسجيل الدخول"
 
 msgid "Register"
-msgstr "انشاء حساب"
+msgstr "إنشاء حساب"
 
 msgid "About this instance"
 msgstr "عن مثيل الخادوم هذا"
@@ -160,7 +160,7 @@ msgid "Administration"
 msgstr "الإدارة"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "مرحبا بكم في {0}"
 
 msgid "Latest articles"
 msgstr "آخر المقالات"
@@ -226,7 +226,7 @@ msgstr "الوصف الطويل"
 
 # src/template_utils.rs:217
 msgid "Default article license"
-msgstr ""
+msgstr "الرخصة الافتراضية للمقال"
 
 msgid "Save these settings"
 msgstr ""
@@ -259,11 +259,11 @@ msgid "To change your avatar, upload it to your gallery and then select from the
 msgstr ""
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "تحميل صورة رمزية"
 
 # src/template_utils.rs:217
 msgid "Display name"
-msgstr ""
+msgstr "الاسم المعروض"
 
 # src/template_utils.rs:217
 msgid "Email"
@@ -357,7 +357,7 @@ msgid "Open on {0}"
 msgstr "افتح على {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "إلغاء الاشتراك"
 
 msgid "Subscribe"
 msgstr ""
@@ -375,7 +375,7 @@ msgid "Are you sure?"
 msgstr "هل أنت واثق؟"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "احذف هذا التعليق"
 
 msgid "What is Plume?"
 msgstr "ما هو بلوم Plume؟"
@@ -399,7 +399,7 @@ msgid "None"
 msgstr "لا شيء"
 
 msgid "No description"
-msgstr ""
+msgstr "مِن دون وصف"
 
 msgid "View all"
 msgstr "عرضها كافة"
@@ -411,7 +411,7 @@ msgid "Draft"
 msgstr "مسودة"
 
 msgid "Your query"
-msgstr ""
+msgstr "طلبُك"
 
 msgid "Advanced search"
 msgstr ""
@@ -450,7 +450,7 @@ msgid "Containing these tags"
 msgstr ""
 
 msgid "Tags"
-msgstr ""
+msgstr "الوسوم"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these instances"
@@ -464,34 +464,34 @@ msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "المؤلفون"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
-msgstr ""
+msgstr "عنوان المدونة"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "اللغة"
 
 # src/template_utils.rs:305
 msgid "Published under this license"
 msgstr ""
 
 msgid "Article license"
-msgstr ""
+msgstr "رخصة المقال"
 
 msgid "Search result for \"{0}\""
 msgstr ""
 
 msgid "Search result"
-msgstr ""
+msgstr "نتائج البحث"
 
 msgid "No result for your query"
 msgstr ""
@@ -500,18 +500,18 @@ msgid "No more results for your query"
 msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "أعد تعيين كلمتك السرية"
 
 # src/template_utils.rs:217
 msgid "New password"
-msgstr ""
+msgstr "كلمة السر الجديدة"
 
 # src/template_utils.rs:217
 msgid "Confirmation"
-msgstr ""
+msgstr "تأكيد"
 
 msgid "Update password"
-msgstr ""
+msgstr "تحديث الكلمة السرية"
 
 msgid "Check your inbox!"
 msgstr ""
@@ -521,7 +521,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "البريد الإلكتروني"
 
 msgid "Send password reset link"
 msgstr ""
@@ -555,7 +555,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "License"
-msgstr ""
+msgstr "الرخصة"
 
 # src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
@@ -647,7 +647,7 @@ msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in
 msgstr ""
 
 msgid "Page not found"
-msgstr ""
+msgstr "الصفحة غير موجودة"
 
 msgid "We couldn't find this page."
 msgstr "تعذر العثور على هذه الصفحة."
@@ -686,13 +686,13 @@ msgid "Upload images"
 msgstr ""
 
 msgid "Blog icon"
-msgstr ""
+msgstr "أيقونة المدونة"
 
 msgid "Blog banner"
 msgstr ""
 
 msgid "Update blog"
-msgstr ""
+msgstr "تحديث المدونة"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
