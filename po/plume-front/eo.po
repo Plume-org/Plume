@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-06 20:15\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Esperanto\n"
 "Language: eo_UY\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:114
 msgid "Open the rich text editor"
-msgstr ""
+msgstr "Malfermi la riĉan redaktilon"
 
 # plume-front/src/editor.rs:143
 msgid "Title"
@@ -50,7 +50,7 @@ msgstr "Kovro"
 
 # plume-front/src/editor.rs:252
 msgid "This is a draft"
-msgstr ""
+msgstr "Malfinias"
 
 # plume-front/src/editor.rs:259
 msgid "Publish"
