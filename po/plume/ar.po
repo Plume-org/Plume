@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 10:48\n"
+"PO-Revision-Date: 2019-04-06 13:19\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -38,23 +38,23 @@ msgstr ""
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "الصورة الرمزية لـ {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "لإنشاء مدونة جديدة، تحتاج إلى تسجيل الدخول"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "لا يسمح لك بحذف هذه المدونة."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "لا يسمح لك بتعديل هذه المدونة."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "لا يمكنك استخدام هذه الوسائط كأيقونة للمدونة."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
@@ -62,11 +62,11 @@ msgstr ""
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولا للإعجاب بهذا المقال"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولا لعرض الإشعارات"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,11 +74,11 @@ msgstr "هذا المقال ليس منشورا بعد."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولا لكتابة مقال جديد"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "لست مِن محرري هذه المدونة."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -98,19 +98,19 @@ msgstr "إعادة تعيين كلمة المرور"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "ها هو رابط إعادة تعيين كلمتك السرية: {0}"
 
 # src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "تمت إعادة تعيين كلمتك السرية بنجاح."
 
 # src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "عذراً، ولكن انتهت مدة صلاحية الرابط. حاول مرة أخرى"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولاللنفاذ إلى لوح المراقبة"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
@@ -199,7 +199,7 @@ msgid "All the articles of the Fediverse"
 msgstr "كافة مقالات الفديفرس"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "مقالات صادرة مِن {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
@@ -229,7 +229,7 @@ msgid "Default article license"
 msgstr "الرخصة الافتراضية للمقال"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "احفظ هذه الإعدادات"
 
 msgid "About {0}"
 msgstr "عن {0}"
@@ -333,13 +333,13 @@ msgid "Articles"
 msgstr "المقالات"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "المشترِكون"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "الاشتراكات"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "تدفق أتوم"
 
 msgid "Recently boosted"
 msgstr "تم ترقيتها حديثا"
@@ -360,7 +360,7 @@ msgid "Unsubscribe"
 msgstr "إلغاء الاشتراك"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "إشترِك"
 
 msgid "{0}'s subscriptions'"
 msgstr ""
@@ -414,7 +414,7 @@ msgid "Your query"
 msgstr "طلبُك"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "البحث المتقدم"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
@@ -435,15 +435,15 @@ msgid "Content matching these words"
 msgstr ""
 
 msgid "Body content"
-msgstr ""
+msgstr "محتوى العرض"
 
 # src/template_utils.rs:305
 msgid "From this date"
-msgstr ""
+msgstr "اعتبارا من هذا التاريخ"
 
 # src/template_utils.rs:305
 msgid "To this date"
-msgstr ""
+msgstr "بحلول هذا التاريخ"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
@@ -683,22 +683,22 @@ msgid "You can upload images to your gallery, to use them as blog icons, or bann
 msgstr ""
 
 msgid "Upload images"
-msgstr ""
+msgstr "رفع صور"
 
 msgid "Blog icon"
 msgstr "أيقونة المدونة"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "شعار المدونة"
 
 msgid "Update blog"
 msgstr "تحديث المدونة"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgstr "توخى الحذر هنا، فأي إجراء تأخذه هنا لا يمكن الغاؤه."
 
 msgid "Permanently delete this blog"
-msgstr ""
+msgstr "احذف هذه المدونة نهائيا"
 
 msgid "New Blog"
 msgstr "مدونة جديدة"
@@ -710,7 +710,7 @@ msgid "Create blog"
 msgstr "انشاء مدونة"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "أيقونة {}"
 
 msgid "New article"
 msgstr "مقال جديد"
@@ -746,13 +746,13 @@ msgid "Delete"
 msgstr "حذف"
 
 msgid "Details"
-msgstr ""
+msgstr "التفاصيل"
 
 msgid "Media upload"
 msgstr "إرسال الوسائط"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "مفيدة للأشخاص المعاقين بصريا، فضلا عن معلومات الترخيص"
 
 msgid "Leave it empty, if none is needed"
 msgstr ""
@@ -776,11 +776,11 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as an avatar"
-msgstr ""
+msgstr "استخدمها كصورة رمزية"
 
 msgid "Log in to boost"
-msgstr ""
+msgstr "قم بتسجيل الدخول قصد ترقية المقال"
 
 msgid "Log in to like"
-msgstr ""
+msgstr "قم بتسجيل الدخول قصد الإعجاب بالمقال"
 
