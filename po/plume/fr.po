@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-06 16:00\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -537,7 +537,7 @@ msgid "Publish"
 msgstr "Publier"
 
 msgid "Classic editor (any changes will be lost)"
-msgstr ""
+msgstr "Éditeur classique (tout changement sera perdu)"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
