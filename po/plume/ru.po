@@ -224,8 +224,8 @@ msgid "Allow anyone to register here"
 msgstr "Позволить регистрироваться кому угодно"
 
 #, fuzzy
-msgid "Short description - byline"
-msgstr "Краткое описание"
+msgid "Short description"
+msgstr "Длинное описание"
 
 #, fuzzy
 msgid "Markdown syntax is supported"
@@ -245,7 +245,7 @@ msgstr "Сохранить настройки"
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to <em>{0}</em> users"
+msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -390,7 +390,7 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr "Описание"
 
 #, fuzzy
@@ -414,7 +414,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume это децентрализованный движок для блоггинга."
 
 #, fuzzy
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "Авторы могут управлять различными блогами с одного сайта."
 
 #, fuzzy
@@ -424,9 +424,6 @@ msgid ""
 msgstr ""
 "Статьи также видны на других сайтах Plume и вы можете взаимодействовать с "
 "ними напрямую из других платформ, таких как Mastodon."
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Прочитать подробные правила"
@@ -577,6 +574,9 @@ msgstr "Имя пользователя или адрес электронной
 msgid "Publish"
 msgstr "Опубликовать"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "Подзаголовок"
 
@@ -652,7 +652,7 @@ msgstr ""
 
 #, fuzzy
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "Одно продвижение"
 msgstr[1] "{0} продвижения"
 msgstr[2] "{0} продвижений"
@@ -851,6 +851,10 @@ msgstr ""
 #, fuzzy
 msgid "Use as an avatar"
 msgstr "Использовать как аватар"
+
+#, fuzzy
+#~ msgid "Short description - byline"
+#~ msgstr "Краткое описание"
 
 #, fuzzy
 #~ msgid "You need to be logged in order to create a new blog"

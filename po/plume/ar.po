@@ -216,8 +216,8 @@ msgid "Allow anyone to register here"
 msgstr "السماح للجميع بتسجيل حساب"
 
 #, fuzzy
-msgid "Short description - byline"
-msgstr "وصف قصير"
+msgid "Short description"
+msgstr "الوصف الطويل"
 
 #, fuzzy
 msgid "Markdown syntax is supported"
@@ -237,7 +237,8 @@ msgstr "حفظ التعديلات"
 msgid "About {0}"
 msgstr "عن {0}"
 
-msgid "Home to <em>{0}</em> users"
+#, fuzzy
+msgid "Home to <em>{0}</em> people"
 msgstr "يستضيف <em>{0}</em> مستخدمين"
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -375,7 +376,7 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr "الوصف"
 
 #, fuzzy
@@ -399,7 +400,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "بلوم محرك لامركزي للمدونات."
 
 #, fuzzy
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "يمكن للمدونين إدارة عدة مدونات مِن موقع ويب وحيد."
 
 #, fuzzy
@@ -409,10 +410,6 @@ msgid ""
 msgstr ""
 "ستكون المقالات معروضة كذلك على مواقع بلوم الأخرى، و يمكنكم التفاعل معها "
 "مباشرة عبر أية منصة أخرى مثل ماستدون."
-
-#, fuzzy
-msgid "Home to <em>{0}</em> people"
-msgstr "يستضيف <em>{0}</em> مستخدمين"
 
 msgid "Read the detailed rules"
 msgstr "إقرأ القواعد بالتفصيل"
@@ -571,6 +568,9 @@ msgstr "اسم المستخدم أو عنوان البريد الالكترون�
 msgid "Publish"
 msgstr "انشر"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
 
@@ -647,7 +647,7 @@ msgstr "أعجبني"
 
 #, fuzzy
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "بدون مشاركة"
 msgstr[1] "مشاركة واحدة"
 msgstr[2] "مشاركتان"
@@ -840,6 +840,13 @@ msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض ال
 #, fuzzy
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#, fuzzy
+#~ msgid "Short description - byline"
+#~ msgstr "وصف قصير"
+
+#~ msgid "Home to <em>{0}</em> users"
+#~ msgstr "يستضيف <em>{0}</em> مستخدمين"
 
 #~ msgid "Login"
 #~ msgstr "تسجيل الدخول"

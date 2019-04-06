@@ -208,10 +208,17 @@ impl Provider<PlumeRocket> for Post {
         let domain = &Instance::get_local(&conn)
             .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
             .public_domain;
+        let author = User::get(
+            conn,
+            rockets.user.clone().expect("<Post as Provider>::create: no user_id error").id,
+        )
+        .map_err(|_| ApiError::NotFound("Author not found".into()))?;
+
         let (content, mentions, hashtags) = md_to_html(
             query.source.clone().unwrap_or_default().clone().as_ref(),
             domain,
             false,
+            Some(Media::get_media_processor(conn, vec![&author])),
         );
 
         let author = rockets
@@ -949,7 +956,7 @@ impl FromId<PlumeRocket> for Post {
         }
 
         // save mentions and tags
-        let mut hashtags = md_to_html(&post.source, "", false)
+        let mut hashtags = md_to_html(&post.source, "", false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
@@ -1077,7 +1084,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
             post.license = license;
         }
 
-        let mut txt_hashtags = md_to_html(&post.source, "", false)
+        let mut txt_hashtags = md_to_html(&post.source, "", false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())

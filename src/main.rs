@@ -58,6 +58,8 @@ mod mail;
 #[macro_use]
 mod template_utils;
 mod routes;
+#[cfg(feature = "test")]
+mod test_routes;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
@@ -120,6 +122,7 @@ Then try to restart Plume
 
     let search_unlocker = searcher.clone();
     ctrlc::set_handler(move || {
+        search_unlocker.commit();
         search_unlocker.drop_writer();
         exit(0);
     })
@@ -131,7 +134,7 @@ Then try to restart Plume
         println!("Please refer to the documentation to see how to configure it.");
     }
 
-    rocket::custom(CONFIG.rocket.clone().unwrap())
+    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",
             routes![
@@ -257,16 +260,6 @@ Then try to restart Plume
                         rocket::http::Method::Post,
                     ),
                     (
-                        "/login".to_owned(),
-                        "/login".to_owned(),
-                        rocket::http::Method::Post,
-                    ),
-                    (
-                        "/users/new".to_owned(),
-                        "/users/new".to_owned(),
-                        rocket::http::Method::Post,
-                    ),
-                    (
                         "/api/<path..>".to_owned(),
                         "/api/<path..>".to_owned(),
                         rocket::http::Method::Post,
@@ -274,6 +267,9 @@ Then try to restart Plume
                 ])
                 .finalize()
                 .expect("main: csrf fairing creation error"),
-        )
-        .launch();
+        );
+
+    #[cfg(feature = "test")]
+    let rocket = rocket.mount("/test", routes![test_routes::health,]);
+    rocket.launch();
 }

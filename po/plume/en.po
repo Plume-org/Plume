@@ -217,7 +217,7 @@ msgstr ""
 msgid "Allow anyone to register here"
 msgstr ""
 
-msgid "Short description - byline"
+msgid "Short description"
 msgstr ""
 
 msgid "Markdown syntax is supported"
@@ -236,7 +236,7 @@ msgstr ""
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to <em>{0}</em> users"
+msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -368,7 +368,7 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr ""
 
 msgid "{0}'s subscribers"
@@ -389,15 +389,12 @@ msgstr ""
 msgid "Plume is a decentralized blogging engine."
 msgstr ""
 
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
 msgid ""
 "Articles are also visible on other Plume instances, and you can interact "
 "with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -546,6 +543,9 @@ msgstr ""
 msgid "Publish"
 msgstr ""
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 # src/template_utils.rs:144
 msgid "Subtitle"
 msgstr ""
@@ -615,7 +615,7 @@ msgid "Add yours"
 msgstr ""
 
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] ""
 msgstr[1] ""
 

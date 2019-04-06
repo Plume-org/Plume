@@ -56,53 +56,117 @@ fn to_inline(tag: Tag) -> Tag {
     }
 }
 
+fn flatten_text<'a>(state: &mut Option<String>, evt: Event<'a>) -> Option<Vec<Event<'a>>> {
+    let (s, res) = match evt {
+        Event::Text(txt) => match state.take() {
+            Some(mut prev_txt) => {
+                prev_txt.push_str(&txt);
+                (Some(prev_txt), vec![])
+            }
+            None => (Some(txt.into_owned()), vec![]),
+        },
+        e => match state.take() {
+            Some(prev) => (None, vec![Event::Text(Cow::Owned(prev)), e]),
+            None => (None, vec![e]),
+        },
+    };
+    *state = s;
+    Some(res)
+}
+
+fn inline_tags<'a>(
+    (state, inline): &mut (Vec<Tag<'a>>, bool),
+    evt: Event<'a>,
+) -> Option<Event<'a>> {
+    if *inline {
+        let new_evt = match evt {
+            Event::Start(t) => {
+                let tag = to_inline(t);
+                state.push(tag.clone());
+                Event::Start(tag)
+            }
+            Event::End(t) => match state.pop() {
+                Some(other) => Event::End(other),
+                None => Event::End(t),
+            },
+            e => e,
+        };
+        Some(new_evt)
+    } else {
+        Some(evt)
+    }
+}
+
+pub type MediaProcessor<'a> = Box<'a + Fn(i32) -> Option<(String, Option<String>)>>;
+
+fn process_image<'a, 'b>(
+    evt: Event<'a>,
+    inline: bool,
+    processor: &Option<MediaProcessor<'b>>,
+) -> Event<'a> {
+    if let Some(ref processor) = *processor {
+        match evt {
+            Event::Start(Tag::Image(id, title)) => {
+                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
+                    if inline || cw.is_none() {
+                        Event::Start(Tag::Image(Cow::Owned(url), title))
+                    } else {
+                        // there is a cw, and where are not inline
+                        Event::Html(Cow::Owned(format!(
+                            r#"<label for="postcontent-cw-{id}">
+  <input type="checkbox" id="postcontent-cw-{id}" checked="checked" class="cw-checkbox">
+  <span class="cw-container">
+    <span class="cw-text">
+        {cw}
+    </span>
+  <img src="{url}" alt=""#,
+                            id = random_hex(),
+                            cw = cw.unwrap(),
+                            url = url
+                        )))
+                    }
+                } else {
+                    Event::Start(Tag::Image(id, title))
+                }
+            }
+            Event::End(Tag::Image(id, title)) => {
+                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
+                    if inline || cw.is_none() {
+                        Event::End(Tag::Image(Cow::Owned(url), title))
+                    } else {
+                        Event::Html(Cow::Borrowed(
+                            r#""/>
+  </span>
+</label>"#,
+                        ))
+                    }
+                } else {
+                    Event::End(Tag::Image(id, title))
+                }
+            }
+            e => e,
+        }
+    } else {
+        evt
+    }
+}
+
 /// Returns (HTML, mentions, hashtags)
-pub fn md_to_html(
+pub fn md_to_html<'a>(
     md: &str,
     base_url: &str,
     inline: bool,
+    media_processor: Option<MediaProcessor<'a>>,
 ) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
-        .scan(None, |state: &mut Option<String>, evt| {
-            let (s, res) = match evt {
-                Event::Text(txt) => match state.take() {
-                    Some(mut prev_txt) => {
-                        prev_txt.push_str(&txt);
-                        (Some(prev_txt), vec![])
-                    }
-                    None => (Some(txt.into_owned()), vec![]),
-                },
-                e => match state.take() {
-                    Some(prev) => (None, vec![Event::Text(Cow::Owned(prev)), e]),
-                    None => (None, vec![e]),
-                },
-            };
-            *state = s;
-            Some(res)
-        })
+        // Flatten text because pulldown_cmark break #hashtag in two individual text elements
+        .scan(None, flatten_text)
         .flat_map(IntoIterator::into_iter)
+        .map(|evt| process_image(evt, inline, &media_processor))
         // Ignore headings, images, and tables if inline = true
-        .scan(vec![], |state: &mut Vec<Tag>, evt| {
-            if inline {
-                let new_evt = match evt {
-                    Event::Start(t) => {
-                        let tag = to_inline(t);
-                        state.push(tag.clone());
-                        Event::Start(tag)
-                    }
-                    Event::End(t) => match state.pop() {
-                        Some(other) => Event::End(other),
-                        None => Event::End(t),
-                    },
-                    e => e,
-                };
-                Some(new_evt)
-            } else {
-                Some(evt)
-            }
-        })
+        .scan((vec![], inline), inline_tags)
         .map(|evt| match evt {
             Event::Text(txt) => {
                 let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold(
@@ -273,7 +337,7 @@ mod tests {
 
         for (md, mentions) in tests {
             assert_eq!(
-                md_to_html(md, "", false).1,
+                md_to_html(md, "", false, None).1,
                 mentions
                     .into_iter()
                     .map(|s| s.to_string())
@@ -298,7 +362,7 @@ mod tests {
 
         for (md, mentions) in tests {
             assert_eq!(
-                md_to_html(md, "", false).2,
+                md_to_html(md, "", false, None).2,
                 mentions
                     .into_iter()
                     .map(|s| s.to_string())
@@ -310,11 +374,11 @@ mod tests {
     #[test]
     fn test_inline() {
         assert_eq!(
-            md_to_html("# Hello", "", false).0,
+            md_to_html("# Hello", "", false, None).0,
             String::from("<h1>Hello</h1>\n")
         );
         assert_eq!(
-            md_to_html("# Hello", "", true).0,
+            md_to_html("# Hello", "", true, None).0,
             String::from("<p>Hello</p>\n")
         );
     }

@@ -1,17 +1,33 @@
 version: 2.1
 
 aliases:
+  - &plume-docker
+    image: plumeorg/plume-buildenv:v0.0.5
   - &defaults
     docker:
-      - image: plumeorg/plume-buildenv:v0.0.3
+      - *plume-docker
     working_directory: ~/projects/Plume
   - &postgresql
     docker:
-      - image: plumeorg/plume-buildenv:v0.0.3
+      - *plume-docker
       - image: circleci/postgres:9.6-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: plume
+    working_directory: ~/projects/Plume
+  - &selenium
+    docker:
+      - *plume-docker
+      - image: elgalu/selenium:latest
+    working_directory: ~/projects/Plume
+  - &postgresql_selenium
+    docker:
+      - *plume-docker
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: plume
+      - image: elgalu/selenium:latest
     working_directory: ~/projects/Plume
 
   - &attach_workspace
@@ -25,13 +41,13 @@ aliases:
 
   - &env_postgresql
     environment:
-      MIGRATION_DIR: migrations/postgres
+      MIGRATION_DIRECTORY: migrations/postgres
       FEATURES: postgres
       DATABASE_URL: postgres://postgres@localhost/plume
       RUST_TEST_THREADS: 1
   - &env_sqlite
     environment:
-      MIGRATION_DIR: migrations/sqlite
+      MIGRATION_DIRECTORY: migrations/sqlite
       FEATURES: sqlite
       DATABASE_URL: plume.sqlite3
       RUST_TEST_THREADS: 1
@@ -101,26 +117,48 @@ aliases:
            name: clippy
            command: cargo clippy --no-default-features --features="${FEATURES}" --release -p plume-cli -- -D warnings
       - *save_cache_cli
-  - &test_plume
+  - &test_unit
     steps:
       - *attach_workspace
       - run:
           name: Set cache key
           command: echo "$FEATURES" > /FEATURES
-      - run:
-          name: Set compiler flags
-          # rustflags = ["-Clink-dead-code", "-Clink-args=-Xlinker --no-keep-memory -Xlinker --reduce-memory-overheads"]
-          command: echo "W3RhcmdldC54ODZfNjQtdW5rbm93bi1saW51eC1nbnVdCnJ1c3RmbGFncyA9IFsiLUNsaW5rLWRlYWQtY29kZSIsICItQ2xpbmstYXJncz0tWGxpbmtlciAtLW5vLWtlZXAtbWVtb3J5IC1YbGlua2VyIC0tcmVkdWNlLW1lbW9yeS1vdmVyaGVhZHMiXQoK" | base64 -d >> ~/.cargo/config
       - *restore_cache_plume_dead_code
       - run:
           name: clippy
           command: cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
-      - run: 
+      - run:
           name: compile test
           command: cargo test --no-default-features --features="${FEATURES}" --all --exclude plume-front --no-run || cargo test --no-default-features --features="${FEATURES}" --all --exclude plume-front --no-run
-      - run: 
-          name: run test and upload coverage
-          command: ./script/compute_coverage.sh
+      - run:
+          name: run test
+          command: ./script/run_unit_test.sh
+      - run:
+          name: upload coverage
+          command: ./script/upload_coverage.sh unit
+      - *save_cache_plume_dead_code
+
+  - &test_browser
+    steps:
+      - *attach_workspace
+      - run:
+          name: Set cache key
+          command: echo "$FEATURES" > /FEATURES
+      - *restore_cache_plume_dead_code
+      - run:
+          name: install server
+          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . || cargo install --debug --no-default-features --features="${FEATURES}",test --path .
+      - run:
+          name: install plm
+          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli
+      - run:
+          name: run test
+          command: ./script/run_browser_test.sh
+          environment:
+            BROWSER: firefox
+      - run:
+          name: upload coverage
+          command: ./script/upload_coverage.sh integration
       - *save_cache_plume_dead_code
 
 jobs:
@@ -160,16 +198,25 @@ jobs:
     <<: *env_sqlite
     <<: *test_cli
 
-  test_plume_postgresql:
+  test_unit_postgresql:
     <<: *postgresql
     <<: *env_postgresql
-    <<: *test_plume
+    <<: *test_unit
 
-  test_plume_sqlite:
+  test_unit_sqlite:
     <<: *defaults
     <<: *env_sqlite
-    <<: *test_plume
+    <<: *test_unit
 
+  test_browser_postgresql:
+    <<: *postgresql_selenium
+    <<: *env_postgresql
+    <<: *test_browser
+
+  test_browser_sqlite:
+    <<: *selenium
+    <<: *env_sqlite
+    <<: *test_browser
 
 workflows:
   version: 2
@@ -188,9 +235,15 @@ workflows:
       - test_cli_sqlite:
           requires:
             - download_deps
-      - test_plume_postgresql:
+      - test_unit_postgresql:
           requires:
             - download_deps
-      - test_plume_sqlite:
+      - test_unit_sqlite:
           requires:
             - download_deps
+      - test_browser_postgresql:
+          requires:
+            - build_web
+      - test_browser_sqlite:
+          requires:
+            - build_web
