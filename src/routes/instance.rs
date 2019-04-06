@@ -1,24 +1,19 @@
-use rocket::{request::LenientForm, response::{status, Redirect}};
+use rocket::{
+    request::LenientForm,
+    response::{status, Redirect},
+};
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationErrors};
 
-use plume_common::activity_pub::sign::{Signable,
-    verify_http_headers};
-use plume_models::{
-    admin::Admin,
-    comments::Comment,
-    db_conn::DbConn,
-    Error,
-    headers::Headers,
-    posts::Post,
-    users::User,
-    safe_string::SafeString,
-    instance::*
-};
 use inbox::{Inbox, SignedJson};
-use routes::{Page, errors::ErrorPage};
+use plume_common::activity_pub::sign::{verify_http_headers, Signable};
+use plume_models::{
+    admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
+    safe_string::SafeString, users::User, Error, CONFIG,
+};
+use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
 use template_utils::Ructe;
 use Searcher;
 
@@ -46,7 +41,12 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Erro
 }
 
 #[get("/local?<page>")]
-pub fn local(conn: DbConn, user: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn local(
+    conn: DbConn,
+    user: Option<User>,
+    page: Option<Page>,
+    intl: I18n,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let instance = Instance::get_local(&*conn)?;
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits())?;
@@ -75,7 +75,12 @@ pub fn feed(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -> Result<
 }
 
 #[get("/federated?<page>")]
-pub fn federated(conn: DbConn, user: Option<User>, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn federated(
+    conn: DbConn,
+    user: Option<User>,
+    page: Option<Page>,
+    intl: I18n,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let articles = Post::get_recents_page(&*conn, page.limits())?;
     Ok(render!(instance::federated(
@@ -111,23 +116,34 @@ pub struct InstanceSettingsForm {
     pub short_description: SafeString,
     pub long_description: SafeString,
     #[validate(length(min = "1"))]
-    pub default_license: String
+    pub default_license: String,
 }
 
 #[post("/admin", data = "<form>")]
-pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSettingsForm>, intl: I18n) -> Result<Redirect, Ructe> {
+pub fn update_settings(
+    conn: DbConn,
+    admin: Admin,
+    form: LenientForm<InstanceSettingsForm>,
+    intl: I18n,
+) -> Result<Redirect, Ructe> {
     form.validate()
         .and_then(|_| {
-            let instance = Instance::get_local(&*conn).expect("instance::update_settings: local instance error");
-            instance.update(&*conn,
-                form.name.clone(),
-                form.open_registrations,
-                form.short_description.clone(),
-                form.long_description.clone()).expect("instance::update_settings: save error");
+            let instance = Instance::get_local(&*conn)
+                .expect("instance::update_settings: local instance error");
+            instance
+                .update(
+                    &*conn,
+                    form.name.clone(),
+                    form.open_registrations,
+                    form.short_description.clone(),
+                    form.long_description.clone(),
+                )
+                .expect("instance::update_settings: save error");
             Ok(Redirect::to(uri!(admin)))
         })
-       .or_else(|e| {
-            let local_inst = Instance::get_local(&*conn).expect("instance::update_settings: local instance error");
+        .or_else(|e| {
+            let local_inst = Instance::get_local(&*conn)
+                .expect("instance::update_settings: local instance error");
             Err(render!(instance::admin(
                 &(&*conn, &intl.catalog, Some(admin.0)),
                 local_inst,
@@ -138,7 +154,12 @@ pub fn update_settings(conn: DbConn, admin: Admin, form: LenientForm<InstanceSet
 }
 
 #[get("/admin/instances?<page>")]
-pub fn admin_instances(admin: Admin, conn: DbConn, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn admin_instances(
+    admin: Admin,
+    conn: DbConn,
+    page: Option<Page>,
+    intl: I18n,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let instances = Instance::page(&*conn, page.limits())?;
     Ok(render!(instance::list(
@@ -160,7 +181,12 @@ pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Result<Redirect, Er
 }
 
 #[get("/admin/users?<page>")]
-pub fn admin_users(admin: Admin, conn: DbConn, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn admin_users(
+    admin: Admin,
+    conn: DbConn,
+    page: Option<Page>,
+    intl: I18n,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(instance::users(
         &(&*conn, &intl.catalog, Some(admin.0)),
@@ -171,7 +197,12 @@ pub fn admin_users(admin: Admin, conn: DbConn, page: Option<Page>, intl: I18n) -
 }
 
 #[post("/admin/users/<id>/ban")]
-pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Result<Redirect, ErrorPage> {
+pub fn ban(
+    _admin: Admin,
+    conn: DbConn,
+    id: i32,
+    searcher: Searcher,
+) -> Result<Redirect, ErrorPage> {
     if let Ok(u) = User::get(&*conn, id) {
         u.delete(&*conn, &searcher)?;
     }
@@ -179,34 +210,50 @@ pub fn ban(_admin: Admin, conn: DbConn, id: i32, searcher: Searcher) -> Result<R
 }
 
 #[post("/inbox", data = "<data>")]
-pub fn shared_inbox(conn: DbConn, data: SignedJson<serde_json::Value>, headers: Headers, searcher: Searcher) -> Result<String, status::BadRequest<&'static str>> {
+pub fn shared_inbox(
+    conn: DbConn,
+    data: SignedJson<serde_json::Value>,
+    headers: Headers,
+    searcher: Searcher,
+) -> Result<String, status::BadRequest<&'static str>> {
     let act = data.1.into_inner();
     let sig = data.0;
 
     let activity = act.clone();
-    let actor_id = activity["actor"].as_str()
-        .or_else(|| activity["actor"]["id"].as_str()).ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
+    let actor_id = activity["actor"]
+        .as_str()
+        .or_else(|| activity["actor"]["id"].as_str())
+        .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
     let actor = User::from_url(&conn, actor_id).expect("instance::shared_inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &sig).is_secure() &&
-        !act.clone().verify(&actor) {
+    if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
         // maybe we just know an old key?
-        actor.refetch(&conn).and_then(|_| User::get(&conn, actor.id))
-            .and_then(|u| if verify_http_headers(&u, &headers.0, &sig).is_secure() ||
-                      act.clone().verify(&u) {
-                          Ok(())
-                      } else {
-                          Err(Error::Signature)
-                      })
+        actor
+            .refetch(&conn)
+            .and_then(|_| User::get(&conn, actor.id))
+            .and_then(|u| {
+                if verify_http_headers(&u, &headers.0, &sig).is_secure() || act.clone().verify(&u) {
+                    Ok(())
+                } else {
+                    Err(Error::Signature)
+                }
+            })
             .map_err(|_| {
-                println!("Rejected invalid activity supposedly from {}, with headers {:?}", actor.username, headers.0);
-                status::BadRequest(Some("Invalid signature"))})?;
+                println!(
+                    "Rejected invalid activity supposedly from {}, with headers {:?}",
+                    actor.username, headers.0
+                );
+                status::BadRequest(Some("Invalid signature"))
+            })?;
     }
 
-    if Instance::is_blocked(&*conn, actor_id).map_err(|_| status::BadRequest(Some("Can't tell if instance is blocked")))? {
+    if Instance::is_blocked(&*conn, actor_id)
+        .map_err(|_| status::BadRequest(Some("Can't tell if instance is blocked")))?
+    {
         return Ok(String::new());
     }
-    let instance = Instance::get_local(&*conn).expect("instance::shared_inbox: local instance not found error");
+    let instance = Instance::get_local(&*conn)
+        .expect("instance::shared_inbox: local instance not found error");
     Ok(match instance.received(&*conn, &searcher, act) {
         Ok(_) => String::new(),
         Err(e) => {
@@ -279,50 +326,8 @@ pub fn web_manifest(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> 
         "background_color": String::from("#f4f4f4"),
         "theme_color": String::from("#7765e3"),
         "categories": [String::from("social")],
-        "icons": [
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather48.png",
-                "sizes": "48x48",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather72.png",
-                "sizes": "72x72",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather96.png",
-                "sizes": "96x96",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather144.png",
-                "sizes": "144x144",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather160.png",
-                "sizes": "160x160",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather192.png",
-                "sizes": "192x192",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather256.png",
-                "sizes": "256x256",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather512.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            },
-            {
-                "src": "/static/icons/trwnh/feather/plumeFeather.svg"
-            }
-        ]
+        "icons": CONFIG.logo.other.iter()
+            .map(|i| i.with_prefix(&uri!(static_files: file = "").to_string()))
+            .collect::<Vec<_>>()
     })))
 }

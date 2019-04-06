@@ -19,21 +19,31 @@ lazy_static! {
     static ref CLEAN: Builder<'static> = {
         let mut b = Builder::new();
         b.add_generic_attributes(iter::once("id"))
-            .add_tags(&[ "iframe", "video", "audio" ])
+            .add_tags(&["iframe", "video", "audio", "label", "input"])
             .id_prefix(Some("postcontent-"))
             .url_relative(UrlRelative::Custom(Box::new(url_add_prefix)))
             .add_tag_attributes(
                 "iframe",
-                [ "width", "height", "src", "frameborder" ].iter().map(|&v| v),
+                ["width", "height", "src", "frameborder"].iter().cloned(),
             )
-            .add_tag_attributes(
-                "video",
-                [ "src", "title", "controls" ].iter(),
-            )
-            .add_tag_attributes(
-                "audio",
-                [ "src", "title", "controls" ].iter(),
-            );
+            .add_tag_attributes("video", ["src", "title", "controls"].iter())
+            .add_tag_attributes("audio", ["src", "title", "controls"].iter())
+            .add_tag_attributes("label", ["for"].iter())
+            .add_tag_attributes("input", ["type", "checked"].iter())
+            .add_allowed_classes("input", ["cw-checkbox"].iter())
+            .add_allowed_classes("span", ["cw-container", "cw-text"].iter())
+            .attribute_filter(|elem, att, val| match (elem, att) {
+                ("input", "type") => Some("checkbox".into()),
+                ("input", "checked") => Some("checked".into()),
+                ("label", "for") => {
+                    if val.starts_with("postcontent-cw-") {
+                        Some(val.into())
+                    } else {
+                        None
+                    }
+                }
+                _ => Some(val.into()),
+            });
         b
     };
 }
@@ -69,7 +79,7 @@ impl SafeString {
     /// Prefer `SafeString::new` as much as possible.
     pub fn trusted(value: impl AsRef<str>) -> Self {
         SafeString {
-            value: value.as_ref().to_string()
+            value: value.as_ref().to_string(),
         }
     }
 

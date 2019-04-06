@@ -698,17 +698,19 @@ msgstr "Supprimer définitivement ce blog"
 msgid "New Blog"
 msgstr "Nouveau Blog"
 
-msgid "Create a blog"
-msgstr "Créer un blog"
+msgid "Description"
+msgstr "Description"
 
-msgid "Create blog"
-msgstr "Créer le blog"
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
 
 msgid "{}'s icon"
 msgstr "icône de {}"
 
-msgid "New article"
-msgstr "Nouvel article"
+#, fuzzy
+msgid "Update blog"
+msgstr "Créer le blog"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "

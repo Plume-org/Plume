@@ -1,0 +1,249 @@
+version: 2.1
+
+aliases:
+  - &plume-docker
+    image: plumeorg/plume-buildenv:v0.0.5
+  - &defaults
+    docker:
+      - *plume-docker
+    working_directory: ~/projects/Plume
+  - &postgresql
+    docker:
+      - *plume-docker
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: plume
+    working_directory: ~/projects/Plume
+  - &selenium
+    docker:
+      - *plume-docker
+      - image: elgalu/selenium:latest
+    working_directory: ~/projects/Plume
+  - &postgresql_selenium
+    docker:
+      - *plume-docker
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: plume
+      - image: elgalu/selenium:latest
+    working_directory: ~/projects/Plume
+
+  - &attach_workspace
+    attach_workspace:
+      at: ~/projects/Plume/
+  - &persist_to_workspace
+    persist_to_workspace:
+      root: ~/projects/Plume/
+      paths:
+        - ./
+
+  - &env_postgresql
+    environment:
+      MIGRATION_DIRECTORY: migrations/postgres
+      FEATURES: postgres
+      DATABASE_URL: postgres://postgres@localhost/plume
+      RUST_TEST_THREADS: 1
+  - &env_sqlite
+    environment:
+      MIGRATION_DIRECTORY: migrations/sqlite
+      FEATURES: sqlite
+      DATABASE_URL: plume.sqlite3
+      RUST_TEST_THREADS: 1
+
+  - &restore_cache
+    restore_cache:
+      keys:
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}
+        - v1-plume-notest
+  - &save_cache
+    save_cache:
+      key: v1-plume-notest-{{ checksum "Cargo.lock" }}
+      paths:
+        - ~/.cargo/
+        - ./target
+
+  - &restore_cache_web
+    restore_cache:
+      keys:
+        - v1-plume-web-{{ checksum "Cargo.lock" }}
+        - v1-plume-web
+  - &save_cache_web
+    save_cache:
+      key: v1-plume-web-{{ checksum "Cargo.lock" }}
+      paths:
+        - ~/.cargo/
+        - ./target
+
+  - &restore_cache_cli
+    restore_cache:
+      keys:
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}
+        - v1-plume-notest
+  - &save_cache_cli
+    save_cache:
+      key: v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
+      paths:
+        - ~/.cargo/
+        - target
+
+  - &restore_cache_plume_dead_code
+    restore_cache:
+      keys:
+        - v1-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
+        - v1-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}
+        - v1-plume-test-{{ checksum "/FEATURES" }}
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}
+        - v1-plume-notest
+  - &save_cache_plume_dead_code
+    save_cache:
+      key: v1-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
+      paths:
+        - ~/.cargo/
+        - target
+
+  - &test_cli
+    steps:
+      - *attach_workspace
+      - run:
+          name: Set cache key
+          command: echo "$FEATURES" > /FEATURES
+      - *restore_cache_cli
+      - run:
+           name: clippy
+           command: cargo clippy --no-default-features --features="${FEATURES}" --release -p plume-cli -- -D warnings
+      - *save_cache_cli
+  - &test_unit
+    steps:
+      - *attach_workspace
+      - run:
+          name: Set cache key
+          command: echo "$FEATURES" > /FEATURES
+      - *restore_cache_plume_dead_code
+      - run:
+          name: clippy
+          command: cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
+      - run:
+          name: compile test
+          command: cargo test --no-default-features --features="${FEATURES}" --all --exclude plume-front --no-run || cargo test --no-default-features --features="${FEATURES}" --all --exclude plume-front --no-run
+      - run:
+          name: run test
+          command: ./script/run_unit_test.sh
+      - run:
+          name: upload coverage
+          command: ./script/upload_coverage.sh unit
+      - *save_cache_plume_dead_code
+
+  - &test_browser
+    steps:
+      - *attach_workspace
+      - run:
+          name: Set cache key
+          command: echo "$FEATURES" > /FEATURES
+      - *restore_cache_plume_dead_code
+      - run:
+          name: install server
+          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . || cargo install --debug --no-default-features --features="${FEATURES}",test --path .
+      - run:
+          name: install plm
+          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli
+      - run:
+          name: run test
+          command: ./script/run_browser_test.sh
+          environment:
+            BROWSER: firefox
+      - run:
+          name: upload coverage
+          command: ./script/upload_coverage.sh integration
+      - *save_cache_plume_dead_code
+
+jobs:
+  download_deps:
+    <<: *defaults
+    steps:
+      - checkout
+      - *attach_workspace
+      - *restore_cache
+      - run: cargo fetch
+      - *save_cache
+      - *persist_to_workspace
+
+  cargo_fmt:
+    <<: *defaults
+    steps:
+      - *attach_workspace
+      - run: cargo fmt --all -- --check
+
+  build_web:
+    <<: *defaults
+    steps:
+      - *attach_workspace
+      - *restore_cache_web
+      - run: cargo clippy -p plume-front -- -D warnings
+      - run: cargo web deploy -p plume-front
+      - *save_cache_web
+      - *persist_to_workspace
+
+  test_cli_postgresql:
+    <<: *postgresql
+    <<: *env_postgresql
+    <<: *test_cli
+
+  test_cli_sqlite:
+    <<: *defaults
+    <<: *env_sqlite
+    <<: *test_cli
+
+  test_unit_postgresql:
+    <<: *postgresql
+    <<: *env_postgresql
+    <<: *test_unit
+
+  test_unit_sqlite:
+    <<: *defaults
+    <<: *env_sqlite
+    <<: *test_unit
+
+  test_browser_postgresql:
+    <<: *postgresql_selenium
+    <<: *env_postgresql
+    <<: *test_browser
+
+  test_browser_sqlite:
+    <<: *selenium
+    <<: *env_sqlite
+    <<: *test_browser
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - download_deps
+      - cargo_fmt:
+          requires:
+            - download_deps
+      - build_web:
+          requires:
+            - download_deps
+      - test_cli_postgresql:
+          requires:
+            - download_deps
+      - test_cli_sqlite:
+          requires:
+            - download_deps
+      - test_unit_postgresql:
+          requires:
+            - download_deps
+      - test_unit_sqlite:
+          requires:
+            - download_deps
+      - test_browser_postgresql:
+          requires:
+            - build_web
+      - test_browser_sqlite:
+          requires:
+            - build_web

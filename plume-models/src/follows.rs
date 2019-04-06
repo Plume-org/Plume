@@ -14,7 +14,7 @@ use plume_common::activity_pub::{
 };
 use schema::follows;
 use users::User;
-use {ap_url, Connection, BASE_URL, Error, Result};
+use {ap_url, Connection, Error, Result, CONFIG};
 
 #[derive(Clone, Queryable, Identifiable, Associations, AsChangeset)]
 #[belongs_to(User, foreign_key = "following_id")]
@@ -34,14 +34,16 @@ pub struct NewFollow {
 }
 
 impl Follow {
-    insert!(follows, NewFollow, |inserted, conn| {
-        if inserted.ap_url.is_empty() {
-            inserted.ap_url = ap_url(&format!("{}/follows/{}", *BASE_URL, inserted.id));
+    insert!(
+        follows,
+        NewFollow,
+        |inserted, conn| if inserted.ap_url.is_empty() {
+            inserted.ap_url = ap_url(&format!("{}/follows/{}", CONFIG.base_url, inserted.id));
             inserted.save_changes(conn).map_err(Error::from)
         } else {
             Ok(inserted)
         }
-    });
+    );
     get!(follows);
     find_by!(follows, find_by_ap_url, ap_url as &str);
 
@@ -62,12 +64,9 @@ impl Follow {
             .set_actor_link::<Id>(user.clone().into_id())?;
         act.follow_props
             .set_object_link::<Id>(target.clone().into_id())?;
-        act.object_props
-            .set_id_string(self.ap_url.clone())?;
-        act.object_props
-            .set_to_link(target.into_id())?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_id_string(self.ap_url.clone())?;
+        act.object_props.set_to_link(target.into_id())?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
         Ok(act)
     }
 
@@ -91,22 +90,18 @@ impl Follow {
         )?;
 
         let mut accept = Accept::default();
-        let accept_id = ap_url(&format!("{}/follow/{}/accept", BASE_URL.as_str(), &res.id));
-        accept
-            .object_props
-            .set_id_string(accept_id)?;
-        accept
-            .object_props
-            .set_to_link(from.clone().into_id())?;
-        accept
-            .object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        let accept_id = ap_url(&format!(
+            "{}/follow/{}/accept",
+            CONFIG.base_url.as_str(),
+            &res.id
+        ));
+        accept.object_props.set_id_string(accept_id)?;
+        accept.object_props.set_to_link(from.clone().into_id())?;
+        accept.object_props.set_cc_link_vec::<Id>(vec![])?;
         accept
             .accept_props
             .set_actor_link::<Id>(target.clone().into_id())?;
-        accept
-            .accept_props
-            .set_object_object(follow)?;
+        accept.accept_props.set_object_object(follow)?;
         broadcast(&*target, accept, vec![from.clone()]);
         Ok(res)
     }
@@ -119,30 +114,19 @@ impl FromActivity<FollowAct, Connection> for Follow {
         let from_id = follow
             .follow_props
             .actor_link::<Id>()
-            .map(|l| l.into())
-            .or_else(|_| Ok(follow
-                .follow_props
-                .actor_object::<Person>()?
-                .object_props
-                .id_string()?) as Result<String>)?;
-        let from =
-            User::from_url(conn, &from_id)?;
-        match User::from_url(
-            conn,
-            follow
-                .follow_props
-                .object
-                .as_str()?,
-        ) {
+            .map(Into::into)
+            .or_else(|_| {
+                Ok(follow
+                    .follow_props
+                    .actor_object::<Person>()?
+                    .object_props
+                    .id_string()?) as Result<String>
+            })?;
+        let from = User::from_url(conn, &from_id)?;
+        match User::from_url(conn, follow.follow_props.object.as_str()?) {
             Ok(user) => Follow::accept_follow(conn, &from, &user, follow, from.id, user.id),
             Err(_) => {
-                let blog = Blog::from_url(
-                    conn,
-                    follow
-                        .follow_props
-                        .object
-                        .as_str()?,
-                )?;
+                let blog = Blog::from_url(conn, follow.follow_props.object.as_str()?)?;
                 Follow::accept_follow(conn, &from, &blog, follow, from.id, blog.id)
             }
         }
@@ -160,7 +144,8 @@ impl Notify<Connection> for Follow {
                 object_id: self.id,
                 user_id: self.following_id,
             },
-        ).map(|_| ())
+        )
+        .map(|_| ())
     }
 }
 
@@ -168,21 +153,16 @@ impl Deletable<Connection, Undo> for Follow {
     type Error = Error;
 
     fn delete(&self, conn: &Connection) -> Result<Undo> {
-        diesel::delete(self)
-            .execute(conn)?;
+        diesel::delete(self).execute(conn)?;
 
         // delete associated notification if any
         if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
-            diesel::delete(&notif)
-                .execute(conn)?;
+            diesel::delete(&notif).execute(conn)?;
         }
 
         let mut undo = Undo::default();
         undo.undo_props
-            .set_actor_link(
-                User::get(conn, self.follower_id)?
-                    .into_id(),
-            )?;
+            .set_actor_link(User::get(conn, self.follower_id)?.into_id())?;
         undo.object_props
             .set_id_string(format!("{}/undo", self.ap_url))?;
         undo.undo_props
@@ -209,8 +189,8 @@ impl IntoId for Follow {
 
 #[cfg(test)]
 mod tests {
-    use diesel::Connection;
     use super::*;
+    use diesel::Connection;
     use tests::db;
     use users::tests as user_tests;
 
@@ -219,18 +199,29 @@ mod tests {
         let conn = db();
         conn.test_transaction::<_, (), _>(|| {
             let users = user_tests::fill_database(&conn);
-            let follow = Follow::insert(&conn, NewFollow {
-                follower_id: users[0].id,
-                following_id: users[1].id,
-                ap_url: String::new(),
-            }).expect("Couldn't insert new follow");
-            assert_eq!(follow.ap_url, format!("https://{}/follows/{}", *BASE_URL, follow.id));
+            let follow = Follow::insert(
+                &conn,
+                NewFollow {
+                    follower_id: users[0].id,
+                    following_id: users[1].id,
+                    ap_url: String::new(),
+                },
+            )
+            .expect("Couldn't insert new follow");
+            assert_eq!(
+                follow.ap_url,
+                format!("https://{}/follows/{}", CONFIG.base_url, follow.id)
+            );
 
-            let follow = Follow::insert(&conn, NewFollow {
-                follower_id: users[1].id,
-                following_id: users[0].id,
-                ap_url: String::from("https://some.url/"),
-            }).expect("Couldn't insert new follow");
+            let follow = Follow::insert(
+                &conn,
+                NewFollow {
+                    follower_id: users[1].id,
+                    following_id: users[0].id,
+                    ap_url: String::from("https://some.url/"),
+                },
+            )
+            .expect("Couldn't insert new follow");
             assert_eq!(follow.ap_url, String::from("https://some.url/"));
             Ok(())
         });

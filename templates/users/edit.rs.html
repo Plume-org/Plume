@@ -10,7 +10,7 @@
     @if let Some(u) = ctx.2.clone() {
         <h1>@i18n!(ctx.1, "Your Profile")</h1>
         <p>
-            @i18n!(ctx.1, "To change your avatar, upload it in your gallery and select from there.")
+            @i18n!(ctx.1, "To change your avatar, upload it to your gallery and then select from there.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload an avatar")</a>
         </p>
         <form method="post" action="@uri!(user::update: _name = u.username.clone())">
@@ -19,7 +19,8 @@
 
             @input!(ctx.1, display_name (text), "Display name", form, errors.clone())
             @input!(ctx.1, email (text), "Email", form, errors.clone())
-            @input!(ctx.1, summary (text), "Summary", form, errors)
+            <label for="summary">@i18n!(ctx.1, "Summary")</label>
+            <textarea id="summary" name="summary">@form.summary</textarea>
 
             <input type="submit" value="@i18n!(ctx.1, "Update account")"/>
         </form>

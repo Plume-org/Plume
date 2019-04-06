@@ -5,20 +5,20 @@
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, followed: Vec<User>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "{0}'s subscriptions'"; user.name()), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "{0}'s subscriptions"; user.name()), {}, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
-        (&uri!(user::details: name = &user.fqn).to_string(), i18n!(ctx.1, "Articles"), true),
+        (&uri!(user::details: name = &user.fqn).to_string(), i18n!(ctx.1, "Articles"), false),
         (&uri!(user::followers: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscribers"), false),
-        (&uri!(user::followed: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscriptions"), false)
+        (&uri!(user::followed: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscriptions"), true)
     ])
 
     <div class="cards">
         @for follow in followed {
             <div class="card">
                 <h3><a href="@uri!(user::details: name = &follow.fqn)">@follow.name()</a> <small>@format!("@{}", &follow.fqn)</small></h3>
-                <main><p>@Html(follow.summary)</p></main>
+                <main><p>@Html(follow.summary_html)</p></main>
             </div>
         }
     </div>

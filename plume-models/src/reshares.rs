@@ -40,7 +40,11 @@ impl Reshare {
         post_id as i32
     );
 
-    pub fn get_recents_for_author(conn: &Connection, user: &User, limit: i64) -> Result<Vec<Reshare>> {
+    pub fn get_recents_for_author(
+        conn: &Connection,
+        user: &User,
+        limit: i64,
+    ) -> Result<Vec<Reshare>> {
         reshares::table
             .filter(reshares::user_id.eq(user.id))
             .order(reshares::creation_date.desc())
@@ -63,12 +67,10 @@ impl Reshare {
             .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
         act.announce_props
             .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
-        act.object_props
-            .set_id_string(self.ap_url.clone())?;
+        act.object_props.set_id_string(self.ap_url.clone())?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
 
         Ok(act)
     }
@@ -78,29 +80,15 @@ impl FromActivity<Announce, Connection> for Reshare {
     type Error = Error;
 
     fn from_activity(conn: &Connection, announce: Announce, _actor: Id) -> Result<Reshare> {
-        let user = User::from_url(
-            conn,
-            announce
-                .announce_props
-                .actor_link::<Id>()?
-                .as_ref(),
-        )?;
-        let post = Post::find_by_ap_url(
-            conn,
-            announce
-                .announce_props
-                .object_link::<Id>()?
-                .as_ref(),
-        )?;
+        let user = User::from_url(conn, announce.announce_props.actor_link::<Id>()?.as_ref())?;
+        let post =
+            Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>()?.as_ref())?;
         let reshare = Reshare::insert(
             conn,
             NewReshare {
                 post_id: post.id,
                 user_id: user.id,
-                ap_url: announce
-                    .object_props
-                    .id_string()
-                    .unwrap_or_default(),
+                ap_url: announce.object_props.id_string().unwrap_or_default(),
             },
         )?;
         reshare.notify(conn)?;
@@ -131,26 +119,22 @@ impl Deletable<Connection, Undo> for Reshare {
     type Error = Error;
 
     fn delete(&self, conn: &Connection) -> Result<Undo> {
-        diesel::delete(self)
-            .execute(conn)?;
+        diesel::delete(self).execute(conn)?;
 
         // delete associated notification if any
         if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
-            diesel::delete(&notif)
-                .execute(conn)?;
+            diesel::delete(&notif).execute(conn)?;
         }
 
         let mut act = Undo::default();
         act.undo_props
             .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.undo_props
-            .set_object_object(self.to_activity(conn)?)?;
+        act.undo_props.set_object_object(self.to_activity(conn)?)?;
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props
-            .set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec::<Id>(vec![])?;
 
         Ok(act)
     }
@@ -172,7 +156,7 @@ impl NewReshare {
         NewReshare {
             post_id: p.id,
             user_id: u.id,
-            ap_url
+            ap_url,
         }
     }
 }

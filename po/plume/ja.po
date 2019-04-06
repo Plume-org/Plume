@@ -252,6 +252,7 @@ msgstr "Plume {0} を実行中"
 msgid "Edit your account"
 msgstr "アカウントを編集"
 
+#, fuzzy
 msgid "Your Profile"
 msgstr "プロフィール"
 
@@ -272,6 +273,7 @@ msgstr "メールアドレス"
 msgid "Summary"
 msgstr "概要"
 
+#, fuzzy
 msgid "Update account"
 msgstr "アカウントを更新"
 

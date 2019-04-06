@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Weblate 3.2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} la inn en kommentar til artikkelen din"
 
 # src/template_utils.rs:35
@@ -38,31 +38,44 @@ msgstr "{0} la inn en kommentar til artikkelen din"
 msgid "{0}'s avatar"
 msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to create a new blog"
-msgstr "Du må være logget inn for å lage en ny blogg"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not allowed to delete this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
-msgstr "Du må være logget inn for å like et innlegg"
+msgid "You are not allowed to edit this blog."
+msgstr "Du er ikke denne bloggens forfatter."
 
-msgid "You need to be logged in order to see your notifications"
-msgstr "Du må være logget inn for å se meldingene dine"
+#, fuzzy
+msgid "You can't use this media as a blog icon."
+msgstr "Du er ikke denne bloggens forfatter."
+
+#, fuzzy
+msgid "You can't use this media as a blog banner."
+msgstr "Du er ikke denne bloggens forfatter."
+
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
+
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 # src/routes/posts.rs:81
 msgid "This post isn't published yet."
 msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to write a new post"
-msgstr "Du må være logget inn for å skrive et nytt innlegg"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author of this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
 msgid "New post"
@@ -72,9 +85,9 @@ msgstr "Nytt innlegg"
 msgid "Edit {0}"
 msgstr "Kommentér \"{0}\""
 
-#, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "Du må være logget inn for å se meldingene dine"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -92,17 +105,17 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to access your dashboard"
-msgstr "Du må være logget inn for å redigere profilen din"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "Du må være logget inn for å følge noen"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to edit your profile"
-msgstr "Du må være logget inn for å redigere profilen din"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -145,7 +158,7 @@ msgstr "Snakkerom"
 msgid "Administration"
 msgstr "Administrasjon"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"
@@ -193,7 +206,7 @@ msgstr ""
 msgid "Articles from {}"
 msgstr "Om {0}"
 
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -236,7 +249,7 @@ msgstr ""
 msgid "Who wrote <em>{0}</em> articles"
 msgstr ""
 
-msgid "And connected to <em>{0}</em> other instances"
+msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 #, fuzzy
@@ -253,7 +266,8 @@ msgstr "Rediger kontoen din"
 msgid "Your Profile"
 msgstr "Din profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -382,6 +396,9 @@ msgstr "Lang beskrivelse"
 msgid "Respond"
 msgstr "Svar"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "Siste artikler"
@@ -394,13 +411,13 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume er et desentralisert bloggsystem."
 
 #, fuzzy
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "Forfattere kan administrere forskjellige blogger fra en unik webside."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "Artiklene er også synlige på andre websider som kjører Plume, og du kan "
 "interagere med dem direkte fra andre plattformer som f.eks. Mastodon."
@@ -410,6 +427,13 @@ msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Les reglene"
+
+msgid "None"
+msgstr ""
+
+#, fuzzy
+msgid "No description"
+msgstr "Lang beskrivelse"
 
 msgid "View all"
 msgstr ""
@@ -525,7 +549,7 @@ msgstr ""
 msgid "No result for your query"
 msgstr ""
 
-msgid "No more result for your query"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Reset your password"
@@ -555,15 +579,23 @@ msgstr ""
 msgid "E-mail"
 msgstr "Epost"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "Passord"
 
-msgid "Login"
+#, fuzzy
+msgid "Log in"
 msgstr "Logg inn"
 
 #, fuzzy
-msgid "Username or email"
+msgid "Username, or email"
 msgstr "Brukernavn eller epost"
+
+msgid "Publish"
+msgstr ""
+
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
 
 #, fuzzy
 msgid "Subtitle"
@@ -573,8 +605,8 @@ msgid "Content"
 msgstr "Innhold"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -596,9 +628,6 @@ msgstr ""
 #, fuzzy
 msgid "Illustration"
 msgstr "Administrasjon"
-
-msgid "None"
-msgstr ""
 
 msgid "This is a draft, don't publish it yet."
 msgstr ""
@@ -656,7 +685,7 @@ msgid "Boost"
 msgstr ""
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
 
@@ -718,6 +747,38 @@ msgstr ""
 "til oss."
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "Kommentér \"{0}\""
+
+#, fuzzy
+msgid "Description"
+msgstr "Lang beskrivelse"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "Din kommentar"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Opprett blogg"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+#, fuzzy
 msgid "New Blog"
 msgstr "Ny blogg"
 
@@ -727,29 +788,20 @@ msgstr "Lag en ny blogg"
 msgid "Create blog"
 msgstr "Opprett blogg"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Ny artikkel"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Én forfatter av denne bloggen: "
 msgstr[1] "{0} forfattere av denne bloggen: "
 
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Én artikkel i denne bloggen"
-msgstr[1] "{0} artikler i denne bloggen"
-
 msgid "No posts to see here yet."
 msgstr "Ingen innlegg å vise enda."
-
-msgid "New article"
-msgstr "Ny artikkel"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr ""
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -777,10 +829,6 @@ msgstr ""
 msgid "Media upload"
 msgstr ""
 
-#, fuzzy
-msgid "Description"
-msgstr "Lang beskrivelse"
-
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
 
@@ -806,8 +854,48 @@ msgstr "Du kan bruke markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr ""
+
+#~ msgid "Login"
+#~ msgstr "Logg inn"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "Du må være logget inn for å lage en ny blogg"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "Du må være logget inn for å like et innlegg"
+
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "Du må være logget inn for å se meldingene dine"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "Du må være logget inn for å skrive et nytt innlegg"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Du må være logget inn for å se meldingene dine"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "Du må være logget inn for å redigere profilen din"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "Du må være logget inn for å følge noen"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "Du må være logget inn for å redigere profilen din"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Én artikkel i denne bloggen"
+#~ msgstr[1] "{0} artikler i denne bloggen"
 
 #, fuzzy
 #~ msgid "{0}'s followers"

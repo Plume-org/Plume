@@ -5,7 +5,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_api::apps::AppEndpoint;
 use plume_common::utils::random_hex;
 use schema::apps;
-use {Connection, Error, Result, ApiResult};
+use {ApiResult, Connection, Error, Result};
 
 #[derive(Clone, Queryable)]
 pub struct App {
@@ -52,7 +52,8 @@ impl Provider<Connection> for App {
                 redirect_uri: data.redirect_uri,
                 website: data.website,
             },
-        ).map_err(|_| ApiError::NotFound("Couldn't register app".into()))?;
+        )
+        .map_err(|_| ApiError::NotFound("Couldn't register app".into()))?;
 
         Ok(AppEndpoint {
             id: Some(app.id),
