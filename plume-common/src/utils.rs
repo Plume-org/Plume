@@ -120,7 +120,7 @@ fn process_image<'a, 'b>(
         {cw}
     </span>
   <img src="{url}" alt=""#,
-                            id = id,
+                            id = random_hex(),
                             cw = cw.unwrap(),
                             url = url
                         )))
