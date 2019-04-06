@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-05 06:01\n"
+"PO-Revision-Date: 2019-04-06 10:01\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -551,7 +551,7 @@ msgstr "Nahrát média"
 
 # src/template_utils.rs:217
 msgid "Tags, separated by commas"
-msgstr ""
+msgstr "Tagy, oddělené čárkami"
 
 # src/template_utils.rs:217
 msgid "License"
@@ -646,7 +646,7 @@ msgid "Page not found"
 msgstr "Stránka nenalezena"
 
 msgid "We couldn't find this page."
-msgstr ""
+msgstr "Tu stránku jsme nemohli najít."
 
 msgid "The link that led you here may be broken."
 msgstr ""
