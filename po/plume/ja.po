@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Weblate 3.2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{{ data }} があなたの記事にコメントしました"
 
 # src/template_utils.rs:35
@@ -38,26 +38,43 @@ msgstr "{{ data }} があなたの記事をブーストしました"
 msgid "{0}'s avatar"
 msgstr "{{ name}} のアバター"
 
-msgid "You need to be logged in order to create a new blog"
-msgstr "新しいブログを作成するにはログインする必要があります"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not allowed to delete this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
-msgid "You need to be logged in order to like a post"
-msgstr "投稿をいいねするにはログインする必要があります"
+#, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "あなたはこのブログの作者ではありません。"
 
-msgid "You need to be logged in order to see your notifications"
-msgstr "通知を表示するにはログインする必要があります"
+#, fuzzy
+msgid "You can't use this media as a blog icon."
+msgstr "あなたはこのブログの作者ではありません。"
+
+#, fuzzy
+msgid "You can't use this media as a blog banner."
+msgstr "あなたはこのブログの作者ではありません。"
+
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
+
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "この投稿はまだ公開されていません。"
 
-msgid "You need to be logged in order to write a new post"
-msgstr "新しい記事を書くにはログインする必要があります"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author of this blog."
 msgstr "あなたはこのブログの作者ではありません。"
 
 msgid "New post"
@@ -67,9 +84,9 @@ msgstr "新しい記事"
 msgid "Edit {0}"
 msgstr "編集"
 
-#, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "投稿をいいねするにはログインする必要があります"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -87,15 +104,17 @@ msgstr "パスワードは空にできません"
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
-msgstr "ダッシュボードにアクセスするにはログインする必要があります"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "他の人をフォローするにはログインする必要があります"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to edit your profile"
-msgstr "自分のプロフィールを編集するにはログインする必要があります"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -136,7 +155,7 @@ msgstr "Matrix　ルーム"
 msgid "Administration"
 msgstr "管理"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"
@@ -181,7 +200,7 @@ msgid "Articles from {}"
 msgstr "{{ instance.name }} の記事"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 "ここにはまだ表示できるものがありません。他の人をもっとフォローしてみてくださ"
 "い。"
@@ -237,10 +256,12 @@ msgstr "Plume {{ version }} を実行中"
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
 
+#, fuzzy
 msgid "Your Profile"
 msgstr "自分のプロフィール"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -257,6 +278,7 @@ msgstr "メールアドレス"
 msgid "Summary"
 msgstr "要約"
 
+#, fuzzy
 msgid "Update account"
 msgstr "アカウントをアップデート"
 
@@ -367,6 +389,9 @@ msgstr "説明"
 msgid "Respond"
 msgstr "返信"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "このブログを削除"
@@ -377,12 +402,14 @@ msgstr "Plume とは？"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume は分散型ブログエンジンです。"
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラット"
 "フォームから直接記事と関わることができます。"
@@ -392,6 +419,13 @@ msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
+
+msgid "None"
+msgstr "なし"
+
+#, fuzzy
+msgid "No description"
+msgstr "長い説明"
 
 msgid "View all"
 msgstr "すべて表示"
@@ -494,8 +528,9 @@ msgstr ""
 msgid "No result for your query"
 msgstr "ギャラリーを参照"
 
-msgid "No more result for your query"
-msgstr ""
+#, fuzzy
+msgid "No more results for your query"
+msgstr "ギャラリーを参照"
 
 msgid "Reset your password"
 msgstr ""
@@ -524,8 +559,9 @@ msgstr ""
 msgid "E-mail"
 msgstr "メールアドレス"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "パスワード"
 
 msgid "Login"
 msgstr "ログイン"
@@ -543,8 +579,8 @@ msgid "Content"
 msgstr "コメント"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -565,9 +601,6 @@ msgstr ""
 
 msgid "Illustration"
 msgstr "図"
-
-msgid "None"
-msgstr "なし"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "これは下書きなので、まだ公開しないでください。"
@@ -621,7 +654,8 @@ msgstr "もうこれをブーストしたくありません"
 msgid "Boost"
 msgstr "ブースト"
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "この記事と関わるにはログインするか Fediverse アカウントを使用してください"
 
@@ -682,6 +716,39 @@ msgstr ""
 "申し訳ありません。これがバグだと思われる場合は、問題を報告してください。"
 
 #, fuzzy
+msgid "Edit \"{}\""
+msgstr "編集"
+
+msgid "Description"
+msgstr "説明"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "アップロード"
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "ブログを作成"
+
+#, fuzzy
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "十分ご注意ください。ここで行ったすべての操作は取り消しできません。"
+
+#, fuzzy
+msgid "Permanently delete this blog"
+msgstr "このブログを削除"
+
+#, fuzzy
 msgid "New Blog"
 msgstr "新しいブログ"
 
@@ -691,29 +758,19 @@ msgstr "ブログを作成"
 msgid "Create blog"
 msgstr "ブログを作成"
 
-#, fuzzy
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "ブログに {0} 人の作成者がいます: "
-
-#, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "ブログに {0} 件の記事があります"
-
-msgid "No posts to see here yet."
-msgstr "ここにはまだ表示できる投稿がありません。"
+msgid "{}'s icon"
+msgstr ""
 
 msgid "New article"
 msgstr "新しい記事"
 
 #, fuzzy
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "十分ご注意ください。ここで行ったすべての操作は取り消しできません。"
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "ブログに {0} 人の作成者がいます: "
 
-#, fuzzy
-msgid "Permanently delete this blog"
-msgstr "このブログを削除"
+msgid "No posts to see here yet."
+msgstr "ここにはまだ表示できる投稿がありません。"
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -743,9 +800,6 @@ msgstr "メディアの詳細"
 msgid "Media upload"
 msgstr "メディアのアップロード"
 
-msgid "Description"
-msgstr "説明"
-
 #, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "視覚的に障害のある方や認可の際に便利です"
@@ -774,8 +828,40 @@ msgstr "Markdown コード"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "このメディアを記事に挿入するには、自分の記事にコピーしてください。"
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "新しいブログを作成するにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "投稿をいいねするにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "通知を表示するにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "新しい記事を書くにはログインする必要があります"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "投稿をいいねするにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "ダッシュボードにアクセスするにはログインする必要があります"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "他の人をフォローするにはログインする必要があります"
+
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "自分のプロフィールを編集するにはログインする必要があります"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "ブログに {0} 件の記事があります"
 
 #~ msgid "{0}'s followers"
 #~ msgstr "{{ count }} フォロワー"

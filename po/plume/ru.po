@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 
 #, fuzzy
-msgid "{0} commented your article."
+msgid "{0} commented on your article."
 msgstr "{0} прокомментировал(а) вашу статью"
 
 # src/template_utils.rs:35
@@ -37,31 +37,43 @@ msgstr "{0} продвинул(а) вашу статью"
 msgid "{0}'s avatar"
 msgstr "Аватар {0}"
 
-#, fuzzy
-msgid "You need to be logged in order to create a new blog"
-msgstr "Вы должны войти чтобы написать новый пост"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "You are not allowed to delete this blog."
 msgstr "Вы не автор этого блога."
 
 #, fuzzy
-msgid "You need to be logged in order to like a post"
-msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
+msgid "You are not allowed to edit this blog."
+msgstr "Вы не автор этого блога."
 
 #, fuzzy
-msgid "You need to be logged in order to see your notifications"
-msgstr "Вы должны войти чтобы просматривать ваши уведомления"
+msgid "You can't use this media as a blog icon."
+msgstr "Вы не автор этого блога."
+
+#, fuzzy
+msgid "You can't use this media as a blog banner."
+msgstr "Вы не автор этого блога."
+
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
+
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "Этот пост ещё не опубликован."
 
-#, fuzzy
-msgid "You need to be logged in order to write a new post"
-msgstr "Вы должны войти чтобы написать новый пост"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
-msgid "You are not author in this blog."
+msgid "You are not an author of this blog."
 msgstr "Вы не автор этого блога."
 
 msgid "New post"
@@ -71,9 +83,9 @@ msgstr "Новый пост"
 msgid "Edit {0}"
 msgstr "Редактировать"
 
-#, fuzzy
-msgid "You need to be logged in order to reshare a post"
-msgstr "Вы должны войти чтобы просматривать ваши уведомления"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -91,17 +103,17 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to access your dashboard"
-msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "Вы должны войти чтобы подписаться на кого-либо"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to edit your profile"
-msgstr "Вы должны войти чтобы редактировать ваш профиль"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -142,7 +154,7 @@ msgstr "Комната в Matrix"
 msgid "Administration"
 msgstr "Администрирование"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr ""
 
 #, fuzzy
@@ -194,7 +206,7 @@ msgid "Articles from {}"
 msgstr "Статьи с {0}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 "Пока что здесь ничего нет. Попробуйте подписаться на большее число людей."
 
@@ -252,7 +264,8 @@ msgstr "Редактировать ваш аккаунт"
 msgid "Your Profile"
 msgstr "Ваш профиль"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -384,6 +397,9 @@ msgstr "Описание"
 msgid "Respond"
 msgstr "Ответить"
 
+msgid "Are you sure?"
+msgstr ""
+
 #, fuzzy
 msgid "Delete this comment"
 msgstr "Удалить этот блог"
@@ -395,13 +411,13 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume это децентрализованный движок для блоггинга."
 
 #, fuzzy
-msgid "Authors can manage various blogs from an unique website."
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "Авторы могут управлять различными блогами с одного сайта."
 
 #, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "Статьи также видны на других сайтах Plume и вы можете взаимодействовать с "
 "ними напрямую из других платформ, таких как Mastodon."
@@ -411,6 +427,13 @@ msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Прочитать подробные правила"
+
+msgid "None"
+msgstr "Нет"
+
+#, fuzzy
+msgid "No description"
+msgstr "Длинное описание"
 
 msgid "View all"
 msgstr "Показать все"
@@ -505,8 +528,9 @@ msgstr ""
 msgid "No result for your query"
 msgstr "Перейти в вашу галерею"
 
-msgid "No more result for your query"
-msgstr ""
+#, fuzzy
+msgid "No more results for your query"
+msgstr "Перейти в вашу галерею"
 
 msgid "Reset your password"
 msgstr ""
@@ -535,8 +559,9 @@ msgstr ""
 msgid "E-mail"
 msgstr "Электронная почта"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "Пароль"
 
 msgid "Login"
 msgstr ""
@@ -555,8 +580,8 @@ msgid "Content"
 msgstr "Содержимое"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -577,9 +602,6 @@ msgstr "Оставьте пустым если нет"
 
 msgid "Illustration"
 msgstr "Иллюстрация"
-
-msgid "None"
-msgstr "Нет"
 
 #, fuzzy
 msgid "This is a draft, don't publish it yet."
@@ -639,7 +661,7 @@ msgid "Boost"
 msgstr "Продвинуть"
 
 #, fuzzy
-msgid "Login or use your Fediverse account to interact with this article"
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Войдите или используйте свой Fediverse-аккаунт, чтобы взаимодействовать с "
 "этой статьёй"
@@ -707,34 +729,29 @@ msgstr ""
 "ней."
 
 #, fuzzy
-msgid "New Blog"
-msgstr "Новый блог"
+msgid "Edit \"{}\""
+msgstr "Редактировать"
 
-msgid "Create a blog"
-msgstr "Создать блог"
+msgid "Description"
+msgstr "Описание"
 
-msgid "Create blog"
-msgstr "Создать блог"
-
-#, fuzzy
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Один автор в этом блоге: "
-msgstr[1] "{0} автора в этом блоге: "
-msgstr[2] "{0} авторов в этом блоге: "
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
 
 #, fuzzy
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Один пост в этом блоге"
-msgstr[1] "{0} поста в этом блоге"
-msgstr[2] "{0} постов в этом блоге"
+msgid "Upload images"
+msgstr "Загрузить"
 
-msgid "No posts to see here yet."
-msgstr "Здесь пока нет постов."
+msgid "Blog icon"
+msgstr ""
 
-msgid "New article"
-msgstr "Новая статья"
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Создать блог"
 
 #, fuzzy
 msgid "Be very careful, any action taken here can't be reversed."
@@ -744,6 +761,32 @@ msgstr ""
 #, fuzzy
 msgid "Permanently delete this blog"
 msgstr "Удалить этот блог"
+
+#, fuzzy
+msgid "New Blog"
+msgstr "Новый блог"
+
+msgid "Create a blog"
+msgstr "Создать блог"
+
+msgid "Create blog"
+msgstr "Создать блог"
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Новая статья"
+
+#, fuzzy
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Один автор в этом блоге: "
+msgstr[1] "{0} автора в этом блоге: "
+msgstr[2] "{0} авторов в этом блоге: "
+
+msgid "No posts to see here yet."
+msgstr "Здесь пока нет постов."
 
 #, fuzzy
 msgid "Articles tagged \"{0}\""
@@ -774,9 +817,6 @@ msgstr "Детали медиафайла"
 msgid "Media upload"
 msgstr "Загрузка медиафайлов"
 
-msgid "Description"
-msgstr "Описание"
-
 #, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr "Описание для лиц с нарушениями зрения и информация о лицензии"
@@ -805,8 +845,47 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 #, fuzzy
-msgid "Use as avatar"
+msgid "Use as an avatar"
 msgstr "Использовать как аватар"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "Вы должны войти чтобы написать новый пост"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "Вы должны войти чтобы отмечать понравившиеся посты"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "Вы должны войти чтобы просматривать ваши уведомления"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "Вы должны войти чтобы написать новый пост"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Вы должны войти чтобы просматривать ваши уведомления"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "Вы должны войти чтобы получить доступ к вашей панели управления"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "Вы должны войти чтобы подписаться на кого-либо"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "Вы должны войти чтобы редактировать ваш профиль"
+
+#, fuzzy
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Один пост в этом блоге"
+#~ msgstr[1] "{0} поста в этом блоге"
+#~ msgstr[2] "{0} постов в этом блоге"
 
 #, fuzzy
 #~ msgid "{0}'s followers"

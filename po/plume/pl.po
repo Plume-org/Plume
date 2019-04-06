@@ -14,7 +14,8 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-msgid "{0} commented your article."
+#, fuzzy
+msgid "{0} commented on your article."
 msgstr "{0} skomentował(a) Twój artykuł."
 
 # src/template_utils.rs:35
@@ -33,25 +34,42 @@ msgstr "{0} podbił(a) Twój artykuł."
 msgid "{0}'s avatar"
 msgstr "Awatar {0}"
 
-msgid "You need to be logged in order to create a new blog"
-msgstr "Musisz się zalogować, aby utworzyć bloga"
+# src/routes/blogs.rs:70
+msgid "To create a new blog, you need to be logged in"
+msgstr ""
 
 msgid "You are not allowed to delete this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
-msgid "You need to be logged in order to like a post"
-msgstr "Musisz się zalogować, aby polubić wpis"
+#, fuzzy
+msgid "You are not allowed to edit this blog."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
-msgid "You need to be logged in order to see your notifications"
-msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
+#, fuzzy
+msgid "You can't use this media as a blog icon."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+#, fuzzy
+msgid "You can't use this media as a blog banner."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+# src/routes/likes.rs:47
+msgid "To like a post, you need to be logged in"
+msgstr ""
+
+# src/routes/notifications.rs:29
+msgid "To see your notifications, you need to be logged in"
+msgstr ""
 
 msgid "This post isn't published yet."
 msgstr "Ten wpis nie został jeszcze opublikowany."
 
-msgid "You need to be logged in order to write a new post"
-msgstr "Musisz się zalogować, aby utworzyć wpis"
+# src/routes/posts.rs:120
+msgid "To write a new post, you need to be logged in"
+msgstr ""
 
-msgid "You are not author in this blog."
+#, fuzzy
+msgid "You are not an author of this blog."
 msgstr "Nie jesteś autorem tego bloga."
 
 msgid "New post"
@@ -60,8 +78,9 @@ msgstr "Nowy wpis"
 msgid "Edit {0}"
 msgstr "Edytuj {0}"
 
-msgid "You need to be logged in order to reshare a post"
-msgstr "Musisz się zalogować, aby udostępnić wpis"
+# src/routes/reshares.rs:47
+msgid "To reshare a post, you need to be logged in"
+msgstr ""
 
 #, fuzzy
 msgid "Password reset"
@@ -79,15 +98,17 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-msgid "You need to be logged in order to access your dashboard"
-msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
+# src/routes/user.rs:148
+msgid "To access your dashboard, you need to be logged in"
+msgstr ""
 
-#, fuzzy
-msgid "You need to be logged in order to subscribe to someone"
-msgstr "Musisz się zalogować, aby zacząć obserwować innych"
+# src/routes/user.rs:187
+msgid "To subscribe to someone, you need to be logged in"
+msgstr ""
 
-msgid "You need to be logged in order to edit your profile"
-msgstr "Musisz się zalogować, aby móc edytować swój profil"
+# src/routes/user.rs:287
+msgid "To edit your profile, you need to be logged in"
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"
@@ -128,7 +149,7 @@ msgstr "Pokój Matrix.org"
 msgid "Administration"
 msgstr "Administracja"
 
-msgid "Welcome on {}"
+msgid "Welcome to {}"
 msgstr "Witamy na {}"
 
 msgid "Latest articles"
@@ -171,7 +192,7 @@ msgid "Articles from {}"
 msgstr "Artykuły z {}"
 
 #, fuzzy
-msgid "Nothing to see here yet. Try to subscribe to more people."
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr "Nie ma tutaj niczego. Spróbuj zacząć śledzić więcej osób."
 
 msgid "Name"
@@ -222,7 +243,8 @@ msgstr "Edytuj swoje konto"
 msgid "Your Profile"
 msgstr "Twój profil"
 
-msgid "To change your avatar, upload it in your gallery and select from there."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 #, fuzzy
@@ -345,6 +367,9 @@ msgstr "Opis"
 msgid "Respond"
 msgstr "Odpowiedz"
 
+msgid "Are you sure?"
+msgstr ""
+
 msgid "Delete this comment"
 msgstr "Usuń ten komentarz"
 
@@ -354,12 +379,14 @@ msgstr "Czym jest Plume?"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume jest zdecentralizowanym silnikiem blogowym."
 
-msgid "Authors can manage various blogs from an unique website."
+#, fuzzy
+msgid "Authors can manage various blogs, each as an unique website."
 msgstr "Autorzy mogą zarządzać blogami ze specjalnej strony."
 
+#, fuzzy
 msgid ""
-"Articles are also visible on other Plume websites, and you can interact with "
-"them directly from other platforms like Mastodon."
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
 msgstr ""
 "Artykuły są widoczne na innych stronach Plume, możesz też wejść w interakcje "
 "z nimi na platformach takich jak Mastodon."
@@ -369,6 +396,13 @@ msgstr "Używana przez <em>{0}</em> użytkowników"
 
 msgid "Read the detailed rules"
 msgstr "Przeczytaj szczegółowe zasady"
+
+msgid "None"
+msgstr "Brak"
+
+#, fuzzy
+msgid "No description"
+msgstr "Szczegółowy opis"
 
 msgid "View all"
 msgstr "Zobacz wszystko"
@@ -468,7 +502,8 @@ msgstr "Wyniki wyszukiwania"
 msgid "No result for your query"
 msgstr "Brak wyników dla tego kryterium"
 
-msgid "No more result for your query"
+#, fuzzy
+msgid "No more results for your query"
 msgstr "Nie ma więcej wyników pasujących do tych kryteriów"
 
 msgid "Reset your password"
@@ -498,8 +533,9 @@ msgstr ""
 msgid "E-mail"
 msgstr "Adres e-mail"
 
-msgid "Send reset link"
-msgstr ""
+#, fuzzy
+msgid "Send password reset link"
+msgstr "Hasło"
 
 msgid "Login"
 msgstr "Zaloguj się"
@@ -517,8 +553,8 @@ msgid "Content"
 msgstr "Zawartość"
 
 msgid ""
-"You can upload medias to your gallery, and copy their Markdown code in your "
-"articles to insert them."
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 #, fuzzy
@@ -538,9 +574,6 @@ msgstr "Pozostawienie pustego jest równe zastrzeżeniu wszystkich praw"
 
 msgid "Illustration"
 msgstr "Ilustracja"
-
-msgid "None"
-msgstr "Brak"
 
 msgid "This is a draft, don't publish it yet."
 msgstr "To jest szkic, nie publikuj go jeszcze."
@@ -593,7 +626,8 @@ msgstr "Nie chcę tego podbijać"
 msgid "Boost"
 msgstr "Podbij"
 
-msgid "Login or use your Fediverse account to interact with this article"
+#, fuzzy
+msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 "Zaloguj się lub użyj konta w Fediwersum, aby wejść w interakcje z tym "
 "artykułem"
@@ -653,6 +687,38 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 "Przepraszamy. Jeżeli uważasz że wystąpił błąd, prosimy o zgłoszenie go."
 
+#, fuzzy
+msgid "Edit \"{}\""
+msgstr "Edytuj {0}"
+
+msgid "Description"
+msgstr "Opis"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+#, fuzzy
+msgid "Upload images"
+msgstr "Wyślij"
+
+#, fuzzy
+msgid "Blog icon"
+msgstr "Tytuł bloga"
+
+msgid "Blog banner"
+msgstr ""
+
+#, fuzzy
+msgid "Update blog"
+msgstr "Utwórz blog"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
+
+msgid "Permanently delete this blog"
+msgstr "Bezpowrotnie usuń ten blog"
+
 msgid "New Blog"
 msgstr "Nowy blog"
 
@@ -662,29 +728,20 @@ msgstr "Utwórz blog"
 msgid "Create blog"
 msgstr "Utwórz blog"
 
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Nowy artykuł"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Ten blog ma jednego autora: "
 msgstr[1] "Ten blog ma {0} autorów: "
 msgstr[2] "Ten blog ma {0} autorów: "
 
-msgid "There's one article on this blog"
-msgid_plural "There are {0} articles on this blog"
-msgstr[0] "Jeden artykuł na tym blogu"
-msgstr[1] "{0} artykuły na tym blogu"
-msgstr[2] "{0} artykułów na tym blogu"
-
 msgid "No posts to see here yet."
 msgstr "Brak wpisów do wyświetlenia."
-
-msgid "New article"
-msgstr "Nowy artykuł"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
-
-msgid "Permanently delete this blog"
-msgstr "Bezpowrotnie usuń ten blog"
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artykuły oznaczone „{0}”"
@@ -712,9 +769,6 @@ msgstr "Szczegóły zawartości multimedialnej"
 msgid "Media upload"
 msgstr "Wysyłanie zawartości multimedialnej"
 
-msgid "Description"
-msgstr "Opis"
-
 msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
 "Przydatny dla osób z problemami ze wzrokiem oraz do umieszczenia informacji "
@@ -741,8 +795,40 @@ msgstr "Kod Markdown"
 msgid "Copy it into your articles, to insert this media:"
 msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialną:"
 
-msgid "Use as avatar"
+#, fuzzy
+msgid "Use as an avatar"
 msgstr "Użyj jako awataru"
+
+#~ msgid "You need to be logged in order to create a new blog"
+#~ msgstr "Musisz się zalogować, aby utworzyć bloga"
+
+#~ msgid "You need to be logged in order to like a post"
+#~ msgstr "Musisz się zalogować, aby polubić wpis"
+
+#~ msgid "You need to be logged in order to see your notifications"
+#~ msgstr "Musisz się zalogować, aby zobaczyć swoje powiadomienia"
+
+#~ msgid "You need to be logged in order to write a new post"
+#~ msgstr "Musisz się zalogować, aby utworzyć wpis"
+
+#~ msgid "You need to be logged in order to reshare a post"
+#~ msgstr "Musisz się zalogować, aby udostępnić wpis"
+
+#~ msgid "You need to be logged in order to access your dashboard"
+#~ msgstr "Musisz się zalogować, aby uzyskać dostęp do panelu"
+
+#, fuzzy
+#~ msgid "You need to be logged in order to subscribe to someone"
+#~ msgstr "Musisz się zalogować, aby zacząć obserwować innych"
+
+#~ msgid "You need to be logged in order to edit your profile"
+#~ msgstr "Musisz się zalogować, aby móc edytować swój profil"
+
+#~ msgid "There's one article on this blog"
+#~ msgid_plural "There are {0} articles on this blog"
+#~ msgstr[0] "Jeden artykuł na tym blogu"
+#~ msgstr[1] "{0} artykuły na tym blogu"
+#~ msgstr[2] "{0} artykułów na tym blogu"
 
 #~ msgid "{0}'s followers"
 #~ msgstr "Obserwujący {0}"

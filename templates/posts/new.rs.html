@@ -1,4 +1,5 @@
 @use templates::base;
+@use templates::partials::image_select;
 @use template_utils::*;
 @use validator::{ValidationErrors, ValidationErrorsKind};
 @use std::borrow::Cow;
@@ -27,14 +28,14 @@
         @input!(ctx.1, subtitle (optional text), "Subtitle", form, errors.clone(), "")
 
         @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("content") {
-            @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or(Cow::from("Unknown error")))
+            @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or_else(|| Cow::from("Unknown error")))
         }
 
         <label for="editor-content">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="editor-content" name="content" rows="20">@Html(&form.content)</textarea>
 	    <small id="editor-left">@content_len</small>
         <p>
-            @i18n!(ctx.1, "You can upload medias to your gallery, and copy their Markdown code in your articles to insert them.")
+            @i18n!(ctx.1, "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload media")</a>
         </p>
 
@@ -42,21 +43,7 @@
 
         @input!(ctx.1, license (optional text), "License", "Leave it empty to reserve all rights", form, errors, "")
 
-        <label for="cover">@i18n!(ctx.1, "Illustration")<small>@i18n!(ctx.1, "Optional")</small></label>
-        <select id="cover" name="cover">
-            <option value="none" @if form.cover.is_none() { selected }>@i18n!(ctx.1, "None")</option>
-            @for media in medias {
-                @if media.category() == MediaCategory::Image {
-                    <option value="@media.id" @if form.cover.map(|c| c == media.id).unwrap_or(false) { selected }>
-                        @if !media.alt_text.is_empty() {
-                            @media.alt_text
-                        } else {
-                            @media.content_warning.unwrap_or_default()
-                        }
-                    </option>
-                }
-            }
-        </select>
+        @:image_select(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias, form.cover)
 
         @if is_draft {
             <label for="draft">

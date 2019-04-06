@@ -89,13 +89,19 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
         }
 
         let mut parsed_header = headers[0].split(' ');
-        let auth_type = parsed_header.next()
-            .map_or_else(|| Outcome::Failure((Status::BadRequest, TokenError::NoType)), |t| Outcome::Success(t))?;
-        let val = parsed_header.next()
-            .map_or_else(|| Outcome::Failure((Status::BadRequest, TokenError::NoValue)), |t| Outcome::Success(t))?;
+        let auth_type = parsed_header.next().map_or_else(
+            || Outcome::Failure((Status::BadRequest, TokenError::NoType)),
+            Outcome::Success,
+        )?;
+        let val = parsed_header.next().map_or_else(
+            || Outcome::Failure((Status::BadRequest, TokenError::NoValue)),
+            Outcome::Success,
+        )?;
 
         if auth_type == "Bearer" {
-            let conn = request.guard::<DbConn>().map_failure(|_| (Status::InternalServerError, TokenError::DbError))?;
+            let conn = request
+                .guard::<DbConn>()
+                .map_failure(|_| (Status::InternalServerError, TokenError::DbError))?;
             if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
                 return Outcome::Success(token);
             }

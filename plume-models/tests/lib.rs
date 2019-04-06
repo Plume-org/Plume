@@ -5,7 +5,7 @@ extern crate diesel_migrations;
 extern crate plume_models;
 
 use diesel::Connection;
-use plume_models::{Connection as Conn, DATABASE_URL};
+use plume_models::{Connection as Conn, CONFIG};
 
 #[cfg(feature = "sqlite")]
 embed_migrations!("../migrations/sqlite");
@@ -14,7 +14,8 @@ embed_migrations!("../migrations/sqlite");
 embed_migrations!("../migrations/postgres");
 
 fn db() -> Conn {
-    let conn = Conn::establish(&*DATABASE_URL.as_str()).expect("Couldn't connect to the database");
+    let conn =
+        Conn::establish(CONFIG.database_url.as_str()).expect("Couldn't connect to the database");
     embedded_migrations::run(&conn).expect("Couldn't run migrations");
     conn
 }

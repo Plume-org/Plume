@@ -1,9 +1,9 @@
-use plume_models::{Connection, notifications::*, users::User};
+use plume_models::{notifications::*, users::User, Connection};
 
-use rocket::http::{Method, Status};
 use rocket::http::hyper::header::{ETag, EntityTag};
+use rocket::http::{Method, Status};
 use rocket::request::Request;
-use rocket::response::{self, Response, Responder, content::Html as HtmlCt};
+use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hasher;
@@ -13,7 +13,7 @@ pub use askama_escape::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
 
-pub type BaseContext<'a> = &'a(&'a Connection, &'a Catalog, Option<User>);
+pub type BaseContext<'a> = &'a (&'a Connection, &'a Catalog, Option<User>);
 
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);
@@ -27,7 +27,10 @@ impl<'r> Responder<'r> for Ructe {
         let mut hasher = DefaultHasher::new();
         hasher.write(&self.0);
         let etag = format!("{:x}", hasher.finish());
-        if r.headers().get("If-None-Match").any(|s| &s[1..s.len()-1] == etag) {
+        if r.headers()
+            .get("If-None-Match")
+            .any(|s| s[1..s.len() - 1] == etag)
+        {
             Response::build()
                 .status(Status::NotModified)
                 .header(ETag(EntityTag::strong(etag)))
@@ -62,7 +65,7 @@ macro_rules! render {
 pub fn translate_notification(ctx: BaseContext, notif: Notification) -> String {
     let name = notif.get_actor(ctx.0).unwrap().name();
     match notif.kind.as_ref() {
-        notification_kind::COMMENT => i18n!(ctx.1, "{0} commented your article."; &name),
+        notification_kind::COMMENT => i18n!(ctx.1, "{0} commented on your article."; &name),
         notification_kind::FOLLOW => i18n!(ctx.1, "{0} is subscribed to you."; &name),
         notification_kind::LIKE => i18n!(ctx.1, "{0} liked your article."; &name),
         notification_kind::MENTION => i18n!(ctx.1, "{0} mentioned you."; &name),
@@ -85,7 +88,13 @@ impl Size {
     }
 }
 
-pub fn avatar(conn: &Connection, user: &User, size: Size, pad: bool, catalog: &Catalog) -> Html<String> {
+pub fn avatar(
+    conn: &Connection,
+    user: &User,
+    size: Size,
+    pad: bool,
+    catalog: &Catalog,
+) -> Html<String> {
     let name = escape(&user.name()).to_string();
     Html(format!(
         r#"<div class="avatar {size} {padded}"
@@ -120,49 +129,82 @@ pub fn tabs(links: &[(&str, String, bool)]) -> Html<String> {
 pub fn paginate(catalog: &Catalog, page: i32, total: i32) -> Html<String> {
     paginate_param(catalog, page, total, None)
 }
-pub fn paginate_param(catalog: &Catalog, page: i32, total: i32, param: Option<String>) -> Html<String> {
+pub fn paginate_param(
+    catalog: &Catalog,
+    page: i32,
+    total: i32,
+    param: Option<String>,
+) -> Html<String> {
     let mut res = String::new();
-    let param = param.map(|mut p| {p.push('&'); p}).unwrap_or_default();
+    let param = param
+        .map(|mut p| {
+            p.push('&');
+            p
+        })
+        .unwrap_or_default();
     res.push_str(r#"<div class="pagination">"#);
     if page != 1 {
-        res.push_str(format!(r#"<a href="?{}page={}">{}</a>"#, param, page - 1, catalog.gettext("Previous page")).as_str());
+        res.push_str(
+            format!(
+                r#"<a href="?{}page={}">{}</a>"#,
+                param,
+                page - 1,
+                catalog.gettext("Previous page")
+            )
+            .as_str(),
+        );
     }
     if page < total {
-        res.push_str(format!(r#"<a href="?{}page={}">{}</a>"#, param, page + 1, catalog.gettext("Next page")).as_str());
+        res.push_str(
+            format!(
+                r#"<a href="?{}page={}">{}</a>"#,
+                param,
+                page + 1,
+                catalog.gettext("Next page")
+            )
+            .as_str(),
+        );
     }
     res.push_str("</div>");
     Html(res)
 }
 
 pub fn encode_query_param(param: &str) -> String {
-    param.chars().map(|c| match c {
-        '+' => Ok("%2B"),
-        ' ' => Err('+'),
-        c   => Err(c),
-    }).fold(String::new(), |mut s,r| {
-        match r {
-            Ok(r) => s.push_str(r),
-            Err(r) => s.push(r),
-        };
-        s
-    })
+    param
+        .chars()
+        .map(|c| match c {
+            '+' => Ok("%2B"),
+            ' ' => Err('+'),
+            c => Err(c),
+        })
+        .fold(String::new(), |mut s, r| {
+            match r {
+                Ok(r) => s.push_str(r),
+                Err(r) => s.push(r),
+            };
+            s
+        })
 }
 
 #[macro_export]
 macro_rules! icon {
     ($name:expr) => {
-        Html(concat!(r#"<svg class="feather"><use xlink:href="/static/images/feather-sprite.svg#"#, $name, "\"/></svg>"))
-    }
+        Html(concat!(
+            r#"<svg class="feather"><use xlink:href="/static/images/feather-sprite.svg#"#,
+            $name,
+            "\"/></svg>"
+        ))
+    };
 }
 
 macro_rules! input {
-    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $optional:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {
-        {
-            use validator::ValidationErrorsKind;
-            use std::borrow::Cow;
-            let cat = $catalog;
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $optional:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {{
+        use std::borrow::Cow;
+        use validator::ValidationErrorsKind;
+        let cat = $catalog;
 
-            Html(format!(r#"
+        Html(format!(
+            r#"
                 <label for="{name}">
                     {label}
                     {optional}
@@ -171,52 +213,98 @@ macro_rules! input {
                 {error}
                 <input type="{kind}" id="{name}" name="{name}" value="{val}" {props}/>
                 "#,
-                name = stringify!($name),
-                label = i18n!(cat, $label),
-                kind = stringify!($kind),
-                optional = if $optional { format!("<small>{}</small>", i18n!(cat, "Optional")) } else { String::new() },
-                details = if $details.len() > 0 {
-                    format!("<small>{}</small>", i18n!(cat, $details))
-                } else {
-                    String::new()
-                },
-                error = if let Some(ValidationErrorsKind::Field(errs)) = $err.errors().get(stringify!($name)) {
-                    format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or(Cow::from("Unknown error")))
-                } else {
-                    String::new()
-                },
-                val = escape(&$form.$name),
-                props = $props
-            ))
-        }
-    };
+            name = stringify!($name),
+            label = i18n!(cat, $label),
+            kind = stringify!($kind),
+            optional = if $optional {
+                format!("<small>{}</small>", i18n!(cat, "Optional"))
+            } else {
+                String::new()
+            },
+            details = if $details.len() > 0 {
+                format!("<small>{}</small>", i18n!(cat, $details))
+            } else {
+                String::new()
+            },
+            error = if let Some(ValidationErrorsKind::Field(errs)) =
+                $err.errors().get(stringify!($name))
+            {
+                format!(
+                    r#"<p class="error">{}</p>"#,
+                    errs[0]
+                        .message
+                        .clone()
+                        .unwrap_or(Cow::from("Unknown error"))
+                )
+            } else {
+                String::new()
+            },
+            val = escape(&$form.$name),
+            props = $props
+        ))
+    }};
     ($catalog:expr, $name:tt (optional $kind:tt), $label:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {
-        input!($catalog, $name ($kind), $label, true, $details, $form, $err, $props)
+        input!(
+            $catalog,
+            $name($kind),
+            $label,
+            true,
+            $details,
+            $form,
+            $err,
+            $props
+        )
     };
     ($catalog:expr, $name:tt (optional $kind:tt), $label:expr, $form:expr, $err:expr, $props:expr) => {
-        input!($catalog, $name ($kind), $label, true, "", $form, $err, $props)
+        input!(
+            $catalog,
+            $name($kind),
+            $label,
+            true,
+            "",
+            $form,
+            $err,
+            $props
+        )
     };
     ($catalog:expr, $name:tt ($kind:tt), $label:expr, $details:expr, $form:expr, $err:expr, $props:expr) => {
-        input!($catalog, $name ($kind), $label, false, $details, $form, $err, $props)
+        input!(
+            $catalog,
+            $name($kind),
+            $label,
+            false,
+            $details,
+            $form,
+            $err,
+            $props
+        )
     };
     ($catalog:expr, $name:tt ($kind:tt), $label:expr, $form:expr, $err:expr, $props:expr) => {
-        input!($catalog, $name ($kind), $label, false, "", $form, $err, $props)
+        input!(
+            $catalog,
+            $name($kind),
+            $label,
+            false,
+            "",
+            $form,
+            $err,
+            $props
+        )
     };
     ($catalog:expr, $name:tt ($kind:tt), $label:expr, $form:expr, $err:expr) => {
-        input!($catalog, $name ($kind), $label, false, "", $form, $err, "")
+        input!($catalog, $name($kind), $label, false, "", $form, $err, "")
     };
-    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $props:expr) => {
-        {
-            let cat = $catalog;
-            Html(format!(r#"
+    ($catalog:expr, $name:tt ($kind:tt), $label:expr, $props:expr) => {{
+        let cat = $catalog;
+        Html(format!(
+            r#"
                 <label for="{name}">{label}</label>
                 <input type="{kind}" id="{name}" name="{name}" {props}/>
                 "#,
-                name = stringify!($name),
-                label = i18n!(cat, $label),
-                kind = stringify!($kind),
-                props = $props
-            ))
-        }
-    };
+            name = stringify!($name),
+            label = i18n!(cat, $label),
+            kind = stringify!($kind),
+            props = $props
+        ))
+    }};
 }

@@ -1,11 +1,18 @@
 use guid_create::GUID;
-use multipart::server::{Multipart, save::{SavedData, SaveResult}};
-use rocket::{Data, http::ContentType, response::{Redirect, status}};
+use multipart::server::{
+    save::{SaveResult, SavedData},
+    Multipart,
+};
+use plume_models::{db_conn::DbConn, medias::*, users::User, Error};
+use rocket::{
+    http::ContentType,
+    response::{status, Redirect},
+    Data,
+};
 use rocket_i18n::I18n;
+use routes::{errors::ErrorPage, Page};
 use std::fs;
-use plume_models::{Error, db_conn::DbConn, medias::*, users::User};
 use template_utils::Ructe;
-use routes::{Page, errors::ErrorPage};
 
 #[get("/medias?<page>")]
 pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<Ructe, ErrorPage> {
@@ -21,64 +28,85 @@ pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<
 
 #[get("/medias/new")]
 pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
-    render!(medias::new(
-        &(&*conn, &intl.catalog, Some(user))
-    ))
+    render!(medias::new(&(&*conn, &intl.catalog, Some(user))))
 }
 
 #[post("/medias/new", data = "<data>")]
-pub fn upload(user: User, data: Data, ct: &ContentType, conn: DbConn) -> Result<Redirect, status::BadRequest<&'static str>> {
+pub fn upload(
+    user: User,
+    data: Data,
+    ct: &ContentType,
+    conn: DbConn,
+) -> Result<Redirect, status::BadRequest<&'static str>> {
     if ct.is_form_data() {
-        let (_, boundary) = ct.params().find(|&(k, _)| k == "boundary").ok_or_else(|| status::BadRequest(Some("No boundary")))?;
+        let (_, boundary) = ct
+            .params()
+            .find(|&(k, _)| k == "boundary")
+            .ok_or_else(|| status::BadRequest(Some("No boundary")))?;
 
         match Multipart::with_body(data.open(), boundary).save().temp() {
             SaveResult::Full(entries) => {
                 let fields = entries.fields;
 
-                let filename = fields.get("file").and_then(|v| v.into_iter().next())
-                    .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?.headers
-                    .filename.clone();
+                let filename = fields
+                    .get("file")
+                    .and_then(|v| v.iter().next())
+                    .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?
+                    .headers
+                    .filename
+                    .clone();
                 // Remove extension if it contains something else than just letters and numbers
                 let ext = filename
-                    .and_then(|f| f
-                        .rsplit('.')
-                        .next()
-                        .and_then(|ext| if ext.chars().any(|c| !c.is_alphanumeric()) {
-                            None
-                        } else {
-                            Some(ext.to_lowercase())
-                        })
-                        .map(|ext| format!(".{}", ext))
-                    ).unwrap_or_default();
+                    .and_then(|f| {
+                        f.rsplit('.')
+                            .next()
+                            .and_then(|ext| {
+                                if ext.chars().any(|c| !c.is_alphanumeric()) {
+                                    None
+                                } else {
+                                    Some(ext.to_lowercase())
+                                }
+                            })
+                            .map(|ext| format!(".{}", ext))
+                    })
+                    .unwrap_or_default();
                 let dest = format!("static/media/{}{}", GUID::rand().to_string(), ext);
 
                 match fields["file"][0].data {
-                    SavedData::Bytes(ref bytes) => fs::write(&dest, bytes).map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
-                    SavedData::File(ref path, _) => {fs::copy(path, &dest).map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;},
+                    SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)
+                        .map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
+                    SavedData::File(ref path, _) => {
+                        fs::copy(path, &dest)
+                            .map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;
+                    }
                     _ => {
                         return Ok(Redirect::to(uri!(new)));
                     }
                 }
 
-                let has_cw = !read(&fields["cw"][0].data).map(|cw| cw.is_empty()).unwrap_or(false);
-                let media = Media::insert(&*conn, NewMedia {
-                    file_path: dest,
-                    alt_text: read(&fields["alt"][0].data)?,
-                    is_remote: false,
-                    remote_url: None,
-                    sensitive: has_cw,
-                    content_warning: if has_cw {
-                        Some(read(&fields["cw"][0].data)?)
-                    } else {
-                        None
+                let has_cw = !read(&fields["cw"][0].data)
+                    .map(|cw| cw.is_empty())
+                    .unwrap_or(false);
+                let media = Media::insert(
+                    &*conn,
+                    NewMedia {
+                        file_path: dest,
+                        alt_text: read(&fields["alt"][0].data)?,
+                        is_remote: false,
+                        remote_url: None,
+                        sensitive: has_cw,
+                        content_warning: if has_cw {
+                            Some(read(&fields["cw"][0].data)?)
+                        } else {
+                            None
+                        },
+                        owner_id: user.id,
                     },
-                    owner_id: user.id
-                }).map_err(|_| status::BadRequest(Some("Error while saving media")))?;
+                )
+                .map_err(|_| status::BadRequest(Some("Error while saving media")))?;
                 Ok(Redirect::to(uri!(details: id = media.id)))
-            },
-            SaveResult::Partial(_, _) | SaveResult::Error(_) => {
-                Ok(Redirect::to(uri!(new)))
             }
+            SaveResult::Partial(_, _) | SaveResult::Error(_) => Ok(Redirect::to(uri!(new))),
         }
     } else {
         Ok(Redirect::to(uri!(new)))
