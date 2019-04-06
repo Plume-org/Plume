@@ -15,8 +15,8 @@ use plume_common::{
     utils,
 };
 use plume_models::{
-    blogs::Blog, comments::*, db_conn::DbConn, instance::Instance, medias::Media,  mentions::Mention,
-    posts::Post, safe_string::SafeString, tags::Tag, users::User,
+    blogs::Blog, comments::*, db_conn::DbConn, instance::Instance, medias::Media,
+    mentions::Mention, posts::Post, safe_string::SafeString, tags::Tag, users::User,
 };
 use routes::errors::ErrorPage;
 use Worker;

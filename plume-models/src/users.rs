@@ -209,7 +209,13 @@ impl User {
             .set((
                 users::display_name.eq(name),
                 users::email.eq(email),
-                users::summary_html.eq(utils::md_to_html(&summary, "", false, Some(Media::get_media_processor(conn, vec![self]))).0),
+                users::summary_html.eq(utils::md_to_html(
+                    &summary,
+                    "",
+                    false,
+                    Some(Media::get_media_processor(conn, vec![self])),
+                )
+                .0),
                 users::summary.eq(summary),
             ))
             .execute(conn)?;

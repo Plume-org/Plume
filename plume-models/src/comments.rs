@@ -110,7 +110,7 @@ impl Comment {
             self.content.get().as_ref(),
             &Instance::get_local(conn)?.public_domain,
             true,
-            Some(Media::get_media_processor(conn, vec![&author]))
+            Some(Media::get_media_processor(conn, vec![&author])),
         );
 
         let mut note = Note::default();

@@ -129,8 +129,18 @@ impl Instance {
         short_description: SafeString,
         long_description: SafeString,
     ) -> Result<()> {
-        let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain, true, Some(Media::get_media_processor(conn, vec![])));
-        let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain, false, Some(Media::get_media_processor(conn, vec![])));
+        let (sd, _, _) = md_to_html(
+            short_description.as_ref(),
+            &self.public_domain,
+            true,
+            Some(Media::get_media_processor(conn, vec![])),
+        );
+        let (ld, _, _) = md_to_html(
+            long_description.as_ref(),
+            &self.public_domain,
+            false,
+            Some(Media::get_media_processor(conn, vec![])),
+        );
         diesel::update(self)
             .set((
                 instances::name.eq(name),

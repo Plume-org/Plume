@@ -225,7 +225,10 @@ impl Media {
         )
     }
 
-    pub fn get_media_processor<'a>(conn: &'a Connection, user: Vec<&User>) -> Box<'a + Fn(i32) -> Option<(String, Option<String>)>> {
+    pub fn get_media_processor<'a>(
+        conn: &'a Connection,
+        user: Vec<&User>,
+    ) -> Box<'a + Fn(i32) -> Option<(String, Option<String>)>> {
         let uid = user.iter().map(|u| u.id).collect::<Vec<_>>();
         Box::new(move |id| {
             let media = Media::get(conn, id).ok()?;

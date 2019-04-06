@@ -32,13 +32,17 @@ lazy_static! {
             .add_tag_attributes("input", ["type", "checked"].iter())
             .add_allowed_classes("input", ["cw-checkbox"].iter())
             .add_allowed_classes("span", ["cw-container", "cw-text"].iter())
-            .attribute_filter(|elem, att, val| {
-                match (elem, att) {
-                    ("input", "type") => Some("checkbox".into()),
-                    ("input", "checked") => Some("checked".into()),
-                    ("label", "for") => if val.starts_with("postcontent-cw-") { Some(val.into()) } else { None },
-                    _ => Some(val.into())
+            .attribute_filter(|elem, att, val| match (elem, att) {
+                ("input", "type") => Some("checkbox".into()),
+                ("input", "checked") => Some("checked".into()),
+                ("label", "for") => {
+                    if val.starts_with("postcontent-cw-") {
+                        Some(val.into())
+                    } else {
+                        None
+                    }
                 }
+                _ => Some(val.into()),
             });
         b
     };

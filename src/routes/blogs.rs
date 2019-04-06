@@ -280,7 +280,21 @@ pub fn update(
 
                 blog.title = form.title.clone();
                 blog.summary = form.summary.clone();
-                blog.summary_html = SafeString::new(&utils::md_to_html(&form.summary, "", true, Some(Media::get_media_processor(&conn, blog.list_authors(&conn).expect("Couldn't get list of authors").iter().collect()))).0);
+                blog.summary_html = SafeString::new(
+                    &utils::md_to_html(
+                        &form.summary,
+                        "",
+                        true,
+                        Some(Media::get_media_processor(
+                            &conn,
+                            blog.list_authors(&conn)
+                                .expect("Couldn't get list of authors")
+                                .iter()
+                                .collect(),
+                        )),
+                    )
+                    .0,
+                );
                 blog.icon_id = form.icon;
                 blog.banner_id = form.banner;
                 blog.save_changes::<Blog>(&*conn)

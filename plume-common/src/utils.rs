@@ -74,8 +74,10 @@ fn flatten_text<'a>(state: &mut Option<String>, evt: Event<'a>) -> Option<Vec<Ev
     Some(res)
 }
 
-
-fn inline_tags<'a>((state, inline): &mut (Vec<Tag<'a>>, bool), evt: Event<'a>) -> Option<Event<'a>> {
+fn inline_tags<'a>(
+    (state, inline): &mut (Vec<Tag<'a>>, bool),
+    evt: Event<'a>,
+) -> Option<Event<'a>> {
     if *inline {
         let new_evt = match evt {
             Event::Start(t) => {
@@ -95,7 +97,11 @@ fn inline_tags<'a>((state, inline): &mut (Vec<Tag<'a>>, bool), evt: Event<'a>) -
     }
 }
 
-fn process_image<'a, 'b>(evt: Event<'a>, inline: bool, processor: &Option<Box<'b + Fn(i32) -> Option<(String, Option<String>)>>>) -> Event<'a> {
+fn process_image<'a, 'b>(
+    evt: Event<'a>,
+    inline: bool,
+    processor: &Option<Box<'b + Fn(i32) -> Option<(String, Option<String>)>>>,
+) -> Event<'a> {
     if let Some(ref processor) = *processor {
         match evt {
             Event::Start(Tag::Image(id, title)) => {
@@ -105,40 +111,43 @@ fn process_image<'a, 'b>(evt: Event<'a>, inline: bool, processor: &Option<Box<'b
                     } else {
                         // there is a cw, and where are not inline
                         Event::Html(Cow::Owned(format!(
-r#"<label for="postcontent-cw-{id}">
+                            r#"<label for="postcontent-cw-{id}">
   <input type="checkbox" id="postcontent-cw-{id}" checked="checked" class="cw-checkbox">
   <span class="cw-container">
     <span class="cw-text">
         {cw}
     </span>
-  <img src="{url}" alt=""#, id = id, cw = cw.unwrap(), url = url)))
+  <img src="{url}" alt=""#,
+                            id = id,
+                            cw = cw.unwrap(),
+                            url = url
+                        )))
                     }
                 } else {
                     Event::Start(Tag::Image(id, title))
                 }
-            },
+            }
             Event::End(Tag::Image(id, title)) => {
                 if let Some((url, cw)) = id.parse::<i32>().ok().and_then(|id| processor(id)) {
                     if inline || cw.is_none() {
                         Event::End(Tag::Image(Cow::Owned(url), title))
                     } else {
                         Event::Html(Cow::Borrowed(
-r#""/>
+                            r#""/>
   </span>
-</label>"#))
+</label>"#,
+                        ))
                     }
-
                 } else {
                     Event::End(Tag::Image(id, title))
                 }
-            },
-        e => e,
+            }
+            e => e,
         }
     } else {
         evt
     }
 }
-
 
 /// Returns (HTML, mentions, hashtags)
 pub fn md_to_html<'a>(
@@ -146,7 +155,7 @@ pub fn md_to_html<'a>(
     base_url: &str,
     inline: bool,
     media_processor: Option<Box<'a + Fn(i32) -> Option<(String, Option<String>)>>>,
-    ) -> (String, HashSet<String>, HashSet<String>) {
+) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
