@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 10:01\n"
+"PO-Revision-Date: 2019-04-06 15:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -339,7 +339,7 @@ msgid "Subscriptions"
 msgstr "Odběry"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "Atom kanál"
 
 msgid "Recently boosted"
 msgstr "Nedávno podpořené"
@@ -536,6 +536,9 @@ msgstr "Uživatelské jméno, nebo email"
 msgid "Publish"
 msgstr "Zveřejnit"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 # src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "Podtitul"
@@ -593,10 +596,10 @@ msgstr "Tento článek je pod {0} licencí."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Jedno oblíbení"
+msgstr[1] "{0} oblíbili"
+msgstr[2] "{0} oblíbili"
+msgstr[3] "{0} oblíbili"
 
 msgid "I don't like this anymore"
 msgstr "Tohle se mi už nelíbí"
@@ -749,7 +752,7 @@ msgid "Useful for visually impaired people, as well as licensing information"
 msgstr ""
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Ponechat prázdne, pokud žádná není potřebná"
 
 msgid "File"
 msgstr "Soubor"
@@ -758,23 +761,23 @@ msgid "Send"
 msgstr "Odeslat"
 
 msgid "Media details"
-msgstr ""
+msgstr "Podrobnosti média"
 
 msgid "Go back to the gallery"
 msgstr ""
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Markdown syntaxe"
 
 msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as an avatar"
-msgstr ""
+msgstr "Použít jak avatar"
 
 msgid "Log in to boost"
 msgstr ""
 
 msgid "Log in to like"
-msgstr ""
+msgstr "Přihlásit se k oblíbení"
 
