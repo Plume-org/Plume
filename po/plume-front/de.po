@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-03 17:26\n"
+"PO-Revision-Date: 2019-04-06 15:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -16,35 +16,43 @@ msgstr ""
 "X-Crowdin-Language: de\n"
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 
-# plume-front/src/editor.rs:103
+# plume-front/src/editor.rs:114
+msgid "Open the rich text editor"
+msgstr ""
+
+# plume-front/src/editor.rs:143
 msgid "Title"
 msgstr "Titel"
 
-# plume-front/src/editor.rs:104
+# plume-front/src/editor.rs:147
 msgid "Subtitle or summary"
 msgstr "Untertitel oder Übersicht"
 
-# plume-front/src/editor.rs:105
+# plume-front/src/editor.rs:154
 msgid "Write your article here. Markdown is supported."
 msgstr "Schreibe deinen Artikel hier. Markdown ist unterstützt."
 
-# plume-front/src/editor.rs:113
+# plume-front/src/editor.rs:165
 msgid "Around {} characters left"
 msgstr "Ungefähr {} Zeichen übrig"
 
-# plume-front/src/editor.rs:143
+# plume-front/src/editor.rs:228
 msgid "Tags"
 msgstr "Tags"
 
-# plume-front/src/editor.rs:144
+# plume-front/src/editor.rs:229
 msgid "License"
 msgstr "Lizenz"
 
-# plume-front/src/editor.rs:147
+# plume-front/src/editor.rs:232
 msgid "Cover"
 msgstr "Einband"
 
-# plume-front/src/editor.rs:157
+# plume-front/src/editor.rs:252
+msgid "This is a draft"
+msgstr ""
+
+# plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr "Veröffentlichen"
 
