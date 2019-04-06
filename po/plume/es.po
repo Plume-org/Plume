@@ -401,12 +401,6 @@ msgstr "Ninguno"
 msgid "No description"
 msgstr "Ninguna descripción"
 
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
 msgid "View all"
 msgstr "Ver todo"
 
