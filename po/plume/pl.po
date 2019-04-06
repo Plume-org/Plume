@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-06 20:15\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -160,7 +160,7 @@ msgid "Administration"
 msgstr "Administracja"
 
 msgid "Welcome to {}"
-msgstr "Witaj na {}"
+msgstr "Witamy na {}"
 
 msgid "Latest articles"
 msgstr "Najnowsze artykuły"
@@ -692,38 +692,6 @@ msgstr "Banner bloga"
 
 msgid "Update blog"
 msgstr "Aktualizuj bloga"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
-
-msgid "Permanently delete this blog"
-msgstr "Bezpowrotnie usuń ten blog"
-
-#, fuzzy
-msgid "Edit \"{}\""
-msgstr "Edytuj {0}"
-
-msgid "Description"
-msgstr "Opis"
-
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-
-#, fuzzy
-msgid "Upload images"
-msgstr "Wyślij"
-
-#, fuzzy
-msgid "Blog icon"
-msgstr "Tytuł bloga"
-
-msgid "Blog banner"
-msgstr ""
-
-#, fuzzy
-msgid "Update blog"
-msgstr "Utwórz blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr "Bądź ostrożny(-a), działania podjęte tutaj nie mogą zostać cofnięte."
