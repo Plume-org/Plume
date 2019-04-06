@@ -3,6 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use std::iter::Iterator;
 
 use ap_url;
+use medias::Media;
 use plume_common::utils::md_to_html;
 use safe_string::SafeString;
 use schema::{instances, users};
@@ -128,8 +129,8 @@ impl Instance {
         short_description: SafeString,
         long_description: SafeString,
     ) -> Result<()> {
-        let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain, true);
-        let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain, false);
+        let (sd, _, _) = md_to_html(short_description.as_ref(), &self.public_domain, true, Some(Media::get_media_processor(conn, vec![])));
+        let (ld, _, _) = md_to_html(long_description.as_ref(), &self.public_domain, false, Some(Media::get_media_processor(conn, vec![])));
         diesel::update(self)
             .set((
                 instances::name.eq(name),

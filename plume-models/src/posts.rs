@@ -207,17 +207,19 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let domain = &Instance::get_local(&conn)
             .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
             .public_domain;
-        let (content, mentions, hashtags) = md_to_html(
-            query.source.clone().unwrap_or_default().clone().as_ref(),
-            domain,
-            false,
-        );
-
         let author = User::get(
             conn,
             user_id.expect("<Post as Provider>::create: no user_id error"),
         )
         .map_err(|_| ApiError::NotFound("Author not found".into()))?;
+
+        let (content, mentions, hashtags) = md_to_html(
+            query.source.clone().unwrap_or_default().clone().as_ref(),
+            domain,
+            false,
+            Some(Media::get_media_processor(conn, vec![&author])),
+        );
+
         let blog = match query.blog_id {
             Some(x) => x,
             None => {
@@ -757,7 +759,7 @@ impl Post {
             post.license = license;
         }
 
-        let mut txt_hashtags = md_to_html(&post.source, "", false)
+        let mut txt_hashtags = md_to_html(&post.source, "", false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
@@ -995,7 +997,7 @@ impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post 
             }
 
             // save mentions and tags
-            let mut hashtags = md_to_html(&post.source, "", false)
+            let mut hashtags = md_to_html(&post.source, "", false, None)
                 .2
                 .into_iter()
                 .map(|s| s.to_camel_case())
