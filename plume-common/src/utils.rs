@@ -97,15 +97,17 @@ fn inline_tags<'a>(
     }
 }
 
+pub type MediaProcessor<'a> = Box<'a + Fn(i32) -> Option<(String, Option<String>)>>;
+
 fn process_image<'a, 'b>(
     evt: Event<'a>,
     inline: bool,
-    processor: &Option<Box<'b + Fn(i32) -> Option<(String, Option<String>)>>>,
+    processor: &Option<MediaProcessor<'b>>,
 ) -> Event<'a> {
     if let Some(ref processor) = *processor {
         match evt {
             Event::Start(Tag::Image(id, title)) => {
-                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(|id| processor(id)) {
+                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
                     if inline || cw.is_none() {
                         Event::Start(Tag::Image(Cow::Owned(url), title))
                     } else {
@@ -128,7 +130,7 @@ fn process_image<'a, 'b>(
                 }
             }
             Event::End(Tag::Image(id, title)) => {
-                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(|id| processor(id)) {
+                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
                     if inline || cw.is_none() {
                         Event::End(Tag::Image(Cow::Owned(url), title))
                     } else {
@@ -154,7 +156,7 @@ pub fn md_to_html<'a>(
     md: &str,
     base_url: &str,
     inline: bool,
-    media_processor: Option<Box<'a + Fn(i32) -> Option<(String, Option<String>)>>>,
+    media_processor: Option<MediaProcessor<'a>>,
 ) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
