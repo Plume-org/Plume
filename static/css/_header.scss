@@ -74,6 +74,19 @@ header {
   }
 }
 
+.messages {
+  & > * {
+      padding: 1em 20%;
+  }
+
+  p.error {
+    color: $red;
+    background: lighten($red, 40%);
+    margin: 0;
+    max-width: initial;
+  }
+}
+
 // Only enable label animations on normal screens
 @media screen and (min-width: 900px) {
  	header nav a {

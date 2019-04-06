@@ -571,6 +571,9 @@ msgstr "Nutzername oder E-Mail"
 msgid "Publish"
 msgstr "Veröffentlichen"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "Untertitel"
 

@@ -84,10 +84,46 @@ fn init_widget(
     widget.focus();
     widget.blur();
 
+    filter_paste(&widget);
+
     Ok(widget)
 }
 
+fn filter_paste(elt: &HtmlElement) {
+    // Only insert text when pasting something
+    js! {
+        @{&elt}.addEventListener("paste", function (evt) {
+            evt.preventDefault();
+            document.execCommand("insertText", false, evt.clipboardData.getData("text"));
+        });
+    };
+}
+
 pub fn init() -> Result<(), EditorError> {
+    // Check if the user wants to use the basic editor
+    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
+        if basic_editor == "true" {
+            if let Some(editor) = document().get_element_by_id("plume-fallback-editor") {
+                if let Ok(Some(title_label)) = document().query_selector("label[for=title]") {
+                    let editor_button = document().create_element("a")?;
+                    js!{ @{&editor_button}.href = "#"; }
+                    editor_button.add_event_listener(|_: ClickEvent| {
+                        window().local_storage().remove("basic-editor");
+                        window().history().go(0).ok(); // refresh
+                    });
+                    editor_button.append_child(&document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")));
+                    editor.insert_before(&editor_button, &title_label).ok();
+                    return Ok(());
+                }
+            }
+        }
+    }
+
+    // If we didn't returned above
+    init_editor()
+}
+
+fn init_editor() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-editor") {
         // Show the editor
         js! { @{&ed}.style.display = "block"; };
@@ -117,7 +153,7 @@ pub fn init() -> Result<(), EditorError> {
             "article",
             i18n!(CATALOG, "Write your article here. Markdown is supported."),
             content_val.clone(),
-            true,
+            false,
         )?;
         js! { @{&content}.innerHTML = @{content_val}; };
 
@@ -134,21 +170,43 @@ pub fn init() -> Result<(), EditorError> {
             }), 0);
         }));
 
-        document().get_element_by_id("publish")?.add_event_listener(
-            mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
-                let popup = document().get_element_by_id("publish-popup").or_else(||
-                        init_popup(&title, &subtitle, &content, &old_ed).ok()
-                    ).unwrap();
-                let bg = document().get_element_by_id("popup-bg").or_else(||
-                        init_popup_bg().ok()
-                    ).unwrap();
+        document().get_element_by_id("publish")?.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+            let popup = document().get_element_by_id("publish-popup").or_else(||
+                    init_popup(&title, &subtitle, &content, &old_ed).ok()
+                ).unwrap();
+            let bg = document().get_element_by_id("popup-bg").or_else(||
+                    init_popup_bg().ok()
+                ).unwrap();
 
-                popup.class_list().add("show").unwrap();
-                bg.class_list().add("show").unwrap();
-            }),
-        );
+            popup.class_list().add("show").unwrap();
+            bg.class_list().add("show").unwrap();
+        }));
+
+        show_errors();
+        setup_close_button();
     }
     Ok(())
+}
+
+fn setup_close_button() {
+    if let Some(button) = document().get_element_by_id("close-editor") {
+        button.add_event_listener(|_: ClickEvent| {
+            window().local_storage().insert("basic-editor", "true").unwrap();
+            window().history().go(0).unwrap(); // Refresh the page
+        });
+    }
+}
+
+fn show_errors() {
+    if let Ok(Some(header)) = document().query_selector("header") {
+        let list = document().create_element("header").unwrap();
+        list.class_list().add("messages").unwrap();
+        for error in document().query_selector_all("p.error").unwrap() {
+            error.parent_element().unwrap().remove_child(&error).unwrap();
+            list.append_child(&error);
+        }
+        header.parent_element().unwrap().insert_before(&list, &header.next_sibling().unwrap()).unwrap();
+    }
 }
 
 fn init_popup(
@@ -178,6 +236,23 @@ fn init_popup(
     popup.append_child(&cover_label);
     popup.append_child(&cover);
 
+    if let Some(draft_checkbox) = document().get_element_by_id("draft") {
+        let draft_label = document().create_element("label")?;
+        draft_label.set_attribute("for", "popup-draft")?;
+
+        let draft = document().create_element("input").unwrap();
+        js!{
+            @{&draft}.id = "popup-draft";
+            @{&draft}.name = "popup-draft";
+            @{&draft}.type = "checkbox";
+            @{&draft}.checked = @{&draft_checkbox}.checked;
+        };
+
+        draft_label.append_child(&draft);
+        draft_label.append_child(&document().create_text_node(&i18n!(CATALOG, "This is a draft")));
+        popup.append_child(&draft_label);
+    }
+
     let button = document().create_element("input")?;
     js! {
         @{&button}.type = "submit";
@@ -185,10 +260,31 @@ fn init_popup(
     };
     button.append_child(&document().create_text_node(&i18n!(CATALOG, "Publish")));
     button.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+        title.focus(); // Remove the placeholder before publishing
         set_value("title", title.inner_text());
+        subtitle.focus();
         set_value("subtitle", subtitle.inner_text());
-        set_value("editor-content", js!{ return @{&content}.innerHTML }.as_str().unwrap_or_default());
+        content.focus();
+        set_value("editor-content", content.child_nodes().iter().fold(String::new(), |md, ch| {
+            let to_append = match ch.node_type() {
+                NodeType::Element => {
+                    if js!{ return @{&ch}.tagName; } == "DIV" {
+                        (js!{ return @{&ch}.innerHTML; }).try_into().unwrap_or_default()
+                    } else {
+                        (js!{ return @{&ch}.outerHTML; }).try_into().unwrap_or_default()
+                    }
+                },
+                NodeType::Text => ch.node_value().unwrap_or_default(),
+                _ => unreachable!(),
+            };
+            format!("{}\n\n{}", md, to_append)
+        }));
         set_value("tags", get_elt_value("popup-tags"));
+        if let Some(draft) = document().get_element_by_id("popup-draft") {
+            js!{
+                document.getElementById("draft").checked = @{draft}.checked;
+            };
+        }
         let cover = document().get_element_by_id("cover").unwrap();
         cover.parent_element().unwrap().remove_child(&cover).ok();
         old_ed.append_child(&cover);

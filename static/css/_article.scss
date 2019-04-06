@@ -273,6 +273,7 @@ main .article-meta {
     flex-direction: row-reverse;
     background: transparent;
     align-items: center;
+    justify-content: space-between;
     button {
       flex: 0 0 10em;
       font-size: 1.25em;

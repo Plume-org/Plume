@@ -568,6 +568,9 @@ msgstr "اسم المستخدم أو عنوان البريد الالكترون�
 msgid "Publish"
 msgstr "انشر"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
 

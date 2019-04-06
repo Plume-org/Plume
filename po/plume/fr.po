@@ -567,6 +567,9 @@ msgstr "Nom d’utilisateur ou adresse électronique"
 msgid "Publish"
 msgstr "Publier"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 msgid "Subtitle"
 msgstr "Sous-titre"
 

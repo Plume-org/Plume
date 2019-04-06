@@ -12,6 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+# plume-front/src/editor.rs:110
+msgid "Open the rich text editor"
+msgstr ""
+
 # plume-front/src/editor.rs:57
 msgid "Title"
 msgstr "Titre"
@@ -38,6 +42,10 @@ msgstr ""
 
 # plume-front/src/editor.rs:100
 msgid "Cover"
+msgstr ""
+
+# plume-front/src/editor.rs:167
+msgid "This is a draft"
 msgstr ""
 
 # plume-front/src/editor.rs:111
