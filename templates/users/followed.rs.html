@@ -9,9 +9,9 @@
     @:header(ctx, &user, follows, is_remote, remote_url)
 
     @tabs(&[
-        (&uri!(user::details: name = &user.fqn).to_string(), i18n!(ctx.1, "Articles"), true),
+        (&uri!(user::details: name = &user.fqn).to_string(), i18n!(ctx.1, "Articles"), false),
         (&uri!(user::followers: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscribers"), false),
-        (&uri!(user::followed: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscriptions"), false)
+        (&uri!(user::followed: name = &user.fqn, page = _).to_string(), i18n!(ctx.1, "Subscriptions"), true)
     ])
 
     <div class="cards">
