@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 13:19\n"
+"PO-Revision-Date: 2019-04-06 15:05\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -213,10 +213,10 @@ msgid "Optional"
 msgstr "اختياري"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "السماح للجميع بإنشاء حساب"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "وصف مختصر - في كل سطر"
 
 msgid "Markdown syntax is supported"
 msgstr ""
@@ -536,6 +536,9 @@ msgstr ""
 msgid "Publish"
 msgstr "انشر"
 
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
 # src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
@@ -665,7 +668,7 @@ msgid "You are not authorized."
 msgstr "ليست لديك التصريحات اللازمة للقيام بذلك."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "خطأ داخلي في الخادم"
 
 msgid "Something broke on our side."
 msgstr "حصل خطأ ما مِن جهتنا."
@@ -674,7 +677,7 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "نعتذر عن الإزعاج. إن كنت تضن أن هذه مشكلة، يرجى إبلاغنا."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "تعديل \"{}\""
 
 msgid "Description"
 msgstr "الوصف"
