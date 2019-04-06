@@ -1,0 +1,6 @@
+localhost:443 {
+  proxy / localhost:7878 {
+    transparent
+  }
+  tls self_signed
+}

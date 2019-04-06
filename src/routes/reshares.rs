@@ -43,10 +43,7 @@ pub fn create(
 #[post("/~/<blog>/<slug>/reshare", rank = 1)]
 pub fn create_auth(blog: String, slug: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
-        &i18n!(
-            i18n.catalog,
-            "To reshare a post, you need to be logged in"
-        ),
+        &i18n!(i18n.catalog, "To reshare a post, you need to be logged in"),
         uri!(create: blog = blog, slug = slug),
     )
 }

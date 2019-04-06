@@ -188,7 +188,7 @@ lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
             "127.0.0.1:{}",
-            var("ROCKET_PORT").unwrap_or_else(|_| "8000".to_owned())
+            var("ROCKET_PORT").unwrap_or_else(|_| "7878".to_owned())
         )),
         db_name: DB_NAME,
         #[cfg(feature = "postgres")]
