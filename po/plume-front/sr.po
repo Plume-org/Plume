@@ -3,48 +3,56 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-04 06:17\n"
+"PO-Revision-Date: 2019-04-06 14:14\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
-"Language-Team: Serbian (Latin)\n"
-"Language: sr_CS\n"
+"Language-Team: Serbian (Cyrillic)\n"
+"Language: sr_SP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
-"X-Crowdin-Language: sr-CS\n"
+"X-Crowdin-Language: sr\n"
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 
-# plume-front/src/editor.rs:103
-msgid "Title"
-msgstr ""
-
-# plume-front/src/editor.rs:104
-msgid "Subtitle or summary"
-msgstr ""
-
-# plume-front/src/editor.rs:105
-msgid "Write your article here. Markdown is supported."
-msgstr ""
-
-# plume-front/src/editor.rs:113
-msgid "Around {} characters left"
+# plume-front/src/editor.rs:114
+msgid "Open the rich text editor"
 msgstr ""
 
 # plume-front/src/editor.rs:143
-msgid "Tags"
-msgstr ""
-
-# plume-front/src/editor.rs:144
-msgid "License"
+msgid "Title"
 msgstr ""
 
 # plume-front/src/editor.rs:147
+msgid "Subtitle or summary"
+msgstr ""
+
+# plume-front/src/editor.rs:154
+msgid "Write your article here. Markdown is supported."
+msgstr ""
+
+# plume-front/src/editor.rs:165
+msgid "Around {} characters left"
+msgstr ""
+
+# plume-front/src/editor.rs:228
+msgid "Tags"
+msgstr ""
+
+# plume-front/src/editor.rs:229
+msgid "License"
+msgstr ""
+
+# plume-front/src/editor.rs:232
 msgid "Cover"
 msgstr ""
 
-# plume-front/src/editor.rs:157
+# plume-front/src/editor.rs:252
+msgid "This is a draft"
+msgstr ""
+
+# plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr ""
 
