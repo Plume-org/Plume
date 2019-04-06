@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 14:14\n"
+"PO-Revision-Date: 2019-04-06 15:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -537,7 +537,7 @@ msgid "Publish"
 msgstr "Zverejni"
 
 msgid "Classic editor (any changes will be lost)"
-msgstr ""
+msgstr "Klasický editor (akékoľvek zmeny budú stratené)"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
@@ -761,7 +761,7 @@ msgid "Send"
 msgstr "Pošli"
 
 msgid "Media details"
-msgstr "Podrobnosti o médiálnom súbore"
+msgstr "Podrobnosti o médiu"
 
 msgid "Go back to the gallery"
 msgstr "Prejdi späť do galérie"
