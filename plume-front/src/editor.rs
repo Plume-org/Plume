@@ -106,12 +106,14 @@ pub fn init() -> Result<(), EditorError> {
             if let Some(editor) = document().get_element_by_id("plume-fallback-editor") {
                 if let Ok(Some(title_label)) = document().query_selector("label[for=title]") {
                     let editor_button = document().create_element("a")?;
-                    js!{ @{&editor_button}.href = "#"; }
+                    js! { @{&editor_button}.href = "#"; }
                     editor_button.add_event_listener(|_: ClickEvent| {
                         window().local_storage().remove("basic-editor");
                         window().history().go(0).ok(); // refresh
                     });
-                    editor_button.append_child(&document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")));
+                    editor_button.append_child(
+                        &document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")),
+                    );
                     editor.insert_before(&editor_button, &title_label).ok();
                     return Ok(());
                 }
@@ -170,17 +172,19 @@ fn init_editor() -> Result<(), EditorError> {
             }), 0);
         }));
 
-        document().get_element_by_id("publish")?.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
-            let popup = document().get_element_by_id("publish-popup").or_else(||
-                    init_popup(&title, &subtitle, &content, &old_ed).ok()
-                ).unwrap();
-            let bg = document().get_element_by_id("popup-bg").or_else(||
-                    init_popup_bg().ok()
-                ).unwrap();
+        document().get_element_by_id("publish")?.add_event_listener(
+            mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+                let popup = document().get_element_by_id("publish-popup").or_else(||
+                        init_popup(&title, &subtitle, &content, &old_ed).ok()
+                    ).unwrap();
+                let bg = document().get_element_by_id("popup-bg").or_else(||
+                        init_popup_bg().ok()
+                    ).unwrap();
 
-            popup.class_list().add("show").unwrap();
-            bg.class_list().add("show").unwrap();
-        }));
+                popup.class_list().add("show").unwrap();
+                bg.class_list().add("show").unwrap();
+            }),
+        );
 
         show_errors();
         setup_close_button();
@@ -191,7 +195,10 @@ fn init_editor() -> Result<(), EditorError> {
 fn setup_close_button() {
     if let Some(button) = document().get_element_by_id("close-editor") {
         button.add_event_listener(|_: ClickEvent| {
-            window().local_storage().insert("basic-editor", "true").unwrap();
+            window()
+                .local_storage()
+                .insert("basic-editor", "true")
+                .unwrap();
             window().history().go(0).unwrap(); // Refresh the page
         });
     }
@@ -202,10 +209,18 @@ fn show_errors() {
         let list = document().create_element("header").unwrap();
         list.class_list().add("messages").unwrap();
         for error in document().query_selector_all("p.error").unwrap() {
-            error.parent_element().unwrap().remove_child(&error).unwrap();
+            error
+                .parent_element()
+                .unwrap()
+                .remove_child(&error)
+                .unwrap();
             list.append_child(&error);
         }
-        header.parent_element().unwrap().insert_before(&list, &header.next_sibling().unwrap()).unwrap();
+        header
+            .parent_element()
+            .unwrap()
+            .insert_before(&list, &header.next_sibling().unwrap())
+            .unwrap();
     }
 }
 
@@ -241,7 +256,7 @@ fn init_popup(
         draft_label.set_attribute("for", "popup-draft")?;
 
         let draft = document().create_element("input").unwrap();
-        js!{
+        js! {
             @{&draft}.id = "popup-draft";
             @{&draft}.name = "popup-draft";
             @{&draft}.type = "checkbox";
@@ -259,40 +274,42 @@ fn init_popup(
         @{&button}.value = @{i18n!(CATALOG, "Publish")};
     };
     button.append_child(&document().create_text_node(&i18n!(CATALOG, "Publish")));
-    button.add_event_listener(mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
-        title.focus(); // Remove the placeholder before publishing
-        set_value("title", title.inner_text());
-        subtitle.focus();
-        set_value("subtitle", subtitle.inner_text());
-        content.focus();
-        set_value("editor-content", content.child_nodes().iter().fold(String::new(), |md, ch| {
-            let to_append = match ch.node_type() {
-                NodeType::Element => {
-                    if js!{ return @{&ch}.tagName; } == "DIV" {
-                        (js!{ return @{&ch}.innerHTML; }).try_into().unwrap_or_default()
-                    } else {
-                        (js!{ return @{&ch}.outerHTML; }).try_into().unwrap_or_default()
-                    }
-                },
-                NodeType::Text => ch.node_value().unwrap_or_default(),
-                _ => unreachable!(),
+    button.add_event_listener(
+        mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
+            title.focus(); // Remove the placeholder before publishing
+            set_value("title", title.inner_text());
+            subtitle.focus();
+            set_value("subtitle", subtitle.inner_text());
+            content.focus();
+            set_value("editor-content", content.child_nodes().iter().fold(String::new(), |md, ch| {
+                let to_append = match ch.node_type() {
+                    NodeType::Element => {
+                        if js!{ return @{&ch}.tagName; } == "DIV" {
+                            (js!{ return @{&ch}.innerHTML; }).try_into().unwrap_or_default()
+                        } else {
+                            (js!{ return @{&ch}.outerHTML; }).try_into().unwrap_or_default()
+                        }
+                    },
+                    NodeType::Text => ch.node_value().unwrap_or_default(),
+                    _ => unreachable!(),
+                };
+                format!("{}\n\n{}", md, to_append)
+            }));
+            set_value("tags", get_elt_value("popup-tags"));
+            if let Some(draft) = document().get_element_by_id("popup-draft") {
+                js!{
+                    document.getElementById("draft").checked = @{draft}.checked;
+                };
+            }
+            let cover = document().get_element_by_id("cover").unwrap();
+            cover.parent_element().unwrap().remove_child(&cover).ok();
+            old_ed.append_child(&cover);
+            set_value("license", get_elt_value("popup-license"));
+            js! {
+                @{&old_ed}.submit();
             };
-            format!("{}\n\n{}", md, to_append)
-        }));
-        set_value("tags", get_elt_value("popup-tags"));
-        if let Some(draft) = document().get_element_by_id("popup-draft") {
-            js!{
-                document.getElementById("draft").checked = @{draft}.checked;
-            };
-        }
-        let cover = document().get_element_by_id("cover").unwrap();
-        cover.parent_element().unwrap().remove_child(&cover).ok();
-        old_ed.append_child(&cover);
-        set_value("license", get_elt_value("popup-license"));
-        js! {
-            @{&old_ed}.submit();
-        };
-    }));
+        }),
+    );
     popup.append_child(&button);
 
     document().body()?.append_child(&popup);
