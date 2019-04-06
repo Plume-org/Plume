@@ -322,3 +322,36 @@ main .article-meta {
     right: 0px;
     bottom: 0px;
 }
+
+
+// content warning
+.cw-container {
+  position: relative;
+  display: inline-block;
+}
+
+.cw-text {
+  display: none;
+}
+
+input[type="checkbox"].cw-checkbox {
+  display: none;
+}
+
+input:checked ~ .cw-container:before {
+  content: " ";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 1);
+}
+
+input:checked ~ .cw-container > .cw-text {
+  display: inline;
+  position: absolute;
+  color: white;
+  width: 100%;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+}

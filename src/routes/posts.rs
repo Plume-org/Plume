@@ -264,6 +264,13 @@ pub fn update(
                     .expect("posts::update: Error getting local instance")
                     .public_domain,
                 false,
+                Some(Media::get_media_processor(
+                    &conn,
+                    b.list_authors(&conn)
+                        .expect("Could not get author list")
+                        .iter()
+                        .collect(),
+                )),
             );
 
             // update publication date if when this article is no longer a draft
@@ -424,6 +431,13 @@ pub fn create(
                 .expect("post::create: local instance error")
                 .public_domain,
             false,
+            Some(Media::get_media_processor(
+                &conn,
+                blog.list_authors(&conn)
+                    .expect("Could not get author list")
+                    .iter()
+                    .collect(),
+            )),
         );
 
         let searcher = rockets.searcher;

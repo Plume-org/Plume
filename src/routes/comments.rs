@@ -15,8 +15,8 @@ use plume_common::{
     utils,
 };
 use plume_models::{
-    blogs::Blog, comments::*, db_conn::DbConn, instance::Instance, mentions::Mention, posts::Post,
-    safe_string::SafeString, tags::Tag, users::User,
+    blogs::Blog, comments::*, db_conn::DbConn, instance::Instance, medias::Media,
+    mentions::Mention, posts::Post, safe_string::SafeString, tags::Tag, users::User,
 };
 use routes::errors::ErrorPage;
 use Worker;
@@ -49,6 +49,7 @@ pub fn create(
                     .expect("comments::create: local instance error")
                     .public_domain,
                 true,
+                Some(Media::get_media_processor(&conn, vec![&user])),
             );
             let comm = Comment::insert(
                 &*conn,

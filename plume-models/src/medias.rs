@@ -5,7 +5,7 @@ use guid_create::GUID;
 use reqwest;
 use std::{fs, path::Path};
 
-use plume_common::activity_pub::Id;
+use plume_common::{activity_pub::Id, utils::MediaProcessor};
 
 use instance::Instance;
 use safe_string::SafeString;
@@ -124,10 +124,9 @@ impl Media {
     }
 
     pub fn markdown(&self, conn: &Connection) -> Result<SafeString> {
-        let url = self.url(conn)?;
         Ok(match self.category() {
             MediaCategory::Image => {
-                SafeString::new(&format!("![{}]({})", escape(&self.alt_text), url))
+                SafeString::new(&format!("![{}]({})", escape(&self.alt_text), self.id))
             }
             MediaCategory::Audio | MediaCategory::Video => self.html(conn)?,
             MediaCategory::Unknown => SafeString::new(""),
@@ -224,6 +223,19 @@ impl Media {
                 .id,
             },
         )
+    }
+
+    pub fn get_media_processor<'a>(conn: &'a Connection, user: Vec<&User>) -> MediaProcessor<'a> {
+        let uid = user.iter().map(|u| u.id).collect::<Vec<_>>();
+        Box::new(move |id| {
+            let media = Media::get(conn, id).ok()?;
+            // if owner is user or check is disabled
+            if uid.contains(&media.owner_id) || uid.is_empty() {
+                Some((media.url(conn).ok()?, media.content_warning))
+            } else {
+                None
+            }
+        })
     }
 }
 

@@ -11,6 +11,7 @@ use std::collections::HashSet;
 
 use comment_seers::{CommentSeers, NewCommentSeers};
 use instance::Instance;
+use medias::Media;
 use mentions::Mention;
 use notifications::*;
 use plume_common::activity_pub::{
@@ -102,14 +103,16 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<Note> {
+    pub fn to_activity<'b>(&self, conn: &'b Connection) -> Result<Note> {
+        let author = User::get(conn, self.author_id)?;
+
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
             &Instance::get_local(conn)?.public_domain,
             true,
+            Some(Media::get_media_processor(conn, vec![&author])),
         );
 
-        let author = User::get(conn, self.author_id)?;
         let mut note = Note::default();
         let to = vec![Id::new(PUBLIC_VISIBILTY.to_string())];
 
