@@ -5,7 +5,10 @@ use guid_create::GUID;
 use reqwest;
 use std::{fs, path::Path};
 
-use plume_common::{activity_pub::{inbox::FromId, Id}, utils::MediaProcessor};
+use plume_common::{
+    activity_pub::{inbox::FromId, Id},
+    utils::MediaProcessor,
+};
 
 use instance::Instance;
 use safe_string::SafeString;

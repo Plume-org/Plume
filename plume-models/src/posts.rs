@@ -210,7 +210,11 @@ impl Provider<PlumeRocket> for Post {
             .public_domain;
         let author = User::get(
             conn,
-            rockets.user.clone().expect("<Post as Provider>::create: no user_id error").id,
+            rockets
+                .user
+                .clone()
+                .expect("<Post as Provider>::create: no user_id error")
+                .id,
         )
         .map_err(|_| ApiError::NotFound("Author not found".into()))?;
 
