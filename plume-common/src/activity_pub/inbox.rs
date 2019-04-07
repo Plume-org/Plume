@@ -227,12 +227,9 @@ where
 /// Get the ActivityPub ID of a JSON value.
 ///
 /// If the value is a string, its value is returned.
-/// Otherwise we return its `id` field, if it is a string
+/// If it is an object, and that its `id` field is a string, we return it.
 ///
-/// # Panics
-///
-/// This function panics if the value is neither a string nor an object with an
-/// `id` field that is a string.
+/// Otherwise, `None` is returned.
 fn get_id(json: serde_json::Value) -> Option<String> {
     match json {
         serde_json::Value::String(s) => Some(s),
@@ -318,7 +315,7 @@ pub trait FromId<C>: Sized {
 /// # Type arguments
 ///
 /// - `C`: the context to be passed to this activity handler from the `Inbox` (usually a database connection)
-pub trait AsActor<C>: Sized {
+pub trait AsActor<C> {
     /// Return the URL of this actor's inbox
     fn get_inbox_url(&self) -> String;
 
@@ -396,7 +393,7 @@ pub trait AsActor<C>: Sized {
 ///     }
 /// }
 /// ```
-pub trait AsObject<A, V, C>: Sized
+pub trait AsObject<A, V, C>
 where
     V: activitypub::Activity,
 {
