@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-07 14:14\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -58,7 +58,7 @@ msgstr "لا يمكنك استخدام هذه الوسائط كأيقونة لل
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "لا يمكنك استخدام هذه الوسائط كشعار للمدونة."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
@@ -121,7 +121,7 @@ msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "القائمة"
@@ -457,7 +457,7 @@ msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Instance domain"
-msgstr ""
+msgstr "اسم نطاق مثيل الخادم"
 
 # src/template_utils.rs:305
 msgid "Posted by one of these authors"
@@ -531,7 +531,7 @@ msgstr "تسجيل الدخول"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
 msgid "Publish"
 msgstr "انشر"
@@ -550,7 +550,7 @@ msgid "You can upload media to your gallery, and then copy their Markdown code i
 msgstr ""
 
 msgid "Upload media"
-msgstr ""
+msgstr "تحميل وسائط"
 
 # src/template_utils.rs:217
 msgid "Tags, separated by commas"
@@ -574,10 +574,10 @@ msgid "Update"
 msgstr "تحديث"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "تحديث أو نشر"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "انشر منشورك"
 
 msgid "Written by {0}"
 msgstr "كتبه {0}"
@@ -589,7 +589,7 @@ msgid "Delete this article"
 msgstr "احذف هذا المقال"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "جميع الحقوق محفوظة."
 
 msgid "This article is under the {0} license."
 msgstr "تم نشر هذا المقال تحت رخصة {0}."
@@ -743,7 +743,7 @@ msgid "You don't have any media yet."
 msgstr "ليس لديك أية وسائط بعد."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "تحذير عن المحتوى: {0}"
 
 msgid "Delete"
 msgstr "حذف"
