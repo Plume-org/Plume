@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-07 14:14\n"
+"PO-Revision-Date: 2019-04-07 15:04\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -390,7 +390,7 @@ msgid "Articles are also visible on other Plume instances, and you can interact 
 msgstr ""
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "يستضيف <em>{0}</em> أشخاص"
 
 msgid "Read the detailed rules"
 msgstr "إقرأ القواعد بالتفصيل"
@@ -418,14 +418,14 @@ msgstr "البحث المتقدم"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
-msgstr ""
+msgstr "عنوان المقالات المطابقة لهذه الكلمات"
 
 msgid "Title"
 msgstr "العنوان"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
-msgstr ""
+msgstr "العناوين الثانوية للمقالات المطابقة لهذه الكلمات"
 
 msgid "Subtitle - byline"
 msgstr ""
@@ -447,7 +447,7 @@ msgstr "بحلول هذا التاريخ"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
-msgstr ""
+msgstr "تتضمن هذه الوسوم"
 
 msgid "Tags"
 msgstr "الوسوم"
