@@ -693,8 +693,6 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            dbg!(blog.fqn);
-
             assert_eq!(Blog::find_by_fqn(&r, "SomeName").unwrap().id, blog.id);
 
             Ok(())

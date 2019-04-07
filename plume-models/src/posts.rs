@@ -76,8 +76,8 @@ impl Provider<PlumeRocket> for Post {
             if !post.published
                 && !rockets
                     .user
-                    .clone()
-                    .map(|u| post.is_author(conn, u.id).unwrap_or(false))
+                    .as_ref()
+                    .and_then(|u| post.is_author(conn, u.id).ok())
                     .unwrap_or(false)
             {
                 return Err(ApiError::Authorization(
@@ -135,8 +135,8 @@ impl Provider<PlumeRocket> for Post {
                         p.published
                             || rockets
                                 .user
-                                .clone()
-                                .map(|u| p.is_author(conn, u.id).unwrap_or(false))
+                                .as_ref()
+                                .and_then(|u| p.is_author(conn, u.id).ok())
                                 .unwrap_or(false)
                     })
                     .map(|p| PostEndpoint {
@@ -176,7 +176,7 @@ impl Provider<PlumeRocket> for Post {
         let conn = &*rockets.conn;
         let user_id = rockets
             .user
-            .clone()
+            .as_ref()
             .expect("Post as Provider::delete: not authenticated")
             .id;
         if let Ok(post) = Post::get(conn, id) {
@@ -208,15 +208,10 @@ impl Provider<PlumeRocket> for Post {
         let domain = &Instance::get_local(&conn)
             .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
             .public_domain;
-        let author = User::get(
-            conn,
-            rockets
-                .user
-                .clone()
-                .expect("<Post as Provider>::create: no user_id error")
-                .id,
-        )
-        .map_err(|_| ApiError::NotFound("Author not found".into()))?;
+        let author = rockets
+            .user
+            .clone()
+            .ok_or_else(|| ApiError::NotFound("Author not found".into()))?;
 
         let (content, mentions, hashtags) = md_to_html(
             query.source.clone().unwrap_or_default().clone().as_ref(),
@@ -225,10 +220,6 @@ impl Provider<PlumeRocket> for Post {
             Some(Media::get_media_processor(conn, vec![&author])),
         );
 
-        let author = rockets
-            .user
-            .clone()
-            .ok_or_else(|| ApiError::NotFound("Author not found".into()))?;
         let blog = match query.blog_id {
             Some(x) => x,
             None => {
