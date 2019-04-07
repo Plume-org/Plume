@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-07 17:04\n"
+"PO-Revision-Date: 2019-04-07 21:26\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -114,7 +114,7 @@ msgstr ""
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Aby subskrybować do kogoś, musisz być zalogowany"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
@@ -130,7 +130,7 @@ msgid "Search"
 msgstr "Szukaj"
 
 msgid "Dashboard"
-msgstr "Panel"
+msgstr "Panel rozdzielczy"
 
 msgid "Notifications"
 msgstr "Powiadomienia"
@@ -288,7 +288,7 @@ msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr "Przepraszamy, jako administrator nie możesz opuścić swojej instancji."
 
 msgid "Your Dashboard"
-msgstr "Twój panel"
+msgstr "Twój panel rozdzielczy"
 
 msgid "Your Blogs"
 msgstr "Twoje blogi"
