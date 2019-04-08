@@ -147,10 +147,10 @@ aliases:
       - *restore_cache_plume_dead_code
       - run:
           name: install server
-          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . || cargo install --debug --no-default-features --features="${FEATURES}",test --path .
+          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . -f || cargo install --debug --no-default-features --features="${FEATURES}",test --path . -f
       - run:
           name: install plm
-          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli
+          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli -f || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli -f
       - run:
           name: run test
           command: ./script/run_browser_test.sh
