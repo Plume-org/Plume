@@ -257,7 +257,7 @@ impl User {
         resolve(acct.to_owned(), true)?
             .links
             .into_iter()
-            .find(|l| l.rel == String::from("http://ostatus.org/schema/1.0/subscribe"))
+            .find(|l| l.rel == "http://ostatus.org/schema/1.0/subscribe")
             .and_then(|l| l.template)
             .ok_or(Error::Webfinger)
     }
