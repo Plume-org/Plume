@@ -606,7 +606,7 @@ pub struct Remote {
     remote: String,
 }
 
-#[post("/~/<blog_name>/<slug>/remote_interact", data="<remote>")]
+#[post("/~/<blog_name>/<slug>/remote_interact", data = "<remote>")]
 pub fn remote_interact_post(
     conn: DbConn,
     blog_name: String,
@@ -618,10 +618,7 @@ pub fn remote_interact_post(
         .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id))?;
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
         .ok()
-        .and_then(|uri| {
-            rt_format!(uri, uri = target.ap_url)
-            .ok()
-        })
+        .and_then(|uri| rt_format!(uri, uri = target.ap_url).ok())
     {
         Ok(Err(Redirect::to(uri)))
     } else {

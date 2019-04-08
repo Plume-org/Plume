@@ -221,7 +221,7 @@ pub fn follow_not_connected(
             );
             Ok(Ok(Flash::new(
                 render!(users::follow_remote(
-                &(&*conn, &i18n.catalog, None),
+                    &(&*conn, &i18n.catalog, None),
                     target,
                     super::session::LoginForm::default(),
                     ValidationErrors::default(),
@@ -239,6 +239,7 @@ pub fn follow_not_connected(
                 target,
                 super::session::LoginForm::default(),
                 ValidationErrors::default(),
+                #[allow(clippy::map_clone)]
                 remote_form.map(|x| x.clone()).unwrap_or_default(),
                 ValidationErrors::default()
             )),
