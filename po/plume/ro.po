@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-08 16:09\n"
+"PO-Revision-Date: 2019-04-08 17:02\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -408,7 +408,7 @@ msgid "By {0}"
 msgstr ""
 
 msgid "Draft"
-msgstr ""
+msgstr "Ciornă"
 
 msgid "Your query"
 msgstr ""
@@ -421,7 +421,7 @@ msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
-msgstr ""
+msgstr "Titlu"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
@@ -435,7 +435,7 @@ msgid "Content matching these words"
 msgstr ""
 
 msgid "Body content"
-msgstr ""
+msgstr "Conţinut de corp"
 
 # src/template_utils.rs:305
 msgid "From this date"
@@ -443,14 +443,14 @@ msgstr ""
 
 # src/template_utils.rs:305
 msgid "To this date"
-msgstr ""
+msgstr "La această dată"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
 msgstr ""
 
 msgid "Tags"
-msgstr ""
+msgstr "Etichete"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these instances"
@@ -464,18 +464,18 @@ msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "Autori"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
-msgstr ""
+msgstr "Postat pe unul dintre aceste bloguri"
 
 msgid "Blog title"
 msgstr ""
 
 # src/template_utils.rs:305
 msgid "Written in this language"
-msgstr ""
+msgstr "Scris în această limbă"
 
 msgid "Language"
 msgstr ""
@@ -565,13 +565,13 @@ msgid "Leave it empty to reserve all rights"
 msgstr ""
 
 msgid "Illustration"
-msgstr ""
+msgstr "Ilustraţie"
 
 msgid "This is a draft, don't publish it yet."
 msgstr ""
 
 msgid "Update"
-msgstr ""
+msgstr "Actualizare"
 
 msgid "Update, or publish"
 msgstr ""
@@ -583,7 +583,7 @@ msgid "Written by {0}"
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "Editare"
 
 msgid "Delete this article"
 msgstr ""
@@ -616,7 +616,7 @@ msgid "I don't want to boost this anymore"
 msgstr ""
 
 msgid "Boost"
-msgstr ""
+msgstr "Boost"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
@@ -629,7 +629,7 @@ msgid "Content warning"
 msgstr ""
 
 msgid "Your comment"
-msgstr ""
+msgstr "Comentariul tău"
 
 msgid "Submit comment"
 msgstr ""
