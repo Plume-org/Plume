@@ -260,7 +260,6 @@ impl User {
             .find(|l| l.rel == String::from("http://ostatus.org/schema/1.0/subscribe"))
             .and_then(|l| l.template)
             .ok_or(Error::Webfinger)
-
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {
