@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 14:14\n"
+"PO-Revision-Date: 2019-04-08 16:09\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -26,7 +26,7 @@ msgstr "{0} este abonat la tine."
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} i-a plăcut articolul tău."
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
@@ -34,19 +34,19 @@ msgstr "{0} te-a menționat."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} impulsionat articolul tău."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "Avatarul lui {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Pentru a crea un nou blog, trebuie sa fii logat"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Nu aveți permisiunea de a șterge acest blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
@@ -70,11 +70,11 @@ msgstr ""
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Acest post nu a fost publicată încă."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Pentru a scrie un post nou, trebuie să fii logat"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
@@ -82,7 +82,7 @@ msgstr ""
 
 # src/routes/posts.rs:145
 msgid "New post"
-msgstr ""
+msgstr "Postare nouă"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
@@ -163,7 +163,7 @@ msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Ultimele articole"
 
 msgid "Your feed"
 msgstr ""
@@ -199,18 +199,18 @@ msgid "All the articles of the Fediverse"
 msgstr "Toate articolele Fediverse"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Articolele de la {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:217
 msgid "Name"
-msgstr ""
+msgstr "Nume"
 
 # src/template_utils.rs:220
 msgid "Optional"
-msgstr ""
+msgstr "Opţional"
 
 msgid "Allow anyone to register here"
 msgstr ""
@@ -267,7 +267,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Summary"
 msgstr ""
@@ -316,27 +316,27 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Username"
-msgstr ""
+msgstr "Nume utilizator"
 
 # src/template_utils.rs:217
 msgid "Password"
-msgstr ""
+msgstr "Parolă"
 
 # src/template_utils.rs:217
 msgid "Password confirmation"
-msgstr ""
+msgstr "Confirmarea parolei"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "Articole"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Abonaţi"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Abonamente"
 
 msgid "Atom feed"
 msgstr ""
@@ -345,22 +345,22 @@ msgid "Recently boosted"
 msgstr ""
 
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 msgid "It is you"
 msgstr ""
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Editează-ți profilul"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Deschide la {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Dezabonare"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Abonare"
 
 msgid "{0}'s subscriptions'"
 msgstr ""
@@ -369,16 +369,16 @@ msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
-msgstr ""
+msgstr "Răspuns"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sînteți sigur?"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Şterge comentariul"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Ce este Plume?"
 
 msgid "Plume is a decentralized blogging engine."
 msgstr ""
