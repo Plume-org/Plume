@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-08 09:32\n"
+"PO-Revision-Date: 2019-04-08 10:24\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:114
 msgid "Open the rich text editor"
-msgstr ""
+msgstr "Apri il compositore di testo avanzato"
 
 # plume-front/src/editor.rs:143
 msgid "Title"
