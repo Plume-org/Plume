@@ -108,6 +108,12 @@ msgstr ""
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
@@ -216,8 +222,8 @@ msgid "Allow anyone to register here"
 msgstr "不特定多数に登録を許可"
 
 #, fuzzy
-msgid "Short description - byline"
-msgstr "短い説明"
+msgid "Short description"
+msgstr "長い説明"
 
 #, fuzzy
 msgid "Markdown syntax is supported"
@@ -237,7 +243,7 @@ msgstr "設定を保存"
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to <em>{0}</em> users"
+msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -252,6 +258,42 @@ msgstr "管理者"
 #, fuzzy
 msgid "Runs Plume {0}"
 msgstr "Plume {{ version }} を実行中"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "フォロー"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "このインスタンスについて"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "ブーストするにはログインしてください"
+
+#, fuzzy
+msgid "Username, or email"
+msgstr "ユーザー名またはメールアドレス"
+
+msgid "Password"
+msgstr "パスワード"
+
+msgid "Log in and follow {}"
+msgstr ""
+
+#, fuzzy
+msgid "I'm from another instance"
+msgstr "件"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
+msgid "Username"
+msgstr "ユーザー名"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
@@ -325,12 +367,6 @@ msgstr "アカウントを作成"
 msgid "Create an account"
 msgstr "アカウントを作成"
 
-msgid "Username"
-msgstr "ユーザー名"
-
-msgid "Password"
-msgstr "パスワード"
-
 msgid "Password confirmation"
 msgstr "パスワードの確認"
 
@@ -379,7 +415,7 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr "説明"
 
 #, fuzzy
@@ -403,7 +439,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume は分散型ブログエンジンです。"
 
 #, fuzzy
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "作成者は、ある固有の Web サイトから、さまざまなブログを管理できます。"
 
 #, fuzzy
@@ -413,9 +449,6 @@ msgid ""
 msgstr ""
 "記事は他の Plume Web サイトからも閲覧可能であり、Mastdon のように他のプラット"
 "フォームから直接記事と関わることができます。"
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "詳細な規則を読む"
@@ -567,10 +600,6 @@ msgstr "パスワード"
 msgid "Log in"
 msgstr "ログイン"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "ユーザー名またはメールアドレス"
-
 msgid "Publish"
 msgstr "公開"
 
@@ -649,7 +678,7 @@ msgstr "いいねする"
 
 #, fuzzy
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "{0} ブースト"
 
 #, fuzzy
@@ -837,6 +866,10 @@ msgstr "このメディアを記事に挿入するには、自分の記事にコ
 msgid "Use as an avatar"
 msgstr "アバターとして使う"
 
+#, fuzzy
+#~ msgid "Short description - byline"
+#~ msgstr "短い説明"
+
 #~ msgid "Login"
 #~ msgstr "ログイン"
 
@@ -891,9 +924,6 @@ msgstr "アバターとして使う"
 
 #~ msgid "Unfollow"
 #~ msgstr "フォロー解除"
-
-#~ msgid "Follow"
-#~ msgstr "フォロー"
 
 #, fuzzy
 #~ msgid "Comment \"{0}\""
@@ -976,9 +1006,6 @@ msgstr "アバターとして使う"
 #~ msgid "Login to like"
 #~ msgstr "いいねするにはログインしてください"
 
-#~ msgid "Login to boost"
-#~ msgstr "ブーストするにはログインしてください"
-
 #~ msgid "Welcome to {{ instance_name | escape }}"
 #~ msgstr "{{ instance_name | escape }} へようこそ"
 
@@ -1029,9 +1056,6 @@ msgstr "アバターとして使う"
 
 #~ msgid "And connected to"
 #~ msgstr "他のインスタンスからの接続数"
-
-#~ msgid "other instances"
-#~ msgstr "件"
 
 #~ msgid "Edit {{ post }}"
 #~ msgstr "{{ post }} を編集"

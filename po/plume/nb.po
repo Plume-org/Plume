@@ -109,6 +109,12 @@ msgstr ""
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
@@ -222,8 +228,8 @@ msgid "Allow anyone to register here"
 msgstr "Tillat at hvem som helst registrerer seg"
 
 #, fuzzy
-msgid "Short description - byline"
-msgstr "Kort beskrivelse"
+msgid "Short description"
+msgstr "Lang beskrivelse"
 
 #, fuzzy
 msgid "Markdown syntax is supported"
@@ -243,7 +249,7 @@ msgstr "Lagre innstillingene"
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to <em>{0}</em> users"
+msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -257,6 +263,41 @@ msgid "Administred by"
 msgstr "Administrasjon"
 
 msgid "Runs Plume {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "Følg"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Om denne instansen"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Logg inn"
+
+#, fuzzy
+msgid "Username, or email"
+msgstr "Brukernavn eller epost"
+
+msgid "Password"
+msgstr "Passord"
+
+msgid "Log in and follow {}"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+msgid "Enter your full username to follow"
+msgstr ""
+
+msgid "Username"
+msgstr "Brukernavn"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Edit your account"
@@ -332,12 +373,6 @@ msgstr "Opprett din konto"
 msgid "Create an account"
 msgstr "Lag en ny konto"
 
-msgid "Username"
-msgstr "Brukernavn"
-
-msgid "Password"
-msgstr "Passord"
-
 msgid "Password confirmation"
 msgstr "Passordbekreftelse"
 
@@ -386,7 +421,7 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr "Lang beskrivelse"
 
 #, fuzzy
@@ -411,7 +446,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume er et desentralisert bloggsystem."
 
 #, fuzzy
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "Forfattere kan administrere forskjellige blogger fra en unik webside."
 
 #, fuzzy
@@ -421,9 +456,6 @@ msgid ""
 msgstr ""
 "Artiklene er også synlige på andre websider som kjører Plume, og du kan "
 "interagere med dem direkte fra andre plattformer som f.eks. Mastodon."
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
 
 msgid "Read the detailed rules"
 msgstr "Les reglene"
@@ -587,10 +619,6 @@ msgstr "Passord"
 msgid "Log in"
 msgstr "Logg inn"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "Brukernavn eller epost"
-
 msgid "Publish"
 msgstr ""
 
@@ -673,7 +701,7 @@ msgstr "Legg til din"
 
 #, fuzzy
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "Én fremhevning"
 msgstr[1] "{0} fremhevninger"
 
@@ -857,6 +885,10 @@ msgstr ""
 msgid "Use as an avatar"
 msgstr ""
 
+#, fuzzy
+#~ msgid "Short description - byline"
+#~ msgstr "Kort beskrivelse"
+
 #~ msgid "Login"
 #~ msgstr "Logg inn"
 
@@ -918,9 +950,6 @@ msgstr ""
 
 #~ msgid "Unfollow"
 #~ msgstr "Slutt å følge"
-
-#~ msgid "Follow"
-#~ msgstr "Følg"
 
 #, fuzzy
 #~ msgid "No articles to see here yet."
@@ -991,10 +1020,6 @@ msgstr ""
 
 #~ msgid "Invalid email"
 #~ msgstr "Ugyldig epost"
-
-#, fuzzy
-#~ msgid "Log In to like"
-#~ msgstr "Logg inn"
 
 #, fuzzy
 #~ msgid "Your drafts"

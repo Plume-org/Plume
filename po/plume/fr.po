@@ -108,6 +108,12 @@ msgstr ""
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
@@ -215,8 +221,8 @@ msgid "Allow anyone to register here"
 msgstr "Autoriser les inscriptions"
 
 #, fuzzy
-msgid "Short description - byline"
-msgstr "Description courte"
+msgid "Short description"
+msgstr "Description longue"
 
 #, fuzzy
 msgid "Markdown syntax is supported"
@@ -236,7 +242,8 @@ msgstr "Enregistrer les paramètres"
 msgid "About {0}"
 msgstr "À propos de {0}"
 
-msgid "Home to <em>{0}</em> users"
+#, fuzzy
+msgid "Home to <em>{0}</em> people"
 msgstr "Accueille <em>{0} personnes"
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -251,6 +258,41 @@ msgstr "Administré par"
 
 msgid "Runs Plume {0}"
 msgstr "Propulsé par Plume {0}"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "S’abonner"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "À propos de cette instance"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Connectez-vous pour partager"
+
+#, fuzzy
+msgid "Username, or email"
+msgstr "Nom d’utilisateur ou adresse électronique"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Log in and follow {}"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+msgid "Enter your full username to follow"
+msgstr ""
+
+msgid "Username"
+msgstr "Nom d’utilisateur"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "Modifier votre compte"
@@ -329,12 +371,6 @@ msgstr "Créer votre compte"
 msgid "Create an account"
 msgstr "Créer un compte"
 
-msgid "Username"
-msgstr "Nom d’utilisateur"
-
-msgid "Password"
-msgstr "Mot de passe"
-
 msgid "Password confirmation"
 msgstr "Confirmation du mot de passe"
 
@@ -384,7 +420,7 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr "Description"
 
 #, fuzzy
@@ -408,7 +444,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume est un moteur de blog décentralisé."
 
 #, fuzzy
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 "Les auteur⋅ice⋅s peuvent gérer différents blogs au sein d’un même site."
 
@@ -420,10 +456,6 @@ msgstr ""
 "Les articles sont également visibles sur d’autres sites Plume, et vous "
 "pouvez interagir avec directement depuis d’autres plateformes telles que "
 "Mastodon."
-
-#, fuzzy
-msgid "Home to <em>{0}</em> people"
-msgstr "Accueille <em>{0} personnes"
 
 msgid "Read the detailed rules"
 msgstr "Lire les règles détaillées"
@@ -560,10 +592,6 @@ msgstr "Mot de passe"
 msgid "Log in"
 msgstr "Se connecter"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "Nom d’utilisateur ou adresse électronique"
-
 msgid "Publish"
 msgstr "Publier"
 
@@ -646,7 +674,7 @@ msgstr ""
 
 #, fuzzy
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "{0} partage"
 msgstr[1] "{0} partages"
 
@@ -846,6 +874,13 @@ msgid "Use as an avatar"
 msgstr "Utiliser comme avatar"
 
 #, fuzzy
+#~ msgid "Short description - byline"
+#~ msgstr "Description courte"
+
+#~ msgid "Home to <em>{0}</em> users"
+#~ msgstr "Accueille <em>{0} personnes"
+
+#, fuzzy
 #~ msgid "You need to be logged in order to create a new blog"
 #~ msgstr "Vous devez vous connecter pour écrire un article"
 
@@ -897,9 +932,6 @@ msgstr "Utiliser comme avatar"
 
 #, fuzzy
 #~ msgid "Unfollow"
-#~ msgstr "S’abonner"
-
-#~ msgid "Follow"
 #~ msgstr "S’abonner"
 
 #, fuzzy
@@ -967,10 +999,6 @@ msgstr "Utiliser comme avatar"
 #, fuzzy
 #~ msgid "Log In to like"
 #~ msgstr "Connectez-vous pour aimer"
-
-#, fuzzy
-#~ msgid "Log In to boost"
-#~ msgstr "Connectez-vous pour partager"
 
 #, fuzzy
 #~ msgid "Create a new post"

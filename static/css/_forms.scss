@@ -133,3 +133,27 @@ form.new-post {
 .button + .button {
   margin-left: 1em;
 }
+
+.split {
+  display: flex;
+  justify-content: space-between;
+
+  & > * {
+    flex-grow: 1;
+    max-width: 40%;
+  }
+}
+
+header.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  opacity: 1;
+  font-weight: normal;
+
+  > * {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

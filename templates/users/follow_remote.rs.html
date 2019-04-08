@@ -1,18 +1,35 @@
 @use templates::base;
 @use plume_models::users::User;
+@use routes::session::LoginForm;
+@use routes::user::*;
 @use template_utils::*;
+@use validator::ValidationErrors;
 
-@(ctx: BaseContext, _user: User, message: Option<&str>)
+@(ctx: BaseContext, user: User, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 
-@:base(ctx, "Follow remote user".to_string(), {}, {}, {
+@:base(ctx, i18n!(ctx.1, "Follow {}"; user.name()), {}, {}, {
     <div>
-	    @if let Some(message) = message {
-		<p>@message</p>
-	    }
-	    <a href="?local">I'm from here</a>
-	    <form method="post">
-		    <input type="text" name="remote" placeholder="your name (something@@somewhere.social)"/>
-		    <input type="submit"/>
-	    </form>
+    	<header class="center">
+    		<h1>@i18n!(ctx.1, "Follow {}"; user.name())</h1>
+    		@avatar(ctx.0, &user, Size::Medium, false, ctx.1)
+    		<small>@@@user.fqn</small>
+    	</header>
+
+	    <div class="split">
+    		<form method="post" action="/login">
+	    		<h2>@i18n!(ctx.1, "I'm from this instance")</h2>
+	    		<p>@i18n!(ctx.1, "Login to follow")</p>
+	    		@input!(ctx.1, email_or_name (text), "Username, or email", login_form, login_errs.clone(), "minlenght=\"1\"")
+		        @input!(ctx.1, password (password), "Password", login_form, login_errs, "minlenght=\"1\"")
+		        <input type="submit" value="@i18n!(ctx.1, "Log in and follow {}"; user.name())" />
+	    	</form>
+
+	    	<form method="post">
+	    		<h2>@i18n!(ctx.1, "I'm from another instance")</h2>
+	    		<p>@i18n!(ctx.1, "Enter your full username to follow")</p>
+	    		@input!(ctx.1, remote (text), "Username", "Example: user@plu.me", remote_form, remote_errs.clone(), "minlenght=\"1\"")
+		    	<input type="submit" value="@i18n!(ctx.1, "Follow {}"; user.name())"/>
+	    	</form>
+	    </div>
     </div>
 })

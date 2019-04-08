@@ -180,21 +180,21 @@ pub fn follow(
     Ok(Redirect::to(uri!(details: name = name)))
 }
 
-#[derive(FromForm)]
-pub struct Remote {
-    remote: String,
+#[derive(Clone, Default, FromForm)]
+pub struct RemoteForm {
+    pub remote: String,
 }
 
-#[post("/@/<name>/follow", data = "<remote>", rank = 2)]
+#[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
 pub fn follow_not_connected(
     conn: DbConn,
     name: String,
-    remote: Option<LenientForm<Remote>>,
+    remote_form: Option<LenientForm<RemoteForm>>,
     i18n: I18n,
-) -> Result<Result<Ructe, Redirect>, ErrorPage> {
+) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
     let target = User::find_by_fqn(&*conn, &name)?;
-    if let Some(remote) = remote {
-        let remote = &remote.remote;
+    if let Some(remote_form) = remote_form {
+        let remote = &remote_form.remote;
         if let Some(uri) = User::fetch_remote_interact_uri(remote)
             .ok()
             .and_then(|uri| {
@@ -211,15 +211,40 @@ pub fn follow_not_connected(
         {
             Ok(Err(Redirect::to(uri)))
         } else {
-            //could not get your remote url?
-            panic!()
+            let mut err = ValidationErrors::default();
+            err.add("remote",
+                ValidationError {
+                    code: Cow::from("invalid_remote"),
+                    message: Some(Cow::from(i18n!(&i18n.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
+                    params: HashMap::new(),
+                },
+            );
+            Ok(Ok(Flash::new(
+                render!(users::follow_remote(
+                &(&*conn, &i18n.catalog, None),
+                    target,
+                    super::session::LoginForm::default(),
+                    ValidationErrors::default(),
+                    remote_form.clone(),
+                    err
+                )),
+                "callback",
+                uri!(follow: name = name).to_string(),
+            )))
         }
     } else {
-        Ok(Ok(render!(users::follow_remote(
-            &(&*conn, &i18n.catalog, None),
-            target,
-            None
-        ))))
+        Ok(Ok(Flash::new(
+            render!(users::follow_remote(
+                &(&*conn, &i18n.catalog, None),
+                target,
+                super::session::LoginForm::default(),
+                ValidationErrors::default(),
+                remote_form.map(|x| x.clone()).unwrap_or_default(),
+                ValidationErrors::default()
+            )),
+            "callback",
+            uri!(follow: name = name).to_string(),
+        )))
     }
 }
 

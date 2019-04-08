@@ -107,6 +107,12 @@ msgstr ""
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
@@ -213,8 +219,8 @@ msgid "Allow anyone to register here"
 msgstr "السماح للجميع بتسجيل حساب"
 
 #, fuzzy
-msgid "Short description - byline"
-msgstr "وصف قصير"
+msgid "Short description"
+msgstr "الوصف الطويل"
 
 #, fuzzy
 msgid "Markdown syntax is supported"
@@ -234,7 +240,8 @@ msgstr "حفظ التعديلات"
 msgid "About {0}"
 msgstr "عن {0}"
 
-msgid "Home to <em>{0}</em> users"
+#, fuzzy
+msgid "Home to <em>{0}</em> people"
 msgstr "يستضيف <em>{0}</em> مستخدمين"
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -249,6 +256,41 @@ msgstr "يديره"
 
 msgid "Runs Plume {0}"
 msgstr "مدعوم بـ Plume {0}"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "اتبع"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "عن مثيل الخادوم هذا"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "قم بتسجيل الدخول قصد مشاركته"
+
+#, fuzzy
+msgid "Username, or email"
+msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
+
+msgid "Password"
+msgstr "كلمة السر"
+
+msgid "Log in and follow {}"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+msgid "Enter your full username to follow"
+msgstr ""
+
+msgid "Username"
+msgstr "اسم المستخدم"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "تعديل حسابك"
@@ -318,12 +360,6 @@ msgstr "انشئ حسابك"
 msgid "Create an account"
 msgstr "انشئ حسابا"
 
-msgid "Username"
-msgstr "اسم المستخدم"
-
-msgid "Password"
-msgstr "كلمة السر"
-
 msgid "Password confirmation"
 msgstr "تأكيد الكلمة السرية"
 
@@ -372,7 +408,7 @@ msgid "Subscribe"
 msgstr ""
 
 #, fuzzy
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr "الوصف"
 
 #, fuzzy
@@ -396,7 +432,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "بلوم محرك لامركزي للمدونات."
 
 #, fuzzy
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "يمكن للمدونين إدارة عدة مدونات مِن موقع ويب وحيد."
 
 #, fuzzy
@@ -406,10 +442,6 @@ msgid ""
 msgstr ""
 "ستكون المقالات معروضة كذلك على مواقع بلوم الأخرى، و يمكنكم التفاعل معها "
 "مباشرة عبر أية منصة أخرى مثل ماستدون."
-
-#, fuzzy
-msgid "Home to <em>{0}</em> people"
-msgstr "يستضيف <em>{0}</em> مستخدمين"
 
 msgid "Read the detailed rules"
 msgstr "إقرأ القواعد بالتفصيل"
@@ -561,10 +593,6 @@ msgstr "كلمة السر"
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
-
 msgid "Publish"
 msgstr "انشر"
 
@@ -647,7 +675,7 @@ msgstr "أعجبني"
 
 #, fuzzy
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "بدون مشاركة"
 msgstr[1] "مشاركة واحدة"
 msgstr[2] "مشاركتان"
@@ -841,6 +869,13 @@ msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض ال
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
 
+#, fuzzy
+#~ msgid "Short description - byline"
+#~ msgstr "وصف قصير"
+
+#~ msgid "Home to <em>{0}</em> users"
+#~ msgstr "يستضيف <em>{0}</em> مستخدمين"
+
 #~ msgid "Login"
 #~ msgstr "تسجيل الدخول"
 
@@ -896,9 +931,6 @@ msgstr "استخدمها كصورة رمزية"
 
 #~ msgid "Unfollow"
 #~ msgstr "الغاء المتابعة"
-
-#~ msgid "Follow"
-#~ msgstr "اتبع"
 
 #~ msgid "Comment \"{0}\""
 #~ msgstr "تعليق \"{0}\""
@@ -980,6 +1012,3 @@ msgstr "استخدمها كصورة رمزية"
 
 #~ msgid "Login to like"
 #~ msgstr "قم بتسجيل الدخول قصد الإعجاب به"
-
-#~ msgid "Login to boost"
-#~ msgstr "قم بتسجيل الدخول قصد مشاركته"
