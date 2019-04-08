@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-08 11:57\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -263,7 +263,7 @@ msgstr "Subir un avatar"
 
 # src/template_utils.rs:217
 msgid "Display name"
-msgstr ""
+msgstr "Nombre mostrado"
 
 # src/template_utils.rs:217
 msgid "Email"
@@ -303,7 +303,7 @@ msgid "Your Drafts"
 msgstr "Tus borradores"
 
 msgid "Your media"
-msgstr ""
+msgstr "Sus medios"
 
 msgid "Go to your gallery"
 msgstr "Ir a tu galería"
@@ -447,14 +447,14 @@ msgstr "Hasta esta fecha"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
-msgstr ""
+msgstr "Con estas etiquetas"
 
 msgid "Tags"
-msgstr ""
+msgstr "Etiquetas"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these instances"
-msgstr ""
+msgstr "Publicado en una de estas instancias"
 
 msgid "Instance domain"
 msgstr ""
