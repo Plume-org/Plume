@@ -752,7 +752,10 @@ impl User {
                     rel: String::from("http://ostatus.org/schema/1.0/subscribe"),
                     mime_type: None,
                     href: None,
-                    template: Some(format!("{}/remote_interact?{{uri}}", self.get_instance(conn)?.public_domain)),
+                    template: Some(format!(
+                        "{}/remote_interact?{{uri}}",
+                        self.get_instance(conn)?.public_domain
+                    )),
                 },
             ],
         })

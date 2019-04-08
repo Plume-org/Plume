@@ -270,13 +270,20 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
     }
 
     if let Ok(post) = Post::find_by_ap_url(&*conn, &target) {
-        return Some(Redirect::to(uri!(super::posts::details: blog = post.get_blog(&*conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _)));
+        return Some(Redirect::to(
+            uri!(super::posts::details: blog = post.get_blog(&*conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _),
+        ));
     }
 
     if let Ok(comment) = Comment::find_by_ap_url(&*conn, &target) {
         if comment.can_see(&*conn, user.as_ref()) {
             let post = comment.get_post(&*conn).expect("Can't retrieve post");
-            return Some(Redirect::to(uri!(super::posts::details: blog = post.get_blog(&*conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = comment.id)));
+            return Some(Redirect::to(uri!(
+                super::posts::details: blog =
+                    post.get_blog(&*conn).expect("Can't retrieve blog").fqn,
+                slug = &post.slug,
+                responding_to = comment.id
+            )));
         }
     }
     None
