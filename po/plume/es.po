@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-08 11:57\n"
+"PO-Revision-Date: 2019-04-08 12:47\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -34,7 +34,7 @@ msgstr "{0} te ha mencionado."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr "{0} impulsó tu artículo."
+msgstr "{0} compartió su artículo."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
@@ -62,7 +62,7 @@ msgstr "No puede usar este medio como bandera del blog."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Para darle un Me Gusta a un artículo, necesita estar conectado"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
@@ -110,15 +110,15 @@ msgstr "Lo sentimos, pero el enlace expiró. Inténtalo de nuevo"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr "Para acceder a su panel de control, necesita estar logueado"
+msgstr "Para acceder a su panel de control, necesita estar conectado"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr "Para suscribirse a alguien, necesita estar logueado"
+msgstr "Para suscribirse a alguien, necesita estar conectado"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr "Para editar su perfil, necesita estar logueado"
+msgstr "Para editar su perfil, necesita estar conectado"
 
 msgid "Plume"
 msgstr "Plume"
@@ -145,7 +145,7 @@ msgid "Log In"
 msgstr "Iniciar Sesión"
 
 msgid "Register"
-msgstr "Registrar"
+msgstr "Registrarse"
 
 msgid "About this instance"
 msgstr "Acerca de esta instancia"
@@ -457,58 +457,58 @@ msgid "Posted on one of these instances"
 msgstr "Publicado en una de estas instancias"
 
 msgid "Instance domain"
-msgstr ""
+msgstr "Dominio de instancia"
 
 # src/template_utils.rs:305
 msgid "Posted by one of these authors"
-msgstr ""
+msgstr "Publicado por uno de estos autores"
 
 msgid "Authors"
-msgstr ""
+msgstr "Autores"
 
 # src/template_utils.rs:305
 msgid "Posted on one of these blogs"
-msgstr ""
+msgstr "Publicado en uno de estos blogs"
 
 msgid "Blog title"
-msgstr ""
+msgstr "Título del blog"
 
 # src/template_utils.rs:305
 msgid "Written in this language"
-msgstr ""
+msgstr "Escrito en este idioma"
 
 msgid "Language"
-msgstr ""
+msgstr "Idioma"
 
 # src/template_utils.rs:305
 msgid "Published under this license"
-msgstr ""
+msgstr "Publicado bajo esta licencia"
 
 msgid "Article license"
-msgstr ""
+msgstr "Licencia de artículo"
 
 msgid "Search result for \"{0}\""
-msgstr ""
+msgstr "Resultado de búsqueda para \"{0}\""
 
 msgid "Search result"
-msgstr ""
+msgstr "Resultado de búsqueda"
 
 msgid "No result for your query"
-msgstr ""
+msgstr "No hay resultado para su consulta"
 
 msgid "No more results for your query"
-msgstr ""
+msgstr "No hay más resultados para su consulta"
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Restablecer su contraseña"
 
 # src/template_utils.rs:217
 msgid "New password"
-msgstr ""
+msgstr "Nueva contraseña"
 
 # src/template_utils.rs:217
 msgid "Confirmation"
-msgstr ""
+msgstr "Confirmación"
 
 msgid "Update password"
 msgstr "Actualizar contraseña"
@@ -517,123 +517,123 @@ msgid "Check your inbox!"
 msgstr "Revise su bandeja de entrada!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Enviamos un correo a la dirección que nos dio, con un enlace para restablecer su contraseña."
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "Correo electrónico"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "Enviar enlace de restablecimiento de contraseña"
 
 msgid "Log in"
-msgstr ""
+msgstr "Iniciar sesión"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Nombre de usuario, o correo electrónico"
 
 msgid "Publish"
 msgstr "Publicar"
 
 msgid "Classic editor (any changes will be lost)"
-msgstr ""
+msgstr "Editor clásico (cualquier cambio estará perdido)"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
-msgstr ""
+msgstr "Subtítulo"
 
 msgid "Content"
 msgstr "Contenido"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr ""
+msgstr "Puede subir los medios a su galería, y luego copiar su código Markdown en sus artículos para insertarlos."
 
 msgid "Upload media"
-msgstr ""
+msgstr "Cargar medios"
 
 # src/template_utils.rs:217
 msgid "Tags, separated by commas"
-msgstr ""
+msgstr "Etiquetas, separadas por comas"
 
 # src/template_utils.rs:217
 msgid "License"
-msgstr ""
+msgstr "Licencia"
 
 # src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "Dejar vacío para reservar todos los derechos"
 
 msgid "Illustration"
-msgstr ""
+msgstr "Ilustración"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "Es un borrador, aún no lo publique."
 
 msgid "Update"
-msgstr ""
+msgstr "Actualizar"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Actualizar, o publicar"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "Publique su artículo"
 
 msgid "Written by {0}"
 msgstr "Escrito por {0}"
 
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 msgid "Delete this article"
-msgstr ""
+msgstr "Eliminar este artículo"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Todos los derechos reservados."
 
 msgid "This article is under the {0} license."
 msgstr "Este artículo está bajo la licencia {0}."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un Me Gusta"
+msgstr[1] "{0} Me Gusta"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Ya no me gusta esto"
 
 msgid "Add yours"
 msgstr "Agregue el suyo"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Un reparto"
+msgstr[1] "{0} repartos"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Ya no quiero compartir esto"
 
 msgid "Boost"
-msgstr ""
+msgstr "Compartir"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr ""
+msgstr "Conéctese o use su cuenta Fediverse para interactuar con este artículo"
 
 msgid "Comments"
 msgstr "Comentários"
 
 # src/template_utils.rs:217
 msgid "Content warning"
-msgstr ""
+msgstr "Aviso de contenido"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Su comentario"
 
 msgid "Submit comment"
 msgstr "Enviar comentario"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "No hay comentarios todavía. ¡Sea el primero en reaccionar!"
 
 msgid "Invalid CSRF token"
 msgstr "Token CSRF inválido"
@@ -770,8 +770,8 @@ msgid "Use as an avatar"
 msgstr "Usar como avatar"
 
 msgid "Log in to boost"
-msgstr ""
+msgstr "Conéctese para compartir"
 
 msgid "Log in to like"
-msgstr ""
+msgstr "Conéctese para darle un Me Gusta"
 
