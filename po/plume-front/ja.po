@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-08 04:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:114
 msgid "Open the rich text editor"
-msgstr ""
+msgstr "リッチテキストエディターを開く"
 
 # plume-front/src/editor.rs:143
 msgid "Title"
@@ -50,7 +50,7 @@ msgstr "カバー"
 
 # plume-front/src/editor.rs:252
 msgid "This is a draft"
-msgstr ""
+msgstr "これは下書きです"
 
 # plume-front/src/editor.rs:259
 msgid "Publish"
