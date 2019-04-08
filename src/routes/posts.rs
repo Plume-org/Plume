@@ -584,3 +584,52 @@ pub fn delete(
         ))
     }
 }
+
+#[get("/~/<blog_name>/<slug>/remote_interact")]
+pub fn remote_interact(
+    conn: DbConn,
+    blog_name: String,
+    slug: String,
+    i18n: I18n,
+) -> Result<Ructe, ErrorPage> {
+    let target = Blog::find_by_fqn(&*conn, &blog_name)
+        .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id))?;
+    Ok(render!(posts::remote_interact(
+        &(&*conn, &i18n.catalog, None),
+        target,
+        None
+    )))
+}
+
+#[derive(FromForm)]
+pub struct Remote {
+    remote: String,
+}
+
+#[post("/~/<blog_name>/<slug>/remote_interact", data="<remote>")]
+pub fn remote_interact_post(
+    conn: DbConn,
+    blog_name: String,
+    slug: String,
+    remote: LenientForm<Remote>,
+    i18n: I18n,
+) -> Result<Result<Ructe, Redirect>, ErrorPage> {
+    let target = Blog::find_by_fqn(&*conn, &blog_name)
+        .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id))?;
+    if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
+        .ok()
+        .and_then(|uri| {
+            rt_format!(uri, uri = target.ap_url)
+            .ok()
+        })
+    {
+        Ok(Err(Redirect::to(uri)))
+    } else {
+        //could not get your remote url?
+        Ok(Ok(render!(posts::remote_interact(
+            &(&*conn, &i18n.catalog, None),
+            target,
+            None
+        ))))
+    }
+}

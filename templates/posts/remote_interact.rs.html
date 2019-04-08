@@ -1,0 +1,19 @@
+@use templates::base;
+@use plume_models::posts::Post;
+@use template_utils::*;
+@use routes::*;
+
+@(ctx: BaseContext, _post: Post, message: Option<&str>)
+
+@:base(ctx, "Interact with remote account".to_string(), {}, {}, {
+    <div>
+	    @if let Some(message) = message {
+		<p>@message</p>
+	    }
+	    <a href="@uri!(session::new: m = i18n!(ctx.1, "Log in to interact"))">I'm from here</a>
+	    <form method="post">
+		    <input type="text" name="remote" placeholder="your name (something@@somewhere.social)"/>
+		    <input type="submit"/>
+	    </form>
+    </div>
+})

@@ -188,6 +188,8 @@ Then try to restart Plume
                 routes::posts::new_auth,
                 routes::posts::create,
                 routes::posts::delete,
+                routes::posts::remote_interact,
+                routes::posts::remote_interact_post,
                 routes::reshares::create,
                 routes::reshares::create_auth,
                 routes::search::search,
