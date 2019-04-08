@@ -164,6 +164,7 @@ Then try to restart Plume
                 routes::instance::toggle_block,
                 routes::instance::update_settings,
                 routes::instance::shared_inbox,
+                routes::instance::interact,
                 routes::instance::nodeinfo,
                 routes::instance::about,
                 routes::instance::web_manifest,

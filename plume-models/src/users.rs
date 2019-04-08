@@ -728,7 +728,7 @@ impl User {
             links: vec![
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
-                    mime_type: None,
+                    mime_type: Some(String::from("text/html")),
                     href: Some(self.ap_url.clone()),
                     template: None,
                 },
@@ -747,6 +747,12 @@ impl User {
                     mime_type: Some(String::from("application/activity+json")),
                     href: Some(self.ap_url.clone()),
                     template: None,
+                },
+                Link {
+                    rel: String::from("http://ostatus.org/schema/1.0/subscribe"),
+                    mime_type: None,
+                    href: None,
+                    template: Some(format!("{}/remote_interact?{{uri}}", self.get_instance(conn)?.public_domain)),
                 },
             ],
         })

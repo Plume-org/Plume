@@ -263,6 +263,25 @@ pub fn shared_inbox(
     })
 }
 
+#[get("/remote_interact?<target>")]
+pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redirect> {
+    if User::find_by_fqn(&*conn, &target).is_ok() {
+        return Some(Redirect::to(uri!(super::user::details: name = target)));
+    }
+
+    if let Ok(post) = Post::find_by_ap_url(&*conn, &target) {
+        return Some(Redirect::to(uri!(super::posts::details: blog = post.get_blog(&*conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _)));
+    }
+
+    if let Ok(comment) = Comment::find_by_ap_url(&*conn, &target) {
+        if comment.can_see(&*conn, user.as_ref()) {
+            let post = comment.get_post(&*conn).expect("Can't retrieve post");
+            return Some(Redirect::to(uri!(super::posts::details: blog = post.get_blog(&*conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = comment.id)));
+        }
+    }
+    None
+}
+
 #[get("/nodeinfo/<version>")]
 pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
     if version != "2.0" && version != "2.1" {
