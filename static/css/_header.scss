@@ -88,7 +88,7 @@ header {
 }
 
 // Only enable label animations on normal screens
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 600px) {
  	header nav a {
  	  i {
    		transition: all 0.2s ease;
