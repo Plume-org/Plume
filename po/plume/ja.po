@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 20:18\n"
+"PO-Revision-Date: 2019-04-08 04:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -537,7 +537,7 @@ msgid "Publish"
 msgstr "公開"
 
 msgid "Classic editor (any changes will be lost)"
-msgstr ""
+msgstr "クラシックエディター (すべての変更を破棄します)"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
