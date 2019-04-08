@@ -180,7 +180,33 @@ pub fn follow(
     Ok(Redirect::to(uri!(details: name = name)))
 }
 
-#[post("/@/<name>/follow", rank = 2)]
+#[derive(FromForm)]
+pub struct Remote {
+    remote: String
+}
+
+#[post("/@/<name>/follow", data = "<remote>", rank = 2)]
+pub fn follow_not_connected(conn: DbConn, name: String, remote: Option<LenientForm<Remote>>, i18n: I18n) -> Result<Result<Ructe, Redirect>, ErrorPage> {
+    let target = User::find_by_fqn(&*conn, &name)?;
+    if let Some(remote) = remote {
+        let remote = &remote.remote;
+        if let Some(uri) = User::fetch_remote_interact_uri(remote).ok()
+            .and_then(|uri| rt_format!(uri, uri = format!("{}@{}", target.fqn, target.get_instance(&*conn).ok()?.public_domain)).ok()) {
+            Ok(Err(Redirect::to(uri)))
+        } else {
+            //could not get your remote url?
+            panic!()
+        }
+    } else {
+        Ok(Ok(render!(users::follow_remote(
+        &(&*conn, &i18n.catalog, None),
+        target,
+        None
+        ))))
+    }
+}
+
+#[get("/@/<name>/follow?local", rank = 2)]
 pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(

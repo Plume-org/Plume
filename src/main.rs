@@ -28,6 +28,8 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
 extern crate rocket_i18n;
+#[macro_use]
+extern crate runtime_fmt;
 extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
@@ -210,6 +212,7 @@ Then try to restart Plume
                 routes::user::update,
                 routes::user::delete,
                 routes::user::follow,
+                routes::user::follow_not_connected,
                 routes::user::follow_auth,
                 routes::user::activity_details,
                 routes::user::outbox,

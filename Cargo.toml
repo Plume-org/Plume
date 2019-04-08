@@ -24,6 +24,7 @@ rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
 rocket_i18n = "0.4.0"
 rpassword = "2.0"
+runtime-fmt = "0.3.0"
 scheduled-thread-pool = "0.2.0"
 serde = "1.0"
 serde_json = "1.0"

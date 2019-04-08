@@ -1,0 +1,18 @@
+@use templates::base;
+@use plume_models::users::User;
+@use template_utils::*;
+
+@(ctx: BaseContext, _user: User, message: Option<&str>)
+
+@:base(ctx, "Follow remote user".to_string(), {}, {}, {
+    <div>
+	    @if let Some(message) = message {
+		<p>@message</p>
+	    }
+	    <a href="?local">I'm from here</a>
+	    <form method="post">
+		    <input type="text" name="remote" placeholder="your name (something@@somewhere.social)"/>
+		    <input type="submit"/>
+	    </form>
+    </div>
+})
