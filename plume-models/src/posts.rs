@@ -1012,6 +1012,7 @@ pub struct PostUpdate {
     pub title: Option<String>,
     pub subtitle: Option<String>,
     pub content: Option<String>,
+    pub cover: Option<i32>,
     pub source: Option<String>,
     pub license: Option<String>,
     pub tags: Option<serde_json::Value>,
@@ -1026,12 +1027,18 @@ impl FromId<PlumeRocket> for PostUpdate {
         Err(Error::NotFound)
     }
 
-    fn from_activity(_c: &PlumeRocket, updated: LicensedArticle) -> Result<Self> {
+    fn from_activity(c: &PlumeRocket, updated: LicensedArticle) -> Result<Self> {
         Ok(PostUpdate {
             ap_url: updated.object.object_props.id_string()?,
             title: updated.object.object_props.name_string().ok(),
             subtitle: updated.object.object_props.summary_string().ok(),
             content: updated.object.object_props.content_string().ok(),
+            cover: updated
+                .object
+                .object_props
+                .icon_object::<Image>()
+                .ok()
+                .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id)),
             source: updated
                 .object
                 .ap_object_props
@@ -1070,6 +1077,8 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
         if let Some(subtitle) = self.subtitle {
             post.subtitle = subtitle;
         }
+
+        post.cover_id = self.cover;
 
         if let Some(source) = self.source {
             post.source = source;
