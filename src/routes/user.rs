@@ -29,7 +29,7 @@ use plume_models::{
     users::*,
     Error,
 };
-use routes::{errors::ErrorPage, Page, PlumeRocket};
+use routes::{errors::ErrorPage, Page, PlumeRocket, RemoteForm};
 use template_utils::Ructe;
 use Searcher;
 use Worker;
@@ -178,11 +178,6 @@ pub fn follow(
         worker.execute(move || broadcast(&user, act, vec![target]));
     }
     Ok(Redirect::to(uri!(details: name = name)))
-}
-
-#[derive(Clone, Default, FromForm)]
-pub struct RemoteForm {
-    pub remote: String,
 }
 
 #[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]

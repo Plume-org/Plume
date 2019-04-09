@@ -78,6 +78,12 @@ msgstr "Nowy wpis"
 msgid "Edit {0}"
 msgstr "Edytuj {0}"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -100,12 +106,6 @@ msgstr ""
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
-
-# src/routes/user.rs:222
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
 msgstr ""
 
 # src/routes/user.rs:187
@@ -250,35 +250,10 @@ msgid "Follow {}"
 msgstr "Obserwuj"
 
 #, fuzzy
-msgid "I'm from this instance"
-msgstr "O tej instancji"
-
-#, fuzzy
 msgid "Login to follow"
 msgstr "Zaloguj się aby podbić"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "Nazwa użytkownika lub adres e-mail"
-
-msgid "Password"
-msgstr "Hasło"
-
-msgid "Log in and follow {}"
-msgstr ""
-
-#, fuzzy
-msgid "I'm from another instance"
-msgstr "innych instancji"
-
 msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Username"
-msgstr "Nazwa użytkownika"
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Edit your account"
@@ -347,6 +322,12 @@ msgstr "Utwórz konto"
 
 msgid "Create an account"
 msgstr "Utwórz nowe konto"
+
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+msgid "Password"
+msgstr "Hasło"
 
 msgid "Password confirmation"
 msgstr "Potwierdzenie hasła"
@@ -576,6 +557,20 @@ msgstr "Hasło"
 msgid "Log in"
 msgstr "Zaloguj się"
 
+#, fuzzy
+msgid "Username, or email"
+msgstr "Nazwa użytkownika lub adres e-mail"
+
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Zaloguj się aby polubić"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Opublikuj"
 
@@ -664,7 +659,9 @@ msgid "Boost"
 msgstr "Podbij"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "Zaloguj się lub użyj konta w Fediwersum, aby wejść w interakcje z tym "
 "artykułem"
@@ -785,6 +782,22 @@ msgstr "Artykuły oznaczone „{0}”"
 
 msgid "There are currently no articles with such a tag"
 msgstr "Obecnie nie istnieją artykuły z tym tagiem"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "O tej instancji"
+
+#, fuzzy
+msgid "I'm from another instance"
+msgstr "innych instancji"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Skonfiguruj swoją instancję"
 
 msgid "Upload"
 msgstr "Wyślij"
@@ -973,9 +986,6 @@ msgstr "Użyj jako awataru"
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Komentarz „{0}”"
 
-#~ msgid "Configure your instance"
-#~ msgstr "Skonfiguruj swoją instancję"
-
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Przejdźmy dalej!"
 
@@ -1048,9 +1058,6 @@ msgstr "Użyj jako awataru"
 
 #~ msgid "Instance settings"
 #~ msgstr "Ustawienia instancji"
-
-#~ msgid "Login to like"
-#~ msgstr "Zaloguj się aby polubić"
 
 #~ msgid "Create a post"
 #~ msgstr "Utwórz wpis"

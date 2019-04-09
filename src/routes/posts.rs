@@ -25,7 +25,7 @@ use plume_models::{
     tags::*,
     users::User,
 };
-use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, PlumeRocket};
+use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, PlumeRocket, RemoteForm};
 use template_utils::Ructe;
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
@@ -597,13 +597,11 @@ pub fn remote_interact(
     Ok(render!(posts::remote_interact(
         &(&*conn, &i18n.catalog, None),
         target,
-        None
+        super::session::LoginForm::default(),
+        ValidationErrors::default(),
+        RemoteForm::default(),
+        ValidationErrors::default()
     )))
-}
-
-#[derive(FromForm)]
-pub struct Remote {
-    remote: String,
 }
 
 #[post("/~/<blog_name>/<slug>/remote_interact", data = "<remote>")]
@@ -611,7 +609,7 @@ pub fn remote_interact_post(
     conn: DbConn,
     blog_name: String,
     slug: String,
-    remote: LenientForm<Remote>,
+    remote: LenientForm<RemoteForm>,
     i18n: I18n,
 ) -> Result<Result<Ructe, Redirect>, ErrorPage> {
     let target = Blog::find_by_fqn(&*conn, &blog_name)
@@ -622,11 +620,20 @@ pub fn remote_interact_post(
     {
         Ok(Err(Redirect::to(uri)))
     } else {
+        let mut errs = ValidationErrors::new();
+        errs.add("remote", ValidationError {
+            code: Cow::from("invalid_remote"),
+            message: Some(Cow::from(i18n!(&i18n.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
+            params: HashMap::new(),
+        });
         //could not get your remote url?
         Ok(Ok(render!(posts::remote_interact(
             &(&*conn, &i18n.catalog, None),
             target,
-            None
+            super::session::LoginForm::default(),
+            ValidationErrors::default(),
+            remote.clone(),
+            errs
         ))))
     }
 }

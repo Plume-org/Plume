@@ -84,6 +84,10 @@ msgstr ""
 msgid "Edit {0}"
 msgstr ""
 
+# src/routes/posts.rs:626
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:46
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -108,15 +112,11 @@ msgstr ""
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:218
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
-
-# src/routes/user.rs:255
+# src/routes/user.rs:251
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:355
+# src/routes/user.rs:351
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
@@ -252,35 +252,10 @@ msgstr ""
 msgid "Follow {}"
 msgstr ""
 
-msgid "I'm from this instance"
-msgstr ""
-
 msgid "Login to follow"
 msgstr ""
 
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr ""
-
-msgid "Log in and follow {}"
-msgstr ""
-
-msgid "I'm from another instance"
-msgstr ""
-
 msgid "Enter your full username to follow"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username"
-msgstr ""
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Edit your account"
@@ -346,6 +321,14 @@ msgid "Create your account"
 msgstr ""
 
 msgid "Create an account"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Password"
 msgstr ""
 
 # src/template_utils.rs:217
@@ -552,6 +535,19 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
+# src/template_utils.rs:217
+msgid "Username, or email"
+msgstr ""
+
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr ""
 
@@ -633,7 +629,7 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
 msgstr ""
 
 msgid "Comments"
@@ -740,6 +736,19 @@ msgstr ""
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
+msgid "I'm from this instance"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+msgid "Continue to your instance"
+msgstr ""
+
 msgid "Upload"
 msgstr ""
 
@@ -783,10 +792,4 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as an avatar"
-msgstr ""
-
-msgid "Log in to boost"
-msgstr ""
-
-msgid "Log in to like"
 msgstr ""

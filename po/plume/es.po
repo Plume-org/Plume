@@ -82,6 +82,12 @@ msgstr "Nueva publicación"
 msgid "Edit {0}"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -104,12 +110,6 @@ msgstr ""
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
-
-# src/routes/user.rs:222
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
 msgstr ""
 
 # src/routes/user.rs:187
@@ -252,34 +252,11 @@ msgstr ""
 msgid "Follow {}"
 msgstr "Seguir"
 
-msgid "I'm from this instance"
-msgstr ""
-
 #, fuzzy
 msgid "Login to follow"
 msgstr "Dejar de seguir"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "Nombre de usuario o correo electrónico"
-
-msgid "Password"
-msgstr "Contraseña"
-
-msgid "Log in and follow {}"
-msgstr ""
-
-msgid "I'm from another instance"
-msgstr ""
-
 msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Username"
-msgstr "Nombre de usuario"
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Edit your account"
@@ -347,6 +324,12 @@ msgstr ""
 
 msgid "Create an account"
 msgstr "Crear una cuenta"
+
+msgid "Username"
+msgstr "Nombre de usuario"
+
+msgid "Password"
+msgstr "Contraseña"
 
 msgid "Password confirmation"
 msgstr "Confirmación de contraseña"
@@ -563,6 +546,19 @@ msgstr "Contraseña"
 msgid "Log in"
 msgstr "Iniciar Sesión"
 
+#, fuzzy
+msgid "Username, or email"
+msgstr "Nombre de usuario o correo electrónico"
+
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publicar"
 
@@ -649,7 +645,9 @@ msgstr "Ya no me gusta"
 msgid "Boost"
 msgstr ""
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"
@@ -764,6 +762,20 @@ msgstr ""
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
+msgid "I'm from this instance"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configure su instancia"
+
 msgid "Upload"
 msgstr ""
 
@@ -837,9 +849,6 @@ msgstr ""
 
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Comentario \"{0}\""
-
-#~ msgid "Configure your instance"
-#~ msgstr "Configure su instancia"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Vamos!"

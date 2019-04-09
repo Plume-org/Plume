@@ -82,6 +82,12 @@ msgstr "Novo artigo"
 msgid "Edit {0}"
 msgstr "Mudar {0}"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -104,12 +110,6 @@ msgstr ""
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
-
-# src/routes/user.rs:222
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
 msgstr ""
 
 # src/routes/user.rs:187
@@ -261,34 +261,10 @@ msgid "Follow {}"
 msgstr "Seguir"
 
 #, fuzzy
-msgid "I'm from this instance"
-msgstr "Sobre esta instância"
-
-#, fuzzy
 msgid "Login to follow"
 msgstr "Entrar para gostar"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "Nome de usuário ou e-mail"
-
-msgid "Password"
-msgstr "Senha"
-
-msgid "Log in and follow {}"
-msgstr ""
-
-msgid "I'm from another instance"
-msgstr ""
-
 msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Username"
-msgstr "Nome de utilizador"
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Edit your account"
@@ -359,6 +335,12 @@ msgstr "Criar a sua conta"
 
 msgid "Create an account"
 msgstr "Criar uma conta"
+
+msgid "Username"
+msgstr "Nome de utilizador"
+
+msgid "Password"
+msgstr "Senha"
 
 msgid "Password confirmation"
 msgstr "Confirmação de senha"
@@ -593,6 +575,19 @@ msgstr "Senha"
 msgid "Log in"
 msgstr "Entrar"
 
+#, fuzzy
+msgid "Username, or email"
+msgstr "Nome de usuário ou e-mail"
+
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publicar"
 
@@ -682,7 +677,9 @@ msgid "Boost"
 msgstr ""
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr "Faça login ou use sua conta Fediverse para interagir com este artigo"
 
 msgid "Comments"
@@ -803,6 +800,21 @@ msgstr "Artigos marcados com \"{0}\""
 msgid "There are currently no articles with such a tag"
 msgstr "Não há atualmente nenhum artigo com essa etiqueta"
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Sobre esta instância"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configure sua instância"
+
 msgid "Upload"
 msgstr "Carregar"
 
@@ -915,9 +927,6 @@ msgstr "Utilizar como avatar"
 
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Comentário \"{0}\""
-
-#~ msgid "Configure your instance"
-#~ msgstr "Configure sua instância"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Vamos lá!"

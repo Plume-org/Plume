@@ -83,6 +83,12 @@ msgstr "Новый пост"
 msgid "Edit {0}"
 msgstr "Редактировать"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -105,12 +111,6 @@ msgstr ""
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
-
-# src/routes/user.rs:222
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
 msgstr ""
 
 # src/routes/user.rs:187
@@ -268,34 +268,10 @@ msgid "Follow {}"
 msgstr "Подписаться"
 
 #, fuzzy
-msgid "I'm from this instance"
-msgstr "Об этом узле"
-
-#, fuzzy
 msgid "Login to follow"
 msgstr "Войдите, чтобы продвигать посты"
 
-#, fuzzy
-msgid "Username, or email"
-msgstr "Имя пользователя или адрес электронной почты"
-
-msgid "Password"
-msgstr "Пароль"
-
-msgid "Log in and follow {}"
-msgstr ""
-
-msgid "I'm from another instance"
-msgstr ""
-
 msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Username"
-msgstr "Имя пользователя"
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Edit your account"
@@ -373,6 +349,12 @@ msgstr "Создать аккаунт"
 
 msgid "Create an account"
 msgstr "Создать новый аккаунт"
+
+msgid "Username"
+msgstr "Имя пользователя"
+
+msgid "Password"
+msgstr "Пароль"
 
 msgid "Password confirmation"
 msgstr "Подтверждение пароля"
@@ -599,6 +581,20 @@ msgstr "Пароль"
 msgid "Log in"
 msgstr "Войти"
 
+#, fuzzy
+msgid "Username, or email"
+msgstr "Имя пользователя или адрес электронной почты"
+
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Войдите, чтобы отмечать понравившиеся посты"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Опубликовать"
 
@@ -693,7 +689,9 @@ msgid "Boost"
 msgstr "Продвинуть"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "Войдите или используйте свой Fediverse-аккаунт, чтобы взаимодействовать с "
 "этой статьёй"
@@ -827,6 +825,21 @@ msgstr "Статьи, отмеченные тегом «{0}»"
 #, fuzzy
 msgid "There are currently no articles with such a tag"
 msgstr "Сейчас нет статей с таким тегом"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Об этом узле"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Настроить ваш узел"
 
 msgid "Upload"
 msgstr "Загрузить"
@@ -1023,9 +1036,6 @@ msgstr "Использовать как аватар"
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Комментарий \"{0}\""
 
-#~ msgid "Configure your instance"
-#~ msgstr "Настроить ваш узел"
-
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Поехали!"
 
@@ -1086,10 +1096,6 @@ msgstr "Использовать как аватар"
 
 #~ msgid "Invalid email"
 #~ msgstr "Неправильный адрес электронной почты"
-
-#, fuzzy
-#~ msgid "Login to like"
-#~ msgstr "Войдите, чтобы отмечать понравившиеся посты"
 
 #, fuzzy
 #~ msgid "Personal feed"
