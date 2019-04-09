@@ -1,4 +1,5 @@
 @use plume_models::blogs::Blog;
+@use plume_models::instance::Instance;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
 @use templates::{base, partials::post_card};
@@ -7,7 +8,22 @@
 
 @(ctx: BaseContext, blog: Blog, authors: &[User], page: i32, n_pages: i32, posts: Vec<Post>)
 
-@:base(ctx, blog.title.clone(), {}, {
+@:base(ctx, blog.title.clone(), {
+	<meta content="profile" property="og:type" />
+	<meta content="120" property="og:image:width" />
+	<meta content="120" property="og:image:height" />
+	<meta content="summary" property="twitter:card" />
+	<meta content="'@Instance::get_local(ctx.0).unwrap().name" property="og:site_name" />
+	<meta content="@blog.ap_url" property="og:url" />
+	<meta content="@blog.fqn" property="profile:username" />
+	<meta content="@blog.title" property="og:title" />
+	<meta content="@blog.summary_html" name="description">
+	<meta content="@blog.summary_html" property="og:description" />
+	<meta content="@blog.icon_url(ctx.0)" property="og:image" />r
+
+	<link href='@Instance::get_local(ctx.0).unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
+	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
+}, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="hidden">
