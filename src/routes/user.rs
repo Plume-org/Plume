@@ -532,7 +532,7 @@ pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
         .title(author.display_name.clone())
         .id(Instance::get_local(&*conn)
             .unwrap()
-            .compute_box("~", &name, "atom.xml"))
+            .compute_box("@", &name, "atom.xml"))
         .entries(
             Post::get_recents_for_author(&*conn, &author, 15)
                 .ok()?
