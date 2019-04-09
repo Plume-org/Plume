@@ -18,6 +18,7 @@ use plume_models::{
     db_conn::DbConn,
     follows,
     headers::Headers,
+    inbox::inbox as local_inbox,
     instance::Instance,
     posts::{LicensedArticle, Post},
     reshares::Reshare,
@@ -145,6 +146,11 @@ pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Redirect
     let target = User::find_by_fqn(&rockets, &name)?;
     if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.build_undo(&*conn)?;
+        local_inbox(
+            &rockets,
+            serde_json::to_value(&delete_act).map_err(Error::from)?,
+        )?;
+
         rockets
             .worker
             .execute(move || broadcast(&user, delete_act, vec![target]));
