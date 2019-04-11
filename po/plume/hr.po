@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-11 07:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -121,7 +121,7 @@ msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "Izbornik"
@@ -130,7 +130,7 @@ msgid "Search"
 msgstr "Traži"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Upravljačka ploča"
 
 msgid "Notifications"
 msgstr "Obavijesti"
@@ -187,7 +187,7 @@ msgid "Users"
 msgstr "Korisnici"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokiraj"
 
 msgid "Block"
 msgstr ""
@@ -253,7 +253,7 @@ msgid "Edit your account"
 msgstr ""
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Tvoj Profil"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
@@ -267,7 +267,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "E-pošta"
 
 msgid "Summary"
 msgstr ""
@@ -330,7 +330,7 @@ msgid "Apologies, but registrations are closed on this particular instance. You 
 msgstr ""
 
 msgid "Articles"
-msgstr ""
+msgstr "Članci"
 
 msgid "Subscribers"
 msgstr ""
