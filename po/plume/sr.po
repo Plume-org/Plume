@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 07:05\n"
+"PO-Revision-Date: 2019-04-11 07:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -124,7 +124,7 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Meni"
 
 msgid "Search"
 msgstr ""
@@ -136,16 +136,16 @@ msgid "Notifications"
 msgstr ""
 
 msgid "Log Out"
-msgstr ""
+msgstr "Odjavi se"
 
 msgid "My account"
-msgstr ""
+msgstr "Moj nalog"
 
 msgid "Log In"
-msgstr ""
+msgstr "Prijaviti se"
 
 msgid "Register"
-msgstr ""
+msgstr "Registracija"
 
 msgid "About this instance"
 msgstr ""
@@ -157,13 +157,13 @@ msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Administracija"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Dobrodošli u {0}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Najnoviji članci"
 
 msgid "Your feed"
 msgstr ""
@@ -184,10 +184,10 @@ msgid "Configuration"
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Korisnici"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokirajte"
 
 msgid "Block"
 msgstr ""
