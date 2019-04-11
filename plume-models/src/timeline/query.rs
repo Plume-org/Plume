@@ -12,14 +12,14 @@ enum Token<'a> {
     RBracket,
     Comma,
     Word(&'a str),
-    Index(usize, usize)
+    Index(usize, usize),
 }
 
 impl<'a> Token<'a> {
     fn get_word(&self) -> Option<&'a str> {
         match self {
             Token::Word(s) => Some(s),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -61,51 +61,49 @@ fn lex(stream: &str) -> Vec<Token> {
         .chars()
         .chain(" ".chars()) // force a last whitespace to empty scan's state
         .zip(0..)
-        .scan((None, false), |(state, quote), (c,i)| {
+        .scan((None, false), |(state, quote), (c, i)| {
             Some(gen_tokenizer!((c,i), state, quote;
                                 ['(', LParent],  [')', RParent],
                                 ['[', LBracket], [']', RBracket],
                                 [',', Comma]))
         })
         .flatten()
-        .map(|t| if let Token::Index(b, e) = t {
-            Token::Word(&stream[b..b+e])
-        } else {
-            t
+        .map(|t| {
+            if let Token::Index(b, e) = t {
+                Token::Word(&stream[b..b + e])
+            } else {
+                t
+            }
         })
         .collect()
 }
 
 #[derive(Debug, Clone)]
 enum TQ<'a> {
-        Or(Vec<TQ<'a>>),
-        And(Vec<TQ<'a>>),
-        Arg(Arg<'a>, bool),
+    Or(Vec<TQ<'a>>),
+    And(Vec<TQ<'a>>),
+    Arg(Arg<'a>, bool),
 }
 
 impl<'a> TQ<'a> {
     pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post) -> Result<bool> {
         match self {
-            TQ::Or(inner) => {
-                inner.iter()
-                    .try_fold(true, |s,e| e.matches(conn, timeline, post).map(|r| s || r))
-            },
-            TQ::And(inner) => {
-                inner.iter()
-                    .try_fold(true, |s,e| e.matches(conn, timeline, post).map(|r| s && r))
-            }
-            TQ::Arg(inner, invert) => {
-                Ok(inner.matches(conn, timeline, post)? ^ invert)
-            }
+            TQ::Or(inner) => inner
+                .iter()
+                .try_fold(true, |s, e| e.matches(conn, timeline, post).map(|r| s || r)),
+            TQ::And(inner) => inner
+                .iter()
+                .try_fold(true, |s, e| e.matches(conn, timeline, post).map(|r| s && r)),
+            TQ::Arg(inner, invert) => Ok(inner.matches(conn, timeline, post)? ^ invert),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 enum Arg<'a> {
-        In(WithList, List<'a>),
-        Contains(WithContain, &'a str),
-        Boolean(Bool),
+    In(WithList, List<'a>),
+    Contains(WithContain, &'a str),
+    Boolean(Bool),
 }
 
 impl<'a> Arg<'a> {
@@ -120,11 +118,11 @@ impl<'a> Arg<'a> {
 
 #[derive(Debug, Clone)]
 enum WithList {
-        Blog,
-        Author,
-        License,
-        Tags,
-        Lang,
+    Blog,
+    Author,
+    License,
+    Tags,
+    Lang,
 }
 
 impl WithList {
@@ -136,9 +134,9 @@ impl WithList {
 
 #[derive(Debug, Clone)]
 enum WithContain {
-        Title,
-        Subtitle,
-        Content,
+    Title,
+    Subtitle,
+    Content,
 }
 
 impl WithContain {
@@ -153,10 +151,10 @@ impl WithContain {
 
 #[derive(Debug, Clone)]
 enum Bool {
-        Followed,
-        HasCover,
-        Local,
-        All
+    Followed,
+    HasCover,
+    Local,
+    All,
 }
 
 impl Bool {
@@ -164,12 +162,13 @@ impl Bool {
         match self {
             Bool::Followed => {
                 if let Some(user) = timeline.user_id {
-                    post.get_authors(conn)?.iter()
-                        .try_fold(false, |s,a| a.is_followed_by(conn, user).map(|r| s || r))
+                    post.get_authors(conn)?
+                        .iter()
+                        .try_fold(false, |s, a| a.is_followed_by(conn, user).map(|r| s || r))
                 } else {
                     Ok(false)
                 }
-            },
+            }
             Bool::HasCover => Ok(post.cover_id.is_some()),
             Bool::Local => Ok(post.get_blog(conn)?.is_local()),
             Bool::All => Ok(true),
@@ -179,19 +178,18 @@ impl Bool {
 
 #[derive(Debug, Clone)]
 enum List<'a> {
-        List(&'a str), //=> list_id
-        Array(Vec<&'a str>), //=>store as anonymous list
+    List(&'a str),       //=> list_id
+    Array(Vec<&'a str>), //=>store as anonymous list
 }
 
-
-fn parse_s<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
+fn parse_s<'a, 'b>(mut stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], TQ<'a>)> {
     let mut res = Vec::new();
     let (left, token) = parse_a(&stream)?;
     res.push(token);
     stream = left;
     while !stream.is_empty() {
         match stream[0] {
-            Token::Word(and) if and == "or" => {},
+            Token::Word(and) if and == "or" => {}
             _ => break,
         }
         let (left, token) = parse_a(&stream[1..])?;
@@ -206,14 +204,14 @@ fn parse_s<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>
     }
 }
 
-fn parse_a<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
+fn parse_a<'a, 'b>(mut stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], TQ<'a>)> {
     let mut res = Vec::new();
     let (left, token) = parse_b(&stream)?;
     res.push(token);
     stream = left;
     while !stream.is_empty() {
         match stream[0] {
-            Token::Word(and) if and == "and" => {},
+            Token::Word(and) if and == "and" => {}
             _ => break,
         }
         let (left, token) = parse_b(&stream[1..])?;
@@ -228,7 +226,7 @@ fn parse_a<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>
     }
 }
 
-fn parse_b<'a, 'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
+fn parse_b<'a, 'b>(stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], TQ<'a>)> {
     match stream.get(0) {
         Some(Token::LParent) => {
             let (left, token) = parse_s(&stream[1..])?;
@@ -236,17 +234,17 @@ fn parse_b<'a, 'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
                 Some(Token::RParent) => Some((&left[1..], token)),
                 _ => None,
             }
-        },
-        _ => parse_c(stream)
+        }
+        _ => parse_c(stream),
     }
 }
 
-fn parse_c<'a,'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
+fn parse_c<'a, 'b>(stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], TQ<'a>)> {
     match stream.get(0) {
         Some(Token::Word(not)) if not == &"not" => {
             let (left, token) = parse_d(&stream[1..])?;
             Some((left, TQ::Arg(token, true)))
-        },
+        }
         _ => {
             let (left, token) = parse_d(stream)?;
             Some((left, TQ::Arg(token, false)))
@@ -254,71 +252,71 @@ fn parse_c<'a,'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
     }
 }
 
-fn parse_d<'a, 'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], Arg<'a>)> {
+fn parse_d<'a, 'b>(stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], Arg<'a>)> {
     match stream.get(0).and_then(Token::get_word)? {
-        s@"blog" | s@"author" | s@"license" | s@"tags" | s@"lang" => {
+        s @ "blog" | s @ "author" | s @ "license" | s @ "tags" | s @ "lang" => {
             match stream.get(1)? {
                 Token::Word(r#in) if r#in == &"in" => {
                     let (left, list) = parse_l(&stream[2..])?;
-                    Some((left, Arg::In(match s {
-                        "blog" => WithList::Blog,
-                        "author" => WithList::Author,
-                        "license" => WithList::License,
-                        "tags" => WithList::Tags,
-                        "lang" => WithList::Lang,
-                        _ => unreachable!(),
-                    },
-                    list)))
-                },
-                _ => None
+                    Some((
+                        left,
+                        Arg::In(
+                            match s {
+                                "blog" => WithList::Blog,
+                                "author" => WithList::Author,
+                                "license" => WithList::License,
+                                "tags" => WithList::Tags,
+                                "lang" => WithList::Lang,
+                                _ => unreachable!(),
+                            },
+                            list,
+                        ),
+                    ))
+                }
+                _ => None,
             }
-        },
-        s@"title" | s@"subtitle" | s@"content" => {
-            match (stream.get(1)?, stream.get(2)?) {
-                (Token::Word(contains), Token::Word(w)) if contains == &"contains" => {
-                    Some((&stream[3..],
-                    Arg::Contains(match s {
+        }
+        s @ "title" | s @ "subtitle" | s @ "content" => match (stream.get(1)?, stream.get(2)?) {
+            (Token::Word(contains), Token::Word(w)) if contains == &"contains" => Some((
+                &stream[3..],
+                Arg::Contains(
+                    match s {
                         "title" => WithContain::Title,
                         "subtitle" => WithContain::Subtitle,
                         "content" => WithContain::Content,
                         _ => unreachable!(),
-                    }, w)))
-                },
-                _ => None
-            }
+                    },
+                    w,
+                ),
+            )),
+            _ => None,
         },
-        s@"followed" | s@"has_cover" | s@"local" | s@"all" => {
-            match s {
-                "followed" => Some((&stream[1..], Arg::Boolean(Bool::Followed))),
-                "has_cover" => Some((&stream[1..], Arg::Boolean(Bool::HasCover))),
-                "local" => Some((&stream[1..], Arg::Boolean(Bool::Local))),
-                "all" => Some((&stream[1..], Arg::Boolean(Bool::All))),
-                _ => unreachable!(),
-            }
+        s @ "followed" | s @ "has_cover" | s @ "local" | s @ "all" => match s {
+            "followed" => Some((&stream[1..], Arg::Boolean(Bool::Followed))),
+            "has_cover" => Some((&stream[1..], Arg::Boolean(Bool::HasCover))),
+            "local" => Some((&stream[1..], Arg::Boolean(Bool::Local))),
+            "all" => Some((&stream[1..], Arg::Boolean(Bool::All))),
+            _ => unreachable!(),
         },
         _ => None,
     }
 }
 
-fn parse_l<'a, 'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], List<'a>)> {
+fn parse_l<'a, 'b>(stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], List<'a>)> {
     match stream.get(0)? {
         Token::LBracket => {
             let (left, list) = parse_m(&stream[1..])?;
             match left.get(0)? {
-                Token::RBracket => {
-                    Some((&left[1..], List::Array(list)))
-                },
-                _ => None
+                Token::RBracket => Some((&left[1..], List::Array(list))),
+                _ => None,
             }
-        },
-        Token::Word(list) => {
-            Some((&stream[1..], List::List(list)))
-        },
-        _ => None
+        }
+        Token::Word(list) => Some((&stream[1..], List::List(list))),
+        _ => None,
     }
 }
 
-fn parse_m<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], Vec<&'a str>)> {
+fn parse_m<'a, 'b>(mut stream: &'b [Token<'a>]) -> Option<(&'b [Token<'a>], Vec<&'a str>)> {
     let mut res: Vec<&str> = Vec::new();
     res.push(match stream.get(0)? {
         Token::Word(w) => w,
@@ -327,7 +325,7 @@ fn parse_m<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], Vec<&'
     stream = &stream[1..];
     loop {
         match stream[0] {
-            Token::Comma => {},
+            Token::Comma => {}
             _ => break,
         }
         res.push(match stream.get(1)? {
@@ -344,14 +342,9 @@ pub struct TimelineQuery<'a>(TQ<'a>);
 
 impl<'a> TimelineQuery<'a> {
     pub fn parse(query: &'a str) -> Option<Self> {
-        parse_s(&lex(query)).and_then(|(left, res)|{
-            if left.is_empty() {
-                Some(res)
-            } else {
-                None
-            }
-        })
-        .map(TimelineQuery)
+        parse_s(&lex(query))
+            .and_then(|(left, res)| if left.is_empty() { Some(res) } else { None })
+            .map(TimelineQuery)
     }
 
     pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post) -> Result<bool> {

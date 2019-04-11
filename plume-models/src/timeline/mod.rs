@@ -35,26 +35,41 @@ struct TimelineEntry {
 impl Timeline {
     insert!(timeline_definition, NewTimeline);
     get!(timeline_definition);
-    find_by!(timeline_definition, find_by_name_and_user,
-             user_id as Option<i32> , name as &str);
+    find_by!(
+        timeline_definition,
+        find_by_name_and_user,
+        user_id as Option<i32>,
+        name as &str
+    );
     list_by!(timeline_definition, list_for_user, user_id as Option<i32>);
 
-    pub fn new_for_user(conn: &Connection, user_id: i32, name: String, query: String) -> Result<Timeline> {
-        TimelineQuery::parse(&query)?;// verify the query is valid
-        Self::insert(conn, NewTimeline {
-            user_id: Some(user_id),
-            name,
-            query,
-        })
+    pub fn new_for_user(
+        conn: &Connection,
+        user_id: i32,
+        name: String,
+        query: String,
+    ) -> Result<Timeline> {
+        TimelineQuery::parse(&query)?; // verify the query is valid
+        Self::insert(
+            conn,
+            NewTimeline {
+                user_id: Some(user_id),
+                name,
+                query,
+            },
+        )
     }
 
     pub fn new_for_instance(conn: &Connection, name: String, query: String) -> Result<Timeline> {
-        TimelineQuery::parse(&query)?;// verify the query is valid
-        Self::insert(conn, NewTimeline {
-            user_id: None,
-            name,
-            query,
-        })
+        TimelineQuery::parse(&query)?; // verify the query is valid
+        Self::insert(
+            conn,
+            NewTimeline {
+                user_id: None,
+                name,
+                query,
+            },
+        )
     }
 
     pub fn get_latest(&self, conn: &Connection, count: i32) -> Result<Vec<Post>> {
@@ -88,7 +103,7 @@ impl Timeline {
 
     pub fn add_post(&self, conn: &Connection, post: &Post) -> Result<()> {
         diesel::insert_into(timeline::table)
-            .values(TimelineEntry{
+            .values(TimelineEntry {
                 post_id: post.id,
                 timeline_id: self.id,
             })
