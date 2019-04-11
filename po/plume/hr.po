@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 15:02\n"
+"PO-Revision-Date: 2019-04-11 17:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -250,7 +250,7 @@ msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Uredite svoj račun"
 
 msgid "Your Profile"
 msgstr "Tvoj Profil"
@@ -270,19 +270,19 @@ msgid "Email"
 msgstr "E-pošta"
 
 msgid "Summary"
-msgstr ""
+msgstr "Sažetak"
 
 msgid "Update account"
-msgstr ""
+msgstr "Ažuriraj račun"
 
 msgid "Danger zone"
-msgstr ""
+msgstr "Opasna zona"
 
 msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
 msgid "Delete your account"
-msgstr ""
+msgstr "Izbrišite svoj račun"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
