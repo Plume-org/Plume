@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 07:58\n"
+"PO-Revision-Date: 2019-04-11 10:38\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -288,7 +288,7 @@ msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr "Omlouváme se, ale jako administrátor nemůžete opustit svou vlastní instanci."
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "Vaše plocha"
 
 msgid "Your Blogs"
 msgstr "Vaše Blogy"
@@ -363,7 +363,7 @@ msgid "Subscribe"
 msgstr "Přihlásit se k odběru"
 
 msgid "{0}'s subscriptions'"
-msgstr ""
+msgstr "Odběratelé uživatele {0}"
 
 msgid "{0}'s subscribers"
 msgstr "Odběratelé uživatele {0}"
@@ -537,7 +537,7 @@ msgid "Publish"
 msgstr "Zveřejnit"
 
 msgid "Classic editor (any changes will be lost)"
-msgstr ""
+msgstr "Klasický editor (jakékoli změny budou ztraceny)"
 
 # src/template_utils.rs:217
 msgid "Subtitle"
