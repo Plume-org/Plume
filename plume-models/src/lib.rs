@@ -59,6 +59,7 @@ pub enum Error {
     SerDe,
     Search(search::SearcherError),
     Signature,
+    TimelineQuery(timeline::query::QueryError),
     Unauthorized,
     Url,
     Webfinger,
@@ -130,6 +131,12 @@ impl From<webfinger::WebfingerError> for Error {
 impl From<search::SearcherError> for Error {
     fn from(err: search::SearcherError) -> Self {
         Error::Search(err)
+    }
+}
+
+impl From<timeline::query::QueryError> for Error {
+    fn from(err: timeline::query::QueryError) -> Self {
+        Error::TimelineQuery(err)
     }
 }
 

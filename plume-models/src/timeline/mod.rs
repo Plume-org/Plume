@@ -4,7 +4,7 @@ use posts::Post;
 use schema::{posts, timeline, timeline_definition};
 use {Connection, Error, Result};
 
-mod query;
+pub(crate) mod query;
 
 use self::query::TimelineQuery;
 
