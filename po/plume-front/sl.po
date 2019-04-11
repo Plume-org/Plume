@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 11:55\n"
+"PO-Revision-Date: 2019-04-11 13:06\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -38,11 +38,11 @@ msgstr ""
 
 # plume-front/src/editor.rs:228
 msgid "Tags"
-msgstr ""
+msgstr "Oznake"
 
 # plume-front/src/editor.rs:229
 msgid "License"
-msgstr ""
+msgstr "Licenca"
 
 # plume-front/src/editor.rs:232
 msgid "Cover"
@@ -50,9 +50,9 @@ msgstr ""
 
 # plume-front/src/editor.rs:252
 msgid "This is a draft"
-msgstr ""
+msgstr "To je osnutek"
 
 # plume-front/src/editor.rs:259
 msgid "Publish"
-msgstr ""
+msgstr "Objavi"
 
