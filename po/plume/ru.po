@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 14:14\n"
+"PO-Revision-Date: 2019-04-11 09:39\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -26,11 +26,11 @@ msgstr ""
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} понравился вашей статье."
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr "{0} упомянул(а) вас."
+msgstr "{0} упомянул вас."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
