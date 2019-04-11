@@ -19,7 +19,7 @@ impl From<std::option::NoneError> for QueryError {
 
 pub type QueryResult<T> = std::result::Result<T, QueryError>;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum Token<'a> {
     LParent(usize),
     RParent(usize),
@@ -124,7 +124,7 @@ fn lex(stream: &str) -> Vec<Token> {
         .flatten()
         .map(|t| {
             if let Token::Word(b, e, _) = t {
-                Token::Word(b, e, &stream[b..b + e])
+                Token::Word(b, e, &stream[b..=b + e])
             } else {
                 t
             }
@@ -132,7 +132,7 @@ fn lex(stream: &str) -> Vec<Token> {
         .collect()
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 enum TQ<'a> {
     Or(Vec<TQ<'a>>),
     And(Vec<TQ<'a>>),
@@ -153,10 +153,10 @@ impl<'a> TQ<'a> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 enum Arg<'a> {
     In(WithList, List<'a>),
-    Contains(WithContain, &'a str),
+    Contains(WithContains, &'a str),
     Boolean(Bool),
 }
 
@@ -170,7 +170,7 @@ impl<'a> Arg<'a> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 enum WithList {
     Blog,
     Author,
@@ -186,24 +186,24 @@ impl WithList {
     }
 }
 
-#[derive(Debug, Clone)]
-enum WithContain {
+#[derive(Debug, Clone, PartialEq)]
+enum WithContains {
     Title,
     Subtitle,
     Content,
 }
 
-impl WithContain {
+impl WithContains {
     pub fn matches(&self, post: &Post, value: &str) -> Result<bool> {
         match self {
-            WithContain::Title => Ok(post.title.contains(value)),
-            WithContain::Subtitle => Ok(post.subtitle.contains(value)),
-            WithContain::Content => Ok(post.content.contains(value)),
+            WithContains::Title => Ok(post.title.contains(value)),
+            WithContains::Subtitle => Ok(post.subtitle.contains(value)),
+            WithContains::Content => Ok(post.content.contains(value)),
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 enum Bool {
     Followed,
     HasCover,
@@ -230,10 +230,10 @@ impl Bool {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 enum List<'a> {
-    List(&'a str),       //=> list_id
-    Array(Vec<&'a str>), //=>store as anonymous list
+    List(&'a str),
+    Array(Vec<&'a str>),
 }
 
 fn parse_s<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<'a>)> {
@@ -336,9 +336,9 @@ fn parse_d<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Arg
                 &stream[3..],
                 Arg::Contains(
                     match s {
-                        "title" => WithContain::Title,
-                        "subtitle" => WithContain::Subtitle,
-                        "content" => WithContain::Content,
+                        "title" => WithContains::Title,
+                        "subtitle" => WithContains::Subtitle,
+                        "content" => WithContains::Content,
                         _ => unreachable!(),
                     },
                     w,
@@ -394,6 +394,7 @@ fn parse_m<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
     Ok((stream, res))
 }
 
+#[derive(Debug, Clone)]
 pub struct TimelineQuery<'a>(TQ<'a>);
 
 impl<'a> TimelineQuery<'a> {
@@ -411,5 +412,91 @@ impl<'a> TimelineQuery<'a> {
 
     pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post) -> Result<bool> {
         self.0.matches(conn, timeline, post)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lexer() {
+        assert_eq!(
+            lex("()[ ],two words \"something quoted with , and [\""),
+            vec![
+                Token::LParent(0),
+                Token::RParent(1),
+                Token::LBracket(2),
+                Token::RBracket(4),
+                Token::Comma(5),
+                Token::Word(6, 2, "two"),
+                Token::Word(10, 4, "words"),
+                Token::Word(17, 28, "something quoted with , and ["),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_parser() {
+        let q = TimelineQuery::parse(r#"lang in [fr, en] and (license in my_fav_lic or not followed) or title contains "Plume is amazing""#)
+            .unwrap();
+        assert_eq!(
+            q.0,
+            TQ::Or(vec![
+                TQ::And(vec![
+                    TQ::Arg(
+                        Arg::In(WithList::Lang, List::Array(vec!["fr", "en"]),),
+                        false
+                    ),
+                    TQ::Or(vec![
+                        TQ::Arg(Arg::In(WithList::License, List::List("my_fav_lic"),), false),
+                        TQ::Arg(Arg::Boolean(Bool::Followed), true),
+                    ]),
+                ]),
+                TQ::Arg(
+                    Arg::Contains(WithContains::Title, "Plume is amazing",),
+                    false
+                ),
+            ])
+        );
+
+        let lists = TimelineQuery::parse(
+            r#"blog in a or author in b or license in c or tags in d or lang in e "#,
+        )
+        .unwrap();
+        assert_eq!(
+            lists.0,
+            TQ::Or(vec![
+                TQ::Arg(Arg::In(WithList::Blog, List::List("a"),), false),
+                TQ::Arg(Arg::In(WithList::Author, List::List("b"),), false),
+                TQ::Arg(Arg::In(WithList::License, List::List("c"),), false),
+                TQ::Arg(Arg::In(WithList::Tags, List::List("d"),), false),
+                TQ::Arg(Arg::In(WithList::Lang, List::List("e"),), false),
+            ])
+        );
+
+        let contains = TimelineQuery::parse(
+            r#"title contains a or subtitle contains b or content contains c"#,
+        )
+        .unwrap();
+        assert_eq!(
+            contains.0,
+            TQ::Or(vec![
+                TQ::Arg(Arg::Contains(WithContains::Title, "a"), false),
+                TQ::Arg(Arg::Contains(WithContains::Subtitle, "b"), false),
+                TQ::Arg(Arg::Contains(WithContains::Content, "c"), false),
+            ])
+        );
+
+        let booleans = TimelineQuery::parse(r#"followed and has_cover and local and all"#).unwrap();
+        assert_eq!(
+            booleans.0,
+            TQ::And(vec![
+                TQ::Arg(Arg::Boolean(Bool::Followed), false),
+                TQ::Arg(Arg::Boolean(Bool::HasCover), false),
+                TQ::Arg(Arg::Boolean(Bool::Local), false),
+                TQ::Arg(Arg::Boolean(Bool::All), false),
+            ])
+        );
     }
 }
