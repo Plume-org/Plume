@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 11:55\n"
+"PO-Revision-Date: 2019-04-11 13:06\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} komentiral vaš članek."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -94,7 +94,7 @@ msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Ponastavitev gesla"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
@@ -124,28 +124,28 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Meni"
 
 msgid "Search"
-msgstr ""
+msgstr "Najdi"
 
 msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Obvestila"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Odjava"
 
 msgid "My account"
-msgstr ""
+msgstr "Moj račun"
 
 msgid "Log In"
-msgstr ""
+msgstr "Prijavi se"
 
 msgid "Register"
-msgstr ""
+msgstr "Registriraj"
 
 msgid "About this instance"
 msgstr ""
@@ -157,13 +157,13 @@ msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Administracija"
 
 msgid "Welcome to {}"
 msgstr ""
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Najnovejši članki"
 
 msgid "Your feed"
 msgstr ""
@@ -181,16 +181,16 @@ msgid "Instances"
 msgstr ""
 
 msgid "Configuration"
-msgstr ""
+msgstr "Nastavitve"
 
 msgid "Users"
-msgstr ""
+msgstr "Uporabniki"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokiraj"
 
 msgid "Block"
-msgstr ""
+msgstr "Blokiraj"
 
 msgid "Ban"
 msgstr ""
@@ -267,13 +267,13 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "E-pošta"
 
 msgid "Summary"
-msgstr ""
+msgstr "Povzetek"
 
 msgid "Update account"
-msgstr ""
+msgstr "Posodobi stranko"
 
 msgid "Danger zone"
 msgstr ""
