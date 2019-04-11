@@ -48,7 +48,7 @@ impl Timeline {
         })
     }
 
-    pub fn new_instance(conn: &Connection, name: String, query: String) -> Result<Timeline> {
+    pub fn new_for_instance(conn: &Connection, name: String, query: String) -> Result<Timeline> {
         TimelineQuery::parse(&query)?;// verify the query is valid
         Self::insert(conn, NewTimeline {
             user_id: None,

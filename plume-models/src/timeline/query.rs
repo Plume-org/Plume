@@ -184,15 +184,15 @@ enum List<'a> {
 }
 
 
-fn parse_s<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<TQ<'a>> {
+fn parse_s<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
     let mut res = Vec::new();
     let (left, token) = parse_a(&stream)?;
     res.push(token);
     stream = left;
     while !stream.is_empty() {
         match stream[0] {
-            Token::Word(or) if or == "or" => {},
-            _ => return None,
+            Token::Word(and) if and == "or" => {},
+            _ => break,
         }
         let (left, token) = parse_a(&stream[1..])?;
         res.push(token);
@@ -200,9 +200,9 @@ fn parse_s<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<TQ<'a>> {
     }
 
     if res.len() == 1 {
-        Some(res.remove(0))
+        Some((stream, res.remove(0)))
     } else {
-        Some(TQ::Or(res))
+        Some((stream, TQ::Or(res)))
     }
 }
 
@@ -231,7 +231,7 @@ fn parse_a<'a, 'b>(mut stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>
 fn parse_b<'a, 'b>(stream: &'b[Token<'a>]) -> Option<(&'b[Token<'a>], TQ<'a>)> {
     match stream.get(0) {
         Some(Token::LParent) => {
-            let (left, token) = parse_a(stream)?;
+            let (left, token) = parse_s(&stream[1..])?;
             match left.get(0) {
                 Some(Token::RParent) => Some((&left[1..], token)),
                 _ => None,
@@ -344,7 +344,14 @@ pub struct TimelineQuery<'a>(TQ<'a>);
 
 impl<'a> TimelineQuery<'a> {
     pub fn parse(query: &'a str) -> Option<Self> {
-        parse_s(&lex(query)).map(TimelineQuery)
+        parse_s(&lex(query)).and_then(|(left, res)|{
+            if left.is_empty() {
+                Some(res)
+            } else {
+                None
+            }
+        })
+        .map(TimelineQuery)
     }
 
     pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post) -> Result<bool> {
