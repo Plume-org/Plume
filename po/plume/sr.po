@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 07:58\n"
+"PO-Revision-Date: 2019-04-11 10:38\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} komentarisala tvoj članak."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -30,7 +30,7 @@ msgstr ""
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} vas je spomenuo/la."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
@@ -133,7 +133,7 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Obaveštenja"
 
 msgid "Log Out"
 msgstr "Odjavi se"
@@ -151,7 +151,7 @@ msgid "About this instance"
 msgstr ""
 
 msgid "Source code"
-msgstr ""
+msgstr "Izvorni kod"
 
 msgid "Matrix room"
 msgstr ""
