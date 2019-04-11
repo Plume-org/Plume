@@ -343,4 +343,5 @@ pub mod safe_string;
 pub mod schema;
 pub mod search;
 pub mod tags;
+pub mod timeline;
 pub mod users;

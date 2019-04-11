@@ -186,6 +186,23 @@ table! {
 }
 
 table! {
+    timeline (id) {
+        id -> Int4,
+        post_id -> Int4,
+        timeline_id -> Int4,
+    }
+}
+
+table! {
+    timeline_definition (id) {
+        id -> Int4,
+        user_id -> Nullable<Int4>,
+        name -> Varchar,
+        query -> Varchar,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
@@ -232,6 +249,9 @@ joinable!(posts -> medias (cover_id));
 joinable!(reshares -> posts (post_id));
 joinable!(reshares -> users (user_id));
 joinable!(tags -> posts (post_id));
+joinable!(timeline -> posts (post_id));
+joinable!(timeline -> timeline_definition (timeline_id));
+joinable!(timeline_definition -> users (user_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
@@ -251,5 +271,7 @@ allow_tables_to_appear_in_same_query!(
     posts,
     reshares,
     tags,
+    timeline,
+    timeline_definition,
     users,
 );
