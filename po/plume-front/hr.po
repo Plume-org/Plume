@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-11 07:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -26,7 +26,7 @@ msgstr "Naslov"
 
 # plume-front/src/editor.rs:147
 msgid "Subtitle or summary"
-msgstr ""
+msgstr "Podnaslov ili sažetak"
 
 # plume-front/src/editor.rs:154
 msgid "Write your article here. Markdown is supported."
@@ -38,7 +38,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:228
 msgid "Tags"
-msgstr ""
+msgstr "Tagovi"
 
 # plume-front/src/editor.rs:229
 msgid "License"
