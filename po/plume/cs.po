@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-10 11:26\n"
+"PO-Revision-Date: 2019-04-11 07:58\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -66,7 +66,7 @@ msgstr ""
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Pokud chcete vidět vaše notifikace, musíte být přihlášeni"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -133,7 +133,7 @@ msgid "Dashboard"
 msgstr "Nástěnka"
 
 msgid "Notifications"
-msgstr "Oznámení"
+msgstr "Notifikace"
 
 msgid "Log Out"
 msgstr "Odhlásit se"
@@ -609,16 +609,16 @@ msgstr "Přidejte váš"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
+msgstr[0] "Jedno boostnoutí"
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Už to nechci dále boostovat"
 
 msgid "Boost"
-msgstr ""
+msgstr "Boostnout"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr "Přihlasit se, nebo použít váš Fediverse účet k interakci s tímto článkem"
@@ -640,7 +640,7 @@ msgid "No comments yet. Be the first to react!"
 msgstr "Zatím bez komentáře. Buďte první, kdo zareaguje!"
 
 msgid "Invalid CSRF token"
-msgstr ""
+msgstr "Neplatný CSRF token"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
@@ -722,7 +722,7 @@ msgstr[2] "Na tomto blogu je {0} autorů: "
 msgstr[3] ""
 
 msgid "No posts to see here yet."
-msgstr ""
+msgstr "Ještě zde nejsou k vidění žádné příspěvky."
 
 msgid "Articles tagged \"{0}\""
 msgstr ""
@@ -764,7 +764,7 @@ msgid "Media details"
 msgstr "Podrobnosti média"
 
 msgid "Go back to the gallery"
-msgstr ""
+msgstr "Přejít zpět do galerie"
 
 msgid "Markdown syntax"
 msgstr "Markdown syntaxe"
