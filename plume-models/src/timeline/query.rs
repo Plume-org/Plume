@@ -4,7 +4,7 @@ use {Connection, Result};
 
 use super::Timeline;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum QueryError {
     SyntaxError(usize, usize, String),
     UnexpectedEndOfQuery,
@@ -30,10 +30,14 @@ enum Token<'a> {
 }
 
 impl<'a> Token<'a> {
-    fn get_word(&self) -> Option<&'a str> {
+    fn get_text(&self) -> &'a str {
         match self {
-            Token::Word(_, _, s) => Some(s),
-            _ => None,
+            Token::Word(_, _, s) => s,
+            Token::LParent(_) => "(",
+            Token::RParent(_) => ")",
+            Token::LBracket(_) => "[",
+            Token::RBracket(_) => "]",
+            Token::Comma(_) => ",",
         }
     }
 
@@ -44,7 +48,7 @@ impl<'a> Token<'a> {
             | Token::RParent(a)
             | Token::LBracket(a)
             | Token::RBracket(a)
-            | Token::Comma(a) => (*a, 0),
+            | Token::Comma(a) => (*a, 1),
         }
     }
 
@@ -101,7 +105,7 @@ macro_rules! gen_tokenizer {
                     vec![]
                 },
                 None => {
-                    *$state = Some(Token::Word($i,0,&""));
+                    *$state = Some(Token::Word($i,1,&""));
                     vec![]
                 },
                 _ => unreachable!(),
@@ -124,7 +128,7 @@ fn lex(stream: &str) -> Vec<Token> {
         .flatten()
         .map(|t| {
             if let Token::Word(b, e, _) = t {
-                Token::Word(b, e, &stream[b..=b + e])
+                Token::Word(b, e, &stream[b..b + e])
             } else {
                 t
             }
@@ -308,7 +312,7 @@ fn parse_c<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<
 }
 
 fn parse_d<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Arg<'a>)> {
-    match stream.get(0).and_then(Token::get_word)? {
+    match stream.get(0).map(Token::get_text)? {
         s @ "blog" | s @ "author" | s @ "license" | s @ "tags" | s @ "lang" => {
             match stream.get(1)? {
                 Token::Word(_, _, r#in) if r#in == &"in" => {
@@ -344,6 +348,9 @@ fn parse_d<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Arg
                     w,
                 ),
             )),
+            (Token::Word(_, _, contains), t) if contains == &"contains" => {
+                t.get_error(Token::Word(0, 0, "any word"))
+            }
             (t, _) => t.get_error(Token::Word(0, 0, "'contains'")),
         },
         s @ "followed" | s @ "has_cover" | s @ "local" | s @ "all" => match s {
@@ -353,11 +360,11 @@ fn parse_d<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Arg
             "all" => Ok((&stream[1..], Arg::Boolean(Bool::All))),
             _ => unreachable!(),
         },
-        t => Token::Word(1, 1, t).get_error(Token::Word(
+        _ => stream.get(0)?.get_error(Token::Word(
             0,
             0,
-            r#"one of 'blog', 'author', 'license', 'tags', 'lang',
-'title', 'subtitle', 'content', 'followed', 'has_cover', 'local' or 'all'"#,
+            "one of 'blog', 'author', 'license', 'tags', 'lang', \
+             'title', 'subtitle', 'content', 'followed', 'has_cover', 'local' or 'all'",
         )),
     }
 }
@@ -368,11 +375,11 @@ fn parse_l<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Lis
             let (left, list) = parse_m(&stream[1..])?;
             match left.get(0)? {
                 Token::RBracket(_) => Ok((&left[1..], List::Array(list))),
-                t => t.get_error(Token::RBracket(0)),
+                t => t.get_error(Token::Word(0, 0, "one of ']' or ','")),
             }
         }
         Token::Word(_, _, list) => Ok((&stream[1..], List::List(list))),
-        t => t.get_error(Token::Word(0, 0, "one of '[' of <list name>")),
+        t => t.get_error(Token::Word(0, 0, "one of [list, of, words] or list_name")),
     }
 }
 
@@ -404,7 +411,7 @@ impl<'a> TimelineQuery<'a> {
                 if left.is_empty() {
                     Ok(res)
                 } else {
-                    left[0].get_error(Token::Word(0, 0, "expected on of 'or' or 'and'"))
+                    left[0].get_error(Token::Word(0, 0, "on of 'or' or 'and'"))
                 }
             })
             .map(TimelineQuery)
@@ -429,9 +436,9 @@ mod tests {
                 Token::LBracket(2),
                 Token::RBracket(4),
                 Token::Comma(5),
-                Token::Word(6, 2, "two"),
-                Token::Word(10, 4, "words"),
-                Token::Word(17, 28, "something quoted with , and ["),
+                Token::Word(6, 3, "two"),
+                Token::Word(10, 5, "words"),
+                Token::Word(17, 29, "something quoted with , and ["),
             ]
         );
     }
@@ -497,6 +504,101 @@ mod tests {
                 TQ::Arg(Arg::Boolean(Bool::Local), false),
                 TQ::Arg(Arg::Boolean(Bool::All), false),
             ])
+        );
+    }
+
+    #[test]
+    fn test_rejection_parser() {
+        let missing_and_or = TimelineQuery::parse(r#"followed or has_cover local"#).unwrap_err();
+        assert_eq!(
+            missing_and_or,
+            QueryError::SyntaxError(
+                22,
+                5,
+                "Syntax Error: Expected on of 'or' or 'and', got 'local'".to_owned()
+            )
+        );
+
+        let unbalanced_parent =
+            TimelineQuery::parse(r#"followed and (has_cover or local"#).unwrap_err();
+        assert_eq!(unbalanced_parent, QueryError::UnexpectedEndOfQuery);
+
+        let missing_and_or_in_par =
+            TimelineQuery::parse(r#"(title contains "abc def" followed)"#).unwrap_err();
+        assert_eq!(
+            missing_and_or_in_par,
+            QueryError::SyntaxError(
+                26,
+                8,
+                "Syntax Error: Expected ')', got 'followed'".to_owned()
+            )
+        );
+
+        let expect_in = TimelineQuery::parse(r#"lang contains abc"#).unwrap_err();
+        assert_eq!(
+            expect_in,
+            QueryError::SyntaxError(
+                5,
+                8,
+                "Syntax Error: Expected 'in', got 'contains'".to_owned()
+            )
+        );
+
+        let expect_contains = TimelineQuery::parse(r#"title in abc"#).unwrap_err();
+        assert_eq!(
+            expect_contains,
+            QueryError::SyntaxError(
+                6,
+                2,
+                "Syntax Error: Expected 'contains', got 'in'".to_owned()
+            )
+        );
+
+        let expect_keyword = TimelineQuery::parse(r#"not_a_field contains something"#).unwrap_err();
+        assert_eq!(expect_keyword, QueryError::SyntaxError(0, 11, "Syntax Error: Expected one of 'blog', \
+'author', 'license', 'tags', 'lang', 'title', 'subtitle', 'content', 'followed', 'has_cover', \
+'local' or 'all', got 'not_a_field'".to_owned()));
+
+        let expect_bracket_or_comma = TimelineQuery::parse(r#"lang in [en ["#).unwrap_err();
+        assert_eq!(
+            expect_bracket_or_comma,
+            QueryError::SyntaxError(
+                12,
+                1,
+                "Syntax Error: Expected one of ']' or ',', \
+                 got '['"
+                    .to_owned()
+            )
+        );
+
+        let expect_bracket = TimelineQuery::parse(r#"lang in )abc"#).unwrap_err();
+        assert_eq!(
+            expect_bracket,
+            QueryError::SyntaxError(
+                8,
+                1,
+                "Syntax Error: Expected one of [list, of, words] or list_name, \
+                 got ')'"
+                    .to_owned()
+            )
+        );
+
+        let expect_word = TimelineQuery::parse(r#"title contains ,"#).unwrap_err();
+        assert_eq!(
+            expect_word,
+            QueryError::SyntaxError(15, 1, "Syntax Error: Expected any word, got ','".to_owned())
+        );
+
+        let got_bracket = TimelineQuery::parse(r#"lang in []"#).unwrap_err();
+        assert_eq!(
+            got_bracket,
+            QueryError::SyntaxError(9, 1, "Syntax Error: Expected any word, got ']'".to_owned())
+        );
+
+        let got_par = TimelineQuery::parse(r#"lang in [a, ("#).unwrap_err();
+        assert_eq!(
+            got_par,
+            QueryError::SyntaxError(12, 1, "Syntax Error: Expected any word, got '('".to_owned())
         );
     }
 }

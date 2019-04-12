@@ -295,7 +295,9 @@ pub fn ap_url(url: &str) -> String {
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use diesel::{dsl::sql_query, Connection, RunQueryDsl};
+    use diesel::Connection;
+    #[cfg(feature = "sqlite")]
+    use diesel::{dsl::sql_query, RunQueryDsl};
     use Connection as Conn;
     use CONFIG;
 
