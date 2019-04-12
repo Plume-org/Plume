@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-11 17:54\n"
+"PO-Revision-Date: 2019-04-12 10:07\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -70,7 +70,7 @@ msgstr ""
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Ta članek še ni objavljen."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
@@ -82,11 +82,11 @@ msgstr ""
 
 # src/routes/posts.rs:145
 msgid "New post"
-msgstr ""
+msgstr "Nov članek"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
-msgstr ""
+msgstr "Uredi {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
@@ -193,10 +193,10 @@ msgid "Block"
 msgstr "Blokiraj"
 
 msgid "Ban"
-msgstr ""
+msgstr "Prepoved"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "Vsi članki Fediverseja"
 
 msgid "Articles from {}"
 msgstr ""
