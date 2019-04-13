@@ -110,6 +110,26 @@ table! {
 }
 
 table! {
+    list_elems (id) {
+        id -> Int4,
+        list_id -> Int4,
+        user_id -> Nullable<Int4>,
+        blog_id -> Nullable<Int4>,
+        word -> Nullable<Varchar>,
+    }
+}
+
+table! {
+    lists (id) {
+        id -> Int4,
+        name -> Varchar,
+        user_id -> Nullable<Int4>,
+        #[sql_name = "type"]
+        type_ -> Int4,
+    }
+}
+
+table! {
     medias (id) {
         id -> Int4,
         file_path -> Text,
@@ -238,6 +258,10 @@ joinable!(comments -> posts (post_id));
 joinable!(comments -> users (author_id));
 joinable!(likes -> posts (post_id));
 joinable!(likes -> users (user_id));
+joinable!(list_elems -> blogs (blog_id));
+joinable!(list_elems -> lists (list_id));
+joinable!(list_elems -> users (user_id));
+joinable!(lists -> users (user_id));
 joinable!(mentions -> comments (comment_id));
 joinable!(mentions -> posts (post_id));
 joinable!(mentions -> users (mentioned_id));
@@ -264,6 +288,8 @@ allow_tables_to_appear_in_same_query!(
     follows,
     instances,
     likes,
+    list_elems,
+    lists,
     medias,
     mentions,
     notifications,

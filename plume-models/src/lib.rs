@@ -342,6 +342,7 @@ pub mod follows;
 pub mod headers;
 pub mod instance;
 pub mod likes;
+pub mod lists;
 pub mod medias;
 pub mod mentions;
 pub mod notifications;
