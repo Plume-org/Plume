@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-12 10:57\n"
+"PO-Revision-Date: 2019-04-14 19:44\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
@@ -78,7 +78,7 @@ msgstr ""
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Ti ne autor ovog bloga."
 
 # src/routes/posts.rs:145
 msgid "New post"
