@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-12 12:37\n"
+"PO-Revision-Date: 2019-04-14 18:54\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -655,7 +655,7 @@ msgid "The link that led you here may be broken."
 msgstr "Odkaz, který vás sem přivedl je asi porušen."
 
 msgid "The content you sent can't be processed."
-msgstr ""
+msgstr "Obsah, který jste poslali, nelze zpracovat."
 
 msgid "Maybe it was too long."
 msgstr "Možná to bylo příliš dlouhé."
@@ -670,7 +670,7 @@ msgid "Something broke on our side."
 msgstr "Neco se pokazilo na naší strane."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
+msgstr "Omlouváme se. Pokud si myslíte, že jde o chybu, prosím, nahlaste ji."
 
 msgid "Edit \"{}\""
 msgstr "Upravit \"{}\""
@@ -679,7 +679,7 @@ msgid "Description"
 msgstr "Popis"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "Můžete nahrát obrázky do své galerie, aby je šlo použít jako ikony blogu, nebo bannery."
 
 msgid "Upload images"
 msgstr "Nahrát obrázky"
@@ -688,7 +688,7 @@ msgid "Blog icon"
 msgstr "Ikonka blogu"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "Blog banner"
 
 msgid "Update blog"
 msgstr "Aktualizovat blog"
@@ -749,7 +749,7 @@ msgid "Media upload"
 msgstr "Nahrávaní médií"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "Užitečné pro zrakově postižené lidi a také jako informace o licencování"
 
 msgid "Leave it empty, if none is needed"
 msgstr "Ponechat prázdne, pokud žádná není potřebná"
