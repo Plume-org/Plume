@@ -1,7 +1,7 @@
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use blogs::Blog;
-use schema::{list_elems, lists, users, blogs};
+use schema::{blogs, list_elems, lists, users};
 use std::convert::{TryFrom, TryInto};
 use users::User;
 use {Connection, Error, Result};
@@ -140,15 +140,17 @@ impl List {
             return Ok(false);
         }
         diesel::insert_into(list_elems::table)
-            .values(users.iter()
+            .values(
+                users
+                    .iter()
                     .map(|u| NewListElem {
-                        list_id: self.id, 
+                        list_id: self.id,
                         user_id: Some(*u),
                         blog_id: None,
                         word: None,
                     })
-                    .collect::<Vec<_>>()
-                    )
+                    .collect::<Vec<_>>(),
+            )
             .execute(conn)?;
         Ok(true)
     }
@@ -160,15 +162,17 @@ impl List {
             return Ok(false);
         }
         diesel::insert_into(list_elems::table)
-            .values(blogs.iter()
+            .values(
+                blogs
+                    .iter()
                     .map(|b| NewListElem {
-                        list_id: self.id, 
+                        list_id: self.id,
                         user_id: None,
                         blog_id: Some(*b),
                         word: None,
                     })
-                    .collect::<Vec<_>>()
-                    )
+                    .collect::<Vec<_>>(),
+            )
             .execute(conn)?;
         Ok(true)
     }
@@ -180,15 +184,17 @@ impl List {
             return Ok(false);
         }
         diesel::insert_into(list_elems::table)
-            .values(words.iter()
+            .values(
+                words
+                    .iter()
                     .map(|w| NewListElem {
-                        list_id: self.id, 
+                        list_id: self.id,
                         user_id: None,
                         blog_id: None,
                         word: Some(w),
                     })
-                    .collect::<Vec<_>>()
-                    )
+                    .collect::<Vec<_>>(),
+            )
             .execute(conn)?;
         Ok(true)
     }
@@ -200,15 +206,17 @@ impl List {
             return Ok(false);
         }
         diesel::insert_into(list_elems::table)
-            .values(prefixes.iter()
+            .values(
+                prefixes
+                    .iter()
                     .map(|p| NewListElem {
-                        list_id: self.id, 
+                        list_id: self.id,
                         user_id: None,
                         blog_id: None,
                         word: Some(p),
                     })
-                    .collect::<Vec<_>>()
-                    )
+                    .collect::<Vec<_>>(),
+            )
             .execute(conn)?;
         Ok(true)
     }
@@ -244,11 +252,7 @@ impl List {
             .select(list_elems::word)
             .load::<Option<String>>(conn)
             .map_err(Error::from)
-            .map(|r| {
-                r.into_iter()
-                    .filter_map(|o| o)
-                    .collect::<Vec<String>>()
-            })
+            .map(|r| r.into_iter().filter_map(|o| o).collect::<Vec<String>>())
     }
 
     /// Get all prefixes in the list
@@ -262,18 +266,11 @@ impl List {
             .select(list_elems::word)
             .load::<Option<String>>(conn)
             .map_err(Error::from)
-            .map(|r| {
-                r.into_iter()
-                    .filter_map(|o| o)
-                    .collect::<Vec<String>>()
-            })
+            .map(|r| r.into_iter().filter_map(|o| o).collect::<Vec<String>>())
     }
 
     pub fn clear(&self, conn: &Connection) -> Result<()> {
-        diesel::delete(
-                list_elems::table
-                    .filter(list_elems::list_id.eq(self.id))
-            )
+        diesel::delete(list_elems::table.filter(list_elems::list_id.eq(self.id)))
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
