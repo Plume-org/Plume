@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
+"PO-Revision-Date: 2019-04-15 13:45\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -127,25 +127,25 @@ msgid "Menu"
 msgstr "मेंन्यू"
 
 msgid "Search"
-msgstr ""
+msgstr "ढूंढें"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "डैशबोर्ड"
 
 msgid "Notifications"
-msgstr ""
+msgstr "सूचनाएँ"
 
 msgid "Log Out"
-msgstr ""
+msgstr "लॉग आउट"
 
 msgid "My account"
-msgstr ""
+msgstr "मेरा अकाउंट"
 
 msgid "Log In"
-msgstr ""
+msgstr "लॉग इन करें"
 
 msgid "Register"
-msgstr ""
+msgstr "रजिस्टर"
 
 msgid "About this instance"
 msgstr ""
