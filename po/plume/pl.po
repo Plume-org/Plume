@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-07 21:26\n"
-"Last-Translator: AnaGelez <ana@gelez.xyz>\n"
+"PO-Revision-Date: 2019-04-15 15:26\n"
+"Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
@@ -110,7 +110,7 @@ msgstr "Przepraszam, ale link wygasł. Spróbuj ponownie"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Aby uzyskać dostęp do panelu, musisz być zalogowany"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
@@ -130,7 +130,7 @@ msgid "Search"
 msgstr "Szukaj"
 
 msgid "Dashboard"
-msgstr "Panel rozdzielczy"
+msgstr "Panel"
 
 msgid "Notifications"
 msgstr "Powiadomienia"
