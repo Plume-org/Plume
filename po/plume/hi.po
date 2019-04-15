@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-15 13:45\n"
+"PO-Revision-Date: 2019-04-15 14:36\n"
 "Last-Translator: AnaGelez <ana@gelez.xyz>\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -145,115 +145,115 @@ msgid "Log In"
 msgstr "लॉग इन करें"
 
 msgid "Register"
-msgstr "रजिस्टर"
+msgstr "अकाउंट रजिस्टर करें"
 
 msgid "About this instance"
-msgstr ""
+msgstr "इंस्टैंस के बारे में जानकारी"
 
 msgid "Source code"
-msgstr ""
+msgstr "सोर्स कोड"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "मैट्रिक्स रूम"
 
 msgid "Administration"
 msgstr ""
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "{} में स्वागत"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "नवीनतम लेख"
 
 msgid "Your feed"
-msgstr ""
+msgstr "आपकी फीड"
 
 msgid "Federated feed"
-msgstr ""
+msgstr "फ़ेडरेटेड फीड"
 
 msgid "Local feed"
-msgstr ""
+msgstr "लोकल फीड"
 
 msgid "Administration of {0}"
 msgstr ""
 
 msgid "Instances"
-msgstr ""
+msgstr "इन्सटेंस"
 
 msgid "Configuration"
-msgstr ""
+msgstr "कॉन्फ़िगरेशन"
 
 msgid "Users"
-msgstr ""
+msgstr "उसेर्स"
 
 msgid "Unblock"
-msgstr ""
+msgstr "अनब्लॉक करें"
 
 msgid "Block"
-msgstr ""
+msgstr "ब्लॉक करें"
 
 msgid "Ban"
-msgstr ""
+msgstr "बन करें"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
+msgstr "फेडिवेर्से के सारे आर्टिकल्स"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "{} के आर्टिकल्स"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "कंटेंट देखने के लिए अन्य लोगों को सब्सक्राइब करें"
 
 # src/template_utils.rs:217
 msgid "Name"
-msgstr ""
+msgstr "नाम"
 
 # src/template_utils.rs:220
 msgid "Optional"
-msgstr ""
+msgstr "वैकल्पिक"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "किसी को भी रजिस्टर करने की अनुमति दें"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "संक्षिप्त विवरण - बाइलाइन"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "मार्कडौं सिंटेक्स उपलब्ध है"
 
 msgid "Long description"
-msgstr ""
+msgstr "दीर्घ वर्णन"
 
 # src/template_utils.rs:217
 msgid "Default article license"
-msgstr ""
+msgstr "डिफ़ॉल्ट आलेख लायसेंस"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "इन सेटिंग्स को सेव करें"
 
 msgid "About {0}"
-msgstr ""
+msgstr "{0} के बारे में"
 
 msgid "Home to <em>{0}</em> users"
-msgstr ""
+msgstr "यहाँ <em>{0}</em> उसेर्स हैं"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
+msgstr "जिन्होनें <em>{0}</em> आर्टिकल्स लिखे हैं"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "और <em>{0}</em> इन्सटेंसेस से जुड़े हैं"
 
 msgid "Administred by"
 msgstr ""
 
 msgid "Runs Plume {0}"
-msgstr ""
+msgstr "Plume {0} का इस्तेमाल कर रहे हैं"
 
 msgid "Edit your account"
-msgstr ""
+msgstr "अपना अकाउंट एडिट करें"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "आपकी प्रोफाइल"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
@@ -267,49 +267,49 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "ईमेल"
 
 msgid "Summary"
-msgstr ""
+msgstr "सारांश"
 
 msgid "Update account"
-msgstr ""
+msgstr "अकाउंट अपडेट करें"
 
 msgid "Danger zone"
 msgstr ""
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
+msgstr "सावधानी रखें, यहाँ पे कोई भी किया गया कार्य कैंसिल नहीं किया जा सकता"
 
 msgid "Delete your account"
-msgstr ""
+msgstr "खाता रद्द करें"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "माफ़ करें, एडमिन होने की वजह से, आप अपना इंस्टैंस नहीं छोड़ सकते"
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "आपका डैशबोर्ड"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "आपके ब्लोग्स"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "आपके कोई ब्लोग्स नहीं हैं. आप स्वयं ब्लॉग बना सकते हैं या किसी और ब्लॉग से जुड़ सकते हैं"
 
 msgid "Start a new blog"
-msgstr ""
+msgstr "नया ब्लॉग बनाएं"
 
 msgid "Your Drafts"
-msgstr ""
+msgstr "आपके ड्राफ्ट्स"
 
 msgid "Your media"
-msgstr ""
+msgstr "आपकी मीडिया"
 
 msgid "Go to your gallery"
-msgstr ""
+msgstr "गैलरी में जाएँ"
 
 msgid "Create your account"
-msgstr ""
+msgstr "अपना अकाउंट बनाएं"
 
 msgid "Create an account"
 msgstr ""
