@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-16 11:06\n"
+"PO-Revision-Date: 2019-04-16 11:57\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -279,7 +279,7 @@ msgid "Danger zone"
 msgstr "Nebezpečná zóna"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Buďte velmi opatrní, jakákoli akce, která zde bude přijata, nemůže být zrušena."
+msgstr "Buďte velmi opatrný/á, jakákoliv zde provedená akce nemůže být zrušena."
 
 msgid "Delete your account"
 msgstr "Smazat váš účet"
@@ -447,7 +447,7 @@ msgstr "Do tohoto data"
 
 # src/template_utils.rs:305
 msgid "Containing these tags"
-msgstr "Obsahuje tyto tagy"
+msgstr "Obsahuje tyto štítky"
 
 msgid "Tags"
 msgstr "Tagy"
@@ -554,7 +554,7 @@ msgstr "Nahrát média"
 
 # src/template_utils.rs:217
 msgid "Tags, separated by commas"
-msgstr "Tagy, oddělené čárkami"
+msgstr "Štítky, oddělené čárkami"
 
 # src/template_utils.rs:217
 msgid "License"
@@ -643,7 +643,7 @@ msgid "Invalid CSRF token"
 msgstr "Neplatný CSRF token"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr ""
+msgstr "S vaším tokenem CSRF něco není v pořádku. Ujistěte se, že máte v prohlížeči povolené cookies a zkuste obnovit stránku. Pokud tuto chybovou zprávu budete nadále vidět, prosím nahlašte ji."
 
 msgid "Page not found"
 msgstr "Stránka nenalezena"
@@ -670,7 +670,7 @@ msgid "Something broke on our side."
 msgstr "Neco se pokazilo na naší strane."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Omlouváme se. Pokud si myslíte, že jde o chybu, prosím, nahlaste ji."
+msgstr "Omlouváme se. Pokud si myslíte, že jde o chybu, prosím nahlašte ji."
 
 msgid "Edit \"{}\""
 msgstr "Upravit \"{}\""
@@ -694,7 +694,7 @@ msgid "Update blog"
 msgstr "Aktualizovat blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Buďte velmi opatrný/á, jakákoliv zde provedená akce nemůže být vrátena."
+msgstr "Buďte velmi opatrný/á, jakákoliv zde provedená akce nemůže být vrácena."
 
 msgid "Permanently delete this blog"
 msgstr "Trvale smazat tento blog"
@@ -725,10 +725,10 @@ msgid "No posts to see here yet."
 msgstr "Ještě zde nejsou k vidění žádné příspěvky."
 
 msgid "Articles tagged \"{0}\""
-msgstr "Články otagované \"{0}\""
+msgstr "Články pod štítkem \"{0}\""
 
 msgid "There are currently no articles with such a tag"
-msgstr ""
+msgstr "Zatím tu nejsou žádné články s takovým štítkem"
 
 msgid "Upload"
 msgstr "Nahrát"
@@ -770,7 +770,7 @@ msgid "Markdown syntax"
 msgstr "Markdown syntaxe"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Pro vložení tohoto média zkopírujte tento kód do vašich článků:"
 
 msgid "Use as an avatar"
 msgstr "Použít jak avatar"
