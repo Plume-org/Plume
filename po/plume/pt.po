@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
-"Last-Translator: AnaGelez <ana@gelez.xyz>\n"
+"PO-Revision-Date: 2019-04-16 00:11\n"
+"Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} comentou o seu artigo."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -42,7 +42,7 @@ msgstr "Avatar do {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Para criar um novo blog, você precisa estar logado"
 
 # src/routes/blogs.rs:169
 msgid "You are not allowed to delete this blog."
@@ -50,23 +50,23 @@ msgstr "Não está autorizado a apagar este blog."
 
 # src/routes/blogs.rs:214
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Você não está autorizado a apagar este blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Você não pode usar esta mídia como um ícone do blog."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Você não pode usar esta mídia como um banner do blog."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Para curtir uma postagem, você precisa estar logado"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Para ver suas notificações, você precisa estar logado"
 
 # src/routes/posts.rs:92
 msgid "This post isn't published yet."
@@ -74,11 +74,11 @@ msgstr "Este artigo ainda não foi publicado."
 
 # src/routes/posts.rs:120
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Para escrever uma nova postagem, você precisa estar logado"
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Você não é um autor deste blog."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -90,7 +90,7 @@ msgstr "Mudar {0}"
 
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Para recompartilhar uma postagem, você precisa estar logado"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -110,24 +110,24 @@ msgstr "Desculpe, mas a ligação expirou. Tente novamente"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Para acessar seu painel, você precisa estar logado"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Para se inscrever em alguém, você precisa estar logado"
 
 # src/routes/user.rs:287
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Para editar seu perfil, você precisa estar logado"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
-msgstr ""
+msgstr "Menu"
 
 msgid "Search"
-msgstr ""
+msgstr "Pesquisar"
 
 msgid "Dashboard"
 msgstr "Painel de controlo"
@@ -151,7 +151,7 @@ msgid "About this instance"
 msgstr "Sobre esta instância"
 
 msgid "Source code"
-msgstr ""
+msgstr "Código fonte"
 
 msgid "Matrix room"
 msgstr "Sala Matrix"
@@ -160,7 +160,7 @@ msgid "Administration"
 msgstr "Administração"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Bem-vindo a {}"
 
 msgid "Latest articles"
 msgstr "Artigos recentes"
@@ -199,10 +199,10 @@ msgid "All the articles of the Fediverse"
 msgstr "Todos os artigos do Fediverse"
 
 msgid "Articles from {}"
-msgstr ""
+msgstr "Artigos de {}"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgstr "Nada para ver aqui ainda. Tente assinar mais pessoas."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -213,23 +213,23 @@ msgid "Optional"
 msgstr "Opcional"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Permitir que qualquer um se registre aqui"
 
 msgid "Short description - byline"
-msgstr ""
+msgstr "Descrição curta"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Sintaxe de Markdown é suportada"
 
 msgid "Long description"
 msgstr "Descrição longa"
 
 # src/template_utils.rs:217
 msgid "Default article license"
-msgstr ""
+msgstr "Licença padrão do artigo"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Salvar estas configurações"
 
 msgid "About {0}"
 msgstr "Sobre {0}"
