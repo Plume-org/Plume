@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-16 00:11\n"
+"PO-Revision-Date: 2019-04-16 00:58\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -241,13 +241,13 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Quem escreveu <em>{0}</em> artigos"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "E estão conectados a <em>{0}</em> outras instâncias"
 
 msgid "Administred by"
 msgstr "Administrado por"
 
 msgid "Runs Plume {0}"
-msgstr ""
+msgstr "Roda Plume {0}"
 
 msgid "Edit your account"
 msgstr "Editar sua conta"
@@ -256,18 +256,18 @@ msgid "Your Profile"
 msgstr "Seu Perfil"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
+msgstr "Para alterar seu avatar, carregue-o para sua galeria e depois selecione a partir de lá."
 
 msgid "Upload an avatar"
-msgstr ""
+msgstr "Carregar um avatar"
 
 # src/template_utils.rs:217
 msgid "Display name"
-msgstr ""
+msgstr "Nome de exibição"
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Summary"
 msgstr "Sumário"
@@ -285,7 +285,7 @@ msgid "Delete your account"
 msgstr "Suprimir sua conta"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
+msgstr "Desculpe, mas como administrador, você não pode deixar sua própria instância."
 
 msgid "Your Dashboard"
 msgstr "Seu Painel de Controle"
@@ -294,7 +294,7 @@ msgid "Your Blogs"
 msgstr "Seus Blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Você ainda não tem nenhum blog. Crie seu próprio, ou peça para entrar em um."
 
 msgid "Start a new blog"
 msgstr "Iniciar um novo blog"
@@ -327,19 +327,19 @@ msgid "Password confirmation"
 msgstr "Confirmação de senha"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
+msgstr "Desculpe, mas as inscrições estão fechadas nessa instância em particular. Você pode, no entanto, encontrar uma outra."
 
 msgid "Articles"
 msgstr "Artigos"
 
 msgid "Subscribers"
-msgstr ""
+msgstr "Assinantes"
 
 msgid "Subscriptions"
-msgstr ""
+msgstr "Inscrições"
 
 msgid "Atom feed"
-msgstr ""
+msgstr "Feed de Atom"
 
 msgid "Recently boosted"
 msgstr "Recentemente partilhado"
@@ -357,25 +357,25 @@ msgid "Open on {0}"
 msgstr "Abrir em {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Desinscrever"
 
 msgid "Subscribe"
-msgstr ""
+msgstr "Inscreva-se"
 
 msgid "{0}'s subscriptions'"
-msgstr ""
+msgstr "{0} inscrições"
 
 msgid "{0}'s subscribers"
-msgstr ""
+msgstr "{0} inscritos"
 
 msgid "Respond"
 msgstr "Responder"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Você tem certeza?"
 
 msgid "Delete this comment"
-msgstr ""
+msgstr "Excluir este comentário"
 
 msgid "What is Plume?"
 msgstr "O que é Plume?"
@@ -384,13 +384,13 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume é um motor de blogs descentralizado."
 
 msgid "Authors can manage various blogs, each as an unique website."
-msgstr ""
+msgstr "Autores podem gerenciar vários blogs, cada um como um site único."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
+msgstr "Os artigos também são visíveis em outras instâncias de Plume, e você pode interagir com elas diretamente de outras plataformas como Mastodon."
 
 msgid "Home to <em>{0}</em> people"
-msgstr ""
+msgstr "Lar de <em>{0}</em> pessoas"
 
 msgid "Read the detailed rules"
 msgstr "Leia as regras detalhadas"
@@ -399,7 +399,7 @@ msgid "None"
 msgstr "Nenhum"
 
 msgid "No description"
-msgstr ""
+msgstr "Sem descrição"
 
 msgid "View all"
 msgstr "Ver tudo"
@@ -411,14 +411,14 @@ msgid "Draft"
 msgstr "Rascunho"
 
 msgid "Your query"
-msgstr ""
+msgstr "Sua consulta"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "Pesquisa avançada"
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
-msgstr ""
+msgstr "Título do artigo que contenha estas palavras"
 
 msgid "Title"
 msgstr "Título"
@@ -654,13 +654,13 @@ msgid "The content you sent can't be processed."
 msgstr ""
 
 msgid "Maybe it was too long."
-msgstr ""
+msgstr "Talvez tenha sido longo demais."
 
 msgid "You are not authorized."
 msgstr "Você não está autorizado."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "Erro interno do servidor"
 
 msgid "Something broke on our side."
 msgstr "Algo partiu-se do nosso lado."
@@ -669,16 +669,16 @@ msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Desculpa por isso. Se você acha que isso é um bug, por favor, relate-o."
 
 msgid "Edit \"{}\""
-msgstr ""
+msgstr "Editar \"{}\""
 
 msgid "Description"
 msgstr "Descrição"
 
 msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgstr "Você pode carregar imagens para sua galeria, para usá-las como ícones de blog, ou banners."
 
 msgid "Upload images"
-msgstr ""
+msgstr "Carregar imagens"
 
 msgid "Blog icon"
 msgstr ""
