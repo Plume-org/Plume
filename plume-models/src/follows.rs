@@ -3,7 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    broadcast,
+    broadcast, PUBLIC_VISIBILITY,
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
     Id, IntoId,
@@ -61,8 +61,8 @@ impl Follow {
         act.follow_props
             .set_object_link::<Id>(target.clone().into_id())?;
         act.object_props.set_id_string(self.ap_url.clone())?;
-        act.object_props.set_to_link(target.into_id())?;
-        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_to_link_vec(vec![target.into_id()])?;
+        act.object_props.set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         Ok(act)
     }
 
@@ -104,8 +104,8 @@ impl Follow {
             &res.id
         ));
         accept.object_props.set_id_string(accept_id)?;
-        accept.object_props.set_to_link(from.clone().into_id())?;
-        accept.object_props.set_cc_link_vec::<Id>(vec![])?;
+        accept.object_props.set_to_link_vec(vec![from.clone().into_id()])?;
+        accept.object_props.set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         accept
             .accept_props
             .set_actor_link::<Id>(target.clone().into_id())?;
@@ -122,6 +122,10 @@ impl Follow {
             .set_id_string(format!("{}/undo", self.ap_url))?;
         undo.undo_props
             .set_object_link::<Id>(self.clone().into_id())?;
+        undo.object_props
+            .set_to_link_vec(vec![User::get(conn, self.following_id)?.into_id()])?;
+        undo.object_props
+            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         Ok(undo)
     }
 }

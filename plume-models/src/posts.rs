@@ -20,7 +20,7 @@ use plume_common::{
     activity_pub::{
         broadcast,
         inbox::{AsObject, FromId},
-        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
+        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
     utils::md_to_html,
 };
@@ -635,7 +635,7 @@ impl Post {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
         let cc = self.get_receivers_urls(conn)?;
-        let to = vec![PUBLIC_VISIBILTY.to_string()];
+        let to = vec![PUBLIC_VISIBILITY.to_string()];
 
         let mut mentions_json = Mention::list_for_post(conn, self.id)?
             .into_iter()
@@ -877,7 +877,7 @@ impl Post {
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
         Ok(act)
     }
 }
@@ -1226,7 +1226,7 @@ mod tests {
                 "mediaType": "text/markdown"
             },
             "published": "2014-12-12T12:12:12Z",
-            "to": [plume_common::activity_pub::PUBLIC_VISIBILTY]
+            "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
         });
         let article: LicensedArticle = serde_json::from_value(json).unwrap();
         assert_eq!(

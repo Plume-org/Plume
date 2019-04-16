@@ -5,7 +5,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use notifications::*;
 use plume_common::activity_pub::{
     inbox::{AsObject, FromId},
-    Id, IntoId, PUBLIC_VISIBILTY,
+    Id, IntoId, PUBLIC_VISIBILITY,
 };
 use posts::Post;
 use schema::likes;
@@ -42,8 +42,8 @@ impl Like {
         act.like_props
             .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
         act.object_props
-            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        act.object_props.set_cc_link_vec(vec![Id::new(User::get(conn, self.user_id)?.followers_endpoint)])?;
         act.object_props.set_id_string(self.ap_url.clone())?;
 
         Ok(act)
@@ -72,8 +72,8 @@ impl Like {
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
-            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        act.object_props.set_cc_link_vec(vec![Id::new(User::get(conn, self.user_id)?.followers_endpoint)])?;
 
         Ok(act)
     }

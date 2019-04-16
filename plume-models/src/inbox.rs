@@ -154,7 +154,7 @@ pub(crate) mod tests {
                     "attributedTo": users[0].ap_url,
                     "inReplyTo": posts[0].ap_url,
                     "content": "Hello.",
-                    "to": [plume_common::activity_pub::PUBLIC_VISIBILTY]
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
                 },
                 "type": "Create",
             });
@@ -195,7 +195,7 @@ pub(crate) mod tests {
                         "mediaType": "text/markdown"
                     },
                     "published": "2014-12-12T12:12:12Z",
-                    "to": [plume_common::activity_pub::PUBLIC_VISIBILTY]
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
                 },
                 "type": "Create",
             });

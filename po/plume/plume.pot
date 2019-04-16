@@ -108,15 +108,15 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:135
+# src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:174
+# src/routes/user.rs:180
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:274
+# src/routes/user.rs:280
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 

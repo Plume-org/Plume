@@ -16,7 +16,7 @@ pub mod request;
 pub mod sign;
 
 pub const CONTEXT_URL: &str = "https://www.w3.org/ns/activitystreams";
-pub const PUBLIC_VISIBILTY: &str = "https://www.w3.org/ns/activitystreams#Public";
+pub const PUBLIC_VISIBILITY: &str = "https://www.w3.org/ns/activitystreams#Public";
 
 pub const AP_CONTENT_TYPE: &str =
     r#"application/ld+json; profile="https://www.w3.org/ns/activitystreams""#;

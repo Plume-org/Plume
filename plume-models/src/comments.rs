@@ -16,7 +16,7 @@ use mentions::Mention;
 use notifications::*;
 use plume_common::activity_pub::{
     inbox::{AsObject, FromId},
-    Id, IntoId, PUBLIC_VISIBILTY,
+    Id, IntoId, PUBLIC_VISIBILITY,
 };
 use plume_common::utils;
 use posts::Post;
@@ -113,7 +113,7 @@ impl Comment {
         );
 
         let mut note = Note::default();
-        let to = vec![Id::new(PUBLIC_VISIBILTY.to_string())];
+        let to = vec![Id::new(PUBLIC_VISIBILITY.to_string())];
 
         note.object_props
             .set_id_string(self.ap_url.clone().unwrap_or_default())?;
@@ -150,7 +150,7 @@ impl Comment {
             .set_id_string(format!("{}/activity", self.ap_url.clone()?,))?;
         act.object_props
             .set_to_link_vec(note.object_props.to_link_vec::<Id>()?)?;
-        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+        act.object_props.set_cc_link_vec(vec![Id::new(self.get_author(&c.conn)?.followers_endpoint)])?;
         Ok(act)
     }
 
@@ -180,7 +180,7 @@ impl Comment {
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))?;
         act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
 
         Ok(act)
     }
@@ -207,8 +207,8 @@ impl FromId<PlumeRocket> for Comment {
                 serde_json::Value::Array(v) => v
                     .iter()
                     .filter_map(serde_json::Value::as_str)
-                    .any(|s| s == PUBLIC_VISIBILTY),
-                serde_json::Value::String(s) => s == PUBLIC_VISIBILTY,
+                    .any(|s| s == PUBLIC_VISIBILITY),
+                serde_json::Value::String(s) => s == PUBLIC_VISIBILITY,
                 _ => false,
             };
 
