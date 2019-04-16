@@ -50,8 +50,8 @@ pub struct List {
 
 #[derive(Default, Insertable)]
 #[table_name = "lists"]
-struct NewList {
-    pub name: String,
+struct NewList<'a> {
+    pub name: &'a str,
     pub user_id: Option<i32>,
     type_: i32,
 }
@@ -88,7 +88,7 @@ impl List {
 
     pub fn new(
         conn: &Connection,
-        name: String,
+        name: &str,
         user: Option<&User>,
         kind: ListType,
     ) -> Result<Self> {
@@ -362,5 +362,61 @@ pub(super) mod private {
             .get_result(conn)
             .map_err(Error::from)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use blogs::tests as blog_tests;
+    use tests::db;
+
+    use diesel::Connection;
+
+    #[test]
+    fn list_type() {
+        for i in 0..4 {
+            assert_eq!(i, Into::<i32>::into(ListType::try_from(i).unwrap()));
+        }
+        ListType::try_from(4).unwrap_err();
+    }
+
+    #[test]
+    fn list_lists() {
+        let conn = &db();
+        conn.begin_test_transaction().unwrap();
+        let (users, blogs) = blog_tests::fill_database(conn);
+
+        let l1 = List::new(conn, "list1", None, ListType::User).unwrap();
+        let l2 = List::new(conn, "list2", None, ListType::Blog).unwrap();
+        let l1u = List::new(conn, "list1", Some(&users[0]), ListType::Word).unwrap();
+        // TODO add db constraint (name, user_id) UNIQUE
+
+        let l_eq = |l1: &List, l2: &List| {
+            assert_eq!(l1.id, l2.id);
+            assert_eq!(l1.user_id, l2.user_id);
+            assert_eq!(l1.name, l2.name);
+            assert_eq!(l1.type_, l2.type_);
+        };
+
+        let l1bis = List::get(conn, l1.id).unwrap();
+        l_eq(&l1, &l1bis);
+
+        let l_inst = List::list_for_user(conn, None).unwrap();
+        let l_user = List::list_for_user(conn, Some(users[0].id)).unwrap();
+        assert_eq!(2, l_inst.len());
+        assert_eq!(1, l_user.len());
+        assert!(l_user[0].id != l1u.id);
+
+        l_eq(&l1u, &l_user[0]);
+        if l_inst[0].id == l1.id {
+            l_eq(&l1, &l_inst[0]);
+            l_eq(&l2, &l_inst[1]);
+        } else {
+            l_eq(&l1, &l_inst[1]);
+            l_eq(&l2, &l_inst[0]);
+        }
+
+        //find_by!(lists, find_by_name, user_id as Option<i32>, name as &str);
     }
 }
