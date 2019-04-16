@@ -70,7 +70,8 @@ impl Reshare {
         act.object_props.set_id_string(self.ap_url.clone())?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
+        act.object_props
+            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
 
         Ok(act)
     }
@@ -99,7 +100,8 @@ impl Reshare {
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
+        act.object_props
+            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
 
         Ok(act)
     }

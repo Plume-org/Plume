@@ -150,7 +150,8 @@ impl Comment {
             .set_id_string(format!("{}/activity", self.ap_url.clone()?,))?;
         act.object_props
             .set_to_link_vec(note.object_props.to_link_vec::<Id>()?)?;
-        act.object_props.set_cc_link_vec(vec![Id::new(self.get_author(&c.conn)?.followers_endpoint)])?;
+        act.object_props
+            .set_cc_link_vec(vec![Id::new(self.get_author(&c.conn)?.followers_endpoint)])?;
         Ok(act)
     }
 

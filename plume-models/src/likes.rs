@@ -43,7 +43,9 @@ impl Like {
             .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(User::get(conn, self.user_id)?.followers_endpoint)])?;
+        act.object_props.set_cc_link_vec(vec![Id::new(
+            User::get(conn, self.user_id)?.followers_endpoint,
+        )])?;
         act.object_props.set_id_string(self.ap_url.clone())?;
 
         Ok(act)
@@ -73,7 +75,9 @@ impl Like {
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(User::get(conn, self.user_id)?.followers_endpoint)])?;
+        act.object_props.set_cc_link_vec(vec![Id::new(
+            User::get(conn, self.user_id)?.followers_endpoint,
+        )])?;
 
         Ok(act)
     }

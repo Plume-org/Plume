@@ -3,10 +3,10 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    broadcast, PUBLIC_VISIBILITY,
+    broadcast,
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
-    Id, IntoId,
+    Id, IntoId, PUBLIC_VISIBILITY,
 };
 use schema::follows;
 use users::User;
@@ -62,7 +62,8 @@ impl Follow {
             .set_object_link::<Id>(target.clone().into_id())?;
         act.object_props.set_id_string(self.ap_url.clone())?;
         act.object_props.set_to_link_vec(vec![target.into_id()])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        act.object_props
+            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         Ok(act)
     }
 
@@ -104,8 +105,12 @@ impl Follow {
             &res.id
         ));
         accept.object_props.set_id_string(accept_id)?;
-        accept.object_props.set_to_link_vec(vec![from.clone().into_id()])?;
-        accept.object_props.set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        accept
+            .object_props
+            .set_to_link_vec(vec![from.clone().into_id()])?;
+        accept
+            .object_props
+            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         accept
             .accept_props
             .set_actor_link::<Id>(target.clone().into_id())?;
