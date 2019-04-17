@@ -90,6 +90,12 @@ msgstr ""
 msgid "Edit {0}"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -249,6 +255,15 @@ msgid "Administred by"
 msgstr ""
 
 msgid "Runs Plume {0}"
+msgstr ""
+
+msgid "Follow {}"
+msgstr ""
+
+msgid "Login to follow"
+msgstr ""
+
+msgid "Enter your full username to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -540,6 +555,15 @@ msgstr ""
 msgid "Username, or email"
 msgstr ""
 
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr ""
 
@@ -625,7 +649,9 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"
@@ -735,6 +761,19 @@ msgid "Articles tagged \"{0}\""
 msgstr ""
 
 msgid "There are currently no articles with such a tag"
+msgstr ""
+
+msgid "I'm from this instance"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+msgid "Continue to your instance"
 msgstr ""
 
 msgid "Upload"

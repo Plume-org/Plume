@@ -85,6 +85,12 @@ msgstr "Neuer Beitrag"
 msgid "Edit {0}"
 msgstr "Bearbeiten"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -255,6 +261,17 @@ msgstr "Administriert von"
 
 msgid "Runs Plume {0}"
 msgstr "Verwendet Plume {0}"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "Folgen"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Um zu boosten, musst du eingeloggt sein"
+
+msgid "Enter your full username to follow"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "Ändere deinen Account"
@@ -568,6 +585,16 @@ msgstr "Einloggen"
 msgid "Username, or email"
 msgstr "Nutzername oder E-Mail"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Um zu liken, musst du eingeloggt sein"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -664,7 +691,9 @@ msgid "Boost"
 msgstr "Boosten"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "Log dich ein oder nutze deinen Fediverse-Account um mit diesem Artikel zu "
 "interagieren"
@@ -796,6 +825,21 @@ msgstr "Mit \"{0}\" markierte Artikel"
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Über diese Instanz"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Konfiguriere deine Instanz"
+
 msgid "Upload"
 msgstr "Hochladen"
 
@@ -909,9 +953,6 @@ msgstr "Als Avatar verwenden"
 #~ msgid "Unfollow"
 #~ msgstr "Folgen"
 
-#~ msgid "Follow"
-#~ msgstr "Folgen"
-
 #, fuzzy
 #~ msgid "No articles to see here yet."
 #~ msgstr "Bisher keine Artikel vorhanden."
@@ -985,9 +1026,6 @@ msgstr "Als Avatar verwenden"
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Kommentar \"{0}\""
 
-#~ msgid "Configure your instance"
-#~ msgstr "Konfiguriere deine Instanz"
-
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Los geht's!"
 
@@ -1046,12 +1084,6 @@ msgstr "Als Avatar verwenden"
 #, fuzzy
 #~ msgid "The password should be at least 8 characters long"
 #~ msgstr "Passwort sollte mindestens 8 Zeichen lang sein"
-
-#~ msgid "Login to like"
-#~ msgstr "Um zu liken, musst du eingeloggt sein"
-
-#~ msgid "Login to boost"
-#~ msgstr "Um zu boosten, musst du eingeloggt sein"
 
 #~ msgid "Create a post"
 #~ msgstr "Beitrag erstellen"

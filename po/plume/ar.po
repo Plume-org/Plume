@@ -86,6 +86,12 @@ msgstr "منشور جديد"
 msgid "Edit {0}"
 msgstr "تعديل {0}"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -253,6 +259,17 @@ msgstr "يديره"
 
 msgid "Runs Plume {0}"
 msgstr "مدعوم بـ Plume {0}"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "اتبع"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "قم بتسجيل الدخول قصد مشاركته"
+
+msgid "Enter your full username to follow"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "تعديل حسابك"
@@ -565,6 +582,16 @@ msgstr "تسجيل الدخول"
 msgid "Username, or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "قم بتسجيل الدخول قصد الإعجاب به"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "انشر"
 
@@ -663,7 +690,9 @@ msgid "Boost"
 msgstr "رقّي"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
 "المقال"
@@ -789,6 +818,21 @@ msgstr "المقالات الموسومة بـ \"{0}\""
 msgid "There are currently no articles with such a tag"
 msgstr "حاليا لا يوجد هناك مقال يحتوي على هذا الوسم"
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "عن مثيل الخادوم هذا"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "إعداد مثيل الخادم"
+
 msgid "Upload"
 msgstr "إرسال"
 
@@ -904,14 +948,8 @@ msgstr "استخدمها كصورة رمزية"
 #~ msgid "Unfollow"
 #~ msgstr "الغاء المتابعة"
 
-#~ msgid "Follow"
-#~ msgstr "اتبع"
-
 #~ msgid "Comment \"{0}\""
 #~ msgstr "تعليق \"{0}\""
-
-#~ msgid "Configure your instance"
-#~ msgstr "إعداد مثيل الخادم"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "هيا بنا!"
@@ -981,9 +1019,3 @@ msgstr "استخدمها كصورة رمزية"
 
 #~ msgid "Next page"
 #~ msgstr "الصفحة التالية"
-
-#~ msgid "Login to like"
-#~ msgstr "قم بتسجيل الدخول قصد الإعجاب به"
-
-#~ msgid "Login to boost"
-#~ msgstr "قم بتسجيل الدخول قصد مشاركته"

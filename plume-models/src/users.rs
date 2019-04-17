@@ -253,6 +253,15 @@ impl User {
         User::from_id(c, link.href.as_ref()?, None).map_err(|(_, e)| e)
     }
 
+    pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
+        resolve(acct.to_owned(), true)?
+            .links
+            .into_iter()
+            .find(|l| l.rel == "http://ostatus.org/schema/1.0/subscribe")
+            .and_then(|l| l.template)
+            .ok_or(Error::Webfinger)
+    }
+
     fn fetch(url: &str) -> Result<CustomPerson> {
         let mut res = Client::new()
             .get(url)
@@ -640,7 +649,7 @@ impl User {
             links: vec![
                 Link {
                     rel: String::from("http://webfinger.net/rel/profile-page"),
-                    mime_type: None,
+                    mime_type: Some(String::from("text/html")),
                     href: Some(self.ap_url.clone()),
                     template: None,
                 },
@@ -659,6 +668,15 @@ impl User {
                     mime_type: Some(String::from("application/activity+json")),
                     href: Some(self.ap_url.clone()),
                     template: None,
+                },
+                Link {
+                    rel: String::from("http://ostatus.org/schema/1.0/subscribe"),
+                    mime_type: None,
+                    href: None,
+                    template: Some(format!(
+                        "{}/remote_interact?{{uri}}",
+                        self.get_instance(conn)?.public_domain
+                    )),
                 },
             ],
         })

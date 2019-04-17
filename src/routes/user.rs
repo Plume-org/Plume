@@ -25,7 +25,7 @@ use plume_models::{
     users::*,
     Error, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page};
+use routes::{errors::ErrorPage, Page, RemoteForm};
 use template_utils::Ructe;
 
 #[get("/me")]
@@ -173,7 +173,71 @@ pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Redirect
     Ok(Redirect::to(uri!(details: name = name)))
 }
 
-#[post("/@/<name>/follow", rank = 2)]
+#[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
+pub fn follow_not_connected(
+    rockets: PlumeRocket,
+    name: String,
+    remote_form: Option<LenientForm<RemoteForm>>,
+    i18n: I18n,
+) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
+    let target = User::find_by_fqn(&rockets, &name)?;
+    if let Some(remote_form) = remote_form {
+        let remote = &remote_form.remote;
+        if let Some(uri) = User::fetch_remote_interact_uri(remote)
+            .ok()
+            .and_then(|uri| {
+                rt_format!(
+                    uri,
+                    uri = format!(
+                        "{}@{}",
+                        target.fqn,
+                        target.get_instance(&rockets.conn).ok()?.public_domain
+                    )
+                )
+                .ok()
+            })
+        {
+            Ok(Err(Redirect::to(uri)))
+        } else {
+            let mut err = ValidationErrors::default();
+            err.add("remote",
+                ValidationError {
+                    code: Cow::from("invalid_remote"),
+                    message: Some(Cow::from(i18n!(&i18n.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
+                    params: HashMap::new(),
+                },
+            );
+            Ok(Ok(Flash::new(
+                render!(users::follow_remote(
+                    &(&rockets.conn, &i18n.catalog, None),
+                    target,
+                    super::session::LoginForm::default(),
+                    ValidationErrors::default(),
+                    remote_form.clone(),
+                    err
+                )),
+                "callback",
+                uri!(follow: name = name).to_string(),
+            )))
+        }
+    } else {
+        Ok(Ok(Flash::new(
+            render!(users::follow_remote(
+                &(&rockets.conn, &i18n.catalog, None),
+                target,
+                super::session::LoginForm::default(),
+                ValidationErrors::default(),
+                #[allow(clippy::map_clone)]
+                remote_form.map(|x| x.clone()).unwrap_or_default(),
+                ValidationErrors::default()
+            )),
+            "callback",
+            uri!(follow: name = name).to_string(),
+        )))
+    }
+}
+
+#[get("/@/<name>/follow?local", rank = 2)]
 pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(

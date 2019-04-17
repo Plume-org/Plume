@@ -84,6 +84,12 @@ msgstr "Nova entrada"
 msgid "Edit {0}"
 msgstr "Editar"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -254,6 +260,17 @@ msgstr "Administrada por"
 
 msgid "Runs Plume {0}"
 msgstr "Versión Plume {0}"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "Seguir"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Conéctese para promover"
+
+msgid "Enter your full username to follow"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "Edite a súa conta"
@@ -564,6 +581,16 @@ msgstr "Conectar"
 msgid "Username, or email"
 msgstr "Usuaria ou correo-e"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Conéctese para gostar"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publicar"
 
@@ -658,7 +685,9 @@ msgid "Boost"
 msgstr "Promover"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "Conéctese ou utilice a súa conta no fediverso para interactuar con este "
 "artigo"
@@ -787,6 +816,21 @@ msgstr "Artigos etiquetados con {0}"
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Sobre esta instancia"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configure a súa instancia"
+
 msgid "Upload"
 msgstr "Subir"
 
@@ -901,9 +945,6 @@ msgstr "Utilizar como avatar"
 #~ msgid "Unfollow"
 #~ msgstr "Seguir"
 
-#~ msgid "Follow"
-#~ msgstr "Seguir"
-
 #, fuzzy
 #~ msgid "No articles to see here yet."
 #~ msgstr "Aínda non hai entradas publicadas"
@@ -985,9 +1026,6 @@ msgstr "Utilizar como avatar"
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Comentar \"{0}\""
 
-#~ msgid "Configure your instance"
-#~ msgstr "Configure a súa instancia"
-
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Imos!"
 
@@ -1037,12 +1075,6 @@ msgstr "Utilizar como avatar"
 #, fuzzy
 #~ msgid "The password should be at least 8 characters long"
 #~ msgstr "O contrasinal debe ter ao menos 8 caracteres"
-
-#~ msgid "Login to like"
-#~ msgstr "Conéctese para gostar"
-
-#~ msgid "Login to boost"
-#~ msgstr "Conéctese para promover"
 
 #~ msgid "Create a post"
 #~ msgstr "Crear unha entrada"

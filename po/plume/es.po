@@ -86,6 +86,12 @@ msgstr "Nueva publicación"
 msgid "Edit {0}"
 msgstr ""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -244,6 +250,17 @@ msgid "Administred by"
 msgstr ""
 
 msgid "Runs Plume {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "Seguir"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Dejar de seguir"
+
+msgid "Enter your full username to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -537,6 +554,15 @@ msgstr "Iniciar Sesión"
 msgid "Username, or email"
 msgstr "Nombre de usuario o correo electrónico"
 
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publicar"
 
@@ -623,7 +649,9 @@ msgstr "Ya no me gusta"
 msgid "Boost"
 msgstr ""
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"
@@ -738,6 +766,20 @@ msgstr ""
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
+msgid "I'm from this instance"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configure su instancia"
+
 msgid "Upload"
 msgstr ""
 
@@ -812,9 +854,6 @@ msgstr ""
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Comentario \"{0}\""
 
-#~ msgid "Configure your instance"
-#~ msgstr "Configure su instancia"
-
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "Vamos!"
 
@@ -823,12 +862,6 @@ msgstr ""
 
 #~ msgid "Create a post"
 #~ msgstr "Crear una publicación"
-
-#~ msgid "Follow"
-#~ msgstr "Seguir"
-
-#~ msgid "Unfollow"
-#~ msgstr "Dejar de seguir"
 
 #~ msgid "One follower"
 #~ msgid_plural "{0} followers"

@@ -88,6 +88,12 @@ msgstr "Nouvel article"
 msgid "Edit {0}"
 msgstr "Modifier {0}"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -256,6 +262,17 @@ msgstr "Administré par"
 
 msgid "Runs Plume {0}"
 msgstr "Propulsé par Plume {0}"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "S’abonner"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Connectez-vous pour partager"
+
+msgid "Enter your full username to follow"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "Modifier votre compte"
@@ -565,6 +582,16 @@ msgstr "Se connecter"
 msgid "Username, or email"
 msgstr "Nom d’utilisateur ou adresse électronique"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Connectez-vous pour aimer"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publier"
 
@@ -659,7 +686,9 @@ msgid "Boost"
 msgstr "Partager"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "Connectez-vous ou utilisez votre compte sur le Fediverse pour interagir avec "
 "cet article"
@@ -793,6 +822,21 @@ msgstr "Articles taggués « {0} »"
 msgid "There are currently no articles with such a tag"
 msgstr "Il n'y a pas encore d'article avec ce tag"
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "À propos de cette instance"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configurer votre instance"
+
 msgid "Upload"
 msgstr "Téléverser"
 
@@ -907,9 +951,6 @@ msgstr "Utiliser comme avatar"
 #~ msgid "Unfollow"
 #~ msgstr "S’abonner"
 
-#~ msgid "Follow"
-#~ msgstr "S’abonner"
-
 #, fuzzy
 #~ msgid "No articles to see here yet."
 #~ msgstr "Aucun article pour le moment."
@@ -973,22 +1014,11 @@ msgstr "Utiliser comme avatar"
 #~ msgstr "Plume est un moteur de blog décentralisé."
 
 #, fuzzy
-#~ msgid "Log In to like"
-#~ msgstr "Connectez-vous pour aimer"
-
-#, fuzzy
-#~ msgid "Log In to boost"
-#~ msgstr "Connectez-vous pour partager"
-
-#, fuzzy
 #~ msgid "Create a new post"
 #~ msgstr "Créer un article"
 
 #~ msgid "Comment \"{0}\""
 #~ msgstr "Commenter « {0} »"
-
-#~ msgid "Configure your instance"
-#~ msgstr "Configurer votre instance"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "C’est parti !"

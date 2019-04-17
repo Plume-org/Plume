@@ -89,6 +89,12 @@ msgstr "Nytt innlegg"
 msgid "Edit {0}"
 msgstr "Kommentér \"{0}\""
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -261,6 +267,17 @@ msgid "Administred by"
 msgstr "Administrasjon"
 
 msgid "Runs Plume {0}"
+msgstr ""
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "Følg"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Logg inn"
+
+msgid "Enter your full username to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -592,6 +609,15 @@ msgstr "Logg inn"
 msgid "Username, or email"
 msgstr "Brukernavn eller epost"
 
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr ""
 
@@ -686,7 +712,9 @@ msgid "Boost"
 msgstr ""
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "Logg inn eller bruk din Fediverse-konto for å gjøre noe med denne artikkelen"
 
@@ -811,6 +839,20 @@ msgstr "Om {0}"
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Om denne instansen"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+msgid "Continue to your instance"
+msgstr ""
+
 msgid "Upload"
 msgstr ""
 
@@ -924,9 +966,6 @@ msgstr ""
 #~ msgid "Unfollow"
 #~ msgstr "Slutt å følge"
 
-#~ msgid "Follow"
-#~ msgstr "Følg"
-
 #, fuzzy
 #~ msgid "No articles to see here yet."
 #~ msgstr "Ingen innlegg å vise enda."
@@ -992,10 +1031,6 @@ msgstr ""
 
 #~ msgid "Invalid email"
 #~ msgstr "Ugyldig epost"
-
-#, fuzzy
-#~ msgid "Log In to like"
-#~ msgstr "Logg inn"
 
 #, fuzzy
 #~ msgid "Your drafts"

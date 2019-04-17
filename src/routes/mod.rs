@@ -71,6 +71,12 @@ impl Default for Page {
     }
 }
 
+/// A form for remote interaction, used by multiple routes
+#[derive(Clone, Default, FromForm)]
+pub struct RemoteForm {
+    pub remote: String,
+}
+
 pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
     EntryBuilder::default()
         .title(format!("<![CDATA[{}]]>", post.title))

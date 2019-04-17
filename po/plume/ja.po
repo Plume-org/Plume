@@ -87,6 +87,12 @@ msgstr "新しい記事"
 msgid "Edit {0}"
 msgstr "編集"
 
+# src/routes/user.rs:222
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:47
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -255,6 +261,17 @@ msgstr "管理者"
 #, fuzzy
 msgid "Runs Plume {0}"
 msgstr "Plume {{ version }} を実行中"
+
+#, fuzzy
+msgid "Follow {}"
+msgstr "フォロー"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "ブーストするにはログインしてください"
+
+msgid "Enter your full username to follow"
+msgstr ""
 
 msgid "Edit your account"
 msgstr "自分のアカウントを編集"
@@ -571,6 +588,16 @@ msgstr "ログイン"
 msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "いいねするにはログインしてください"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "公開"
 
@@ -660,7 +687,9 @@ msgid "Boost"
 msgstr "ブースト"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "この記事と関わるにはログインするか Fediverse アカウントを使用してください"
 
@@ -785,6 +814,22 @@ msgstr "\"{{ tag }}\" タグの記事"
 msgid "There are currently no articles with such a tag"
 msgstr "そのタグのある記事は現在ありません"
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "このインスタンスについて"
+
+#, fuzzy
+msgid "I'm from another instance"
+msgstr "件"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "インスタンスを設定"
+
 msgid "Upload"
 msgstr "アップロード"
 
@@ -896,15 +941,9 @@ msgstr "アバターとして使う"
 #~ msgid "Unfollow"
 #~ msgstr "フォロー解除"
 
-#~ msgid "Follow"
-#~ msgstr "フォロー"
-
 #, fuzzy
 #~ msgid "Comment \"{0}\""
 #~ msgstr "\"{{ post }}\" にコメント"
-
-#~ msgid "Configure your instance"
-#~ msgstr "インスタンスを設定"
 
 #~ msgid "Let&#x27;s go!"
 #~ msgstr "開始しましょう！"
@@ -974,12 +1013,6 @@ msgstr "アバターとして使う"
 #~ msgid "Next page"
 #~ msgstr "次のページ"
 
-#~ msgid "Login to like"
-#~ msgstr "いいねするにはログインしてください"
-
-#~ msgid "Login to boost"
-#~ msgstr "ブーストするにはログインしてください"
-
 #~ msgid "Welcome to {{ instance_name | escape }}"
 #~ msgstr "{{ instance_name | escape }} へようこそ"
 
@@ -1030,9 +1063,6 @@ msgstr "アバターとして使う"
 
 #~ msgid "And connected to"
 #~ msgstr "他のインスタンスからの接続数"
-
-#~ msgid "other instances"
-#~ msgstr "件"
 
 #~ msgid "Edit {{ post }}"
 #~ msgstr "{{ post }} を編集"
