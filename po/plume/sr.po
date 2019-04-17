@@ -3,22 +3,22 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 19:09\n"
+"PO-Revision-Date: 2019-04-17 19:54\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
-"Language-Team: Serbian (Cyrillic)\n"
-"Language: sr_SP\n"
+"Language-Team: Serbian (Latin)\n"
+"Language: sr_CS\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
-"X-Crowdin-Language: sr\n"
+"X-Crowdin-Language: sr-CS\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} komentarisala tvoj članak."
 
 # src/template_utils.rs:69
 msgid "{0} is subscribed to you."
@@ -30,7 +30,7 @@ msgstr ""
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} vas je spomenuo/la."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
@@ -90,7 +90,7 @@ msgstr ""
 
 # src/routes/posts.rs:192
 msgid "Edit {0}"
-msgstr ""
+msgstr "Uredi {0}"
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
@@ -98,7 +98,7 @@ msgstr ""
 
 # src/routes/session.rs:181
 msgid "Password reset"
-msgstr ""
+msgstr "Poništavanje lozinke"
 
 # src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
@@ -128,7 +128,7 @@ msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr ""
+msgstr "Meni"
 
 msgid "Search"
 msgstr ""
@@ -137,37 +137,37 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Obaveštenja"
 
 msgid "Log Out"
-msgstr ""
+msgstr "Odjavi se"
 
 msgid "My account"
-msgstr ""
+msgstr "Moj nalog"
 
 msgid "Log In"
-msgstr ""
+msgstr "Prijaviti se"
 
 msgid "Register"
-msgstr ""
+msgstr "Registracija"
 
 msgid "About this instance"
 msgstr ""
 
 msgid "Source code"
-msgstr ""
+msgstr "Izvorni kod"
 
 msgid "Matrix room"
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Administracija"
 
 msgid "Welcome to {}"
-msgstr ""
+msgstr "Dobrodošli u {0}"
 
 msgid "Latest articles"
-msgstr ""
+msgstr "Najnoviji članci"
 
 msgid "Your feed"
 msgstr ""
@@ -188,10 +188,10 @@ msgid "Configuration"
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Korisnici"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokirajte"
 
 msgid "Block"
 msgstr ""
