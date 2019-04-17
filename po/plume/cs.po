@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 09:40\n"
+"PO-Revision-Date: 2019-04-17 11:16\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -54,11 +54,11 @@ msgstr "Nemáte oprávnění upravovat tento blog."
 
 # src/routes/blogs.rs:253
 msgid "You can't use this media as a blog icon."
-msgstr "Toto médium nemůžete použít jako ikonu blogu."
+msgstr "Toto médium nelze použít jako ikonu blogu."
 
 # src/routes/blogs.rs:271
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Toto médium nelze použít jako banner blogu."
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
