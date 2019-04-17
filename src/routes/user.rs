@@ -175,12 +175,12 @@ pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Redirect
 
 #[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
 pub fn follow_not_connected(
-    conn: DbConn,
+    rockets: PlumeRocket,
     name: String,
     remote_form: Option<LenientForm<RemoteForm>>,
     i18n: I18n,
 ) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
-    let target = User::find_by_fqn(&*conn, &name)?;
+    let target = User::find_by_fqn(&rockets, &name)?;
     if let Some(remote_form) = remote_form {
         let remote = &remote_form.remote;
         if let Some(uri) = User::fetch_remote_interact_uri(remote)
@@ -191,7 +191,7 @@ pub fn follow_not_connected(
                     uri = format!(
                         "{}@{}",
                         target.fqn,
-                        target.get_instance(&*conn).ok()?.public_domain
+                        target.get_instance(&rockets.conn).ok()?.public_domain
                     )
                 )
                 .ok()
@@ -209,7 +209,7 @@ pub fn follow_not_connected(
             );
             Ok(Ok(Flash::new(
                 render!(users::follow_remote(
-                    &(&*conn, &i18n.catalog, None),
+                    &(&rockets.conn, &i18n.catalog, None),
                     target,
                     super::session::LoginForm::default(),
                     ValidationErrors::default(),
@@ -223,7 +223,7 @@ pub fn follow_not_connected(
     } else {
         Ok(Ok(Flash::new(
             render!(users::follow_remote(
-                &(&*conn, &i18n.catalog, None),
+                &(&rockets.conn, &i18n.catalog, None),
                 target,
                 super::session::LoginForm::default(),
                 ValidationErrors::default(),
