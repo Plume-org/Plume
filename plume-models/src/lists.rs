@@ -148,7 +148,7 @@ impl List {
     /// Return Ok(true) if the list contain the given blog, Ok(false) otherwiser,
     /// and Err(_) on error
     pub fn contains_blog(&self, conn: &Connection, blog: i32) -> Result<bool> {
-        private::ListElem::user_in_list(conn, self, blog)
+        private::ListElem::blog_in_list(conn, self, blog)
     }
 
     /// Return Ok(true) if the list contain the given word, Ok(false) otherwiser,
@@ -452,4 +452,129 @@ mod tests {
             &List::find_by_name(conn, l1u.user_id, &l1u.name).unwrap(),
         );
     }
+
+    #[test]
+    fn test_user_list() {
+        let conn = &db();
+        let (users, blogs) = blog_tests::fill_database(conn);
+
+        let l = List::new(conn, "list", None, ListType::User).unwrap();
+
+        assert_eq!(l.kind(), ListType::User);
+        assert!(l.list_users(conn).unwrap().is_empty());
+
+        assert!(!l.contains_user(conn, users[0].id).unwrap());
+        assert!(l.add_users(conn, &[users[0].id]).unwrap());
+        assert!(l.contains_user(conn, users[0].id).unwrap());
+
+        assert!(l.add_users(conn, &[users[1].id]).unwrap());
+        assert!(l.contains_user(conn, users[0].id).unwrap());
+        assert!(l.contains_user(conn, users[1].id).unwrap());
+        assert_eq!(2, l.list_users(conn).unwrap().len());
+
+        assert!(l.set_users(conn, &[users[0].id]).unwrap());
+        assert!(l.contains_user(conn, users[0].id).unwrap());
+        assert!(!l.contains_user(conn, users[1].id).unwrap());
+        assert_eq!(1, l.list_users(conn).unwrap().len());
+        assert!(users[0] == l.list_users(conn).unwrap()[0]);
+
+        l.clear(conn).unwrap();
+        assert!(l.list_users(conn).unwrap().is_empty());
+
+        assert!(!l.add_blogs(conn, &[blogs[0].id]).unwrap());
+    }
+
+    #[test]
+    fn test_blog_list() {
+        let conn = &db();
+        let (users, blogs) = blog_tests::fill_database(conn);
+
+        let l = List::new(conn, "list", None, ListType::Blog).unwrap();
+
+        assert_eq!(l.kind(), ListType::Blog);
+        assert!(l.list_blogs(conn).unwrap().is_empty());
+
+        assert!(!l.contains_blog(conn, blogs[0].id).unwrap());
+        assert!(l.add_blogs(conn, &[blogs[0].id]).unwrap());
+        assert!(l.contains_blog(conn, blogs[0].id).unwrap());
+
+        assert!(l.add_blogs(conn, &[blogs[1].id]).unwrap());
+        assert!(l.contains_blog(conn, blogs[0].id).unwrap());
+        assert!(l.contains_blog(conn, blogs[1].id).unwrap());
+        assert_eq!(2, l.list_blogs(conn).unwrap().len());
+
+        assert!(l.set_blogs(conn, &[blogs[0].id]).unwrap());
+        assert!(l.contains_blog(conn, blogs[0].id).unwrap());
+        assert!(!l.contains_blog(conn, blogs[1].id).unwrap());
+        assert_eq!(1, l.list_blogs(conn).unwrap().len());
+        assert_eq!(blogs[0].id, l.list_blogs(conn).unwrap()[0].id);
+
+        l.clear(conn).unwrap();
+        assert!(l.list_blogs(conn).unwrap().is_empty());
+
+        assert!(!l.add_users(conn, &[users[0].id]).unwrap());
+    }
+
+    #[test]
+    fn test_word_list() {
+        let conn = &db();
+
+        let l = List::new(conn, "list", None, ListType::Word).unwrap();
+
+        assert_eq!(l.kind(), ListType::Word);
+        assert!(l.list_words(conn).unwrap().is_empty());
+
+        assert!(!l.contains_word(conn, "plume").unwrap());
+        assert!(l.add_words(conn, &["plume"]).unwrap());
+        assert!(l.contains_word(conn, "plume").unwrap());
+        assert!(!l.contains_word(conn, "plumelin").unwrap());
+
+        assert!(l.add_words(conn, &["amsterdam"]).unwrap());
+        assert!(l.contains_word(conn, "plume").unwrap());
+        assert!(l.contains_word(conn, "amsterdam").unwrap());
+        assert_eq!(2, l.list_words(conn).unwrap().len());
+
+        assert!(l.set_words(conn, &["plume"]).unwrap());
+        assert!(l.contains_word(conn, "plume").unwrap());
+        assert!(!l.contains_word(conn, "amsterdam").unwrap());
+        assert_eq!(1, l.list_words(conn).unwrap().len());
+        assert_eq!("plume", l.list_words(conn).unwrap()[0]);
+
+        l.clear(conn).unwrap();
+        assert!(l.list_words(conn).unwrap().is_empty());
+
+        assert!(!l.add_prefixes(conn, &["something"]).unwrap());
+    }
+
+    #[test]
+    fn test_prefix_list() {
+        let conn = &db();
+
+        let l = List::new(conn, "list", None, ListType::Prefix).unwrap();
+
+        assert_eq!(l.kind(), ListType::Prefix);
+        assert!(l.list_prefixes(conn).unwrap().is_empty());
+
+        assert!(!l.contains_prefix(conn, "plume").unwrap());
+        assert!(l.add_prefixes(conn, &["plume"]).unwrap());
+        assert!(l.contains_prefix(conn, "plume").unwrap());
+        assert!(l.contains_prefix(conn, "plumelin").unwrap());
+
+        assert!(l.add_prefixes(conn, &["amsterdam"]).unwrap());
+        assert!(l.contains_prefix(conn, "plume").unwrap());
+        assert!(l.contains_prefix(conn, "amsterdam").unwrap());
+        assert_eq!(2, l.list_prefixes(conn).unwrap().len());
+
+        assert!(l.set_prefixes(conn, &["plume"]).unwrap());
+        assert!(l.contains_prefix(conn, "plume").unwrap());
+        assert!(!l.contains_prefix(conn, "amsterdam").unwrap());
+        assert_eq!(1, l.list_prefixes(conn).unwrap().len());
+        assert_eq!("plume", l.list_prefixes(conn).unwrap()[0]);
+
+        l.clear(conn).unwrap();
+        assert!(l.list_prefixes(conn).unwrap().is_empty());
+
+        assert!(!l.add_words(conn, &["something"]).unwrap());
+    }
+
 }
