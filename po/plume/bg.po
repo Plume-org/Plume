@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 16:25\n"
+"PO-Revision-Date: 2019-04-17 17:11\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -26,15 +26,15 @@ msgstr ""
 
 # src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} хареса(ха) вашата статия."
 
 # src/template_utils.rs:71
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} ви спомена(ха)."
 
 # src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} подсили(ха) вашата статия."
 
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
@@ -78,7 +78,7 @@ msgstr ""
 
 # src/routes/posts.rs:138
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Вие не сте автор на този блог."
 
 # src/routes/posts.rs:145
 msgid "New post"
@@ -645,10 +645,10 @@ msgid "Page not found"
 msgstr ""
 
 msgid "We couldn't find this page."
-msgstr ""
+msgstr "Не можахме да намерим тази страница."
 
 msgid "The link that led you here may be broken."
-msgstr ""
+msgstr "Възможно е връзката, от която сте дошли да е неправилна."
 
 msgid "The content you sent can't be processed."
 msgstr ""
@@ -657,7 +657,7 @@ msgid "Maybe it was too long."
 msgstr ""
 
 msgid "You are not authorized."
-msgstr ""
+msgstr "Не сте упълномощени."
 
 msgid "Internal server error"
 msgstr ""
