@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-16 15:45\n"
+"PO-Revision-Date: 2019-04-17 09:40\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -62,7 +62,7 @@ msgstr ""
 
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Pro oblíbení příspěvku musíte být přihlášen/a"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
@@ -110,7 +110,7 @@ msgstr "Omlouváme se, ale odkaz vypršel. Zkuste to znovu"
 
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Pro přístup k vaší nástěnce musíte být přihlášen/a"
 
 # src/routes/user.rs:187
 msgid "To subscribe to someone, you need to be logged in"
@@ -288,7 +288,7 @@ msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr "Omlouváme se, ale jako administrátor nemůžete opustit svou vlastní instanci."
 
 msgid "Your Dashboard"
-msgstr "Vaše plocha"
+msgstr "Vaše nástěnka"
 
 msgid "Your Blogs"
 msgstr "Vaše Blogy"
