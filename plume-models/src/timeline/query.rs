@@ -1,5 +1,10 @@
+use blogs::Blog;
+use lists::{self, ListType};
 use plume_common::activity_pub::inbox::WithInbox;
 use posts::Post;
+use tags::Tag;
+use users::User;
+
 use {Connection, Result};
 
 use super::Timeline;
@@ -167,7 +172,7 @@ enum Arg<'a> {
 impl<'a> Arg<'a> {
     pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post) -> Result<bool> {
         match self {
-            Arg::In(t, l) => t.matches(conn, post, l),
+            Arg::In(t, l) => t.matches(conn, timeline, post, l),
             Arg::Contains(t, v) => t.matches(post, v),
             Arg::Boolean(t) => t.matches(conn, timeline, post),
         }
@@ -184,9 +189,54 @@ enum WithList {
 }
 
 impl WithList {
-    pub fn matches(&self, conn: &Connection, post: &Post, list: &List) -> Result<bool> {
-        let _ = (conn, post, list); // trick to hide warnings
-        unimplemented!()
+    pub fn matches(
+        &self,
+        conn: &Connection,
+        timeline: &Timeline,
+        post: &Post,
+        list: &List,
+    ) -> Result<bool> {
+        match list {
+            List::List(name) => {
+                let list = lists::List::find_by_name(conn, timeline.user_id, &name)?;
+                match (self, list.kind()) {
+                    (WithList::Blog, ListType::Blog) => list.contains_blog(conn, post.blog_id),
+                    (WithList::Author, ListType::User) => Ok(list
+                        .list_users(conn)?
+                        .iter()
+                        .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
+                    (WithList::License, ListType::Word) => list.contains_word(conn, &post.license),
+                    (WithList::Tags, ListType::Word) => {
+                        let tags = Tag::for_post(conn, post.id)?;
+                        Ok(list
+                            .list_words(conn)?
+                            .iter()
+                            .any(|s| tags.iter().any(|t| s == &t.tag)))
+                    }
+                    (WithList::Lang, ListType::Prefix) => unimplemented!(),
+                    (_, _) => Err(QueryError::RuntimeError(format!(
+                        "The list '{}' is of the wrong type for this usage",
+                        name
+                    )))?,
+                }
+            }
+            List::Array(list) => match self {
+                WithList::Blog => Ok(list
+                    .iter()
+                    .filter_map(|b| Blog::find_by_ap_url(conn, b).ok())
+                    .any(|b| b.id == post.blog_id)),
+                WithList::Author => Ok(list
+                    .iter()
+                    .filter_map(|a| User::find_by_ap_url(conn, a).ok())
+                    .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
+                WithList::License => Ok(list.iter().any(|s| s == &post.license)),
+                WithList::Tags => {
+                    let tags = Tag::for_post(conn, post.id)?;
+                    Ok(list.iter().any(|s| tags.iter().any(|t| s == &t.tag)))
+                }
+                WithList::Lang => unimplemented!(),
+            },
+        }
     }
 }
 
