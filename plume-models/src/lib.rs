@@ -20,6 +20,7 @@ extern crate plume_api;
 extern crate plume_common;
 extern crate reqwest;
 extern crate rocket;
+extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
@@ -36,6 +37,8 @@ extern crate whatlang;
 #[macro_use]
 extern crate diesel_migrations;
 
+use plume_common::activity_pub::inbox::InboxError;
+
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
 compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
 #[cfg(all(feature = "sqlite", feature = "postgres"))]
@@ -51,6 +54,7 @@ pub type Connection = diesel::PgConnection;
 #[derive(Debug)]
 pub enum Error {
     Db(diesel::result::Error),
+    Inbox(Box<InboxError<Error>>),
     InvalidValue,
     Io(std::io::Error),
     MissingApProperty,
@@ -136,6 +140,15 @@ impl From<search::SearcherError> for Error {
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
         Error::Io(err)
+    }
+}
+
+impl From<InboxError<Error>> for Error {
+    fn from(err: InboxError<Error>) -> Error {
+        match err {
+            InboxError::InvalidActor(Some(e)) | InboxError::InvalidObject(Some(e)) => e,
+            e => Error::Inbox(Box::new(e)),
+        }
     }
 }
 
@@ -288,7 +301,13 @@ pub fn ap_url(url: &str) -> String {
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use diesel::{dsl::sql_query, Connection, RunQueryDsl};
+    use db_conn;
+    use diesel::r2d2::ConnectionManager;
+    #[cfg(feature = "sqlite")]
+    use diesel::{dsl::sql_query, RunQueryDsl};
+    use scheduled_thread_pool::ScheduledThreadPool;
+    use search;
+    use std::sync::Arc;
     use Connection as Conn;
     use CONFIG;
 
@@ -309,15 +328,28 @@ mod tests {
         };
     }
 
-    pub fn db() -> Conn {
-        let conn = Conn::establish(CONFIG.database_url.as_str())
-            .expect("Couldn't connect to the database");
-        embedded_migrations::run(&conn).expect("Couldn't run migrations");
-        #[cfg(feature = "sqlite")]
-        sql_query("PRAGMA foreign_keys = on;")
-            .execute(&conn)
-            .expect("PRAGMA foreign_keys fail");
-        conn
+    pub fn db<'a>() -> db_conn::DbConn {
+        db_conn::DbConn((*DB_POOL).get().unwrap())
+    }
+
+    lazy_static! {
+        static ref DB_POOL: db_conn::DbPool = {
+            let pool = db_conn::DbPool::builder()
+                .connection_customizer(Box::new(db_conn::PragmaForeignKey))
+                .build(ConnectionManager::<Conn>::new(CONFIG.database_url.as_str()))
+                .unwrap();
+            embedded_migrations::run(&*pool.get().unwrap()).expect("Migrations error");
+            pool
+        };
+    }
+
+    pub fn rockets() -> super::PlumeRocket {
+        super::PlumeRocket {
+            conn: db_conn::DbConn((*DB_POOL).get().unwrap()),
+            searcher: Arc::new(search::tests::get_searcher()),
+            worker: Arc::new(ScheduledThreadPool::new(2)),
+            user: None,
+        }
     }
 }
 
@@ -331,11 +363,13 @@ pub mod comments;
 pub mod db_conn;
 pub mod follows;
 pub mod headers;
+pub mod inbox;
 pub mod instance;
 pub mod likes;
 pub mod medias;
 pub mod mentions;
 pub mod notifications;
+pub mod plume_rocket;
 pub mod post_authors;
 pub mod posts;
 pub mod reshares;
@@ -344,3 +378,4 @@ pub mod schema;
 pub mod search;
 pub mod tags;
 pub mod users;
+pub use plume_rocket::PlumeRocket;

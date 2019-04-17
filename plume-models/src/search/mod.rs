@@ -12,7 +12,6 @@ pub(crate) mod tests {
     use std::str::FromStr;
 
     use blogs::tests::fill_database;
-    use plume_common::activity_pub::inbox::Deletable;
     use plume_common::utils::random_hex;
     use post_authors::*;
     use posts::{NewPost, Post};
@@ -171,7 +170,7 @@ pub(crate) mod tests {
                 .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
                 .is_empty());
 
-            post.delete(&(conn, &searcher)).unwrap();
+            post.delete(conn, &searcher).unwrap();
             searcher.commit();
             assert!(searcher
                 .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
