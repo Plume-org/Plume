@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-07 17:04\n"
-"Last-Translator: AnaGelez <ana@gelez.xyz>\n"
+"PO-Revision-Date: 2019-04-17 19:55\n"
+"Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -44,23 +44,27 @@ msgstr "{0}'s Profilbild"
 msgid "To create a new blog, you need to be logged in"
 msgstr "Um einen neuen Blog zu erstellen, müssen Sie angemeldet sein"
 
-# src/routes/blogs.rs:169
+# src/routes/blogs.rs:109
+msgid "A blog with the same name already exists."
+msgstr ""
+
+# src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
 msgstr "Sie dürfen diesen Blog nicht löschen."
 
-# src/routes/blogs.rs:214
+# src/routes/blogs.rs:217
 msgid "You are not allowed to edit this blog."
 msgstr "Ihnen fehlt die Berechtigung, um diesen Blog zu bearbeiten."
 
-# src/routes/blogs.rs:253
+# src/routes/blogs.rs:262
 msgid "You can't use this media as a blog icon."
 msgstr "Sie können dieses Medium nicht als ein Blog-Icon verwenden."
 
-# src/routes/blogs.rs:271
+# src/routes/blogs.rs:280
 msgid "You can't use this media as a blog banner."
 msgstr "Sie können dieses Medium nicht als einen Blog-Banner verwenden."
 
-# src/routes/likes.rs:47
+# src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "Um einen Beitrag zu liken, musst du angemeldet sein"
 
@@ -68,27 +72,27 @@ msgstr "Um einen Beitrag zu liken, musst du angemeldet sein"
 msgid "To see your notifications, you need to be logged in"
 msgstr "Um Ihre Benachrichtigungen zu sehen, müssen Sie angemeldet sein"
 
-# src/routes/posts.rs:92
+# src/routes/posts.rs:93
 msgid "This post isn't published yet."
 msgstr "Dieser Beitrag ist noch nicht veröffentlicht."
 
-# src/routes/posts.rs:120
+# src/routes/posts.rs:122
 msgid "To write a new post, you need to be logged in"
 msgstr "Um einen neuen Beitrag zu schreiben, müssen Sie angemeldet sein"
 
-# src/routes/posts.rs:138
+# src/routes/posts.rs:140
 msgid "You are not an author of this blog."
 msgstr "Du bist kein Autor dieses Blogs."
 
-# src/routes/posts.rs:145
+# src/routes/posts.rs:147
 msgid "New post"
 msgstr "Neuer Beitrag"
 
-# src/routes/posts.rs:190
+# src/routes/posts.rs:192
 msgid "Edit {0}"
 msgstr "Bearbeite {0}"
 
-# src/routes/reshares.rs:47
+# src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Um einen Beitrag zu wiederholen, musst du angemeldet sein"
 
@@ -108,15 +112,15 @@ msgstr "Dein Passwort wurde erfolgreich zurückgesetzt."
 msgid "Sorry, but the link expired. Try again"
 msgstr "Entschuldigung, der Link ist abgelaufen. Versuche es erneut"
 
-# src/routes/user.rs:148
+# src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Um auf dein Dashboard zuzugreifen, musst du angemeldet sein"
 
-# src/routes/user.rs:187
+# src/routes/user.rs:180
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Um jemanden zu abonnieren, musst du angemeldet sein"
 
-# src/routes/user.rs:287
+# src/routes/user.rs:280
 msgid "To edit your profile, you need to be logged in"
 msgstr "Um dein Profil zu bearbeiten, musst du angemeldet sein"
 
@@ -215,8 +219,8 @@ msgstr "Optional"
 msgid "Allow anyone to register here"
 msgstr "Erlaubt es allen, sich hier zu registrieren"
 
-msgid "Short description - byline"
-msgstr "Kurze Beschreibung - Verfasserzeile"
+msgid "Short description"
+msgstr ""
 
 msgid "Markdown syntax is supported"
 msgstr "Markdown-Syntax ist unterstützt"
@@ -234,8 +238,8 @@ msgstr "Diese Einstellungen speichern"
 msgid "About {0}"
 msgstr "Über {0}"
 
-msgid "Home to <em>{0}</em> users"
-msgstr "Heimat von <em>{0}</em> Nutzer*innen"
+msgid "Home to <em>{0}</em> people"
+msgstr "Heimat von <em>{0}</em> Personen"
 
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "Welche <em>{0}</em> Artikel geschrieben haben"
@@ -362,8 +366,8 @@ msgstr "Abbestellen"
 msgid "Subscribe"
 msgstr "Abonieren"
 
-msgid "{0}'s subscriptions'"
-msgstr "{0}'s Abonnements"
+msgid "{0}'s subscriptions"
+msgstr ""
 
 msgid "{0}'s subscribers"
 msgstr "{0}'s Abonnenten"
@@ -383,14 +387,11 @@ msgstr "Was ist Plume?"
 msgid "Plume is a decentralized blogging engine."
 msgstr "Plume ist eine dezentrale Blogging-Engine."
 
-msgid "Authors can manage various blogs, each as an unique website."
-msgstr "Autoren können verschiedene Blogs verwalten, jeden als eine eigene Website."
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr "Artikel sind auch auf anderen Plume-Instanzen sichtbar und du kannst mit ihnen direkt von anderen Plattformen wie Mastodon interagieren."
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Heimat von <em>{0}</em> Personen"
 
 msgid "Read the detailed rules"
 msgstr "Lies die detailierten Regeln"
@@ -606,7 +607,7 @@ msgid "Add yours"
 msgstr "Füge deins hinzu"
 
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] "Ein Boost"
 msgstr[1] "{0} boosts"
 
