@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 19:54\n"
+"PO-Revision-Date: 2019-04-17 20:49\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -92,6 +92,10 @@ msgstr "Nueva publicación"
 msgid "Edit {0}"
 msgstr "Editar {0}"
 
+# src/routes/posts.rs:630
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Para compartir un artículo, necesita estar logueado"
@@ -116,67 +120,55 @@ msgstr "Lo sentimos, pero el enlace expiró. Inténtalo de nuevo"
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Para acceder a su panel de control, necesita estar conectado"
 
-# src/routes/user.rs:180
+# src/routes/user.rs:244
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Para suscribirse a alguien, necesita estar conectado"
 
-# src/routes/user.rs:280
+# src/routes/user.rs:344
 msgid "To edit your profile, you need to be logged in"
 msgstr "Para editar su perfil, necesita estar conectado"
 
-msgid "Plume"
-msgstr "Plume"
+msgid "Reset your password"
+msgstr "Restablecer su contraseña"
 
-msgid "Menu"
-msgstr "Menú"
+# src/template_utils.rs:217
+msgid "E-mail"
+msgstr "Correo electrónico"
 
-msgid "Search"
-msgstr "Buscar"
+# src/template_utils.rs:220
+msgid "Optional"
+msgstr "Opcional"
 
-msgid "Dashboard"
-msgstr "Panel"
+msgid "Send password reset link"
+msgstr "Enviar enlace de restablecimiento de contraseña"
 
-msgid "Notifications"
-msgstr "Notificaciones"
+msgid "Check your inbox!"
+msgstr "Revise su bandeja de entrada!"
 
-msgid "Log Out"
-msgstr "Cerrar Sesión"
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgstr "Enviamos un correo a la dirección que nos dio, con un enlace para restablecer su contraseña."
 
-msgid "My account"
-msgstr "Mi cuenta"
+msgid "Log in"
+msgstr "Iniciar sesión"
 
-msgid "Log In"
-msgstr "Iniciar Sesión"
+# src/template_utils.rs:217
+msgid "Username, or email"
+msgstr "Nombre de usuario, o correo electrónico"
 
-msgid "Register"
-msgstr "Registrarse"
+# src/template_utils.rs:217
+msgid "Password"
+msgstr "Contraseña"
 
-msgid "About this instance"
-msgstr "Acerca de esta instancia"
+# src/template_utils.rs:217
+msgid "New password"
+msgstr "Nueva contraseña"
 
-msgid "Source code"
-msgstr "Código fuente"
+# src/template_utils.rs:217
+msgid "Confirmation"
+msgstr "Confirmación"
 
-msgid "Matrix room"
-msgstr "Sala de matriz"
-
-msgid "Administration"
-msgstr "Administración"
-
-msgid "Welcome to {}"
-msgstr "Bienvenido a {}"
-
-msgid "Latest articles"
-msgstr "Últimas publicaciones"
-
-msgid "Your feed"
-msgstr "Tu Feed"
-
-msgid "Federated feed"
-msgstr "Feed federada"
-
-msgid "Local feed"
-msgstr "Feed local"
+msgid "Update password"
+msgstr "Actualizar contraseña"
 
 msgid "Administration of {0}"
 msgstr "Administración de {0}"
@@ -196,25 +188,57 @@ msgstr "Desbloquear"
 msgid "Block"
 msgstr "Bloquear"
 
-msgid "Ban"
-msgstr "Banear"
+msgid "About {0}"
+msgstr "Acerca de {0}"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "Hogar de <em>{0}</em> usuarios"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Que escribieron <em>{0}</em> artículos"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "Y están conectados a <em>{0}</em> otras instancias"
+
+msgid "Administred by"
+msgstr "Administrado por"
+
+msgid "Runs Plume {0}"
+msgstr "Ejecuta Pluma {0}"
 
 msgid "All the articles of the Fediverse"
 msgstr "Todos los artículos de la Fediverse"
 
+msgid "Latest articles"
+msgstr "Últimas publicaciones"
+
+msgid "Your feed"
+msgstr "Tu Feed"
+
+msgid "Federated feed"
+msgstr "Feed federada"
+
+msgid "Local feed"
+msgstr "Feed local"
+
+msgid "Welcome to {}"
+msgstr "Bienvenido a {}"
+
 msgid "Articles from {}"
 msgstr "Artículos de {}"
+
+msgid "Ban"
+msgstr "Banear"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr "Nada que ver aquí aún. Intente suscribirse a más personas."
 
+msgid "Administration"
+msgstr "Administración"
+
 # src/template_utils.rs:217
 msgid "Name"
 msgstr "Nombre"
-
-# src/template_utils.rs:220
-msgid "Optional"
-msgstr "Opcional"
 
 msgid "Allow anyone to register here"
 msgstr "Permite a cualquiera registrarse aquí"
@@ -235,181 +259,8 @@ msgstr "Licencia del artículo por defecto"
 msgid "Save these settings"
 msgstr "Guardar estos ajustes"
 
-msgid "About {0}"
-msgstr "Acerca de {0}"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Hogar de <em>{0}</em> usuarios"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Que escribieron <em>{0}</em> artículos"
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr "Y están conectados a <em>{0}</em> otras instancias"
-
-msgid "Administred by"
-msgstr "Administrado por"
-
-msgid "Runs Plume {0}"
-msgstr "Ejecuta Pluma {0}"
-
-msgid "Edit your account"
-msgstr "Edita tu cuenta"
-
-msgid "Your Profile"
-msgstr "Tu perfil"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "Para cambiar tu avatar, súbalo a su galería y seleccione de ahí."
-
-msgid "Upload an avatar"
-msgstr "Subir un avatar"
-
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr "Nombre mostrado"
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr "Correo electrónico"
-
-msgid "Summary"
-msgstr "Resumen"
-
-msgid "Update account"
-msgstr "Actualizar cuenta"
-
-msgid "Danger zone"
-msgstr "Zona de peligro"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Tenga mucho cuidado, cualquier acción tomada aquí es irreversible."
-
-msgid "Delete your account"
-msgstr "Eliminar tu cuenta"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "Lo sentimos, pero como un administrador, no puede dejar su propia instancia."
-
-msgid "Your Dashboard"
-msgstr "Tu Tablero"
-
-msgid "Your Blogs"
-msgstr "Tus blogs"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "Aún no tienes blog. Crea uno propio o pide unirte a uno."
-
-msgid "Start a new blog"
-msgstr "Iniciar un nuevo blog"
-
-msgid "Your Drafts"
-msgstr "Tus borradores"
-
-msgid "Your media"
-msgstr "Sus medios"
-
-msgid "Go to your gallery"
-msgstr "Ir a tu galería"
-
-msgid "Create your account"
-msgstr "Crea tu cuenta"
-
-msgid "Create an account"
-msgstr "Crear una cuenta"
-
-# src/template_utils.rs:217
-msgid "Username"
-msgstr "Nombre de usuario"
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr "Contraseña"
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr "Confirmación de contraseña"
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "Lo sentimos, pero las inscripciones están cerradas en esta instancia. Sin embargo, puede encontrar una instancia distinta."
-
-msgid "Articles"
-msgstr "Artículos"
-
-msgid "Subscribers"
-msgstr "Suscriptores"
-
-msgid "Subscriptions"
-msgstr "Suscripciones"
-
-msgid "Atom feed"
-msgstr "Fuente Atom"
-
-msgid "Recently boosted"
-msgstr "Compartido recientemente"
-
-msgid "Admin"
-msgstr "Administrador"
-
-msgid "It is you"
-msgstr "Eres tú"
-
-msgid "Edit your profile"
-msgstr "Edita tu perfil"
-
-msgid "Open on {0}"
-msgstr "Abrir en {0}"
-
-msgid "Unsubscribe"
-msgstr "Cancelar suscripción"
-
-msgid "Subscribe"
-msgstr "Subscribirse"
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr "{0}'s suscriptores"
-
-msgid "Respond"
-msgstr "Responder"
-
-msgid "Are you sure?"
-msgstr "¿Está seguro?"
-
-msgid "Delete this comment"
-msgstr "Eliminar este comentario"
-
-msgid "What is Plume?"
-msgstr "¿Qué es Plume?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Plume es un motor de blogs descentralizado."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "Los artículos también son visibles en otras instancias de Plume, y puede interactuar con ellos directamente desde otras plataformas como Mastodon."
-
-msgid "Read the detailed rules"
-msgstr "Leer las reglas detalladas"
-
-msgid "None"
-msgstr "Ninguno"
-
-msgid "No description"
-msgstr "Ninguna descripción"
-
-msgid "View all"
-msgstr "Ver todo"
-
-msgid "By {0}"
-msgstr "Por {0}"
-
-msgid "Draft"
-msgstr "Borrador"
+msgid "Search"
+msgstr "Buscar"
 
 msgid "Your query"
 msgstr "Su consulta"
@@ -500,39 +351,141 @@ msgstr "No hay resultado para su consulta"
 msgid "No more results for your query"
 msgstr "No hay más resultados para su consulta"
 
-msgid "Reset your password"
-msgstr "Restablecer su contraseña"
+msgid "Edit \"{}\""
+msgstr "Editar \"{}\""
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Puede subir imágenes a su galería, para usarlas como iconos de blog, o banderas."
+
+msgid "Upload images"
+msgstr "Subir imágenes"
+
+msgid "Blog icon"
+msgstr "Icono del blog"
+
+msgid "Blog banner"
+msgstr "Bandera del blog"
+
+msgid "Update blog"
+msgstr "Actualizar el blog"
+
+msgid "Danger zone"
+msgstr "Zona de peligro"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Tenga mucho cuidado, cualquier acción que se tome aquí no puede ser invertida."
+
+msgid "Permanently delete this blog"
+msgstr "Eliminar permanentemente este blog"
+
+msgid "{}'s icon"
+msgstr "Icono de {}"
+
+msgid "New article"
+msgstr "Nueva publicación"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Hay un autor en este blog: "
+msgstr[1] "Hay {0} autores en este blog: "
+
+msgid "No posts to see here yet."
+msgstr "Ningún artículo aún."
+
+msgid "New Blog"
+msgstr "Nuevo Blog"
+
+msgid "Create a blog"
+msgstr "Crear un blog"
+
+msgid "Create blog"
+msgstr "Crear el blog"
+
+msgid "Articles tagged \"{0}\""
+msgstr "Artículos etiquetados \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "Actualmente, no hay artículo con esa etiqueta"
+
+msgid "Written by {0}"
+msgstr "Escrito por {0}"
+
+msgid "Are you sure?"
+msgstr "¿Está seguro?"
+
+msgid "Delete this article"
+msgstr "Eliminar este artículo"
+
+msgid "Draft"
+msgstr "Borrador"
+
+msgid "All rights reserved."
+msgstr "Todos los derechos reservados."
+
+msgid "This article is under the {0} license."
+msgstr "Este artículo está bajo la licencia {0}."
+
+msgid "Unsubscribe"
+msgstr "Cancelar suscripción"
+
+msgid "Subscribe"
+msgstr "Subscribirse"
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Un Me Gusta"
+msgstr[1] "{0} Me Gusta"
+
+msgid "I don't like this anymore"
+msgstr "Ya no me gusta esto"
+
+msgid "Add yours"
+msgstr "Agregue el suyo"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "Un reparto"
+msgstr[1] "{0} repartos"
+
+msgid "I don't want to boost this anymore"
+msgstr "Ya no quiero compartir esto"
+
+msgid "Boost"
+msgstr "Compartir"
+
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr ""
+
+msgid "Comments"
+msgstr "Comentários"
 
 # src/template_utils.rs:217
-msgid "New password"
-msgstr "Nueva contraseña"
+msgid "Content warning"
+msgstr "Aviso de contenido"
 
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr "Confirmación"
+msgid "Your comment"
+msgstr "Su comentario"
 
-msgid "Update password"
-msgstr "Actualizar contraseña"
+msgid "Submit comment"
+msgstr "Enviar comentario"
 
-msgid "Check your inbox!"
-msgstr "Revise su bandeja de entrada!"
+msgid "No comments yet. Be the first to react!"
+msgstr "No hay comentarios todavía. ¡Sea el primero en reaccionar!"
 
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "Enviamos un correo a la dirección que nos dio, con un enlace para restablecer su contraseña."
+msgid "Interact with {}"
+msgstr ""
 
-# src/template_utils.rs:217
-msgid "E-mail"
-msgstr "Correo electrónico"
+msgid "Log in to interact"
+msgstr ""
 
-msgid "Send password reset link"
-msgstr "Enviar enlace de restablecimiento de contraseña"
-
-msgid "Log in"
-msgstr "Iniciar sesión"
-
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr "Nombre de usuario, o correo electrónico"
+msgid "Enter your full username to interact"
+msgstr ""
 
 msgid "Publish"
 msgstr "Publicar"
@@ -580,150 +533,94 @@ msgstr "Actualizar, o publicar"
 msgid "Publish your post"
 msgstr "Publique su artículo"
 
-msgid "Written by {0}"
-msgstr "Escrito por {0}"
+msgid "I'm from this instance"
+msgstr ""
 
-msgid "Edit"
-msgstr "Editar"
-
-msgid "Delete this article"
-msgstr "Eliminar este artículo"
-
-msgid "All rights reserved."
-msgstr "Todos los derechos reservados."
-
-msgid "This article is under the {0} license."
-msgstr "Este artículo está bajo la licencia {0}."
-
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "Un Me Gusta"
-msgstr[1] "{0} Me Gusta"
-
-msgid "I don't like this anymore"
-msgstr "Ya no me gusta esto"
-
-msgid "Add yours"
-msgstr "Agregue el suyo"
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] "Un reparto"
-msgstr[1] "{0} repartos"
-
-msgid "I don't want to boost this anymore"
-msgstr "Ya no quiero compartir esto"
-
-msgid "Boost"
-msgstr "Compartir"
-
-msgid "Log in, or use your Fediverse account to interact with this article"
-msgstr "Conéctese o use su cuenta Fediverse para interactuar con este artículo"
-
-msgid "Comments"
-msgstr "Comentários"
+msgid "I'm from another instance"
+msgstr ""
 
 # src/template_utils.rs:217
-msgid "Content warning"
-msgstr "Aviso de contenido"
+msgid "Username"
+msgstr "Nombre de usuario"
 
-msgid "Your comment"
-msgstr "Su comentario"
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
 
-msgid "Submit comment"
-msgstr "Enviar comentario"
+msgid "Continue to your instance"
+msgstr ""
 
-msgid "No comments yet. Be the first to react!"
-msgstr "No hay comentarios todavía. ¡Sea el primero en reaccionar!"
+msgid "View all"
+msgstr "Ver todo"
 
-msgid "Invalid CSRF token"
-msgstr "Token CSRF inválido"
+msgid "By {0}"
+msgstr "Por {0}"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "Hay un problema con su token CSRF. Asegúrase de que las cookies están habilitadas en su navegador, e intente recargar esta página. Si sigue viendo este mensaje de error, por favor infórmelo."
+msgid "What is Plume?"
+msgstr "¿Qué es Plume?"
 
-msgid "Page not found"
-msgstr "Página no encontrada"
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume es un motor de blogs descentralizado."
 
-msgid "We couldn't find this page."
-msgstr "No pudimos encontrar esta página."
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
 
-msgid "The link that led you here may be broken."
-msgstr "El enlace que le llevó aquí puede estar roto."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgstr "Los artículos también son visibles en otras instancias de Plume, y puede interactuar con ellos directamente desde otras plataformas como Mastodon."
 
-msgid "The content you sent can't be processed."
-msgstr "El contenido que envió no puede ser procesado."
+msgid "Create your account"
+msgstr "Crea tu cuenta"
 
-msgid "Maybe it was too long."
-msgstr "Quizás fue demasiado largo."
+msgid "Read the detailed rules"
+msgstr "Leer las reglas detalladas"
 
-msgid "You are not authorized."
-msgstr "No está autorizado."
+msgid "Respond"
+msgstr "Responder"
 
-msgid "Internal server error"
-msgstr "Error interno del servidor"
+msgid "Delete this comment"
+msgstr "Eliminar este comentario"
 
-msgid "Something broke on our side."
-msgstr "Algo ha salido mal de nuestro lado."
+msgid "None"
+msgstr "Ninguno"
 
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Disculpe la molestia. Si cree que esto es un defecto, por favor repórtalo."
+msgid "No description"
+msgstr "Ninguna descripción"
 
-msgid "Edit \"{}\""
-msgstr "Editar \"{}\""
+msgid "Notifications"
+msgstr "Notificaciones"
 
-msgid "Description"
-msgstr "Descripción"
+msgid "Plume"
+msgstr "Plume"
 
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "Puede subir imágenes a su galería, para usarlas como iconos de blog, o banderas."
+msgid "Menu"
+msgstr "Menú"
 
-msgid "Upload images"
-msgstr "Subir imágenes"
+msgid "Dashboard"
+msgstr "Panel"
 
-msgid "Blog icon"
-msgstr "Icono del blog"
+msgid "Log Out"
+msgstr "Cerrar Sesión"
 
-msgid "Blog banner"
-msgstr "Bandera del blog"
+msgid "My account"
+msgstr "Mi cuenta"
 
-msgid "Update blog"
-msgstr "Actualizar el blog"
+msgid "Log In"
+msgstr "Iniciar Sesión"
 
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Tenga mucho cuidado, cualquier acción que se tome aquí no puede ser invertida."
+msgid "Register"
+msgstr "Registrarse"
 
-msgid "Permanently delete this blog"
-msgstr "Eliminar permanentemente este blog"
+msgid "About this instance"
+msgstr "Acerca de esta instancia"
 
-msgid "New Blog"
-msgstr "Nuevo Blog"
+msgid "Source code"
+msgstr "Código fuente"
 
-msgid "Create a blog"
-msgstr "Crear un blog"
+msgid "Matrix room"
+msgstr "Sala de matriz"
 
-msgid "Create blog"
-msgstr "Crear el blog"
-
-msgid "{}'s icon"
-msgstr "Icono de {}"
-
-msgid "New article"
-msgstr "Nueva publicación"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Hay un autor en este blog: "
-msgstr[1] "Hay {0} autores en este blog: "
-
-msgid "No posts to see here yet."
-msgstr "Ningún artículo aún."
-
-msgid "Articles tagged \"{0}\""
-msgstr "Artículos etiquetados \"{0}\""
-
-msgid "There are currently no articles with such a tag"
-msgstr "Actualmente, no hay artículo con esa etiqueta"
+msgid "Your media"
+msgstr "Sus medios"
 
 msgid "Upload"
 msgstr "Subir"
@@ -740,21 +637,6 @@ msgstr "Eliminar"
 msgid "Details"
 msgstr "Detalles"
 
-msgid "Media upload"
-msgstr "Subir medios"
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Útil para personas con discapacidad visual, tanto como información de licencias"
-
-msgid "Leave it empty, if none is needed"
-msgstr "Dejarlo vacío, si no se necesita nada"
-
-msgid "File"
-msgstr "Archivo"
-
-msgid "Send"
-msgstr "Enviar"
-
 msgid "Media details"
 msgstr "Detalles de los archivos multimedia"
 
@@ -770,9 +652,156 @@ msgstr "Cópielo en sus artículos, para insertar este medio:"
 msgid "Use as an avatar"
 msgstr "Usar como avatar"
 
-msgid "Log in to boost"
-msgstr "Conéctese para compartir"
+msgid "Media upload"
+msgstr "Subir medios"
 
-msgid "Log in to like"
-msgstr "Conéctese para darle un Me Gusta"
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Útil para personas con discapacidad visual, tanto como información de licencias"
+
+msgid "Leave it empty, if none is needed"
+msgstr "Dejarlo vacío, si no se necesita nada"
+
+msgid "File"
+msgstr "Archivo"
+
+msgid "Send"
+msgstr "Enviar"
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
+msgid "Articles"
+msgstr "Artículos"
+
+msgid "Subscribers"
+msgstr "Suscriptores"
+
+msgid "Subscriptions"
+msgstr "Suscripciones"
+
+msgid "Your Dashboard"
+msgstr "Tu Tablero"
+
+msgid "Your Blogs"
+msgstr "Tus blogs"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Aún no tienes blog. Crea uno propio o pide unirte a uno."
+
+msgid "Start a new blog"
+msgstr "Iniciar un nuevo blog"
+
+msgid "Your Drafts"
+msgstr "Tus borradores"
+
+msgid "Go to your gallery"
+msgstr "Ir a tu galería"
+
+msgid "Admin"
+msgstr "Administrador"
+
+msgid "It is you"
+msgstr "Eres tú"
+
+msgid "Edit your profile"
+msgstr "Edita tu perfil"
+
+msgid "Open on {0}"
+msgstr "Abrir en {0}"
+
+msgid "{0}'s subscribers"
+msgstr "{0}'s suscriptores"
+
+msgid "Edit your account"
+msgstr "Edita tu cuenta"
+
+msgid "Your Profile"
+msgstr "Tu perfil"
+
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "Para cambiar tu avatar, súbalo a su galería y seleccione de ahí."
+
+msgid "Upload an avatar"
+msgstr "Subir un avatar"
+
+# src/template_utils.rs:217
+msgid "Display name"
+msgstr "Nombre mostrado"
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgid "Summary"
+msgstr "Resumen"
+
+msgid "Update account"
+msgstr "Actualizar cuenta"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Tenga mucho cuidado, cualquier acción tomada aquí es irreversible."
+
+msgid "Delete your account"
+msgstr "Eliminar tu cuenta"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Lo sentimos, pero como un administrador, no puede dejar su propia instancia."
+
+msgid "Atom feed"
+msgstr "Fuente Atom"
+
+msgid "Recently boosted"
+msgstr "Compartido recientemente"
+
+msgid "Create an account"
+msgstr "Crear una cuenta"
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
+msgstr "Confirmación de contraseña"
+
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Lo sentimos, pero las inscripciones están cerradas en esta instancia. Sin embargo, puede encontrar una instancia distinta."
+
+msgid "Follow {}"
+msgstr ""
+
+msgid "Login to follow"
+msgstr ""
+
+msgid "Enter your full username to follow"
+msgstr ""
+
+msgid "Internal server error"
+msgstr "Error interno del servidor"
+
+msgid "Something broke on our side."
+msgstr "Algo ha salido mal de nuestro lado."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Disculpe la molestia. Si cree que esto es un defecto, por favor repórtalo."
+
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+msgid "We couldn't find this page."
+msgstr "No pudimos encontrar esta página."
+
+msgid "The link that led you here may be broken."
+msgstr "El enlace que le llevó aquí puede estar roto."
+
+msgid "Invalid CSRF token"
+msgstr "Token CSRF inválido"
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Hay un problema con su token CSRF. Asegúrase de que las cookies están habilitadas en su navegador, e intente recargar esta página. Si sigue viendo este mensaje de error, por favor infórmelo."
+
+msgid "You are not authorized."
+msgstr "No está autorizado."
+
+msgid "The content you sent can't be processed."
+msgstr "El contenido que envió no puede ser procesado."
+
+msgid "Maybe it was too long."
+msgstr "Quizás fue demasiado largo."
 
