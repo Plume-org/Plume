@@ -190,40 +190,36 @@ impl IntoId for Follow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use diesel::Connection;
     use tests::db;
     use users::tests as user_tests;
 
     #[test]
     fn test_id() {
         let conn = db();
-        conn.test_transaction::<_, (), _>(|| {
-            let users = user_tests::fill_database(&conn);
-            let follow = Follow::insert(
-                &conn,
-                NewFollow {
-                    follower_id: users[0].id,
-                    following_id: users[1].id,
-                    ap_url: String::new(),
-                },
-            )
-            .expect("Couldn't insert new follow");
-            assert_eq!(
-                follow.ap_url,
-                format!("https://{}/follows/{}", CONFIG.base_url, follow.id)
-            );
+        let users = user_tests::fill_database(&conn);
+        let follow = Follow::insert(
+            &conn,
+            NewFollow {
+                follower_id: users[0].id,
+                following_id: users[1].id,
+                ap_url: String::new(),
+            },
+        )
+        .expect("Couldn't insert new follow");
+        assert_eq!(
+            follow.ap_url,
+            format!("https://{}/follows/{}", CONFIG.base_url, follow.id)
+        );
 
-            let follow = Follow::insert(
-                &conn,
-                NewFollow {
-                    follower_id: users[1].id,
-                    following_id: users[0].id,
-                    ap_url: String::from("https://some.url/"),
-                },
-            )
-            .expect("Couldn't insert new follow");
-            assert_eq!(follow.ap_url, String::from("https://some.url/"));
-            Ok(())
-        });
+        let follow = Follow::insert(
+            &conn,
+            NewFollow {
+                follower_id: users[1].id,
+                following_id: users[0].id,
+                ap_url: String::from("https://some.url/"),
+            },
+        )
+        .expect("Couldn't insert new follow");
+        assert_eq!(follow.ap_url, String::from("https://some.url/"));
     }
 }

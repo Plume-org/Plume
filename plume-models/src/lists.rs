@@ -75,23 +75,53 @@ struct NewListElem<'a> {
 }
 
 impl List {
+    last!(lists);
+    get!(lists);
+
     fn insert(conn: &Connection, val: NewList) -> Result<Self> {
         diesel::insert_into(lists::table)
             .values(val)
             .execute(conn)?;
         List::last(conn)
     }
-    last!(lists);
-    get!(lists);
-    list_by!(lists, list_for_user, user_id as Option<i32>);
-    find_by!(lists, find_by_name, user_id as Option<i32>, name as &str);
 
-    pub fn new(
-        conn: &Connection,
-        name: &str,
-        user: Option<&User>,
-        kind: ListType,
-    ) -> Result<Self> {
+    pub fn list_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
+        if let Some(user_id) = user_id {
+            lists::table
+                .filter(lists::user_id.eq(user_id))
+                .load::<Self>(conn)
+                .map_err(Error::from)
+        } else {
+            lists::table
+                .filter(lists::user_id.is_null())
+                .load::<Self>(conn)
+                .map_err(Error::from)
+        }
+    }
+
+    pub fn find_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
+        if let Some(user_id) = user_id {
+            lists::table
+                .filter(lists::user_id.eq(user_id))
+                .filter(lists::name.eq(name))
+                .limit(1)
+                .load::<Self>(conn)?
+                .into_iter()
+                .next()
+                .ok_or(Error::NotFound)
+        } else {
+            lists::table
+                .filter(lists::user_id.is_null())
+                .filter(lists::name.eq(name))
+                .limit(1)
+                .load::<Self>(conn)?
+                .into_iter()
+                .next()
+                .ok_or(Error::NotFound)
+        }
+    }
+
+    pub fn new(conn: &Connection, name: &str, user: Option<&User>, kind: ListType) -> Result<Self> {
         Self::insert(
             conn,
             NewList {
@@ -371,8 +401,6 @@ mod tests {
     use blogs::tests as blog_tests;
     use tests::db;
 
-    use diesel::Connection;
-
     #[test]
     fn list_type() {
         for i in 0..4 {
@@ -384,13 +412,11 @@ mod tests {
     #[test]
     fn list_lists() {
         let conn = &db();
-        conn.begin_test_transaction().unwrap();
-        let (users, blogs) = blog_tests::fill_database(conn);
+        let (users, _) = blog_tests::fill_database(conn);
 
         let l1 = List::new(conn, "list1", None, ListType::User).unwrap();
         let l2 = List::new(conn, "list2", None, ListType::Blog).unwrap();
         let l1u = List::new(conn, "list1", Some(&users[0]), ListType::Word).unwrap();
-        // TODO add db constraint (name, user_id) UNIQUE
 
         let l_eq = |l1: &List, l2: &List| {
             assert_eq!(l1.id, l2.id);
@@ -406,7 +432,7 @@ mod tests {
         let l_user = List::list_for_user(conn, Some(users[0].id)).unwrap();
         assert_eq!(2, l_inst.len());
         assert_eq!(1, l_user.len());
-        assert!(l_user[0].id != l1u.id);
+        assert!(l_inst.iter().all(|l| l.id != l1u.id));
 
         l_eq(&l1u, &l_user[0]);
         if l_inst[0].id == l1.id {
@@ -417,6 +443,13 @@ mod tests {
             l_eq(&l2, &l_inst[0]);
         }
 
-        //find_by!(lists, find_by_name, user_id as Option<i32>, name as &str);
+        l_eq(
+            &l1,
+            &List::find_by_name(conn, l1.user_id, &l1.name).unwrap(),
+        );
+        l_eq(
+            &&l1u,
+            &List::find_by_name(conn, l1u.user_id, &l1u.name).unwrap(),
+        );
     }
 }

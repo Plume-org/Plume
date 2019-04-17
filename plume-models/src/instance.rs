@@ -166,7 +166,6 @@ impl Instance {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use diesel::Connection;
     use tests::db;
     use Connection as Conn;
 
@@ -231,196 +230,176 @@ pub(crate) mod tests {
     #[test]
     fn local_instance() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn)
-                .into_iter()
-                .map(|(inserted, _)| inserted)
-                .find(|inst| inst.local)
-                .unwrap();
-            let res = Instance::get_local(conn).unwrap();
+        let inserted = fill_database(conn)
+            .into_iter()
+            .map(|(inserted, _)| inserted)
+            .find(|inst| inst.local)
+            .unwrap();
+        let res = Instance::get_local(conn).unwrap();
 
-            part_eq!(
-                res,
-                inserted,
-                [
-                    default_license,
-                    local,
-                    long_description,
-                    short_description,
-                    name,
-                    open_registrations,
-                    public_domain
-                ]
-            );
-            assert_eq!(
-                res.long_description_html.get(),
-                &inserted.long_description_html
-            );
-            assert_eq!(
-                res.short_description_html.get(),
-                &inserted.short_description_html
-            );
-
-            Ok(())
-        });
+        part_eq!(
+            res,
+            inserted,
+            [
+                default_license,
+                local,
+                long_description,
+                short_description,
+                name,
+                open_registrations,
+                public_domain
+            ]
+        );
+        assert_eq!(
+            res.long_description_html.get(),
+            &inserted.long_description_html
+        );
+        assert_eq!(
+            res.short_description_html.get(),
+            &inserted.short_description_html
+        );
     }
 
     #[test]
     fn remote_instance() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
-            assert_eq!(Instance::count(conn).unwrap(), inserted.len() as i64);
+        let inserted = fill_database(conn);
+        assert_eq!(Instance::count(conn).unwrap(), inserted.len() as i64);
 
-            let res = Instance::get_remotes(conn).unwrap();
-            assert_eq!(
-                res.len(),
-                inserted.iter().filter(|(inst, _)| !inst.local).count()
-            );
+        let res = Instance::get_remotes(conn).unwrap();
+        assert_eq!(
+            res.len(),
+            inserted.iter().filter(|(inst, _)| !inst.local).count()
+        );
 
-            inserted
-                .iter()
-                .filter(|(newinst, _)| !newinst.local)
-                .map(|(newinst, inst)| (newinst, res.iter().find(|res| res.id == inst.id).unwrap()))
-                .for_each(|(newinst, inst)| {
-                    part_eq!(
-                        newinst,
-                        inst,
-                        [
-                            default_license,
-                            local,
-                            long_description,
-                            short_description,
-                            name,
-                            open_registrations,
-                            public_domain
-                        ]
-                    );
-                    assert_eq!(
-                        &newinst.long_description_html,
-                        inst.long_description_html.get()
-                    );
-                    assert_eq!(
-                        &newinst.short_description_html,
-                        inst.short_description_html.get()
-                    );
-                });
+        inserted
+            .iter()
+            .filter(|(newinst, _)| !newinst.local)
+            .map(|(newinst, inst)| (newinst, res.iter().find(|res| res.id == inst.id).unwrap()))
+            .for_each(|(newinst, inst)| {
+                part_eq!(
+                    newinst,
+                    inst,
+                    [
+                        default_license,
+                        local,
+                        long_description,
+                        short_description,
+                        name,
+                        open_registrations,
+                        public_domain
+                    ]
+                );
+                assert_eq!(
+                    &newinst.long_description_html,
+                    inst.long_description_html.get()
+                );
+                assert_eq!(
+                    &newinst.short_description_html,
+                    inst.short_description_html.get()
+                );
+            });
 
-            let page = Instance::page(conn, (0, 2)).unwrap();
-            assert_eq!(page.len(), 2);
-            let page1 = &page[0];
-            let page2 = &page[1];
-            assert!(page1.public_domain <= page2.public_domain);
+        let page = Instance::page(conn, (0, 2)).unwrap();
+        assert_eq!(page.len(), 2);
+        let page1 = &page[0];
+        let page2 = &page[1];
+        assert!(page1.public_domain <= page2.public_domain);
 
-            let mut last_domaine: String = Instance::page(conn, (0, 1)).unwrap()[0]
-                .public_domain
-                .clone();
-            for i in 1..inserted.len() as i32 {
-                let page = Instance::page(conn, (i, i + 1)).unwrap();
-                assert_eq!(page.len(), 1);
-                assert!(last_domaine <= page[0].public_domain);
-                last_domaine = page[0].public_domain.clone();
-            }
-
-            Ok(())
-        });
+        let mut last_domaine: String = Instance::page(conn, (0, 1)).unwrap()[0]
+            .public_domain
+            .clone();
+        for i in 1..inserted.len() as i32 {
+            let page = Instance::page(conn, (i, i + 1)).unwrap();
+            assert_eq!(page.len(), 1);
+            assert!(last_domaine <= page[0].public_domain);
+            last_domaine = page[0].public_domain.clone();
+        }
     }
 
     #[test]
     fn blocked() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inst_list = fill_database(conn);
-            let inst = &inst_list[0].1;
-            let inst_list = &inst_list[1..];
+        let inst_list = fill_database(conn);
+        let inst = &inst_list[0].1;
+        let inst_list = &inst_list[1..];
 
-            let blocked = inst.blocked;
-            inst.toggle_block(conn).unwrap();
-            let inst = Instance::get(conn, inst.id).unwrap();
-            assert_eq!(inst.blocked, !blocked);
-            assert_eq!(
-                inst_list
-                    .iter()
-                    .filter(
-                        |(_, inst)| inst.blocked != Instance::get(conn, inst.id).unwrap().blocked
-                    )
-                    .count(),
-                0
-            );
-            assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain))
-                    .unwrap(),
-                inst.blocked
-            );
-            assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain))
-                    .unwrap(),
-                Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
-                    .map(|inst| inst.blocked)
-                    .unwrap_or(false)
-            );
+        let blocked = inst.blocked;
+        inst.toggle_block(conn).unwrap();
+        let inst = Instance::get(conn, inst.id).unwrap();
+        assert_eq!(inst.blocked, !blocked);
+        assert_eq!(
+            inst_list
+                .iter()
+                .filter(|(_, inst)| inst.blocked != Instance::get(conn, inst.id).unwrap().blocked)
+                .count(),
+            0
+        );
+        assert_eq!(
+            Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain))
+                .unwrap(),
+            inst.blocked
+        );
+        assert_eq!(
+            Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain))
+                .unwrap(),
+            Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
+                .map(|inst| inst.blocked)
+                .unwrap_or(false)
+        );
 
-            inst.toggle_block(conn).unwrap();
-            let inst = Instance::get(conn, inst.id).unwrap();
-            assert_eq!(inst.blocked, blocked);
-            assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain))
-                    .unwrap(),
-                inst.blocked
-            );
-            assert_eq!(
-                Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain))
-                    .unwrap(),
-                Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
-                    .map(|inst| inst.blocked)
-                    .unwrap_or(false)
-            );
-            assert_eq!(
-                inst_list
-                    .iter()
-                    .filter(
-                        |(_, inst)| inst.blocked != Instance::get(conn, inst.id).unwrap().blocked
-                    )
-                    .count(),
-                0
-            );
-
-            Ok(())
-        });
+        inst.toggle_block(conn).unwrap();
+        let inst = Instance::get(conn, inst.id).unwrap();
+        assert_eq!(inst.blocked, blocked);
+        assert_eq!(
+            Instance::is_blocked(conn, &format!("https://{}/something", inst.public_domain))
+                .unwrap(),
+            inst.blocked
+        );
+        assert_eq!(
+            Instance::is_blocked(conn, &format!("https://{}a/something", inst.public_domain))
+                .unwrap(),
+            Instance::find_by_domain(conn, &format!("{}a", inst.public_domain))
+                .map(|inst| inst.blocked)
+                .unwrap_or(false)
+        );
+        assert_eq!(
+            inst_list
+                .iter()
+                .filter(|(_, inst)| inst.blocked != Instance::get(conn, inst.id).unwrap().blocked)
+                .count(),
+            0
+        );
     }
 
     #[test]
     fn update() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inst = &fill_database(conn)[0].1;
+        let inst = &fill_database(conn)[0].1;
 
-            inst.update(
-                conn,
-                "NewName".to_owned(),
-                false,
-                SafeString::new("[short](#link)"),
-                SafeString::new("[long_description](/with_link)"),
-            )
-            .unwrap();
-            let inst = Instance::get(conn, inst.id).unwrap();
-            assert_eq!(inst.name, "NewName".to_owned());
-            assert_eq!(inst.open_registrations, false);
-            assert_eq!(
-                inst.long_description.get(),
-                "[long_description](/with_link)"
-            );
-            assert_eq!(
-                inst.long_description_html,
-                SafeString::new("<p><a href=\"/with_link\">long_description</a></p>\n")
-            );
-            assert_eq!(inst.short_description.get(), "[short](#link)");
-            assert_eq!(
-                inst.short_description_html,
-                SafeString::new("<p><a href=\"#link\">short</a></p>\n")
-            );
-
-            Ok(())
-        });
+        inst.update(
+            conn,
+            "NewName".to_owned(),
+            false,
+            SafeString::new("[short](#link)"),
+            SafeString::new("[long_description](/with_link)"),
+        )
+        .unwrap();
+        let inst = Instance::get(conn, inst.id).unwrap();
+        assert_eq!(inst.name, "NewName".to_owned());
+        assert_eq!(inst.open_registrations, false);
+        assert_eq!(
+            inst.long_description.get(),
+            "[long_description](/with_link)"
+        );
+        assert_eq!(
+            inst.long_description_html,
+            SafeString::new("<p><a href=\"/with_link\">long_description</a></p>\n")
+        );
+        assert_eq!(inst.short_description.get(), "[short](#link)");
+        assert_eq!(
+            inst.short_description_html,
+            SafeString::new("<p><a href=\"#link\">short</a></p>\n")
+        );
     }
 }

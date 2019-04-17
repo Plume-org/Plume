@@ -7,7 +7,6 @@ pub use self::searcher::*;
 #[cfg(test)]
 pub(crate) mod tests {
     use super::{Query, Searcher};
-    use diesel::Connection;
     use std::env::temp_dir;
     use std::str::FromStr;
 
@@ -119,66 +118,62 @@ pub(crate) mod tests {
     #[test]
     fn search() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let searcher = get_searcher();
-            let blog = &fill_database(conn).1[0];
-            let author = &blog.list_authors(conn).unwrap()[0];
+        let searcher = get_searcher();
+        let blog = &fill_database(conn).1[0];
+        let author = &blog.list_authors(conn).unwrap()[0];
 
-            let title = random_hex()[..8].to_owned();
+        let title = random_hex()[..8].to_owned();
 
-            let mut post = Post::insert(
-                conn,
-                NewPost {
-                    blog_id: blog.id,
-                    slug: title.clone(),
-                    title: title.clone(),
-                    content: SafeString::new(""),
-                    published: true,
-                    license: "CC-BY-SA".to_owned(),
-                    ap_url: "".to_owned(),
-                    creation_date: None,
-                    subtitle: "".to_owned(),
-                    source: "".to_owned(),
-                    cover_id: None,
-                },
-                &searcher,
-            )
-            .unwrap();
-            PostAuthor::insert(
-                conn,
-                NewPostAuthor {
-                    post_id: post.id,
-                    author_id: author.id,
-                },
-            )
-            .unwrap();
+        let mut post = Post::insert(
+            conn,
+            NewPost {
+                blog_id: blog.id,
+                slug: title.clone(),
+                title: title.clone(),
+                content: SafeString::new(""),
+                published: true,
+                license: "CC-BY-SA".to_owned(),
+                ap_url: "".to_owned(),
+                creation_date: None,
+                subtitle: "".to_owned(),
+                source: "".to_owned(),
+                cover_id: None,
+            },
+            &searcher,
+        )
+        .unwrap();
+        PostAuthor::insert(
+            conn,
+            NewPostAuthor {
+                post_id: post.id,
+                author_id: author.id,
+            },
+        )
+        .unwrap();
 
-            searcher.commit();
-            assert_eq!(
-                searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
-                post.id
-            );
+        searcher.commit();
+        assert_eq!(
+            searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
+            post.id
+        );
 
-            let newtitle = random_hex()[..8].to_owned();
-            post.title = newtitle.clone();
-            post.update(conn, &searcher).unwrap();
-            searcher.commit();
-            assert_eq!(
-                searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
-                post.id
-            );
-            assert!(searcher
-                .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
-                .is_empty());
+        let newtitle = random_hex()[..8].to_owned();
+        post.title = newtitle.clone();
+        post.update(conn, &searcher).unwrap();
+        searcher.commit();
+        assert_eq!(
+            searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
+            post.id
+        );
+        assert!(searcher
+            .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
+            .is_empty());
 
-            post.delete(&(conn, &searcher)).unwrap();
-            searcher.commit();
-            assert!(searcher
-                .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
-                .is_empty());
-
-            Ok(())
-        });
+        post.delete(&(conn, &searcher)).unwrap();
+        searcher.commit();
+        assert!(searcher
+            .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
+            .is_empty());
     }
 
     #[test]

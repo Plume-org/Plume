@@ -4,7 +4,8 @@ CREATE TABLE timeline_definition(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	name VARCHAR NOT NULL,
-	query VARCHAR NOT NULL
+	query VARCHAR NOT NULL,
+	CONSTRAINT timeline_unique_user_name UNIQUE(user_id, name)
 );
 
 CREATE TABLE timeline(
@@ -17,7 +18,8 @@ CREATE TABLE lists(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	name VARCHAR NOT NULL,
 	user_id integer REFERENCES users(id) ON DELETE CASCADE,
-	type integer NOT NULL
+	type integer NOT NULL,
+	CONSTRAINT timeline_unique_user_name UNIQUE(user_id, name)
 );
 
 CREATE TABLE list_elems(

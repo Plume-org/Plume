@@ -321,11 +321,13 @@ mod tests {
     pub fn db() -> Conn {
         let conn = Conn::establish(CONFIG.database_url.as_str())
             .expect("Couldn't connect to the database");
-        embedded_migrations::run(&conn).expect("Couldn't run migrations");
         #[cfg(feature = "sqlite")]
         sql_query("PRAGMA foreign_keys = on;")
             .execute(&conn)
             .expect("PRAGMA foreign_keys fail");
+        conn.begin_test_transaction()
+            .expect("Couldn't start test transaction");
+        embedded_migrations::run(&conn).expect("Couldn't run migrations");
         conn
     }
 }

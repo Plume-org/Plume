@@ -242,7 +242,6 @@ impl Media {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use diesel::Connection;
     use std::env::{current_dir, set_current_dir};
     use std::fs;
     use std::path::Path;
@@ -315,83 +314,75 @@ pub(crate) mod tests {
     #[test]
     fn delete() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let user = fill_database(conn).0[0].id;
+        let user = fill_database(conn).0[0].id;
 
-            let path = "static/media/test_deletion".to_owned();
-            fs::write(path.clone(), []).unwrap();
+        let path = "static/media/test_deletion".to_owned();
+        fs::write(path.clone(), []).unwrap();
 
-            let media = Media::insert(
-                conn,
-                NewMedia {
-                    file_path: path.clone(),
-                    alt_text: "alt message".to_owned(),
-                    is_remote: false,
-                    remote_url: None,
-                    sensitive: false,
-                    content_warning: None,
-                    owner_id: user,
-                },
-            )
-            .unwrap();
+        let media = Media::insert(
+            conn,
+            NewMedia {
+                file_path: path.clone(),
+                alt_text: "alt message".to_owned(),
+                is_remote: false,
+                remote_url: None,
+                sensitive: false,
+                content_warning: None,
+                owner_id: user,
+            },
+        )
+        .unwrap();
 
-            assert!(Path::new(&path).exists());
-            media.delete(conn).unwrap();
-            assert!(!Path::new(&path).exists());
+        assert!(Path::new(&path).exists());
+        media.delete(conn).unwrap();
+        assert!(!Path::new(&path).exists());
 
-            clean(conn);
-
-            Ok(())
-        });
+        clean(conn);
     }
 
     #[test]
 
     fn set_owner() {
         let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let (users, _) = fill_database(conn);
-            let u1 = &users[0];
-            let u2 = &users[1];
+        let (users, _) = fill_database(conn);
+        let u1 = &users[0];
+        let u2 = &users[1];
 
-            let path = "static/media/test_set_owner".to_owned();
-            fs::write(path.clone(), []).unwrap();
+        let path = "static/media/test_set_owner".to_owned();
+        fs::write(path.clone(), []).unwrap();
 
-            let media = Media::insert(
-                conn,
-                NewMedia {
-                    file_path: path.clone(),
-                    alt_text: "alt message".to_owned(),
-                    is_remote: false,
-                    remote_url: None,
-                    sensitive: false,
-                    content_warning: None,
-                    owner_id: u1.id,
-                },
-            )
-            .unwrap();
+        let media = Media::insert(
+            conn,
+            NewMedia {
+                file_path: path.clone(),
+                alt_text: "alt message".to_owned(),
+                is_remote: false,
+                remote_url: None,
+                sensitive: false,
+                content_warning: None,
+                owner_id: u1.id,
+            },
+        )
+        .unwrap();
 
-            assert!(Media::for_user(conn, u1.id)
-                .unwrap()
-                .iter()
-                .any(|m| m.id == media.id));
-            assert!(!Media::for_user(conn, u2.id)
-                .unwrap()
-                .iter()
-                .any(|m| m.id == media.id));
-            media.set_owner(conn, u2).unwrap();
-            assert!(!Media::for_user(conn, u1.id)
-                .unwrap()
-                .iter()
-                .any(|m| m.id == media.id));
-            assert!(Media::for_user(conn, u2.id)
-                .unwrap()
-                .iter()
-                .any(|m| m.id == media.id));
+        assert!(Media::for_user(conn, u1.id)
+            .unwrap()
+            .iter()
+            .any(|m| m.id == media.id));
+        assert!(!Media::for_user(conn, u2.id)
+            .unwrap()
+            .iter()
+            .any(|m| m.id == media.id));
+        media.set_owner(conn, u2).unwrap();
+        assert!(!Media::for_user(conn, u1.id)
+            .unwrap()
+            .iter()
+            .any(|m| m.id == media.id));
+        assert!(Media::for_user(conn, u2.id)
+            .unwrap()
+            .iter()
+            .any(|m| m.id == media.id));
 
-            clean(conn);
-
-            Ok(())
-        });
+        clean(conn);
     }
 }
