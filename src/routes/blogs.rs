@@ -13,17 +13,17 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
-    blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, medias::*, posts::Post,
-    safe_string::SafeString, users::User, Connection,
+    blog_authors::*, blogs::*, instance::Instance, medias::*, posts::Post, safe_string::SafeString,
+    users::User, Connection, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page, PlumeRocket};
+use routes::{errors::ErrorPage, Page};
 use template_utils::Ructe;
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let conn = rockets.conn;
-    let blog = Blog::find_by_fqn(&*conn, &name)?;
+    let conn = &*rockets.conn;
+    let blog = Blog::find_by_fqn(&rockets, &name)?;
     let posts = Post::blog_page(&*conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(&*conn, &blog)?;
     let authors = &blog.list_authors(&*conn)?;
@@ -43,18 +43,18 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
 #[get("/~/<name>", rank = 1)]
 pub fn activity_details(
     name: String,
-    conn: DbConn,
+    rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
-    Some(ActivityStream::new(blog.to_activity(&*conn).ok()?))
+    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
 }
 
 #[get("/blogs/new")]
 pub fn new(rockets: PlumeRocket) -> Ructe {
     let user = rockets.user.unwrap();
     let intl = rockets.intl;
-    let conn = rockets.conn;
+    let conn = &*rockets.conn;
 
     render!(blogs::new(
         &(&*conn, &intl.catalog, Some(user)),
@@ -92,20 +92,23 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 #[post("/blogs/new", data = "<form>")]
 pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
-    let conn = rockets.conn;
-    let intl = rockets.intl;
-    let user = rockets.user.unwrap();
+    let conn = &*rockets.conn;
+    let intl = &rockets.intl.catalog;
+    let user = rockets.user.clone().unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Blog::find_by_fqn(&*conn, &slug).is_ok() {
+    if Blog::find_by_fqn(&rockets, &slug).is_ok() {
         errors.add(
             "title",
             ValidationError {
                 code: Cow::from("existing_slug"),
-                message: Some(Cow::from("A blog with the same name already exists.")),
+                message: Some(Cow::from(i18n!(
+                    intl,
+                    "A blog with the same name already exists."
+                ))),
                 params: HashMap::new(),
             },
         );
@@ -139,7 +142,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
         Ok(Redirect::to(uri!(details: name = slug.clone(), page = _)))
     } else {
         Err(render!(blogs::new(
-            &(&*conn, &intl.catalog, Some(user)),
+            &(&*conn, intl, Some(user)),
             &*form,
             errors
         )))
@@ -148,8 +151,8 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
 
 #[post("/~/<name>/delete")]
 pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
-    let conn = rockets.conn;
-    let blog = Blog::find_by_fqn(&*conn, &name).expect("blog::delete: blog not found");
+    let conn = &*rockets.conn;
+    let blog = Blog::find_by_fqn(&rockets, &name).expect("blog::delete: blog not found");
     let user = rockets.user;
     let intl = rockets.intl;
     let searcher = rockets.searcher;
@@ -181,22 +184,21 @@ pub struct EditForm {
 }
 
 #[get("/~/<name>/edit")]
-pub fn edit(
-    conn: DbConn,
-    name: String,
-    user: Option<User>,
-    intl: I18n,
-) -> Result<Ructe, ErrorPage> {
-    let blog = Blog::find_by_fqn(&*conn, &name)?;
-    if user
+pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let conn = &*rockets.conn;
+    let blog = Blog::find_by_fqn(&rockets, &name)?;
+    if rockets
+        .user
         .clone()
         .and_then(|u| u.is_author_in(&*conn, &blog).ok())
         .unwrap_or(false)
     {
-        let user = user.expect("blogs::edit: User was None while it shouldn't");
+        let user = rockets
+            .user
+            .expect("blogs::edit: User was None while it shouldn't");
         let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
         Ok(render!(blogs::edit(
-            &(&*conn, &intl.catalog, Some(user)),
+            &(&*conn, &rockets.intl.catalog, Some(user)),
             &blog,
             medias,
             &EditForm {
@@ -210,8 +212,11 @@ pub fn edit(
     } else {
         // TODO actually return 403 error code
         Ok(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, user),
-            i18n!(intl.catalog, "You are not allowed to edit this blog.")
+            &(&*conn, &rockets.intl.catalog, rockets.user),
+            i18n!(
+                rockets.intl.catalog,
+                "You are not allowed to edit this blog."
+            )
         )))
     }
 }
@@ -227,19 +232,23 @@ fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
 
 #[put("/~/<name>/edit", data = "<form>")]
 pub fn update(
-    conn: DbConn,
     name: String,
-    user: Option<User>,
-    intl: I18n,
     form: LenientForm<EditForm>,
+    rockets: PlumeRocket,
 ) -> Result<Redirect, Ructe> {
-    let mut blog = Blog::find_by_fqn(&*conn, &name).expect("blog::update: blog not found");
-    if user
+    let conn = &*rockets.conn;
+    let intl = &rockets.intl.catalog;
+    let mut blog = Blog::find_by_fqn(&rockets, &name).expect("blog::update: blog not found");
+    if rockets
+        .user
         .clone()
         .and_then(|u| u.is_author_in(&*conn, &blog).ok())
         .unwrap_or(false)
     {
-        let user = user.expect("blogs::edit: User was None while it shouldn't");
+        let user = rockets
+            .user
+            .clone()
+            .expect("blogs::edit: User was None while it shouldn't");
         form.validate()
             .and_then(|_| {
                 if let Some(icon) = form.icon {
@@ -250,7 +259,7 @@ pub fn update(
                             ValidationError {
                                 code: Cow::from("icon"),
                                 message: Some(Cow::from(i18n!(
-                                    intl.catalog,
+                                    intl,
                                     "You can't use this media as a blog icon."
                                 ))),
                                 params: HashMap::new(),
@@ -268,7 +277,7 @@ pub fn update(
                             ValidationError {
                                 code: Cow::from("banner"),
                                 message: Some(Cow::from(i18n!(
-                                    intl.catalog,
+                                    intl,
                                     "You can't use this media as a blog banner."
                                 ))),
                                 params: HashMap::new(),
@@ -304,7 +313,7 @@ pub fn update(
             .map_err(|err| {
                 let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
                 render!(blogs::edit(
-                    &(&*conn, &intl.catalog, Some(user)),
+                    &(&*conn, intl, Some(user)),
                     &blog,
                     medias,
                     &*form,
@@ -314,21 +323,25 @@ pub fn update(
     } else {
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, user),
-            i18n!(intl.catalog, "You are not allowed to edit this blog.")
+            &(&*conn, &rockets.intl.catalog, rockets.user),
+            i18n!(
+                rockets.intl.catalog,
+                "You are not allowed to edit this blog."
+            )
         )))
     }
 }
 
 #[get("/~/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
-    Some(blog.outbox(&*conn).ok()?)
+pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<OrderedCollection>> {
+    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    Some(blog.outbox(&*rockets.conn).ok()?)
 }
 
 #[get("/~/<name>/atom.xml")]
-pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&*conn, &name).ok()?;
+pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
+    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    let conn = &*rockets.conn;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
         .id(Instance::get_local(&*conn)

@@ -16,7 +16,7 @@ pub mod request;
 pub mod sign;
 
 pub const CONTEXT_URL: &str = "https://www.w3.org/ns/activitystreams";
-pub const PUBLIC_VISIBILTY: &str = "https://www.w3.org/ns/activitystreams#Public";
+pub const PUBLIC_VISIBILITY: &str = "https://www.w3.org/ns/activitystreams#Public";
 
 pub const AP_CONTENT_TYPE: &str =
     r#"application/ld+json; profile="https://www.w3.org/ns/activitystreams""#;
@@ -107,11 +107,12 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .unwrap_or(Outcome::Forward(()))
     }
 }
-pub fn broadcast<S: sign::Signer, A: Activity, T: inbox::WithInbox>(
-    sender: &S,
-    act: A,
-    to: Vec<T>,
-) {
+pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>)
+where
+    S: sign::Signer,
+    A: Activity,
+    T: inbox::AsActor<C>,
+{
     let boxes = to
         .into_iter()
         .filter(|u| !u.is_local())

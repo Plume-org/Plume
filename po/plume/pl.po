@@ -38,6 +38,9 @@ msgstr "Awatar {0}"
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
+msgid "A blog with the same name already exists."
+msgstr "Blog o tej nazwie już istnieje."
+
 msgid "You are not allowed to delete this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
 
@@ -1012,9 +1015,6 @@ msgstr "Użyj jako awataru"
 
 #~ msgid "Invalid name"
 #~ msgstr "Nieprawidłowa nazwa"
-
-#~ msgid "A blog with the same name already exists."
-#~ msgstr "Blog o tej nazwie już istnieje."
 
 #~ msgid "Your comment can't be empty"
 #~ msgstr "Twój komentarz nie może być pusty"

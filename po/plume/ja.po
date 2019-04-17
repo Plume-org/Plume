@@ -42,6 +42,9 @@ msgstr "{{ name}} のアバター"
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
+msgid "A blog with the same name already exists."
+msgstr "同じ名前のブログがすでに存在します。"
+
 #, fuzzy
 msgid "You are not allowed to delete this blog."
 msgstr "あなたはこのブログの作者ではありません。"
@@ -982,9 +985,6 @@ msgstr "アバターとして使う"
 
 #~ msgid "Invalid name"
 #~ msgstr "無効な名前"
-
-#~ msgid "A blog with the same name already exists."
-#~ msgstr "同じ名前のブログがすでに存在します。"
 
 #~ msgid "Your comment can't be empty"
 #~ msgstr "コメントは空にできません"

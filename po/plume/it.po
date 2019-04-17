@@ -39,6 +39,9 @@ msgstr "Avatar di {0}"
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
+msgid "A blog with the same name already exists."
+msgstr "Un blog con lo stesso nome esiste già."
+
 #, fuzzy
 msgid "You are not allowed to delete this blog."
 msgstr "Non sei l'autore di questo blog."
@@ -1055,9 +1058,6 @@ msgstr "Usa come avatar"
 
 #~ msgid "Invalid name"
 #~ msgstr "Nome non valido"
-
-#~ msgid "A blog with the same name already exists."
-#~ msgstr "Un blog con lo stesso nome esiste già."
 
 #~ msgid "Your comment can't be empty"
 #~ msgstr "Il tuo commento non può essere vuoto"

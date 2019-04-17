@@ -41,6 +41,9 @@ msgstr "Аватар {0}"
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
+msgid "A blog with the same name already exists."
+msgstr "Блог с таким же названием уже существует."
+
 #, fuzzy
 msgid "You are not allowed to delete this blog."
 msgstr "Вы не автор этого блога."
@@ -1071,9 +1074,6 @@ msgstr "Использовать как аватар"
 
 #~ msgid "Invalid name"
 #~ msgstr "Неправильное имя"
-
-#~ msgid "A blog with the same name already exists."
-#~ msgstr "Блог с таким же названием уже существует."
 
 #~ msgid "Your comment can't be empty"
 #~ msgstr "Ваш комментарий не может быть пустым"

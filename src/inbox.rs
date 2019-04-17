@@ -1,171 +1,68 @@
-#![warn(clippy::too_many_arguments)]
-use activitypub::{
-    activity::{Announce, Create, Delete, Follow as FollowAct, Like, Undo, Update},
-    object::Tombstone,
-};
-use failure::Error;
-use rocket::{data::*, http::Status, Outcome::*, Request};
-use rocket_contrib::json::*;
-use serde::Deserialize;
-use serde_json;
-
-use std::io::Read;
-
 use plume_common::activity_pub::{
-    inbox::{Deletable, FromActivity, InboxError, Notify},
+    inbox::FromId,
     request::Digest,
-    Id,
+    sign::{verify_http_headers, Signable},
 };
 use plume_models::{
-    comments::Comment, follows::Follow, instance::Instance, likes, posts::Post, reshares::Reshare,
-    search::Searcher, users::User, Connection,
+    headers::Headers, inbox::inbox, instance::Instance, users::User, Error, PlumeRocket,
 };
+use rocket::{data::*, http::Status, response::status, Outcome::*, Request};
+use rocket_contrib::json::*;
+use serde::Deserialize;
+use std::io::Read;
 
-pub trait Inbox {
-    fn received(
-        &self,
-        conn: &Connection,
-        searcher: &Searcher,
-        act: serde_json::Value,
-    ) -> Result<(), Error> {
-        let actor_id = Id::new(act["actor"].as_str().unwrap_or_else(|| {
-            act["actor"]["id"]
-                .as_str()
-                .expect("Inbox::received: actor_id missing error")
-        }));
-        match act["type"].as_str() {
-            Some(t) => match t {
-                "Announce" => {
-                    Reshare::from_activity(conn, serde_json::from_value(act.clone())?, actor_id)
-                        .expect("Inbox::received: Announce error");;
+pub fn handle_incoming(
+    rockets: PlumeRocket,
+    data: SignedJson<serde_json::Value>,
+    headers: Headers,
+) -> Result<String, status::BadRequest<&'static str>> {
+    let conn = &*rockets.conn;
+    let act = data.1.into_inner();
+    let sig = data.0;
+
+    let activity = act.clone();
+    let actor_id = activity["actor"]
+        .as_str()
+        .or_else(|| activity["actor"]["id"].as_str())
+        .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
+
+    let actor =
+        User::from_id(&rockets, actor_id, None).expect("instance::shared_inbox: user error");
+    if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
+        // maybe we just know an old key?
+        actor
+            .refetch(conn)
+            .and_then(|_| User::get(conn, actor.id))
+            .and_then(|u| {
+                if verify_http_headers(&u, &headers.0, &sig).is_secure() || act.clone().verify(&u) {
                     Ok(())
+                } else {
+                    Err(Error::Signature)
                 }
-                "Create" => {
-                    let act: Create = serde_json::from_value(act.clone())?;
-                    if Post::try_from_activity(&(conn, searcher), act.clone()).is_ok()
-                        || Comment::try_from_activity(conn, act).is_ok()
-                    {
-                        Ok(())
-                    } else {
-                        Err(InboxError::InvalidType)?
-                    }
-                }
-                "Delete" => {
-                    let act: Delete = serde_json::from_value(act.clone())?;
-                    Post::delete_id(
-                        &act.delete_props
-                            .object_object::<Tombstone>()?
-                            .object_props
-                            .id_string()?,
-                        actor_id.as_ref(),
-                        &(conn, searcher),
-                    )
-                    .ok();
-                    Comment::delete_id(
-                        &act.delete_props
-                            .object_object::<Tombstone>()?
-                            .object_props
-                            .id_string()?,
-                        actor_id.as_ref(),
-                        conn,
-                    )
-                    .ok();
-                    Ok(())
-                }
-                "Follow" => {
-                    Follow::from_activity(conn, serde_json::from_value(act.clone())?, actor_id)
-                        .and_then(|f| f.notify(conn))
-                        .expect("Inbox::received: follow from activity error");;
-                    Ok(())
-                }
-                "Like" => {
-                    likes::Like::from_activity(
-                        conn,
-                        serde_json::from_value(act.clone())?,
-                        actor_id,
-                    )
-                    .expect("Inbox::received: like from activity error");;
-                    Ok(())
-                }
-                "Undo" => {
-                    let act: Undo = serde_json::from_value(act.clone())?;
-                    if let Some(t) = act.undo_props.object["type"].as_str() {
-                        match t {
-                            "Like" => {
-                                likes::Like::delete_id(
-                                    &act.undo_props
-                                        .object_object::<Like>()?
-                                        .object_props
-                                        .id_string()?,
-                                    actor_id.as_ref(),
-                                    conn,
-                                )
-                                .expect("Inbox::received: undo like fail");;
-                                Ok(())
-                            }
-                            "Announce" => {
-                                Reshare::delete_id(
-                                    &act.undo_props
-                                        .object_object::<Announce>()?
-                                        .object_props
-                                        .id_string()?,
-                                    actor_id.as_ref(),
-                                    conn,
-                                )
-                                .expect("Inbox::received: undo reshare fail");;
-                                Ok(())
-                            }
-                            "Follow" => {
-                                Follow::delete_id(
-                                    &act.undo_props
-                                        .object_object::<FollowAct>()?
-                                        .object_props
-                                        .id_string()?,
-                                    actor_id.as_ref(),
-                                    conn,
-                                )
-                                .expect("Inbox::received: undo follow error");;
-                                Ok(())
-                            }
-                            _ => Err(InboxError::CantUndo)?,
-                        }
-                    } else {
-                        let link =
-                            act.undo_props.object.as_str().expect(
-                                "Inbox::received: undo doesn't contain a type and isn't Link",
-                            );
-                        if let Ok(like) = likes::Like::find_by_ap_url(conn, link) {
-                            likes::Like::delete_id(&like.ap_url, actor_id.as_ref(), conn)
-                                .expect("Inbox::received: delete Like error");
-                            Ok(())
-                        } else if let Ok(reshare) = Reshare::find_by_ap_url(conn, link) {
-                            Reshare::delete_id(&reshare.ap_url, actor_id.as_ref(), conn)
-                                .expect("Inbox::received: delete Announce error");
-                            Ok(())
-                        } else if let Ok(follow) = Follow::find_by_ap_url(conn, link) {
-                            Follow::delete_id(&follow.ap_url, actor_id.as_ref(), conn)
-                                .expect("Inbox::received: delete Follow error");
-                            Ok(())
-                        } else {
-                            Err(InboxError::NoType)?
-                        }
-                    }
-                }
-                "Update" => {
-                    let act: Update = serde_json::from_value(act.clone())?;
-                    Post::handle_update(conn, &act.update_props.object_object()?, searcher)
-                        .expect("Inbox::received: post update error");
-                    Ok(())
-                }
-                _ => Err(InboxError::InvalidType)?,
-            },
-            None => Err(InboxError::NoType)?,
-        }
+            })
+            .map_err(|_| {
+                println!(
+                    "Rejected invalid activity supposedly from {}, with headers {:?}",
+                    actor.username, headers.0
+                );
+                status::BadRequest(Some("Invalid signature"))
+            })?;
     }
-}
 
-impl Inbox for Instance {}
-impl Inbox for User {}
+    if Instance::is_blocked(conn, actor_id)
+        .map_err(|_| status::BadRequest(Some("Can't tell if instance is blocked")))?
+    {
+        return Ok(String::new());
+    }
+
+    Ok(match inbox(&rockets, act) {
+        Ok(_) => String::new(),
+        Err(e) => {
+            println!("Shared inbox error: {:?}", e);
+            format!("Error: {:?}", e)
+        }
+    })
+}
 
 const JSON_LIMIT: u64 = 1 << 20;
 

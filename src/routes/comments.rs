@@ -1,25 +1,19 @@
 use activitypub::object::Note;
 use rocket::{request::LenientForm, response::Redirect};
-use rocket_i18n::I18n;
 use template_utils::Ructe;
 use validator::Validate;
 
 use std::time::Duration;
 
 use plume_common::{
-    activity_pub::{
-        broadcast,
-        inbox::{Deletable, Notify},
-        ActivityStream, ApRequest,
-    },
+    activity_pub::{broadcast, ActivityStream, ApRequest},
     utils,
 };
 use plume_models::{
-    blogs::Blog, comments::*, db_conn::DbConn, instance::Instance, medias::Media,
-    mentions::Mention, posts::Post, safe_string::SafeString, tags::Tag, users::User,
+    blogs::Blog, comments::*, inbox::inbox, instance::Instance, medias::Media, mentions::Mention,
+    posts::Post, safe_string::SafeString, tags::Tag, users::User, Error, PlumeRocket,
 };
 use routes::errors::ErrorPage;
-use Worker;
 
 #[derive(Default, FromForm, Debug, Validate)]
 pub struct NewCommentForm {
@@ -35,11 +29,10 @@ pub fn create(
     slug: String,
     form: LenientForm<NewCommentForm>,
     user: User,
-    conn: DbConn,
-    worker: Worker,
-    intl: I18n,
+    rockets: PlumeRocket,
 ) -> Result<Redirect, Ructe> {
-    let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("comments::create: blog error");
+    let conn = &*rockets.conn;
+    let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("comments::create: blog error");
     let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
     form.validate()
         .map(|_| {
@@ -67,14 +60,14 @@ pub fn create(
             .expect("comments::create: insert error");
             comm.notify(&*conn).expect("comments::create: notify error");
             let new_comment = comm
-                .create_activity(&*conn)
+                .create_activity(&rockets)
                 .expect("comments::create: activity error");
 
             // save mentions
             for ment in mentions {
                 Mention::from_activity(
                     &*conn,
-                    &Mention::build_activity(&*conn, &ment)
+                    &Mention::build_activity(&rockets, &ment)
                         .expect("comments::create: build mention error"),
                     comm.id,
                     false,
@@ -86,7 +79,9 @@ pub fn create(
             // federate
             let dest = User::one_by_instance(&*conn).expect("comments::create: dest error");
             let user_clone = user.clone();
-            worker.execute(move || broadcast(&user_clone, new_comment, dest));
+            rockets
+                .worker
+                .execute(move || broadcast(&user_clone, new_comment, dest));
 
             Redirect::to(
                 uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
@@ -102,7 +97,7 @@ pub fn create(
                 .and_then(|r| Comment::get(&*conn, r).ok());
 
             render!(posts::details(
-                &(&*conn, &intl.catalog, Some(user.clone())),
+                &(&*conn, &rockets.intl.catalog, Some(user.clone())),
                 post.clone(),
                 blog,
                 &*form,
@@ -138,19 +133,28 @@ pub fn delete(
     slug: String,
     id: i32,
     user: User,
-    conn: DbConn,
-    worker: Worker,
+    rockets: PlumeRocket,
 ) -> Result<Redirect, ErrorPage> {
-    if let Ok(comment) = Comment::get(&*conn, id) {
+    if let Ok(comment) = Comment::get(&*rockets.conn, id) {
         if comment.author_id == user.id {
-            let dest = User::one_by_instance(&*conn)?;
-            let delete_activity = comment.delete(&*conn)?;
+            let dest = User::one_by_instance(&*rockets.conn)?;
+            let delete_activity = comment.build_delete(&*rockets.conn)?;
+            inbox(
+                &rockets,
+                serde_json::to_value(&delete_activity).map_err(Error::from)?,
+            )?;
+
             let user_c = user.clone();
-            worker.execute(move || broadcast(&user_c, delete_activity, dest));
-            worker.execute_after(Duration::from_secs(10 * 60), move || {
-                user.rotate_keypair(&conn)
-                    .expect("Failed to rotate keypair");
-            });
+            rockets
+                .worker
+                .execute(move || broadcast(&user_c, delete_activity, dest));
+            let conn = rockets.conn;
+            rockets
+                .worker
+                .execute_after(Duration::from_secs(10 * 60), move || {
+                    user.rotate_keypair(&conn)
+                        .expect("Failed to rotate keypair");
+                });
         }
     }
     Ok(Redirect::to(
@@ -164,10 +168,10 @@ pub fn activity_pub(
     _slug: String,
     id: i32,
     _ap: ApRequest,
-    conn: DbConn,
+    rockets: PlumeRocket,
 ) -> Option<ActivityStream<Note>> {
-    Comment::get(&*conn, id)
-        .and_then(|c| c.to_activity(&*conn))
+    Comment::get(&*rockets.conn, id)
+        .and_then(|c| c.to_activity(&rockets))
         .ok()
         .map(ActivityStream::new)
 }

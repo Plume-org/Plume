@@ -10,7 +10,6 @@ extern crate colored;
 extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
-extern crate failure;
 #[macro_use]
 extern crate gettext_macros;
 extern crate gettext_utils;
@@ -68,7 +67,6 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 compile_i18n!();
 
-type Worker<'a> = State<'a, ScheduledThreadPool>;
 type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
@@ -247,7 +245,7 @@ Then try to restart Plume
         .manage(Arc::new(Mutex::new(mail)))
         .manage::<Arc<Mutex<Vec<routes::session::ResetRequest>>>>(Arc::new(Mutex::new(vec![])))
         .manage(dbpool)
-        .manage(workpool)
+        .manage(Arc::new(workpool))
         .manage(searcher)
         .manage(include_i18n!())
         .attach(
