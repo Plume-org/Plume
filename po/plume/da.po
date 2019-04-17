@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-06 15:05\n"
-"Last-Translator: AnaGelez <ana@gelez.xyz>\n"
+"PO-Revision-Date: 2019-04-17 19:55\n"
+"Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
 "MIME-Version: 1.0\n"
@@ -44,23 +44,27 @@ msgstr ""
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
-# src/routes/blogs.rs:169
+# src/routes/blogs.rs:109
+msgid "A blog with the same name already exists."
+msgstr ""
+
+# src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:214
+# src/routes/blogs.rs:217
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:253
+# src/routes/blogs.rs:262
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:271
+# src/routes/blogs.rs:280
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/likes.rs:47
+# src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
@@ -68,27 +72,27 @@ msgstr ""
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:92
+# src/routes/posts.rs:93
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:120
+# src/routes/posts.rs:122
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:138
+# src/routes/posts.rs:140
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:145
+# src/routes/posts.rs:147
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:190
+# src/routes/posts.rs:192
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/reshares.rs:47
+# src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
@@ -108,15 +112,15 @@ msgstr ""
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:148
+# src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:187
+# src/routes/user.rs:180
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:287
+# src/routes/user.rs:280
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
@@ -215,7 +219,7 @@ msgstr ""
 msgid "Allow anyone to register here"
 msgstr ""
 
-msgid "Short description - byline"
+msgid "Short description"
 msgstr ""
 
 msgid "Markdown syntax is supported"
@@ -234,7 +238,7 @@ msgstr ""
 msgid "About {0}"
 msgstr ""
 
-msgid "Home to <em>{0}</em> users"
+msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
@@ -362,7 +366,7 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
-msgid "{0}'s subscriptions'"
+msgid "{0}'s subscriptions"
 msgstr ""
 
 msgid "{0}'s subscribers"
@@ -383,13 +387,10 @@ msgstr ""
 msgid "Plume is a decentralized blogging engine."
 msgstr ""
 
-msgid "Authors can manage various blogs, each as an unique website."
+msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -606,7 +607,7 @@ msgid "Add yours"
 msgstr ""
 
 msgid "One boost"
-msgid_plural "{0} boost"
+msgid_plural "{0} boosts"
 msgstr[0] ""
 msgstr[1] ""
 
