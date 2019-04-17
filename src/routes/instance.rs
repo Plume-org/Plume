@@ -232,10 +232,14 @@ pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Opt
 
     if let Ok(comment) = Comment::from_id(&rockets, &target, None) {
         if comment.can_see(&rockets.conn, user.as_ref()) {
-            let post = comment.get_post(&rockets.conn).expect("Can't retrieve post");
+            let post = comment
+                .get_post(&rockets.conn)
+                .expect("Can't retrieve post");
             return Some(Redirect::to(uri!(
-                super::posts::details: blog =
-                    post.get_blog(&rockets.conn).expect("Can't retrieve blog").fqn,
+                super::posts::details: blog = post
+                    .get_blog(&rockets.conn)
+                    .expect("Can't retrieve blog")
+                    .fqn,
                 slug = &post.slug,
                 responding_to = comment.id
             )));
