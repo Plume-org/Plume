@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 09:40\n"
+"PO-Revision-Date: 2019-04-17 10:28\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -133,7 +133,7 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Notifications"
-msgstr ""
+msgstr "Известия"
 
 msgid "Log Out"
 msgstr ""
@@ -181,7 +181,7 @@ msgid "Instances"
 msgstr ""
 
 msgid "Configuration"
-msgstr ""
+msgstr "Конфигурация"
 
 msgid "Users"
 msgstr ""
@@ -206,7 +206,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 # src/template_utils.rs:220
 msgid "Optional"
@@ -316,7 +316,7 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Username"
-msgstr ""
+msgstr "Потребителско име"
 
 # src/template_utils.rs:217
 msgid "Password"
@@ -421,7 +421,7 @@ msgid "Article title matching these words"
 msgstr ""
 
 msgid "Title"
-msgstr ""
+msgstr "Заглавие"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
@@ -544,7 +544,7 @@ msgid "Subtitle"
 msgstr ""
 
 msgid "Content"
-msgstr ""
+msgstr "Съдържание"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
@@ -580,7 +580,7 @@ msgid "Publish your post"
 msgstr ""
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Написано от {0}"
 
 msgid "Edit"
 msgstr ""
@@ -592,7 +592,7 @@ msgid "All rights reserved."
 msgstr ""
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Тази статия се разпространява под {0} лиценз."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -620,7 +620,7 @@ msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
 
 msgid "Comments"
-msgstr ""
+msgstr "Коментари"
 
 # src/template_utils.rs:217
 msgid "Content warning"
@@ -630,7 +630,7 @@ msgid "Your comment"
 msgstr ""
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Публикувайте коментар"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
@@ -663,10 +663,10 @@ msgid "Internal server error"
 msgstr ""
 
 msgid "Something broke on our side."
-msgstr ""
+msgstr "Възникна грешка от ваша страна."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
+msgstr "Извиняваме се за това. Ако смятате, че това е грешка, моля докладвайте я."
 
 msgid "Edit \"{}\""
 msgstr ""
@@ -699,10 +699,10 @@ msgid "New Blog"
 msgstr "Нов блог"
 
 msgid "Create a blog"
-msgstr ""
+msgstr "Създайте блог"
 
 msgid "Create blog"
-msgstr ""
+msgstr "Създайте блог"
 
 msgid "{}'s icon"
 msgstr ""
