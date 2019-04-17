@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 18:15\n"
+"PO-Revision-Date: 2019-04-17 19:09\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
-"Language-Team: Serbian (Latin)\n"
-"Language: sr_CS\n"
+"Language-Team: Serbian (Cyrillic)\n"
+"Language: sr_SP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
-"X-Crowdin-Language: sr-CS\n"
+"X-Crowdin-Language: sr\n"
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 
 # plume-front/src/editor.rs:114
@@ -22,7 +22,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:143
 msgid "Title"
-msgstr "Naslov"
+msgstr ""
 
 # plume-front/src/editor.rs:147
 msgid "Subtitle or summary"
