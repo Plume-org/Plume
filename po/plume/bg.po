@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 10:28\n"
+"PO-Revision-Date: 2019-04-17 12:05\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -82,7 +82,7 @@ msgstr ""
 
 # src/routes/posts.rs:145
 msgid "New post"
-msgstr ""
+msgstr "Нова публикация"
 
 # src/routes/posts.rs:190
 msgid "Edit {0}"
@@ -130,7 +130,7 @@ msgid "Search"
 msgstr ""
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Контролен панел"
 
 msgid "Notifications"
 msgstr "Известия"
@@ -142,7 +142,7 @@ msgid "My account"
 msgstr ""
 
 msgid "Log In"
-msgstr ""
+msgstr "Влез"
 
 msgid "Register"
 msgstr ""
@@ -250,10 +250,10 @@ msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Edit your account"
-msgstr ""
+msgstr "Редактирайте профила си"
 
 msgid "Your Profile"
-msgstr ""
+msgstr "Вашият профил"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
@@ -263,17 +263,17 @@ msgstr ""
 
 # src/template_utils.rs:217
 msgid "Display name"
-msgstr ""
+msgstr "Показвано име"
 
 # src/template_utils.rs:217
 msgid "Email"
-msgstr ""
+msgstr "Електронна поща"
 
 msgid "Summary"
-msgstr ""
+msgstr "Резюме"
 
 msgid "Update account"
-msgstr ""
+msgstr "Актуализиране на профил"
 
 msgid "Danger zone"
 msgstr ""
@@ -288,16 +288,16 @@ msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 
 msgid "Your Dashboard"
-msgstr ""
+msgstr "Вашият контролен панел"
 
 msgid "Your Blogs"
-msgstr ""
+msgstr "Вашият Блог"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgstr "Все още нямате блог. Създайте свой собствен или поискайте да се присъедините към някой друг."
 
 msgid "Start a new blog"
-msgstr "Започни нова блог"
+msgstr "Започнете нов блог"
 
 msgid "Your Drafts"
 msgstr ""
@@ -312,7 +312,7 @@ msgid "Create your account"
 msgstr ""
 
 msgid "Create an account"
-msgstr ""
+msgstr "Създай профил"
 
 # src/template_utils.rs:217
 msgid "Username"
@@ -320,11 +320,11 @@ msgstr "Потребителско име"
 
 # src/template_utils.rs:217
 msgid "Password"
-msgstr ""
+msgstr "Парола"
 
 # src/template_utils.rs:217
 msgid "Password confirmation"
-msgstr ""
+msgstr "Потвърждение на парола"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
@@ -342,19 +342,19 @@ msgid "Atom feed"
 msgstr ""
 
 msgid "Recently boosted"
-msgstr ""
+msgstr "Наскоро подсилен"
 
 msgid "Admin"
-msgstr ""
+msgstr "Администратор"
 
 msgid "It is you"
-msgstr ""
+msgstr "Това си ти"
 
 msgid "Edit your profile"
-msgstr ""
+msgstr "Редактиране на вашият профил"
 
 msgid "Open on {0}"
-msgstr ""
+msgstr "Отворен на {0}"
 
 msgid "Unsubscribe"
 msgstr ""
@@ -369,7 +369,7 @@ msgid "{0}'s subscribers"
 msgstr ""
 
 msgid "Respond"
-msgstr ""
+msgstr "Отговори"
 
 msgid "Are you sure?"
 msgstr ""
@@ -527,14 +527,14 @@ msgid "Send password reset link"
 msgstr ""
 
 msgid "Log in"
-msgstr ""
+msgstr "Влез"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Потребителско име или имейл"
 
 msgid "Publish"
-msgstr ""
+msgstr "Публикувайте"
 
 msgid "Classic editor (any changes will be lost)"
 msgstr ""
@@ -596,25 +596,25 @@ msgstr "Тази статия се разпространява под {0} ли�
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Едно харесване"
+msgstr[1] "{0} харесвания"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Това вече не ми харесва"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Добавете вашите"
 
 msgid "One boost"
 msgid_plural "{0} boost"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Едно Подсилване"
+msgstr[1] "{0} Подсилвания"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Не искам повече да го подсилвам"
 
 msgid "Boost"
-msgstr ""
+msgstr "Подсилване"
 
 msgid "Log in, or use your Fediverse account to interact with this article"
 msgstr ""
@@ -627,7 +627,7 @@ msgid "Content warning"
 msgstr ""
 
 msgid "Your comment"
-msgstr ""
+msgstr "Tвоя коментар"
 
 msgid "Submit comment"
 msgstr "Публикувайте коментар"
