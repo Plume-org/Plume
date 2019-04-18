@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 19:55\n"
+"PO-Revision-Date: 2019-04-18 07:05\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -22,37 +22,37 @@ msgstr ""
 
 # plume-front/src/editor.rs:143
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 # plume-front/src/editor.rs:147
 msgid "Subtitle or summary"
-msgstr ""
+msgstr "Legenda ou resumo"
 
 # plume-front/src/editor.rs:154
 msgid "Write your article here. Markdown is supported."
-msgstr ""
+msgstr "Escreva seu artigo aqui. Markdown pode ser usado."
 
 # plume-front/src/editor.rs:165
 msgid "Around {} characters left"
-msgstr ""
+msgstr "Cerca de {} caracteres restantes"
 
 # plume-front/src/editor.rs:228
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 # plume-front/src/editor.rs:229
 msgid "License"
-msgstr ""
+msgstr "Licença"
 
 # plume-front/src/editor.rs:232
 msgid "Cover"
-msgstr ""
+msgstr "Capa"
 
 # plume-front/src/editor.rs:252
 msgid "This is a draft"
-msgstr ""
+msgstr "Isso é um rascunho"
 
 # plume-front/src/editor.rs:259
 msgid "Publish"
-msgstr ""
+msgstr "Publicar"
 
