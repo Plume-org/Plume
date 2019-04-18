@@ -11,9 +11,9 @@ atom_syndication = "0.6"
 canapi = "0.2"
 colored = "1.7"
 dotenv = "0.13"
-gettext = "0.3"
-gettext-macros = "0.4"
-gettext-utils = "0.1"
+gettext = { git = "https://github.com/BaptisteGelez/gettext/", rev = "294c54d74c699fbc66502b480a37cc66c1daa7f3" }
+gettext-macros = { git = "https://github.com/Plume-org/gettext-macros/", rev = "dc431a69654b15a33537b926c203cb6266d67b9e" }
+gettext-utils = { git = "https://github.com/Plume-org/gettext-macros/", rev = "dc431a69654b15a33537b926c203cb6266d67b9e" }
 guid-create = "0.1"
 heck = "0.3.0"
 lettre = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
@@ -21,7 +21,7 @@ lettre_email = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad817
 num_cpus = "1.0"
 rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
-rocket_i18n = "0.4.0"
+rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "cb3580b3f6af2fdc2f24e0fe13745f7ea3ccc784" }
 rpassword = "2.0"
 scheduled-thread-pool = "0.2.0"
 serde = "1.0"

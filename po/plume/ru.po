@@ -10,7 +10,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
+"&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
+"&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Language: ru\n"
@@ -92,10 +94,6 @@ msgstr "Новый пост"
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:630
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
-
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
@@ -128,47 +126,59 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-msgid "Reset your password"
+msgid "Plume"
 msgstr ""
 
-# src/template_utils.rs:217
-msgid "E-mail"
+msgid "Menu"
+msgstr "Меню"
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "Dashboard"
+msgstr "Панель управления"
+
+msgid "Notifications"
+msgstr "Уведомления"
+
+msgid "Log Out"
+msgstr "Выйти"
+
+msgid "My account"
+msgstr "Мой аккаунт"
+
+msgid "Log In"
+msgstr "Войти"
+
+msgid "Register"
+msgstr "Зарегистрироваться"
+
+msgid "About this instance"
+msgstr "Об этом узле"
+
+msgid "Source code"
+msgstr "Исходный код"
+
+msgid "Matrix room"
+msgstr "Комната в Matrix"
+
+msgid "Administration"
+msgstr "Администрирование"
+
+msgid "Welcome to {}"
 msgstr ""
 
-# src/template_utils.rs:220
-msgid "Optional"
-msgstr "Не обязательно"
-
-msgid "Send password reset link"
+msgid "Latest articles"
 msgstr ""
 
-msgid "Check your inbox!"
+msgid "Your feed"
 msgstr ""
 
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgid "Federated feed"
 msgstr ""
 
-msgid "Log in"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr "Пароль"
-
-# src/template_utils.rs:217
-msgid "New password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
-msgstr ""
+msgid "Local feed"
+msgstr "Локальная лента"
 
 msgid "Administration of {0}"
 msgstr ""
@@ -188,57 +198,25 @@ msgstr ""
 msgid "Block"
 msgstr "Заблокировать"
 
-msgid "About {0}"
+msgid "Ban"
 msgstr ""
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
-
-msgid "Administred by"
-msgstr "Администрируется"
-
-msgid "Runs Plume {0}"
-msgstr "Работает на Plume {0}"
 
 msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Latest articles"
-msgstr ""
-
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr "Локальная лента"
-
-msgid "Welcome to {}"
 msgstr ""
 
 msgid "Articles from {}"
 msgstr ""
 
-msgid "Ban"
-msgstr ""
-
 msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
-
-msgid "Administration"
-msgstr "Администрирование"
 
 # src/template_utils.rs:217
 msgid "Name"
 msgstr "Имя"
+
+# src/template_utils.rs:220
+msgid "Optional"
+msgstr "Не обязательно"
 
 msgid "Allow anyone to register here"
 msgstr ""
@@ -259,8 +237,186 @@ msgstr ""
 msgid "Save these settings"
 msgstr ""
 
-msgid "Search"
-msgstr "Поиск"
+msgid "About {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr ""
+
+msgid "Administred by"
+msgstr "Администрируется"
+
+msgid "Runs Plume {0}"
+msgstr "Работает на Plume {0}"
+
+msgid "Edit your account"
+msgstr "Редактировать ваш аккаунт"
+
+msgid "Your Profile"
+msgstr ""
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Display name"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr "Электронная почта"
+
+msgid "Summary"
+msgstr ""
+
+msgid "Update account"
+msgstr ""
+
+msgid "Danger zone"
+msgstr "Опасная зона"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+
+msgid "Delete your account"
+msgstr "Удалить ваш аккаунт"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+
+msgid "Your Dashboard"
+msgstr "Ваша панель управления"
+
+msgid "Your Blogs"
+msgstr ""
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+
+msgid "Start a new blog"
+msgstr "Начать новый блог"
+
+msgid "Your Drafts"
+msgstr "Ваши черновики"
+
+msgid "Your media"
+msgstr "Ваши медиафайлы"
+
+msgid "Go to your gallery"
+msgstr "Перейти в вашу галерею"
+
+msgid "Create your account"
+msgstr "Создать аккаунт"
+
+msgid "Create an account"
+msgstr "Создать новый аккаунт"
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr "Имя пользователя"
+
+# src/template_utils.rs:217
+msgid "Password"
+msgstr "Пароль"
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
+msgstr "Подтверждение пароля"
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+
+msgid "Articles"
+msgstr "Статьи"
+
+msgid "Subscribers"
+msgstr ""
+
+msgid "Subscriptions"
+msgstr ""
+
+msgid "Atom feed"
+msgstr ""
+
+msgid "Recently boosted"
+msgstr "Недавно продвинутые"
+
+msgid "Admin"
+msgstr "Администратор"
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr "Редактировать ваш профиль"
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Respond"
+msgstr "Ответить"
+
+msgid "Are you sure?"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr "Что такое Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume это децентрализованный движок для блоггинга."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr "Прочитать подробные правила"
+
+msgid "None"
+msgstr "Нет"
+
+msgid "No description"
+msgstr ""
+
+msgid "View all"
+msgstr "Показать все"
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
 
 msgid "Your query"
 msgstr ""
@@ -351,146 +507,40 @@ msgstr ""
 msgid "No more results for your query"
 msgstr ""
 
-msgid "Edit \"{}\""
-msgstr ""
-
-msgid "Description"
-msgstr "Описание"
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-
-msgid "Upload images"
-msgstr ""
-
-msgid "Blog icon"
-msgstr ""
-
-msgid "Blog banner"
-msgstr ""
-
-msgid "Update blog"
-msgstr ""
-
-msgid "Danger zone"
-msgstr "Опасная зона"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr ""
-
-msgid "{}'s icon"
-msgstr ""
-
-msgid "New article"
-msgstr "Новая статья"
-
-msgid "Edit"
-msgstr "Редактировать"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-
-msgid "No posts to see here yet."
-msgstr "Здесь пока нет постов."
-
-msgid "New Blog"
-msgstr ""
-
-msgid "Create a blog"
-msgstr "Создать блог"
-
-msgid "Create blog"
-msgstr "Создать блог"
-
-msgid "Articles tagged \"{0}\""
-msgstr ""
-
-msgid "There are currently no articles with such a tag"
-msgstr ""
-
-msgid "Written by {0}"
-msgstr ""
-
-msgid "Are you sure?"
-msgstr ""
-
-msgid "Delete this article"
-msgstr "Удалить эту статью"
-
-msgid "Draft"
-msgstr ""
-
-msgid "All rights reserved."
-msgstr ""
-
-msgid "This article is under the {0} license."
-msgstr ""
-
-msgid "Unsubscribe"
-msgstr ""
-
-msgid "Subscribe"
-msgstr ""
-
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "Один лайк"
-msgstr[1] "{0} лайка"
-msgstr[2] "{0} лайков"
-msgstr[3] ""
-
-msgid "I don't like this anymore"
-msgstr ""
-
-msgid "Add yours"
-msgstr ""
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-
-msgid "I don't want to boost this anymore"
-msgstr ""
-
-msgid "Boost"
-msgstr "Продвинуть"
-
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
-
-msgid "Comments"
+msgid "Reset your password"
 msgstr ""
 
 # src/template_utils.rs:217
-msgid "Content warning"
-msgstr "Предупреждение о контенте"
-
-msgid "Your comment"
+msgid "New password"
 msgstr ""
 
-msgid "Submit comment"
+# src/template_utils.rs:217
+msgid "Confirmation"
 msgstr ""
 
-msgid "No comments yet. Be the first to react!"
+msgid "Update password"
 msgstr ""
 
-msgid "Interact with {}"
+msgid "Check your inbox!"
 msgstr ""
 
-msgid "Log in to interact"
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
 msgstr ""
 
-msgid "Enter your full username to interact"
+# src/template_utils.rs:217
+msgid "E-mail"
+msgstr ""
+
+msgid "Send password reset link"
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username, or email"
 msgstr ""
 
 msgid "Publish"
@@ -506,7 +556,9 @@ msgstr "Подзаголовок"
 msgid "Content"
 msgstr "Содержимое"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -539,94 +591,165 @@ msgstr ""
 msgid "Publish your post"
 msgstr ""
 
-msgid "I'm from this instance"
+msgid "Written by {0}"
 msgstr ""
 
-msgid "I'm from another instance"
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Delete this article"
+msgstr "Удалить эту статью"
+
+msgid "All rights reserved."
+msgstr ""
+
+msgid "This article is under the {0} license."
+msgstr ""
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Один лайк"
+msgstr[1] "{0} лайка"
+msgstr[2] "{0} лайков"
+msgstr[3] ""
+
+msgid "I don't like this anymore"
+msgstr ""
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+msgid "I don't want to boost this anymore"
+msgstr ""
+
+msgid "Boost"
+msgstr "Продвинуть"
+
+msgid "Log in, or use your Fediverse account to interact with this article"
+msgstr ""
+
+msgid "Comments"
 msgstr ""
 
 # src/template_utils.rs:217
-msgid "Username"
-msgstr "Имя пользователя"
+msgid "Content warning"
+msgstr "Предупреждение о контенте"
 
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
+msgid "Your comment"
 msgstr ""
 
-msgid "Continue to your instance"
+msgid "Submit comment"
 msgstr ""
 
-msgid "View all"
-msgstr "Показать все"
-
-msgid "By {0}"
+msgid "No comments yet. Be the first to react!"
 msgstr ""
 
-msgid "What is Plume?"
-msgstr "Что такое Plume?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Plume это децентрализованный движок для блоггинга."
-
-msgid "Authors can manage multiple blogs, each as its own website."
+msgid "Invalid CSRF token"
 msgstr ""
 
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Что-то не так с вашим CSRF-токеном. Убедитесь что в вашем браузере включены "
+"cookies и попробуйте перезагрузить страницу. Если вы продолжите видеть это "
+"сообщение об ошибке, сообщите об этом."
+
+msgid "Page not found"
 msgstr ""
 
-msgid "Create your account"
-msgstr "Создать аккаунт"
+msgid "We couldn't find this page."
+msgstr "Мы не можем найти эту страницу."
 
-msgid "Read the detailed rules"
-msgstr "Прочитать подробные правила"
-
-msgid "Respond"
-msgstr "Ответить"
-
-msgid "Delete this comment"
+msgid "The link that led you here may be broken."
 msgstr ""
 
-msgid "None"
-msgstr "Нет"
-
-msgid "No description"
+msgid "The content you sent can't be processed."
 msgstr ""
 
-msgid "Notifications"
-msgstr "Уведомления"
-
-msgid "Plume"
+msgid "Maybe it was too long."
 msgstr ""
 
-msgid "Menu"
-msgstr "Меню"
+msgid "You are not authorized."
+msgstr "Вы не авторизованы."
 
-msgid "Dashboard"
-msgstr "Панель управления"
+msgid "Internal server error"
+msgstr ""
 
-msgid "Log Out"
-msgstr "Выйти"
+msgid "Something broke on our side."
+msgstr "Произошла ошибка на вашей стороне."
 
-msgid "My account"
-msgstr "Мой аккаунт"
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Приносим извинения. Если вы считаете что это ошибка, пожалуйста сообщите о "
+"ней."
 
-msgid "Log In"
-msgstr "Войти"
+msgid "Edit \"{}\""
+msgstr ""
 
-msgid "Register"
-msgstr "Зарегистрироваться"
+msgid "Description"
+msgstr "Описание"
 
-msgid "About this instance"
-msgstr "Об этом узле"
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
 
-msgid "Source code"
-msgstr "Исходный код"
+msgid "Upload images"
+msgstr ""
 
-msgid "Matrix room"
-msgstr "Комната в Matrix"
+msgid "Blog icon"
+msgstr ""
 
-msgid "Your media"
-msgstr "Ваши медиафайлы"
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+msgid "New Blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr "Создать блог"
+
+msgid "Create blog"
+msgstr "Создать блог"
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "New article"
+msgstr "Новая статья"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+msgid "No posts to see here yet."
+msgstr "Здесь пока нет постов."
+
+msgid "Articles tagged \"{0}\""
+msgstr ""
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
 
 msgid "Upload"
 msgstr "Загрузить"
@@ -641,21 +764,6 @@ msgid "Delete"
 msgstr "Удалить"
 
 msgid "Details"
-msgstr ""
-
-msgid "Media details"
-msgstr "Детали медиафайла"
-
-msgid "Go back to the gallery"
-msgstr "Вернуться в галерею"
-
-msgid "Markdown syntax"
-msgstr ""
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr ""
-
-msgid "Use as an avatar"
 msgstr ""
 
 msgid "Media upload"
@@ -673,141 +781,17 @@ msgstr "Файл"
 msgid "Send"
 msgstr "Отправить"
 
-msgid "{0}'s subscriptions"
+msgid "Media details"
+msgstr "Детали медиафайла"
+
+msgid "Go back to the gallery"
+msgstr "Вернуться в галерею"
+
+msgid "Markdown syntax"
 msgstr ""
 
-msgid "Articles"
-msgstr "Статьи"
-
-msgid "Subscribers"
+msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Subscriptions"
+msgid "Use as an avatar"
 msgstr ""
-
-msgid "Your Dashboard"
-msgstr "Ваша панель управления"
-
-msgid "Your Blogs"
-msgstr ""
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-
-msgid "Start a new blog"
-msgstr "Начать новый блог"
-
-msgid "Your Drafts"
-msgstr "Ваши черновики"
-
-msgid "Go to your gallery"
-msgstr "Перейти в вашу галерею"
-
-msgid "Admin"
-msgstr "Администратор"
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr "Редактировать ваш профиль"
-
-msgid "Open on {0}"
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Edit your account"
-msgstr "Редактировать ваш аккаунт"
-
-msgid "Your Profile"
-msgstr ""
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr "Электронная почта"
-
-msgid "Summary"
-msgstr ""
-
-msgid "Update account"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr "Удалить ваш аккаунт"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr "Недавно продвинутые"
-
-msgid "Create an account"
-msgstr "Создать новый аккаунт"
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr "Подтверждение пароля"
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Login to follow"
-msgstr ""
-
-msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Internal server error"
-msgstr ""
-
-msgid "Something broke on our side."
-msgstr "Произошла ошибка на вашей стороне."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Приносим извинения. Если вы считаете что это ошибка, пожалуйста сообщите о ней."
-
-msgid "Page not found"
-msgstr ""
-
-msgid "We couldn't find this page."
-msgstr "Мы не можем найти эту страницу."
-
-msgid "The link that led you here may be broken."
-msgstr ""
-
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "Что-то не так с вашим CSRF-токеном. Убедитесь что в вашем браузере включены cookies и попробуйте перезагрузить страницу. Если вы продолжите видеть это сообщение об ошибке, сообщите об этом."
-
-msgid "You are not authorized."
-msgstr "Вы не авторизованы."
-
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
-msgstr ""
-
