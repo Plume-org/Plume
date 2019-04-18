@@ -193,6 +193,7 @@ aliases:
       - run: script/generate_artifact.sh
       - store_artifacts:
           path: plume.tar.gz
+          destination: plume.tar.gz
 
 
 jobs:
