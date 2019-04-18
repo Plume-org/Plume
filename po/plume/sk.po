@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 20:49\n"
+"PO-Revision-Date: 2019-04-18 07:05\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -94,7 +94,7 @@ msgstr "Uprav {0}"
 
 # src/routes/posts.rs:630
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "Nebolo možné zistiť postačujúce množstvo informácií o tvojom účte. Prosím over si, že celá tvoja prezývka je zadaná správne."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
@@ -466,7 +466,7 @@ msgid "Boost"
 msgstr "Vyzdvihni"
 
 msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
+msgstr "{0}Prihlás sa{1}, alebo {2}použi svoj účet v rámci Fediversa{3} pre narábanie s týmto článkom"
 
 msgid "Comments"
 msgstr "Komentáre"
@@ -485,13 +485,13 @@ msgid "No comments yet. Be the first to react!"
 msgstr "Zatiaľ žiadne komentáre. Buď prvý kto zareaguje!"
 
 msgid "Interact with {}"
-msgstr ""
+msgstr "Narábaj s {}"
 
 msgid "Log in to interact"
-msgstr ""
+msgstr "Pre zapojenie sa prihlás"
 
 msgid "Enter your full username to interact"
-msgstr ""
+msgstr "Zadaj celú svoju prezývku, aby si sa zapojil/a"
 
 msgid "Publish"
 msgstr "Zverejni"
@@ -540,10 +540,10 @@ msgid "Publish your post"
 msgstr "Zverejni svoj príspevok"
 
 msgid "I'm from this instance"
-msgstr ""
+msgstr "Som z tejto instancie"
 
 msgid "I'm from another instance"
-msgstr ""
+msgstr "Som z inej instancie"
 
 # src/template_utils.rs:217
 msgid "Username"
@@ -551,10 +551,10 @@ msgstr "Užívateľské meno"
 
 # src/template_utils.rs:225
 msgid "Example: user@plu.me"
-msgstr ""
+msgstr "Príklad: user@plu.me"
 
 msgid "Continue to your instance"
-msgstr ""
+msgstr "Pokračuj na tvoju instanciu"
 
 msgid "View all"
 msgstr "Zobraz všetky"
@@ -770,13 +770,13 @@ msgid "Apologies, but registrations are closed on this particular instance. You 
 msgstr "Ospravedlňujeme sa, ale na tejto konkrétnej instancii zatvorené. Môžeš si však nájsť inú."
 
 msgid "Follow {}"
-msgstr ""
+msgstr "Následuj {}"
 
 msgid "Login to follow"
-msgstr ""
+msgstr "Pre následovanie sa prihlás"
 
 msgid "Enter your full username to follow"
-msgstr ""
+msgstr "Zadaj celú svoju prezývku, aby si následoval/a"
 
 msgid "Internal server error"
 msgstr "Vnútorná chyba v rámci serveru"
