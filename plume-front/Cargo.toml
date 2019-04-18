@@ -5,7 +5,7 @@ authors = ["Plume contributors"]
 
 [dependencies]
 stdweb = "0.4"
-gettext = { git = "https://github.com/BaptisteGelez/gettext/", rev = "294c54d74c699fbc66502b480a37cc66c1daa7f3" }
-gettext-macros = { git = "https://github.com/Plume-org/gettext-macros/", rev = "dc431a69654b15a33537b926c203cb6266d67b9e" }
-gettext-utils = { git = "https://github.com/Plume-org/gettext-macros/", rev = "dc431a69654b15a33537b926c203cb6266d67b9e" }
+gettext = { git = "https://github.com/Plume-org/gettext/", rev = "294c54d74c699fbc66502b480a37cc66c1daa7f3" }
+gettext-macros = { git = "https://github.com/Plume-org/gettext-macros/", rev = "a7c605f7edd6bfbfbfe7778026bfefd88d82db10" }
+gettext-utils = { git = "https://github.com/Plume-org/gettext-macros/", rev = "a7c605f7edd6bfbfbfe7778026bfefd88d82db10" }
 lazy_static = "1.3"

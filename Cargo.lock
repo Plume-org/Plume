@@ -938,7 +938,7 @@ dependencies = [
 [[package]]
 name = "gettext"
 version = "0.3.0"
-source = "git+https://github.com/BaptisteGelez/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3#294c54d74c699fbc66502b480a37cc66c1daa7f3"
+source = "git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3#294c54d74c699fbc66502b480a37cc66c1daa7f3"
 dependencies = [
  "byteorder 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "encoding 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -947,16 +947,16 @@ dependencies = [
 [[package]]
 name = "gettext-macros"
 version = "0.4.0"
-source = "git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e#dc431a69654b15a33537b926c203cb6266d67b9e"
+source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
 dependencies = [
- "gettext 0.3.0 (git+https://github.com/BaptisteGelez/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
- "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
 ]
 
 [[package]]
 name = "gettext-utils"
 version = "0.1.0"
-source = "git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e#dc431a69654b15a33537b926c203cb6266d67b9e"
+source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
 
 [[package]]
 name = "guid"
@@ -1788,9 +1788,9 @@ dependencies = [
  "ctrlc 3.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext 0.3.0 (git+https://github.com/BaptisteGelez/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
- "gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)",
- "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
+ "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
  "guid-create 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lettre 0.9.0 (git+https://github.com/lettre/lettre?rev=c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49)",
@@ -1803,7 +1803,7 @@ dependencies = [
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)",
- "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=cb3580b3f6af2fdc2f24e0fe13745f7ea3ccc784)",
+ "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
  "rpassword 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "ructe 0.5.10 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1862,9 +1862,9 @@ dependencies = [
 name = "plume-front"
 version = "0.1.0"
 dependencies = [
- "gettext 0.3.0 (git+https://github.com/BaptisteGelez/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
- "gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)",
- "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
+ "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
  "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "stdweb 0.4.14 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1890,7 +1890,7 @@ dependencies = [
  "plume-common 0.2.0",
  "reqwest 0.9.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=cb3580b3f6af2fdc2f24e0fe13745f7ea3ccc784)",
+ "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
  "scheduled-thread-pool 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2332,9 +2332,9 @@ dependencies = [
 [[package]]
 name = "rocket_i18n"
 version = "0.4.0"
-source = "git+https://github.com/Plume-org/rocket_i18n?rev=cb3580b3f6af2fdc2f24e0fe13745f7ea3ccc784#cb3580b3f6af2fdc2f24e0fe13745f7ea3ccc784"
+source = "git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2#e922afa7c366038b3433278c03b1456b346074f2"
 dependencies = [
- "gettext 0.3.0 (git+https://github.com/BaptisteGelez/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -3364,9 +3364,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum futures 0.1.25 (registry+https://github.com/rust-lang/crates.io-index)" = "49e7653e374fe0d0c12de4250f0bdb60680b8c80eed558c5c7538eec9c89e21b"
 "checksum futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "ab90cde24b3319636588d0c35fe03b1333857621051837ed769faefb4c2162e4"
 "checksum generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3c0f28c2f5bfb5960175af447a2da7c18900693738343dc896ffbcabd9839592"
-"checksum gettext 0.3.0 (git+https://github.com/BaptisteGelez/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)" = "<none>"
-"checksum gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)" = "<none>"
-"checksum gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=dc431a69654b15a33537b926c203cb6266d67b9e)" = "<none>"
+"checksum gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)" = "<none>"
+"checksum gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)" = "<none>"
+"checksum gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)" = "<none>"
 "checksum guid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e691c64d9b226c7597e29aeb46be753beb8c9eeef96d8c78dfd4d306338a38da"
 "checksum guid-create 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "fcea207bf7a6092166ab590f98fe5dde5a7deed1f1920d98dcac31f80814c40d"
 "checksum guid-macro-impl 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "08d50f7c496073b5a5dec0f6f1c149113a50960ce25dd2a559987a5a71190816"
@@ -3498,7 +3498,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_contrib 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f73e161dad5730435f51c815a5c6831d2e57b6b4299b1bf609d31b09aa9a2fa7"
 "checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)" = "<none>"
 "checksum rocket_http 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ba9d4f2ce5bba6e1b6d3100493bbad63879e99bbf6b4365d61e6f781daab324d"
-"checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=cb3580b3f6af2fdc2f24e0fe13745f7ea3ccc784)" = "<none>"
+"checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)" = "<none>"
 "checksum rpassword 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d37473170aedbe66ffa3ad3726939ba677d83c646ad4fd99e5b4bc38712f45ec"
 "checksum rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)" = "7f4534cc03040beacd2668621815f26fe57e5b7cfe085790f98e5e87c1612316"
 "checksum ructe 0.5.10 (registry+https://github.com/rust-lang/crates.io-index)" = "159f449df09bdd1c92080d0fc1d1c5e11abe81301496370dfee546d985a46dec"
