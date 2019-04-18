@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 20:49\n"
+"PO-Revision-Date: 2019-04-18 15:25\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -46,7 +46,7 @@ msgstr "Per creare un nuovo blog, devi avere effettuato l'accesso"
 
 # src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Un blog con lo stesso nome esiste già."
 
 # src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
@@ -94,7 +94,7 @@ msgstr "Modifica {0}"
 
 # src/routes/posts.rs:630
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "Non è stato possibile ottenere abbastanza informazioni sul tuo account. Per favore assicurati che il tuo nome utente sia corretto."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
@@ -244,7 +244,7 @@ msgid "Allow anyone to register here"
 msgstr "Permetti a chiunque di registrarsi qui"
 
 msgid "Short description"
-msgstr ""
+msgstr "Descrizione breve"
 
 msgid "Markdown syntax is supported"
 msgstr "La sintassi Markdown è supportata"
@@ -460,7 +460,7 @@ msgid "Boost"
 msgstr "Boost"
 
 msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
+msgstr "{0}Accedi{1}, o {2}usa il tuo account del Fediverso{3} per interagire con questo articolo"
 
 msgid "Comments"
 msgstr "Commenti"
@@ -479,13 +479,13 @@ msgid "No comments yet. Be the first to react!"
 msgstr "Ancora nessun commento. Sii il primo ad aggiungere la tua reazione!"
 
 msgid "Interact with {}"
-msgstr ""
+msgstr "Interagisci con {}"
 
 msgid "Log in to interact"
-msgstr ""
+msgstr "Accedi per interagire"
 
 msgid "Enter your full username to interact"
-msgstr ""
+msgstr "Inserisci il tuo nome utente completo per interagire"
 
 msgid "Publish"
 msgstr "Pubblica"
@@ -534,10 +534,10 @@ msgid "Publish your post"
 msgstr "Pubblica il tuo post"
 
 msgid "I'm from this instance"
-msgstr ""
+msgstr "Io appartengo a questa istanza"
 
 msgid "I'm from another instance"
-msgstr ""
+msgstr "Io sono di un'altra istanza"
 
 # src/template_utils.rs:217
 msgid "Username"
@@ -545,10 +545,10 @@ msgstr "Nome utente"
 
 # src/template_utils.rs:225
 msgid "Example: user@plu.me"
-msgstr ""
+msgstr "Esempio: utente@plu.me"
 
 msgid "Continue to your instance"
-msgstr ""
+msgstr "Continua verso la tua istanza"
 
 msgid "View all"
 msgstr "Vedi tutto"
