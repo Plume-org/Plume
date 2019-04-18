@@ -3,10 +3,10 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
 use notifications::*;
-use plume_common::activity_pub::inbox::Notify;
 use posts::Post;
 use schema::mentions;
 use users::User;
+use PlumeRocket;
 use {Connection, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
@@ -55,8 +55,8 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(conn: &Connection, ment: &str) -> Result<link::Mention> {
-        let user = User::find_by_fqn(conn, ment)?;
+    pub fn build_activity(c: &PlumeRocket, ment: &str) -> Result<link::Mention> {
+        let user = User::find_by_fqn(c, ment)?;
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.ap_url)?;
         mention.link_props.set_name_string(format!("@{}", ment))?;
@@ -126,10 +126,7 @@ impl Mention {
             .map(|_| ())
             .map_err(Error::from)
     }
-}
 
-impl Notify<Connection> for Mention {
-    type Error = Error;
     fn notify(&self, conn: &Connection) -> Result<()> {
         let m = self.get_mentioned(conn)?;
         Notification::insert(

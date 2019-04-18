@@ -10,12 +10,12 @@ use std::{
 };
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use plume_common::activity_pub::{broadcast, inbox::Deletable, ActivityStream, ApRequest};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
     blogs::*,
     comments::{Comment, CommentTree},
-    db_conn::DbConn,
+    inbox::inbox,
     instance::Instance,
     medias::Media,
     mentions::Mention,
@@ -24,20 +24,21 @@ use plume_models::{
     safe_string::SafeString,
     tags::*,
     users::User,
+    Error, PlumeRocket,
 };
-use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, PlumeRocket};
+use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen};
 use template_utils::Ructe;
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
 pub fn details(
     blog: String,
     slug: String,
-    conn: DbConn,
-    user: Option<User>,
     responding_to: Option<i32>,
-    intl: I18n,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    let blog = Blog::find_by_fqn(&*conn, &blog)?;
+    let conn = &*rockets.conn;
+    let user = rockets.user.clone();
+    let blog = Blog::find_by_fqn(&rockets, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
     if post.published
         || post
@@ -50,7 +51,7 @@ pub fn details(
         let previous = responding_to.and_then(|r| Comment::get(&*conn, r).ok());
 
         Ok(render!(posts::details(
-            &(&*conn, &intl.catalog, user.clone()),
+            &(&*conn, &rockets.intl.catalog, user.clone()),
             post.clone(),
             blog,
             &NewCommentForm {
@@ -88,8 +89,8 @@ pub fn details(
         )))
     } else {
         Ok(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, user.clone()),
-            i18n!(intl.catalog, "This post isn't published yet.")
+            &(&*conn, &rockets.intl.catalog, user.clone()),
+            i18n!(rockets.intl.catalog, "This post isn't published yet.")
         )))
     }
 }
@@ -98,10 +99,11 @@ pub fn details(
 pub fn activity_details(
     blog: String,
     slug: String,
-    conn: DbConn,
     _ap: ApRequest,
+    rockets: PlumeRocket,
 ) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
-    let blog = Blog::find_by_fqn(&*conn, &blog).map_err(|_| None)?;
+    let conn = &*rockets.conn;
+    let blog = Blog::find_by_fqn(&rockets, &blog).map_err(|_| None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).map_err(|_| None)?;
     if post.published {
         Ok(ActivityStream::new(
@@ -126,8 +128,8 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 
 #[get("/~/<blog>/new", rank = 1)]
 pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let conn = rockets.conn;
-    let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let conn = &*rockets.conn;
+    let b = Blog::find_by_fqn(&rockets, &blog)?;
     let user = rockets.user.unwrap();
     let intl = rockets.intl;
 
@@ -164,16 +166,16 @@ pub fn edit(
     cl: ContentLen,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    let conn = rockets.conn;
-    let intl = rockets.intl;
-    let b = Blog::find_by_fqn(&*conn, &blog)?;
+    let conn = &*rockets.conn;
+    let intl = &rockets.intl.catalog;
+    let b = Blog::find_by_fqn(&rockets, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
     let user = rockets.user.unwrap();
 
     if !user.is_author_in(&*conn, &b)? {
         return Ok(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "You are not an author of this blog.")
+            &(&*conn, intl, Some(user)),
+            i18n!(intl, "You are not an author of this blog.")
         )));
     }
 
@@ -186,8 +188,8 @@ pub fn edit(
     let medias = Media::for_user(&*conn, user.id)?;
     let title = post.title.clone();
     Ok(render!(posts::new(
-        &(&*conn, &intl.catalog, Some(user)),
-        i18n!(intl.catalog, "Edit {0}"; &title),
+        &(&*conn, intl, Some(user)),
+        i18n!(intl, "Edit {0}"; &title),
         b,
         true,
         &NewPostForm {
@@ -219,12 +221,12 @@ pub fn update(
     form: LenientForm<NewPostForm>,
     rockets: PlumeRocket,
 ) -> Result<Redirect, Ructe> {
-    let conn = rockets.conn;
-    let b = Blog::find_by_fqn(&*conn, &blog).expect("post::update: blog error");
+    let conn = &*rockets.conn;
+    let b = Blog::find_by_fqn(&rockets, &blog).expect("post::update: blog error");
     let mut post =
         Post::find_by_slug(&*conn, &slug, b.id).expect("post::update: find by slug error");
-    let user = rockets.user.unwrap();
-    let intl = rockets.intl;
+    let user = rockets.user.clone().unwrap();
+    let intl = &rockets.intl.catalog;
 
     let new_slug = if !post.published {
         form.title.to_string().to_kebab_case()
@@ -282,8 +284,6 @@ pub fn update(
                 false
             };
 
-            let searcher = rockets.searcher;
-            let worker = rockets.worker;
             post.slug = new_slug.clone();
             post.title = form.title.clone();
             post.subtitle = form.subtitle.clone();
@@ -291,7 +291,7 @@ pub fn update(
             post.source = form.content.clone();
             post.license = form.license.clone();
             post.cover_id = form.cover;
-            post.update(&*conn, &searcher)
+            post.update(&*conn, &rockets.searcher)
                 .expect("post::update: update error");;
 
             if post.published {
@@ -299,7 +299,7 @@ pub fn update(
                     &conn,
                     mentions
                         .into_iter()
-                        .filter_map(|m| Mention::build_activity(&conn, &m).ok())
+                        .filter_map(|m| Mention::build_activity(&rockets, &m).ok())
                         .collect(),
                 )
                 .expect("post::update: mentions error");;
@@ -333,13 +333,13 @@ pub fn update(
                         .create_activity(&conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&*conn).expect("post::update: dest error");
-                    worker.execute(move || broadcast(&user, act, dest));
+                    rockets.worker.execute(move || broadcast(&user, act, dest));
                 } else {
                     let act = post
                         .update_activity(&*conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&*conn).expect("posts::update: dest error");
-                    worker.execute(move || broadcast(&user, act, dest));
+                    rockets.worker.execute(move || broadcast(&user, act, dest));
                 }
             }
 
@@ -350,8 +350,8 @@ pub fn update(
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts:update: medias error");
         Err(render!(posts::new(
-            &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "Edit {0}"; &form.title),
+            &(&*conn, intl, Some(user)),
+            i18n!(intl, "Edit {0}"; &form.title),
             b,
             true,
             &*form,
@@ -394,10 +394,10 @@ pub fn create(
     cl: ContentLen,
     rockets: PlumeRocket,
 ) -> Result<Redirect, Result<Ructe, ErrorPage>> {
-    let conn = rockets.conn;
-    let blog = Blog::find_by_fqn(&*conn, &blog_name).expect("post::create: blog error");;
+    let conn = &*rockets.conn;
+    let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
-    let user = rockets.user.unwrap();
+    let user = rockets.user.clone().unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -440,7 +440,6 @@ pub fn create(
             )),
         );
 
-        let searcher = rockets.searcher;
         let post = Post::insert(
             &*conn,
             NewPost {
@@ -456,7 +455,7 @@ pub fn create(
                 source: form.content.clone(),
                 cover_id: form.cover,
             },
-            &searcher,
+            &rockets.searcher,
         )
         .expect("post::create: post save error");
 
@@ -502,7 +501,7 @@ pub fn create(
             for m in mentions {
                 Mention::from_activity(
                     &*conn,
-                    &Mention::build_activity(&*conn, &m)
+                    &Mention::build_activity(&rockets, &m)
                         .expect("post::create: mention build error"),
                     post.id,
                     true,
@@ -546,14 +545,13 @@ pub fn delete(
     slug: String,
     rockets: PlumeRocket,
 ) -> Result<Redirect, ErrorPage> {
-    let conn = rockets.conn;
-    let user = rockets.user.unwrap();
-    let post = Blog::find_by_fqn(&*conn, &blog_name)
-        .and_then(|blog| Post::find_by_slug(&*conn, &slug, blog.id));
+    let user = rockets.user.clone().unwrap();
+    let post = Blog::find_by_fqn(&rockets, &blog_name)
+        .and_then(|blog| Post::find_by_slug(&*rockets.conn, &slug, blog.id));
 
     if let Ok(post) = post {
         if !post
-            .get_authors(&*conn)?
+            .get_authors(&*rockets.conn)?
             .into_iter()
             .any(|a| a.id == user.id)
         {
@@ -562,18 +560,24 @@ pub fn delete(
             ));
         }
 
-        let searcher = rockets.searcher;
-        let worker = rockets.worker;
+        let dest = User::one_by_instance(&*rockets.conn)?;
+        let delete_activity = post.build_delete(&*rockets.conn)?;
+        inbox(
+            &rockets,
+            serde_json::to_value(&delete_activity).map_err(Error::from)?,
+        )?;
 
-        let dest = User::one_by_instance(&*conn)?;
-        let delete_activity = post.delete(&(&conn, &searcher))?;
         let user_c = user.clone();
-
-        worker.execute(move || broadcast(&user_c, delete_activity, dest));
-        worker.execute_after(Duration::from_secs(10 * 60), move || {
-            user.rotate_keypair(&conn)
-                .expect("Failed to rotate keypair");
-        });
+        rockets
+            .worker
+            .execute(move || broadcast(&user_c, delete_activity, dest));
+        let conn = rockets.conn;
+        rockets
+            .worker
+            .execute_after(Duration::from_secs(10 * 60), move || {
+                user.rotate_keypair(&*conn)
+                    .expect("Failed to rotate keypair");
+            });
 
         Ok(Redirect::to(
             uri!(super::blogs::details: name = blog_name, page = _),

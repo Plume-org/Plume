@@ -19,7 +19,7 @@ use mail::{build_mail, Mailer};
 use plume_models::{
     db_conn::DbConn,
     users::{User, AUTH_COOKIE},
-    Error, CONFIG,
+    Error, PlumeRocket, CONFIG,
 };
 use routes::errors::ErrorPage;
 
@@ -43,14 +43,14 @@ pub struct LoginForm {
 
 #[post("/login", data = "<form>")]
 pub fn create(
-    conn: DbConn,
     form: LenientForm<LoginForm>,
     flash: Option<FlashMessage>,
     mut cookies: Cookies,
-    intl: I18n,
+    rockets: PlumeRocket,
 ) -> Result<Redirect, Ructe> {
+    let conn = &*rockets.conn;
     let user = User::find_by_email(&*conn, &form.email_or_name)
-        .or_else(|_| User::find_by_fqn(&*conn, &form.email_or_name));
+        .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
@@ -98,7 +98,7 @@ pub fn create(
             .map(IntoOwned::into_owned)
             .map_err(|_| {
                 render!(session::login(
-                    &(&*conn, &intl.catalog, None),
+                    &(&*conn, &rockets.intl.catalog, None),
                     None,
                     &*form,
                     errors
@@ -108,7 +108,7 @@ pub fn create(
         Ok(Redirect::to(uri))
     } else {
         Err(render!(session::login(
-            &(&*conn, &intl.catalog, None),
+            &(&*conn, &rockets.intl.catalog, None),
             None,
             &*form,
             errors

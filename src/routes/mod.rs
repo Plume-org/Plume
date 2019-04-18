@@ -10,40 +10,9 @@ use rocket::{
     response::NamedFile,
     Outcome,
 };
-use rocket_i18n::I18n;
 use std::path::{Path, PathBuf};
 
-use plume_models::{db_conn::DbConn, posts::Post, users::User, Connection};
-
-use Searcher;
-use Worker;
-
-pub struct PlumeRocket<'a> {
-    conn: DbConn,
-    intl: I18n,
-    user: Option<User>,
-    searcher: Searcher<'a>,
-    worker: Worker<'a>,
-}
-
-impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket<'a> {
-    type Error = ();
-
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket<'a>, ()> {
-        let conn = request.guard::<DbConn>()?;
-        let intl = request.guard::<I18n>()?;
-        let user = request.guard::<User>().succeeded();
-        let worker = request.guard::<Worker>()?;
-        let searcher = request.guard::<Searcher>()?;
-        rocket::Outcome::Success(PlumeRocket {
-            conn,
-            intl,
-            user,
-            worker,
-            searcher,
-        })
-    }
-}
+use plume_models::{posts::Post, Connection};
 
 const ITEMS_PER_PAGE: i32 = 12;
 
