@@ -25,7 +25,8 @@ msgid "Title"
 msgstr "Nadpis"
 
 # plume-front/src/editor.rs:147
-msgid "Subtitle or summary"
+#, fuzzy
+msgid "Subtitle, or summary"
 msgstr "Zhrnutie, alebo podnadpis"
 
 # plume-front/src/editor.rs:154
@@ -55,4 +56,3 @@ msgstr "Toto je koncept"
 # plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr "Zverejniť"
-

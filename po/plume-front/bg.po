@@ -24,8 +24,8 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-# plume-front/src/editor.rs:147
-msgid "Subtitle or summary"
+# plume-front/src/editor.rs:149
+msgid "Subtitle, or summary"
 msgstr ""
 
 # plume-front/src/editor.rs:154
@@ -55,4 +55,3 @@ msgstr ""
 # plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr ""
-

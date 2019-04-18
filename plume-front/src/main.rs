@@ -11,7 +11,7 @@ extern crate stdweb;
 
 use stdweb::web::{event::*, *};
 
-init_i18n!("plume-front", en, fr);
+init_i18n!("plume-front", ar, bg, ca, cs, de, en, eo, es, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr, sk, sv);
 
 mod editor;
 

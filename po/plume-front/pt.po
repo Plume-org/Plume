@@ -25,7 +25,8 @@ msgid "Title"
 msgstr "Título"
 
 # plume-front/src/editor.rs:147
-msgid "Subtitle or summary"
+#, fuzzy
+msgid "Subtitle, or summary"
 msgstr "Legenda ou resumo"
 
 # plume-front/src/editor.rs:154
@@ -55,4 +56,3 @@ msgstr "Isso é um rascunho"
 # plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr "Publicar"
-

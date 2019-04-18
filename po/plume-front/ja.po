@@ -25,7 +25,8 @@ msgid "Title"
 msgstr "タイトル"
 
 # plume-front/src/editor.rs:147
-msgid "Subtitle or summary"
+#, fuzzy
+msgid "Subtitle, or summary"
 msgstr "サブタイトルまたは概要"
 
 # plume-front/src/editor.rs:154
@@ -55,4 +56,3 @@ msgstr "これは下書きです"
 # plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr "公開"
-
