@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-18 06:16\n"
+"PO-Revision-Date: 2019-04-18 07:05\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -543,7 +543,7 @@ msgid "I'm from this instance"
 msgstr ""
 
 msgid "I'm from another instance"
-msgstr ""
+msgstr "Jestem z innej instancji"
 
 # src/template_utils.rs:217
 msgid "Username"
@@ -551,7 +551,7 @@ msgstr "Nazwa użytkownika"
 
 # src/template_utils.rs:225
 msgid "Example: user@plu.me"
-msgstr ""
+msgstr "Przykład: user@plu.me"
 
 msgid "Continue to your instance"
 msgstr ""
@@ -776,7 +776,7 @@ msgid "Login to follow"
 msgstr ""
 
 msgid "Enter your full username to follow"
-msgstr ""
+msgstr "Wpisz swoją pełną nazwę użytkownika, do naśladowania"
 
 msgid "Internal server error"
 msgstr "Wewnętrzny błąd serwera"
