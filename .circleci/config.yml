@@ -168,6 +168,7 @@ jobs:
       - checkout
       - *attach_workspace
       - *restore_cache
+      - run: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - run: cargo fetch
       - *save_cache
       - *persist_to_workspace
