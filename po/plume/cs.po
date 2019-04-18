@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 20:49\n"
+"PO-Revision-Date: 2019-04-18 07:05\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -491,7 +491,7 @@ msgid "Log in to interact"
 msgstr ""
 
 msgid "Enter your full username to interact"
-msgstr ""
+msgstr "Pro interakci zadejte své plné uživatelské jméno"
 
 msgid "Publish"
 msgstr "Zveřejnit"
@@ -540,10 +540,10 @@ msgid "Publish your post"
 msgstr "Publikovat svůj příspěvek"
 
 msgid "I'm from this instance"
-msgstr ""
+msgstr "Jsem z téhle instance"
 
 msgid "I'm from another instance"
-msgstr ""
+msgstr "Jsem z jiné instance"
 
 # src/template_utils.rs:217
 msgid "Username"
@@ -551,10 +551,10 @@ msgstr "Uživatelské jméno"
 
 # src/template_utils.rs:225
 msgid "Example: user@plu.me"
-msgstr ""
+msgstr "Příklad: user@plu.me"
 
 msgid "Continue to your instance"
-msgstr ""
+msgstr "Pokračujte na vaši instanci"
 
 msgid "View all"
 msgstr "Zobrazit všechny"
@@ -569,7 +569,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume je decentralizovaný blogování systém."
 
 msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
+msgstr "Autoři mohou spravovat vícero blogů, každý jako svou vlastní stránku."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr "Články jsou viditelné také na ostatních Plume instancích, a můžete s nimi narábět přímo i v rámci jiných platforem, jako je Mastodon."
@@ -770,7 +770,7 @@ msgid "Apologies, but registrations are closed on this particular instance. You 
 msgstr "Omlouváme se, ale registrace je uzavřena na této konkrétní instanci. Můžete však najít jinou."
 
 msgid "Follow {}"
-msgstr ""
+msgstr "Následovat {}"
 
 msgid "Login to follow"
 msgstr ""
