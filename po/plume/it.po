@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-18 15:25\n"
+"PO-Revision-Date: 2019-04-18 16:25\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -563,7 +563,7 @@ msgid "Plume is a decentralized blogging engine."
 msgstr "Plume è un motore di blog decentralizzato."
 
 msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
+msgstr "Gli autori possono gestire blog multipli, ognuno come fosse un sito web differente."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr "Gli articoli sono anche visibili su altre istanze Plume, e puoi interagire con loro direttamente da altre piattaforme come Mastodon."
@@ -668,7 +668,7 @@ msgid "Send"
 msgstr "Invia"
 
 msgid "{0}'s subscriptions"
-msgstr ""
+msgstr "Iscrizioni di {0}"
 
 msgid "Articles"
 msgstr "Articoli"
@@ -764,13 +764,13 @@ msgid "Apologies, but registrations are closed on this particular instance. You 
 msgstr "Spiacenti, ma le registrazioni sono chiuse per questa istanza. Puoi comunque trovarne un'altra."
 
 msgid "Follow {}"
-msgstr ""
+msgstr "Segui {}"
 
 msgid "Login to follow"
-msgstr ""
+msgstr "Accedi per seguire"
 
 msgid "Enter your full username to follow"
-msgstr ""
+msgstr "Inserisci il tuo nome utente completo per seguire"
 
 msgid "Internal server error"
 msgstr "Errore interno del server"
