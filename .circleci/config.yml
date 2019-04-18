@@ -190,15 +190,9 @@ aliases:
           name: build plm
           command: cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli || cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli
       - *save_cache_release
+      - run: script/generate_artifact.sh
       - store_artifacts:
-          path: static
-          destination: static
-      - store_artifacts:
-          path: target/release/plume
-          destination: bin/plume
-      - store_artifacts:
-          path: target/release/plm
-          destination: bin/plm
+          path: plume.tar.gz
 
 
 jobs:
