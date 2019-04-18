@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 20:49\n"
+"PO-Revision-Date: 2019-04-18 09:55\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -46,7 +46,7 @@ msgstr "नया ब्लॉग बनाने के लिए आपको 
 
 # src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "ये नाम से पहले ही एक ब्लॉग है"
 
 # src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
@@ -94,7 +94,7 @@ msgstr "Edit करें {0}"
 
 # src/routes/posts.rs:630
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "आपके अकाउंट के बारे में पर्याप्त जानकारी नहीं मिल पायी. कृपया जांच करें की आपका यूजरनाम सही है."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
@@ -129,21 +129,21 @@ msgid "To edit your profile, you need to be logged in"
 msgstr "प्रोफाइल में बदलाव करने के लिए, लोग इन करें"
 
 msgid "Reset your password"
-msgstr ""
+msgstr "पासवर्ड रिसेट करें"
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "इ-मेल"
 
 # src/template_utils.rs:220
 msgid "Optional"
 msgstr "वैकल्पिक"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "पासवर्ड रिसेट करने के लिए लिंक भेजें"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "आपका इनबॉक्स चेक करें"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
