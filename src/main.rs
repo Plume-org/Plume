@@ -50,7 +50,9 @@ use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-init_i18n!("plume", ar, bg, ca, cs, de, en, eo, es, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr, sk, sv);
+init_i18n!(
+    "plume", ar, bg, ca, cs, de, en, eo, es, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr, sk, sv
+);
 
 mod api;
 mod inbox;
