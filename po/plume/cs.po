@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-18 18:42\n"
+"PO-Revision-Date: 2019-04-18 19:40\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -94,7 +94,7 @@ msgstr "Upravit {0}"
 
 # src/routes/posts.rs:630
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "Nemohli jsme zjistit dostatečné množstvo informací ohledne vašeho účtu. Prosím ověřte si, že vaše předzývka je správná."
+msgstr "Nemohli jsme zjistit dostatečné množství informací ohledne vašeho účtu. Prosím ověřte si, že vaše předzývka je správná."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
