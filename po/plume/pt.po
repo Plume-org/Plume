@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-18 06:16\n"
+"PO-Revision-Date: 2019-04-18 07:05\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -94,7 +94,7 @@ msgstr "Mudar {0}"
 
 # src/routes/posts.rs:630
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "Não foi possível obter informações suficientes sobre sua conta. Por favor, certifique-se de que seu nome de usuário está correto."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
@@ -129,31 +129,31 @@ msgid "To edit your profile, you need to be logged in"
 msgstr "Para editar seu perfil, você precisa estar logado"
 
 msgid "Reset your password"
-msgstr ""
+msgstr "Redefinir sua senha"
 
 # src/template_utils.rs:217
 msgid "E-mail"
-msgstr ""
+msgstr "E-mail"
 
 # src/template_utils.rs:220
 msgid "Optional"
 msgstr "Opcional"
 
 msgid "Send password reset link"
-msgstr ""
+msgstr "Enviar link para redefinição de senha"
 
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Verifique sua caixa de entrada!"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Enviamos um e-mail para o endereço que você nos forneceu com um link para redefinir sua senha."
 
 msgid "Log in"
-msgstr ""
+msgstr "Fazer login"
 
 # src/template_utils.rs:217
 msgid "Username, or email"
-msgstr ""
+msgstr "Nome de usuário ou e-mail"
 
 # src/template_utils.rs:217
 msgid "Password"
@@ -161,14 +161,14 @@ msgstr "Senha"
 
 # src/template_utils.rs:217
 msgid "New password"
-msgstr ""
+msgstr "Nova senha"
 
 # src/template_utils.rs:217
 msgid "Confirmation"
-msgstr ""
+msgstr "Confirmação"
 
 msgid "Update password"
-msgstr ""
+msgstr "Atualizar senha"
 
 msgid "Administration of {0}"
 msgstr "Administração de {0}"
@@ -198,7 +198,7 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Quem escreveu <em>{0}</em> artigos"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr "E estão conectados a <em>{0}</em> outras instâncias"
+msgstr "E esta conectados a <em>{0}</em> outras instâncias"
 
 msgid "Administred by"
 msgstr "Administrado por"
@@ -244,7 +244,7 @@ msgid "Allow anyone to register here"
 msgstr "Permitir que qualquer um se registre aqui"
 
 msgid "Short description"
-msgstr ""
+msgstr "Descrição curta"
 
 msgid "Markdown syntax is supported"
 msgstr "Sintaxe de Markdown é suportada"
@@ -280,11 +280,11 @@ msgid "Subtitle matching these words"
 msgstr ""
 
 msgid "Subtitle - byline"
-msgstr ""
+msgstr "Legenda"
 
 # src/template_utils.rs:305
 msgid "Content matching these words"
-msgstr ""
+msgstr "Conteúdo que contenha estas palavras"
 
 msgid "Body content"
 msgstr ""
