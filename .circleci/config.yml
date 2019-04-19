@@ -162,10 +162,10 @@ aliases:
       - *restore_cache_plume_dead_code
       - run:
           name: install server
-          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . -f || cargo install --debug --no-default-features --features="${FEATURES}",test --path . -f
+          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . --force || cargo install --debug --no-default-features --features="${FEATURES}",test --path . --force
       - run:
           name: install plm
-          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli -f || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli -f
+          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli --force || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli --force
       - run:
           name: run test
           command: ./script/run_browser_test.sh
@@ -203,6 +203,7 @@ jobs:
       - checkout
       - *attach_workspace
       - *restore_cache
+      - run: git config --global --remove-section url."ssh://git@github.com"
       - run: cargo fetch
       - *save_cache
       - *persist_to_workspace

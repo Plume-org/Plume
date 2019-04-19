@@ -3,124 +3,131 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-01-18 06:50+0000\n"
-"Last-Translator: ButterflyOfFire <butterflyoffire+funkwhale@protonmail.com>\n"
-"Language-Team: Arabic <https://translate.funkwhale.audio/projects/plume/"
-"Plume/ar/>\n"
-"Language: ar\n"
+"PO-Revision-Date: 2019-04-17 20:49\n"
+"Last-Translator: Ana Gelez (AnaGelez)\n"
+"Language-Team: Arabic\n"
+"Language: ar_SA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 3.2.2\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: plume\n"
+"X-Crowdin-Language: ar\n"
+"X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-#, fuzzy
+# src/template_utils.rs:68
 msgid "{0} commented on your article."
-msgstr "علَّق {0} على مقالك"
+msgstr ""
 
-# src/template_utils.rs:35
+# src/template_utils.rs:69
 msgid "{0} is subscribed to you."
 msgstr ""
 
-#, fuzzy
+# src/template_utils.rs:70
 msgid "{0} liked your article."
-msgstr "أُعجِب {0} بمقالك"
+msgstr ""
 
+# src/template_utils.rs:71
 msgid "{0} mentioned you."
 msgstr "أشار إليك {0}."
 
-#, fuzzy
+# src/template_utils.rs:72
 msgid "{0} boosted your article."
-msgstr "قام {0} بترقية مقالك"
+msgstr ""
 
-#, fuzzy
+# src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "الصورة الرمزية لـ {0}"
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "لإنشاء مدونة جديدة، تحتاج إلى تسجيل الدخول"
 
+# src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
-msgstr "هناك مدونة تحمل نفس التسمية."
-
-#, fuzzy
-msgid "You are not allowed to delete this blog."
-msgstr "لست مِن محرري هذه المدونة."
-
-#, fuzzy
-msgid "You are not allowed to edit this blog."
-msgstr "لست مِن محرري هذه المدونة."
-
-#, fuzzy
-msgid "You can't use this media as a blog icon."
-msgstr "لست مِن محرري هذه المدونة."
-
-#, fuzzy
-msgid "You can't use this media as a blog banner."
-msgstr "لست مِن محرري هذه المدونة."
-
-# src/routes/likes.rs:47
-msgid "To like a post, you need to be logged in"
 msgstr ""
+
+# src/routes/blogs.rs:172
+msgid "You are not allowed to delete this blog."
+msgstr "لا يسمح لك بحذف هذه المدونة."
+
+# src/routes/blogs.rs:217
+msgid "You are not allowed to edit this blog."
+msgstr "لا يسمح لك بتعديل هذه المدونة."
+
+# src/routes/blogs.rs:262
+msgid "You can't use this media as a blog icon."
+msgstr "لا يمكنك استخدام هذه الوسائط كأيقونة للمدونة."
+
+# src/routes/blogs.rs:280
+msgid "You can't use this media as a blog banner."
+msgstr "لا يمكنك استخدام هذه الوسائط كشعار للمدونة."
+
+# src/routes/likes.rs:51
+msgid "To like a post, you need to be logged in"
+msgstr "يجب عليك تسجيل الدخول أولا للإعجاب بهذا المقال"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولا لعرض الإشعارات"
 
+# src/routes/posts.rs:93
 msgid "This post isn't published yet."
 msgstr "هذا المقال ليس منشورا بعد."
 
-# src/routes/posts.rs:120
+# src/routes/posts.rs:122
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولا لكتابة مقال جديد"
 
-#, fuzzy
+# src/routes/posts.rs:140
 msgid "You are not an author of this blog."
 msgstr "لست مِن محرري هذه المدونة."
 
+# src/routes/posts.rs:147
 msgid "New post"
 msgstr "منشور جديد"
 
+# src/routes/posts.rs:192
 msgid "Edit {0}"
 msgstr "تعديل {0}"
 
-# src/routes/user.rs:222
+# src/routes/posts.rs:630
 msgid ""
 "Couldn't obtain enough information about your account. Please make sure your "
 "username is correct."
 msgstr ""
 
-# src/routes/reshares.rs:47
+# src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
-#, fuzzy
+# src/routes/session.rs:181
 msgid "Password reset"
-msgstr "كلمة السر"
+msgstr "إعادة تعيين كلمة المرور"
 
-# src/routes/session.rs:156
+# src/routes/session.rs:182
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "ها هو رابط إعادة تعيين كلمتك السرية: {0}"
 
-#, fuzzy
+# src/routes/session.rs:259
 msgid "Your password was successfully reset."
-msgstr "لا يمكن ترك خانة الكلمة السرية فارغة"
+msgstr "تمت إعادة تعيين كلمتك السرية بنجاح."
 
-# src/routes/session.rs:214
+# src/routes/session.rs:263
 msgid "Sorry, but the link expired. Try again"
-msgstr ""
+msgstr "عذراً، ولكن انتهت مدة صلاحية الرابط. حاول مرة أخرى"
 
-# src/routes/user.rs:148
+# src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "يجب عليك تسجيل الدخول أولاللنفاذ إلى لوح المراقبة"
 
-# src/routes/user.rs:187
+# src/routes/user.rs:244
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:287
+# src/routes/user.rs:344
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
@@ -131,7 +138,7 @@ msgid "Menu"
 msgstr "القائمة"
 
 msgid "Search"
-msgstr ""
+msgstr "البحث"
 
 msgid "Dashboard"
 msgstr "لوح المراقبة"
@@ -149,7 +156,7 @@ msgid "Log In"
 msgstr "تسجيل الدخول"
 
 msgid "Register"
-msgstr "انشاء حساب"
+msgstr "إنشاء حساب"
 
 msgid "About this instance"
 msgstr "عن مثيل الخادوم هذا"
@@ -163,9 +170,8 @@ msgstr "غرفة المحادثة على ماتريكس"
 msgid "Administration"
 msgstr "الإدارة"
 
-#, fuzzy
 msgid "Welcome to {}"
-msgstr "أهلا بكم على {0}"
+msgstr "مرحبا بكم في {0}"
 
 msgid "Latest articles"
 msgstr "آخر المقالات"
@@ -203,56 +209,50 @@ msgstr "اطرد"
 msgid "All the articles of the Fediverse"
 msgstr "كافة مقالات الفديفرس"
 
-#, fuzzy
 msgid "Articles from {}"
-msgstr "مقالات مِن {0}"
+msgstr "مقالات صادرة مِن {}"
 
-#, fuzzy
 msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "حاليا لا يوجد أي شيء هنا. حاول متابعة أشخاص آخرين."
+msgstr ""
 
+# src/template_utils.rs:217
 msgid "Name"
 msgstr "الاسم"
 
+# src/template_utils.rs:220
 msgid "Optional"
 msgstr "اختياري"
 
-#, fuzzy
 msgid "Allow anyone to register here"
-msgstr "السماح للجميع بتسجيل حساب"
+msgstr "السماح للجميع بإنشاء حساب"
 
-#, fuzzy
 msgid "Short description"
-msgstr "الوصف الطويل"
+msgstr ""
 
-#, fuzzy
 msgid "Markdown syntax is supported"
-msgstr "يمكنك استخدام الماركداون"
+msgstr ""
 
 msgid "Long description"
 msgstr "الوصف الطويل"
 
-#, fuzzy
+# src/template_utils.rs:217
 msgid "Default article license"
-msgstr "الرخصة الافتراضية"
+msgstr "الرخصة الافتراضية للمقال"
 
-#, fuzzy
 msgid "Save these settings"
-msgstr "حفظ التعديلات"
+msgstr "احفظ هذه الإعدادات"
 
 msgid "About {0}"
 msgstr "عن {0}"
 
-#, fuzzy
 msgid "Home to <em>{0}</em> people"
-msgstr "يستضيف <em>{0}</em> مستخدمين"
+msgstr "يستضيف <em>{0}</em> أشخاص"
 
 msgid "Who wrote <em>{0}</em> articles"
 msgstr "قاموا بتحرير <em>{0}</em> مقالات"
 
-#, fuzzy
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr "ومتصل بـ <em>{0}</em> مثيلات خوادم أخرى"
+msgstr ""
 
 msgid "Administred by"
 msgstr "يديره"
@@ -281,14 +281,14 @@ msgid ""
 "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
-#, fuzzy
 msgid "Upload an avatar"
-msgstr "استخدمها كصورة رمزية"
+msgstr "تحميل صورة رمزية"
 
-#, fuzzy
+# src/template_utils.rs:217
 msgid "Display name"
-msgstr "الاسم العلني"
+msgstr "الاسم المعروض"
 
+# src/template_utils.rs:217
 msgid "Email"
 msgstr "البريد الالكتروني"
 
@@ -307,9 +307,8 @@ msgstr "نوخى الحذر هنا، فكل إجراء تأخذه هنا لا ي
 msgid "Delete your account"
 msgstr "احذف حسابك"
 
-#, fuzzy
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "المعذرة، بصفتك مديرا، لا يمكنك مغادرة مثيل خادومك."
+msgstr ""
 
 msgid "Your Dashboard"
 msgstr "لوح المراقبة"
@@ -317,9 +316,8 @@ msgstr "لوح المراقبة"
 msgid "Your Blogs"
 msgstr "مدوناتك"
 
-#, fuzzy
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "ليس عندك مدونة بعد؟ قم بإنشاء واحدة أو أطلب الإلتحاق بمدونة."
+msgstr ""
 
 msgid "Start a new blog"
 msgstr "انشئ مدونة جديدة"
@@ -339,37 +337,34 @@ msgstr "انشئ حسابك"
 msgid "Create an account"
 msgstr "انشئ حسابا"
 
+# src/template_utils.rs:217
 msgid "Username"
 msgstr "اسم المستخدم"
 
+# src/template_utils.rs:217
 msgid "Password"
 msgstr "كلمة السر"
 
+# src/template_utils.rs:217
 msgid "Password confirmation"
 msgstr "تأكيد الكلمة السرية"
 
-#, fuzzy
 msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
 msgstr ""
-"عذرا، إن تسجيل الحسابات الجديدة غير ممكن حاليا على مثيل الخادوم هذا. يرجى "
-"المحاولة على مثيل خادم آخر"
 
 msgid "Articles"
 msgstr "المقالات"
 
-#, fuzzy
 msgid "Subscribers"
-msgstr "الوصف"
+msgstr "المشترِكون"
 
-#, fuzzy
 msgid "Subscriptions"
-msgstr "الوصف"
+msgstr "الاشتراكات"
 
-#, fuzzy
 msgid "Atom feed"
-msgstr "خيطك"
+msgstr "تدفق أتوم"
 
 msgid "Recently boosted"
 msgstr "تم ترقيتها حديثا"
@@ -387,28 +382,25 @@ msgid "Open on {0}"
 msgstr "افتح على {0}"
 
 msgid "Unsubscribe"
-msgstr ""
+msgstr "إلغاء الاشتراك"
 
 msgid "Subscribe"
+msgstr "إشترِك"
+
+msgid "{0}'s subscriptions"
 msgstr ""
 
-#, fuzzy
-msgid "{0}'s subscriptions"
-msgstr "الوصف"
-
-#, fuzzy
 msgid "{0}'s subscribers"
-msgstr "الوصف"
+msgstr ""
 
 msgid "Respond"
 msgstr "رد"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "هل أنت واثق؟"
 
-#, fuzzy
 msgid "Delete this comment"
-msgstr "احذف هذه المدونة"
+msgstr "احذف هذا التعليق"
 
 msgid "What is Plume?"
 msgstr "ما هو بلوم Plume؟"
@@ -416,17 +408,13 @@ msgstr "ما هو بلوم Plume؟"
 msgid "Plume is a decentralized blogging engine."
 msgstr "بلوم محرك لامركزي للمدونات."
 
-#, fuzzy
 msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "يمكن للمدونين إدارة عدة مدونات مِن موقع ويب وحيد."
+msgstr ""
 
-#, fuzzy
 msgid ""
 "Articles are also visible on other Plume instances, and you can interact "
 "with them directly from other platforms like Mastodon."
 msgstr ""
-"ستكون المقالات معروضة كذلك على مواقع بلوم الأخرى، و يمكنكم التفاعل معها "
-"مباشرة عبر أية منصة أخرى مثل ماستدون."
 
 msgid "Read the detailed rules"
 msgstr "إقرأ القواعد بالتفصيل"
@@ -434,9 +422,8 @@ msgstr "إقرأ القواعد بالتفصيل"
 msgid "None"
 msgstr "لا شيء"
 
-#, fuzzy
 msgid "No description"
-msgstr "الوصف الطويل"
+msgstr "مِن دون وصف"
 
 msgid "View all"
 msgstr "عرضها كافة"
@@ -447,116 +434,108 @@ msgstr "مِن طرف {0}"
 msgid "Draft"
 msgstr "مسودة"
 
-#, fuzzy
 msgid "Your query"
-msgstr "خيطك"
+msgstr "طلبُك"
 
 msgid "Advanced search"
-msgstr ""
+msgstr "البحث المتقدم"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Article title matching these words"
-msgstr ""
+msgstr "عنوان المقالات المطابقة لهذه الكلمات"
 
 msgid "Title"
 msgstr "العنوان"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Subtitle matching these words"
+msgstr "العناوين الثانوية للمقالات المطابقة لهذه الكلمات"
+
+msgid "Subtitle - byline"
 msgstr ""
 
-#, fuzzy
-msgid "Subtitle - byline"
-msgstr "العنوان الثانوي"
-
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Content matching these words"
 msgstr ""
 
-#, fuzzy
 msgid "Body content"
-msgstr "المحتوى"
+msgstr "محتوى العرض"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "From this date"
-msgstr ""
+msgstr "اعتبارا من هذا التاريخ"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "To this date"
-msgstr ""
+msgstr "بحلول هذا التاريخ"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Containing these tags"
-msgstr ""
+msgstr "تتضمن هذه الوسوم"
 
 msgid "Tags"
-msgstr ""
+msgstr "الوسوم"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these instances"
 msgstr ""
 
-#, fuzzy
 msgid "Instance domain"
-msgstr "إعدادات مثيل الخادم"
+msgstr "اسم نطاق مثيل الخادم"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Authors"
-msgstr ""
+msgstr "المؤلفون"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
-msgstr ""
+msgstr "عنوان المدونة"
 
-# src/template_utils.rs:185
+# src/template_utils.rs:305
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
+msgstr "اللغة"
+
+# src/template_utils.rs:305
+msgid "Published under this license"
 msgstr ""
 
-#, fuzzy
-msgid "Published under this license"
-msgstr "تم نشر هذا المقال تحت رخصة {0}."
-
-#, fuzzy
 msgid "Article license"
-msgstr "المقالات"
+msgstr "رخصة المقال"
 
 msgid "Search result for \"{0}\""
 msgstr ""
 
 msgid "Search result"
+msgstr "نتائج البحث"
+
+msgid "No result for your query"
 msgstr ""
 
-#, fuzzy
-msgid "No result for your query"
-msgstr "الانتقال إلى معرضك"
-
-#, fuzzy
 msgid "No more results for your query"
-msgstr "الانتقال إلى معرضك"
+msgstr ""
 
 msgid "Reset your password"
-msgstr ""
+msgstr "أعد تعيين كلمتك السرية"
 
-#, fuzzy
+# src/template_utils.rs:217
 msgid "New password"
-msgstr "كلمة السر"
+msgstr "كلمة السر الجديدة"
 
-#, fuzzy
+# src/template_utils.rs:217
 msgid "Confirmation"
-msgstr "الإعدادات"
+msgstr "تأكيد"
 
-#, fuzzy
 msgid "Update password"
-msgstr "تحديث الحساب"
+msgstr "تحديث الكلمة السرية"
 
 msgid "Check your inbox!"
 msgstr ""
@@ -566,19 +545,17 @@ msgid ""
 "password."
 msgstr ""
 
-#, fuzzy
+# src/template_utils.rs:217
 msgid "E-mail"
-msgstr "البريد الالكتروني"
+msgstr "البريد الإلكتروني"
 
-#, fuzzy
 msgid "Send password reset link"
-msgstr "كلمة السر"
+msgstr ""
 
-#, fuzzy
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#, fuzzy
+# src/template_utils.rs:217
 msgid "Username, or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
@@ -598,6 +575,7 @@ msgstr "انشر"
 msgid "Classic editor (any changes will be lost)"
 msgstr ""
 
+# src/template_utils.rs:217
 msgid "Subtitle"
 msgstr "العنوان الثانوي"
 
@@ -609,19 +587,18 @@ msgid ""
 "your articles to insert them."
 msgstr ""
 
-#, fuzzy
 msgid "Upload media"
-msgstr "إرسال"
+msgstr "تحميل وسائط"
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "Tags, separated by commas"
 msgstr ""
 
-# src/template_utils.rs:144
+# src/template_utils.rs:217
 msgid "License"
-msgstr ""
+msgstr "الرخصة"
 
-# src/template_utils.rs:148
+# src/template_utils.rs:225
 msgid "Leave it empty to reserve all rights"
 msgstr ""
 
@@ -634,12 +611,11 @@ msgstr "هذه مُسودّة، لا تقم بنشرها الآن."
 msgid "Update"
 msgstr "تحديث"
 
-#, fuzzy
 msgid "Update, or publish"
 msgstr "تحديث أو نشر"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "انشر منشورك"
 
 msgid "Written by {0}"
 msgstr "كتبه {0}"
@@ -651,7 +627,7 @@ msgid "Delete this article"
 msgstr "احذف هذا المقال"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "جميع الحقوق محفوظة."
 
 msgid "This article is under the {0} license."
 msgstr "تم نشر هذا المقال تحت رخصة {0}."
@@ -665,41 +641,36 @@ msgstr[3] "{0} إعجاب"
 msgstr[4] "{0} إعجابات"
 msgstr[5] "{0} إعجابات"
 
-#, fuzzy
 msgid "I don't like this anymore"
-msgstr "لم أعد معجبا بهذا بتاتا"
+msgstr ""
 
 msgid "Add yours"
 msgstr "أعجبني"
 
-#, fuzzy
 msgid "One boost"
 msgid_plural "{0} boosts"
-msgstr[0] "بدون مشاركة"
-msgstr[1] "مشاركة واحدة"
-msgstr[2] "مشاركتان"
-msgstr[3] "{0} مشاركة"
-msgstr[4] "{0} مشاركات"
-msgstr[5] "{0} مشاركة"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
 
-#, fuzzy
 msgid "I don't want to boost this anymore"
-msgstr "لا أريد مشاركة هذا"
+msgstr ""
 
 msgid "Boost"
 msgstr "رقّي"
 
-#, fuzzy
 msgid ""
 "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
 "article"
 msgstr ""
-"قم بتسجيل الدخول أو استخدم حسابك على الفديفرس إن كنت ترغب في التفاعل مع هذا "
-"المقال"
 
 msgid "Comments"
 msgstr "التعليقات"
 
+# src/template_utils.rs:217
 msgid "Content warning"
 msgstr "تحذير عن المحتوى"
 
@@ -712,9 +683,8 @@ msgstr "ارسال التعليق"
 msgid "No comments yet. Be the first to react!"
 msgstr "لا توجد هناك تعليقات بعد. كن أول مَن يتفاعل معه!"
 
-#, fuzzy
 msgid "Invalid CSRF token"
-msgstr "رمز CSRF غير صالح."
+msgstr ""
 
 msgid ""
 "Something is wrong with your CSRF token. Make sure cookies are enabled in "
@@ -723,7 +693,7 @@ msgid ""
 msgstr ""
 
 msgid "Page not found"
-msgstr ""
+msgstr "الصفحة غير موجودة"
 
 msgid "We couldn't find this page."
 msgstr "تعذر العثور على هذه الصفحة."
@@ -741,7 +711,7 @@ msgid "You are not authorized."
 msgstr "ليست لديك التصريحات اللازمة للقيام بذلك."
 
 msgid "Internal server error"
-msgstr ""
+msgstr "خطأ داخلي في الخادم"
 
 msgid "Something broke on our side."
 msgstr "حصل خطأ ما مِن جهتنا."
@@ -749,9 +719,8 @@ msgstr "حصل خطأ ما مِن جهتنا."
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "نعتذر عن الإزعاج. إن كنت تضن أن هذه مشكلة، يرجى إبلاغنا."
 
-#, fuzzy
 msgid "Edit \"{}\""
-msgstr "تعديل {0}"
+msgstr "تعديل \"{}\""
 
 msgid "Description"
 msgstr "الوصف"
@@ -760,29 +729,24 @@ msgid ""
 "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
-#, fuzzy
 msgid "Upload images"
-msgstr "إرسال"
+msgstr "رفع صور"
 
 msgid "Blog icon"
-msgstr ""
+msgstr "أيقونة المدونة"
 
 msgid "Blog banner"
-msgstr ""
+msgstr "شعار المدونة"
 
-#, fuzzy
 msgid "Update blog"
-msgstr "انشاء مدونة"
+msgstr "تحديث المدونة"
 
-#, fuzzy
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr "نوخى الحذر هنا، فكل إجراء تأخذه هنا لا يمكن الغاؤه."
+msgstr "توخى الحذر هنا، فأي إجراء تأخذه هنا لا يمكن الغاؤه."
 
-#, fuzzy
 msgid "Permanently delete this blog"
-msgstr "احذف هذه المدونة"
+msgstr "احذف هذه المدونة نهائيا"
 
-#, fuzzy
 msgid "New Blog"
 msgstr "مدونة جديدة"
 
@@ -793,20 +757,19 @@ msgid "Create blog"
 msgstr "انشاء مدونة"
 
 msgid "{}'s icon"
-msgstr ""
+msgstr "أيقونة {}"
 
 msgid "New article"
 msgstr "مقال جديد"
 
-#, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "بدون أي مؤلف على هذه المدونة: "
-msgstr[1] "مؤلف واحد على هذه المدونة: "
-msgstr[2] "{0} مؤلف على هذه المدونة: "
-msgstr[3] "{0} مؤلف على هذه المدونة: "
-msgstr[4] "{0} مؤلفون على هذه المدونة: "
-msgstr[5] "{0} كُتاب على هذه المدونة: "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
 
 msgid "No posts to see here yet."
 msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
@@ -814,9 +777,8 @@ msgstr "في الوقت الراهن لا توجد أية منشورات هنا.
 msgid "Articles tagged \"{0}\""
 msgstr "المقالات الموسومة بـ \"{0}\""
 
-#, fuzzy
 msgid "There are currently no articles with such a tag"
-msgstr "حاليا لا يوجد هناك مقال يحتوي على هذا الوسم"
+msgstr ""
 
 #, fuzzy
 msgid "I'm from this instance"
@@ -839,27 +801,23 @@ msgstr "إرسال"
 msgid "You don't have any media yet."
 msgstr "ليس لديك أية وسائط بعد."
 
-#, fuzzy
 msgid "Content warning: {0}"
-msgstr "تحذير عن المحتوى"
+msgstr "تحذير عن المحتوى: {0}"
 
 msgid "Delete"
 msgstr "حذف"
 
-#, fuzzy
 msgid "Details"
-msgstr "تفاصيل الصورة"
+msgstr "التفاصيل"
 
 msgid "Media upload"
 msgstr "إرسال الوسائط"
 
-#, fuzzy
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "صالح للمُعاقين بصريا وكذا لمعلومات الرخصة"
+msgstr "مفيدة للأشخاص المعاقين بصريا، فضلا عن معلومات الترخيص"
 
-#, fuzzy
 msgid "Leave it empty, if none is needed"
-msgstr "اتركه فارغا إن لم يوجد"
+msgstr ""
 
 msgid "File"
 msgstr "الملف"
@@ -873,149 +831,11 @@ msgstr "تفاصيل الصورة"
 msgid "Go back to the gallery"
 msgstr "العودة إلى المعرض"
 
-#, fuzzy
 msgid "Markdown syntax"
-msgstr "شيفرة ماركداون"
+msgstr ""
 
-#, fuzzy
 msgid "Copy it into your articles, to insert this media:"
-msgstr "قم بنسخه و إلصاقه في محتوى مقالك لعرض الصورة."
+msgstr ""
 
-#, fuzzy
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
-
-#, fuzzy
-#~ msgid "Short description - byline"
-#~ msgstr "وصف قصير"
-
-#~ msgid "Home to <em>{0}</em> users"
-#~ msgstr "يستضيف <em>{0}</em> مستخدمين"
-
-#~ msgid "Login"
-#~ msgstr "تسجيل الدخول"
-
-#~ msgid "You need to be logged in order to create a new blog"
-#~ msgstr "يجب عليك تسجيل الدخول قصد انشاء مدونة جديدة"
-
-#~ msgid "You need to be logged in order to like a post"
-#~ msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
-
-#~ msgid "You need to be logged in order to see your notifications"
-#~ msgstr "يجب عليك تسجيل الدخول للإطلاع على إشعاراتك"
-
-#~ msgid "You need to be logged in order to write a new post"
-#~ msgstr "يشترط عليك تسجيل الدخول لكتابة مقال جديد"
-
-#, fuzzy
-#~ msgid "You need to be logged in order to reshare a post"
-#~ msgstr "يجب عليك تسجيل الدخول قصد الإعجاب بالمنشور"
-
-#~ msgid "You need to be logged in order to access your dashboard"
-#~ msgstr "يجب عليك أولا تسجيل الدخول للوصول إلى لوح التحكم"
-
-#, fuzzy
-#~ msgid "You need to be logged in order to subscribe to someone"
-#~ msgstr "يجب عليك أولا تسجيل الدخول قصد متابعة شخص آخر"
-
-#~ msgid "You need to be logged in order to edit your profile"
-#~ msgstr "يجب عليك تسجيل الدخول أولا قصد تعديل صفحتك الشخصية"
-
-#, fuzzy
-#~ msgid "There's one article on this blog"
-#~ msgid_plural "There are {0} articles on this blog"
-#~ msgstr[0] "لا مقال على هذه المدونة"
-#~ msgstr[1] "{0} مقال على هذه المدونة"
-#~ msgstr[2] "مقالَين على هذه المدونة"
-#~ msgstr[3] "{0} مقالات على هذه المدونة"
-#~ msgstr[4] "{0} مقالات على هذه المدونة"
-#~ msgstr[5] "{0} مقالات على هذه المدونة"
-
-#~ msgid "{0}'s followers"
-#~ msgstr "{0} متابِعون"
-
-#, fuzzy
-#~ msgid "{0} is now following you."
-#~ msgstr "إنّ {0} يتبعك الآن"
-
-#, fuzzy
-#~ msgid "People {0} follows"
-#~ msgstr "{0} متابِعون"
-
-#~ msgid "Followers"
-#~ msgstr "المتابِعون"
-
-#~ msgid "Unfollow"
-#~ msgstr "الغاء المتابعة"
-
-#~ msgid "Comment \"{0}\""
-#~ msgstr "تعليق \"{0}\""
-
-#~ msgid "Let&#x27;s go!"
-#~ msgstr "هيا بنا!"
-
-#~ msgid "Comment"
-#~ msgstr "تعليق"
-
-#~ msgid "Create a post"
-#~ msgstr "انشئ منشورا"
-
-#~ msgid "One follower"
-#~ msgid_plural "{0} followers"
-#~ msgstr[0] "دون متابِع"
-#~ msgstr[1] "متابِع واحد"
-#~ msgstr[2] "متابِعيْن"
-#~ msgstr[3] "{0} متابِع"
-#~ msgstr[4] "{0} متابِعون"
-#~ msgstr[5] "{0} متابِعين"
-
-#~ msgid "New Account"
-#~ msgstr "حساب جديد"
-
-#~ msgid "Create account"
-#~ msgstr "انشئ حسابا"
-
-#~ msgid "You need to be logged in order to post a comment"
-#~ msgstr "يجب عليك تسجيل الدخول إن كنت تريد نشر تعليق"
-
-#~ msgid "You need to be logged in order to boost a post"
-#~ msgstr "يجب تسجيل الدخول أولا قصد مشاركة أي مقال"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "اسم المستخدم أو كلمة السر غير صالحة"
-
-#~ msgid "We couldn&#x27;t find this page."
-#~ msgstr "الصفحة غير موجودة."
-
-#~ msgid "Unknown error"
-#~ msgstr "خطأ مجهول"
-
-#~ msgid "Invalid name"
-#~ msgstr "اسم غير صالح"
-
-#~ msgid "Your comment can't be empty"
-#~ msgstr "لا يمكن ترك التعليق فارغا"
-
-#~ msgid "A post with the same title already exists."
-#~ msgstr "هناك مقال يحمل نفس العنوان."
-
-#~ msgid "We need an email or a username to identify you"
-#~ msgstr "نحن بحاجة إلى عنوان بريد إلكتروني أو اسم مستخدم للتعرف عليك"
-
-#~ msgid "Passwords are not matching"
-#~ msgstr "الكلمات السرية غير متشابهة"
-
-#~ msgid "Username can't be empty"
-#~ msgstr "لا يمكن ترك خانة اسم المستخدم فارغة"
-
-#~ msgid "Invalid email"
-#~ msgstr "عنوان البريد الالكتروني غير صالح"
-
-#~ msgid "Password should be at least 8 characters long"
-#~ msgstr "ينبغي أن يكون طول الكلمة السرية 8 أحرف على الأقل"
-
-#~ msgid "Previous page"
-#~ msgstr "الصفحة السابقة"
-
-#~ msgid "Next page"
-#~ msgstr "الصفحة التالية"
