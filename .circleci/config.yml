@@ -90,6 +90,21 @@ aliases:
         - ~/.cargo/
         - target
 
+  - &restore_cache_release
+    restore_cache:
+      keys:
+        - v1-plume-release-{{ checksum "Cargo.lock" }}
+        - v1-plume-release
+        - v1-plume-notest-{{ checksum "Cargo.lock" }}
+        - v1-plume-notest
+  - &save_cache_release
+    save_cache:
+      key: v1-plume-release-{{ checksum "Cargo.lock" }}
+      paths:
+        - ~/.cargo
+        - target/release
+        - target/wasm32-unknown-unknown/release
+
   - &restore_cache_plume_dead_code
     restore_cache:
       keys:
@@ -161,6 +176,26 @@ aliases:
           command: ./script/upload_coverage.sh integration
       - *save_cache_plume_dead_code
 
+  - &release
+    steps:
+      - *attach_workspace
+      - *restore_cache_release
+      - run:
+          name: build frontend
+          command: cargo web deploy -p plume-front --release
+      - run:
+          name: build server
+          command: cargo build --release --no-default-features --features="${FEATURES}" || cargo build --release --no-default-features --features="${FEATURES}"
+      - run:
+          name: build plm
+          command: cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli || cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli
+      - *save_cache_release
+      - run: script/generate_artifact.sh
+      - store_artifacts:
+          path: plume.tar.gz
+          destination: plume.tar.gz
+
+
 jobs:
   download_deps:
     <<: *defaults
@@ -217,6 +252,19 @@ jobs:
     <<: *selenium
     <<: *env_sqlite
     <<: *test_browser
+  all_ok:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run: /bin/true
+  release_postgresql:
+    <<: *defaults
+    <<: *env_postgresql
+    <<: *release
+  release_sqlite:
+    <<: *defaults
+    <<: *env_sqlite
+    <<: *release
 
 workflows:
   version: 2
@@ -247,3 +295,18 @@ workflows:
       - test_browser_sqlite:
           requires:
             - build_web
+      - all_ok:
+          requires:
+            - cargo_fmt
+            - test_cli_postgresql
+            - test_cli_sqlite
+            - test_unit_postgresql
+            - test_unit_sqlite
+            - test_browser_postgresql
+            - test_browser_sqlite
+      - release_postgresql:
+          requires:
+            - all_ok
+      - release_sqlite:
+          requires:
+            - all_ok
