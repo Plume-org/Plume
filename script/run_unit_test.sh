@@ -6,5 +6,6 @@ for file in target/debug/*-*[^\.d]; do
 		filename=$(basename $file)
 		mkdir -p "target/cov/$filename"
 		kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$filename" "$file"
+		rm $file
 	fi
 done
