@@ -92,6 +92,12 @@ msgstr "Neuer Beitrag"
 msgid "Edit {0}"
 msgstr "Bearbeite {0}"
 
+# src/routes/posts.rs:630
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Um einen Beitrag zu wiederholen, musst du angemeldet sein"
@@ -661,7 +667,9 @@ msgstr "Ich möchte das nicht mehr boosten"
 msgid "Boost"
 msgstr "Boosten"
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"

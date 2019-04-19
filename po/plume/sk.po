@@ -92,6 +92,14 @@ msgstr "Nový príspevok"
 msgid "Edit {0}"
 msgstr "Uprav {0}"
 
+# src/routes/posts.rs:630
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+"Nebolo možné zistiť postačujúce množstvo informácií o tvojom účte. Prosím "
+"over si, že celá tvoja prezývka je zadaná správne."
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Na zdieľanie príspevku sa musíš prihlásiť"
@@ -252,6 +260,15 @@ msgstr "Správcom je"
 
 msgid "Runs Plume {0}"
 msgstr "Beží na Plume {0}"
+
+msgid "Follow {}"
+msgstr "Následuj {}"
+
+msgid "Login to follow"
+msgstr "Pre následovanie sa prihlás"
+
+msgid "Enter your full username to follow"
+msgstr "Zadaj svoju prezývku v úplnosti, aby si následoval/a"
 
 msgid "Edit your account"
 msgstr "Uprav svoj účet"
@@ -554,6 +571,15 @@ msgstr "Prihlás sa"
 msgid "Username, or email"
 msgstr "Používateľské meno, alebo email"
 
+msgid "Interact with {}"
+msgstr "Narábaj s {}"
+
+msgid "Log in to interact"
+msgstr "Pre zapojenie sa prihlás"
+
+msgid "Enter your full username to interact"
+msgstr "Zadaj svoju prezývku v úplnosti, aby si sa zapojil/a"
+
 msgid "Publish"
 msgstr "Zverejni"
 
@@ -646,7 +672,9 @@ msgid "Boost"
 msgstr "Vyzdvihni"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "{0}Prihlás sa{1}, alebo {2}použi svoj účet v rámci Fediversa{3} pre "
 "narábanie s týmto článkom"
@@ -769,6 +797,19 @@ msgstr "Články otagované pod \"{0}\""
 msgid "There are currently no articles with such a tag"
 msgstr "Momentálne tu niesú žiadné články pod takýmto tagom"
 
+msgid "I'm from this instance"
+msgstr "Som z tejto instancie"
+
+msgid "I'm from another instance"
+msgstr "Som z inej instancie"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr "Príklad: user@plu.me"
+
+msgid "Continue to your instance"
+msgstr "Pokračuj na tvoju instanciu"
+
 msgid "Upload"
 msgstr "Nahraj"
 
@@ -814,42 +855,3 @@ msgstr "Kód skopíruj do tvojho článku, pre vloženie tohto mediálneho súbo
 
 msgid "Use as an avatar"
 msgstr "Použi ako avatar"
-
-# src/routes/posts.rs:630
-#~ msgid ""
-#~ "Couldn't obtain enough information about your account. Please make sure "
-#~ "your username is correct."
-#~ msgstr ""
-#~ "Nebolo možné zistiť postačujúce množstvo informácií o tvojom účte. Prosím "
-#~ "over si, že celá tvoja prezývka je zadaná správne."
-
-#~ msgid "Interact with {}"
-#~ msgstr "Narábaj s {}"
-
-#~ msgid "Log in to interact"
-#~ msgstr "Pre zapojenie sa prihlás"
-
-#~ msgid "Enter your full username to interact"
-#~ msgstr "Zadaj svoju prezývku v úplnosti, aby si sa zapojil/a"
-
-#~ msgid "I'm from this instance"
-#~ msgstr "Som z tejto instancie"
-
-#~ msgid "I'm from another instance"
-#~ msgstr "Som z inej instancie"
-
-# src/template_utils.rs:225
-#~ msgid "Example: user@plu.me"
-#~ msgstr "Príklad: user@plu.me"
-
-#~ msgid "Continue to your instance"
-#~ msgstr "Pokračuj na tvoju instanciu"
-
-#~ msgid "Follow {}"
-#~ msgstr "Následuj {}"
-
-#~ msgid "Login to follow"
-#~ msgstr "Pre následovanie sa prihlás"
-
-#~ msgid "Enter your full username to follow"
-#~ msgstr "Zadaj svoju prezývku v úplnosti, aby si následoval/a"

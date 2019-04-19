@@ -92,6 +92,12 @@ msgstr "Nueva publicación"
 msgid "Edit {0}"
 msgstr "Editar {0}"
 
+# src/routes/posts.rs:630
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Para compartir un artículo, necesita estar logueado"

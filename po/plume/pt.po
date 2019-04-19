@@ -92,6 +92,14 @@ msgstr "Novo artigo"
 msgid "Edit {0}"
 msgstr "Mudar {0}"
 
+# src/routes/posts.rs:630
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+"Não foi possível obter informações suficientes sobre sua conta. Por favor, "
+"certifique-se de que seu nome de usuário está correto."
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Para recompartilhar uma postagem, você precisa estar logado"
@@ -656,7 +664,9 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"
@@ -830,11 +840,3 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
-
-# src/routes/posts.rs:630
-#~ msgid ""
-#~ "Couldn't obtain enough information about your account. Please make sure "
-#~ "your username is correct."
-#~ msgstr ""
-#~ "Não foi possível obter informações suficientes sobre sua conta. Por "
-#~ "favor, certifique-se de que seu nome de usuário está correto."

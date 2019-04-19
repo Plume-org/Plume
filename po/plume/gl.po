@@ -92,6 +92,12 @@ msgstr "Nova entrada"
 msgid "Edit {0}"
 msgstr "Editar {0}"
 
+# src/routes/posts.rs:630
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Para compartir un artigo, debe estar conectada"
@@ -660,7 +666,9 @@ msgstr "Xa non quero promocionar este artigo"
 msgid "Boost"
 msgstr "Promover"
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"

@@ -92,6 +92,12 @@ msgstr "Nouvel article"
 msgid "Edit {0}"
 msgstr "Modifier {0}"
 
+# src/routes/posts.rs:630
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Vous devez vous connecter pour partager un article"
@@ -850,42 +856,3 @@ msgstr "Copiez-le dans vos articles, à insérer ce média :"
 
 msgid "Use as an avatar"
 msgstr "Utiliser comme avatar"
-
-# src/routes/posts.rs:630
-#~ msgid ""
-#~ "Couldn't obtain enough information about your account. Please make sure "
-#~ "your username is correct."
-#~ msgstr ""
-#~ "Nous n'avons pas pu obtenir assez d'informations à propos de votre "
-#~ "compte. Veuillez vous assurer que votre nom d'utilisateur est correct."
-
-#~ msgid "Interact with {}"
-#~ msgstr "Interagir avec {}"
-
-#~ msgid "Log in to interact"
-#~ msgstr "Connectez-vous pour interagir"
-
-#~ msgid "Enter your full username to interact"
-#~ msgstr "Entrez votre nom d'utilisateur complet pour interagir"
-
-#~ msgid "I'm from this instance"
-#~ msgstr "Je suis de cette instance"
-
-#~ msgid "I'm from another instance"
-#~ msgstr "Je viens d'une autre instance"
-
-# src/template_utils.rs:225
-#~ msgid "Example: user@plu.me"
-#~ msgstr "Exemple : utilisateur@plu.me"
-
-#~ msgid "Continue to your instance"
-#~ msgstr "Continuez sur votre instance"
-
-#~ msgid "Follow {}"
-#~ msgstr "Suivre {}"
-
-#~ msgid "Login to follow"
-#~ msgstr "Connectez-vous pour læ suivre"
-
-#~ msgid "Enter your full username to follow"
-#~ msgstr "Entrez votre nom d'utilisateur complet pour læ suivre"
