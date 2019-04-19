@@ -255,6 +255,17 @@ msgstr "Администрируется"
 msgid "Runs Plume {0}"
 msgstr "Работает на Plume {0}"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "Подписаться"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Войдите, чтобы продвигать посты"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "Редактировать ваш аккаунт"
 
@@ -543,6 +554,16 @@ msgstr ""
 msgid "Username, or email"
 msgstr ""
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Войдите, чтобы отмечать понравившиеся посты"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Опубликовать"
 
@@ -750,6 +771,21 @@ msgstr ""
 
 msgid "There are currently no articles with such a tag"
 msgstr ""
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Об этом узле"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Настроить ваш узел"
 
 msgid "Upload"
 msgstr "Загрузить"

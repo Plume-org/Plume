@@ -32,7 +32,7 @@
             <a class="u-url" href="@user.ap_url"></a>
         }
 
-        @if ctx.2.clone().map(|u| u.id != user.id).unwrap_or(false) {
+        @if ctx.2.clone().map(|u| u.id != user.id).unwrap_or(true) {
             <form class="inline" method="post" action="@uri!(user::follow: name = &user.fqn)">
             @if follows {
                 <input type="submit" value="@i18n!(ctx.1, "Unsubscribe")">

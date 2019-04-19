@@ -628,6 +628,22 @@ msgstr "Pokój Matrix.org"
 msgid "Your media"
 msgstr "Twoja zawartość multimedialna"
 
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "O tej instancji"
+
+#, fuzzy
+msgid "I'm from another instance"
+msgstr "innych instancji"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Skonfiguruj swoją instancję"
+
 msgid "Upload"
 msgstr "Wyślij"
 

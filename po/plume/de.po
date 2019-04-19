@@ -253,6 +253,17 @@ msgstr "Administriert von"
 msgid "Runs Plume {0}"
 msgstr "Verwendet Plume {0}"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "Folgen"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Um zu boosten, musst du eingeloggt sein"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "Ändere deinen Account"
 
@@ -553,6 +564,16 @@ msgstr "Anmelden"
 msgid "Username, or email"
 msgstr "Benutzername oder E-Mail"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Um zu liken, musst du eingeloggt sein"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -759,6 +780,21 @@ msgstr "Artikel, die mit \"{0}\" getaggt sind"
 
 msgid "There are currently no articles with such a tag"
 msgstr "Es gibt derzeit keine Artikel mit einem solchen Tag"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Über diese Instanz"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Konfiguriere deine Instanz"
 
 msgid "Upload"
 msgstr "Hochladen"

@@ -256,6 +256,17 @@ msgstr "管理者"
 msgid "Runs Plume {0}"
 msgstr "Plume {0} を実行中"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "フォロー"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "ブーストするにはログインしてください"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "アカウントを編集"
 
@@ -552,6 +563,16 @@ msgstr "ログイン"
 msgid "Username, or email"
 msgstr "ユーザー名またはメールアドレス"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "いいねするにはログインしてください"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "公開"
 
@@ -752,6 +773,22 @@ msgstr "\"{0}\" タグがついた投稿"
 
 msgid "There are currently no articles with such a tag"
 msgstr "現在このタグがついた投稿はありません"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "このインスタンスについて"
+
+#, fuzzy
+msgid "I'm from another instance"
+msgstr "件"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "インスタンスを設定"
 
 msgid "Upload"
 msgstr "アップロード"

@@ -254,6 +254,17 @@ msgstr "يديره"
 msgid "Runs Plume {0}"
 msgstr "مدعوم بـ Plume {0}"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "اتبع"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "قم بتسجيل الدخول قصد مشاركته"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "تعديل حسابك"
 
@@ -542,6 +553,16 @@ msgstr "تسجيل الدخول"
 msgid "Username, or email"
 msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "قم بتسجيل الدخول قصد الإعجاب به"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "انشر"
 
@@ -750,6 +771,21 @@ msgstr "المقالات الموسومة بـ \"{0}\""
 
 msgid "There are currently no articles with such a tag"
 msgstr ""
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "عن مثيل الخادوم هذا"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "إعداد مثيل الخادم"
 
 msgid "Upload"
 msgstr "إرسال"

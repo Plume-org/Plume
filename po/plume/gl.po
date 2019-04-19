@@ -254,6 +254,17 @@ msgstr "Administrada por"
 msgid "Runs Plume {0}"
 msgstr "Versión Plume {0}"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "Seguir"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Conéctese para promover"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "Edite a súa conta"
 
@@ -552,6 +563,16 @@ msgstr "Conectar"
 msgid "Username, or email"
 msgstr "Nome de usuaria ou correo"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Conéctese para gostar"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publicar"
 
@@ -754,6 +775,21 @@ msgstr "Artigos etiquetados \"{0}\""
 
 msgid "There are currently no articles with such a tag"
 msgstr "Non hai artigos con esa etiqueta"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Sobre esta instancia"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configure a súa instancia"
 
 msgid "Upload"
 msgstr "Subir"

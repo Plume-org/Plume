@@ -8,6 +8,7 @@ use serde_json;
 use validator::{Validate, ValidationErrors};
 
 use inbox;
+use plume_common::activity_pub::inbox::FromId;
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
@@ -215,6 +216,36 @@ pub fn shared_inbox(
     headers: Headers,
 ) -> Result<String, status::BadRequest<&'static str>> {
     inbox::handle_incoming(rockets, data, headers)
+}
+
+#[get("/remote_interact?<target>")]
+pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Option<Redirect> {
+    if User::find_by_fqn(&rockets, &target).is_ok() {
+        return Some(Redirect::to(uri!(super::user::details: name = target)));
+    }
+
+    if let Ok(post) = Post::from_id(&rockets, &target, None) {
+        return Some(Redirect::to(
+            uri!(super::posts::details: blog = post.get_blog(&rockets.conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _),
+        ));
+    }
+
+    if let Ok(comment) = Comment::from_id(&rockets, &target, None) {
+        if comment.can_see(&rockets.conn, user.as_ref()) {
+            let post = comment
+                .get_post(&rockets.conn)
+                .expect("Can't retrieve post");
+            return Some(Redirect::to(uri!(
+                super::posts::details: blog = post
+                    .get_blog(&rockets.conn)
+                    .expect("Can't retrieve blog")
+                    .fqn,
+                slug = &post.slug,
+                responding_to = comment.id
+            )));
+        }
+    }
+    None
 }
 
 #[get("/nodeinfo/<version>")]

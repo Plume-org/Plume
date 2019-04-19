@@ -253,6 +253,17 @@ msgstr "Administrado por"
 msgid "Runs Plume {0}"
 msgstr "Ejecuta Pluma {0}"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "Seguir"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Dejar de seguir"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "Edita tu cuenta"
 
@@ -548,6 +559,15 @@ msgstr "Iniciar sesión"
 msgid "Username, or email"
 msgstr "Nombre de usuario, o correo electrónico"
 
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publicar"
 
@@ -635,7 +655,9 @@ msgstr "Ya no quiero compartir esto"
 msgid "Boost"
 msgstr "Compartir"
 
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 
 msgid "Comments"
@@ -754,6 +776,20 @@ msgstr "Artículos etiquetados \"{0}\""
 
 msgid "There are currently no articles with such a tag"
 msgstr "Actualmente, no hay artículo con esa etiqueta"
+
+msgid "I'm from this instance"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configure su instancia"
 
 msgid "Upload"
 msgstr "Subir"

@@ -254,6 +254,17 @@ msgstr "Administré par"
 msgid "Runs Plume {0}"
 msgstr "Propulsé par Plume {0}"
 
+#, fuzzy
+msgid "Follow {}"
+msgstr "S’abonner"
+
+#, fuzzy
+msgid "Login to follow"
+msgstr "Connectez-vous pour partager"
+
+msgid "Enter your full username to follow"
+msgstr ""
+
 msgid "Edit your account"
 msgstr "Modifier votre compte"
 
@@ -557,6 +568,16 @@ msgstr "Se connecter"
 msgid "Username, or email"
 msgstr "Nom d'utilisateur⋅ice ou e-mail"
 
+msgid "Interact with {}"
+msgstr ""
+
+#, fuzzy
+msgid "Log in to interact"
+msgstr "Connectez-vous pour aimer"
+
+msgid "Enter your full username to interact"
+msgstr ""
+
 msgid "Publish"
 msgstr "Publier"
 
@@ -645,7 +666,9 @@ msgid "Boost"
 msgstr "Partager"
 
 #, fuzzy
-msgid "Log in, or use your Fediverse account to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr ""
 "{0}Connectez-vous{1}, ou {2}utilisez votre compte sur le Fediverse{3} pour "
 "interagir avec cet article"
@@ -765,6 +788,21 @@ msgstr "Articles marqués \"{0}\""
 
 msgid "There are currently no articles with such a tag"
 msgstr "Il n'y a actuellement aucun article avec un tel tag"
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "À propos de cette instance"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+#, fuzzy
+msgid "Continue to your instance"
+msgstr "Configurer votre instance"
 
 msgid "Upload"
 msgstr "Téléverser"

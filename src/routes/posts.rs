@@ -26,7 +26,7 @@ use plume_models::{
     users::User,
     Error, PlumeRocket,
 };
-use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen};
+use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm};
 use template_utils::Ructe;
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
@@ -586,5 +586,58 @@ pub fn delete(
         Ok(Redirect::to(
             uri!(super::blogs::details: name = blog_name, page = _),
         ))
+    }
+}
+
+#[get("/~/<blog_name>/<slug>/remote_interact")]
+pub fn remote_interact(
+    rockets: PlumeRocket,
+    blog_name: String,
+    slug: String,
+    i18n: I18n,
+) -> Result<Ructe, ErrorPage> {
+    let target = Blog::find_by_fqn(&rockets, &blog_name)
+        .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
+    Ok(render!(posts::remote_interact(
+        &(&rockets.conn, &i18n.catalog, None),
+        target,
+        super::session::LoginForm::default(),
+        ValidationErrors::default(),
+        RemoteForm::default(),
+        ValidationErrors::default()
+    )))
+}
+
+#[post("/~/<blog_name>/<slug>/remote_interact", data = "<remote>")]
+pub fn remote_interact_post(
+    rockets: PlumeRocket,
+    blog_name: String,
+    slug: String,
+    remote: LenientForm<RemoteForm>,
+    i18n: I18n,
+) -> Result<Result<Ructe, Redirect>, ErrorPage> {
+    let target = Blog::find_by_fqn(&rockets, &blog_name)
+        .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
+    if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
+        .ok()
+        .and_then(|uri| rt_format!(uri, uri = target.ap_url).ok())
+    {
+        Ok(Err(Redirect::to(uri)))
+    } else {
+        let mut errs = ValidationErrors::new();
+        errs.add("remote", ValidationError {
+            code: Cow::from("invalid_remote"),
+            message: Some(Cow::from(i18n!(&i18n.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
+            params: HashMap::new(),
+        });
+        //could not get your remote url?
+        Ok(Ok(render!(posts::remote_interact(
+            &(&rockets.conn, &i18n.catalog, None),
+            target,
+            super::session::LoginForm::default(),
+            ValidationErrors::default(),
+            remote.clone(),
+            errs
+        ))))
     }
 }
