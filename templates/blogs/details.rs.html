@@ -19,7 +19,7 @@
 	<meta content="@blog.title" property="og:title" />
 	<meta content="@blog.summary_html" name="description">
 	<meta content="@blog.summary_html" property="og:description" />
-	<meta content="@blog.icon_url(ctx.0)" property="og:image" />r
+	<meta content="@blog.icon_url(ctx.0)" property="og:image" />
 
 	<link href='@Instance::get_local(ctx.0).unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
