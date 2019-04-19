@@ -1,4 +1,5 @@
 #!/bin/bash
 mkdir bin
 cp target/release/{plume,plm} bin
-tar -cvzf plume.tar.gz bin/ static/
+cp "$(which diesel)" bin
+tar -cvzf plume.tar.gz bin/ static/ migrations/$FEATURES
