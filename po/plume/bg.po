@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-19 07:26\n"
+"PO-Revision-Date: 2019-04-19 08:17\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -204,7 +204,7 @@ msgid "Administred by"
 msgstr ""
 
 msgid "Runs Plume {0}"
-msgstr ""
+msgstr "Писти Pluma {0}"
 
 msgid "All the articles of the Fediverse"
 msgstr ""
@@ -234,30 +234,30 @@ msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 msgid "Administration"
-msgstr ""
+msgstr "Aдминистрация"
 
 # src/template_utils.rs:217
 msgid "Name"
 msgstr "Име"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Позволете на всеки да се регистрира"
 
 msgid "Short description"
-msgstr ""
+msgstr "Кратко описание"
 
 msgid "Markdown syntax is supported"
-msgstr ""
+msgstr "Поддържа се от Markdown"
 
 msgid "Long description"
-msgstr ""
+msgstr "Дълго описание"
 
 # src/template_utils.rs:217
 msgid "Default article license"
-msgstr ""
+msgstr "Лиценз по подразбиране"
 
 msgid "Save these settings"
-msgstr ""
+msgstr "Запаметете тези настройките"
 
 msgid "Search"
 msgstr ""
@@ -476,7 +476,7 @@ msgid "Submit comment"
 msgstr "Публикувайте коментар"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Все още няма коментари. Бъдете първите!"
 
 msgid "Interact with {}"
 msgstr ""
@@ -557,10 +557,10 @@ msgid "By {0}"
 msgstr "С {0}"
 
 msgid "What is Plume?"
-msgstr ""
+msgstr "Какво е Pluma?"
 
 msgid "Plume is a decentralized blogging engine."
-msgstr ""
+msgstr "Pluma е децентрализиран двигател за блогове."
 
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
@@ -590,7 +590,7 @@ msgid "Notifications"
 msgstr "Известия"
 
 msgid "Plume"
-msgstr ""
+msgstr "Pluma"
 
 msgid "Menu"
 msgstr "Меню"
@@ -611,10 +611,10 @@ msgid "Register"
 msgstr "Регистрация"
 
 msgid "About this instance"
-msgstr ""
+msgstr "За тази инстанция"
 
 msgid "Source code"
-msgstr ""
+msgstr "Изходен код"
 
 msgid "Matrix room"
 msgstr ""
