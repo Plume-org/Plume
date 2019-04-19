@@ -191,6 +191,7 @@ aliases:
           command: cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli || cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli
       - *save_cache_release
       - run: script/generate_artifact.sh
+      - run: script/upload_test_environment.sh
       - store_artifacts:
           path: plume.tar.gz
           destination: plume.tar.gz
