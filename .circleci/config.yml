@@ -55,11 +55,11 @@ aliases:
   - &restore_cache
     restore_cache:
       keys:
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}
-        - v1-plume-notest
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}
+        - v2-plume-notest
   - &save_cache
     save_cache:
-      key: v1-plume-notest-{{ checksum "Cargo.lock" }}
+      key: v2-plume-notest-{{ checksum "Cargo.lock" }}
       paths:
         - ~/.cargo/
         - ./target
@@ -67,11 +67,11 @@ aliases:
   - &restore_cache_web
     restore_cache:
       keys:
-        - v1-plume-web-{{ checksum "Cargo.lock" }}
-        - v1-plume-web
+        - v2-plume-web-{{ checksum "Cargo.lock" }}
+        - v2-plume-web
   - &save_cache_web
     save_cache:
-      key: v1-plume-web-{{ checksum "Cargo.lock" }}
+      key: v2-plume-web-{{ checksum "Cargo.lock" }}
       paths:
         - ~/.cargo/
         - ./target
@@ -79,13 +79,13 @@ aliases:
   - &restore_cache_cli
     restore_cache:
       keys:
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}
-        - v1-plume-notest
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}
+        - v2-plume-notest
   - &save_cache_cli
     save_cache:
-      key: v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
+      key: v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
       paths:
         - ~/.cargo/
         - target
@@ -93,13 +93,13 @@ aliases:
   - &restore_cache_release
     restore_cache:
       keys:
-        - v1-plume-release-{{ checksum "Cargo.lock" }}
-        - v1-plume-release
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}
-        - v1-plume-notest
+        - v2-plume-release-{{ checksum "Cargo.lock" }}
+        - v2-plume-release
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}
+        - v2-plume-notest
   - &save_cache_release
     save_cache:
-      key: v1-plume-release-{{ checksum "Cargo.lock" }}
+      key: v2-plume-release-{{ checksum "Cargo.lock" }}
       paths:
         - ~/.cargo
         - target/release
@@ -108,15 +108,15 @@ aliases:
   - &restore_cache_plume_dead_code
     restore_cache:
       keys:
-        - v1-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
-        - v1-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}
-        - v1-plume-test-{{ checksum "/FEATURES" }}
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
-        - v1-plume-notest-{{ checksum "Cargo.lock" }}
-        - v1-plume-notest
+        - v2-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
+        - v2-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}
+        - v2-plume-test-{{ checksum "/FEATURES" }}
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
+        - v2-plume-notest-{{ checksum "Cargo.lock" }}
+        - v2-plume-notest
   - &save_cache_plume_dead_code
     save_cache:
-      key: v1-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
+      key: v2-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
       paths:
         - ~/.cargo/
         - target
