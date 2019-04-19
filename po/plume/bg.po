@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-19 06:36\n"
+"PO-Revision-Date: 2019-04-19 07:26\n"
 "Last-Translator: Ana Gelez (AnaGelez)\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -137,7 +137,7 @@ msgstr ""
 
 # src/template_utils.rs:220
 msgid "Optional"
-msgstr ""
+msgstr "По избор"
 
 msgid "Send password reset link"
 msgstr ""
@@ -460,7 +460,7 @@ msgid "Boost"
 msgstr "Подсилване"
 
 msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
+msgstr "{0}Влезте {1}или {2}използвайте акаунта си в Fediverse{3}, за да взаимодействате с тази статия"
 
 msgid "Comments"
 msgstr "Коментари"
