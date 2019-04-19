@@ -33,7 +33,7 @@ fn get_rocket_config() -> Result<RocketConfig, RocketError> {
         .unwrap_or(7878);
     let secret_key = var("ROCKET_SECRET_KEY").map_err(|_| RocketError::InvalidSecretKey)?;
     let form_size = var("FORM_SIZE")
-        .unwrap_or_else(|_| "32".to_owned())
+        .unwrap_or_else(|_| "128".to_owned())
         .parse::<u64>()
         .unwrap();
     let activity_size = var("ACTIVITY_SIZE")
