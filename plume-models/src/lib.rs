@@ -6,7 +6,6 @@ extern crate activitypub;
 extern crate ammonia;
 extern crate askama_escape;
 extern crate bcrypt;
-extern crate canapi;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
@@ -153,8 +152,6 @@ impl From<InboxError<Error>> for Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
-
-pub type ApiResult<T> = std::result::Result<T, canapi::Error>;
 
 /// Adds a function to a model, that returns the first
 /// matching row for a given list of fields.
