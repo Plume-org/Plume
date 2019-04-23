@@ -7,7 +7,7 @@ use rocket_contrib::json::Json;
 use serde_json;
 
 use plume_common::utils::random_hex;
-use plume_models::{api_tokens::*, apps::App, db_conn::DbConn, users::User, Error};
+use plume_models::{api_tokens::*, apps::App, users::User, Error, PlumeRocket};
 
 #[derive(Debug)]
 pub struct ApiError(Error);
@@ -47,13 +47,17 @@ pub struct OAuthRequest {
 }
 
 #[get("/oauth2?<query..>")]
-pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
-    let app = App::find_by_client_id(&*conn, &query.client_id)?;
+pub fn oauth(
+    query: Form<OAuthRequest>,
+    rockets: PlumeRocket,
+) -> Result<Json<serde_json::Value>, ApiError> {
+    let conn = &*rockets.conn;
+    let app = App::find_by_client_id(conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::find_by_fqn(&*conn, &query.username) {
+        if let Ok(user) = User::find_by_fqn(&rockets, &query.username) {
             if user.auth(&query.password) {
                 let token = ApiToken::insert(
-                    &*conn,
+                    conn,
                     NewApiToken {
                         app_id: app.id,
                         user_id: user.id,
@@ -73,7 +77,7 @@ pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json:
             // Making fake password verification to avoid different
             // response times that would make it possible to know
             // if a username is registered or not.
-            User::get(&*conn, 1)?.auth(&query.password);
+            User::get(conn, 1)?.auth(&query.password);
             Ok(Json(json!({
                 "error": "Invalid credentials"
             })))

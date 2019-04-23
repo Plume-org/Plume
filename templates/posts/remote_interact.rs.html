@@ -1,0 +1,14 @@
+@use templates::remote_interact_base;
+@use templates::partials::post_card;
+@use plume_models::posts::Post;
+@use routes::RemoteForm;
+@use routes::session::LoginForm;
+@use template_utils::*;
+@use validator::ValidationErrors;
+
+@(ctx: BaseContext, post: Post, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
+
+@:remote_interact_base(ctx, i18n!(ctx.1, "Interact with {}"; post.title.clone()), i18n!(ctx.1, "Log in to interact"), i18n!(ctx.1, "Enter your full username to interact"), {
+	<h1>@i18n!(ctx.1, "Interact with {}"; post.title.clone())</h1>
+	@:post_card(ctx, post)
+}, login_form, login_errs, remote_form, remote_errs)

@@ -5,13 +5,16 @@ use guid_create::GUID;
 use reqwest;
 use std::{fs, path::Path};
 
-use plume_common::{activity_pub::Id, utils::MediaProcessor};
+use plume_common::{
+    activity_pub::{inbox::FromId, Id},
+    utils::MediaProcessor,
+};
 
 use instance::Instance;
 use safe_string::SafeString;
 use schema::medias;
 use users::User;
-use {ap_url, Connection, Error, Result};
+use {ap_url, Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Media {
@@ -183,7 +186,8 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &Connection, image: &Image) -> Result<Media> {
+    pub fn from_activity(c: &PlumeRocket, image: &Image) -> Result<Media> {
+        let conn = &*c.conn;
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
             .rsplit('.')
@@ -210,8 +214,8 @@ impl Media {
                 remote_url: None,
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),
-                owner_id: User::from_url(
-                    conn,
+                owner_id: User::from_id(
+                    c,
                     image
                         .object_props
                         .attributed_to_link_vec::<Id>()
@@ -219,7 +223,9 @@ impl Media {
                         .into_iter()
                         .next()?
                         .as_ref(),
-                )?
+                    None,
+                )
+                .map_err(|(_, e)| e)?
                 .id,
             },
         )
@@ -242,6 +248,7 @@ impl Media {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use diesel::Connection;
     use std::env::{current_dir, set_current_dir};
     use std::fs;
     use std::path::Path;
@@ -309,80 +316,83 @@ pub(crate) mod tests {
         }
     }
 
-    //set_owner
-
     #[test]
     fn delete() {
         let conn = &db();
-        let user = fill_database(conn).0[0].id;
+        conn.test_transaction::<_, (), _>(|| {
+            let user = fill_database(conn).0[0].id;
 
-        let path = "static/media/test_deletion".to_owned();
-        fs::write(path.clone(), []).unwrap();
+            let path = "static/media/test_deletion".to_owned();
+            fs::write(path.clone(), []).unwrap();
 
-        let media = Media::insert(
-            conn,
-            NewMedia {
-                file_path: path.clone(),
-                alt_text: "alt message".to_owned(),
-                is_remote: false,
-                remote_url: None,
-                sensitive: false,
-                content_warning: None,
-                owner_id: user,
-            },
-        )
-        .unwrap();
+            let media = Media::insert(
+                conn,
+                NewMedia {
+                    file_path: path.clone(),
+                    alt_text: "alt message".to_owned(),
+                    is_remote: false,
+                    remote_url: None,
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: user,
+                },
+            )
+            .unwrap();
 
-        assert!(Path::new(&path).exists());
-        media.delete(conn).unwrap();
-        assert!(!Path::new(&path).exists());
+            assert!(Path::new(&path).exists());
+            media.delete(conn).unwrap();
+            assert!(!Path::new(&path).exists());
 
-        clean(conn);
+            clean(conn);
+            Ok(())
+        });
     }
 
     #[test]
-
     fn set_owner() {
         let conn = &db();
-        let (users, _) = fill_database(conn);
-        let u1 = &users[0];
-        let u2 = &users[1];
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, _) = fill_database(conn);
+            let u1 = &users[0];
+            let u2 = &users[1];
 
-        let path = "static/media/test_set_owner".to_owned();
-        fs::write(path.clone(), []).unwrap();
+            let path = "static/media/test_set_owner".to_owned();
+            fs::write(path.clone(), []).unwrap();
 
-        let media = Media::insert(
-            conn,
-            NewMedia {
-                file_path: path.clone(),
-                alt_text: "alt message".to_owned(),
-                is_remote: false,
-                remote_url: None,
-                sensitive: false,
-                content_warning: None,
-                owner_id: u1.id,
-            },
-        )
-        .unwrap();
+            let media = Media::insert(
+                conn,
+                NewMedia {
+                    file_path: path.clone(),
+                    alt_text: "alt message".to_owned(),
+                    is_remote: false,
+                    remote_url: None,
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: u1.id,
+                },
+            )
+            .unwrap();
 
-        assert!(Media::for_user(conn, u1.id)
-            .unwrap()
-            .iter()
-            .any(|m| m.id == media.id));
-        assert!(!Media::for_user(conn, u2.id)
-            .unwrap()
-            .iter()
-            .any(|m| m.id == media.id));
-        media.set_owner(conn, u2).unwrap();
-        assert!(!Media::for_user(conn, u1.id)
-            .unwrap()
-            .iter()
-            .any(|m| m.id == media.id));
-        assert!(Media::for_user(conn, u2.id)
-            .unwrap()
-            .iter()
-            .any(|m| m.id == media.id));
+            assert!(Media::for_user(conn, u1.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
+            assert!(!Media::for_user(conn, u2.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
+            media.set_owner(conn, u2).unwrap();
+            assert!(!Media::for_user(conn, u1.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
+            assert!(Media::for_user(conn, u2.id)
+                .unwrap()
+                .iter()
+                .any(|m| m.id == media.id));
 
-        clean(conn);
+            clean(conn);
+            Ok(())
+        });
     }
 }

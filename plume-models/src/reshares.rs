@@ -4,13 +4,13 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{Deletable, FromActivity, Notify},
-    Id, IntoId, PUBLIC_VISIBILTY,
+    inbox::{AsObject, FromId},
+    Id, IntoId, PUBLIC_VISIBILITY,
 };
 use posts::Post;
 use schema::reshares;
 use users::User;
-use {Connection, Error, Result};
+use {Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Reshare {
@@ -69,37 +69,14 @@ impl Reshare {
             .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
         act.object_props.set_id_string(self.ap_url.clone())?;
         act.object_props
-            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        act.object_props
+            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
 
         Ok(act)
     }
-}
 
-impl FromActivity<Announce, Connection> for Reshare {
-    type Error = Error;
-
-    fn from_activity(conn: &Connection, announce: Announce, _actor: Id) -> Result<Reshare> {
-        let user = User::from_url(conn, announce.announce_props.actor_link::<Id>()?.as_ref())?;
-        let post =
-            Post::find_by_ap_url(conn, announce.announce_props.object_link::<Id>()?.as_ref())?;
-        let reshare = Reshare::insert(
-            conn,
-            NewReshare {
-                post_id: post.id,
-                user_id: user.id,
-                ap_url: announce.object_props.id_string().unwrap_or_default(),
-            },
-        )?;
-        reshare.notify(conn)?;
-        Ok(reshare)
-    }
-}
-
-impl Notify<Connection> for Reshare {
-    type Error = Error;
-
-    fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &Connection) -> Result<()> {
         let post = self.get_post(conn)?;
         for author in post.get_authors(conn)? {
             Notification::insert(
@@ -113,19 +90,8 @@ impl Notify<Connection> for Reshare {
         }
         Ok(())
     }
-}
 
-impl Deletable<Connection, Undo> for Reshare {
-    type Error = Error;
-
-    fn delete(&self, conn: &Connection) -> Result<Undo> {
-        diesel::delete(self).execute(conn)?;
-
-        // delete associated notification if any
-        if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
-            diesel::delete(&notif).execute(conn)?;
-        }
-
+    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
         let mut act = Undo::default();
         act.undo_props
             .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
@@ -133,17 +99,88 @@ impl Deletable<Connection, Undo> for Reshare {
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
-            .set_to_link(Id::new(PUBLIC_VISIBILTY.to_string()))?;
-        act.object_props.set_cc_link_vec::<Id>(vec![])?;
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        act.object_props
+            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
 
         Ok(act)
     }
+}
 
-    fn delete_id(id: &str, actor_id: &str, conn: &Connection) -> Result<Undo> {
-        let reshare = Reshare::find_by_ap_url(conn, id)?;
-        let actor = User::find_by_ap_url(conn, actor_id)?;
-        if actor.id == reshare.user_id {
-            reshare.delete(conn)
+impl AsObject<User, Announce, &PlumeRocket> for Post {
+    type Error = Error;
+    type Output = Reshare;
+
+    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Reshare> {
+        let conn = &*c.conn;
+        let reshare = Reshare::insert(
+            conn,
+            NewReshare {
+                post_id: self.id,
+                user_id: actor.id,
+                ap_url: id.to_string(),
+            },
+        )?;
+        reshare.notify(conn)?;
+        Ok(reshare)
+    }
+}
+
+impl FromId<PlumeRocket> for Reshare {
+    type Error = Error;
+    type Object = Announce;
+
+    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+        Reshare::find_by_ap_url(&c.conn, id)
+    }
+
+    fn from_activity(c: &PlumeRocket, act: Announce) -> Result<Self> {
+        let res = Reshare::insert(
+            &c.conn,
+            NewReshare {
+                post_id: Post::from_id(
+                    c,
+                    &{
+                        let res: String = act.announce_props.object_link::<Id>()?.into();
+                        res
+                    },
+                    None,
+                )
+                .map_err(|(_, e)| e)?
+                .id,
+                user_id: User::from_id(
+                    c,
+                    &{
+                        let res: String = act.announce_props.actor_link::<Id>()?.into();
+                        res
+                    },
+                    None,
+                )
+                .map_err(|(_, e)| e)?
+                .id,
+                ap_url: act.object_props.id_string()?,
+            },
+        )?;
+        res.notify(&c.conn)?;
+        Ok(res)
+    }
+}
+
+impl AsObject<User, Undo, &PlumeRocket> for Reshare {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+        let conn = &*c.conn;
+        if actor.id == self.user_id {
+            diesel::delete(&self).execute(conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(&conn, notification_kind::RESHARE, self.id) {
+                diesel::delete(&notif).execute(conn)?;
+            }
+
+            Ok(())
         } else {
             Err(Error::Unauthorized)
         }

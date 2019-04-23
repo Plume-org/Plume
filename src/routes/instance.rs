@@ -7,11 +7,11 @@ use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationErrors};
 
-use inbox::{Inbox, SignedJson};
-use plume_common::activity_pub::sign::{verify_http_headers, Signable};
+use inbox;
+use plume_common::activity_pub::inbox::FromId;
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
-    safe_string::SafeString, users::User, Error, CONFIG,
+    safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
 use template_utils::Ructe;
@@ -211,56 +211,41 @@ pub fn ban(
 
 #[post("/inbox", data = "<data>")]
 pub fn shared_inbox(
-    conn: DbConn,
-    data: SignedJson<serde_json::Value>,
+    rockets: PlumeRocket,
+    data: inbox::SignedJson<serde_json::Value>,
     headers: Headers,
-    searcher: Searcher,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    let act = data.1.into_inner();
-    let sig = data.0;
+    inbox::handle_incoming(rockets, data, headers)
+}
 
-    let activity = act.clone();
-    let actor_id = activity["actor"]
-        .as_str()
-        .or_else(|| activity["actor"]["id"].as_str())
-        .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
-
-    let actor = User::from_url(&conn, actor_id).expect("instance::shared_inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
-        // maybe we just know an old key?
-        actor
-            .refetch(&conn)
-            .and_then(|_| User::get(&conn, actor.id))
-            .and_then(|u| {
-                if verify_http_headers(&u, &headers.0, &sig).is_secure() || act.clone().verify(&u) {
-                    Ok(())
-                } else {
-                    Err(Error::Signature)
-                }
-            })
-            .map_err(|_| {
-                println!(
-                    "Rejected invalid activity supposedly from {}, with headers {:?}",
-                    actor.username, headers.0
-                );
-                status::BadRequest(Some("Invalid signature"))
-            })?;
+#[get("/remote_interact?<target>")]
+pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Option<Redirect> {
+    if User::find_by_fqn(&rockets, &target).is_ok() {
+        return Some(Redirect::to(uri!(super::user::details: name = target)));
     }
 
-    if Instance::is_blocked(&*conn, actor_id)
-        .map_err(|_| status::BadRequest(Some("Can't tell if instance is blocked")))?
-    {
-        return Ok(String::new());
+    if let Ok(post) = Post::from_id(&rockets, &target, None) {
+        return Some(Redirect::to(
+            uri!(super::posts::details: blog = post.get_blog(&rockets.conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _),
+        ));
     }
-    let instance = Instance::get_local(&*conn)
-        .expect("instance::shared_inbox: local instance not found error");
-    Ok(match instance.received(&*conn, &searcher, act) {
-        Ok(_) => String::new(),
-        Err(e) => {
-            println!("Shared inbox error: {}\n{}", e.as_fail(), e.backtrace());
-            format!("Error: {}", e.as_fail())
+
+    if let Ok(comment) = Comment::from_id(&rockets, &target, None) {
+        if comment.can_see(&rockets.conn, user.as_ref()) {
+            let post = comment
+                .get_post(&rockets.conn)
+                .expect("Can't retrieve post");
+            return Some(Redirect::to(uri!(
+                super::posts::details: blog = post
+                    .get_blog(&rockets.conn)
+                    .expect("Can't retrieve blog")
+                    .fqn,
+                slug = &post.slug,
+                responding_to = comment.id
+            )));
         }
-    })
+    }
+    None
 }
 
 #[get("/nodeinfo/<version>")]

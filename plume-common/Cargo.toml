@@ -1,6 +1,6 @@
 [package]
 name = "plume-common"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Plume contributors"]
 
 [dependencies]
@@ -9,8 +9,6 @@ activitystreams-derive = "0.1.0"
 activitystreams-traits = "0.1.0"
 array_tool = "1.0"
 base64 = "0.10"
-failure = "0.1"
-failure_derive = "0.1"
 heck = "0.3.0"
 hex = "0.3"
 hyper = "0.12.20"

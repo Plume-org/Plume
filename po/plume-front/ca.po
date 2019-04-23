@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plume\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-15 16:33-0700\n"
+"PO-Revision-Date: 2019-04-17 19:55\n"
+"Last-Translator: Ana Gelez (AnaGelez)\n"
+"Language-Team: Catalan\n"
+"Language: ca_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: plume\n"
+"X-Crowdin-Language: ca\n"
+"X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
+
+# plume-front/src/editor.rs:114
+msgid "Open the rich text editor"
+msgstr ""
+
+# plume-front/src/editor.rs:143
+msgid "Title"
+msgstr ""
+
+# plume-front/src/editor.rs:149
+msgid "Subtitle, or summary"
+msgstr ""
+
+# plume-front/src/editor.rs:154
+msgid "Write your article here. Markdown is supported."
+msgstr ""
+
+# plume-front/src/editor.rs:165
+msgid "Around {} characters left"
+msgstr ""
+
+# plume-front/src/editor.rs:228
+msgid "Tags"
+msgstr ""
+
+# plume-front/src/editor.rs:229
+msgid "License"
+msgstr ""
+
+# plume-front/src/editor.rs:232
+msgid "Cover"
+msgstr ""
+
+# plume-front/src/editor.rs:252
+msgid "This is a draft"
+msgstr ""
+
+# plume-front/src/editor.rs:259
+msgid "Publish"
+msgstr ""

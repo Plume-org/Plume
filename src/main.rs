@@ -10,7 +10,6 @@ extern crate colored;
 extern crate ctrlc;
 extern crate diesel;
 extern crate dotenv;
-extern crate failure;
 #[macro_use]
 extern crate gettext_macros;
 extern crate gettext_utils;
@@ -28,6 +27,8 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_csrf;
 extern crate rocket_i18n;
+#[macro_use]
+extern crate runtime_fmt;
 extern crate scheduled_thread_pool;
 extern crate serde;
 #[macro_use]
@@ -51,7 +52,9 @@ use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-init_i18n!("plume", ar, de, en, es, fr, gl, it, ja, nb, pl, pt, ru);
+init_i18n!(
+    "plume", ar, bg, ca, cs, de, en, eo, es, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr, sk, sv
+);
 
 mod api;
 mod inbox;
@@ -66,7 +69,6 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 compile_i18n!();
 
-type Worker<'a> = State<'a, ScheduledThreadPool>;
 type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
@@ -164,6 +166,7 @@ Then try to restart Plume
                 routes::instance::toggle_block,
                 routes::instance::update_settings,
                 routes::instance::shared_inbox,
+                routes::instance::interact,
                 routes::instance::nodeinfo,
                 routes::instance::about,
                 routes::instance::web_manifest,
@@ -185,6 +188,8 @@ Then try to restart Plume
                 routes::posts::new_auth,
                 routes::posts::create,
                 routes::posts::delete,
+                routes::posts::remote_interact,
+                routes::posts::remote_interact_post,
                 routes::reshares::create,
                 routes::reshares::create_auth,
                 routes::search::search,
@@ -209,6 +214,7 @@ Then try to restart Plume
                 routes::user::update,
                 routes::user::delete,
                 routes::user::follow,
+                routes::user::follow_not_connected,
                 routes::user::follow_auth,
                 routes::user::activity_details,
                 routes::user::outbox,
@@ -241,7 +247,7 @@ Then try to restart Plume
         .manage(Arc::new(Mutex::new(mail)))
         .manage::<Arc<Mutex<Vec<routes::session::ResetRequest>>>>(Arc::new(Mutex::new(vec![])))
         .manage(dbpool)
-        .manage(workpool)
+        .manage(Arc::new(workpool))
         .manage(searcher)
         .manage(include_i18n!())
         .attach(

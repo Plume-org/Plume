@@ -1,0 +1,32 @@
+@use templates::base;
+@use routes::session::LoginForm;
+@use routes::RemoteForm;
+@use template_utils::*;
+@use validator::ValidationErrors;
+
+@(ctx: BaseContext, title: String, login_msg: String, remote_msg: String, header: Content, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
+
+@:base(ctx, title, {}, {}, {
+    <div>
+    	<header class="center">
+    		@:header()
+    	</header>
+
+	    <div class="split">
+    		<form method="post" action="/login">
+	    		<h2>@i18n!(ctx.1, "I'm from this instance")</h2>
+	    		<p>@login_msg</p>
+	    		@input!(ctx.1, email_or_name (text), "Username, or email", login_form, login_errs.clone(), "minlenght=\"1\"")
+		        @input!(ctx.1, password (password), "Password", login_form, login_errs, "minlenght=\"1\"")
+		        <input type="submit" value="@i18n!(ctx.1, "Log in")" />
+	    	</form>
+
+	    	<form method="post">
+	    		<h2>@i18n!(ctx.1, "I'm from another instance")</h2>
+	    		<p>@remote_msg</p>
+	    		@input!(ctx.1, remote (text), "Username", "Example: user@plu.me", remote_form, remote_errs.clone(), "minlenght=\"1\"")
+		    	<input type="submit" value="@i18n!(ctx.1, "Continue to your instance")"/>
+	    	</form>
+	    </div>
+    </div>
+})

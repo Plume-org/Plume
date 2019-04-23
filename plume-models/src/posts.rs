@@ -8,7 +8,6 @@ use canapi::{Error as ApiError, Provider};
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use heck::{CamelCase, KebabCase};
-use scheduled_thread_pool::ScheduledThreadPool as Worker;
 use serde_json;
 use std::collections::HashSet;
 
@@ -20,8 +19,8 @@ use plume_api::posts::PostEndpoint;
 use plume_common::{
     activity_pub::{
         broadcast,
-        inbox::{Deletable, FromActivity},
-        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILTY,
+        inbox::{AsObject, FromId},
+        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
     utils::md_to_html,
 };
@@ -31,7 +30,7 @@ use schema::posts;
 use search::Searcher;
 use tags::*;
 use users::User;
-use {ap_url, ApiResult, Connection, Error, Result, CONFIG};
+use {ap_url, ApiResult, Connection, Error, PlumeRocket, Result, CONFIG};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -68,17 +67,17 @@ pub struct NewPost {
     pub cover_id: Option<i32>,
 }
 
-impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for Post {
+impl Provider<PlumeRocket> for Post {
     type Data = PostEndpoint;
 
-    fn get(
-        (conn, _worker, _search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
-        id: i32,
-    ) -> ApiResult<PostEndpoint> {
+    fn get(rockets: &PlumeRocket, id: i32) -> ApiResult<PostEndpoint> {
+        let conn = &*rockets.conn;
         if let Ok(post) = Post::get(conn, id) {
             if !post.published
-                && !user_id
-                    .map(|u| post.is_author(conn, u).unwrap_or(false))
+                && !rockets
+                    .user
+                    .as_ref()
+                    .and_then(|u| post.is_author(conn, u.id).ok())
                     .unwrap_or(false)
             {
                 return Err(ApiError::Authorization(
@@ -115,10 +114,8 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         }
     }
 
-    fn list(
-        (conn, _worker, _search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
-        filter: PostEndpoint,
-    ) -> Vec<PostEndpoint> {
+    fn list(rockets: &PlumeRocket, filter: PostEndpoint) -> Vec<PostEndpoint> {
+        let conn = &*rockets.conn;
         let mut query = posts::table.into_boxed();
         if let Some(title) = filter.title {
             query = query.filter(posts::title.eq(title));
@@ -131,13 +128,15 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         }
 
         query
-            .get_results::<Post>(*conn)
+            .get_results::<Post>(conn)
             .map(|ps| {
                 ps.into_iter()
                     .filter(|p| {
                         p.published
-                            || user_id
-                                .map(|u| p.is_author(conn, u).unwrap_or(false))
+                            || rockets
+                                .user
+                                .as_ref()
+                                .and_then(|u| p.is_author(conn, u.id).ok())
                                 .unwrap_or(false)
                     })
                     .map(|p| PostEndpoint {
@@ -166,31 +165,33 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
     }
 
     fn update(
-        (_conn, _worker, _search, _user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
+        _rockets: &PlumeRocket,
         _id: i32,
         _new_data: PostEndpoint,
     ) -> ApiResult<PostEndpoint> {
         unimplemented!()
     }
 
-    fn delete(
-        (conn, _worker, search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
-        id: i32,
-    ) {
-        let user_id = user_id.expect("Post as Provider::delete: not authenticated");
+    fn delete(rockets: &PlumeRocket, id: i32) {
+        let conn = &*rockets.conn;
+        let user_id = rockets
+            .user
+            .as_ref()
+            .expect("Post as Provider::delete: not authenticated")
+            .id;
         if let Ok(post) = Post::get(conn, id) {
             if post.is_author(conn, user_id).unwrap_or(false) {
-                post.delete(&(conn, search))
+                post.delete(conn, &rockets.searcher)
                     .expect("Post as Provider::delete: delete error");
             }
         }
     }
 
-    fn create(
-        (conn, worker, search, user_id): &(&Connection, &Worker, &Searcher, Option<i32>),
-        query: PostEndpoint,
-    ) -> ApiResult<PostEndpoint> {
-        if user_id.is_none() {
+    fn create(rockets: &PlumeRocket, query: PostEndpoint) -> ApiResult<PostEndpoint> {
+        let conn = &*rockets.conn;
+        let search = &rockets.searcher;
+        let worker = &rockets.worker;
+        if rockets.user.is_none() {
             return Err(ApiError::Authorization(
                 "You are not authorized to create new articles.".to_string(),
             ));
@@ -207,11 +208,10 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
         let domain = &Instance::get_local(&conn)
             .map_err(|_| ApiError::NotFound("posts::update: Error getting local instance".into()))?
             .public_domain;
-        let author = User::get(
-            conn,
-            user_id.expect("<Post as Provider>::create: no user_id error"),
-        )
-        .map_err(|_| ApiError::NotFound("Author not found".into()))?;
+        let author = rockets
+            .user
+            .clone()
+            .ok_or_else(|| ApiError::NotFound("Author not found".into()))?;
 
         let (content, mentions, hashtags) = md_to_html(
             query.source.clone().unwrap_or_default().clone().as_ref(),
@@ -298,7 +298,7 @@ impl<'a> Provider<(&'a Connection, &'a Worker, &'a Searcher, Option<i32>)> for P
             for m in mentions.into_iter() {
                 Mention::from_activity(
                     &*conn,
-                    &Mention::build_activity(&*conn, &m)
+                    &Mention::build_activity(&rockets, &m)
                         .map_err(|_| ApiError::NotFound("Couldn't build mentions".into()))?,
                     post.id,
                     true,
@@ -367,11 +367,21 @@ impl Post {
         searcher.add_document(conn, &post)?;
         Ok(post)
     }
+
     pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
         searcher.update_document(conn, &post)?;
         Ok(post)
+    }
+
+    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+        for m in Mention::list_for_post(&conn, self.id)? {
+            m.delete(conn)?;
+        }
+        diesel::delete(self).execute(conn)?;
+        searcher.delete_document(self);
+        Ok(())
     }
 
     pub fn list_by_tag(
@@ -625,7 +635,7 @@ impl Post {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
         let cc = self.get_receivers_urls(conn)?;
-        let to = vec![PUBLIC_VISIBILTY.to_string()];
+        let to = vec![PUBLIC_VISIBILITY.to_string()];
 
         let mut mentions_json = Mention::list_for_post(conn, self.id)?
             .into_iter()
@@ -724,77 +734,6 @@ impl Post {
             .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
         act.update_props.set_object_object(article)?;
         Ok(act)
-    }
-
-    pub fn handle_update(
-        conn: &Connection,
-        updated: &LicensedArticle,
-        searcher: &Searcher,
-    ) -> Result<()> {
-        let id = updated.object.object_props.id_string()?;
-        let mut post = Post::find_by_ap_url(conn, &id)?;
-
-        if let Ok(title) = updated.object.object_props.name_string() {
-            post.slug = title.to_kebab_case();
-            post.title = title;
-        }
-
-        if let Ok(content) = updated.object.object_props.content_string() {
-            post.content = SafeString::new(&content);
-        }
-
-        if let Ok(subtitle) = updated.object.object_props.summary_string() {
-            post.subtitle = subtitle;
-        }
-
-        if let Ok(ap_url) = updated.object.object_props.url_string() {
-            post.ap_url = ap_url;
-        }
-
-        if let Ok(source) = updated.object.ap_object_props.source_object::<Source>() {
-            post.source = source.content;
-        }
-
-        if let Ok(license) = updated.custom_props.license_string() {
-            post.license = license;
-        }
-
-        let mut txt_hashtags = md_to_html(&post.source, "", false, None)
-            .2
-            .into_iter()
-            .map(|s| s.to_camel_case())
-            .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(mention_tags)) =
-            updated.object.object_props.tag.clone()
-        {
-            let mut mentions = vec![];
-            let mut tags = vec![];
-            let mut hashtags = vec![];
-            for tag in mention_tags {
-                serde_json::from_value::<link::Mention>(tag.clone())
-                    .map(|m| mentions.push(m))
-                    .ok();
-
-                serde_json::from_value::<Hashtag>(tag.clone())
-                    .map_err(Error::from)
-                    .and_then(|t| {
-                        let tag_name = t.name_string()?;
-                        if txt_hashtags.remove(&tag_name) {
-                            hashtags.push(t);
-                        } else {
-                            tags.push(t);
-                        }
-                        Ok(())
-                    })
-                    .ok();
-            }
-            post.update_mentions(conn, mentions)?;
-            post.update_tags(conn, tags)?;
-            post.update_hashtags(conn, hashtags)?;
-        }
-
-        post.update(conn, searcher)?;
-        Ok(())
     }
 
     pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
@@ -925,112 +864,8 @@ impl Post {
             .and_then(|i| Media::get(conn, i).ok())
             .and_then(|c| c.url(conn).ok())
     }
-}
 
-impl<'a> FromActivity<LicensedArticle, (&'a Connection, &'a Searcher)> for Post {
-    type Error = Error;
-
-    fn from_activity(
-        (conn, searcher): &(&'a Connection, &'a Searcher),
-        article: LicensedArticle,
-        _actor: Id,
-    ) -> Result<Post> {
-        let license = article.custom_props.license_string().unwrap_or_default();
-        let article = article.object;
-        if let Ok(post) =
-            Post::find_by_ap_url(conn, &article.object_props.id_string().unwrap_or_default())
-        {
-            Ok(post)
-        } else {
-            let (blog, authors) = article
-                .object_props
-                .attributed_to_link_vec::<Id>()?
-                .into_iter()
-                .fold((None, vec![]), |(blog, mut authors), link| {
-                    let url: String = link.into();
-                    match User::from_url(conn, &url) {
-                        Ok(u) => {
-                            authors.push(u);
-                            (blog, authors)
-                        }
-                        Err(_) => (blog.or_else(|| Blog::from_url(conn, &url).ok()), authors),
-                    }
-                });
-
-            let cover = article
-                .object_props
-                .icon_object::<Image>()
-                .ok()
-                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
-
-            let title = article.object_props.name_string()?;
-            let post = Post::insert(
-                conn,
-                NewPost {
-                    blog_id: blog?.id,
-                    slug: title.to_kebab_case(),
-                    title,
-                    content: SafeString::new(&article.object_props.content_string()?),
-                    published: true,
-                    license,
-                    // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                    ap_url: article
-                        .object_props
-                        .url_string()
-                        .or_else(|_| article.object_props.id_string())?,
-                    creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
-                    subtitle: article.object_props.summary_string()?,
-                    source: article.ap_object_props.source_object::<Source>()?.content,
-                    cover_id: cover,
-                },
-                searcher,
-            )?;
-
-            for author in authors {
-                PostAuthor::insert(
-                    conn,
-                    NewPostAuthor {
-                        post_id: post.id,
-                        author_id: author.id,
-                    },
-                )?;
-            }
-
-            // save mentions and tags
-            let mut hashtags = md_to_html(&post.source, "", false, None)
-                .2
-                .into_iter()
-                .map(|s| s.to_camel_case())
-                .collect::<HashSet<_>>();
-            if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
-                for tag in tags {
-                    serde_json::from_value::<link::Mention>(tag.clone())
-                        .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
-                        .ok();
-
-                    serde_json::from_value::<Hashtag>(tag.clone())
-                        .map_err(Error::from)
-                        .and_then(|t| {
-                            let tag_name = t.name_string()?;
-                            Ok(Tag::from_activity(
-                                conn,
-                                &t,
-                                post.id,
-                                hashtags.remove(&tag_name),
-                            ))
-                        })
-                        .ok();
-                }
-            }
-            Ok(post)
-        }
-    }
-}
-
-impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
-    type Error = Error;
-
-    fn delete(&self, (conn, searcher): &(&Connection, &Searcher)) -> Result<Delete> {
+    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
         let mut act = Delete::default();
         act.delete_props
             .set_actor_link(self.get_authors(conn)?[0].clone().into_id())?;
@@ -1042,37 +877,360 @@ impl<'a> Deletable<(&'a Connection, &'a Searcher), Delete> for Post {
         act.object_props
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILTY)])?;
-
-        for m in Mention::list_for_post(&conn, self.id)? {
-            m.delete(conn)?;
-        }
-        diesel::delete(self).execute(*conn)?;
-        searcher.delete_document(self);
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
         Ok(act)
     }
+}
 
-    fn delete_id(
-        id: &str,
-        actor_id: &str,
-        (conn, searcher): &(&Connection, &Searcher),
-    ) -> Result<Delete> {
-        let actor = User::find_by_ap_url(conn, actor_id)?;
-        let post = Post::find_by_ap_url(conn, id)?;
-        let can_delete = post
-            .get_authors(conn)?
+impl FromId<PlumeRocket> for Post {
+    type Error = Error;
+    type Object = LicensedArticle;
+
+    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(&c.conn, id)
+    }
+
+    fn from_activity(c: &PlumeRocket, article: LicensedArticle) -> Result<Self> {
+        let conn = &*c.conn;
+        let searcher = &c.searcher;
+        let license = article.custom_props.license_string().unwrap_or_default();
+        let article = article.object;
+
+        let (blog, authors) = article
+            .object_props
+            .attributed_to_link_vec::<Id>()?
+            .into_iter()
+            .fold((None, vec![]), |(blog, mut authors), link| {
+                let url: String = link.into();
+                match User::from_id(&c, &url, None) {
+                    Ok(u) => {
+                        authors.push(u);
+                        (blog, authors)
+                    }
+                    Err(_) => (blog.or_else(|| Blog::from_id(&c, &url, None).ok()), authors),
+                }
+            });
+
+        let cover = article
+            .object_props
+            .icon_object::<Image>()
+            .ok()
+            .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id));
+
+        let title = article.object_props.name_string()?;
+        let post = Post::insert(
+            conn,
+            NewPost {
+                blog_id: blog?.id,
+                slug: title.to_kebab_case(),
+                title,
+                content: SafeString::new(&article.object_props.content_string()?),
+                published: true,
+                license,
+                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                ap_url: article
+                    .object_props
+                    .url_string()
+                    .or_else(|_| article.object_props.id_string())?,
+                creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
+                subtitle: article.object_props.summary_string()?,
+                source: article.ap_object_props.source_object::<Source>()?.content,
+                cover_id: cover,
+            },
+            searcher,
+        )?;
+
+        for author in authors {
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: author.id,
+                },
+            )?;
+        }
+
+        // save mentions and tags
+        let mut hashtags = md_to_html(&post.source, "", false, None)
+            .2
+            .into_iter()
+            .map(|s| s.to_camel_case())
+            .collect::<HashSet<_>>();
+        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+            for tag in tags {
+                serde_json::from_value::<link::Mention>(tag.clone())
+                    .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
+                    .ok();
+
+                serde_json::from_value::<Hashtag>(tag.clone())
+                    .map_err(Error::from)
+                    .and_then(|t| {
+                        let tag_name = t.name_string()?;
+                        Ok(Tag::from_activity(
+                            conn,
+                            &t,
+                            post.id,
+                            hashtags.remove(&tag_name),
+                        ))
+                    })
+                    .ok();
+            }
+        }
+        Ok(post)
+    }
+}
+
+impl AsObject<User, Create, &PlumeRocket> for Post {
+    type Error = Error;
+    type Output = Post;
+
+    fn activity(self, _c: &PlumeRocket, _actor: User, _id: &str) -> Result<Post> {
+        // TODO: check that _actor is actually one of the author?
+        Ok(self)
+    }
+}
+
+impl AsObject<User, Delete, &PlumeRocket> for Post {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+        let can_delete = self
+            .get_authors(&c.conn)?
             .into_iter()
             .any(|a| actor.id == a.id);
         if can_delete {
-            post.delete(&(conn, searcher))
+            self.delete(&c.conn, &c.searcher).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
     }
 }
 
+pub struct PostUpdate {
+    pub ap_url: String,
+    pub title: Option<String>,
+    pub subtitle: Option<String>,
+    pub content: Option<String>,
+    pub cover: Option<i32>,
+    pub source: Option<String>,
+    pub license: Option<String>,
+    pub tags: Option<serde_json::Value>,
+}
+
+impl FromId<PlumeRocket> for PostUpdate {
+    type Error = Error;
+    type Object = LicensedArticle;
+
+    fn from_db(_: &PlumeRocket, _: &str) -> Result<Self> {
+        // Always fail because we always want to deserialize the AP object
+        Err(Error::NotFound)
+    }
+
+    fn from_activity(c: &PlumeRocket, updated: LicensedArticle) -> Result<Self> {
+        Ok(PostUpdate {
+            ap_url: updated.object.object_props.id_string()?,
+            title: updated.object.object_props.name_string().ok(),
+            subtitle: updated.object.object_props.summary_string().ok(),
+            content: updated.object.object_props.content_string().ok(),
+            cover: updated
+                .object
+                .object_props
+                .icon_object::<Image>()
+                .ok()
+                .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id)),
+            source: updated
+                .object
+                .ap_object_props
+                .source_object::<Source>()
+                .ok()
+                .map(|x| x.content),
+            license: updated.custom_props.license_string().ok(),
+            tags: updated.object.object_props.tag.clone(),
+        })
+    }
+}
+
+impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
+    type Error = Error;
+    type Output = ();
+
+    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+        let conn = &*c.conn;
+        let searcher = &c.searcher;
+        let mut post = Post::from_id(c, &self.ap_url, None).map_err(|(_, e)| e)?;
+
+        if !post.is_author(conn, actor.id)? {
+            // TODO: maybe the author was added in the meantime
+            return Err(Error::Unauthorized);
+        }
+
+        if let Some(title) = self.title {
+            post.slug = title.to_kebab_case();
+            post.title = title;
+        }
+
+        if let Some(content) = self.content {
+            post.content = SafeString::new(&content);
+        }
+
+        if let Some(subtitle) = self.subtitle {
+            post.subtitle = subtitle;
+        }
+
+        post.cover_id = self.cover;
+
+        if let Some(source) = self.source {
+            post.source = source;
+        }
+
+        if let Some(license) = self.license {
+            post.license = license;
+        }
+
+        let mut txt_hashtags = md_to_html(&post.source, "", false, None)
+            .2
+            .into_iter()
+            .map(|s| s.to_camel_case())
+            .collect::<HashSet<_>>();
+        if let Some(serde_json::Value::Array(mention_tags)) = self.tags {
+            let mut mentions = vec![];
+            let mut tags = vec![];
+            let mut hashtags = vec![];
+            for tag in mention_tags {
+                serde_json::from_value::<link::Mention>(tag.clone())
+                    .map(|m| mentions.push(m))
+                    .ok();
+
+                serde_json::from_value::<Hashtag>(tag.clone())
+                    .map_err(Error::from)
+                    .and_then(|t| {
+                        let tag_name = t.name_string()?;
+                        if txt_hashtags.remove(&tag_name) {
+                            hashtags.push(t);
+                        } else {
+                            tags.push(t);
+                        }
+                        Ok(())
+                    })
+                    .ok();
+            }
+            post.update_mentions(conn, mentions)?;
+            post.update_tags(conn, tags)?;
+            post.update_hashtags(conn, hashtags)?;
+        }
+
+        post.update(conn, searcher)?;
+        Ok(())
+    }
+}
+
 impl IntoId for Post {
     fn into_id(self) -> Id {
         Id::new(self.ap_url.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::inbox::{inbox, tests::fill_database, InboxResult};
+    use crate::safe_string::SafeString;
+    use crate::tests::rockets;
+    use diesel::Connection;
+
+    // creates a post, get it's Create activity, delete the post,
+    // "send" the Create to the inbox, and check it works
+    #[test]
+    fn self_federation() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (_, users, blogs) = fill_database(&r);
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "yo".into(),
+                    title: "Yo".into(),
+                    content: SafeString::new("Hello"),
+                    published: true,
+                    license: "WTFPL".to_string(),
+                    creation_date: None,
+                    ap_url: String::new(), // automatically updated when inserting
+                    subtitle: "Testing".into(),
+                    source: "Hello".into(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: users[0].id,
+                },
+            )
+            .unwrap();
+            let create = post.create_activity(conn).unwrap();
+            post.delete(conn, &r.searcher).unwrap();
+
+            match inbox(&r, serde_json::to_value(create).unwrap()).unwrap() {
+                InboxResult::Post(p) => {
+                    assert!(p.is_author(conn, users[0].id).unwrap());
+                    assert_eq!(p.source, "Hello".to_owned());
+                    assert_eq!(p.blog_id, blogs[0].id);
+                    assert_eq!(p.content, SafeString::new("Hello"));
+                    assert_eq!(p.subtitle, "Testing".to_owned());
+                    assert_eq!(p.title, "Yo".to_owned());
+                }
+                _ => panic!("Unexpected result"),
+            };
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn licensed_article_serde() {
+        let mut article = Article::default();
+        article.object_props.set_id_string("Yo".into()).unwrap();
+        let mut license = Licensed::default();
+        license.set_license_string("WTFPL".into()).unwrap();
+        let full_article = LicensedArticle::new(article, license);
+
+        let json = serde_json::to_value(full_article).unwrap();
+        let article_from_json: LicensedArticle = serde_json::from_value(json).unwrap();
+        assert_eq!(
+            "Yo",
+            &article_from_json.object.object_props.id_string().unwrap()
+        );
+        assert_eq!(
+            "WTFPL",
+            &article_from_json.custom_props.license_string().unwrap()
+        );
+    }
+
+    #[test]
+    fn licensed_article_deserialization() {
+        let json = json!({
+            "type": "Article",
+            "id": "https://plu.me/~/Blog/my-article",
+            "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
+            "content": "Hello.",
+            "name": "My Article",
+            "summary": "Bye.",
+            "source": {
+                "content": "Hello.",
+                "mediaType": "text/markdown"
+            },
+            "published": "2014-12-12T12:12:12Z",
+            "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+        });
+        let article: LicensedArticle = serde_json::from_value(json).unwrap();
+        assert_eq!(
+            "https://plu.me/~/Blog/my-article",
+            &article.object.object_props.id_string().unwrap()
+        );
     }
 }

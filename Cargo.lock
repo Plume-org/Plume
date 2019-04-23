@@ -938,7 +938,7 @@ dependencies = [
 [[package]]
 name = "gettext"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3#294c54d74c699fbc66502b480a37cc66c1daa7f3"
 dependencies = [
  "byteorder 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "encoding 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -947,16 +947,16 @@ dependencies = [
 [[package]]
 name = "gettext-macros"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
 dependencies = [
- "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
 ]
 
 [[package]]
 name = "gettext-utils"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
 
 [[package]]
 name = "guid"
@@ -1777,7 +1777,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "plume"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "activitypub 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "askama_escape 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1788,26 +1788,26 @@ dependencies = [
  "ctrlc 3.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext-macros 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
+ "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
  "guid-create 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lettre 0.9.0 (git+https://github.com/lettre/lettre?rev=c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49)",
  "lettre_email 0.9.0 (git+https://github.com/lettre/lettre?rev=c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49)",
  "multipart 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "num_cpus 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "plume-api 0.2.0",
- "plume-common 0.2.0",
- "plume-models 0.2.0",
+ "plume-api 0.3.0",
+ "plume-common 0.3.0",
+ "plume-models 0.3.0",
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)",
- "rocket_i18n 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
  "rpassword 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "ructe 0.5.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "runtime-fmt 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "scheduled-thread-pool 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1819,7 +1819,7 @@ dependencies = [
 
 [[package]]
 name = "plume-api"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "canapi 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1828,18 +1828,18 @@ dependencies = [
 
 [[package]]
 name = "plume-cli"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "plume-models 0.2.0",
+ "plume-models 0.3.0",
  "rpassword 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "plume-common"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "activitypub 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "activitystreams-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1847,8 +1847,6 @@ dependencies = [
  "array_tool 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.12.25 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1863,18 +1861,18 @@ dependencies = [
 
 [[package]]
 name = "plume-front"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
- "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext-macros 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
+ "gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
+ "gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)",
  "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "stdweb 0.4.14 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "plume-models"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "activitypub 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "ammonia 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1887,12 +1885,13 @@ dependencies = [
  "guid-create 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.10.19 (registry+https://github.com/rust-lang/crates.io-index)",
- "plume-api 0.2.0",
- "plume-common 0.2.0",
+ "plume-api 0.3.0",
+ "plume-common 0.3.0",
  "reqwest 0.9.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
  "scheduled-thread-pool 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2334,9 +2333,9 @@ dependencies = [
 [[package]]
 name = "rocket_i18n"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2#e922afa7c366038b3433278c03b1456b346074f2"
 dependencies = [
- "gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)",
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -2374,6 +2373,11 @@ dependencies = [
  "md5 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "nom 4.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "runtime-fmt"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rust-stemmers"
@@ -3366,9 +3370,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum futures 0.1.25 (registry+https://github.com/rust-lang/crates.io-index)" = "49e7653e374fe0d0c12de4250f0bdb60680b8c80eed558c5c7538eec9c89e21b"
 "checksum futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "ab90cde24b3319636588d0c35fe03b1333857621051837ed769faefb4c2162e4"
 "checksum generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3c0f28c2f5bfb5960175af447a2da7c18900693738343dc896ffbcabd9839592"
-"checksum gettext 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4378b8e09fd51cfdb0d48f40929a5c358efeeb62feb458c7d6eab979fae231f4"
-"checksum gettext-macros 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "2bdeb4255ca6caddbe341fb22fdbe654abb0b797358dfc2c569ed0d5d832ab8e"
-"checksum gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "46dd079379f756f6a1ae74b051813e242893f84fbf6ac898bce827fc77958d70"
+"checksum gettext 0.3.0 (git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3)" = "<none>"
+"checksum gettext-macros 0.4.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)" = "<none>"
+"checksum gettext-utils 0.1.0 (git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10)" = "<none>"
 "checksum guid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e691c64d9b226c7597e29aeb46be753beb8c9eeef96d8c78dfd4d306338a38da"
 "checksum guid-create 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "fcea207bf7a6092166ab590f98fe5dde5a7deed1f1920d98dcac31f80814c40d"
 "checksum guid-macro-impl 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "08d50f7c496073b5a5dec0f6f1c149113a50960ce25dd2a559987a5a71190816"
@@ -3500,10 +3504,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_contrib 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f73e161dad5730435f51c815a5c6831d2e57b6b4299b1bf609d31b09aa9a2fa7"
 "checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)" = "<none>"
 "checksum rocket_http 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ba9d4f2ce5bba6e1b6d3100493bbad63879e99bbf6b4365d61e6f781daab324d"
-"checksum rocket_i18n 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc76ce146d0650cd38ee343202c95c8a891311f1ddad54feb9ecf8709cc2c86b"
+"checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)" = "<none>"
 "checksum rpassword 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d37473170aedbe66ffa3ad3726939ba677d83c646ad4fd99e5b4bc38712f45ec"
 "checksum rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)" = "7f4534cc03040beacd2668621815f26fe57e5b7cfe085790f98e5e87c1612316"
 "checksum ructe 0.5.10 (registry+https://github.com/rust-lang/crates.io-index)" = "159f449df09bdd1c92080d0fc1d1c5e11abe81301496370dfee546d985a46dec"
+"checksum runtime-fmt 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "647a821d66049faccc993fc3c379d1181b81a484097495cda79ffdb17b55b87f"
 "checksum rust-stemmers 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "05928c187b85b38f6b98db43057a24f0245163635a5ce6325a4f77a833d646aa"
 "checksum rustc-demangle 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)" = "adacaae16d02b6ec37fdc7acfcddf365978de76d1983d3ee22afc260e1ca9619"
 "checksum rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "138e3e0acb6c9fb258b19b67cb8abd63c00679d2851805ea151465464fe9030a"

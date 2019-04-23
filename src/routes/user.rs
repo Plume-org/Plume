@@ -10,29 +10,23 @@ use serde_json;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use inbox::{Inbox, SignedJson};
-use plume_common::activity_pub::{
-    broadcast,
-    inbox::{Deletable, FromActivity, Notify},
-    sign::{verify_http_headers, Signable},
-    ActivityStream, ApRequest, Id, IntoId,
-};
+use inbox;
+use plume_common::activity_pub::{broadcast, inbox::FromId, ActivityStream, ApRequest, Id};
 use plume_common::utils;
 use plume_models::{
     blogs::Blog,
     db_conn::DbConn,
     follows,
     headers::Headers,
+    inbox::inbox as local_inbox,
     instance::Instance,
     posts::{LicensedArticle, Post},
     reshares::Reshare,
     users::*,
-    Error,
+    Error, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page, PlumeRocket};
+use routes::{errors::ErrorPage, Page, RemoteForm};
 use template_utils::Ructe;
-use Searcher;
-use Worker;
 
 #[get("/me")]
 pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -46,21 +40,19 @@ pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
 pub fn details(
     name: String,
     rockets: PlumeRocket,
-    fetch_articles_conn: DbConn,
-    fetch_followers_conn: DbConn,
+    fetch_rockets: PlumeRocket,
+    fetch_followers_rockets: PlumeRocket,
     update_conn: DbConn,
 ) -> Result<Ructe, ErrorPage> {
-    let conn = rockets.conn;
-    let user = User::find_by_fqn(&*conn, &name)?;
+    let conn = &*rockets.conn;
+    let user = User::find_by_fqn(&rockets, &name)?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
-    let searcher = rockets.searcher;
     let worker = rockets.worker;
 
     if !user.get_instance(&*conn)?.local {
         // Fetch new articles
         let user_clone = user.clone();
-        let searcher = searcher.clone();
         worker.execute(move || {
             for create_act in user_clone
                 .fetch_outbox::<Create>()
@@ -68,12 +60,8 @@ pub fn details(
             {
                 match create_act.create_props.object_object::<LicensedArticle>() {
                     Ok(article) => {
-                        Post::from_activity(
-                            &(&*fetch_articles_conn, &searcher),
-                            article,
-                            user_clone.clone().into_id(),
-                        )
-                        .expect("Article from remote user couldn't be saved");
+                        Post::from_activity(&fetch_rockets, article)
+                            .expect("Article from remote user couldn't be saved");
                         println!("Fetched article from remote user");
                     }
                     Err(e) => println!("Error while fetching articles in background: {:?}", e),
@@ -88,10 +76,10 @@ pub fn details(
                 .fetch_followers_ids()
                 .expect("Remote user: fetching followers error")
             {
-                let follower = User::from_url(&*fetch_followers_conn, &user_id)
+                let follower = User::from_id(&fetch_followers_rockets, &user_id, None)
                     .expect("user::details: Couldn't fetch follower");
                 follows::Follow::insert(
-                    &*fetch_followers_conn,
+                    &*fetch_followers_rockets.conn,
                     follows::NewFollow {
                         follower_id: follower.id,
                         following_id: user_clone.id,
@@ -153,16 +141,19 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-pub fn follow(
-    name: String,
-    conn: DbConn,
-    user: User,
-    worker: Worker,
-) -> Result<Redirect, ErrorPage> {
-    let target = User::find_by_fqn(&*conn, &name)?;
+pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Redirect, ErrorPage> {
+    let conn = &*rockets.conn;
+    let target = User::find_by_fqn(&rockets, &name)?;
     if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
-        let delete_act = follow.delete(&*conn)?;
-        worker.execute(move || broadcast(&user, delete_act, vec![target]));
+        let delete_act = follow.build_undo(&*conn)?;
+        local_inbox(
+            &rockets,
+            serde_json::to_value(&delete_act).map_err(Error::from)?,
+        )?;
+
+        rockets
+            .worker
+            .execute(move || broadcast(&user, delete_act, vec![target]));
     } else {
         let f = follows::Follow::insert(
             &*conn,
@@ -175,12 +166,78 @@ pub fn follow(
         f.notify(&*conn)?;
 
         let act = f.to_activity(&*conn)?;
-        worker.execute(move || broadcast(&user, act, vec![target]));
+        rockets
+            .worker
+            .execute(move || broadcast(&user, act, vec![target]));
     }
     Ok(Redirect::to(uri!(details: name = name)))
 }
 
-#[post("/@/<name>/follow", rank = 2)]
+#[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
+pub fn follow_not_connected(
+    rockets: PlumeRocket,
+    name: String,
+    remote_form: Option<LenientForm<RemoteForm>>,
+    i18n: I18n,
+) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
+    let target = User::find_by_fqn(&rockets, &name)?;
+    if let Some(remote_form) = remote_form {
+        let remote = &remote_form.remote;
+        if let Some(uri) = User::fetch_remote_interact_uri(remote)
+            .ok()
+            .and_then(|uri| {
+                rt_format!(
+                    uri,
+                    uri = format!(
+                        "{}@{}",
+                        target.fqn,
+                        target.get_instance(&rockets.conn).ok()?.public_domain
+                    )
+                )
+                .ok()
+            })
+        {
+            Ok(Err(Redirect::to(uri)))
+        } else {
+            let mut err = ValidationErrors::default();
+            err.add("remote",
+                ValidationError {
+                    code: Cow::from("invalid_remote"),
+                    message: Some(Cow::from(i18n!(&i18n.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
+                    params: HashMap::new(),
+                },
+            );
+            Ok(Ok(Flash::new(
+                render!(users::follow_remote(
+                    &(&rockets.conn, &i18n.catalog, None),
+                    target,
+                    super::session::LoginForm::default(),
+                    ValidationErrors::default(),
+                    remote_form.clone(),
+                    err
+                )),
+                "callback",
+                uri!(follow: name = name).to_string(),
+            )))
+        }
+    } else {
+        Ok(Ok(Flash::new(
+            render!(users::follow_remote(
+                &(&rockets.conn, &i18n.catalog, None),
+                target,
+                super::session::LoginForm::default(),
+                ValidationErrors::default(),
+                #[allow(clippy::map_clone)]
+                remote_form.map(|x| x.clone()).unwrap_or_default(),
+                ValidationErrors::default()
+            )),
+            "callback",
+            uri!(follow: name = name).to_string(),
+        )))
+    }
+}
+
+#[get("/@/<name>/follow?local", rank = 2)]
 pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
     utils::requires_login(
         &i18n!(
@@ -194,19 +251,19 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 #[get("/@/<name>/followers?<page>", rank = 2)]
 pub fn followers(
     name: String,
-    conn: DbConn,
-    account: Option<User>,
     page: Option<Page>,
-    intl: I18n,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
+    let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&*conn, &name)?;
+    let user = User::find_by_fqn(&rockets, &name)?;
     let followers_count = user.count_followers(&*conn)?;
 
     Ok(render!(users::followers(
-        &(&*conn, &intl.catalog, account.clone()),
+        &(&*conn, &rockets.intl.catalog, rockets.user.clone()),
         user.clone(),
-        account
+        rockets
+            .user
             .and_then(|x| x.is_following(&*conn, user.id).ok())
             .unwrap_or(false),
         user.instance_id != Instance::get_local(&*conn)?.id,
@@ -220,19 +277,19 @@ pub fn followers(
 #[get("/@/<name>/followed?<page>", rank = 2)]
 pub fn followed(
     name: String,
-    conn: DbConn,
-    account: Option<User>,
     page: Option<Page>,
-    intl: I18n,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
+    let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&*conn, &name)?;
+    let user = User::find_by_fqn(&rockets, &name)?;
     let followed_count = user.count_followed(&*conn)?;
 
     Ok(render!(users::followed(
-        &(&*conn, &intl.catalog, account.clone()),
+        &(&*conn, &rockets.intl.catalog, rockets.user.clone()),
         user.clone(),
-        account
+        rockets
+            .user
             .and_then(|x| x.is_following(&*conn, user.id).ok())
             .unwrap_or(false),
         user.instance_id != Instance::get_local(&*conn)?.id,
@@ -246,11 +303,11 @@ pub fn followed(
 #[get("/@/<name>", rank = 1)]
 pub fn activity_details(
     name: String,
-    conn: DbConn,
+    rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_by_fqn(&*conn, &name).ok()?;
-    Some(ActivityStream::new(user.to_activity(&*conn).ok()?))
+    let user = User::find_by_fqn(&rockets, &name).ok()?;
+    Some(ActivityStream::new(user.to_activity(&*rockets.conn).ok()?))
 }
 
 #[get("/users/new")]
@@ -329,14 +386,13 @@ pub fn update(
 #[post("/@/<name>/delete")]
 pub fn delete(
     name: String,
-    conn: DbConn,
     user: User,
     mut cookies: Cookies,
-    searcher: Searcher,
+    rockets: PlumeRocket,
 ) -> Result<Redirect, ErrorPage> {
-    let account = User::find_by_fqn(&*conn, &name)?;
+    let account = User::find_by_fqn(&rockets, &name)?;
     if user.id == account.id {
-        account.delete(&*conn, &searcher)?;
+        account.delete(&*rockets.conn, &rockets.searcher)?;
 
         if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
             cookies.remove_private(cookie);
@@ -439,76 +495,31 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n) -> Resul
 }
 
 #[get("/@/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&*conn, &name).ok()?;
-    user.outbox(&*conn).ok()
+pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<OrderedCollection>> {
+    let user = User::find_by_fqn(&rockets, &name).ok()?;
+    user.outbox(&*rockets.conn).ok()
 }
 
 #[post("/@/<name>/inbox", data = "<data>")]
 pub fn inbox(
     name: String,
-    conn: DbConn,
-    data: SignedJson<serde_json::Value>,
+    data: inbox::SignedJson<serde_json::Value>,
     headers: Headers,
-    searcher: Searcher,
-) -> Result<String, Option<status::BadRequest<&'static str>>> {
-    let user = User::find_by_fqn(&*conn, &name).map_err(|_| None)?;
-    let act = data.1.into_inner();
-    let sig = data.0;
-
-    let activity = act.clone();
-    let actor_id = activity["actor"]
-        .as_str()
-        .or_else(|| activity["actor"]["id"].as_str())
-        .ok_or(Some(status::BadRequest(Some(
-            "Missing actor id for activity",
-        ))))?;
-
-    let actor = User::from_url(&conn, actor_id).expect("user::inbox: user error");
-    if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
-        // maybe we just know an old key?
-        actor
-            .refetch(&conn)
-            .and_then(|_| User::get(&conn, actor.id))
-            .and_then(|actor| {
-                if verify_http_headers(&actor, &headers.0, &sig).is_secure()
-                    || act.clone().verify(&actor)
-                {
-                    Ok(())
-                } else {
-                    Err(Error::Signature)
-                }
-            })
-            .map_err(|_| {
-                println!(
-                    "Rejected invalid activity supposedly from {}, with headers {:?}",
-                    actor.username, headers.0
-                );
-                status::BadRequest(Some("Invalid signature"))
-            })?;
-    }
-
-    if Instance::is_blocked(&*conn, actor_id).map_err(|_| None)? {
-        return Ok(String::new());
-    }
-    Ok(match user.received(&*conn, &searcher, act) {
-        Ok(_) => String::new(),
-        Err(e) => {
-            println!("User inbox error: {}\n{}", e.as_fail(), e.backtrace());
-            format!("Error: {}", e.as_fail())
-        }
-    })
+    rockets: PlumeRocket,
+) -> Result<String, status::BadRequest<&'static str>> {
+    User::find_by_fqn(&rockets, &name).map_err(|_| status::BadRequest(Some("User not found")))?;
+    inbox::handle_incoming(rockets, data, headers)
 }
 
 #[get("/@/<name>/followers", rank = 1)]
 pub fn ap_followers(
     name: String,
-    conn: DbConn,
+    rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&*conn, &name).ok()?;
+    let user = User::find_by_fqn(&rockets, &name).ok()?;
     let followers = user
-        .get_followers(&*conn)
+        .get_followers(&*rockets.conn)
         .ok()?
         .into_iter()
         .map(|f| Id::new(f.ap_url))
@@ -526,18 +537,19 @@ pub fn ap_followers(
 }
 
 #[get("/@/<name>/atom.xml")]
-pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let author = User::find_by_fqn(&*conn, &name).ok()?;
+pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
+    let conn = &*rockets.conn;
+    let author = User::find_by_fqn(&rockets, &name).ok()?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
-        .id(Instance::get_local(&*conn)
+        .id(Instance::get_local(conn)
             .unwrap()
             .compute_box("@", &name, "atom.xml"))
         .entries(
-            Post::get_recents_for_author(&*conn, &author, 15)
+            Post::get_recents_for_author(conn, &author, 15)
                 .ok()?
                 .into_iter()
-                .map(|p| super::post_to_atom(p, &*conn))
+                .map(|p| super::post_to_atom(p, conn))
                 .collect::<Vec<Entry>>(),
         )
         .build()

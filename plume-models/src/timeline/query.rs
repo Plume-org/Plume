@@ -1,6 +1,6 @@
 use blogs::Blog;
 use lists::{self, ListType};
-use plume_common::activity_pub::inbox::WithInbox;
+use plume_common::activity_pub::inbox::AsActor;
 use posts::Post;
 use tags::Tag;
 use users::User;
