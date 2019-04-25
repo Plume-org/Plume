@@ -156,14 +156,20 @@ enum TQ<'a> {
 }
 
 impl<'a> TQ<'a> {
-    pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post, kind: Kind) -> Result<bool> {
+    pub fn matches(
+        &self,
+        conn: &Connection,
+        timeline: &Timeline,
+        post: &Post,
+        kind: Kind,
+    ) -> Result<bool> {
         match self {
-            TQ::Or(inner) => inner
-                .iter()
-                .try_fold(true, |s, e| e.matches(conn, timeline, post, kind).map(|r| s || r)),
-            TQ::And(inner) => inner
-                .iter()
-                .try_fold(true, |s, e| e.matches(conn, timeline, post, kind).map(|r| s && r)),
+            TQ::Or(inner) => inner.iter().try_fold(true, |s, e| {
+                e.matches(conn, timeline, post, kind).map(|r| s || r)
+            }),
+            TQ::And(inner) => inner.iter().try_fold(true, |s, e| {
+                e.matches(conn, timeline, post, kind).map(|r| s && r)
+            }),
             TQ::Arg(inner, invert) => Ok(inner.matches(conn, timeline, post, kind)? ^ invert),
         }
     }
@@ -177,7 +183,13 @@ enum Arg<'a> {
 }
 
 impl<'a> Arg<'a> {
-    pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post, kind: Kind) -> Result<bool> {
+    pub fn matches(
+        &self,
+        conn: &Connection,
+        timeline: &Timeline,
+        post: &Post,
+        kind: Kind,
+    ) -> Result<bool> {
         match self {
             Arg::In(t, l) => t.matches(conn, timeline, post, l, kind),
             Arg::Contains(t, v) => t.matches(post, v),
@@ -189,7 +201,7 @@ impl<'a> Arg<'a> {
 #[derive(Debug, Clone, PartialEq)]
 enum WithList {
     Blog,
-    Author{boosts: bool, likes: bool},
+    Author { boosts: bool, likes: bool },
     License,
     Tags,
     Lang,
@@ -209,28 +221,24 @@ impl WithList {
                 let list = lists::List::find_by_name(conn, timeline.user_id, &name)?;
                 match (self, list.kind()) {
                     (WithList::Blog, ListType::Blog) => list.contains_blog(conn, post.blog_id),
-                    (WithList::Author{boosts, likes}, ListType::User) => {
-                        match kind {
-                            Kind::Original => {
-                                Ok(list
-                                    .list_users(conn)?
-                                    .iter()
-                                    .any(|a| post.is_author(conn, a.id).unwrap_or(false)))
-                            },
-                            Kind::Boost(u) => {
-                                if *boosts {
-                                    list.contains_user(conn, u.id)
-                                } else {
-                                    Ok(false)
-                                }
-                            },
-                            Kind::Like(u) => {
-                                if *likes {
-                                    list.contains_user(conn, u.id)
-                                } else {
-                                    Ok(false)
-                                }
-                            },
+                    (WithList::Author { boosts, likes }, ListType::User) => match kind {
+                        Kind::Original => Ok(list
+                            .list_users(conn)?
+                            .iter()
+                            .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
+                        Kind::Boost(u) => {
+                            if *boosts {
+                                list.contains_user(conn, u.id)
+                            } else {
+                                Ok(false)
+                            }
+                        }
+                        Kind::Like(u) => {
+                            if *likes {
+                                list.contains_user(conn, u.id)
+                            } else {
+                                Ok(false)
+                            }
                         }
                     },
                     (WithList::License, ListType::Word) => list.contains_word(conn, &post.license),
@@ -253,33 +261,25 @@ impl WithList {
                     .iter()
                     .filter_map(|b| Blog::find_by_ap_url(conn, b).ok())
                     .any(|b| b.id == post.blog_id)),
-                WithList::Author{boosts, likes} => {
-                        match kind {
-                            Kind::Original => {
-                                Ok(list
-                                    .iter()
-                                    .filter_map(|a| User::find_by_ap_url(conn, a).ok())
-                                    .any(|a| post.is_author(conn, a.id).unwrap_or(false)))
-                            },
-                            Kind::Boost(u) => {
-                                if *boosts {
-                                    Ok(list
-                                        .iter()
-                                        .any(|user| &u.fqn == user))
-                                } else {
-                                    Ok(false)
-                                }
-                            },
-                            Kind::Like(u) => {
-                                if *likes {
-                                    Ok(list
-                                        .iter()
-                                        .any(|user| &u.fqn == user))
-                                } else {
-                                    Ok(false)
-                                }
-                            },
+                WithList::Author { boosts, likes } => match kind {
+                    Kind::Original => Ok(list
+                        .iter()
+                        .filter_map(|a| User::find_by_ap_url(conn, a).ok())
+                        .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
+                    Kind::Boost(u) => {
+                        if *boosts {
+                            Ok(list.iter().any(|user| &u.fqn == user))
+                        } else {
+                            Ok(false)
                         }
+                    }
+                    Kind::Like(u) => {
+                        if *likes {
+                            Ok(list.iter().any(|user| &u.fqn == user))
+                        } else {
+                            Ok(false)
+                        }
+                    }
                 },
                 WithList::License => Ok(list.iter().any(|s| s == &post.license)),
                 WithList::Tags => {
@@ -311,43 +311,45 @@ impl WithContains {
 
 #[derive(Debug, Clone, PartialEq)]
 enum Bool {
-    Followed{
-        boosts: bool,
-        likes: bool,
-    },
+    Followed { boosts: bool, likes: bool },
     HasCover,
     Local,
     All,
 }
 
 impl Bool {
-    pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post, kind: Kind) -> Result<bool> {
+    pub fn matches(
+        &self,
+        conn: &Connection,
+        timeline: &Timeline,
+        post: &Post,
+        kind: Kind,
+    ) -> Result<bool> {
         match self {
-            Bool::Followed{boosts, likes} => {
+            Bool::Followed { boosts, likes } => {
                 if timeline.user_id.is_none() {
-                    return Ok(false)
+                    return Ok(false);
                 }
                 let user = timeline.user_id.unwrap();
                 match kind {
-                    Kind::Original => {
-                        post.get_authors(conn)?
-                            .iter()
-                            .try_fold(false, |s, a| a.is_followed_by(conn, user).map(|r| s || r))
-                    },
+                    Kind::Original => post
+                        .get_authors(conn)?
+                        .iter()
+                        .try_fold(false, |s, a| a.is_followed_by(conn, user).map(|r| s || r)),
                     Kind::Boost(u) => {
                         if *boosts {
                             u.is_followed_by(conn, user)
                         } else {
                             Ok(false)
                         }
-                    },
+                    }
                     Kind::Like(u) => {
                         if *likes {
                             u.is_followed_by(conn, user)
                         } else {
                             Ok(false)
                         }
-                    },
+                    }
                 }
             }
             Bool::HasCover => Ok(post.cover_id.is_some()),
@@ -408,7 +410,7 @@ fn parse_a<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
 }
 
 fn parse_b<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<'a>)> {
-   match stream.get(0) {
+    match stream.get(0) {
         Some(Token::LParent(_)) => {
             let (left, token) = parse_s(&stream[1..])?;
             match left.get(0) {
@@ -448,35 +450,35 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                             while let Some(Token::Word(s, e, clude)) = left.get(0) {
                                 if *clude == "include" || *clude == "exclude" {
                                     match (*clude, left.get(1).map(Token::get_text)?) {
-                                        ("include", "boosts")
-                                        | ("include", "boost") => boosts = true,
-                                        ("exclude", "boosts")
-                                        | ("exclude", "boost") => boosts = false,
-                                        ("include", "likes")
-                                        | ("include", "like") => likes = true,
-                                        ("exclude", "likes")
-                                        | ("exclude", "like") => likes = false,
-                                        (_, w) => return Token::Word(*s, *e, w).get_error(Token::Word(0, 0, "one of 'likes' or 'boosts'")),
+                                        ("include", "boosts") | ("include", "boost") => {
+                                            boosts = true
+                                        }
+                                        ("exclude", "boosts") | ("exclude", "boost") => {
+                                            boosts = false
+                                        }
+                                        ("include", "likes") | ("include", "like") => likes = true,
+                                        ("exclude", "likes") | ("exclude", "like") => likes = false,
+                                        (_, w) => {
+                                            return Token::Word(*s, *e, w).get_error(Token::Word(
+                                                0,
+                                                0,
+                                                "one of 'likes' or 'boosts'",
+                                            ))
+                                        }
                                     }
                                     left = &left[2..];
                                 } else {
                                     break;
                                 }
                             }
-                            WithList::Author{boosts, likes}
-                        },
+                            WithList::Author { boosts, likes }
+                        }
                         "license" => WithList::License,
                         "tags" => WithList::Tags,
                         "lang" => WithList::Lang,
                         _ => unreachable!(),
                     };
-                    Ok((
-                        left,
-                        Arg::In(
-                            kind,
-                            list,
-                        ),
-                    ))
+                    Ok((left, Arg::In(kind, list)))
                 }
                 t => t.get_error(Token::Word(0, 0, "'in'")),
             }
@@ -505,24 +507,26 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                 let mut likes = false;
                 while let Some(Token::Word(s, e, clude)) = stream.get(1) {
                     if *clude == "include" || *clude == "exclude" {
-                        match (*clude,stream.get(2).map(Token::get_text)?) {
-                            ("include", "boosts")
-                            | ("include", "boost") => boosts = true,
-                            ("exclude", "boosts")
-                            | ("exclude", "boost") => boosts = false,
-                            ("include", "likes")
-                            | ("include", "like") => likes = true,
-                            ("exclude", "likes")
-                            | ("exclude", "like") => likes = false,
-                            | (_, w) => return Token::Word(*s, *e, w).get_error(Token::Word(0, 0, "one of 'likes' or 'boosts'")),
+                        match (*clude, stream.get(2).map(Token::get_text)?) {
+                            ("include", "boosts") | ("include", "boost") => boosts = true,
+                            ("exclude", "boosts") | ("exclude", "boost") => boosts = false,
+                            ("include", "likes") | ("include", "like") => likes = true,
+                            ("exclude", "likes") | ("exclude", "like") => likes = false,
+                            (_, w) => {
+                                return Token::Word(*s, *e, w).get_error(Token::Word(
+                                    0,
+                                    0,
+                                    "one of 'likes' or 'boosts'",
+                                ))
+                            }
                         }
                         stream = &stream[2..];
                     } else {
                         break;
                     }
                 }
-                Ok((&stream[1..], Arg::Boolean(Bool::Followed{boosts, likes})))
-            },
+                Ok((&stream[1..], Arg::Boolean(Bool::Followed { boosts, likes })))
+            }
             "has_cover" => Ok((&stream[1..], Arg::Boolean(Bool::HasCover))),
             "local" => Ok((&stream[1..], Arg::Boolean(Bool::Local))),
             "all" => Ok((&stream[1..], Arg::Boolean(Bool::All))),
@@ -585,7 +589,13 @@ impl<'a> TimelineQuery<'a> {
             .map(TimelineQuery)
     }
 
-    pub fn matches(&self, conn: &Connection, timeline: &Timeline, post: &Post, kind: Kind) -> Result<bool> {
+    pub fn matches(
+        &self,
+        conn: &Connection,
+        timeline: &Timeline,
+        post: &Post,
+        kind: Kind,
+    ) -> Result<bool> {
         self.0.matches(conn, timeline, post, kind)
     }
 }
@@ -625,7 +635,13 @@ mod tests {
                     ),
                     TQ::Or(vec![
                         TQ::Arg(Arg::In(WithList::License, List::List("my_fav_lic"),), false),
-                        TQ::Arg(Arg::Boolean(Bool::Followed{boosts: true, likes: false}), true),
+                        TQ::Arg(
+                            Arg::Boolean(Bool::Followed {
+                                boosts: true,
+                                likes: false
+                            }),
+                            true
+                        ),
                     ]),
                 ]),
                 TQ::Arg(
@@ -643,7 +659,16 @@ mod tests {
             lists.0,
             TQ::Or(vec![
                 TQ::Arg(Arg::In(WithList::Blog, List::List("a"),), false),
-                TQ::Arg(Arg::In(WithList::Author{boosts: true, likes: true}, List::List("b"),), false),
+                TQ::Arg(
+                    Arg::In(
+                        WithList::Author {
+                            boosts: true,
+                            likes: true
+                        },
+                        List::List("b"),
+                    ),
+                    false
+                ),
                 TQ::Arg(Arg::In(WithList::License, List::List("c"),), false),
                 TQ::Arg(Arg::In(WithList::Tags, List::List("d"),), false),
                 TQ::Arg(Arg::In(WithList::Lang, List::List("e"),), false),
@@ -663,11 +688,20 @@ mod tests {
             ])
         );
 
-        let booleans = TimelineQuery::parse(r#"followed include like exclude boosts and has_cover and local and all"#).unwrap();
+        let booleans = TimelineQuery::parse(
+            r#"followed include like exclude boosts and has_cover and local and all"#,
+        )
+        .unwrap();
         assert_eq!(
             booleans.0,
             TQ::And(vec![
-                TQ::Arg(Arg::Boolean(Bool::Followed{boosts: false, likes: true}), false),
+                TQ::Arg(
+                    Arg::Boolean(Bool::Followed {
+                        boosts: false,
+                        likes: true
+                    }),
+                    false
+                ),
                 TQ::Arg(Arg::Boolean(Bool::HasCover), false),
                 TQ::Arg(Arg::Boolean(Bool::Local), false),
                 TQ::Arg(Arg::Boolean(Bool::All), false),
