@@ -5,6 +5,8 @@ label {
 }
 input, textarea, select {
  	transition: all 0.1s ease-in;
+  -webkit-transition: 0.1s;
+  -moz-transition: 0.1s;
  	display: block;
  	width: 100%;
  	margin: auto;
@@ -32,7 +34,7 @@ textarea {
  	font-size: 1.1em;
  	line-height: 1.5;
  @media only screen and (max-width: 600px) {
-    display: block;
+    display: block !important;
  }
 }
 
@@ -59,7 +61,7 @@ form.inline {
     width: auto;
    -webkit-appearance: none;
    @media only screen and (max-width: 600px) {
-    display: block;
+    display: block !important;
   }
 
     &:not(.button) {
@@ -74,10 +76,12 @@ form.inline {
 
 .button, input[type="submit"], button {
  	transition: all 0.1s ease-in;
+  -webkit-transition: 0.1s;
+  -moz-transition: 0.1s;
  	display: inline-block;
   -webkit-appearance: none;
  @media only screen and (max-width: 600px) {
-    display: block;
+    display: block !important;
   }
 
  	border-radius: 0.5em;
