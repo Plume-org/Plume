@@ -55,6 +55,9 @@ form.inline {
     font-size: 1em;
     width: auto;
    -webkit-appearance: none;
+   @media only screen and (max-width: 600px) {
+    display: block;
+  }
 
     &:not(.button) {
       margin: 0;
@@ -70,6 +73,9 @@ form.inline {
  	transition: all 0.1s ease-in;
  	display: inline-block;
   -webkit-appearance: none;
+ @media only screen and (max-width: 600px) {
+    display: block;
+  }
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
@@ -122,6 +128,9 @@ form.new-post {
    	color: $black;
    	border: none;
     -webkit-appearance: none;
+   @media only screen and (max-width: 600px) {
+    display: block;
+  }
 
    	font-family: $playfair;
    	font-size: 1.5em;
