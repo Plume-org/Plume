@@ -1,12 +1,13 @@
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
+use lists::List;
 use posts::Post;
 use schema::{posts, timeline, timeline_definition};
 use {Connection, Error, Result};
 
 pub(crate) mod query;
 
-use self::query::{Kind, TimelineQuery};
+use self::query::{Kind, QueryError, TimelineQuery};
 
 #[derive(Clone, Queryable, Identifiable)]
 #[table_name = "timeline_definition"]
@@ -47,27 +48,74 @@ impl Timeline {
         conn: &Connection,
         user_id: i32,
         name: String,
-        query: String,
+        query_string: String,
     ) -> Result<Timeline> {
-        TimelineQuery::parse(&query)?; // verify the query is valid
+        {
+            let query = TimelineQuery::parse(&query_string)?; // verify the query is valid
+            if let Some(err) =
+                query
+                    .list_used_lists()
+                    .into_iter()
+                    .find_map(|(name, kind)| {
+                        let list = List::find_by_name(conn, Some(user_id), &name)
+                            .map(|l| l.kind() == kind);
+                        match list {
+                            Ok(true) => None,
+                            Ok(false) => Some(Error::TimelineQuery(QueryError::RuntimeError(
+                                format!("list '{}' has the wrong type for this usage", name),
+                            ))),
+                            Err(_) => Some(Error::TimelineQuery(QueryError::RuntimeError(
+                                format!("list '{}' was not found", name),
+                            ))),
+                        }
+                    })
+            {
+                Err(err)?;
+            }
+        }
         Self::insert(
             conn,
             NewTimeline {
                 user_id: Some(user_id),
                 name,
-                query,
+                query: query_string,
             },
         )
     }
 
-    pub fn new_for_instance(conn: &Connection, name: String, query: String) -> Result<Timeline> {
-        TimelineQuery::parse(&query)?; // verify the query is valid
+    pub fn new_for_instance(
+        conn: &Connection,
+        name: String,
+        query_string: String,
+    ) -> Result<Timeline> {
+        {
+            let query = TimelineQuery::parse(&query_string)?; // verify the query is valid
+            if let Some(err) =
+                query
+                    .list_used_lists()
+                    .into_iter()
+                    .find_map(|(name, kind)| {
+                        let list = List::find_by_name(conn, None, &name).map(|l| l.kind() == kind);
+                        match list {
+                            Ok(true) => None,
+                            Ok(false) => Some(Error::TimelineQuery(QueryError::RuntimeError(
+                                format!("list '{}' has the wrong type for this usage", name),
+                            ))),
+                            Err(_) => Some(Error::TimelineQuery(QueryError::RuntimeError(
+                                format!("list '{}' was not found", name),
+                            ))),
+                        }
+                    })
+            {
+                Err(err)?;
+            }
+        }
         Self::insert(
             conn,
             NewTimeline {
                 user_id: None,
                 name,
-                query,
+                query: query_string,
             },
         )
     }

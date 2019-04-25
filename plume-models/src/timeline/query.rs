@@ -177,8 +177,8 @@ impl<'a> TQ<'a> {
 
     fn list_used_lists(&self) -> Vec<(String, ListType)> {
         match self {
-            TQ::Or(inner) => inner.iter().flat_map(|e| e.list_used_lists()).collect(),
-            TQ::And(inner) => inner.iter().flat_map(|e| e.list_used_lists()).collect(),
+            TQ::Or(inner) => inner.iter().flat_map(TQ::list_used_lists).collect(),
+            TQ::And(inner) => inner.iter().flat_map(TQ::list_used_lists).collect(),
             TQ::Arg(Arg::In(typ, List::List(name)), _) => vec![(
                 name.to_string(),
                 match typ {
@@ -270,11 +270,17 @@ impl WithList {
                     }
                     (WithList::Lang, ListType::Prefix) => {
                         let lang = whatlang::detect(post.content.get())
-                            .and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} )
+                            .and_then(|i| {
+                                if i.is_reliable() {
+                                    Some(i.lang())
+                                } else {
+                                    None
+                                }
+                            })
                             .unwrap_or(Lang::Eng)
                             .name();
                         list.contains_prefix(conn, lang)
-                    },
+                    }
                     (_, _) => Err(QueryError::RuntimeError(format!(
                         "The list '{}' is of the wrong type for this usage",
                         name
@@ -313,11 +319,17 @@ impl WithList {
                 }
                 WithList::Lang => {
                     let lang = whatlang::detect(post.content.get())
-                        .and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} )
+                        .and_then(|i| {
+                            if i.is_reliable() {
+                                Some(i.lang())
+                            } else {
+                                None
+                            }
+                        })
                         .unwrap_or(Lang::Eng)
                         .name();
                     Ok(list.iter().any(|s| lang.starts_with(s)))
-                },
+                }
             },
         }
     }
