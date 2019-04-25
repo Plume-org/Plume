@@ -6,7 +6,7 @@ use {Connection, Error, Result};
 
 pub(crate) mod query;
 
-use self::query::TimelineQuery;
+use self::query::{Kind, TimelineQuery};
 
 #[derive(Clone, Queryable, Identifiable)]
 #[table_name = "timeline_definition"]
@@ -88,13 +88,13 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(conn: &Connection, post: &Post) -> Result<()> {
+    pub fn add_to_all_timelines(conn: &Connection, post: &Post, kind: Kind) -> Result<()> {
         let timelines = timeline_definition::table
             .load::<Self>(conn)
             .map_err(Error::from)?;
 
         for t in timelines {
-            if t.matches(conn, post)? {
+            if t.matches(conn, post, kind)? {
                 t.add_post(conn, post)?;
             }
         }
@@ -111,8 +111,8 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn matches(&self, conn: &Connection, post: &Post) -> Result<bool> {
+    pub fn matches(&self, conn: &Connection, post: &Post, kind: Kind) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
-        query.matches(conn, self, post)
+        query.matches(conn, self, post, kind)
     }
 }
