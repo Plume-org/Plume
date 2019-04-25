@@ -93,7 +93,7 @@ html {
         > img:first-child { height: 3rem; }
         > *:last-child { margin-left: 1rem; }
         > nav hr {
-          display: block;
+          display: block; // This was flex; in Alpha 1
           margin: 0;
           width: 100%;
           border: solid $white 0.1rem;
