@@ -55,7 +55,6 @@ form.inline {
     cursor: pointer;
     font-size: 1em;
     width: auto;
-   -webkit-appearance: none;
 
     &:not(.button) {
       margin: 0;
@@ -71,7 +70,6 @@ form.inline {
  	transition: all 0.1s ease-in;
   -webkit-transition: 0.1s;
  	display: block;
-  -webkit-appearance: none;
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
