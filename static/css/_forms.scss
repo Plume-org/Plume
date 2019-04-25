@@ -5,11 +5,12 @@ label {
 }
 input, textarea, select {
  	transition: all 0.1s ease-in;
+  -webkit-transition: 0.1s;
  	display: block;
  	width: 100%;
  	margin: auto;
  	padding: 1em;
- 	box-sizing: border-box;
+ 	box-sizing: auto;
 
  	background: $form-input-background;
  	color: $black;
@@ -68,7 +69,9 @@ form.inline {
 
 .button, input[type="submit"], button {
  	transition: all 0.1s ease-in;
+  -webkit-transition: 0.1s;
  	display: block;
+  -webkit-appearance: none;
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
@@ -120,6 +123,7 @@ form.new-post {
    	background: $lightgray;
    	color: $black;
    	border: none;
+   -webkit-appearance: none;
 
    	font-family: $playfair;
    	font-size: 1.5em;
