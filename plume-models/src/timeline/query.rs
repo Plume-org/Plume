@@ -156,7 +156,7 @@ enum TQ<'a> {
 }
 
 impl<'a> TQ<'a> {
-    pub fn matches(
+    fn matches(
         &self,
         conn: &Connection,
         timeline: &Timeline,
@@ -171,6 +171,24 @@ impl<'a> TQ<'a> {
                 e.matches(conn, timeline, post, kind).map(|r| s && r)
             }),
             TQ::Arg(inner, invert) => Ok(inner.matches(conn, timeline, post, kind)? ^ invert),
+        }
+    }
+
+    fn list_used_lists(&self) -> Vec<(String, ListType)> {
+        match self {
+            TQ::Or(inner) => inner.iter().flat_map(|e| e.list_used_lists()).collect(),
+            TQ::And(inner) => inner.iter().flat_map(|e| e.list_used_lists()).collect(),
+            TQ::Arg(Arg::In(typ, List::List(name)), _) => vec![(
+                name.to_string(),
+                match typ {
+                    WithList::Blog => ListType::Blog,
+                    WithList::Author { .. } => ListType::User,
+                    WithList::License => ListType::Word,
+                    WithList::Tags => ListType::Word,
+                    WithList::Lang => ListType::Prefix,
+                },
+            )],
+            TQ::Arg(_, _) => vec![],
         }
     }
 }
@@ -598,6 +616,10 @@ impl<'a> TimelineQuery<'a> {
     ) -> Result<bool> {
         self.0.matches(conn, timeline, post, kind)
     }
+
+    pub fn list_used_lists(&self) -> Vec<(String, ListType)> {
+        self.0.list_used_lists()
+    }
 }
 
 #[cfg(test)]
@@ -801,6 +823,23 @@ mod tests {
         assert_eq!(
             got_par,
             QueryError::SyntaxError(12, 1, "Syntax Error: Expected any word, got '('".to_owned())
+        );
+    }
+
+    #[test]
+    fn test_list_used_lists() {
+        let q = TimelineQuery::parse(r#"lang in [fr, en] and blog in blogs or author in my_fav_authors or tags in hashtag and lang in spoken or license in copyleft"#)
+            .unwrap();
+        let used_lists = q.list_used_lists();
+        assert_eq!(
+            used_lists,
+            vec![
+                ("blogs".to_owned(), ListType::Blog),
+                ("my_fav_authors".to_owned(), ListType::User),
+                ("hashtag".to_owned(), ListType::Word),
+                ("spoken".to_owned(), ListType::Prefix),
+                ("copyleft".to_owned(), ListType::Word),
+            ]
         );
     }
 }
