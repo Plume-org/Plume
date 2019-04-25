@@ -5,8 +5,8 @@ label {
 }
 input, textarea, select {
  	transition: all 0.1s ease-in;
-  -webkit-transition: 0.1s;
-  -moz-transition: 0.1s;
+   -webkit-transition: 0.1s;
+   -moz-transition: 0.1s;
  	display: block;
  	width: 100%;
  	margin: auto;
@@ -33,9 +33,6 @@ textarea {
  	font-family: $lora;
  	font-size: 1.1em;
  	line-height: 1.5;
- @media only screen and (max-width: 600px) {
-    display: block !important;
- }
 }
 
 input[type="checkbox"] {
@@ -49,6 +46,9 @@ input[type="checkbox"] {
 
 form.inline {
   display: inline;
+  @media only screen and (max-width: 600px) {
+    display: block !important;
+  }
   margin: 0px;
   padding: 0px;
   width: auto;
@@ -135,10 +135,7 @@ form.new-post {
    	color: $black;
    	border: none;
     -webkit-appearance: none;
-   @media only screen and (max-width: 600px) {
-    display: block;
-  }
-
+   
    	font-family: $playfair;
    	font-size: 1.5em;
   }
