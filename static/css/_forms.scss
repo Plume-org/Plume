@@ -69,7 +69,6 @@ form.inline {
 .button, input[type="submit"], button {
  	transition: all 0.1s ease-in;
  	display: inline-block;
-  -webkit-appearance: none;
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
@@ -121,7 +120,6 @@ form.new-post {
    	background: $lightgray;
    	color: $black;
    	border: none;
-    -webkit-appearance: none;
 
    	font-family: $playfair;
    	font-size: 1.5em;
