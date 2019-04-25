@@ -4,6 +4,7 @@ use plume_common::activity_pub::inbox::AsActor;
 use posts::Post;
 use tags::Tag;
 use users::User;
+use whatlang::{self, Lang};
 
 use {Connection, Result};
 
@@ -97,7 +98,7 @@ impl<'a> ToString for Token<'a> {
 macro_rules! gen_tokenizer {
     ( ($c:ident,$i:ident), $state:ident, $quote:ident; $([$char:tt, $variant:tt]),*) => {
         match $c {
-            ' ' if !*$quote => match $state.take() {
+            space if !*$quote && space.is_whitespace() => match $state.take() {
                 Some(v) => vec![v],
                 None => vec![],
             },
@@ -267,7 +268,13 @@ impl WithList {
                             .iter()
                             .any(|s| tags.iter().any(|t| s == &t.tag)))
                     }
-                    (WithList::Lang, ListType::Prefix) => unimplemented!(),
+                    (WithList::Lang, ListType::Prefix) => {
+                        let lang = whatlang::detect(post.content.get())
+                            .and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} )
+                            .unwrap_or(Lang::Eng)
+                            .name();
+                        list.contains_prefix(conn, lang)
+                    },
                     (_, _) => Err(QueryError::RuntimeError(format!(
                         "The list '{}' is of the wrong type for this usage",
                         name
@@ -304,7 +311,13 @@ impl WithList {
                     let tags = Tag::for_post(conn, post.id)?;
                     Ok(list.iter().any(|s| tags.iter().any(|t| s == &t.tag)))
                 }
-                WithList::Lang => unimplemented!(),
+                WithList::Lang => {
+                    let lang = whatlang::detect(post.content.get())
+                        .and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} )
+                        .unwrap_or(Lang::Eng)
+                        .name();
+                    Ok(list.iter().any(|s| lang.starts_with(s)))
+                },
             },
         }
     }
