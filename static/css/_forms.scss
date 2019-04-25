@@ -31,6 +31,8 @@ textarea {
  	font-family: $lora;
  	font-size: 1.1em;
  	line-height: 1.5;
+ @media only screen and (max-width: 600px) {
+    display: block;
 }
 
 input[type="checkbox"] {
