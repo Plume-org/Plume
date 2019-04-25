@@ -7,7 +7,7 @@
 
 @(ctx: BaseContext, user: User, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 
-@:remote_interact_base(ctx, i18n!(ctx.1, "Follow {}"; user.name()), i18n!(ctx.1, "Login to follow"), i18n!(ctx.1, "Enter your full username to follow"), {
+@:remote_interact_base(ctx, i18n!(ctx.1, "Follow {}"; user.name()), i18n!(ctx.1, "Login to follow"), i18n!(ctx.1, "Enter your full username handle to follow"), {
 	<h1>@i18n!(ctx.1, "Follow {}"; user.name())</h1>
 	@avatar(ctx.0, &user, Size::Medium, false, ctx.1)
 	<small>@@@user.fqn</small>
