@@ -36,11 +36,11 @@ html {
     flex-direction: column;
 
     nav#menu {
-      display: inline-flex;
+      display: flex;
     }
 
     #content {
-      display: flex;
+      display: inline-flex;
       text-align: center;
     }
   }
