@@ -8,14 +8,13 @@ use serde_json;
 use validator::{Validate, ValidationErrors};
 
 use inbox;
-use plume_common::activity_pub::inbox::FromId;
+use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
 use template_utils::Ructe;
-use Searcher;
 
 #[get("/")]
 pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, ErrorPage> {
@@ -199,12 +198,17 @@ pub fn admin_users(
 #[post("/admin/users/<id>/ban")]
 pub fn ban(
     _admin: Admin,
-    conn: DbConn,
     id: i32,
-    searcher: Searcher,
+    rockets: PlumeRocket,
 ) -> Result<Redirect, ErrorPage> {
-    if let Ok(u) = User::get(&*conn, id) {
-        u.delete(&*conn, &searcher)?;
+    if let Ok(u) = User::get(&*rockets.conn, id) {
+        u.delete(&*rockets.conn, &rockets.searcher)?;
+
+        if Instance::get_local(&*rockets.conn).map(|i| u.instance_id == i.id).unwrap_or(false) {
+            let target = User::one_by_instance(&*rockets.conn)?;
+            let delete_act = u.delete_activity(&*rockets.conn)?;
+            rockets.worker.execute(move || broadcast(&u, delete_act, target));
+        }
     }
     Ok(Redirect::to(uri!(admin_users: page = _)))
 }
