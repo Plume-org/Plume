@@ -16,7 +16,7 @@ a, a:visited {
  	color: $purple;
  	text-decoration: none;
 }
-a::selection { 
+a::selection {
 	color: $white;
 }
 a::-moz-selection {
@@ -35,6 +35,13 @@ small {
  	font-weight: bold;
  	opacity: 0.6;
  	padding: 5em;
+}
+
+.right {
+  text-align: right;
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 
 .spaced {
@@ -148,7 +155,6 @@ p.error {
  	background: $white;
  	color: $purple;
  	border: 1px solid $purple;
- 	border-radius: 1em;
 
  	font-size: 1rem;
 }
@@ -287,7 +293,7 @@ p.error {
 .left-icon {
     align-self: center;
     padding: 1em;
-    background: $lightgray;
+    background: $gray;
     border-radius: 50px;
     margin: 1em;
     margin-right: 2em;
@@ -298,7 +304,7 @@ body > footer {
   display: flex;
   align-content: center;
   justify-content: space-between;
-  background: $lightgray;
+  background: $gray;
   padding: 0 20%;
   margin-top: 5em;
 
@@ -385,7 +391,7 @@ figure {
 
 /// Tabs
 .tabs {
-  border-bottom: 1px solid $lightgray;
+  border-bottom: 1px solid $gray;
   padding: 0px;
   margin: auto 20% 2em;
   overflow: auto;

@@ -246,6 +246,9 @@ msgstr ""
 msgid "About {0}"
 msgstr ""
 
+msgid "Runs Plume {0}"
+msgstr "Работает на Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -258,18 +261,15 @@ msgstr ""
 msgid "Administred by"
 msgstr "Администрируется"
 
-msgid "Runs Plume {0}"
-msgstr "Работает на Plume {0}"
-
 #, fuzzy
 msgid "Follow {}"
 msgstr "Подписаться"
 
 #, fuzzy
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr "Войдите, чтобы продвигать посты"
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -621,12 +621,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
-msgid "Edit"
-msgstr "Редактировать"
-
-msgid "Delete this article"
-msgstr "Удалить эту статью"
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -679,6 +673,15 @@ msgstr ""
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr "Редактировать"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -804,9 +807,6 @@ msgstr ""
 msgid "Content warning: {0}"
 msgstr ""
 
-msgid "Delete"
-msgstr "Удалить"
-
 msgid "Details"
 msgstr ""
 
@@ -839,3 +839,6 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#~ msgid "Delete this article"
+#~ msgstr "Удалить эту статью"

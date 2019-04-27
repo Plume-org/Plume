@@ -246,6 +246,9 @@ msgstr "Salvar estas configurações"
 msgid "About {0}"
 msgstr "Sobre {0}"
 
+msgid "Runs Plume {0}"
+msgstr "Roda Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "Lar de <em>{0}</em> pessoas"
 
@@ -258,18 +261,15 @@ msgstr "E esta conectados a <em>{0}</em> outras instâncias"
 msgid "Administred by"
 msgstr "Administrado por"
 
-msgid "Runs Plume {0}"
-msgstr "Roda Plume {0}"
-
 #, fuzzy
 msgid "Follow {}"
 msgstr "Seguir"
 
 #, fuzzy
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr "Entrar para gostar"
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -630,12 +630,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr "Escrito por {0}"
 
-msgid "Edit"
-msgstr "Mudar"
-
-msgid "Delete this article"
-msgstr "Suprimir este artigo"
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -684,6 +678,15 @@ msgstr "Submeter comentário"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Nenhum comentário ainda. Seja o primeiro a reagir!"
+
+msgid "Delete"
+msgstr "Suprimir"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr "Mudar"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -805,9 +808,6 @@ msgstr "Você ainda não tem nenhuma mídia."
 msgid "Content warning: {0}"
 msgstr ""
 
-msgid "Delete"
-msgstr "Suprimir"
-
 msgid "Details"
 msgstr ""
 
@@ -840,3 +840,6 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#~ msgid "Delete this article"
+#~ msgstr "Suprimir este artigo"

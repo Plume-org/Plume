@@ -1,4 +1,35 @@
 // Heading
+main header {
+  position: relative;
+
+  & > div:not(.shadow) {
+    position: absolute;
+    z-index: 3;
+
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 40rem;
+    margin: 2em auto;
+    color: white;
+  }
+
+  & > div.shadow {
+    position: absolute;
+    z-index: 2;
+
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(180deg, #F4F4F4 27.23%, #000000 109.05%);
+    mix-blend-mode: multiply;
+  }
+
+  & > img {
+    z-index: 1;
+    width: 100%;
+  }
+}
+
 main .article-info {
   max-width: 40rem;
  	margin: 0 auto 3em;
@@ -30,9 +61,14 @@ main article {
 
   pre {
    	padding: 1em;
-   	background: $lightgray;
+   	background: $gray;
    	overflow: auto;
-   	border-radius: 5px;
+  }
+
+  blockquote {
+    border-left: 5px solid $gray;
+    margin: 1em auto;
+    padding: 0em 2em;
   }
 }
 
@@ -49,6 +85,13 @@ main .article-meta {
     margin: 0 20%;
   }
 
+  > .banner {
+    margin: 3em 0;
+    & > * {
+      margin: 0 20%;
+    }
+  }
+
   > p {
     margin: 2em 20%;
  	  font-size: 0.9em;
@@ -57,26 +100,23 @@ main .article-meta {
   // Article Tags
   .tags {
     list-style: none;
-    display: inline-block;
     padding: 0px;
-    margin-bottom: 2em;
+    max-width: 75%;
 
     li {
       display: inline-block;
-      background: $lightgray;
       padding: 0px;
       margin: 0px 10px 10px 0px;
-      border-radius: 3px;
       transition: all 0.2s ease-in;
+      border: 1px solid $purple;
 
       a {
         display: inline-block;
         padding: 10px 20px;
-        color: $black;
       }
 
       &:hover {
-        background: mix($black, $lightgray, 10%);
+        background: transparentize($purple, 0.9);
       }
     }
   }
@@ -111,6 +151,7 @@ main .article-meta {
      	color: $black;
      	border: none;
      	font-size: 1.1em;
+      cursor: pointer;
 
      	svg.feather {
        	transition: background 0.1s ease-in;
@@ -208,13 +249,12 @@ main .article-meta {
 
     // Respond & delete comment buttons
     a.button, form.inline, form.inline input {
-     	display: inline-block;
      	padding: 0;
      	background: none;
      	color: $black;
-     	border: none;
      	margin-right: 2em;
      	font-family: $route159;
+      font-weight: normal;
 
      	&::before {
      	  color: $purple;
@@ -228,7 +268,7 @@ main .article-meta {
      	display: grid;
      	margin: 0 0 -5em;
      	padding: 0 20%;
-     	background: $lightgray;
+     	background: $gray;
     }
 
     .comment {
@@ -303,7 +343,7 @@ main .article-meta {
   bottom: 20vh;
   left: 20vw;
   right: 20vw;
-  background: $lightgray;
+  background: $gray;
   border: 1px solid $purple;
   z-index: 2;
   padding: 2em;
@@ -328,6 +368,11 @@ main .article-meta {
 .cw-container {
   position: relative;
   display: inline-block;
+  cursor: pointer;
+
+  img {
+    margin: auto;
+  }
 }
 
 .cw-text {
@@ -354,4 +399,28 @@ input:checked ~ .cw-container > .cw-text {
   text-align: center;
   top: 50%;
   transform: translateY(-50%);
+}
+
+// Bottom action bar
+
+.bottom-bar {
+  z-index: 10;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $gray;
+  margin: 0;
+  display: flex;
+
+  & > div {
+    margin: 1em;
+  }
+
+  & > div:nth-child(2) {
+    flex: 1;
+    display: flex;
+    max-width: 40rem;
+    margin: auto;
+  }
 }

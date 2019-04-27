@@ -246,6 +246,9 @@ msgstr "Ulož tieto nastavenia"
 msgid "About {0}"
 msgstr "O {0}"
 
+msgid "Runs Plume {0}"
+msgstr "Beží na Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "Domov pre <em>{0}</em> ľudí"
 
@@ -258,16 +261,15 @@ msgstr "A sú pripojení k <em>{0}</em> ďalším instanciám"
 msgid "Administred by"
 msgstr "Správcom je"
 
-msgid "Runs Plume {0}"
-msgstr "Beží na Plume {0}"
-
 msgid "Follow {}"
 msgstr "Následuj {}"
 
-msgid "Login to follow"
+#, fuzzy
+msgid "Log in to follow"
 msgstr "Pre následovanie sa prihlás"
 
-msgid "Enter your full username to follow"
+#, fuzzy
+msgid "Enter your full username handle to follow"
 msgstr "Zadaj svoju prezývku v úplnosti, aby si následoval/a"
 
 msgid "Edit your account"
@@ -633,12 +635,6 @@ msgstr "Zverejni svoj príspevok"
 msgid "Written by {0}"
 msgstr "Napísal/a {0}"
 
-msgid "Edit"
-msgstr "Uprav"
-
-msgid "Delete this article"
-msgstr "Vymaž tento článok"
-
 msgid "All rights reserved."
 msgstr "Všetky práva vyhradné."
 
@@ -694,6 +690,15 @@ msgstr "Pošli komentár"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Zatiaľ žiadne komentáre. Buď prvý kto zareaguje!"
+
+msgid "Delete"
+msgstr "Zmazať"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr "Uprav"
 
 msgid "Invalid CSRF token"
 msgstr "Neplatný CSRF token"
@@ -819,9 +824,6 @@ msgstr "Ešte nemáš nahrané žiadne multimédiá."
 msgid "Content warning: {0}"
 msgstr "Upozornenie o obsahu: {0}"
 
-msgid "Delete"
-msgstr "Zmazať"
-
 msgid "Details"
 msgstr "Podrobnosti"
 
@@ -855,3 +857,6 @@ msgstr "Kód skopíruj do tvojho článku, pre vloženie tohto mediálneho súbo
 
 msgid "Use as an avatar"
 msgstr "Použi ako avatar"
+
+#~ msgid "Delete this article"
+#~ msgstr "Vymaž tento článok"

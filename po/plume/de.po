@@ -244,6 +244,9 @@ msgstr "Diese Einstellungen speichern"
 msgid "About {0}"
 msgstr "Über {0}"
 
+msgid "Runs Plume {0}"
+msgstr "Verwendet Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "Heimat von <em>{0}</em> Personen"
 
@@ -256,18 +259,15 @@ msgstr "Und mit <em>{0}</em> anderen Instanzen verbunden sind"
 msgid "Administred by"
 msgstr "Administriert von"
 
-msgid "Runs Plume {0}"
-msgstr "Verwendet Plume {0}"
-
 #, fuzzy
 msgid "Follow {}"
 msgstr "Folgen"
 
 #, fuzzy
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr "Um zu boosten, musst du eingeloggt sein"
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -633,12 +633,6 @@ msgstr "Veröffentliche deinen Beitrag"
 msgid "Written by {0}"
 msgstr "Geschrieben von {0}"
 
-msgid "Edit"
-msgstr "Bearbeiten"
-
-msgid "Delete this article"
-msgstr "Diesen Artikel löschen"
-
 msgid "All rights reserved."
 msgstr "Alle Rechte vorbehalten."
 
@@ -687,6 +681,15 @@ msgstr "Kommentar abschicken"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Noch keine Kommentare. Sei der erste, der reagiert!"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr "Bearbeiten"
 
 msgid "Invalid CSRF token"
 msgstr "Ungültiges CSRF-Token"
@@ -813,9 +816,6 @@ msgstr "Du hast noch keine Medien."
 msgid "Content warning: {0}"
 msgstr "Warnhinweis zum Inhalt: {0}"
 
-msgid "Delete"
-msgstr "Löschen"
-
 msgid "Details"
 msgstr "Details"
 
@@ -848,3 +848,6 @@ msgstr "Kopiere das in deine Artikel, um dieses Medium einzufügen:"
 
 msgid "Use as an avatar"
 msgstr "Als Profilbild nutzen"
+
+#~ msgid "Delete this article"
+#~ msgstr "Diesen Artikel löschen"

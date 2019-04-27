@@ -246,6 +246,9 @@ msgstr "इन सेटिंग्स को सेव करें"
 msgid "About {0}"
 msgstr "{0} के बारे में"
 
+msgid "Runs Plume {0}"
+msgstr "Plume {0} का इस्तेमाल कर रहे हैं"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "यहाँ <em>{0}</em> यूज़र्स हैं"
 
@@ -258,16 +261,13 @@ msgstr "और <em>{0}</em> इन्सटेंसेस से जुड़े �
 msgid "Administred by"
 msgstr "द्वारा संचालित"
 
-msgid "Runs Plume {0}"
-msgstr "Plume {0} का इस्तेमाल कर रहे हैं"
-
 msgid "Follow {}"
 msgstr ""
 
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr ""
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -618,12 +618,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Delete this article"
-msgstr ""
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -671,6 +665,15 @@ msgid "Submit comment"
 msgstr ""
 
 msgid "No comments yet. Be the first to react!"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
 msgstr ""
 
 msgid "Invalid CSRF token"
@@ -787,9 +790,6 @@ msgid "You don't have any media yet."
 msgstr ""
 
 msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "Details"

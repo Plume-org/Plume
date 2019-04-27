@@ -247,6 +247,9 @@ msgstr "設定を保存"
 msgid "About {0}"
 msgstr "{0} について"
 
+msgid "Runs Plume {0}"
+msgstr "Plume {0} を実行中"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "ユーザー登録者数 <em>{0}</em> 人"
 
@@ -259,18 +262,15 @@ msgstr "他のインスタンスからの接続数 <em>{0}</em>"
 msgid "Administred by"
 msgstr "管理者"
 
-msgid "Runs Plume {0}"
-msgstr "Plume {0} を実行中"
-
 #, fuzzy
 msgid "Follow {}"
 msgstr "フォロー"
 
 #, fuzzy
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr "ブーストするにはログインしてください"
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -632,12 +632,6 @@ msgstr "投稿を公開"
 msgid "Written by {0}"
 msgstr "投稿者 {0}"
 
-msgid "Edit"
-msgstr "編集"
-
-msgid "Delete this article"
-msgstr "この投稿を削除"
-
 msgid "All rights reserved."
 msgstr "著作権は投稿者が保有しています。"
 
@@ -684,6 +678,15 @@ msgstr "コメントを保存"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "コメントがまだありません。最初のコメントを書きましょう！"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr "編集"
 
 msgid "Invalid CSRF token"
 msgstr "無効な CSRF トークンです"
@@ -807,9 +810,6 @@ msgstr "メディアがまだありません。"
 msgid "Content warning: {0}"
 msgstr "コンテンツの警告: {0}"
 
-msgid "Delete"
-msgstr "削除"
-
 msgid "Details"
 msgstr "詳細"
 
@@ -842,3 +842,6 @@ msgstr "このメディアを挿入するには、これを投稿にコピーし
 
 msgid "Use as an avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "Delete this article"
+#~ msgstr "この投稿を削除"

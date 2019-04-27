@@ -244,6 +244,9 @@ msgstr "Запаметете тези настройките"
 msgid "About {0}"
 msgstr ""
 
+msgid "Runs Plume {0}"
+msgstr "Писти Pluma {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -256,16 +259,13 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid "Runs Plume {0}"
-msgstr "Писти Pluma {0}"
-
 msgid "Follow {}"
 msgstr ""
 
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr ""
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -618,12 +618,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr "Написано от {0}"
 
-msgid "Edit"
-msgstr ""
-
-msgid "Delete this article"
-msgstr ""
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -674,6 +668,15 @@ msgstr "Публикувайте коментар"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Все още няма коментари. Бъдете първите!"
+
+msgid "Delete"
+msgstr ""
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr ""
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -789,9 +792,6 @@ msgid "You don't have any media yet."
 msgstr ""
 
 msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "Details"

@@ -253,6 +253,9 @@ msgstr "Lagre innstillingene"
 msgid "About {0}"
 msgstr ""
 
+msgid "Runs Plume {0}"
+msgstr ""
+
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -266,18 +269,15 @@ msgstr ""
 msgid "Administred by"
 msgstr "Administrasjon"
 
-msgid "Runs Plume {0}"
-msgstr ""
-
 #, fuzzy
 msgid "Follow {}"
 msgstr "Følg"
 
 #, fuzzy
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr "Logg inn"
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
@@ -672,13 +672,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-#, fuzzy
-msgid "Delete this article"
-msgstr "Siste artikler"
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -734,6 +727,15 @@ msgstr "Send kommentar"
 #, fuzzy
 msgid "No comments yet. Be the first to react!"
 msgstr "Ingen kommentarer enda. Vær den første!"
+
+msgid "Delete"
+msgstr ""
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Edit"
+msgstr ""
 
 #, fuzzy
 msgid "Invalid CSRF token"
@@ -863,9 +865,6 @@ msgstr ""
 msgid "Content warning: {0}"
 msgstr "Innhold"
 
-msgid "Delete"
-msgstr ""
-
 msgid "Details"
 msgstr ""
 
@@ -899,6 +898,10 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Delete this article"
+#~ msgstr "Siste artikler"
 
 #, fuzzy
 #~ msgid "Short description - byline"
