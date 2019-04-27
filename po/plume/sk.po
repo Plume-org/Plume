@@ -264,10 +264,12 @@ msgstr "Beží na Plume {0}"
 msgid "Follow {}"
 msgstr "Následuj {}"
 
-msgid "Login to follow"
+#, fuzzy
+msgid "Log in to follow"
 msgstr "Pre následovanie sa prihlás"
 
-msgid "Enter your full username to follow"
+#, fuzzy
+msgid "Enter your full username handle to follow"
 msgstr "Zadaj svoju prezývku v úplnosti, aby si následoval/a"
 
 msgid "Edit your account"

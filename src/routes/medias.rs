@@ -6,6 +6,7 @@ use multipart::server::{
 use plume_models::{db_conn::DbConn, medias::*, users::User, Error};
 use rocket::{
     http::ContentType,
+    request::FlashMessage,
     response::{status, Redirect},
     Data,
 };
@@ -15,11 +16,11 @@ use std::fs;
 use template_utils::Ructe;
 
 #[get("/medias?<page>")]
-pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let medias = Media::page_for_user(&*conn, &user, page.limits())?;
     Ok(render!(medias::index(
-        &(&*conn, &intl.catalog, Some(user.clone())),
+        &(&*conn, &intl.catalog, Some(user.clone()), msg),
         medias,
         page.0,
         Page::total(Media::count_for_user(&*conn, &user)? as i32)
@@ -27,8 +28,8 @@ pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<
 }
 
 #[get("/medias/new")]
-pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
-    render!(medias::new(&(&*conn, &intl.catalog, Some(user))))
+pub fn new(user: User, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Ructe {
+    render!(medias::new(&(&*conn, &intl.catalog, Some(user), msg)))
 }
 
 #[post("/medias/new", data = "<data>")]
@@ -122,11 +123,11 @@ fn read(data: &SavedData) -> Result<String, status::BadRequest<&'static str>> {
 }
 
 #[get("/medias/<id>")]
-pub fn details(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn details(id: i32, user: User, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         Ok(render!(medias::details(
-            &(&*conn, &intl.catalog, Some(user)),
+            &(&*conn, &intl.catalog, Some(user), msg),
             media
         )))
     } else {

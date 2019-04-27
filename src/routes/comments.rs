@@ -1,5 +1,5 @@
 use activitypub::object::Note;
-use rocket::{request::LenientForm, response::Redirect};
+use rocket::{request::{FlashMessage, LenientForm}, response::Redirect};
 use template_utils::Ructe;
 use validator::Validate;
 
@@ -30,6 +30,7 @@ pub fn create(
     form: LenientForm<NewCommentForm>,
     user: User,
     rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
 ) -> Result<Redirect, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("comments::create: blog error");
@@ -97,7 +98,7 @@ pub fn create(
                 .and_then(|r| Comment::get(&*conn, r).ok());
 
             render!(posts::details(
-                &(&*conn, &rockets.intl.catalog, Some(user.clone())),
+                &(&*conn, &rockets.intl.catalog, Some(user.clone()), msg),
                 post.clone(),
                 blog,
                 &*form,

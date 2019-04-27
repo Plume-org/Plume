@@ -24,9 +24,9 @@ use plume_models::{
 use routes::errors::ErrorPage;
 
 #[get("/login?<m>")]
-pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n) -> Ructe {
+pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n, msg: Option<FlashMessage>) -> Ructe {
     render!(session::login(
-        &(&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user, msg),
         m,
         &LoginForm::default(),
         ValidationErrors::default()
@@ -98,7 +98,7 @@ pub fn create(
             .map(IntoOwned::into_owned)
             .map_err(|_| {
                 render!(session::login(
-                    &(&*conn, &rockets.intl.catalog, None),
+                    &(&*conn, &rockets.intl.catalog, None, None),
                     None,
                     &*form,
                     errors
@@ -108,7 +108,7 @@ pub fn create(
         Ok(Redirect::to(uri))
     } else {
         Err(render!(session::login(
-            &(&*conn, &rockets.intl.catalog, None),
+            &(&*conn, &rockets.intl.catalog, None, flash),
             None,
             &*form,
             errors
@@ -138,9 +138,9 @@ impl PartialEq for ResetRequest {
 }
 
 #[get("/password-reset")]
-pub fn password_reset_request_form(conn: DbConn, intl: I18n) -> Ructe {
+pub fn password_reset_request_form(conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Ructe {
     render!(session::password_reset_request(
-        &(&*conn, &intl.catalog, None),
+        &(&*conn, &intl.catalog, None, msg),
         &ResetForm::default(),
         ValidationErrors::default()
     ))
@@ -159,6 +159,7 @@ pub fn password_reset_request(
     mail: State<Arc<Mutex<Mailer>>>,
     form: Form<ResetForm>,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+    msg: Option<FlashMessage>,
 ) -> Ructe {
     let mut requests = requests.lock().unwrap();
     // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
@@ -191,7 +192,8 @@ pub fn password_reset_request(
     render!(session::password_reset_request_ok(&(
         &*conn,
         &intl.catalog,
-        None
+        None,
+        msg
     )))
 }
 
@@ -201,6 +203,7 @@ pub fn password_reset_form(
     intl: I18n,
     token: String,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     requests
         .lock()
@@ -209,7 +212,7 @@ pub fn password_reset_form(
         .find(|x| x.id == token.clone())
         .ok_or(Error::NotFound)?;
     Ok(render!(session::password_reset(
-        &(&*conn, &intl.catalog, None),
+        &(&*conn, &intl.catalog, None, msg),
         &NewPasswordForm::default(),
         ValidationErrors::default()
     )))
@@ -241,6 +244,7 @@ pub fn password_reset(
     token: String,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
     form: Form<NewPasswordForm>,
+    msg: Option<FlashMessage>,
 ) -> Result<Redirect, Ructe> {
     form.validate()
         .and_then(|_| {
@@ -266,7 +270,7 @@ pub fn password_reset(
         })
         .map_err(|err| {
             render!(session::password_reset(
-                &(&*conn, &intl.catalog, None),
+                &(&*conn, &intl.catalog, None, msg),
                 &form,
                 err
             ))

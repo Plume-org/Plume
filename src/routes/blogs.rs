@@ -3,7 +3,7 @@ use atom_syndication::{Entry, FeedBuilder};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
-    request::LenientForm,
+    request::{FlashMessage, LenientForm},
     response::{content::Content, Flash, Redirect},
 };
 use rocket_i18n::I18n;
@@ -20,7 +20,7 @@ use routes::{errors::ErrorPage, Page};
 use template_utils::Ructe;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name)?;
@@ -31,7 +31,7 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
     let intl = rockets.intl;
 
     Ok(render!(blogs::details(
-        &(&*conn, &intl.catalog, user.clone()),
+        &(&*conn, &intl.catalog, user.clone(), msg),
         blog,
         authors,
         page.0,
@@ -51,13 +51,13 @@ pub fn activity_details(
 }
 
 #[get("/blogs/new")]
-pub fn new(rockets: PlumeRocket) -> Ructe {
+pub fn new(rockets: PlumeRocket, msg: Option<FlashMessage>) -> Ructe {
     let user = rockets.user.unwrap();
     let intl = rockets.intl;
     let conn = &*rockets.conn;
 
     render!(blogs::new(
-        &(&*conn, &intl.catalog, Some(user)),
+        &(&*conn, &intl.catalog, Some(user), msg),
         &NewBlogForm::default(),
         ValidationErrors::default()
     ))
@@ -90,7 +90,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
+pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Redirect, Ructe> {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -142,7 +142,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
         Ok(Redirect::to(uri!(details: name = slug.clone(), page = _)))
     } else {
         Err(render!(blogs::new(
-            &(&*conn, intl, Some(user)),
+            &(&*conn, intl, Some(user), msg),
             &*form,
             errors
         )))
@@ -150,7 +150,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
+pub fn delete(name: String, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Redirect, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name).expect("blog::delete: blog not found");
     let user = rockets.user;
@@ -168,7 +168,7 @@ pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
     } else {
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, user),
+            &(&*conn, &intl.catalog, user, msg),
             i18n!(intl.catalog, "You are not allowed to delete this blog.")
         )))
     }
@@ -184,7 +184,7 @@ pub struct EditForm {
 }
 
 #[get("/~/<name>/edit")]
-pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn edit(name: String, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name)?;
     if rockets
@@ -198,7 +198,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
             .expect("blogs::edit: User was None while it shouldn't");
         let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
         Ok(render!(blogs::edit(
-            &(&*conn, &rockets.intl.catalog, Some(user)),
+            &(&*conn, &rockets.intl.catalog, Some(user), msg),
             &blog,
             medias,
             &EditForm {
@@ -212,7 +212,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     } else {
         // TODO actually return 403 error code
         Ok(render!(errors::not_authorized(
-            &(&*conn, &rockets.intl.catalog, rockets.user),
+            &(&*conn, &rockets.intl.catalog, rockets.user, msg),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."
@@ -235,6 +235,7 @@ pub fn update(
     name: String,
     form: LenientForm<EditForm>,
     rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
 ) -> Result<Redirect, Ructe> {
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -313,7 +314,7 @@ pub fn update(
             .map_err(|err| {
                 let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
                 render!(blogs::edit(
-                    &(&*conn, intl, Some(user)),
+                    &(&*conn, intl, Some(user), msg),
                     &blog,
                     medias,
                     &*form,
@@ -323,7 +324,7 @@ pub fn update(
     } else {
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
-            &(&*conn, &rockets.intl.catalog, rockets.user),
+            &(&*conn, &rockets.intl.catalog, rockets.user, msg),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."

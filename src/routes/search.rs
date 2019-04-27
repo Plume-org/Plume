@@ -1,5 +1,5 @@
 use chrono::offset::Utc;
-use rocket::request::Form;
+use rocket::request::{FlashMessage, Form};
 use rocket_i18n::I18n;
 
 use plume_models::{db_conn::DbConn, search::Query, users::User};
@@ -58,6 +58,7 @@ pub fn search(
     searcher: Searcher,
     user: Option<User>,
     intl: I18n,
+    msg: Option<FlashMessage>,
 ) -> Ructe {
     let query = query.map(Form::into_inner).unwrap_or_default();
     let page = query.page.unwrap_or_default();
@@ -73,14 +74,14 @@ pub fn search(
 
     if str_query.is_empty() {
         render!(search::index(
-            &(&*conn, &intl.catalog, user),
+            &(&*conn, &intl.catalog, user, msg),
             &format!("{}", Utc::today().format("%Y-%m-d"))
         ))
     } else {
         let res = searcher.search_document(&conn, parsed_query, page.limits());
         let next_page = if res.is_empty() { 0 } else { page.0 + 1 };
         render!(search::result(
-            &(&*conn, &intl.catalog, user),
+            &(&*conn, &intl.catalog, user, msg),
             &str_query,
             res,
             page.0,

@@ -52,11 +52,11 @@ msgstr ""
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:262
+# src/routes/blogs.rs:263
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:280
+# src/routes/blogs.rs:281
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
@@ -64,31 +64,31 @@ msgstr ""
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
-# src/routes/notifications.rs:29
+# src/routes/notifications.rs:30
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:93
+# src/routes/posts.rs:94
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:122
+# src/routes/posts.rs:123
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:140
+# src/routes/posts.rs:141
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:147
+# src/routes/posts.rs:148
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:192
+# src/routes/posts.rs:194
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:630
+# src/routes/posts.rs:636
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
@@ -96,31 +96,31 @@ msgstr ""
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
-# src/routes/session.rs:181
+# src/routes/session.rs:182
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:182
+# src/routes/session.rs:183
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:259
+# src/routes/session.rs:263
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:263
+# src/routes/session.rs:267
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
-# src/routes/user.rs:136
+# src/routes/user.rs:137
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:244
+# src/routes/user.rs:246
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:344
+# src/routes/user.rs:348
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
@@ -256,10 +256,10 @@ msgstr ""
 msgid "Follow {}"
 msgstr ""
 
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr ""
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"

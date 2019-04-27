@@ -2,7 +2,7 @@ use plume_models::{notifications::*, users::User, Connection};
 
 use rocket::http::hyper::header::{ETag, EntityTag};
 use rocket::http::{Method, Status};
-use rocket::request::Request;
+use rocket::request::{FlashMessage, Request};
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
 use std::collections::hash_map::DefaultHasher;
@@ -13,7 +13,7 @@ pub use askama_escape::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
 
-pub type BaseContext<'a> = &'a (&'a Connection, &'a Catalog, Option<User>);
+pub type BaseContext<'a, 'r> = &'a (&'a Connection, &'a Catalog, Option<User>, Option<FlashMessage<'a, 'r>>);
 
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);

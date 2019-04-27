@@ -1,3 +1,4 @@
+use rocket::request::FlashMessage;
 use plume_models::users::User;
 use plume_models::{db_conn::DbConn, Error};
 use rocket::{
@@ -22,24 +23,28 @@ impl<'r> Responder<'r> for ErrorPage {
         let conn = req.guard::<DbConn>().succeeded();
         let intl = req.guard::<I18n>().succeeded();
         let user = User::from_request(req).succeeded();
+        let msg = req.guard::<FlashMessage>().succeeded();
 
         match self.0 {
             Error::NotFound => render!(errors::not_found(&(
                 &*conn.unwrap(),
                 &intl.unwrap().catalog,
-                user
+                user,
+                msg
             )))
             .respond_to(req),
             Error::Unauthorized => render!(errors::not_found(&(
                 &*conn.unwrap(),
                 &intl.unwrap().catalog,
-                user
+                user,
+                msg
             )))
             .respond_to(req),
             _ => render!(errors::not_found(&(
                 &*conn.unwrap(),
                 &intl.unwrap().catalog,
-                user
+                user,
+                msg
             )))
             .respond_to(req),
         }
@@ -51,10 +56,12 @@ pub fn not_found(req: &Request) -> Ructe {
     let conn = req.guard::<DbConn>().succeeded();
     let intl = req.guard::<I18n>().succeeded();
     let user = User::from_request(req).succeeded();
+    let msg = req.guard::<FlashMessage>().succeeded();
     render!(errors::not_found(&(
         &*conn.unwrap(),
         &intl.unwrap().catalog,
-        user
+        user,
+        msg
     )))
 }
 
@@ -63,10 +70,12 @@ pub fn unprocessable_entity(req: &Request) -> Ructe {
     let conn = req.guard::<DbConn>().succeeded();
     let intl = req.guard::<I18n>().succeeded();
     let user = User::from_request(req).succeeded();
+    let msg = req.guard::<FlashMessage>().succeeded();
     render!(errors::unprocessable_entity(&(
         &*conn.unwrap(),
         &intl.unwrap().catalog,
-        user
+        user,
+        msg
     )))
 }
 
@@ -75,10 +84,12 @@ pub fn server_error(req: &Request) -> Ructe {
     let conn = req.guard::<DbConn>().succeeded();
     let intl = req.guard::<I18n>().succeeded();
     let user = User::from_request(req).succeeded();
+    let msg = req.guard::<FlashMessage>().succeeded();
     render!(errors::server_error(&(
         &*conn.unwrap(),
         &intl.unwrap().catalog,
-        user
+        user,
+        msg
     )))
 }
 
@@ -88,9 +99,10 @@ pub fn csrf_violation(
     conn: DbConn,
     intl: I18n,
     user: Option<User>,
+    msg: Option<FlashMessage>,
 ) -> Ructe {
     if let Some(uri) = target {
         eprintln!("Csrf violation while acceding \"{}\"", uri)
     }
-    render!(errors::csrf(&(&*conn, &intl.catalog, user)))
+    render!(errors::csrf(&(&*conn, &intl.catalog, user, msg)))
 }

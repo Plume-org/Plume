@@ -1,5 +1,5 @@
 use rocket::{
-    request::LenientForm,
+    request::{FlashMessage, LenientForm},
     response::{status, Redirect},
 };
 use rocket_contrib::json::Json;
@@ -18,7 +18,7 @@ use template_utils::Ructe;
 use Searcher;
 
 #[get("/")]
-pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn index(conn: DbConn, user: Option<User>, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let inst = Instance::get_local(&*conn)?;
     let federated = Post::get_recents_page(&*conn, Page::default().limits())?;
     let local = Post::get_instance_page(&*conn, inst.id, Page::default().limits())?;
@@ -30,7 +30,7 @@ pub fn index(conn: DbConn, user: Option<User>, intl: I18n) -> Result<Ructe, Erro
     });
 
     Ok(render!(instance::index(
-        &(&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user, msg),
         inst,
         User::count_local(&*conn)?,
         Post::count_local(&*conn)?,
@@ -46,12 +46,13 @@ pub fn local(
     user: Option<User>,
     page: Option<Page>,
     intl: I18n,
+    msg: Option<FlashMessage>
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let instance = Instance::get_local(&*conn)?;
     let articles = Post::get_instance_page(&*conn, instance.id, page.limits())?;
     Ok(render!(instance::local(
-        &(&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user, msg),
         instance,
         articles,
         page.0,
@@ -60,14 +61,14 @@ pub fn local(
 }
 
 #[get("/feed?<page>")]
-pub fn feed(conn: DbConn, user: User, page: Option<Page>, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn feed(conn: DbConn, user: User, page: Option<Page>, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let followed = user.get_followed(&*conn)?;
     let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
     in_feed.push(user.id);
     let articles = Post::user_feed_page(&*conn, in_feed, page.limits())?;
     Ok(render!(instance::feed(
-        &(&*conn, &intl.catalog, Some(user)),
+        &(&*conn, &intl.catalog, Some(user), msg),
         articles,
         page.0,
         Page::total(Post::count_local(&*conn)? as i32)
@@ -80,11 +81,12 @@ pub fn federated(
     user: Option<User>,
     page: Option<Page>,
     intl: I18n,
+    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let articles = Post::get_recents_page(&*conn, page.limits())?;
     Ok(render!(instance::federated(
-        &(&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user, msg),
         articles,
         page.0,
         Page::total(Post::count_local(&*conn)? as i32)
@@ -92,10 +94,10 @@ pub fn federated(
 }
 
 #[get("/admin")]
-pub fn admin(conn: DbConn, admin: Admin, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn admin(conn: DbConn, admin: Admin, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     let local_inst = Instance::get_local(&*conn)?;
     Ok(render!(instance::admin(
-        &(&*conn, &intl.catalog, Some(admin.0)),
+        &(&*conn, &intl.catalog, Some(admin.0), msg),
         local_inst.clone(),
         InstanceSettingsForm {
             name: local_inst.name.clone(),
@@ -125,6 +127,7 @@ pub fn update_settings(
     admin: Admin,
     form: LenientForm<InstanceSettingsForm>,
     intl: I18n,
+    msg: Option<FlashMessage>,
 ) -> Result<Redirect, Ructe> {
     form.validate()
         .and_then(|_| {
@@ -145,7 +148,7 @@ pub fn update_settings(
             let local_inst = Instance::get_local(&*conn)
                 .expect("instance::update_settings: local instance error");
             Err(render!(instance::admin(
-                &(&*conn, &intl.catalog, Some(admin.0)),
+                &(&*conn, &intl.catalog, Some(admin.0), msg),
                 local_inst,
                 form.clone(),
                 e
@@ -159,11 +162,12 @@ pub fn admin_instances(
     conn: DbConn,
     page: Option<Page>,
     intl: I18n,
+    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let instances = Instance::page(&*conn, page.limits())?;
     Ok(render!(instance::list(
-        &(&*conn, &intl.catalog, Some(admin.0)),
+        &(&*conn, &intl.catalog, Some(admin.0), msg),
         Instance::get_local(&*conn)?,
         instances,
         page.0,
@@ -186,10 +190,11 @@ pub fn admin_users(
     conn: DbConn,
     page: Option<Page>,
     intl: I18n,
+    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(instance::users(
-        &(&*conn, &intl.catalog, Some(admin.0)),
+        &(&*conn, &intl.catalog, Some(admin.0), msg),
         User::get_local_page(&*conn, page.limits())?,
         page.0,
         Page::total(User::count_local(&*conn)? as i32)
@@ -288,9 +293,9 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
 }
 
 #[get("/about")]
-pub fn about(user: Option<User>, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
+pub fn about(user: Option<User>, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
     Ok(render!(instance::about(
-        &(&*conn, &intl.catalog, user),
+        &(&*conn, &intl.catalog, user, msg),
         Instance::get_local(&*conn)?,
         Instance::get_local(&*conn)?.main_admin(&*conn)?,
         User::count_local(&*conn)?,

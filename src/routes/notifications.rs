@@ -1,4 +1,4 @@
-use rocket::response::{Flash, Redirect};
+use rocket::{request::FlashMessage, response::{Flash, Redirect}};
 use rocket_i18n::I18n;
 
 use plume_common::utils;
@@ -12,10 +12,11 @@ pub fn notifications(
     user: User,
     page: Option<Page>,
     intl: I18n,
+    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(notifications::index(
-        &(&*conn, &intl.catalog, Some(user.clone())),
+        &(&*conn, &intl.catalog, Some(user.clone()), msg),
         Notification::page_for_user(&*conn, &user, page.limits())?,
         page.0,
         Page::total(Notification::count_for_user(&*conn, &user)? as i32)
