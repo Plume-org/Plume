@@ -1,6 +1,6 @@
 use rocket::{
     request::{FlashMessage, LenientForm},
-    response::{status, Redirect},
+    response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
@@ -128,7 +128,7 @@ pub fn update_settings(
     form: LenientForm<InstanceSettingsForm>,
     intl: I18n,
     msg: Option<FlashMessage>,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     form.validate()
         .and_then(|_| {
             let instance = Instance::get_local(&*conn)
@@ -142,7 +142,7 @@ pub fn update_settings(
                     form.long_description.clone(),
                 )
                 .expect("instance::update_settings: save error");
-            Ok(Redirect::to(uri!(admin)))
+            Ok(Flash::success(Redirect::to(uri!(admin)), i18n!(&intl.catalog, "Instance settings have been saved.")))
         })
         .or_else(|e| {
             let local_inst = Instance::get_local(&*conn)
@@ -176,12 +176,16 @@ pub fn admin_instances(
 }
 
 #[post("/admin/instances/<id>/block")]
-pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32) -> Result<Redirect, ErrorPage> {
-    if let Ok(inst) = Instance::get(&*conn, id) {
-        inst.toggle_block(&*conn)?;
-    }
+pub fn toggle_block(_admin: Admin, conn: DbConn, id: i32, intl: I18n) -> Result<Flash<Redirect>, ErrorPage> {
+    let inst = Instance::get(&*conn, id)?;
+    let message = if inst.blocked {
+        i18n!(intl.catalog, "{} have been unblocked."; &inst.name)
+    } else {
+        i18n!(intl.catalog, "{} have been blocked."; &inst.name)
+    };
 
-    Ok(Redirect::to(uri!(admin_instances: page = _)))
+    inst.toggle_block(&*conn)?;
+    Ok(Flash::success(Redirect::to(uri!(admin_instances: page = _)), message))
 }
 
 #[get("/admin/users?<page>")]
@@ -207,11 +211,11 @@ pub fn ban(
     conn: DbConn,
     id: i32,
     searcher: Searcher,
-) -> Result<Redirect, ErrorPage> {
-    if let Ok(u) = User::get(&*conn, id) {
-        u.delete(&*conn, &searcher)?;
-    }
-    Ok(Redirect::to(uri!(admin_users: page = _)))
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
+    let u = User::get(&*conn, id)?;
+    u.delete(&*conn, &searcher)?;
+    Ok(Flash::success(Redirect::to(uri!(admin_users: page = _)), i18n!(intl.catalog, "{} have been banned."; u.name())))
 }
 
 #[post("/inbox", data = "<data>")]

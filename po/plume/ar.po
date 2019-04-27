@@ -49,6 +49,15 @@ msgstr "لإنشاء مدونة جديدة، تحتاج إلى تسجيل الد
 msgid "A blog with the same name already exists."
 msgstr ""
 
+# src/routes/session.rs:259
+#, fuzzy
+msgid "Your blog was successfully created!"
+msgstr "تمت إعادة تعيين كلمتك السرية بنجاح."
+
+# src/routes/blogs.rs:167
+msgid "Your blog was deleted."
+msgstr ""
+
 # src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
 msgstr "لا يسمح لك بحذف هذه المدونة."
@@ -65,9 +74,55 @@ msgstr "لا يمكنك استخدام هذه الوسائط كأيقونة لل
 msgid "You can't use this media as a blog banner."
 msgstr "لا يمكنك استخدام هذه الوسائط كشعار للمدونة."
 
+# src/routes/blogs.rs:312
+msgid "Your blog information have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment have been posted."
+msgstr "ليس لديك أية وسائط بعد."
+
+#, fuzzy
+msgid "Your comment have been deleted."
+msgstr "ليس لديك أية وسائط بعد."
+
+# src/routes/instance.rs:145
+msgid "Instance settings have been saved."
+msgstr ""
+
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
+msgstr ""
+
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
+msgstr ""
+
+# src/routes/instance.rs:218
+msgid "{} have been banned."
+msgstr ""
+
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول أولا للإعجاب بهذا المقال"
+
+# src/routes/medias.rs:143
+msgid "Your media have been deleted."
+msgstr ""
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this media."
+msgstr "لا يسمح لك بحذف هذه المدونة."
+
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
+
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to use this media."
+msgstr "لا يسمح لك بتعديل هذه المدونة."
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
@@ -93,6 +148,34 @@ msgstr "منشور جديد"
 msgid "Edit {0}"
 msgstr "تعديل {0}"
 
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to publish on this blog."
+msgstr "لا يسمح لك بتعديل هذه المدونة."
+
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your post have been saved."
+msgstr "ليس لديك أية وسائط بعد."
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this article."
+msgstr "لا يسمح لك بحذف هذه المدونة."
+
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
+msgstr ""
+
+# src/routes/posts.rs:593
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+
 # src/routes/posts.rs:630
 msgid ""
 "Couldn't obtain enough information about your account. Please make sure your "
@@ -102,6 +185,14 @@ msgstr ""
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
+
+#, fuzzy
+msgid "You are now connected."
+msgstr "ليست لديك التصريحات اللازمة للقيام بذلك."
+
+#, fuzzy
+msgid "You are now logged off."
+msgstr "ليست لديك التصريحات اللازمة للقيام بذلك."
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -123,12 +214,41 @@ msgstr "عذراً، ولكن انتهت مدة صلاحية الرابط. حا�
 msgid "To access your dashboard, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول أولاللنفاذ إلى لوح المراقبة"
 
+# src/routes/user.rs:158
+msgid "You are no longer following {}."
+msgstr ""
+
+# src/routes/user.rs:174
+msgid "You are now following {}."
+msgstr ""
+
 # src/routes/user.rs:244
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
 # src/routes/user.rs:344
 msgid "To edit your profile, you need to be logged in"
+msgstr ""
+
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your account have been deleted."
+msgstr "ليس لديك أية وسائط بعد."
+
+# src/routes/user.rs:411
+msgid "You can't delete someone else's account."
+msgstr ""
+
+# src/routes/user.rs:473
+msgid "Registrations are closed on this instance."
+msgstr ""
+
+# src/routes/user.rs:491
+msgid ""
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"

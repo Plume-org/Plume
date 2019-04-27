@@ -1,5 +1,5 @@
 use activitypub::object::Note;
-use rocket::{request::{FlashMessage, LenientForm}, response::Redirect};
+use rocket::{request::{FlashMessage, LenientForm}, response::{Flash, Redirect}};
 use template_utils::Ructe;
 use validator::Validate;
 
@@ -31,7 +31,7 @@ pub fn create(
     user: User,
     rockets: PlumeRocket,
     msg: Option<FlashMessage>,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("comments::create: blog error");
     let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
@@ -84,9 +84,9 @@ pub fn create(
                 .worker
                 .execute(move || broadcast(&user_clone, new_comment, dest));
 
-            Redirect::to(
+            Flash::success(Redirect::to(
                 uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
-            )
+            ), i18n!(&rockets.intl.catalog, "Your comment have been posted."))
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code
@@ -135,7 +135,7 @@ pub fn delete(
     id: i32,
     user: User,
     rockets: PlumeRocket,
-) -> Result<Redirect, ErrorPage> {
+) -> Result<Flash<Redirect>, ErrorPage> {
     if let Ok(comment) = Comment::get(&*rockets.conn, id) {
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&*rockets.conn)?;
@@ -158,9 +158,9 @@ pub fn delete(
                 });
         }
     }
-    Ok(Redirect::to(
+    Ok(Flash::success(Redirect::to(
         uri!(super::posts::details: blog = blog, slug = slug, responding_to = _),
-    ))
+    ), i18n!(&rockets.intl.catalog, "Your comment have been deleted.")))
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]

@@ -7,7 +7,7 @@ use plume_models::{db_conn::DbConn, medias::*, users::User, Error};
 use rocket::{
     http::ContentType,
     request::FlashMessage,
-    response::{status, Redirect},
+    response::{status, Flash, Redirect},
     Data,
 };
 use rocket_i18n::I18n;
@@ -136,19 +136,23 @@ pub fn details(id: i32, user: User, conn: DbConn, intl: I18n, msg: Option<FlashM
 }
 
 #[post("/medias/<id>/delete")]
-pub fn delete(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
+pub fn delete(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Flash<Redirect>, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         media.delete(&*conn)?;
+        Ok(Flash::success(Redirect::to(uri!(list: page = _)), i18n!(intl.catalog, "Your media have been deleted.")))
+    } else {
+        Ok(Flash::error(Redirect::to(uri!(list: page = _)), i18n!(intl.catalog, "You are not allowed to delete this media.")))
     }
-    Ok(Redirect::to(uri!(list: page = _)))
 }
 
 #[post("/medias/<id>/avatar")]
-pub fn set_avatar(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
+pub fn set_avatar(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Flash<Redirect>, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         user.set_avatar(&*conn, media.id)?;
+        Ok(Flash::success(Redirect::to(uri!(details: id = id)), i18n!(intl.catalog, "Your avatar have been updated.")))
+    } else {
+        Ok(Flash::error(Redirect::to(uri!(details: id = id)), i18n!(intl.catalog, "You are not allowed to use this media.")))
     }
-    Ok(Redirect::to(uri!(details: id = id)))
 }

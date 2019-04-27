@@ -3,7 +3,7 @@ use rocket::http::ext::IntoOwned;
 use rocket::{
     http::{uri::Uri, Cookie, Cookies, SameSite},
     request::{FlashMessage, Form, LenientForm},
-    response::Redirect,
+    response::{Flash, Redirect},
     State,
 };
 use rocket_i18n::I18n;
@@ -47,7 +47,7 @@ pub fn create(
     flash: Option<FlashMessage>,
     mut cookies: Cookies,
     rockets: PlumeRocket,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let user = User::find_by_email(&*conn, &form.email_or_name)
         .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
@@ -105,7 +105,7 @@ pub fn create(
                 ))
             })?;
 
-        Ok(Redirect::to(uri))
+        Ok(Flash::success(Redirect::to(uri), i18n!(&rockets.intl.catalog, "You are now connected.")))
     } else {
         Err(render!(session::login(
             &(&*conn, &rockets.intl.catalog, None, flash),
@@ -117,11 +117,11 @@ pub fn create(
 }
 
 #[get("/logout")]
-pub fn delete(mut cookies: Cookies) -> Redirect {
+pub fn delete(mut cookies: Cookies, intl: I18n) -> Flash<Redirect> {
     if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
         cookies.remove_private(cookie);
     }
-    Redirect::to("/")
+    Flash::success(Redirect::to("/"), i18n!(intl.catalog, "You are now logged off."))
 }
 
 #[derive(Clone)]

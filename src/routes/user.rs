@@ -142,19 +142,21 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Redirect, ErrorPage> {
+pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
     let conn = &*rockets.conn;
     let target = User::find_by_fqn(&rockets, &name)?;
-    if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
+    let message = if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.build_undo(&*conn)?;
         local_inbox(
             &rockets,
             serde_json::to_value(&delete_act).map_err(Error::from)?,
         )?;
 
+        let msg = i18n!(rockets.intl.catalog, "You are no longer following {}."; target.name());
         rockets
             .worker
             .execute(move || broadcast(&user, delete_act, vec![target]));
+        msg
     } else {
         let f = follows::Follow::insert(
             &*conn,
@@ -167,11 +169,13 @@ pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Redirect
         f.notify(&*conn)?;
 
         let act = f.to_activity(&*conn)?;
+        let msg = i18n!(rockets.intl.catalog, "You are now following {}."; target.name());
         rockets
             .worker
             .execute(move || broadcast(&user, act, vec![target]));
-    }
-    Ok(Redirect::to(uri!(details: name = name)))
+        msg
+    };
+    Ok(Flash::success(Redirect::to(uri!(details: name = name)), message))
 }
 
 #[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
@@ -365,7 +369,8 @@ pub fn update(
     conn: DbConn,
     user: User,
     form: LenientForm<UpdateUserForm>,
-) -> Result<Redirect, ErrorPage> {
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
     user.update(
         &*conn,
         if !form.display_name.is_empty() {
@@ -384,7 +389,7 @@ pub fn update(
             user.summary.to_string()
         },
     )?;
-    Ok(Redirect::to(uri!(me)))
+    Ok(Flash::success(Redirect::to(uri!(me)), i18n!(intl.catalog, "Your profile have been updated.")))
 }
 
 #[post("/@/<name>/delete")]
@@ -393,7 +398,8 @@ pub fn delete(
     user: User,
     mut cookies: Cookies,
     rockets: PlumeRocket,
-) -> Result<Redirect, ErrorPage> {
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
     let account = User::find_by_fqn(&rockets, &name)?;
     if user.id == account.id {
         account.delete(&*rockets.conn, &rockets.searcher)?;
@@ -402,9 +408,9 @@ pub fn delete(
             cookies.remove_private(cookie);
         }
 
-        Ok(Redirect::to(uri!(super::instance::index)))
+        Ok(Flash::success(Redirect::to(uri!(super::instance::index)), i18n!(intl.catalog, "Your account have been deleted.")))
     } else {
-        Ok(Redirect::to(uri!(edit: name = name)))
+        Ok(Flash::error(Redirect::to(uri!(edit: name = name)), i18n!(intl.catalog, "You can't delete someone else's account.")))
     }
 }
 
@@ -461,12 +467,12 @@ fn to_validation(_: Error) -> ValidationErrors {
 }
 
 #[post("/users/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n, msg: Option<FlashMessage>) -> Result<Redirect, Ructe> {
+pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n, msg: Option<FlashMessage>) -> Result<Flash<Redirect>, Ructe> {
     if !Instance::get_local(&*conn)
         .map(|i| i.open_registrations)
         .unwrap_or(true)
     {
-        return Ok(Redirect::to(uri!(new))); // Actually, it is an error
+        return Ok(Flash::error(Redirect::to(uri!(new)), i18n!(intl.catalog, "Registrations are closed on this instance."))); // Actually, it is an error
     }
 
     let mut form = form.into_inner();
@@ -484,7 +490,7 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n, msg: Opt
                 User::hash_pass(&form.password).map_err(to_validation)?,
             )
             .map_err(to_validation)?;
-            Ok(Redirect::to(uri!(super::session::new: m = _)))
+            Ok(Flash::success(Redirect::to(uri!(super::session::new: m = _)), i18n!(intl.catalog, "Your account have been created. You just need to login before you can use it.")))
         })
         .map_err(|err| {
             render!(users::new(

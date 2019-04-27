@@ -223,7 +223,7 @@ pub fn update(
     form: LenientForm<NewPostForm>,
     rockets: PlumeRocket,
     msg: Option<FlashMessage>,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let b = Blog::find_by_fqn(&rockets, &blog).expect("post::update: blog error");
     let mut post =
@@ -259,9 +259,9 @@ pub fn update(
             .expect("posts::update: is author in error")
         {
             // actually it's not "Ok"…
-            Ok(Redirect::to(
+            Ok(Flash::error(Redirect::to(
                 uri!(super::blogs::details: name = blog, page = _),
-            ))
+            ), i18n!(&intl, "You are not allowed to publish on this blog.")))
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
@@ -346,9 +346,9 @@ pub fn update(
                 }
             }
 
-            Ok(Redirect::to(
+            Ok(Flash::success(Redirect::to(
                 uri!(details: blog = blog, slug = new_slug, responding_to = _),
-            ))
+            ), i18n!(intl, "Your article have been updated.")))
         }
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts:update: medias error");
@@ -397,7 +397,7 @@ pub fn create(
     cl: ContentLen,
     rockets: PlumeRocket,
     msg: Option<FlashMessage>,
-) -> Result<Redirect, Result<Ructe, ErrorPage>> {
+) -> Result<Flash<Redirect>, Result<Ructe, ErrorPage>> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
@@ -424,9 +424,9 @@ pub fn create(
             .expect("post::create: is author in error")
         {
             // actually it's not "Ok"…
-            return Ok(Redirect::to(
+            return Ok(Flash::error(Redirect::to(
                 uri!(super::blogs::details: name = blog_name, page = _),
-            ));
+            ), i18n!(&rockets.intl.catalog, "You are not allowed to publish on this blog.")));
         }
 
         let (content, mentions, hashtags) = utils::md_to_html(
@@ -522,9 +522,9 @@ pub fn create(
             worker.execute(move || broadcast(&user, act, dest));
         }
 
-        Ok(Redirect::to(
+        Ok(Flash::success(Redirect::to(
             uri!(details: blog = blog_name, slug = slug, responding_to = _),
-        ))
+        ), i18n!(&rockets.intl.catalog, "Your post have been saved.")))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
         let intl = rockets.intl;
@@ -548,7 +548,8 @@ pub fn delete(
     blog_name: String,
     slug: String,
     rockets: PlumeRocket,
-) -> Result<Redirect, ErrorPage> {
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
     let user = rockets.user.clone().unwrap();
     let post = Blog::find_by_fqn(&rockets, &blog_name)
         .and_then(|blog| Post::find_by_slug(&*rockets.conn, &slug, blog.id));
@@ -559,9 +560,9 @@ pub fn delete(
             .into_iter()
             .any(|a| a.id == user.id)
         {
-            return Ok(Redirect::to(
+            return Ok(Flash::error(Redirect::to(
                 uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _),
-            ));
+            ), i18n!(intl.catalog, "You are not allowed to delete this article.")));
         }
 
         let dest = User::one_by_instance(&*rockets.conn)?;
@@ -583,13 +584,13 @@ pub fn delete(
                     .expect("Failed to rotate keypair");
             });
 
-        Ok(Redirect::to(
+        Ok(Flash::success(Redirect::to(
             uri!(super::blogs::details: name = blog_name, page = _),
-        ))
+        ), i18n!(intl.catalog, "Your article have been deleted.")))
     } else {
-        Ok(Redirect::to(
+        Ok(Flash::error(Redirect::to(
             uri!(super::blogs::details: name = blog_name, page = _),
-        ))
+        ), i18n!(intl.catalog, "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?")))
     }
 }
 
