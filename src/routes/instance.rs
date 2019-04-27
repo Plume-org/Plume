@@ -196,18 +196,19 @@ pub fn admin_users(
 }
 
 #[post("/admin/users/<id>/ban")]
-pub fn ban(
-    _admin: Admin,
-    id: i32,
-    rockets: PlumeRocket,
-) -> Result<Redirect, ErrorPage> {
+pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Redirect, ErrorPage> {
     if let Ok(u) = User::get(&*rockets.conn, id) {
         u.delete(&*rockets.conn, &rockets.searcher)?;
 
-        if Instance::get_local(&*rockets.conn).map(|i| u.instance_id == i.id).unwrap_or(false) {
+        if Instance::get_local(&*rockets.conn)
+            .map(|i| u.instance_id == i.id)
+            .unwrap_or(false)
+        {
             let target = User::one_by_instance(&*rockets.conn)?;
             let delete_act = u.delete_activity(&*rockets.conn)?;
-            rockets.worker.execute(move || broadcast(&u, delete_act, target));
+            rockets
+                .worker
+                .execute(move || broadcast(&u, delete_act, target));
         }
     }
     Ok(Redirect::to(uri!(admin_users: page = _)))

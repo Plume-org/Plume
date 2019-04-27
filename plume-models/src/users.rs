@@ -1,5 +1,9 @@
 use activitypub::{
-    activity::Delete, actor::Person, collection::OrderedCollection, object::{Image, Tombstone}, Activity, CustomObject, Endpoint,
+    activity::Delete,
+    actor::Person,
+    collection::OrderedCollection,
+    object::{Image, Tombstone},
+    Activity, CustomObject, Endpoint,
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
@@ -11,10 +15,10 @@ use openssl::{
     sign,
 };
 use plume_common::activity_pub::{
-    ap_accept_header, PUBLIC_VISIBILITY,
+    ap_accept_header,
     inbox::{AsActor, AsObject, FromId},
     sign::{gen_keypair, Signer},
-    ActivityStream, ApSignature, Id, IntoId, PublicKey,
+    ActivityStream, ApSignature, Id, IntoId, PublicKey, PUBLIC_VISIBILITY,
 };
 use plume_common::utils;
 use reqwest::{
@@ -638,11 +642,19 @@ impl User {
         let mut tombstone = Tombstone::default();
         tombstone.object_props.set_id_string(self.ap_url.clone())?;
 
-        del.delete_props.set_actor_link(Id::new(self.ap_url.clone()))?;
+        del.delete_props
+            .set_actor_link(Id::new(self.ap_url.clone()))?;
         del.delete_props.set_object_object(tombstone)?;
-        del.object_props.set_id_string(format!("{}#delete", self.ap_url))?;
-        del.object_props.set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
-        del.object_props.set_cc_link_vec(self.get_followers(conn)?.into_iter().map(|f| Id::new(f.ap_url)).collect())?;
+        del.object_props
+            .set_id_string(format!("{}#delete", self.ap_url))?;
+        del.object_props
+            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
+        del.object_props.set_cc_link_vec(
+            self.get_followers(conn)?
+                .into_iter()
+                .map(|f| Id::new(f.ap_url))
+                .collect(),
+        )?;
 
         Ok(del)
     }
