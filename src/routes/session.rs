@@ -24,7 +24,13 @@ use plume_models::{
 use routes::errors::ErrorPage;
 
 #[get("/login?<m>")]
-pub fn new(user: Option<User>, conn: DbConn, m: Option<String>, intl: I18n, msg: Option<FlashMessage>) -> Ructe {
+pub fn new(
+    user: Option<User>,
+    conn: DbConn,
+    m: Option<String>,
+    intl: I18n,
+    msg: Option<FlashMessage>,
+) -> Ructe {
     render!(session::login(
         &(&*conn, &intl.catalog, user, msg),
         m,
@@ -105,7 +111,10 @@ pub fn create(
                 ))
             })?;
 
-        Ok(Flash::success(Redirect::to(uri), i18n!(&rockets.intl.catalog, "You are now connected.")))
+        Ok(Flash::success(
+            Redirect::to(uri),
+            i18n!(&rockets.intl.catalog, "You are now connected."),
+        ))
     } else {
         Err(render!(session::login(
             &(&*conn, &rockets.intl.catalog, None, flash),
@@ -121,7 +130,10 @@ pub fn delete(mut cookies: Cookies, intl: I18n) -> Flash<Redirect> {
     if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
         cookies.remove_private(cookie);
     }
-    Flash::success(Redirect::to("/"), i18n!(intl.catalog, "You are now logged off."))
+    Flash::success(
+        Redirect::to("/"),
+        i18n!(intl.catalog, "You are now logged off."),
+    )
 }
 
 #[derive(Clone)]

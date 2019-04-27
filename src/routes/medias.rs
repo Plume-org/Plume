@@ -16,7 +16,13 @@ use std::fs;
 use template_utils::Ructe;
 
 #[get("/medias?<page>")]
-pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn list(
+    user: User,
+    conn: DbConn,
+    intl: I18n,
+    page: Option<Page>,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let medias = Media::page_for_user(&*conn, &user, page.limits())?;
     Ok(render!(medias::index(
@@ -123,7 +129,13 @@ fn read(data: &SavedData) -> Result<String, status::BadRequest<&'static str>> {
 }
 
 #[get("/medias/<id>")]
-pub fn details(id: i32, user: User, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn details(
+    id: i32,
+    user: User,
+    conn: DbConn,
+    intl: I18n,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         Ok(render!(medias::details(
@@ -140,19 +152,36 @@ pub fn delete(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Flash<Red
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         media.delete(&*conn)?;
-        Ok(Flash::success(Redirect::to(uri!(list: page = _)), i18n!(intl.catalog, "Your media have been deleted.")))
+        Ok(Flash::success(
+            Redirect::to(uri!(list: page = _)),
+            i18n!(intl.catalog, "Your media have been deleted."),
+        ))
     } else {
-        Ok(Flash::error(Redirect::to(uri!(list: page = _)), i18n!(intl.catalog, "You are not allowed to delete this media.")))
+        Ok(Flash::error(
+            Redirect::to(uri!(list: page = _)),
+            i18n!(intl.catalog, "You are not allowed to delete this media."),
+        ))
     }
 }
 
 #[post("/medias/<id>/avatar")]
-pub fn set_avatar(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Flash<Redirect>, ErrorPage> {
+pub fn set_avatar(
+    id: i32,
+    user: User,
+    conn: DbConn,
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         user.set_avatar(&*conn, media.id)?;
-        Ok(Flash::success(Redirect::to(uri!(details: id = id)), i18n!(intl.catalog, "Your avatar have been updated.")))
+        Ok(Flash::success(
+            Redirect::to(uri!(details: id = id)),
+            i18n!(intl.catalog, "Your avatar have been updated."),
+        ))
     } else {
-        Ok(Flash::error(Redirect::to(uri!(details: id = id)), i18n!(intl.catalog, "You are not allowed to use this media.")))
+        Ok(Flash::error(
+            Redirect::to(uri!(details: id = id)),
+            i18n!(intl.catalog, "You are not allowed to use this media."),
+        ))
     }
 }

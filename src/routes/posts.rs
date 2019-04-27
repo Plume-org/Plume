@@ -128,7 +128,12 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn new(
+    blog: String,
+    cl: ContentLen,
+    rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let b = Blog::find_by_fqn(&rockets, &blog)?;
     let user = rockets.user.unwrap();
@@ -259,9 +264,10 @@ pub fn update(
             .expect("posts::update: is author in error")
         {
             // actually it's not "Ok"…
-            Ok(Flash::error(Redirect::to(
-                uri!(super::blogs::details: name = blog, page = _),
-            ), i18n!(&intl, "You are not allowed to publish on this blog.")))
+            Ok(Flash::error(
+                Redirect::to(uri!(super::blogs::details: name = blog, page = _)),
+                i18n!(&intl, "You are not allowed to publish on this blog."),
+            ))
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
@@ -346,9 +352,10 @@ pub fn update(
                 }
             }
 
-            Ok(Flash::success(Redirect::to(
-                uri!(details: blog = blog, slug = new_slug, responding_to = _),
-            ), i18n!(intl, "Your article have been updated.")))
+            Ok(Flash::success(
+                Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)),
+                i18n!(intl, "Your article have been updated."),
+            ))
         }
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts:update: medias error");
@@ -424,9 +431,13 @@ pub fn create(
             .expect("post::create: is author in error")
         {
             // actually it's not "Ok"…
-            return Ok(Flash::error(Redirect::to(
-                uri!(super::blogs::details: name = blog_name, page = _),
-            ), i18n!(&rockets.intl.catalog, "You are not allowed to publish on this blog.")));
+            return Ok(Flash::error(
+                Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
+                i18n!(
+                    &rockets.intl.catalog,
+                    "You are not allowed to publish on this blog."
+                ),
+            ));
         }
 
         let (content, mentions, hashtags) = utils::md_to_html(
@@ -522,9 +533,10 @@ pub fn create(
             worker.execute(move || broadcast(&user, act, dest));
         }
 
-        Ok(Flash::success(Redirect::to(
-            uri!(details: blog = blog_name, slug = slug, responding_to = _),
-        ), i18n!(&rockets.intl.catalog, "Your post have been saved.")))
+        Ok(Flash::success(
+            Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
+            i18n!(&rockets.intl.catalog, "Your post have been saved."),
+        ))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
         let intl = rockets.intl;
@@ -560,9 +572,12 @@ pub fn delete(
             .into_iter()
             .any(|a| a.id == user.id)
         {
-            return Ok(Flash::error(Redirect::to(
-                uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _),
-            ), i18n!(intl.catalog, "You are not allowed to delete this article.")));
+            return Ok(Flash::error(
+                Redirect::to(
+                    uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _),
+                ),
+                i18n!(intl.catalog, "You are not allowed to delete this article."),
+            ));
         }
 
         let dest = User::one_by_instance(&*rockets.conn)?;
@@ -584,9 +599,10 @@ pub fn delete(
                     .expect("Failed to rotate keypair");
             });
 
-        Ok(Flash::success(Redirect::to(
-            uri!(super::blogs::details: name = blog_name, page = _),
-        ), i18n!(intl.catalog, "Your article have been deleted.")))
+        Ok(Flash::success(
+            Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
+            i18n!(intl.catalog, "Your article have been deleted."),
+        ))
     } else {
         Ok(Flash::error(Redirect::to(
             uri!(super::blogs::details: name = blog_name, page = _),

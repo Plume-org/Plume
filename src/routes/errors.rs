@@ -1,6 +1,6 @@
-use rocket::request::FlashMessage;
 use plume_models::users::User;
 use plume_models::{db_conn::DbConn, Error};
+use rocket::request::FlashMessage;
 use rocket::{
     request::FromRequest,
     response::{self, Responder},

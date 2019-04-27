@@ -1,5 +1,8 @@
 use activitypub::object::Note;
-use rocket::{request::{FlashMessage, LenientForm}, response::{Flash, Redirect}};
+use rocket::{
+    request::{FlashMessage, LenientForm},
+    response::{Flash, Redirect},
+};
 use template_utils::Ructe;
 use validator::Validate;
 
@@ -84,9 +87,12 @@ pub fn create(
                 .worker
                 .execute(move || broadcast(&user_clone, new_comment, dest));
 
-            Flash::success(Redirect::to(
-                uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
-            ), i18n!(&rockets.intl.catalog, "Your comment have been posted."))
+            Flash::success(
+                Redirect::to(
+                    uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
+                ),
+                i18n!(&rockets.intl.catalog, "Your comment have been posted."),
+            )
         })
         .map_err(|errors| {
             // TODO: de-duplicate this code
@@ -158,9 +164,10 @@ pub fn delete(
                 });
         }
     }
-    Ok(Flash::success(Redirect::to(
-        uri!(super::posts::details: blog = blog, slug = slug, responding_to = _),
-    ), i18n!(&rockets.intl.catalog, "Your comment have been deleted.")))
+    Ok(Flash::success(
+        Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _)),
+        i18n!(&rockets.intl.catalog, "Your comment have been deleted."),
+    ))
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]

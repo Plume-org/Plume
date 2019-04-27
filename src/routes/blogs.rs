@@ -20,7 +20,12 @@ use routes::{errors::ErrorPage, Page};
 use template_utils::Ructe;
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn details(
+    name: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name)?;
@@ -90,7 +95,11 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Flash<Redirect>, Ructe> {
+pub fn create(
+    form: LenientForm<NewBlogForm>,
+    rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
+) -> Result<Flash<Redirect>, Ructe> {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -139,7 +148,10 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket, msg: Option<
         )
         .expect("blog::create: author error");
 
-        Ok(Flash::success(Redirect::to(uri!(details: name = slug.clone(), page = _)), &i18n!(intl, "Your blog was successfully created!")))
+        Ok(Flash::success(
+            Redirect::to(uri!(details: name = slug.clone(), page = _)),
+            &i18n!(intl, "Your blog was successfully created!"),
+        ))
     } else {
         Err(render!(blogs::new(
             &(&*conn, intl, Some(user), msg),
@@ -150,7 +162,11 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket, msg: Option<
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Flash<Redirect>, Ructe> {
+pub fn delete(
+    name: String,
+    rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name).expect("blog::delete: blog not found");
     let user = rockets.user;
@@ -164,7 +180,10 @@ pub fn delete(name: String, rockets: PlumeRocket, msg: Option<FlashMessage>) -> 
     {
         blog.delete(&conn, &searcher)
             .expect("blog::expect: deletion error");
-        Ok(Flash::success(Redirect::to(uri!(super::instance::index)), i18n!(intl.catalog, "Your blog was deleted.")))
+        Ok(Flash::success(
+            Redirect::to(uri!(super::instance::index)),
+            i18n!(intl.catalog, "Your blog was deleted."),
+        ))
     } else {
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
@@ -184,7 +203,11 @@ pub struct EditForm {
 }
 
 #[get("/~/<name>/edit")]
-pub fn edit(name: String, rockets: PlumeRocket, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn edit(
+    name: String,
+    rockets: PlumeRocket,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name)?;
     if rockets
@@ -309,7 +332,10 @@ pub fn update(
                 blog.banner_id = form.banner;
                 blog.save_changes::<Blog>(&*conn)
                     .expect("Couldn't save blog changes");
-                Ok(Flash::success(Redirect::to(uri!(details: name = name, page = _)), i18n!(intl, "Your blog information have been updated.")))
+                Ok(Flash::success(
+                    Redirect::to(uri!(details: name = name, page = _)),
+                    i18n!(intl, "Your blog information have been updated."),
+                ))
             })
             .map_err(|err| {
                 let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");

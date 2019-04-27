@@ -1,4 +1,7 @@
-use rocket::{request::FlashMessage, response::{Flash, Redirect}};
+use rocket::{
+    request::FlashMessage,
+    response::{Flash, Redirect},
+};
 use rocket_i18n::I18n;
 
 use plume_common::utils;

@@ -121,7 +121,12 @@ pub fn details(
 }
 
 #[get("/dashboard")]
-pub fn dashboard(user: User, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn dashboard(
+    user: User,
+    conn: DbConn,
+    intl: I18n,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     let blogs = Blog::find_for_author(&*conn, &user)?;
     Ok(render!(users::dashboard(
         &(&*conn, &intl.catalog, Some(user.clone()), msg),
@@ -142,7 +147,11 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
+pub fn follow(
+    name: String,
+    user: User,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
     let conn = &*rockets.conn;
     let target = User::find_by_fqn(&rockets, &name)?;
     let message = if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
@@ -175,7 +184,10 @@ pub fn follow(name: String, user: User, rockets: PlumeRocket) -> Result<Flash<Re
             .execute(move || broadcast(&user, act, vec![target]));
         msg
     };
-    Ok(Flash::success(Redirect::to(uri!(details: name = name)), message))
+    Ok(Flash::success(
+        Redirect::to(uri!(details: name = name)),
+        message,
+    ))
 }
 
 #[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
@@ -319,7 +331,12 @@ pub fn activity_details(
 }
 
 #[get("/users/new")]
-pub fn new(user: Option<User>, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn new(
+    user: Option<User>,
+    conn: DbConn,
+    intl: I18n,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     Ok(render!(users::new(
         &(&*conn, &intl.catalog, user, msg),
         Instance::get_local(&*conn)?.open_registrations,
@@ -329,7 +346,13 @@ pub fn new(user: Option<User>, conn: DbConn, intl: I18n, msg: Option<FlashMessag
 }
 
 #[get("/@/<name>/edit")]
-pub fn edit(name: String, user: User, conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Result<Ructe, ErrorPage> {
+pub fn edit(
+    name: String,
+    user: User,
+    conn: DbConn,
+    intl: I18n,
+    msg: Option<FlashMessage>,
+) -> Result<Ructe, ErrorPage> {
     if user.username == name && !name.contains('@') {
         Ok(render!(users::edit(
             &(&*conn, &intl.catalog, Some(user.clone()), msg),
@@ -389,7 +412,10 @@ pub fn update(
             user.summary.to_string()
         },
     )?;
-    Ok(Flash::success(Redirect::to(uri!(me)), i18n!(intl.catalog, "Your profile have been updated.")))
+    Ok(Flash::success(
+        Redirect::to(uri!(me)),
+        i18n!(intl.catalog, "Your profile have been updated."),
+    ))
 }
 
 #[post("/@/<name>/delete")]
@@ -408,9 +434,15 @@ pub fn delete(
             cookies.remove_private(cookie);
         }
 
-        Ok(Flash::success(Redirect::to(uri!(super::instance::index)), i18n!(intl.catalog, "Your account have been deleted.")))
+        Ok(Flash::success(
+            Redirect::to(uri!(super::instance::index)),
+            i18n!(intl.catalog, "Your account have been deleted."),
+        ))
     } else {
-        Ok(Flash::error(Redirect::to(uri!(edit: name = name)), i18n!(intl.catalog, "You can't delete someone else's account.")))
+        Ok(Flash::error(
+            Redirect::to(uri!(edit: name = name)),
+            i18n!(intl.catalog, "You can't delete someone else's account."),
+        ))
     }
 }
 
@@ -467,12 +499,20 @@ fn to_validation(_: Error) -> ValidationErrors {
 }
 
 #[post("/users/new", data = "<form>")]
-pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n, msg: Option<FlashMessage>) -> Result<Flash<Redirect>, Ructe> {
+pub fn create(
+    conn: DbConn,
+    form: LenientForm<NewUserForm>,
+    intl: I18n,
+    msg: Option<FlashMessage>,
+) -> Result<Flash<Redirect>, Ructe> {
     if !Instance::get_local(&*conn)
         .map(|i| i.open_registrations)
         .unwrap_or(true)
     {
-        return Ok(Flash::error(Redirect::to(uri!(new)), i18n!(intl.catalog, "Registrations are closed on this instance."))); // Actually, it is an error
+        return Ok(Flash::error(
+            Redirect::to(uri!(new)),
+            i18n!(intl.catalog, "Registrations are closed on this instance."),
+        )); // Actually, it is an error
     }
 
     let mut form = form.into_inner();
@@ -490,7 +530,13 @@ pub fn create(conn: DbConn, form: LenientForm<NewUserForm>, intl: I18n, msg: Opt
                 User::hash_pass(&form.password).map_err(to_validation)?,
             )
             .map_err(to_validation)?;
-            Ok(Flash::success(Redirect::to(uri!(super::session::new: m = _)), i18n!(intl.catalog, "Your account have been created. You just need to login before you can use it.")))
+            Ok(Flash::success(
+                Redirect::to(uri!(super::session::new: m = _)),
+                i18n!(
+                    intl.catalog,
+                    "Your account have been created. You just need to login before you can use it."
+                ),
+            ))
         })
         .map_err(|err| {
             render!(users::new(

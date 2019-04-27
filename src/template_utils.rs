@@ -13,7 +13,12 @@ pub use askama_escape::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
 
-pub type BaseContext<'a, 'r> = &'a (&'a Connection, &'a Catalog, Option<User>, Option<FlashMessage<'a, 'r>>);
+pub type BaseContext<'a, 'r> = &'a (
+    &'a Connection,
+    &'a Catalog,
+    Option<User>,
+    Option<FlashMessage<'a, 'r>>,
+);
 
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);
