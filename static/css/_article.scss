@@ -58,11 +58,13 @@ main .article-meta {
   .tags {
     list-style: none;
     display: inline-block;
+    display: -webkit-inline-block;
     padding: 0px;
     margin-bottom: 2em;
 
     li {
       display: inline-block;
+      display: -webkit-inline-block;
       background: $lightgray;
       padding: 0px;
       margin: 0px 10px 10px 0px;
@@ -71,6 +73,7 @@ main .article-meta {
 
       a {
         display: inline-block;
+        display: -webkit-inline-block;
         padding: 10px 20px;
         color: $black;
       }
@@ -99,6 +102,7 @@ main .article-meta {
     p {
       font-size: 1.5em;
       display: inline-block;
+      display: -webkit-inline-block;
       margin: 0;
     }
 
@@ -213,6 +217,7 @@ main .article-meta {
     // Respond & delete comment buttons
     a.button, form.inline, form.inline input {
      	display: inline-block;
+      display: -webkit-inline-block;
      	padding: 0;
      	background: none;
      	color: $black;
@@ -335,6 +340,7 @@ main .article-meta {
 .cw-container {
   position: relative;
   display: inline-block;
+  display: -webkit-inline-block;
 }
 
 .cw-text {
@@ -355,6 +361,7 @@ input:checked ~ .cw-container:before {
 
 input:checked ~ .cw-container > .cw-text {
   display: inline;
+  display: -webkit-inline-block;
   position: absolute;
   color: white;
   width: 100%;
