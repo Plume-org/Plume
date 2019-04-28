@@ -15,6 +15,10 @@ header {
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
+    padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
     background: $purple;
     align-self: flex-start;
 
@@ -29,6 +33,10 @@ header {
      	height: 1.4em;
      	margin: 0;
      	padding: 0;
+      padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
      	color: $lightgray;
      	font-size: 1.33em;
    	}
@@ -63,6 +71,10 @@ header {
      	  margin: 0;
         text-align: center;
         padding: 0.5em 1em;
+        padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
         font-size: 1.75em;
 
         img {
@@ -103,7 +115,6 @@ header {
    	.mobile-label {
    		transition: all 0.2s ease;
    		display: block;
-      display: -webkit-block;
    		position: absolute;
    		left: 50%;
    		transform: translate(-50%, 0);
