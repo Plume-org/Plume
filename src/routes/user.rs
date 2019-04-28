@@ -430,6 +430,12 @@ pub fn delete(
     if user.id == account.id {
         account.delete(&*rockets.conn, &rockets.searcher)?;
 
+        let target = User::one_by_instance(&*rockets.conn)?;
+        let delete_act = account.delete_activity(&*rockets.conn)?;
+        rockets
+            .worker
+            .execute(move || broadcast(&account, delete_act, target));
+
         if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
             cookies.remove_private(cookie);
         }
