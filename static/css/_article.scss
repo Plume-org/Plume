@@ -3,6 +3,9 @@ main header {
   position: relative;
   max-height: 80vh;
   overflow: hidden;
+  min-height: 20em;
+  background: $white;
+  color: $black;
 
   & > div:not(.shadow) {
     position: absolute;
@@ -15,7 +18,10 @@ main header {
     right: 0;
     max-width: $article-width;
     margin: 2em auto;
-    color: white;
+
+    &.illustrated {
+      color: white;
+    }
   }
 
   & > div.shadow {
@@ -24,13 +30,13 @@ main header {
 
     height: 100%;
     width: 100%;
-    background: linear-gradient(180deg, #F4F4F4 27.23%, #000000 109.05%);
-    mix-blend-mode: multiply;
+    background: linear-gradient(180deg, transparent 27.23%, black 109.05%);
   }
 
   & > img {
     z-index: 1;
     width: 100%;
+    background: $purple;
   }
 }
 
@@ -85,18 +91,18 @@ main .article-meta, main .article-meta button {
 main .article-meta {
 
   > * {
-    margin: 0 20%;
+    margin: $margin;
   }
 
   > .banner {
     margin: 3em 0;
     & > * {
-      margin: 0 20%;
+      margin: $margin;
     }
   }
 
   > p {
-    margin: 2em 20%;
+    margin: 2em $horizontal-margin;
  	  font-size: 0.9em;
   }
 
@@ -423,7 +429,6 @@ input:checked ~ .cw-container > .cw-text {
   & > div:nth-child(2) {
     flex: 1;
     display: flex;
-    max-width: $article-width; // TODO: change it
-    margin: auto;
+    margin: auto $horizontal-margin;
   }
 }

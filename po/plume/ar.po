@@ -683,6 +683,9 @@ msgstr "حذف"
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
 msgid "Edit"
 msgstr "تعديل"
 

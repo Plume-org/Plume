@@ -24,7 +24,7 @@
 }, {
 <div class="h-entry">
     <header>
-        <div>
+        <div @if article.cover_id.is_some() { class="illustrated" }>
             <h1 class="article p-name">@article.title</h1>
             <div class="article-info">
                 <span class="author">

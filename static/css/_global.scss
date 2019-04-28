@@ -4,11 +4,12 @@ html, body {
  	background: $background;
  	color: $black;
  	font-family: $route159;
-        ::selection {
-		background: $lightpurple;
-        }
+
+  ::selection {
+    background: transparentize($purple, 0.7);
+  }
 	::-moz-selection {
-		background: $lightpurple;
+    background: ransparentize($purple, 0.7);
 	}
 }
 
@@ -48,10 +49,6 @@ small {
  	margin: 4rem 0;
 }
 
-.cards.spaced {
-  margin: 1rem 0 5rem;
-}
-
 .banner {
  	background: $gray;
  	padding-top: 2em;
@@ -65,7 +62,7 @@ small {
 
 /// Main
 body > main > *, .h-feed > * {
- 	margin: 0 20%;
+ 	margin: $margin;
 }
 
 body > main > .h-entry, .h-feed {
@@ -169,6 +166,7 @@ p.error {
  	flex-direction: row;
  	flex-wrap: wrap;
  	padding: 0 5%;
+  margin: 1rem 0 5rem;
 }
 .card {
  	flex: 1;
@@ -227,15 +225,20 @@ p.error {
 }
 
 /// Instance presentation
-.presentation > h2, .presentation > a {
- 	text-align: center;
-}
-.presentation > a {
- 	font-size: 1.2em;
- 	margin: 1em;
+.presentation {
+  max-width: none;
+
+  & > h2, & > a {
+    text-align: center;
+  }
+
+  & > a {
+    font-size: 1.2em;
+    margin: 1em;
+  }
 }
 
-//  Stats
+// Stats
 .stats {
  	display: flex;
  	justify-content: space-around;
@@ -393,7 +396,7 @@ figure {
 .tabs {
   border-bottom: 1px solid $gray;
   padding: 0px;
-  margin: auto 20% 2em;
+  margin: auto $horizontal-margin 2em;
   overflow: auto;
   display: flex;
 
