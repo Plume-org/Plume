@@ -162,14 +162,17 @@ msgstr "अकाउंट रजिस्टर करें"
 msgid "About this instance"
 msgstr "इंस्टैंस के बारे में जानकारी"
 
+msgid "Administration"
+msgstr "संचालन"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "सोर्स कोड"
 
 msgid "Matrix room"
 msgstr "मैट्रिक्स रूम"
-
-msgid "Administration"
-msgstr "संचालन"
 
 msgid "Welcome to {}"
 msgstr "{} में स्वागत"

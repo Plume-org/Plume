@@ -161,14 +161,17 @@ msgstr "登録"
 msgid "About this instance"
 msgstr "このインスタンスについて"
 
+msgid "Administration"
+msgstr "管理"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "ソースコード"
 
 msgid "Matrix room"
 msgstr "Matrix ルーム"
-
-msgid "Administration"
-msgstr "管理"
 
 msgid "Welcome to {}"
 msgstr "{} へようこそ"

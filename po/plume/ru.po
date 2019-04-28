@@ -162,14 +162,17 @@ msgstr "Зарегистрироваться"
 msgid "About this instance"
 msgstr "Об этом узле"
 
+msgid "Administration"
+msgstr "Администрирование"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Исходный код"
 
 msgid "Matrix room"
 msgstr "Комната в Matrix"
-
-msgid "Administration"
-msgstr "Администрирование"
 
 msgid "Welcome to {}"
 msgstr ""

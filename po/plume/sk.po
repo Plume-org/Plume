@@ -162,14 +162,17 @@ msgstr "Registrácia"
 msgid "About this instance"
 msgstr "O tejto instancii"
 
+msgid "Administration"
+msgstr "Administrácia"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Zdrojový kód"
 
 msgid "Matrix room"
 msgstr "Matrix miestnosť"
-
-msgid "Administration"
-msgstr "Administrácia"
 
 msgid "Welcome to {}"
 msgstr "Vitaj na {}"

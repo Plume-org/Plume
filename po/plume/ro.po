@@ -161,14 +161,17 @@ msgstr "Înregistrare"
 msgid "About this instance"
 msgstr "Despre această instanță"
 
+msgid "Administration"
+msgstr "Administrație"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Cod sursă"
 
 msgid "Matrix room"
 msgstr ""
-
-msgid "Administration"
-msgstr "Administrație"
 
 msgid "Welcome to {}"
 msgstr ""

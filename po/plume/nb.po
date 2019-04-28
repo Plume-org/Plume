@@ -159,14 +159,17 @@ msgstr "Registrér deg"
 msgid "About this instance"
 msgstr "Om denne instansen"
 
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Kildekode"
 
 msgid "Matrix room"
 msgstr "Snakkerom"
-
-msgid "Administration"
-msgstr "Administrasjon"
 
 msgid "Welcome to {}"
 msgstr ""

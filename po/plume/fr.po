@@ -160,14 +160,17 @@ msgstr "S’inscrire"
 msgid "About this instance"
 msgstr "À propos de cette instance"
 
+msgid "Administration"
+msgstr "Administration"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Code source"
 
 msgid "Matrix room"
 msgstr "Salon Matrix"
-
-msgid "Administration"
-msgstr "Administration"
 
 msgid "Welcome to {}"
 msgstr "Bienvenue sur {0}"

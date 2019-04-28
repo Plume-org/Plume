@@ -162,14 +162,17 @@ msgstr "Vytvořit účet"
 msgid "About this instance"
 msgstr "O této instanci"
 
+msgid "Administration"
+msgstr "Správa"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Zdrojový kód"
 
 msgid "Matrix room"
 msgstr "Matrix místnost"
-
-msgid "Administration"
-msgstr "Správa"
 
 msgid "Welcome to {}"
 msgstr "Vítejte na {}"

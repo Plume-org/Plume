@@ -160,14 +160,17 @@ msgstr "Rexistrar"
 msgid "About this instance"
 msgstr "Sobre esta instancia"
 
+msgid "Administration"
+msgstr "Administración"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Código fonte"
 
 msgid "Matrix room"
 msgstr "Sala Matrix"
-
-msgid "Administration"
-msgstr "Administración"
 
 msgid "Welcome to {}"
 msgstr "Benvida a {}"

@@ -23,7 +23,7 @@
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="h-entry">
-    <header>
+    <header class="article">
         <div @if article.cover_id.is_some() { class="illustrated" }>
             <h1 class="article p-name">@article.title</h1>
             <div class="article-info">

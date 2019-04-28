@@ -9,7 +9,7 @@ html, body {
     background: transparentize($purple, 0.7);
   }
 	::-moz-selection {
-    background: ransparentize($purple, 0.7);
+    background: transparentize($purple, 0.7);
 	}
 }
 
@@ -306,13 +306,37 @@ p.error {
 body > footer {
   display: flex;
   align-content: center;
-  justify-content: space-between;
-  background: $gray;
-  padding: 0 20%;
+  justify-content: space-around;
+  background: $purple;
+  color: $white;
   margin-top: 5em;
 
   * {
-    margin: 5em 0;
+    margin: 0;
+  }
+
+  hr {
+    transform: skew(-15deg);
+    background: $white;
+    border: none;
+    width: .2em;
+  }
+
+  a, a:visited {
+    color: $white;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 20%;
+    margin: 2em 0;
+    transition: all 0.1s ease-in;
+
+    & > * {
+      display: block;
+      margin: 1em 0;
+    }
   }
 }
 

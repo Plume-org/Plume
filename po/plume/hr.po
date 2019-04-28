@@ -161,14 +161,17 @@ msgstr "Registrirajte se"
 msgid "About this instance"
 msgstr ""
 
+msgid "Administration"
+msgstr "Administracija"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Izvorni kod"
 
 msgid "Matrix room"
 msgstr ""
-
-msgid "Administration"
-msgstr "Administracija"
 
 msgid "Welcome to {}"
 msgstr "Dobrodošli u {0}"

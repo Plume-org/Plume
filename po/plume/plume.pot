@@ -154,13 +154,16 @@ msgstr ""
 msgid "About this instance"
 msgstr ""
 
+msgid "Administration"
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr ""
 
 msgid "Matrix room"
-msgstr ""
-
-msgid "Administration"
 msgstr ""
 
 msgid "Welcome to {}"

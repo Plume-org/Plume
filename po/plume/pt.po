@@ -162,14 +162,17 @@ msgstr "Registrar"
 msgid "About this instance"
 msgstr "Sobre esta instância"
 
+msgid "Administration"
+msgstr "Administração"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Código fonte"
 
 msgid "Matrix room"
 msgstr "Sala Matrix"
-
-msgid "Administration"
-msgstr "Administração"
 
 msgid "Welcome to {}"
 msgstr "Bem-vindo a {}"

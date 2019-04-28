@@ -161,14 +161,17 @@ msgstr "إنشاء حساب"
 msgid "About this instance"
 msgstr "عن مثيل الخادوم هذا"
 
+msgid "Administration"
+msgstr "الإدارة"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "الشيفرة المصدرية"
 
 msgid "Matrix room"
 msgstr "غرفة المحادثة على ماتريكس"
-
-msgid "Administration"
-msgstr "الإدارة"
 
 msgid "Welcome to {}"
 msgstr "مرحبا بكم في {0}"
