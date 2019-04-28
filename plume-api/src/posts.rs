@@ -4,7 +4,8 @@ pub struct NewPostData {
     pub subtitle: Option<String>,
     pub source: String,
     pub author: String,
-    // If None, a blog for this author will be choosen automatically
+    // If None, and that there is only one blog, it will be choosen automatically.
+    // If there are more than one blog, the request will fail.
     pub blog_id: Option<i32>,
     pub published: Option<bool>,
     pub creation_date: Option<String>,
