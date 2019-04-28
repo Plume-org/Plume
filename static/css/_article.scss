@@ -30,6 +30,10 @@ main article {
 
   pre {
    	padding: 1em;
+    padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
    	background: $lightgray;
    	overflow: auto;
    	border-radius: 5px;
@@ -39,6 +43,10 @@ main article {
 // Metadata under the article
 main .article-meta, main .article-meta button {
   padding: 0;
+  padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
   font-size: 1.1em;
   margin-top: 10%;
 }
@@ -60,6 +68,10 @@ main .article-meta {
     display: inline-block;
     display: -webkit-inline-block;
     padding: 0px;
+    padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
     margin-bottom: 2em;
 
     li {
@@ -67,6 +79,10 @@ main .article-meta {
       display: -webkit-inline-block;
       background: $lightgray;
       padding: 0px;
+      padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
       margin: 0px 10px 10px 0px;
       border-radius: 3px;
       transition: all 0.2s ease-in;
@@ -98,6 +114,10 @@ main .article-meta {
    	flex-direction: column;
    	align-items: center;
    	padding: 0.5em 0;
+    padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
 
     p {
       font-size: 1.5em;
@@ -114,6 +134,10 @@ main .article-meta {
      	justify-content: center;
      	margin: 0;
      	padding: 0;
+      padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
      	background: none;
      	color: $black;
      	border: none;
@@ -147,6 +171,10 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
+      padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
      	box-sizing: border-box;
      	color: $red;
      	fill: none;
@@ -217,8 +245,11 @@ main .article-meta {
     // Respond & delete comment buttons
     a.button, form.inline, form.inline input {
      	display: inline-block;
-      display: -webkit-inline-block;
      	padding: 0;
+      padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
      	background: none;
      	color: $black;
      	border: none;
@@ -269,6 +300,10 @@ main .article-meta {
 
      	.text {
        	padding: 1.25em 0;
+        padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
        	font-family: $lora;
        	font-size: 1.1em;
        	line-height: 1.4;
@@ -320,6 +355,10 @@ main .article-meta {
   border: 1px solid $purple;
   z-index: 2;
   padding: 2em;
+  padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -343,7 +382,6 @@ main .article-meta {
 .cw-container {
   position: relative;
   display: inline-block;
-  display: -webkit-inline-block;
 }
 
 .cw-text {
@@ -366,7 +404,6 @@ input:checked ~ .cw-container:before {
 
 input:checked ~ .cw-container > .cw-text {
   display: inline;
-  display: -webkit-inline;
   position: absolute;
   color: white;
   width: 100%;
