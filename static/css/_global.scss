@@ -69,7 +69,12 @@ body > main > .h-entry, .h-feed {
 	margin: 0;
 }
 
+body > main {
+  min-height: 70vh;
+}
+
 main {
+
   h1, h2, h3, h4, h5, h6 {
       font-family: $route159;
       line-height: 1.15;

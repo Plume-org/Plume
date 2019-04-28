@@ -110,7 +110,8 @@ main .article-meta {
   .tags {
     list-style: none;
     padding: 0px;
-    max-width: 75%;
+    max-width: none;
+    flex: 20;
 
     li {
       display: inline-block;
@@ -235,11 +236,7 @@ main .article-meta {
 
   // Comments
   .comments {
-    margin: 0;
-    > * {
-      margin-left: 20%;
-      margin-right: 20%;
-    }
+    margin: 0 $horizontal-margin;
 
     h2 {
      	color: $purple;
@@ -273,17 +270,39 @@ main .article-meta {
       &:hover { color: $purple; }
     }
 
-    .list {
-     	display: grid;
-     	margin: 0 0 -5em;
-     	padding: 0 20%;
-     	background: $gray;
-    }
-
     .comment {
-      padding: 2em;
+      margin: 1em 0;
      	font-size: 1em;
      	border: none;
+
+      .content {
+        background: $gray;
+        margin-top: 2.5em;
+        padding: 1em;
+
+        &::before {
+          display: block;
+          content: ' ';
+          border: 1em solid $gray;
+          border-top-color: transparent;
+          border-right-color: transparent;
+          position: relative;
+          top: -2.4em;
+          left: -1em;
+          width: 0;
+          height: 0;
+        }
+      }
+
+      header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .dt-published a {
+        color: transparentize($black, 0.6);
+      }
 
      	.author {
      	  display: flex;
@@ -304,6 +323,10 @@ main .article-meta {
           small { opacity: 1; }
         }
      	}
+
+      & > .comment {
+          padding-left: 2em;
+      }
 
      	.text {
        	padding: 1.25em 0;

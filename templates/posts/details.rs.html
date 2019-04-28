@@ -146,11 +146,9 @@
             }
 
             @if !comments.is_empty() {
-                <div class="list">
-                    @for comm in comments {
-                        @:comment(ctx, &comm, Some(&article.ap_url), &blog.fqn, &article.slug)
-                    }
-                </div>
+                @for comm in comments {
+                    @:comment(ctx, &comm, Some(&article.ap_url), &blog.fqn, &article.slug)
+                }
             } else {
                 <p class="center">@i18n!(ctx.1, "No comments yet. Be the first to react!")</p>
             }
