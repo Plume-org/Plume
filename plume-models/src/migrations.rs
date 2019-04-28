@@ -88,6 +88,6 @@ impl ImportedMigrations {
     }
 }
 
-pub const IMPORTED_MIGRATION: ImportedMigrations = {
+pub const IMPORTED_MIGRATIONS: ImportedMigrations = {
     import_migrations! {}
 };
