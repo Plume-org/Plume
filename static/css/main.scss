@@ -37,11 +37,13 @@ html {
 
     nav#menu {
       display: inline-flex;
+      z-index: 21;
     }
 
     #content {
       display: none;
       text-align: center;
+      z-index: 20;
     }
   }
 
@@ -104,7 +106,7 @@ html {
   }
 
   body > main > * {
-    padding: 0 5%;
+    // padding: 0 5%;
   }
   main .article-meta {
     > * {
@@ -139,7 +141,16 @@ html {
 
   .flex.wrap { flex-direction: column; }
 
-  .cards {
+  .cards, .list {
     margin: 1rem 0 5rem;
+  }
+
+  .split {
+    flex-direction: column;
+    margin: 0;
+
+    & > * {
+      max-width: 100%;
+    }
   }
 }

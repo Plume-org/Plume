@@ -62,7 +62,7 @@ small {
 
 /// Main
 body > main > *, .h-feed > * {
- 	margin: $margin;
+ 	margin: 1em $horizontal-margin;
 }
 
 body > main > .h-entry, .h-feed {
