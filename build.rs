@@ -40,6 +40,12 @@ fn main() {
     compile_templates(&in_dir, &out_dir).expect("compile templates");
 
     println!("cargo:rerun-if-changed=static/css");
+    println!("cargo:rerun-if-changed=static/css/_article.scss");
+    println!("cargo:rerun-if-changed=static/css/_forms.scss");
+    println!("cargo:rerun-if-changed=static/css/_global.scss");
+    println!("cargo:rerun-if-changed=static/css/_header.scss");
+    println!("cargo:rerun-if-changed=static/css/_variables.scss");
+    println!("cargo:rerun-if-changed=static/css/main.scss");
     let mut out = File::create("static/css/main.css").expect("Couldn't create main.css");
     out.write_all(
         &rsass::compile_scss_file(
