@@ -30,6 +30,7 @@ struct ComplexMigration {
 
 impl ComplexMigration {
     fn run(&self, conn: &Connection, path: &Path) -> Result<()> {
+        println!("Running migration {}", self.name);
         for step in self.up {
             step.run(conn, path)?
         }
@@ -37,6 +38,7 @@ impl ComplexMigration {
     }
 
     fn revert(&self, conn: &Connection, path: &Path) -> Result<()> {
+        println!("Reverting migration {}", self.name);
         for step in self.down {
             step.run(conn, path)?
         }
@@ -52,7 +54,7 @@ impl ImportedMigrations {
         let latest_id = if let Some(migration) = latest_migration {
             self.0
                 .binary_search_by_key(&migration.as_str(), |mig| mig.name)
-                .map(|id| id+1)
+                .map(|id| id + 1)
                 .map_err(|_| Error::NotFound)?
         } else {
             0

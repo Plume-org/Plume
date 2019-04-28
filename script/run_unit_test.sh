@@ -4,7 +4,7 @@ for file in target/debug/*-*[^\.d]; do
 	if [[ -x "$file" ]]
 	then
 		filename=$(basename $file)
-		if [[ "plume_macro-c53c304b7b109570" =~ ^plume_macro ]]; then
+		if [[ $filename =~ ^plume_macro ]]; then
 			rm $file
 			continue
 		fi
