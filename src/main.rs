@@ -1,10 +1,9 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene)]
+#![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
 extern crate activitypub;
 extern crate askama_escape;
 extern crate atom_syndication;
-extern crate canapi;
 extern crate chrono;
 extern crate colored;
 extern crate ctrlc;
@@ -102,8 +101,8 @@ Then try to restart Plume.
             SearcherError::IndexOpeningError => panic!(
                 r#"
 Plume was unable to open the search index. If you created the index
-before, make sure to run Plume in the same directory it was created in, or 
-to set SEARCH_INDEX accordingly. If you did not yet create the search 
+before, make sure to run Plume in the same directory it was created in, or
+to set SEARCH_INDEX accordingly. If you did not yet create the search
 index, run this command:
 
     plm search init
@@ -237,6 +236,7 @@ Then try to restart Plume
                 api::posts::get,
                 api::posts::list,
                 api::posts::create,
+                api::posts::delete,
             ],
         )
         .register(catchers![
