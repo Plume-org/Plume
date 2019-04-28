@@ -10,6 +10,7 @@ use plume_models::{Connection as Conn, CONFIG};
 use std::io::{self, prelude::*};
 
 mod instance;
+mod migration;
 mod search;
 mod users;
 
@@ -19,8 +20,9 @@ fn main() {
         .version(env!("CARGO_PKG_VERSION"))
         .about("Collection of tools to manage your Plume instance.")
         .subcommand(instance::command())
-        .subcommand(users::command())
-        .subcommand(search::command());
+        .subcommand(migration::command())
+        .subcommand(search::command())
+        .subcommand(users::command());
     let matches = app.clone().get_matches();
 
     dotenv::dotenv().ok();
@@ -30,11 +32,14 @@ fn main() {
         ("instance", Some(args)) => {
             instance::run(args, &conn.expect("Couldn't connect to the database."))
         }
-        ("users", Some(args)) => {
-            users::run(args, &conn.expect("Couldn't connect to the database."))
+        ("migration", Some(args)) => {
+            migration::run(args, &conn.expect("Couldn't connect to the database."))
         }
         ("search", Some(args)) => {
             search::run(args, &conn.expect("Couldn't connect to the database."))
+        }
+        ("users", Some(args)) => {
+            users::run(args, &conn.expect("Couldn't connect to the database."))
         }
         _ => app.print_help().expect("Couldn't print help"),
     };
