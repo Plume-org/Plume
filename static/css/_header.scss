@@ -15,10 +15,10 @@ header {
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
-    padding: constant(safe-area-inset-top) 
-           constant(safe-area-inset-right) 
-           constant(safe-area-inset-bottom) 
-           constant(safe-area-inset-left);
+    padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
     background: $purple;
     align-self: flex-start;
 
@@ -32,11 +32,15 @@ header {
      	width: 1.4em;
      	height: 1.4em;
      	margin: 0;
+      margin: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
      	padding: 0;
-      padding: constant(safe-area-inset-top) 
-           constant(safe-area-inset-right) 
-           constant(safe-area-inset-bottom) 
-           constant(safe-area-inset-left);
+      padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
      	color: $lightgray;
      	font-size: 1.33em;
    	}
@@ -63,18 +67,26 @@ header {
      	align-self: stretch;
      	margin: 0;
      	padding: 0 2em;
+      padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
      	font-size: 1em;
 
      	i { font-size: 1.2em; }
 
      	&.title {
      	  margin: 0;
+        margin: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
         text-align: center;
         padding: 0.5em 1em;
-        padding: constant(safe-area-inset-top) 
-           constant(safe-area-inset-right) 
-           constant(safe-area-inset-bottom) 
-           constant(safe-area-inset-left);
+        padding: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
         font-size: 1.75em;
 
         img {
@@ -84,6 +96,10 @@ header {
 
         p {
           margin: 0;
+          margin: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
           padding-left: 0.5em;
         }
      	}
@@ -110,6 +126,10 @@ header {
  	  i {
    		transition: all 0.2s ease;
    		margin: 0;
+      margin: env(safe-area-inset-top) 
+           env(safe-area-inset-right) 
+           env(safe-area-inset-bottom) 
+           env(safe-area-inset-left);
    	}
 
    	.mobile-label {
