@@ -122,16 +122,14 @@ pub fn create(
         Some(Media::get_media_processor(conn, vec![&author])),
     );
 
-    let blog = payload
-        .blog_id
-        .or_else(|| {
-            let blogs = Blog::find_for_author(conn, &author).ok()?;
-            if blogs.len() == 1 {
-                Some(blogs[0].id)
-            } else {
-                None
-            }
-        })?;
+    let blog = payload.blog_id.or_else(|| {
+        let blogs = Blog::find_for_author(conn, &author).ok()?;
+        if blogs.len() == 1 {
+            Some(blogs[0].id)
+        } else {
+            None
+        }
+    })?;
 
     if Post::find_by_slug(conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());
