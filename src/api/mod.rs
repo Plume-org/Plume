@@ -9,12 +9,20 @@ use serde_json;
 use plume_common::utils::random_hex;
 use plume_models::{api_tokens::*, apps::App, users::User, Error, PlumeRocket};
 
+type Api<T> = Result<Json<T>, ApiError>;
+
 #[derive(Debug)]
 pub struct ApiError(Error);
 
 impl From<Error> for ApiError {
     fn from(err: Error) -> ApiError {
         ApiError(err)
+    }
+}
+
+impl From<std::option::NoneError> for ApiError {
+    fn from(err: std::option::NoneError) -> ApiError {
+        ApiError(err.into())
     }
 }
 
