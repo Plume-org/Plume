@@ -13,7 +13,6 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2019-0
 
 #compile some deps
 RUN cargo install cargo-web &&\
-    cargo install diesel_cli --no-default-features --features postgres,sqlite --version '=1.3.0' &&\
     rm -fr ~/.cargo/registry
 
 #install coverage tools
