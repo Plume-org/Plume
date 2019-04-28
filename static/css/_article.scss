@@ -288,6 +288,7 @@ main .article-meta {
     justify-content: space-between;
     button {
       flex: 0 0 10em;
+      -webkit-flex: 0 0 10em;
       font-size: 1.25em;
       margin: .5em 0em .5em 1em;
     }
@@ -345,10 +346,12 @@ main .article-meta {
 
 .cw-text {
   display: none;
+  -webkit-appearance: none;
 }
 
 input[type="checkbox"].cw-checkbox {
   display: none;
+  -webkit-appearance: none;
 }
 
 input:checked ~ .cw-container:before {
@@ -361,7 +364,7 @@ input:checked ~ .cw-container:before {
 
 input:checked ~ .cw-container > .cw-text {
   display: inline;
-  display: -webkit-inline-block;
+  display: -webkit-inline;
   position: absolute;
   color: white;
   width: 100%;
