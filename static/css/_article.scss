@@ -84,12 +84,14 @@ main .article-meta {
   // Likes & Boosts
   .actions {
     display: flex;
+    display: -webkit-flex;
    	flex-direction: row;
    	justify-content: space-around;
   }
 
   .likes, .reshares {
     display: flex;
+    display: -webkit-flex;
    	flex-direction: column;
    	align-items: center;
    	padding: 0.5em 0;
@@ -102,6 +104,7 @@ main .article-meta {
 
     .action {
       display: flex;
+      display: -webkit-flex;
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
@@ -115,6 +118,7 @@ main .article-meta {
      	svg.feather {
        	transition: background 0.1s ease-in;
        	display: flex;
+        display: -webkit-flex;
        	align-items: center;
        	justify-content: center;
 
@@ -219,6 +223,7 @@ main .article-meta {
      	&::before {
      	  color: $purple;
      	  padding-right: 0.5em;
+        padding-right: env(safe-area-inset-right);
       }
 
       &:hover { color: $purple; }
@@ -238,6 +243,7 @@ main .article-meta {
 
      	.author {
      	  display: flex;
+        display: -webkit-flex;
        	flex-direction: row;
        	align-items: center;
        	align-content: center;
@@ -270,6 +276,7 @@ main .article-meta {
 #plume-editor {
   header {
     display: flex;
+    display: -webkit-flex;
     flex-direction: row-reverse;
     background: transparent;
     align-items: center;
