@@ -2,7 +2,7 @@ use activitypub::{activity::Create, collection::OrderedCollection};
 use atom_syndication::{Entry, FeedBuilder};
 use rocket::{
     http::{ContentType, Cookies},
-    request::{FlashMessage, LenientForm},
+    request::LenientForm,
     response::{status, Content, Flash, Redirect},
 };
 use rocket_i18n::I18n;
@@ -26,7 +26,7 @@ use plume_models::{
     Error, PlumeRocket,
 };
 use routes::{errors::ErrorPage, Page, RemoteForm};
-use template_utils::Ructe;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/me")]
 pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -43,13 +43,12 @@ pub fn details(
     fetch_rockets: PlumeRocket,
     fetch_followers_rockets: PlumeRocket,
     update_conn: DbConn,
-    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let user = User::find_by_fqn(&rockets, &name)?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
-    let worker = rockets.worker;
+    let worker = &rockets.worker;
 
     if !user.get_instance(&*conn)?.local {
         // Fetch new articles
@@ -102,12 +101,12 @@ pub fn details(
         }
     }
 
-    let account = rockets.user;
-    let intl = rockets.intl;
     Ok(render!(users::details(
-        &(&*conn, &intl.catalog, account.clone(), msg),
+        &rockets.to_context(),
         user.clone(),
-        account
+        rockets
+            .user
+            .clone()
             .and_then(|x| x.is_following(&*conn, user.id).ok())
             .unwrap_or(false),
         user.instance_id != Instance::get_local(&*conn)?.id,
@@ -121,17 +120,12 @@ pub fn details(
 }
 
 #[get("/dashboard")]
-pub fn dashboard(
-    user: User,
-    conn: DbConn,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
-    let blogs = Blog::find_for_author(&*conn, &user)?;
+pub fn dashboard(user: User, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let blogs = Blog::find_for_author(&*rockets.conn, &user)?;
     Ok(render!(users::dashboard(
-        &(&*conn, &intl.catalog, Some(user.clone()), msg),
+        &rockets.to_context(),
         blogs,
-        Post::drafts_by_author(&*conn, &user)?
+        Post::drafts_by_author(&*rockets.conn, &user)?
     )))
 }
 
@@ -196,7 +190,6 @@ pub fn follow_not_connected(
     name: String,
     remote_form: Option<LenientForm<RemoteForm>>,
     i18n: I18n,
-    msg: Option<FlashMessage>,
 ) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
     let target = User::find_by_fqn(&rockets, &name)?;
     if let Some(remote_form) = remote_form {
@@ -227,7 +220,7 @@ pub fn follow_not_connected(
             );
             Ok(Ok(Flash::new(
                 render!(users::follow_remote(
-                    &(&rockets.conn, &i18n.catalog, None, msg),
+                    &rockets.to_context(),
                     target,
                     super::session::LoginForm::default(),
                     ValidationErrors::default(),
@@ -241,7 +234,7 @@ pub fn follow_not_connected(
     } else {
         Ok(Ok(Flash::new(
             render!(users::follow_remote(
-                &(&rockets.conn, &i18n.catalog, None, msg),
+                &rockets.to_context(),
                 target,
                 super::session::LoginForm::default(),
                 ValidationErrors::default(),
@@ -271,7 +264,6 @@ pub fn followers(
     name: String,
     page: Option<Page>,
     rockets: PlumeRocket,
-    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
@@ -279,10 +271,11 @@ pub fn followers(
     let followers_count = user.count_followers(&*conn)?;
 
     Ok(render!(users::followers(
-        &(&*conn, &rockets.intl.catalog, rockets.user.clone(), msg),
+        &rockets.to_context(),
         user.clone(),
         rockets
             .user
+            .clone()
             .and_then(|x| x.is_following(&*conn, user.id).ok())
             .unwrap_or(false),
         user.instance_id != Instance::get_local(&*conn)?.id,
@@ -298,23 +291,23 @@ pub fn followed(
     name: String,
     page: Option<Page>,
     rockets: PlumeRocket,
-    msg: Option<FlashMessage>,
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
     let user = User::find_by_fqn(&rockets, &name)?;
-    let followed_count = user.count_followed(&*conn)?;
+    let followed_count = user.count_followed(conn)?;
 
     Ok(render!(users::followed(
-        &(&*conn, &rockets.intl.catalog, rockets.user.clone(), msg),
+        &rockets.to_context(),
         user.clone(),
         rockets
             .user
-            .and_then(|x| x.is_following(&*conn, user.id).ok())
+            .clone()
+            .and_then(|x| x.is_following(conn, user.id).ok())
             .unwrap_or(false),
-        user.instance_id != Instance::get_local(&*conn)?.id,
-        user.get_instance(&*conn)?.public_domain,
-        user.get_followed_page(&*conn, page.limits())?,
+        user.instance_id != Instance::get_local(conn)?.id,
+        user.get_instance(conn)?.public_domain,
+        user.get_followed_page(conn, page.limits())?,
         page.0,
         Page::total(followed_count as i32)
     )))
@@ -331,31 +324,20 @@ pub fn activity_details(
 }
 
 #[get("/users/new")]
-pub fn new(
-    user: Option<User>,
-    conn: DbConn,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
+pub fn new(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     Ok(render!(users::new(
-        &(&*conn, &intl.catalog, user, msg),
-        Instance::get_local(&*conn)?.open_registrations,
+        &rockets.to_context(),
+        Instance::get_local(&*rockets.conn)?.open_registrations,
         &NewUserForm::default(),
         ValidationErrors::default()
     )))
 }
 
 #[get("/@/<name>/edit")]
-pub fn edit(
-    name: String,
-    user: User,
-    conn: DbConn,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
+pub fn edit(name: String, user: User, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     if user.username == name && !name.contains('@') {
         Ok(render!(users::edit(
-            &(&*conn, &intl.catalog, Some(user.clone()), msg),
+            &rockets.to_context(),
             UpdateUserForm {
                 display_name: user.display_name.clone(),
                 email: user.email.clone().unwrap_or_default(),
@@ -424,7 +406,6 @@ pub fn delete(
     user: User,
     mut cookies: Cookies,
     rockets: PlumeRocket,
-    intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let account = User::find_by_fqn(&rockets, &name)?;
     if user.id == account.id {
@@ -442,12 +423,15 @@ pub fn delete(
 
         Ok(Flash::success(
             Redirect::to(uri!(super::instance::index)),
-            i18n!(intl.catalog, "Your account have been deleted."),
+            i18n!(rockets.intl.catalog, "Your account have been deleted."),
         ))
     } else {
         Ok(Flash::error(
             Redirect::to(uri!(edit: name = name)),
-            i18n!(intl.catalog, "You can't delete someone else's account."),
+            i18n!(
+                rockets.intl.catalog,
+                "You can't delete someone else's account."
+            ),
         ))
     }
 }
@@ -506,18 +490,20 @@ fn to_validation(_: Error) -> ValidationErrors {
 
 #[post("/users/new", data = "<form>")]
 pub fn create(
-    conn: DbConn,
     form: LenientForm<NewUserForm>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
-    if !Instance::get_local(&*conn)
+    let conn = &*rockets.conn;
+    if !Instance::get_local(conn)
         .map(|i| i.open_registrations)
         .unwrap_or(true)
     {
         return Ok(Flash::error(
             Redirect::to(uri!(new)),
-            i18n!(intl.catalog, "Registrations are closed on this instance."),
+            i18n!(
+                rockets.intl.catalog,
+                "Registrations are closed on this instance."
+            ),
         )); // Actually, it is an error
     }
 
@@ -527,7 +513,7 @@ pub fn create(
     form.validate()
         .and_then(|_| {
             NewUser::new_local(
-                &*conn,
+                conn,
                 form.username.to_string(),
                 form.username.to_string(),
                 false,
@@ -539,15 +525,15 @@ pub fn create(
             Ok(Flash::success(
                 Redirect::to(uri!(super::session::new: m = _)),
                 i18n!(
-                    intl.catalog,
+                    rockets.intl.catalog,
                     "Your account have been created. You just need to login before you can use it."
                 ),
             ))
         })
         .map_err(|err| {
             render!(users::new(
-                &(&*conn, &intl.catalog, None, msg),
-                Instance::get_local(&*conn)
+                &rockets.to_context(),
+                Instance::get_local(conn)
                     .map(|i| i.open_registrations)
                     .unwrap_or(true),
                 &form,

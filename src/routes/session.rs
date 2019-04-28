@@ -2,7 +2,7 @@ use lettre::Transport;
 use rocket::http::ext::IntoOwned;
 use rocket::{
     http::{uri::Uri, Cookie, Cookies, SameSite},
-    request::{FlashMessage, Form, LenientForm},
+    request::{Form, LenientForm},
     response::{Flash, Redirect},
     State,
 };
@@ -12,27 +12,20 @@ use std::{
     sync::{Arc, Mutex},
     time::Instant,
 };
-use template_utils::Ructe;
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use mail::{build_mail, Mailer};
 use plume_models::{
-    db_conn::DbConn,
     users::{User, AUTH_COOKIE},
     Error, PlumeRocket, CONFIG,
 };
 use routes::errors::ErrorPage;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/login?<m>")]
-pub fn new(
-    user: Option<User>,
-    conn: DbConn,
-    m: Option<String>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Ructe {
+pub fn new(m: Option<String>, rockets: PlumeRocket) -> Ructe {
     render!(session::login(
-        &(&*conn, &intl.catalog, user, msg),
+        &rockets.to_context(),
         m,
         &LoginForm::default(),
         ValidationErrors::default()
@@ -50,7 +43,6 @@ pub struct LoginForm {
 #[post("/login", data = "<form>")]
 pub fn create(
     form: LenientForm<LoginForm>,
-    flash: Option<FlashMessage>,
     mut cookies: Cookies,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
@@ -90,21 +82,25 @@ pub fn create(
                 .same_site(SameSite::Lax)
                 .finish(),
         );
-        let destination = flash
-            .and_then(|f| {
-                if f.name() == "callback" {
-                    Some(f.msg().to_owned())
-                } else {
-                    None
-                }
-            })
+        let destination = rockets
+            .flash_msg
+            .clone()
+            .and_then(
+                |(name, msg)| {
+                    if name == "callback" {
+                        Some(msg)
+                    } else {
+                        None
+                    }
+                },
+            )
             .unwrap_or_else(|| "/".to_owned());
 
         let uri = Uri::parse(&destination)
             .map(IntoOwned::into_owned)
             .map_err(|_| {
                 render!(session::login(
-                    &(&*conn, &rockets.intl.catalog, None, None),
+                    &(conn, &rockets.intl.catalog, None, None),
                     None,
                     &*form,
                     errors
@@ -117,7 +113,7 @@ pub fn create(
         ))
     } else {
         Err(render!(session::login(
-            &(&*conn, &rockets.intl.catalog, None, flash),
+            &rockets.to_context(),
             None,
             &*form,
             errors
@@ -150,9 +146,9 @@ impl PartialEq for ResetRequest {
 }
 
 #[get("/password-reset")]
-pub fn password_reset_request_form(conn: DbConn, intl: I18n, msg: Option<FlashMessage>) -> Ructe {
+pub fn password_reset_request_form(rockets: PlumeRocket) -> Ructe {
     render!(session::password_reset_request(
-        &(&*conn, &intl.catalog, None, msg),
+        &rockets.to_context(),
         &ResetForm::default(),
         ValidationErrors::default()
     ))
@@ -166,18 +162,16 @@ pub struct ResetForm {
 
 #[post("/password-reset", data = "<form>")]
 pub fn password_reset_request(
-    conn: DbConn,
-    intl: I18n,
     mail: State<Arc<Mutex<Mailer>>>,
     form: Form<ResetForm>,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Ructe {
     let mut requests = requests.lock().unwrap();
     // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
     requests.retain(|r| r.creation_date.elapsed().as_secs() < 24 * 60 * 60);
 
-    if User::find_by_email(&*conn, &form.email).is_ok()
+    if User::find_by_email(&*rockets.conn, &form.email).is_ok()
         && !requests.iter().any(|x| x.mail == form.email.clone())
     {
         let id = plume_common::utils::random_hex();
@@ -191,8 +185,8 @@ pub fn password_reset_request(
         let link = format!("https://{}/password-reset/{}", CONFIG.base_url, id);
         if let Some(message) = build_mail(
             form.email.clone(),
-            i18n!(intl.catalog, "Password reset"),
-            i18n!(intl.catalog, "Here is the link to reset your password: {0}"; link),
+            i18n!(rockets.intl.catalog, "Password reset"),
+            i18n!(rockets.intl.catalog, "Here is the link to reset your password: {0}"; link),
         ) {
             if let Some(ref mut mail) = *mail.lock().unwrap() {
                 mail.send(message.into())
@@ -201,21 +195,14 @@ pub fn password_reset_request(
             }
         }
     }
-    render!(session::password_reset_request_ok(&(
-        &*conn,
-        &intl.catalog,
-        None,
-        msg
-    )))
+    render!(session::password_reset_request_ok(&rockets.to_context()))
 }
 
 #[get("/password-reset/<token>")]
 pub fn password_reset_form(
-    conn: DbConn,
-    intl: I18n,
     token: String,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     requests
         .lock()
@@ -224,7 +211,7 @@ pub fn password_reset_form(
         .find(|x| x.id == token.clone())
         .ok_or(Error::NotFound)?;
     Ok(render!(session::password_reset(
-        &(&*conn, &intl.catalog, None, msg),
+        &rockets.to_context(),
         &NewPasswordForm::default(),
         ValidationErrors::default()
     )))
@@ -251,13 +238,11 @@ fn passwords_match(form: &NewPasswordForm) -> Result<(), ValidationError> {
 
 #[post("/password-reset/<token>", data = "<form>")]
 pub fn password_reset(
-    conn: DbConn,
-    intl: I18n,
     token: String,
     requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
     form: Form<NewPasswordForm>,
-    msg: Option<FlashMessage>,
-) -> Result<Redirect, Ructe> {
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, Ructe> {
     form.validate()
         .and_then(|_| {
             let mut requests = requests.lock().unwrap();
@@ -269,24 +254,30 @@ pub fn password_reset(
             if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 {
                 // Reset link is only valid for 2 hours
                 requests.retain(|r| *r != req);
-                let user = User::find_by_email(&*conn, &req.mail).map_err(to_validation)?;
-                user.reset_password(&*conn, &form.password).ok();
-                Ok(Redirect::to(uri!(
-                    new: m = i18n!(intl.catalog, "Your password was successfully reset.")
-                )))
+                let user = User::find_by_email(&*rockets.conn, &req.mail).map_err(to_validation)?;
+                user.reset_password(&*rockets.conn, &form.password).ok();
+                Ok(Flash::success(
+                    Redirect::to(uri!(
+                        new: m = _
+                    )),
+                    i18n!(
+                        rockets.intl.catalog,
+                        "Your password was successfully reset."
+                    ),
+                ))
             } else {
-                Ok(Redirect::to(uri!(
-                    new: m = i18n!(intl.catalog, "Sorry, but the link expired. Try again")
-                )))
+                Ok(Flash::error(
+                    Redirect::to(uri!(
+                        new: m = _
+                    )),
+                    i18n!(
+                        rockets.intl.catalog,
+                        "Sorry, but the link expired. Try again"
+                    ),
+                ))
             }
         })
-        .map_err(|err| {
-            render!(session::password_reset(
-                &(&*conn, &intl.catalog, None, msg),
-                &form,
-                err
-            ))
-        })
+        .map_err(|err| render!(session::password_reset(&rockets.to_context(), &form, err)))
 }
 
 fn to_validation<T>(_: T) -> ValidationErrors {

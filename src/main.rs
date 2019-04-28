@@ -45,7 +45,6 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
@@ -68,8 +67,6 @@ mod test_routes;
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 compile_i18n!();
-
-type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
@@ -102,8 +99,8 @@ Then try to restart Plume.
             SearcherError::IndexOpeningError => panic!(
                 r#"
 Plume was unable to open the search index. If you created the index
-before, make sure to run Plume in the same directory it was created in, or 
-to set SEARCH_INDEX accordingly. If you did not yet create the search 
+before, make sure to run Plume in the same directory it was created in, or
+to set SEARCH_INDEX accordingly. If you did not yet create the search
 index, run this command:
 
     plm search init

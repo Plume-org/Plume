@@ -1,5 +1,5 @@
 use rocket::{
-    request::{FlashMessage, LenientForm},
+    request::LenientForm,
     response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
@@ -14,30 +14,26 @@ use plume_models::{
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
-use template_utils::Ructe;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/")]
-pub fn index(
-    conn: DbConn,
-    user: Option<User>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
-    let inst = Instance::get_local(&*conn)?;
-    let federated = Post::get_recents_page(&*conn, Page::default().limits())?;
-    let local = Post::get_instance_page(&*conn, inst.id, Page::default().limits())?;
-    let user_feed = user.clone().and_then(|user| {
-        let followed = user.get_followed(&*conn).ok()?;
+pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let conn = &*rockets.conn;
+    let inst = Instance::get_local(conn)?;
+    let federated = Post::get_recents_page(conn, Page::default().limits())?;
+    let local = Post::get_instance_page(conn, inst.id, Page::default().limits())?;
+    let user_feed = rockets.user.clone().and_then(|user| {
+        let followed = user.get_followed(conn).ok()?;
         let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
         in_feed.push(user.id);
-        Post::user_feed_page(&*conn, in_feed, Page::default().limits()).ok()
+        Post::user_feed_page(conn, in_feed, Page::default().limits()).ok()
     });
 
     Ok(render!(instance::index(
-        &(&*conn, &intl.catalog, user, msg),
+        &rockets.to_context(),
         inst,
-        User::count_local(&*conn)?,
-        Post::count_local(&*conn)?,
+        User::count_local(conn)?,
+        Post::count_local(conn)?,
         local,
         federated,
         user_feed
@@ -45,74 +41,51 @@ pub fn index(
 }
 
 #[get("/local?<page>")]
-pub fn local(
-    conn: DbConn,
-    user: Option<User>,
-    page: Option<Page>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
+pub fn local(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let instance = Instance::get_local(&*conn)?;
-    let articles = Post::get_instance_page(&*conn, instance.id, page.limits())?;
+    let instance = Instance::get_local(&*rockets.conn)?;
+    let articles = Post::get_instance_page(&*rockets.conn, instance.id, page.limits())?;
     Ok(render!(instance::local(
-        &(&*conn, &intl.catalog, user, msg),
+        &rockets.to_context(),
         instance,
         articles,
         page.0,
-        Page::total(Post::count_local(&*conn)? as i32)
+        Page::total(Post::count_local(&*rockets.conn)? as i32)
     )))
 }
 
 #[get("/feed?<page>")]
-pub fn feed(
-    conn: DbConn,
-    user: User,
-    page: Option<Page>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
+pub fn feed(user: User, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let followed = user.get_followed(&*conn)?;
+    let followed = user.get_followed(&*rockets.conn)?;
     let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
     in_feed.push(user.id);
-    let articles = Post::user_feed_page(&*conn, in_feed, page.limits())?;
+    let articles = Post::user_feed_page(&*rockets.conn, in_feed, page.limits())?;
     Ok(render!(instance::feed(
-        &(&*conn, &intl.catalog, Some(user), msg),
+        &rockets.to_context(),
         articles,
         page.0,
-        Page::total(Post::count_local(&*conn)? as i32)
+        Page::total(Post::count_local(&*rockets.conn)? as i32)
     )))
 }
 
 #[get("/federated?<page>")]
-pub fn federated(
-    conn: DbConn,
-    user: Option<User>,
-    page: Option<Page>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
+pub fn federated(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let articles = Post::get_recents_page(&*conn, page.limits())?;
+    let articles = Post::get_recents_page(&*rockets.conn, page.limits())?;
     Ok(render!(instance::federated(
-        &(&*conn, &intl.catalog, user, msg),
+        &rockets.to_context(),
         articles,
         page.0,
-        Page::total(Post::count_local(&*conn)? as i32)
+        Page::total(Post::count_local(&*rockets.conn)? as i32)
     )))
 }
 
 #[get("/admin")]
-pub fn admin(
-    conn: DbConn,
-    admin: Admin,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
-    let local_inst = Instance::get_local(&*conn)?;
+pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let local_inst = Instance::get_local(&*rockets.conn)?;
     Ok(render!(instance::admin(
-        &(&*conn, &intl.catalog, Some(admin.0), msg),
+        &rockets.to_context(),
         local_inst.clone(),
         InstanceSettingsForm {
             name: local_inst.name.clone(),
@@ -138,19 +111,18 @@ pub struct InstanceSettingsForm {
 
 #[post("/admin", data = "<form>")]
 pub fn update_settings(
-    conn: DbConn,
-    admin: Admin,
+    _admin: Admin,
     form: LenientForm<InstanceSettingsForm>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
+    let conn = &*rockets.conn;
     form.validate()
         .and_then(|_| {
-            let instance = Instance::get_local(&*conn)
-                .expect("instance::update_settings: local instance error");
+            let instance =
+                Instance::get_local(conn).expect("instance::update_settings: local instance error");
             instance
                 .update(
-                    &*conn,
+                    conn,
                     form.name.clone(),
                     form.open_registrations,
                     form.short_description.clone(),
@@ -159,14 +131,14 @@ pub fn update_settings(
                 .expect("instance::update_settings: save error");
             Ok(Flash::success(
                 Redirect::to(uri!(admin)),
-                i18n!(&intl.catalog, "Instance settings have been saved."),
+                i18n!(rockets.intl.catalog, "Instance settings have been saved."),
             ))
         })
         .or_else(|e| {
-            let local_inst = Instance::get_local(&*conn)
-                .expect("instance::update_settings: local instance error");
+            let local_inst =
+                Instance::get_local(conn).expect("instance::update_settings: local instance error");
             Err(render!(instance::admin(
-                &(&*conn, &intl.catalog, Some(admin.0), msg),
+                &rockets.to_context(),
                 local_inst,
                 form.clone(),
                 e
@@ -176,20 +148,18 @@ pub fn update_settings(
 
 #[get("/admin/instances?<page>")]
 pub fn admin_instances(
-    admin: Admin,
-    conn: DbConn,
+    _admin: Admin,
     page: Option<Page>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let instances = Instance::page(&*conn, page.limits())?;
+    let instances = Instance::page(&*rockets.conn, page.limits())?;
     Ok(render!(instance::list(
-        &(&*conn, &intl.catalog, Some(admin.0), msg),
-        Instance::get_local(&*conn)?,
+        &rockets.to_context(),
+        Instance::get_local(&*rockets.conn)?,
         instances,
         page.0,
-        Page::total(Instance::count(&*conn)? as i32)
+        Page::total(Instance::count(&*rockets.conn)? as i32)
     )))
 }
 
@@ -216,41 +186,35 @@ pub fn toggle_block(
 
 #[get("/admin/users?<page>")]
 pub fn admin_users(
-    admin: Admin,
-    conn: DbConn,
+    _admin: Admin,
     page: Option<Page>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(instance::users(
-        &(&*conn, &intl.catalog, Some(admin.0), msg),
-        User::get_local_page(&*conn, page.limits())?,
+        &rockets.to_context(),
+        User::get_local_page(&*rockets.conn, page.limits())?,
         page.0,
-        Page::total(User::count_local(&*conn)? as i32)
+        Page::total(User::count_local(&*rockets.conn)? as i32)
     )))
 }
 
 #[post("/admin/users/<id>/ban")]
-pub fn ban(
-    _admin: Admin,
-    id: i32,
-    rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, ErrorPage> {
+pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
     let u = User::get(&*rockets.conn, id)?;
     u.delete(&*rockets.conn, &rockets.searcher)?;
 
     if Instance::get_local(&*rockets.conn)
-            .map(|i| u.instance_id == i.id)
-            .unwrap_or(false)
-        {
-            let target = User::one_by_instance(&*rockets.conn)?;
-            let delete_act = u.delete_activity(&*rockets.conn)?;
-            let u_clone = u.clone();
-            rockets
-                .worker
-                .execute(move || broadcast(&u_clone, delete_act, target));
-        }
+        .map(|i| u.instance_id == i.id)
+        .unwrap_or(false)
+    {
+        let target = User::one_by_instance(&*rockets.conn)?;
+        let delete_act = u.delete_activity(&*rockets.conn)?;
+        let u_clone = u.clone();
+        rockets
+            .worker
+            .execute(move || broadcast(&u_clone, delete_act, target));
+    }
 
     Ok(Flash::success(
         Redirect::to(uri!(admin_users: page = _)),
@@ -337,19 +301,15 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
 }
 
 #[get("/about")]
-pub fn about(
-    user: Option<User>,
-    conn: DbConn,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Result<Ructe, ErrorPage> {
+pub fn about(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let conn = &*rockets.conn;
     Ok(render!(instance::about(
-        &(&*conn, &intl.catalog, user, msg),
-        Instance::get_local(&*conn)?,
-        Instance::get_local(&*conn)?.main_admin(&*conn)?,
-        User::count_local(&*conn)?,
-        Post::count_local(&*conn)?,
-        Instance::count(&*conn)? - 1
+        &rockets.to_context(),
+        Instance::get_local(conn)?,
+        Instance::get_local(conn)?.main_admin(conn)?,
+        User::count_local(conn)?,
+        Post::count_local(conn)?,
+        Instance::count(conn)? - 1
     )))
 }
 

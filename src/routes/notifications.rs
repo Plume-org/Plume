@@ -1,28 +1,23 @@
-use rocket::{
-    request::FlashMessage,
-    response::{Flash, Redirect},
-};
+use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;
 
 use plume_common::utils;
-use plume_models::{db_conn::DbConn, notifications::Notification, users::User};
+use plume_models::{notifications::Notification, users::User, PlumeRocket};
 use routes::{errors::ErrorPage, Page};
-use template_utils::Ructe;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/notifications?<page>")]
 pub fn notifications(
-    conn: DbConn,
     user: User,
     page: Option<Page>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
+    rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(notifications::index(
-        &(&*conn, &intl.catalog, Some(user.clone()), msg),
-        Notification::page_for_user(&*conn, &user, page.limits())?,
+        &rockets.to_context(),
+        Notification::page_for_user(&*rockets.conn, &user, page.limits())?,
         page.0,
-        Page::total(Notification::count_for_user(&*conn, &user)? as i32)
+        Page::total(Notification::count_for_user(&*rockets.conn, &user)? as i32)
     )))
 }
 

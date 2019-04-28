@@ -1,6 +1,6 @@
 use activitypub::object::Note;
 use rocket::{
-    request::{FlashMessage, LenientForm},
+    request::LenientForm,
     response::{Flash, Redirect},
 };
 use template_utils::Ructe;
@@ -17,6 +17,7 @@ use plume_models::{
     posts::Post, safe_string::SafeString, tags::Tag, users::User, Error, PlumeRocket,
 };
 use routes::errors::ErrorPage;
+use template_utils::IntoContext;
 
 #[derive(Default, FromForm, Debug, Validate)]
 pub struct NewCommentForm {
@@ -33,7 +34,6 @@ pub fn create(
     form: LenientForm<NewCommentForm>,
     user: User,
     rockets: PlumeRocket,
-    msg: Option<FlashMessage>,
 ) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("comments::create: blog error");
@@ -104,7 +104,7 @@ pub fn create(
                 .and_then(|r| Comment::get(&*conn, r).ok());
 
             render!(posts::details(
-                &(&*conn, &rockets.intl.catalog, Some(user.clone()), msg),
+                &rockets.to_context(),
                 post.clone(),
                 blog,
                 &*form,

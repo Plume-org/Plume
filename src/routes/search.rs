@@ -1,12 +1,10 @@
 use chrono::offset::Utc;
-use rocket::request::{FlashMessage, Form};
-use rocket_i18n::I18n;
+use rocket::request::Form;
 
-use plume_models::{db_conn::DbConn, search::Query, users::User};
+use plume_models::{search::Query, PlumeRocket};
 use routes::Page;
 use std::str::FromStr;
-use template_utils::Ructe;
-use Searcher;
+use template_utils::{IntoContext, Ructe};
 
 #[derive(Default, FromForm)]
 pub struct SearchQuery {
@@ -52,14 +50,8 @@ macro_rules! param_to_query {
 }
 
 #[get("/search?<query..>")]
-pub fn search(
-    query: Option<Form<SearchQuery>>,
-    conn: DbConn,
-    searcher: Searcher,
-    user: Option<User>,
-    intl: I18n,
-    msg: Option<FlashMessage>,
-) -> Ructe {
+pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
+    let conn = &*rockets.conn;
     let query = query.map(Form::into_inner).unwrap_or_default();
     let page = query.page.unwrap_or_default();
     let mut parsed_query =
@@ -74,14 +66,16 @@ pub fn search(
 
     if str_query.is_empty() {
         render!(search::index(
-            &(&*conn, &intl.catalog, user, msg),
+            &rockets.to_context(),
             &format!("{}", Utc::today().format("%Y-%m-d"))
         ))
     } else {
-        let res = searcher.search_document(&conn, parsed_query, page.limits());
+        let res = rockets
+            .searcher
+            .search_document(&conn, parsed_query, page.limits());
         let next_page = if res.is_empty() { 0 } else { page.0 + 1 };
         render!(search::result(
-            &(&*conn, &intl.catalog, user, msg),
+            &rockets.to_context(),
             &str_query,
             res,
             page.0,
