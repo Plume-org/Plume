@@ -78,4 +78,4 @@ debug-mailer = []
 test = []
 
 [workspace]
-members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front"]
+members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front", "plume-macro"]

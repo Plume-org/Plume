@@ -1,6 +1,7 @@
 #![feature(try_trait)]
 #![feature(never_type)]
 #![feature(custom_attribute)]
+#![feature(proc_macro_hygiene)]
 
 extern crate activitypub;
 extern crate ammonia;
@@ -15,9 +16,12 @@ extern crate heck;
 extern crate itertools;
 #[macro_use]
 extern crate lazy_static;
+extern crate migrations_internals;
 extern crate openssl;
 extern crate plume_api;
 extern crate plume_common;
+#[macro_use]
+extern crate plume_macro;
 extern crate reqwest;
 extern crate rocket;
 extern crate rocket_i18n;
@@ -368,6 +372,7 @@ pub mod instance;
 pub mod likes;
 pub mod medias;
 pub mod mentions;
+pub mod migrations;
 pub mod notifications;
 pub mod plume_rocket;
 pub mod post_authors;

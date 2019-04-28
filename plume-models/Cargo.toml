@@ -13,6 +13,7 @@ guid-create = "0.1"
 heck = "0.3.0"
 itertools = "0.8.0"
 lazy_static = "*"
+migrations_internals= "1.4.0"
 openssl = "0.10.15"
 rocket = "0.4.0"
 rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
@@ -40,9 +41,12 @@ path = "../plume-api"
 [dependencies.plume-common]
 path = "../plume-common"
 
+[dependencies.plume-macro]
+path = "../plume-macro"
+
 [dev-dependencies]
 diesel_migrations = "1.3.0"
 
 [features]
-postgres = ["diesel/postgres"]
-sqlite = ["diesel/sqlite"]
+postgres = ["diesel/postgres", "plume-macro/postgres"]
+sqlite = ["diesel/sqlite", "plume-macro/sqlite"]
