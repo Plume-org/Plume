@@ -42,6 +42,7 @@ html {
 
     #content {
       display: none;
+      -webkit-appearance: none;
       text-align: center;
     }
   }
@@ -108,6 +109,10 @@ html {
 
   body > main > * {
     padding: 0 5%;
+    padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
   }
   main .article-meta {
     > * {
