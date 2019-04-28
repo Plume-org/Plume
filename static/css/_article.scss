@@ -7,11 +7,13 @@ main header {
   & > div:not(.shadow) {
     position: absolute;
     z-index: 3;
+    font-family: $lora;
+    font-size: 1.2em;
 
     bottom: 0;
     left: 0;
     right: 0;
-    max-width: 40rem;
+    max-width: $article-width;
     margin: 2em auto;
     color: white;
   }
@@ -33,7 +35,6 @@ main header {
 }
 
 main .article-info {
-  max-width: 40rem;
  	margin: 0 auto 3em;
  	font-size: 0.95em;
  	font-weight: 400;
@@ -45,7 +46,7 @@ main .article-info {
 
 // The article itself
 main article {
-  max-width: 40rem;
+  max-width: $article-width;
  	margin: 2.5em auto;
  	font-family: $lora;
  	font-size: 1.2em;
@@ -422,7 +423,7 @@ input:checked ~ .cw-container > .cw-text {
   & > div:nth-child(2) {
     flex: 1;
     display: flex;
-    max-width: 40rem;
+    max-width: $article-width; // TODO: change it
     margin: auto;
   }
 }

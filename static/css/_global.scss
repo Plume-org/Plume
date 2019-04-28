@@ -79,7 +79,7 @@ main {
       font-weight: 300;
 
       &.article {
-          max-width: 40rem;
+          max-width: $article-width;
       }
   }
   h1 {
@@ -132,7 +132,7 @@ main {
 p.error {
  	color: $red;
  	font-weight: bold;
- 	max-width: 40rem;
+ 	max-width: 40rem; // TODO: change this value
  	margin: 1em auto;
 }
 
