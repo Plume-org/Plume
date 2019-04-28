@@ -37,11 +37,11 @@ html {
 
     nav#menu {
       display: inline-flex;
+      display: -webkit-inline-flex;
     }
 
     #content {
       display: none;
-      -webkit-appearance: none;
       text-align: center;
     }
   }
