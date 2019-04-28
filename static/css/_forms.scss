@@ -9,6 +9,8 @@ input, textarea, select {
  	width: 100%;
  	margin: auto;
  	padding: 1em;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
  	box-sizing: border-box;
 
  	background: $form-input-background;
@@ -74,6 +76,8 @@ form.inline {
  	border-radius: 0.5em;
  	margin: 0.5em auto;
  	padding: 0.75em 1em;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 
  	background: transparent;
  	color: $purple;
@@ -104,6 +108,8 @@ form.new-post {
   .title {
    	margin: 0 auto;
    	padding: 0.75em 0;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 
    	background: none;
    	border: none;
