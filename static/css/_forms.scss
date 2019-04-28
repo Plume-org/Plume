@@ -9,9 +9,10 @@ input, textarea, select {
  	width: 100%;
  	margin: auto;
  	padding: 1em;
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
  	box-sizing: border-box;
 
  	background: $form-input-background;
@@ -49,9 +50,10 @@ form.inline {
   display: inline;
   margin: 0px;
   padding: 0px;
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
   width: auto;
 
   input[type="submit"] {
@@ -80,9 +82,10 @@ form.inline {
  	border-radius: 0.5em;
  	margin: 0.5em auto;
  	padding: 0.75em 1em;
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
 
  	background: transparent;
  	color: $purple;
@@ -113,9 +116,10 @@ form.new-post {
   .title {
    	margin: 0 auto;
    	padding: 0.75em 0;
-    padding-top: env(safe-area-inset-top);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    padding: constant(safe-area-inset-top) 
+           constant(safe-area-inset-right) 
+           constant(safe-area-inset-bottom) 
+           constant(safe-area-inset-left);
 
    	background: none;
    	border: none;
