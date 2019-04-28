@@ -1,11 +1,13 @@
 label {
  	display: block;
+  display: -webkit-block;
  	margin: 2em auto .5em;
  	font-size: 1.2em;
 }
 input, textarea, select {
  	transition: all 0.1s ease-in;
  	display: block;
+  display: -webkit-block;
  	width: 100%;
  	margin: auto;
  	padding: 1em;
@@ -38,6 +40,7 @@ textarea {
 
 input[type="checkbox"] {
  	display: inline;
+  display: -webkit-inline;
  	margin: initial;
  	min-width: initial;
  	width: initial;
@@ -47,6 +50,7 @@ input[type="checkbox"] {
 
 form.inline {
   display: inline;
+  display: -webkit-inline;
   margin: 0px;
   padding: 0px;
   padding-top: env(safe-area-inset-top);
@@ -56,6 +60,7 @@ form.inline {
 
   input[type="submit"] {
     display: inline-block;
+    display: -webkit-inline-block;
     color: $purple;
     cursor: pointer;
     font-size: 1em;
@@ -75,6 +80,7 @@ form.inline {
 .button, input[type="submit"], button {
  	transition: all 0.1s ease-in;
  	display: inline-block;
+  display: -webkit-inline-block;
   -webkit-appearance: none;
 
  	border-radius: 0.5em;
