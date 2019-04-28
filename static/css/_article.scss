@@ -1,14 +1,16 @@
 // Heading
 main header.article {
-  position: relative;
-  max-height: 80vh;
   overflow: hidden;
-  min-height: 20em;
   background: $white;
   color: $black;
+  display: grid;
+
+  & > * {
+    grid-row: 1;
+    grid-column: 1;
+  }
 
   & > div:not(.shadow) {
-    position: absolute;
     z-index: 3;
     font-family: $lora;
     font-size: 1.2em;
@@ -19,13 +21,20 @@ main header.article {
     max-width: $article-width;
     margin: 2em auto;
 
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+
+    h1, .article-info {
+      text-align: center;
+    }
+
     &.illustrated {
       color: white;
     }
   }
 
   & > div.shadow {
-    position: absolute;
     z-index: 2;
 
     height: 100%;
@@ -35,7 +44,8 @@ main header.article {
 
   & > img {
     z-index: 1;
-    width: 100%;
+    min-width: 100%;
+    min-height: 100%;
     background: $purple;
   }
 }
