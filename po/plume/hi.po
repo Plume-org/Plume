@@ -132,49 +132,59 @@ msgstr "सब्सक्राइब करने के लिए, लोग 
 msgid "To edit your profile, you need to be logged in"
 msgstr "प्रोफाइल में बदलाव करने के लिए, लोग इन करें"
 
-msgid "Reset your password"
-msgstr "पासवर्ड रिसेट करें"
+msgid "Plume"
+msgstr "प्लूम"
 
-# src/template_utils.rs:217
-msgid "E-mail"
-msgstr "इ-मेल"
+msgid "Menu"
+msgstr "मेंन्यू"
 
-# src/template_utils.rs:220
-msgid "Optional"
-msgstr "वैकल्पिक"
+msgid "Search"
+msgstr "ढूंढें"
 
-msgid "Send password reset link"
-msgstr "पासवर्ड रिसेट करने के लिए लिंक भेजें"
+msgid "Dashboard"
+msgstr "डैशबोर्ड"
 
-msgid "Check your inbox!"
-msgstr "आपका इनबॉक्स चेक करें"
+msgid "Notifications"
+msgstr "सूचनाएँ"
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr "हमने आपके दिए गए इ-मेल पे पासवर्ड रिसेट लिंक भेज दिया है."
+msgid "Log Out"
+msgstr "लॉग आउट"
 
-msgid "Log in"
-msgstr "लौग इन"
+msgid "My account"
+msgstr "मेरा अकाउंट"
 
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr "यूजरनेम या इ-मेल"
+msgid "Log In"
+msgstr "लॉग इन करें"
 
-# src/template_utils.rs:217
-msgid "Password"
-msgstr "पासवर्ड"
+msgid "Register"
+msgstr "अकाउंट रजिस्टर करें"
 
-# src/template_utils.rs:217
-msgid "New password"
-msgstr "नया पासवर्ड"
+msgid "About this instance"
+msgstr "इंस्टैंस के बारे में जानकारी"
 
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr "पुष्टीकरण"
+msgid "Source code"
+msgstr "सोर्स कोड"
 
-msgid "Update password"
-msgstr "पासवर्ड अपडेट करें"
+msgid "Matrix room"
+msgstr "मैट्रिक्स रूम"
+
+msgid "Administration"
+msgstr "संचालन"
+
+msgid "Welcome to {}"
+msgstr "{} में स्वागत"
+
+msgid "Latest articles"
+msgstr "नवीनतम लेख"
+
+msgid "Your feed"
+msgstr "आपकी फीड"
+
+msgid "Federated feed"
+msgstr "फ़ेडरेटेड फीड"
+
+msgid "Local feed"
+msgstr "लोकल फीड"
 
 msgid "Administration of {0}"
 msgstr "{0} का संचालन"
@@ -194,57 +204,25 @@ msgstr "अनब्लॉक करें"
 msgid "Block"
 msgstr "ब्लॉक करें"
 
-msgid "About {0}"
-msgstr "{0} के बारे में"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "यहाँ <em>{0}</em> यूज़र्स हैं"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "जिन्होनें <em>{0}</em> आर्टिकल्स लिखे हैं"
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr "और <em>{0}</em> इन्सटेंसेस से जुड़े हैं"
-
-msgid "Administred by"
-msgstr "द्वारा संचालित"
-
-msgid "Runs Plume {0}"
-msgstr "Plume {0} का इस्तेमाल कर रहे हैं"
+msgid "Ban"
+msgstr "बन करें"
 
 msgid "All the articles of the Fediverse"
 msgstr "फेडिवेर्से के सारे आर्टिकल्स"
 
-msgid "Latest articles"
-msgstr "नवीनतम लेख"
-
-msgid "Your feed"
-msgstr "आपकी फीड"
-
-msgid "Federated feed"
-msgstr "फ़ेडरेटेड फीड"
-
-msgid "Local feed"
-msgstr "लोकल फीड"
-
-msgid "Welcome to {}"
-msgstr "{} में स्वागत"
-
 msgid "Articles from {}"
 msgstr "{} के आर्टिकल्स"
-
-msgid "Ban"
-msgstr "बन करें"
 
 msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr "कंटेंट देखने के लिए अन्य लोगों को सब्सक्राइब करें"
 
-msgid "Administration"
-msgstr "संचालन"
-
 # src/template_utils.rs:217
 msgid "Name"
 msgstr "नाम"
+
+# src/template_utils.rs:220
+msgid "Optional"
+msgstr "वैकल्पिक"
 
 msgid "Allow anyone to register here"
 msgstr "किसी को भी रजिस्टर करने की अनुमति दें"
@@ -265,8 +243,195 @@ msgstr "डिफ़ॉल्ट आलेख लायसेंस"
 msgid "Save these settings"
 msgstr "इन सेटिंग्स को सेव करें"
 
-msgid "Search"
-msgstr "ढूंढें"
+msgid "About {0}"
+msgstr "{0} के बारे में"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "यहाँ <em>{0}</em> यूज़र्स हैं"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "जिन्होनें <em>{0}</em> आर्टिकल्स लिखे हैं"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "और <em>{0}</em> इन्सटेंसेस से जुड़े हैं"
+
+msgid "Administred by"
+msgstr "द्वारा संचालित"
+
+msgid "Runs Plume {0}"
+msgstr "Plume {0} का इस्तेमाल कर रहे हैं"
+
+msgid "Follow {}"
+msgstr ""
+
+msgid "Log in to follow"
+msgstr ""
+
+msgid "Enter your full username handle to follow"
+msgstr ""
+
+msgid "Edit your account"
+msgstr "अपने अकाउंट में बदलाव करें"
+
+msgid "Your Profile"
+msgstr "आपकी प्रोफाइल"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Display name"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr "ईमेल"
+
+msgid "Summary"
+msgstr "सारांश"
+
+msgid "Update account"
+msgstr "अकाउंट अपडेट करें"
+
+msgid "Danger zone"
+msgstr "खतरे का क्षेत्र"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "सावधानी रखें, यहाँ पे कोई भी किया गया कार्य कैंसिल नहीं किया जा सकता"
+
+msgid "Delete your account"
+msgstr "खाता रद्द करें"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "माफ़ करें, एडमिन होने की वजह से, आप अपना इंस्टैंस नहीं छोड़ सकते"
+
+msgid "Your Dashboard"
+msgstr "आपका डैशबोर्ड"
+
+msgid "Your Blogs"
+msgstr "आपके ब्लोग्स"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "आपके कोई ब्लोग्स नहीं हैं. आप स्वयं ब्लॉग बना सकते हैं या किसी और ब्लॉग से जुड़ सकते हैं"
+
+msgid "Start a new blog"
+msgstr "नया ब्लॉग बनाएं"
+
+msgid "Your Drafts"
+msgstr "आपके ड्राफ्ट्स"
+
+msgid "Your media"
+msgstr "आपकी मीडिया"
+
+msgid "Go to your gallery"
+msgstr "गैलरी में जाएँ"
+
+msgid "Create your account"
+msgstr "अपना अकाउंट बनाएं"
+
+msgid "Create an account"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Password"
+msgstr "पासवर्ड"
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
+msgstr ""
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+
+msgid "Articles"
+msgstr ""
+
+msgid "Subscribers"
+msgstr ""
+
+msgid "Subscriptions"
+msgstr ""
+
+msgid "Atom feed"
+msgstr ""
+
+msgid "Recently boosted"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr ""
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Respond"
+msgstr ""
+
+msgid "Are you sure?"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
+msgid "View all"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
 
 msgid "Your query"
 msgstr "आपके प्रश्न"
@@ -357,135 +522,41 @@ msgstr "आपकी जांच के लिए रिजल्ट"
 msgid "No more results for your query"
 msgstr "आपकी जांच के लिए और रिजल्ट्स नहीं है"
 
-msgid "Edit \"{}\""
-msgstr "{0} में बदलाव करें"
-
-msgid "Description"
-msgstr "वर्णन"
-
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "आप गैलरी में फोटो दाल कर, उनका ब्लॉग आइकॉन या बैनर के लिए उपयोग कर सकते हैं"
-
-msgid "Upload images"
-msgstr "फोटो अपलोड करें"
-
-msgid "Blog icon"
-msgstr "ब्लॉग आइकॉन"
-
-msgid "Blog banner"
-msgstr "ब्लॉग बैनर"
-
-msgid "Update blog"
-msgstr "ब्लॉग अपडेट करें"
-
-msgid "Danger zone"
-msgstr "खतरे का क्षेत्र"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "सावधानी रखें, यहाँ पे कोई भी किया गया कार्य कैंसिल नहीं किया जा सकता"
-
-msgid "Permanently delete this blog"
-msgstr "इस ब्लॉग को स्थाई रूप से हटाएं"
-
-msgid "{}'s icon"
-msgstr "{} का आइकॉन"
-
-msgid "New article"
-msgstr "नया लेख"
-
-msgid "Edit"
-msgstr ""
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "No posts to see here yet."
-msgstr ""
-
-msgid "New Blog"
-msgstr ""
-
-msgid "Create a blog"
-msgstr ""
-
-msgid "Create blog"
-msgstr ""
-
-msgid "Articles tagged \"{0}\""
-msgstr ""
-
-msgid "There are currently no articles with such a tag"
-msgstr ""
-
-msgid "Written by {0}"
-msgstr ""
-
-msgid "Are you sure?"
-msgstr ""
-
-msgid "Delete this article"
-msgstr ""
-
-msgid "Draft"
-msgstr ""
-
-msgid "All rights reserved."
-msgstr ""
-
-msgid "This article is under the {0} license."
-msgstr ""
-
-msgid "Unsubscribe"
-msgstr ""
-
-msgid "Subscribe"
-msgstr ""
-
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't like this anymore"
-msgstr ""
-
-msgid "Add yours"
-msgstr ""
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't want to boost this anymore"
-msgstr ""
-
-msgid "Boost"
-msgstr ""
-
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
-msgstr ""
-
-msgid "Comments"
-msgstr ""
+msgid "Reset your password"
+msgstr "पासवर्ड रिसेट करें"
 
 # src/template_utils.rs:217
-msgid "Content warning"
-msgstr ""
+msgid "New password"
+msgstr "नया पासवर्ड"
 
-msgid "Your comment"
-msgstr ""
+# src/template_utils.rs:217
+msgid "Confirmation"
+msgstr "पुष्टीकरण"
 
-msgid "Submit comment"
-msgstr ""
+msgid "Update password"
+msgstr "पासवर्ड अपडेट करें"
 
-msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgid "Check your inbox!"
+msgstr "आपका इनबॉक्स चेक करें"
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr "हमने आपके दिए गए इ-मेल पे पासवर्ड रिसेट लिंक भेज दिया है."
+
+# src/template_utils.rs:217
+msgid "E-mail"
+msgstr "इ-मेल"
+
+msgid "Send password reset link"
+msgstr "पासवर्ड रिसेट करने के लिए लिंक भेजें"
+
+msgid "Log in"
+msgstr "लौग इन"
+
+# src/template_utils.rs:217
+msgid "Username, or email"
+msgstr "यूजरनेम या इ-मेल"
 
 msgid "Interact with {}"
 msgstr ""
@@ -544,15 +615,162 @@ msgstr "अपडेट या पब्लिश"
 msgid "Publish your post"
 msgstr ""
 
+msgid "Written by {0}"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Delete this article"
+msgstr ""
+
+msgid "All rights reserved."
+msgstr ""
+
+msgid "This article is under the {0} license."
+msgstr ""
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't like this anymore"
+msgstr ""
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't want to boost this anymore"
+msgstr ""
+
+msgid "Boost"
+msgstr ""
+
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Content warning"
+msgstr ""
+
+msgid "Your comment"
+msgstr ""
+
+msgid "Submit comment"
+msgstr ""
+
+msgid "No comments yet. Be the first to react!"
+msgstr ""
+
+msgid "Invalid CSRF token"
+msgstr ""
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Edit \"{}\""
+msgstr "{0} में बदलाव करें"
+
+msgid "Description"
+msgstr "वर्णन"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "आप गैलरी में फोटो दाल कर, उनका ब्लॉग आइकॉन या बैनर के लिए उपयोग कर सकते हैं"
+
+msgid "Upload images"
+msgstr "फोटो अपलोड करें"
+
+msgid "Blog icon"
+msgstr "ब्लॉग आइकॉन"
+
+msgid "Blog banner"
+msgstr "ब्लॉग बैनर"
+
+msgid "Update blog"
+msgstr "ब्लॉग अपडेट करें"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "सावधानी रखें, यहाँ पे कोई भी किया गया कार्य कैंसिल नहीं किया जा सकता"
+
+msgid "Permanently delete this blog"
+msgstr "इस ब्लॉग को स्थाई रूप से हटाएं"
+
+msgid "New Blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "{}'s icon"
+msgstr "{} का आइकॉन"
+
+msgid "New article"
+msgstr "नया लेख"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "Articles tagged \"{0}\""
+msgstr ""
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
+
 #, fuzzy
 msgid "I'm from this instance"
 msgstr "इंस्टैंस के बारे में जानकारी"
 
 msgid "I'm from another instance"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username"
 msgstr ""
 
 # src/template_utils.rs:225
@@ -561,80 +779,6 @@ msgstr ""
 
 msgid "Continue to your instance"
 msgstr ""
-
-msgid "View all"
-msgstr ""
-
-msgid "By {0}"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr ""
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Create your account"
-msgstr "अपना अकाउंट बनाएं"
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "Respond"
-msgstr ""
-
-msgid "Delete this comment"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "Notifications"
-msgstr "सूचनाएँ"
-
-msgid "Plume"
-msgstr "प्लूम"
-
-msgid "Menu"
-msgstr "मेंन्यू"
-
-msgid "Dashboard"
-msgstr "डैशबोर्ड"
-
-msgid "Log Out"
-msgstr "लॉग आउट"
-
-msgid "My account"
-msgstr "मेरा अकाउंट"
-
-msgid "Log In"
-msgstr "लॉग इन करें"
-
-msgid "Register"
-msgstr "अकाउंट रजिस्टर करें"
-
-msgid "About this instance"
-msgstr "इंस्टैंस के बारे में जानकारी"
-
-msgid "Source code"
-msgstr "सोर्स कोड"
-
-msgid "Matrix room"
-msgstr "मैट्रिक्स रूम"
-
-msgid "Your media"
-msgstr "आपकी मीडिया"
 
 msgid "Upload"
 msgstr ""
@@ -649,21 +793,6 @@ msgid "Delete"
 msgstr ""
 
 msgid "Details"
-msgstr ""
-
-msgid "Media details"
-msgstr ""
-
-msgid "Go back to the gallery"
-msgstr ""
-
-msgid "Markdown syntax"
-msgstr ""
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr ""
-
-msgid "Use as an avatar"
 msgstr ""
 
 msgid "Media upload"
@@ -681,146 +810,17 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-msgid "{0}'s subscriptions"
+msgid "Media details"
 msgstr ""
 
-msgid "Articles"
+msgid "Go back to the gallery"
 msgstr ""
 
-msgid "Subscribers"
+msgid "Markdown syntax"
 msgstr ""
 
-msgid "Subscriptions"
+msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
-msgid "Your Dashboard"
-msgstr "आपका डैशबोर्ड"
-
-msgid "Your Blogs"
-msgstr "आपके ब्लोग्स"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "आपके कोई ब्लोग्स नहीं हैं. आप स्वयं ब्लॉग बना सकते हैं या किसी और ब्लॉग से जुड़ सकते हैं"
-
-msgid "Start a new blog"
-msgstr "नया ब्लॉग बनाएं"
-
-msgid "Your Drafts"
-msgstr "आपके ड्राफ्ट्स"
-
-msgid "Go to your gallery"
-msgstr "गैलरी में जाएँ"
-
-msgid "Admin"
-msgstr ""
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr ""
-
-msgid "Open on {0}"
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Edit your account"
-msgstr "अपने अकाउंट में बदलाव करें"
-
-msgid "Your Profile"
-msgstr "आपकी प्रोफाइल"
-
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr "ईमेल"
-
-msgid "Summary"
-msgstr "सारांश"
-
-msgid "Update account"
-msgstr "अकाउंट अपडेट करें"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "सावधानी रखें, यहाँ पे कोई भी किया गया कार्य कैंसिल नहीं किया जा सकता"
-
-msgid "Delete your account"
-msgstr "खाता रद्द करें"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "माफ़ करें, एडमिन होने की वजह से, आप अपना इंस्टैंस नहीं छोड़ सकते"
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr ""
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Login to follow"
-msgstr ""
-
-msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Internal server error"
-msgstr ""
-
-msgid "Something broke on our side."
-msgstr ""
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-
-msgid "Page not found"
-msgstr ""
-
-msgid "We couldn't find this page."
-msgstr ""
-
-msgid "The link that led you here may be broken."
-msgstr ""
-
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-
-msgid "You are not authorized."
-msgstr ""
-
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
+msgid "Use as an avatar"
 msgstr ""
