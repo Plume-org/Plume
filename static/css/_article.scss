@@ -321,10 +321,12 @@ main .article-meta {
   z-index: 2;
   padding: 2em;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .popup:not(.show), .popup-bg:not(.show) {
     display: none;
+    -webkit-appearance: none;
 }
 
 .popup-bg {
