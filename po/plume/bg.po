@@ -262,10 +262,10 @@ msgstr "Писти Pluma {0}"
 msgid "Follow {}"
 msgstr ""
 
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr ""
 
-msgid "Enter your full username to follow"
+msgid "Enter your full username handle to follow"
 msgstr ""
 
 msgid "Edit your account"
