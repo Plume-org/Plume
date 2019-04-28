@@ -136,6 +136,7 @@ form.new-post {
 
 .split {
   display: flex;
+  display: -webkit-flex;
   justify-content: space-between;
 
   & > * {
@@ -146,6 +147,7 @@ form.new-post {
 
 header.center {
   display: flex;
+  display: -webkit-flex;
   flex-direction: column;
   align-items: center;
   background: transparent;
