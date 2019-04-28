@@ -1,10 +1,8 @@
 label {
  	display: block;
  	margin: 2em auto .5em;
-  margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  margin: env(safe-area-inset-right)
+          env(safe-area-inset-left);
  	font-size: 1.2em;
 }
 input, textarea, select {
@@ -12,15 +10,11 @@ input, textarea, select {
  	display: block;
  	width: 100%;
  	margin: auto;
-  margin: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  margin: env(safe-area-inset-right)
+          env(safe-area-inset-left);
  	padding: 1em;
-  padding: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  padding: env(safe-area-inset-right)
+          env(safe-area-inset-left);
  	box-sizing: border-box;
 
  	background: $form-input-background;
@@ -57,15 +51,11 @@ input[type="checkbox"] {
 form.inline {
   display: inline;
   margin: 0px;
-  margin: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  margin: env(safe-area-inset-right)
+          env(safe-area-inset-left);
   padding: 0px;
-  padding: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  padding: env(safe-area-inset-right)
+          env(safe-area-inset-left);
   width: auto;
 
   input[type="submit"] {
@@ -78,15 +68,11 @@ form.inline {
 
     &:not(.button) {
       margin: 0;
-      margin: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+      margin: env(safe-area-inset-right)
+          env(safe-area-inset-left);
       padding: 0;
-      padding: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+      padding: env(safe-area-inset-right)
+          env(safe-area-inset-left);
       border: none;
       background: transparent;
       color: $purple;
@@ -101,15 +87,11 @@ form.inline {
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
-  margin: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  margin: env(safe-area-inset-right)
+          env(safe-area-inset-left);
  	padding: 0.75em 1em;
-  padding: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+  padding: env(safe-area-inset-right)
+          env(safe-area-inset-left);
 
  	background: transparent;
  	color: $purple;
@@ -140,10 +122,8 @@ form.new-post {
   .title {
    	margin: 0 auto;
    	padding: 0.75em 0;
-    padding: env(safe-area-inset-top)
-           env(safe-area-inset-right)
-           env(safe-area-inset-bottom)
-           env(safe-area-inset-left);
+    padding: env(safe-area-inset-right)
+          env(safe-area-inset-left);
 
    	background: none;
    	border: none;
