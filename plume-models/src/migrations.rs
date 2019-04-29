@@ -53,7 +53,7 @@ impl ImportedMigrations {
         let latest_migration = conn.latest_run_migration_version()?;
         let latest_id = if let Some(migration) = latest_migration {
             self.0
-                .binary_search_by_key(&migration.as_str(), |mig| mig.name)
+                .binary_search_by_key(&dbg!(migration.as_str()), |mig| dbg!(mig.name))
                 .map(|id| id + 1)
                 .map_err(|_| Error::NotFound)?
         } else {
@@ -63,8 +63,8 @@ impl ImportedMigrations {
         let to_run = &self.0[latest_id..];
         for migration in to_run {
             conn.transaction(|| {
-                conn.insert_new_migration(migration.name)?;
-                migration.run(conn, path)
+                migration.run(conn, path)?;
+                conn.insert_new_migration(migration.name).map_err(Error::from)
             })?;
         }
         Ok(())

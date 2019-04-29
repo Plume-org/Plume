@@ -37,10 +37,6 @@ extern crate url;
 extern crate webfinger;
 extern crate whatlang;
 
-#[cfg(test)]
-#[macro_use]
-extern crate diesel_migrations;
-
 use plume_common::activity_pub::inbox::InboxError;
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
@@ -309,17 +305,14 @@ mod tests {
     use diesel::r2d2::ConnectionManager;
     #[cfg(feature = "sqlite")]
     use diesel::{dsl::sql_query, RunQueryDsl};
+    use migrations::IMPORTED_MIGRATIONS;
     use scheduled_thread_pool::ScheduledThreadPool;
     use search;
     use std::sync::Arc;
+    use std::env::temp_dir;
+    use plume_common::utils::random_hex;
     use Connection as Conn;
     use CONFIG;
-
-    #[cfg(feature = "sqlite")]
-    embed_migrations!("../migrations/sqlite");
-
-    #[cfg(feature = "postgres")]
-    embed_migrations!("../migrations/postgres");
 
     #[macro_export]
     macro_rules! part_eq {
@@ -342,7 +335,10 @@ mod tests {
                 .connection_customizer(Box::new(db_conn::PragmaForeignKey))
                 .build(ConnectionManager::<Conn>::new(CONFIG.database_url.as_str()))
                 .unwrap();
-            embedded_migrations::run(&*pool.get().unwrap()).expect("Migrations error");
+            let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
+            IMPORTED_MIGRATIONS
+                .run_pending_migrations(&pool.get().unwrap(), &dir)
+                .expect("Migrations error");
             pool
         };
     }
