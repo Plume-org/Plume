@@ -1,6 +1,8 @@
 html, body {
  	margin: 0;
  	padding: 0;
+	padding: env(safe-area-inset-right) 
+                 env(safe-area-inset-left);
  	background: $background;
  	color: $black;
  	font-family: $route159;
@@ -59,10 +61,14 @@ small {
 /// Main
 body > main > *, .h-feed > * {
  	margin: 0 20%;
+	margin: env(safe-area-inset-right) 
+                env(safe-area-inset-left);
 }
 
 body > main > .h-entry, .h-feed {
 	margin: 0;
+	margin: env(safe-area-inset-right) 
+                env(safe-area-inset-left);
 }
 
 main {
@@ -160,6 +166,7 @@ p.error {
 /// Cards
 .cards {
  	display: flex;
+	display: -webkit-flex;
  	flex-direction: row;
  	flex-wrap: wrap;
  	padding: 0 5%;
@@ -167,6 +174,7 @@ p.error {
 .card {
  	flex: 1;
  	display: flex;
+	display: -webkit-flex;
  	flex-direction: column;
 
  	min-width: 20em;
@@ -187,10 +195,14 @@ p.error {
     background-position: center;
     background-size: cover;
     margin: 0px;
+    margin: env(safe-area-inset-right) 
+            env(safe-area-inset-left);
   }
 
   h3 {
    	margin: 0.75em 20px;
+	margin: env(safe-area-inset-right) 
+                env(safe-area-inset-left);
    	font-family: $playfair;
    	font-size: 1.75em;
    	font-weight: normal;
@@ -232,11 +244,13 @@ p.error {
 //  Stats
 .stats {
  	display: flex;
+	display: -webkit-flex;
  	justify-content: space-around;
  	margin: 2em;
 
  	> div {
    	display: flex;
+	display: -webkit-flex;
    	flex-direction: column;
    	justify-content: center;
    	align-items: center;
@@ -266,6 +280,7 @@ p.error {
 /// Flex boxes
 .flex {
   display: flex;
+  display: -webkit-flex;
   flex-direction: row;
   align-items: center;
 
@@ -296,6 +311,7 @@ p.error {
 /// Footer
 body > footer {
   display: flex;
+  display: -webkit-flex;
   align-content: center;
   justify-content: space-between;
   background: $lightgray;
@@ -311,6 +327,8 @@ body > footer {
 figure {
   text-align: center;
   margin: 2em;
+  margin: env(safe-area-inset-right) 
+          env(safe-area-inset-left);
   max-width: 100%;
   width: auto;
   height: auto;
@@ -390,6 +408,7 @@ figure {
   margin: auto 20% 2em;
   overflow: auto;
   display: flex;
+  display: -webkit-flex;
 
   a {
     display: inline-block;
