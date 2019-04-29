@@ -220,12 +220,27 @@ p.error {
    	overflow: hidden;
   }
 }
-.list .card {
- 	/* TODO */
- 	background: 0;
- 	margin: 2em 0;
- 	padding: 0;
- 	min-height: 0;
+
+.list > .card {
+  background: transparent;
+  margin: 2em 0;
+  min-height: 3em;
+
+  padding: 1em;
+  transition: background 0.1s ease-in;
+
+  &:hover {
+    background-color: $gray;
+  }
+
+  &.compact {
+    margin: 0;
+    padding: 0 1em;
+  }
+
+  h3 {
+    margin: 0;
+  }
 }
 
 /// Instance presentation
@@ -294,6 +309,7 @@ p.error {
 
   .grow {
     flex: 1;
+    margin: 0 1em;
   }
 }
 

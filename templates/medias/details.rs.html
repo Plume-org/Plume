@@ -24,15 +24,17 @@
             </p>
             <code>@media.markdown(ctx.0).unwrap_or_else(|_| SafeString::new(""))</code>
         </div>
-        <div>
-	    @if media.category() == MediaCategory::Image {
-                <form class="inline" method="post" action="@uri!(medias::set_avatar: id = media.id)">
-		    <input class="button" type="submit" value="@i18n!(ctx.1, "Use as an avatar")">
-                </form>
-	    }
-            <form class="inline" method="post" action="@uri!(medias::delete: id = media.id)">
-                <input class="button" type="submit" value="@i18n!(ctx.1, "Delete")">
+    </section>
+
+    <section>
+        @if media.category() == MediaCategory::Image {
+            <form method="post" action="@uri!(medias::set_avatar: id = media.id)">
+                <input class="button" type="submit" value="@i18n!(ctx.1, "Use as an avatar")">
             </form>
-        </div>
+        }
+
+        <form method="post" action="@uri!(medias::delete: id = media.id)">
+            <input class="button destructive" type="submit" value="@i18n!(ctx.1, "Delete")">
+        </form>
     </section>
 })
