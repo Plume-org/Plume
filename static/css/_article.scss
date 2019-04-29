@@ -4,6 +4,13 @@ main header.article {
   background: $white;
   color: $black;
   display: grid;
+  background-size: cover;
+  background-position: center;
+
+  &.illustrated {
+    min-height: 75vh;
+    color: $white;
+  }
 
   & > * {
     grid-row: 1;
@@ -28,10 +35,6 @@ main header.article {
     h1, .article-info {
       text-align: center;
     }
-
-    &.illustrated {
-      color: white;
-    }
   }
 
   & > div.shadow {
@@ -39,7 +42,7 @@ main header.article {
 
     height: 100%;
     width: 100%;
-    background: linear-gradient(180deg, transparent 27.23%, black 109.05%);
+    background: linear-gradient(180deg, transparent 20vh, black 80vh);
   }
 
   & > img {

@@ -23,8 +23,11 @@
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="h-entry">
-    <header class="article">
-        <div @if article.cover_id.is_some() { class="illustrated" }>
+    <header
+        class="article @if article.cover_id.is_some() { illustrated }"
+        @if article.cover_id.is_some() { style="background-image: url('@article.cover_url(ctx.0).unwrap_or_default()'" }
+    >
+        <div>
             <h1 class="article p-name">@article.title</h1>
             <div class="article-info">
                 <span class="author">
@@ -39,7 +42,7 @@
         </div>
         @if article.cover_id.is_some() {
             <div class="shadow"></div>
-            <img class="u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
+            <img class="u-photo hidden" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
         }
     </header>
 
