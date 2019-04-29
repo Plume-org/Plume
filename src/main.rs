@@ -1,10 +1,9 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene)]
+#![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
 extern crate activitypub;
 extern crate askama_escape;
 extern crate atom_syndication;
-extern crate canapi;
 extern crate chrono;
 extern crate colored;
 extern crate ctrlc;
@@ -42,6 +41,7 @@ extern crate webfinger;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
+    migrations::IMPORTED_MIGRATIONS,
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
@@ -84,6 +84,22 @@ fn init_pool() -> Option<DbPool> {
 
 fn main() {
     let dbpool = init_pool().expect("main: database pool initialization error");
+    if IMPORTED_MIGRATIONS
+        .is_pending(&dbpool.get().unwrap())
+        .unwrap_or(true)
+    {
+        panic!(
+            r#"
+It appear your database migration does not run the migration required
+by this version of Plume. To fix this, you can run migrations via
+this command:
+
+    plm migration run
+
+Then try to restart Plume.
+"#
+        )
+    }
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     #[allow(clippy::match_wild_err_arm)]
@@ -102,8 +118,8 @@ Then try to restart Plume.
             SearcherError::IndexOpeningError => panic!(
                 r#"
 Plume was unable to open the search index. If you created the index
-before, make sure to run Plume in the same directory it was created in, or 
-to set SEARCH_INDEX accordingly. If you did not yet create the search 
+before, make sure to run Plume in the same directory it was created in, or
+to set SEARCH_INDEX accordingly. If you did not yet create the search
 index, run this command:
 
     plm search init
@@ -237,6 +253,7 @@ Then try to restart Plume
                 api::posts::get,
                 api::posts::list,
                 api::posts::create,
+                api::posts::delete,
             ],
         )
         .register(catchers![
