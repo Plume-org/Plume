@@ -106,8 +106,6 @@ header {
  	  i {
    		transition: all 0.2s ease;
    		margin: 0;
-      margin: env(safe-area-inset-top) 
-              env(safe-area-inset-left);
    	}
 
    	.mobile-label {
