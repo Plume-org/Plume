@@ -99,8 +99,6 @@ html {
         > nav hr {
           display: block;
           margin: 0;
-          margin: env(safe-area-inset-right) 
-                  env(safe-area-inset-left);
           width: 100%;
           border: solid $white 0.1rem;
         }
@@ -111,8 +109,6 @@ html {
 
   body > main > * {
     padding: 0 5%;
-    padding: env(safe-area-inset-right) 
-             env(safe-area-inset-left);
   }
   main .article-meta {
     > * {
@@ -122,8 +118,6 @@ html {
     }
     > p {
       margin: 2em 5%;
-      margin: env(safe-area-inset-right) 
-              env(safe-area-inset-left);
       font-size: 0.9em;
     }
     .comments > * { margin: auto 5%; }
