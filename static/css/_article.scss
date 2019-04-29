@@ -2,8 +2,6 @@
 main .article-info {
   max-width: 40rem;
  	margin: 0 auto 3em;
-  margin: env(safe-area-inset-right)
-           env(safe-area-inset-left);
  	font-size: 0.95em;
  	font-weight: 400;
 
@@ -84,16 +82,12 @@ main .article-meta {
       padding: env(safe-area-inset-right)
                env(safe-area-inset-left);
       margin: 0px 10px 10px 0px;
-      margin: env(safe-area-inset-right)
-              env(safe-area-inset-left);
       border-radius: 3px;
       transition: all 0.2s ease-in;
 
       a {
         display: inline-block;
         padding: 10px 20px;
-        padding: env(safe-area-inset-right)
-                 env(safe-area-inset-left);
         color: $black;
       }
 
@@ -151,8 +145,6 @@ main .article-meta {
        	justify-content: center;
 
        	margin: 0.5em 0;
-        margin: env(safe-area-inset-right)
-                 env(safe-area-inset-left);
        	width: 2.5em;
        	height: 2.5em;
 
@@ -173,8 +165,6 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
-      padding: env(safe-area-inset-right)
-               env(safe-area-inset-left);
      	box-sizing: border-box;
      	color: $red;
      	fill: none;
@@ -200,8 +190,6 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
-      padding: env(safe-area-inset-right)
-               env(safe-area-inset-left);
      	box-sizing: border-box;
      	color: $purple;
      	border: solid $purple thin;
@@ -261,7 +249,6 @@ main .article-meta {
      	&::before {
      	  color: $purple;
      	  padding-right: 0.5em;
-          padding-right: env(safe-area-inset-right);
       }
 
       &:hover { color: $purple; }
