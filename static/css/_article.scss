@@ -14,8 +14,6 @@ main .article-info {
 main article {
   max-width: 40rem;
  	margin: 2.5em auto;
-  margin: env(safe-area-inset-right)
-           env(safe-area-inset-left);
  	font-family: $lora;
  	font-size: 1.2em;
  	line-height: 1.7;
@@ -27,8 +25,6 @@ main article {
  	img {
    	display: block;
    	margin: 3em auto;
-    margin: env(safe-area-inset-right)
-            env(safe-area-inset-left);
    	max-width: 100%;
   }
 
@@ -45,7 +41,7 @@ main article {
 // Metadata under the article
 main .article-meta, main .article-meta button {
   padding: 0;
-  padding: env(safe-area-inset-right)
+  padding:  env(safe-area-inset-right)
              env(safe-area-inset-left);
   font-size: 1.1em;
   margin-top: 10%;
