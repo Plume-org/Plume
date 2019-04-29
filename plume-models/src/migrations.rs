@@ -3,7 +3,7 @@ use Error;
 use Result;
 
 use diesel::connection::{Connection as Conn, SimpleConnection};
-use migrations_internals::MigrationConnection;
+use migrations_internals::{setup_database, MigrationConnection};
 
 use std::path::Path;
 
@@ -50,6 +50,31 @@ pub struct ImportedMigrations(&'static [ComplexMigration]);
 
 impl ImportedMigrations {
     pub fn run_pending_migrations(&self, conn: &Connection, path: &Path) -> Result<()> {
+        use diesel::dsl::sql;
+        use diesel::sql_types::Bool;
+        use diesel::{select, RunQueryDsl};
+        #[cfg(feature = "postgres")]
+        let schema_exists: bool = select(sql::<Bool>(
+            "EXISTS \
+             (SELECT 1 \
+             FROM information_schema.tables \
+             WHERE table_name = '__diesel_schema_migrations')",
+        ))
+        .get_result(conn)?;
+        #[cfg(feature = "sqlite")]
+        let schema_exists: bool = select(sql::<Bool>(
+            "EXISTS \
+             (SELECT 1 \
+             FROM sqlite_master \
+             WHERE type = 'table' \
+             AND name = '__diesel_schema_migrations')",
+        ))
+        .get_result(conn)?;
+
+        if !schema_exists {
+            setup_database(conn)?;
+        }
+
         let latest_migration = conn.latest_run_migration_version()?;
         let latest_id = if let Some(migration) = latest_migration {
             self.0
