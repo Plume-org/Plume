@@ -161,9 +161,6 @@ aliases:
           command: echo "$FEATURES" > /FEATURES
       - *restore_cache_plume_dead_code
       - run:
-          name: run migration
-          command: diesel migration run
-      - run:
           name: install server
           command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . --force || cargo install --debug --no-default-features --features="${FEATURES}",test --path . --force
       - run:
