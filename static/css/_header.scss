@@ -61,12 +61,8 @@ header {
 
      	&.title {
      	  margin: 0;
-        margin: env(safe-area-inset-right) 
-                env(safe-area-inset-left);
         text-align: center;
         padding: 0.5em 1em;
-        padding: env(safe-area-inset-right) 
-                 env(safe-area-inset-left);
         font-size: 1.75em;
 
         img {
@@ -76,8 +72,6 @@ header {
 
         p {
           margin: 0;
-          margin: env(safe-area-inset-right) 
-                  env(safe-area-inset-left);
           padding-left: 0.5em;
         }
      	}
