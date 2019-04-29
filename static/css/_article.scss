@@ -30,8 +30,6 @@ main article {
 
   pre {
    	padding: 1em;
-    padding: env(safe-area-inset-right)
-             env(safe-area-inset-left);
    	background: $lightgray;
    	overflow: auto;
    	border-radius: 5px;
@@ -41,8 +39,8 @@ main article {
 // Metadata under the article
 main .article-meta, main .article-meta button {
   padding: 0;
-  padding:  env(safe-area-inset-right)
-             env(safe-area-inset-left);
+  padding: env(safe-area-inset-right)
+           env(safe-area-inset-left);
   font-size: 1.1em;
   margin-top: 10%;
 }
@@ -51,8 +49,8 @@ main .article-meta {
 
   > * {
     margin: 0 20%;
-    margin:  env(safe-area-inset-right)
-             env(safe-area-inset-left);
+    margin: env(safe-area-inset-right)
+            env(safe-area-inset-left);
   }
 
   > p {
