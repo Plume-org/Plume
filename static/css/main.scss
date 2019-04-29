@@ -86,15 +86,7 @@ html {
         flex-direction: row;
         align-items: center;
         margin: 0;
-        margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
-           env(safe-area-inset-left);
         padding: 1rem 1.5rem;
-        padding: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
-           env(safe-area-inset-left);
         color: $white;
         font-size: 1.4em;
         font-weight: 300;
@@ -107,10 +99,8 @@ html {
         > nav hr {
           display: block;
           margin: 0;
-          margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
-           env(safe-area-inset-left);
+          margin: env(safe-area-inset-right) 
+                  env(safe-area-inset-left);
           width: 100%;
           border: solid $white 0.1rem;
         }
@@ -121,25 +111,19 @@ html {
 
   body > main > * {
     padding: 0 5%;
-    padding: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
-           env(safe-area-inset-left);
+    padding: env(safe-area-inset-right) 
+             env(safe-area-inset-left);
   }
   main .article-meta {
     > * {
       margin: 0 5%;
-      margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
-           env(safe-area-inset-left);
+      margin: env(safe-area-inset-right) 
+              env(safe-area-inset-left);
     }
     > p {
       margin: 2em 5%;
-      margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
-           env(safe-area-inset-left);
+      margin: env(safe-area-inset-right) 
+              env(safe-area-inset-left);
       font-size: 0.9em;
     }
     .comments > * { margin: auto 5%; }
@@ -156,9 +140,7 @@ html {
 
   .tabs {
     margin: auto 0px 2em;
-    margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
+    margin: env(safe-area-inset-right) 
            env(safe-area-inset-left);
   }
 
@@ -173,9 +155,7 @@ html {
 
   .cards {
     margin: 1rem 0 5rem;
-    margin: env(safe-area-inset-top) 
-           env(safe-area-inset-right) 
-           env(safe-area-inset-bottom) 
+    margin: env(safe-area-inset-right) 
            env(safe-area-inset-left);
   }
 }
