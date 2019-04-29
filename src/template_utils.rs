@@ -21,22 +21,22 @@ pub type BaseContext<'a> = &'a (
 );
 
 pub trait IntoContext {
-    fn to_context<'a>(
-        &'a self,
+    fn to_context(
+        &self,
     ) -> (
-        &'a Connection,
-        &'a Catalog,
+        &Connection,
+        &Catalog,
         Option<User>,
         Option<(String, String)>,
     );
 }
 
 impl IntoContext for PlumeRocket {
-    fn to_context<'a>(
-        &'a self,
+    fn to_context(
+        &self,
     ) -> (
-        &'a Connection,
-        &'a Catalog,
+        &Connection,
+        &Catalog,
         Option<User>,
         Option<(String, String)>,
     ) {
