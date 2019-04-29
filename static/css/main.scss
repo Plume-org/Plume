@@ -37,7 +37,6 @@ html {
 
     nav#menu {
       display: inline-flex;
-      display: -webkit-inline-flex;
     }
 
     #content {
@@ -118,6 +117,8 @@ html {
     }
     > p {
       margin: 2em 5%;
+      margin: env(safe-area-inset-right) 
+              env(safe-area-inset-left);
       font-size: 0.9em;
     }
     .comments > * { margin: auto 5%; }
@@ -150,6 +151,6 @@ html {
   .cards {
     margin: 1rem 0 5rem;
     margin: env(safe-area-inset-right) 
-           env(safe-area-inset-left);
+            env(safe-area-inset-left);
   }
 }
