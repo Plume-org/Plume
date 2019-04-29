@@ -15,8 +15,6 @@ header {
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
-    padding: env(safe-area-inset-top) 
-           env(safe-area-inset-left);
     background: $purple;
     align-self: flex-start;
 
@@ -64,7 +62,7 @@ header {
      	&.title {
      	  margin: 0;
         margin: env(safe-area-inset-right) 
-                 env(safe-area-inset-left);
+                env(safe-area-inset-left);
         text-align: center;
         padding: 0.5em 1em;
         padding: env(safe-area-inset-right) 
