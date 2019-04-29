@@ -306,11 +306,11 @@ mod tests {
     #[cfg(feature = "sqlite")]
     use diesel::{dsl::sql_query, RunQueryDsl};
     use migrations::IMPORTED_MIGRATIONS;
+    use plume_common::utils::random_hex;
     use scheduled_thread_pool::ScheduledThreadPool;
     use search;
-    use std::sync::Arc;
     use std::env::temp_dir;
-    use plume_common::utils::random_hex;
+    use std::sync::Arc;
     use Connection as Conn;
     use CONFIG;
 
