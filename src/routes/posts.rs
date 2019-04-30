@@ -27,7 +27,7 @@ use plume_models::{
     Error, PlumeRocket,
 };
 use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm};
-use template_utils::Ructe;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
 pub fn details(
@@ -51,7 +51,7 @@ pub fn details(
         let previous = responding_to.and_then(|r| Comment::get(&*conn, r).ok());
 
         Ok(render!(posts::details(
-            &(&*conn, &rockets.intl.catalog, user.clone()),
+            &rockets.to_context(),
             post.clone(),
             blog,
             &NewCommentForm {
@@ -89,7 +89,7 @@ pub fn details(
         )))
     } else {
         Ok(render!(errors::not_authorized(
-            &(&*conn, &rockets.intl.catalog, user.clone()),
+            &rockets.to_context(),
             i18n!(rockets.intl.catalog, "This post isn't published yet.")
         )))
     }
@@ -130,21 +130,20 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let b = Blog::find_by_fqn(&rockets, &blog)?;
-    let user = rockets.user.unwrap();
-    let intl = rockets.intl;
+    let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&*conn, &b)? {
         // TODO actually return 403 error code
         return Ok(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "You are not an author of this blog.")
+            &rockets.to_context(),
+            i18n!(rockets.intl.catalog, "You are not an author of this blog.")
         )));
     }
 
     let medias = Media::for_user(&*conn, user.id)?;
     Ok(render!(posts::new(
-        &(&*conn, &intl.catalog, Some(user)),
-        i18n!(intl.catalog, "New post"),
+        &rockets.to_context(),
+        i18n!(rockets.intl.catalog, "New post"),
         b,
         false,
         &NewPostForm {
@@ -170,11 +169,11 @@ pub fn edit(
     let intl = &rockets.intl.catalog;
     let b = Blog::find_by_fqn(&rockets, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
-    let user = rockets.user.unwrap();
+    let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&*conn, &b)? {
         return Ok(render!(errors::not_authorized(
-            &(&*conn, intl, Some(user)),
+            &rockets.to_context(),
             i18n!(intl, "You are not an author of this blog.")
         )));
     }
@@ -188,7 +187,7 @@ pub fn edit(
     let medias = Media::for_user(&*conn, user.id)?;
     let title = post.title.clone();
     Ok(render!(posts::new(
-        &(&*conn, intl, Some(user)),
+        &rockets.to_context(),
         i18n!(intl, "Edit {0}"; &title),
         b,
         true,
@@ -220,7 +219,7 @@ pub fn update(
     cl: ContentLen,
     form: LenientForm<NewPostForm>,
     rockets: PlumeRocket,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let b = Blog::find_by_fqn(&rockets, &blog).expect("post::update: blog error");
     let mut post =
@@ -256,8 +255,9 @@ pub fn update(
             .expect("posts::update: is author in error")
         {
             // actually it's not "Ok"…
-            Ok(Redirect::to(
-                uri!(super::blogs::details: name = blog, page = _),
+            Ok(Flash::error(
+                Redirect::to(uri!(super::blogs::details: name = blog, page = _)),
+                i18n!(&intl, "You are not allowed to publish on this blog."),
             ))
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(
@@ -343,14 +343,15 @@ pub fn update(
                 }
             }
 
-            Ok(Redirect::to(
-                uri!(details: blog = blog, slug = new_slug, responding_to = _),
+            Ok(Flash::success(
+                Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)),
+                i18n!(intl, "Your article have been updated."),
             ))
         }
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts:update: medias error");
         Err(render!(posts::new(
-            &(&*conn, intl, Some(user)),
+            &rockets.to_context(),
             i18n!(intl, "Edit {0}"; &form.title),
             b,
             true,
@@ -393,7 +394,7 @@ pub fn create(
     form: LenientForm<NewPostForm>,
     cl: ContentLen,
     rockets: PlumeRocket,
-) -> Result<Redirect, Result<Ructe, ErrorPage>> {
+) -> Result<Flash<Redirect>, Result<Ructe, ErrorPage>> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
@@ -420,8 +421,12 @@ pub fn create(
             .expect("post::create: is author in error")
         {
             // actually it's not "Ok"…
-            return Ok(Redirect::to(
-                uri!(super::blogs::details: name = blog_name, page = _),
+            return Ok(Flash::error(
+                Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
+                i18n!(
+                    &rockets.intl.catalog,
+                    "You are not allowed to publish on this blog."
+                ),
             ));
         }
 
@@ -518,15 +523,15 @@ pub fn create(
             worker.execute(move || broadcast(&user, act, dest));
         }
 
-        Ok(Redirect::to(
-            uri!(details: blog = blog_name, slug = slug, responding_to = _),
+        Ok(Flash::success(
+            Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
+            i18n!(&rockets.intl.catalog, "Your post have been saved."),
         ))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
-        let intl = rockets.intl;
         Err(Ok(render!(posts::new(
-            &(&*conn, &intl.catalog, Some(user)),
-            i18n!(intl.catalog, "New post"),
+            &rockets.to_context(),
+            i18n!(rockets.intl.catalog, "New post"),
             blog,
             false,
             &*form,
@@ -544,7 +549,8 @@ pub fn delete(
     blog_name: String,
     slug: String,
     rockets: PlumeRocket,
-) -> Result<Redirect, ErrorPage> {
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
     let user = rockets.user.clone().unwrap();
     let post = Blog::find_by_fqn(&rockets, &blog_name)
         .and_then(|blog| Post::find_by_slug(&*rockets.conn, &slug, blog.id));
@@ -555,8 +561,11 @@ pub fn delete(
             .into_iter()
             .any(|a| a.id == user.id)
         {
-            return Ok(Redirect::to(
-                uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _),
+            return Ok(Flash::error(
+                Redirect::to(
+                    uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _),
+                ),
+                i18n!(intl.catalog, "You are not allowed to delete this article."),
             ));
         }
 
@@ -579,13 +588,14 @@ pub fn delete(
                     .expect("Failed to rotate keypair");
             });
 
-        Ok(Redirect::to(
-            uri!(super::blogs::details: name = blog_name, page = _),
+        Ok(Flash::success(
+            Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
+            i18n!(intl.catalog, "Your article have been deleted."),
         ))
     } else {
-        Ok(Redirect::to(
+        Ok(Flash::error(Redirect::to(
             uri!(super::blogs::details: name = blog_name, page = _),
-        ))
+        ), i18n!(intl.catalog, "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?")))
     }
 }
 
@@ -594,12 +604,11 @@ pub fn remote_interact(
     rockets: PlumeRocket,
     blog_name: String,
     slug: String,
-    i18n: I18n,
 ) -> Result<Ructe, ErrorPage> {
     let target = Blog::find_by_fqn(&rockets, &blog_name)
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
     Ok(render!(posts::remote_interact(
-        &(&rockets.conn, &i18n.catalog, None),
+        &rockets.to_context(),
         target,
         super::session::LoginForm::default(),
         ValidationErrors::default(),
@@ -614,7 +623,6 @@ pub fn remote_interact_post(
     blog_name: String,
     slug: String,
     remote: LenientForm<RemoteForm>,
-    i18n: I18n,
 ) -> Result<Result<Ructe, Redirect>, ErrorPage> {
     let target = Blog::find_by_fqn(&rockets, &blog_name)
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
@@ -627,12 +635,12 @@ pub fn remote_interact_post(
         let mut errs = ValidationErrors::new();
         errs.add("remote", ValidationError {
             code: Cow::from("invalid_remote"),
-            message: Some(Cow::from(i18n!(&i18n.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
+            message: Some(Cow::from(i18n!(rockets.intl.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
             params: HashMap::new(),
         });
         //could not get your remote url?
         Ok(Ok(render!(posts::remote_interact(
-            &(&rockets.conn, &i18n.catalog, None),
+            &rockets.to_context(),
             target,
             super::session::LoginForm::default(),
             ValidationErrors::default(),

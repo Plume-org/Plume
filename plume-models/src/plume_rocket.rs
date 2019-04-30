@@ -6,7 +6,7 @@ mod module {
     use crate::search;
     use crate::users;
     use rocket::{
-        request::{self, FromRequest, Request},
+        request::{self, FlashMessage, FromRequest, Request},
         Outcome, State,
     };
     use scheduled_thread_pool::ScheduledThreadPool;
@@ -19,6 +19,7 @@ mod module {
         pub user: Option<users::User>,
         pub searcher: Arc<search::Searcher>,
         pub worker: Arc<ScheduledThreadPool>,
+        pub flash_msg: Option<(String, String)>,
     }
 
     impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket {
@@ -30,10 +31,12 @@ mod module {
             let user = request.guard::<users::User>().succeeded();
             let worker = request.guard::<State<Arc<ScheduledThreadPool>>>()?;
             let searcher = request.guard::<State<Arc<search::Searcher>>>()?;
+            let flash_msg = request.guard::<FlashMessage>().succeeded();
             Outcome::Success(PlumeRocket {
                 conn,
                 intl,
                 user,
+                flash_msg: flash_msg.map(|f| (f.name().into(), f.msg().into())),
                 worker: worker.clone(),
                 searcher: searcher.clone(),
             })

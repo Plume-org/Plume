@@ -69,6 +69,11 @@
                 </nav>
             </div>
         </header>
+        <div class="messages">
+            @if let Some(ref message) = ctx.3 {
+                <p class="flash-message @message.0">@message.1</p>
+            }
+        </div>
         <main>
             @:content()
         </main>

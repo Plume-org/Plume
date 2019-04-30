@@ -1,4 +1,4 @@
-use plume_models::{notifications::*, users::User, Connection};
+use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
 
 use rocket::http::hyper::header::{ETag, EntityTag};
 use rocket::http::{Method, Status};
@@ -13,7 +13,41 @@ pub use askama_escape::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
 
-pub type BaseContext<'a> = &'a (&'a Connection, &'a Catalog, Option<User>);
+pub type BaseContext<'a> = &'a (
+    &'a Connection,
+    &'a Catalog,
+    Option<User>,
+    Option<(String, String)>,
+);
+
+pub trait IntoContext {
+    fn to_context(
+        &self,
+    ) -> (
+        &Connection,
+        &Catalog,
+        Option<User>,
+        Option<(String, String)>,
+    );
+}
+
+impl IntoContext for PlumeRocket {
+    fn to_context(
+        &self,
+    ) -> (
+        &Connection,
+        &Catalog,
+        Option<User>,
+        Option<(String, String)>,
+    ) {
+        (
+            &*self.conn,
+            &self.intl.catalog,
+            self.user.clone(),
+            self.flash_msg.clone(),
+        )
+    }
+}
 
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);
