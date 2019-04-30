@@ -1,6 +1,6 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use reqwest::Client;
+use reqwest::ClientBuilder;
 use rocket::{
     http::Status,
     request::{FromRequest, Request},
@@ -134,16 +134,21 @@ where
         let body = signed.to_string();
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
-        let res = Client::new()
-            .post(&inbox)
-            .headers(headers.clone())
-            .header(
-                "Signature",
-                request::signature(sender, &headers)
-                    .expect("activity_pub::broadcast: request signature error"),
-            )
-            .body(body)
-            .send();
+        let res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()
+            .and_then(|client| {
+                client
+                    .post(&inbox)
+                    .headers(headers.clone())
+                    .header(
+                        "Signature",
+                        request::signature(sender, &headers)
+                            .expect("activity_pub::broadcast: request signature error"),
+                    )
+                    .body(body)
+                    .send()
+            });
         match res {
             Ok(mut r) => {
                 println!("Successfully sent activity to inbox ({})", inbox);
