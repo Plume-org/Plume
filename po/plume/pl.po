@@ -264,10 +264,11 @@ msgstr "Działa na Plume {0}"
 msgid "Follow {}"
 msgstr "Obserwuj {}"
 
-msgid "Login to follow"
+msgid "Log in to follow"
 msgstr ""
 
-msgid "Enter your full username to follow"
+#, fuzzy
+msgid "Enter your full username handle to follow"
 msgstr "Wpisz swoją pełną nazwę użytkownika, do naśladowania"
 
 msgid "Edit your account"

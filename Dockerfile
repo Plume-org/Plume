@@ -18,7 +18,6 @@ RUN chmod a+x ./wasm-deps.sh && sleep 1 && ./wasm-deps.sh
 
 WORKDIR /app
 COPY Cargo.toml Cargo.lock rust-toolchain ./
-RUN cargo install diesel_cli --no-default-features --features postgres --version '=1.3.0'
 RUN cargo install cargo-web
 
 COPY . .
@@ -40,7 +39,6 @@ WORKDIR /app
 COPY --from=builder /app /app
 COPY --from=builder /usr/local/cargo/bin/plm /bin/
 COPY --from=builder /usr/local/cargo/bin/plume /bin/
-COPY --from=builder /usr/local/cargo/bin/diesel /bin/
 
 CMD ["plume"]
 

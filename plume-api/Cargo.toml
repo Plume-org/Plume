@@ -4,6 +4,5 @@ version = "0.3.0"
 authors = ["Plume contributors"]
 
 [dependencies]
-canapi = "0.2"
 serde = "1.0"
 serde_derive = "1.0"
