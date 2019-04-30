@@ -159,6 +159,8 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
+      padding: env(safe-area-inset-right)
+               env(safe-area-inset-left);
      	box-sizing: border-box;
      	color: $red;
      	fill: none;
@@ -184,6 +186,8 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
+      padding: env(safe-area-inset-right)
+               env(safe-area-inset-left);
      	box-sizing: border-box;
      	color: $purple;
      	border: solid $purple thin;
@@ -232,8 +236,6 @@ main .article-meta {
     a.button, form.inline, form.inline input {
      	display: inline-block;
      	padding: 0;
-      padding: env(safe-area-inset-right)
-               env(safe-area-inset-left);
      	background: none;
      	color: $black;
      	border: none;
