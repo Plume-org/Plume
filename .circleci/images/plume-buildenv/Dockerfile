@@ -13,12 +13,9 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2019-0
 
 #compile some deps
 RUN cargo install cargo-web &&\
+    cargo install grcov &&\
+    strip /root/.cargo/bin/* &&\
     rm -fr ~/.cargo/registry
-
-#install coverage tools
-RUN curl -L https://github.com/SimonKagstrom/kcov/archive/master.tar.gz | tar xz &&\
-    mkdir -p kcov-master/build && cd kcov-master/build && cmake .. && make &&\
-    make install && cd ../.. && rm -rf kcov-master
 
 #set some compilation parametters
 COPY cargo_config /root/.cargo/config
