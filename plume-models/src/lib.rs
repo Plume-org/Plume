@@ -179,11 +179,8 @@ macro_rules! find_by {
         pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Result<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     };
 }
@@ -229,11 +226,8 @@ macro_rules! get {
         pub fn get(conn: &crate::Connection, id: i32) -> Result<Self> {
             $table::table
                 .filter($table::id.eq(id))
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     };
 }
@@ -286,11 +280,8 @@ macro_rules! last {
         pub fn last(conn: &crate::Connection) -> Result<Self> {
             $table::table
                 .order_by($table::id.desc())
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     };
 }

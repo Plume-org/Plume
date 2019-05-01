@@ -9,13 +9,14 @@ pub(crate) mod query;
 
 use self::query::{Kind, QueryError, TimelineQuery};
 
-#[derive(Clone, Queryable, Identifiable)]
+#[derive(Clone, Debug, PartialEq, Queryable, Identifiable, AsChangeset)]
 #[table_name = "timeline_definition"]
 pub struct Timeline {
     pub id: i32,
     pub user_id: Option<i32>,
     pub name: String,
     pub query: String,
+    pub ord: i32,
 }
 
 #[derive(Default, Insertable)]
@@ -24,6 +25,7 @@ pub struct NewTimeline {
     user_id: Option<i32>,
     name: String,
     query: String,
+    ord: i32,
 }
 
 #[derive(Default, Insertable)]
@@ -36,19 +38,45 @@ struct TimelineEntry {
 impl Timeline {
     insert!(timeline_definition, NewTimeline);
     get!(timeline_definition);
-    find_by!(
-        timeline_definition,
-        find_by_name_and_user,
-        user_id as Option<i32>,
-        name as &str
-    );
-    list_by!(timeline_definition, list_for_user, user_id as Option<i32>);
+
+    pub fn find_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
+        if let Some(user_id) = user_id {
+            timeline_definition::table
+                .filter(timeline_definition::user_id.eq(user_id))
+                .filter(timeline_definition::name.eq(name))
+                .first(conn)
+                .map_err(Error::from)
+        } else {
+            timeline_definition::table
+                .filter(timeline_definition::user_id.is_null())
+                .filter(timeline_definition::name.eq(name))
+                .first(conn)
+                .map_err(Error::from)
+        }
+    }
+
+    pub fn list_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
+        if let Some(user_id) = user_id {
+            timeline_definition::table
+                .filter(timeline_definition::user_id.eq(user_id))
+                .order(timeline_definition::ord.asc())
+                .load::<Self>(conn)
+                .map_err(Error::from)
+        } else {
+            timeline_definition::table
+                .filter(timeline_definition::user_id.is_null())
+                .order(timeline_definition::ord.asc())
+                .load::<Self>(conn)
+                .map_err(Error::from)
+        }
+    }
 
     pub fn new_for_user(
         conn: &Connection,
         user_id: i32,
         name: String,
         query_string: String,
+        ord: i32,
     ) -> Result<Timeline> {
         {
             let query = TimelineQuery::parse(&query_string)?; // verify the query is valid
@@ -79,6 +107,7 @@ impl Timeline {
                 user_id: Some(user_id),
                 name,
                 query: query_string,
+                ord,
             },
         )
     }
@@ -87,6 +116,7 @@ impl Timeline {
         conn: &Connection,
         name: String,
         query_string: String,
+        ord: i32,
     ) -> Result<Timeline> {
         {
             let query = TimelineQuery::parse(&query_string)?; // verify the query is valid
@@ -116,8 +146,15 @@ impl Timeline {
                 user_id: None,
                 name,
                 query: query_string,
+                ord,
             },
         )
+    }
+
+    pub fn update(&self, conn: &Connection) -> Result<Self> {
+        diesel::update(self).set(self).execute(conn)?;
+        let timeline = Self::get(conn, self.id)?;
+        Ok(timeline)
     }
 
     pub fn get_latest(&self, conn: &Connection, count: i32) -> Result<Vec<Post>> {
@@ -162,5 +199,91 @@ impl Timeline {
     pub fn matches(&self, conn: &Connection, post: &Post, kind: Kind) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
         query.matches(conn, self, post, kind)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use diesel::Connection;
+    use tests::db;
+    use users::tests as userTests;
+
+    #[test]
+    fn test_timeline() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let users = userTests::fill_database(conn);
+
+            assert!(Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "my timeline".to_owned(),
+                "invalid keyword".to_owned(),
+                2
+            )
+            .is_err());
+            let mut tl1_u1 = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "my timeline".to_owned(),
+                "all".to_owned(),
+                2,
+            )
+            .unwrap();
+            let tl2_u1 = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "another timeline".to_owned(),
+                "followed".to_owned(),
+                1,
+            )
+            .unwrap();
+            let _tl1_u2 = Timeline::new_for_user(
+                conn,
+                users[1].id,
+                "english posts".to_owned(),
+                "lang in [en]".to_owned(),
+                1,
+            )
+            .unwrap();
+            let tl1_instance = Timeline::new_for_instance(
+                conn,
+                "english posts".to_owned(),
+                "license in [cc]".to_owned(),
+                1,
+            )
+            .unwrap();
+
+            assert_eq!(tl1_u1, Timeline::get(conn, tl1_u1.id).unwrap());
+            assert_eq!(
+                tl2_u1,
+                Timeline::find_by_name(conn, Some(users[0].id), "another timeline")
+                    .unwrap()
+            );
+            assert_eq!(
+                tl1_instance,
+                Timeline::find_by_name(conn, None, "english posts").unwrap()
+            );
+
+            let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
+            assert_eq!(2, tl_u1.len());
+            assert_eq!(tl2_u1, tl_u1[0]);
+            assert_eq!(tl1_u1, tl_u1[1]);
+
+            let tl_instance = Timeline::list_for_user(conn, None).unwrap();
+            assert_eq!(1, tl_instance.len());
+            assert_eq!(tl1_instance, tl_instance[0]);
+
+            tl1_u1.ord = 0;
+            let new_tl1_u1 = tl1_u1.update(conn).unwrap();
+
+            let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
+            assert_eq!(2, tl_u1.len());
+            assert_eq!(new_tl1_u1, tl_u1[0]);
+            assert_eq!(tl2_u1, tl_u1[1]);
+
+            Ok(())
+        });
     }
 }

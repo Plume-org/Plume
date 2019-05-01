@@ -335,11 +335,8 @@ impl Post {
         use schema::blogs;
         blogs::table
             .filter(blogs::id.eq(self.blog_id))
-            .limit(1)
-            .load::<Blog>(conn)?
-            .into_iter()
-            .nth(0)
-            .ok_or(Error::NotFound)
+            .first(conn)
+            .map_err(Error::from)
     }
 
     pub fn count_likes(&self, conn: &Connection) -> Result<i64> {

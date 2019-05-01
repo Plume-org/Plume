@@ -1,6 +1,5 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use std::iter::Iterator;
 
 use ap_url;
 use medias::Media;
@@ -44,11 +43,8 @@ impl Instance {
     pub fn get_local(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
-            .limit(1)
-            .load::<Instance>(conn)?
-            .into_iter()
-            .nth(0)
-            .ok_or(Error::NotFound)
+            .first(conn)
+            .map_err(Error::from)
     }
 
     pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
@@ -106,8 +102,7 @@ impl Instance {
         users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::is_admin.eq(true))
-            .limit(1)
-            .get_result::<User>(conn)
+            .first(conn)
             .map_err(Error::from)
     }
 

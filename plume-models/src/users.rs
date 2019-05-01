@@ -7,7 +7,7 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -237,10 +237,8 @@ impl User {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .limit(1)
-            .load::<User>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {

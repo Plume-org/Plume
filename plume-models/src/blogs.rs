@@ -1,6 +1,6 @@
 use activitypub::{actor::Group, collection::OrderedCollection, object::Image, CustomObject};
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -133,10 +133,8 @@ impl Blog {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
-            .limit(1)
-            .load::<Blog>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
