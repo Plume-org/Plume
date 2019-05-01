@@ -10,6 +10,16 @@ main header.article {
   &.illustrated {
     min-height: 75vh;
     color: $white;
+
+    a, a:visited {
+      color: $white;
+      border-bottom: 1px solid transparent;
+      transition: border-bottom-color 0.1s ease-in;
+
+      &:hover {
+        border-bottom-color: $white;
+      }
+    }
   }
 
   & > * {
