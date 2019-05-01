@@ -5,9 +5,7 @@ CREATE TABLE timeline_definition(
 	user_id integer REFERENCES users ON DELETE CASCADE,
 	name VARCHAR NOT NULL,
 	query VARCHAR NOT NULL,
-	ord integer NOT NULL,
-	CONSTRAINT timeline_unique_user_name UNIQUE(user_id, name),
-	CONSTRAINT timeline_unique_order UNIQUE(user_id, ord)
+	CONSTRAINT timeline_unique_user_name UNIQUE(user_id, name)
 );
 
 CREATE TABLE timeline(

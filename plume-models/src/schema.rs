@@ -219,7 +219,6 @@ table! {
         user_id -> Nullable<Int4>,
         name -> Varchar,
         query -> Varchar,
-        ord -> Int4,
     }
 }
 

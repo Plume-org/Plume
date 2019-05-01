@@ -16,7 +16,6 @@ pub struct Timeline {
     pub user_id: Option<i32>,
     pub name: String,
     pub query: String,
-    pub ord: i32,
 }
 
 #[derive(Default, Insertable)]
@@ -25,7 +24,6 @@ pub struct NewTimeline {
     user_id: Option<i32>,
     name: String,
     query: String,
-    ord: i32,
 }
 
 #[derive(Default, Insertable)]
@@ -59,13 +57,11 @@ impl Timeline {
         if let Some(user_id) = user_id {
             timeline_definition::table
                 .filter(timeline_definition::user_id.eq(user_id))
-                .order(timeline_definition::ord.asc())
                 .load::<Self>(conn)
                 .map_err(Error::from)
         } else {
             timeline_definition::table
                 .filter(timeline_definition::user_id.is_null())
-                .order(timeline_definition::ord.asc())
                 .load::<Self>(conn)
                 .map_err(Error::from)
         }
@@ -76,7 +72,6 @@ impl Timeline {
         user_id: i32,
         name: String,
         query_string: String,
-        ord: i32,
     ) -> Result<Timeline> {
         {
             let query = TimelineQuery::parse(&query_string)?; // verify the query is valid
@@ -107,7 +102,6 @@ impl Timeline {
                 user_id: Some(user_id),
                 name,
                 query: query_string,
-                ord,
             },
         )
     }
@@ -116,7 +110,6 @@ impl Timeline {
         conn: &Connection,
         name: String,
         query_string: String,
-        ord: i32,
     ) -> Result<Timeline> {
         {
             let query = TimelineQuery::parse(&query_string)?; // verify the query is valid
@@ -146,7 +139,6 @@ impl Timeline {
                 user_id: None,
                 name,
                 query: query_string,
-                ord,
             },
         )
     }
@@ -220,7 +212,6 @@ mod tests {
                 users[0].id,
                 "my timeline".to_owned(),
                 "invalid keyword".to_owned(),
-                2
             )
             .is_err());
             let mut tl1_u1 = Timeline::new_for_user(
@@ -228,7 +219,6 @@ mod tests {
                 users[0].id,
                 "my timeline".to_owned(),
                 "all".to_owned(),
-                2,
             )
             .unwrap();
             let tl2_u1 = Timeline::new_for_user(
@@ -236,22 +226,19 @@ mod tests {
                 users[0].id,
                 "another timeline".to_owned(),
                 "followed".to_owned(),
-                1,
             )
             .unwrap();
-            let _tl1_u2 = Timeline::new_for_user(
+            let tl1_u2 = Timeline::new_for_user(
                 conn,
                 users[1].id,
                 "english posts".to_owned(),
                 "lang in [en]".to_owned(),
-                1,
             )
             .unwrap();
             let tl1_instance = Timeline::new_for_instance(
                 conn,
                 "english posts".to_owned(),
                 "license in [cc]".to_owned(),
-                1,
             )
             .unwrap();
 
@@ -267,20 +254,24 @@ mod tests {
 
             let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
             assert_eq!(2, tl_u1.len());
-            assert_eq!(tl2_u1, tl_u1[0]);
-            assert_eq!(tl1_u1, tl_u1[1]);
+            if tl1_u1.id == tl_u1[0].id {
+                assert_eq!(tl1_u1, tl_u1[0]);
+                assert_eq!(tl2_u1, tl_u1[1]);
+            } else {
+                assert_eq!(tl2_u1, tl_u1[0]);
+                assert_eq!(tl1_u1, tl_u1[1]);
+            }
 
             let tl_instance = Timeline::list_for_user(conn, None).unwrap();
             assert_eq!(1, tl_instance.len());
             assert_eq!(tl1_instance, tl_instance[0]);
 
-            tl1_u1.ord = 0;
-            let new_tl1_u1 = tl1_u1.update(conn).unwrap();
+            tl1_u1.name = "My Super TL".to_owned();
+            let new_tl1_u2 = tl1_u2.update(conn).unwrap();
 
-            let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
-            assert_eq!(2, tl_u1.len());
-            assert_eq!(new_tl1_u1, tl_u1[0]);
-            assert_eq!(tl2_u1, tl_u1[1]);
+            let tl_u2 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
+            assert_eq!(1, tl_u2.len());
+            assert_eq!(new_tl1_u2, tl_u2[0]);
 
             Ok(())
         });
