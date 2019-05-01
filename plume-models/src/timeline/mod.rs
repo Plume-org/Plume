@@ -258,8 +258,7 @@ mod tests {
             assert_eq!(tl1_u1, Timeline::get(conn, tl1_u1.id).unwrap());
             assert_eq!(
                 tl2_u1,
-                Timeline::find_by_name(conn, Some(users[0].id), "another timeline")
-                    .unwrap()
+                Timeline::find_by_name(conn, Some(users[0].id), "another timeline").unwrap()
             );
             assert_eq!(
                 tl1_instance,

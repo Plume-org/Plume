@@ -7,7 +7,10 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{
+    self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl,
+    SaveChangesDsl,
+};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
