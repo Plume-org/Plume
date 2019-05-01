@@ -15,7 +15,7 @@ executors:
       environment:
         POSTGRES_USER: postgres
         POSTGRES_DB: plume
-    - image: <<#parameters.postgres>>elgalu/selenium:latest<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
+    - image: <<#parameters.selenium>>elgalu/selenium:latest<</parameters.selenium>><<^parameters.selenium>>alpine:latest<</parameters.selenium>>
     working_directory: ~/projects/Plume
     environment:
       RUST_TEST_THREADS: 1
