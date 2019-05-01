@@ -71,7 +71,7 @@ commands:
         type: string
     steps:
     - run: |
-       export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads"
+       export RUSTFLAGS="-Zprofile -Zfewer-names -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads -Clink-arg=-Xlinker -Clink-arg=--no-keep-memory -Clink-arg=-Xlinker -Clink-arg=--reduce-memory-overheads"
        export CARGO_INCREMENTAL=0
        << parameters.cmd >>
 
@@ -139,7 +139,9 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cargo test --all --exclude plume-front --exclude plume-macro --no-run;
+          cargo test --all --exclude plume-front --exclude plume-macro --no-run ||
+          cargo test --all --exclude plume-front --exclude plume-macro --no-run ||
+          cargo test --all --exclude plume-front --exclude plume-macro --no-run
           cargo test --all --exclude plume-front --exclude plume-macro;
     - upload_coverage:
         type: unit
@@ -165,9 +167,9 @@ jobs:
                cargo install --debug --no-default-features --features="${FEATURES}",test --force --path .
     - run_with_coverage:
         cmd: |
-               cargo install --debug --no-default-features --features="${FEATURES}",test --force --path plume-cli ||
-               cargo install --debug --no-default-features --features="${FEATURES}",test --force --path plume-cli ||
-               cargo install --debug --no-default-features --features="${FEATURES}",test --force --path plume-cli
+               cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli ||
+               cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli ||
+               cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli
     - run:
         name: run test
         command: ./script/run_browser_test.sh
