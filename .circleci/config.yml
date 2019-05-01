@@ -96,9 +96,11 @@ commands:
         default: false
     steps:
     - run: |
-       cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>> ||
-       cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>>
-
+            cmd="cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>>"
+            for i in {1..16}; do
+                $cmd && exit 0
+            done
+            exit 1
 
 jobs:
   cargo fmt:
@@ -139,10 +141,11 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cargo test --all --exclude plume-front --exclude plume-macro --no-run ||
-          cargo test --all --exclude plume-front --exclude plume-macro --no-run ||
-          cargo test --all --exclude plume-front --exclude plume-macro --no-run
-          cargo test --all --exclude plume-front --exclude plume-macro;
+          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run"
+          for i in {1..16}; do
+              $cmd && break
+          done
+          cargo test --all --exclude plume-front --exclude plume-macro
     - upload_coverage:
         type: unit
     - cache:
@@ -162,14 +165,18 @@ jobs:
     - run: cargo web deploy -p plume-front
     - run_with_coverage:
         cmd: |
-               cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . ||
-               cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . ||
-               cargo install --debug --no-default-features --features="${FEATURES}",test --force --path .
+            cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path ."
+            for i in {1..16}; do
+                $cmd && exit 0
+            done
+            exit 1
     - run_with_coverage:
         cmd: |
-               cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli ||
-               cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli ||
-               cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli
+            cmd="cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli"
+            for i in {1..16}; do
+                $cmd && exit 0
+            done
+            exit 1
     - run:
         name: run test
         command: ./script/run_browser_test.sh
