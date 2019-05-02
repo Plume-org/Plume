@@ -106,21 +106,31 @@ html {
     }
   }
 
+  @supports(padding: max(0px)) {
   body > main > * {
     padding: 0 5%;
+    padding: env(safe-area-inset-right) 
+            env(safe-area-inset-left);
   }
+   }
+  
+  @supports(margin: max(0px)) {
   main .article-meta {
     > * {
       margin: 0 5%;
       margin: env(safe-area-inset-right) 
               env(safe-area-inset-left);
     }
+     }
+    
+    @supports(margin: max(0px)) {
     > p {
       margin: 2em 5%;
       margin: env(safe-area-inset-right) 
               env(safe-area-inset-left);
       font-size: 0.9em;
     }
+     }
     .comments > * { margin: auto 5%; }
     .comments .comment { padding: 2em 0px; }
   }
@@ -133,11 +143,13 @@ html {
     min-height: 80%;
   }
 
+  @supports(margin: max(0px)) {
   .tabs {
     margin: auto 0px 2em;
     margin: env(safe-area-inset-right) 
-           env(safe-area-inset-left);
+            env(safe-area-inset-left);
   }
+   }
 
   .stats { flex-direction: column; }
     body > footer {
