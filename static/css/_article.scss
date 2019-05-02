@@ -58,7 +58,7 @@ main .article-meta {
    }
 
   > p {
-    @supports(margin: max(0px)) {
+    @supports(margin: max(2em)) {
     margin: 2em 20%;
     margin: env(safe-area-inset-right)
             env(safe-area-inset-left);
@@ -100,7 +100,7 @@ main .article-meta {
   }
 
   // Likes & Boosts
-  @supports(padding: max(0px)) {
+  @supports(padding: max(0.5em)) {
   .actions {
     display: flex;
     display: -webkit-flex;
@@ -169,6 +169,7 @@ main .article-meta {
   .likes {
     p, .action:hover { color: $red; }
 
+    @supports(padding: max(0.7em)) {
     .action svg.feather {
       padding: 0.7em;
       padding: env(safe-area-inset-right)
@@ -178,6 +179,7 @@ main .article-meta {
      	fill: none;
      	border: solid $red thin;
     }
+     }
 
     .action:hover svg.feather {
      	background: transparentize($red, 0.85);
@@ -193,6 +195,7 @@ main .article-meta {
     }
   }
 
+  @supports(padding: max(0.7em)) {
   .reshares {
     p, .action:hover { color: $purple; }
 
@@ -205,6 +208,7 @@ main .article-meta {
      	border: solid $purple thin;
      	font-weight: 600;
     }
+     }
 
     .action:hover svg.feather {
      	background: transparentize($purple, 0.85);
@@ -220,6 +224,7 @@ main .article-meta {
   }
 
   // Comments
+  @supports(margin: max(0px)) {
   .comments {
     margin: 0;
     margin: env(safe-area-inset-right)
@@ -238,6 +243,7 @@ main .article-meta {
     summary {
       cursor: pointer;
     }
+     }
 
     // New comment form
     > form input[type="submit"] {
@@ -245,6 +251,7 @@ main .article-meta {
     }
 
     // Respond & delete comment buttons
+    @supports(padding: max(0px)) {
     a.button, form.inline, form.inline input {
      	display: inline-block;
      	padding: 0;
@@ -262,7 +269,6 @@ main .article-meta {
       &:hover { color: $purple; }
     }
     
-    @supports(padding: max(0px)) {
     .list {
      	display: grid;
      	margin: 0 0 -5em;
@@ -317,6 +323,7 @@ main .article-meta {
 }
 
 #plume-editor {
+  @supports(margin: max(1em)) {
   header {
     display: flex;
     display: -webkit-flex;
@@ -333,6 +340,7 @@ main .article-meta {
               env(safe-area-inset-left);
     }
   }
+   }
 
   & > * {
     min-height: 1em;
@@ -351,6 +359,7 @@ main .article-meta {
 }
 
 .popup {
+  @supports(padding: max(2em)) {
   position: fixed;
   top: 15vh;
   bottom: 20vh;
@@ -365,6 +374,7 @@ main .article-meta {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+ }
 
 .popup:not(.show), .popup-bg:not(.show) {
     display: none;
