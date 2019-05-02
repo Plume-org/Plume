@@ -50,17 +50,21 @@ main .article-meta, main .article-meta button {
 main .article-meta {
 
   > * {
+    @supports(margin: max(0px)) {
     margin: 0 20%;
     margin: env(safe-area-inset-right)
             env(safe-area-inset-left);
   }
+   }
 
   > p {
+    @supports(margin: max(0px)) {
     margin: 2em 20%;
     margin: env(safe-area-inset-right)
             env(safe-area-inset-left);
  	  font-size: 0.9em;
   }
+   }
 
   // Article Tags
   @supports(padding: max(0px)) {
