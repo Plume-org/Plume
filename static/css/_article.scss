@@ -100,6 +100,7 @@ main .article-meta {
   }
 
   // Likes & Boosts
+  @supports(padding: max(0px)) {
   .actions {
     display: flex;
     display: -webkit-flex;
@@ -123,6 +124,7 @@ main .article-meta {
       margin: env(safe-area-inset-right)
               env(safe-area-inset-left);
     }
+     }
     
     @supports(padding: max(0px)) {
     .action {
