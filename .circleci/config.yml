@@ -62,7 +62,7 @@ commands:
         type: boolean
         default: false
     steps:
-    - run: cargo clippy <<#parameters.no_feature>>--no-default-features --features="${FEATURES}"<</parameters.no_feature>> --release -p <<parameters.package>> -- -D warnings
+    - run: cargo clippy <<^parameters.no_feature>>--no-default-features --features="${FEATURES}"<</parameters.no_feature>> --release -p <<parameters.package>> -- -D warnings
 
   run_with_coverage:
     description: run command with environment for coverage
@@ -141,11 +141,11 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run"
+          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=\"${FEATURES}\""
           for i in {1..16}; do
               $cmd && break
           done
-          cargo test --all --exclude plume-front --exclude plume-macro -- --test-threads=1
+          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -- --test-threads=1
     - upload_coverage:
         type: unit
     - cache:

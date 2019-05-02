@@ -8,6 +8,7 @@ use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use std::fs::{read_dir, File};
 use std::io::Read;
+use std::path::Path;
 use std::str::FromStr;
 
 #[proc_macro]
@@ -20,7 +21,15 @@ pub fn import_migrations(input: TokenStream) -> TokenStream {
     } else {
         "migrations"
     };
-    let mut files = read_dir(migration_dir)
+    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .find(|path| {
+            path.join(migration_dir).is_dir() ||
+            path.join(".git").exists()
+        })
+        .expect("migrations dir not found")
+        .join(migration_dir);
+    let mut files = read_dir(path)
         .unwrap()
         .map(|dir| dir.unwrap())
         .filter(|dir| dir.file_type().unwrap().is_dir())
