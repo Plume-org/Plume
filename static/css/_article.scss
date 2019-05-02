@@ -28,13 +28,17 @@ main article {
    	max-width: 100%;
   }
 
+  @supports(padding: max(1em)) {
   pre {
    	padding: 1em;
+    padding: env(safe-area-inset-right)
+             env(safe-area-inset-left);
    	background: $lightgray;
    	overflow: auto;
    	border-radius: 5px;
   }
 }
+ }
 
 // Metadata under the article
 @supports(padding: max(0px)) {
@@ -49,16 +53,16 @@ main .article-meta, main .article-meta button {
 
 main .article-meta {
 
+  @supports(margin: max(0px)) {
   > * {
-    @supports(margin: max(0px)) {
     margin: 0 20%;
     margin: env(safe-area-inset-right)
             env(safe-area-inset-left);
   }
    }
 
+  @supports(margin: max(2em)) {
   > p {
-    @supports(margin: max(2em)) {
     margin: 2em 20%;
     margin: env(safe-area-inset-right)
             env(safe-area-inset-left);
