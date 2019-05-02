@@ -37,6 +37,7 @@ main article {
 }
 
 // Metadata under the article
+@supports(padding: max(0px)) {
 main .article-meta, main .article-meta button {
   padding: 0;
   padding: env(safe-area-inset-right)
@@ -44,6 +45,7 @@ main .article-meta, main .article-meta button {
   font-size: 1.1em;
   margin-top: 10%;
 }
+ }
 
 main .article-meta {
 
@@ -61,6 +63,7 @@ main .article-meta {
   }
 
   // Article Tags
+  @supports(padding: max(0px)) {
   .tags {
     list-style: none;
     display: inline-block;
@@ -84,6 +87,7 @@ main .article-meta {
         padding: 10px 20px;
         color: $black;
       }
+    }
 
       &:hover {
         background: mix($black, $lightgray, 10%);
@@ -115,7 +119,8 @@ main .article-meta {
       margin: env(safe-area-inset-right)
               env(safe-area-inset-left);
     }
-
+    
+    @supports(padding: max(0px)) {
     .action {
       display: flex;
       display: -webkit-flex;
@@ -144,6 +149,7 @@ main .article-meta {
 
        	border-radius: 50%;
       }
+       }
 
       &.reshared, &.liked {
         svg.feather {
@@ -249,7 +255,8 @@ main .article-meta {
 
       &:hover { color: $purple; }
     }
-
+    
+    @supports(padding: max(0px)) {
     .list {
      	display: grid;
      	margin: 0 0 -5em;
@@ -260,6 +267,7 @@ main .article-meta {
                env(safe-area-inset-left);
      	background: $lightgray;
     }
+     }
 
     .comment {
       padding: 2em;
