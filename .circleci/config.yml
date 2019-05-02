@@ -96,9 +96,9 @@ commands:
         default: false
     steps:
     - run: |
-            cmd="cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>>"
-            for i in {1..16}; do
-                $cmd && exit 0
+            cmd="cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>> -j"
+            for i in 36 4 2 1 1; do
+                $cmd $i && exit 0
             done
             exit 1
 
@@ -141,11 +141,11 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES}"
-          for i in {1..16}; do
-              $cmd && break
+          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
+          for i in 36 4 2 1 1; do
+              $cmd $i && break
           done
-          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -- --test-threads=1
+          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1 -- --test-threads=1
     - upload_coverage:
         type: unit
     - cache:
@@ -165,16 +165,16 @@ jobs:
     - run: cargo web deploy -p plume-front
     - run_with_coverage:
         cmd: |
-            cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path ."
-            for i in {1..16}; do
-                $cmd && exit 0
+            cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . -j"
+            for i in 36 4 2 1 1; do
+                $cmd $i && exit 0
             done
             exit 1
     - run_with_coverage:
         cmd: |
-            cmd="cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli"
-            for i in {1..16}; do
-                $cmd && exit 0
+            cmd="cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli -j"
+            for i in 36 4 2 1 1; do
+                $cmd $i && exit 0
             done
             exit 1
     - run:
