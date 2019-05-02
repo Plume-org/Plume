@@ -23,10 +23,7 @@ pub fn import_migrations(input: TokenStream) -> TokenStream {
     };
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .ancestors()
-        .find(|path| {
-            path.join(migration_dir).is_dir() ||
-            path.join(".git").exists()
-        })
+        .find(|path| path.join(migration_dir).is_dir() || path.join(".git").exists())
         .expect("migrations dir not found")
         .join(migration_dir);
     let mut files = read_dir(path)

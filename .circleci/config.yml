@@ -141,7 +141,7 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=\"${FEATURES}\""
+          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES}"
           for i in {1..16}; do
               $cmd && break
           done
