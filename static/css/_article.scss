@@ -362,8 +362,8 @@ main .article-meta {
   }
 }
 
+@supports(padding: max(2em)) {
 .popup {
-  @supports(padding: max(2em)) {
   position: fixed;
   top: 15vh;
   bottom: 20vh;
