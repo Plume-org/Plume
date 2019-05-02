@@ -215,6 +215,13 @@ jobs:
         path: plume.tar.gz
         destination: plume.tar.gz
 
+  push translations:
+    executor:
+      name: default
+    steps:
+    - restore_env:
+        cache: none
+    - run: crowdin upload
 
 workflows:
   version: 2
@@ -237,3 +244,8 @@ workflows:
         postgres: false
     - release:
         postgres: true
+    - push translations:
+        filters:
+          branches:
+            only:
+              - /^master/
