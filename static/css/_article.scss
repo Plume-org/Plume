@@ -282,6 +282,7 @@ main .article-meta {
      }
 
     .comment {
+      @supports(padding: max(2em)) {
       padding: 2em;
       padding: env(safe-area-inset-right)
                env(safe-area-inset-left);
@@ -307,9 +308,11 @@ main .article-meta {
           .display-name { color: $purple; }
           small { opacity: 1; }
         }
-     	}
+     	} 
+       }
 
      	.text {
+        @supports(padding: max(1.25em)) {
        	padding: 1.25em 0;
         padding: env(safe-area-inset-right)
                  env(safe-area-inset-left);
@@ -321,6 +324,7 @@ main .article-meta {
     }
   }
 }
+ }
 
 #plume-editor {
   @supports(margin: max(1em)) {
