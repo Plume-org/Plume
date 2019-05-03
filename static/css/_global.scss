@@ -132,6 +132,7 @@ p.error {
 /// User page
 .user h1 {
  	display: flex;
+	display: -webkit-flex;
  	flex-direction: row;
  	align-items: center;
   margin: 0px;
@@ -160,6 +161,7 @@ p.error {
 /// Cards
 .cards {
  	display: flex;
+	display: -webkit-flex;
  	flex-direction: row;
  	flex-wrap: wrap;
  	padding: 0 5%;
@@ -167,6 +169,7 @@ p.error {
 .card {
  	flex: 1;
  	display: flex;
+	display: -webkit-flex;
  	flex-direction: column;
 
  	min-width: 20em;
@@ -232,11 +235,13 @@ p.error {
 //  Stats
 .stats {
  	display: flex;
+	display: -webkit-flex;
  	justify-content: space-around;
  	margin: 2em;
 
  	> div {
    	display: flex;
+	display: -webkit-flex;
    	flex-direction: column;
    	justify-content: center;
    	align-items: center;
@@ -256,6 +261,7 @@ p.error {
 /// Pagination
 .pagination {
   display: flex;
+  display: -webkit-flex;
   justify-content: space-evenly;
 
   > * {
@@ -266,6 +272,7 @@ p.error {
 /// Flex boxes
 .flex {
   display: flex;
+  display: -webkit-flex;
   flex-direction: row;
   align-items: center;
 
@@ -296,6 +303,7 @@ p.error {
 /// Footer
 body > footer {
   display: flex;
+  display: -webkit-flex;
   align-content: center;
   justify-content: space-between;
   background: $lightgray;
