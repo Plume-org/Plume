@@ -11,6 +11,7 @@ header {
   nav#menu {
     position: relative;
     display: none;
+    -webkit-appearance: none;
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
@@ -48,6 +49,7 @@ header {
     }
     a {
      	display: flex;
+      display: -webkit-flex;
      	align-items: center;
      	position: relative;
      	align-self: stretch;
