@@ -3,6 +3,7 @@ header {
 
   #content {
     display: flex;
+    display: -webkit-flex; //Useful for Safari on iOS
    	align-content: center;
    	justify-content: space-between;
   }
@@ -19,6 +20,7 @@ header {
     a {
       transform: skewX(15deg);
      	display: flex;
+      display: -webkit-flex;
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
@@ -33,6 +35,7 @@ header {
 
   nav {
     display: flex;
+    display: -webkit-flex; // Helps with handling on iOS devices
    	flex-direction: row;
    	align-items: center;
 
