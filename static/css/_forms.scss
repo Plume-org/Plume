@@ -23,7 +23,10 @@ input, textarea, select {
  	  border-color: $purple;
  	}
 }
-form input[type="submit"] { margin: 2em auto; }
+form input[type="submit"] {
+ margin: 2em auto;
+ -webkit-appearance: none;
+}
 
 textarea {
  	resize: vertical;
@@ -96,7 +99,10 @@ form.inline {
     }
  	}
 }
-input[type="submit"] { display: block; }
+input[type="submit"] {
+ display: block;
+ -webkit-appearance: none;
+}
 
 //  Writing page
 form.new-post {
@@ -136,6 +142,7 @@ form.new-post {
 
 .split {
   display: flex;
+  display: -webkit-flex;
   justify-content: space-between;
 
   & > * {
@@ -146,6 +153,7 @@ form.new-post {
 
 header.center {
   display: flex;
+  display: -webkit-flex;
   flex-direction: column;
   align-items: center;
   background: transparent;
