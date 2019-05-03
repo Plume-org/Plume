@@ -84,12 +84,14 @@ main .article-meta {
   // Likes & Boosts
   .actions {
     display: flex;
+    display: -webkit-flex;
    	flex-direction: row;
    	justify-content: space-around;
   }
 
   .likes, .reshares {
     display: flex;
+    display: -webkit-flex;
    	flex-direction: column;
    	align-items: center;
    	padding: 0.5em 0;
@@ -102,6 +104,7 @@ main .article-meta {
 
     .action {
       display: flex;
+      display: -webkit-flex;
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
@@ -115,6 +118,7 @@ main .article-meta {
      	svg.feather {
        	transition: background 0.1s ease-in;
        	display: flex;
+        display: -webkit-flex;
        	align-items: center;
        	justify-content: center;
 
@@ -270,6 +274,7 @@ main .article-meta {
 #plume-editor {
   header {
     display: flex;
+    display: -webkit-flex; // Addresses the editor being too narrow in Safari for iOS
     flex-direction: row-reverse;
     background: transparent;
     align-items: center;
@@ -312,6 +317,7 @@ main .article-meta {
 
 .popup:not(.show), .popup-bg:not(.show) {
     display: none;
+    -webkit-appearance: none;
 }
 
 .popup-bg {
@@ -332,10 +338,12 @@ main .article-meta {
 
 .cw-text {
   display: none;
+  -webkit-appearance: none;
 }
 
 input[type="checkbox"].cw-checkbox {
   display: none;
+  -webkit-appearance: none;
 }
 
 input:checked ~ .cw-container:before {
