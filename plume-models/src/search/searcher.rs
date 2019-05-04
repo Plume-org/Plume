@@ -9,9 +9,8 @@ use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
 use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 use tantivy::{
-    collector::TopDocs, directory::MmapDirectory, schema::*, tokenizer::*, Index, IndexReader,
+    collector::TopDocs, directory::MmapDirectory, doc, schema::*, tokenizer::*, Index, IndexReader,
     IndexWriter, ReloadPolicy, Term,
-    doc,
 };
 use whatlang::{detect as detect_lang, Lang};
 

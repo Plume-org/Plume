@@ -1,8 +1,8 @@
+use lazy_static::lazy_static;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use serde::Serialize;
 use std::env::{self, var};
-use lazy_static::lazy_static;
 
 #[cfg(not(test))]
 const DB_NAME: &str = "plume";
