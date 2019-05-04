@@ -71,6 +71,7 @@ pub(crate) mod tests {
     use crate::tests::rockets;
     use crate::PlumeRocket;
     use diesel::Connection;
+    use serde_json::json;
 
     pub fn fill_database(
         rockets: &PlumeRocket,
