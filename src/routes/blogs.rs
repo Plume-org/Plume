@@ -17,21 +17,19 @@ use plume_models::{
     users::User, Connection, PlumeRocket,
 };
 use routes::{errors::ErrorPage, Page};
-use template_utils::Ructe;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name)?;
-    let posts = Post::blog_page(&*conn, &blog, page.limits())?;
-    let articles_count = Post::count_for_blog(&*conn, &blog)?;
-    let authors = &blog.list_authors(&*conn)?;
-    let user = rockets.user;
-    let intl = rockets.intl;
+    let posts = Post::blog_page(conn, &blog, page.limits())?;
+    let articles_count = Post::count_for_blog(conn, &blog)?;
+    let authors = &blog.list_authors(conn)?;
 
     Ok(render!(blogs::details(
-        &(&*conn, &intl.catalog, user.clone()),
+        &rockets.to_context(),
         blog,
         authors,
         page.0,
@@ -51,13 +49,9 @@ pub fn activity_details(
 }
 
 #[get("/blogs/new")]
-pub fn new(rockets: PlumeRocket) -> Ructe {
-    let user = rockets.user.unwrap();
-    let intl = rockets.intl;
-    let conn = &*rockets.conn;
-
+pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
     render!(blogs::new(
-        &(&*conn, &intl.catalog, Some(user)),
+        &rockets.to_context(),
         &NewBlogForm::default(),
         ValidationErrors::default()
     ))
@@ -90,7 +84,10 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
+pub fn create(
+    form: LenientForm<NewBlogForm>,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, Ructe> {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -139,37 +136,40 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> Result<Re
         )
         .expect("blog::create: author error");
 
-        Ok(Redirect::to(uri!(details: name = slug.clone(), page = _)))
+        Ok(Flash::success(
+            Redirect::to(uri!(details: name = slug.clone(), page = _)),
+            &i18n!(intl, "Your blog was successfully created!"),
+        ))
     } else {
-        Err(render!(blogs::new(
-            &(&*conn, intl, Some(user)),
-            &*form,
-            errors
-        )))
+        Err(render!(blogs::new(&rockets.to_context(), &*form, errors)))
     }
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, rockets: PlumeRocket) -> Result<Redirect, Ructe> {
+pub fn delete(name: String, rockets: PlumeRocket) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name).expect("blog::delete: blog not found");
-    let user = rockets.user;
-    let intl = rockets.intl;
-    let searcher = rockets.searcher;
 
-    if user
+    if rockets
+        .user
         .clone()
         .and_then(|u| u.is_author_in(&*conn, &blog).ok())
         .unwrap_or(false)
     {
-        blog.delete(&conn, &searcher)
+        blog.delete(&conn, &rockets.searcher)
             .expect("blog::expect: deletion error");
-        Ok(Redirect::to(uri!(super::instance::index)))
+        Ok(Flash::success(
+            Redirect::to(uri!(super::instance::index)),
+            i18n!(rockets.intl.catalog, "Your blog was deleted."),
+        ))
     } else {
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
-            &(&*conn, &intl.catalog, user),
-            i18n!(intl.catalog, "You are not allowed to delete this blog.")
+            &rockets.to_context(),
+            i18n!(
+                rockets.intl.catalog,
+                "You are not allowed to delete this blog."
+            )
         )))
     }
 }
@@ -190,15 +190,16 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     if rockets
         .user
         .clone()
-        .and_then(|u| u.is_author_in(&*conn, &blog).ok())
+        .and_then(|u| u.is_author_in(conn, &blog).ok())
         .unwrap_or(false)
     {
         let user = rockets
             .user
+            .clone()
             .expect("blogs::edit: User was None while it shouldn't");
-        let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
+        let medias = Media::for_user(conn, user.id).expect("Couldn't list media");
         Ok(render!(blogs::edit(
-            &(&*conn, &rockets.intl.catalog, Some(user)),
+            &rockets.to_context(),
             &blog,
             medias,
             &EditForm {
@@ -212,7 +213,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     } else {
         // TODO actually return 403 error code
         Ok(render!(errors::not_authorized(
-            &(&*conn, &rockets.intl.catalog, rockets.user),
+            &rockets.to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."
@@ -235,7 +236,7 @@ pub fn update(
     name: String,
     form: LenientForm<EditForm>,
     rockets: PlumeRocket,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
     let mut blog = Blog::find_by_fqn(&rockets, &name).expect("blog::update: blog not found");
@@ -292,7 +293,7 @@ pub fn update(
                 blog.summary_html = SafeString::new(
                     &utils::md_to_html(
                         &form.summary,
-                        "",
+                        None,
                         true,
                         Some(Media::get_media_processor(
                             &conn,
@@ -308,12 +309,15 @@ pub fn update(
                 blog.banner_id = form.banner;
                 blog.save_changes::<Blog>(&*conn)
                     .expect("Couldn't save blog changes");
-                Ok(Redirect::to(uri!(details: name = name, page = _)))
+                Ok(Flash::success(
+                    Redirect::to(uri!(details: name = name, page = _)),
+                    i18n!(intl, "Your blog information have been updated."),
+                ))
             })
             .map_err(|err| {
                 let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
                 render!(blogs::edit(
-                    &(&*conn, intl, Some(user)),
+                    &rockets.to_context(),
                     &blog,
                     medias,
                     &*form,
@@ -323,7 +327,7 @@ pub fn update(
     } else {
         // TODO actually return 403 error code
         Err(render!(errors::not_authorized(
-            &(&*conn, &rockets.intl.catalog, rockets.user),
+            &rockets.to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."

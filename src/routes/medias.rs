@@ -3,32 +3,32 @@ use multipart::server::{
     save::{SaveResult, SavedData},
     Multipart,
 };
-use plume_models::{db_conn::DbConn, medias::*, users::User, Error};
+use plume_models::{db_conn::DbConn, medias::*, users::User, Error, PlumeRocket};
 use rocket::{
     http::ContentType,
-    response::{status, Redirect},
+    response::{status, Flash, Redirect},
     Data,
 };
 use rocket_i18n::I18n;
 use routes::{errors::ErrorPage, Page};
 use std::fs;
-use template_utils::Ructe;
+use template_utils::{IntoContext, Ructe};
 
 #[get("/medias?<page>")]
-pub fn list(user: User, conn: DbConn, intl: I18n, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn list(user: User, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let medias = Media::page_for_user(&*conn, &user, page.limits())?;
+    let medias = Media::page_for_user(&*rockets.conn, &user, page.limits())?;
     Ok(render!(medias::index(
-        &(&*conn, &intl.catalog, Some(user.clone())),
+        &rockets.to_context(),
         medias,
         page.0,
-        Page::total(Media::count_for_user(&*conn, &user)? as i32)
+        Page::total(Media::count_for_user(&*rockets.conn, &user)? as i32)
     )))
 }
 
 #[get("/medias/new")]
-pub fn new(user: User, conn: DbConn, intl: I18n) -> Ructe {
-    render!(medias::new(&(&*conn, &intl.catalog, Some(user))))
+pub fn new(_user: User, rockets: PlumeRocket) -> Ructe {
+    render!(medias::new(&rockets.to_context()))
 }
 
 #[post("/medias/new", data = "<data>")]
@@ -122,32 +122,50 @@ fn read(data: &SavedData) -> Result<String, status::BadRequest<&'static str>> {
 }
 
 #[get("/medias/<id>")]
-pub fn details(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Ructe, ErrorPage> {
-    let media = Media::get(&*conn, id)?;
+pub fn details(id: i32, user: User, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let media = Media::get(&*rockets.conn, id)?;
     if media.owner_id == user.id {
-        Ok(render!(medias::details(
-            &(&*conn, &intl.catalog, Some(user)),
-            media
-        )))
+        Ok(render!(medias::details(&rockets.to_context(), media)))
     } else {
         Err(Error::Unauthorized.into())
     }
 }
 
 #[post("/medias/<id>/delete")]
-pub fn delete(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
+pub fn delete(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Flash<Redirect>, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         media.delete(&*conn)?;
+        Ok(Flash::success(
+            Redirect::to(uri!(list: page = _)),
+            i18n!(intl.catalog, "Your media have been deleted."),
+        ))
+    } else {
+        Ok(Flash::error(
+            Redirect::to(uri!(list: page = _)),
+            i18n!(intl.catalog, "You are not allowed to delete this media."),
+        ))
     }
-    Ok(Redirect::to(uri!(list: page = _)))
 }
 
 #[post("/medias/<id>/avatar")]
-pub fn set_avatar(id: i32, user: User, conn: DbConn) -> Result<Redirect, ErrorPage> {
+pub fn set_avatar(
+    id: i32,
+    user: User,
+    conn: DbConn,
+    intl: I18n,
+) -> Result<Flash<Redirect>, ErrorPage> {
     let media = Media::get(&*conn, id)?;
     if media.owner_id == user.id {
         user.set_avatar(&*conn, media.id)?;
+        Ok(Flash::success(
+            Redirect::to(uri!(details: id = id)),
+            i18n!(intl.catalog, "Your avatar have been updated."),
+        ))
+    } else {
+        Ok(Flash::error(
+            Redirect::to(uri!(details: id = id)),
+            i18n!(intl.catalog, "You are not allowed to use this media."),
+        ))
     }
-    Ok(Redirect::to(uri!(details: id = id)))
 }

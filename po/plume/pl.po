@@ -50,6 +50,15 @@ msgstr "Aby utworzyć nowy blog, musisz być zalogowany"
 msgid "A blog with the same name already exists."
 msgstr "Blog o tej samej nazwie już istnieje."
 
+# src/routes/session.rs:259
+#, fuzzy
+msgid "Your blog was successfully created!"
+msgstr "Twoje hasło zostało pomyślnie zresetowane."
+
+# src/routes/blogs.rs:167
+msgid "Your blog was deleted."
+msgstr ""
+
 # src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
 msgstr "Nie masz uprawnień do usunięcia tego bloga."
@@ -66,9 +75,55 @@ msgstr "Nie możesz użyć tego nośnika jako ikony blogu."
 msgid "You can't use this media as a blog banner."
 msgstr "Nie możesz użyć tego nośnika jako banner na blogu."
 
+# src/routes/blogs.rs:312
+msgid "Your blog information have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment have been posted."
+msgstr "Nie masz żadnej zawartości multimedialnej."
+
+#, fuzzy
+msgid "Your comment have been deleted."
+msgstr "Nie masz żadnej zawartości multimedialnej."
+
+# src/routes/instance.rs:145
+msgid "Instance settings have been saved."
+msgstr ""
+
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
+msgstr ""
+
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
+msgstr ""
+
+# src/routes/instance.rs:218
+msgid "{} have been banned."
+msgstr ""
+
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "Aby polubić post, musisz być zalogowany"
+
+# src/routes/medias.rs:143
+msgid "Your media have been deleted."
+msgstr ""
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this media."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
+
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to use this media."
+msgstr "Nie masz uprawnień edytować tego bloga."
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
@@ -94,6 +149,34 @@ msgstr "Nowy wpis"
 msgid "Edit {0}"
 msgstr "Edytuj {0}"
 
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to publish on this blog."
+msgstr "Nie masz uprawnień edytować tego bloga."
+
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your post have been saved."
+msgstr "Nie masz żadnej zawartości multimedialnej."
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this article."
+msgstr "Nie masz uprawnień do usunięcia tego bloga."
+
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
+msgstr ""
+
+# src/routes/posts.rs:593
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+
 # src/routes/posts.rs:630
 msgid ""
 "Couldn't obtain enough information about your account. Please make sure your "
@@ -103,6 +186,14 @@ msgstr ""
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Aby udostępnić post, musisz być zalogowany"
+
+#, fuzzy
+msgid "You are now connected."
+msgstr "Nie jesteś zalogowany."
+
+#, fuzzy
+msgid "You are now logged off."
+msgstr "Nie jesteś zalogowany."
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -124,6 +215,14 @@ msgstr "Przepraszam, ale link wygasł. Spróbuj ponownie"
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Aby uzyskać dostęp do panelu, musisz być zalogowany"
 
+# src/routes/user.rs:158
+msgid "You are no longer following {}."
+msgstr ""
+
+# src/routes/user.rs:174
+msgid "You are now following {}."
+msgstr ""
+
 # src/routes/user.rs:244
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Aby subskrybować do kogoś, musisz być zalogowany"
@@ -131,6 +230,27 @@ msgstr "Aby subskrybować do kogoś, musisz być zalogowany"
 # src/routes/user.rs:344
 msgid "To edit your profile, you need to be logged in"
 msgstr "Aby edytować swój profil, musisz być zalogowany"
+
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your account have been deleted."
+msgstr "Nie masz żadnej zawartości multimedialnej."
+
+# src/routes/user.rs:411
+msgid "You can't delete someone else's account."
+msgstr ""
+
+# src/routes/user.rs:473
+msgid "Registrations are closed on this instance."
+msgstr ""
+
+# src/routes/user.rs:491
+msgid ""
+"Your account have been created. You just need to login before you can use it."
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"

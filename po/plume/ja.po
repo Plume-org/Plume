@@ -48,6 +48,15 @@ msgstr "新しいブログを作成するにはログインが必要です"
 msgid "A blog with the same name already exists."
 msgstr ""
 
+# src/routes/session.rs:259
+#, fuzzy
+msgid "Your blog was successfully created!"
+msgstr "パスワードが正常にリセットされました。"
+
+# src/routes/blogs.rs:167
+msgid "Your blog was deleted."
+msgstr ""
+
 # src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
 msgstr "このブログを削除する権限がありません。"
@@ -64,9 +73,55 @@ msgstr "このメディアはブログアイコンに使用できません。"
 msgid "You can't use this media as a blog banner."
 msgstr "このメディアはブログバナーに使用できません。"
 
+# src/routes/blogs.rs:312
+msgid "Your blog information have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment have been posted."
+msgstr "メディアがまだありません。"
+
+#, fuzzy
+msgid "Your comment have been deleted."
+msgstr "メディアがまだありません。"
+
+# src/routes/instance.rs:145
+msgid "Instance settings have been saved."
+msgstr ""
+
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
+msgstr ""
+
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
+msgstr ""
+
+# src/routes/instance.rs:218
+msgid "{} have been banned."
+msgstr ""
+
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "投稿をいいねするにはログインが必要です"
+
+# src/routes/medias.rs:143
+msgid "Your media have been deleted."
+msgstr ""
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this media."
+msgstr "このブログを削除する権限がありません。"
+
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
+
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to use this media."
+msgstr "このブログを編集する権限がありません。"
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
@@ -92,6 +147,34 @@ msgstr "新しい投稿"
 msgid "Edit {0}"
 msgstr "{0} を編集"
 
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to publish on this blog."
+msgstr "このブログを編集する権限がありません。"
+
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your post have been saved."
+msgstr "メディアがまだありません。"
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this article."
+msgstr "このブログを削除する権限がありません。"
+
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
+msgstr ""
+
+# src/routes/posts.rs:593
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+
 # src/routes/posts.rs:630
 msgid ""
 "Couldn't obtain enough information about your account. Please make sure your "
@@ -101,6 +184,14 @@ msgstr ""
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "投稿を再共有するにはログインが必要です"
+
+#, fuzzy
+msgid "You are now connected."
+msgstr "許可されていません。"
+
+#, fuzzy
+msgid "You are now logged off."
+msgstr "許可されていません。"
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -123,6 +214,14 @@ msgstr ""
 msgid "To access your dashboard, you need to be logged in"
 msgstr "ダッシュボードにアクセスするにはログインが必要です"
 
+# src/routes/user.rs:158
+msgid "You are no longer following {}."
+msgstr ""
+
+# src/routes/user.rs:174
+msgid "You are now following {}."
+msgstr ""
+
 # src/routes/user.rs:244
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "誰かをフォローするにはログインが必要です"
@@ -130,6 +229,27 @@ msgstr "誰かをフォローするにはログインが必要です"
 # src/routes/user.rs:344
 msgid "To edit your profile, you need to be logged in"
 msgstr "プロフィールを編集するにはログインが必要です"
+
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your account have been deleted."
+msgstr "メディアがまだありません。"
+
+# src/routes/user.rs:411
+msgid "You can't delete someone else's account."
+msgstr ""
+
+# src/routes/user.rs:473
+msgid "Registrations are closed on this instance."
+msgstr ""
+
+# src/routes/user.rs:491
+msgid ""
+"Your account have been created. You just need to login before you can use it."
+msgstr ""
 
 msgid "Plume"
 msgstr "Plume"

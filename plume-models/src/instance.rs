@@ -131,13 +131,13 @@ impl Instance {
     ) -> Result<()> {
         let (sd, _, _) = md_to_html(
             short_description.as_ref(),
-            &self.public_domain,
+            Some(&self.public_domain),
             true,
             Some(Media::get_media_processor(conn, vec![])),
         );
         let (ld, _, _) = md_to_html(
             long_description.as_ref(),
-            &self.public_domain,
+            Some(&self.public_domain),
             false,
             Some(Media::get_media_processor(conn, vec![])),
         );

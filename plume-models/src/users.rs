@@ -23,7 +23,7 @@ use plume_common::activity_pub::{
 use plume_common::utils;
 use reqwest::{
     header::{HeaderValue, ACCEPT},
-    Client,
+    ClientBuilder,
 };
 use rocket::{
     outcome::IntoOutcome,
@@ -215,7 +215,7 @@ impl User {
                 users::email.eq(email),
                 users::summary_html.eq(utils::md_to_html(
                     &summary,
-                    "",
+                    None,
                     false,
                     Some(Media::get_media_processor(conn, vec![self])),
                 )
@@ -267,7 +267,9 @@ impl User {
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {
-        let mut res = Client::new()
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
             .get(url)
             .header(
                 ACCEPT,
@@ -369,7 +371,9 @@ impl User {
     }
 
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
-        let mut res = Client::new()
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
             .get(&self.outbox_url[..])
             .header(
                 ACCEPT,
@@ -392,7 +396,9 @@ impl User {
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
-        let mut res = Client::new()
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
             .get(&self.followers_endpoint[..])
             .header(
                 ACCEPT,
@@ -925,7 +931,7 @@ impl NewUser {
                 display_name,
                 is_admin,
                 summary: summary.to_owned(),
-                summary_html: SafeString::new(&utils::md_to_html(&summary, "", false, None).0),
+                summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
                 hashed_password: Some(password),
                 instance_id: Instance::get_local(conn)?.id,
