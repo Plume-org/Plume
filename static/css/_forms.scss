@@ -132,7 +132,8 @@ form.new-post {
    	font-family: $playfair;
    	font-size: 1.5em;
   }
-  input[type="submit"]:hover { background: $lightgray; }
+  input[type="submit"]:hover {
+   background: $lightgray;}
   -webkit-appearance: none;
 }
 
