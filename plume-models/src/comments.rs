@@ -107,7 +107,7 @@ impl Comment {
         let author = User::get(&c.conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
-            &Instance::get_local(&c.conn)?.public_domain,
+            Some(&Instance::get_local(&c.conn)?.public_domain),
             true,
             Some(Media::get_media_processor(&c.conn, vec![&author])),
         );

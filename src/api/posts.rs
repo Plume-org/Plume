@@ -117,7 +117,7 @@ pub fn create(
     let domain = &Instance::get_local(conn)?.public_domain;
     let (content, mentions, hashtags) = md_to_html(
         &payload.source,
-        domain,
+        Some(domain),
         false,
         Some(Media::get_media_processor(conn, vec![&author])),
     );
