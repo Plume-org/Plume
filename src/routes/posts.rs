@@ -262,9 +262,9 @@ pub fn update(
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
-                &Instance::get_local(&conn)
+                Some(&Instance::get_local(&conn)
                     .expect("posts::update: Error getting local instance")
-                    .public_domain,
+                    .public_domain),
                 false,
                 Some(Media::get_media_processor(
                     &conn,
@@ -432,9 +432,9 @@ pub fn create(
 
         let (content, mentions, hashtags) = utils::md_to_html(
             form.content.to_string().as_ref(),
-            &Instance::get_local(&conn)
+            Some(&Instance::get_local(&conn)
                 .expect("post::create: local instance error")
-                .public_domain,
+                .public_domain),
             false,
             Some(Media::get_media_processor(
                 &conn,

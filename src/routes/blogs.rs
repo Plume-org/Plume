@@ -293,7 +293,7 @@ pub fn update(
                 blog.summary_html = SafeString::new(
                     &utils::md_to_html(
                         &form.summary,
-                        "",
+                        None,
                         true,
                         Some(Media::get_media_processor(
                             &conn,

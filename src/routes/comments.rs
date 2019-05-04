@@ -42,9 +42,9 @@ pub fn create(
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
-                &Instance::get_local(&conn)
+                Some(&Instance::get_local(&conn)
                     .expect("comments::create: local instance error")
-                    .public_domain,
+                    .public_domain),
                 true,
                 Some(Media::get_media_processor(&conn, vec![&user])),
             );
