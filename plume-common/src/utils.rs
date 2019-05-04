@@ -154,10 +154,15 @@ fn process_image<'a, 'b>(
 /// Returns (HTML, mentions, hashtags)
 pub fn md_to_html<'a>(
     md: &str,
-    base_url: &str,
+    base_url: Option<&str>,
     inline: bool,
     media_processor: Option<MediaProcessor<'a>>,
 ) -> (String, HashSet<String>, HashSet<String>) {
+    let base_url = if let Some(base_url) = base_url {
+        format!("//{}/", base_url)
+    } else {
+        "/".to_owned()
+    };
     let parser = Parser::new_ext(md, Options::all());
 
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
@@ -185,7 +190,7 @@ pub fn md_to_html<'a>(
                                     let mention = text_acc;
                                     let short_mention = mention.splitn(1, '@').nth(0).unwrap_or("");
                                     let link = Tag::Link(
-                                        format!("//{}/@/{}/", base_url, &mention).into(),
+                                        format!("{}@/{}/", base_url, &mention).into(),
                                         short_mention.to_owned().into(),
                                     );
 
@@ -215,7 +220,7 @@ pub fn md_to_html<'a>(
                                     }
                                     let hashtag = text_acc;
                                     let link = Tag::Link(
-                                        format!("//{}/tag/{}", base_url, &hashtag.to_camel_case())
+                                        format!("{}tag/{}", base_url, &hashtag.to_camel_case())
                                             .into(),
                                         hashtag.to_owned().into(),
                                     );
@@ -337,7 +342,7 @@ mod tests {
 
         for (md, mentions) in tests {
             assert_eq!(
-                md_to_html(md, "", false, None).1,
+                md_to_html(md, None, false, None).1,
                 mentions
                     .into_iter()
                     .map(|s| s.to_string())
@@ -362,7 +367,7 @@ mod tests {
 
         for (md, mentions) in tests {
             assert_eq!(
-                md_to_html(md, "", false, None).2,
+                md_to_html(md, None, false, None).2,
                 mentions
                     .into_iter()
                     .map(|s| s.to_string())
@@ -374,11 +379,11 @@ mod tests {
     #[test]
     fn test_inline() {
         assert_eq!(
-            md_to_html("# Hello", "", false, None).0,
+            md_to_html("# Hello", None, false, None).0,
             String::from("<h1>Hello</h1>\n")
         );
         assert_eq!(
-            md_to_html("# Hello", "", true, None).0,
+            md_to_html("# Hello", None, true, None).0,
             String::from("<p>Hello</p>\n")
         );
     }

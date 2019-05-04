@@ -1,5 +1,8 @@
 use activitypub::object::Note;
-use rocket::{request::LenientForm, response::Redirect};
+use rocket::{
+    request::LenientForm,
+    response::{Flash, Redirect},
+};
 use template_utils::Ructe;
 use validator::Validate;
 
@@ -14,6 +17,7 @@ use plume_models::{
     posts::Post, safe_string::SafeString, tags::Tag, users::User, Error, PlumeRocket,
 };
 use routes::errors::ErrorPage;
+use template_utils::IntoContext;
 
 #[derive(Default, FromForm, Debug, Validate)]
 pub struct NewCommentForm {
@@ -30,7 +34,7 @@ pub fn create(
     form: LenientForm<NewCommentForm>,
     user: User,
     rockets: PlumeRocket,
-) -> Result<Redirect, Ructe> {
+) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("comments::create: blog error");
     let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
@@ -38,9 +42,11 @@ pub fn create(
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
-                &Instance::get_local(&conn)
-                    .expect("comments::create: local instance error")
-                    .public_domain,
+                Some(
+                    &Instance::get_local(&conn)
+                        .expect("comments::create: local instance error")
+                        .public_domain,
+                ),
                 true,
                 Some(Media::get_media_processor(&conn, vec![&user])),
             );
@@ -58,7 +64,6 @@ pub fn create(
                 },
             )
             .expect("comments::create: insert error");
-            comm.notify(&*conn).expect("comments::create: notify error");
             let new_comment = comm
                 .create_activity(&rockets)
                 .expect("comments::create: activity error");
@@ -76,6 +81,8 @@ pub fn create(
                 .expect("comments::create: mention save error");
             }
 
+            comm.notify(&*conn).expect("comments::create: notify error");
+
             // federate
             let dest = User::one_by_instance(&*conn).expect("comments::create: dest error");
             let user_clone = user.clone();
@@ -83,8 +90,11 @@ pub fn create(
                 .worker
                 .execute(move || broadcast(&user_clone, new_comment, dest));
 
-            Redirect::to(
-                uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
+            Flash::success(
+                Redirect::to(
+                    uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
+                ),
+                i18n!(&rockets.intl.catalog, "Your comment have been posted."),
             )
         })
         .map_err(|errors| {
@@ -97,7 +107,7 @@ pub fn create(
                 .and_then(|r| Comment::get(&*conn, r).ok());
 
             render!(posts::details(
-                &(&*conn, &rockets.intl.catalog, Some(user.clone())),
+                &rockets.to_context(),
                 post.clone(),
                 blog,
                 &*form,
@@ -134,7 +144,7 @@ pub fn delete(
     id: i32,
     user: User,
     rockets: PlumeRocket,
-) -> Result<Redirect, ErrorPage> {
+) -> Result<Flash<Redirect>, ErrorPage> {
     if let Ok(comment) = Comment::get(&*rockets.conn, id) {
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&*rockets.conn)?;
@@ -157,8 +167,9 @@ pub fn delete(
                 });
         }
     }
-    Ok(Redirect::to(
-        uri!(super::posts::details: blog = blog, slug = slug, responding_to = _),
+    Ok(Flash::success(
+        Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _)),
+        i18n!(&rockets.intl.catalog, "Your comment have been deleted."),
     ))
 }
 

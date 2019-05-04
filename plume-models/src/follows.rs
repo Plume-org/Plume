@@ -67,15 +67,18 @@ impl Follow {
         Ok(act)
     }
 
-    pub fn notify(&self, conn: &Connection) -> Result<Notification> {
-        Notification::insert(
-            conn,
-            NewNotification {
-                kind: notification_kind::FOLLOW.to_string(),
-                object_id: self.id,
-                user_id: self.following_id,
-            },
-        )
+    pub fn notify(&self, conn: &Connection) -> Result<()> {
+        if User::get(conn, self.following_id)?.is_local() {
+            Notification::insert(
+                conn,
+                NewNotification {
+                    kind: notification_kind::FOLLOW.to_string(),
+                    object_id: self.id,
+                    user_id: self.following_id,
+                },
+            )?;
+        }
+        Ok(())
     }
 
     /// from -> The one sending the follow request

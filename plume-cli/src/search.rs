@@ -104,7 +104,8 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
 
 fn unlock<'a>(args: &ArgMatches<'a>) {
     let path = args.value_of("path").unwrap_or(".");
-    let path = Path::new(path).join("search_index/.tantivy-indexer.lock");
-
-    remove_file(path).unwrap();
+    let meta = Path::new(path).join("search_index/.tantivy-meta.lock");
+    remove_file(meta).unwrap();
+    let writer = Path::new(path).join("search_index/.tantivy-writer.lock");
+    remove_file(writer).unwrap();
 }

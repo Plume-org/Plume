@@ -1,314 +1,253 @@
 version: 2.1
 
-aliases:
-  - &plume-docker
-    image: plumeorg/plume-buildenv:v0.0.5
-  - &defaults
+executors:
+  default:
+    parameters:
+      postgres:
+        type: boolean
+        default: false
+      selenium:
+        type: boolean
+        default: false
     docker:
-      - *plume-docker
+    - image: plumeorg/plume-buildenv:v0.0.7
+    - image: <<#parameters.postgres>>circleci/postgres:9.6-alpine<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_DB: plume
+    - image: <<#parameters.selenium>>elgalu/selenium:latest<</parameters.selenium>><<^parameters.selenium>>alpine:latest<</parameters.selenium>>
     working_directory: ~/projects/Plume
-  - &postgresql
-    docker:
-      - *plume-docker
-      - image: circleci/postgres:9.6-alpine
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: plume
-    working_directory: ~/projects/Plume
-  - &selenium
-    docker:
-      - *plume-docker
-      - image: elgalu/selenium:latest
-    working_directory: ~/projects/Plume
-  - &postgresql_selenium
-    docker:
-      - *plume-docker
-      - image: circleci/postgres:9.6-alpine
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: plume
-      - image: elgalu/selenium:latest
-    working_directory: ~/projects/Plume
-
-  - &attach_workspace
-    attach_workspace:
-      at: ~/projects/Plume/
-  - &persist_to_workspace
-    persist_to_workspace:
-      root: ~/projects/Plume/
-      paths:
-        - ./
-
-  - &env_postgresql
     environment:
-      MIGRATION_DIRECTORY: migrations/postgres
-      FEATURES: postgres
-      DATABASE_URL: postgres://postgres@localhost/plume
       RUST_TEST_THREADS: 1
-  - &env_sqlite
-    environment:
-      MIGRATION_DIRECTORY: migrations/sqlite
-      FEATURES: sqlite
-      DATABASE_URL: plume.sqlite3
-      RUST_TEST_THREADS: 1
+      FEATURES: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+      DATABASE_URL: <<#parameters.postgres>>postgres://postgres@localhost/plume<</parameters.postgres>><<^parameters.postgres>>plume.sqlite<</parameters.postgres>>
 
-  - &restore_cache
-    restore_cache:
-      keys:
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}
-        - v2-plume-notest
-  - &save_cache
-    save_cache:
-      key: v2-plume-notest-{{ checksum "Cargo.lock" }}
-      paths:
+
+commands:
+  restore_env:
+    description: checkout and pull cache
+    parameters:
+      cache:
+        type: enum
+        default: none
+        enum: ["none", "clippy", "postgres", "sqlite", "release-postgres", "release-sqlite"]
+    steps:
+    - checkout
+    - run: git config --global --remove-section url."ssh://git@github.com"
+    - restore_cache:
+        keys:
+        - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-{{ .Branch }}
+        - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-master
+
+  cache:
+    description: push cache
+    parameters:
+      cache:
+        type: enum
+        enum: ["clippy", "postgres", "sqlite", "release-postgres", "release-sqlite"]
+    steps:
+    - save_cache:
+        key: v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-{{ .Branch }}
+        paths:
         - ~/.cargo/
         - ./target
 
-  - &restore_cache_web
-    restore_cache:
-      keys:
-        - v2-plume-web-{{ checksum "Cargo.lock" }}
-        - v2-plume-web
-  - &save_cache_web
-    save_cache:
-      key: v2-plume-web-{{ checksum "Cargo.lock" }}
-      paths:
-        - ~/.cargo/
-        - ./target
-
-  - &restore_cache_cli
-    restore_cache:
-      keys:
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}
-        - v2-plume-notest
-  - &save_cache_cli
-    save_cache:
-      key: v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}-cli
-      paths:
-        - ~/.cargo/
-        - target
-
-  - &restore_cache_release
-    restore_cache:
-      keys:
-        - v2-plume-release-{{ checksum "Cargo.lock" }}
-        - v2-plume-release
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}
-        - v2-plume-notest
-  - &save_cache_release
-    save_cache:
-      key: v2-plume-release-{{ checksum "Cargo.lock" }}
-      paths:
-        - ~/.cargo
-        - target/release
-        - target/wasm32-unknown-unknown/release
-
-  - &restore_cache_plume_dead_code
-    restore_cache:
-      keys:
-        - v2-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
-        - v2-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}
-        - v2-plume-test-{{ checksum "/FEATURES" }}
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}-{{ checksum "/FEATURES" }}
-        - v2-plume-notest-{{ checksum "Cargo.lock" }}
-        - v2-plume-notest
-  - &save_cache_plume_dead_code
-    save_cache:
-      key: v2-plume-test-{{ checksum "/FEATURES" }}-{{ checksum "Cargo.lock" }}-plume
-      paths:
-        - ~/.cargo/
-        - target
-
-  - &test_cli
+  clippy:
+    description: run cargo clippy
+    parameters:
+      package:
+        type: string
+        default: plume
+      no_feature:
+        type: boolean
+        default: false
     steps:
-      - *attach_workspace
-      - run:
-          name: Set cache key
-          command: echo "$FEATURES" > /FEATURES
-      - *restore_cache_cli
-      - run:
-           name: clippy
-           command: cargo clippy --no-default-features --features="${FEATURES}" --release -p plume-cli -- -D warnings
-      - *save_cache_cli
-  - &test_unit
-    steps:
-      - *attach_workspace
-      - run:
-          name: Set cache key
-          command: echo "$FEATURES" > /FEATURES
-      - *restore_cache_plume_dead_code
-      - run:
-          name: clippy
-          command: cargo clippy --no-default-features --features="${FEATURES}" --release -- -D warnings
-      - run:
-          name: compile test
-          command: cargo test --no-default-features --features="${FEATURES}" --all --exclude plume-front --no-run || cargo test --no-default-features --features="${FEATURES}" --all --exclude plume-front --no-run
-      - run:
-          name: run test
-          command: ./script/run_unit_test.sh
-      - run:
-          name: upload coverage
-          command: ./script/upload_coverage.sh unit
-      - *save_cache_plume_dead_code
+    - run: cargo clippy <<^parameters.no_feature>>--no-default-features --features="${FEATURES}"<</parameters.no_feature>> --release -p <<parameters.package>> -- -D warnings
 
-  - &test_browser
+  run_with_coverage:
+    description: run command with environment for coverage
+    parameters:
+      cmd:
+        type: string
     steps:
-      - *attach_workspace
-      - run:
-          name: Set cache key
-          command: echo "$FEATURES" > /FEATURES
-      - *restore_cache_plume_dead_code
-      - run:
-          name: install server
-          command: cargo install --debug --no-default-features --features="${FEATURES}",test --path . --force || cargo install --debug --no-default-features --features="${FEATURES}",test --path . --force
-      - run:
-          name: install plm
-          command: cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli --force || cargo install --debug --no-default-features --features="${FEATURES}" --path plume-cli --force
-      - run:
-          name: run test
-          command: ./script/run_browser_test.sh
-          environment:
-            BROWSER: firefox
-      - run:
-          name: upload coverage
-          command: ./script/upload_coverage.sh integration
-      - *save_cache_plume_dead_code
+    - run: |
+       export RUSTFLAGS="-Zprofile -Zfewer-names -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads -Clink-arg=-Xlinker -Clink-arg=--no-keep-memory -Clink-arg=-Xlinker -Clink-arg=--reduce-memory-overheads"
+       export CARGO_INCREMENTAL=0
+       << parameters.cmd >>
 
-  - &release
+  upload_coverage:
+    description: merge coverage files and upload to codecov.io
+    parameters:
+      type:
+        type: string
     steps:
-      - *attach_workspace
-      - *restore_cache_release
-      - run:
-          name: build frontend
-          command: cargo web deploy -p plume-front --release
-      - run:
-          name: build server
-          command: cargo build --release --no-default-features --features="${FEATURES}" || cargo build --release --no-default-features --features="${FEATURES}"
-      - run:
-          name: build plm
-          command: cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli || cargo build --release --no-default-features --features="${FEATURES}" -p plume-cli
-      - *save_cache_release
-      - run: script/generate_artifact.sh
-      - run: script/upload_test_environment.sh
-      - store_artifacts:
-          path: plume.tar.gz
-          destination: plume.tar.gz
+    - run: zip -0 ccov.zip `find . -name 'plume*.gc*' -o -name 'plm*.gc*'`
+    - run: grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir '/*' -o lcov.info
+    - run: bash <(curl -s https://codecov.io/bash) -f lcov.info -F <<parameters.type>>
+    - run: find . -name 'plume*.gc*' -delete -o -name 'plm*.gc*' -delete 
+    - run: rm ccov.zip lcov.info
 
+  build:
+    description: build a package
+    parameters:
+      package:
+        type: string
+        default: plume
+      release:
+        type: boolean
+        default: false
+    steps:
+    - run: |
+            cmd="cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>> -j"
+            for i in 36 4 2 1 1; do
+                $cmd $i && exit 0
+            done
+            exit 1
 
 jobs:
-  download_deps:
-    <<: *defaults
+  cargo fmt:
+    executor:
+      name: default
     steps:
-      - checkout
-      - *attach_workspace
-      - *restore_cache
-      - run: git config --global --remove-section url."ssh://git@github.com"
-      - run: cargo fetch
-      - *save_cache
-      - *persist_to_workspace
+    - restore_env
+    - run: cargo fmt --all -- --check
 
-  cargo_fmt:
-    <<: *defaults
+  clippy:
+    parameters:
+      postgres:
+        type: boolean
+    executor:
+      name: default
+      postgres: << parameters.postgres >>
     steps:
-      - *attach_workspace
-      - run: cargo fmt --all -- --check
+    - restore_env:
+        cache: clippy
+    - clippy
+    - clippy:
+        package: plume-cli
+    - clippy:
+        package: plume-front
+        no_feature: true
+    - cache:
+        cache: clippy
 
-  build_web:
-    <<: *defaults
+  unit:
+    parameters:
+      postgres:
+        type: boolean
+    executor:
+      name: default
+      postgres: << parameters.postgres >>
     steps:
-      - *attach_workspace
-      - *restore_cache_web
-      - run: cargo clippy -p plume-front -- -D warnings
-      - run: cargo web deploy -p plume-front
-      - *save_cache_web
-      - *persist_to_workspace
+    - restore_env:
+        cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+    - run_with_coverage:
+        cmd: |
+          cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
+          for i in 36 4 2 1 1; do
+              $cmd $i && break
+          done
+          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1 -- --test-threads=1
+    - upload_coverage:
+        type: unit
+    - cache:
+        cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
 
-  test_cli_postgresql:
-    <<: *postgresql
-    <<: *env_postgresql
-    <<: *test_cli
-
-  test_cli_sqlite:
-    <<: *defaults
-    <<: *env_sqlite
-    <<: *test_cli
-
-  test_unit_postgresql:
-    <<: *postgresql
-    <<: *env_postgresql
-    <<: *test_unit
-
-  test_unit_sqlite:
-    <<: *defaults
-    <<: *env_sqlite
-    <<: *test_unit
-
-  test_browser_postgresql:
-    <<: *postgresql_selenium
-    <<: *env_postgresql
-    <<: *test_browser
-
-  test_browser_sqlite:
-    <<: *selenium
-    <<: *env_sqlite
-    <<: *test_browser
-  all_ok:
-    docker:
-      - image: alpine:3.7
+  integration:
+    parameters:
+      postgres:
+        type: boolean
+    executor:
+      name: default
+      postgres: << parameters.postgres >>
+      selenium: true
     steps:
-      - run: /bin/true
-  release_postgresql:
-    <<: *defaults
-    <<: *env_postgresql
-    <<: *release
-  release_sqlite:
-    <<: *defaults
-    <<: *env_sqlite
-    <<: *release
+    - restore_env:
+        cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+    - run: cargo web deploy -p plume-front
+    - run_with_coverage:
+        cmd: |
+            cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . -j"
+            for i in 36 4 2 1 1; do
+                $cmd $i && exit 0
+            done
+            exit 1
+    - run_with_coverage:
+        cmd: |
+            cmd="cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli -j"
+            for i in 36 4 2 1 1; do
+                $cmd $i && exit 0
+            done
+            exit 1
+    - run:
+        name: run test
+        command: ./script/run_browser_test.sh
+        environment:
+          BROWSER: firefox
+    - upload_coverage:
+        type: integration
+    - cache:
+        cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+
+  release:
+    parameters:
+      postgres:
+        type: boolean
+    executor:
+      name: default
+      postgres: << parameters.postgres >>
+    steps:
+    - restore_env:
+        cache: release-<<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+    - run: cargo web deploy -p plume-front --release
+    - build:
+        package: plume
+        release: true
+    - build:
+        package: plume-cli
+        release: true
+    - cache:
+        cache: release-<<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+    - run: ./script/generate_artifact.sh
+    - unless:
+        condition: << parameters.postgres >>
+        steps:
+        - run: ./script/upload_test_environment.sh
+    - store_artifacts:
+        path: plume.tar.gz
+        destination: plume.tar.gz
+
+  push translations:
+    executor:
+      name: default
+    steps:
+    - restore_env:
+        cache: none
+    - run: crowdin upload
 
 workflows:
   version: 2
-  build_and_test:
+  build and test:
     jobs:
-      - download_deps
-      - cargo_fmt:
-          requires:
-            - download_deps
-      - build_web:
-          requires:
-            - download_deps
-      - test_cli_postgresql:
-          requires:
-            - download_deps
-      - test_cli_sqlite:
-          requires:
-            - download_deps
-      - test_unit_postgresql:
-          requires:
-            - download_deps
-      - test_unit_sqlite:
-          requires:
-            - download_deps
-      - test_browser_postgresql:
-          requires:
-            - build_web
-      - test_browser_sqlite:
-          requires:
-            - build_web
-      - all_ok:
-          requires:
-            - cargo_fmt
-            - test_cli_postgresql
-            - test_cli_sqlite
-            - test_unit_postgresql
-            - test_unit_sqlite
-            - test_browser_postgresql
-            - test_browser_sqlite
-      - release_postgresql:
-          requires:
-            - all_ok
-      - release_sqlite:
-          requires:
-            - all_ok
+    - cargo fmt
+    - clippy:
+        postgres: false
+    - clippy:
+        postgres: true
+    - unit:
+        postgres: false
+    - unit:
+        postgres: true
+    - integration:
+        postgres: false
+    - integration:
+        postgres: true
+    - release:
+        postgres: false
+    - release:
+        postgres: true
+    - push translations:
+        filters:
+          branches:
+            only:
+              - /^master/

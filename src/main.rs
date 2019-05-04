@@ -45,7 +45,6 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
@@ -68,8 +67,6 @@ mod test_routes;
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 compile_i18n!();
-
-type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
