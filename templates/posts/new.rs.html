@@ -1,11 +1,11 @@
 @use crate::templates::base;
 @use crate::templates::partials::image_select;
 @use crate::template_utils::*;
-@use crate::validator::{ValidationErrors, ValidationErrorsKind};
+@use validator::{ValidationErrors, ValidationErrorsKind};
 @use std::borrow::Cow;
-@use crate::plume_models::medias::*;
-@use crate::plume_models::blogs::Blog;
-@use crate::plume_models::posts::Post;
+@use plume_models::medias::*;
+@use plume_models::blogs::Blog;
+@use plume_models::posts::Post;
 @use crate::routes::posts::NewPostForm;
 @use crate::routes::*;
 

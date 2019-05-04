@@ -1,7 +1,7 @@
 @use crate::templates::{base, partials::*};
 @use crate::template_utils::*;
-@use crate::plume_models::instance::Instance;
-@use crate::plume_models::posts::Post;
+@use plume_models::instance::Instance;
+@use plume_models::posts::Post;
 @use crate::routes::*;
 
 @(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)

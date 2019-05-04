@@ -1,7 +1,7 @@
 @use crate::templates::base;
 @use crate::template_utils::*;
 @use crate::routes::user::UpdateUserForm;
-@use crate::validator::ValidationErrors;
+@use validator::ValidationErrors;
 @use crate::routes::*;
 
 @(ctx: BaseContext, form: UpdateUserForm, errors: ValidationErrors)

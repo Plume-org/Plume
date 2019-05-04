@@ -1,14 +1,4 @@
-#![feature(custom_attribute, associated_type_defaults)]
-
-#[macro_use]
-extern crate activitystreams_derive;
-use activitystreams_traits;
-
-use serde;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
+#![feature(associated_type_defaults)]
 
 pub mod activity_pub;
 pub mod utils;

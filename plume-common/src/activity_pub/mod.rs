@@ -1,4 +1,5 @@
 use activitypub::{Activity, Link, Object};
+use activitystreams_derive::{Properties, UnitString};
 use array_tool::vec::Uniq;
 use reqwest::ClientBuilder;
 use rocket::{
@@ -7,7 +8,8 @@ use rocket::{
     response::{Responder, Response},
     Outcome,
 };
-use serde_json;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 use self::sign::Signable;
 

@@ -6,7 +6,7 @@ use rocket::{
     response::{status, Content, Flash, Redirect},
 };
 use rocket_i18n::I18n;
-use serde_json;
+use runtime_fmt::{rt_format, rt_format_args};
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 

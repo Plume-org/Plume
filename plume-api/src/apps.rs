@@ -1,3 +1,5 @@
+use serde::{Serialize, Deserialize};
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct NewAppData {
     pub name: String,

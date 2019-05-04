@@ -4,7 +4,7 @@ use rocket::{
 };
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
-use serde_json;
+use serde_json::json;
 use validator::{Validate, ValidationErrors};
 
 use crate::inbox;

@@ -6,6 +6,7 @@ use diesel::{
     sql_types::Text,
     types::ToSql,
 };
+use lazy_static::lazy_static;
 use serde::{self, de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
     borrow::{Borrow, Cow},

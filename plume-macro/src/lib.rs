@@ -1,7 +1,6 @@
 #![recursion_limit = "128"]
 extern crate proc_macro;
-#[macro_use]
-extern crate quote;
+use quote::quote;
 
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
@@ -69,12 +68,6 @@ pub fn import_migrations(input: TokenStream) -> TokenStream {
         .map(|m| m.2.as_str())
         .map(file_to_migration)
         .collect::<Vec<_>>();
-
-    /*
-    enum Action {
-        Sql(&'static str),
-        Function(&'static Fn(&Connection, &Path) -> Result<()>)
-    }*/
 
     quote!(
         ImportedMigrations(

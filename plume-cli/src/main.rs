@@ -1,5 +1,3 @@
-use dotenv;
-
 use clap::App;
 use diesel::Connection;
 use plume_models::{Connection as Conn, CONFIG};

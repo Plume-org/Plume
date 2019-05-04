@@ -1,14 +1,11 @@
 #![recursion_limit = "128"]
 #![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
-use gettext;
-#[macro_use]
-extern crate gettext_macros;
-#[macro_use]
-extern crate lazy_static;
 #[macro_use]
 extern crate stdweb;
 
+use gettext_macros::{compile_i18n, include_i18n, init_i18n};
+use lazy_static::lazy_static;
 use stdweb::web::{event::*, *};
 
 init_i18n!(

@@ -1,4 +1,5 @@
 use crate::CATALOG;
+use gettext_macros::i18n;
 use stdweb::{
     unstable::{TryFrom, TryInto},
     web::{event::*, html_element::*, *},

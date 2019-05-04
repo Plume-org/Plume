@@ -7,7 +7,7 @@ use activitypub::{
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use heck::{CamelCase, KebabCase};
-use serde_json;
+use serde_json::json;
 use std::collections::HashSet;
 
 use crate::blogs::Blog;

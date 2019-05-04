@@ -1,6 +1,6 @@
 @use crate::templates::{base, users::header};
 @use crate::template_utils::*;
-@use crate::plume_models::users::User;
+@use plume_models::users::User;
 @use crate::routes::*;
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, followers: Vec<User>, page: i32, n_pages: i32)

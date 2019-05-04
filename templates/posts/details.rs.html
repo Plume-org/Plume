@@ -1,11 +1,11 @@
 @use crate::templates::{base, partials::comment};
 @use crate::template_utils::*;
-@use crate::plume_models::blogs::Blog;
-@use crate::plume_models::comments::{Comment, CommentTree};
-@use crate::plume_models::posts::Post;
-@use crate::plume_models::tags::Tag;
-@use crate::plume_models::users::User;
-@use crate::validator::ValidationErrors;
+@use plume_models::blogs::Blog;
+@use plume_models::comments::{Comment, CommentTree};
+@use plume_models::posts::Post;
+@use plume_models::tags::Tag;
+@use plume_models::users::User;
+@use validator::ValidationErrors;
 @use crate::routes::comments::NewCommentForm;
 @use crate::routes::*;
 

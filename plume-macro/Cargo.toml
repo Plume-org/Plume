@@ -1,10 +1,8 @@
 [package]
+authors = ["Plume contributors"]
 name = "plume-macro"
-version = "0.1.0"
-authors = ["Trinity Pointard <trinity.pointard@insa-rennes.fr>"]
+version = "0.3.0"
 edition = "2018"
-description = "Plume procedural macros"
-license = "AGPLv3"
 
 [lib]
 proc-macro = true

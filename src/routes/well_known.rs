@@ -1,6 +1,6 @@
 use rocket::http::ContentType;
 use rocket::response::Content;
-use serde_json;
+use serde_json::json;
 use webfinger::*;
 
 use plume_models::{ap_url, blogs::Blog, users::User, PlumeRocket, CONFIG};

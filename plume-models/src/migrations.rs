@@ -4,6 +4,7 @@ use crate::Result;
 
 use diesel::connection::{Connection as Conn, SimpleConnection};
 use migrations_internals::{setup_database, MigrationConnection};
+use plume_macro::import_migrations;
 
 use std::path::Path;
 

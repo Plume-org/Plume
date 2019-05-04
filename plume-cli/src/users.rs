@@ -1,7 +1,6 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
 
 use plume_models::{instance::Instance, users::*, Connection};
-use rpassword;
 use std::io::{self, Write};
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {

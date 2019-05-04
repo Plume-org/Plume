@@ -1,9 +1,9 @@
 @use crate::templates::remote_interact_base;
-@use crate::plume_models::users::User;
+@use plume_models::users::User;
 @use crate::routes::RemoteForm;
 @use crate::routes::session::LoginForm;
 @use crate::template_utils::*;
-@use crate::validator::ValidationErrors;
+@use validator::ValidationErrors;
 
 @(ctx: BaseContext, user: User, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 

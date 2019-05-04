@@ -1,5 +1,6 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use serde::Serialize;
 
 use crate::schema::apps;
 use crate::{Error, Result};

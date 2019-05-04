@@ -1,5 +1,6 @@
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
+use runtime_fmt::{rt_format, rt_format_args};
 use rocket::request::LenientForm;
 use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;

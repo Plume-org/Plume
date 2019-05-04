@@ -1,27 +1,7 @@
-#![feature(try_trait)]
-#![feature(never_type)]
-#![feature(custom_attribute)]
-#![feature(proc_macro_hygiene)]
+#![feature(never_type, proc_macro_hygiene, try_trait)]
 
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate lazy_static;
-#[macro_use]
-extern crate plume_macro;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
-#[macro_use]
-extern crate tantivy;
-
-use activitypub;
-use bcrypt;
-use openssl;
-use reqwest;
-use url;
-use webfinger;
 
 use plume_common::activity_pub::inbox::InboxError;
 
@@ -293,6 +273,7 @@ mod tests {
     use diesel::r2d2::ConnectionManager;
     #[cfg(feature = "sqlite")]
     use diesel::{dsl::sql_query, RunQueryDsl};
+    use lazy_static::lazy_static;
     use plume_common::utils::random_hex;
     use scheduled_thread_pool::ScheduledThreadPool;
     use std::env::temp_dir;

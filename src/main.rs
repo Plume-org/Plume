@@ -1,25 +1,10 @@
 #![allow(clippy::too_many_arguments)]
 #![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
-use ctrlc;
-
-use dotenv;
 #[macro_use]
 extern crate gettext_macros;
-
-use num_cpus;
-
-use plume_models;
 #[macro_use]
 extern crate rocket;
-
-#[macro_use]
-extern crate runtime_fmt;
-
-#[macro_use]
-extern crate serde_json;
-
-use validator;
 #[macro_use]
 extern crate validator_derive;
 
