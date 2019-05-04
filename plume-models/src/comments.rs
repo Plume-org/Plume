@@ -157,14 +157,16 @@ impl Comment {
 
     pub fn notify(&self, conn: &Connection) -> Result<()> {
         for author in self.get_post(conn)?.get_authors(conn)? {
-            Notification::insert(
-                conn,
-                NewNotification {
-                    kind: notification_kind::COMMENT.to_string(),
-                    object_id: self.id,
-                    user_id: author.id,
-                },
-            )?;
+            if Mention::list_for_comment(conn, self.id)?.iter().all(|m| m.get_mentioned(conn).map(|u| u != author).unwrap_or(true)) {
+                Notification::insert(
+                    conn,
+                    NewNotification {
+                        kind: notification_kind::COMMENT.to_string(),
+                        object_id: self.id,
+                        user_id: author.id,
+                    },
+                )?;
+            }
         }
         Ok(())
     }
