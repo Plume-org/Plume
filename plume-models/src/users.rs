@@ -215,7 +215,7 @@ impl User {
                 users::email.eq(email),
                 users::summary_html.eq(utils::md_to_html(
                     &summary,
-                    "",
+                    None,
                     false,
                     Some(Media::get_media_processor(conn, vec![self])),
                 )
@@ -931,7 +931,7 @@ impl NewUser {
                 display_name,
                 is_admin,
                 summary: summary.to_owned(),
-                summary_html: SafeString::new(&utils::md_to_html(&summary, "", false, None).0),
+                summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
                 hashed_password: Some(password),
                 instance_id: Instance::get_local(conn)?.id,

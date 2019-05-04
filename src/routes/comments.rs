@@ -42,9 +42,11 @@ pub fn create(
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
-                &Instance::get_local(&conn)
-                    .expect("comments::create: local instance error")
-                    .public_domain,
+                Some(
+                    &Instance::get_local(&conn)
+                        .expect("comments::create: local instance error")
+                        .public_domain,
+                ),
                 true,
                 Some(Media::get_media_processor(&conn, vec![&user])),
             );
@@ -62,7 +64,6 @@ pub fn create(
                 },
             )
             .expect("comments::create: insert error");
-            comm.notify(&*conn).expect("comments::create: notify error");
             let new_comment = comm
                 .create_activity(&rockets)
                 .expect("comments::create: activity error");
@@ -79,6 +80,8 @@ pub fn create(
                 )
                 .expect("comments::create: mention save error");
             }
+
+            comm.notify(&*conn).expect("comments::create: notify error");
 
             // federate
             let dest = User::one_by_instance(&*conn).expect("comments::create: dest error");

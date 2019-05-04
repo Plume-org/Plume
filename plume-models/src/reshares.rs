@@ -4,7 +4,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{AsObject, FromId},
+    inbox::{AsActor, AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILITY,
 };
 use posts::Post;
@@ -79,14 +79,16 @@ impl Reshare {
     pub fn notify(&self, conn: &Connection) -> Result<()> {
         let post = self.get_post(conn)?;
         for author in post.get_authors(conn)? {
-            Notification::insert(
-                conn,
-                NewNotification {
-                    kind: notification_kind::RESHARE.to_string(),
-                    object_id: self.id,
-                    user_id: author.id,
-                },
-            )?;
+            if author.is_local() {
+                Notification::insert(
+                    conn,
+                    NewNotification {
+                        kind: notification_kind::RESHARE.to_string(),
+                        object_id: self.id,
+                        user_id: author.id,
+                    },
+                )?;
+            }
         }
         Ok(())
     }

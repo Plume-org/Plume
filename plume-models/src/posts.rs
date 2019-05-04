@@ -692,7 +692,7 @@ impl FromId<PlumeRocket> for Post {
         }
 
         // save mentions and tags
-        let mut hashtags = md_to_html(&post.source, "", false, None)
+        let mut hashtags = md_to_html(&post.source, None, false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
@@ -829,7 +829,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
             post.license = license;
         }
 
-        let mut txt_hashtags = md_to_html(&post.source, "", false, None)
+        let mut txt_hashtags = md_to_html(&post.source, None, false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
