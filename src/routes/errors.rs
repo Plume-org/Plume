@@ -1,9 +1,9 @@
+use crate::template_utils::{IntoContext, Ructe};
 use plume_models::{Error, PlumeRocket};
 use rocket::{
     response::{self, Responder},
     Request,
 };
-use crate::template_utils::{IntoContext, Ructe};
 
 #[derive(Debug)]
 pub struct ErrorPage(Error);
@@ -15,7 +15,7 @@ impl From<Error> for ErrorPage {
 }
 
 impl<'r> Responder<'r> for ErrorPage {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
+    fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
         let rockets = req.guard::<PlumeRocket>().unwrap();
 
         match self.0 {
@@ -29,19 +29,19 @@ impl<'r> Responder<'r> for ErrorPage {
 }
 
 #[catch(404)]
-pub fn not_found(req: &Request) -> Ructe {
+pub fn not_found(req: &Request<'_>) -> Ructe {
     let rockets = req.guard::<PlumeRocket>().unwrap();
     render!(errors::not_found(&rockets.to_context()))
 }
 
 #[catch(422)]
-pub fn unprocessable_entity(req: &Request) -> Ructe {
+pub fn unprocessable_entity(req: &Request<'_>) -> Ructe {
     let rockets = req.guard::<PlumeRocket>().unwrap();
     render!(errors::unprocessable_entity(&rockets.to_context()))
 }
 
 #[catch(500)]
-pub fn server_error(req: &Request) -> Ructe {
+pub fn server_error(req: &Request<'_>) -> Ructe {
     let rockets = req.guard::<PlumeRocket>().unwrap();
     render!(errors::server_error(&rockets.to_context()))
 }

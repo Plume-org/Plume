@@ -48,7 +48,7 @@ lazy_static! {
     };
 }
 
-fn url_add_prefix(url: &str) -> Option<Cow<str>> {
+fn url_add_prefix(url: &str) -> Option<Cow<'_, str>> {
     if url.starts_with('#') && !url.starts_with("#postcontent-") {
         //if start with an #
         let mut new_url = "#postcontent-".to_owned(); //change to valid id
@@ -105,7 +105,7 @@ struct SafeStringVisitor;
 impl<'de> Visitor<'de> for SafeStringVisitor {
     type Value = SafeString;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str("a string")
     }
 
@@ -147,7 +147,7 @@ where
     DB: diesel::backend::Backend,
     str: ToSql<diesel::sql_types::Text, DB>,
 {
-    fn to_sql<W: Write>(&self, out: &mut Output<W, DB>) -> serialize::Result {
+    fn to_sql<W: Write>(&self, out: &mut Output<'_, W, DB>) -> serialize::Result {
         str::to_sql(&self.value, out)
     }
 }
@@ -159,7 +159,7 @@ impl Borrow<str> for SafeString {
 }
 
 impl Display for SafeString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
     }
 }

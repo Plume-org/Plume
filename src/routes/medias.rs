@@ -1,3 +1,5 @@
+use crate::routes::{errors::ErrorPage, Page};
+use crate::template_utils::{IntoContext, Ructe};
 use guid_create::GUID;
 use multipart::server::{
     save::{SaveResult, SavedData},
@@ -10,9 +12,7 @@ use rocket::{
     Data,
 };
 use rocket_i18n::I18n;
-use crate::routes::{errors::ErrorPage, Page};
 use std::fs;
-use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/medias?<page>")]
 pub fn list(user: User, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {

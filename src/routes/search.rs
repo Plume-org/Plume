@@ -1,10 +1,10 @@
 use chrono::offset::Utc;
 use rocket::request::Form;
 
-use plume_models::{search::Query, PlumeRocket};
 use crate::routes::Page;
-use std::str::FromStr;
 use crate::template_utils::{IntoContext, Ructe};
+use plume_models::{search::Query, PlumeRocket};
+use std::str::FromStr;
 
 #[derive(Default, FromForm)]
 pub struct SearchQuery {

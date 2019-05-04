@@ -1,8 +1,4 @@
-extern crate clap;
-extern crate diesel;
-extern crate dotenv;
-extern crate plume_models;
-extern crate rpassword;
+use dotenv;
 
 use clap::App;
 use diesel::Connection;

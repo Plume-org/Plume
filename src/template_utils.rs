@@ -1,5 +1,6 @@
 use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
 
+use crate::templates::Html;
 use rocket::http::hyper::header::{ETag, EntityTag};
 use rocket::http::{Method, Status};
 use rocket::request::Request;
@@ -7,7 +8,6 @@ use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hasher;
-use crate::templates::Html;
 
 pub use askama_escape::escape;
 
@@ -53,7 +53,7 @@ impl IntoContext for PlumeRocket {
 pub struct Ructe(pub Vec<u8>);
 
 impl<'r> Responder<'r> for Ructe {
-    fn respond_to(self, r: &Request) -> response::Result<'r> {
+    fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
         //if method is not Get or page contain a form, no caching
         if r.method() != Method::Get || self.0.windows(6).any(|w| w == b"<form ") {
             return HtmlCt(self.0).respond_to(r);
@@ -96,7 +96,7 @@ macro_rules! render {
     }
 }
 
-pub fn translate_notification(ctx: BaseContext, notif: Notification) -> String {
+pub fn translate_notification(ctx: BaseContext<'_>, notif: Notification) -> String {
     let name = notif.get_actor(ctx.0).unwrap().name();
     match notif.kind.as_ref() {
         notification_kind::COMMENT => i18n!(ctx.1, "{0} commented on your article."; &name),

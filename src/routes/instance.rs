@@ -8,13 +8,13 @@ use serde_json;
 use validator::{Validate, ValidationErrors};
 
 use crate::inbox;
+use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
+use crate::template_utils::{IntoContext, Ructe};
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
-use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
-use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/")]
 pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
@@ -226,7 +226,7 @@ pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirec
 pub fn shared_inbox(
     rockets: PlumeRocket,
     data: inbox::SignedJson<serde_json::Value>,
-    headers: Headers,
+    headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
     inbox::handle_incoming(rockets, data, headers)
 }

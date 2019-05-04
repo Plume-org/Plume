@@ -248,13 +248,13 @@ impl Media {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use crate::tests::db;
+    use crate::users::tests as usersTests;
+    use crate::Connection as Conn;
     use diesel::Connection;
     use std::env::{current_dir, set_current_dir};
     use std::fs;
     use std::path::Path;
-    use crate::tests::db;
-    use crate::users::tests as usersTests;
-    use crate::Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Media>) {
         let mut wd = current_dir().unwrap().to_path_buf();

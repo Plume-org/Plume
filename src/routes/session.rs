@@ -15,12 +15,12 @@ use std::{
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::mail::{build_mail, Mailer};
+use crate::routes::errors::ErrorPage;
+use crate::template_utils::{IntoContext, Ructe};
 use plume_models::{
     users::{User, AUTH_COOKIE},
     Error, PlumeRocket, CONFIG,
 };
-use crate::routes::errors::ErrorPage;
-use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/login?<m>")]
 pub fn new(m: Option<String>, rockets: PlumeRocket) -> Ructe {
@@ -43,7 +43,7 @@ pub struct LoginForm {
 #[post("/login", data = "<form>")]
 pub fn create(
     form: LenientForm<LoginForm>,
-    mut cookies: Cookies,
+    mut cookies: Cookies<'_>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
@@ -122,7 +122,7 @@ pub fn create(
 }
 
 #[get("/logout")]
-pub fn delete(mut cookies: Cookies, intl: I18n) -> Flash<Redirect> {
+pub fn delete(mut cookies: Cookies<'_>, intl: I18n) -> Flash<Redirect> {
     if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
         cookies.remove_private(cookie);
     }
@@ -162,9 +162,9 @@ pub struct ResetForm {
 
 #[post("/password-reset", data = "<form>")]
 pub fn password_reset_request(
-    mail: State<Arc<Mutex<Mailer>>>,
+    mail: State<'_, Arc<Mutex<Mailer>>>,
     form: Form<ResetForm>,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+    requests: State<'_, Arc<Mutex<Vec<ResetRequest>>>>,
     rockets: PlumeRocket,
 ) -> Ructe {
     let mut requests = requests.lock().unwrap();
@@ -201,7 +201,7 @@ pub fn password_reset_request(
 #[get("/password-reset/<token>")]
 pub fn password_reset_form(
     token: String,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+    requests: State<'_, Arc<Mutex<Vec<ResetRequest>>>>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     requests
@@ -239,7 +239,7 @@ fn passwords_match(form: &NewPasswordForm) -> Result<(), ValidationError> {
 #[post("/password-reset/<token>", data = "<form>")]
 pub fn password_reset(
     token: String,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
+    requests: State<'_, Arc<Mutex<Vec<ResetRequest>>>>,
     form: Form<NewPasswordForm>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {

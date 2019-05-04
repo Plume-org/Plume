@@ -14,13 +14,6 @@ use crate::blogs::Blog;
 use crate::instance::Instance;
 use crate::medias::Media;
 use crate::mentions::Mention;
-use plume_common::{
-    activity_pub::{
-        inbox::{AsObject, FromId},
-        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
-    },
-    utils::md_to_html,
-};
 use crate::post_authors::*;
 use crate::safe_string::SafeString;
 use crate::schema::posts;
@@ -28,6 +21,13 @@ use crate::search::Searcher;
 use crate::tags::*;
 use crate::users::User;
 use crate::{ap_url, Connection, Error, PlumeRocket, Result, CONFIG};
+use plume_common::{
+    activity_pub::{
+        inbox::{AsObject, FromId},
+        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
+    },
+    utils::md_to_html,
+};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 

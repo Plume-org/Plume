@@ -63,7 +63,7 @@ impl<T> ActivityStream<T> {
 }
 
 impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
-    fn respond_to(self, request: &Request) -> Result<Response<'r>, Status> {
+    fn respond_to(self, request: &Request<'_>) -> Result<Response<'r>, Status> {
         let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();
         serde_json::to_string(&json).respond_to(request).map(|r| {

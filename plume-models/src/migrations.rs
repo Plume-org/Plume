@@ -10,7 +10,7 @@ use std::path::Path;
 #[allow(dead_code)] //variants might not be constructed if not required by current migrations
 enum Action {
     Sql(&'static str),
-    Function(&'static Fn(&Connection, &Path) -> Result<()>),
+    Function(&'static dyn Fn(&Connection, &Path) -> Result<()>),
 }
 
 impl Action {

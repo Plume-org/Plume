@@ -947,11 +947,11 @@ impl NewUser {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use diesel::Connection;
     use crate::instance::{tests as instance_tests, Instance};
     use crate::search::tests::get_searcher;
     use crate::tests::{db, rockets};
     use crate::Connection as Conn;
+    use diesel::Connection;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<User> {
         instance_tests::fill_database(conn);

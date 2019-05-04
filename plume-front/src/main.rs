@@ -1,7 +1,7 @@
 #![recursion_limit = "128"]
 #![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
-extern crate gettext;
+use gettext;
 #[macro_use]
 extern crate gettext_macros;
 #[macro_use]

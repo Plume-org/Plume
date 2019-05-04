@@ -27,7 +27,7 @@ impl From<std::option::NoneError> for ApiError {
 }
 
 impl<'r> Responder<'r> for ApiError {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
+    fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
         match self.0 {
             Error::NotFound => Json(json!({
                 "error": "Not found"

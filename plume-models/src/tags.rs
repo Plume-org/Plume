@@ -1,9 +1,9 @@
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use crate::instance::Instance;
-use plume_common::activity_pub::Hashtag;
 use crate::schema::tags;
 use crate::{ap_url, Connection, Error, Result};
+use plume_common::activity_pub::Hashtag;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Tag {

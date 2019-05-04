@@ -3,38 +3,25 @@
 #![feature(custom_attribute)]
 #![feature(proc_macro_hygiene)]
 
-extern crate activitypub;
-extern crate ammonia;
-extern crate askama_escape;
-extern crate bcrypt;
-extern crate chrono;
 #[macro_use]
 extern crate diesel;
-extern crate guid_create;
-extern crate heck;
-extern crate itertools;
 #[macro_use]
 extern crate lazy_static;
-extern crate migrations_internals;
-extern crate openssl;
-extern crate plume_api;
-extern crate plume_common;
 #[macro_use]
 extern crate plume_macro;
-extern crate reqwest;
-extern crate rocket;
-extern crate rocket_i18n;
-extern crate scheduled_thread_pool;
-extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
-extern crate url;
-extern crate webfinger;
-extern crate whatlang;
+
+use activitypub;
+use bcrypt;
+use openssl;
+use reqwest;
+use url;
+use webfinger;
 
 use plume_common::activity_pub::inbox::InboxError;
 
@@ -299,17 +286,17 @@ pub fn ap_url(url: &str) -> String {
 #[macro_use]
 mod tests {
     use crate::db_conn;
+    use crate::migrations::IMPORTED_MIGRATIONS;
+    use crate::search;
+    use crate::Connection as Conn;
+    use crate::CONFIG;
     use diesel::r2d2::ConnectionManager;
     #[cfg(feature = "sqlite")]
     use diesel::{dsl::sql_query, RunQueryDsl};
-    use crate::migrations::IMPORTED_MIGRATIONS;
     use plume_common::utils::random_hex;
     use scheduled_thread_pool::ScheduledThreadPool;
-    use crate::search;
     use std::env::temp_dir;
     use std::sync::Arc;
-    use crate::Connection as Conn;
-    use crate::CONFIG;
 
     #[macro_export]
     macro_rules! part_eq {

@@ -14,16 +14,16 @@ use crate::instance::Instance;
 use crate::medias::Media;
 use crate::mentions::Mention;
 use crate::notifications::*;
-use plume_common::activity_pub::{
-    inbox::{AsObject, FromId},
-    Id, IntoId, PUBLIC_VISIBILITY,
-};
-use plume_common::utils;
 use crate::posts::Post;
 use crate::safe_string::SafeString;
 use crate::schema::comments;
 use crate::users::User;
 use crate::{Connection, Error, PlumeRocket, Result};
+use plume_common::activity_pub::{
+    inbox::{AsObject, FromId},
+    Id, IntoId, PUBLIC_VISIBILITY,
+};
+use plume_common::utils;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Comment {

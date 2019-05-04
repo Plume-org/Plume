@@ -4,11 +4,11 @@ use std::iter::Iterator;
 
 use crate::ap_url;
 use crate::medias::Media;
-use plume_common::utils::md_to_html;
 use crate::safe_string::SafeString;
 use crate::schema::{instances, users};
 use crate::users::User;
 use crate::{Connection, Error, Result};
+use plume_common::utils::md_to_html;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
@@ -166,9 +166,9 @@ impl Instance {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use diesel::Connection;
     use crate::tests::db;
     use crate::Connection as Conn;
+    use diesel::Connection;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
         vec![

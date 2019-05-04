@@ -3,14 +3,14 @@ use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use crate::notifications::*;
-use plume_common::activity_pub::{
-    inbox::{AsObject, FromId},
-    Id, IntoId, PUBLIC_VISIBILITY,
-};
 use crate::posts::Post;
 use crate::schema::likes;
 use crate::users::User;
 use crate::{Connection, Error, PlumeRocket, Result};
+use plume_common::activity_pub::{
+    inbox::{AsObject, FromId},
+    Id, IntoId, PUBLIC_VISIBILITY,
+};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Like {

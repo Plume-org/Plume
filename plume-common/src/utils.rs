@@ -46,7 +46,7 @@ enum State {
     Ready,
 }
 
-fn to_inline(tag: Tag) -> Tag {
+fn to_inline(tag: Tag<'_>) -> Tag<'_> {
     match tag {
         Tag::Header(_) | Tag::Table(_) | Tag::TableHead | Tag::TableRow | Tag::TableCell => {
             Tag::Paragraph
@@ -97,7 +97,7 @@ fn inline_tags<'a>(
     }
 }
 
-pub type MediaProcessor<'a> = Box<'a + Fn(i32) -> Option<(String, Option<String>)>>;
+pub type MediaProcessor<'a> = Box<dyn 'a + Fn(i32) -> Option<(String, Option<String>)>>;
 
 fn process_image<'a, 'b>(
     evt: Event<'a>,
@@ -160,7 +160,7 @@ pub fn md_to_html<'a>(
 ) -> (String, HashSet<String>, HashSet<String>) {
     let parser = Parser::new_ext(md, Options::all());
 
-    let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
+    let (parser, mentions, hashtags): (Vec<Event<'_>>, Vec<String>, Vec<String>) = parser
         // Flatten text because pulldown_cmark break #hashtag in two individual text elements
         .scan(None, flatten_text)
         .flat_map(IntoIterator::into_iter)

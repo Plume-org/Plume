@@ -13,16 +13,16 @@ use webfinger::*;
 
 use crate::instance::*;
 use crate::medias::Media;
-use plume_common::activity_pub::{
-    inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
-};
 use crate::posts::Post;
 use crate::safe_string::SafeString;
 use crate::schema::blogs;
 use crate::search::Searcher;
 use crate::users::User;
 use crate::{Connection, Error, PlumeRocket, Result};
+use plume_common::activity_pub::{
+    inbox::{AsActor, FromId},
+    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
+};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -457,13 +457,13 @@ impl NewBlog {
 pub(crate) mod tests {
     use super::*;
     use crate::blog_authors::*;
-    use diesel::Connection;
     use crate::instance::tests as instance_tests;
     use crate::medias::NewMedia;
     use crate::search::tests::get_searcher;
     use crate::tests::{db, rockets};
     use crate::users::tests as usersTests;
     use crate::Connection as Conn;
+    use diesel::Connection;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Blog>) {
         instance_tests::fill_database(conn);

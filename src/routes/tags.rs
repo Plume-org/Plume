@@ -1,6 +1,6 @@
-use plume_models::{posts::Post, PlumeRocket};
 use crate::routes::{errors::ErrorPage, Page};
 use crate::template_utils::{IntoContext, Ructe};
+use plume_models::{posts::Post, PlumeRocket};
 
 #[get("/tag/<name>?<page>")]
 pub fn tag(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {

@@ -131,7 +131,7 @@ impl SignatureValidity {
 
 pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     sender: &S,
-    all_headers: &HeaderMap,
+    all_headers: &HeaderMap<'_>,
     data: &request::Digest,
 ) -> SignatureValidity {
     let sig_header = all_headers.get_one("Signature");

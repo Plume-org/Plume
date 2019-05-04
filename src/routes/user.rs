@@ -11,6 +11,8 @@ use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::inbox;
+use crate::routes::{errors::ErrorPage, Page, RemoteForm};
+use crate::template_utils::{IntoContext, Ructe};
 use plume_common::activity_pub::{broadcast, inbox::FromId, ActivityStream, ApRequest, Id};
 use plume_common::utils;
 use plume_models::{
@@ -25,8 +27,6 @@ use plume_models::{
     users::*,
     Error, PlumeRocket,
 };
-use crate::routes::{errors::ErrorPage, Page, RemoteForm};
-use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/me")]
 pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
@@ -404,7 +404,7 @@ pub fn update(
 pub fn delete(
     name: String,
     user: User,
-    mut cookies: Cookies,
+    mut cookies: Cookies<'_>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let account = User::find_by_fqn(&rockets, &name)?;
@@ -552,7 +552,7 @@ pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<Order
 pub fn inbox(
     name: String,
     data: inbox::SignedJson<serde_json::Value>,
-    headers: Headers,
+    headers: Headers<'_>,
     rockets: PlumeRocket,
 ) -> Result<String, status::BadRequest<&'static str>> {
     User::find_by_fqn(&rockets, &name).map_err(|_| status::BadRequest(Some("User not found")))?;
