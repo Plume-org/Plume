@@ -3,6 +3,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
 use notifications::*;
+use plume_common::activity_pub::inbox::AsActor;
 use posts::Post;
 use schema::mentions;
 use users::User;
@@ -129,14 +130,18 @@ impl Mention {
 
     fn notify(&self, conn: &Connection) -> Result<()> {
         let m = self.get_mentioned(conn)?;
-        Notification::insert(
-            conn,
-            NewNotification {
-                kind: notification_kind::MENTION.to_string(),
-                object_id: self.id,
-                user_id: m.id,
-            },
-        )
-        .map(|_| ())
+        if m.is_local() {
+            Notification::insert(
+                conn,
+                NewNotification {
+                    kind: notification_kind::MENTION.to_string(),
+                    object_id: self.id,
+                    user_id: m.id,
+                },
+            )
+            .map(|_| ())
+        } else {
+            Ok(())
+        }
     }
 }
