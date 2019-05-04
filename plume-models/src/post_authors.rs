@@ -1,9 +1,9 @@
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use posts::Post;
-use schema::post_authors;
-use users::User;
-use {Error, Result};
+use crate::posts::Post;
+use crate::schema::post_authors;
+use crate::users::User;
+use crate::{Error, Result};
 
 #[derive(Clone, Queryable, Identifiable, Associations)]
 #[belongs_to(Post)]

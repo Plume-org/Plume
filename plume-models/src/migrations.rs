@@ -1,6 +1,6 @@
-use Connection;
-use Error;
-use Result;
+use crate::Connection;
+use crate::Error;
+use crate::Result;
 
 use diesel::connection::{Connection as Conn, SimpleConnection};
 use migrations_internals::{setup_database, MigrationConnection};

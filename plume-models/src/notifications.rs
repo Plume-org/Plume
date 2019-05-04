@@ -1,15 +1,15 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use comments::Comment;
-use follows::Follow;
-use likes::Like;
-use mentions::Mention;
-use posts::Post;
-use reshares::Reshare;
-use schema::notifications;
-use users::User;
-use {Connection, Error, Result};
+use crate::comments::Comment;
+use crate::follows::Follow;
+use crate::likes::Like;
+use crate::mentions::Mention;
+use crate::posts::Post;
+use crate::reshares::Reshare;
+use crate::schema::notifications;
+use crate::users::User;
+use crate::{Connection, Error, Result};
 
 pub mod notification_kind {
     pub const COMMENT: &str = "COMMENT";

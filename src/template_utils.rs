@@ -7,7 +7,7 @@ use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hasher;
-use templates::Html;
+use crate::templates::Html;
 
 pub use askama_escape::escape;
 
@@ -82,7 +82,7 @@ impl<'r> Responder<'r> for Ructe {
 macro_rules! render {
     ($group:tt :: $page:tt ( $( $param:expr ),* ) ) => {
         {
-            use templates;
+            use crate::templates;
 
             let mut res = vec![];
             templates::$group::$page(

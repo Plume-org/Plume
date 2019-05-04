@@ -7,14 +7,14 @@ use rocket_i18n::I18n;
 use serde_json;
 use validator::{Validate, ValidationErrors};
 
-use inbox;
+use crate::inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
-use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
-use template_utils::{IntoContext, Ructe};
+use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/")]
 pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {

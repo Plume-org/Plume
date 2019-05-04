@@ -1,8 +1,8 @@
-@use templates::base;
-@use routes::session::LoginForm;
-@use routes::RemoteForm;
-@use template_utils::*;
-@use validator::ValidationErrors;
+@use crate::templates::base;
+@use crate::routes::session::LoginForm;
+@use crate::routes::RemoteForm;
+@use crate::template_utils::*;
+@use crate::validator::ValidationErrors;
 
 @(ctx: BaseContext, title: String, login_msg: String, remote_msg: String, header: Content, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 

@@ -11,12 +11,12 @@ pub(crate) mod tests {
     use std::env::temp_dir;
     use std::str::FromStr;
 
-    use blogs::tests::fill_database;
+    use crate::blogs::tests::fill_database;
     use plume_common::utils::random_hex;
-    use post_authors::*;
-    use posts::{NewPost, Post};
-    use safe_string::SafeString;
-    use tests::db;
+    use crate::post_authors::*;
+    use crate::posts::{NewPost, Post};
+    use crate::safe_string::SafeString;
+    use crate::tests::db;
 
     pub(crate) fn get_searcher() -> Searcher {
         let dir = temp_dir().join("plume-test");

@@ -2,13 +2,13 @@ use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use std::iter::Iterator;
 
-use ap_url;
-use medias::Media;
+use crate::ap_url;
+use crate::medias::Media;
 use plume_common::utils::md_to_html;
-use safe_string::SafeString;
-use schema::{instances, users};
-use users::User;
-use {Connection, Error, Result};
+use crate::safe_string::SafeString;
+use crate::schema::{instances, users};
+use crate::users::User;
+use crate::{Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
@@ -167,8 +167,8 @@ impl Instance {
 pub(crate) mod tests {
     use super::*;
     use diesel::Connection;
-    use tests::db;
-    use Connection as Conn;
+    use crate::tests::db;
+    use crate::Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
         vec![

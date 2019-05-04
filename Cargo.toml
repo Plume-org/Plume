@@ -3,6 +3,7 @@ authors = ["Plume contributors"]
 name = "plume"
 version = "0.3.0"
 repository = "https://github.com/Plume-org/Plume"
+edition = "2018"
 
 [dependencies]
 activitypub = "0.1.3"

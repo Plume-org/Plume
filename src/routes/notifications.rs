@@ -3,8 +3,8 @@ use rocket_i18n::I18n;
 
 use plume_common::utils;
 use plume_models::{notifications::Notification, users::User, PlumeRocket};
-use routes::{errors::ErrorPage, Page};
-use template_utils::{IntoContext, Ructe};
+use crate::routes::{errors::ErrorPage, Page};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/notifications?<page>")]
 pub fn notifications(

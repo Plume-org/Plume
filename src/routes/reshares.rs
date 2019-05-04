@@ -6,7 +6,7 @@ use plume_common::utils;
 use plume_models::{
     blogs::Blog, inbox::inbox, posts::Post, reshares::*, users::User, Error, PlumeRocket,
 };
-use routes::errors::ErrorPage;
+use crate::routes::errors::ErrorPage;
 
 #[post("/~/<blog>/<slug>/reshare")]
 pub fn create(

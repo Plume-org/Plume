@@ -1,5 +1,5 @@
 use chrono::{naive::NaiveDate, offset::Utc, Datelike};
-use search::searcher::Searcher;
+use crate::search::searcher::Searcher;
 use std::{cmp, ops::Bound};
 use tantivy::{query::*, schema::*, Term};
 
@@ -300,7 +300,7 @@ impl PlumeQuery {
                         } else {
                             IndexRecordOption::WithFreqsAndPositions
                         },
-                    )) as Box<dyn Query + 'static>,
+                    )) as Box<Query + 'static>,
                 ),
                 (
                     Occur::Must,
@@ -321,7 +321,7 @@ impl PlumeQuery {
                                 (
                                     Occur::Should,
                                     Box::new(TermQuery::new(term, IndexRecordOption::Basic))
-                                        as Box<dyn Query + 'static>,
+                                        as Box<Query + 'static>,
                                 )
                             })
                             .collect::<Vec<_>>(),

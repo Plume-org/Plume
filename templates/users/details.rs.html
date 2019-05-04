@@ -1,9 +1,9 @@
-@use templates::{base, partials::post_card, users::header};
-@use template_utils::*;
-@use plume_models::instance::Instance;
-@use plume_models::users::User;
-@use plume_models::posts::Post;
-@use routes::*;
+@use crate::templates::{base, partials::post_card, users::header};
+@use crate::template_utils::*;
+@use crate::plume_models::instance::Instance;
+@use crate::plume_models::users::User;
+@use crate::plume_models::posts::Post;
+@use crate::routes::*;
 
 @(ctx: BaseContext, user: User, follows: bool, is_remote: bool, remote_url: String, recents: Vec<Post>, reshares: Vec<Post>)
 

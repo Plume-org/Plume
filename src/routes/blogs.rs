@@ -16,8 +16,8 @@ use plume_models::{
     blog_authors::*, blogs::*, instance::Instance, medias::*, posts::Post, safe_string::SafeString,
     users::User, Connection, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page};
-use template_utils::{IntoContext, Ructe};
+use crate::routes::{errors::ErrorPage, Page};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {

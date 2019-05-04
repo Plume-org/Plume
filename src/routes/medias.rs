@@ -10,9 +10,9 @@ use rocket::{
     Data,
 };
 use rocket_i18n::I18n;
-use routes::{errors::ErrorPage, Page};
+use crate::routes::{errors::ErrorPage, Page};
 use std::fs;
-use template_utils::{IntoContext, Ructe};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/medias?<page>")]
 pub fn list(user: User, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {

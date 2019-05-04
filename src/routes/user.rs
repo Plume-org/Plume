@@ -10,7 +10,7 @@ use serde_json;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use inbox;
+use crate::inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId, ActivityStream, ApRequest, Id};
 use plume_common::utils;
 use plume_models::{
@@ -25,8 +25,8 @@ use plume_models::{
     users::*,
     Error, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page, RemoteForm};
-use template_utils::{IntoContext, Ructe};
+use crate::routes::{errors::ErrorPage, Page, RemoteForm};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/me")]
 pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {

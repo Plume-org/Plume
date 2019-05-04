@@ -1,13 +1,13 @@
-@use templates::{base, partials::comment};
-@use template_utils::*;
-@use plume_models::blogs::Blog;
-@use plume_models::comments::{Comment, CommentTree};
-@use plume_models::posts::Post;
-@use plume_models::tags::Tag;
-@use plume_models::users::User;
-@use validator::ValidationErrors;
-@use routes::comments::NewCommentForm;
-@use routes::*;
+@use crate::templates::{base, partials::comment};
+@use crate::template_utils::*;
+@use crate::plume_models::blogs::Blog;
+@use crate::plume_models::comments::{Comment, CommentTree};
+@use crate::plume_models::posts::Post;
+@use crate::plume_models::tags::Tag;
+@use crate::plume_models::users::User;
+@use crate::validator::ValidationErrors;
+@use crate::routes::comments::NewCommentForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 
@@ -110,7 +110,7 @@
                 </form>
             </div>
         } else {
-	    <p class="center">@Html(i18n!(ctx.1, "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article";
+	    <p class="center">@Html(i18n!(ctx.1, "{0}Log in{1}, or {2}use crate::your Fediverse account{3} to interact with this article";
 			format!("<a href='{}'>", uri!(session::new: m = _)), "</a>",
 			format!("<a href='{}'>", uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)), "</a>"
 			))</p>

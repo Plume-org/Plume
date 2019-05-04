@@ -2,15 +2,15 @@ use activitypub::activity;
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use notifications::*;
+use crate::notifications::*;
 use plume_common::activity_pub::{
     inbox::{AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILITY,
 };
-use posts::Post;
-use schema::likes;
-use users::User;
-use {Connection, Error, PlumeRocket, Result};
+use crate::posts::Post;
+use crate::schema::likes;
+use crate::users::User;
+use crate::{Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Like {

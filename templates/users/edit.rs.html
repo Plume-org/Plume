@@ -1,8 +1,8 @@
-@use templates::base;
-@use template_utils::*;
-@use routes::user::UpdateUserForm;
-@use validator::ValidationErrors;
-@use routes::*;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::user::UpdateUserForm;
+@use crate::validator::ValidationErrors;
+@use crate::routes::*;
 
 @(ctx: BaseContext, form: UpdateUserForm, errors: ValidationErrors)
 
@@ -14,7 +14,7 @@
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload an avatar")</a>
         </p>
         <form method="post" action="@uri!(user::update: _name = u.username.clone())">
-            <!-- Rocket hack to use various HTTP methods -->
+            <!-- Rocket hack to use crate::various HTTP methods -->
             <input type=hidden name="_method" value="put">
 
             @input!(ctx.1, display_name (text), "Display name", form, errors.clone())

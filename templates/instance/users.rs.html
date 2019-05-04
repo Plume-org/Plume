@@ -1,7 +1,7 @@
-@use plume_models::users::User;
-@use templates::base;
-@use template_utils::*;
-@use routes::*;
+@use crate::plume_models::users::User;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, users: Vec<User>, page: i32, n_pages: i32)
 

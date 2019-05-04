@@ -3,7 +3,7 @@ use rocket::{
     response::{self, Responder},
     Request,
 };
-use template_utils::{IntoContext, Ructe};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[derive(Debug)]
 pub struct ErrorPage(Error);

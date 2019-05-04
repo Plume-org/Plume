@@ -1,6 +1,6 @@
-@use templates::partials::post_card;
-@use plume_models::posts::Post;
-@use template_utils::*;
+@use crate::templates::partials::post_card;
+@use crate::plume_models::posts::Post;
+@use crate::template_utils::*;
 
 @(ctx: BaseContext, articles: Vec<Post>, link: &str, title: String)
 

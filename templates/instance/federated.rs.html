@@ -1,7 +1,7 @@
-@use plume_models::posts::Post;
-@use templates::{base, partials::post_card};
-@use template_utils::*;
-@use routes::*;
+@use crate::plume_models::posts::Post;
+@use crate::templates::{base, partials::post_card};
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, articles: Vec<Post>, page: i32, n_pages: i32)
 

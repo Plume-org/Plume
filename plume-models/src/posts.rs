@@ -10,10 +10,10 @@ use heck::{CamelCase, KebabCase};
 use serde_json;
 use std::collections::HashSet;
 
-use blogs::Blog;
-use instance::Instance;
-use medias::Media;
-use mentions::Mention;
+use crate::blogs::Blog;
+use crate::instance::Instance;
+use crate::medias::Media;
+use crate::mentions::Mention;
 use plume_common::{
     activity_pub::{
         inbox::{AsObject, FromId},
@@ -21,13 +21,13 @@ use plume_common::{
     },
     utils::md_to_html,
 };
-use post_authors::*;
-use safe_string::SafeString;
-use schema::posts;
-use search::Searcher;
-use tags::*;
-use users::User;
-use {ap_url, Connection, Error, PlumeRocket, Result, CONFIG};
+use crate::post_authors::*;
+use crate::safe_string::SafeString;
+use crate::schema::posts;
+use crate::search::Searcher;
+use crate::tags::*;
+use crate::users::User;
+use crate::{ap_url, Connection, Error, PlumeRocket, Result, CONFIG};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -110,7 +110,7 @@ impl Post {
         tag: String,
         (min, max): (i32, i32),
     ) -> Result<Vec<Post>> {
-        use schema::tags;
+        use crate::schema::tags;
 
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
         posts::table
@@ -124,7 +124,7 @@ impl Post {
     }
 
     pub fn count_for_tag(conn: &Connection, tag: String) -> Result<i64> {
-        use schema::tags;
+        use crate::schema::tags;
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
         posts::table
             .filter(posts::id.eq_any(ids))
@@ -138,8 +138,8 @@ impl Post {
     }
 
     pub fn count_local(conn: &Connection) -> Result<i64> {
-        use schema::post_authors;
-        use schema::users;
+        use crate::schema::post_authors;
+        use crate::schema::users;
         let local_authors = users::table
             .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
             .select(users::id);
@@ -196,7 +196,7 @@ impl Post {
         author: &User,
         limit: i64,
     ) -> Result<Vec<Post>> {
-        use schema::post_authors;
+        use crate::schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
         posts::table
@@ -263,7 +263,7 @@ impl Post {
         instance_id: i32,
         (min, max): (i32, i32),
     ) -> Result<Vec<Post>> {
-        use schema::blogs;
+        use crate::schema::blogs;
 
         let blog_ids = blogs::table
             .filter(blogs::instance_id.eq(instance_id))
@@ -285,7 +285,7 @@ impl Post {
         followed: Vec<i32>,
         (min, max): (i32, i32),
     ) -> Result<Vec<Post>> {
-        use schema::post_authors;
+        use crate::schema::post_authors;
         let post_ids = post_authors::table
             .filter(post_authors::author_id.eq_any(followed))
             .select(post_authors::post_id);
@@ -301,7 +301,7 @@ impl Post {
     }
 
     pub fn drafts_by_author(conn: &Connection, author: &User) -> Result<Vec<Post>> {
-        use schema::post_authors;
+        use crate::schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
         posts::table
@@ -313,8 +313,8 @@ impl Post {
     }
 
     pub fn get_authors(&self, conn: &Connection) -> Result<Vec<User>> {
-        use schema::post_authors;
-        use schema::users;
+        use crate::schema::post_authors;
+        use crate::schema::users;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
         users::table
             .filter(users::id.eq_any(author_list))
@@ -323,7 +323,7 @@ impl Post {
     }
 
     pub fn is_author(&self, conn: &Connection, author_id: i32) -> Result<bool> {
-        use schema::post_authors;
+        use crate::schema::post_authors;
         Ok(PostAuthor::belonging_to(self)
             .filter(post_authors::author_id.eq(author_id))
             .count()
@@ -332,7 +332,7 @@ impl Post {
     }
 
     pub fn get_blog(&self, conn: &Connection) -> Result<Blog> {
-        use schema::blogs;
+        use crate::schema::blogs;
         blogs::table
             .filter(blogs::id.eq(self.blog_id))
             .limit(1)
@@ -343,7 +343,7 @@ impl Post {
     }
 
     pub fn count_likes(&self, conn: &Connection) -> Result<i64> {
-        use schema::likes;
+        use crate::schema::likes;
         likes::table
             .filter(likes::post_id.eq(self.id))
             .count()
@@ -352,7 +352,7 @@ impl Post {
     }
 
     pub fn count_reshares(&self, conn: &Connection) -> Result<i64> {
-        use schema::reshares;
+        use crate::schema::reshares;
         reshares::table
             .filter(reshares::post_id.eq(self.id))
             .count()

@@ -289,7 +289,7 @@ macro_rules! last {
 }
 
 mod config;
-pub use config::CONFIG;
+pub use crate::config::CONFIG;
 
 pub fn ap_url(url: &str) -> String {
     format!("https://{}", url)
@@ -298,18 +298,18 @@ pub fn ap_url(url: &str) -> String {
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use db_conn;
+    use crate::db_conn;
     use diesel::r2d2::ConnectionManager;
     #[cfg(feature = "sqlite")]
     use diesel::{dsl::sql_query, RunQueryDsl};
-    use migrations::IMPORTED_MIGRATIONS;
+    use crate::migrations::IMPORTED_MIGRATIONS;
     use plume_common::utils::random_hex;
     use scheduled_thread_pool::ScheduledThreadPool;
-    use search;
+    use crate::search;
     use std::env::temp_dir;
     use std::sync::Arc;
-    use Connection as Conn;
-    use CONFIG;
+    use crate::Connection as Conn;
+    use crate::CONFIG;
 
     #[macro_export]
     macro_rules! part_eq {
@@ -376,4 +376,4 @@ pub mod schema;
 pub mod search;
 pub mod tags;
 pub mod users;
-pub use plume_rocket::PlumeRocket;
+pub use crate::plume_rocket::PlumeRocket;

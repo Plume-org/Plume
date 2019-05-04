@@ -6,9 +6,9 @@ use rocket::{
     Outcome,
 };
 
-use db_conn::DbConn;
-use schema::api_tokens;
-use {Error, Result};
+use crate::db_conn::DbConn;
+use crate::schema::api_tokens;
+use crate::{Error, Result};
 
 #[derive(Clone, Queryable)]
 pub struct ApiToken {

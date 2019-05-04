@@ -1,8 +1,8 @@
-@use validator::ValidationErrors;
-@use templates::base;
-@use template_utils::*;
-@use routes::blogs::NewBlogForm;
-@use routes::*;
+@use crate::validator::ValidationErrors;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::blogs::NewBlogForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, form: &NewBlogForm, errors: ValidationErrors)
 

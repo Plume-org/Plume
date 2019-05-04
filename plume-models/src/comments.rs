@@ -9,21 +9,21 @@ use serde_json;
 
 use std::collections::HashSet;
 
-use comment_seers::{CommentSeers, NewCommentSeers};
-use instance::Instance;
-use medias::Media;
-use mentions::Mention;
-use notifications::*;
+use crate::comment_seers::{CommentSeers, NewCommentSeers};
+use crate::instance::Instance;
+use crate::medias::Media;
+use crate::mentions::Mention;
+use crate::notifications::*;
 use plume_common::activity_pub::{
     inbox::{AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILITY,
 };
 use plume_common::utils;
-use posts::Post;
-use safe_string::SafeString;
-use schema::comments;
-use users::User;
-use {Connection, Error, PlumeRocket, Result};
+use crate::posts::Post;
+use crate::safe_string::SafeString;
+use crate::schema::comments;
+use crate::users::User;
+use crate::{Connection, Error, PlumeRocket, Result};
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Comment {
@@ -77,7 +77,7 @@ impl Comment {
     }
 
     pub fn count_local(conn: &Connection) -> Result<i64> {
-        use schema::users;
+        use crate::schema::users;
         let local_authors = users::table
             .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
             .select(users::id);

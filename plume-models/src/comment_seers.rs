@@ -1,9 +1,9 @@
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use comments::Comment;
-use schema::comment_seers;
-use users::User;
-use {Connection, Error, Result};
+use crate::comments::Comment;
+use crate::schema::comment_seers;
+use crate::users::User;
+use crate::{Connection, Error, Result};
 
 #[derive(Queryable, Clone)]
 pub struct CommentSeers {

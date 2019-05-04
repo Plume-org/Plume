@@ -1,8 +1,8 @@
-use instance::Instance;
-use posts::Post;
-use schema::posts;
-use tags::Tag;
-use Connection;
+use crate::instance::Instance;
+use crate::posts::Post;
+use crate::schema::posts;
+use crate::tags::Tag;
+use crate::Connection;
 
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -15,8 +15,8 @@ use tantivy::{
 use whatlang::{detect as detect_lang, Lang};
 
 use super::tokenizer;
-use search::query::PlumeQuery;
-use Result;
+use crate::search::query::PlumeQuery;
+use crate::Result;
 
 #[derive(Debug)]
 pub enum SearcherError {

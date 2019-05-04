@@ -26,8 +26,8 @@ use plume_models::{
     users::User,
     Error, PlumeRocket,
 };
-use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm};
-use template_utils::{IntoContext, Ructe};
+use crate::routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm};
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
 pub fn details(

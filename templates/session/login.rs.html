@@ -1,8 +1,8 @@
-@use template_utils::*;
-@use templates::base;
-@use validator::ValidationErrors;
-@use routes::session::LoginForm;
-@use routes::*;
+@use crate::template_utils::*;
+@use crate::templates::base;
+@use crate::validator::ValidationErrors;
+@use crate::routes::session::LoginForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, message: Option<String>, form: &LoginForm, errors: ValidationErrors)
 

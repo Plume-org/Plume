@@ -10,11 +10,11 @@ use plume_common::{
     utils::MediaProcessor,
 };
 
-use instance::Instance;
-use safe_string::SafeString;
-use schema::medias;
-use users::User;
-use {ap_url, Connection, Error, PlumeRocket, Result};
+use crate::instance::Instance;
+use crate::safe_string::SafeString;
+use crate::schema::medias;
+use crate::users::User;
+use crate::{ap_url, Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Media {
@@ -252,9 +252,9 @@ pub(crate) mod tests {
     use std::env::{current_dir, set_current_dir};
     use std::fs;
     use std::path::Path;
-    use tests::db;
-    use users::tests as usersTests;
-    use Connection as Conn;
+    use crate::tests::db;
+    use crate::users::tests as usersTests;
+    use crate::Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Media>) {
         let mut wd = current_dir().unwrap().to_path_buf();

@@ -1,6 +1,6 @@
-@use templates::base;
-@use template_utils::*;
-@use plume_models::notifications::Notification;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::plume_models::notifications::Notification;
 
 @(ctx: BaseContext, notifications: Vec<Notification>, page: i32, n_pages: i32)
 

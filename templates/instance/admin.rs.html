@@ -1,9 +1,9 @@
-@use plume_models::instance::Instance;
-@use validator::ValidationErrors;
-@use templates::base;
-@use template_utils::*;
-@use routes::instance::InstanceSettingsForm;
-@use routes::*;
+@use crate::plume_models::instance::Instance;
+@use crate::validator::ValidationErrors;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::instance::InstanceSettingsForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, instance: Instance, form: InstanceSettingsForm, errors: ValidationErrors)
 

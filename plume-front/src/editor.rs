@@ -2,7 +2,7 @@ use stdweb::{
     unstable::{TryFrom, TryInto},
     web::{event::*, html_element::*, *},
 };
-use CATALOG;
+use crate::CATALOG;
 
 macro_rules! mv {
     ( $( $var:ident ),* => $exp:expr ) => {

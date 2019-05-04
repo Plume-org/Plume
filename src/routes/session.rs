@@ -14,13 +14,13 @@ use std::{
 };
 use validator::{Validate, ValidationError, ValidationErrors};
 
-use mail::{build_mail, Mailer};
+use crate::mail::{build_mail, Mailer};
 use plume_models::{
     users::{User, AUTH_COOKIE},
     Error, PlumeRocket, CONFIG,
 };
-use routes::errors::ErrorPage;
-use template_utils::{IntoContext, Ructe};
+use crate::routes::errors::ErrorPage;
+use crate::template_utils::{IntoContext, Ructe};
 
 #[get("/login?<m>")]
 pub fn new(m: Option<String>, rockets: PlumeRocket) -> Ructe {

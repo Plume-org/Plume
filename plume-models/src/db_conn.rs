@@ -10,7 +10,7 @@ use rocket::{
 };
 use std::ops::Deref;
 
-use Connection;
+use crate::Connection;
 
 pub type DbPool = Pool<ConnectionManager<Connection>>;
 

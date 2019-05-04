@@ -1,8 +1,8 @@
-@use templates::{base, partials::post_card};
-@use template_utils::*;
-@use plume_models::blogs::Blog;
-@use plume_models::posts::Post;
-@use routes::*;
+@use crate::templates::{base, partials::post_card};
+@use crate::template_utils::*;
+@use crate::plume_models::blogs::Blog;
+@use crate::plume_models::posts::Post;
+@use crate::routes::*;
 
 @(ctx: BaseContext, blogs: Vec<Blog>, drafts: Vec<Post>)
 
