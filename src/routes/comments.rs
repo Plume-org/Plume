@@ -62,7 +62,6 @@ pub fn create(
                 },
             )
             .expect("comments::create: insert error");
-            comm.notify(&*conn).expect("comments::create: notify error");
             let new_comment = comm
                 .create_activity(&rockets)
                 .expect("comments::create: activity error");
@@ -79,6 +78,8 @@ pub fn create(
                 )
                 .expect("comments::create: mention save error");
             }
+
+            comm.notify(&*conn).expect("comments::create: notify error");
 
             // federate
             let dest = User::one_by_instance(&*conn).expect("comments::create: dest error");
