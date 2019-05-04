@@ -7,6 +7,7 @@
   <h1>@i18n!(ctx.1, "Search")</h1>
   <form method="get" id="form">
     <input id="q" name="q" placeholder="@i18n!(ctx.1, "Your query")" type="search">
+      <style type="text/css">-webkit-appearance: none;</style>
     <details>
         <summary>@i18n!(ctx.1, "Advanced search")</summary>
         @input!(ctx.1, title    (text), "Article title matching these words", &format!("placeholder=\"{}\"", i18n!(ctx.1, "Title")))
