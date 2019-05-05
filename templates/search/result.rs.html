@@ -5,7 +5,7 @@
 @(ctx: BaseContext, query_str: &str, articles: Vec<Post>, page: i32, n_pages: i32)
 
 @:base(ctx, i18n!(ctx.1, "Search result(s) for \"{0}\""; query_str), {}, {}, {
-    <h1>@i18n!(ctx.1, "Search result")</h1>
+    <h1>@i18n!(ctx.1, "Search result(s)")</h1>
     <p>@query_str</p>
 
     @if articles.is_empty() {
