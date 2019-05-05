@@ -6,7 +6,7 @@
 @:base(ctx, i18n!(ctx.1, "Search"), {}, {}, {
   <h1>@i18n!(ctx.1, "Search")</h1>
   <form method="get" id="form">
-    <input id="q" name="q" placeholder="@i18n!(ctx.1, "Your query")" type="search" style="display: collapse;>
+    <input id="q" name="q" placeholder="@i18n!(ctx.1, "Your query")" type="search" style="display: none; -webkit-appearance: none;>
     <details>
         <summary>@i18n!(ctx.1, "Advanced search")</summary>
         @input!(ctx.1, title    (text), "Article title matching these words", &format!("placeholder=\"{}\"", i18n!(ctx.1, "Title")))
@@ -17,7 +17,7 @@
 
         @input!(ctx.1, tag      (text), "Containing these tags",             &format!("placeholder=\"{}\"", i18n!(ctx.1, "Tags")))
         @input!(ctx.1, instance (text), "Posted on one of these instances",  &format!("placeholder=\"{}\"", i18n!(ctx.1, "Instance domain")))
-        @input!(ctx.1, author   (text), "Posted by one of these authors",    &format!("placeholder=\"{}\"", i18n!(ctx.1, "Authors")))
+        @input!(ctx.1, author   (text), "Posted by one of these authors",    &format!("placeholder=\"{}\"", i18n!(ctx.1, "Author(s)")))
         @input!(ctx.1, blog     (text), "Posted on one of these blogs",      &format!("placeholder=\"{}\"", i18n!(ctx.1, "Blog title")))
         @input!(ctx.1, lang     (text), "Written in this language",          &format!("placeholder=\"{}\"", i18n!(ctx.1, "Language")))
         @input!(ctx.1, license  (text), "Published under this license",      &format!("placeholder=\"{}\"", i18n!(ctx.1, "Article license")))
