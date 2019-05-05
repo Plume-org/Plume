@@ -41,6 +41,7 @@ input[type="checkbox"] {
  	margin: initial;
  	min-width: initial;
  	width: initial;
+  -webkit-appearance: checkbox;
 }
 
 /** Inline forms (containing only CSRF token and a <submit>, for protected links) **/
