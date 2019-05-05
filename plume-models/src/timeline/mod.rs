@@ -269,7 +269,7 @@ mod tests {
             tl1_u1.name = "My Super TL".to_owned();
             let new_tl1_u2 = tl1_u2.update(conn).unwrap();
 
-            let tl_u2 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
+            let tl_u2 = Timeline::list_for_user(conn, Some(users[1].id)).unwrap();
             assert_eq!(1, tl_u2.len());
             assert_eq!(new_tl1_u2, tl_u2[0]);
 
