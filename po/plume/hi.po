@@ -282,6 +282,9 @@ msgstr "अकाउंट रजिस्टर करें"
 msgid "About this instance"
 msgstr "इंस्टैंस के बारे में जानकारी"
 
+msgid "Privacy policy"
+msgstr ""
+
 msgid "Administration"
 msgstr "संचालन"
 
@@ -383,6 +386,23 @@ msgstr "और <em>{0}</em> इन्सटेंसेस से जुड़े �
 
 msgid "Administred by"
 msgstr "द्वारा संचालित"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 msgid "Follow {}"
 msgstr ""

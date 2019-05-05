@@ -182,6 +182,7 @@ Then try to restart Plume
                 routes::instance::interact,
                 routes::instance::nodeinfo,
                 routes::instance::about,
+                routes::instance::privacy,
                 routes::instance::web_manifest,
                 routes::likes::create,
                 routes::likes::create_auth,

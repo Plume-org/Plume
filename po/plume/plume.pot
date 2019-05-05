@@ -72,11 +72,11 @@ msgstr ""
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:94
+# src/routes/comments.rs:97
 msgid "Your comment have been posted."
 msgstr ""
 
-# src/routes/comments.rs:169
+# src/routes/comments.rs:172
 msgid "Your comment have been deleted."
 msgstr ""
 
@@ -144,27 +144,27 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:348
+# src/routes/posts.rs:350
 msgid "Your article have been updated."
 msgstr ""
 
-# src/routes/posts.rs:528
+# src/routes/posts.rs:532
 msgid "Your post have been saved."
 msgstr ""
 
-# src/routes/posts.rs:568
+# src/routes/posts.rs:572
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:593
+# src/routes/posts.rs:597
 msgid "Your article have been deleted."
 msgstr ""
 
-# src/routes/posts.rs:598
+# src/routes/posts.rs:602
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:638
+# src/routes/posts.rs:642
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
@@ -264,6 +264,9 @@ msgid "Register"
 msgstr ""
 
 msgid "About this instance"
+msgstr ""
+
+msgid "Privacy policy"
 msgstr ""
 
 msgid "Administration"
@@ -366,6 +369,15 @@ msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
+msgstr ""
+
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid "As a registered user, you also have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr ""
+
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
 msgstr ""
 
 msgid "Follow {}"

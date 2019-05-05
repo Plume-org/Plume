@@ -280,6 +280,9 @@ msgstr "Registrati"
 msgid "About this instance"
 msgstr "A proposito di questa istanza"
 
+msgid "Privacy policy"
+msgstr ""
+
 msgid "Administration"
 msgstr "Amministrazione"
 
@@ -381,6 +384,23 @@ msgstr "E sono connessi ad altre <em>{0}</em> istanze"
 
 msgid "Administred by"
 msgstr "Amministrata da"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 #, fuzzy
 msgid "Follow {}"

@@ -275,6 +275,9 @@ msgstr "Registre"
 msgid "About this instance"
 msgstr "Quant a aquesta instància"
 
+msgid "Privacy policy"
+msgstr ""
+
 msgid "Administration"
 msgstr "Administració"
 
@@ -375,6 +378,23 @@ msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
+msgstr ""
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
 msgid "Follow {}"
