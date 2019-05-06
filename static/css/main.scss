@@ -41,7 +41,7 @@ html {
 
     #content {
       display: none;
-      -webkit-appearance: none;
+      appearance: none;
       text-align: center;
     }
   }
@@ -49,7 +49,6 @@ html {
   header:focus-within #content, #content.show {
     position: fixed;
     display: flex;
-    display: -webkit-flex;
     flex-direction: column;
     justify-content: flex-start;
 
@@ -81,7 +80,6 @@ html {
 
       a {
         display: flex;
-        display: -webkit-flex;
         flex-direction: row;
         align-items: center;
         margin: 0;
