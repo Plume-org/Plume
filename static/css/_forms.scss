@@ -10,6 +10,7 @@ input, textarea, select {
  	margin: auto;
  	padding: 1em;
  	box-sizing: border-box;
+  -webkit-appearance: textarea;
 
  	background: $form-input-background;
  	color: $black;
@@ -23,7 +24,10 @@ input, textarea, select {
  	  border-color: $purple;
  	}
 }
-form input[type="submit"] { margin: 2em auto; }
+form input[type="submit"] {
+ margin: 2em auto;
+ -webkit-appearance: none;
+}
 
 textarea {
  	resize: vertical;
@@ -38,6 +42,7 @@ input[type="checkbox"] {
  	margin: initial;
  	min-width: initial;
  	width: initial;
+  -webkit-appearance: checkbox;
 }
 
 /** Inline forms (containing only CSRF token and a <submit>, for protected links) **/
@@ -54,7 +59,7 @@ form.inline {
     cursor: pointer;
     font-size: 1em;
     width: auto;
-   -webkit-appearance: none;
+    -webkit-appearance: none;
 
     &:not(.button) {
       margin: 0;
@@ -96,7 +101,10 @@ form.inline {
     }
  	}
 }
-input[type="submit"] { display: block; }
+input[type="submit"] {
+ display: block;
+ -webkit-appearance: none;
+}
 
 //  Writing page
 form.new-post {
@@ -116,6 +124,7 @@ form.new-post {
    	min-height: 20em;
    	overflow-y: hidden;
    	resize: none;
+   -webkit-appearance: textarea;
   }
   input[type="submit"] {
    	background: $lightgray;
@@ -126,8 +135,9 @@ form.new-post {
    	font-family: $playfair;
    	font-size: 1.5em;
   }
-  input[type="submit"]:hover { background: $lightgray; }
-  -webkit-appearance: none;
+  input[type="submit"]:hover {
+   background: $lightgray;}
+   -webkit-appearance: none;
 }
 
 .button + .button {

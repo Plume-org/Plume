@@ -312,6 +312,7 @@ main .article-meta {
 
 .popup:not(.show), .popup-bg:not(.show) {
     display: none;
+    appearance: none;
 }
 
 .popup-bg {
@@ -332,6 +333,7 @@ main .article-meta {
 
 .cw-text {
   display: none;
+  appearance: none;
 }
 
 input[type="checkbox"].cw-checkbox {
