@@ -18,6 +18,7 @@ header {
     background: $purple;
     align-self: flex-start;
 
+    @supports(padding: max(0px)) {
     a {
       transform: skewX(15deg);
      	display: flex;
@@ -33,6 +34,7 @@ header {
      	font-size: 1.33em;
    	}
   }
+   }
 
   nav {
     display: flex;
