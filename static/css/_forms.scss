@@ -25,7 +25,7 @@ input, textarea, select {
 }
 form input[type="submit"] {
  margin: 2em auto;
- -webkit-appearance: none;
+ appearance: none;
 }
 
 textarea {
@@ -58,7 +58,7 @@ form.inline {
     cursor: pointer;
     font-size: 1em;
     width: auto;
-   -webkit-appearance: none;
+    appearance: none;
 
     &:not(.button) {
       margin: 0;
@@ -73,7 +73,7 @@ form.inline {
 .button, input[type="submit"], button {
  	transition: all 0.1s ease-in;
  	display: inline-block;
-  -webkit-appearance: none;
+  appearance: none;
 
  	border-radius: 0.5em;
  	margin: 0.5em auto;
@@ -102,7 +102,7 @@ form.inline {
 }
 input[type="submit"] {
  display: block;
- -webkit-appearance: none;
+ appearance: none;
 }
 
 //  Writing page
@@ -128,14 +128,14 @@ form.new-post {
    	background: $lightgray;
    	color: $black;
    	border: none;
-    -webkit-appearance: none;
+    appearance: none;
 
    	font-family: $playfair;
    	font-size: 1.5em;
   }
   input[type="submit"]:hover {
    background: $lightgray;}
-  -webkit-appearance: none;
+   appearance: none;
 }
 
 .button + .button {
@@ -144,7 +144,6 @@ form.new-post {
 
 .split {
   display: flex;
-  display: -webkit-flex;
   justify-content: space-between;
 
   & > * {
@@ -155,7 +154,6 @@ form.new-post {
 
 header.center {
   display: flex;
-  display: -webkit-flex;
   flex-direction: column;
   align-items: center;
   background: transparent;
