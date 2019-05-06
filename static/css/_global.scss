@@ -54,7 +54,7 @@ small {
 
 .hidden {
 	display: none;
-	-webkit-appearance: none;
+	appearance: none;
 }
 
 /// Main
@@ -133,7 +133,6 @@ p.error {
 /// User page
 .user h1 {
  	display: flex;
-	display: -webkit-flex;
  	flex-direction: row;
  	align-items: center;
   margin: 0px;
@@ -386,7 +385,6 @@ figure {
 }
 
 /// Tabs
-@supports(padding: max(0px)) {
 .tabs {
   border-bottom: 1px solid $lightgray;
   padding: 0px;
@@ -403,6 +401,5 @@ figure {
       color: $purple;
       border-bottom: 1px solid $purple;
     }
-  }
  }
 }
