@@ -37,11 +37,13 @@ main article {
 }
 
 // Metadata under the article
+@supports(padding: max(0px)) {
 main .article-meta, main .article-meta button {
   padding: 0;
   font-size: 1.1em;
   margin-top: 10%;
 }
+ }
 
 main .article-meta {
 
@@ -102,6 +104,7 @@ main .article-meta {
       margin: 0;
     }
 
+    @supports(padding: max(0px)) {
     .action {
       display: flex;
       display: -webkit-flex;
@@ -128,6 +131,7 @@ main .article-meta {
 
        	border-radius: 50%;
       }
+    }
 
       &.reshared, &.liked {
         svg.feather {
@@ -211,6 +215,7 @@ main .article-meta {
     }
 
     // Respond & delete comment buttons
+    @supports(padding: max(0px)) {
     a.button, form.inline, form.inline input {
      	display: inline-block;
      	padding: 0;
@@ -227,6 +232,7 @@ main .article-meta {
 
       &:hover { color: $purple; }
     }
+  }
 
     .list {
      	display: grid;
