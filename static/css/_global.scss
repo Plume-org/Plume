@@ -1,4 +1,5 @@
 html, body {
+	@supports(padding: max(0px)) {
  	margin: 0;
  	padding: 0;
  	background: $background;
@@ -11,6 +12,7 @@ html, body {
 		background: $lightpurple;
 	}
 }
+ }
 
 a, a:visited {
  	color: $purple;
@@ -54,6 +56,7 @@ small {
 
 .hidden {
 	display: none;
+	-webkit-appearance: none;
 }
 
 /// Main
@@ -110,6 +113,7 @@ main {
       }
   }
 
+  @supports(padding: max(0px)) {	
   .cover {
     padding: 0px;
     margin: 0px;
@@ -120,6 +124,7 @@ main {
     overflow: hidden;
   }
 }
+ }
 
 /// Errors
 p.error {
@@ -392,6 +397,7 @@ figure {
 }
 
 /// Tabs
+@supports(padding: max(0px)) {
 .tabs {
   border-bottom: 1px solid $lightgray;
   padding: 0px;
@@ -409,4 +415,5 @@ figure {
       border-bottom: 1px solid $purple;
     }
   }
+ }
 }
