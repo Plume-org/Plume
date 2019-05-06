@@ -37,13 +37,11 @@ main article {
 }
 
 // Metadata under the article
-@supports(padding: max(0px)) {
 main .article-meta, main .article-meta button {
   padding: 0;
   font-size: 1.1em;
   margin-top: 10%;
 }
- }
 
 main .article-meta {
 
@@ -86,14 +84,12 @@ main .article-meta {
   // Likes & Boosts
   .actions {
     display: flex;
-    display: -webkit-flex;
    	flex-direction: row;
    	justify-content: space-around;
   }
 
   .likes, .reshares {
     display: flex;
-    display: -webkit-flex;
    	flex-direction: column;
    	align-items: center;
    	padding: 0.5em 0;
@@ -104,10 +100,8 @@ main .article-meta {
       margin: 0;
     }
 
-    @supports(padding: max(0px)) {
     .action {
       display: flex;
-      display: -webkit-flex;
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
@@ -121,7 +115,6 @@ main .article-meta {
      	svg.feather {
        	transition: background 0.1s ease-in;
        	display: flex;
-        display: -webkit-flex;
        	align-items: center;
        	justify-content: center;
 
@@ -140,7 +133,6 @@ main .article-meta {
         }
       }
     }
-  }
 
   .likes {
     p, .action:hover { color: $red; }
@@ -215,7 +207,6 @@ main .article-meta {
     }
 
     // Respond & delete comment buttons
-    @supports(padding: max(0px)) {
     a.button, form.inline, form.inline input {
      	display: inline-block;
      	padding: 0;
@@ -232,7 +223,6 @@ main .article-meta {
 
       &:hover { color: $purple; }
     }
-  }
 
     .list {
      	display: grid;
@@ -280,7 +270,6 @@ main .article-meta {
 #plume-editor {
   header {
     display: flex;
-    display: -webkit-flex; // Addresses the editor being too narrow in Safari for iOS
     flex-direction: row-reverse;
     background: transparent;
     align-items: center;
@@ -344,7 +333,7 @@ main .article-meta {
 
 .cw-text {
   display: none;
-  -webkit-appearance: none;
+  appearance: none;
 }
 
 input[type="checkbox"].cw-checkbox {
