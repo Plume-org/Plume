@@ -312,7 +312,7 @@ main .article-meta {
 
 .popup:not(.show), .popup-bg:not(.show) {
     display: none;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 .popup-bg {
