@@ -5,7 +5,7 @@ use std::process::{Command, Stdio};
 use std::{env, fs::*, io::Write, path::PathBuf};
 
 fn compute_static_hash() -> String {
-    //"find static/ -type f ! -path 'static/media/*' | sort | xargs stat --printf='%n %Y\n' | sha256sum"
+    //"find static/ -type f ! -path 'static/media/*' | sort | xargs stat --printf='%n %Y\n' | openssl dgst -r"
 
     let find = Command::new("find")
         .args(&["static/", "-type", "f", "!", "-path", "static/media/*"])
@@ -26,11 +26,13 @@ fn compute_static_hash() -> String {
         .spawn()
         .expect("failed xargs command");
 
-    let sha = Command::new("sha256sum")
+    let mut sha = Command::new("openssl")
+        .args(&["dgst", "-r"])
         .stdin(xargs.stdout.unwrap())
         .output()
-        .expect("failed sha256sum command");
+        .expect("failed openssl command");
 
+    sha.stdout.resize(64, 0);
     String::from_utf8(sha.stdout).unwrap()
 }
 
