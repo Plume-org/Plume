@@ -5,7 +5,7 @@ use std::process::{Command, Stdio};
 use std::{env, fs::*, io::Write, path::PathBuf};
 
 fn compute_static_hash() -> String {
-    //"find static/ -type f ! -path 'static/media/*' | sort | xargs stat --printf='%n %Y\n' | openssl dgst -r"
+    //"find static/ -type f ! -path 'static/media/*' | sort | xargs stat -c'%n %Y' | openssl dgst -r"
 
     let find = Command::new("find")
         .args(&["static/", "-type", "f", "!", "-path", "static/media/*"])
@@ -20,7 +20,7 @@ fn compute_static_hash() -> String {
         .expect("failed sort command");
 
     let xargs = Command::new("xargs")
-        .args(&["stat", "--printf='%n %Y\n'"])
+        .args(&["stat", "-c'%n %Y'"])
         .stdin(sort.stdout.unwrap())
         .stdout(Stdio::piped())
         .spawn()
