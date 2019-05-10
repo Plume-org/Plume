@@ -129,7 +129,7 @@ fn reset_password<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let user = User::find_by_name(
         conn,
         &username,
-        Instance::get_local()
+        Instance::get_local_uncached(conn)
             .expect("Failed to get local instance")
             .id,
     )

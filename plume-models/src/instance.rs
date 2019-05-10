@@ -58,7 +58,7 @@ impl Instance {
             .ok_or(Error::NotFound)
     }
 
-    fn get_local_uncached(conn: &Connection) -> Result<Instance> {
+    pub fn get_local_uncached(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
             .limit(1)
