@@ -69,7 +69,7 @@ impl Instance {
     }
 
     pub fn cache_local(conn: &Connection) {
-        Instance::set_local(Instance::get_local_uncached(conn).unwrap());
+        *LOCAL_INSTANCE.write().unwrap() = Instance::get_local_uncached(conn).ok();
     }
 
     pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
