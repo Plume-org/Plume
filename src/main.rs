@@ -41,6 +41,7 @@ extern crate webfinger;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
+    instance::Instance,
     migrations::IMPORTED_MIGRATIONS,
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
@@ -73,10 +74,12 @@ fn init_pool() -> Option<DbPool> {
     dotenv::dotenv().ok();
 
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
-    DbPool::builder()
+    let pool = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
         .build(manager)
-        .ok()
+        .ok()?;
+    Instance::cache_local(&pool.get().unwrap());
+    Some(pool)
 }
 
 fn main() {

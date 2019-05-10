@@ -109,7 +109,7 @@ pub fn details(
             .clone()
             .and_then(|x| x.is_following(&*conn, user.id).ok())
             .unwrap_or(false),
-        user.instance_id != Instance::get_local(&*conn)?.id,
+        user.instance_id != Instance::get_local()?.id,
         user.get_instance(&*conn)?.public_domain,
         recents,
         reshares
@@ -278,7 +278,7 @@ pub fn followers(
             .clone()
             .and_then(|x| x.is_following(&*conn, user.id).ok())
             .unwrap_or(false),
-        user.instance_id != Instance::get_local(&*conn)?.id,
+        user.instance_id != Instance::get_local()?.id,
         user.get_instance(&*conn)?.public_domain,
         user.get_followers_page(&*conn, page.limits())?,
         page.0,
@@ -305,7 +305,7 @@ pub fn followed(
             .clone()
             .and_then(|x| x.is_following(conn, user.id).ok())
             .unwrap_or(false),
-        user.instance_id != Instance::get_local(conn)?.id,
+        user.instance_id != Instance::get_local()?.id,
         user.get_instance(conn)?.public_domain,
         user.get_followed_page(conn, page.limits())?,
         page.0,
@@ -327,7 +327,7 @@ pub fn activity_details(
 pub fn new(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     Ok(render!(users::new(
         &rockets.to_context(),
-        Instance::get_local(&*rockets.conn)?.open_registrations,
+        Instance::get_local()?.open_registrations,
         &NewUserForm::default(),
         ValidationErrors::default()
     )))
@@ -494,7 +494,7 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
-    if !Instance::get_local(conn)
+    if !Instance::get_local()
         .map(|i| i.open_registrations)
         .unwrap_or(true)
     {
@@ -533,7 +533,7 @@ pub fn create(
         .map_err(|err| {
             render!(users::new(
                 &rockets.to_context(),
-                Instance::get_local(conn)
+                Instance::get_local()
                     .map(|i| i.open_registrations)
                     .unwrap_or(true),
                 &form,
@@ -590,7 +590,7 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
     let author = User::find_by_fqn(&rockets, &name).ok()?;
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
-        .id(Instance::get_local(conn)
+        .id(Instance::get_local()
             .unwrap()
             .compute_box("@", &name, "atom.xml"))
         .entries(

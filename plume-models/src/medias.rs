@@ -104,8 +104,8 @@ impl Media {
         }
     }
 
-    pub fn html(&self, conn: &Connection) -> Result<SafeString> {
-        let url = self.url(conn)?;
+    pub fn html(&self) -> Result<SafeString> {
+        let url = self.url()?;
         Ok(match self.category() {
             MediaCategory::Image => SafeString::trusted(&format!(
                 r#"<img src="{}" alt="{}" title="{}">"#,
@@ -126,23 +126,23 @@ impl Media {
         })
     }
 
-    pub fn markdown(&self, conn: &Connection) -> Result<SafeString> {
+    pub fn markdown(&self) -> Result<SafeString> {
         Ok(match self.category() {
             MediaCategory::Image => {
                 SafeString::new(&format!("![{}]({})", escape(&self.alt_text), self.id))
             }
-            MediaCategory::Audio | MediaCategory::Video => self.html(conn)?,
+            MediaCategory::Audio | MediaCategory::Video => self.html()?,
             MediaCategory::Unknown => SafeString::new(""),
         })
     }
 
-    pub fn url(&self, conn: &Connection) -> Result<String> {
+    pub fn url(&self) -> Result<String> {
         if self.is_remote {
             Ok(self.remote_url.clone().unwrap_or_default())
         } else {
             Ok(ap_url(&format!(
                 "{}/{}",
-                Instance::get_local(conn)?.public_domain,
+                Instance::get_local()?.public_domain,
                 self.file_path
             )))
         }
@@ -237,7 +237,7 @@ impl Media {
             let media = Media::get(conn, id).ok()?;
             // if owner is user or check is disabled
             if uid.contains(&media.owner_id) || uid.is_empty() {
-                Some((media.url(conn).ok()?, media.content_warning))
+                Some((media.url().ok()?, media.content_warning))
             } else {
                 None
             }

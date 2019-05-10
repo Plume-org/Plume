@@ -118,7 +118,7 @@ pub fn create(
                 slug.clone(),
                 form.title.to_string(),
                 String::from(""),
-                Instance::get_local(&*conn)
+                Instance::get_local()
                     .expect("blog::create: instance error")
                     .id,
             )
@@ -348,7 +348,7 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
     let conn = &*rockets.conn;
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
-        .id(Instance::get_local(&*conn)
+        .id(Instance::get_local()
             .ok()?
             .compute_box("~", &name, "atom.xml"))
         .entries(

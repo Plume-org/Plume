@@ -1,6 +1,7 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use std::iter::Iterator;
+use std::sync::RwLock;
 
 use ap_url;
 use medias::Media;
@@ -40,8 +41,24 @@ pub struct NewInstance {
     pub short_description_html: String,
 }
 
+lazy_static! {
+    static ref LOCAL_INSTANCE: RwLock<Option<Instance>> = RwLock::new(None);
+}
+
 impl Instance {
-    pub fn get_local(conn: &Connection) -> Result<Instance> {
+    pub fn set_local(self) {
+        LOCAL_INSTANCE.write().unwrap().replace(self);
+    }
+
+    pub fn get_local() -> Result<Instance> {
+        LOCAL_INSTANCE
+            .read()
+            .unwrap()
+            .clone()
+            .ok_or(Error::NotFound)
+    }
+
+    fn get_local_uncached(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
             .limit(1)
@@ -49,6 +66,10 @@ impl Instance {
             .into_iter()
             .nth(0)
             .ok_or(Error::NotFound)
+    }
+
+    pub fn cache_local(conn: &Connection) {
+        Instance::set_local(Instance::get_local_uncached(conn).unwrap());
     }
 
     pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
@@ -141,7 +162,7 @@ impl Instance {
             false,
             Some(Media::get_media_processor(conn, vec![])),
         );
-        diesel::update(self)
+        let res = diesel::update(self)
             .set((
                 instances::name.eq(name),
                 instances::open_registrations.eq(open_registrations),
@@ -152,7 +173,11 @@ impl Instance {
             ))
             .execute(conn)
             .map(|_| ())
-            .map_err(Error::from)
+            .map_err(Error::from);
+        if self.local {
+            Instance::cache_local(conn);
+        }
+        res
     }
 
     pub fn count(conn: &Connection) -> Result<i64> {
@@ -171,7 +196,7 @@ pub(crate) mod tests {
     use Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
-        vec![
+        let res = vec![
             NewInstance {
                 default_license: "WTFPL".to_string(),
                 local: true,
@@ -225,7 +250,9 @@ pub(crate) mod tests {
                     .unwrap_or_else(|_| Instance::insert(conn, inst).unwrap()),
             )
         })
-        .collect()
+        .collect();
+        Instance::cache_local(conn);
+        res
     }
 
     #[test]
@@ -237,7 +264,7 @@ pub(crate) mod tests {
                 .map(|(inserted, _)| inserted)
                 .find(|inst| inst.local)
                 .unwrap();
-            let res = Instance::get_local(conn).unwrap();
+            let res = Instance::get_local().unwrap();
 
             part_eq!(
                 res,

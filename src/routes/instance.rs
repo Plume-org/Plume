@@ -19,7 +19,7 @@ use template_utils::{IntoContext, Ructe};
 #[get("/")]
 pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
-    let inst = Instance::get_local(conn)?;
+    let inst = Instance::get_local()?;
     let federated = Post::get_recents_page(conn, Page::default().limits())?;
     let local = Post::get_instance_page(conn, inst.id, Page::default().limits())?;
     let user_feed = rockets.user.clone().and_then(|user| {
@@ -43,7 +43,7 @@ pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 #[get("/local?<page>")]
 pub fn local(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let instance = Instance::get_local(&*rockets.conn)?;
+    let instance = Instance::get_local()?;
     let articles = Post::get_instance_page(&*rockets.conn, instance.id, page.limits())?;
     Ok(render!(instance::local(
         &rockets.to_context(),
@@ -83,7 +83,7 @@ pub fn federated(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, Erro
 
 #[get("/admin")]
 pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let local_inst = Instance::get_local(&*rockets.conn)?;
+    let local_inst = Instance::get_local()?;
     Ok(render!(instance::admin(
         &rockets.to_context(),
         local_inst.clone(),
@@ -119,7 +119,7 @@ pub fn update_settings(
     form.validate()
         .and_then(|_| {
             let instance =
-                Instance::get_local(conn).expect("instance::update_settings: local instance error");
+                Instance::get_local().expect("instance::update_settings: local instance error");
             instance
                 .update(
                     conn,
@@ -136,7 +136,7 @@ pub fn update_settings(
         })
         .or_else(|e| {
             let local_inst =
-                Instance::get_local(conn).expect("instance::update_settings: local instance error");
+                Instance::get_local().expect("instance::update_settings: local instance error");
             Err(render!(instance::admin(
                 &rockets.to_context(),
                 local_inst,
@@ -156,7 +156,7 @@ pub fn admin_instances(
     let instances = Instance::page(&*rockets.conn, page.limits())?;
     Ok(render!(instance::list(
         &rockets.to_context(),
-        Instance::get_local(&*rockets.conn)?,
+        Instance::get_local()?,
         instances,
         page.0,
         Page::total(Instance::count(&*rockets.conn)? as i32)
@@ -204,7 +204,7 @@ pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirec
     let u = User::get(&*rockets.conn, id)?;
     u.delete(&*rockets.conn, &rockets.searcher)?;
 
-    if Instance::get_local(&*rockets.conn)
+    if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
     {
@@ -267,7 +267,7 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
         return Err(ErrorPage::from(Error::NotFound));
     }
 
-    let local_inst = Instance::get_local(&*conn)?;
+    let local_inst = Instance::get_local()?;
     let mut doc = json!({
         "version": version,
         "software": {
@@ -305,8 +305,8 @@ pub fn about(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     Ok(render!(instance::about(
         &rockets.to_context(),
-        Instance::get_local(conn)?,
-        Instance::get_local(conn)?.main_admin(conn)?,
+        Instance::get_local()?,
+        Instance::get_local()?.main_admin(conn)?,
         User::count_local(conn)?,
         Post::count_local(conn)?,
         Instance::count(conn)? - 1
@@ -314,8 +314,8 @@ pub fn about(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 }
 
 #[get("/manifest.json")]
-pub fn web_manifest(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
-    let instance = Instance::get_local(&*conn)?;
+pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
+    let instance = Instance::get_local()?;
     Ok(Json(json!({
         "name": &instance.name,
         "description": &instance.short_description,
