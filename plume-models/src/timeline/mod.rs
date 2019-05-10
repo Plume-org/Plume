@@ -200,6 +200,7 @@ mod tests {
     use diesel::Connection;
     use tests::db;
     use users::tests as userTests;
+    use lists::ListType;
 
     #[test]
     fn test_timeline() {
@@ -207,13 +208,6 @@ mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let users = userTests::fill_database(conn);
 
-            assert!(Timeline::new_for_user(
-                conn,
-                users[0].id,
-                "my timeline".to_owned(),
-                "invalid keyword".to_owned(),
-            )
-            .is_err());
             let mut tl1_u1 = Timeline::new_for_user(
                 conn,
                 users[0].id,
@@ -221,6 +215,11 @@ mod tests {
                 "all".to_owned(),
             )
             .unwrap();
+            List::new(conn,
+                      "languages I speak",
+                      Some(&users[1]),
+                      ListType::Prefix
+                      ).unwrap();
             let tl2_u1 = Timeline::new_for_user(
                 conn,
                 users[0].id,
@@ -232,7 +231,7 @@ mod tests {
                 conn,
                 users[1].id,
                 "english posts".to_owned(),
-                "lang in [en]".to_owned(),
+                "lang in \"languages I speak\"".to_owned(),
             )
             .unwrap();
             let tl1_instance = Timeline::new_for_instance(
@@ -272,6 +271,70 @@ mod tests {
             let tl_u2 = Timeline::list_for_user(conn, Some(users[1].id)).unwrap();
             assert_eq!(1, tl_u2.len());
             assert_eq!(new_tl1_u2, tl_u2[0]);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_timeline_creation_error() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let users = userTests::fill_database(conn);
+
+            assert!(Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "my timeline".to_owned(),
+                "invalid keyword".to_owned(),
+            )
+            .is_err());
+            assert!(Timeline::new_for_instance(
+                conn,
+                "my timeline".to_owned(),
+                "invalid keyword".to_owned(),
+            )
+            .is_err());
+
+            assert!(Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "my timeline".to_owned(),
+                "author in non_existant_list".to_owned(),
+            )
+            .is_err());
+            assert!(Timeline::new_for_instance(
+                conn,
+                "my timeline".to_owned(),
+                "lang in dont-exist".to_owned(),
+            )
+            .is_err());
+
+            List::new(conn,
+                      "friends",
+                      Some(&users[0]),
+                      ListType::User
+                      ).unwrap();
+            List::new(conn,
+                      "idk",
+                      None,
+                      ListType::Blog
+                      ).unwrap();
+
+            assert!(Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "my timeline".to_owned(),
+                "blog in friends".to_owned(),
+            )
+            .is_err());
+            assert!(Timeline::new_for_instance(
+                conn,
+                "my timeline".to_owned(),
+                "not author in idk".to_owned(),
+            )
+            .is_err());
+
 
             Ok(())
         });
