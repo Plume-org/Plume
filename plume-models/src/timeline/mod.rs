@@ -198,9 +198,9 @@ impl Timeline {
 mod tests {
     use super::*;
     use diesel::Connection;
+    use lists::ListType;
     use tests::db;
     use users::tests as userTests;
-    use lists::ListType;
 
     #[test]
     fn test_timeline() {
@@ -215,11 +215,7 @@ mod tests {
                 "all".to_owned(),
             )
             .unwrap();
-            List::new(conn,
-                      "languages I speak",
-                      Some(&users[1]),
-                      ListType::Prefix
-                      ).unwrap();
+            List::new(conn, "languages I speak", Some(&users[1]), ListType::Prefix).unwrap();
             let tl2_u1 = Timeline::new_for_user(
                 conn,
                 users[0].id,
@@ -310,16 +306,8 @@ mod tests {
             )
             .is_err());
 
-            List::new(conn,
-                      "friends",
-                      Some(&users[0]),
-                      ListType::User
-                      ).unwrap();
-            List::new(conn,
-                      "idk",
-                      None,
-                      ListType::Blog
-                      ).unwrap();
+            List::new(conn, "friends", Some(&users[0]), ListType::User).unwrap();
+            List::new(conn, "idk", None, ListType::Blog).unwrap();
 
             assert!(Timeline::new_for_user(
                 conn,
@@ -334,7 +322,6 @@ mod tests {
                 "not author in idk".to_owned(),
             )
             .is_err());
-
 
             Ok(())
         });
