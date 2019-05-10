@@ -216,6 +216,9 @@ jobs:
     - store_artifacts:
         path: plume.tar.gz
         destination: plume.tar.gz
+    - store_artifacts:
+        path: wasm.tar.gz
+        destination: wasm.tar.gz
 
   push translations:
     executor:
