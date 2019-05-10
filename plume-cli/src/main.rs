@@ -6,7 +6,7 @@ extern crate rpassword;
 
 use clap::App;
 use diesel::Connection;
-use plume_models::{Connection as Conn, CONFIG, instance::Instance};
+use plume_models::{instance::Instance, Connection as Conn, CONFIG};
 use std::io::{self, prelude::*};
 
 mod instance;
