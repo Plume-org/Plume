@@ -12,7 +12,7 @@
 	<meta content="120" property="og:image:width" />
 	<meta content="120" property="og:image:height" />
 	<meta content="summary" property="twitter:card" />
-	<meta content="'@Instance::get_local(ctx.0).unwrap().name" property="og:site_name" />
+	<meta content="'@Instance::get_local().unwrap().name" property="og:site_name" />
 	<meta content="@user.ap_url" property="og:url" />
 	<meta content="@user.display_name" property="profile:username" />
 	<meta content="@user.display_name's Blog" property="og:title" />
@@ -20,7 +20,7 @@
 	<meta content="@user.summary_html" property="og:description" />
 	<meta content="@user.avatar_url(ctx.0)" property="og:image" />
 
-	<link href='@Instance::get_local(ctx.0).unwrap().compute_box("@", &user.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
+	<link href='@Instance::get_local().unwrap().compute_box("@", &user.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@user.ap_url' rel='alternate' type='application/activity+json'>
 }, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)

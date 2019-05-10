@@ -43,7 +43,7 @@ pub fn create(
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
                 Some(
-                    &Instance::get_local(&conn)
+                    &Instance::get_local()
                         .expect("comments::create: local instance error")
                         .public_domain,
                 ),
