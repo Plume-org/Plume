@@ -54,6 +54,7 @@ small {
 
 .hidden {
 	display: none;
+	appearance: none;
 }
 
 /// Main
@@ -109,7 +110,7 @@ main {
           margin-bottom: 0.5em;
       }
   }
-
+	
   .cover {
     padding: 0px;
     margin: 0px;
@@ -400,5 +401,5 @@ figure {
       color: $purple;
       border-bottom: 1px solid $purple;
     }
-  }
+ }
 }
