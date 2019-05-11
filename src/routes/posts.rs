@@ -147,7 +147,7 @@ pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, 
         b,
         false,
         &NewPostForm {
-            license: Instance::get_local(&*conn)?.default_license,
+            license: Instance::get_local()?.default_license,
             ..NewPostForm::default()
         },
         true,
@@ -263,7 +263,7 @@ pub fn update(
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
                 Some(
-                    &Instance::get_local(&conn)
+                    &Instance::get_local()
                         .expect("posts::update: Error getting local instance")
                         .public_domain,
                 ),
@@ -314,7 +314,7 @@ pub fn update(
                 .filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(&conn, t).ok())
+                .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
             post.update_tags(&conn, tags)
                 .expect("post::update: tags error");
@@ -324,7 +324,7 @@ pub fn update(
                 .map(|h| h.to_camel_case())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(&conn, t).ok())
+                .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
             post.update_hashtags(&conn, hashtags)
                 .expect("post::update: hashtags error");
@@ -435,7 +435,7 @@ pub fn create(
         let (content, mentions, hashtags) = utils::md_to_html(
             form.content.to_string().as_ref(),
             Some(
-                &Instance::get_local(&conn)
+                &Instance::get_local()
                     .expect("post::create: local instance error")
                     .public_domain,
             ),

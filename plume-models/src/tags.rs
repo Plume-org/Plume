@@ -27,11 +27,11 @@ impl Tag {
     find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<Hashtag> {
+    pub fn to_activity(&self) -> Result<Hashtag> {
         let mut ht = Hashtag::default();
         ht.set_href_string(ap_url(&format!(
             "{}/tag/{}",
-            Instance::get_local(conn)?.public_domain,
+            Instance::get_local()?.public_domain,
             self.tag
         )))?;
         ht.set_name_string(self.tag.clone())?;
@@ -54,11 +54,11 @@ impl Tag {
         )
     }
 
-    pub fn build_activity(conn: &Connection, tag: String) -> Result<Hashtag> {
+    pub fn build_activity(tag: String) -> Result<Hashtag> {
         let mut ht = Hashtag::default();
         ht.set_href_string(ap_url(&format!(
             "{}/tag/{}",
-            Instance::get_local(conn)?.public_domain,
+            Instance::get_local()?.public_domain,
             tag
         )))?;
         ht.set_name_string(tag)?;
