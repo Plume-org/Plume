@@ -74,9 +74,7 @@ pub fn webfinger(resource: String, rockets: PlumeRocket) -> Content<String> {
                     "Invalid resource. Make sure to request an acct: URI"
                 }
                 ResolverError::NotFound => "Requested resource was not found",
-                ResolverError::WrongDomain => {
-                    "This is not the instance of the requested resource"
-                }
+                ResolverError::WrongDomain => "This is not the instance of the requested resource",
             }),
         ),
     }
