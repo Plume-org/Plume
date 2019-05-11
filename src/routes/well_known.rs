@@ -48,14 +48,16 @@ impl Resolver<PlumeRocket> for WebfingerResolver {
         CONFIG.base_url.as_str()
     }
 
-    fn find(acct: String, ctx: PlumeRocket) -> Result<Webfinger, ResolverError> {
-        User::find_by_fqn(&ctx, &acct)
-            .and_then(|usr| usr.webfinger(&*ctx.conn))
-            .or_else(|_| {
-                Blog::find_by_fqn(&ctx, &acct)
-                    .and_then(|blog| blog.webfinger(&*ctx.conn))
-                    .or(Err(ResolverError::NotFound))
-            })
+    fn find(prefix: Prefix, acct: String, ctx: PlumeRocket) -> Result<Webfinger, ResolverError> {
+        match prefix {
+            Prefix::Acct => User::find_by_fqn(&ctx, &acct)
+                .and_then(|usr| usr.webfinger(&*ctx.conn))
+                .or(Err(ResolverError::NotFound)),
+            Prefix::Group => Blog::find_by_fqn(&ctx, &acct)
+                .and_then(|blog| blog.webfinger(&*ctx.conn))
+                .or(Err(ResolverError::NotFound)),
+            Prefix::Custom(_) => Err(ResolverError::NotFound),
+        }
     }
 }
 
@@ -72,7 +74,7 @@ pub fn webfinger(resource: String, rockets: PlumeRocket) -> Content<String> {
                     "Invalid resource. Make sure to request an acct: URI"
                 }
                 ResolverError::NotFound => "Requested resource was not found",
-                ResolverError::WrongInstance => {
+                ResolverError::WrongDomain => {
                     "This is not the instance of the requested resource"
                 }
             }),
