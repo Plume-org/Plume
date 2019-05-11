@@ -9,7 +9,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = "2.32"
-dotenv = "0.13"
+dotenv = "0.14"
 rpassword = "2.1"
 
 [dependencies.diesel]
