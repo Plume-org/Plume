@@ -41,7 +41,6 @@ fn main() {
     let in_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("templates");
     compile_templates(&in_dir, &out_dir).expect("compile templates");
 
-    println!("cargo:rerun-if-changed=static/css");
     println!("cargo:rerun-if-changed=static/css/_article.scss");
     println!("cargo:rerun-if-changed=static/css/_forms.scss");
     println!("cargo:rerun-if-changed=static/css/_global.scss");

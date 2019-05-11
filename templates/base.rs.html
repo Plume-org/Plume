@@ -81,7 +81,7 @@
         <footer>
             <hr/>
             <div>
-                <h3>@Instance::get_local(ctx.0).map(|i| i.name).unwrap_or_default()</h3>
+                <h3>@Instance::get_local().map(|i| i.name).unwrap_or_default()</h3>
                 <a href="@uri!(instance::about)">@i18n!(ctx.1, "About this instance")</a>
                 <a href="@uri!(instance::privacy)">@i18n!(ctx.1, "Privacy policy")</a>
                 @if ctx.2.clone().map(|a| a.is_admin).unwrap_or(false) {
