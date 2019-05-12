@@ -606,7 +606,8 @@ msgstr "इंस्टैंस डोमेन"
 msgid "Posted by one of these authors"
 msgstr "इन लेखकों द्वारा पोस्ट किये गए आर्टिकल्स"
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "लेखक"
 
 # src/template_utils.rs:305
@@ -630,13 +631,16 @@ msgstr "इस लिसेंसे के साथ पब्लिश कि�
 msgid "Article license"
 msgstr "आर्टिकल लाइसेंस"
 
-msgid "Search result for \"{0}\""
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
 msgstr "{0} के लिए सर्च रिजल्ट"
 
-msgid "Search result"
+#, fuzzy
+msgid "Search result(s)"
 msgstr "सर्च रिजल्ट"
 
-msgid "No result for your query"
+#, fuzzy
+msgid "No results for your query"
 msgstr "आपकी जांच के लिए रिजल्ट"
 
 msgid "No more results for your query"

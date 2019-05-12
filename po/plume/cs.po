@@ -618,7 +618,8 @@ msgstr "Doména instance"
 msgid "Posted by one of these authors"
 msgstr "Zveřejněno na jedném z těchto autorů"
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "Autoři"
 
 # src/template_utils.rs:305
@@ -642,13 +643,16 @@ msgstr "Publikováno pod touto licenci"
 msgid "Article license"
 msgstr "Licence článku"
 
-msgid "Search result for \"{0}\""
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
 msgstr "Výsledky hledání pro \"{0}\""
 
-msgid "Search result"
+#, fuzzy
+msgid "Search result(s)"
 msgstr "Výsledek hledání"
 
-msgid "No result for your query"
+#, fuzzy
+msgid "No results for your query"
 msgstr "Žádný výsledek nenalzen pro váš dotaz"
 
 msgid "No more results for your query"
