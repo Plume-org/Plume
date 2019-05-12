@@ -642,7 +642,7 @@ msgstr "Instillinger for instansen"
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Authors"
+msgid "Author(s)"
 msgstr ""
 
 # #-#-#-#-#  nb.po (plume)  #-#-#-#-#
@@ -673,13 +673,13 @@ msgstr "Denne artikkelen er publisert med lisensen {0}"
 msgid "Article license"
 msgstr "Standardlisens"
 
-msgid "Search result for \"{0}\""
+msgid "Search result(s) for \"{0}\""
 msgstr ""
 
-msgid "Search result"
+msgid "Search result(s)"
 msgstr ""
 
-msgid "No result for your query"
+msgid "No results for your query"
 msgstr ""
 
 msgid "No more results for your query"

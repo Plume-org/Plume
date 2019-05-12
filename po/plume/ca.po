@@ -599,7 +599,8 @@ msgstr ""
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "Autors"
 
 # src/template_utils.rs:305
@@ -623,13 +624,16 @@ msgstr "Publicat segons aquesta llicència"
 msgid "Article license"
 msgstr ""
 
-msgid "Search result for \"{0}\""
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
 msgstr "Resultats de la cerca «{0}»"
 
-msgid "Search result"
+#, fuzzy
+msgid "Search result(s)"
 msgstr "Resultats de la cerca"
 
-msgid "No result for your query"
+#, fuzzy
+msgid "No results for your query"
 msgstr "La vostra consulta no ha produït cap resultat"
 
 msgid "No more results for your query"

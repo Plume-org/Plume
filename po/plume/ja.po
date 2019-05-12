@@ -615,7 +615,8 @@ msgstr "インスタンスのドメイン"
 msgid "Posted by one of these authors"
 msgstr "以下のいずれかの投稿者が投稿"
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "投稿者"
 
 # src/template_utils.rs:305
@@ -639,13 +640,16 @@ msgstr "適用されているライセンス"
 msgid "Article license"
 msgstr "投稿のライセンス"
 
-msgid "Search result for \"{0}\""
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
 msgstr "\"{0}\" の検索結果"
 
-msgid "Search result"
+#, fuzzy
+msgid "Search result(s)"
 msgstr "検索結果"
 
-msgid "No result for your query"
+#, fuzzy
+msgid "No results for your query"
 msgstr "検索結果はありません"
 
 msgid "No more results for your query"

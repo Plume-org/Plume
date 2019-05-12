@@ -84,7 +84,7 @@ commands:
     - run: zip -0 ccov.zip `find . -name 'plume*.gc*' -o -name 'plm*.gc*'`
     - run: grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir '/*' -o lcov.info
     - run: bash <(curl -s https://codecov.io/bash) -f lcov.info -F <<parameters.type>>
-    - run: find . -name 'plume*.gc*' -delete -o -name 'plm*.gc*' -delete 
+    - run: find . -name 'plume*.gc*' -delete -o -name 'plm*.gc*' -delete
     - run: rm ccov.zip lcov.info
 
   build:
@@ -226,7 +226,7 @@ jobs:
     steps:
     - restore_env:
         cache: none
-    - run: crowdin upload
+    - run: crowdin upload -b master
 
 workflows:
   version: 2
