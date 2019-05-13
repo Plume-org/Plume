@@ -34,7 +34,7 @@
 
         <label for="editor-content">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="editor-content" name="content" rows="20">@Html(&form.content)</textarea>
-	    <small id="editor-left">@content_len</small>
+	    <small id="editor-left" dir="auto">@content_len</small>
         <p>
             @i18n!(ctx.1, "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload media")</a>
