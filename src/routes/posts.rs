@@ -529,13 +529,13 @@ pub fn create(
 
         Ok(Flash::success(
             Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
-            i18n!(&rockets.intl.catalog, "Your post has been saved."),
+            i18n!(&rockets.intl.catalog, "Your article has been saved."),
         ))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
         Err(Ok(render!(posts::new(
             &rockets.to_context(),
-            i18n!(rockets.intl.catalog, "New post"),
+            i18n!(rockets.intl.catalog, "New article"),
             blog,
             false,
             &*form,
