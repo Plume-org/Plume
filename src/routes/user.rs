@@ -526,7 +526,7 @@ pub fn create(
                 Redirect::to(uri!(super::session::new: m = _)),
                 i18n!(
                     rockets.intl.catalog,
-                    "Your account has been created. Now you just need to login before you can use it."
+                    "Your account has been created. Now you just need to log in, before you can use it."
                 ),
             ))
         })
