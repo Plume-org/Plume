@@ -396,7 +396,7 @@ pub fn update(
     )?;
     Ok(Flash::success(
         Redirect::to(uri!(me)),
-        i18n!(intl.catalog, "Your profile have been updated."),
+        i18n!(intl.catalog, "Your profile has been updated."),
     ))
 }
 
@@ -423,7 +423,7 @@ pub fn delete(
 
         Ok(Flash::success(
             Redirect::to(uri!(super::instance::index)),
-            i18n!(rockets.intl.catalog, "Your account have been deleted."),
+            i18n!(rockets.intl.catalog, "Your account has been deleted."),
         ))
     } else {
         Ok(Flash::error(
@@ -526,7 +526,7 @@ pub fn create(
                 Redirect::to(uri!(super::session::new: m = _)),
                 i18n!(
                     rockets.intl.catalog,
-                    "Your account have been created. You just need to login before you can use it."
+                    "Your account has been created. Now you just need to log in, before you can use it."
                 ),
             ))
         })
