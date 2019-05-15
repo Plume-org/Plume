@@ -16,7 +16,6 @@ header {
     padding: 1em 1em 1em 2em;
     background: $purple;
     align-self: flex-start;
-    cursor: pointer;
 
     a {
       transform: skewX(15deg);
@@ -37,7 +36,6 @@ header {
     display: flex;
    	flex-direction: row;
    	align-items: center;
-    cursor: pointer;
 
    	hr {
      	height: 100%;
@@ -121,7 +119,6 @@ header {
    		opacity: 0;
    		font-size: 0.9em;
    		white-space: nowrap;
-      cursor: pointer;
    	}
 
    	img + .mobile-label { display: none; }
@@ -131,7 +128,6 @@ header {
    	  .mobile-label {
    	    opacity: 1;
      		transform: translate(-50%, 80%);
-        cursor: pointer;
    		}
     }
  	}
