@@ -17,7 +17,6 @@ header {
     background: $purple;
     align-self: flex-start;
     cursor: pointer;
-    overflow: hidden;
 
     a {
       transform: skewX(15deg);
@@ -39,7 +38,6 @@ header {
    	flex-direction: row;
    	align-items: center;
     cursor: pointer;
-    overflow: hidden;
 
    	hr {
      	height: 100%;
@@ -111,6 +109,7 @@ header {
  	  i {
    		transition: all 0.2s ease;
    		margin: 0;
+      overflow: hidden;
    	}
 
    	.mobile-label {
