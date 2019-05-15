@@ -109,7 +109,7 @@ header {
  	  i {
    		transition: all 0.2s ease;
    		margin: 0;
-      overflow: hidden;
+      cursor: pointer;
    	}
 
    	.mobile-label {
@@ -121,6 +121,7 @@ header {
    		opacity: 0;
    		font-size: 0.9em;
    		white-space: nowrap;
+      cursor: pointer;
    	}
 
    	img + .mobile-label { display: none; }
@@ -130,6 +131,7 @@ header {
    	  .mobile-label {
    	    opacity: 1;
      		transform: translate(-50%, 80%);
+        cursor: pointer;
    		}
     }
  	}
