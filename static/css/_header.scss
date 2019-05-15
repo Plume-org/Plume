@@ -17,6 +17,7 @@ header {
     background: $purple;
     align-self: flex-start;
     cursor: pointer;
+    overflow: hidden;
 
     a {
       transform: skewX(15deg);
@@ -38,6 +39,7 @@ header {
    	flex-direction: row;
    	align-items: center;
     cursor: pointer;
+    overflow: hidden;
 
    	hr {
      	height: 100%;
