@@ -38,7 +38,6 @@ html {
     nav#menu {
       display: inline-flex;
       cursor: pointer;
-      overflow: hidden;
     }
 
     #content {
@@ -80,7 +79,6 @@ html {
       flex-direction: column;
       align-items: flex-start;
       cursor: pointer;
-      overflow: hidden;
 
       a {
         display: flex;
@@ -102,6 +100,7 @@ html {
           margin: 0;
           width: 100%;
           border: solid $white 0.1rem;
+          cursor: pointer;
         }
         .mobile-label { display: initial; }
       }
