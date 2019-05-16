@@ -12,8 +12,8 @@
 @(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
 
 @:base(ctx, title.clone(), {}, {}, {
-    <h1 id="plume-editor-title">@title</h1>
-    <div id="plume-editor" style="display: none;">
+    <h1 id="plume-editor-title" dir="auto">@title</h1>
+    <div id="plume-editor" style="display: none;" dir="auto">
       <header>
         <button id="publish" class="button">@i18n!(ctx.1, "Publish")</button>
         <p id="char-count">@content_len</p>
@@ -32,10 +32,10 @@
             @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or_else(|| Cow::from("Unknown error")))
         }
 
-        <label for="editor-content">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
-        <textarea id="editor-content" name="content" rows="20">@Html(&form.content)</textarea>
+        <label for="editor-content" dir="auto">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
+        <textarea id="editor-content" name="content" rows="20" dir="auto">@Html(&form.content)</textarea>
 	    <small id="editor-left" dir="auto">@content_len</small>
-        <p>
+        <p dir="auto">
             @i18n!(ctx.1, "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload media")</a>
         </p>
@@ -47,7 +47,7 @@
         @:image_select(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias, form.cover)
 
         @if is_draft {
-            <label for="draft">
+            <label for="draft" dir="auto">
                 <input type="checkbox" name="draft" id="draft" checked>
                 @i18n!(ctx.1, "This is a draft, don't publish it yet.")
             </label>
