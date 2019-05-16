@@ -25,7 +25,7 @@
 <div class="h-entry">
     <h1 class="article p-name" dir="auto">@article.title</h1>
     <h2 class="article p-summary" dir="auto">@article.subtitle</h2>
-    <div class="article-info">
+    <div class="article-info" dir="auto">
         <span class="author">
             @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
                                 uri!(user::details: name = &author.fqn),
@@ -53,14 +53,14 @@
         @Html(&article.content)
     </article>
     <div class="article-meta">
-        <p>
+        <p dir="auto">
             @if article.license.is_empty() {
                 @i18n!(ctx.1, "All rights reserved."; &article.license)
             } else {
                 @i18n!(ctx.1, "This article is under the {0} license."; &article.license)
             }
         </p>
-        <ul class="tags">
+        <ul class="tags" dir="auto">
             @for tag in tags {
                 @if !tag.is_hashtag {
                     <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
@@ -69,7 +69,7 @@
                 }
             }
         </ul>
-        <div class="flex p-author h-card">
+        <div class="flex p-author h-card" dir="auto">
             @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
             <div class="grow">
                 <h2 class="p-name">
@@ -130,7 +130,7 @@
                 </div>
             </div>
         }
-        <div class="comments">
+        <div class="comments" dir="auto">
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
             @if ctx.2.is_some() {
