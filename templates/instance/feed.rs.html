@@ -16,7 +16,7 @@
     ])
 
     @if !articles.is_empty() {
-        <div class="cards spaced">
+        <div class="cards">
             @for article in articles {
                 @:post_card(ctx, article)
             }

@@ -170,7 +170,7 @@ impl Blog {
         let mut icon = Image::default();
         icon.object_props.set_url_string(
             self.icon_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
                 .unwrap_or_default(),
         )?;
         icon.object_props.set_attributed_to_link(
@@ -187,7 +187,7 @@ impl Blog {
         let mut banner = Image::default();
         banner.object_props.set_url_string(
             self.banner_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
                 .unwrap_or_default(),
         )?;
         banner.object_props.set_attributed_to_link(
@@ -269,14 +269,14 @@ impl Blog {
 
     pub fn icon_url(&self, conn: &Connection) -> String {
         self.icon_id
-            .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+            .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
             .unwrap_or_else(|| "/static/default-avatar.png".to_string())
     }
 
     pub fn banner_url(&self, conn: &Connection) -> Option<String> {
         self.banner_id
             .and_then(|i| Media::get(conn, i).ok())
-            .and_then(|c| c.url(conn).ok())
+            .and_then(|c| c.url().ok())
     }
 
     pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
@@ -405,7 +405,9 @@ impl AsActor<&PlumeRocket> for Blog {
     }
 
     fn is_local(&self) -> bool {
-        self.instance_id == 1 // TODO: this is not always true
+        Instance::get_local()
+            .map(|i| self.instance_id == i.id)
+            .unwrap_or(false)
     }
 }
 
@@ -472,7 +474,7 @@ pub(crate) mod tests {
                 "BlogName".to_owned(),
                 "Blog name".to_owned(),
                 "This is a small blog".to_owned(),
-                Instance::get_local(conn).unwrap().id,
+                Instance::get_local().unwrap().id,
             )
             .unwrap(),
         )
@@ -483,7 +485,7 @@ pub(crate) mod tests {
                 "MyBlog".to_owned(),
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
-                Instance::get_local(conn).unwrap().id,
+                Instance::get_local().unwrap().id,
             )
             .unwrap(),
         )
@@ -494,7 +496,7 @@ pub(crate) mod tests {
                 "WhyILikePlume".to_owned(),
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
-                Instance::get_local(conn).unwrap().id,
+                Instance::get_local().unwrap().id,
             )
             .unwrap(),
         )
@@ -554,7 +556,7 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )
@@ -562,7 +564,7 @@ pub(crate) mod tests {
 
             assert_eq!(
                 blog.get_instance(conn).unwrap().id,
-                Instance::get_local(conn).unwrap().id
+                Instance::get_local().unwrap().id
             );
             // TODO add tests for remote instance
             Ok(())
@@ -581,7 +583,7 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )
@@ -592,7 +594,7 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )
@@ -683,7 +685,7 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )
@@ -706,7 +708,7 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )
@@ -742,7 +744,7 @@ pub(crate) mod tests {
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )
@@ -753,7 +755,7 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
-                    Instance::get_local(conn).unwrap().id,
+                    Instance::get_local().unwrap().id,
                 )
                 .unwrap(),
             )

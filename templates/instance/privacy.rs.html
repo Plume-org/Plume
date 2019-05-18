@@ -1,0 +1,13 @@
+@use templates::base;
+@use template_utils::*;
+
+@(ctx: BaseContext)
+
+@:base(ctx, i18n!(ctx.1, "Privacy policy"), {}, {}, {
+    <h1>@i18n!(ctx.1, "Privacy policy")</h1>
+    <section>
+    	<p>@i18n!(ctx.1, "If you are browsing this site as a visitor, no data about you is collected.")</p>
+    	<p>@i18n!(ctx.1, "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it.")</p>
+    	<p>@i18n!(ctx.1, "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies.")</p>
+    </section>
+})

@@ -147,7 +147,7 @@ pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, 
         b,
         false,
         &NewPostForm {
-            license: Instance::get_local(&*conn)?.default_license,
+            license: Instance::get_local()?.default_license,
             ..NewPostForm::default()
         },
         true,
@@ -263,7 +263,7 @@ pub fn update(
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
                 Some(
-                    &Instance::get_local(&conn)
+                    &Instance::get_local()
                         .expect("posts::update: Error getting local instance")
                         .public_domain,
                 ),
@@ -314,7 +314,7 @@ pub fn update(
                 .filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(&conn, t).ok())
+                .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
             post.update_tags(&conn, tags)
                 .expect("post::update: tags error");
@@ -324,7 +324,7 @@ pub fn update(
                 .map(|h| h.to_camel_case())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(&conn, t).ok())
+                .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
             post.update_hashtags(&conn, hashtags)
                 .expect("post::update: hashtags error");
@@ -347,7 +347,7 @@ pub fn update(
 
             Ok(Flash::success(
                 Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)),
-                i18n!(intl, "Your article have been updated."),
+                i18n!(intl, "Your article has been updated."),
             ))
         }
     } else {
@@ -435,7 +435,7 @@ pub fn create(
         let (content, mentions, hashtags) = utils::md_to_html(
             form.content.to_string().as_ref(),
             Some(
-                &Instance::get_local(&conn)
+                &Instance::get_local()
                     .expect("post::create: local instance error")
                     .public_domain,
             ),
@@ -529,13 +529,13 @@ pub fn create(
 
         Ok(Flash::success(
             Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
-            i18n!(&rockets.intl.catalog, "Your post have been saved."),
+            i18n!(&rockets.intl.catalog, "Your article has been saved."),
         ))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
         Err(Ok(render!(posts::new(
             &rockets.to_context(),
-            i18n!(rockets.intl.catalog, "New post"),
+            i18n!(rockets.intl.catalog, "New article"),
             blog,
             false,
             &*form,
@@ -594,7 +594,7 @@ pub fn delete(
 
         Ok(Flash::success(
             Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
-            i18n!(intl.catalog, "Your article have been deleted."),
+            i18n!(intl.catalog, "Your article has been deleted."),
         ))
     } else {
         Ok(Flash::error(Redirect::to(

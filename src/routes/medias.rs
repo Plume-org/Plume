@@ -160,7 +160,7 @@ pub fn set_avatar(
         user.set_avatar(&*conn, media.id)?;
         Ok(Flash::success(
             Redirect::to(uri!(details: id = id)),
-            i18n!(intl.catalog, "Your avatar have been updated."),
+            i18n!(intl.catalog, "Your avatar has been updated."),
         ))
     } else {
         Ok(Flash::error(

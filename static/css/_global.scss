@@ -4,11 +4,12 @@ html, body {
  	background: $background;
  	color: $black;
  	font-family: $route159;
-        ::selection {
-		background: $lightpurple;
-        }
+
+  ::selection {
+    background: transparentize($purple, 0.7);
+  }
 	::-moz-selection {
-		background: $lightpurple;
+    background: transparentize($purple, 0.7);
 	}
 }
 
@@ -16,7 +17,7 @@ a, a:visited {
  	color: $purple;
  	text-decoration: none;
 }
-a::selection { 
+a::selection {
 	color: $white;
 }
 a::-moz-selection {
@@ -37,12 +38,15 @@ small {
  	padding: 5em;
 }
 
-.spaced {
- 	margin: 4rem 0;
+.right {
+  text-align: right;
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 
-.cards.spaced {
-  margin: 1rem 0 5rem;
+.spaced {
+ 	margin: 4rem 0;
 }
 
 .banner {
@@ -59,21 +63,26 @@ small {
 
 /// Main
 body > main > *, .h-feed > * {
- 	margin: 0 20%;
+ 	margin: 1em $horizontal-margin;
 }
 
 body > main > .h-entry, .h-feed {
 	margin: 0;
 }
 
+body > main {
+  min-height: 70vh;
+}
+
 main {
+
   h1, h2, h3, h4, h5, h6 {
       font-family: $route159;
       line-height: 1.15;
       font-weight: 300;
 
       &.article {
-          max-width: 40rem;
+          max-width: $article-width;
       }
   }
   h1 {
@@ -94,7 +103,6 @@ main {
    	font-weight: 300;
 
    	&.article {
-      margin: auto;
       font-size: 1.25em;
       margin-bottom: 0.5em;
     }
@@ -110,7 +118,7 @@ main {
           margin-bottom: 0.5em;
       }
   }
-	
+
   .cover {
     padding: 0px;
     margin: 0px;
@@ -126,8 +134,6 @@ main {
 p.error {
  	color: $red;
  	font-weight: bold;
- 	max-width: 40rem;
- 	margin: 1em auto;
 }
 
 /// User page
@@ -149,7 +155,6 @@ p.error {
  	background: $white;
  	color: $purple;
  	border: 1px solid $purple;
- 	border-radius: 1em;
 
  	font-size: 1rem;
 }
@@ -164,6 +169,7 @@ p.error {
  	flex-direction: row;
  	flex-wrap: wrap;
  	padding: 0 5%;
+  margin: 1rem 0 5rem;
 }
 .card {
  	flex: 1;
@@ -213,24 +219,44 @@ p.error {
    	overflow: hidden;
   }
 }
-.list .card {
- 	/* TODO */
- 	background: 0;
- 	margin: 2em 0;
- 	padding: 0;
- 	min-height: 0;
+
+.list > .card {
+  background: transparent;
+  margin: 2em 0;
+  min-height: 3em;
+
+  padding: 1em;
+  transition: background 0.1s ease-in;
+
+  &:hover {
+    background-color: $gray;
+  }
+
+  &.compact {
+    margin: 0;
+    padding: 0 1em;
+  }
+
+  h3 {
+    margin: 0;
+  }
 }
 
 /// Instance presentation
-.presentation > h2, .presentation > a {
- 	text-align: center;
-}
-.presentation > a {
- 	font-size: 1.2em;
- 	margin: 1em;
+.presentation {
+  max-width: none;
+
+  & > h2, & > a {
+    text-align: center;
+  }
+
+  & > a {
+    font-size: 1.2em;
+    margin: 1em;
+  }
 }
 
-//  Stats
+// Stats
 .stats {
  	display: flex;
  	justify-content: space-around;
@@ -282,13 +308,14 @@ p.error {
 
   .grow {
     flex: 1;
+    margin: 0 1em;
   }
 }
 
 .left-icon {
     align-self: center;
     padding: 1em;
-    background: $lightgray;
+    background: $gray;
     border-radius: 50px;
     margin: 1em;
     margin-right: 2em;
@@ -298,13 +325,37 @@ p.error {
 body > footer {
   display: flex;
   align-content: center;
-  justify-content: space-between;
-  background: $lightgray;
-  padding: 0 20%;
+  justify-content: space-around;
+  background: $purple;
+  color: $white;
   margin-top: 5em;
 
   * {
-    margin: 5em 0;
+    margin: 0;
+  }
+
+  hr {
+    transform: skew(-15deg);
+    background: $white;
+    border: none;
+    width: .2em;
+  }
+
+  a, a:visited {
+    color: $white;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 20%;
+    margin: 2em 0;
+    transition: all 0.1s ease-in;
+
+    & > * {
+      display: block;
+      margin: 1em 0;
+    }
   }
 }
 
@@ -386,9 +437,9 @@ figure {
 
 /// Tabs
 .tabs {
-  border-bottom: 1px solid $lightgray;
+  border-bottom: 1px solid $gray;
   padding: 0px;
-  margin: auto 20% 2em;
+  margin: auto $horizontal-margin 2em;
   overflow: auto;
   display: flex;
 

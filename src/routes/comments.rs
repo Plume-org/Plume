@@ -43,7 +43,7 @@ pub fn create(
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
                 Some(
-                    &Instance::get_local(&conn)
+                    &Instance::get_local()
                         .expect("comments::create: local instance error")
                         .public_domain,
                 ),
@@ -94,7 +94,7 @@ pub fn create(
                 Redirect::to(
                     uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
                 ),
-                i18n!(&rockets.intl.catalog, "Your comment have been posted."),
+                i18n!(&rockets.intl.catalog, "Your comment has been posted."),
             )
         })
         .map_err(|errors| {
@@ -169,7 +169,7 @@ pub fn delete(
     }
     Ok(Flash::success(
         Redirect::to(uri!(super::posts::details: blog = blog, slug = slug, responding_to = _)),
-        i18n!(&rockets.intl.catalog, "Your comment have been deleted."),
+        i18n!(&rockets.intl.catalog, "Your comment has been deleted."),
     ))
 }
 

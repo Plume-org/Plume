@@ -141,7 +141,7 @@ impl Post {
         use schema::post_authors;
         use schema::users;
         let local_authors = users::table
-            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
             .select(users::id);
         let local_posts_id = post_authors::table
             .filter(post_authors::author_id.eq_any(local_authors))
@@ -381,7 +381,7 @@ impl Post {
             .collect::<Vec<serde_json::Value>>();
         let mut tags_json = Tag::for_post(conn, self.id)?
             .into_iter()
-            .map(|t| json!(t.to_activity(conn).ok()))
+            .map(|t| json!(t.to_activity().ok()))
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
@@ -416,7 +416,7 @@ impl Post {
         if let Some(media_id) = self.cover_id {
             let media = Media::get(conn, media_id)?;
             let mut cover = Image::default();
-            cover.object_props.set_url_string(media.url(conn)?)?;
+            cover.object_props.set_url_string(media.url()?)?;
             if media.sensitive {
                 cover
                     .object_props
@@ -600,7 +600,7 @@ impl Post {
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {
         self.cover_id
             .and_then(|i| Media::get(conn, i).ok())
-            .and_then(|c| c.url(conn).ok())
+            .and_then(|c| c.url().ok())
     }
 
     pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
