@@ -347,7 +347,7 @@ pub fn update(
 
             Ok(Flash::success(
                 Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)),
-                i18n!(intl, "Your article have been updated."),
+                i18n!(intl, "Your article has been updated."),
             ))
         }
     } else {
@@ -529,13 +529,13 @@ pub fn create(
 
         Ok(Flash::success(
             Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
-            i18n!(&rockets.intl.catalog, "Your post have been saved."),
+            i18n!(&rockets.intl.catalog, "Your article has been saved."),
         ))
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
         Err(Ok(render!(posts::new(
             &rockets.to_context(),
-            i18n!(rockets.intl.catalog, "New post"),
+            i18n!(rockets.intl.catalog, "New article"),
             blog,
             false,
             &*form,
@@ -594,7 +594,7 @@ pub fn delete(
 
         Ok(Flash::success(
             Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
-            i18n!(intl.catalog, "Your article have been deleted."),
+            i18n!(intl.catalog, "Your article has been deleted."),
         ))
     } else {
         Ok(Flash::error(Redirect::to(
