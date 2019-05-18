@@ -281,14 +281,20 @@ msgstr "إنشاء حساب"
 msgid "About this instance"
 msgstr "عن مثيل الخادوم هذا"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "الإدارة"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "الشيفرة المصدرية"
 
 msgid "Matrix room"
 msgstr "غرفة المحادثة على ماتريكس"
-
-msgid "Administration"
-msgstr "الإدارة"
 
 msgid "Welcome to {}"
 msgstr "مرحبا بكم في {0}"
@@ -365,6 +371,9 @@ msgstr "احفظ هذه الإعدادات"
 msgid "About {0}"
 msgstr "عن {0}"
 
+msgid "Runs Plume {0}"
+msgstr "مدعوم بـ Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "يستضيف <em>{0}</em> أشخاص"
 
@@ -377,8 +386,22 @@ msgstr ""
 msgid "Administred by"
 msgstr "يديره"
 
-msgid "Runs Plume {0}"
-msgstr "مدعوم بـ Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 #, fuzzy
 msgid "Follow {}"
@@ -607,8 +630,7 @@ msgstr "اسم نطاق مثيل الخادم"
 msgid "Posted by one of these authors"
 msgstr ""
 
-#, fuzzy
-msgid "Author(s)"
+msgid "Authors"
 msgstr "المؤلفون"
 
 # src/template_utils.rs:305
@@ -632,17 +654,14 @@ msgstr ""
 msgid "Article license"
 msgstr "رخصة المقال"
 
-#, fuzzy
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
+msgstr ""
+
+msgid "Search result"
 msgstr "نتائج البحث"
 
-#, fuzzy
-msgid "Search result(s)"
-msgstr "نتائج البحث"
-
-#, fuzzy
-msgid "No results for your query"
-msgstr "الانتقال إلى معرضك"
+msgid "No result for your query"
+msgstr ""
 
 msgid "No more results for your query"
 msgstr ""
@@ -744,12 +763,6 @@ msgstr "انشر منشورك"
 msgid "Written by {0}"
 msgstr "كتبه {0}"
 
-msgid "Edit"
-msgstr "تعديل"
-
-msgid "Delete this article"
-msgstr "احذف هذا المقال"
-
 msgid "All rights reserved."
 msgstr "جميع الحقوق محفوظة."
 
@@ -806,6 +819,18 @@ msgstr "ارسال التعليق"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "لا توجد هناك تعليقات بعد. كن أول مَن يتفاعل معه!"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "تعديل"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -928,9 +953,6 @@ msgstr "ليس لديك أية وسائط بعد."
 msgid "Content warning: {0}"
 msgstr "تحذير عن المحتوى: {0}"
 
-msgid "Delete"
-msgstr "حذف"
-
 msgid "Details"
 msgstr "التفاصيل"
 
@@ -963,3 +985,6 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#~ msgid "Delete this article"
+#~ msgstr "احذف هذا المقال"

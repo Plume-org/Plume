@@ -281,14 +281,20 @@ msgstr "登録"
 msgid "About this instance"
 msgstr "このインスタンスについて"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "管理"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "ソースコード"
 
 msgid "Matrix room"
 msgstr "Matrix ルーム"
-
-msgid "Administration"
-msgstr "管理"
 
 msgid "Welcome to {}"
 msgstr "{} へようこそ"
@@ -367,6 +373,9 @@ msgstr "設定を保存"
 msgid "About {0}"
 msgstr "{0} について"
 
+msgid "Runs Plume {0}"
+msgstr "Plume {0} を実行中"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "ユーザー登録者数 <em>{0}</em> 人"
 
@@ -379,8 +388,22 @@ msgstr "他のインスタンスからの接続数 <em>{0}</em>"
 msgid "Administred by"
 msgstr "管理者"
 
-msgid "Runs Plume {0}"
-msgstr "Plume {0} を実行中"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 #, fuzzy
 msgid "Follow {}"
@@ -615,8 +638,7 @@ msgstr "インスタンスのドメイン"
 msgid "Posted by one of these authors"
 msgstr "以下のいずれかの投稿者が投稿"
 
-#, fuzzy
-msgid "Author(s)"
+msgid "Authors"
 msgstr "投稿者"
 
 # src/template_utils.rs:305
@@ -640,16 +662,13 @@ msgstr "適用されているライセンス"
 msgid "Article license"
 msgstr "投稿のライセンス"
 
-#, fuzzy
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr "\"{0}\" の検索結果"
 
-#, fuzzy
-msgid "Search result(s)"
+msgid "Search result"
 msgstr "検索結果"
 
-#, fuzzy
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr "検索結果はありません"
 
 msgid "No more results for your query"
@@ -756,12 +775,6 @@ msgstr "投稿を公開"
 msgid "Written by {0}"
 msgstr "投稿者 {0}"
 
-msgid "Edit"
-msgstr "編集"
-
-msgid "Delete this article"
-msgstr "この投稿を削除"
-
 msgid "All rights reserved."
 msgstr "著作権は投稿者が保有しています。"
 
@@ -808,6 +821,18 @@ msgstr "コメントを保存"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "コメントがまだありません。最初のコメントを書きましょう！"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "編集"
 
 msgid "Invalid CSRF token"
 msgstr "無効な CSRF トークンです"
@@ -931,9 +956,6 @@ msgstr "メディアがまだありません。"
 msgid "Content warning: {0}"
 msgstr "コンテンツの警告: {0}"
 
-msgid "Delete"
-msgstr "削除"
-
 msgid "Details"
 msgstr "詳細"
 
@@ -966,3 +988,6 @@ msgstr "このメディアを挿入するには、これを投稿にコピーし
 
 msgid "Use as an avatar"
 msgstr "アバターとして使う"
+
+#~ msgid "Delete this article"
+#~ msgstr "この投稿を削除"

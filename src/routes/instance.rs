@@ -313,6 +313,11 @@ pub fn about(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     )))
 }
 
+#[get("/privacy")]
+pub fn privacy(rockets: PlumeRocket) -> Ructe {
+    render!(instance::privacy(&rockets.to_context()))
+}
+
 #[get("/manifest.json")]
 pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
     let instance = Instance::get_local()?;

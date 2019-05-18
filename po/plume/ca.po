@@ -275,14 +275,20 @@ msgstr "Registre"
 msgid "About this instance"
 msgstr "Quant a aquesta instància"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administració"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Codi font"
 
 msgid "Matrix room"
 msgstr ""
-
-msgid "Administration"
-msgstr "Administració"
 
 msgid "Welcome to {}"
 msgstr "Us donem la benvinguda a {}"
@@ -359,6 +365,9 @@ msgstr ""
 msgid "About {0}"
 msgstr "Quant a {0}"
 
+msgid "Runs Plume {0}"
+msgstr ""
+
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -371,7 +380,21 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid "Runs Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
 msgid "Follow {}"
@@ -599,8 +622,7 @@ msgstr ""
 msgid "Posted by one of these authors"
 msgstr ""
 
-#, fuzzy
-msgid "Author(s)"
+msgid "Authors"
 msgstr "Autors"
 
 # src/template_utils.rs:305
@@ -624,16 +646,13 @@ msgstr "Publicat segons aquesta llicència"
 msgid "Article license"
 msgstr ""
 
-#, fuzzy
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr "Resultats de la cerca «{0}»"
 
-#, fuzzy
-msgid "Search result(s)"
+msgid "Search result"
 msgstr "Resultats de la cerca"
 
-#, fuzzy
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr "La vostra consulta no ha produït cap resultat"
 
 msgid "No more results for your query"
@@ -735,12 +754,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr "Escrit per {0}"
 
-msgid "Edit"
-msgstr "Edita"
-
-msgid "Delete this article"
-msgstr "Suprimeix aquest article"
-
 msgid "All rights reserved."
 msgstr "Tots els drets reservats."
 
@@ -789,6 +802,18 @@ msgstr "Envia el comentari"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
+
+msgid "Delete"
+msgstr "Suprimeix"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Edita"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -906,9 +931,6 @@ msgstr ""
 msgid "Content warning: {0}"
 msgstr ""
 
-msgid "Delete"
-msgstr "Suprimeix"
-
 msgid "Details"
 msgstr "Detalls"
 
@@ -941,3 +963,6 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#~ msgid "Delete this article"
+#~ msgstr "Suprimeix aquest article"

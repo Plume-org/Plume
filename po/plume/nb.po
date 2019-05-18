@@ -274,14 +274,20 @@ msgstr "Registrér deg"
 msgid "About this instance"
 msgstr "Om denne instansen"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Kildekode"
 
 msgid "Matrix room"
 msgstr "Snakkerom"
-
-msgid "Administration"
-msgstr "Administrasjon"
 
 msgid "Welcome to {}"
 msgstr ""
@@ -368,6 +374,9 @@ msgstr "Lagre innstillingene"
 msgid "About {0}"
 msgstr ""
 
+msgid "Runs Plume {0}"
+msgstr ""
+
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -381,7 +390,21 @@ msgstr ""
 msgid "Administred by"
 msgstr "Administrasjon"
 
-msgid "Runs Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
 #, fuzzy
@@ -642,7 +665,7 @@ msgstr "Instillinger for instansen"
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Author(s)"
+msgid "Authors"
 msgstr ""
 
 # #-#-#-#-#  nb.po (plume)  #-#-#-#-#
@@ -673,13 +696,13 @@ msgstr "Denne artikkelen er publisert med lisensen {0}"
 msgid "Article license"
 msgstr "Standardlisens"
 
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr ""
 
-msgid "Search result(s)"
+msgid "Search result"
 msgstr ""
 
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr ""
 
 msgid "No more results for your query"
@@ -787,13 +810,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-#, fuzzy
-msgid "Delete this article"
-msgstr "Siste artikler"
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -849,6 +865,18 @@ msgstr "Send kommentar"
 #, fuzzy
 msgid "No comments yet. Be the first to react!"
 msgstr "Ingen kommentarer enda. Vær den første!"
+
+msgid "Delete"
+msgstr ""
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr ""
 
 #, fuzzy
 msgid "Invalid CSRF token"
@@ -978,9 +1006,6 @@ msgstr ""
 msgid "Content warning: {0}"
 msgstr "Innhold"
 
-msgid "Delete"
-msgstr ""
-
 msgid "Details"
 msgstr ""
 
@@ -1014,6 +1039,10 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Delete this article"
+#~ msgstr "Siste artikler"
 
 #, fuzzy
 #~ msgid "Short description - byline"

@@ -23,69 +23,53 @@
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
 <div class="h-entry">
-    <h1 class="article p-name">@article.title</h1>
-    <h2 class="article p-summary">@article.subtitle</h2>
-    <div class="article-info">
-        <span class="author">
-            @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
-                                uri!(user::details: name = &author.fqn),
-                                escape(&author.name()))))
-        </span>
-        &mdash;
-        <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
-        @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
-            &mdash;
-            <a href="@uri!(posts::edit: blog = &blog.fqn, slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
-            &mdash;
-            <form class="inline" method="post" action="@uri!(posts::delete: blog_name = &blog.fqn, slug = &article.slug)">
-                <input onclick="return confirm('@i18n!(ctx.1, "Are you sure?")')" type="submit" value="@i18n!(ctx.1, "Delete this article")">
-            </form>
+    <header
+        class="article @if article.cover_id.is_some() { illustrated }"
+        @if article.cover_id.is_some() { style="background-image: url('@article.cover_url(ctx.0).unwrap_or_default()'" }
+    >
+        <div>
+            <h1 class="article p-name">@article.title</h1>
+            <div class="article-info">
+                <span class="author">
+                    @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
+                                        uri!(user::details: name = &author.fqn),
+                                        escape(&author.name()))))
+                </span>
+                &mdash;
+                <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
+            </div>
+            <h2 class="article p-summary">@article.subtitle</h2>
+        </div>
+        @if article.cover_id.is_some() {
+            <div class="shadow"></div>
+            <img class="u-photo hidden" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
         }
-        @if !article.published {
-            <span class="badge">@i18n!(ctx.1, "Draft")</span>
-        }
-    </div>
-    @if article.cover_id.is_some() {
-        <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
-        <img class="hidden u-photo" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
-    }
+    </header>
+
     <article class="e-content">
         @Html(&article.content)
     </article>
     <div class="article-meta">
-        <p>
-            @if article.license.is_empty() {
-                @i18n!(ctx.1, "All rights reserved."; &article.license)
-            } else {
-                @i18n!(ctx.1, "This article is under the {0} license."; &article.license)
-            }
-        </p>
-        <ul class="tags">
-            @for tag in tags {
-                @if !tag.is_hashtag {
-                    <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
-                } else {
-                    <span class="hidden p-category">@tag.tag</span>
+        <section class="split">
+            <ul class="tags">
+                @for tag in tags {
+                    @if !tag.is_hashtag {
+                        <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
+                    } else {
+                        <span class="hidden p-category">@tag.tag</span>
+                    }
                 }
-            }
-        </ul>
-        <div class="flex p-author h-card">
-            @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
-            <div class="grow">
-                <h2 class="p-name">
-		    <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
-		    <a rel="author" class="u-url" href="@author.ap_url"></a>
-		</h2>
-                <p>@Html(&author.summary_html)</h2>
-            </div>
-	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
-                <form action="@uri!(user::follow: name = &author.fqn)" method="POST">
-                    <input type="submit" class="button" value="@if is_following {@i18n!(ctx.1, "Unsubscribe")} else {@i18n!(ctx.1, "Subscribe")}">
-                </form>
-	    }
-        </div>
+            </ul>
+            <p class="right">
+                @if article.license.is_empty() {
+                    @i18n!(ctx.1, "All rights reserved."; &article.license)
+                } else {
+                    @i18n!(ctx.1, "This article is under the {0} license."; &article.license)
+                }
+            </p>
+        </section>
         @if ctx.2.is_some() {
-            <div class="actions">
+            <section class="actions">
                 <form class="likes" action="@uri!(likes::create: blog = &blog.fqn, slug = &article.slug)" method="POST">
                     <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
@@ -93,7 +77,7 @@
 
                     @if has_liked {
                         <button type="submit" class="action liked">@icon!("heart") @i18n!(ctx.1, "I don't like this anymore")</button>
-	    } else {
+                    } else {
                         <button type="submit" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</button>
                     }
                 </form>
@@ -108,18 +92,19 @@
                         <button type="submit" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</button>
                     }
                 </form>
-            </div>
+            </section>
         } else {
-	    <p class="center">@Html(i18n!(ctx.1, "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article";
-			format!("<a href='{}'>", uri!(session::new: m = _)), "</a>",
-			format!("<a href='{}'>", uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)), "</a>"
-			))</p>
-            <div class="actions">
+            <p class="center">@Html(i18n!(ctx.1, "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article";
+                format!("<a href='{}'>", uri!(session::new: m = _)), "</a>",
+                format!("<a href='{}'>", uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)), "</a>"
+                ))
+            </p>
+            <section class="actions">
                 <div class="likes">
                     <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
                     </p>
-		    <a href="@uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
+                    <a href="@uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
                 </div>
 
                 <div class="reshares">
@@ -128,9 +113,26 @@
                     </p>
                     <a href="@uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)" class="action">@icon!("repeat") @i18n!(ctx.1, "Boost")</a>
                 </div>
-            </div>
+            </section>
         }
-        <div class="comments">
+        <section class="banner">
+            <div class="flex p-author h-card user">
+                @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
+                <div class="grow">
+                    <h2 class="p-name">
+                        <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
+                        <a rel="author" class="u-url" href="@author.ap_url"></a>
+                    </h2>
+                    <p>@Html(&author.summary_html)</p>
+                </div>
+        	    @if !ctx.2.as_ref().map(|u| u.id == author.id).unwrap_or(false) {
+                    <form action="@uri!(user::follow: name = &author.fqn)" method="POST">
+                        <input type="submit" class="button" value="@if is_following {@i18n!(ctx.1, "Unsubscribe")} else {@i18n!(ctx.1, "Subscribe")}">
+                    </form>
+        	    }
+            </div>
+        </section>
+        <section class="comments">
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
             @if ctx.2.is_some() {
@@ -147,15 +149,35 @@
             }
 
             @if !comments.is_empty() {
-                <div class="list">
-                    @for comm in comments {
-                        @:comment(ctx, &comm, Some(&article.ap_url), &blog.fqn, &article.slug)
-                    }
-                </div>
+                @for comm in comments {
+                    @:comment(ctx, &comm, Some(&article.ap_url), &blog.fqn, &article.slug)
+                }
             } else {
                 <p class="center">@i18n!(ctx.1, "No comments yet. Be the first to react!")</p>
             }
-        </div>
+        </section>
     </div>
 </div>
+@if  ctx.2.clone().and_then(|u| article.is_author(ctx.0, u.id).ok()).unwrap_or(false) {
+    <aside class="bottom-bar">
+        <div>
+            <form class="inline" method="post" action="@uri!(posts::delete: blog_name = &blog.fqn, slug = &article.slug)">
+                <input class="button destructive" onclick="return confirm('@i18n!(ctx.1, "Are you sure?")')" type="submit" value="@i18n!(ctx.1, "Delete")">
+            </form>
+        </div>
+        <div>
+            @if !article.published {
+                <p>@i18n!(ctx.1, "This article is still a draft. Only you and other authors can see it.")</p>
+            } else {
+                <p>@i18n!(ctx.1, "Only you and other authors can edit this article.")</p>
+            }
+        </div>
+        <div>
+            @if !article.published {
+                <a class="button secondary" href="@uri!(posts::edit: blog = &blog.fqn, slug = &article.slug)">@i18n!(ctx.1, "Publish")</a>
+            }
+            <a class="button" href="@uri!(posts::edit: blog = &blog.fqn, slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
+        </div>
+    </aside>
+}
 })

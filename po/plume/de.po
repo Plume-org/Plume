@@ -280,14 +280,20 @@ msgstr "Registrieren"
 msgid "About this instance"
 msgstr "Über diese Instanz"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administration"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Quelltext"
 
 msgid "Matrix room"
 msgstr "Matrix-Raum"
-
-msgid "Administration"
-msgstr "Administration"
 
 msgid "Welcome to {}"
 msgstr "Willkommen bei {}"
@@ -364,6 +370,9 @@ msgstr "Diese Einstellungen speichern"
 msgid "About {0}"
 msgstr "Über {0}"
 
+msgid "Runs Plume {0}"
+msgstr "Verwendet Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "Heimat von <em>{0}</em> Personen"
 
@@ -376,8 +385,22 @@ msgstr "Und mit <em>{0}</em> anderen Instanzen verbunden sind"
 msgid "Administred by"
 msgstr "Administriert von"
 
-msgid "Runs Plume {0}"
-msgstr "Verwendet Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 #, fuzzy
 msgid "Follow {}"
@@ -616,8 +639,7 @@ msgstr "Instanz-Domain"
 msgid "Posted by one of these authors"
 msgstr "Von eine*r dieser Autor*innen veröffentlicht"
 
-#, fuzzy
-msgid "Author(s)"
+msgid "Authors"
 msgstr "Autoren"
 
 # src/template_utils.rs:305
@@ -641,16 +663,13 @@ msgstr "Unter dieser Lizenz veröffentlicht"
 msgid "Article license"
 msgstr "Artikel-Lizenz"
 
-#, fuzzy
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr "Suchergebnis für {0}"
 
-#, fuzzy
-msgid "Search result(s)"
+msgid "Search result"
 msgstr "Suchergebnis"
 
-#, fuzzy
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr "Keine Ergebnisse für deine Anfrage"
 
 msgid "No more results for your query"
@@ -757,12 +776,6 @@ msgstr "Veröffentliche deinen Beitrag"
 msgid "Written by {0}"
 msgstr "Geschrieben von {0}"
 
-msgid "Edit"
-msgstr "Bearbeiten"
-
-msgid "Delete this article"
-msgstr "Diesen Artikel löschen"
-
 msgid "All rights reserved."
 msgstr "Alle Rechte vorbehalten."
 
@@ -811,6 +824,18 @@ msgstr "Kommentar abschicken"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Noch keine Kommentare. Sei der erste, der reagiert!"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Bearbeiten"
 
 msgid "Invalid CSRF token"
 msgstr "Ungültiges CSRF-Token"
@@ -937,9 +962,6 @@ msgstr "Du hast noch keine Medien."
 msgid "Content warning: {0}"
 msgstr "Warnhinweis zum Inhalt: {0}"
 
-msgid "Delete"
-msgstr "Löschen"
-
 msgid "Details"
 msgstr "Details"
 
@@ -972,3 +994,6 @@ msgstr "Kopiere das in deine Artikel, um dieses Medium einzufügen:"
 
 msgid "Use as an avatar"
 msgstr "Als Profilbild nutzen"
+
+#~ msgid "Delete this article"
+#~ msgstr "Diesen Artikel löschen"

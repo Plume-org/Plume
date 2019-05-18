@@ -14,8 +14,7 @@ input, textarea, select {
 
  	background: $form-input-background;
  	color: $black;
- 	border: none;
- 	border: solid $lightgray thin;
+ 	border: solid $black thin;
 
  	font-size: 1.2em;
  	font-weight: 400;
@@ -55,7 +54,6 @@ form.inline {
 
   input[type="submit"] {
     display: inline-block;
-    color: $purple;
     cursor: pointer;
     font-size: 1em;
     width: auto;
@@ -67,39 +65,46 @@ form.inline {
       border: none;
       background: transparent;
       color: $purple;
+      font-weight: normal;
     }
   }
 }
 
-.button, input[type="submit"], button {
+.button, .button:visited, input[type="submit"], input[type="submit"].button {
  	transition: all 0.1s ease-in;
  	display: inline-block;
   -webkit-appearance: none;
 
- 	border-radius: 0.5em;
  	margin: 0.5em auto;
  	padding: 0.75em 1em;
 
- 	background: transparent;
- 	color: $purple;
- 	border: 1px solid $purple;
+ 	background: $purple;
+ 	color: $white;
+  font-weight: bold;
+  border: none;
 
  	cursor: pointer;
 
  	&:hover {
- 	  background: transparentize($purple, 0.6);
- 	  color: white;
+ 	  background: transparentize($purple, 0.1);
  	}
 
  	&.destructive {
- 	  color: $red;
-    border-color: $red;
+ 	  background: $red;
 
     &:hover {
-      background: transparentize($red, 0.6);
-      color: $white;
+      background: transparentize($red, 0.1);
     }
  	}
+
+  &.secondary {
+    background: $gray;
+    color: $black;
+
+    &:hover {
+      background: transparentize($black, 0.9);
+    }
+  }
 }
 input[type="submit"] {
  display: block;
@@ -126,18 +131,6 @@ form.new-post {
    	resize: none;
    -webkit-appearance: textarea;
   }
-  input[type="submit"] {
-   	background: $lightgray;
-   	color: $black;
-   	border: none;
-    -webkit-appearance: none;
-
-   	font-family: $playfair;
-   	font-size: 1.5em;
-  }
-  input[type="submit"]:hover {
-   background: $lightgray;}
-   -webkit-appearance: none;
 }
 
 .button + .button {
@@ -147,6 +140,7 @@ form.new-post {
 .split {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 
   & > * {
     flex-grow: 1;

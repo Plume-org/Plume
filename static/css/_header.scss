@@ -1,5 +1,5 @@
-header {
-  background: $lightgray;
+body > header {
+  background: $gray;
 
   #content {
     display: flex;
@@ -27,7 +27,7 @@ header {
      	height: 1.4em;
      	margin: 0;
      	padding: 0;
-     	color: $lightgray;
+     	color: $gray;
      	font-size: 1.33em;
    	}
   }

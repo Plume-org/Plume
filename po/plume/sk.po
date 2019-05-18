@@ -282,14 +282,20 @@ msgstr "Registrácia"
 msgid "About this instance"
 msgstr "O tejto instancii"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administrácia"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Zdrojový kód"
 
 msgid "Matrix room"
 msgstr "Matrix miestnosť"
-
-msgid "Administration"
-msgstr "Administrácia"
 
 msgid "Welcome to {}"
 msgstr "Vitaj na {}"
@@ -366,6 +372,9 @@ msgstr "Ulož tieto nastavenia"
 msgid "About {0}"
 msgstr "O {0}"
 
+msgid "Runs Plume {0}"
+msgstr "Beží na Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "Domov pre <em>{0}</em> ľudí"
 
@@ -378,8 +387,22 @@ msgstr "A sú pripojení k <em>{0}</em> ďalším instanciám"
 msgid "Administred by"
 msgstr "Správcom je"
 
-msgid "Runs Plume {0}"
-msgstr "Beží na Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 msgid "Follow {}"
 msgstr "Následuj {}"
@@ -619,8 +642,7 @@ msgstr "Doména instancie"
 msgid "Posted by one of these authors"
 msgstr "Uverejnené jedným z týchto autorov"
 
-#, fuzzy
-msgid "Author(s)"
+msgid "Authors"
 msgstr "Autori"
 
 # src/template_utils.rs:305
@@ -644,16 +666,13 @@ msgstr "Uverejnené pod touto licenciou"
 msgid "Article license"
 msgstr "Článok je pod licenciou"
 
-#, fuzzy
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr "Výsledok hľadania pre \"{0}\""
 
-#, fuzzy
-msgid "Search result(s)"
+msgid "Search result"
 msgstr "Výsledok hľadania"
 
-#, fuzzy
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr "Žiadny výsledok pre tvoje zadanie"
 
 msgid "No more results for your query"
@@ -759,12 +778,6 @@ msgstr "Zverejni svoj príspevok"
 msgid "Written by {0}"
 msgstr "Napísal/a {0}"
 
-msgid "Edit"
-msgstr "Uprav"
-
-msgid "Delete this article"
-msgstr "Vymaž tento článok"
-
 msgid "All rights reserved."
 msgstr "Všetky práva vyhradné."
 
@@ -820,6 +833,18 @@ msgstr "Pošli komentár"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Zatiaľ žiadne komentáre. Buď prvý kto zareaguje!"
+
+msgid "Delete"
+msgstr "Zmazať"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Uprav"
 
 msgid "Invalid CSRF token"
 msgstr "Neplatný CSRF token"
@@ -945,9 +970,6 @@ msgstr "Ešte nemáš nahrané žiadne multimédiá."
 msgid "Content warning: {0}"
 msgstr "Upozornenie o obsahu: {0}"
 
-msgid "Delete"
-msgstr "Zmazať"
-
 msgid "Details"
 msgstr "Podrobnosti"
 
@@ -981,3 +1003,6 @@ msgstr "Kód skopíruj do tvojho článku, pre vloženie tohto mediálneho súbo
 
 msgid "Use as an avatar"
 msgstr "Použi ako avatar"
+
+#~ msgid "Delete this article"
+#~ msgstr "Vymaž tento článok"

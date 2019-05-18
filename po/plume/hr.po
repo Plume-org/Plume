@@ -280,14 +280,20 @@ msgstr "Registrirajte se"
 msgid "About this instance"
 msgstr ""
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administracija"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Izvorni kod"
 
 msgid "Matrix room"
 msgstr ""
-
-msgid "Administration"
-msgstr "Administracija"
 
 msgid "Welcome to {}"
 msgstr "Dobrodošli u {0}"
@@ -364,6 +370,9 @@ msgstr ""
 msgid "About {0}"
 msgstr "O {0}"
 
+msgid "Runs Plume {0}"
+msgstr ""
+
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -376,7 +385,21 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid "Runs Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
 msgid "Follow {}"
@@ -604,7 +627,7 @@ msgstr ""
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Author(s)"
+msgid "Authors"
 msgstr ""
 
 # src/template_utils.rs:305
@@ -628,13 +651,13 @@ msgstr ""
 msgid "Article license"
 msgstr ""
 
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr ""
 
-msgid "Search result(s)"
+msgid "Search result"
 msgstr ""
 
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr ""
 
 msgid "No more results for your query"
@@ -736,12 +759,6 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
-msgid "Delete this article"
-msgstr ""
-
 msgid "All rights reserved."
 msgstr ""
 
@@ -791,6 +808,18 @@ msgid "Submit comment"
 msgstr ""
 
 msgid "No comments yet. Be the first to react!"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
 msgstr ""
 
 msgid "Invalid CSRF token"
@@ -907,9 +936,6 @@ msgid "You don't have any media yet."
 msgstr ""
 
 msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Delete"
 msgstr ""
 
 msgid "Details"

@@ -1,4 +1,5 @@
 @use plume_models::CONFIG;
+@use plume_models::instance::Instance;
 @use template_utils::*;
 @use routes::*;
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
@@ -78,13 +79,21 @@
             @:content()
         </main>
         <footer>
-            <span>@concat!("Plume ", env!("CARGO_PKG_VERSION"))</span>
-            <a href="@uri!(instance::about)">@i18n!(ctx.1, "About this instance")</a>
-            <a href="https://github.com/Plume-org/Plume">@i18n!(ctx.1, "Source code")</a>
-            <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(ctx.1, "Matrix room")</a>
-            @if ctx.2.clone().map(|a| a.is_admin).unwrap_or(false) {
-                <a href="@uri!(instance::admin)">@i18n!(ctx.1, "Administration")</a>
-            }
+            <hr/>
+            <div>
+                <h3>@Instance::get_local().map(|i| i.name).unwrap_or_default()</h3>
+                <a href="@uri!(instance::about)">@i18n!(ctx.1, "About this instance")</a>
+                <a href="@uri!(instance::privacy)">@i18n!(ctx.1, "Privacy policy")</a>
+                @if ctx.2.clone().map(|a| a.is_admin).unwrap_or(false) {
+                    <a href="@uri!(instance::admin)">@i18n!(ctx.1, "Administration")</a>
+                }
+            </div>
+            <div>
+                <h3>@concat!("Plume ", env!("CARGO_PKG_VERSION"))</h3>
+                <a href="https://docs.joinplu.me">@i18n!(ctx.1, "Documentation")</a>
+                <a href="https://github.com/Plume-org/Plume">@i18n!(ctx.1, "Source code")</a>
+                <a href="https://riot.im/app/#/room/#plume:disroot.org">@i18n!(ctx.1, "Matrix room")</a>
+            </div>
         </footer>
         <script src="@uri!(plume_static_files: file = "plume-front.js", _build_id = CACHE_NAME)"></script>
     </body>

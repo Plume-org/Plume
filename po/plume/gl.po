@@ -280,14 +280,20 @@ msgstr "Rexistrar"
 msgid "About this instance"
 msgstr "Sobre esta instancia"
 
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administración"
+
+msgid "Documentation"
+msgstr ""
+
 msgid "Source code"
 msgstr "Código fonte"
 
 msgid "Matrix room"
 msgstr "Sala Matrix"
-
-msgid "Administration"
-msgstr "Administración"
 
 msgid "Welcome to {}"
 msgstr "Benvida a {}"
@@ -365,6 +371,9 @@ msgstr "Gardar estas preferencias"
 msgid "About {0}"
 msgstr "Acerca de {0}"
 
+msgid "Runs Plume {0}"
+msgstr "Versión Plume {0}"
+
 msgid "Home to <em>{0}</em> people"
 msgstr "Lar de <em>{0}</em> persoas"
 
@@ -377,8 +386,22 @@ msgstr "E están conectadas a outras <em>{0}</em> instancias"
 msgid "Administred by"
 msgstr "Administrada por"
 
-msgid "Runs Plume {0}"
-msgstr "Versión Plume {0}"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you also have to provide your username (which does not "
+"have to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 #, fuzzy
 msgid "Follow {}"
@@ -615,8 +638,7 @@ msgstr "Dominio da instancia"
 msgid "Posted by one of these authors"
 msgstr "Publicado por unha de estas autoras"
 
-#, fuzzy
-msgid "Author(s)"
+msgid "Authors"
 msgstr "Autoras"
 
 # src/template_utils.rs:305
@@ -640,16 +662,13 @@ msgstr "Publicado baixo esta licenza"
 msgid "Article license"
 msgstr "Licenza do artigo"
 
-#, fuzzy
-msgid "Search result(s) for \"{0}\""
+msgid "Search result for \"{0}\""
 msgstr "Resultado da busca por \"{0}\""
 
-#, fuzzy
-msgid "Search result(s)"
+msgid "Search result"
 msgstr "Resultado da busca"
 
-#, fuzzy
-msgid "No results for your query"
+msgid "No result for your query"
 msgstr "Sen resultados para a busca"
 
 msgid "No more results for your query"
@@ -756,12 +775,6 @@ msgstr "Publicar o artigo"
 msgid "Written by {0}"
 msgstr "Escrito por {0}"
 
-msgid "Edit"
-msgstr "Editar"
-
-msgid "Delete this article"
-msgstr "Eliminar este artigo"
-
 msgid "All rights reserved."
 msgstr "Todos os dereitos reservados."
 
@@ -810,6 +823,18 @@ msgstr "Enviar comentario"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Sen comentarios. Sexa a primeira persoa en facelo!"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Editar"
 
 msgid "Invalid CSRF token"
 msgstr "Testemuño CSRF non válido"
@@ -932,9 +957,6 @@ msgstr "Aínda non subeu ficheiros de medios."
 msgid "Content warning: {0}"
 msgstr "Aviso de contido: {0}"
 
-msgid "Delete"
-msgstr "Eliminar"
-
 msgid "Details"
 msgstr "Detalles"
 
@@ -968,3 +990,6 @@ msgstr "Copie e pegue este código para incrustar no artigo:"
 
 msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
+
+#~ msgid "Delete this article"
+#~ msgstr "Eliminar este artigo"
