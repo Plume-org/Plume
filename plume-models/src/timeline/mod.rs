@@ -3,7 +3,8 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use lists::List;
 use posts::Post;
 use schema::{posts, timeline, timeline_definition};
-use {Connection, Error, Result};
+use std::ops::Deref;
+use {Connection, Error, PlumeRocket, Result};
 
 pub(crate) mod query;
 
@@ -149,6 +150,13 @@ impl Timeline {
         Ok(timeline)
     }
 
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
+        diesel::delete(self)
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
+    }
+
     pub fn get_latest(&self, conn: &Connection, count: i32) -> Result<Vec<Post>> {
         self.get_page(conn, (0, count))
     }
@@ -165,14 +173,14 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(conn: &Connection, post: &Post, kind: Kind) -> Result<()> {
+    pub fn add_to_all_timelines(rocket: &PlumeRocket, post: &Post, kind: Kind) -> Result<()> {
         let timelines = timeline_definition::table
-            .load::<Self>(conn)
+            .load::<Self>(rocket.conn.deref())
             .map_err(Error::from)?;
 
         for t in timelines {
-            if t.matches(conn, post, kind)? {
-                t.add_post(conn, post)?;
+            if t.matches(rocket, post, kind)? {
+                t.add_post(&rocket.conn, post)?;
             }
         }
         Ok(())
@@ -188,9 +196,9 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn matches(&self, conn: &Connection, post: &Post, kind: Kind) -> Result<bool> {
+    pub fn matches(&self, rocket: &PlumeRocket, post: &Post, kind: Kind) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
-        query.matches(conn, self, post, kind)
+        query.matches(rocket, self, post, kind)
     }
 }
 
@@ -200,8 +208,10 @@ mod tests {
     use blogs::tests as blogTests;
     use diesel::Connection;
     use lists::ListType;
+    use post_authors::{NewPostAuthor, PostAuthor};
     use posts::NewPost;
     use safe_string::SafeString;
+    use tags::Tag;
     use tests::{db, rockets};
     use users::tests as userTests;
 
@@ -332,7 +342,7 @@ mod tests {
 
     #[test]
     fn test_simple_match() {
-        let r = rockets();
+        let r = &rockets();
         let conn = &r.conn;
         conn.test_transaction::<_, (), _>(|| {
             let (users, blogs) = blogTests::fill_database(conn);
@@ -363,7 +373,7 @@ mod tests {
                 &r.searcher,
             )
             .unwrap();
-            assert!(gnu_tl.matches(conn, &gnu_post, Kind::Original).unwrap());
+            assert!(gnu_tl.matches(r, &gnu_post, Kind::Original).unwrap());
 
             let non_free_post = Post::insert(
                 conn,
@@ -383,9 +393,7 @@ mod tests {
                 &r.searcher,
             )
             .unwrap();
-            assert!(!gnu_tl
-                .matches(conn, &non_free_post, Kind::Original)
-                .unwrap());
+            assert!(!gnu_tl.matches(r, &non_free_post, Kind::Original).unwrap());
 
             Ok(())
         });
@@ -393,7 +401,7 @@ mod tests {
 
     #[test]
     fn test_add_to_all_timelines() {
-        let r = rockets();
+        let r = &rockets();
         let conn = &r.conn;
         conn.test_transaction::<_, (), _>(|| {
             let (users, blogs) = blogTests::fill_database(conn);
@@ -451,8 +459,8 @@ mod tests {
             )
             .unwrap();
 
-            Timeline::add_to_all_timelines(conn, &gnu_post, Kind::Original).unwrap();
-            Timeline::add_to_all_timelines(conn, &non_free_post, Kind::Original).unwrap();
+            Timeline::add_to_all_timelines(r, &gnu_post, Kind::Original).unwrap();
+            Timeline::add_to_all_timelines(r, &non_free_post, Kind::Original).unwrap();
 
             let res = gnu_tl.get_latest(conn, 2).unwrap();
             assert_eq!(res.len(), 1);
@@ -460,6 +468,245 @@ mod tests {
             let res = non_gnu_tl.get_latest(conn, 2).unwrap();
             assert_eq!(res.len(), 1);
             assert_eq!(res[0].id, non_free_post.id);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_matches_lists_direct() {
+        let r = &rockets();
+        let conn = &r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, blogs) = blogTests::fill_database(conn);
+
+            let gnu_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug".to_string(),
+                    title: "About Linux".to_string(),
+                    content: SafeString::new("you must say GNU/Linux, not Linux!!!"),
+                    published: true,
+                    license: "GPL".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    source: "you must say GNU/Linux, not Linux!!!".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            gnu_post
+                .update_tags(conn, vec![Tag::build_activity("free".to_owned()).unwrap()])
+                .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: gnu_post.id,
+                    author_id: blogs[0].list_authors(conn).unwrap()[0].id,
+                },
+            )
+            .unwrap();
+
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "blog timeline".to_owned(),
+                format!("blog in [{}]", blogs[0].fqn),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "blog timeline".to_owned(),
+                "blog in [no_one@nowhere]".to_owned(),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "author timeline".to_owned(),
+                format!(
+                    "author in [{}]",
+                    blogs[0].list_authors(conn).unwrap()[0].fqn
+                ),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "author timeline".to_owned(),
+                format!("author in [{}]", users[2].fqn),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            assert!(tl.matches(r, &gnu_post, Kind::Reshare(&users[2])).unwrap());
+            assert!(!tl.matches(r, &gnu_post, Kind::Like(&users[2])).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "author timeline".to_owned(),
+                format!(
+                    "author in [{}] include likes exclude reshares",
+                    users[2].fqn
+                ),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            assert!(!tl.matches(r, &gnu_post, Kind::Reshare(&users[2])).unwrap());
+            assert!(tl.matches(r, &gnu_post, Kind::Like(&users[2])).unwrap());
+            tl.delete(conn).unwrap();
+
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "tag timeline".to_owned(),
+                "tags in [free]".to_owned(),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "tag timeline".to_owned(),
+                "tags in [private]".to_owned(),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+
+            Ok(())
+        });
+    }
+
+    /*
+    #[test]
+    fn test_matches_lists_saved() {
+        let r = &rockets();
+        let conn = &r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, blogs) = blogTests::fill_database(conn);
+
+            let gnu_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug".to_string(),
+                    title: "About Linux".to_string(),
+                    content: SafeString::new("you must say GNU/Linux, not Linux!!!"),
+                    published: true,
+                    license: "GPL".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    source: "you must say GNU/Linux, not Linux!!!".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            gnu_post.update_tags(conn, vec![Tag::build_activity("free".to_owned()).unwrap()]).unwrap();
+            PostAuthor::insert(conn, NewPostAuthor {post_id: gnu_post.id, author_id: blogs[0].list_authors(conn).unwrap()[0].id}).unwrap();
+
+            unimplemented!();
+
+            Ok(())
+        });
+    }*/
+
+    #[test]
+    fn test_matches_keyword() {
+        let r = &rockets();
+        let conn = &r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, blogs) = blogTests::fill_database(conn);
+
+            let gnu_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug".to_string(),
+                    title: "About Linux".to_string(),
+                    content: SafeString::new("you must say GNU/Linux, not Linux!!!"),
+                    published: true,
+                    license: "GPL".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "Stallman is our god".to_string(),
+                    source: "you must say GNU/Linux, not Linux!!!".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Linux title".to_owned(),
+                "title contains Linux".to_owned(),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Microsoft title".to_owned(),
+                "title contains Microsoft".to_owned(),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Linux subtitle".to_owned(),
+                "subtitle contains Stallman".to_owned(),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Microsoft subtitle".to_owned(),
+                "subtitle contains Nadella".to_owned(),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Linux content".to_owned(),
+                "content contains Linux".to_owned(),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Microsoft content".to_owned(),
+                "subtitle contains Windows".to_owned(),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
 
             Ok(())
         });
