@@ -197,9 +197,12 @@ impl Timeline {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use blogs::tests as blogTests;
     use diesel::Connection;
     use lists::ListType;
-    use tests::db;
+    use posts::NewPost;
+    use safe_string::SafeString;
+    use tests::{db, rockets};
     use users::tests as userTests;
 
     #[test]
@@ -322,6 +325,141 @@ mod tests {
                 "not author in idk".to_owned(),
             )
             .is_err());
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_simple_match() {
+        let r = rockets();
+        let conn = &r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, blogs) = blogTests::fill_database(conn);
+
+            let gnu_tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "GNU timeline".to_owned(),
+                "license in [AGPL, LGPL, GPL]".to_owned(),
+            )
+            .unwrap();
+
+            let gnu_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug".to_string(),
+                    title: "About Linux".to_string(),
+                    content: SafeString::new("you must say GNU/Linux, not Linux!!!"),
+                    published: true,
+                    license: "GPL".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    source: "you must say GNU/Linux, not Linux!!!".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            assert!(gnu_tl.matches(conn, &gnu_post, Kind::Original).unwrap());
+
+            let non_free_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug2".to_string(),
+                    title: "Private is bad".to_string(),
+                    content: SafeString::new("so is Microsoft"),
+                    published: true,
+                    license: "all right reserved".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    source: "so is Microsoft".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            assert!(!gnu_tl
+                .matches(conn, &non_free_post, Kind::Original)
+                .unwrap());
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_add_to_all_timelines() {
+        let r = rockets();
+        let conn = &r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, blogs) = blogTests::fill_database(conn);
+
+            let gnu_tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "GNU timeline".to_owned(),
+                "license in [AGPL, LGPL, GPL]".to_owned(),
+            )
+            .unwrap();
+            let non_gnu_tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "Stallman disapproved timeline".to_owned(),
+                "not license in [AGPL, LGPL, GPL]".to_owned(),
+            )
+            .unwrap();
+
+            let gnu_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug".to_string(),
+                    title: "About Linux".to_string(),
+                    content: SafeString::new("you must say GNU/Linux, not Linux!!!"),
+                    published: true,
+                    license: "GPL".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    source: "you must say GNU/Linux, not Linux!!!".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+
+            let non_free_post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "slug2".to_string(),
+                    title: "Private is bad".to_string(),
+                    content: SafeString::new("so is Microsoft"),
+                    published: true,
+                    license: "all right reserved".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    source: "so is Microsoft".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+
+            Timeline::add_to_all_timelines(conn, &gnu_post, Kind::Original).unwrap();
+            Timeline::add_to_all_timelines(conn, &non_free_post, Kind::Original).unwrap();
+
+            let res = gnu_tl.get_latest(conn, 2).unwrap();
+            assert_eq!(res.len(), 1);
+            assert_eq!(res[0].id, gnu_post.id);
+            let res = non_gnu_tl.get_latest(conn, 2).unwrap();
+            assert_eq!(res.len(), 1);
+            assert_eq!(res[0].id, non_free_post.id);
 
             Ok(())
         });
