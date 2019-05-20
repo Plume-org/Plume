@@ -274,6 +274,7 @@ main .article-meta {
     // New comment form
     > form input[type="submit"] {
       font-size: 1em;
+      -webkit-appearance: none;
     }
 
     // Respond & delete comment buttons
