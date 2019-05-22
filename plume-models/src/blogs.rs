@@ -44,6 +44,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_domain: Option<String>,
 }
 
 #[derive(Default, Insertable)]
@@ -61,6 +62,7 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_domain: Option<String>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -392,6 +394,7 @@ impl FromId<PlumeRocket> for Blog {
                         .summary_string()
                         .unwrap_or_default(),
                 ),
+                custom_domain: None,
             },
         )
     }
