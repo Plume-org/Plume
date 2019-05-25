@@ -175,6 +175,9 @@ Then try to restart Plume
         println!("Please refer to the documentation to see how to configure it.");
     }
 
+    let custom_domains = plume_models::blogs::Blog::list_custom_domains(&dbpool.get().unwrap()).unwrap();
+    dbg!(custom_domains);
+
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",

@@ -81,7 +81,7 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
-    pub custom_domain: Option<String>,
+    pub custom_domain: Option<Host>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -310,6 +310,15 @@ impl Blog {
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
+    }
+
+    pub fn list_custom_domains(conn: &Connection) -> Result<Vec<String>> {
+        blogs::table
+            .filter(blogs::custom_domain.is_not_null())
+            .select(blogs::custom_domain)
+            .load::<Option<String>>(conn)
+            .map_err(Error::from)
+            .map(|res| res.into_iter().map(|s| s.unwrap()).collect::<Vec<_>>())
     }
 }
 
