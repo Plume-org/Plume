@@ -193,8 +193,7 @@ pub fn follow_not_connected(
 ) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
     let target = User::find_by_fqn(&rockets, &name)?;
     if let Some(remote_form) = remote_form {
-        let remote = &remote_form.remote;
-        if let Some(uri) = User::fetch_remote_interact_uri(remote)
+        if let Some(uri) = User::fetch_remote_interact_uri(&remote_form)
             .ok()
             .and_then(|uri| {
                 rt_format!(

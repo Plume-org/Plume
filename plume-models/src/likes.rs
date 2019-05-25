@@ -115,26 +115,12 @@ impl FromId<PlumeRocket> for Like {
         let res = Like::insert(
             &c.conn,
             NewLike {
-                post_id: Post::from_id(
-                    c,
-                    &{
-                        let res: String = act.like_props.object_link::<Id>()?.into();
-                        res
-                    },
-                    None,
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                user_id: User::from_id(
-                    c,
-                    &{
-                        let res: String = act.like_props.actor_link::<Id>()?.into();
-                        res
-                    },
-                    None,
-                )
-                .map_err(|(_, e)| e)?
-                .id,
+                post_id: Post::from_id(c, &act.like_props.object_link::<Id>()?, None)
+                    .map_err(|(_, e)| e)?
+                    .id,
+                user_id: User::from_id(c, &act.like_props.actor_link::<Id>()?, None)
+                    .map_err(|(_, e)| e)?
+                    .id,
                 ap_url: act.object_props.id_string()?,
             },
         )?;

@@ -642,7 +642,7 @@ impl FromId<PlumeRocket> for Post {
             .attributed_to_link_vec::<Id>()?
             .into_iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
-                let url: String = link.into();
+                let url = link;
                 match User::from_id(&c, &url, None) {
                     Ok(u) => {
                         authors.push(u);
