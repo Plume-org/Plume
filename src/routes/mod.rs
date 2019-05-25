@@ -16,7 +16,7 @@ use plume_models::{posts::Post, Connection};
 
 const ITEMS_PER_PAGE: i32 = 12;
 
-#[derive(Copy, Clone, UriDisplayQuery)]
+#[derive(Shrinkwrap, Copy, Clone, UriDisplayQuery)]
 pub struct Page(i32);
 
 impl<'v> FromFormValue<'v> for Page {
@@ -52,6 +52,7 @@ impl Page {
     }
 }
 
+#[derive(Shrinkwrap)]
 pub struct ContentLen(pub u64);
 
 impl<'a, 'r> FromRequest<'a, 'r> for ContentLen {
@@ -72,7 +73,7 @@ impl Default for Page {
 }
 
 /// A form for remote interaction, used by multiple routes
-#[derive(Clone, Default, FromForm)]
+#[derive(Shrinkwrap, Clone, Default, FromForm)]
 pub struct RemoteForm {
     pub remote: String,
 }

@@ -62,6 +62,8 @@ mod mail;
 #[macro_use]
 mod template_utils;
 mod routes;
+#[macro_use]
+extern crate shrinkwraprs;
 #[cfg(feature = "test")]
 mod test_routes;
 
