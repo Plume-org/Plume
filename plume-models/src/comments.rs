@@ -237,7 +237,7 @@ impl FromId<PlumeRocket> for Comment {
                     author_id: User::from_id(
                         c,
                         &{
-                            let res: String = note.object_props.attributed_to_link::<Id>()?.into();
+                            let res = note.object_props.attributed_to_link::<Id>()?;
                             res
                         },
                         None,

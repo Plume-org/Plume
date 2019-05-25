@@ -118,7 +118,7 @@ impl FromId<PlumeRocket> for Like {
                 post_id: Post::from_id(
                     c,
                     &{
-                        let res: String = act.like_props.object_link::<Id>()?.into();
+                        let res = act.like_props.object_link::<Id>()?;
                         res
                     },
                     None,
@@ -128,7 +128,7 @@ impl FromId<PlumeRocket> for Like {
                 user_id: User::from_id(
                     c,
                     &{
-                        let res: String = act.like_props.actor_link::<Id>()?.into();
+                        let res = act.like_props.actor_link::<Id>()?;
                         res
                     },
                     None,

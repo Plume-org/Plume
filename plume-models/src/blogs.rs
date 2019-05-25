@@ -332,7 +332,7 @@ impl FromId<PlumeRocket> for Blog {
             .icon_image()
             .ok()
             .and_then(|icon| {
-                let owner: String = icon.object_props.attributed_to_link::<Id>().ok()?.into();
+                let owner = icon.object_props.attributed_to_link::<Id>().ok()?;
                 Media::save_remote(
                     &c.conn,
                     icon.object_props.url_string().ok()?,
@@ -348,7 +348,7 @@ impl FromId<PlumeRocket> for Blog {
             .image_image()
             .ok()
             .and_then(|banner| {
-                let owner: String = banner.object_props.attributed_to_link::<Id>().ok()?.into();
+                let owner = banner.object_props.attributed_to_link::<Id>().ok()?;
                 Media::save_remote(
                     &c.conn,
                     banner.object_props.url_string().ok()?,

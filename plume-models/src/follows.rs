@@ -166,7 +166,7 @@ impl FromId<PlumeRocket> for Follow {
         let actor = User::from_id(
             c,
             &{
-                let res: String = follow.follow_props.actor_link::<Id>()?.into();
+                let res = follow.follow_props.actor_link::<Id>()?;
                 res
             },
             None,
@@ -176,7 +176,7 @@ impl FromId<PlumeRocket> for Follow {
         let target = User::from_id(
             c,
             &{
-                let res: String = follow.follow_props.object_link::<Id>()?.into();
+                let res = follow.follow_props.object_link::<Id>()?;
                 res
             },
             None,
