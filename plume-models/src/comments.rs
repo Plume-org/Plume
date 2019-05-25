@@ -236,7 +236,7 @@ impl FromId<PlumeRocket> for Comment {
                     })?,
                     author_id: User::from_id(
                         c,
-                        &{ note.object_props.attributed_to_link::<Id>()? },
+                        &note.object_props.attributed_to_link::<Id>()?,
                         None,
                     )
                     .map_err(|(_, e)| e)?
