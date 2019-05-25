@@ -143,8 +143,7 @@ impl FromId<PlumeRocket> for Reshare {
                 post_id: Post::from_id(
                     c,
                     &{
-                        let res = act.announce_props.object_link::<Id>()?;
-                        res
+                        act.announce_props.object_link::<Id>()?
                     },
                     None,
                 )
@@ -153,8 +152,7 @@ impl FromId<PlumeRocket> for Reshare {
                 user_id: User::from_id(
                     c,
                     &{
-                        let res = act.announce_props.actor_link::<Id>()?;
-                        res
+                        act.announce_props.actor_link::<Id>()?
                     },
                     None,
                 )
