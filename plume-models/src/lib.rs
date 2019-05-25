@@ -10,6 +10,8 @@ extern crate bcrypt;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate diesel_derive_newtype;
 extern crate guid_create;
 extern crate heck;
 extern crate itertools;
@@ -30,6 +32,8 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+#[macro_use]
+extern crate shrinkwraprs;
 #[macro_use]
 extern crate tantivy;
 extern crate url;

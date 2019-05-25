@@ -25,42 +25,23 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
-use std::fmt;
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
-#[derive(Queryable, Clone)]
+#[derive(Clone, Debug, DieselNewType, Shrinkwrap)]
 pub struct Host(String);
 
 impl Host {
-    pub fn new<T: Into<String>>(host: T) -> Host {
-        Host(host.into())
-    }
-}
-
-impl Into<String> for Host {
-    fn into(self) -> String {
-        self.0.clone()
-    }
-}
-
-impl From<String> for Host {
-    fn from(s: String) -> Host {
-        Host::new(s)
+    pub fn new(host: impl ToString) -> Host {
+        Host(host.to_string())
     }
 }
 
 impl AsRef<str> for Host {
     fn as_ref(&self) -> &str {
         &self.0
-    }
-}
-
-impl std::fmt::Display for Host {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
     }
 }
 
@@ -82,7 +63,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
-    pub custom_domain: Option<String>,
+    pub custom_domain: Option<Host>,
 }
 
 #[derive(Default, Insertable)]
@@ -341,7 +322,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Host {
             .get_one("Host")
             .and_then(|x| {
                 if x != Instance::get_local().ok()?.public_domain {
-                    Some(Host(x.to_string()))
+                    Some(Host::new(x))
                 } else {
                     None
                 }
