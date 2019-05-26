@@ -25,6 +25,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
+use std::fmt::{self, Display};
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
@@ -36,6 +37,12 @@ pub struct Host(String);
 impl Host {
     pub fn new(host: impl ToString) -> Host {
         Host(host.to_string())
+    }
+}
+
+impl Display for Host {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 

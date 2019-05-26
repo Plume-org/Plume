@@ -42,12 +42,14 @@ extern crate webfinger;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
+    blogs::Host,
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
     migrations::IMPORTED_MIGRATIONS,
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
+use rocket::{fairing::AdHoc, http::uri::Origin};
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
@@ -175,8 +177,13 @@ Then try to restart Plume
         println!("Please refer to the documentation to see how to configure it.");
     }
 
-    let custom_domains = plume_models::blogs::Blog::list_custom_domains(&dbpool.get().unwrap()).unwrap();
-    dbg!(custom_domains);
+    let custom_domain_fairing = AdHoc::on_request("Custom Blog Domains", |req, _data| {
+        let host = req.guard::<Host>();
+        if host.is_success() {
+            let rewrite_uri = format!("/custom_domains/{}/{}", host.unwrap(), req.uri());
+            req.set_uri(Origin::parse_owned(rewrite_uri).unwrap())
+        }
+    });
 
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
@@ -317,7 +324,8 @@ Then try to restart Plume
                 ])
                 .finalize()
                 .expect("main: csrf fairing creation error"),
-        );
+        )
+        .attach(custom_domain_fairing);
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);
