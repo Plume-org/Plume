@@ -325,7 +325,7 @@ impl Blog {
             .select(blogs::custom_domain)
             .load::<Option<String>>(conn)
             .map_err(Error::from)
-            .map(|res| res.into_iter().map(|s| s.unwrap()).collect::<Vec<_>>())
+            .map(|res| res.into_iter().map(Option::unwrap).collect::<Vec<_>>())
     }
 }
 
