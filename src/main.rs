@@ -42,6 +42,7 @@ extern crate webfinger;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
+    blogs::Blog,
     blogs::Host,
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
@@ -89,6 +90,7 @@ fn init_pool() -> Option<DbPool> {
         .build(manager)
         .ok()?;
     Instance::cache_local(&pool.get().unwrap());
+    Blog::cache_custom_domains(&pool.get().unwrap());
     Some(pool)
 }
 

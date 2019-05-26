@@ -26,6 +26,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use std::fmt::{self, Display};
+use std::sync::RwLock;
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
@@ -92,6 +93,10 @@ pub struct NewBlog {
 }
 
 const BLOG_PREFIX: &str = "~";
+
+lazy_static! {
+    static ref CUSTOM_DOMAINS: RwLock<Vec<String>> = RwLock::new(vec![]);
+}
 
 impl Blog {
     insert!(blogs, NewBlog, |inserted, conn| {
@@ -319,7 +324,15 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn list_custom_domains(conn: &Connection) -> Result<Vec<String>> {
+    pub fn list_custom_domains() -> Vec<String> {
+        CUSTOM_DOMAINS.read().unwrap().clone()
+    }
+
+    pub fn cache_custom_domains(conn: &Connection) {
+        *CUSTOM_DOMAINS.write().unwrap() = Blog::list_custom_domains_uncached(conn).unwrap();
+    }
+
+    pub fn list_custom_domains_uncached(conn: &Connection) -> Result<Vec<String>> {
         blogs::table
             .filter(blogs::custom_domain.is_not_null())
             .select(blogs::custom_domain)
@@ -337,7 +350,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Host {
             .headers()
             .get_one("Host")
             .and_then(|x| {
-                if x != Instance::get_local().ok()?.public_domain {
+                if Blog::list_custom_domains().contains(&x.to_string()) {
                     Some(Host::new(x))
                 } else {
                     None
