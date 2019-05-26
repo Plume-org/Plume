@@ -586,6 +586,25 @@ mod tests {
             assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
             tl.delete(conn).unwrap();
 
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "english timeline".to_owned(),
+                "lang in [en]".to_owned(),
+            )
+            .unwrap();
+            assert!(tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+            let tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "franco-italian timeline".to_owned(),
+                "lang in [fr, it]".to_owned(),
+            )
+            .unwrap();
+            assert!(!tl.matches(r, &gnu_post, Kind::Original).unwrap());
+            tl.delete(conn).unwrap();
+
             Ok(())
         });
     }

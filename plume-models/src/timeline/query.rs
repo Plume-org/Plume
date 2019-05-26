@@ -331,8 +331,9 @@ impl WithList {
                             }
                         })
                         .unwrap_or(Lang::Eng)
-                        .name();
-                    Ok(list.iter().any(|s| lang.starts_with(s)))
+                        .name()
+                        .to_lowercase();
+                    Ok(list.iter().any(|s| lang.starts_with(&s.to_lowercase())))
                 }
             },
         }
