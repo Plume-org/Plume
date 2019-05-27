@@ -53,6 +53,24 @@ impl AsRef<str> for Host {
     }
 }
 
+impl<'a, 'r> FromRequest<'a, 'r> for Host {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Host, ()> {
+        request
+            .headers()
+            .get_one("Host")
+            .and_then(|x| {
+                if Blog::list_custom_domains().contains(&x.to_string()) {
+                    Some(Host::new(x))
+                } else {
+                    None
+                }
+            })
+            .or_forward(())
+    }
+}
+
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct Blog {
@@ -339,24 +357,6 @@ impl Blog {
             .load::<Option<String>>(conn)
             .map_err(Error::from)
             .map(|res| res.into_iter().map(Option::unwrap).collect::<Vec<_>>())
-    }
-}
-
-impl<'a, 'r> FromRequest<'a, 'r> for Host {
-    type Error = ();
-
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Host, ()> {
-        request
-            .headers()
-            .get_one("Host")
-            .and_then(|x| {
-                if Blog::list_custom_domains().contains(&x.to_string()) {
-                    Some(Host::new(x))
-                } else {
-                    None
-                }
-            })
-            .or_forward(())
     }
 }
 
