@@ -202,14 +202,7 @@ impl Blog {
             .load::<Blog>(&*c.conn)?
             .into_iter()
             .next();
-        if let Some(from_db) = from_db {
-            Ok(from_db)
-        } else {
-            // we should never get here, because
-            // a) load::<Blog>()? should return early if it fails
-            // b) this function is only called after a Request::guard::<Host>()
-            Err(Error::NotFound)
-        }
+        from_db.ok_or(Error::NotFound)
     }
 
     fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
