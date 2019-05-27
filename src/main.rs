@@ -50,7 +50,7 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket::{fairing::AdHoc, http::uri::Origin};
+use rocket::{fairing::AdHoc, http::ext::IntoOwned, http::uri::Origin};
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
@@ -183,7 +183,9 @@ Then try to restart Plume
         let host = req.guard::<Host>();
         if host.is_success() {
             let rewrite_uri = format!("/custom_domains/{}/{}", host.unwrap(), req.uri());
-            req.set_uri(Origin::parse_owned(rewrite_uri).unwrap())
+            let uri = Origin::parse_owned(rewrite_uri).unwrap();
+            let uri = uri.to_normalized().into_owned();
+            req.set_uri(uri);
         }
     });
 
