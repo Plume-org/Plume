@@ -19,6 +19,16 @@ use plume_models::{
 use routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
+#[get("/<custom_domain>?<page>", rank = 2)]
+pub fn custom_details(
+    custom_domain: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
+    details(blog.fqn, page, rockets)
+}
+
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
@@ -36,6 +46,16 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
         Page::total(articles_count as i32),
         posts
     )))
+}
+
+#[get("/<custom_domain>", rank = 1)]
+pub fn custom_activity_details(
+    custom_domain: String,
+    rockets: PlumeRocket,
+    _ap: ApRequest,
+) -> Option<ActivityStream<CustomGroup>> {
+    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain)).ok()?;
+    activity_details(blog.fqn, rockets, _ap)
 }
 
 #[get("/~/<name>", rank = 1)]

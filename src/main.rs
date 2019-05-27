@@ -198,6 +198,13 @@ Then try to restart Plume
 
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
+            "/custom_domains/",
+            routes![
+                routes::blogs::custom_details,
+                routes::blogs::custom_activity_details,
+            ],
+        )
+        .mount(
             "/",
             routes![
                 routes::blogs::details,
