@@ -181,7 +181,14 @@ Then try to restart Plume
 
     let custom_domain_fairing = AdHoc::on_request("Custom Blog Domains", |req, _data| {
         let host = req.guard::<Host>();
-        if host.is_success() {
+        if host.is_success()
+            && req
+                .uri()
+                .segments()
+                .next()
+                .map(|path| path != "static" && path != "api")
+                .unwrap_or(true)
+        {
             let rewrite_uri = format!("/custom_domains/{}/{}", host.unwrap(), req.uri());
             let uri = Origin::parse_owned(rewrite_uri).unwrap();
             let uri = uri.to_normalized().into_owned();
