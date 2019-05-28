@@ -1,6 +1,6 @@
 use activitypub::{actor::Group, collection::OrderedCollection, object::Image, CustomObject};
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, ExpressionMethods, QueryDsl, QueryResult, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -195,14 +195,10 @@ impl Blog {
         }
     }
 
-    pub fn find_by_host(c: &PlumeRocket, host: Host) -> Result<Blog> {
-        let from_db = blogs::table
+    pub fn find_by_host(c: &PlumeRocket, host: Host) -> QueryResult<Blog> {
+        blogs::table
             .filter(blogs::custom_domain.eq(host))
-            .limit(1)
-            .load::<Blog>(&*c.conn)?
-            .into_iter()
-            .next();
-        from_db.ok_or(Error::NotFound)
+            .first::<Blog>(&*c.conn)
     }
 
     fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
