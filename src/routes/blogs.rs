@@ -19,21 +19,9 @@ use plume_models::{
 use routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
-#[get("/<custom_domain>?<page>", rank = 2)]
-pub fn custom_details(
-    custom_domain: String,
-    page: Option<Page>,
-    rockets: PlumeRocket,
-) -> Result<Ructe, ErrorPage> {
-    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
-    details(blog.fqn, page, rockets)
-}
-
-#[get("/~/<name>?<page>", rank = 2)]
-pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+fn detail_guts(blog: Blog, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &name)?;
     let posts = Post::blog_page(conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(conn, &blog)?;
     let authors = &blog.list_authors(conn)?;
@@ -48,6 +36,30 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
     )))
 }
 
+#[get("/<custom_domain>?<page>", rank = 2)]
+pub fn custom_details(
+    custom_domain: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
+    detail_guts(blog, page, rockets)
+}
+
+#[get("/~/<name>?<page>", rank = 2)]
+pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_by_fqn(&rockets, &name)?;
+    detail_guts(blog, page, rockets)
+}
+
+pub fn activity_detail_guts(
+    blog: Blog,
+    rockets: PlumeRocket,
+    _ap: ApRequest,
+) -> Option<ActivityStream<CustomGroup>> {
+    Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
+}
+
 #[get("/<custom_domain>", rank = 1)]
 pub fn custom_activity_details(
     custom_domain: String,
@@ -55,7 +67,7 @@ pub fn custom_activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_by_host(&rockets, Host::new(custom_domain)).ok()?;
-    activity_details(blog.fqn, rockets, _ap)
+    activity_detail_guts(blog, rockets, _ap)
 }
 
 #[get("/~/<name>", rank = 1)]
@@ -65,7 +77,7 @@ pub fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
-    Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
+    activity_detail_guts(blog, rockets, _ap)
 }
 
 #[get("/blogs/new")]
