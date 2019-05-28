@@ -14,12 +14,6 @@ impl From<Error> for ErrorPage {
     }
 }
 
-impl From<diesel::result::Error> for ErrorPage {
-    fn from(err: diesel::result::Error) -> ErrorPage {
-        ErrorPage(plume_models::Error::Db(err))
-    }
-}
-
 impl<'r> Responder<'r> for ErrorPage {
     fn respond_to(self, req: &Request) -> response::Result<'r> {
         let rockets = req.guard::<PlumeRocket>().unwrap();
