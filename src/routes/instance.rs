@@ -172,9 +172,9 @@ pub fn toggle_block(
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let inst = Instance::get(&*conn, id)?;
     let message = if inst.blocked {
-        i18n!(intl.catalog, "{} have been unblocked."; &inst.name)
+        i18n!(intl.catalog, "{} has been unblocked."; &inst.name)
     } else {
-        i18n!(intl.catalog, "{} have been blocked."; &inst.name)
+        i18n!(intl.catalog, "{} has been blocked."; &inst.name)
     };
 
     inst.toggle_block(&*conn)?;
@@ -218,7 +218,7 @@ pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirec
 
     Ok(Flash::success(
         Redirect::to(uri!(admin_users: page = _)),
-        i18n!(rockets.intl.catalog, "{} have been banned."; u.name()),
+        i18n!(rockets.intl.catalog, "{} has been banned."; u.name()),
     ))
 }
 
