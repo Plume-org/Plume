@@ -202,6 +202,7 @@ Then try to restart Plume
             routes![
                 routes::blogs::custom_details,
                 routes::blogs::custom_activity_details,
+                routes::search::custom_search,
             ],
         )
         .mount(
