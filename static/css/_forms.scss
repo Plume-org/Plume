@@ -24,7 +24,7 @@ input, textarea, select {
  	}
 }
 form input[type="submit"] {
- margin: 2em auto;
+ margin: 1.5em auto;
  -webkit-appearance: none;
 }
 
@@ -128,7 +128,7 @@ form.new-post {
   textarea {
    	min-height: 20em;
    	overflow-y: hidden;
-   	resize: none;
+   	resize: vertical;
    -webkit-appearance: textarea;
   }
 }
