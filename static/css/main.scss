@@ -44,6 +44,7 @@ html {
       display: none;
       appearance: none;
       text-align: center;
+      overflow-y: scroll;
       z-index: 20;
     }
   }
@@ -108,10 +109,10 @@ html {
 
   main .article-meta {
     > *, .comments {
-      margin: 0 5%;
+      margin: 0 3%;
     }
     > p {
-      margin: 2em 5%;
+      margin: 1em 5%;
       font-size: 0.9em;
     }
     .comments > * { margin: auto 5%; }
