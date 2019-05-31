@@ -64,7 +64,7 @@ main header.article {
 }
 
 main .article-info {
- 	margin: 0 auto 3em;
+ 	margin: 0 auto 2em;
  	font-size: 0.95em;
  	font-weight: 400;
 
@@ -76,7 +76,7 @@ main .article-info {
 // The article itself
 main article {
   max-width: $article-width;
- 	margin: 2.5em auto;
+ 	margin: 1.5em auto;
  	font-family: $lora;
  	font-size: 1.2em;
  	line-height: 1.7;
@@ -87,7 +87,7 @@ main article {
 
  	img {
    	display: block;
-   	margin: 3em auto;
+   	margin: 2em auto;
    	max-width: 100%;
   }
 
@@ -118,7 +118,7 @@ main .article-meta {
   }
 
   > .banner {
-    margin: 3em 0;
+    margin: 2em 0;
     & > * {
       margin: $margin;
     }
@@ -370,6 +370,7 @@ main .article-meta {
     background: transparent;
     align-items: center;
     justify-content: space-between;
+    resize: auto;
     button {
       flex: 0 0 10em;
       font-size: 1.25em;
