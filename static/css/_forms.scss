@@ -30,7 +30,7 @@ form input[type="submit"] {
 
 textarea {
  	resize: vertical;
-
+  overflow-y: scroll;
  	font-family: $lora;
  	font-size: 1.1em;
  	line-height: 1.5;
