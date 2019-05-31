@@ -327,6 +327,19 @@ impl Blog {
         })
     }
 
+    pub fn url(&self) -> String {
+        format!(
+            "https://{}",
+            self.custom_domain
+                .clone()
+                .unwrap_or_else(|| Host::new(format!(
+                    "{}/~/{}",
+                    Instance::get_local().unwrap().public_domain,
+                    self.title
+                )))
+        )
+    }
+
     pub fn icon_url(&self, conn: &Connection) -> String {
         self.icon_id
             .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
