@@ -127,7 +127,7 @@ form.new-post {
   }
   textarea {
    	min-height: 20em;
-   	overflow-y: hidden;
+   	overflow-y: scroll;
    	resize: vertical;
    -webkit-appearance: textarea;
   }
