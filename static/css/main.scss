@@ -112,10 +112,10 @@ html {
       margin: 0 3%;
     }
     > p {
-      margin: 1em 5%;
+      margin: 1em 3%;
       font-size: 0.9em;
     }
-    .comments > * { margin: auto 5%; }
+    .comments > * { margin: auto 3%; }
     .comments .comment { padding: 2em 0px; }
   }
   main .article-info, main article, main h1.article, main h2.article {
@@ -128,7 +128,7 @@ html {
   }
 
   .tabs {
-    margin: auto 0px 2em;
+    margin: auto 0px 1em;
   }
 
   .stats { flex-direction: column; }
