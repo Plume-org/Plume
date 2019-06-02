@@ -114,6 +114,7 @@ input[type="submit"] {
 //  Writing page
 form.new-post {
   max-width: 60em;
+  overflow-y: scroll;
   .title {
    	margin: 0 auto;
    	padding: 0.75em 0;
