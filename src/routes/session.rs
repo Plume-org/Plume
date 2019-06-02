@@ -17,6 +17,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use mail::{build_mail, Mailer};
 use plume_models::{
     users::{User, AUTH_COOKIE},
+    password_reset_requests::*,
     Error, PlumeRocket, CONFIG,
 };
 use routes::errors::ErrorPage;
@@ -164,29 +165,20 @@ pub struct ResetForm {
 pub fn password_reset_request(
     mail: State<Arc<Mutex<Mailer>>>,
     form: Form<ResetForm>,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
     rockets: PlumeRocket,
 ) -> Ructe {
-    let mut requests = requests.lock().unwrap();
-    // Remove outdated requests (more than 1 day old) to avoid the list to grow too much
-    requests.retain(|r| r.creation_date.elapsed().as_secs() < 24 * 60 * 60);
+    if User::find_by_email(&*rockets.conn, &form.email).is_ok() {
+        let request = PasswordResetRequest::insert(
+            &*rockets.conn,
+            &form.email,
+        )
+        .expect("password_reset_request::insert: error");
 
-    if User::find_by_email(&*rockets.conn, &form.email).is_ok()
-        && !requests.iter().any(|x| x.mail == form.email.clone())
-    {
-        let id = plume_common::utils::random_hex();
-
-        requests.push(ResetRequest {
-            mail: form.email.clone(),
-            id: id.clone(),
-            creation_date: Instant::now(),
-        });
-
-        let link = format!("https://{}/password-reset/{}", CONFIG.base_url, id);
+        let url = format!("https://{}/password-reset/{}", CONFIG.base_url, request.token);
         if let Some(message) = build_mail(
             form.email.clone(),
             i18n!(rockets.intl.catalog, "Password reset"),
-            i18n!(rockets.intl.catalog, "Here is the link to reset your password: {0}"; link),
+            i18n!(rockets.intl.catalog, "Here is the link to reset your password: {0}"; url),
         ) {
             if let Some(ref mut mail) = *mail.lock().unwrap() {
                 mail.send(message.into())
@@ -201,15 +193,11 @@ pub fn password_reset_request(
 #[get("/password-reset/<token>")]
 pub fn password_reset_form(
     token: String,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    requests
-        .lock()
-        .unwrap()
-        .iter()
-        .find(|x| x.id == token.clone())
-        .ok_or(Error::NotFound)?;
+    PasswordResetRequest::find_by_token(&*rockets.conn, &token)
+        .map_err(|_| Error::NotFound)?;
+
     Ok(render!(session::password_reset(
         &rockets.to_context(),
         &NewPasswordForm::default(),
@@ -239,43 +227,27 @@ fn passwords_match(form: &NewPasswordForm) -> Result<(), ValidationError> {
 #[post("/password-reset/<token>", data = "<form>")]
 pub fn password_reset(
     token: String,
-    requests: State<Arc<Mutex<Vec<ResetRequest>>>>,
     form: Form<NewPasswordForm>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
     form.validate()
         .and_then(|_| {
-            let mut requests = requests.lock().unwrap();
-            let req = requests
-                .iter()
-                .find(|x| x.id == token.clone())
-                .ok_or_else(|| to_validation(0))?
-                .clone();
-            if req.creation_date.elapsed().as_secs() < 60 * 60 * 2 {
-                // Reset link is only valid for 2 hours
-                requests.retain(|r| *r != req);
-                let user = User::find_by_email(&*rockets.conn, &req.mail).map_err(to_validation)?;
-                user.reset_password(&*rockets.conn, &form.password).ok();
-                Ok(Flash::success(
-                    Redirect::to(uri!(
-                        new: m = _
-                    )),
-                    i18n!(
-                        rockets.intl.catalog,
-                        "Your password was successfully reset."
-                    ),
-                ))
-            } else {
-                Ok(Flash::error(
-                    Redirect::to(uri!(
-                        new: m = _
-                    )),
-                    i18n!(
-                        rockets.intl.catalog,
-                        "Sorry, but the link expired. Try again"
-                    ),
-                ))
-            }
+            let request = PasswordResetRequest::find_and_delete_by_token(&*rockets.conn, &token)
+                .map_err(to_validation)?;
+
+            // TODO show a better error if the token has expired?
+            let user = User::find_by_email(&*rockets.conn, &request.email).map_err(to_validation)?;
+            user.reset_password(&*rockets.conn, &form.password).ok();
+
+            Ok(Flash::success(
+                Redirect::to(uri!(
+                    new: m = _
+                )),
+                i18n!(
+                    rockets.intl.catalog,
+                    "Your password was successfully reset."
+                ),
+            ))
         })
         .map_err(|err| render!(session::password_reset(&rockets.to_context(), &form, err)))
 }
