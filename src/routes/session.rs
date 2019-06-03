@@ -20,7 +20,6 @@ use plume_models::{
     password_reset_requests::*,
     Error, PlumeRocket, CONFIG,
 };
-use routes::errors::ErrorPage;
 use template_utils::{IntoContext, Ructe};
 
 #[get("/login?<m>")]
@@ -194,9 +193,9 @@ pub fn password_reset_request(
 pub fn password_reset_form(
     token: String,
     rockets: PlumeRocket,
-) -> Result<Ructe, ErrorPage> {
+) -> Result<Ructe, Ructe> {
     PasswordResetRequest::find_by_token(&*rockets.conn, &token)
-        .map_err(|_| Error::NotFound)?;
+        .map_err(|err| password_reset_error_response(err, &rockets))?;
 
     Ok(render!(session::password_reset(
         &rockets.to_context(),
@@ -230,37 +229,29 @@ pub fn password_reset(
     form: Form<NewPasswordForm>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
-    form.validate()
-        .and_then(|_| {
-            let request = PasswordResetRequest::find_and_delete_by_token(&*rockets.conn, &token)
-                .map_err(to_validation)?;
+    form.validate().map_err(|err|
+        render!(session::password_reset(&rockets.to_context(), &form, err))
+    )?;
 
-            // TODO show a better error if the token has expired?
-            let user = User::find_by_email(&*rockets.conn, &request.email).map_err(to_validation)?;
-            user.reset_password(&*rockets.conn, &form.password).ok();
+    PasswordResetRequest::find_and_delete_by_token(&*rockets.conn, &token)
+        .and_then(|request| User::find_by_email(&*rockets.conn, &request.email))
+        .and_then(|user| user.reset_password(&*rockets.conn, &form.password))
+        .map_err(|err| password_reset_error_response(err, &rockets))?;
 
-            Ok(Flash::success(
-                Redirect::to(uri!(
-                    new: m = _
-                )),
-                i18n!(
-                    rockets.intl.catalog,
-                    "Your password was successfully reset."
-                ),
-            ))
-        })
-        .map_err(|err| render!(session::password_reset(&rockets.to_context(), &form, err)))
+    Ok(Flash::success(
+        Redirect::to(uri!(
+            new: m = _
+        )),
+        i18n!(
+            rockets.intl.catalog,
+            "Your password was successfully reset."
+        ),
+    ))
 }
 
-fn to_validation<T>(_: T) -> ValidationErrors {
-    let mut errors = ValidationErrors::new();
-    errors.add(
-        "",
-        ValidationError {
-            code: Cow::from("server_error"),
-            message: Some(Cow::from("An unknown error occured")),
-            params: std::collections::HashMap::new(),
-        },
-    );
-    errors
+fn password_reset_error_response(err: Error, rockets: &PlumeRocket) -> Ructe {
+    match err {
+        Error::Expired => render!(session::password_reset_request_expired(&rockets.to_context())),
+        _ => render!(errors::not_found(&rockets.to_context()))
+    }
 }

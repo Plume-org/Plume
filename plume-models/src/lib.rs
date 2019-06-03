@@ -65,6 +65,7 @@ pub enum Error {
     Unauthorized,
     Url,
     Webfinger,
+    Expired,
 }
 
 impl From<bcrypt::BcryptError> for Error {

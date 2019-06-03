@@ -2,7 +2,7 @@ CREATE TABLE password_reset_requests (
   id SERIAL PRIMARY KEY,
   email VARCHAR NOT NULL,
   token VARCHAR NOT NULL,
-  creation_date TIMESTAMP NOT NULL DEFAULT now()
+  expiration_date TIMESTAMP NOT NULL
 );
 
 CREATE INDEX password_reset_requests_token ON password_reset_requests (token);

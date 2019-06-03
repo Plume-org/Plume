@@ -146,7 +146,7 @@ table! {
         id -> Int4,
         email -> Varchar,
         token -> Varchar,
-        creation_date -> Timestamp,
+        expiration_date -> Timestamp,
     }
 }
 

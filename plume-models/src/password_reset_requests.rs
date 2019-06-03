@@ -1,6 +1,5 @@
-use chrono::NaiveDateTime;
+use chrono::{Duration, NaiveDateTime, offset::Utc};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
-use diesel::dsl::{now, IntervalDsl};
 use schema::password_reset_requests;
 use {Connection, Error, Result};
 
@@ -9,7 +8,7 @@ pub struct PasswordResetRequest {
     pub id: i32,
     pub email: String,
     pub token: String,
-    pub creation_date: NaiveDateTime,
+    pub expiration_date: NaiveDateTime,
 }
 
 #[derive(Insertable)]
@@ -17,7 +16,10 @@ pub struct PasswordResetRequest {
 pub struct NewPasswordResetRequest {
     pub email: String,
     pub token: String,
+    pub expiration_date: NaiveDateTime,
 }
+
+const TOKEN_VALIDITY_HOURS: i64 = 2;
 
 impl PasswordResetRequest {
     pub fn insert(conn: &Connection, email: &str) -> Result<Self> {
@@ -26,11 +28,17 @@ impl PasswordResetRequest {
             .filter(password_reset_requests::email.eq(email));
         diesel::delete(existing_requests).execute(conn)?;
 
-        // now, generate a random token, insert in the DB, and return it:
+        // now, generate a random token, set the expiry date,
+        // and insert it into the DB:
         let token = plume_common::utils::random_hex();
+        let expiration_date = Utc::now()
+            .naive_utc()
+            .checked_add_signed(Duration::hours(TOKEN_VALIDITY_HOURS))
+            .expect("could not calculate expiration date");
         let new_request = NewPasswordResetRequest {
             email: email.to_owned(),
             token: token,
+            expiration_date: expiration_date,
         };
         diesel::insert_into(password_reset_requests::table)
             .values(new_request)
@@ -39,11 +47,16 @@ impl PasswordResetRequest {
     }
 
     pub fn find_by_token(conn: &Connection, token: &str) -> Result<Self> {
-        password_reset_requests::table
+        let token = password_reset_requests::table
             .filter(password_reset_requests::token.eq(token))
-            .filter(password_reset_requests::creation_date.gt(now - 2.hours()))
             .first::<Self>(conn)
-            .map_err(Error::from)
+            .map_err(Error::from)?;
+
+        if token.expiration_date < Utc::now().naive_utc() {
+            return Err(Error::Expired);
+        }
+
+        Ok(token)
     }
 
     pub fn find_and_delete_by_token(conn: &Connection, token: &str) -> Result<Self> {
@@ -107,8 +120,24 @@ mod tests {
         let conn = db();
         conn.test_transaction::<_, (), _>(|| {
             user_tests::fill_database(&conn);
+            let admin_email = "admin@example.com";
+            let token = "abcdef";
+            let now = Utc::now().naive_utc();
 
-            // TODO: best way to test this?
+            diesel::insert_into(password_reset_requests::table)
+                .values((
+                    password_reset_requests::email.eq(&admin_email),
+                    password_reset_requests::token.eq(&token),
+                    password_reset_requests::expiration_date.eq(now),
+                ))
+                .execute(&*conn)
+                .expect("could not insert request");
+
+            match PasswordResetRequest::find_by_token(&conn, &token) {
+                Err(Error::Expired) => (),
+                _ => panic!("Received unexpected result finding expired token"),
+            }
+
             Ok(())
         });
     }
