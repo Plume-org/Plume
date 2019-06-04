@@ -1,4 +1,4 @@
-use chrono::{Duration, NaiveDateTime, offset::Utc};
+use chrono::{offset::Utc, Duration, NaiveDateTime};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use schema::password_reset_requests;
 use {Connection, Error, Result};
@@ -24,8 +24,8 @@ const TOKEN_VALIDITY_HOURS: i64 = 2;
 impl PasswordResetRequest {
     pub fn insert(conn: &Connection, email: &str) -> Result<String> {
         // first, delete other password reset tokens associated with this email:
-        let existing_requests = password_reset_requests::table
-            .filter(password_reset_requests::email.eq(email));
+        let existing_requests =
+            password_reset_requests::table.filter(password_reset_requests::email.eq(email));
         diesel::delete(existing_requests).execute(conn)?;
 
         // now, generate a random token, set the expiry date,
@@ -38,7 +38,7 @@ impl PasswordResetRequest {
         let new_request = NewPasswordResetRequest {
             email: email.to_owned(),
             token: token.clone(),
-            expiration_date: expiration_date,
+            expiration_date,
         };
         diesel::insert_into(password_reset_requests::table)
             .values(new_request)
@@ -64,8 +64,8 @@ impl PasswordResetRequest {
     pub fn find_and_delete_by_token(conn: &Connection, token: &str) -> Result<Self> {
         let request = Self::find_by_token(&conn, &token)?;
 
-        let filter = password_reset_requests::table
-            .filter(password_reset_requests::id.eq(request.id));
+        let filter =
+            password_reset_requests::table.filter(password_reset_requests::id.eq(request.id));
         diesel::delete(filter).execute(conn)?;
 
         Ok(request)
@@ -105,8 +105,7 @@ mod tests {
             user_tests::fill_database(&conn);
             let admin_email = "admin@example.com";
 
-            PasswordResetRequest::insert(&conn, &admin_email)
-                .expect("couldn't insert new request");
+            PasswordResetRequest::insert(&conn, &admin_email).expect("couldn't insert new request");
             PasswordResetRequest::insert(&conn, &admin_email)
                 .expect("couldn't insert second request");
 

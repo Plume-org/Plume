@@ -16,8 +16,8 @@ use validator::{Validate, ValidationError, ValidationErrors};
 
 use mail::{build_mail, Mailer};
 use plume_models::{
-    users::{User, AUTH_COOKIE},
     password_reset_requests::*,
+    users::{User, AUTH_COOKIE},
     Error, PlumeRocket, CONFIG,
 };
 use template_utils::{IntoContext, Ructe};
@@ -167,11 +167,8 @@ pub fn password_reset_request(
     rockets: PlumeRocket,
 ) -> Ructe {
     if User::find_by_email(&*rockets.conn, &form.email).is_ok() {
-        let token = PasswordResetRequest::insert(
-            &*rockets.conn,
-            &form.email,
-        )
-        .expect("password_reset_request::insert: error");
+        let token = PasswordResetRequest::insert(&*rockets.conn, &form.email)
+            .expect("password_reset_request::insert: error");
 
         let url = format!("https://{}/password-reset/{}", CONFIG.base_url, token);
         if let Some(message) = build_mail(
@@ -190,10 +187,7 @@ pub fn password_reset_request(
 }
 
 #[get("/password-reset/<token>")]
-pub fn password_reset_form(
-    token: String,
-    rockets: PlumeRocket,
-) -> Result<Ructe, Ructe> {
+pub fn password_reset_form(token: String, rockets: PlumeRocket) -> Result<Ructe, Ructe> {
     PasswordResetRequest::find_by_token(&*rockets.conn, &token)
         .map_err(|err| password_reset_error_response(err, &rockets))?;
 
@@ -229,9 +223,8 @@ pub fn password_reset(
     form: Form<NewPasswordForm>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
-    form.validate().map_err(|err|
-        render!(session::password_reset(&rockets.to_context(), &form, err))
-    )?;
+    form.validate()
+        .map_err(|err| render!(session::password_reset(&rockets.to_context(), &form, err)))?;
 
     PasswordResetRequest::find_and_delete_by_token(&*rockets.conn, &token)
         .and_then(|request| User::find_by_email(&*rockets.conn, &request.email))
@@ -251,7 +244,9 @@ pub fn password_reset(
 
 fn password_reset_error_response(err: Error, rockets: &PlumeRocket) -> Ructe {
     match err {
-        Error::Expired => render!(session::password_reset_request_expired(&rockets.to_context())),
-        _ => render!(errors::not_found(&rockets.to_context()))
+        Error::Expired => render!(session::password_reset_request_expired(
+            &rockets.to_context()
+        )),
+        _ => render!(errors::not_found(&rockets.to_context())),
     }
 }
