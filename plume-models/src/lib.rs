@@ -65,6 +65,7 @@ pub enum Error {
     Unauthorized,
     Url,
     Webfinger,
+    Expired,
 }
 
 impl From<bcrypt::BcryptError> for Error {
@@ -367,6 +368,7 @@ pub mod medias;
 pub mod mentions;
 pub mod migrations;
 pub mod notifications;
+pub mod password_reset_requests;
 pub mod plume_rocket;
 pub mod post_authors;
 pub mod posts;
