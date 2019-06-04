@@ -24,13 +24,9 @@ if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     apt-get install -y --no-install-recommends build-essential subversion ninja-build cmake
     mkdir -p /scratch/src
     cd /scratch/src
-    # Pin LLVM to post 7.0.1 tag and pin to a known-good revision for Plume builds
-    svn co -r350977 http://llvm.org/svn/llvm-project/llvm/trunk/ llvm
+    svn co http://llvm.org/svn/llvm-project/llvm/tags/RELEASE_800/final/ llvm
     cd /scratch/src/llvm/tools
-    # Pin lld to post 7.0.1 tag and pin to a known-good revision for Plume builds
-    svn co -r350975 http://llvm.org/svn/llvm-project/lld/trunk lld
-    #svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
-    #svn co http://llvm.org/svn/llvm-project/clang-tools-extra/trunk extra
+    svn co http://llvm.org/svn/llvm-project/lld/tags/RELEASE_800/final/ lld
     mkdir -p /scratch/build/arm
     cd /scratch/build/arm
     if [ "$ARCH" == "aarch64" ] ; then
