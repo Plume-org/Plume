@@ -22,7 +22,7 @@ pub struct NewPasswordResetRequest {
 const TOKEN_VALIDITY_HOURS: i64 = 2;
 
 impl PasswordResetRequest {
-    pub fn insert(conn: &Connection, email: &str) -> Result<Self> {
+    pub fn insert(conn: &Connection, email: &str) -> Result<String> {
         // first, delete other password reset tokens associated with this email:
         let existing_requests = password_reset_requests::table
             .filter(password_reset_requests::email.eq(email));
@@ -37,13 +37,15 @@ impl PasswordResetRequest {
             .expect("could not calculate expiration date");
         let new_request = NewPasswordResetRequest {
             email: email.to_owned(),
-            token: token,
+            token: token.clone(),
             expiration_date: expiration_date,
         };
         diesel::insert_into(password_reset_requests::table)
             .values(new_request)
-            .get_result(conn)
-            .map_err(Error::from)
+            .execute(conn)
+            .map_err(Error::from)?;
+
+        Ok(token)
     }
 
     pub fn find_by_token(conn: &Connection, token: &str) -> Result<Self> {
@@ -84,13 +86,13 @@ mod tests {
             user_tests::fill_database(&conn);
             let admin_email = "admin@example.com";
 
-            let request = PasswordResetRequest::insert(&conn, admin_email)
+            let token = PasswordResetRequest::insert(&conn, admin_email)
                 .expect("couldn't insert new request");
-            let request2 = PasswordResetRequest::find_by_token(&conn, &request.token)
+            let request = PasswordResetRequest::find_by_token(&conn, &token)
                 .expect("couldn't retrieve request");
 
-            assert!(&request.token.len() > &32);
-            assert_eq!(&request2.email, &admin_email);
+            assert!(&token.len() > &32);
+            assert_eq!(&request.email, &admin_email);
 
             Ok(())
         });
@@ -149,9 +151,9 @@ mod tests {
             user_tests::fill_database(&conn);
             let admin_email = "admin@example.com";
 
-            let request = PasswordResetRequest::insert(&conn, &admin_email)
+            let token = PasswordResetRequest::insert(&conn, &admin_email)
                 .expect("couldn't insert new request");
-            PasswordResetRequest::find_and_delete_by_token(&conn, &request.token)
+            PasswordResetRequest::find_and_delete_by_token(&conn, &token)
                 .expect("couldn't find and delete request");
 
             let count = password_reset_requests::table.count().get_result(&*conn);

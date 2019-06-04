@@ -167,13 +167,13 @@ pub fn password_reset_request(
     rockets: PlumeRocket,
 ) -> Ructe {
     if User::find_by_email(&*rockets.conn, &form.email).is_ok() {
-        let request = PasswordResetRequest::insert(
+        let token = PasswordResetRequest::insert(
             &*rockets.conn,
             &form.email,
         )
         .expect("password_reset_request::insert: error");
 
-        let url = format!("https://{}/password-reset/{}", CONFIG.base_url, request.token);
+        let url = format!("https://{}/password-reset/{}", CONFIG.base_url, token);
         if let Some(message) = build_mail(
             form.email.clone(),
             i18n!(rockets.intl.catalog, "Password reset"),
