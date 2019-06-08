@@ -23,6 +23,7 @@ const ITEMS_PER_PAGE: i32 = 12;
 #[derive(Responder)]
 pub enum RespondOrRedirect {
     Response(Ructe),
+    FlashResponse(Flash<Ructe>),
     Redirect(Redirect),
     FlashRedirect(Flash<Redirect>),
 }
@@ -30,6 +31,12 @@ pub enum RespondOrRedirect {
 impl From<Ructe> for RespondOrRedirect {
     fn from(response: Ructe) -> Self {
         RespondOrRedirect::Response(response)
+    }
+}
+
+impl From<Flash<Ructe>> for RespondOrRedirect {
+    fn from(response: Flash<Ructe>) -> Self {
+        RespondOrRedirect::FlashResponse(response)
     }
 }
 
