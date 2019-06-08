@@ -7,14 +7,42 @@ use rocket::{
         RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
-    response::NamedFile,
+    response::{Flash, NamedFile, Redirect},
     Outcome,
 };
 use std::path::{Path, PathBuf};
+use template_utils::Ructe;
 
 use plume_models::{posts::Post, Connection};
 
 const ITEMS_PER_PAGE: i32 = 12;
+
+/// Special return type used for routes that "cannot fail", and instead
+/// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response
+#[derive(Responder)]
+pub enum RespondOrRedirect {
+    Response(Ructe),
+    Redirect(Redirect),
+    FlashRedirect(Flash<Redirect>),
+}
+
+impl From<Ructe> for RespondOrRedirect {
+    fn from(response: Ructe) -> Self {
+        RespondOrRedirect::Response(response)
+    }
+}
+
+impl From<Redirect> for RespondOrRedirect {
+    fn from(redirect: Redirect) -> Self {
+        RespondOrRedirect::Redirect(redirect)
+    }
+}
+
+impl From<Flash<Redirect>> for RespondOrRedirect {
+    fn from(redirect: Flash<Redirect>) -> Self {
+        RespondOrRedirect::FlashRedirect(redirect)
+    }
+}
 
 #[derive(Shrinkwrap, Copy, Clone, UriDisplayQuery)]
 pub struct Page(i32);
