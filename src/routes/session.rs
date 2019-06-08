@@ -7,6 +7,7 @@ use rocket::{
     State,
 };
 use rocket_i18n::I18n;
+use routes::RespondOrRedirect;
 use std::{
     borrow::Cow,
     sync::{Arc, Mutex},
@@ -45,7 +46,7 @@ pub fn create(
     form: LenientForm<LoginForm>,
     mut cookies: Cookies,
     rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Ructe> {
+) -> RespondOrRedirect {
     let conn = &*rockets.conn;
     let user = User::find_by_email(&*conn, &form.email_or_name)
         .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
@@ -76,48 +77,43 @@ pub fn create(
         String::new()
     };
 
-    if errors.is_empty() {
-        cookies.add_private(
-            Cookie::build(AUTH_COOKIE, user_id)
-                .same_site(SameSite::Lax)
-                .finish(),
-        );
-        let destination = rockets
-            .flash_msg
-            .clone()
-            .and_then(
-                |(name, msg)| {
-                    if name == "callback" {
-                        Some(msg)
-                    } else {
-                        None
-                    }
-                },
-            )
-            .unwrap_or_else(|| "/".to_owned());
+    if !errors.is_empty() {
+        return render!(session::login(&rockets.to_context(), None, &*form, errors)).into();
+    }
 
-        let uri = Uri::parse(&destination)
-            .map(IntoOwned::into_owned)
-            .map_err(|_| {
-                render!(session::login(
-                    &(conn, &rockets.intl.catalog, None, None),
-                    None,
-                    &*form,
-                    errors
-                ))
-            })?;
+    cookies.add_private(
+        Cookie::build(AUTH_COOKIE, user_id)
+            .same_site(SameSite::Lax)
+            .finish(),
+    );
+    let destination = rockets
+        .flash_msg
+        .clone()
+        .and_then(
+            |(name, msg)| {
+                if name == "callback" {
+                    Some(msg)
+                } else {
+                    None
+                }
+            },
+        )
+        .unwrap_or_else(|| "/".to_owned());
 
-        Ok(Flash::success(
+    if let Ok(uri) = Uri::parse(&destination).map(IntoOwned::into_owned) {
+        Flash::success(
             Redirect::to(uri),
             i18n!(&rockets.intl.catalog, "You are now connected."),
-        ))
+        )
+        .into()
     } else {
-        Err(render!(session::login(
-            &rockets.to_context(),
+        render!(session::login(
+            &(conn, &rockets.intl.catalog, None, None),
             None,
             &*form,
             errors
-        )))
+        ))
+        .into()
     }
 }
 
