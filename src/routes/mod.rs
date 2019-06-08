@@ -19,6 +19,7 @@ const ITEMS_PER_PAGE: i32 = 12;
 
 /// Special return type used for routes that "cannot fail", and instead
 /// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response
+#[allow(clippy::large_enum_variant)]
 #[derive(Responder)]
 pub enum RespondOrRedirect {
     Response(Ructe),
