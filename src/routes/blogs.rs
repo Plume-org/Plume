@@ -236,104 +236,107 @@ pub fn update(
     name: String,
     form: LenientForm<EditForm>,
     rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Ructe> {
+) -> RespondOrRedirect {
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
     let mut blog = Blog::find_by_fqn(&rockets, &name).expect("blog::update: blog not found");
-    if rockets
+    if !rockets
         .user
         .clone()
         .and_then(|u| u.is_author_in(&*conn, &blog).ok())
         .unwrap_or(false)
     {
-        let user = rockets
-            .user
-            .clone()
-            .expect("blogs::edit: User was None while it shouldn't");
-        form.validate()
-            .and_then(|_| {
-                if let Some(icon) = form.icon {
-                    if !check_media(&*conn, icon, &user) {
-                        let mut errors = ValidationErrors::new();
-                        errors.add(
-                            "",
-                            ValidationError {
-                                code: Cow::from("icon"),
-                                message: Some(Cow::from(i18n!(
-                                    intl,
-                                    "You can't use this media as a blog icon."
-                                ))),
-                                params: HashMap::new(),
-                            },
-                        );
-                        return Err(errors);
-                    }
-                }
-
-                if let Some(banner) = form.banner {
-                    if !check_media(&*conn, banner, &user) {
-                        let mut errors = ValidationErrors::new();
-                        errors.add(
-                            "",
-                            ValidationError {
-                                code: Cow::from("banner"),
-                                message: Some(Cow::from(i18n!(
-                                    intl,
-                                    "You can't use this media as a blog banner."
-                                ))),
-                                params: HashMap::new(),
-                            },
-                        );
-                        return Err(errors);
-                    }
-                }
-
-                blog.title = form.title.clone();
-                blog.summary = form.summary.clone();
-                blog.summary_html = SafeString::new(
-                    &utils::md_to_html(
-                        &form.summary,
-                        None,
-                        true,
-                        Some(Media::get_media_processor(
-                            &conn,
-                            blog.list_authors(&conn)
-                                .expect("Couldn't get list of authors")
-                                .iter()
-                                .collect(),
-                        )),
-                    )
-                    .0,
-                );
-                blog.icon_id = form.icon;
-                blog.banner_id = form.banner;
-                blog.save_changes::<Blog>(&*conn)
-                    .expect("Couldn't save blog changes");
-                Ok(Flash::success(
-                    Redirect::to(uri!(details: name = name, page = _)),
-                    i18n!(intl, "Your blog information have been updated."),
-                ))
-            })
-            .map_err(|err| {
-                let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
-                render!(blogs::edit(
-                    &rockets.to_context(),
-                    &blog,
-                    medias,
-                    &*form,
-                    err
-                ))
-            })
-    } else {
         // TODO actually return 403 error code
-        Err(render!(errors::not_authorized(
+        return render!(errors::not_authorized(
             &rockets.to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."
             )
-        )))
+        ))
+        .into();
     }
+
+    let user = rockets
+        .user
+        .clone()
+        .expect("blogs::edit: User was None while it shouldn't");
+    form.validate()
+        .and_then(|_| {
+            if let Some(icon) = form.icon {
+                if !check_media(&*conn, icon, &user) {
+                    let mut errors = ValidationErrors::new();
+                    errors.add(
+                        "",
+                        ValidationError {
+                            code: Cow::from("icon"),
+                            message: Some(Cow::from(i18n!(
+                                intl,
+                                "You can't use this media as a blog icon."
+                            ))),
+                            params: HashMap::new(),
+                        },
+                    );
+                    return Err(errors);
+                }
+            }
+
+            if let Some(banner) = form.banner {
+                if !check_media(&*conn, banner, &user) {
+                    let mut errors = ValidationErrors::new();
+                    errors.add(
+                        "",
+                        ValidationError {
+                            code: Cow::from("banner"),
+                            message: Some(Cow::from(i18n!(
+                                intl,
+                                "You can't use this media as a blog banner."
+                            ))),
+                            params: HashMap::new(),
+                        },
+                    );
+                    return Err(errors);
+                }
+            }
+
+            blog.title = form.title.clone();
+            blog.summary = form.summary.clone();
+            blog.summary_html = SafeString::new(
+                &utils::md_to_html(
+                    &form.summary,
+                    None,
+                    true,
+                    Some(Media::get_media_processor(
+                        &conn,
+                        blog.list_authors(&conn)
+                            .expect("Couldn't get list of authors")
+                            .iter()
+                            .collect(),
+                    )),
+                )
+                .0,
+            );
+            blog.icon_id = form.icon;
+            blog.banner_id = form.banner;
+            blog.save_changes::<Blog>(&*conn)
+                .expect("Couldn't save blog changes");
+            Ok(Flash::success(
+                Redirect::to(uri!(details: name = name, page = _)),
+                i18n!(intl, "Your blog information have been updated."),
+            ))
+        })
+        .map_err(|err| {
+            let medias = Media::for_user(&*conn, user.id).expect("Couldn't list media");
+            render!(blogs::edit(
+                &rockets.to_context(),
+                &blog,
+                medias,
+                &*form,
+                err
+            ))
+        })
+        .unwrap()
+        .into()
 }
 
 #[get("/~/<name>/outbox")]
