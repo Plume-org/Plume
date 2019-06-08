@@ -42,17 +42,23 @@ pub fn details(
     let user = rockets.user.clone();
     let blog = Blog::find_by_fqn(&rockets, &blog)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
-    if post.published
+    if !(post.published
         || post
             .get_authors(&*conn)?
             .into_iter()
-            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0))
+            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
     {
-        let comments = CommentTree::from_post(&*conn, &post, user.as_ref())?;
+        return Ok(render!(errors::not_authorized(
+            &rockets.to_context(),
+            i18n!(rockets.intl.catalog, "This post isn't published yet.")
+        )));
+    }
 
-        let previous = responding_to.and_then(|r| Comment::get(&*conn, r).ok());
+    let comments = CommentTree::from_post(&*conn, &post, user.as_ref())?;
 
-        Ok(render!(posts::details(
+    let previous = responding_to.and_then(|r| Comment::get(&*conn, r).ok());
+
+    Ok(render!(posts::details(
             &rockets.to_context(),
             post.clone(),
             blog,
@@ -89,12 +95,6 @@ pub fn details(
             user.and_then(|u| u.is_following(&*conn, post.get_authors(&*conn).ok()?[0].id).ok()).unwrap_or(false),
             post.get_authors(&*conn)?[0].clone()
         )))
-    } else {
-        Ok(render!(errors::not_authorized(
-            &rockets.to_context(),
-            i18n!(rockets.intl.catalog, "This post isn't published yet.")
-        )))
-    }
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
@@ -221,7 +221,7 @@ pub fn update(
     cl: ContentLen,
     form: LenientForm<NewPostForm>,
     rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Ructe> {
+) -> RespondOrRedirect {
     let conn = &*rockets.conn;
     let b = Blog::find_by_fqn(&rockets, &blog).expect("post::update: blog error");
     let mut post =
@@ -257,10 +257,11 @@ pub fn update(
             .expect("posts::update: is author in error")
         {
             // actually it's not "Ok"…
-            Ok(Flash::error(
+            Flash::error(
                 Redirect::to(uri!(super::blogs::details: name = blog, page = _)),
                 i18n!(&intl, "You are not allowed to publish on this blog."),
-            ))
+            )
+            .into()
         } else {
             let (content, mentions, hashtags) = utils::md_to_html(
                 form.content.to_string().as_ref(),
@@ -347,14 +348,15 @@ pub fn update(
                 }
             }
 
-            Ok(Flash::success(
+            Flash::success(
                 Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)),
                 i18n!(intl, "Your article has been updated."),
-            ))
+            )
+            .into()
         }
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts:update: medias error");
-        Err(render!(posts::new(
+        render!(posts::new(
             &rockets.to_context(),
             i18n!(intl, "Edit {0}"; &form.title),
             b,
@@ -365,7 +367,8 @@ pub fn update(
             errors.clone(),
             medias.clone(),
             cl.0
-        )))
+        ))
+        .into()
     }
 }
 
