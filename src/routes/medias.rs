@@ -38,76 +38,75 @@ pub fn upload(
     ct: &ContentType,
     conn: DbConn,
 ) -> Result<Redirect, status::BadRequest<&'static str>> {
-    if ct.is_form_data() {
-        let (_, boundary) = ct
-            .params()
-            .find(|&(k, _)| k == "boundary")
-            .ok_or_else(|| status::BadRequest(Some("No boundary")))?;
+    if !ct.is_form_data() {
+        return Ok(Redirect::to(uri!(new)));
+    }
 
-        match Multipart::with_body(data.open(), boundary).save().temp() {
-            SaveResult::Full(entries) => {
-                let fields = entries.fields;
+    let (_, boundary) = ct
+        .params()
+        .find(|&(k, _)| k == "boundary")
+        .ok_or_else(|| status::BadRequest(Some("No boundary")))?;
 
-                let filename = fields
-                    .get("file")
-                    .and_then(|v| v.iter().next())
-                    .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?
-                    .headers
-                    .filename
-                    .clone();
-                // Remove extension if it contains something else than just letters and numbers
-                let ext = filename
-                    .and_then(|f| {
-                        f.rsplit('.')
-                            .next()
-                            .and_then(|ext| {
-                                if ext.chars().any(|c| !c.is_alphanumeric()) {
-                                    None
-                                } else {
-                                    Some(ext.to_lowercase())
-                                }
-                            })
-                            .map(|ext| format!(".{}", ext))
-                    })
-                    .unwrap_or_default();
-                let dest = format!("static/media/{}{}", GUID::rand().to_string(), ext);
+    if let SaveResult::Full(entries) = Multipart::with_body(data.open(), boundary).save().temp() {
+        let fields = entries.fields;
 
-                match fields["file"][0].data {
-                    SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)
-                        .map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
-                    SavedData::File(ref path, _) => {
-                        fs::copy(path, &dest)
-                            .map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;
-                    }
-                    _ => {
-                        return Ok(Redirect::to(uri!(new)));
-                    }
-                }
-
-                let has_cw = !read(&fields["cw"][0].data)
-                    .map(|cw| cw.is_empty())
-                    .unwrap_or(false);
-                let media = Media::insert(
-                    &*conn,
-                    NewMedia {
-                        file_path: dest,
-                        alt_text: read(&fields["alt"][0].data)?,
-                        is_remote: false,
-                        remote_url: None,
-                        sensitive: has_cw,
-                        content_warning: if has_cw {
-                            Some(read(&fields["cw"][0].data)?)
-                        } else {
+        let filename = fields
+            .get("file")
+            .and_then(|v| v.iter().next())
+            .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?
+            .headers
+            .filename
+            .clone();
+        // Remove extension if it contains something else than just letters and numbers
+        let ext = filename
+            .and_then(|f| {
+                f.rsplit('.')
+                    .next()
+                    .and_then(|ext| {
+                        if ext.chars().any(|c| !c.is_alphanumeric()) {
                             None
-                        },
-                        owner_id: user.id,
-                    },
-                )
-                .map_err(|_| status::BadRequest(Some("Error while saving media")))?;
-                Ok(Redirect::to(uri!(details: id = media.id)))
+                        } else {
+                            Some(ext.to_lowercase())
+                        }
+                    })
+                    .map(|ext| format!(".{}", ext))
+            })
+            .unwrap_or_default();
+        let dest = format!("static/media/{}{}", GUID::rand().to_string(), ext);
+
+        match fields["file"][0].data {
+            SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)
+                .map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
+            SavedData::File(ref path, _) => {
+                fs::copy(path, &dest)
+                    .map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;
             }
-            SaveResult::Partial(_, _) | SaveResult::Error(_) => Ok(Redirect::to(uri!(new))),
+            _ => {
+                return Ok(Redirect::to(uri!(new)));
+            }
         }
+
+        let has_cw = !read(&fields["cw"][0].data)
+            .map(|cw| cw.is_empty())
+            .unwrap_or(false);
+        let media = Media::insert(
+            &*conn,
+            NewMedia {
+                file_path: dest,
+                alt_text: read(&fields["alt"][0].data)?,
+                is_remote: false,
+                remote_url: None,
+                sensitive: has_cw,
+                content_warning: if has_cw {
+                    Some(read(&fields["cw"][0].data)?)
+                } else {
+                    None
+                },
+                owner_id: user.id,
+            },
+        )
+        .map_err(|_| status::BadRequest(Some("Error while saving media")))?;
+        Ok(Redirect::to(uri!(details: id = media.id)))
     } else {
         Ok(Redirect::to(uri!(new)))
     }
