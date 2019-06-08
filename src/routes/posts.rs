@@ -26,7 +26,9 @@ use plume_models::{
     users::User,
     Error, PlumeRocket,
 };
-use routes::{comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm};
+use routes::{
+    comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm, RespondOrRedirect,
+};
 use template_utils::{IntoContext, Ructe};
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
@@ -396,7 +398,7 @@ pub fn create(
     form: LenientForm<NewPostForm>,
     cl: ContentLen,
     rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Result<Ructe, ErrorPage>> {
+) -> Result<RespondOrRedirect, ErrorPage> {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");;
     let slug = form.title.to_string().to_kebab_case();
@@ -429,7 +431,8 @@ pub fn create(
                     &rockets.intl.catalog,
                     "You are not allowed to publish on this blog."
                 ),
-            ));
+            )
+            .into());
         }
 
         let (content, mentions, hashtags) = utils::md_to_html(
@@ -530,10 +533,11 @@ pub fn create(
         Ok(Flash::success(
             Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
             i18n!(&rockets.intl.catalog, "Your article has been saved."),
-        ))
+        )
+        .into())
     } else {
         let medias = Media::for_user(&*conn, user.id).expect("posts::create: medias error");
-        Err(Ok(render!(posts::new(
+        Ok(render!(posts::new(
             &rockets.to_context(),
             i18n!(rockets.intl.catalog, "New article"),
             blog,
@@ -544,7 +548,8 @@ pub fn create(
             errors.clone(),
             medias,
             cl.0
-        ))))
+        ))
+        .into())
     }
 }
 
@@ -627,14 +632,14 @@ pub fn remote_interact_post(
     blog_name: String,
     slug: String,
     remote: LenientForm<RemoteForm>,
-) -> Result<Result<Ructe, Redirect>, ErrorPage> {
+) -> Result<RespondOrRedirect, ErrorPage> {
     let target = Blog::find_by_fqn(&rockets, &blog_name)
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
         .ok()
         .and_then(|uri| rt_format!(uri, uri = target.ap_url).ok())
     {
-        Ok(Err(Redirect::to(uri)))
+        Ok(Redirect::to(uri).into())
     } else {
         let mut errs = ValidationErrors::new();
         errs.add("remote", ValidationError {
@@ -643,13 +648,14 @@ pub fn remote_interact_post(
             params: HashMap::new(),
         });
         //could not get your remote url?
-        Ok(Ok(render!(posts::remote_interact(
+        Ok(render!(posts::remote_interact(
             &rockets.to_context(),
             target,
             super::session::LoginForm::default(),
             ValidationErrors::default(),
             remote.clone(),
             errs
-        ))))
+        ))
+        .into())
     }
 }
