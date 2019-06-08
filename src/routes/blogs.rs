@@ -16,7 +16,7 @@ use plume_models::{
     blog_authors::*, blogs::*, instance::Instance, medias::*, posts::Post, safe_string::SafeString,
     users::User, Connection, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page};
+use routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
@@ -84,10 +84,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(
-    form: LenientForm<NewBlogForm>,
-    rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Ructe> {
+pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOrRedirect {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -111,42 +108,43 @@ pub fn create(
         );
     }
 
-    if errors.is_empty() {
-        let blog = Blog::insert(
-            &*conn,
-            NewBlog::new_local(
-                slug.clone(),
-                form.title.to_string(),
-                String::from(""),
-                Instance::get_local()
-                    .expect("blog::create: instance error")
-                    .id,
-            )
-            .expect("blog::create: new local error"),
-        )
-        .expect("blog::create:  error");
-
-        BlogAuthor::insert(
-            &*conn,
-            NewBlogAuthor {
-                blog_id: blog.id,
-                author_id: user.id,
-                is_owner: true,
-            },
-        )
-        .expect("blog::create: author error");
-
-        Ok(Flash::success(
-            Redirect::to(uri!(details: name = slug.clone(), page = _)),
-            &i18n!(intl, "Your blog was successfully created!"),
-        ))
-    } else {
-        Err(render!(blogs::new(&rockets.to_context(), &*form, errors)))
+    if !errors.is_empty() {
+        return render!(blogs::new(&rockets.to_context(), &*form, errors)).into();
     }
+
+    let blog = Blog::insert(
+        &*conn,
+        NewBlog::new_local(
+            slug.clone(),
+            form.title.to_string(),
+            String::from(""),
+            Instance::get_local()
+                .expect("blog::create: instance error")
+                .id,
+        )
+        .expect("blog::create: new local error"),
+    )
+    .expect("blog::create:  error");
+
+    BlogAuthor::insert(
+        &*conn,
+        NewBlogAuthor {
+            blog_id: blog.id,
+            author_id: user.id,
+            is_owner: true,
+        },
+    )
+    .expect("blog::create: author error");
+
+    Flash::success(
+        Redirect::to(uri!(details: name = slug.clone(), page = _)),
+        &i18n!(intl, "Your blog was successfully created!"),
+    )
+    .into()
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, rockets: PlumeRocket) -> Result<Flash<Redirect>, Ructe> {
+pub fn delete(name: String, rockets: PlumeRocket) -> RespondOrRedirect {
     let conn = &*rockets.conn;
     let blog = Blog::find_by_fqn(&rockets, &name).expect("blog::delete: blog not found");
 
@@ -158,19 +156,21 @@ pub fn delete(name: String, rockets: PlumeRocket) -> Result<Flash<Redirect>, Ruc
     {
         blog.delete(&conn, &rockets.searcher)
             .expect("blog::expect: deletion error");
-        Ok(Flash::success(
+        Flash::success(
             Redirect::to(uri!(super::instance::index)),
             i18n!(rockets.intl.catalog, "Your blog was deleted."),
-        ))
+        )
+        .into()
     } else {
         // TODO actually return 403 error code
-        Err(render!(errors::not_authorized(
+        render!(errors::not_authorized(
             &rockets.to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to delete this blog."
             )
-        )))
+        ))
+        .into()
     }
 }
 
