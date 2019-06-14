@@ -32,7 +32,7 @@ use {Connection, Error, PlumeRocket, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
-#[derive(Clone, Debug, DieselNewType, Shrinkwrap)]
+#[derive(Clone, Debug, PartialEq, DieselNewType, Shrinkwrap)]
 pub struct Host(String);
 
 impl Host {

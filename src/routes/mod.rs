@@ -10,6 +10,7 @@ use rocket::{
     response::{Flash, NamedFile, Redirect},
     Outcome,
 };
+use std::fmt;
 use std::path::{Path, PathBuf};
 use template_utils::Ructe;
 
@@ -52,8 +53,14 @@ impl From<Flash<Redirect>> for RespondOrRedirect {
     }
 }
 
-#[derive(Shrinkwrap, Copy, Clone, UriDisplayQuery)]
+#[derive(Debug, Shrinkwrap, Copy, Clone, UriDisplayQuery)]
 pub struct Page(i32);
+
+impl fmt::Display for Page {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 impl<'v> FromFormValue<'v> for Page {
     type Error = &'v RawStr;

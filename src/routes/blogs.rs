@@ -19,7 +19,11 @@ use plume_models::{
 use routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
-fn detail_guts(blog: Blog, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+fn detail_guts(
+    blog: Blog,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<RespondOrRedirect, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
     let posts = Post::blog_page(conn, &blog, page.limits())?;
@@ -33,7 +37,8 @@ fn detail_guts(blog: Blog, page: Option<Page>, rockets: PlumeRocket) -> Result<R
         page.0,
         Page::total(articles_count as i32),
         posts
-    )))
+    ))
+    .into())
 }
 
 #[get("/<custom_domain>?<page>", rank = 2)]
@@ -41,15 +46,36 @@ pub fn custom_details(
     custom_domain: String,
     page: Option<Page>,
     rockets: PlumeRocket,
-) -> Result<Ructe, ErrorPage> {
+) -> Result<RespondOrRedirect, ErrorPage> {
     let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
     detail_guts(blog, page, rockets)
 }
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn details(
+    name: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<RespondOrRedirect, ErrorPage> {
     let blog = Blog::find_by_fqn(&rockets, &name)?;
-    detail_guts(blog, page, rockets)
+
+    // check this first, and return early
+    // doing this prevents partially moving `blog` into the `match (tuple)`,
+    // which makes it impossible to reuse then.
+    if blog.custom_domain == None {
+        return detail_guts(blog, page, rockets);
+    }
+
+    match (blog.custom_domain, page) {
+        (Some(ref custom_domain), Some(ref page)) => {
+            Ok(Redirect::to(format!("https://{}/?{}", custom_domain, page)).into())
+        }
+        (Some(ref custom_domain), _) => {
+            Ok(Redirect::to(format!("https://{}/", custom_domain)).into())
+        }
+        // we need this match arm, or the match won't compile
+        (None, _) => panic!("This code path should have already been handled!"),
+    }
 }
 
 pub fn activity_detail_guts(
