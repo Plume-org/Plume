@@ -13,7 +13,7 @@ use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
-use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
+use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
 #[get("/")]
@@ -114,36 +114,36 @@ pub fn update_settings(
     _admin: Admin,
     form: LenientForm<InstanceSettingsForm>,
     rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Ructe> {
+) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    form.validate()
-        .and_then(|_| {
-            let instance =
-                Instance::get_local().expect("instance::update_settings: local instance error");
-            instance
-                .update(
-                    conn,
-                    form.name.clone(),
-                    form.open_registrations,
-                    form.short_description.clone(),
-                    form.long_description.clone(),
-                )
-                .expect("instance::update_settings: save error");
-            Ok(Flash::success(
-                Redirect::to(uri!(admin)),
-                i18n!(rockets.intl.catalog, "Instance settings have been saved."),
-            ))
-        })
-        .or_else(|e| {
-            let local_inst =
-                Instance::get_local().expect("instance::update_settings: local instance error");
-            Err(render!(instance::admin(
-                &rockets.to_context(),
-                local_inst,
-                form.clone(),
-                e
-            )))
-        })
+    if let Err(e) = form.validate() {
+        let local_inst =
+            Instance::get_local().expect("instance::update_settings: local instance error");
+        render!(instance::admin(
+            &rockets.to_context(),
+            local_inst,
+            form.clone(),
+            e
+        ))
+        .into()
+    } else {
+        let instance =
+            Instance::get_local().expect("instance::update_settings: local instance error");
+        instance
+            .update(
+                conn,
+                form.name.clone(),
+                form.open_registrations,
+                form.short_description.clone(),
+                form.long_description.clone(),
+            )
+            .expect("instance::update_settings: save error");
+        Flash::success(
+            Redirect::to(uri!(admin)),
+            i18n!(rockets.intl.catalog, "Instance settings have been saved."),
+        )
+        .into()
+    }
 }
 
 #[get("/admin/instances?<page>")]

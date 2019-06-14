@@ -25,14 +25,14 @@ use plume_models::{
     users::*,
     Error, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page, RemoteForm};
+use routes::{errors::ErrorPage, Page, RemoteForm, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
 #[get("/me")]
-pub fn me(user: Option<User>) -> Result<Redirect, Flash<Redirect>> {
+pub fn me(user: Option<User>) -> RespondOrRedirect {
     match user {
-        Some(user) => Ok(Redirect::to(uri!(details: name = user.username))),
-        None => Err(utils::requires_login("", uri!(me))),
+        Some(user) => Redirect::to(uri!(details: name = user.username)).into(),
+        None => utils::requires_login("", uri!(me)).into(),
     }
 }
 
@@ -190,7 +190,7 @@ pub fn follow_not_connected(
     name: String,
     remote_form: Option<LenientForm<RemoteForm>>,
     i18n: I18n,
-) -> Result<Result<Flash<Ructe>, Redirect>, ErrorPage> {
+) -> Result<RespondOrRedirect, ErrorPage> {
     let target = User::find_by_fqn(&rockets, &name)?;
     if let Some(remote_form) = remote_form {
         if let Some(uri) = User::fetch_remote_interact_uri(&remote_form)
@@ -207,7 +207,7 @@ pub fn follow_not_connected(
                 .ok()
             })
         {
-            Ok(Err(Redirect::to(uri)))
+            Ok(Redirect::to(uri).into())
         } else {
             let mut err = ValidationErrors::default();
             err.add("remote",
@@ -217,7 +217,7 @@ pub fn follow_not_connected(
                     params: HashMap::new(),
                 },
             );
-            Ok(Ok(Flash::new(
+            Ok(Flash::new(
                 render!(users::follow_remote(
                     &rockets.to_context(),
                     target,
@@ -228,10 +228,11 @@ pub fn follow_not_connected(
                 )),
                 "callback",
                 uri!(follow: name = name).to_string(),
-            )))
+            )
+            .into())
         }
     } else {
-        Ok(Ok(Flash::new(
+        Ok(Flash::new(
             render!(users::follow_remote(
                 &rockets.to_context(),
                 target,
@@ -243,7 +244,8 @@ pub fn follow_not_connected(
             )),
             "callback",
             uri!(follow: name = name).to_string(),
-        )))
+        )
+        .into())
     }
 }
 
