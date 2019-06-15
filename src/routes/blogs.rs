@@ -68,7 +68,7 @@ pub fn details(
 
     match (blog.custom_domain, page) {
         (Some(ref custom_domain), Some(ref page)) => {
-            Ok(Redirect::to(format!("https://{}/?{}", custom_domain, page)).into())
+            Ok(Redirect::to(format!("https://{}/?page={}", custom_domain, page)).into())
         }
         (Some(ref custom_domain), _) => {
             Ok(Redirect::to(format!("https://{}/", custom_domain)).into())

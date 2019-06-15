@@ -335,7 +335,7 @@ impl Blog {
                 .unwrap_or_else(|| Host::new(format!(
                     "{}/~/{}",
                     Instance::get_local().unwrap().public_domain,
-                    self.title
+                    self.fqn,
                 )))
         )
     }
