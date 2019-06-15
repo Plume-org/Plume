@@ -163,25 +163,11 @@ impl FromId<PlumeRocket> for Follow {
     }
 
     fn from_activity(c: &PlumeRocket, follow: FollowAct) -> Result<Self> {
-        let actor = User::from_id(
-            c,
-            &{
-                let res: String = follow.follow_props.actor_link::<Id>()?.into();
-                res
-            },
-            None,
-        )
-        .map_err(|(_, e)| e)?;
+        let actor =
+            User::from_id(c, &follow.follow_props.actor_link::<Id>()?, None).map_err(|(_, e)| e)?;
 
-        let target = User::from_id(
-            c,
-            &{
-                let res: String = follow.follow_props.object_link::<Id>()?.into();
-                res
-            },
-            None,
-        )
-        .map_err(|(_, e)| e)?;
+        let target = User::from_id(c, &follow.follow_props.object_link::<Id>()?, None)
+            .map_err(|(_, e)| e)?;
         Follow::accept_follow(&c.conn, &actor, &target, follow, actor.id, target.id)
     }
 }

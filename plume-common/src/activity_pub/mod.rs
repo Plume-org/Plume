@@ -163,18 +163,12 @@ where
     }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Shrinkwrap, Clone, Serialize, Deserialize)]
 pub struct Id(String);
 
 impl Id {
-    pub fn new<T: Into<String>>(id: T) -> Id {
-        Id(id.into())
-    }
-}
-
-impl Into<String> for Id {
-    fn into(self) -> String {
-        self.0.clone()
+    pub fn new(id: impl ToString) -> Id {
+        Id(id.to_string())
     }
 }
 

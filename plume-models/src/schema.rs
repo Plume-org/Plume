@@ -162,6 +162,15 @@ table! {
 }
 
 table! {
+    password_reset_requests (id) {
+        id -> Int4,
+        email -> Varchar,
+        token -> Varchar,
+        expiration_date -> Timestamp,
+    }
+}
+
+table! {
     post_authors (id) {
         id -> Int4,
         post_id -> Int4,
@@ -293,6 +302,7 @@ allow_tables_to_appear_in_same_query!(
     medias,
     mentions,
     notifications,
+    password_reset_requests,
     post_authors,
     posts,
     reshares,
