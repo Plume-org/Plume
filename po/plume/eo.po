@@ -88,16 +88,16 @@ msgstr ""
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:182
-msgid "{} have been unblocked."
+# src/routes/instance.rs:175
+msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:184
-msgid "{} have been blocked."
+# src/routes/instance.rs:177
+msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:218
-msgid "{} have been banned."
+# src/routes/instance.rs:221
+msgid "{} has been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -207,10 +207,6 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:263
-msgid "Sorry, but the link expired. Try again"
-msgstr ""
-
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
@@ -253,129 +249,329 @@ msgid ""
 "use it."
 msgstr ""
 
-msgid "Internal server error"
+msgid "Plume"
 msgstr ""
 
-msgid "Something broke on our side."
+msgid "Menu"
 msgstr ""
 
-msgid "Sorry about that. If you think this is a bug, please report it."
+msgid "Search"
+msgstr "Serĉi"
+
+msgid "Dashboard"
 msgstr ""
 
-msgid "You are not authorized."
+msgid "Notifications"
 msgstr ""
 
-msgid "Page not found"
+msgid "Log Out"
+msgstr "Elsaluti"
+
+msgid "My account"
+msgstr "Mia konto"
+
+msgid "Log In"
+msgstr "Ensaluti"
+
+msgid "Register"
 msgstr ""
 
-msgid "We couldn't find this page."
+msgid "About this instance"
 msgstr ""
 
-msgid "The link that led you here may be broken."
+msgid "Privacy policy"
 msgstr ""
 
-msgid "The content you sent can't be processed."
+msgid "Administration"
 msgstr ""
 
-msgid "Maybe it was too long."
-msgstr "Eble ĝi estis tro longa."
-
-msgid "Invalid CSRF token"
+msgid "Documentation"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
+msgid "Source code"
 msgstr ""
 
-msgid "Articles tagged \"{0}\""
+msgid "Matrix room"
 msgstr ""
 
-msgid "There are currently no articles with such a tag"
+msgid "Welcome to {}"
 msgstr ""
 
-msgid "New Blog"
+msgid "Latest articles"
 msgstr ""
 
-msgid "Create a blog"
+msgid "Your feed"
 msgstr ""
 
-msgid "Title"
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Administration of {0}"
+msgstr ""
+
+msgid "Instances"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Unblock"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Ban"
+msgstr ""
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+msgid "Articles from {}"
+msgstr ""
+
+msgid "Nothing to see here yet. Try subscribing to more people."
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Name"
 msgstr ""
 
 # src/template_utils.rs:220
 msgid "Optional"
 msgstr ""
 
-msgid "Create blog"
-msgstr "Krei blogon"
-
-msgid "Edit \"{}\""
+msgid "Allow anyone to register here"
 msgstr ""
 
-msgid "Description"
+msgid "Short description"
 msgstr ""
 
 msgid "Markdown syntax is supported"
 msgstr ""
 
+msgid "Long description"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Default article license"
+msgstr ""
+
+msgid "Save these settings"
+msgstr ""
+
+msgid "About {0}"
+msgstr ""
+
+msgid "Runs Plume {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr ""
+
+msgid "Administred by"
+msgstr ""
+
 msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+"If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid "Upload images"
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
 msgstr ""
 
-msgid "Blog icon"
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
-msgid "Blog banner"
+msgid "Follow {}"
 msgstr ""
 
-msgid "Update blog"
+msgid "Log in to follow"
+msgstr ""
+
+msgid "Enter your full username handle to follow"
+msgstr ""
+
+msgid "Edit your account"
+msgstr ""
+
+msgid "Your Profile"
+msgstr "Via profilo"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Display name"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr "Retpoŝtadreso"
+
+msgid "Summary"
+msgstr ""
+
+msgid "Update account"
 msgstr ""
 
 msgid "Danger zone"
 msgstr ""
 
-msgid "Be very careful, any action taken here can't be reversed."
+msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
-msgid "Permanently delete this blog"
+msgid "Delete your account"
 msgstr ""
 
-msgid "{}'s icon"
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 
-msgid "Edit"
-msgstr "Redakti"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Latest articles"
+msgid "Your Dashboard"
 msgstr ""
 
-msgid "No posts to see here yet."
+msgid "Your Blogs"
+msgstr "Viaj Blogoj"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
 
-msgid "Search result(s) for \"{0}\""
+msgid "Start a new blog"
+msgstr "Ekigi novan blogon"
+
+msgid "Your Drafts"
 msgstr ""
 
-msgid "Search result(s)"
+msgid "Your media"
 msgstr ""
 
-msgid "No results for your query"
+msgid "Go to your gallery"
 msgstr ""
 
-msgid "No more results for your query"
+msgid "Create your account"
 msgstr ""
 
-msgid "Search"
-msgstr "Serĉi"
+msgid "Create an account"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr "Uzantnomo"
+
+# src/template_utils.rs:217
+msgid "Password"
+msgstr "Pasvorto"
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
+msgstr ""
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+
+msgid "Articles"
+msgstr ""
+
+msgid "Subscribers"
+msgstr ""
+
+msgid "Subscriptions"
+msgstr ""
+
+msgid "Atom feed"
+msgstr ""
+
+msgid "Recently boosted"
+msgstr ""
+
+msgid "Admin"
+msgstr "Administristo"
+
+msgid "It is you"
+msgstr "Ĝi estas vi"
+
+msgid "Edit your profile"
+msgstr "Redakti vian profilon"
+
+msgid "Open on {0}"
+msgstr "Malfermi en {0}"
+
+msgid "Unsubscribe"
+msgstr "Malaboni"
+
+msgid "Subscribe"
+msgstr "Aboni"
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Respond"
+msgstr "Respondi"
+
+msgid "Are you sure?"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
+msgid "View all"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
 
 msgid "Your query"
 msgstr ""
@@ -385,6 +581,9 @@ msgstr ""
 
 # src/template_utils.rs:305
 msgid "Article title matching these words"
+msgstr ""
+
+msgid "Title"
 msgstr ""
 
 # src/template_utils.rs:305
@@ -451,6 +650,63 @@ msgstr "Eldonita sub ĉi tiu permesilo"
 
 msgid "Article license"
 msgstr "Artikola permesilo"
+
+msgid "Search result(s) for \"{0}\""
+msgstr ""
+
+msgid "Search result(s)"
+msgstr ""
+
+msgid "No results for your query"
+msgstr ""
+
+msgid "No more results for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "New password"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "This token has expired"
+msgstr ""
+
+msgid "Please start the process again by clicking"
+msgstr ""
+
+msgid "here"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "E-mail"
+msgstr ""
+
+msgid "Send password reset link"
+msgstr ""
+
+msgid "Log in"
+msgstr "Ensaluti"
+
+# src/template_utils.rs:217
+msgid "Username, or email"
+msgstr ""
 
 msgid "Interact with {}"
 msgstr ""
@@ -545,12 +801,6 @@ msgid ""
 "article"
 msgstr ""
 
-msgid "Unsubscribe"
-msgstr "Malaboni"
-
-msgid "Subscribe"
-msgstr "Aboni"
-
 msgid "Comments"
 msgstr ""
 
@@ -567,9 +817,6 @@ msgstr ""
 msgid "No comments yet. Be the first to react!"
 msgstr ""
 
-msgid "Are you sure?"
-msgstr ""
-
 msgid "Delete"
 msgstr ""
 
@@ -577,6 +824,127 @@ msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
 msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Redakti"
+
+msgid "Invalid CSRF token"
+msgstr ""
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr "Eble ĝi estis tro longa."
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+msgid "New Blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Create blog"
+msgstr "Krei blogon"
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "Articles tagged \"{0}\""
+msgstr ""
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
+
+msgid "I'm from this instance"
+msgstr ""
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+msgid "Continue to your instance"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Content warning: {0}"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Media upload"
@@ -594,21 +962,6 @@ msgstr ""
 msgid "Send"
 msgstr "Sendi"
 
-msgid "Your media"
-msgstr ""
-
-msgid "Upload"
-msgstr ""
-
-msgid "You don't have any media yet."
-msgstr ""
-
-msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
 msgid "Media details"
 msgstr ""
 
@@ -622,349 +975,4 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as an avatar"
-msgstr ""
-
-msgid "Notifications"
-msgstr ""
-
-msgid "Plume"
-msgstr ""
-
-msgid "Menu"
-msgstr ""
-
-msgid "Dashboard"
-msgstr ""
-
-msgid "Log Out"
-msgstr "Elsaluti"
-
-msgid "My account"
-msgstr "Mia konto"
-
-msgid "Log In"
-msgstr "Ensaluti"
-
-msgid "Register"
-msgstr ""
-
-msgid "About this instance"
-msgstr ""
-
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr ""
-
-msgid "Documentation"
-msgstr ""
-
-msgid "Source code"
-msgstr ""
-
-msgid "Matrix room"
-msgstr ""
-
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Users"
-msgstr ""
-
-msgid "Configuration"
-msgstr ""
-
-msgid "Instances"
-msgstr ""
-
-msgid "Ban"
-msgstr ""
-
-msgid "Administration of {0}"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Name"
-msgstr ""
-
-msgid "Allow anyone to register here"
-msgstr ""
-
-msgid "Short description"
-msgstr ""
-
-msgid "Long description"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Default article license"
-msgstr ""
-
-msgid "Save these settings"
-msgstr ""
-
-msgid "About {0}"
-msgstr ""
-
-msgid "Runs Plume {0}"
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
-
-msgid "Administred by"
-msgstr ""
-
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr ""
-
-msgid "Unblock"
-msgstr ""
-
-msgid "Block"
-msgstr ""
-
-msgid "Reset your password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "New password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
-msgstr ""
-
-msgid "Log in"
-msgstr "Ensaluti"
-
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr "Pasvorto"
-
-# src/template_utils.rs:217
-msgid "E-mail"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr ""
-
-msgid "Check your inbox!"
-msgstr ""
-
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr ""
-
-msgid "Admin"
-msgstr "Administristo"
-
-msgid "It is you"
-msgstr "Ĝi estas vi"
-
-msgid "Edit your profile"
-msgstr "Redakti vian profilon"
-
-msgid "Open on {0}"
-msgstr "Malfermi en {0}"
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Log in to follow"
-msgstr ""
-
-msgid "Enter your full username handle to follow"
-msgstr ""
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Articles"
-msgstr ""
-
-msgid "Subscribers"
-msgstr ""
-
-msgid "Subscriptions"
-msgstr ""
-
-msgid "Create your account"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username"
-msgstr "Uzantnomo"
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr "Retpoŝtadreso"
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr ""
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Edit your account"
-msgstr ""
-
-msgid "Your Profile"
-msgstr "Via profilo"
-
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr ""
-
-msgid "Update account"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr ""
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr ""
-
-msgid "Your Blogs"
-msgstr "Viaj Blogoj"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-
-msgid "Start a new blog"
-msgstr "Ekigi novan blogon"
-
-msgid "Your Drafts"
-msgstr ""
-
-msgid "Go to your gallery"
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr ""
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "View all"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "By {0}"
-msgstr ""
-
-msgid "Draft"
-msgstr ""
-
-msgid "Respond"
-msgstr "Respondi"
-
-msgid "Delete this comment"
-msgstr ""
-
-msgid "I'm from this instance"
-msgstr ""
-
-msgid "I'm from another instance"
-msgstr ""
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
-msgstr ""
-
-msgid "Continue to your instance"
 msgstr ""
