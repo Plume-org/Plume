@@ -162,3 +162,11 @@ header.center {
     margin-right: 0;
   }
 }
+
+form > header {
+  display: flex;
+
+  input[type="submit"] {
+    margin-left: 1em;
+  }
+}

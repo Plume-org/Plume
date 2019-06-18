@@ -73,6 +73,7 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
     pub summary_html: SafeString,
+    pub is_moderator: bool,
 }
 
 #[derive(Default, Insertable)]
@@ -94,6 +95,7 @@ pub struct NewUser {
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
     pub summary_html: SafeString,
+    pub is_moderator: bool,
 }
 
 pub const AUTH_COOKIE: &str = "user_id";
@@ -197,6 +199,22 @@ impl User {
     pub fn revoke_admin_rights(&self, conn: &Connection) -> Result<()> {
         diesel::update(self)
             .set(users::is_admin.eq(false))
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
+    }
+
+    pub fn grant_moderator_rights(&self, conn: &Connection) -> Result<()> {
+        diesel::update(self)
+            .set(users::is_moderator.eq(true))
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
+    }
+
+    pub fn revoke_moderator_rights(&self, conn: &Connection) -> Result<()> {
+        diesel::update(self)
+            .set(users::is_moderator.eq(false))
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
@@ -834,6 +852,7 @@ impl FromId<PlumeRocket> for User {
                     .ok(),
                 followers_endpoint: acct.object.ap_actor_props.followers_string()?,
                 avatar_id: None,
+                is_moderator: false,
             },
         )?;
 
@@ -932,6 +951,7 @@ impl NewUser {
                 username,
                 display_name,
                 is_admin,
+                is_moderator: is_admin,
                 summary: summary.to_owned(),
                 summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
