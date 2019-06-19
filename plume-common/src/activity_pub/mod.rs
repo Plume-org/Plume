@@ -130,36 +130,34 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
-    let mut rt = tokio::runtime::current_thread::Runtime::new().expect("new rt");
+    let mut rt = tokio::runtime::current_thread::Runtime::new()
+        .expect("Error while initializing tokio runtime for federation");
     let client = ClientBuilder::new()
         .connect_timeout(std::time::Duration::from_secs(5))
         .build()
         .expect("Can't build client");
     for inbox in boxes {
-        // TODO: run it in Sidekiq or something like that
         let body = signed.to_string();
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
-        rt.spawn(client
-            .post(&inbox)
-            .headers(headers.clone())
-            .header(
-                "Signature",
-                request::signature(sender, &headers)
-                    .expect("activity_pub::broadcast: request signature error"),
-            )
-            .body(body)
-            .send()
-            .and_then(move |r| {
-                println!("Successfully sent activity to inbox ({})", inbox);
-                r.into_body().concat2()
-            })
-            .map(|response| {
-                println!("Response: \"{:?}\"\n\n", response)
-            })
-            .map_err(|e| {
-                println!("Error while sending to inbox ({:?})", e)
-            }));
+        rt.spawn(
+            client
+                .post(&inbox)
+                .headers(headers.clone())
+                .header(
+                    "Signature",
+                    request::signature(sender, &headers)
+                        .expect("activity_pub::broadcast: request signature error"),
+                )
+                .body(body)
+                .send()
+                .and_then(move |r| {
+                    println!("Successfully sent activity to inbox ({})", inbox);
+                    r.into_body().concat2()
+                })
+                .map(|response| println!("Response: \"{:?}\"\n\n", response))
+                .map_err(|e| println!("Error while sending to inbox ({:?})", e)),
+        );
     }
     rt.run().unwrap();
 }
