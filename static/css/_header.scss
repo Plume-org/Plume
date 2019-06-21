@@ -14,7 +14,7 @@ body > header {
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
-    background: $purple;
+    background: $primary;
     align-self: flex-start;
 
     a {
@@ -40,7 +40,7 @@ body > header {
    	hr {
      	height: 100%;
      	width: 0.2em;
-     	background: $purple;
+     	background: $primary;
      	border: none;
      	transform: skewX(-15deg);
     }

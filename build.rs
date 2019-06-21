@@ -46,7 +46,9 @@ fn main() {
     println!("cargo:rerun-if-changed=static/css/_global.scss");
     println!("cargo:rerun-if-changed=static/css/_header.scss");
     println!("cargo:rerun-if-changed=static/css/_variables.scss");
+    println!("cargo:rerun-if-changed=static/css/_dark_variables.scss");
     println!("cargo:rerun-if-changed=static/css/main.scss");
+    println!("cargo:rerun-if-changed=static/css/dark.scss");
     let mut out = File::create("static/css/main.css").expect("Couldn't create main.css");
     out.write_all(
         &rsass::compile_scss_file(
@@ -56,6 +58,16 @@ fn main() {
         .expect("Error during SCSS compilation"),
     )
     .expect("Couldn't write CSS output");
+
+    let mut out = File::create("static/css/dark.css").expect("Couldn't create dark.css");
+    out.write_all(
+        &rsass::compile_scss_file(
+            "static/css/dark.scss".as_ref(),
+            rsass::OutputStyle::Compressed,
+        )
+        .expect("Error during (dark) SCSS compilation"),
+    )
+    .expect("Couldn't write (dark) CSS output");
 
     let cache_id = &compute_static_hash()[..8];
     println!("cargo:rerun-if-changed=target/deploy/plume-front.wasm");

@@ -2,6 +2,7 @@
 @use plume_models::instance::Instance;
 @use template_utils::*;
 @use routes::*;
+@use std::path::Path;
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
 
 <!DOCTYPE html>
@@ -10,7 +11,7 @@
         <meta charset="utf-8" />
         <title>@title ⋅ @i18n!(ctx.1, "Plume")</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="@uri!(plume_static_files: file = "css/main.css", _build_id = CACHE_NAME)" />
+        <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(&format!("{}.css", ctx.2.clone().and_then(|u| u.preferred_theme).unwrap_or_else(|| "main".to_owned()))), _build_id = CACHE_NAME)" />
         <link rel="stylesheet" href="@uri!(plume_static_files: file = "css/feather.css", _build_id = CACHE_NAME)" />
         <link rel="manifest" href="@uri!(instance::web_manifest)" />
         <link rel="icon" type="image/png" href="@uri!(plume_static_files: file = CONFIG.logo.favicon.as_str(), _build_id = CACHE_NAME)">

@@ -186,6 +186,28 @@ impl Instance {
             .get_result(conn)
             .map_err(Error::from)
     }
+
+    /// Returns a list of the local themes (all files matching `static/css/*.css`)
+    ///
+    /// The list only contains the name of the themes, without their extension or full path.
+    pub fn list_themes() -> Vec<String> {
+        // List all the files in static/css
+        std::path::Path::new("static").join("css").read_dir()
+            .map(|files| {
+                files
+                    .filter_map(|r| r.ok())
+                    // Only keep actual files
+                    .filter(|f| f.file_type().map(|t| t.is_file()).unwrap_or(false))
+                    // Ignore feather.css because it is not a theme, but the icon pack
+                    .filter(|f| f.path().file_name().map(|n| n != "feather.css").unwrap_or(false))
+                    // Keep css files only
+                    .filter(|f| f.path().extension().map(|e| e == "css").unwrap_or(false))
+                    // And take their name, without extension
+                    .filter_map(|f| f.path().file_stem().and_then(|f| f.to_str().map(str::to_owned)))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
 }
 
 #[cfg(test)]

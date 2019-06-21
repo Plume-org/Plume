@@ -44,6 +44,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_css: Option<String>,
 }
 
 #[derive(Default, Insertable)]

@@ -1,10 +1,17 @@
+use multipart::server::{
+    save::{SaveResult, SavedData},
+    Multipart,
+};
 use rocket::{
+    Data,
+    http::ContentType,
     request::LenientForm,
     response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
 use serde_json;
+use std::{fs, path::Path};
 use validator::{Validate, ValidationErrors};
 
 use inbox;
@@ -334,4 +341,74 @@ pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
             .map(|i| i.with_prefix(&uri!(static_files: file = "").to_string()))
             .collect::<Vec<_>>()
     })))
+}
+
+#[post("/admin/theme", data = "<data>")]
+pub fn upload_theme(
+    _admin: Admin,
+    data: Data,
+    ct: &ContentType,
+) -> Result<Redirect, status::BadRequest<&'static str>> {
+    if !ct.is_form_data() {
+        return Ok(Redirect::to(uri!(admin)));
+    }
+
+    let (_, boundary) = ct
+        .params()
+        .find(|&(k, _)| k == "boundary")
+        .ok_or_else(|| status::BadRequest(Some("No boundary")))?;
+
+    if let SaveResult::Full(entries) = Multipart::with_body(data.open(), boundary).save().temp() {
+        let fields = entries.fields;
+
+        let filename = fields
+            .get("theme")
+            .and_then(|v| v.iter().next())
+            .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?
+            .headers
+            .filename
+            .clone()
+            .map(|f| {
+                f.chars().filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-' || *c == '.').collect()
+            })
+            .unwrap_or_else(|| "custom-theme.css".to_owned());
+
+        dbg!(filename.clone());
+        if !filename.ends_with(".css") {
+            return Err(status::BadRequest(Some("Your theme should be a CSS file")));
+        }
+
+        let dest = format!("static/css/{}", filename);
+        let dest = Path::new(&dest);
+        if dest.exists() {
+            fs::rename(dest, format!("static/css/original-{}", filename)).ok();
+        }
+
+        match fields["theme"][0].data {
+            SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)
+                .map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
+            SavedData::File(ref path, _) => {
+                fs::copy(path, &dest)
+                    .map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;
+            }
+            _ => {
+                return Ok(Redirect::to(uri!(admin)));
+            }
+        }
+    }
+    Ok(Redirect::to(uri!(admin)))
+}
+
+#[post("/admin/theme/delete/<name>")]
+pub fn delete_theme(name: String, intl: I18n) -> Flash<Redirect> {
+    fs::remove_file(format!("static/css/{}.css", name))
+        .map(|_| Flash::success(
+            Redirect::to(uri!(admin)),
+            // TODO: add context to this translation once gettext-macros have been updated
+            i18n!(intl.catalog, "{} have been deleted"; name),
+        ))
+        .unwrap_or_else(|_| Flash::error(
+            Redirect::to(uri!(admin)),
+            i18n!(intl.catalog, "An error occured and we couldn't delete this theme."),
+        ))
 }

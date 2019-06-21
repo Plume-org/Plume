@@ -73,6 +73,8 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
     pub summary_html: SafeString,
+    pub preferred_theme: Option<String>,
+    pub hide_custom_css: bool,
 }
 
 #[derive(Default, Insertable)]
@@ -200,30 +202,6 @@ impl User {
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
-    }
-
-    pub fn update(
-        &self,
-        conn: &Connection,
-        name: String,
-        email: String,
-        summary: String,
-    ) -> Result<User> {
-        diesel::update(self)
-            .set((
-                users::display_name.eq(name),
-                users::email.eq(email),
-                users::summary_html.eq(utils::md_to_html(
-                    &summary,
-                    None,
-                    false,
-                    Some(Media::get_media_processor(conn, vec![self])),
-                )
-                .0),
-                users::summary.eq(summary),
-            ))
-            .execute(conn)?;
-        User::get(conn, self.id)
     }
 
     pub fn count_local(conn: &Connection) -> Result<i64> {

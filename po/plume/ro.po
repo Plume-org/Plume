@@ -90,16 +90,24 @@ msgstr ""
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:182
-msgid "{} have been unblocked."
+# src/routes/instance.rs:175
+msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:184
-msgid "{} have been blocked."
+# src/routes/instance.rs:177
+msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:218
-msgid "{} have been banned."
+# src/routes/instance.rs:221
+msgid "{} has been banned."
+msgstr ""
+
+# src/routes/instance.rs:406
+msgid "{} have been deleted"
+msgstr ""
+
+# src/routes/instance.rs:410
+msgid "An error occured and we couldn't delete this theme."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -209,10 +217,6 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr "Parola dumneavoastră a fost resetată cu succes."
 
-# src/routes/session.rs:263
-msgid "Sorry, but the link expired. Try again"
-msgstr ""
-
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
@@ -255,130 +259,353 @@ msgid ""
 "use it."
 msgstr ""
 
-msgid "Internal server error"
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Meniu"
+
+msgid "Search"
+msgstr "Caută"
+
+msgid "Dashboard"
+msgstr "Tablou de bord"
+
+msgid "Notifications"
+msgstr "Notificări"
+
+msgid "Log Out"
+msgstr "Deconectare"
+
+msgid "My account"
+msgstr "Contul meu"
+
+msgid "Log In"
+msgstr "Autentificare"
+
+msgid "Register"
+msgstr "Înregistrare"
+
+msgid "About this instance"
+msgstr "Despre această instanță"
+
+msgid "Privacy policy"
 msgstr ""
 
-msgid "Something broke on our side."
+msgid "Administration"
+msgstr "Administrație"
+
+msgid "Documentation"
 msgstr ""
 
-msgid "Sorry about that. If you think this is a bug, please report it."
+msgid "Source code"
+msgstr "Cod sursă"
+
+msgid "Matrix room"
 msgstr ""
 
-msgid "You are not authorized."
+msgid "Welcome to {}"
 msgstr ""
 
-msgid "Page not found"
+msgid "Latest articles"
+msgstr "Ultimele articole"
+
+msgid "Your feed"
 msgstr ""
 
-msgid "We couldn't find this page."
+msgid "Federated feed"
 msgstr ""
 
-msgid "The link that led you here may be broken."
+msgid "Local feed"
 msgstr ""
 
-msgid "The content you sent can't be processed."
+msgid "Administration of {0}"
 msgstr ""
 
-msgid "Maybe it was too long."
+msgid "Instances"
+msgstr "Instanțe"
+
+msgid "Configuration"
+msgstr "Configurare"
+
+msgid "Users"
+msgstr "Utilizatori"
+
+msgid "Unblock"
+msgstr "Deblochează"
+
+msgid "Block"
+msgstr "Bloc"
+
+msgid "Ban"
+msgstr "Interzice"
+
+msgid "All the articles of the Fediverse"
+msgstr "Toate articolele Fediverse"
+
+msgid "Articles from {}"
+msgstr "Articolele de la {}"
+
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-
-msgid "Articles tagged \"{0}\""
-msgstr ""
-
-msgid "There are currently no articles with such a tag"
-msgstr ""
-
-msgid "New Blog"
-msgstr ""
-
-msgid "Create a blog"
-msgstr ""
-
-msgid "Title"
-msgstr "Titlu"
+# src/template_utils.rs:217
+msgid "Name"
+msgstr "Nume"
 
 # src/template_utils.rs:220
 msgid "Optional"
 msgstr "Opţional"
 
-msgid "Create blog"
+msgid "Allow anyone to register here"
 msgstr ""
 
-msgid "Edit \"{}\""
-msgstr ""
-
-msgid "Description"
+msgid "Short description"
 msgstr ""
 
 msgid "Markdown syntax is supported"
 msgstr ""
 
+msgid "Long description"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Default article license"
+msgstr ""
+
+msgid "Save these settings"
+msgstr ""
+
+msgid "Custom themes"
+msgstr ""
+
 msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+"You can upload a CSS file, and people will be able to choose this theme from "
+"their settings. If your theme is named 'main.css', it will become the "
+"default theme"
 msgstr ""
 
-msgid "Upload images"
+msgid "Upload"
 msgstr ""
 
-msgid "Blog icon"
+msgid "Available themes"
 msgstr ""
 
-msgid "Blog banner"
+msgid "Delete"
 msgstr ""
 
-msgid "Update blog"
+msgid "About {0}"
+msgstr ""
+
+msgid "Runs Plume {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr ""
+
+msgid "Administred by"
+msgstr ""
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+
+msgid "Follow {}"
+msgstr ""
+
+msgid "Log in to follow"
+msgstr ""
+
+msgid "Enter your full username handle to follow"
+msgstr ""
+
+msgid "Edit your account"
+msgstr ""
+
+msgid "Your Profile"
+msgstr ""
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Display name"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr "Email"
+
+msgid "Summary"
+msgstr ""
+
+msgid "Theme"
+msgstr ""
+
+msgid "Default theme"
+msgstr ""
+
+msgid "Update account"
 msgstr ""
 
 msgid "Danger zone"
 msgstr ""
 
-msgid "Be very careful, any action taken here can't be reversed."
+msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
-msgid "Permanently delete this blog"
+msgid "Delete your account"
 msgstr ""
 
-msgid "{}'s icon"
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 
-msgid "Edit"
-msgstr "Editare"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-msgid "Latest articles"
-msgstr "Ultimele articole"
-
-msgid "No posts to see here yet."
+msgid "Your Dashboard"
 msgstr ""
 
-msgid "Search result(s) for \"{0}\""
+msgid "Your Blogs"
 msgstr ""
 
-msgid "Search result(s)"
+msgid "You don't have any blog yet. Create your own, or ask to join one."
 msgstr ""
 
-msgid "No results for your query"
+msgid "Start a new blog"
 msgstr ""
 
-msgid "No more results for your query"
+msgid "Your Drafts"
 msgstr ""
 
-msgid "Search"
-msgstr "Caută"
+msgid "Your media"
+msgstr ""
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "Create your account"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr "Nume utilizator"
+
+# src/template_utils.rs:217
+msgid "Password"
+msgstr "Parolă"
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
+msgstr "Confirmarea parolei"
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+
+msgid "Articles"
+msgstr "Articole"
+
+msgid "Subscribers"
+msgstr "Abonaţi"
+
+msgid "Subscriptions"
+msgstr "Abonamente"
+
+msgid "Atom feed"
+msgstr ""
+
+msgid "Recently boosted"
+msgstr ""
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr "Editează-ți profilul"
+
+msgid "Open on {0}"
+msgstr "Deschide la {0}"
+
+msgid "Unsubscribe"
+msgstr "Dezabonare"
+
+msgid "Subscribe"
+msgstr "Abonare"
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Respond"
+msgstr "Răspuns"
+
+msgid "Are you sure?"
+msgstr "Sînteți sigur?"
+
+msgid "Delete this comment"
+msgstr "Şterge comentariul"
+
+msgid "What is Plume?"
+msgstr "Ce este Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
+msgid "View all"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr "Ciornă"
 
 msgid "Your query"
 msgstr ""
@@ -389,6 +616,9 @@ msgstr ""
 # src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr ""
+
+msgid "Title"
+msgstr "Titlu"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
@@ -453,6 +683,63 @@ msgid "Published under this license"
 msgstr ""
 
 msgid "Article license"
+msgstr ""
+
+msgid "Search result(s) for \"{0}\""
+msgstr ""
+
+msgid "Search result(s)"
+msgstr ""
+
+msgid "No results for your query"
+msgstr ""
+
+msgid "No more results for your query"
+msgstr ""
+
+msgid "Reset your password"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "New password"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "This token has expired"
+msgstr ""
+
+msgid "Please start the process again by clicking"
+msgstr ""
+
+msgid "here"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "E-mail"
+msgstr ""
+
+msgid "Send password reset link"
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username, or email"
 msgstr ""
 
 msgid "Interact with {}"
@@ -550,12 +837,6 @@ msgid ""
 "article"
 msgstr ""
 
-msgid "Unsubscribe"
-msgstr "Dezabonare"
-
-msgid "Subscribe"
-msgstr "Abonare"
-
 msgid "Comments"
 msgstr ""
 
@@ -572,16 +853,138 @@ msgstr ""
 msgid "No comments yet. Be the first to react!"
 msgstr ""
 
-msgid "Are you sure?"
-msgstr "Sînteți sigur?"
-
-msgid "Delete"
-msgstr ""
-
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
 msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Editare"
+
+msgid "Invalid CSRF token"
+msgstr ""
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Custom style"
+msgstr ""
+
+msgid "Enter some custom CSS for blog, but be aware that it may break things."
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Nu aveți permisiunea de a șterge acest blog."
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+msgid "New Blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+msgid "No posts to see here yet."
+msgstr ""
+
+msgid "Articles tagged \"{0}\""
+msgstr ""
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
+
+#, fuzzy
+msgid "I'm from this instance"
+msgstr "Despre această instanță"
+
+msgid "I'm from another instance"
+msgstr ""
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr ""
+
+msgid "Continue to your instance"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Content warning: {0}"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Media upload"
@@ -599,21 +1002,6 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-msgid "Your media"
-msgstr ""
-
-msgid "Upload"
-msgstr ""
-
-msgid "You don't have any media yet."
-msgstr ""
-
-msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
 msgid "Media details"
 msgstr ""
 
@@ -627,350 +1015,4 @@ msgid "Copy it into your articles, to insert this media:"
 msgstr ""
 
 msgid "Use as an avatar"
-msgstr ""
-
-msgid "Notifications"
-msgstr "Notificări"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "Meniu"
-
-msgid "Dashboard"
-msgstr "Tablou de bord"
-
-msgid "Log Out"
-msgstr "Deconectare"
-
-msgid "My account"
-msgstr "Contul meu"
-
-msgid "Log In"
-msgstr "Autentificare"
-
-msgid "Register"
-msgstr "Înregistrare"
-
-msgid "About this instance"
-msgstr "Despre această instanță"
-
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Administrație"
-
-msgid "Documentation"
-msgstr ""
-
-msgid "Source code"
-msgstr "Cod sursă"
-
-msgid "Matrix room"
-msgstr ""
-
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
-
-msgid "Articles from {}"
-msgstr "Articolele de la {}"
-
-msgid "All the articles of the Fediverse"
-msgstr "Toate articolele Fediverse"
-
-msgid "Users"
-msgstr "Utilizatori"
-
-msgid "Configuration"
-msgstr "Configurare"
-
-msgid "Instances"
-msgstr "Instanțe"
-
-msgid "Ban"
-msgstr "Interzice"
-
-msgid "Administration of {0}"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Name"
-msgstr "Nume"
-
-msgid "Allow anyone to register here"
-msgstr ""
-
-msgid "Short description"
-msgstr ""
-
-msgid "Long description"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Default article license"
-msgstr ""
-
-msgid "Save these settings"
-msgstr ""
-
-msgid "About {0}"
-msgstr ""
-
-msgid "Runs Plume {0}"
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
-
-msgid "Administred by"
-msgstr ""
-
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr ""
-
-msgid "Unblock"
-msgstr "Deblochează"
-
-msgid "Block"
-msgstr "Bloc"
-
-msgid "Reset your password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "New password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
-msgstr ""
-
-msgid "Log in"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr "Parolă"
-
-# src/template_utils.rs:217
-msgid "E-mail"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr ""
-
-msgid "Check your inbox!"
-msgstr ""
-
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr ""
-
-msgid "Admin"
-msgstr "Admin"
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr "Editează-ți profilul"
-
-msgid "Open on {0}"
-msgstr "Deschide la {0}"
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Log in to follow"
-msgstr ""
-
-msgid "Enter your full username handle to follow"
-msgstr ""
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Articles"
-msgstr "Articole"
-
-msgid "Subscribers"
-msgstr "Abonaţi"
-
-msgid "Subscriptions"
-msgstr "Abonamente"
-
-msgid "Create your account"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username"
-msgstr "Nume utilizator"
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr "Email"
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr "Confirmarea parolei"
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Edit your account"
-msgstr ""
-
-msgid "Your Profile"
-msgstr ""
-
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr ""
-
-msgid "Update account"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr ""
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr ""
-
-msgid "Your Blogs"
-msgstr ""
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-
-msgid "Start a new blog"
-msgstr ""
-
-msgid "Your Drafts"
-msgstr ""
-
-msgid "Go to your gallery"
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr "Ce este Plume?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "View all"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "By {0}"
-msgstr ""
-
-msgid "Draft"
-msgstr "Ciornă"
-
-msgid "Respond"
-msgstr "Răspuns"
-
-msgid "Delete this comment"
-msgstr "Şterge comentariul"
-
-#, fuzzy
-msgid "I'm from this instance"
-msgstr "Despre această instanță"
-
-msgid "I'm from another instance"
-msgstr ""
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
-msgstr ""
-
-msgid "Continue to your instance"
 msgstr ""

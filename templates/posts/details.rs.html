@@ -19,6 +19,10 @@
     }
     <meta property="og:url" content="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)"/>
     <meta property="og:description" content="@article.subtitle"/>
+
+    @if blog.clone().custom_css.is_some() && !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
+        <link rel="stylesheet" href="@uri!(blogs::custom_css: fqn = blog.fqn.clone())">
+    }
 }, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {

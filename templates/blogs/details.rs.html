@@ -23,6 +23,9 @@
 
 	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
+    @if blog.clone().custom_css.is_some() && !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
+        <link rel="stylesheet" href="@uri!(blogs::custom_css: fqn = blog.fqn.clone())">
+    }
 }, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {

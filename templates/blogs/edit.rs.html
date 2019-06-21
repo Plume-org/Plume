@@ -31,6 +31,9 @@
         @:image_select(ctx, "icon", i18n!(ctx.1, "Blog icon"), true, medias.clone(), form.icon)
         @:image_select(ctx, "banner", i18n!(ctx.1, "Blog banner"), true, medias, form.banner)
 
+        <label for="css">@i18n!(ctx.1, "Custom style")<small>@i18n!(ctx.1, "Enter some custom CSS for blog, but be aware that it may break things.")</small></label>
+        <textarea id="css" name="css" rows="20">@form.css</textarea>
+
         <input type="submit" value="@i18n!(ctx.1, "Update blog")"/>
     </form>
 

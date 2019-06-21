@@ -181,6 +181,7 @@ pub struct EditForm {
     pub summary: String,
     pub icon: Option<i32>,
     pub banner: Option<i32>,
+    pub css: String,
 }
 
 #[get("/~/<name>/edit")]
@@ -207,6 +208,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
                 summary: blog.summary.clone(),
                 icon: blog.icon_id,
                 banner: blog.banner_id,
+                css: blog.custom_css.clone().unwrap_or_default(),
             },
             ValidationErrors::default()
         )))
@@ -318,6 +320,11 @@ pub fn update(
             );
             blog.icon_id = form.icon;
             blog.banner_id = form.banner;
+            blog.custom_css = if !form.css.is_empty() {
+                Some(form.css.clone())
+            } else {
+                None
+            };
             blog.save_changes::<Blog>(&*conn)
                 .expect("Couldn't save blog changes");
             Ok(Flash::success(
@@ -367,4 +374,10 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
         ContentType::new("application", "atom+xml"),
         feed.to_string(),
     ))
+}
+
+#[get("/~/<fqn>/theme")]
+pub fn custom_css(fqn: String, rockets: PlumeRocket) -> Option<Content<String>> {
+    let blog = Blog::find_by_fqn(&rockets, &fqn).ok()?;
+    blog.custom_css.map(|css| Content(ContentType::CSS, css))
 }
