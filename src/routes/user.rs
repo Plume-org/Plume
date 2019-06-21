@@ -347,6 +347,7 @@ pub fn edit(name: String, user: User, rockets: PlumeRocket) -> Result<Ructe, Err
                 email: user.email.clone().unwrap_or_default(),
                 summary: user.summary.clone(),
                 theme: user.preferred_theme,
+                hide_custom_css: user.hide_custom_css,
             },
             ValidationErrors::default()
         )))
@@ -372,6 +373,7 @@ pub struct UpdateUserForm {
     pub email: String,
     pub summary: String,
     pub theme: Option<String>,
+    pub hide_custom_css: bool,
 }
 
 #[put("/@/<_name>/edit", data = "<form>")]
@@ -392,6 +394,7 @@ pub fn update(
         Some(Media::get_media_processor(&conn, vec![&user])),
     ).0);
     user.preferred_theme = form.theme.clone();
+    user.hide_custom_css = form.hide_custom_css;
     let _: User = user.save_changes(&*conn).map_err(Error::from)?;
 
     Ok(Flash::success(

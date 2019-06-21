@@ -473,6 +473,9 @@ msgstr ""
 msgid "Default theme"
 msgstr "Licenza predefinita degli articoli"
 
+msgid "Never load blogs custom themes"
+msgstr ""
+
 msgid "Update account"
 msgstr "Aggiorna account"
 

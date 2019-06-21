@@ -31,6 +31,11 @@
                 }
             </select>
 
+            <label for="hide_custom_css">
+              <input type="checkbox" name="hide_custom_css" id="hide_custom_css" @if form.hide_custom_css { checked }>
+              @i18n!(ctx.1, "Never load blogs custom themes")
+            </label>
+
             <input type="submit" value="@i18n!(ctx.1, "Update account")"/>
         </form>
 

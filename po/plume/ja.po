@@ -473,6 +473,9 @@ msgstr ""
 msgid "Default theme"
 msgstr "投稿のデフォルトのライセンス"
 
+msgid "Never load blogs custom themes"
+msgstr ""
+
 msgid "Update account"
 msgstr "アカウントを更新"
 

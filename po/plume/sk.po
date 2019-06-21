@@ -474,6 +474,9 @@ msgstr ""
 msgid "Default theme"
 msgstr "Predvolená licencia článkov"
 
+msgid "Never load blogs custom themes"
+msgstr ""
+
 msgid "Update account"
 msgstr "Aktualizuj účet"
 

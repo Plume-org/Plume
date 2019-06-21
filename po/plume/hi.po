@@ -471,6 +471,9 @@ msgstr ""
 msgid "Default theme"
 msgstr "डिफ़ॉल्ट आलेख लायसेंस"
 
+msgid "Never load blogs custom themes"
+msgstr ""
+
 msgid "Update account"
 msgstr "अकाउंट अपडेट करें"
 

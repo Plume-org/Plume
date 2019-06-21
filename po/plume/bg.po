@@ -468,6 +468,9 @@ msgstr ""
 msgid "Default theme"
 msgstr "Лиценз по подразбиране"
 
+msgid "Never load blogs custom themes"
+msgstr ""
+
 msgid "Update account"
 msgstr "Актуализиране на профил"
 

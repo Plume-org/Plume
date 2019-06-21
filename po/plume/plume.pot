@@ -220,27 +220,27 @@ msgstr ""
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:362
+# src/routes/user.rs:363
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:399
+# src/routes/user.rs:402
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:426
+# src/routes/user.rs:429
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:432
+# src/routes/user.rs:435
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:504
+# src/routes/user.rs:507
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:528
+# src/routes/user.rs:531
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
@@ -439,6 +439,9 @@ msgid "Theme"
 msgstr ""
 
 msgid "Default theme"
+msgstr ""
+
+msgid "Never load blogs custom themes"
 msgstr ""
 
 msgid "Update account"
