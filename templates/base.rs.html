@@ -6,7 +6,7 @@
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
 
 <!DOCTYPE html>
-<html>
+<html class="@ctx.2.clone().and_then(|u| u.preferred_theme).unwrap_or_else(|| "main".to_owned())">
     <head>
         <meta charset="utf-8" />
         <title>@title ⋅ @i18n!(ctx.1, "Plume")</title>
