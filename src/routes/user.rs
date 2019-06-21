@@ -387,12 +387,15 @@ pub fn update(
     user.display_name = form.display_name.clone();
     user.email = Some(form.email.clone());
     user.summary = form.summary.clone();
-    user.summary_html = SafeString::new(&utils::md_to_html(
-        &form.summary,
-        None,
-        false,
-        Some(Media::get_media_processor(&conn, vec![&user])),
-    ).0);
+    user.summary_html = SafeString::new(
+        &utils::md_to_html(
+            &form.summary,
+            None,
+            false,
+            Some(Media::get_media_processor(&conn, vec![&user])),
+        )
+        .0,
+    );
     user.preferred_theme = form.theme.clone();
     user.hide_custom_css = form.hide_custom_css;
     let _: User = user.save_changes(&*conn).map_err(Error::from)?;

@@ -403,9 +403,10 @@ impl FromId<PlumeRocket> for Blog {
                 custom_css: acct
                     .object
                     .object_props
-                    .attachment_object_vec::<Theme>().ok()
+                    .attachment_object_vec::<Theme>()
+                    .ok()
                     .and_then(|themes| themes.into_iter().next())
-                    .and_then(|theme| theme.style_string().ok())
+                    .and_then(|theme| theme.style_string().ok()),
             },
         )
     }

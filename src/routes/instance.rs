@@ -3,10 +3,10 @@ use multipart::server::{
     Multipart,
 };
 use rocket::{
-    Data,
     http::ContentType,
     request::LenientForm,
     response::{status, Flash, Redirect},
+    Data,
 };
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
@@ -369,7 +369,9 @@ pub fn upload_theme(
             .filename
             .clone()
             .map(|f| {
-                f.chars().filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-' || *c == '.').collect()
+                f.chars()
+                    .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-' || *c == '.')
+                    .collect()
             })
             .unwrap_or_else(|| "custom-theme.css".to_owned());
 
@@ -402,13 +404,20 @@ pub fn upload_theme(
 #[post("/admin/theme/delete/<name>")]
 pub fn delete_theme(name: String, intl: I18n) -> Flash<Redirect> {
     fs::remove_file(format!("static/css/{}.css", name))
-        .map(|_| Flash::success(
-            Redirect::to(uri!(admin)),
-            // TODO: add context to this translation once gettext-macros have been updated
-            i18n!(intl.catalog, "{} have been deleted"; name),
-        ))
-        .unwrap_or_else(|_| Flash::error(
-            Redirect::to(uri!(admin)),
-            i18n!(intl.catalog, "An error occured and we couldn't delete this theme."),
-        ))
+        .map(|_| {
+            Flash::success(
+                Redirect::to(uri!(admin)),
+                // TODO: add context to this translation once gettext-macros have been updated
+                i18n!(intl.catalog, "{} have been deleted"; name),
+            )
+        })
+        .unwrap_or_else(|_| {
+            Flash::error(
+                Redirect::to(uri!(admin)),
+                i18n!(
+                    intl.catalog,
+                    "An error occured and we couldn't delete this theme."
+                ),
+            )
+        })
 }
