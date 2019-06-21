@@ -239,3 +239,12 @@ pub struct Licensed {
 }
 
 impl Object for Licensed {}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
+#[serde(rename_all = "camelCase")]
+pub struct Theme {
+    #[activitystreams(concrete(String), functional)]
+    pub style: Option<serde_json::Value>,
+}
+
+impl Object for Theme {}

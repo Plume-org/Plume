@@ -15,7 +15,7 @@ use instance::*;
 use medias::Media;
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
+    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source, Theme,
 };
 use posts::Post;
 use safe_string::SafeString;
@@ -62,6 +62,7 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_css: Option<String>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -203,6 +204,12 @@ impl Blog {
                 .unwrap_or_else(|| Id::new(String::new())),
         )?;
         blog.object_props.set_image_object(banner)?;
+
+        if let Some(css) = self.custom_css.clone() {
+            let mut theme = Theme::default();
+            theme.set_style_string(css)?;
+            blog.object_props.set_attachment_object_vec(vec![theme])?;
+        }
 
         blog.object_props.set_id_string(self.ap_url.clone())?;
 
@@ -393,6 +400,12 @@ impl FromId<PlumeRocket> for Blog {
                         .summary_string()
                         .unwrap_or_default(),
                 ),
+                custom_css: acct
+                    .object
+                    .object_props
+                    .attachment_object_vec::<Theme>().ok()
+                    .and_then(|themes| themes.into_iter().next())
+                    .and_then(|theme| theme.style_string().ok())
             },
         )
     }
