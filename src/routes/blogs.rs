@@ -321,7 +321,12 @@ pub fn update(
             blog.icon_id = form.icon;
             blog.banner_id = form.banner;
             blog.custom_css = if !form.css.is_empty() {
-                Some(form.css.clone())
+                let css = form.css.clone()
+                    .split(';')
+                    .filter(|rule| !rule.contains("url(") && !rule.contains("url (") && !rule.contains("@import "))
+                    .collect::<Vec<_>>()
+                    .join(";");
+                Some(css)
             } else {
                 None
             };

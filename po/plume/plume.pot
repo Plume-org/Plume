@@ -68,7 +68,7 @@ msgstr ""
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:332
+# src/routes/blogs.rs:337
 msgid "Your blog information have been updated."
 msgstr ""
 
