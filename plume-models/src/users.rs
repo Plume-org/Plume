@@ -1055,27 +1055,6 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn update() {
-        let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
-            let updated = inserted[0]
-                .update(
-                    conn,
-                    "new name".to_owned(),
-                    "em@il".to_owned(),
-                    "<p>summary</p><script></script>".to_owned(),
-                )
-                .unwrap();
-            assert_eq!(updated.display_name, "new name");
-            assert_eq!(updated.email.unwrap(), "em@il");
-            assert_eq!(updated.summary_html.get(), "<p>summary</p>");
-
-            Ok(())
-        });
-    }
-
-    #[test]
     fn auth() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
