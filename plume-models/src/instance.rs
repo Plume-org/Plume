@@ -197,7 +197,7 @@ impl Instance {
             .read_dir()
             .map(|files| {
                 files
-                    .filter_map(|r| r.ok())
+                    .filter_map(std::result::Result::ok)
                     // Only keep actual files
                     .filter(|f| f.file_type().map(|t| t.is_file()).unwrap_or(false))
                     // Ignore feather.css because it is not a theme, but the icon pack
