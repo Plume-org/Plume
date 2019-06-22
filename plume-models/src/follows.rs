@@ -67,15 +67,18 @@ impl Follow {
         Ok(act)
     }
 
-    pub fn notify(&self, conn: &Connection) -> Result<Notification> {
-        Notification::insert(
-            conn,
-            NewNotification {
-                kind: notification_kind::FOLLOW.to_string(),
-                object_id: self.id,
-                user_id: self.following_id,
-            },
-        )
+    pub fn notify(&self, conn: &Connection) -> Result<()> {
+        if User::get(conn, self.following_id)?.is_local() {
+            Notification::insert(
+                conn,
+                NewNotification {
+                    kind: notification_kind::FOLLOW.to_string(),
+                    object_id: self.id,
+                    user_id: self.following_id,
+                },
+            )?;
+        }
+        Ok(())
     }
 
     /// from -> The one sending the follow request
@@ -160,25 +163,11 @@ impl FromId<PlumeRocket> for Follow {
     }
 
     fn from_activity(c: &PlumeRocket, follow: FollowAct) -> Result<Self> {
-        let actor = User::from_id(
-            c,
-            &{
-                let res: String = follow.follow_props.actor_link::<Id>()?.into();
-                res
-            },
-            None,
-        )
-        .map_err(|(_, e)| e)?;
+        let actor =
+            User::from_id(c, &follow.follow_props.actor_link::<Id>()?, None).map_err(|(_, e)| e)?;
 
-        let target = User::from_id(
-            c,
-            &{
-                let res: String = follow.follow_props.object_link::<Id>()?.into();
-                res
-            },
-            None,
-        )
-        .map_err(|(_, e)| e)?;
+        let target = User::from_id(c, &follow.follow_props.object_link::<Id>()?, None)
+            .map_err(|(_, e)| e)?;
         Follow::accept_follow(&c.conn, &actor, &target, follow, actor.id, target.id)
     }
 }

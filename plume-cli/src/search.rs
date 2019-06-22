@@ -1,7 +1,6 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
-use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use plume_models::{posts::Post, schema::posts, search::Searcher, Connection, CONFIG};
+use plume_models::{search::Searcher, Connection, CONFIG};
 use std::fs::{read_dir, remove_file};
 use std::io::ErrorKind;
 use std::path::Path;
@@ -98,25 +97,15 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
     let path = Path::new(path).join("search_index");
     let searcher = searcher.unwrap_or_else(|| Searcher::open(&path).unwrap());
 
-    let posts = posts::table
-        .filter(posts::published.eq(true))
-        .load::<Post>(conn)
-        .expect("Post::get_recents: loading error");
-
-    let len = posts.len();
-    for (i, post) in posts.iter().enumerate() {
-        println!("Importing {}/{} : {}", i + 1, len, post.title);
-        searcher
-            .update_document(conn, &post)
-            .expect("Couldn't import post");
-    }
+    searcher.fill(conn).expect("Couldn't import post");
     println!("Commiting result");
     searcher.commit();
 }
 
 fn unlock<'a>(args: &ArgMatches<'a>) {
     let path = args.value_of("path").unwrap_or(".");
-    let path = Path::new(path).join("search_index/.tantivy-indexer.lock");
-
-    remove_file(path).unwrap();
+    let meta = Path::new(path).join("search_index/.tantivy-meta.lock");
+    remove_file(meta).unwrap();
+    let writer = Path::new(path).join("search_index/.tantivy-writer.lock");
+    remove_file(writer).unwrap();
 }

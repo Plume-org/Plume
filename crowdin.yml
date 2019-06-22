@@ -1,3 +1,6 @@
+"project_identifier": "plume"
+"api_key_env": CROWDIN_API_KEY
+preserve_hierarchy: true
 files:
   - source: /po/plume/plume.pot
     translation: /po/plume/%two_letters_code%.po

@@ -104,20 +104,14 @@ impl List {
             lists::table
                 .filter(lists::user_id.eq(user_id))
                 .filter(lists::name.eq(name))
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         } else {
             lists::table
                 .filter(lists::user_id.is_null())
                 .filter(lists::name.eq(name))
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     }
 

@@ -16,7 +16,7 @@
 
     <div class="list">
         @for user in users {
-            <div class="flex">
+            <div class="card flex compact">
                 @avatar(ctx.0, &user, Size::Small, false, ctx.1)
                 <p class="grow">
                     <a href="@uri!(user::details: name = &user.fqn)">@user.name()</a>

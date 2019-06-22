@@ -15,7 +15,7 @@ use medias::Media;
 use mentions::Mention;
 use notifications::*;
 use plume_common::activity_pub::{
-    inbox::{AsObject, FromId},
+    inbox::{AsActor, AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILITY,
 };
 use plume_common::utils;
@@ -79,7 +79,7 @@ impl Comment {
     pub fn count_local(conn: &Connection) -> Result<i64> {
         use schema::users;
         let local_authors = users::table
-            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
             .select(users::id);
         comments::table
             .filter(comments::author_id.eq_any(local_authors))
@@ -107,7 +107,7 @@ impl Comment {
         let author = User::get(&c.conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
-            &Instance::get_local(&c.conn)?.public_domain,
+            Some(&Instance::get_local()?.public_domain),
             true,
             Some(Media::get_media_processor(&c.conn, vec![&author])),
         );
@@ -157,14 +157,20 @@ impl Comment {
 
     pub fn notify(&self, conn: &Connection) -> Result<()> {
         for author in self.get_post(conn)?.get_authors(conn)? {
-            Notification::insert(
-                conn,
-                NewNotification {
-                    kind: notification_kind::COMMENT.to_string(),
-                    object_id: self.id,
-                    user_id: author.id,
-                },
-            )?;
+            if Mention::list_for_comment(conn, self.id)?
+                .iter()
+                .all(|m| m.get_mentioned(conn).map(|u| u != author).unwrap_or(true))
+                && author.is_local()
+            {
+                Notification::insert(
+                    conn,
+                    NewNotification {
+                        kind: notification_kind::COMMENT.to_string(),
+                        object_id: self.id,
+                        user_id: author.id,
+                    },
+                )?;
+            }
         }
         Ok(())
     }
@@ -230,10 +236,7 @@ impl FromId<PlumeRocket> for Comment {
                     })?,
                     author_id: User::from_id(
                         c,
-                        &{
-                            let res: String = note.object_props.attributed_to_link::<Id>()?.into();
-                            res
-                        },
+                        &note.object_props.attributed_to_link::<Id>()?,
                         None,
                     )
                     .map_err(|(_, e)| e)?

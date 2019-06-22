@@ -1,5 +1,5 @@
-header {
-  background: $lightgray;
+body > header {
+  background: $gray;
 
   #content {
     display: flex;
@@ -10,6 +10,7 @@ header {
   nav#menu {
     position: relative;
     display: none;
+    appearance: none;
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
@@ -26,7 +27,7 @@ header {
      	height: 1.4em;
      	margin: 0;
      	padding: 0;
-     	color: $lightgray;
+     	color: $gray;
      	font-size: 1.33em;
    	}
   }
@@ -76,14 +77,27 @@ header {
 
 .messages {
   & > * {
-      padding: 1em 20%;
+    padding: 1em 20%;
+    margin: 0;
+    max-width: initial;
+    font-weight: bold;
   }
 
   p.error {
-    color: $red;
+    color: darken($red, 20%);
     background: lighten($red, 40%);
     margin: 0;
     max-width: initial;
+  }
+
+  p.warning {
+    color: darken($yellow, 20%);
+    background: lighten($yellow, 40%);
+  }
+
+  p.success {
+    color: darken($green, 20%);
+    background: lighten($green, 40%);
   }
 }
 

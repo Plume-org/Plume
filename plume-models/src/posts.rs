@@ -141,7 +141,7 @@ impl Post {
         use schema::post_authors;
         use schema::users;
         let local_authors = users::table
-            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
             .select(users::id);
         let local_posts_id = post_authors::table
             .filter(post_authors::author_id.eq_any(local_authors))
@@ -335,11 +335,8 @@ impl Post {
         use schema::blogs;
         blogs::table
             .filter(blogs::id.eq(self.blog_id))
-            .limit(1)
-            .load::<Blog>(conn)?
-            .into_iter()
-            .nth(0)
-            .ok_or(Error::NotFound)
+            .first(conn)
+            .map_err(Error::from)
     }
 
     pub fn count_likes(&self, conn: &Connection) -> Result<i64> {
@@ -384,7 +381,7 @@ impl Post {
             .collect::<Vec<serde_json::Value>>();
         let mut tags_json = Tag::for_post(conn, self.id)?
             .into_iter()
-            .map(|t| json!(t.to_activity(conn).ok()))
+            .map(|t| json!(t.to_activity().ok()))
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
@@ -419,7 +416,7 @@ impl Post {
         if let Some(media_id) = self.cover_id {
             let media = Media::get(conn, media_id)?;
             let mut cover = Image::default();
-            cover.object_props.set_url_string(media.url(conn)?)?;
+            cover.object_props.set_url_string(media.url()?)?;
             if media.sensitive {
                 cover
                     .object_props
@@ -603,7 +600,7 @@ impl Post {
     pub fn cover_url(&self, conn: &Connection) -> Option<String> {
         self.cover_id
             .and_then(|i| Media::get(conn, i).ok())
-            .and_then(|c| c.url(conn).ok())
+            .and_then(|c| c.url().ok())
     }
 
     pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
@@ -642,7 +639,7 @@ impl FromId<PlumeRocket> for Post {
             .attributed_to_link_vec::<Id>()?
             .into_iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
-                let url: String = link.into();
+                let url = link;
                 match User::from_id(&c, &url, None) {
                     Ok(u) => {
                         authors.push(u);
@@ -692,7 +689,7 @@ impl FromId<PlumeRocket> for Post {
         }
 
         // save mentions and tags
-        let mut hashtags = md_to_html(&post.source, "", false, None)
+        let mut hashtags = md_to_html(&post.source, None, false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())
@@ -829,7 +826,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
             post.license = license;
         }
 
-        let mut txt_hashtags = md_to_html(&post.source, "", false, None)
+        let mut txt_hashtags = md_to_html(&post.source, None, false, None)
             .2
             .into_iter()
             .map(|s| s.to_camel_case())

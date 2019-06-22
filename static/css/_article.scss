@@ -1,6 +1,69 @@
 // Heading
+main header.article {
+  overflow: hidden;
+  background: $white;
+  color: $black;
+  display: grid;
+  background-size: cover;
+  background-position: center;
+
+  &.illustrated {
+    min-height: 75vh;
+    color: $white;
+
+    a, a:visited {
+      color: $white;
+      border-bottom: 1px solid transparent;
+      transition: border-bottom-color 0.1s ease-in;
+
+      &:hover {
+        border-bottom-color: $white;
+      }
+    }
+  }
+
+  & > * {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  & > div:not(.shadow) {
+    z-index: 3;
+    font-family: $lora;
+    font-size: 1.2em;
+
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: $article-width;
+    margin: 2em auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+
+    h1, .article-info {
+      text-align: center;
+    }
+  }
+
+  & > div.shadow {
+    z-index: 2;
+
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(180deg, transparent 20vh, black 80vh);
+  }
+
+  & > img {
+    z-index: 1;
+    min-width: 100%;
+    min-height: 100%;
+    background: $purple;
+  }
+}
+
 main .article-info {
-  max-width: 40rem;
  	margin: 0 auto 3em;
  	font-size: 0.95em;
  	font-weight: 400;
@@ -12,7 +75,7 @@ main .article-info {
 
 // The article itself
 main article {
-  max-width: 40rem;
+  max-width: $article-width;
  	margin: 2.5em auto;
  	font-family: $lora;
  	font-size: 1.2em;
@@ -30,9 +93,14 @@ main article {
 
   pre {
    	padding: 1em;
-   	background: $lightgray;
+   	background: $gray;
    	overflow: auto;
-   	border-radius: 5px;
+  }
+
+  blockquote {
+    border-left: 5px solid $gray;
+    margin: 1em auto;
+    padding: 0em 2em;
   }
 }
 
@@ -46,37 +114,42 @@ main .article-meta, main .article-meta button {
 main .article-meta {
 
   > * {
-    margin: 0 20%;
+    margin: $margin;
+  }
+
+  > .banner {
+    margin: 3em 0;
+    & > * {
+      margin: $margin;
+    }
   }
 
   > p {
-    margin: 2em 20%;
+    margin: 2em $horizontal-margin;
  	  font-size: 0.9em;
   }
 
   // Article Tags
   .tags {
     list-style: none;
-    display: inline-block;
     padding: 0px;
-    margin-bottom: 2em;
+    max-width: none;
+    flex: 20;
 
     li {
       display: inline-block;
-      background: $lightgray;
       padding: 0px;
       margin: 0px 10px 10px 0px;
-      border-radius: 3px;
       transition: all 0.2s ease-in;
+      border: 1px solid $purple;
 
       a {
         display: inline-block;
         padding: 10px 20px;
-        color: $black;
       }
 
       &:hover {
-        background: mix($black, $lightgray, 10%);
+        background: transparentize($purple, 0.9);
       }
     }
   }
@@ -111,6 +184,7 @@ main .article-meta {
      	color: $black;
      	border: none;
      	font-size: 1.1em;
+      cursor: pointer;
 
      	svg.feather {
        	transition: background 0.1s ease-in;
@@ -185,11 +259,7 @@ main .article-meta {
 
   // Comments
   .comments {
-    margin: 0;
-    > * {
-      margin-left: 20%;
-      margin-right: 20%;
-    }
+    margin: 0 $horizontal-margin;
 
     h2 {
      	color: $purple;
@@ -204,17 +274,17 @@ main .article-meta {
     // New comment form
     > form input[type="submit"] {
       font-size: 1em;
+      -webkit-appearance: none;
     }
 
     // Respond & delete comment buttons
     a.button, form.inline, form.inline input {
-     	display: inline-block;
      	padding: 0;
      	background: none;
      	color: $black;
-     	border: none;
      	margin-right: 2em;
      	font-family: $route159;
+      font-weight: normal;
 
      	&::before {
      	  color: $purple;
@@ -224,17 +294,39 @@ main .article-meta {
       &:hover { color: $purple; }
     }
 
-    .list {
-     	display: grid;
-     	margin: 0 0 -5em;
-     	padding: 0 20%;
-     	background: $lightgray;
-    }
-
     .comment {
-      padding: 2em;
+      margin: 1em 0;
      	font-size: 1em;
      	border: none;
+
+      .content {
+        background: $gray;
+        margin-top: 2.5em;
+        padding: 1em;
+
+        &::before {
+          display: block;
+          content: ' ';
+          border: 1em solid $gray;
+          border-top-color: transparent;
+          border-right-color: transparent;
+          position: relative;
+          top: -2.4em;
+          left: -1em;
+          width: 0;
+          height: 0;
+        }
+      }
+
+      header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .dt-published a {
+        color: transparentize($black, 0.6);
+      }
 
      	.author {
      	  display: flex;
@@ -255,6 +347,10 @@ main .article-meta {
           small { opacity: 1; }
         }
      	}
+
+      & > .comment {
+          padding-left: 2em;
+      }
 
      	.text {
        	padding: 1.25em 0;
@@ -303,7 +399,7 @@ main .article-meta {
   bottom: 20vh;
   left: 20vw;
   right: 20vw;
-  background: $lightgray;
+  background: $gray;
   border: 1px solid $purple;
   z-index: 2;
   padding: 2em;
@@ -312,6 +408,7 @@ main .article-meta {
 
 .popup:not(.show), .popup-bg:not(.show) {
     display: none;
+    appearance: none;
 }
 
 .popup-bg {
@@ -328,10 +425,16 @@ main .article-meta {
 .cw-container {
   position: relative;
   display: inline-block;
+  cursor: pointer;
+
+  img {
+    margin: auto;
+  }
 }
 
 .cw-text {
   display: none;
+  appearance: none;
 }
 
 input[type="checkbox"].cw-checkbox {
@@ -354,4 +457,27 @@ input:checked ~ .cw-container > .cw-text {
   text-align: center;
   top: 50%;
   transform: translateY(-50%);
+}
+
+// Bottom action bar
+
+.bottom-bar {
+  z-index: 10;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $gray;
+  margin: 0;
+  display: flex;
+
+  & > div {
+    margin: 1em;
+  }
+
+  & > div:nth-child(2) {
+    flex: 1;
+    display: flex;
+    margin: auto $horizontal-margin;
+  }
 }

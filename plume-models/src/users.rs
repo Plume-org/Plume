@@ -7,7 +7,10 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{
+    self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl,
+    SaveChangesDsl,
+};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -23,7 +26,7 @@ use plume_common::activity_pub::{
 use plume_common::utils;
 use reqwest::{
     header::{HeaderValue, ACCEPT},
-    Client,
+    ClientBuilder,
 };
 use rocket::{
     outcome::IntoOutcome,
@@ -215,7 +218,7 @@ impl User {
                 users::email.eq(email),
                 users::summary_html.eq(utils::md_to_html(
                     &summary,
-                    "",
+                    None,
                     false,
                     Some(Media::get_media_processor(conn, vec![self])),
                 )
@@ -228,7 +231,7 @@ impl User {
 
     pub fn count_local(conn: &Connection) -> Result<i64> {
         users::table
-            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
             .count()
             .get_result(conn)
             .map_err(Error::from)
@@ -237,10 +240,8 @@ impl User {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .limit(1)
-            .load::<User>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
@@ -267,7 +268,9 @@ impl User {
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {
-        let mut res = Client::new()
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
             .get(url)
             .header(
                 ACCEPT,
@@ -351,7 +354,7 @@ impl User {
 
     pub fn get_local_page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<User>> {
         users::table
-            .filter(users::instance_id.eq(Instance::get_local(conn)?.id))
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
             .order(users::username.asc())
             .offset(min.into())
             .limit((max - min).into())
@@ -369,7 +372,9 @@ impl User {
     }
 
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
-        let mut res = Client::new()
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
             .get(&self.outbox_url[..])
             .header(
                 ACCEPT,
@@ -392,7 +397,9 @@ impl User {
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
-        let mut res = Client::new()
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
             .get(&self.followers_endpoint[..])
             .header(
                 ACCEPT,
@@ -628,7 +635,7 @@ impl User {
         let mut avatar = Image::default();
         avatar.object_props.set_url_string(
             self.avatar_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
                 .unwrap_or_default(),
         )?;
         actor.object_props.set_icon_object(avatar)?;
@@ -661,7 +668,7 @@ impl User {
 
     pub fn avatar_url(&self, conn: &Connection) -> String {
         self.avatar_id
-            .and_then(|id| Media::get(conn, id).and_then(|m| m.url(conn)).ok())
+            .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
             .unwrap_or_else(|| "/static/default-avatar.png".to_string())
     }
 
@@ -855,7 +862,9 @@ impl AsActor<&PlumeRocket> for User {
     }
 
     fn is_local(&self) -> bool {
-        self.instance_id == 1
+        Instance::get_local()
+            .map(|i| self.instance_id == i.id)
+            .unwrap_or(false)
     }
 }
 
@@ -925,10 +934,10 @@ impl NewUser {
                 display_name,
                 is_admin,
                 summary: summary.to_owned(),
-                summary_html: SafeString::new(&utils::md_to_html(&summary, "", false, None).0),
+                summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
                 hashed_password: Some(password),
-                instance_id: Instance::get_local(conn)?.id,
+                instance_id: Instance::get_local()?.id,
                 ap_url: String::new(),
                 public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
                 private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
@@ -1000,7 +1009,7 @@ pub(crate) mod tests {
             .unwrap();
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test", Instance::get_local(conn).unwrap().id)
+                User::find_by_name(conn, "test", Instance::get_local().unwrap().id)
                     .unwrap()
                     .id
             );
@@ -1018,7 +1027,7 @@ pub(crate) mod tests {
                     conn,
                     &format!(
                         "https://{}/@/{}/",
-                        Instance::get_local(conn).unwrap().public_domain,
+                        Instance::get_local().unwrap().public_domain,
                         "test"
                     )
                 )
@@ -1047,7 +1056,7 @@ pub(crate) mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let inserted = fill_database(conn);
-            let local_inst = Instance::get_local(conn).unwrap();
+            let local_inst = Instance::get_local().unwrap();
             let mut i = 0;
             while local_inst.has_admin(conn).unwrap() {
                 assert!(i < 100); //prevent from looping indefinitelly

@@ -7,16 +7,52 @@ use rocket::{
         RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
-    response::NamedFile,
+    response::{Flash, NamedFile, Redirect},
     Outcome,
 };
 use std::path::{Path, PathBuf};
+use template_utils::Ructe;
 
 use plume_models::{posts::Post, Connection};
 
 const ITEMS_PER_PAGE: i32 = 12;
 
-#[derive(Copy, Clone, UriDisplayQuery)]
+/// Special return type used for routes that "cannot fail", and instead
+/// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response
+#[allow(clippy::large_enum_variant)]
+#[derive(Responder)]
+pub enum RespondOrRedirect {
+    Response(Ructe),
+    FlashResponse(Flash<Ructe>),
+    Redirect(Redirect),
+    FlashRedirect(Flash<Redirect>),
+}
+
+impl From<Ructe> for RespondOrRedirect {
+    fn from(response: Ructe) -> Self {
+        RespondOrRedirect::Response(response)
+    }
+}
+
+impl From<Flash<Ructe>> for RespondOrRedirect {
+    fn from(response: Flash<Ructe>) -> Self {
+        RespondOrRedirect::FlashResponse(response)
+    }
+}
+
+impl From<Redirect> for RespondOrRedirect {
+    fn from(redirect: Redirect) -> Self {
+        RespondOrRedirect::Redirect(redirect)
+    }
+}
+
+impl From<Flash<Redirect>> for RespondOrRedirect {
+    fn from(redirect: Flash<Redirect>) -> Self {
+        RespondOrRedirect::FlashRedirect(redirect)
+    }
+}
+
+#[derive(Shrinkwrap, Copy, Clone, UriDisplayQuery)]
 pub struct Page(i32);
 
 impl<'v> FromFormValue<'v> for Page {
@@ -52,6 +88,7 @@ impl Page {
     }
 }
 
+#[derive(Shrinkwrap)]
 pub struct ContentLen(pub u64);
 
 impl<'a, 'r> FromRequest<'a, 'r> for ContentLen {
@@ -72,7 +109,7 @@ impl Default for Page {
 }
 
 /// A form for remote interaction, used by multiple routes
-#[derive(Clone, Default, FromForm)]
+#[derive(Shrinkwrap, Clone, Default, FromForm)]
 pub struct RemoteForm {
     pub remote: String,
 }

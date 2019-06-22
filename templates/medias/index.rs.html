@@ -15,12 +15,12 @@
         <p>@i18n!(ctx.1, "You don't have any media yet.")</p>
     }
 
-    <div class="cards spaced">
+    <div class="cards">
         @for media in medias {
           <div class="card">
               <div class="cover media-preview @media.category().to_string()"
                 @if media.category() == MediaCategory::Image {
-                  style="background-image: url('@media.url(ctx.0).unwrap_or_default()')"
+                  style="background-image: url('@media.url().unwrap_or_default()')"
                 }
               ></div>
               <main>

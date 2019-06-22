@@ -48,6 +48,15 @@ msgstr "Aby si vytvoril/a nový blog, musíš sa prihlásiť"
 msgid "A blog with the same name already exists."
 msgstr "Blog s rovnakým názvom už existuje."
 
+# src/routes/session.rs:259
+#, fuzzy
+msgid "Your blog was successfully created!"
+msgstr "Tvoje heslo bolo úspešne zmenené."
+
+# src/routes/blogs.rs:167
+msgid "Your blog was deleted."
+msgstr ""
+
 # src/routes/blogs.rs:172
 msgid "You are not allowed to delete this blog."
 msgstr "Nemáš povolenie vymazať tento blog."
@@ -64,9 +73,55 @@ msgstr "Tento mediálny súbor nemožno použiť ako ikonku pre blog."
 msgid "You can't use this media as a blog banner."
 msgstr "Tento mediálny súbor nemožno použiť ako záhlavie pre blog."
 
+# src/routes/blogs.rs:312
+msgid "Your blog information have been updated."
+msgstr ""
+
+#, fuzzy
+msgid "Your comment has been posted."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+#, fuzzy
+msgid "Your comment has been deleted."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+# src/routes/instance.rs:145
+msgid "Instance settings have been saved."
+msgstr ""
+
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
+msgstr ""
+
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
+msgstr ""
+
+# src/routes/instance.rs:218
+msgid "{} have been banned."
+msgstr ""
+
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "Aby si si obľúbil/a príspevok, musíš sa prihlásiť"
+
+# src/routes/medias.rs:143
+msgid "Your media have been deleted."
+msgstr ""
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this media."
+msgstr "Nemáš povolenie vymazať tento blog."
+
+#, fuzzy
+msgid "Your avatar has been updated."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to use this media."
+msgstr "Nemáš dovolené upravovať tento blog."
 
 # src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
@@ -92,6 +147,37 @@ msgstr "Nový príspevok"
 msgid "Edit {0}"
 msgstr "Uprav {0}"
 
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to publish on this blog."
+msgstr "Nemáš dovolené upravovať tento blog."
+
+#, fuzzy
+msgid "Your article has been updated."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+#, fuzzy
+msgid "Your article has been saved."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+msgid "New article"
+msgstr "Nový článok"
+
+# src/routes/blogs.rs:172
+#, fuzzy
+msgid "You are not allowed to delete this article."
+msgstr "Nemáš povolenie vymazať tento blog."
+
+#, fuzzy
+msgid "Your article has been deleted."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+# src/routes/posts.rs:593
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+
 # src/routes/posts.rs:630
 msgid ""
 "Couldn't obtain enough information about your account. Please make sure your "
@@ -103,6 +189,14 @@ msgstr ""
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr "Na zdieľanie príspevku sa musíš prihlásiť"
+
+#, fuzzy
+msgid "You are now connected."
+msgstr "Nemáš oprávnenie."
+
+#, fuzzy
+msgid "You are now logged off."
+msgstr "Nemáš oprávnenie."
 
 # src/routes/session.rs:181
 msgid "Password reset"
@@ -124,6 +218,14 @@ msgstr "Prepáč, ale tento odkaz už vypŕšal. Skús to znova"
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Pre prístup k prehľadovému panelu sa musíš prihlásiť"
 
+# src/routes/user.rs:158
+msgid "You are no longer following {}."
+msgstr ""
+
+# src/routes/user.rs:174
+msgid "You are now following {}."
+msgstr ""
+
 # src/routes/user.rs:244
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Ak chceš niekoho odoberať, musíš sa prihlásiť"
@@ -132,319 +234,163 @@ msgstr "Ak chceš niekoho odoberať, musíš sa prihlásiť"
 msgid "To edit your profile, you need to be logged in"
 msgstr "Na upravenie tvojho profilu sa musíš prihlásiť"
 
-msgid "Plume"
-msgstr "Plume"
+#, fuzzy
+msgid "Your profile has been updated."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
 
-msgid "Menu"
-msgstr "Ponuka"
+#, fuzzy
+msgid "Your account has been deleted."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
 
-msgid "Search"
-msgstr "Vyhľadávanie"
+# src/routes/user.rs:411
+msgid "You can't delete someone else's account."
+msgstr ""
 
-msgid "Dashboard"
-msgstr "Prehľadový panel"
+# src/routes/user.rs:473
+msgid "Registrations are closed on this instance."
+msgstr ""
 
-msgid "Notifications"
-msgstr "Oboznámenia"
+# src/routes/user.rs:527
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
+msgstr ""
 
-msgid "Log Out"
-msgstr "Odhlás sa"
+msgid "Internal server error"
+msgstr "Vnútorná chyba v rámci serveru"
 
-msgid "My account"
-msgstr "Môj účet"
+msgid "Something broke on our side."
+msgstr "Niečo sa pokazilo na našej strane."
 
-msgid "Log In"
-msgstr "Prihlás sa"
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Prepáč ohľadom toho. Ak si myslíš, že ide o chybu, prosím nahlás ju."
 
-msgid "Register"
-msgstr "Registrácia"
+msgid "You are not authorized."
+msgstr "Nemáš oprávnenie."
 
-msgid "About this instance"
-msgstr "O tejto instancii"
+msgid "Page not found"
+msgstr "Stránka nenájdená"
 
-msgid "Source code"
-msgstr "Zdrojový kód"
+msgid "We couldn't find this page."
+msgstr "Tú stránku sa nepodarilo nájsť."
 
-msgid "Matrix room"
-msgstr "Matrix miestnosť"
+msgid "The link that led you here may be broken."
+msgstr "Odkaz, ktorý ťa sem zaviedol je azda narušený."
 
-msgid "Administration"
-msgstr "Administrácia"
+msgid "The content you sent can't be processed."
+msgstr "Obsah, ktorý si odoslal/a nemožno spracovať."
 
-msgid "Welcome to {}"
-msgstr "Vitaj na {}"
+msgid "Maybe it was too long."
+msgstr "Možno to bolo príliš dlhé."
 
-msgid "Latest articles"
-msgstr "Najnovšie články"
+msgid "Invalid CSRF token"
+msgstr "Neplatný CSRF token"
 
-msgid "Your feed"
-msgstr "Tvoje zdroje"
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Niečo nieje v poriadku s tvojím CSRF tokenom. Uisti sa, že máš vo svojom "
+"prehliadači povolené cookies, potom skús načítať stránku znovu. Ak budeš aj "
+"naďalej vidieť túto chybovú správu, prosím nahlás ju."
 
-msgid "Federated feed"
-msgstr "Federované zdroje"
+msgid "Articles tagged \"{0}\""
+msgstr "Články otagované pod \"{0}\""
 
-msgid "Local feed"
-msgstr "Miestny zdroj"
+msgid "There are currently no articles with such a tag"
+msgstr "Momentálne tu niesú žiadné články pod takýmto tagom"
 
-msgid "Administration of {0}"
-msgstr "Spravovanie {0}"
+msgid "New Blog"
+msgstr "Nový blog"
 
-msgid "Instances"
-msgstr "Instancie"
+msgid "Create a blog"
+msgstr "Vytvor blog"
 
-msgid "Configuration"
-msgstr "Nastavenia"
-
-msgid "Users"
-msgstr "Užívatelia"
-
-msgid "Unblock"
-msgstr "Odblokuj"
-
-msgid "Block"
-msgstr "Blokuj"
-
-msgid "Ban"
-msgstr "Zakáž"
-
-msgid "All the articles of the Fediverse"
-msgstr "Všetky články Fediversa"
-
-msgid "Articles from {}"
-msgstr "Články od {}"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "Ešte tu nič nieje vidieť. Skús začať odoberať obsah od viacero ľudí."
-
-# src/template_utils.rs:217
-msgid "Name"
-msgstr "Pomenovanie"
+msgid "Title"
+msgstr "Nadpis"
 
 # src/template_utils.rs:220
 msgid "Optional"
 msgstr "Volitelné/Nepovinný údaj"
 
-msgid "Allow anyone to register here"
-msgstr "Umožni komukoľvek sa tu zaregistrovať"
+msgid "Create blog"
+msgstr "Vytvor blog"
 
-msgid "Short description"
-msgstr "Stručný popis"
+msgid "Edit \"{}\""
+msgstr "Uprav \"{}\""
+
+msgid "Description"
+msgstr "Popis"
 
 msgid "Markdown syntax is supported"
 msgstr "Markdown syntaxia je podporovaná"
 
-msgid "Long description"
-msgstr "Podrobný popis"
-
-# src/template_utils.rs:217
-msgid "Default article license"
-msgstr "Predvolená licencia článkov"
-
-msgid "Save these settings"
-msgstr "Ulož tieto nastavenia"
-
-msgid "About {0}"
-msgstr "O {0}"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Domov pre <em>{0}</em> ľudí"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Ktorí napísal <em>{0}</em> článkov"
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr "A sú pripojení k <em>{0}</em> ďalším instanciám"
-
-msgid "Administred by"
-msgstr "Správcom je"
-
-msgid "Runs Plume {0}"
-msgstr "Beží na Plume {0}"
-
-msgid "Follow {}"
-msgstr "Následuj {}"
-
-#, fuzzy
-msgid "Log in to follow"
-msgstr "Pre následovanie sa prihlás"
-
-#, fuzzy
-msgid "Enter your full username handle to follow"
-msgstr "Zadaj svoju prezývku v úplnosti, aby si následoval/a"
-
-msgid "Edit your account"
-msgstr "Uprav svoj účet"
-
-msgid "Your Profile"
-msgstr "Tvoj profil"
-
 msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
+"You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
-"Pre zmenu tvojho avataru ho nahraj do svojej galérie a potom ho odtiaľ zvoľ."
+"Do svojej galérie môžeš nahrávať obrázky, ktoré sa potom dajú použiť aj ako "
+"ikonky, či záhlavie pre blogy."
 
-msgid "Upload an avatar"
-msgstr "Nahraj avatar"
+msgid "Upload images"
+msgstr "Nahraj obrázky"
 
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr "Zobrazované meno"
+msgid "Blog icon"
+msgstr "Ikonka blogu"
 
-# src/template_utils.rs:217
-msgid "Email"
-msgstr "Emailová adresa"
+msgid "Blog banner"
+msgstr "Banner blogu"
 
-msgid "Summary"
-msgstr "Súhrn"
-
-msgid "Update account"
-msgstr "Aktualizuj účet"
+msgid "Update blog"
+msgstr "Aktualizuj blog"
 
 msgid "Danger zone"
 msgstr "Riziková zóna"
 
-msgid "Be very careful, any action taken here can't be cancelled."
+msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 "Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné "
 "vziať späť."
 
-msgid "Delete your account"
-msgstr "Vymaž svoj účet"
+msgid "Permanently delete this blog"
+msgstr "Vymaž tento blog natrvalo"
 
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-"Prepáč, ale ako jej správca, ty nemôžeš opustiť svoju vlastnú instanciu."
+msgid "{}'s icon"
+msgstr "Ikonka pre {}"
 
-msgid "Your Dashboard"
-msgstr "Tvoja nástenka"
+msgid "Edit"
+msgstr "Uprav"
 
-msgid "Your Blogs"
-msgstr "Tvoje blogy"
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Tento blog má jedného autora: "
+msgstr[1] "Tento blog má {0} autorov: "
+msgstr[2] "Tento blog má {0} autorov: "
+msgstr[3] "Tento blog má {0} autorov: "
 
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-"Ešte nemáš žiaden blog. Vytvor si svoj vlastný, alebo požiadaj v niektorom o "
-"členstvo."
+msgid "Latest articles"
+msgstr "Najnovšie články"
 
-msgid "Start a new blog"
-msgstr "Začni nový blog"
+msgid "No posts to see here yet."
+msgstr "Ešte tu nemožno vidieť žiadné príspevky."
 
-msgid "Your Drafts"
-msgstr "Tvoje koncepty"
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
+msgstr "Výsledok hľadania pre \"{0}\""
 
-msgid "Your media"
-msgstr "Tvoje multimédiá"
+#, fuzzy
+msgid "Search result(s)"
+msgstr "Výsledok hľadania"
 
-msgid "Go to your gallery"
-msgstr "Prejdi do svojej galérie"
+#, fuzzy
+msgid "No results for your query"
+msgstr "Žiadny výsledok pre tvoje zadanie"
 
-msgid "Create your account"
-msgstr "Vytvor si účet"
+msgid "No more results for your query"
+msgstr "Žiadne ďalšie výsledky pre tvoje zadanie"
 
-msgid "Create an account"
-msgstr "Vytvoriť účet"
-
-# src/template_utils.rs:217
-msgid "Username"
-msgstr "Užívateľské meno"
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr "Heslo"
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr "Potvrdenie hesla"
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-"Ospravedlňujeme sa, ale na tejto konkrétnej instancii zatvorené. Môžeš si "
-"však nájsť inú."
-
-msgid "Articles"
-msgstr "Články"
-
-msgid "Subscribers"
-msgstr "Odberatelia"
-
-msgid "Subscriptions"
-msgstr "Odoberané"
-
-msgid "Atom feed"
-msgstr "Atom zdroj"
-
-msgid "Recently boosted"
-msgstr "Nedávno vyzdvihnuté"
-
-msgid "Admin"
-msgstr "Správca"
-
-msgid "It is you"
-msgstr "Toto si ty"
-
-msgid "Edit your profile"
-msgstr "Uprav svoj profil"
-
-msgid "Open on {0}"
-msgstr "Otvor na {0}"
-
-msgid "Unsubscribe"
-msgstr "Neodoberaj"
-
-msgid "Subscribe"
-msgstr "Odoberaj"
-
-msgid "{0}'s subscriptions"
-msgstr "Odoberané užívateľom {0}"
-
-msgid "{0}'s subscribers"
-msgstr "Odberatelia obsahu od {0}"
-
-msgid "Respond"
-msgstr "Odpovedz"
-
-msgid "Are you sure?"
-msgstr "Ste si istý/á?"
-
-msgid "Delete this comment"
-msgstr "Vymaž tento komentár"
-
-msgid "What is Plume?"
-msgstr "Čo je to Plume?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Plume je decentralizovanou blogovacou platformou."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "Autori môžu spravovať viacero blogov, každý ako osobitnú stránku."
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-"Články sú tiež viditeľné na iných Plume instanciách a môžeš s nimi "
-"interaktovať priamo aj z iných federovaných platforiem, ako napríklad "
-"Mastodon."
-
-msgid "Read the detailed rules"
-msgstr "Prečítaj si podrobné pravidlá"
-
-msgid "None"
-msgstr "Žiadne"
-
-msgid "No description"
-msgstr "Žiaden popis"
-
-msgid "View all"
-msgstr "Zobraz všetky"
-
-msgid "By {0}"
-msgstr "Od {0}"
-
-msgid "Draft"
-msgstr "Koncept"
+msgid "Search"
+msgstr "Vyhľadávanie"
 
 msgid "Your query"
 msgstr "Tvoje zadanie"
@@ -455,9 +401,6 @@ msgstr "Pokročilé vyhľadávanie"
 # src/template_utils.rs:305
 msgid "Article title matching these words"
 msgstr "Nadpis článku vyhovujúci týmto slovám"
-
-msgid "Title"
-msgstr "Nadpis"
 
 # src/template_utils.rs:305
 msgid "Subtitle matching these words"
@@ -499,7 +442,8 @@ msgstr "Doména instancie"
 msgid "Posted by one of these authors"
 msgstr "Uverejnené jedným z týchto autorov"
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "Autori"
 
 # src/template_utils.rs:305
@@ -522,56 +466,6 @@ msgstr "Uverejnené pod touto licenciou"
 
 msgid "Article license"
 msgstr "Článok je pod licenciou"
-
-msgid "Search result for \"{0}\""
-msgstr "Výsledok hľadania pre \"{0}\""
-
-msgid "Search result"
-msgstr "Výsledok hľadania"
-
-msgid "No result for your query"
-msgstr "Žiadny výsledok pre tvoje zadanie"
-
-msgid "No more results for your query"
-msgstr "Žiadne ďalšie výsledky pre tvoje zadanie"
-
-msgid "Reset your password"
-msgstr "Obnov svoje heslo"
-
-# src/template_utils.rs:217
-msgid "New password"
-msgstr "Nové heslo"
-
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr "Potvrdenie"
-
-msgid "Update password"
-msgstr "Aktualizovať heslo"
-
-msgid "Check your inbox!"
-msgstr "Pozri si svoju Doručenú poštu!"
-
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr ""
-"Email s odkazom na obnovenie hesla bol odoslaný na adresu, ktorú si nám dal/"
-"a."
-
-# src/template_utils.rs:217
-msgid "E-mail"
-msgstr "Emailová adresa"
-
-msgid "Send password reset link"
-msgstr "Pošli odkaz na obnovu hesla"
-
-msgid "Log in"
-msgstr "Prihlás sa"
-
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr "Používateľské meno, alebo email"
 
 msgid "Interact with {}"
 msgstr "Narábaj s {}"
@@ -635,12 +529,6 @@ msgstr "Zverejni svoj príspevok"
 msgid "Written by {0}"
 msgstr "Napísal/a {0}"
 
-msgid "Edit"
-msgstr "Uprav"
-
-msgid "Delete this article"
-msgstr "Vymaž tento článok"
-
 msgid "All rights reserved."
 msgstr "Všetky práva vyhradné."
 
@@ -681,6 +569,12 @@ msgstr ""
 "{0}Prihlás sa{1}, alebo {2}použi svoj účet v rámci Fediversa{3} pre "
 "narábanie s týmto článkom"
 
+msgid "Unsubscribe"
+msgstr "Neodoberaj"
+
+msgid "Subscribe"
+msgstr "Odoberaj"
+
 msgid "Comments"
 msgstr "Komentáre"
 
@@ -697,135 +591,17 @@ msgstr "Pošli komentár"
 msgid "No comments yet. Be the first to react!"
 msgstr "Zatiaľ žiadne komentáre. Buď prvý kto zareaguje!"
 
-msgid "Invalid CSRF token"
-msgstr "Neplatný CSRF token"
-
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-"Niečo nieje v poriadku s tvojím CSRF tokenom. Uisti sa, že máš vo svojom "
-"prehliadači povolené cookies, potom skús načítať stránku znovu. Ak budeš aj "
-"naďalej vidieť túto chybovú správu, prosím nahlás ju."
-
-msgid "Page not found"
-msgstr "Stránka nenájdená"
-
-msgid "We couldn't find this page."
-msgstr "Tú stránku sa nepodarilo nájsť."
-
-msgid "The link that led you here may be broken."
-msgstr "Odkaz, ktorý ťa sem zaviedol je azda narušený."
-
-msgid "The content you sent can't be processed."
-msgstr "Obsah, ktorý si odoslal/a nemožno spracovať."
-
-msgid "Maybe it was too long."
-msgstr "Možno to bolo príliš dlhé."
-
-msgid "You are not authorized."
-msgstr "Nemáš oprávnenie."
-
-msgid "Internal server error"
-msgstr "Vnútorná chyba v rámci serveru"
-
-msgid "Something broke on our side."
-msgstr "Niečo sa pokazilo na našej strane."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Prepáč ohľadom toho. Ak si myslíš, že ide o chybu, prosím nahlás ju."
-
-msgid "Edit \"{}\""
-msgstr "Uprav \"{}\""
-
-msgid "Description"
-msgstr "Popis"
-
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-"Do svojej galérie môžeš nahrávať obrázky, ktoré sa potom dajú použiť aj ako "
-"ikonky, či záhlavie pre blogy."
-
-msgid "Upload images"
-msgstr "Nahraj obrázky"
-
-msgid "Blog icon"
-msgstr "Ikonka blogu"
-
-msgid "Blog banner"
-msgstr "Banner blogu"
-
-msgid "Update blog"
-msgstr "Aktualizuj blog"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-"Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné "
-"vziať späť."
-
-msgid "Permanently delete this blog"
-msgstr "Vymaž tento blog natrvalo"
-
-msgid "New Blog"
-msgstr "Nový blog"
-
-msgid "Create a blog"
-msgstr "Vytvor blog"
-
-msgid "Create blog"
-msgstr "Vytvor blog"
-
-msgid "{}'s icon"
-msgstr "Ikonka pre {}"
-
-msgid "New article"
-msgstr "Nový článok"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Tento blog má jedného autora: "
-msgstr[1] "Tento blog má {0} autorov: "
-msgstr[2] "Tento blog má {0} autorov: "
-msgstr[3] "Tento blog má {0} autorov: "
-
-msgid "No posts to see here yet."
-msgstr "Ešte tu nemožno vidieť žiadné príspevky."
-
-msgid "Articles tagged \"{0}\""
-msgstr "Články otagované pod \"{0}\""
-
-msgid "There are currently no articles with such a tag"
-msgstr "Momentálne tu niesú žiadné články pod takýmto tagom"
-
-msgid "I'm from this instance"
-msgstr "Som z tejto instancie"
-
-msgid "I'm from another instance"
-msgstr "Som z inej instancie"
-
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
-msgstr "Príklad: user@plu.me"
-
-msgid "Continue to your instance"
-msgstr "Pokračuj na tvoju instanciu"
-
-msgid "Upload"
-msgstr "Nahraj"
-
-msgid "You don't have any media yet."
-msgstr "Ešte nemáš nahrané žiadne multimédiá."
-
-msgid "Content warning: {0}"
-msgstr "Upozornenie o obsahu: {0}"
+msgid "Are you sure?"
+msgstr "Ste si istý/á?"
 
 msgid "Delete"
 msgstr "Zmazať"
 
-msgid "Details"
-msgstr "Podrobnosti"
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
 
 msgid "Media upload"
 msgstr "Nahrávanie mediálnych súborov"
@@ -843,6 +619,21 @@ msgstr "Súbor"
 msgid "Send"
 msgstr "Pošli"
 
+msgid "Your media"
+msgstr "Tvoje multimédiá"
+
+msgid "Upload"
+msgstr "Nahraj"
+
+msgid "You don't have any media yet."
+msgstr "Ešte nemáš nahrané žiadne multimédiá."
+
+msgid "Content warning: {0}"
+msgstr "Upozornenie o obsahu: {0}"
+
+msgid "Details"
+msgstr "Podrobnosti"
+
 msgid "Media details"
 msgstr "Podrobnosti o médiu"
 
@@ -857,3 +648,366 @@ msgstr "Kód skopíruj do tvojho článku, pre vloženie tohto mediálneho súbo
 
 msgid "Use as an avatar"
 msgstr "Použi ako avatar"
+
+msgid "Notifications"
+msgstr "Oboznámenia"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Ponuka"
+
+msgid "Dashboard"
+msgstr "Prehľadový panel"
+
+msgid "Log Out"
+msgstr "Odhlás sa"
+
+msgid "My account"
+msgstr "Môj účet"
+
+msgid "Log In"
+msgstr "Prihlás sa"
+
+msgid "Register"
+msgstr "Registrácia"
+
+msgid "About this instance"
+msgstr "O tejto instancii"
+
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administrácia"
+
+msgid "Documentation"
+msgstr ""
+
+msgid "Source code"
+msgstr "Zdrojový kód"
+
+msgid "Matrix room"
+msgstr "Matrix miestnosť"
+
+msgid "Your feed"
+msgstr "Tvoje zdroje"
+
+msgid "Federated feed"
+msgstr "Federované zdroje"
+
+msgid "Local feed"
+msgstr "Miestny zdroj"
+
+msgid "Nothing to see here yet. Try subscribing to more people."
+msgstr "Ešte tu nič nieje vidieť. Skús začať odoberať obsah od viacero ľudí."
+
+msgid "Articles from {}"
+msgstr "Články od {}"
+
+msgid "All the articles of the Fediverse"
+msgstr "Všetky články Fediversa"
+
+msgid "Users"
+msgstr "Užívatelia"
+
+msgid "Configuration"
+msgstr "Nastavenia"
+
+msgid "Instances"
+msgstr "Instancie"
+
+msgid "Ban"
+msgstr "Zakáž"
+
+msgid "Administration of {0}"
+msgstr "Spravovanie {0}"
+
+# src/template_utils.rs:217
+msgid "Name"
+msgstr "Pomenovanie"
+
+msgid "Allow anyone to register here"
+msgstr "Umožni komukoľvek sa tu zaregistrovať"
+
+msgid "Short description"
+msgstr "Stručný popis"
+
+msgid "Long description"
+msgstr "Podrobný popis"
+
+# src/template_utils.rs:217
+msgid "Default article license"
+msgstr "Predvolená licencia článkov"
+
+msgid "Save these settings"
+msgstr "Ulož tieto nastavenia"
+
+msgid "About {0}"
+msgstr "O {0}"
+
+msgid "Runs Plume {0}"
+msgstr "Beží na Plume {0}"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "Domov pre <em>{0}</em> ľudí"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Ktorí napísal <em>{0}</em> článkov"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "A sú pripojení k <em>{0}</em> ďalším instanciám"
+
+msgid "Administred by"
+msgstr "Správcom je"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+
+msgid "Welcome to {}"
+msgstr "Vitaj na {}"
+
+msgid "Unblock"
+msgstr "Odblokuj"
+
+msgid "Block"
+msgstr "Blokuj"
+
+msgid "Reset your password"
+msgstr "Obnov svoje heslo"
+
+# src/template_utils.rs:217
+msgid "New password"
+msgstr "Nové heslo"
+
+# src/template_utils.rs:217
+msgid "Confirmation"
+msgstr "Potvrdenie"
+
+msgid "Update password"
+msgstr "Aktualizovať heslo"
+
+msgid "Log in"
+msgstr "Prihlás sa"
+
+# src/template_utils.rs:217
+msgid "Username, or email"
+msgstr "Používateľské meno, alebo email"
+
+# src/template_utils.rs:217
+msgid "Password"
+msgstr "Heslo"
+
+# src/template_utils.rs:217
+msgid "E-mail"
+msgstr "Emailová adresa"
+
+msgid "Send password reset link"
+msgstr "Pošli odkaz na obnovu hesla"
+
+msgid "Check your inbox!"
+msgstr "Pozri si svoju Doručenú poštu!"
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+"Email s odkazom na obnovenie hesla bol odoslaný na adresu, ktorú si nám dal/"
+"a."
+
+msgid "Admin"
+msgstr "Správca"
+
+msgid "It is you"
+msgstr "Toto si ty"
+
+msgid "Edit your profile"
+msgstr "Uprav svoj profil"
+
+msgid "Open on {0}"
+msgstr "Otvor na {0}"
+
+msgid "Follow {}"
+msgstr "Následuj {}"
+
+#, fuzzy
+msgid "Log in to follow"
+msgstr "Pre následovanie sa prihlás"
+
+#, fuzzy
+msgid "Enter your full username handle to follow"
+msgstr "Zadaj svoju prezývku v úplnosti, aby si následoval/a"
+
+msgid "{0}'s subscriptions"
+msgstr "Odoberané užívateľom {0}"
+
+msgid "Articles"
+msgstr "Články"
+
+msgid "Subscribers"
+msgstr "Odberatelia"
+
+msgid "Subscriptions"
+msgstr "Odoberané"
+
+msgid "Create your account"
+msgstr "Vytvor si účet"
+
+msgid "Create an account"
+msgstr "Vytvoriť účet"
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr "Užívateľské meno"
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr "Emailová adresa"
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
+msgstr "Potvrdenie hesla"
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+"Ospravedlňujeme sa, ale na tejto konkrétnej instancii zatvorené. Môžeš si "
+"však nájsť inú."
+
+msgid "{0}'s subscribers"
+msgstr "Odberatelia obsahu od {0}"
+
+msgid "Edit your account"
+msgstr "Uprav svoj účet"
+
+msgid "Your Profile"
+msgstr "Tvoj profil"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+"Pre zmenu tvojho avataru ho nahraj do svojej galérie a potom ho odtiaľ zvoľ."
+
+msgid "Upload an avatar"
+msgstr "Nahraj avatar"
+
+# src/template_utils.rs:217
+msgid "Display name"
+msgstr "Zobrazované meno"
+
+msgid "Summary"
+msgstr "Súhrn"
+
+msgid "Update account"
+msgstr "Aktualizuj účet"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+"Buď veľmi opatrný/á, akýkoľvek úkon vykonaný v tomto priestore nieje možné "
+"vziať späť."
+
+msgid "Delete your account"
+msgstr "Vymaž svoj účet"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+"Prepáč, ale ako jej správca, ty nemôžeš opustiť svoju vlastnú instanciu."
+
+msgid "Your Dashboard"
+msgstr "Tvoja nástenka"
+
+msgid "Your Blogs"
+msgstr "Tvoje blogy"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Ešte nemáš žiaden blog. Vytvor si svoj vlastný, alebo požiadaj v niektorom o "
+"členstvo."
+
+msgid "Start a new blog"
+msgstr "Začni nový blog"
+
+msgid "Your Drafts"
+msgstr "Tvoje koncepty"
+
+msgid "Go to your gallery"
+msgstr "Prejdi do svojej galérie"
+
+msgid "Atom feed"
+msgstr "Atom zdroj"
+
+msgid "Recently boosted"
+msgstr "Nedávno vyzdvihnuté"
+
+msgid "What is Plume?"
+msgstr "Čo je to Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume je decentralizovanou blogovacou platformou."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr "Autori môžu spravovať viacero blogov, každý ako osobitnú stránku."
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"Články sú tiež viditeľné na iných Plume instanciách a môžeš s nimi "
+"interaktovať priamo aj z iných federovaných platforiem, ako napríklad "
+"Mastodon."
+
+msgid "Read the detailed rules"
+msgstr "Prečítaj si podrobné pravidlá"
+
+msgid "View all"
+msgstr "Zobraz všetky"
+
+msgid "None"
+msgstr "Žiadne"
+
+msgid "No description"
+msgstr "Žiaden popis"
+
+msgid "By {0}"
+msgstr "Od {0}"
+
+msgid "Draft"
+msgstr "Koncept"
+
+msgid "Respond"
+msgstr "Odpovedz"
+
+msgid "Delete this comment"
+msgstr "Vymaž tento komentár"
+
+msgid "I'm from this instance"
+msgstr "Som z tejto instancie"
+
+msgid "I'm from another instance"
+msgstr "Som z inej instancie"
+
+# src/template_utils.rs:225
+msgid "Example: user@plu.me"
+msgstr "Príklad: user@plu.me"
+
+msgid "Continue to your instance"
+msgstr "Pokračuj na tvoju instanciu"
+
+#~ msgid "Delete this article"
+#~ msgstr "Vymaž tento článok"

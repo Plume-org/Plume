@@ -7,33 +7,40 @@
 @if let Some(ref comm) = Some(&comment_tree.comment) {
 @if let Ok(author) = comm.get_author(ctx.0) {
 <div class="comment u-comment h-cite" id="comment-@comm.id">
-    <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)">
-        @avatar(ctx.0, &author, Size::Small, true, ctx.1)
-        <span class="display-name p-name">@author.name()</span>
-        <small>@author.fqn</small>
-	    </a>
-    @if let Some(ref ap_url) = comm.ap_url {
-        <a class="u-url" href="@ap_url"></a>
-    }
-    @if let Some(ref in_reply_to) = in_reply_to {
-        <a class="u-in-reply-to" href="@in_reply_to"></a>
-    }
-    <div class="text p-content">
-        @if comm.sensitive {
-            <details>
-                <summary>@comm.spoiler_text</summary>
+    <main class="content">
+        <header>
+            <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)">
+                @avatar(ctx.0, &author, Size::Small, true, ctx.1)
+                <span class="display-name p-name">@author.name()</span>
+                <small>@author.fqn</small>
+    	    </a>
+            <p class="dt-published" datetime="@comm.creation_date.format("%F %T")">
+                @if let Some(ref ap_url) = comm.ap_url {
+                    <a class="u-url" href="@ap_url">@comm.creation_date.format("%B %e, %Y %H:%M")</a>
+                }
+            </p>
+
+            @if let Some(ref in_reply_to) = in_reply_to {
+                <a class="u-in-reply-to hidden" href="@in_reply_to"></a>
+            }
+        </header>
+        <div class="text p-content">
+            @if comm.sensitive {
+                <details>
+                    <summary>@comm.spoiler_text</summary>
+            }
+            @Html(&comm.content)
+            @if comm.sensitive {
+                </details>
+            }
+        </div>
+        <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
+        @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
+            <form class="inline icon icon-trash" method="post" action="@uri!(comments::delete: blog = blog, slug = slug, id = comm.id)">
+                <input onclick="return confirm('@i18n!(ctx.1, "Are you sure?")')" type="submit" value="@i18n!(ctx.1, "Delete this comment")">
+    	    </form>
         }
-        @Html(&comm.content)
-        @if comm.sensitive {
-            </details>
-        }
-    </div>
-    <a class="button icon icon-message-circle" href="?responding_to=@comm.id">@i18n!(ctx.1, "Respond")</a>
-    @if ctx.2.clone().map(|u| u.id == author.id).unwrap_or(false) {
-        <form class="inline icon icon-trash" method="post" action="@uri!(comments::delete: blog = blog, slug = slug, id = comm.id)">
-            <input onclick="return confirm('@i18n!(ctx.1, "Are you sure?")')" type="submit" value="@i18n!(ctx.1, "Delete this comment")">
-	    </form>
-    }
+    </main>
     @for res in &comment_tree.responses {
         @:comment(ctx, res, comm.ap_url.as_ref().map(|u| &**u), blog, slug)
     }

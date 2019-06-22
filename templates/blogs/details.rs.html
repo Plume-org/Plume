@@ -13,7 +13,7 @@
 	<meta content="120" property="og:image:width" />
 	<meta content="120" property="og:image:height" />
 	<meta content="summary" property="twitter:card" />
-	<meta content="'@Instance::get_local(ctx.0).unwrap().name" property="og:site_name" />
+	<meta content="'@Instance::get_local().unwrap().name" property="og:site_name" />
 	<meta content="@blog.ap_url" property="og:url" />
 	<meta content="@blog.fqn" property="profile:username" />
 	<meta content="@blog.title" property="og:title" />
@@ -21,7 +21,7 @@
 	<meta content="@blog.summary_html" property="og:description" />
 	<meta content="@blog.icon_url(ctx.0)" property="og:image" />
 
-	<link href='@Instance::get_local(ctx.0).unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
+	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
 }, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
@@ -55,7 +55,7 @@
                     <a href="@uri!(blogs::edit: name = &blog.fqn)" class="button">@i18n!(ctx.1, "Edit")</a>
                 }
             </div>
-            
+
             <main class="user-summary">
                 <p>
                     @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
@@ -74,7 +74,7 @@
         @if posts.is_empty() {
             <p>@i18n!(ctx.1, "No posts to see here yet.")</p>
         }
-        <div class="cards spaced">
+        <div class="cards">
             @for article in posts {
                 @:post_card(ctx, article)
             }

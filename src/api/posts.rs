@@ -114,10 +114,10 @@ pub fn create(
         NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok()
     });
 
-    let domain = &Instance::get_local(conn)?.public_domain;
+    let domain = &Instance::get_local()?.public_domain;
     let (content, mentions, hashtags) = md_to_html(
         &payload.source,
-        domain,
+        Some(domain),
         false,
         Some(Media::get_media_processor(conn, vec![&author])),
     );
@@ -144,7 +144,7 @@ pub fn create(
             content: SafeString::new(content.as_ref()),
             published: payload.published.unwrap_or(true),
             license: payload.license.clone().unwrap_or_else(|| {
-                Instance::get_local(conn)
+                Instance::get_local()
                     .map(|i| i.default_license)
                     .unwrap_or_else(|_| String::from("CC-BY-SA"))
             }),

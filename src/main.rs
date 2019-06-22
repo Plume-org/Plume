@@ -41,10 +41,11 @@ extern crate webfinger;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
+    instance::Instance,
+    migrations::IMPORTED_MIGRATIONS,
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket::State;
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
@@ -61,6 +62,8 @@ mod mail;
 #[macro_use]
 mod template_utils;
 mod routes;
+#[macro_use]
+extern crate shrinkwraprs;
 #[cfg(feature = "test")]
 mod test_routes;
 
@@ -68,21 +71,37 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 compile_i18n!();
 
-type Searcher<'a> = State<'a, Arc<UnmanagedSearcher>>;
-
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
     dotenv::dotenv().ok();
 
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
-    DbPool::builder()
+    let pool = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
         .build(manager)
-        .ok()
+        .ok()?;
+    Instance::cache_local(&pool.get().unwrap());
+    Some(pool)
 }
 
 fn main() {
     let dbpool = init_pool().expect("main: database pool initialization error");
+    if IMPORTED_MIGRATIONS
+        .is_pending(&dbpool.get().unwrap())
+        .unwrap_or(true)
+    {
+        panic!(
+            r#"
+It appear your database migration does not run the migration required
+by this version of Plume. To fix this, you can run migrations via
+this command:
+
+    plm migration run
+
+Then try to restart Plume.
+"#
+        )
+    }
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     #[allow(clippy::match_wild_err_arm)]
@@ -168,6 +187,7 @@ Then try to restart Plume
                 routes::instance::interact,
                 routes::instance::nodeinfo,
                 routes::instance::about,
+                routes::instance::privacy,
                 routes::instance::web_manifest,
                 routes::likes::create,
                 routes::likes::create_auth,
