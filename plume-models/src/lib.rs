@@ -299,8 +299,6 @@ pub fn ap_url(url: &str) -> String {
 mod tests {
     use db_conn;
     use diesel::r2d2::ConnectionManager;
-    #[cfg(feature = "sqlite")]
-    use diesel::{dsl::sql_query, RunQueryDsl};
     use migrations::IMPORTED_MIGRATIONS;
     use plume_common::utils::random_hex;
     use scheduled_thread_pool::ScheduledThreadPool;

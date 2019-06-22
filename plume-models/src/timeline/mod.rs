@@ -207,6 +207,7 @@ mod tests {
     use super::*;
     use blogs::tests as blogTests;
     use diesel::Connection;
+    use follows::*;
     use lists::ListType;
     use post_authors::{NewPostAuthor, PostAuthor};
     use posts::NewPost;
@@ -394,6 +395,73 @@ mod tests {
             )
             .unwrap();
             assert!(!gnu_tl.matches(r, &non_free_post, Kind::Original).unwrap());
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_complex_match() {
+        let r = &rockets();
+        let conn = &r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (users, blogs) = blogTests::fill_database(conn);
+            Follow::insert(conn, NewFollow {
+                follower_id: users[0].id,
+                following_id: users[1].id,
+                ap_url: String::new(),
+            }).unwrap();
+
+            let fav_blogs_list = List::new(conn, "fav_blogs", Some(&users[0]), ListType::Blog).unwrap();
+            fav_blogs_list.add_blogs(conn, &[ blogs[0].id ]).unwrap();
+
+            let my_tl = Timeline::new_for_user(
+                conn,
+                users[0].id,
+                "My timeline".to_owned(),
+                "blog in fav_blogs and not has_cover or local and followed exclude likes".to_owned(),
+            )
+            .unwrap();
+
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "about-linux".to_string(),
+                    title: "About Linux".to_string(),
+                    content: SafeString::new("you must say GNU/Linux, not Linux!!!"),
+                    published: true,
+                    license: "GPL".to_string(),
+                    source: "you must say GNU/Linux, not Linux!!!".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            assert!(my_tl.matches(r, &post, Kind::Original).unwrap()); // matches because of "blog in fav_blogs" (and there is no cover)
+
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blogs[1].id,
+                    slug: "about-linux-2".to_string(),
+                    title: "About Linux (2)".to_string(),
+                    content: SafeString::new("Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better."),
+                    published: true,
+                    license: "GPL".to_string(),
+                    source: "Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better.".to_string(),
+                    ap_url: "".to_string(),
+                    creation_date: None,
+                    subtitle: "".to_string(),
+                    cover_id: None,
+                },
+                &r.searcher,
+            )
+            .unwrap();
+            assert!(!my_tl.matches(r, &post, Kind::Like(&users[1])).unwrap());
 
             Ok(())
         });

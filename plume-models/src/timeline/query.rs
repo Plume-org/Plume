@@ -165,7 +165,7 @@ impl<'a> TQ<'a> {
         kind: Kind,
     ) -> Result<bool> {
         match self {
-            TQ::Or(inner) => inner.iter().try_fold(true, |s, e| {
+            TQ::Or(inner) => inner.iter().try_fold(false, |s, e| {
                 e.matches(rocket, timeline, post, kind).map(|r| s || r)
             }),
             TQ::And(inner) => inner.iter().try_fold(true, |s, e| {
