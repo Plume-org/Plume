@@ -406,20 +406,26 @@ mod tests {
         let conn = &r.conn;
         conn.test_transaction::<_, (), _>(|| {
             let (users, blogs) = blogTests::fill_database(conn);
-            Follow::insert(conn, NewFollow {
-                follower_id: users[0].id,
-                following_id: users[1].id,
-                ap_url: String::new(),
-            }).unwrap();
+            Follow::insert(
+                conn,
+                NewFollow {
+                    follower_id: users[0].id,
+                    following_id: users[1].id,
+                    ap_url: String::new(),
+                },
+            )
+            .unwrap();
 
-            let fav_blogs_list = List::new(conn, "fav_blogs", Some(&users[0]), ListType::Blog).unwrap();
-            fav_blogs_list.add_blogs(conn, &[ blogs[0].id ]).unwrap();
+            let fav_blogs_list =
+                List::new(conn, "fav_blogs", Some(&users[0]), ListType::Blog).unwrap();
+            fav_blogs_list.add_blogs(conn, &[blogs[0].id]).unwrap();
 
             let my_tl = Timeline::new_for_user(
                 conn,
                 users[0].id,
                 "My timeline".to_owned(),
-                "blog in fav_blogs and not has_cover or local and followed exclude likes".to_owned(),
+                "blog in fav_blogs and not has_cover or local and followed exclude likes"
+                    .to_owned(),
             )
             .unwrap();
 
@@ -449,10 +455,13 @@ mod tests {
                     blog_id: blogs[1].id,
                     slug: "about-linux-2".to_string(),
                     title: "About Linux (2)".to_string(),
-                    content: SafeString::new("Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better."),
+                    content: SafeString::new(
+                        "Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better.",
+                    ),
                     published: true,
                     license: "GPL".to_string(),
-                    source: "Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better.".to_string(),
+                    source: "Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better."
+                        .to_string(),
                     ap_url: "".to_string(),
                     creation_date: None,
                     subtitle: "".to_string(),

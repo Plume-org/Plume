@@ -1,32 +1,37 @@
+#![allow(dead_code)]
+
+use crate::{routes::errors::ErrorPage, template_utils::Ructe};
 use plume_models::PlumeRocket;
-use crate::{template_utils::Ructe, routes::errors::ErrorPage};
+use rocket::response::Redirect;
 
-#[get("/timeline/<id>")]
-pub fn details(id: i32, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+// TODO
 
+#[get("/timeline/<_id>")]
+pub fn details(_id: i32, _rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    unimplemented!()
 }
 
 #[get("/timeline/new")]
 pub fn new() -> Result<Ructe, ErrorPage> {
-
+    unimplemented!()
 }
 
 #[post("/timeline/new")]
 pub fn create() -> Result<Redirect, Ructe> {
-
+    unimplemented!()
 }
 
-#[get("/timeline/<id>/edit")]
-pub fn edit() -> Result<Ructe, ErrorPage> {
-
+#[get("/timeline/<_id>/edit")]
+pub fn edit(_id: i32) -> Result<Ructe, ErrorPage> {
+    unimplemented!()
 }
 
-#[post("/timeline/<id>/edit")]
-pub fn update() -> Result<Redirect, Ructe> {
-
+#[post("/timeline/<_id>/edit")]
+pub fn update(_id: i32) -> Result<Redirect, Ructe> {
+    unimplemented!()
 }
 
-#[post("/timeline/<id>/delete")]
-pub fn delete() -> Result<Redirect, ErrorPage> {
-
+#[post("/timeline/<_id>/delete")]
+pub fn delete(_id: i32) -> Result<Redirect, ErrorPage> {
+    unimplemented!()
 }

@@ -1,13 +1,14 @@
 @use plume_models::timeline::Timeline;
-@use templates_utils::*;
+@use template_utils::*;
 @use templates::base;
+@use routes::timelines;
 
 @(ctx: BaseContext, tl: Timeline)
 
-@:base(ctx, tl.name, {}, {}, {
+@:base(ctx, tl.name.clone(), {}, {}, {
 	<section class="flex wrap">
 		<h1>@tl.name</h1>
-		<a href="@uri!(user::edit: name = &user.username)" class="button inline-block">@i18n!(ctx.1, "Edit")</a>
+		<a href="@uri!(timelines::edit: _id = tl.id)" class="button inline-block">@i18n!(ctx.1, "Edit")</a>
 	</section>
 
 	<p>@i18n!(ctx.1, "Query")</p>
