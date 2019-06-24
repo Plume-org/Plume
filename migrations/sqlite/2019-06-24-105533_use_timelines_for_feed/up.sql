@@ -2,17 +2,18 @@
 --#!|conn: &Connection, path: &Path| {
 --#!	let mut i = 0;
 --#!	loop {
---#!		let users = super::users::User::get_local_page(conn, (i * 20, (i + 1) * 20)).unwrap();
+--#!		if let Ok(users) = super::users::User::get_local_page(conn, (i * 20, (i + 1) * 20)) {
+--#!			if users.is_empty() {
+--#!				break;
+--#!			}
 --#!
---#!		if users.is_empty() {
+--#!			for u in users {
+--#!				super::timeline::Timeline::new_for_user(conn, u.id, "Your feed".into(), format!("followed or author in [ {} ]", u.fqn)).expect("User feed creation error");
+--#!			}
+--#!			i += 1;
+--#!		} else {
 --#!			break;
 --#!		}
---#!
---#!		for u in users {
---#!			super::timeline::Timeline::new_for_user(conn, u.id, "Your feed".into(), format!("followed or author in [ {} ]", u.fqn)).unwrap();
---#!		}
---#!		i += 1;
---#!
 --#!	}
 --#!
 --#!	super::timeline::Timeline::new_for_instance(conn, "Local feed".into(), "local".into()).expect("Local feed creation error");

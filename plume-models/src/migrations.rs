@@ -77,10 +77,11 @@ impl ImportedMigrations {
 
         let latest_migration = conn.latest_run_migration_version()?;
         let latest_id = if let Some(migration) = latest_migration {
+            println!("{:?}", migration);
             self.0
                 .binary_search_by_key(&migration.as_str(), |mig| mig.name)
                 .map(|id| id + 1)
-                .map_err(|_| Error::NotFound)?
+                .map_err(|e| { println!("{:?}", e); Error::NotFound })?
         } else {
             0
         };
