@@ -50,6 +50,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
+use timeline::Timeline;
 use {ap_url, Connection, Error, PlumeRocket, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
@@ -927,7 +928,7 @@ impl NewUser {
         password: String,
     ) -> Result<User> {
         let (pub_key, priv_key) = gen_keypair();
-        User::insert(
+        let res = User::insert(
             conn,
             NewUser {
                 username,
@@ -943,7 +944,12 @@ impl NewUser {
                 private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
                 ..NewUser::default()
             },
-        )
+        )?;
+
+        // create default timeline
+        Timeline::new_for_user(conn, res.id, "My feed".into(), "followed".into())?;
+
+        Ok(res)
     }
 }
 

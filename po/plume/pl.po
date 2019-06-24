@@ -38,9 +38,26 @@ msgstr "{0} wspomniał(a) o Tobie."
 msgid "{0} boosted your article."
 msgstr "{0} podbił(a) Twój artykuł."
 
+msgid "Your feed"
+msgstr "Twój strumień"
+
+msgid "Local feed"
+msgstr "Lokalna"
+
+msgid "Federated feed"
+msgstr "Strumień federacji"
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "Awatar {0}"
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
@@ -303,14 +320,8 @@ msgstr "Witamy na {}"
 msgid "Latest articles"
 msgstr "Najnowsze artykuły"
 
-msgid "Your feed"
-msgstr "Twój strumień"
-
-msgid "Federated feed"
-msgstr "Strumień federacji"
-
-msgid "Local feed"
-msgstr "Lokalna"
+msgid "View all"
+msgstr "Zobacz wszystko"
 
 msgid "Administration of {0}"
 msgstr "Administracja {0}"
@@ -332,15 +343,6 @@ msgstr "Zablikuj"
 
 msgid "Ban"
 msgstr "Zbanuj"
-
-msgid "All the articles of the Fediverse"
-msgstr "Wszystkie artykuły w Fediwersum"
-
-msgid "Articles from {}"
-msgstr "Artykuły z {}"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "Nic tu nie jeszcze do zobaczenia. Spróbuj subskrybować więcej osób."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -576,9 +578,6 @@ msgstr "Brak"
 
 msgid "No description"
 msgstr "Brak opisu"
-
-msgid "View all"
-msgstr "Zobacz wszystko"
 
 msgid "By {0}"
 msgstr "Od {0}"
@@ -951,13 +950,9 @@ msgstr[3] ""
 msgid "No posts to see here yet."
 msgstr "Brak wpisów do wyświetlenia."
 
-msgid "Query"
-msgstr ""
-
-# src/template_utils.rs:305
 #, fuzzy
-msgid "Articles in this timeline"
-msgstr "Napisany w tym języku"
+msgid "Nothing to see here yet."
+msgstr "Brak wpisów do wyświetlenia."
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artykuły oznaczone „{0}”"
@@ -1021,6 +1016,24 @@ msgstr "Skopiuj do swoich artykułów, aby wstawić tę zawartość multimedialn
 
 msgid "Use as an avatar"
 msgstr "Użyj jako awataru"
+
+#, fuzzy
+#~ msgid "My feed"
+#~ msgstr "Twój strumień"
+
+#~ msgid "All the articles of the Fediverse"
+#~ msgstr "Wszystkie artykuły w Fediwersum"
+
+#~ msgid "Articles from {}"
+#~ msgstr "Artykuły z {}"
+
+#~ msgid "Nothing to see here yet. Try subscribing to more people."
+#~ msgstr "Nic tu nie jeszcze do zobaczenia. Spróbuj subskrybować więcej osób."
+
+# src/template_utils.rs:305
+#, fuzzy
+#~ msgid "Articles in this timeline"
+#~ msgstr "Napisany w tym języku"
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

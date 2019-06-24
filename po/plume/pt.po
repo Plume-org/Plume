@@ -36,9 +36,26 @@ msgstr "{0} mencionou você."
 msgid "{0} boosted your article."
 msgstr "{0} impulsionou o seu artigo."
 
+msgid "Your feed"
+msgstr "Seu feed"
+
+msgid "Local feed"
+msgstr "Feed local"
+
+msgid "Federated feed"
+msgstr "Feed federado"
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "Avatar do {0}"
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
@@ -303,14 +320,8 @@ msgstr "Bem-vindo a {}"
 msgid "Latest articles"
 msgstr "Artigos recentes"
 
-msgid "Your feed"
-msgstr "Seu feed"
-
-msgid "Federated feed"
-msgstr "Feed federado"
-
-msgid "Local feed"
-msgstr "Feed local"
+msgid "View all"
+msgstr "Ver tudo"
 
 msgid "Administration of {0}"
 msgstr "Administração de {0}"
@@ -332,15 +343,6 @@ msgstr "Bloquear"
 
 msgid "Ban"
 msgstr "Expulsar"
-
-msgid "All the articles of the Fediverse"
-msgstr "Todos os artigos do Fediverse"
-
-msgid "Articles from {}"
-msgstr "Artigos de {}"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "Nada para ver aqui ainda. Tente assinar mais pessoas."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -576,9 +578,6 @@ msgstr "Nenhum"
 
 msgid "No description"
 msgstr "Sem descrição"
-
-msgid "View all"
-msgstr "Ver tudo"
 
 msgid "By {0}"
 msgstr "Por {0}"
@@ -936,11 +935,9 @@ msgstr[1] ""
 msgid "No posts to see here yet."
 msgstr "Ainda não há posts para ver."
 
-msgid "Query"
-msgstr ""
-
-msgid "Articles in this timeline"
-msgstr ""
+#, fuzzy
+msgid "Nothing to see here yet."
+msgstr "Ainda não há posts para ver."
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artigos marcados com \"{0}\""
@@ -1004,6 +1001,19 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "My feed"
+#~ msgstr "Seu feed"
+
+#~ msgid "All the articles of the Fediverse"
+#~ msgstr "Todos os artigos do Fediverse"
+
+#~ msgid "Articles from {}"
+#~ msgstr "Artigos de {}"
+
+#~ msgid "Nothing to see here yet. Try subscribing to more people."
+#~ msgstr "Nada para ver aqui ainda. Tente assinar mais pessoas."
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

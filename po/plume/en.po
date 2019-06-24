@@ -36,8 +36,26 @@ msgstr ""
 msgid "{0} boosted your article."
 msgstr ""
 
+# src/template_utils.rs:113
+msgid "Your feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Federated feed"
+msgstr ""
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
+msgstr ""
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
 msgstr ""
 
 # src/routes/blogs.rs:70
@@ -296,13 +314,7 @@ msgstr ""
 msgid "Latest articles"
 msgstr ""
 
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
+msgid "View all"
 msgstr ""
 
 msgid "Administration of {0}"
@@ -324,15 +336,6 @@ msgid "Block"
 msgstr ""
 
 msgid "Ban"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:217
@@ -558,9 +561,6 @@ msgid "None"
 msgstr ""
 
 msgid "No description"
-msgstr ""
-
-msgid "View all"
 msgstr ""
 
 msgid "By {0}"
@@ -911,10 +911,7 @@ msgstr[1] ""
 msgid "No posts to see here yet."
 msgstr ""
 
-msgid "Query"
-msgstr ""
-
-msgid "Articles in this timeline"
+msgid "Nothing to see here yet."
 msgstr ""
 
 msgid "Articles tagged \"{0}\""

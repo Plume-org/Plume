@@ -36,9 +36,26 @@ msgstr "{0} hat dich erwähnt."
 msgid "{0} boosted your article."
 msgstr "{0} hat deinen Artikel geboosted."
 
+msgid "Your feed"
+msgstr "Dein Feed"
+
+msgid "Local feed"
+msgstr "Lokaler Feed"
+
+msgid "Federated feed"
+msgstr "Föderierter Feed"
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "{0}'s Profilbild"
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
@@ -301,14 +318,8 @@ msgstr "Willkommen bei {}"
 msgid "Latest articles"
 msgstr "Neueste Artikel"
 
-msgid "Your feed"
-msgstr "Dein Feed"
-
-msgid "Federated feed"
-msgstr "Föderierter Feed"
-
-msgid "Local feed"
-msgstr "Lokaler Feed"
+msgid "View all"
+msgstr "Alles anzeigen"
 
 msgid "Administration of {0}"
 msgstr "Administration von {0}"
@@ -330,15 +341,6 @@ msgstr "Blockieren"
 
 msgid "Ban"
 msgstr "Verbieten"
-
-msgid "All the articles of the Fediverse"
-msgstr "Alle Artikel im Fediverse"
-
-msgid "Articles from {}"
-msgstr "Artikel von {}"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "Hier ist noch nichts. Versuche mehr Leute zu abonnieren."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -576,9 +578,6 @@ msgstr "Keine"
 
 msgid "No description"
 msgstr "Keine Beschreibung"
-
-msgid "View all"
-msgstr "Alles anzeigen"
 
 msgid "By {0}"
 msgstr "Von {0}"
@@ -946,13 +945,9 @@ msgstr[1] "Es gibt {0} Autorren auf diesem Blog: "
 msgid "No posts to see here yet."
 msgstr "Bisher keine Artikel vorhanden."
 
-msgid "Query"
-msgstr ""
-
-# src/template_utils.rs:305
 #, fuzzy
-msgid "Articles in this timeline"
-msgstr "In dieser Sprache verfasst"
+msgid "Nothing to see here yet."
+msgstr "Bisher keine Artikel vorhanden."
 
 msgid "Articles tagged \"{0}\""
 msgstr "Artikel, die mit \"{0}\" getaggt sind"
@@ -1016,6 +1011,24 @@ msgstr "Kopiere das in deine Artikel, um dieses Medium einzufügen:"
 
 msgid "Use as an avatar"
 msgstr "Als Profilbild nutzen"
+
+#, fuzzy
+#~ msgid "My feed"
+#~ msgstr "Dein Feed"
+
+#~ msgid "All the articles of the Fediverse"
+#~ msgstr "Alle Artikel im Fediverse"
+
+#~ msgid "Articles from {}"
+#~ msgstr "Artikel von {}"
+
+#~ msgid "Nothing to see here yet. Try subscribing to more people."
+#~ msgstr "Hier ist noch nichts. Versuche mehr Leute zu abonnieren."
+
+# src/template_utils.rs:305
+#, fuzzy
+#~ msgid "Articles in this timeline"
+#~ msgstr "In dieser Sprache verfasst"
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

@@ -2,34 +2,40 @@
 @use template_utils::*;
 @use plume_models::instance::Instance;
 @use plume_models::posts::Post;
+@use plume_models::timeline::Timeline;
 @use routes::*;
 
-@(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, local: Vec<Post>, federated: Vec<Post>, user_feed: Option<Vec<Post>>)
+@(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, all_tl: Vec<(Timeline, Vec<Post>)>)
 
 @:base(ctx, instance.name.clone(), {}, {}, {
   <h1>@i18n!(ctx.1, "Welcome to {}"; instance.name.as_str())</h1>
 
-     @if ctx.2.is_some() {
-        @tabs(&[
-            (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), true),
-            (&uri!(instance::feed: _).to_string(), i18n!(ctx.1, "Your feed"), false),
-            (&uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"), false),
-            (&uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"), false),
-        ])
+    @tabs(&vec![(format!("{}", uri!(instance::index)), i18n!(ctx.1, "Latest articles"), true)]
+        .into_iter().chain(all_tl.clone()
+            .into_iter()
+            .map(|(tl, _)| {
+                let url = format!("{}", uri!(timelines::details: id = tl.id, page = _));
+                (url, i18n_timeline_name(ctx.1, &tl.name), false)
+            })
+        ).collect::<Vec<_>>()
+    )
 
-        @:home_feed(ctx, user_feed.unwrap_or_default(), &uri!(instance::feed: _).to_string(), i18n!(ctx.1, "Your feed"))
-        @:home_feed(ctx, federated, &uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"))
-        @:home_feed(ctx, local, &uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"))
-        @:instance_description(ctx, instance, n_users, n_articles)
-    } else {
-        @tabs(&[
-            (&uri!(instance::index).to_string(), i18n!(ctx.1, "Latest articles"), true),
-            (&uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"), false),
-            (&uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"), false),
-        ])
-
-        @:home_feed(ctx, federated, &uri!(instance::federated: _).to_string(), i18n!(ctx.1, "Federated feed"))
-        @:home_feed(ctx, local, &uri!(instance::local: _).to_string(), i18n!(ctx.1, "Local feed"))
-        @:instance_description(ctx, instance, n_users, n_articles)
+    @for (tl, articles) in all_tl {
+        @if !articles.is_empty() {
+            <div class="h-feed">
+                <h2>
+                    <span class="p-name">@i18n_timeline_name(ctx.1, &tl.name)</span>
+                    &mdash;
+                    <a href="@uri!(timelines::details: id = tl.id, page = _)">@i18n!(ctx.1, "View all")</a>
+                </h2>
+                <div class="cards">
+                    @for article in articles {
+                        @:post_card(ctx, article)
+                    }
+                </div>
+            </div>
+        }
     }
+
+    @:instance_description(ctx, instance, n_users, n_articles)
 })

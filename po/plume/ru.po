@@ -38,8 +38,26 @@ msgstr "{0} упомянул вас."
 msgid "{0} boosted your article."
 msgstr ""
 
+#, fuzzy
+msgid "Your feed"
+msgstr "Ваши медиафайлы"
+
+msgid "Local feed"
+msgstr "Локальная лента"
+
+msgid "Federated feed"
+msgstr ""
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
+msgstr ""
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
 msgstr ""
 
 # src/routes/blogs.rs:70
@@ -298,14 +316,8 @@ msgstr ""
 msgid "Latest articles"
 msgstr ""
 
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr "Локальная лента"
+msgid "View all"
+msgstr "Показать все"
 
 msgid "Administration of {0}"
 msgstr ""
@@ -326,15 +338,6 @@ msgid "Block"
 msgstr "Заблокировать"
 
 msgid "Ban"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:217
@@ -563,9 +566,6 @@ msgstr "Нет"
 
 msgid "No description"
 msgstr ""
-
-msgid "View all"
-msgstr "Показать все"
 
 msgid "By {0}"
 msgstr ""
@@ -928,11 +928,9 @@ msgstr[3] ""
 msgid "No posts to see here yet."
 msgstr "Здесь пока нет постов."
 
-msgid "Query"
-msgstr ""
-
-msgid "Articles in this timeline"
-msgstr ""
+#, fuzzy
+msgid "Nothing to see here yet."
+msgstr "Здесь пока нет постов."
 
 msgid "Articles tagged \"{0}\""
 msgstr ""

@@ -36,8 +36,26 @@ msgstr "{0} us ha esmentat."
 msgid "{0} boosted your article."
 msgstr ""
 
+#, fuzzy
+msgid "Your feed"
+msgstr "El vostre perfil"
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Federated feed"
+msgstr ""
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
+msgstr ""
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
 msgstr ""
 
 # src/routes/blogs.rs:70
@@ -296,14 +314,8 @@ msgstr "Us donem la benvinguda a {}"
 msgid "Latest articles"
 msgstr "Darrers articles"
 
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr ""
+msgid "View all"
+msgstr "Mostra-ho tot"
 
 msgid "Administration of {0}"
 msgstr ""
@@ -324,15 +336,6 @@ msgid "Block"
 msgstr "Bloca"
 
 msgid "Ban"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:217
@@ -559,9 +562,6 @@ msgstr "Cap"
 
 msgid "No description"
 msgstr "Cap descripció"
-
-msgid "View all"
-msgstr "Mostra-ho tot"
 
 msgid "By {0}"
 msgstr "Per {0}"
@@ -916,13 +916,9 @@ msgstr[1] "Hi ha {0} autors en aquest blog: "
 msgid "No posts to see here yet."
 msgstr "Encara no hi ha cap apunt."
 
-msgid "Query"
-msgstr ""
-
-# src/template_utils.rs:305
 #, fuzzy
-msgid "Articles in this timeline"
-msgstr "Escrit en aquesta llengua"
+msgid "Nothing to see here yet."
+msgstr "Encara no hi ha cap apunt."
 
 msgid "Articles tagged \"{0}\""
 msgstr "Articles amb l’etiqueta «{0}»"
@@ -985,6 +981,11 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+# src/template_utils.rs:305
+#, fuzzy
+#~ msgid "Articles in this timeline"
+#~ msgstr "Escrit en aquesta llengua"
 
 #~ msgid "Delete this article"
 #~ msgstr "Suprimeix aquest article"

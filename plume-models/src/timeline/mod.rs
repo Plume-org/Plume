@@ -1,4 +1,4 @@
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lists::List;
 use posts::Post;
@@ -8,7 +8,9 @@ use {Connection, Error, PlumeRocket, Result};
 
 pub(crate) mod query;
 
-use self::query::{Kind, QueryError, TimelineQuery};
+use self::query::{QueryError, TimelineQuery};
+
+pub use self::query::Kind;
 
 #[derive(Clone, Debug, PartialEq, Queryable, Identifiable, AsChangeset)]
 #[table_name = "timeline_definition"]
@@ -58,6 +60,21 @@ impl Timeline {
         if let Some(user_id) = user_id {
             timeline_definition::table
                 .filter(timeline_definition::user_id.eq(user_id))
+                .load::<Self>(conn)
+                .map_err(Error::from)
+        } else {
+            timeline_definition::table
+                .filter(timeline_definition::user_id.is_null())
+                .load::<Self>(conn)
+                .map_err(Error::from)
+        }
+    }
+
+    /// Same as `list_for_user`, but also includes instance timelines if `user_id` is `Some`.
+    pub fn list_all_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
+        if let Some(user_id) = user_id {
+            timeline_definition::table
+                .filter(timeline_definition::user_id.eq(user_id).or(timeline_definition::user_id.is_null()))
                 .load::<Self>(conn)
                 .map_err(Error::from)
         } else {
@@ -170,6 +187,15 @@ impl Timeline {
             .limit((max - min).into())
             .select(posts::all_columns)
             .load::<Post>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn count_posts(&self, conn: &Connection) -> Result<i64> {
+        timeline::table
+            .filter(timeline::timeline_id.eq(self.id))
+            .inner_join(posts::table)
+            .count()
+            .get_result(conn)
             .map_err(Error::from)
     }
 

@@ -36,9 +36,26 @@ msgstr "{0} vás zmínil/a."
 msgid "{0} boosted your article."
 msgstr "{0} povýšil/a váš článek."
 
+msgid "Your feed"
+msgstr "Vaše zdroje"
+
+msgid "Local feed"
+msgstr "Místni zdroje"
+
+msgid "Federated feed"
+msgstr "Federované zdroje"
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "Avatar uživatele {0}"
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
@@ -303,14 +320,8 @@ msgstr "Vítejte na {}"
 msgid "Latest articles"
 msgstr "Nejposlednejší články"
 
-msgid "Your feed"
-msgstr "Vaše zdroje"
-
-msgid "Federated feed"
-msgstr "Federované zdroje"
-
-msgid "Local feed"
-msgstr "Místni zdroje"
+msgid "View all"
+msgstr "Zobrazit všechny"
 
 msgid "Administration of {0}"
 msgstr "Správa {0}"
@@ -332,15 +343,6 @@ msgstr "Blokovat"
 
 msgid "Ban"
 msgstr "Zakázat"
-
-msgid "All the articles of the Fediverse"
-msgstr "Všechny články Fediversa"
-
-msgid "Articles from {}"
-msgstr "Články z {}"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "Ještě tu nic není k vidění. Zkuste odebírat obsah od více lidí."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -578,9 +580,6 @@ msgstr "Žádné"
 
 msgid "No description"
 msgstr "Bez popisu"
-
-msgid "View all"
-msgstr "Zobrazit všechny"
 
 msgid "By {0}"
 msgstr "Od {0}"
@@ -953,13 +952,9 @@ msgstr[3] "Tento blog má {0} autorů: "
 msgid "No posts to see here yet."
 msgstr "Ještě zde nejsou k vidění žádné příspěvky."
 
-msgid "Query"
-msgstr ""
-
-# src/template_utils.rs:305
 #, fuzzy
-msgid "Articles in this timeline"
-msgstr "Napsané v tomto jazyce"
+msgid "Nothing to see here yet."
+msgstr "Ještě zde nejsou k vidění žádné příspěvky."
 
 msgid "Articles tagged \"{0}\""
 msgstr "Články pod štítkem \"{0}\""
@@ -1021,6 +1016,24 @@ msgstr "Pro vložení tohoto média zkopírujte tento kód do vašich článků:
 
 msgid "Use as an avatar"
 msgstr "Použít jak avatar"
+
+#, fuzzy
+#~ msgid "My feed"
+#~ msgstr "Vaše zdroje"
+
+#~ msgid "All the articles of the Fediverse"
+#~ msgstr "Všechny články Fediversa"
+
+#~ msgid "Articles from {}"
+#~ msgstr "Články z {}"
+
+#~ msgid "Nothing to see here yet. Try subscribing to more people."
+#~ msgstr "Ještě tu nic není k vidění. Zkuste odebírat obsah od více lidí."
+
+# src/template_utils.rs:305
+#, fuzzy
+#~ msgid "Articles in this timeline"
+#~ msgstr "Napsané v tomto jazyce"
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

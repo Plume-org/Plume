@@ -37,9 +37,26 @@ msgstr "أشار إليك {0}."
 msgid "{0} boosted your article."
 msgstr ""
 
+msgid "Your feed"
+msgstr "خيطك"
+
+msgid "Local feed"
+msgstr "الخيط المحلي"
+
+msgid "Federated feed"
+msgstr "الخيط الموحد"
+
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "الصورة الرمزية لـ {0}"
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
@@ -302,14 +319,8 @@ msgstr "مرحبا بكم في {0}"
 msgid "Latest articles"
 msgstr "آخر المقالات"
 
-msgid "Your feed"
-msgstr "خيطك"
-
-msgid "Federated feed"
-msgstr "الخيط الموحد"
-
-msgid "Local feed"
-msgstr "الخيط المحلي"
+msgid "View all"
+msgstr "عرضها كافة"
 
 msgid "Administration of {0}"
 msgstr "إدارة {0}"
@@ -331,15 +342,6 @@ msgstr "حظر"
 
 msgid "Ban"
 msgstr "اطرد"
-
-msgid "All the articles of the Fediverse"
-msgstr "كافة مقالات الفديفرس"
-
-msgid "Articles from {}"
-msgstr "مقالات صادرة مِن {}"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -567,9 +569,6 @@ msgstr "لا شيء"
 
 msgid "No description"
 msgstr "مِن دون وصف"
-
-msgid "View all"
-msgstr "عرضها كافة"
 
 msgid "By {0}"
 msgstr "مِن طرف {0}"
@@ -937,12 +936,9 @@ msgstr[5] ""
 msgid "No posts to see here yet."
 msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
 
-msgid "Query"
-msgstr ""
-
 #, fuzzy
-msgid "Articles in this timeline"
-msgstr "رخصة المقال"
+msgid "Nothing to see here yet."
+msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
 
 msgid "Articles tagged \"{0}\""
 msgstr "المقالات الموسومة بـ \"{0}\""
@@ -1006,6 +1002,20 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
+
+#, fuzzy
+#~ msgid "My feed"
+#~ msgstr "خيطك"
+
+#~ msgid "All the articles of the Fediverse"
+#~ msgstr "كافة مقالات الفديفرس"
+
+#~ msgid "Articles from {}"
+#~ msgstr "مقالات صادرة مِن {}"
+
+#, fuzzy
+#~ msgid "Articles in this timeline"
+#~ msgstr "رخصة المقال"
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

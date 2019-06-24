@@ -9,6 +9,7 @@ use plume_common::activity_pub::{
 };
 use posts::Post;
 use schema::reshares;
+use timeline::*;
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
@@ -124,6 +125,8 @@ impl AsObject<User, Announce, &PlumeRocket> for Post {
             },
         )?;
         reshare.notify(conn)?;
+
+        Timeline::add_to_all_timelines(c, &self, Kind::Original)?;
         Ok(reshare)
     }
 }

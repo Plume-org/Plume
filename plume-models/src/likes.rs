@@ -9,6 +9,7 @@ use plume_common::activity_pub::{
 };
 use posts::Post;
 use schema::likes;
+use timeline::*;
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
@@ -99,6 +100,8 @@ impl AsObject<User, activity::Like, &PlumeRocket> for Post {
             },
         )?;
         res.notify(&c.conn)?;
+
+        Timeline::add_to_all_timelines(c, &self, Kind::Original)?;
         Ok(res)
     }
 }
