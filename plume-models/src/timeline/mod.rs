@@ -74,7 +74,11 @@ impl Timeline {
     pub fn list_all_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
         if let Some(user_id) = user_id {
             timeline_definition::table
-                .filter(timeline_definition::user_id.eq(user_id).or(timeline_definition::user_id.is_null()))
+                .filter(
+                    timeline_definition::user_id
+                        .eq(user_id)
+                        .or(timeline_definition::user_id.is_null()),
+                )
                 .load::<Self>(conn)
                 .map_err(Error::from)
         } else {
