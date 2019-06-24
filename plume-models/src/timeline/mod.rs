@@ -292,7 +292,7 @@ mod tests {
             );
 
             let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
-            assert_eq!(2, tl_u1.len());
+            assert_eq!(3, tl_u1.len()); // it is not 2 because there is a "Your feed" tl created for each user automatically
             if tl1_u1.id == tl_u1[0].id {
                 assert_eq!(tl1_u1, tl_u1[0]);
                 assert_eq!(tl2_u1, tl_u1[1]);
@@ -309,7 +309,7 @@ mod tests {
             let new_tl1_u2 = tl1_u2.update(conn).unwrap();
 
             let tl_u2 = Timeline::list_for_user(conn, Some(users[1].id)).unwrap();
-            assert_eq!(1, tl_u2.len());
+            assert_eq!(2, tl_u2.len()); // same here
             assert_eq!(new_tl1_u2, tl_u2[0]);
 
             Ok(())

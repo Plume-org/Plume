@@ -81,7 +81,7 @@ impl ImportedMigrations {
             self.0
                 .binary_search_by_key(&migration.as_str(), |mig| mig.name)
                 .map(|id| id + 1)
-                .map_err(|e| { println!("{:?}", e); Error::NotFound })?
+                .map_err(|_| Error::NotFound)?
         } else {
             0
         };
