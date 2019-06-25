@@ -293,25 +293,23 @@ mod tests {
 
             let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();
             assert_eq!(3, tl_u1.len()); // it is not 2 because there is a "Your feed" tl created for each user automatically
-            assert!(tl_u1.iter().fold(false, |res, tl| {
-                res || *tl == tl1_u1
-            }));
-            assert!(tl_u1.iter().fold(false, |res, tl| {
-                res || *tl == tl2_u1
-            }));
+            assert!(tl_u1.iter().fold(false, |res, tl| { res || *tl == tl1_u1 }));
+            assert!(tl_u1.iter().fold(false, |res, tl| { res || *tl == tl2_u1 }));
 
             let tl_instance = Timeline::list_for_user(conn, None).unwrap();
-            assert_eq!(1, tl_instance.len());
-            assert_eq!(tl1_instance, tl_instance[0]);
+            assert_eq!(3, tl_instance.len()); // there are also the local and federated feed by default
+            assert!(tl_instance
+                .iter()
+                .fold(false, |res, tl| { res || *tl == tl1_instance }));
 
             tl1_u1.name = "My Super TL".to_owned();
             let new_tl1_u2 = tl1_u2.update(conn).unwrap();
 
             let tl_u2 = Timeline::list_for_user(conn, Some(users[1].id)).unwrap();
             assert_eq!(2, tl_u2.len()); // same here
-            assert!(tl_u2.iter().fold(false, |res, tl| {
-                res || *tl == new_tl1_u2
-            }));
+            assert!(tl_u2
+                .iter()
+                .fold(false, |res, tl| { res || *tl == new_tl1_u2 }));
 
             Ok(())
         });
