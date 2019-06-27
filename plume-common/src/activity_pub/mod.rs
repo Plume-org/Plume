@@ -151,11 +151,11 @@ where
                 )
                 .body(body)
                 .send()
-                .and_then(move |r| {
+                .and_then(|r| r.into_body().concat2())
+                .map(move |response| {
                     println!("Successfully sent activity to inbox ({})", inbox);
-                    r.into_body().concat2()
+                    println!("Response: \"{:?}\"\n", response)
                 })
-                .map(|response| println!("Response: \"{:?}\"\n\n", response))
                 .map_err(|e| println!("Error while sending to inbox ({:?})", e)),
         );
     }
