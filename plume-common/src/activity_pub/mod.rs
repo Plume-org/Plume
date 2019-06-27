@@ -1,6 +1,6 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use reqwest::ClientBuilder;
+use reqwest::r#async::ClientBuilder;
 use rocket::{
     http::Status,
     request::{FromRequest, Request},
@@ -8,6 +8,7 @@ use rocket::{
     Outcome,
 };
 use serde_json;
+use tokio::prelude::*;
 
 use self::sign::Signable;
 
@@ -129,38 +130,36 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
+    let mut rt = tokio::runtime::current_thread::Runtime::new()
+        .expect("Error while initializing tokio runtime for federation");
+    let client = ClientBuilder::new()
+        .connect_timeout(std::time::Duration::from_secs(5))
+        .build()
+        .expect("Can't build client");
     for inbox in boxes {
-        // TODO: run it in Sidekiq or something like that
         let body = signed.to_string();
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
-        let res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()
-            .and_then(|client| {
-                client
-                    .post(&inbox)
-                    .headers(headers.clone())
-                    .header(
-                        "Signature",
-                        request::signature(sender, &headers)
-                            .expect("activity_pub::broadcast: request signature error"),
-                    )
-                    .body(body)
-                    .send()
-            });
-        match res {
-            Ok(mut r) => {
-                println!("Successfully sent activity to inbox ({})", inbox);
-                if let Ok(response) = r.text() {
-                    println!("Response: \"{:?}\"\n\n", response)
-                } else {
-                    println!("Error while reading response")
-                }
-            }
-            Err(e) => println!("Error while sending to inbox ({:?})", e),
-        }
+        rt.spawn(
+            client
+                .post(&inbox)
+                .headers(headers.clone())
+                .header(
+                    "Signature",
+                    request::signature(sender, &headers)
+                        .expect("activity_pub::broadcast: request signature error"),
+                )
+                .body(body)
+                .send()
+                .and_then(|r| r.into_body().concat2())
+                .map(move |response| {
+                    println!("Successfully sent activity to inbox ({})", inbox);
+                    println!("Response: \"{:?}\"\n", response)
+                })
+                .map_err(|e| println!("Error while sending to inbox ({:?})", e)),
+        );
     }
+    rt.run().unwrap();
 }
 
 #[derive(Shrinkwrap, Clone, Serialize, Deserialize)]
