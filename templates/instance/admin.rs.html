@@ -1,4 +1,5 @@
 @use plume_models::instance::Instance;
+@use plume_models::blogs::REMOTE_THEMES as themes;
 @use validator::ValidationErrors;
 @use templates::base;
 @use template_utils::*;
@@ -36,20 +37,33 @@
   </form>
 
   <h2>@i18n!(ctx.1, "Custom themes")</h2>
-  <p>@i18n!(ctx.1, "You can upload a CSS file, and people will be able to choose this theme from their settings. If your theme is named 'main.css', it will become the default theme")</p>
-  <form method="post" enctype="multipart/form-data" action="@uri!(instance::upload_theme)">
-    <input type="file" id="theme" name="theme">
-    <input type="submit" value="@i18n!(ctx.1, "Upload")">
-  </form>
-  <h3>@i18n!(ctx.1, "Available themes")</h3>
-  <div class="list">
-        @for theme in Instance::list_themes() {
-            <div class="card flex compact">
-                <p class="grow">@theme</p>
-                <form class="inline" method="post" action="@uri!(instance::delete_theme: name = theme)">
-                    <input type="submit" value="@i18n!(ctx.1, "Delete")">
-                </form>
-            </div>
-        }
+  <p>@i18n!(ctx.1, "These themes are used on blogs from other instance. They may contain tracking code, so you need to review and approve them.")</p>
+  <p>@i18n!(ctx.1, "Once a theme is approved, people on your instance will be able to use it on their own blogs too.")</p>
+  <p>@i18n!(ctx.1, "You can also upload your own themes if you have a command-line access to your instance.")</p>
+  @if themes.read().unwrap().is_empty() {
+      <p class="center">@i18n!(ctx.1, "There are no themes awaiting your approval for the moment.")</p>
+  } else {
+    <div class="cards">
+      @for theme in themes.read().unwrap().clone() {
+        <div class="card">
+          <b>@theme.name</b>
+          <p>@i18n!(ctx.1, "Files to review:")</p>
+          <ul>
+            @for url in theme.urls {
+              <li><a href="@url">@url</a></li>
+            }
+          </ul>
+          <footer>
+            <form class="inline" method="post" action="@uri!(instance::reject_theme: name = &theme.name)">
+                <input class="destructive" type="submit" value="@i18n!(ctx.1, "Reject")">
+            </form>
+            &mdash;
+            <form class="inline" method="post" action="@uri!(instance::approve_theme: name = &theme.name)">
+                <input type="submit" value="@i18n!(ctx.1, "Approve")">
+            </form>
+          </footer>
+        </div>
+      }
     </div>
+  }
 })

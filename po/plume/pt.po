@@ -102,12 +102,16 @@ msgid "{} has been banned."
 msgstr ""
 
 #, fuzzy
-msgid "{} have been deleted"
+msgid "The theme have been rejected."
 msgstr "Você ainda não tem nenhuma mídia."
 
-# src/routes/instance.rs:410
-msgid "An error occured and we couldn't delete this theme."
+# src/routes/instance.rs:353
+msgid "An error occurred."
 msgstr ""
+
+#, fuzzy
+msgid "The theme have been accepted."
+msgstr "Você ainda não tem nenhuma mídia."
 
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
@@ -381,19 +385,31 @@ msgid "Custom themes"
 msgstr ""
 
 msgid ""
-"You can upload a CSS file, and people will be able to choose this theme from "
-"their settings. If your theme is named 'main.css', it will become the "
-"default theme"
+"These themes are used on blogs from other instance. They may contain "
+"tracking code, so you need to review and approve them."
 msgstr ""
 
-msgid "Upload"
-msgstr "Carregar"
-
-msgid "Available themes"
+msgid ""
+"Once a theme is approved, people on your instance will be able to use it on "
+"their own blogs too."
 msgstr ""
 
-msgid "Delete"
-msgstr "Suprimir"
+msgid ""
+"You can also upload your own themes if you have a command-line access to "
+"your instance."
+msgstr ""
+
+msgid "There are no themes awaiting your approval for the moment."
+msgstr ""
+
+msgid "Files to review:"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Approve"
+msgstr ""
 
 msgid "About {0}"
 msgstr "Sobre {0}"
@@ -869,6 +885,9 @@ msgstr "Submeter comentário"
 msgid "No comments yet. Be the first to react!"
 msgstr "Nenhum comentário ainda. Seja o primeiro a reagir!"
 
+msgid "Delete"
+msgstr "Suprimir"
+
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
@@ -936,11 +955,10 @@ msgstr ""
 msgid "Blog banner"
 msgstr ""
 
-msgid "Custom style"
-msgstr ""
-
-msgid "Enter some custom CSS for blog, but be aware that it may break things."
-msgstr ""
+# src/template_utils.rs:217
+#, fuzzy
+msgid "Custom theme"
+msgstr "Licença padrão do artigo"
 
 msgid "Update blog"
 msgstr ""
@@ -996,6 +1014,9 @@ msgstr ""
 #, fuzzy
 msgid "Continue to your instance"
 msgstr "Configure sua instância"
+
+msgid "Upload"
+msgstr "Carregar"
 
 msgid "You don't have any media yet."
 msgstr "Você ainda não tem nenhuma mídia."

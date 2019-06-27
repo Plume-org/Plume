@@ -646,7 +646,7 @@ impl User {
     pub fn avatar_url(&self, conn: &Connection) -> String {
         self.avatar_id
             .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-            .unwrap_or_else(|| "/static/default-avatar.png".to_string())
+            .unwrap_or_else(|| "/static/images/default-avatar.png".to_string())
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {

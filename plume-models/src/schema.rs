@@ -47,7 +47,7 @@ table! {
         summary_html -> Text,
         icon_id -> Nullable<Int4>,
         banner_id -> Nullable<Int4>,
-        custom_css -> Nullable<Text>,
+        theme -> Nullable<Varchar>,
     }
 }
 

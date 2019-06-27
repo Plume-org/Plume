@@ -8,6 +8,7 @@ use openssl::{
     sign::{Signer, Verifier},
 };
 use serde_json;
+use std::{path::Path, sync::RwLock};
 use url::Url;
 use webfinger::*;
 
@@ -22,7 +23,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, Error, PlumeRocket, Result};
+use {Connection, Error, PlumeRocket, Result, CONFIG};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -44,7 +45,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
-    pub custom_css: Option<String>,
+    pub theme: Option<String>,
 }
 
 #[derive(Default, Insertable)]
@@ -62,7 +63,7 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
-    pub custom_css: Option<String>,
+    pub theme: Option<String>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -205,9 +206,20 @@ impl Blog {
         )?;
         blog.object_props.set_image_object(banner)?;
 
-        if let Some(css) = self.custom_css.clone() {
+        if let Some(theme_name) = self.theme.clone() {
             let mut theme = Theme::default();
-            theme.set_style_string(css)?;
+            let theme_dir = Path::new("static").join("css").join(&theme_name);
+            let theme_dir_str = theme_dir.to_str()?;
+            theme.set_url_string_vec(
+                walkdir::WalkDir::new(&theme_dir).into_iter()
+                    .filter_map(|e| e.ok())
+                    .filter(|f| f.file_type().is_file())
+                    .filter_map(|f| f.path().to_str().map(ToString::to_string))
+                    .map(|f| format!("https://{}/static/css/{}{}", CONFIG.base_url, theme_name, f.replace(theme_dir_str, "")))
+                    .collect()
+            )?;
+            theme.set_id_string(format!("https://{}/static/css/{}", CONFIG.base_url, &theme_name))?;
+            theme.set_name_string(theme_name)?;
             blog.object_props.set_attachment_object_vec(vec![theme])?;
         }
 
@@ -280,7 +292,7 @@ impl Blog {
     pub fn icon_url(&self, conn: &Connection) -> String {
         self.icon_id
             .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-            .unwrap_or_else(|| "/static/default-avatar.png".to_string())
+            .unwrap_or_else(|| "/static/images/default-avatar.png".to_string())
     }
 
     pub fn banner_url(&self, conn: &Connection) -> Option<String> {
@@ -400,16 +412,63 @@ impl FromId<PlumeRocket> for Blog {
                         .summary_string()
                         .unwrap_or_default(),
                 ),
-                custom_css: acct
+                theme: acct
                     .object
                     .object_props
                     .attachment_object_vec::<Theme>()
                     .ok()
                     .and_then(|themes| themes.into_iter().next())
-                    .and_then(|theme| theme.style_string().ok()),
+                    .and_then(|theme| {
+                        let name = theme.name_string().ok()?;
+                        let out_dir = if name.starts_with("blog-") {
+                            name
+                        } else {
+                            format!("blog-{}", name)
+                        };
+
+                        let already_known = REMOTE_THEMES.read().ok()?.iter().any(|t| t.name == out_dir);
+                        if !Path::new("static").join("css").join(&out_dir).exists() && !already_known {
+                            REMOTE_THEMES.write().ok()?.push(RemoteTheme {
+                                name: out_dir.clone(),
+                                urls: theme.url_string_vec().ok()?,
+                            });
+                        }
+
+                        Some(out_dir)
+                    })
             },
         )
     }
+}
+
+#[derive(Clone)]
+pub struct RemoteTheme {
+    pub name: String,
+    pub urls: Vec<String>,
+}
+
+impl RemoteTheme {
+    pub fn save(&self) -> Option<()> {
+        let out_dir = Path::new("static").join("css").join(&self.name);
+        std::fs::create_dir_all(&out_dir).ok()?;
+
+        let base_url = self.urls.iter().find(|u| u.ends_with("/theme.css")).map(|u| u.replace("theme.css", ""))?;
+
+        let client = reqwest::Client::new();
+        for url in self.urls.clone() {
+            let filename = url.replace(&base_url, "");
+            let mut out = std::fs::File::create(out_dir.join(filename)).ok()?;
+            client.get(&url)
+                .send().ok()?
+                .copy_to(&mut out).ok()?;
+        }
+
+        Some(())
+    }
+}
+
+lazy_static! {
+    pub static ref REMOTE_THEMES: RwLock<Vec<RemoteTheme>> = RwLock::new(vec![]);
 }
 
 impl AsActor<&PlumeRocket> for Blog {

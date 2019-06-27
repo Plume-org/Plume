@@ -68,7 +68,7 @@ msgstr ""
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:337
+# src/routes/blogs.rs:328
 msgid "Your blog information have been updated."
 msgstr ""
 
@@ -80,28 +80,32 @@ msgstr ""
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/instance.rs:150
+# src/routes/instance.rs:143
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:182
+# src/routes/instance.rs:175
 msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:184
+# src/routes/instance.rs:177
 msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:228
+# src/routes/instance.rs:221
 msgid "{} has been banned."
 msgstr ""
 
-# src/routes/instance.rs:408
-msgid "{} have been deleted"
+# src/routes/instance.rs:346
+msgid "The theme have been rejected."
 msgstr ""
 
-# src/routes/instance.rs:412
-msgid "An error occured and we couldn't delete this theme."
+# src/routes/instance.rs:348
+msgid "An error occurred."
+msgstr ""
+
+# src/routes/instance.rs:361
+msgid "The theme have been accepted."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -224,23 +228,23 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:402
+# src/routes/user.rs:405
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:429
+# src/routes/user.rs:432
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:435
+# src/routes/user.rs:438
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:507
+# src/routes/user.rs:510
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:531
+# src/routes/user.rs:534
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
@@ -364,16 +368,25 @@ msgstr ""
 msgid "Custom themes"
 msgstr ""
 
-msgid "You can upload a CSS file, and people will be able to choose this theme from their settings. If your theme is named 'main.css', it will become the default theme"
+msgid "These themes are used on blogs from other instance. They may contain tracking code, so you need to review and approve them."
 msgstr ""
 
-msgid "Upload"
+msgid "Once a theme is approved, people on your instance will be able to use it on their own blogs too."
 msgstr ""
 
-msgid "Available themes"
+msgid "You can also upload your own themes if you have a command-line access to your instance."
 msgstr ""
 
-msgid "Delete"
+msgid "There are no themes awaiting your approval for the moment."
+msgstr ""
+
+msgid "Files to review:"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Approve"
 msgstr ""
 
 msgid "About {0}"
@@ -814,6 +827,9 @@ msgstr ""
 msgid "No comments yet. Be the first to react!"
 msgstr ""
 
+msgid "Delete"
+msgstr ""
+
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
@@ -874,10 +890,7 @@ msgstr ""
 msgid "Blog banner"
 msgstr ""
 
-msgid "Custom style"
-msgstr ""
-
-msgid "Enter some custom CSS for blog, but be aware that it may break things."
+msgid "Custom theme"
 msgstr ""
 
 msgid "Update blog"
@@ -928,6 +941,9 @@ msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Continue to your instance"
+msgstr ""
+
+msgid "Upload"
 msgstr ""
 
 msgid "You don't have any media yet."

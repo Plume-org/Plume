@@ -102,12 +102,16 @@ msgid "{} has been banned."
 msgstr ""
 
 #, fuzzy
-msgid "{} have been deleted"
+msgid "The theme have been rejected."
 msgstr "メディアがまだありません。"
 
-# src/routes/instance.rs:410
-msgid "An error occured and we couldn't delete this theme."
+# src/routes/instance.rs:353
+msgid "An error occurred."
 msgstr ""
+
+#, fuzzy
+msgid "The theme have been accepted."
+msgstr "メディアがまだありません。"
 
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
@@ -381,19 +385,31 @@ msgid "Custom themes"
 msgstr ""
 
 msgid ""
-"You can upload a CSS file, and people will be able to choose this theme from "
-"their settings. If your theme is named 'main.css', it will become the "
-"default theme"
+"These themes are used on blogs from other instance. They may contain "
+"tracking code, so you need to review and approve them."
 msgstr ""
 
-msgid "Upload"
-msgstr "アップロード"
-
-msgid "Available themes"
+msgid ""
+"Once a theme is approved, people on your instance will be able to use it on "
+"their own blogs too."
 msgstr ""
 
-msgid "Delete"
-msgstr "削除"
+msgid ""
+"You can also upload your own themes if you have a command-line access to "
+"your instance."
+msgstr ""
+
+msgid "There are no themes awaiting your approval for the moment."
+msgstr ""
+
+msgid "Files to review:"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Approve"
+msgstr ""
 
 msgid "About {0}"
 msgstr "{0} について"
@@ -871,6 +887,9 @@ msgstr "コメントを保存"
 msgid "No comments yet. Be the first to react!"
 msgstr "コメントがまだありません。最初のコメントを書きましょう！"
 
+msgid "Delete"
+msgstr "削除"
+
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
@@ -940,11 +959,10 @@ msgstr "ブログアイコン"
 msgid "Blog banner"
 msgstr "ブログバナー"
 
-msgid "Custom style"
-msgstr ""
-
-msgid "Enter some custom CSS for blog, but be aware that it may break things."
-msgstr ""
+# src/template_utils.rs:217
+#, fuzzy
+msgid "Custom theme"
+msgstr "投稿のデフォルトのライセンス"
 
 msgid "Update blog"
 msgstr "ブログを更新"
@@ -999,6 +1017,9 @@ msgstr ""
 #, fuzzy
 msgid "Continue to your instance"
 msgstr "インスタンスを設定"
+
+msgid "Upload"
+msgstr "アップロード"
 
 msgid "You don't have any media yet."
 msgstr "メディアがまだありません。"

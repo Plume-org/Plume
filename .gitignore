@@ -7,7 +7,7 @@ translations
 .env
 Rocket.toml
 !.gitkeep
-static/media
+static
 docker-compose.yml
 *.db
 *.sqlite
@@ -16,8 +16,5 @@ docker-compose.yml
 tags.*
 !tags.rs
 search_index
-main.css
-*.wasm
-*.js
 .buildconfig
 __pycache__

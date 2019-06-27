@@ -1997,6 +1997,7 @@ dependencies = [
  "shrinkwraprs 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tantivy 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "webfinger 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "whatlang 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

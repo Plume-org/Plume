@@ -1,23 +1,16 @@
-use multipart::server::{
-    save::{SaveResult, SavedData},
-    Multipart,
-};
 use rocket::{
-    http::ContentType,
     request::LenientForm,
     response::{status, Flash, Redirect},
-    Data,
 };
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
 use serde_json;
-use std::{fs, path::Path};
 use validator::{Validate, ValidationErrors};
 
 use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
-    admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
+    admin::Admin, blogs::REMOTE_THEMES, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
@@ -343,81 +336,29 @@ pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
     })))
 }
 
-#[post("/admin/theme", data = "<data>")]
-pub fn upload_theme(
-    _admin: Admin,
-    data: Data,
-    ct: &ContentType,
-) -> Result<Redirect, status::BadRequest<&'static str>> {
-    if !ct.is_form_data() {
-        return Ok(Redirect::to(uri!(admin)));
-    }
+#[post("/admin/themes/reject/<name>")]
+pub fn reject_theme(_admin: Admin, name: String, intl: I18n) -> Flash<Redirect> {
+    REMOTE_THEMES.write()
+        .map(|mut themes| {
+            let new_themes = themes.clone().into_iter().filter(|t| t.name != name).collect();
+            *themes = new_themes;
 
-    let (_, boundary) = ct
-        .params()
-        .find(|&(k, _)| k == "boundary")
-        .ok_or_else(|| status::BadRequest(Some("No boundary")))?;
-
-    if let SaveResult::Full(entries) = Multipart::with_body(data.open(), boundary).save().temp() {
-        let fields = entries.fields;
-
-        let filename = fields
-            .get("theme")
-            .and_then(|v| v.iter().next())
-            .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?
-            .headers
-            .filename
-            .clone()
-            .map(|f| {
-                f.chars()
-                    .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-' || *c == '.')
-                    .collect()
-            })
-            .unwrap_or_else(|| "custom-theme.css".to_owned());
-
-        dbg!(filename.clone());
-        if !filename.ends_with(".css") {
-            return Err(status::BadRequest(Some("Your theme should be a CSS file")));
-        }
-
-        let dest = format!("static/css/{}", filename);
-        let dest = Path::new(&dest);
-        if dest.exists() {
-            fs::rename(dest, format!("static/css/original-{}", filename)).ok();
-        }
-
-        match fields["theme"][0].data {
-            SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)
-                .map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
-            SavedData::File(ref path, _) => {
-                fs::copy(path, &dest)
-                    .map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;
-            }
-            _ => {
-                return Ok(Redirect::to(uri!(admin)));
-            }
-        }
-    }
-    Ok(Redirect::to(uri!(admin)))
+            Flash::success(Redirect::to(uri!(admin)), i18n!(intl.catalog, "The theme have been rejected."))
+        })
+        .unwrap_or_else(|_| Flash::error(Redirect::to(uri!(admin)), i18n!(intl.catalog, "An error occurred.")))
 }
 
-#[post("/admin/theme/delete/<name>")]
-pub fn delete_theme(name: String, intl: I18n) -> Flash<Redirect> {
-    fs::remove_file(format!("static/css/{}.css", name))
-        .map(|_| {
-            Flash::success(
-                Redirect::to(uri!(admin)),
-                // TODO: add context to this translation once gettext-macros have been updated
-                i18n!(intl.catalog, "{} have been deleted"; name),
-            )
+#[post("/admin/themes/accept/<name>")]
+pub fn approve_theme(_admin: Admin, name: String, intl: I18n) -> Flash<Redirect> {
+    REMOTE_THEMES.write().ok()
+        .and_then(|mut themes| {
+            let theme = themes.clone().into_iter().find(|t| t.name == name)?;
+            theme.save()?;
+
+            let new_themes = themes.clone().into_iter().filter(|t| t.name != name).collect();
+            *themes = new_themes;
+
+            Some(Flash::success(Redirect::to(uri!(admin)), i18n!(intl.catalog, "The theme have been accepted.")))
         })
-        .unwrap_or_else(|_| {
-            Flash::error(
-                Redirect::to(uri!(admin)),
-                i18n!(
-                    intl.catalog,
-                    "An error occured and we couldn't delete this theme."
-                ),
-            )
-        })
+        .unwrap_or_else(|| Flash::error(Redirect::to(uri!(admin)), i18n!(intl.catalog, "An error occurred.")))
 }

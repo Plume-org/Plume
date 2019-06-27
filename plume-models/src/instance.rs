@@ -187,7 +187,7 @@ impl Instance {
             .map_err(Error::from)
     }
 
-    /// Returns a list of the local themes (all files matching `static/css/*.css`)
+    /// Returns a list of the local instance themes (all files matching `static/css/NAME/theme.css`)
     ///
     /// The list only contains the name of the themes, without their extension or full path.
     pub fn list_themes() -> Vec<String> {
@@ -198,23 +198,34 @@ impl Instance {
             .map(|files| {
                 files
                     .filter_map(std::result::Result::ok)
-                    // Only keep actual files
-                    .filter(|f| f.file_type().map(|t| t.is_file()).unwrap_or(false))
-                    // Ignore feather.css because it is not a theme, but the icon pack
-                    .filter(|f| {
-                        f.path()
-                            .file_name()
-                            .map(|n| n != "feather.css")
-                            .unwrap_or(false)
-                    })
-                    // Keep css files only
-                    .filter(|f| f.path().extension().map(|e| e == "css").unwrap_or(false))
-                    // And take their name, without extension
-                    .filter_map(|f| {
-                        f.path()
-                            .file_stem()
-                            .and_then(|f| f.to_str().map(str::to_owned))
-                    })
+                    // Only keep actual directories (each theme has its own dir)
+                    .filter(|f| f.file_type().map(|t| t.is_dir()).unwrap_or(false))
+                    // Only keep the directory name (= theme name)
+                    .filter_map(|f| f.path().file_name().and_then(|s| s.to_str()).map(|s| s.to_owned()))
+                    // Ignore the one starting with "blog-": these are the blog themes
+                    .filter(|f| !f.starts_with("blog-"))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    /// Returns a list of the local blog themes (all files matching `static/css/blog-NAME/theme.css`)
+    ///
+    /// The list only contains the name of the themes, without their extension or full path.
+    pub fn list_blog_themes() -> Vec<String> {
+        // List all the files in static/css
+        std::path::Path::new("static")
+            .join("css")
+            .read_dir()
+            .map(|files| {
+                files
+                    .filter_map(std::result::Result::ok)
+                    // Only keep actual directories (each theme has its own dir)
+                    .filter(|f| f.file_type().map(|t| t.is_dir()).unwrap_or(false))
+                    // Only keep the directory name (= theme name)
+                    .filter_map(|f| f.path().file_name().and_then(|s| s.to_str()).map(|s| s.to_owned()))
+                    // Only keep the one starting with "blog-": these are the blog themes
+                    .filter(|f| f.starts_with("blog-"))
                     .collect()
             })
             .unwrap_or_default()

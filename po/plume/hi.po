@@ -101,12 +101,16 @@ msgstr ""
 msgid "{} has been banned."
 msgstr ""
 
-# src/routes/instance.rs:406
-msgid "{} have been deleted"
+# src/routes/instance.rs:351
+msgid "The theme have been rejected."
 msgstr ""
 
-# src/routes/instance.rs:410
-msgid "An error occured and we couldn't delete this theme."
+# src/routes/instance.rs:353
+msgid "An error occurred."
+msgstr ""
+
+# src/routes/instance.rs:379
+msgid "The theme have been accepted."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -381,18 +385,30 @@ msgid "Custom themes"
 msgstr ""
 
 msgid ""
-"You can upload a CSS file, and people will be able to choose this theme from "
-"their settings. If your theme is named 'main.css', it will become the "
-"default theme"
+"These themes are used on blogs from other instance. They may contain "
+"tracking code, so you need to review and approve them."
 msgstr ""
 
-msgid "Upload"
+msgid ""
+"Once a theme is approved, people on your instance will be able to use it on "
+"their own blogs too."
 msgstr ""
 
-msgid "Available themes"
+msgid ""
+"You can also upload your own themes if you have a command-line access to "
+"your instance."
 msgstr ""
 
-msgid "Delete"
+msgid "There are no themes awaiting your approval for the moment."
+msgstr ""
+
+msgid "Files to review:"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Approve"
 msgstr ""
 
 msgid "About {0}"
@@ -860,6 +876,9 @@ msgstr ""
 msgid "No comments yet. Be the first to react!"
 msgstr ""
 
+msgid "Delete"
+msgstr ""
+
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
@@ -924,11 +943,10 @@ msgstr "ब्लॉग आइकॉन"
 msgid "Blog banner"
 msgstr "ब्लॉग बैनर"
 
-msgid "Custom style"
-msgstr ""
-
-msgid "Enter some custom CSS for blog, but be aware that it may break things."
-msgstr ""
+# src/template_utils.rs:217
+#, fuzzy
+msgid "Custom theme"
+msgstr "डिफ़ॉल्ट आलेख लायसेंस"
 
 msgid "Update blog"
 msgstr "ब्लॉग अपडेट करें"
@@ -981,6 +999,9 @@ msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Continue to your instance"
+msgstr ""
+
+msgid "Upload"
 msgstr ""
 
 msgid "You don't have any media yet."
