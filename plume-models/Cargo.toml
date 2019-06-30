@@ -51,4 +51,4 @@ diesel_migrations = "1.3.0"
 
 [features]
 postgres = ["diesel/postgres", "plume-macro/postgres", "diesel-derive-enum/postgres"]
-sqlite = ["diesel/sqlite", "plume-macro/sqlite", "diesel-derive-enum/postgres"]
+sqlite = ["diesel/sqlite", "plume-macro/sqlite", "diesel-derive-enum/sqlite"]
