@@ -51,6 +51,37 @@ use {ap_url, Connection, Error, PlumeRocket, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
+#[derive(Clone, Debug, DbEnum)]
+#[DieselType = "User_role"]
+pub enum Role {
+    Normal,
+    Moderator,
+    Admin,
+}
+
+impl Role {
+    /// We consider that admins have moderation rights too.
+    pub fn is_moderator(&self) -> bool {
+        match self {
+            Role::Normal => false,
+            _ => true,
+        }
+    }
+
+    pub fn is_admin(&self) -> bool {
+        match self {
+            Role::Admin => true,
+            _ => false,
+        }
+    }
+}
+
+impl Default for Role {
+    fn default() -> Self {
+        Role::Normal
+    }
+}
+
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
 pub struct User {
     pub id: i32,
@@ -58,7 +89,6 @@ pub struct User {
     pub display_name: String,
     pub outbox_url: String,
     pub inbox_url: String,
-    pub is_admin: bool,
     pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
@@ -73,7 +103,7 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
     pub summary_html: SafeString,
-    pub is_moderator: bool,
+    pub role: Role,
 }
 
 #[derive(Default, Insertable)]
@@ -83,7 +113,6 @@ pub struct NewUser {
     pub display_name: String,
     pub outbox_url: String,
     pub inbox_url: String,
-    pub is_admin: bool,
     pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
@@ -95,7 +124,7 @@ pub struct NewUser {
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
     pub summary_html: SafeString,
-    pub is_moderator: bool,
+    pub role: Role,
 }
 
 pub const AUTH_COOKIE: &str = "user_id";
@@ -188,33 +217,9 @@ impl User {
         Instance::get(conn, self.instance_id)
     }
 
-    pub fn grant_admin_rights(&self, conn: &Connection) -> Result<()> {
+    pub fn set_role(&self, conn: &Connection, new_role: Role) -> Result<()> {
         diesel::update(self)
-            .set(users::is_admin.eq(true))
-            .execute(conn)
-            .map(|_| ())
-            .map_err(Error::from)
-    }
-
-    pub fn revoke_admin_rights(&self, conn: &Connection) -> Result<()> {
-        diesel::update(self)
-            .set(users::is_admin.eq(false))
-            .execute(conn)
-            .map(|_| ())
-            .map_err(Error::from)
-    }
-
-    pub fn grant_moderator_rights(&self, conn: &Connection) -> Result<()> {
-        diesel::update(self)
-            .set(users::is_moderator.eq(true))
-            .execute(conn)
-            .map(|_| ())
-            .map_err(Error::from)
-    }
-
-    pub fn revoke_moderator_rights(&self, conn: &Connection) -> Result<()> {
-        diesel::update(self)
-            .set(users::is_moderator.eq(false))
+            .set(users::role.eq(new_role))
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
@@ -822,7 +827,7 @@ impl FromId<PlumeRocket> for User {
                 username,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                is_admin: false,
+                role: Role::Normal,
                 summary: acct
                     .object
                     .object_props
@@ -852,7 +857,6 @@ impl FromId<PlumeRocket> for User {
                     .ok(),
                 followers_endpoint: acct.object.ap_actor_props.followers_string()?,
                 avatar_id: None,
-                is_moderator: false,
             },
         )?;
 
@@ -939,7 +943,7 @@ impl NewUser {
         conn: &Connection,
         username: String,
         display_name: String,
-        is_admin: bool,
+        role: Role,
         summary: &str,
         email: String,
         password: String,
@@ -950,8 +954,7 @@ impl NewUser {
             NewUser {
                 username,
                 display_name,
-                is_admin,
-                is_moderator: is_admin,
+                role,
                 summary: summary.to_owned(),
                 summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),

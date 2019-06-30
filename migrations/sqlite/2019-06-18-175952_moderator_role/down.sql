@@ -30,7 +30,7 @@ INSERT INTO users_without_is_moderator SELECT
     display_name,
     outbox_url,
     inbox_url,
-    is_admin,
+    't',
     summary,
     email,
     hashed_password,
@@ -45,6 +45,28 @@ INSERT INTO users_without_is_moderator SELECT
     last_fetched_date,
     fqn,
     summary
-FROM users;
+FROM users WHERE role = 'admin';
+INSERT INTO users_without_is_moderator SELECT
+    id,
+    username,
+    display_name,
+    outbox_url,
+    inbox_url,
+    'f',
+    summary,
+    email,
+    hashed_password,
+    instance_id,
+    creation_date,
+    ap_url,
+    private_key,
+    public_key,
+    shared_inbox_url,
+    followers_endpoint,
+    avatar_id,
+    last_fetched_date,
+    fqn,
+    summary
+FROM users WHERE role != 'admin';
 DROP TABLE users;
 ALTER TABLE users_without_is_moderator RENAME TO users;

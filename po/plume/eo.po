@@ -96,7 +96,16 @@ msgstr ""
 msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:264
+# src/routes/instance.rs:276
+msgid "You can't change your own rights."
+msgstr ""
+
+# src/routes/blogs.rs:217
+#, fuzzy
+msgid "You are not allowed to take this action."
+msgstr "Vi ne estas permesita redakti ĉi tiun blogon."
+
+# src/routes/instance.rs:304
 msgid "Done."
 msgstr ""
 

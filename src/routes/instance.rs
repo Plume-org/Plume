@@ -13,7 +13,7 @@ use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::*, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
-    safe_string::SafeString, search::Searcher, users::User, Error, PlumeRocket, CONFIG, Connection
+    safe_string::SafeString, search::Searcher, users::{Role, User}, Error, PlumeRocket, CONFIG, Connection
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
@@ -268,15 +268,34 @@ impl FromStr for UserActions {
 }
 
 #[post("/admin/users/edit", data = "<form>")]
-pub fn edit_users(_mod: Moderator, form: LenientForm<MultiAction<UserActions>>, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
+pub fn edit_users(moderator: Moderator, form: LenientForm<MultiAction<UserActions>>, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
+    // you can't change your own rights
+    if form.ids.contains(&moderator.0.id) {
+        return Ok(Flash::error(
+            Redirect::to(uri!(admin_users: page = _)),
+            i18n!(rockets.intl.catalog, "You can't change your own rights."),
+        ))
+    }
+
+    // moderators can't grant or revoke admin rights
+    if !moderator.0.role.is_admin() {
+        match form.action {
+            UserActions::Admin | UserActions::RevokeAdmin => return Ok(Flash::error(
+                Redirect::to(uri!(admin_users: page = _)),
+                i18n!(rockets.intl.catalog, "You are not allowed to take this action."),
+            )),
+            _ => {}
+        }
+    }
+
     let conn = &rockets.conn;
     let searcher = &*rockets.searcher;
     let worker = &*rockets.worker;
     match form.action {
-        UserActions::Admin => for u in form.ids.clone() { User::get(conn, u)?.grant_admin_rights(conn)?; }
-        UserActions::RevokeAdmin => for u in form.ids.clone() { User::get(conn, u)?.revoke_admin_rights(conn)?; }
-        UserActions::Moderator => for u in form.ids.clone() { User::get(conn, u)?.grant_moderator_rights(conn)?; }
-        UserActions::RevokeModerator => for u in form.ids.clone() { User::get(conn, u)?.revoke_moderator_rights(conn)?; }
+        UserActions::Admin => for u in form.ids.clone() { User::get(conn, u)?.set_role(conn, Role::Admin)?; }
+        UserActions::Moderator => for u in form.ids.clone() { User::get(conn, u)?.set_role(conn, Role::Moderator)?; }
+        UserActions::RevokeAdmin |
+        UserActions::RevokeModerator => for u in form.ids.clone() { User::get(conn, u)?.set_role(conn, Role::Normal)?; }
         UserActions::Ban => for u in form.ids.clone() { ban(u, conn, searcher, worker)?; }
     }
 

@@ -1,4 +1,7 @@
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     api_tokens (id) {
         id -> Integer,
         creation_date -> Timestamp,
@@ -10,6 +13,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     apps (id) {
         id -> Integer,
         name -> Text,
@@ -22,6 +28,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     blog_authors (id) {
         id -> Integer,
         blog_id -> Integer,
@@ -31,6 +40,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     blogs (id) {
         id -> Integer,
         actor_id -> Text,
@@ -51,6 +63,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     comment_seers (id) {
         id -> Integer,
         comment_id -> Integer,
@@ -59,6 +74,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     comments (id) {
         id -> Integer,
         content -> Text,
@@ -74,6 +92,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     follows (id) {
         id -> Integer,
         follower_id -> Integer,
@@ -83,6 +104,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     instances (id) {
         id -> Integer,
         public_domain -> Text,
@@ -100,6 +124,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     likes (id) {
         id -> Integer,
         user_id -> Integer,
@@ -110,6 +137,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     medias (id) {
         id -> Integer,
         file_path -> Text,
@@ -123,6 +153,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     mentions (id) {
         id -> Integer,
         mentioned_id -> Integer,
@@ -132,6 +165,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     notifications (id) {
         id -> Integer,
         user_id -> Integer,
@@ -142,6 +178,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     password_reset_requests (id) {
         id -> Integer,
         email -> Text,
@@ -151,6 +190,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     post_authors (id) {
         id -> Integer,
         post_id -> Integer,
@@ -159,6 +201,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     posts (id) {
         id -> Integer,
         blog_id -> Integer,
@@ -176,6 +221,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     reshares (id) {
         id -> Integer,
         user_id -> Integer,
@@ -186,6 +234,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     tags (id) {
         id -> Integer,
         tag -> Text,
@@ -195,13 +246,15 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::users::User_role;
+
     users (id) {
         id -> Integer,
         username -> Text,
         display_name -> Text,
         outbox_url -> Text,
         inbox_url -> Text,
-        is_admin -> Bool,
         summary -> Text,
         email -> Nullable<Text>,
         hashed_password -> Nullable<Text>,
@@ -216,7 +269,7 @@ table! {
         last_fetched_date -> Timestamp,
         fqn -> Text,
         summary_html -> Text,
-        is_moderator -> Bool,
+        role -> Text,
     }
 }
 

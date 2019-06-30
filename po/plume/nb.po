@@ -94,7 +94,15 @@ msgstr ""
 msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:264
+# src/routes/instance.rs:276
+msgid "You can't change your own rights."
+msgstr ""
+
+#, fuzzy
+msgid "You are not allowed to take this action."
+msgstr "Du er ikke denne bloggens forfatter."
+
+# src/routes/instance.rs:304
 msgid "Done."
 msgstr ""
 
