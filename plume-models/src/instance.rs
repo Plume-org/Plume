@@ -204,8 +204,8 @@ impl Instance {
                     .filter_map(|f| {
                         f.path()
                             .file_name()
-                            .and_then(|s| s.to_str())
-                            .map(|s| s.to_owned())
+                            .and_then(std::ffi::OsStr::to_str)
+                            .map(std::borrow::ToOwned::to_owned)
                     })
                     // Ignore the one starting with "blog-": these are the blog themes
                     .filter(|f| !f.starts_with("blog-"))
@@ -231,8 +231,8 @@ impl Instance {
                     .filter_map(|f| {
                         f.path()
                             .file_name()
-                            .and_then(|s| s.to_str())
-                            .map(|s| s.to_owned())
+                            .and_then(std::ffi::OsStr::to_str)
+                            .map(std::borrow::ToOwned::to_owned)
                     })
                     // Only keep the one starting with "blog-": these are the blog themes
                     .filter(|f| f.starts_with("blog-"))
