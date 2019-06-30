@@ -1,5 +1,5 @@
 use rocket::{
-    request::{LenientForm, FromForm, FormItems},
+    request::{FormItems, FromForm, LenientForm},
     response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
@@ -12,8 +12,16 @@ use validator::{Validate, ValidationErrors};
 use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
-    admin::*, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
-    safe_string::SafeString, search::Searcher, users::{Role, User}, Error, PlumeRocket, CONFIG, Connection
+    admin::*,
+    comments::Comment,
+    db_conn::DbConn,
+    headers::Headers,
+    instance::*,
+    posts::Post,
+    safe_string::SafeString,
+    search::Searcher,
+    users::{Role, User},
+    Connection, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
@@ -102,9 +110,7 @@ pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 
 #[get("/admin", rank = 2)]
 pub fn admin_mod(_mod: Moderator, rockets: PlumeRocket) -> Ructe {
-    render!(instance::admin_mod(
-        &rockets.to_context()
-    ))
+    render!(instance::admin_mod(&rockets.to_context()))
 }
 
 #[derive(Clone, FromForm, Validate)]
@@ -211,12 +217,18 @@ pub fn admin_users(
 /// A structure to handle forms that are a list of items on which actions are applied.
 ///
 /// This is for instance the case of the user list in the administration.
-pub struct MultiAction<T> where T: FromStr {
+pub struct MultiAction<T>
+where
+    T: FromStr,
+{
     ids: Vec<i32>,
     action: T,
 }
 
-impl<'f, T> FromForm<'f> for MultiAction<T> where T: FromStr {
+impl<'f, T> FromForm<'f> for MultiAction<T>
+where
+    T: FromStr,
+{
     type Error = ();
 
     fn from_form(items: &mut FormItems, _strict: bool) -> Result<Self, Self::Error> {
@@ -234,10 +246,7 @@ impl<'f, T> FromForm<'f> for MultiAction<T> where T: FromStr {
         });
 
         if let Some(act) = act {
-            Ok(MultiAction {
-                ids,
-                action: act,
-            })
+            Ok(MultiAction { ids, action: act })
         } else {
             Err(())
         }
@@ -268,22 +277,31 @@ impl FromStr for UserActions {
 }
 
 #[post("/admin/users/edit", data = "<form>")]
-pub fn edit_users(moderator: Moderator, form: LenientForm<MultiAction<UserActions>>, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
+pub fn edit_users(
+    moderator: Moderator,
+    form: LenientForm<MultiAction<UserActions>>,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
     // you can't change your own rights
     if form.ids.contains(&moderator.0.id) {
         return Ok(Flash::error(
             Redirect::to(uri!(admin_users: page = _)),
             i18n!(rockets.intl.catalog, "You can't change your own rights."),
-        ))
+        ));
     }
 
     // moderators can't grant or revoke admin rights
     if !moderator.0.role.is_admin() {
         match form.action {
-            UserActions::Admin | UserActions::RevokeAdmin => return Ok(Flash::error(
-                Redirect::to(uri!(admin_users: page = _)),
-                i18n!(rockets.intl.catalog, "You are not allowed to take this action."),
-            )),
+            UserActions::Admin | UserActions::RevokeAdmin => {
+                return Ok(Flash::error(
+                    Redirect::to(uri!(admin_users: page = _)),
+                    i18n!(
+                        rockets.intl.catalog,
+                        "You are not allowed to take this action."
+                    ),
+                ))
+            }
             _ => {}
         }
     }
@@ -292,11 +310,26 @@ pub fn edit_users(moderator: Moderator, form: LenientForm<MultiAction<UserAction
     let searcher = &*rockets.searcher;
     let worker = &*rockets.worker;
     match form.action {
-        UserActions::Admin => for u in form.ids.clone() { User::get(conn, u)?.set_role(conn, Role::Admin)?; }
-        UserActions::Moderator => for u in form.ids.clone() { User::get(conn, u)?.set_role(conn, Role::Moderator)?; }
-        UserActions::RevokeAdmin |
-        UserActions::RevokeModerator => for u in form.ids.clone() { User::get(conn, u)?.set_role(conn, Role::Normal)?; }
-        UserActions::Ban => for u in form.ids.clone() { ban(u, conn, searcher, worker)?; }
+        UserActions::Admin => {
+            for u in form.ids.clone() {
+                User::get(conn, u)?.set_role(conn, Role::Admin)?;
+            }
+        }
+        UserActions::Moderator => {
+            for u in form.ids.clone() {
+                User::get(conn, u)?.set_role(conn, Role::Moderator)?;
+            }
+        }
+        UserActions::RevokeAdmin | UserActions::RevokeModerator => {
+            for u in form.ids.clone() {
+                User::get(conn, u)?.set_role(conn, Role::Normal)?;
+            }
+        }
+        UserActions::Ban => {
+            for u in form.ids.clone() {
+                ban(u, conn, searcher, worker)?;
+            }
+        }
     }
 
     Ok(Flash::success(
@@ -305,7 +338,12 @@ pub fn edit_users(moderator: Moderator, form: LenientForm<MultiAction<UserAction
     ))
 }
 
-fn ban(id: i32, conn: &Connection, searcher: &Searcher, worker: &ScheduledThreadPool) -> Result<(), ErrorPage> {
+fn ban(
+    id: i32,
+    conn: &Connection,
+    searcher: &Searcher,
+    worker: &ScheduledThreadPool,
+) -> Result<(), ErrorPage> {
     let u = User::get(&*conn, id)?;
     u.delete(&*conn, searcher)?;
 
@@ -316,8 +354,7 @@ fn ban(id: i32, conn: &Connection, searcher: &Searcher, worker: &ScheduledThread
         let target = User::one_by_instance(&*conn)?;
         let delete_act = u.delete_activity(&*conn)?;
         let u_clone = u.clone();
-        worker
-            .execute(move || broadcast(&u_clone, delete_act, target));
+        worker.execute(move || broadcast(&u_clone, delete_act, target));
     }
 
     Ok(())
