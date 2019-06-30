@@ -189,8 +189,6 @@ Then try to restart Plume
                 routes::instance::about,
                 routes::instance::privacy,
                 routes::instance::web_manifest,
-                routes::instance::reject_theme,
-                routes::instance::approve_theme,
                 routes::likes::create,
                 routes::likes::create_auth,
                 routes::medias::list,

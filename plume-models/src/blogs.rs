@@ -8,7 +8,6 @@ use openssl::{
     sign::{Signer, Verifier},
 };
 use serde_json;
-use std::{path::Path, sync::RwLock};
 use url::Url;
 use webfinger::*;
 
@@ -16,14 +15,14 @@ use instance::*;
 use medias::Media;
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source, Theme,
+    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
 use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, Error, PlumeRocket, Result, CONFIG};
+use {Connection, Error, PlumeRocket, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -205,23 +204,6 @@ impl Blog {
                 .unwrap_or_else(|| Id::new(String::new())),
         )?;
         blog.object_props.set_image_object(banner)?;
-
-        if let Some(theme_name) = self.theme.clone() {
-            let mut theme = Theme::default();
-            let theme_dir = Path::new("static").join("css").join(&theme_name);
-            let theme_dir_str = theme_dir.to_str()?;
-            theme.set_url_string_vec(
-                walkdir::WalkDir::new(&theme_dir).into_iter()
-                    .filter_map(|e| e.ok())
-                    .filter(|f| f.file_type().is_file())
-                    .filter_map(|f| f.path().to_str().map(ToString::to_string))
-                    .map(|f| format!("https://{}/static/css/{}{}", CONFIG.base_url, theme_name, f.replace(theme_dir_str, "")))
-                    .collect()
-            )?;
-            theme.set_id_string(format!("https://{}/static/css/{}", CONFIG.base_url, &theme_name))?;
-            theme.set_name_string(theme_name)?;
-            blog.object_props.set_attachment_object_vec(vec![theme])?;
-        }
 
         blog.object_props.set_id_string(self.ap_url.clone())?;
 
@@ -412,63 +394,10 @@ impl FromId<PlumeRocket> for Blog {
                         .summary_string()
                         .unwrap_or_default(),
                 ),
-                theme: acct
-                    .object
-                    .object_props
-                    .attachment_object_vec::<Theme>()
-                    .ok()
-                    .and_then(|themes| themes.into_iter().next())
-                    .and_then(|theme| {
-                        let name = theme.name_string().ok()?;
-                        let out_dir = if name.starts_with("blog-") {
-                            name
-                        } else {
-                            format!("blog-{}", name)
-                        };
-
-                        let already_known = REMOTE_THEMES.read().ok()?.iter().any(|t| t.name == out_dir);
-                        if !Path::new("static").join("css").join(&out_dir).exists() && !already_known {
-                            REMOTE_THEMES.write().ok()?.push(RemoteTheme {
-                                name: out_dir.clone(),
-                                urls: theme.url_string_vec().ok()?,
-                            });
-                        }
-
-                        Some(out_dir)
-                    })
+                theme: None,
             },
         )
     }
-}
-
-#[derive(Clone)]
-pub struct RemoteTheme {
-    pub name: String,
-    pub urls: Vec<String>,
-}
-
-impl RemoteTheme {
-    pub fn save(&self) -> Option<()> {
-        let out_dir = Path::new("static").join("css").join(&self.name);
-        std::fs::create_dir_all(&out_dir).ok()?;
-
-        let base_url = self.urls.iter().find(|u| u.ends_with("/theme.css")).map(|u| u.replace("theme.css", ""))?;
-
-        let client = reqwest::Client::new();
-        for url in self.urls.clone() {
-            let filename = url.replace(&base_url, "");
-            let mut out = std::fs::File::create(out_dir.join(filename)).ok()?;
-            client.get(&url)
-                .send().ok()?
-                .copy_to(&mut out).ok()?;
-        }
-
-        Some(())
-    }
-}
-
-lazy_static! {
-    pub static ref REMOTE_THEMES: RwLock<Vec<RemoteTheme>> = RwLock::new(vec![]);
 }
 
 impl AsActor<&PlumeRocket> for Blog {

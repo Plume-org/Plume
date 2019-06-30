@@ -101,18 +101,6 @@ msgstr ""
 msgid "{} has been banned."
 msgstr ""
 
-#, fuzzy
-msgid "The theme have been rejected."
-msgstr "Todavía no tiene ningún medio."
-
-# src/routes/instance.rs:353
-msgid "An error occurred."
-msgstr ""
-
-#, fuzzy
-msgid "The theme have been accepted."
-msgstr "Todavía no tiene ningún medio."
-
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "Para darle un Me Gusta a un artículo, necesita estar conectado"
@@ -378,36 +366,6 @@ msgstr "Licencia del artículo por defecto"
 
 msgid "Save these settings"
 msgstr "Guardar estos ajustes"
-
-msgid "Custom themes"
-msgstr ""
-
-msgid ""
-"These themes are used on blogs from other instance. They may contain "
-"tracking code, so you need to review and approve them."
-msgstr ""
-
-msgid ""
-"Once a theme is approved, people on your instance will be able to use it on "
-"their own blogs too."
-msgstr ""
-
-msgid ""
-"You can also upload your own themes if you have a command-line access to "
-"your instance."
-msgstr ""
-
-msgid "There are no themes awaiting your approval for the moment."
-msgstr ""
-
-msgid "Files to review:"
-msgstr ""
-
-msgid "Reject"
-msgstr ""
-
-msgid "Approve"
-msgstr ""
 
 msgid "About {0}"
 msgstr "Acerca de {0}"
@@ -1061,6 +1019,14 @@ msgstr "Cópielo en sus artículos, para insertar este medio:"
 
 msgid "Use as an avatar"
 msgstr "Usar como avatar"
+
+#, fuzzy
+#~ msgid "The theme have been rejected."
+#~ msgstr "Todavía no tiene ningún medio."
+
+#, fuzzy
+#~ msgid "The theme have been accepted."
+#~ msgstr "Todavía no tiene ningún medio."
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

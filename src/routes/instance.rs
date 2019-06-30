@@ -10,7 +10,7 @@ use validator::{Validate, ValidationErrors};
 use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
-    admin::Admin, blogs::REMOTE_THEMES, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
+    admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
@@ -334,31 +334,4 @@ pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
             .map(|i| i.with_prefix(&uri!(static_files: file = "").to_string()))
             .collect::<Vec<_>>()
     })))
-}
-
-#[post("/admin/themes/reject/<name>")]
-pub fn reject_theme(_admin: Admin, name: String, intl: I18n) -> Flash<Redirect> {
-    REMOTE_THEMES.write()
-        .map(|mut themes| {
-            let new_themes = themes.clone().into_iter().filter(|t| t.name != name).collect();
-            *themes = new_themes;
-
-            Flash::success(Redirect::to(uri!(admin)), i18n!(intl.catalog, "The theme have been rejected."))
-        })
-        .unwrap_or_else(|_| Flash::error(Redirect::to(uri!(admin)), i18n!(intl.catalog, "An error occurred.")))
-}
-
-#[post("/admin/themes/accept/<name>")]
-pub fn approve_theme(_admin: Admin, name: String, intl: I18n) -> Flash<Redirect> {
-    REMOTE_THEMES.write().ok()
-        .and_then(|mut themes| {
-            let theme = themes.clone().into_iter().find(|t| t.name == name)?;
-            theme.save()?;
-
-            let new_themes = themes.clone().into_iter().filter(|t| t.name != name).collect();
-            *themes = new_themes;
-
-            Some(Flash::success(Redirect::to(uri!(admin)), i18n!(intl.catalog, "The theme have been accepted.")))
-        })
-        .unwrap_or_else(|| Flash::error(Redirect::to(uri!(admin)), i18n!(intl.catalog, "An error occurred.")))
 }

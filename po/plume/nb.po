@@ -98,18 +98,6 @@ msgstr ""
 msgid "{} has been banned."
 msgstr ""
 
-#, fuzzy
-msgid "The theme have been rejected."
-msgstr "Ingen innlegg å vise enda."
-
-# src/routes/instance.rs:353
-msgid "An error occurred."
-msgstr ""
-
-#, fuzzy
-msgid "The theme have been accepted."
-msgstr "Ingen innlegg å vise enda."
-
 # src/routes/likes.rs:47
 msgid "To like a post, you need to be logged in"
 msgstr ""
@@ -382,36 +370,6 @@ msgstr "Standardlisens"
 #, fuzzy
 msgid "Save these settings"
 msgstr "Lagre innstillingene"
-
-msgid "Custom themes"
-msgstr ""
-
-msgid ""
-"These themes are used on blogs from other instance. They may contain "
-"tracking code, so you need to review and approve them."
-msgstr ""
-
-msgid ""
-"Once a theme is approved, people on your instance will be able to use it on "
-"their own blogs too."
-msgstr ""
-
-msgid ""
-"You can also upload your own themes if you have a command-line access to "
-"your instance."
-msgstr ""
-
-msgid "There are no themes awaiting your approval for the moment."
-msgstr ""
-
-msgid "Files to review:"
-msgstr ""
-
-msgid "Reject"
-msgstr ""
-
-msgid "Approve"
-msgstr ""
 
 msgid "About {0}"
 msgstr ""
@@ -1105,6 +1063,14 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
+
+#, fuzzy
+#~ msgid "The theme have been rejected."
+#~ msgstr "Ingen innlegg å vise enda."
+
+#, fuzzy
+#~ msgid "The theme have been accepted."
+#~ msgstr "Ingen innlegg å vise enda."
 
 #, fuzzy
 #~ msgid "Delete this article"

@@ -2,7 +2,7 @@ extern crate rsass;
 extern crate ructe;
 use ructe::*;
 use std::process::{Command, Stdio};
-use std::{env, fs::*, io::Write, path::*, ffi::OsStr};
+use std::{env, ffi::OsStr, fs::*, io::Write, path::*};
 
 fn compute_static_hash() -> String {
     //"find static/ -type f ! -path 'static/media/*' | sort | xargs stat -c'%n %Y' | openssl dgst -r"
@@ -42,8 +42,10 @@ fn main() {
     compile_templates(&in_dir, &out_dir).expect("compile templates");
 
     compile_themes().expect("Theme compilation error");
-    recursive_copy(&Path::new("assets").join("icons"), &Path::new("static")).expect("Couldn't copy icons");
-    recursive_copy(&Path::new("assets").join("images"), &Path::new("static")).expect("Couldn't copy images");
+    recursive_copy(&Path::new("assets").join("icons"), &Path::new("static"))
+        .expect("Couldn't copy icons");
+    recursive_copy(&Path::new("assets").join("images"), &Path::new("static"))
+        .expect("Couldn't copy images");
     create_dir_all(&Path::new("static").join("media")).expect("Couldn't init media directory");
 
     let cache_id = &compute_static_hash()[..8];
@@ -88,7 +90,9 @@ fn find_themes(path: PathBuf) -> std::io::Result<Vec<PathBuf>> {
             }
             themes
         }))
-    } else if (ext == Some("scss") || ext == Some("sass")) && !path.file_name().unwrap().to_str().unwrap().starts_with('_') {
+    } else if (ext == Some("scss") || ext == Some("sass"))
+        && !path.file_name().unwrap().to_str().unwrap().starts_with('_')
+    {
         Ok(vec![path.clone()])
     } else {
         Ok(vec![])
@@ -100,7 +104,13 @@ fn compile_theme(path: &Path, out_dir: &Path) -> std::io::Result<()> {
         .components()
         .skip_while(|c| *c != Component::Normal(OsStr::new("themes")))
         .skip(1)
-        .filter_map(|c| c.as_os_str().to_str().unwrap_or_default().splitn(2, '.').next())
+        .filter_map(|c| {
+            c.as_os_str()
+                .to_str()
+                .unwrap_or_default()
+                .splitn(2, '.')
+                .next()
+        })
         .collect::<Vec<_>>()
         .join("-");
 
@@ -117,7 +127,8 @@ fn compile_theme(path: &Path, out_dir: &Path) -> std::io::Result<()> {
     // compile the .scss/.sass file
     let mut out = File::create(out.join("theme.css"))?;
     out.write_all(
-        &rsass::compile_scss_file(path, rsass::OutputStyle::Compressed).expect("SCSS compilation error")
+        &rsass::compile_scss_file(path, rsass::OutputStyle::Compressed)
+            .expect("SCSS compilation error"),
     )?;
 
     Ok(())

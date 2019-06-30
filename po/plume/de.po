@@ -101,18 +101,6 @@ msgstr ""
 msgid "{} has been banned."
 msgstr ""
 
-#, fuzzy
-msgid "The theme have been rejected."
-msgstr "Du hast noch keine Medien."
-
-# src/routes/instance.rs:353
-msgid "An error occurred."
-msgstr ""
-
-#, fuzzy
-msgid "The theme have been accepted."
-msgstr "Du hast noch keine Medien."
-
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "Um einen Beitrag zu liken, musst du angemeldet sein"
@@ -378,36 +366,6 @@ msgstr "Standard-Artikellizenz"
 
 msgid "Save these settings"
 msgstr "Diese Einstellungen speichern"
-
-msgid "Custom themes"
-msgstr ""
-
-msgid ""
-"These themes are used on blogs from other instance. They may contain "
-"tracking code, so you need to review and approve them."
-msgstr ""
-
-msgid ""
-"Once a theme is approved, people on your instance will be able to use it on "
-"their own blogs too."
-msgstr ""
-
-msgid ""
-"You can also upload your own themes if you have a command-line access to "
-"your instance."
-msgstr ""
-
-msgid "There are no themes awaiting your approval for the moment."
-msgstr ""
-
-msgid "Files to review:"
-msgstr ""
-
-msgid "Reject"
-msgstr ""
-
-msgid "Approve"
-msgstr ""
 
 msgid "About {0}"
 msgstr "Über {0}"
@@ -1066,6 +1024,14 @@ msgstr "Kopiere das in deine Artikel, um dieses Medium einzufügen:"
 
 msgid "Use as an avatar"
 msgstr "Als Profilbild nutzen"
+
+#, fuzzy
+#~ msgid "The theme have been rejected."
+#~ msgstr "Du hast noch keine Medien."
+
+#, fuzzy
+#~ msgid "The theme have been accepted."
+#~ msgstr "Du hast noch keine Medien."
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"

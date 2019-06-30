@@ -201,7 +201,12 @@ impl Instance {
                     // Only keep actual directories (each theme has its own dir)
                     .filter(|f| f.file_type().map(|t| t.is_dir()).unwrap_or(false))
                     // Only keep the directory name (= theme name)
-                    .filter_map(|f| f.path().file_name().and_then(|s| s.to_str()).map(|s| s.to_owned()))
+                    .filter_map(|f| {
+                        f.path()
+                            .file_name()
+                            .and_then(|s| s.to_str())
+                            .map(|s| s.to_owned())
+                    })
                     // Ignore the one starting with "blog-": these are the blog themes
                     .filter(|f| !f.starts_with("blog-"))
                     .collect()
@@ -223,7 +228,12 @@ impl Instance {
                     // Only keep actual directories (each theme has its own dir)
                     .filter(|f| f.file_type().map(|t| t.is_dir()).unwrap_or(false))
                     // Only keep the directory name (= theme name)
-                    .filter_map(|f| f.path().file_name().and_then(|s| s.to_str()).map(|s| s.to_owned()))
+                    .filter_map(|f| {
+                        f.path()
+                            .file_name()
+                            .and_then(|s| s.to_str())
+                            .map(|s| s.to_owned())
+                    })
                     // Only keep the one starting with "blog-": these are the blog themes
                     .filter(|f| f.starts_with("blog-"))
                     .collect()

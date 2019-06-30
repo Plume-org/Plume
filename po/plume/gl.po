@@ -101,18 +101,6 @@ msgstr ""
 msgid "{} has been banned."
 msgstr ""
 
-#, fuzzy
-msgid "The theme have been rejected."
-msgstr "Aínda non subeu ficheiros de medios."
-
-# src/routes/instance.rs:353
-msgid "An error occurred."
-msgstr ""
-
-#, fuzzy
-msgid "The theme have been accepted."
-msgstr "Aínda non subeu ficheiros de medios."
-
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
 msgstr "Para darlle a gústame, debe estar conectada"
@@ -379,36 +367,6 @@ msgstr "Licenza por omisión dos artigos"
 
 msgid "Save these settings"
 msgstr "Gardar estas preferencias"
-
-msgid "Custom themes"
-msgstr ""
-
-msgid ""
-"These themes are used on blogs from other instance. They may contain "
-"tracking code, so you need to review and approve them."
-msgstr ""
-
-msgid ""
-"Once a theme is approved, people on your instance will be able to use it on "
-"their own blogs too."
-msgstr ""
-
-msgid ""
-"You can also upload your own themes if you have a command-line access to "
-"your instance."
-msgstr ""
-
-msgid "There are no themes awaiting your approval for the moment."
-msgstr ""
-
-msgid "Files to review:"
-msgstr ""
-
-msgid "Reject"
-msgstr ""
-
-msgid "Approve"
-msgstr ""
 
 msgid "About {0}"
 msgstr "Acerca de {0}"
@@ -1062,6 +1020,14 @@ msgstr "Copie e pegue este código para incrustar no artigo:"
 
 msgid "Use as an avatar"
 msgstr "Utilizar como avatar"
+
+#, fuzzy
+#~ msgid "The theme have been rejected."
+#~ msgstr "Aínda non subeu ficheiros de medios."
+
+#, fuzzy
+#~ msgid "The theme have been accepted."
+#~ msgstr "Aínda non subeu ficheiros de medios."
 
 # src/routes/session.rs:263
 #~ msgid "Sorry, but the link expired. Try again"
