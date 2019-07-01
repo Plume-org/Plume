@@ -73,7 +73,7 @@ compile_i18n!();
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
-    dotenv::dotenv().ok();
+    dotenv::dotenv().unwrap();
 
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let pool = DbPool::builder()
