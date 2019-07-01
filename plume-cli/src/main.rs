@@ -25,7 +25,7 @@ fn main() {
         .subcommand(users::command());
     let matches = app.clone().get_matches();
 
-    dotenv::dotenv().ok();
+    dotenv::dotenv().expect("error while reading .env");
     let conn = Conn::establish(CONFIG.database_url.as_str());
     let _ = conn.as_ref().map(|conn| Instance::cache_local(conn));
 
