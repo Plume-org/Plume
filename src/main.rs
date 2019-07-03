@@ -5,6 +5,7 @@ extern crate activitypub;
 extern crate askama_escape;
 extern crate atom_syndication;
 extern crate chrono;
+extern crate clap;
 extern crate colored;
 extern crate ctrlc;
 extern crate diesel;
@@ -38,6 +39,7 @@ extern crate validator;
 extern crate validator_derive;
 extern crate webfinger;
 
+use clap::App;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
@@ -85,6 +87,17 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
+    App::new("Plume")
+        .bin_name("plume")
+        .version(env!("CARGO_PKG_VERSION"))
+        .about("Plume backend server")
+        .after_help(
+            r#"
+Be careful plume command should be run inside the directory
+containing .env file an static directory
+        "#,
+        )
+        .get_matches();
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
