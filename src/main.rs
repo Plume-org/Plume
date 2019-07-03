@@ -73,7 +73,11 @@ compile_i18n!();
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
-    dotenv::dotenv().ok();
+    match dotenv::dotenv() {
+        Ok(path) => println!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
 
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let pool = DbPool::builder()
