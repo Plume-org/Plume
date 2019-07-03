@@ -27,7 +27,7 @@
 
         <h2>@i18n!(ctx.1, "Danger zone")</h2>
         <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")
-        @if !u.role.is_admin() {
+        @if !u.is_admin() {
             <form method="post" action="@uri!(user::delete: name = u.username)">
                 <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete your account")">
             </form>

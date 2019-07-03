@@ -104,11 +104,11 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     let admin = args.is_present("admin");
     let moderator = args.is_present("moderator");
     let role = if admin {
-        Role::Admin
+        0
     } else if moderator {
-        Role::Moderator
+        1
     } else {
-        Role::Normal
+        2
     };
 
     let bio = args.value_of("biography").unwrap_or("").to_string();

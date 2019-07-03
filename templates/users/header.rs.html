@@ -15,7 +15,7 @@
             </h1>
 
             <p>
-                @if user.role.is_admin() {
+                @if user.is_admin() {
                     <span class="badge">@i18n!(ctx.1, "Admin")</span>
                 }
 

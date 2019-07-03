@@ -51,37 +51,6 @@ use {ap_url, Connection, Error, PlumeRocket, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
-#[derive(Clone, Debug, DbEnum)]
-#[DieselType = "User_role"]
-pub enum Role {
-    Normal,
-    Moderator,
-    Admin,
-}
-
-impl Role {
-    /// We consider that admins have moderation rights too.
-    pub fn is_moderator(&self) -> bool {
-        match self {
-            Role::Normal => false,
-            _ => true,
-        }
-    }
-
-    pub fn is_admin(&self) -> bool {
-        match self {
-            Role::Admin => true,
-            _ => false,
-        }
-    }
-}
-
-impl Default for Role {
-    fn default() -> Self {
-        Role::Normal
-    }
-}
-
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
 pub struct User {
     pub id: i32,
@@ -103,7 +72,10 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
     pub summary_html: SafeString,
-    pub role: Role,
+    /// 0 = admin
+    /// 1 = moderator
+    /// anything else = normal user
+    pub role: i32,
 }
 
 #[derive(Default, Insertable)]
@@ -124,7 +96,7 @@ pub struct NewUser {
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
     pub summary_html: SafeString,
-    pub role: Role,
+    pub role: i32,
 }
 
 pub const AUTH_COOKIE: &str = "user_id";
@@ -168,6 +140,14 @@ impl User {
     find_by!(users, find_by_email, email as &str);
     find_by!(users, find_by_name, username as &str, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as &str);
+
+    pub fn is_moderator(&self) -> bool {
+        self.role == 0 || self.role == 1
+    }
+
+    pub fn is_admin(&self) -> bool {
+        self.role == 0
+    }
 
     pub fn one_by_instance(conn: &Connection) -> Result<Vec<User>> {
         users::table
@@ -217,7 +197,7 @@ impl User {
         Instance::get(conn, self.instance_id)
     }
 
-    pub fn set_role(&self, conn: &Connection, new_role: Role) -> Result<()> {
+    pub fn set_role(&self, conn: &Connection, new_role: i32) -> Result<()> {
         diesel::update(self)
             .set(users::role.eq(new_role))
             .execute(conn)
@@ -827,7 +807,7 @@ impl FromId<PlumeRocket> for User {
                 username,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                role: Role::Normal,
+                role: 2,
                 summary: acct
                     .object
                     .object_props
@@ -943,7 +923,7 @@ impl NewUser {
         conn: &Connection,
         username: String,
         display_name: String,
-        role: Role,
+        role: i32,
         summary: &str,
         email: String,
         password: String,

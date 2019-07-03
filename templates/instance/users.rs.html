@@ -34,10 +34,10 @@
                         <a href="@uri!(user::details: name = &user.fqn)">@user.name()</a>
                         <small>@format!("@{}", user.username)</small>
                     </p>
-                    @if user.role.is_admin() {
+                    @if user.is_admin() {
                         <p class="badge">@i18n!(ctx.1, "Admin")</p>
                     } else {
-                        @if user.role.is_moderator() {
+                        @if user.is_moderator() {
                             <p class="badge">@i18n!(ctx.1, "Moderator")</p>
                         }
                     }

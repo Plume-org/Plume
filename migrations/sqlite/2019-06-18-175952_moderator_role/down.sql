@@ -1,5 +1,5 @@
 -- This file should undo anything in `up.sql`
-CREATE TABLE IF NOT EXISTS "users_without_is_moderator" (
+CREATE TABLE IF NOT EXISTS "users_without_role" (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     username VARCHAR NOT NULL,
     display_name VARCHAR NOT NULL DEFAULT '',
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "users_without_is_moderator" (
     CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
 
-INSERT INTO users_without_is_moderator SELECT
+INSERT INTO users_without_role SELECT
 	id,
     username,
     display_name,
@@ -45,8 +45,8 @@ INSERT INTO users_without_is_moderator SELECT
     last_fetched_date,
     fqn,
     summary
-FROM users WHERE role = 'admin';
-INSERT INTO users_without_is_moderator SELECT
+FROM users WHERE role = 0;
+INSERT INTO users_without_role SELECT
     id,
     username,
     display_name,
@@ -67,6 +67,6 @@ INSERT INTO users_without_is_moderator SELECT
     last_fetched_date,
     fqn,
     summary
-FROM users WHERE role != 'admin';
+FROM users WHERE role != 0;
 DROP TABLE users;
-ALTER TABLE users_without_is_moderator RENAME TO users;
+ALTER TABLE users_without_role RENAME TO users;

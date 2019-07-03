@@ -3,4 +3,3 @@
 
 [print_schema]
 file = "plume-models/src/schema.rs"
-import_types = [ "diesel::sql_types::*", "crate::users::User_role" ]

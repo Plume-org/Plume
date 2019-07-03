@@ -20,7 +20,7 @@ use plume_models::{
     posts::Post,
     safe_string::SafeString,
     search::Searcher,
-    users::{Role, User},
+    users::User,
     Connection, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
@@ -291,7 +291,7 @@ pub fn edit_users(
     }
 
     // moderators can't grant or revoke admin rights
-    if !moderator.0.role.is_admin() {
+    if !moderator.0.is_admin() {
         match form.action {
             UserActions::Admin | UserActions::RevokeAdmin => {
                 return Ok(Flash::error(
@@ -312,17 +312,17 @@ pub fn edit_users(
     match form.action {
         UserActions::Admin => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, Role::Admin)?;
+                User::get(conn, u)?.set_role(conn, 0)?;
             }
         }
         UserActions::Moderator => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, Role::Moderator)?;
+                User::get(conn, u)?.set_role(conn, 1)?;
             }
         }
         UserActions::RevokeAdmin | UserActions::RevokeModerator => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, Role::Normal)?;
+                User::get(conn, u)?.set_role(conn, 2)?;
             }
         }
         UserActions::Ban => {

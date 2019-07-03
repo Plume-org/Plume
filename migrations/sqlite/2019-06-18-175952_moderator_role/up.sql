@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "users_with_role" (
     last_fetched_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fqn TEXT NOT NULL DEFAULT '',
     summary_html TEXT NOT NULL DEFAULT '',
-    role TEXT CHECK(role IN ('admin', 'moderator', 'normal')) NOT NULL DEFAULT 'normal',
+    role INTEGER NOT NULL DEFAULT 2,
     FOREIGN KEY (avatar_id) REFERENCES medias(id) ON DELETE SET NULL,
     CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
@@ -46,7 +46,7 @@ INSERT INTO users_with_role SELECT
     last_fetched_date,
     fqn,
     summary,
-    'admin'
+    0
 FROM users WHERE is_admin = 't';
 INSERT INTO users_with_role SELECT
     id,
@@ -68,7 +68,7 @@ INSERT INTO users_with_role SELECT
     last_fetched_date,
     fqn,
     summary,
-    'normal'
+    2
 FROM users WHERE is_admin = 'f';
 DROP TABLE users;
 ALTER TABLE users_with_role RENAME TO users;

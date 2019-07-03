@@ -84,7 +84,7 @@
                 <h3>@Instance::get_local().map(|i| i.name).unwrap_or_default()</h3>
                 <a href="@uri!(instance::about)">@i18n!(ctx.1, "About this instance")</a>
                 <a href="@uri!(instance::privacy)">@i18n!(ctx.1, "Privacy policy")</a>
-                @if ctx.2.clone().map(|a| a.role.is_admin()).unwrap_or(false) {
+                @if ctx.2.clone().map(|u| u.is_admin()).unwrap_or(false) {
                     <a href="@uri!(instance::admin)">@i18n!(ctx.1, "Administration")</a>
                 }
             </div>

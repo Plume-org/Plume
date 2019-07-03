@@ -1,5 +1,4 @@
 -- Your SQL goes here
-CREATE TYPE user_role AS ENUM ('normal', 'moderator', 'admin');
-ALTER TABLE users ADD COLUMN role user_role NOT NULL DEFAULT 'normal';
-UPDATE users SET role = 'admin' WHERE is_admin = 't';
+ALTER TABLE users ADD COLUMN role INTEGER NOT NULL DEFAULT 2;
+UPDATE users SET role = 0 WHERE is_admin = 't';
 ALTER TABLE users DROP COLUMN is_admin;

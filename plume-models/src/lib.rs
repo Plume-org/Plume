@@ -10,8 +10,6 @@ extern crate bcrypt;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate diesel_derive_enum;
 extern crate guid_create;
 extern crate heck;
 extern crate itertools;
