@@ -51,6 +51,12 @@ use {ap_url, Connection, Error, PlumeRocket, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
+pub enum Role {
+    Admin = 0,
+    Moderator = 1,
+    Normal = 2,
+}
+
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
 pub struct User {
     pub id: i32,
@@ -142,11 +148,11 @@ impl User {
     find_by!(users, find_by_ap_url, ap_url as &str);
 
     pub fn is_moderator(&self) -> bool {
-        self.role == 0 || self.role == 1
+        self.role == Role::Admin as i32 || self.role == Role::Moderator as i32
     }
 
     pub fn is_admin(&self) -> bool {
-        self.role == 0
+        self.role == Role::Admin as i32
     }
 
     pub fn one_by_instance(conn: &Connection) -> Result<Vec<User>> {
@@ -197,9 +203,9 @@ impl User {
         Instance::get(conn, self.instance_id)
     }
 
-    pub fn set_role(&self, conn: &Connection, new_role: i32) -> Result<()> {
+    pub fn set_role(&self, conn: &Connection, new_role: Role) -> Result<()> {
         diesel::update(self)
-            .set(users::role.eq(new_role))
+            .set(users::role.eq(new_role as i32))
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
@@ -923,7 +929,7 @@ impl NewUser {
         conn: &Connection,
         username: String,
         display_name: String,
-        role: i32,
+        role: Role,
         summary: &str,
         email: String,
         password: String,
@@ -934,7 +940,7 @@ impl NewUser {
             NewUser {
                 username,
                 display_name,
-                role,
+                role: role as i32,
                 summary: summary.to_owned(),
                 summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
@@ -964,7 +970,7 @@ pub(crate) mod tests {
             conn,
             "admin".to_owned(),
             "The admin".to_owned(),
-            true,
+            Role::Admin,
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
             "invalid_admin_password".to_owned(),
@@ -974,7 +980,7 @@ pub(crate) mod tests {
             conn,
             "user".to_owned(),
             "Some user".to_owned(),
-            false,
+            Role::Normal,
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
             "invalid_user_password".to_owned(),
@@ -984,7 +990,7 @@ pub(crate) mod tests {
             conn,
             "other".to_owned(),
             "Another user".to_owned(),
-            false,
+            Role::Normal,
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
             "invalid_other_password".to_owned(),
@@ -1003,7 +1009,7 @@ pub(crate) mod tests {
                 conn,
                 "test".to_owned(),
                 "test user".to_owned(),
-                false,
+                Role::Normal,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
                 User::hash_pass("test_password").unwrap(),
@@ -1068,11 +1074,11 @@ pub(crate) mod tests {
                 local_inst
                     .main_admin(conn)
                     .unwrap()
-                    .revoke_admin_rights(conn)
+                    .set_role(conn, Role::Normal)
                     .unwrap();
                 i += 1;
             }
-            inserted[0].grant_admin_rights(conn).unwrap();
+            inserted[0].set_role(conn, Role::Admin).unwrap();
             assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
 
             Ok(())
@@ -1109,7 +1115,7 @@ pub(crate) mod tests {
                 conn,
                 "test".to_owned(),
                 "test user".to_owned(),
-                false,
+                Role::Normal,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
                 User::hash_pass("test_password").unwrap(),

@@ -20,7 +20,7 @@ use plume_models::{
     posts::Post,
     safe_string::SafeString,
     search::Searcher,
-    users::User,
+    users::{Role, User},
     Connection, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
@@ -312,17 +312,17 @@ pub fn edit_users(
     match form.action {
         UserActions::Admin => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, 0)?;
+                User::get(conn, u)?.set_role(conn, Role::Admin)?;
             }
         }
         UserActions::Moderator => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, 1)?;
+                User::get(conn, u)?.set_role(conn, Role::Moderator)?;
             }
         }
         UserActions::RevokeAdmin | UserActions::RevokeModerator => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, 2)?;
+                User::get(conn, u)?.set_role(conn, Role::Normal)?;
             }
         }
         UserActions::Ban => {
