@@ -93,8 +93,10 @@ fn main() {
         .about("Plume backend server")
         .after_help(
             r#"
-Be careful plume command should be run inside the directory
-containing .env file an static directory
+The plume command should be run inside the directory
+containing the `.env` configuration file and `static` directory.
+See https://docs.joinplu.me/installation/config
+and https://docs.joinplu.me/installation/init for more info.
         "#,
         )
         .get_matches();
