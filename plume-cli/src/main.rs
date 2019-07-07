@@ -6,7 +6,7 @@ extern crate rpassword;
 
 use clap::App;
 use diesel::Connection;
-use plume_models::{Connection as Conn, CONFIG};
+use plume_models::{instance::Instance, Connection as Conn, CONFIG};
 use std::io::{self, prelude::*};
 
 mod instance;
@@ -25,8 +25,13 @@ fn main() {
         .subcommand(users::command());
     let matches = app.clone().get_matches();
 
-    dotenv::dotenv().ok();
+    match dotenv::dotenv() {
+        Ok(path) => println!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
     let conn = Conn::establish(CONFIG.database_url.as_str());
+    let _ = conn.as_ref().map(|conn| Instance::cache_local(conn));
 
     match matches.subcommand() {
         ("instance", Some(args)) => {

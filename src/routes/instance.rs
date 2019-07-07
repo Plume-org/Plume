@@ -13,13 +13,13 @@ use plume_models::{
     admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
     safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
 };
-use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page};
+use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
 #[get("/")]
 pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
-    let inst = Instance::get_local(conn)?;
+    let inst = Instance::get_local()?;
     let federated = Post::get_recents_page(conn, Page::default().limits())?;
     let local = Post::get_instance_page(conn, inst.id, Page::default().limits())?;
     let user_feed = rockets.user.clone().and_then(|user| {
@@ -43,7 +43,7 @@ pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 #[get("/local?<page>")]
 pub fn local(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let instance = Instance::get_local(&*rockets.conn)?;
+    let instance = Instance::get_local()?;
     let articles = Post::get_instance_page(&*rockets.conn, instance.id, page.limits())?;
     Ok(render!(instance::local(
         &rockets.to_context(),
@@ -83,7 +83,7 @@ pub fn federated(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, Erro
 
 #[get("/admin")]
 pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let local_inst = Instance::get_local(&*rockets.conn)?;
+    let local_inst = Instance::get_local()?;
     Ok(render!(instance::admin(
         &rockets.to_context(),
         local_inst.clone(),
@@ -114,36 +114,36 @@ pub fn update_settings(
     _admin: Admin,
     form: LenientForm<InstanceSettingsForm>,
     rockets: PlumeRocket,
-) -> Result<Flash<Redirect>, Ructe> {
+) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    form.validate()
-        .and_then(|_| {
-            let instance =
-                Instance::get_local(conn).expect("instance::update_settings: local instance error");
-            instance
-                .update(
-                    conn,
-                    form.name.clone(),
-                    form.open_registrations,
-                    form.short_description.clone(),
-                    form.long_description.clone(),
-                )
-                .expect("instance::update_settings: save error");
-            Ok(Flash::success(
-                Redirect::to(uri!(admin)),
-                i18n!(rockets.intl.catalog, "Instance settings have been saved."),
-            ))
-        })
-        .or_else(|e| {
-            let local_inst =
-                Instance::get_local(conn).expect("instance::update_settings: local instance error");
-            Err(render!(instance::admin(
-                &rockets.to_context(),
-                local_inst,
-                form.clone(),
-                e
-            )))
-        })
+    if let Err(e) = form.validate() {
+        let local_inst =
+            Instance::get_local().expect("instance::update_settings: local instance error");
+        render!(instance::admin(
+            &rockets.to_context(),
+            local_inst,
+            form.clone(),
+            e
+        ))
+        .into()
+    } else {
+        let instance =
+            Instance::get_local().expect("instance::update_settings: local instance error");
+        instance
+            .update(
+                conn,
+                form.name.clone(),
+                form.open_registrations,
+                form.short_description.clone(),
+                form.long_description.clone(),
+            )
+            .expect("instance::update_settings: save error");
+        Flash::success(
+            Redirect::to(uri!(admin)),
+            i18n!(rockets.intl.catalog, "Instance settings have been saved."),
+        )
+        .into()
+    }
 }
 
 #[get("/admin/instances?<page>")]
@@ -156,7 +156,7 @@ pub fn admin_instances(
     let instances = Instance::page(&*rockets.conn, page.limits())?;
     Ok(render!(instance::list(
         &rockets.to_context(),
-        Instance::get_local(&*rockets.conn)?,
+        Instance::get_local()?,
         instances,
         page.0,
         Page::total(Instance::count(&*rockets.conn)? as i32)
@@ -172,9 +172,9 @@ pub fn toggle_block(
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let inst = Instance::get(&*conn, id)?;
     let message = if inst.blocked {
-        i18n!(intl.catalog, "{} have been unblocked."; &inst.name)
+        i18n!(intl.catalog, "{} has been unblocked."; &inst.name)
     } else {
-        i18n!(intl.catalog, "{} have been blocked."; &inst.name)
+        i18n!(intl.catalog, "{} has been blocked."; &inst.name)
     };
 
     inst.toggle_block(&*conn)?;
@@ -204,7 +204,7 @@ pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirec
     let u = User::get(&*rockets.conn, id)?;
     u.delete(&*rockets.conn, &rockets.searcher)?;
 
-    if Instance::get_local(&*rockets.conn)
+    if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
     {
@@ -218,7 +218,7 @@ pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirec
 
     Ok(Flash::success(
         Redirect::to(uri!(admin_users: page = _)),
-        i18n!(rockets.intl.catalog, "{} have been banned."; u.name()),
+        i18n!(rockets.intl.catalog, "{} has been banned."; u.name()),
     ))
 }
 
@@ -267,7 +267,7 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
         return Err(ErrorPage::from(Error::NotFound));
     }
 
-    let local_inst = Instance::get_local(&*conn)?;
+    let local_inst = Instance::get_local()?;
     let mut doc = json!({
         "version": version,
         "software": {
@@ -305,17 +305,22 @@ pub fn about(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     Ok(render!(instance::about(
         &rockets.to_context(),
-        Instance::get_local(conn)?,
-        Instance::get_local(conn)?.main_admin(conn)?,
+        Instance::get_local()?,
+        Instance::get_local()?.main_admin(conn)?,
         User::count_local(conn)?,
         Post::count_local(conn)?,
         Instance::count(conn)? - 1
     )))
 }
 
+#[get("/privacy")]
+pub fn privacy(rockets: PlumeRocket) -> Ructe {
+    render!(instance::privacy(&rockets.to_context()))
+}
+
 #[get("/manifest.json")]
-pub fn web_manifest(conn: DbConn) -> Result<Json<serde_json::Value>, ErrorPage> {
-    let instance = Instance::get_local(&*conn)?;
+pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
+    let instance = Instance::get_local()?;
     Ok(Json(json!({
         "name": &instance.name,
         "description": &instance.short_description,

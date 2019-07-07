@@ -8,9 +8,9 @@ name = "plm"
 path = "src/main.rs"
 
 [dependencies]
-clap = "2.32"
-dotenv = "0.13"
-rpassword = "2.1"
+clap = "2.33"
+dotenv = "0.14"
+rpassword = "3.0"
 
 [dependencies.diesel]
 features = ["r2d2", "chrono"]

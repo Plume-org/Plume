@@ -9,6 +9,8 @@
     <h1>@i18n!(ctx.1, "About {0}"; instance.name)</h1>
     <section>
     @Html(instance.short_description_html)
+
+    <p>@i18n!(ctx.1, "Runs Plume {0}"; env!("CARGO_PKG_VERSION"))</p>
     </section>
     <div class="banner">
         <section class="stats">
@@ -27,7 +29,6 @@
             <p><a href="@uri!(user::details: name = &admin.fqn)">@admin.name()</a><small>@@@admin.fqn</small></p>
         </div>
         </section>
-        <p>@i18n!(ctx.1, "Runs Plume {0}"; env!("CARGO_PKG_VERSION"))</p>
     </div>
     <section>
       @Html(instance.long_description_html)
