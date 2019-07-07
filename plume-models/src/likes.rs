@@ -101,7 +101,7 @@ impl AsObject<User, activity::Like, &PlumeRocket> for Post {
         )?;
         res.notify(&c.conn)?;
 
-        Timeline::add_to_all_timelines(c, &self, Kind::Original)?;
+        Timeline::add_to_all_timelines(c, &self, Kind::Like(&actor))?;
         Ok(res)
     }
 }

@@ -126,7 +126,7 @@ impl AsObject<User, Announce, &PlumeRocket> for Post {
         )?;
         reshare.notify(conn)?;
 
-        Timeline::add_to_all_timelines(c, &self, Kind::Original)?;
+        Timeline::add_to_all_timelines(c, &self, Kind::Reshare(&actor))?;
         Ok(reshare)
     }
 }
