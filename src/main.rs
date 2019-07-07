@@ -5,6 +5,7 @@ extern crate activitypub;
 extern crate askama_escape;
 extern crate atom_syndication;
 extern crate chrono;
+extern crate clap;
 extern crate colored;
 extern crate ctrlc;
 extern crate diesel;
@@ -38,6 +39,7 @@ extern crate validator;
 extern crate validator_derive;
 extern crate webfinger;
 
+use clap::App;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
@@ -62,6 +64,8 @@ mod mail;
 #[macro_use]
 mod template_utils;
 mod routes;
+#[macro_use]
+extern crate shrinkwraprs;
 #[cfg(feature = "test")]
 mod test_routes;
 
@@ -71,7 +75,11 @@ compile_i18n!();
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
-    dotenv::dotenv().ok();
+    match dotenv::dotenv() {
+        Ok(path) => println!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
 
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let pool = DbPool::builder()
@@ -83,6 +91,19 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
+    App::new("Plume")
+        .bin_name("plume")
+        .version(env!("CARGO_PKG_VERSION"))
+        .about("Plume backend server")
+        .after_help(
+            r#"
+The plume command should be run inside the directory
+containing the `.env` configuration file and `static` directory.
+See https://docs.joinplu.me/installation/config
+and https://docs.joinplu.me/installation/init for more info.
+        "#,
+        )
+        .get_matches();
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
@@ -185,6 +206,7 @@ Then try to restart Plume
                 routes::instance::interact,
                 routes::instance::nodeinfo,
                 routes::instance::about,
+                routes::instance::privacy,
                 routes::instance::web_manifest,
                 routes::likes::create,
                 routes::likes::create_auth,

@@ -74,7 +74,7 @@
         @if posts.is_empty() {
             <p dir="auto">@i18n!(ctx.1, "No posts to see here yet.")</p>
         }
-        <div class="cards spaced">
+        <div class="cards">
             @for article in posts {
                 @:post_card(ctx, article)
             }
