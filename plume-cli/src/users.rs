@@ -109,16 +109,8 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
             rpassword::read_password().expect("Couldn't read your password.")
         });
 
-    NewUser::new_local(
-        conn,
-        username,
-        display_name,
-        admin,
-        &bio,
-        email,
-        User::hash_pass(&password).expect("Couldn't hash password"),
-    )
-    .expect("Couldn't save new user");
+    NewUser::new_local(conn, username, display_name, admin, &bio, email, &password)
+        .expect("Couldn't save new user");
 }
 
 fn reset_password<'a>(args: &ArgMatches<'a>, conn: &Connection) {

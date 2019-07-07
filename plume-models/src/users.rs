@@ -333,15 +333,33 @@ impl User {
         })
     }
 
-    pub fn hash_pass(pass: &str) -> Result<String> {
+    fn hash_pass(pass: &str) -> Result<String> {
         bcrypt::hash(pass, 10).map_err(Error::from)
     }
 
-    pub fn auth(&self, pass: &str) -> bool {
+    fn auth(&self, pass: &str) -> bool {
         self.hashed_password
             .clone()
             .map(|hashed| bcrypt::verify(pass, hashed.as_ref()).unwrap_or(false))
             .unwrap_or(false)
+    }
+
+    pub fn connect(rocket: &PlumeRocket, name: &str, password: &str) -> Result<Self> {
+        let user = User::find_by_email(&*rocket.conn, &name)
+            .or_else(|_| User::find_by_fqn(&rocket, &name));
+        match user {
+            Ok(user) => {
+                if user.auth(password) {
+                    Ok(user)
+                } else {
+                    Err(Error::NotFound)
+                }
+            }
+            Err(_) => {
+                User::get(&rocket.conn, 1)?.auth(password);
+                Err(Error::NotFound)
+            }
+        }
     }
 
     pub fn reset_password(&self, conn: &Connection, pass: &str) -> Result<()> {
@@ -923,7 +941,7 @@ impl NewUser {
         is_admin: bool,
         summary: &str,
         email: String,
-        password: String,
+        password: &str,
     ) -> Result<User> {
         let (pub_key, priv_key) = gen_keypair();
         User::insert(
@@ -935,7 +953,7 @@ impl NewUser {
                 summary: summary.to_owned(),
                 summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
-                hashed_password: Some(password),
+                hashed_password: Some(User::hash_pass(password)?),
                 instance_id: Instance::get_local()?.id,
                 ap_url: String::new(),
                 public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
@@ -964,7 +982,7 @@ pub(crate) mod tests {
             true,
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
-            "invalid_admin_password".to_owned(),
+            "invalid_admin_password",
         )
         .unwrap();
         let user = NewUser::new_local(
@@ -974,7 +992,7 @@ pub(crate) mod tests {
             false,
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
-            "invalid_user_password".to_owned(),
+            "invalid_user_password",
         )
         .unwrap();
         let other = NewUser::new_local(
@@ -984,7 +1002,7 @@ pub(crate) mod tests {
             false,
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
-            "invalid_other_password".to_owned(),
+            "invalid_other_password",
         )
         .unwrap();
         vec![admin, user, other]
@@ -1003,7 +1021,7 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password").unwrap(),
+                "test_password",
             )
             .unwrap();
 
@@ -1109,7 +1127,7 @@ pub(crate) mod tests {
                 false,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password").unwrap(),
+                "test_password",
             )
             .unwrap();
 

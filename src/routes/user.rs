@@ -520,7 +520,7 @@ pub fn create(
                 false,
                 "",
                 form.email.to_string(),
-                User::hash_pass(&form.password).map_err(to_validation)?,
+                &form.password,
             )
             .map_err(to_validation)?;
             Ok(Flash::success(

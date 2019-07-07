@@ -33,53 +33,29 @@ pub fn new(m: Option<String>, rockets: PlumeRocket) -> Ructe {
     ))
 }
 
-#[derive(Default, FromForm, Validate)]
+#[derive(Default, FromForm)]
 pub struct LoginForm {
-    #[validate(length(min = "1", message = "We need an email, or a username to identify you"))]
     pub email_or_name: String,
-    #[validate(length(min = "1", message = "Your password can't be empty"))]
     pub password: String,
 }
 
 #[post("/login", data = "<form>")]
 pub fn create(
     form: LenientForm<LoginForm>,
-    mut cookies: Cookies,
     rockets: PlumeRocket,
+    mut cookies: Cookies,
 ) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    let user = User::find_by_email(&*conn, &form.email_or_name)
-        .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
-    let mut errors = match form.validate() {
-        Ok(_) => ValidationErrors::new(),
-        Err(e) => e,
-    };
 
-    let user_id = if let Ok(user) = user {
-        if !user.auth(&form.password) {
-            let mut err = ValidationError::new("invalid_login");
-            err.message = Some(Cow::from("Invalid username, or password"));
-            errors.add("email_or_name", err);
-            String::new()
-        } else {
-            user.id.to_string()
-        }
+    let user_id = if let Ok(user) = User::connect(&rockets, &form.email_or_name, &form.password) {
+        user.id.to_string()
     } else {
-        // Fake password verification, only to avoid different login times
-        // that could be used to see if an email adress is registered or not
-        User::get(&*conn, 1)
-            .map(|u| u.auth(&form.password))
-            .expect("No user is registered");
-
+        let mut errors = ValidationErrors::new();
         let mut err = ValidationError::new("invalid_login");
         err.message = Some(Cow::from("Invalid username, or password"));
         errors.add("email_or_name", err);
-        String::new()
-    };
-
-    if !errors.is_empty() {
         return render!(session::login(&rockets.to_context(), None, &*form, errors)).into();
-    }
+    };
 
     cookies.add_private(
         Cookie::build(AUTH_COOKIE, user_id)
@@ -111,7 +87,7 @@ pub fn create(
             &(conn, &rockets.intl.catalog, None, None),
             None,
             &*form,
-            errors
+            ValidationErrors::new()
         ))
         .into()
     }
