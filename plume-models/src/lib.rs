@@ -15,6 +15,7 @@ extern crate heck;
 extern crate itertools;
 #[macro_use]
 extern crate lazy_static;
+extern crate ldap3;
 extern crate migrations_internals;
 extern crate openssl;
 extern crate plume_api;
@@ -363,6 +364,7 @@ pub mod follows;
 pub mod headers;
 pub mod inbox;
 pub mod instance;
+pub mod ldap;
 pub mod likes;
 pub mod medias;
 pub mod mentions;

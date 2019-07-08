@@ -44,6 +44,7 @@ use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
+    ldap::Ldap,
     migrations::IMPORTED_MIGRATIONS,
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
@@ -81,6 +82,7 @@ fn init_pool() -> Option<DbPool> {
         e => e.map(|_| ()).unwrap(),
     }
 
+    let _ = Ldap::get_shared(); // force initialization of lazy static
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let pool = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))

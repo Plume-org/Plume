@@ -14,6 +14,7 @@ pub struct Config {
     pub search_index: String,
     pub rocket: Result<RocketConfig, RocketError>,
     pub logo: LogoConfig,
+    pub ldap: LdapConfig,
 }
 
 #[derive(Debug, Clone)]
@@ -184,6 +185,27 @@ impl Default for LogoConfig {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct LdapConfig {
+    pub url: Option<String>,
+    pub bind_dn: Option<String>,
+}
+
+impl Default for LdapConfig {
+    fn default() -> Self {
+        let url = var("LDAP_URL").ok();
+        let bind_dn = var("LDAP_BIND_DN").ok();
+        if url.is_some() ^ bind_dn.is_some() {
+            panic!(
+                r#"Invalid configuration :
+You must provide both LDAP_URL and LDAP_BIND_DN, or neither"#
+            );
+        } else {
+            LdapConfig { url, bind_dn }
+        }
+    }
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -199,5 +221,6 @@ lazy_static! {
         search_index: var("SEARCH_INDEX").unwrap_or_else(|_| "search_index".to_owned()),
         rocket: get_rocket_config(),
         logo: LogoConfig::default(),
+        ldap: LdapConfig::default(),
     };
 }

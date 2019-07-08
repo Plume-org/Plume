@@ -41,6 +41,7 @@ use blogs::Blog;
 use db_conn::DbConn;
 use follows::Follow;
 use instance::*;
+use ldap::Ldap;
 use medias::Media;
 use post_authors::PostAuthor;
 use posts::Post;
@@ -349,7 +350,13 @@ impl User {
             .or_else(|_| User::find_by_fqn(&rocket, &name));
         match user {
             Ok(user) => {
-                if user.auth(password) {
+                let ldap_conn = Ldap::get_shared().connect(name.to_owned(), password.to_owned());
+                let local_conn = user.auth(password);
+                let ldap_conn = ldap_conn.get().unwrap_or(false);
+                if ldap_conn && local_conn {
+                    user.clear_password(&rocket.conn).ok();
+                }
+                if ldap_conn || local_conn {
                     Ok(user)
                 } else {
                     Err(Error::NotFound)
@@ -365,6 +372,13 @@ impl User {
     pub fn reset_password(&self, conn: &Connection, pass: &str) -> Result<()> {
         diesel::update(self)
             .set(users::hashed_password.eq(User::hash_pass(pass)?))
+            .execute(conn)?;
+        Ok(())
+    }
+
+    fn clear_password(&self, conn: &Connection) -> Result<()> {
+        diesel::update(self)
+            .set(users::hashed_password.eq::<Option<String>>(None))
             .execute(conn)?;
         Ok(())
     }
