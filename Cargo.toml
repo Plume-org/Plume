@@ -71,6 +71,9 @@ rev = "4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
 ructe = "0.6.2"
 rsass = "0.9"
 
+[patch.crates-io]
+bitpacking = { git = "https://github.com/fdb-hiroshima/bitpacking", branch = "disable-non-4x"}
+
 [features]
 default = ["postgres"]
 postgres = ["plume-models/postgres", "diesel/postgres"]
