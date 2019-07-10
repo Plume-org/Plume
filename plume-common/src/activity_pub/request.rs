@@ -5,8 +5,8 @@ use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_A
 use std::ops::Deref;
 use std::time::SystemTime;
 
-use activity_pub::sign::Signer;
-use activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
+use crate::activity_pub::sign::Signer;
+use crate::activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
 
 const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 

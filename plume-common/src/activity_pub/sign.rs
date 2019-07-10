@@ -4,7 +4,7 @@ use chrono::{naive::NaiveDateTime, DateTime, Duration, Utc};
 use hex;
 use openssl::{pkey::PKey, rsa::Rsa, sha::sha256};
 use rocket::http::HeaderMap;
-use serde_json;
+use serde_json::{self, json};
 
 /// Returns (public key, private key)
 pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
@@ -131,7 +131,7 @@ impl SignatureValidity {
 
 pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     sender: &S,
-    all_headers: &HeaderMap,
+    all_headers: &HeaderMap<'_>,
     data: &request::Digest,
 ) -> SignatureValidity {
     let sig_header = all_headers.get_one("Signature");

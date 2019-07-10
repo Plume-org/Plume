@@ -2,6 +2,7 @@
 name = "plume-common"
 version = "0.3.0"
 authors = ["Plume contributors"]
+edition = "2018"
 
 [dependencies]
 activitypub = "0.1.1"

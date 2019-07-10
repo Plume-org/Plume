@@ -1,4 +1,5 @@
 use activitypub::{Activity, Link, Object};
+use activitystreams_derive::{Properties, UnitString};
 use array_tool::vec::Uniq;
 use reqwest::r#async::ClientBuilder;
 use rocket::{
@@ -7,7 +8,9 @@ use rocket::{
     response::{Responder, Response},
     Outcome,
 };
-use serde_json;
+use serde::{Deserialize, Serialize};
+use serde_json::{self, json};
+use shrinkwraprs::Shrinkwrap;
 use tokio::prelude::*;
 
 use self::sign::Signable;
@@ -64,7 +67,7 @@ impl<T> ActivityStream<T> {
 }
 
 impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
-    fn respond_to(self, request: &Request) -> Result<Response<'r>, Status> {
+    fn respond_to(self, request: &Request<'_>) -> Result<Response<'r>, Status> {
         let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();
         serde_json::to_string(&json).respond_to(request).map(|r| {
