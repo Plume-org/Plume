@@ -201,6 +201,7 @@ Then try to restart Plume
             "/custom_domains/",
             routes![
                 routes::blogs::custom_details,
+                routes::posts::custom_details,
                 routes::blogs::custom_activity_details,
                 routes::search::custom_search,
             ],
