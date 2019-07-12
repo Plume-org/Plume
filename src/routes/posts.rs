@@ -144,14 +144,14 @@ pub fn details(
 
     match (blog.custom_domain, responding_to) {
         (Some(ref custom_domain), Some(ref responding_to)) => Ok(Redirect::to(format!(
-            "https://{}/?responding_to={}",
-            custom_domain, responding_to
+            "https://{}/{}?responding_to={}",
+            custom_domain, slug, responding_to
         ))
         .into()),
         (Some(ref custom_domain), _) => {
-            Ok(Redirect::to(format!("https://{}/", custom_domain)).into())
+            Ok(Redirect::to(format!("https://{}/{}", custom_domain, slug)).into())
         }
-        (None, _) => panic!("This code path should have already been handled!"),
+        (None, _) => unreachable!("This code path should have already been handled!"),
     }
 }
 
