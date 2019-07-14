@@ -88,11 +88,17 @@ pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
     search_guts(query, rockets)
 }
 
-#[get("/<_custom_domain>/search?<query..>")]
-pub fn custom_search(
-    _custom_domain: String,
-    query: Option<Form<SearchQuery>>,
-    rockets: PlumeRocket,
-) -> Ructe {
-    search_guts(query, rockets)
+pub mod custom {
+    use plume_models::PlumeRocket;
+    use rocket::request::Form;
+    use template_utils::Ructe;
+
+    #[get("/<_custom_domain>/search?<query..>")]
+    pub fn search(
+        _custom_domain: String,
+        query: Option<Form<super::SearchQuery>>,
+        rockets: PlumeRocket,
+    ) -> Ructe {
+        super::search_guts(query, rockets)
+    }
 }

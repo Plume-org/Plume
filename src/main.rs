@@ -200,10 +200,10 @@ Then try to restart Plume
         .mount(
             "/custom_domains/",
             routes![
-                routes::blogs::custom_details,
-                routes::posts::custom_details,
-                routes::blogs::custom_activity_details,
-                routes::search::custom_search,
+                routes::blogs::custom::details,
+                routes::posts::custom::details,
+                routes::blogs::custom::activity_details,
+                routes::search::custom::search,
             ],
         )
         .mount(

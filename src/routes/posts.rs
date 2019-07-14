@@ -83,33 +83,6 @@ fn detail_guts(
         )).into())
 }
 
-#[get("/custom_domains/<custom_domain>/<slug>?<responding_to>", rank = 4)]
-pub fn custom_details(
-    custom_domain: String,
-    slug: String,
-    responding_to: Option<i32>,
-    rockets: PlumeRocket,
-) -> Result<RespondOrRedirect, ErrorPage> {
-    let conn = &*rockets.conn;
-    let user = rockets.user.clone();
-    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
-    let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
-    if !(post.published
-        || post
-            .get_authors(&*conn)?
-            .into_iter()
-            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
-    {
-        return Ok(render!(errors::not_authorized(
-            &rockets.to_context(),
-            i18n!(rockets.intl.catalog, "This post isn't published yet.")
-        ))
-        .into());
-    }
-
-    detail_guts(&blog, &post, responding_to, &rockets)
-}
-
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
 pub fn details(
     blog: String,
@@ -152,6 +125,39 @@ pub fn details(
             Ok(Redirect::to(format!("https://{}/{}", custom_domain, slug)).into())
         }
         (None, _) => unreachable!("This code path should have already been handled!"),
+    }
+}
+
+pub mod custom {
+    use plume_models::{blogs::Blog, blogs::Host, posts::Post, PlumeRocket};
+    use routes::{errors::ErrorPage, RespondOrRedirect};
+    use template_utils::{IntoContext, Ructe};
+
+    #[get("/custom_domains/<custom_domain>/<slug>?<responding_to>", rank = 4)]
+    pub fn details(
+        custom_domain: String,
+        slug: String,
+        responding_to: Option<i32>,
+        rockets: PlumeRocket,
+    ) -> Result<RespondOrRedirect, ErrorPage> {
+        let conn = &*rockets.conn;
+        let user = rockets.user.clone();
+        let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
+        let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
+        if !(post.published
+            || post
+                .get_authors(&*conn)?
+                .into_iter()
+                .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
+        {
+            return Ok(render!(errors::not_authorized(
+                &rockets.to_context(),
+                i18n!(rockets.intl.catalog, "This post isn't published yet.")
+            ))
+            .into());
+        }
+
+        super::detail_guts(&blog, &post, responding_to, &rockets)
     }
 }
 

@@ -41,16 +41,6 @@ fn detail_guts(
     .into())
 }
 
-#[get("/<custom_domain>?<page>", rank = 2)]
-pub fn custom_details(
-    custom_domain: String,
-    page: Option<Page>,
-    rockets: PlumeRocket,
-) -> Result<RespondOrRedirect, ErrorPage> {
-    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
-    detail_guts(blog, page, rockets)
-}
-
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(
     name: String,
@@ -74,7 +64,7 @@ pub fn details(
             Ok(Redirect::to(format!("https://{}/", custom_domain)).into())
         }
         // we need this match arm, or the match won't compile
-        (None, _) => panic!("This code path should have already been handled!"),
+        (None, _) => unreachable!("This code path should have already been handled!"),
     }
 }
 
@@ -84,16 +74,6 @@ pub fn activity_detail_guts(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
     Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
-}
-
-#[get("/<custom_domain>", rank = 1)]
-pub fn custom_activity_details(
-    custom_domain: String,
-    rockets: PlumeRocket,
-    _ap: ApRequest,
-) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_by_host(&rockets, Host::new(custom_domain)).ok()?;
-    activity_detail_guts(blog, rockets, _ap)
 }
 
 #[get("/~/<name>", rank = 1)]
@@ -113,6 +93,32 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
         &NewBlogForm::default(),
         ValidationErrors::default()
     ))
+}
+
+pub mod custom {
+    use plume_common::activity_pub::{ActivityStream, ApRequest};
+    use plume_models::{blogs::Blog, blogs::CustomGroup, blogs::Host, PlumeRocket};
+    use routes::{errors::ErrorPage, Page, RespondOrRedirect};
+
+    #[get("/<custom_domain>?<page>", rank = 2)]
+    pub fn details(
+        custom_domain: String,
+        page: Option<Page>,
+        rockets: PlumeRocket,
+    ) -> Result<RespondOrRedirect, ErrorPage> {
+        let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
+        super::detail_guts(blog, page, rockets)
+    }
+
+    #[get("/<custom_domain>", rank = 1)]
+    pub fn activity_details(
+        custom_domain: String,
+        rockets: PlumeRocket,
+        _ap: ApRequest,
+    ) -> Option<ActivityStream<CustomGroup>> {
+        let blog = Blog::find_by_host(&rockets, Host::new(custom_domain)).ok()?;
+        super::activity_detail_guts(blog, rockets, _ap)
+    }
 }
 
 #[get("/blogs/new", rank = 2)]
