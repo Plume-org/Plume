@@ -345,25 +345,72 @@ macro_rules! input {
 
 /// This macro imitate rocket's uri!, but with support for custom domains
 ///
-/// It takes one more argument, domain, which must appear first, and must be an Option<String>
+/// It takes one more argument, domain, which must appear first, and must be an Option<&str>
 /// sample call :
-/// url!(domain=Some("something.tld".to_owned()), posts::details: blog = "blogname", slug = "title", responding_to = _)
-/// routes used in this macro must have a proper custom-domain counterpart, for instance
-/// for above call to compile, posts::custom::details must exist, and take the same parameters as
-/// posts::details (plus the custom domain)
+/// assuming both take the same parameters
+/// url!(custom_domain=Some("something.tld"), posts::details: slug = "title", responding_to = _, blog = "blogname"));
+///
+/// assuming posts::details take one more parameter than posts::custom::details
+/// url!(custom_domain=Some("something.tld"), posts::details:
+///          common=[slug = "title", responding_to = _],
+///          normal=[blog = "blogname"]));
+///
+/// you can also provide custom=[] for custom-domain specific arguments
+/// custom_domain can be changed to anything, indicating custom domain varname in the custom-domain
+/// function (most likely custom_domain or _custom_domain)
 macro_rules! url {
-    (domain=$domain:expr, $module:ident::$route:ident: $($tt:tt)*) => {{
-        let domain: Option<String> = $domain; //for type inference with None
+    ($custom_domain:ident=$domain:expr, $module:ident::$route:ident:
+        common=[$($common_args:ident = $common_val:expr),*],
+        normal=[$($normal_args:ident = $normal_val:expr),*],
+        custom=[$($custom_args:ident = $custom_val:expr),*]) => {{
+        let domain: Option<&str> = $domain; //for type inference with None
         if let Some(domain) = domain {
-            let origin = uri!(crate::routes::$module::custom::$route: custom_domain=&domain, $($tt)*);
+            let origin = uri!(crate::routes::$module::custom::$route:
+                              $custom_domain=&domain,
+                              $($common_args = $common_val,)*
+                              $($custom_args = $custom_val,)*
+                              );
             let path = origin.segments().skip(1).map(|seg| format!("/{}", seg)).collect::<String>(); //first segment is domain, drop it
             let query = origin.query().map(|q| format!("?{}", q)).unwrap_or_default();
             format!("https://{}{}{}", &domain, path, query)
         } else {
-            url!($module::$route: $($tt)*)
+            url!($module::$route:
+                 $($common_args = $common_val,)*
+                 $($normal_args = $normal_val,)*)
+                .to_string()
         }
     }};
-    ($module:ident::$route:ident: $($tt:tt)*) => {{
-            uri!(crate::routes::$module::$route: $($tt)*).to_string()
-    }}
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        common=[$($tt:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[$($tt)*], normal=[], custom=[])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        normal=[$($tt:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[], normal=[$($tt)*], custom=[])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        custom=[$($tt:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[], normal=[], custom=[$($tt)*])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        common=[$($co:tt)*],
+        normal=[$($no:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[$($co)*], normal=[$($no)*], custom=[])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        common=[$($co:tt)*],
+        custom=[$($cu:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[$($co)*], normal=[], custom=[$($cu)*])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        normal=[$($no:tt)*],
+        custom=[$($cu:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[], normal=[$($no)*], custom=[$($cu)*])
+    };
+    ($custom_domain:ident=$domain:expr, $module:ident::$route:ident: $($common_args:tt)*) => {
+        url!($custom_domain=$domain, $module::$route: common=[$($common_args)*])
+    };
+    ($module:ident::$route:ident: $($tt:tt)*) => {
+            uri!(crate::routes::$module::$route: $($tt)*)
+    };
 }
