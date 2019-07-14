@@ -342,3 +342,28 @@ macro_rules! input {
         ))
     }};
 }
+
+/// This macro imitate rocket's uri!, but with support for custom domains
+///
+/// It takes one more argument, domain, which must appear first, and must be an Option<String>
+/// sample call :
+/// url!(domain=Some("something.tld".to_owned()), posts::details: blog = "blogname", slug = "title", responding_to = _)
+/// routes used in this macro must have a proper custom-domain counterpart, for instance
+/// for above call to compile, posts::custom::details must exist, and take the same parameters as
+/// posts::details (plus the custom domain)
+macro_rules! url {
+    (domain=$domain:expr, $module:ident::$route:ident: $($tt:tt)*) => {{
+        let domain: Option<String> = $domain; //for type inference with None
+        if let Some(domain) = domain {
+            let origin = uri!(crate::routes::$module::custom::$route: custom_domain=&domain, $($tt)*);
+            let path = origin.segments().skip(1).map(|seg| format!("/{}", seg)).collect::<String>(); //first segment is domain, drop it
+            let query = origin.query().map(|q| format!("?{}", q)).unwrap_or_default();
+            format!("https://{}{}{}", &domain, path, query)
+        } else {
+            url!($module::$route: $($tt)*)
+        }
+    }};
+    ($module:ident::$route:ident: $($tt:tt)*) => {{
+            uri!(crate::routes::$module::$route: $($tt)*).to_string()
+    }}
+}
