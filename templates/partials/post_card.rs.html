@@ -9,7 +9,7 @@
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
     }
     <h3 class="p-name" dir="auto">
-        <a class="u-url" href="@uri!(posts::details: blog = article.get_blog(ctx.0).unwrap().fqn, slug = &article.slug, responding_to = _)">
+        <a class="u-url" href="@url!(custom_domain = article.get_blog(ctx.0).unwrap().custom_domain, posts::details: common=[ slug = &article.slug, responding_to = None], normal=[blog = article.get_blog(ctx.0).unwrap().fqn])">
             @article.title
         </a>
     </h3>
@@ -25,10 +25,9 @@
         @if article.published {
 	       ⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
         }
-        ⋅ <a href="@uri!(blogs::details: name = &article.get_blog(ctx.0).unwrap().fqn, page = _)">@article.get_blog(ctx.0).unwrap().title</a>
+        ⋅ <a href="@url!(custom_domain = article.get_blog(ctx.0).unwrap().custom_domain, blogs::details: common=[page = None], normal=[name = &article.get_blog(ctx.0).unwrap().fqn])">@article.get_blog(ctx.0).unwrap().title</a>
         @if !article.published {
             ⋅ @i18n!(ctx.1, "Draft")
         }
     </footer>
 </div>
-

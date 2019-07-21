@@ -17,10 +17,10 @@
     @if article.cover_id.is_some() {
         <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
     }
-    <meta property="og:url" content="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)"/>
+        <meta property="og:url" content="@url!(custom_domain = *&blog.custom_domain, posts::details: common=[slug = &article.slug, responding_to = None], normal=[blog = &blog.fqn])"/>
     <meta property="og:description" content="@article.subtitle"/>
 }, {
-    <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
+    <a href="@url!(custom_domain = &blog.custom_domain, blogs::details: common=[page = None], normal=[name = &blog.fqn])">@blog.title</a>
 }, {
 <div class="h-entry">
     <header
@@ -54,7 +54,7 @@
             <ul class="tags" dir="auto">
                 @for tag in tags {
                     @if !tag.is_hashtag {
-                        <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
+                        <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = None)">@tag.tag</a></li>
                     } else {
                         <span class="hidden p-category">@tag.tag</span>
                     }
