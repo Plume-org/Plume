@@ -360,23 +360,32 @@ macro_rules! input {
 /// function (most likely custom_domain or _custom_domain)
 macro_rules! url {
     ($custom_domain:ident=$domain:expr, $module:ident::$route:ident:
-        common=[$($common_args:ident = $common_val:expr),*],
-        normal=[$($normal_args:ident = $normal_val:expr),*],
-        custom=[$($custom_args:ident = $custom_val:expr),*]) => {{
-        let domain: Option<&str> = $domain; //for type inference with None
+        common=[$($common_args:tt = $common_val:expr),*],
+        normal=[$($normal_args:tt = $normal_val:expr),*],
+        custom=[$($custom_args:tt = $custom_val:expr),*]) => {{
+        let domain: Option<&plume_models::blogs::Host> = $domain.as_ref(); //for type inference with None
+        $(
+            let $common_args = $common_val;
+        )*
         if let Some(domain) = domain {
+            $(
+                let $custom_args = $custom_val;
+            )*
             let origin = uri!(crate::routes::$module::custom::$route:
-                              $custom_domain=&domain,
-                              $($common_args = $common_val,)*
-                              $($custom_args = $custom_val,)*
+                              $custom_domain = domain.as_ref(),
+                              $($common_args = $common_args,)*
+                              $($custom_args = $custom_args,)*
                               );
             let path = origin.segments().skip(1).map(|seg| format!("/{}", seg)).collect::<String>(); //first segment is domain, drop it
             let query = origin.query().map(|q| format!("?{}", q)).unwrap_or_default();
             format!("https://{}{}{}", &domain, path, query)
         } else {
+            $(
+                let $normal_args = $normal_val;
+            )*
             url!($module::$route:
-                 $($common_args = $common_val,)*
-                 $($normal_args = $normal_val,)*)
+                 $($common_args = $common_args,)*
+                 $($normal_args = $normal_args,)*)
                 .to_string()
         }
     }};
