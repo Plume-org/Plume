@@ -9,7 +9,7 @@
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
     }
     <h3 class="p-name" dir="auto">
-        <a class="u-url" href="@url!(custom_domain = article.get_blog(ctx.0).unwrap().custom_domain, posts::details: common=[ slug = &article.slug, responding_to = None], normal=[blog = article.get_blog(ctx.0).unwrap().fqn])">
+        <a class="u-url" href="@url!(custom_domain = article.get_blog(ctx.0).unwrap().custom_domain, posts::details: common=[ slug = &article.slug, responding_to = NoValue], normal=[blog = article.get_blog(ctx.0).unwrap().fqn])">
             @article.title
         </a>
     </h3>

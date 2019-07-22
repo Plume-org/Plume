@@ -17,7 +17,7 @@
     @if article.cover_id.is_some() {
         <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
     }
-        <meta property="og:url" content="@url!(custom_domain = *&blog.custom_domain, posts::details: common=[slug = &article.slug, responding_to = None], normal=[blog = &blog.fqn])"/>
+        <meta property="og:url" content="@url!(custom_domain = blog.custom_domain, posts::details: common=[slug = &article.slug, responding_to = NoValue], normal=[blog = &blog.fqn])"/>
     <meta property="og:description" content="@article.subtitle"/>
 }, {
     <a href="@url!(custom_domain = &blog.custom_domain, blogs::details: common=[page = None], normal=[name = &blog.fqn])">@blog.title</a>

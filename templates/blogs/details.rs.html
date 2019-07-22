@@ -24,7 +24,7 @@
 	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
 }, {
-    <a href="@url!(custom_domain = *&blog.custom_domain, blogs::details: common=[page = None], normal=[name = &blog.fqn])" dir="auto">@blog.title</a>
+    <a href="@url!(custom_domain = blog.custom_domain, blogs::details: common=[page = None], normal=[name = &blog.fqn])" dir="auto">@blog.title</a>
 }, {
 <div class="hidden">
     @for author in authors {

@@ -1,7 +1,10 @@
 use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
 
 use rocket::http::hyper::header::{ETag, EntityTag};
-use rocket::http::{Method, Status};
+use rocket::http::{
+    uri::{FromUriParam, Query},
+    Method, Status,
+};
 use rocket::request::Request;
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
@@ -12,6 +15,16 @@ use templates::Html;
 pub use askama_escape::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
+
+pub struct NoValue; // workarround for missing FromUriParam implementation for Option
+
+impl FromUriParam<Query, NoValue> for Option<i32> {
+    type Target = Option<i32>;
+
+    fn from_uri_param(_: NoValue) -> Self::Target {
+        None
+    }
+}
 
 pub type BaseContext<'a> = &'a (
     &'a Connection,
@@ -363,7 +376,7 @@ macro_rules! url {
         common=[$($common_args:tt = $common_val:expr),*],
         normal=[$($normal_args:tt = $normal_val:expr),*],
         custom=[$($custom_args:tt = $custom_val:expr),*]) => {{
-        let domain: Option<&plume_models::blogs::Host> = $domain.as_ref(); //for type inference with None
+        let domain: &Option<plume_models::blogs::Host> = &$domain; //for type inference with None
         $(
             let $common_args = $common_val;
         )*
@@ -372,7 +385,7 @@ macro_rules! url {
                 let $custom_args = $custom_val;
             )*
             let origin = uri!(crate::routes::$module::custom::$route:
-                              $custom_domain = domain.as_ref(),
+                              $custom_domain = domain.to_string(),
                               $($common_args = $common_args,)*
                               $($custom_args = $custom_args,)*
                               );
