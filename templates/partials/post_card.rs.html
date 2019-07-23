@@ -8,13 +8,13 @@
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
     }
-    <h3 class="p-name">
+    <h3 class="p-name" dir="auto">
         <a class="u-url" href="@uri!(posts::details: blog = article.get_blog(ctx.0).unwrap().fqn, slug = &article.slug, responding_to = _)">
             @article.title
         </a>
     </h3>
     <main>
-        <p class="p-summary">@article.subtitle</p>
+        <p class="p-summary" dir="auto">@article.subtitle</p>
     </main>
     <footer class="authors">
         @Html(i18n!(ctx.1, "By {0}"; format!(
