@@ -36,26 +36,8 @@ msgstr "{0} us ha esmentat."
 msgid "{0} boosted your article."
 msgstr ""
 
-#, fuzzy
-msgid "Your feed"
-msgstr "El vostre perfil"
-
-msgid "Local feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
-msgstr ""
-
-# src/template_utils.rs:195
-msgid "Previous page"
-msgstr ""
-
-# src/template_utils.rs:206
-msgid "Next page"
 msgstr ""
 
 # src/routes/blogs.rs:70
@@ -94,28 +76,28 @@ msgstr ""
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:97
-msgid "Your comment has been posted."
+# src/routes/comments.rs:89
+msgid "Your comment have been posted."
 msgstr ""
 
-# src/routes/comments.rs:172
-msgid "Your comment has been deleted."
+# src/routes/comments.rs:163
+msgid "Your comment have been deleted."
 msgstr ""
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} has been unblocked."
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} has been blocked."
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} has been banned."
+# src/routes/instance.rs:218
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -130,8 +112,8 @@ msgstr ""
 msgid "You are not allowed to delete this media."
 msgstr ""
 
-# src/routes/medias.rs:163
-msgid "Your avatar has been updated."
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
 msgstr ""
 
 # src/routes/medias.rs:156
@@ -166,23 +148,20 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:350
-msgid "Your article has been updated."
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
 msgstr ""
 
-# src/routes/posts.rs:532
-msgid "Your article has been saved."
+# src/routes/posts.rs:527
+msgid "Your post have been saved."
 msgstr ""
-
-msgid "New article"
-msgstr "Article nou"
 
 # src/routes/posts.rs:565
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:597
-msgid "Your article has been deleted."
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
 msgstr ""
 
 # src/routes/posts.rs:593
@@ -221,6 +200,10 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr ""
 
+# src/routes/session.rs:263
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
@@ -241,12 +224,12 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:398
-msgid "Your profile has been updated."
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
 msgstr ""
 
-# src/routes/user.rs:425
-msgid "Your account has been deleted."
+# src/routes/user.rs:409
+msgid "Your account have been deleted."
 msgstr ""
 
 # src/routes/user.rs:411
@@ -257,10 +240,9 @@ msgstr ""
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:491
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"
@@ -293,20 +275,14 @@ msgstr "Registre"
 msgid "About this instance"
 msgstr "Quant a aquesta instància"
 
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Administració"
-
-msgid "Documentation"
-msgstr ""
-
 msgid "Source code"
 msgstr "Codi font"
 
 msgid "Matrix room"
 msgstr ""
+
+msgid "Administration"
+msgstr "Administració"
 
 msgid "Welcome to {}"
 msgstr "Us donem la benvinguda a {}"
@@ -314,8 +290,14 @@ msgstr "Us donem la benvinguda a {}"
 msgid "Latest articles"
 msgstr "Darrers articles"
 
-msgid "View all"
-msgstr "Mostra-ho tot"
+msgid "Your feed"
+msgstr ""
+
+msgid "Federated feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
 
 msgid "Administration of {0}"
 msgstr ""
@@ -336,6 +318,15 @@ msgid "Block"
 msgstr "Bloca"
 
 msgid "Ban"
+msgstr ""
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+msgid "Articles from {}"
+msgstr ""
+
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:217
@@ -368,9 +359,6 @@ msgstr ""
 msgid "About {0}"
 msgstr "Quant a {0}"
 
-msgid "Runs Plume {0}"
-msgstr ""
-
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -383,21 +371,7 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "Runs Plume {0}"
 msgstr ""
 
 msgid "Follow {}"
@@ -563,6 +537,9 @@ msgstr "Cap"
 msgid "No description"
 msgstr "Cap descripció"
 
+msgid "View all"
+msgstr "Mostra-ho tot"
+
 msgid "By {0}"
 msgstr "Per {0}"
 
@@ -676,15 +653,6 @@ msgstr "Confirmació"
 msgid "Update password"
 msgstr "Actualitza la contrasenya"
 
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking"
-msgstr ""
-
-msgid "here"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr "Reviseu la vostra safata d’entrada."
 
@@ -767,6 +735,12 @@ msgstr ""
 msgid "Written by {0}"
 msgstr "Escrit per {0}"
 
+msgid "Edit"
+msgstr "Edita"
+
+msgid "Delete this article"
+msgstr "Suprimeix aquest article"
+
 msgid "All rights reserved."
 msgstr "Tots els drets reservats."
 
@@ -815,18 +789,6 @@ msgstr "Envia el comentari"
 
 msgid "No comments yet. Be the first to react!"
 msgstr ""
-
-msgid "Delete"
-msgstr "Suprimeix"
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Edit"
-msgstr "Edita"
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -889,10 +851,6 @@ msgstr "Actualitza el blog"
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 
-#, fuzzy
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "Suprimeix permanentment aquest blog"
-
 msgid "Permanently delete this blog"
 msgstr "Suprimeix permanentment aquest blog"
 
@@ -908,16 +866,15 @@ msgstr "Crea un blog"
 msgid "{}'s icon"
 msgstr "Icona per a {}"
 
+msgid "New article"
+msgstr "Article nou"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "Hi ha 1 autor en aquest blog: "
 msgstr[1] "Hi ha {0} autors en aquest blog: "
 
 msgid "No posts to see here yet."
-msgstr "Encara no hi ha cap apunt."
-
-#, fuzzy
-msgid "Nothing to see here yet."
 msgstr "Encara no hi ha cap apunt."
 
 msgid "Articles tagged \"{0}\""
@@ -948,6 +905,9 @@ msgstr ""
 
 msgid "Content warning: {0}"
 msgstr ""
+
+msgid "Delete"
+msgstr "Suprimeix"
 
 msgid "Details"
 msgstr "Detalls"
@@ -981,11 +941,3 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
-
-# src/template_utils.rs:305
-#, fuzzy
-#~ msgid "Articles in this timeline"
-#~ msgstr "Escrit en aquesta llengua"
-
-#~ msgid "Delete this article"
-#~ msgstr "Suprimeix aquest article"

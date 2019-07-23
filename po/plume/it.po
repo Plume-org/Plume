@@ -36,26 +36,9 @@ msgstr "{0} ti ha menzionato."
 msgid "{0} boosted your article."
 msgstr "{0} ha boostato il tuo articolo."
 
-msgid "Your feed"
-msgstr "Il tuo flusso"
-
-msgid "Local feed"
-msgstr "Flusso locale"
-
-msgid "Federated feed"
-msgstr "Flusso federato"
-
 # src/template_utils.rs:108
 msgid "{0}'s avatar"
 msgstr "Avatar di {0}"
-
-# src/template_utils.rs:195
-msgid "Previous page"
-msgstr ""
-
-# src/template_utils.rs:206
-msgid "Next page"
-msgstr ""
 
 # src/routes/blogs.rs:70
 msgid "To create a new blog, you need to be logged in"
@@ -95,27 +78,27 @@ msgid "Your blog information have been updated."
 msgstr ""
 
 #, fuzzy
-msgid "Your comment has been posted."
+msgid "Your comment have been posted."
 msgstr "Non hai ancora nessun media."
 
 #, fuzzy
-msgid "Your comment has been deleted."
+msgid "Your comment have been deleted."
 msgstr "Non hai ancora nessun media."
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} has been unblocked."
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} has been blocked."
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} has been banned."
+# src/routes/instance.rs:218
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -131,9 +114,9 @@ msgstr ""
 msgid "You are not allowed to delete this media."
 msgstr "Non ti è consentito di eliminare questo blog."
 
-#, fuzzy
-msgid "Your avatar has been updated."
-msgstr "Non hai ancora nessun media."
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
 
 # src/routes/blogs.rs:217
 #, fuzzy
@@ -169,25 +152,22 @@ msgstr "Modifica {0}"
 msgid "You are not allowed to publish on this blog."
 msgstr "Non ti è consentito modificare questo blog."
 
-#, fuzzy
-msgid "Your article has been updated."
-msgstr "Non hai ancora nessun media."
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
 
 #, fuzzy
-msgid "Your article has been saved."
+msgid "Your post have been saved."
 msgstr "Non hai ancora nessun media."
-
-msgid "New article"
-msgstr "Nuovo articolo"
 
 # src/routes/blogs.rs:172
 #, fuzzy
 msgid "You are not allowed to delete this article."
 msgstr "Non ti è consentito di eliminare questo blog."
 
-#, fuzzy
-msgid "Your article has been deleted."
-msgstr "Non hai ancora nessun media."
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
+msgstr ""
 
 # src/routes/posts.rs:593
 msgid ""
@@ -225,6 +205,10 @@ msgstr "Qui c'è il collegamento per reimpostare la tua password: {0}"
 msgid "Your password was successfully reset."
 msgstr "La tua password è stata reimpostata con successo."
 
+# src/routes/session.rs:263
+msgid "Sorry, but the link expired. Try again"
+msgstr "Spiacente, ma il collegamento è scaduto. Riprova"
+
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Per accedere al tuo pannello, devi avere effettuato l'accesso"
@@ -245,12 +229,12 @@ msgstr "Per iscriverti a qualcuno, devi avere effettuato l'accesso"
 msgid "To edit your profile, you need to be logged in"
 msgstr "Per modificare il tuo profilo, devi avere effettuato l'accesso"
 
-#, fuzzy
-msgid "Your profile has been updated."
-msgstr "Non hai ancora nessun media."
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
 
 #, fuzzy
-msgid "Your account has been deleted."
+msgid "Your account have been deleted."
 msgstr "Non hai ancora nessun media."
 
 # src/routes/user.rs:411
@@ -261,10 +245,9 @@ msgstr ""
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:491
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"
@@ -297,20 +280,14 @@ msgstr "Registrati"
 msgid "About this instance"
 msgstr "A proposito di questa istanza"
 
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Amministrazione"
-
-msgid "Documentation"
-msgstr ""
-
 msgid "Source code"
 msgstr "Codice sorgente"
 
 msgid "Matrix room"
 msgstr "Stanza Matrix"
+
+msgid "Administration"
+msgstr "Amministrazione"
 
 msgid "Welcome to {}"
 msgstr "Benvenuto su {}"
@@ -318,8 +295,14 @@ msgstr "Benvenuto su {}"
 msgid "Latest articles"
 msgstr "Ultimi articoli"
 
-msgid "View all"
-msgstr "Vedi tutto"
+msgid "Your feed"
+msgstr "Il tuo flusso"
+
+msgid "Federated feed"
+msgstr "Flusso federato"
+
+msgid "Local feed"
+msgstr "Flusso locale"
 
 msgid "Administration of {0}"
 msgstr "Amministrazione di {0}"
@@ -341,6 +324,15 @@ msgstr "Blocca"
 
 msgid "Ban"
 msgstr "Bandisci"
+
+msgid "All the articles of the Fediverse"
+msgstr "Tutti gli articoli del Fediverso"
+
+msgid "Articles from {}"
+msgstr "Articoli da {}"
+
+msgid "Nothing to see here yet. Try subscribing to more people."
+msgstr "Ancora niente da vedere qui. Prova ad iscriverti a più persone."
 
 # src/template_utils.rs:217
 msgid "Name"
@@ -372,9 +364,6 @@ msgstr "Salva queste impostazioni"
 msgid "About {0}"
 msgstr "A proposito di {0}"
 
-msgid "Runs Plume {0}"
-msgstr "Utilizza Plume {0}"
-
 msgid "Home to <em>{0}</em> people"
 msgstr "Casa di <em>{0}</em> persone"
 
@@ -387,22 +376,8 @@ msgstr "E sono connessi ad altre <em>{0}</em> istanze"
 msgid "Administred by"
 msgstr "Amministrata da"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
+msgid "Runs Plume {0}"
+msgstr "Utilizza Plume {0}"
 
 #, fuzzy
 msgid "Follow {}"
@@ -580,6 +555,9 @@ msgstr "Nessuna"
 msgid "No description"
 msgstr "Nessuna descrizione"
 
+msgid "View all"
+msgstr "Vedi tutto"
+
 msgid "By {0}"
 msgstr "Da {0}"
 
@@ -693,15 +671,6 @@ msgstr "Conferma"
 msgid "Update password"
 msgstr "Aggiorna password"
 
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking"
-msgstr ""
-
-msgid "here"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr "Controlla la tua casella di posta in arrivo!"
 
@@ -789,6 +758,12 @@ msgstr "Pubblica il tuo post"
 msgid "Written by {0}"
 msgstr "Scritto da {0}"
 
+msgid "Edit"
+msgstr "Modifica"
+
+msgid "Delete this article"
+msgstr "Elimina questo articolo"
+
 msgid "All rights reserved."
 msgstr "Tutti i diritti riservati."
 
@@ -840,18 +815,6 @@ msgstr "Invia commento"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Ancora nessun commento. Sii il primo ad aggiungere la tua reazione!"
-
-msgid "Delete"
-msgstr "Elimina"
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Edit"
-msgstr "Modifica"
 
 msgid "Invalid CSRF token"
 msgstr "Token CSRF non valido"
@@ -920,10 +883,6 @@ msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 "Fai molta attenzione, qualsiasi scelta fatta qui non può essere annullata."
 
-#, fuzzy
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "Elimina permanentemente questo blog"
-
 msgid "Permanently delete this blog"
 msgstr "Elimina permanentemente questo blog"
 
@@ -939,16 +898,15 @@ msgstr "Crea blog"
 msgid "{}'s icon"
 msgstr "Icona di {}"
 
+msgid "New article"
+msgstr "Nuovo articolo"
+
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
 msgstr[0] "C'è un autore su questo blog: "
 msgstr[1] "Ci sono {0} autori su questo blog: "
 
 msgid "No posts to see here yet."
-msgstr "Nessun post da mostrare qui."
-
-#, fuzzy
-msgid "Nothing to see here yet."
 msgstr "Nessun post da mostrare qui."
 
 msgid "Articles tagged \"{0}\""
@@ -980,6 +938,9 @@ msgstr "Non hai ancora nessun media."
 
 msgid "Content warning: {0}"
 msgstr "Avviso di contenuto sensibile: {0}"
+
+msgid "Delete"
+msgstr "Elimina"
 
 msgid "Details"
 msgstr "Dettagli"
@@ -1013,28 +974,3 @@ msgstr "Copialo nei tuoi articoli, per inserire questo media:"
 
 msgid "Use as an avatar"
 msgstr "Usa come immagine di profilo"
-
-#, fuzzy
-#~ msgid "My feed"
-#~ msgstr "Il tuo flusso"
-
-#~ msgid "All the articles of the Fediverse"
-#~ msgstr "Tutti gli articoli del Fediverso"
-
-#~ msgid "Articles from {}"
-#~ msgstr "Articoli da {}"
-
-#~ msgid "Nothing to see here yet. Try subscribing to more people."
-#~ msgstr "Ancora niente da vedere qui. Prova ad iscriverti a più persone."
-
-# src/template_utils.rs:305
-#, fuzzy
-#~ msgid "Articles in this timeline"
-#~ msgstr "Scritto in questa lingua"
-
-# src/routes/session.rs:263
-#~ msgid "Sorry, but the link expired. Try again"
-#~ msgstr "Spiacente, ma il collegamento è scaduto. Riprova"
-
-#~ msgid "Delete this article"
-#~ msgstr "Elimina questo articolo"

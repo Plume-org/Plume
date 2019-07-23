@@ -34,27 +34,8 @@ msgstr "{0} la inn en kommentar til artikkelen din"
 msgid "{0} boosted your article."
 msgstr "{0} la inn en kommentar til artikkelen din"
 
-#, fuzzy
-msgid "Your feed"
-msgstr "Din kommentar"
-
-#, fuzzy
-msgid "Local feed"
-msgstr "Din kommentar"
-
-msgid "Federated feed"
-msgstr ""
-
 # src/template_utils.rs:68
 msgid "{0}'s avatar"
-msgstr ""
-
-# src/template_utils.rs:195
-msgid "Previous page"
-msgstr ""
-
-# src/template_utils.rs:206
-msgid "Next page"
 msgstr ""
 
 # src/routes/blogs.rs:70
@@ -93,28 +74,28 @@ msgstr "Du er ikke denne bloggens forfatter."
 msgid "Your blog information have been updated."
 msgstr ""
 
-#, fuzzy
-msgid "Your comment has been posted."
-msgstr "Ingen innlegg å vise enda."
+# src/routes/comments.rs:89
+msgid "Your comment have been posted."
+msgstr ""
 
-#, fuzzy
-msgid "Your comment has been deleted."
-msgstr "Ingen innlegg å vise enda."
+# src/routes/comments.rs:163
+msgid "Your comment have been deleted."
+msgstr ""
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} has been unblocked."
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} has been blocked."
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} has been banned."
+# src/routes/instance.rs:218
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:47
@@ -129,9 +110,9 @@ msgstr ""
 msgid "You are not allowed to delete this media."
 msgstr "Du er ikke denne bloggens forfatter."
 
-#, fuzzy
-msgid "Your avatar has been updated."
-msgstr "Ingen innlegg å vise enda."
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
 
 #, fuzzy
 msgid "You are not allowed to use this media."
@@ -164,23 +145,20 @@ msgstr "Kommentér \"{0}\""
 msgid "You are not allowed to publish on this blog."
 msgstr "Du er ikke denne bloggens forfatter."
 
-#, fuzzy
-msgid "Your article has been updated."
-msgstr "Ingen innlegg å vise enda."
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
 
-#, fuzzy
-msgid "Your article has been saved."
-msgstr "Ingen innlegg å vise enda."
-
-msgid "New article"
-msgstr "Ny artikkel"
+# src/routes/posts.rs:527
+msgid "Your post have been saved."
+msgstr ""
 
 #, fuzzy
 msgid "You are not allowed to delete this article."
 msgstr "Du er ikke denne bloggens forfatter."
 
 #, fuzzy
-msgid "Your article has been deleted."
+msgid "Your article have been deleted."
 msgstr "Ingen innlegg å vise enda."
 
 # src/routes/posts.rs:593
@@ -219,6 +197,10 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr ""
 
+# src/routes/session.rs:214
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 # src/routes/user.rs:148
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
@@ -239,13 +221,13 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-#, fuzzy
-msgid "Your profile has been updated."
-msgstr "Ingen innlegg å vise enda."
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
 
-#, fuzzy
-msgid "Your account has been deleted."
-msgstr "Ingen innlegg å vise enda."
+# src/routes/user.rs:409
+msgid "Your account have been deleted."
+msgstr ""
 
 # src/routes/user.rs:411
 msgid "You can't delete someone else's account."
@@ -255,10 +237,9 @@ msgstr ""
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:491
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"
@@ -293,20 +274,14 @@ msgstr "Registrér deg"
 msgid "About this instance"
 msgstr "Om denne instansen"
 
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Administrasjon"
-
-msgid "Documentation"
-msgstr ""
-
 msgid "Source code"
 msgstr "Kildekode"
 
 msgid "Matrix room"
 msgstr "Snakkerom"
+
+msgid "Administration"
+msgstr "Administrasjon"
 
 msgid "Welcome to {}"
 msgstr ""
@@ -314,8 +289,16 @@ msgstr ""
 msgid "Latest articles"
 msgstr "Siste artikler"
 
-msgid "View all"
+#, fuzzy
+msgid "Your feed"
+msgstr "Din kommentar"
+
+msgid "Federated feed"
 msgstr ""
+
+#, fuzzy
+msgid "Local feed"
+msgstr "Din kommentar"
 
 #, fuzzy
 msgid "Administration of {0}"
@@ -339,6 +322,16 @@ msgid "Block"
 msgstr ""
 
 msgid "Ban"
+msgstr ""
+
+msgid "All the articles of the Fediverse"
+msgstr ""
+
+#, fuzzy
+msgid "Articles from {}"
+msgstr "Om {0}"
+
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 # src/template_utils.rs:144
@@ -375,9 +368,6 @@ msgstr "Lagre innstillingene"
 msgid "About {0}"
 msgstr ""
 
-msgid "Runs Plume {0}"
-msgstr ""
-
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -391,21 +381,7 @@ msgstr ""
 msgid "Administred by"
 msgstr "Administrasjon"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "Runs Plume {0}"
 msgstr ""
 
 #, fuzzy
@@ -592,6 +568,9 @@ msgstr ""
 msgid "No description"
 msgstr "Lang beskrivelse"
 
+msgid "View all"
+msgstr ""
+
 msgid "By {0}"
 msgstr ""
 
@@ -721,15 +700,6 @@ msgstr "Oppsett"
 msgid "Update password"
 msgstr "Oppdater konto"
 
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking"
-msgstr ""
-
-msgid "here"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr ""
 
@@ -817,6 +787,13 @@ msgstr ""
 msgid "Written by {0}"
 msgstr ""
 
+msgid "Edit"
+msgstr ""
+
+#, fuzzy
+msgid "Delete this article"
+msgstr "Siste artikler"
+
 msgid "All rights reserved."
 msgstr ""
 
@@ -872,18 +849,6 @@ msgstr "Send kommentar"
 #, fuzzy
 msgid "No comments yet. Be the first to react!"
 msgstr "Ingen kommentarer enda. Vær den første!"
-
-msgid "Delete"
-msgstr ""
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Edit"
-msgstr ""
 
 #, fuzzy
 msgid "Invalid CSRF token"
@@ -954,10 +919,6 @@ msgstr "Opprett blogg"
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr ""
 
-#, fuzzy
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "Du er ikke denne bloggens forfatter."
-
 msgid "Permanently delete this blog"
 msgstr ""
 
@@ -974,6 +935,9 @@ msgstr "Opprett blogg"
 msgid "{}'s icon"
 msgstr ""
 
+msgid "New article"
+msgstr "Ny artikkel"
+
 #, fuzzy
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -981,10 +945,6 @@ msgstr[0] "Én forfatter av denne bloggen: "
 msgstr[1] "{0} forfattere av denne bloggen: "
 
 msgid "No posts to see here yet."
-msgstr "Ingen innlegg å vise enda."
-
-#, fuzzy
-msgid "Nothing to see here yet."
 msgstr "Ingen innlegg å vise enda."
 
 #, fuzzy
@@ -1017,6 +977,9 @@ msgstr ""
 #, fuzzy
 msgid "Content warning: {0}"
 msgstr "Innhold"
+
+msgid "Delete"
+msgstr ""
 
 msgid "Details"
 msgstr ""
@@ -1051,27 +1014,6 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr ""
-
-#, fuzzy
-#~ msgid "My feed"
-#~ msgstr "Din kommentar"
-
-#, fuzzy
-#~ msgid "Articles from {}"
-#~ msgstr "Om {0}"
-
-# #-#-#-#-#  nb.po (plume)  #-#-#-#-#
-# src/template_utils.rs:183
-#, fuzzy
-#~ msgid "Articles in this timeline"
-#~ msgstr ""
-#~ "#-#-#-#-#  nb.po (plume)  #-#-#-#-#\n"
-#~ "#-#-#-#-#  nb.po (plume)  #-#-#-#-#\n"
-#~ "Den siden fant vi ikke."
-
-#, fuzzy
-#~ msgid "Delete this article"
-#~ msgstr "Siste artikler"
 
 #, fuzzy
 #~ msgid "Short description - byline"
