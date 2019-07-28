@@ -149,6 +149,7 @@ fn lex(stream: &str) -> Vec<Token> {
         .collect()
 }
 
+/// Private internals of TimelineQuery
 #[derive(Debug, Clone, PartialEq)]
 enum TQ<'a> {
     Or(Vec<TQ<'a>>),
@@ -498,28 +499,27 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                             let mut boosts = true;
                             let mut likes = false;
                             while let Some(Token::Word(s, e, clude)) = left.get(0) {
-                                if *clude == "include" || *clude == "exclude" {
-                                    match (*clude, left.get(1).map(Token::get_text)?) {
-                                        ("include", "reshares") | ("include", "reshare") => {
-                                            boosts = true
-                                        }
-                                        ("exclude", "reshares") | ("exclude", "reshare") => {
-                                            boosts = false
-                                        }
-                                        ("include", "likes") | ("include", "like") => likes = true,
-                                        ("exclude", "likes") | ("exclude", "like") => likes = false,
-                                        (_, w) => {
-                                            return Token::Word(*s, *e, w).get_error(Token::Word(
-                                                0,
-                                                0,
-                                                "one of 'likes' or 'reshares'",
-                                            ))
-                                        }
-                                    }
-                                    left = &left[2..];
-                                } else {
+                                if *clude != "include" && *clude != "exclude" {
                                     break;
                                 }
+                                match (*clude, left.get(1).map(Token::get_text)?) {
+                                    ("include", "reshares") | ("include", "reshare") => {
+                                        boosts = true
+                                    }
+                                    ("exclude", "reshares") | ("exclude", "reshare") => {
+                                        boosts = false
+                                    }
+                                    ("include", "likes") | ("include", "like") => likes = true,
+                                    ("exclude", "likes") | ("exclude", "like") => likes = false,
+                                    (_, w) => {
+                                        return Token::Word(*s, *e, w).get_error(Token::Word(
+                                            0,
+                                            0,
+                                            "one of 'likes' or 'reshares'",
+                                        ))
+                                    }
+                                }
+                                left = &left[2..];
                             }
                             WithList::Author { boosts, likes }
                         }
@@ -556,24 +556,23 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                 let mut boosts = true;
                 let mut likes = false;
                 while let Some(Token::Word(s, e, clude)) = stream.get(1) {
-                    if *clude == "include" || *clude == "exclude" {
-                        match (*clude, stream.get(2).map(Token::get_text)?) {
-                            ("include", "reshares") | ("include", "reshare") => boosts = true,
-                            ("exclude", "reshares") | ("exclude", "reshare") => boosts = false,
-                            ("include", "likes") | ("include", "like") => likes = true,
-                            ("exclude", "likes") | ("exclude", "like") => likes = false,
-                            (_, w) => {
-                                return Token::Word(*s, *e, w).get_error(Token::Word(
-                                    0,
-                                    0,
-                                    "one of 'likes' or 'boosts'",
-                                ))
-                            }
-                        }
-                        stream = &stream[2..];
-                    } else {
+                    if *clude != "include" && *clude != "exclude" {
                         break;
                     }
+                    match (*clude, stream.get(2).map(Token::get_text)?) {
+                        ("include", "reshares") | ("include", "reshare") => boosts = true,
+                        ("exclude", "reshares") | ("exclude", "reshare") => boosts = false,
+                        ("include", "likes") | ("include", "like") => likes = true,
+                        ("exclude", "likes") | ("exclude", "like") => likes = false,
+                        (_, w) => {
+                            return Token::Word(*s, *e, w).get_error(Token::Word(
+                                0,
+                                0,
+                                "one of 'likes' or 'boosts'",
+                            ))
+                        }
+                    }
+                    stream = &stream[2..];
                 }
                 Ok((&stream[1..], Arg::Boolean(Bool::Followed { boosts, likes })))
             }

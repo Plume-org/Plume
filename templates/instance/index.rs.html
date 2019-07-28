@@ -23,7 +23,7 @@
     @for (tl, articles) in all_tl {
         @if !articles.is_empty() {
             <div class="h-feed">
-                <h2>
+                <h2 dir="auto">
                     <span class="p-name">@i18n_timeline_name(ctx.1, &tl.name)</span>
                     &mdash;
                     <a href="@uri!(timelines::details: id = tl.id, page = _)">@i18n!(ctx.1, "View all")</a>

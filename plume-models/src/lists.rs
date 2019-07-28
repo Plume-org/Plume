@@ -128,9 +128,7 @@ impl List {
 
     /// Returns the kind of a list
     pub fn kind(&self) -> ListType {
-        self.type_
-            .try_into()
-            .expect("invalide list was constructed")
+        self.type_.try_into().expect("invalid list was constructed")
     }
 
     /// Return Ok(true) if the list contain the given user, Ok(false) otherwiser,
@@ -333,7 +331,7 @@ impl List {
     }
 }
 
-pub(super) mod private {
+mod private {
     pub use super::*;
     use diesel::{
         dsl,
