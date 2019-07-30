@@ -136,6 +136,7 @@ pub fn new_auth(i18n: I18n) -> Flash<Redirect> {
 pub struct NewBlogForm {
     #[validate(custom(function = "valid_slug", message = "Invalid name"))]
     pub title: String,
+    pub custom_domain: String,
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
@@ -153,6 +154,12 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
     let user = rockets.user.clone().unwrap();
+
+    let custom_domain = if *(&form.custom_domain.is_empty()) {
+        None
+    } else {
+        Some(Host::new(*(&form.custom_domain)))
+    };
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -185,6 +192,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
             Instance::get_local()
                 .expect("blog::create: instance error")
                 .id,
+            custom_domain,
         )
         .expect("blog::create: new local error"),
     )

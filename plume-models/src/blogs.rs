@@ -530,6 +530,7 @@ impl NewBlog {
         title: String,
         summary: String,
         instance_id: i32,
+        custom_domain: Option<Host>,
     ) -> Result<NewBlog> {
         let (pub_key, priv_key) = sign::gen_keypair();
         Ok(NewBlog {
@@ -539,6 +540,7 @@ impl NewBlog {
             instance_id,
             public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
             private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
+            custom_domain,
             ..NewBlog::default()
         })
     }
@@ -566,6 +568,7 @@ pub(crate) mod tests {
                 "Blog name".to_owned(),
                 "This is a small blog".to_owned(),
                 Instance::get_local().unwrap().id,
+                None,
             )
             .unwrap(),
         )
@@ -577,6 +580,7 @@ pub(crate) mod tests {
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
                 Instance::get_local().unwrap().id,
+                Some(Host::new("blog.myname.me")),
             )
             .unwrap(),
         )
@@ -588,6 +592,7 @@ pub(crate) mod tests {
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
                 Instance::get_local().unwrap().id,
+                None,
             )
             .unwrap(),
         )
@@ -648,6 +653,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("some.blog.com")),
                 )
                 .unwrap(),
             )
@@ -676,6 +682,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    None,
                 )
                 .unwrap(),
             )
@@ -687,6 +694,7 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("named.example.blog")),
                 )
                 .unwrap(),
             )
@@ -779,6 +787,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    None,
                 )
                 .unwrap(),
             )
@@ -803,6 +812,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("some.blog.com")),
                 )
                 .unwrap(),
             )
@@ -841,6 +851,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    None,
                 )
                 .unwrap(),
             )
@@ -852,6 +863,7 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("my.blog.com")),
                 )
                 .unwrap(),
             )
