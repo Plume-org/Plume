@@ -611,7 +611,8 @@ msgstr "Dominio de instancia"
 msgid "Posted by one of these authors"
 msgstr "Publicado por uno de estos autores"
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "Autores"
 
 # src/template_utils.rs:305
@@ -635,13 +636,16 @@ msgstr "Publicado bajo esta licencia"
 msgid "Article license"
 msgstr "Licencia de artículo"
 
-msgid "Search result for \"{0}\""
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
 msgstr "Resultado de búsqueda para \"{0}\""
 
-msgid "Search result"
+#, fuzzy
+msgid "Search result(s)"
 msgstr "Resultado de búsqueda"
 
-msgid "No result for your query"
+#, fuzzy
+msgid "No results for your query"
 msgstr "No hay resultado para su consulta"
 
 msgid "No more results for your query"

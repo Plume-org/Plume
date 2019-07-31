@@ -607,7 +607,8 @@ msgstr "اسم نطاق مثيل الخادم"
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Authors"
+#, fuzzy
+msgid "Author(s)"
 msgstr "المؤلفون"
 
 # src/template_utils.rs:305
@@ -631,14 +632,17 @@ msgstr ""
 msgid "Article license"
 msgstr "رخصة المقال"
 
-msgid "Search result for \"{0}\""
-msgstr ""
-
-msgid "Search result"
+#, fuzzy
+msgid "Search result(s) for \"{0}\""
 msgstr "نتائج البحث"
 
-msgid "No result for your query"
-msgstr ""
+#, fuzzy
+msgid "Search result(s)"
+msgstr "نتائج البحث"
+
+#, fuzzy
+msgid "No results for your query"
+msgstr "الانتقال إلى معرضك"
 
 msgid "No more results for your query"
 msgstr ""

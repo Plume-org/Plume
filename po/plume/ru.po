@@ -603,7 +603,7 @@ msgstr ""
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Authors"
+msgid "Author(s)"
 msgstr ""
 
 # src/template_utils.rs:305
@@ -627,14 +627,15 @@ msgstr ""
 msgid "Article license"
 msgstr ""
 
-msgid "Search result for \"{0}\""
+msgid "Search result(s) for \"{0}\""
 msgstr ""
 
-msgid "Search result"
+msgid "Search result(s)"
 msgstr ""
 
-msgid "No result for your query"
-msgstr ""
+#, fuzzy
+msgid "No results for your query"
+msgstr "Перейти в вашу галерею"
 
 msgid "No more results for your query"
 msgstr ""

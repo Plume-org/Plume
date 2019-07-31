@@ -72,11 +72,11 @@ msgstr ""
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:94
+# src/routes/comments.rs:97
 msgid "Your comment have been posted."
 msgstr ""
 
-# src/routes/comments.rs:169
+# src/routes/comments.rs:172
 msgid "Your comment have been deleted."
 msgstr ""
 
@@ -144,27 +144,27 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:348
+# src/routes/posts.rs:350
 msgid "Your article have been updated."
 msgstr ""
 
-# src/routes/posts.rs:528
+# src/routes/posts.rs:532
 msgid "Your post have been saved."
 msgstr ""
 
-# src/routes/posts.rs:568
+# src/routes/posts.rs:572
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:593
+# src/routes/posts.rs:597
 msgid "Your article have been deleted."
 msgstr ""
 
-# src/routes/posts.rs:598
+# src/routes/posts.rs:602
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:638
+# src/routes/posts.rs:642
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
@@ -585,7 +585,7 @@ msgstr ""
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Authors"
+msgid "Author(s)"
 msgstr ""
 
 # src/template_utils.rs:339
@@ -609,13 +609,13 @@ msgstr ""
 msgid "Article license"
 msgstr ""
 
-msgid "Search result for \"{0}\""
+msgid "Search result(s) for \"{0}\""
 msgstr ""
 
-msgid "Search result"
+msgid "Search result(s)"
 msgstr ""
 
-msgid "No result for your query"
+msgid "No results for your query"
 msgstr ""
 
 msgid "No more results for your query"
