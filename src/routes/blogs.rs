@@ -155,7 +155,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     let intl = &rockets.intl.catalog;
     let user = rockets.user.clone().unwrap();
 
-    let custom_domain = if *(&form.custom_domain.is_empty()) {
+    let custom_domain = if form.custom_domain.is_empty() {
         None
     } else {
         Some(Host::new(form.custom_domain.clone()))
