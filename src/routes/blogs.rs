@@ -155,10 +155,11 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     let intl = &rockets.intl.catalog;
     let user = rockets.user.clone().unwrap();
 
-    let custom_domain = if form.custom_domain.is_empty() {
-        None
+    let (custom_domain, dns_ok) = if form.custom_domain.is_empty() {
+        (None, true)
     } else {
-        Some(Host::new(form.custom_domain.clone()))
+        let dns_check = true; // TODO
+        (Some(Host::new(form.custom_domain.clone())), dns_check)
     };
 
     let mut errors = match form.validate() {
@@ -208,11 +209,19 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     )
     .expect("blog::create: author error");
 
-    Flash::success(
-        Redirect::to(uri!(details: name = slug.clone(), page = _)),
-        &i18n!(intl, "Your blog was successfully created!"),
-    )
-    .into()
+    if dns_ok {
+        Flash::success(
+            Redirect::to(uri!(details: name = slug.clone(), page = _)),
+            &i18n!(intl, "Your blog was successfully created!"),
+        )
+        .into()
+    } else {
+        Flash::warn(
+            Redirect::to(uri!(details: name = slug.clone(), page = _)),
+            &i18n!(intl, "Your blog was successfully created, but the custom domain seems invalid. Please check it is correct from your blog's settings."),
+        )
+        .into()
+    }
 }
 
 #[post("/~/<name>/delete")]
