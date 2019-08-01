@@ -216,7 +216,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
         )
         .into()
     } else {
-        Flash::warn(
+        Flash::warning(
             Redirect::to(uri!(details: name = slug.clone(), page = _)),
             &i18n!(intl, "Your blog was successfully created, but the custom domain seems invalid. Please check it is correct from your blog's settings."),
         )
