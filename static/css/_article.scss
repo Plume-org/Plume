@@ -370,6 +370,14 @@ main .article-meta {
     background: transparent;
     align-items: center;
     justify-content: space-between;
+    position: fixed;
+    width: 60%;
+    padding: 0px 20px;
+    border: 1px solid $purple;
+    margin-top: -100px;
+    max-height: 90px;
+    background: $background;
+
     button {
       flex: 0 0 10em;
       font-size: 1.25em;
@@ -381,6 +389,10 @@ main .article-meta {
     min-height: 1em;
     outline: none;
     margin-bottom: 0.5em;
+  }
+
+  & > h1 {
+    margin-top: 110px;
   }
 
   .placeholder {
