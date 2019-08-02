@@ -364,48 +364,54 @@ main .article-meta {
 }
 
 #plume-editor {
-  header {
+  margin: 0;
+  grid: 50px 1fr / 1fr auto 20%;
+  min-height: 80vh;
+
+  & > header {
     display: flex;
-    flex-direction: row-reverse;
-    background: transparent;
     align-items: center;
     justify-content: space-between;
-    position: fixed;
-    width: 60%;
     padding: 0px 20px;
-    border: 1px solid $purple;
-    margin-top: -100px;
+    border-bottom: 1px solid $purple;
     max-height: 90px;
     background: $background;
 
-    button {
-      flex: 0 0 10em;
-      font-size: 1.25em;
-      margin: .5em 0em .5em 1em;
+    grid-column: 1 / 3;
+    grid-row: 1 / 1;
+  }
+
+  #edition-area {
+    margin: 0;
+    max-width: none;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  #edition-area > * {
+    min-height: 1em;
+    outline: none;
+    margin-left: 20%;
+    margin-bottom: 0.5em;
+    padding-right: 5%;
+
+    &:empty::before {
+      content: attr(data-placeholder);
+      display: none;
+      color: transparentize($black, 0.6);
+      cursor: text;
+    }
+
+    &:empty:not(:focus)::before {
+      display: inline;
     }
   }
 
-  & > * {
-    min-height: 1em;
-    outline: none;
-    margin-bottom: 0.5em;
-  }
-
-  & > h1 {
+  #edition-area > h1 {
     margin-top: 110px;
   }
 
-  .placeholder {
-    color: transparentize($black, 0.6);
-  }
-
-  article {
-    max-width: none;
-    min-height: 2em;
-  }
-
-  & > *[contenteditable] {
-    margin-left: -20px;
+  #edition-area > *[contenteditable] {
     padding-left: 18px;
     border-left: 2px solid transparent;
     transition: border-left-color 0.1s ease-in;
@@ -413,6 +419,34 @@ main .article-meta {
     &:hover {
       border-left-color: transparentize($black, 0.6);
     }
+  }
+
+  aside {
+    background: $gray;
+    margin: 0;
+    flex: 0 0 15%;
+    padding: 0 1em;
+    grid-row: 1 / 4;
+
+    & > * {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin: 2em 0 .5em;
+    }
+
+    button {
+      font-size: 1.25em;
+      margin: 0;
+    }
+  }
+}
+
+body#editor {
+  footer {
+    margin-top: 0;
   }
 }
 

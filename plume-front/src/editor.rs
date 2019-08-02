@@ -63,33 +63,7 @@ impl From<stdweb::private::ConversionError> for EditorError {
     }
 }
 
-fn init_widget(
-    parent: &Element,
-    tag: &'static str,
-    placeholder_text: String,
-    content: String,
-    disable_return: bool,
-) -> Result<HtmlElement, EditorError> {
-    let widget = placeholder(make_editable(tag).try_into()?, &placeholder_text);
-    if !content.is_empty() {
-        widget.dataset().insert("edited", "true")?;
-    }
-    widget.append_child(&document().create_text_node(&content));
-    if disable_return {
-        widget.add_event_listener(no_return);
-    }
-
-    parent.append_child(&widget);
-    // We need to do that to make sure the placeholder is correctly rendered
-    widget.focus();
-    widget.blur();
-
-    filter_paste(&widget);
-
-    Ok(widget)
-}
-
-fn filter_paste(elt: &HtmlElement) {
+fn filter_paste(elt: &Element) {
     // Only insert text when pasting something
     js! {
         @{&elt}.addEventListener("paste", function (evt) {
@@ -127,43 +101,32 @@ pub fn init() -> Result<(), EditorError> {
 
 fn init_editor() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-editor") {
+        document().body()?.set_attribute("id", "editor")?;
+
+        let aside = document().get_element_by_id("plume-editor-aside")?;
+
         // Show the editor
-        js! { @{&ed}.style.display = "block"; };
+        js! {
+            @{&ed}.style.display = "grid";
+            @{&aside}.style.display = "block";
+        };
         // And hide the HTML-only fallback
         let old_ed = document().get_element_by_id("plume-fallback-editor")?;
-        let old_title = document().get_element_by_id("plume-editor-title")?;
         js! {
             @{&old_ed}.style.display = "none";
-            @{&old_title}.style.display = "none";
         };
 
-        // Get content from the old editor (when editing an article for instance)
-        let title_val = get_elt_value("title");
-        let subtitle_val = get_elt_value("subtitle");
-        let content_val = get_elt_value("editor-content");
         // And pre-fill the new editor with this values
-        let title = init_widget(
-            &ed,
-            "h1",
-            i18n!(CATALOG, "Enter your title"),
-            title_val,
-            true,
-        )?;
-        let subtitle = init_widget(
-            &ed,
-            "h2",
-            i18n!(CATALOG, "Enter a subtitle, or a summary"),
-            subtitle_val,
-            true,
-        )?;
-        let content = init_widget(
-            &ed,
-            "article",
-            i18n!(CATALOG, "Write your article here. Markdown is supported."),
-            content_val.clone(),
-            false,
-        )?;
-        js! { @{&content}.innerHTML = @{content_val}; };
+        let title = document().get_element_by_id("editor-title")?;
+        let subtitle = document().get_element_by_id("editor-subtitle")?;
+        let content = document().get_element_by_id("editor-default-paragraph")?;
+
+        title.add_event_listener(no_return);
+        subtitle.add_event_listener(no_return);
+
+        filter_paste(&title);
+        filter_paste(&subtitle);
+        filter_paste(&content);
 
         // character counter
         content.add_event_listener(mv!(content => move |_: KeyDownEvent| {
@@ -178,19 +141,27 @@ fn init_editor() -> Result<(), EditorError> {
             }), 0);
         }));
 
-        document().get_element_by_id("publish")?.add_event_listener(
-            mv!(title, subtitle, content, old_ed => move |_: ClickEvent| {
-                let popup = document().get_element_by_id("publish-popup").or_else(||
-                        init_popup(&title, &subtitle, &content, &old_ed).ok()
-                    ).unwrap();
-                let bg = document().get_element_by_id("popup-bg").or_else(||
-                        init_popup_bg().ok()
-                    ).unwrap();
+        document()
+            .get_element_by_id("publish")?
+            .add_event_listener(|_: ClickEvent| {
+                let publish_page = document().get_element_by_id("publish-page").unwrap();
+                let options_page = document().get_element_by_id("options-page").unwrap();
+                js! {
+                    @{&options_page}.style.display = "none";
+                    @{&publish_page}.style.display = "flex";
+                };
+            });
 
-                popup.class_list().add("show").unwrap();
-                bg.class_list().add("show").unwrap();
-            }),
-        );
+        document()
+            .get_element_by_id("cancel-publish")?
+            .add_event_listener(|_: ClickEvent| {
+                let publish_page = document().get_element_by_id("publish-page").unwrap();
+                let options_page = document().get_element_by_id("options-page").unwrap();
+                js! {
+                    @{&publish_page}.style.display = "none";
+                    @{&options_page}.style.display = "flex";
+                };
+            });
 
         show_errors();
         setup_close_button();
@@ -332,7 +303,7 @@ fn init_popup_bg() -> Result<Element, EditorError> {
     Ok(bg)
 }
 
-fn chars_left(selector: &str, content: &HtmlElement) -> Option<i32> {
+fn chars_left(selector: &str, content: &Element) -> Option<i32> {
     match document().query_selector(selector) {
         Ok(Some(form)) => HtmlElement::try_from(form).ok().and_then(|form| {
             if let Some(len) = form
@@ -389,35 +360,6 @@ fn make_editable(tag: &'static str) -> Element {
         .expect("Couldn't create editable element");
     elt.set_attribute("contenteditable", "true")
         .expect("Couldn't make the element editable");
-    elt
-}
-
-fn placeholder(elt: HtmlElement, text: &str) -> HtmlElement {
-    elt.dataset().insert("placeholder", text).unwrap();
-    elt.dataset().insert("edited", "false").unwrap();
-
-    elt.add_event_listener(mv!(elt => move |_: FocusEvent| {
-        if elt.dataset().get("edited").unwrap().as_str() != "true" {
-            clear_children(&elt);
-        }
-    }));
-    elt.add_event_listener(mv!(elt => move |_: BlurEvent| {
-        if elt.dataset().get("edited").unwrap().as_str() != "true" {
-            clear_children(&elt);
-
-            let ph = document().create_element("span").expect("Couldn't create placeholder");
-            ph.class_list().add("placeholder").expect("Couldn't add class");
-            ph.append_child(&document().create_text_node(&elt.dataset().get("placeholder").unwrap_or_default()));
-            elt.append_child(&ph);
-        }
-    }));
-    elt.add_event_listener(mv!(elt => move |_: KeyUpEvent| {
-        elt.dataset().insert("edited", if elt.inner_text().trim_matches('\n').is_empty() {
-            "false"
-        } else {
-            "true"
-        }).expect("Couldn't update edition state");
-    }));
     elt
 }
 

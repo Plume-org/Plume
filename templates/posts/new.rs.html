@@ -12,19 +12,40 @@
 @(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
 
 @:base(ctx, title.clone(), {}, {}, {
-    <h1 id="plume-editor-title" dir="auto">@title</h1>
     <div id="plume-editor" style="display: none;" dir="auto">
       <header>
-        <button id="publish" class="button">@i18n!(ctx.1, "Publish")</button>
-        <p id="char-count">@content_len</p>
         <a href="#" id="close-editor">@i18n!(ctx.1, "Classic editor (any changes will be lost)")</a>
+        <p id="char-count">@content_len</p>
       </header>
+      <article id="edition-area">
+        <h1 contenteditable id="editor-title" data-placeholder="@i18n!(ctx.1, "Type your title")">@form.title</h1>
+        <h2 contenteditable id="editor-subtitle" data-placeholder="@i18n!(ctx.1, "Type a subtitle or a summary")">@form.subtitle</h2>
+        <p contenteditable id="editor-default-paragraph" data-placeholder="@i18n!(ctx.1, "Write your article. You can use Markdown.")">@form.content</p>
+      </article>
+      <aside id="plume-editor-aside" style="display: none;">
+        <div id="options-page">
+            <button id="publish" class="button">@i18n!(ctx.1, "Publish")</button>
+
+            @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")
+            @input!(ctx.1, license (optional text), "License", "Leave it empty to reserve all rights", form, errors.clone(), "")
+            @:image_select(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias.clone(), form.cover)
+        </div>
+        <div id="publish-page" style="display: none">
+            <a href="#" id="cancel-publish">@i18n!(ctx.1, "Cancel")</a>
+            <p>@i18n!(ctx.1, "You are about to publish this article in {}"; &blog.title)</p>
+            <button id="confirm-publish" class="button">@i18n!(ctx.1, "Confirm publication")</button>
+            <button id="draft" class="button secondary">@i18n!(ctx.1, "Save as draft")</button>
+        </div>
+    </aside>
     </div>
+
     @if let Some(article) = article {
 	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)" content-size="@content_len">
     } else {
 	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)" content-size="@content_len">
     }
+        <h1 id="plume-editor-title" dir="auto">@title</h1>
+
         @input!(ctx.1, title (text), "Title", form, errors.clone(), "required")
         @input!(ctx.1, subtitle (optional text), "Subtitle", form, errors.clone(), "")
 
