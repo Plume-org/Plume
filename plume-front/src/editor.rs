@@ -142,11 +142,17 @@ fn init_editor() -> Result<(), EditorError> {
         let subtitle_val = get_elt_value("subtitle");
         let content_val = get_elt_value("editor-content");
         // And pre-fill the new editor with this values
-        let title = init_widget(&ed, "h1", i18n!(CATALOG, "Title"), title_val, true)?;
+        let title = init_widget(
+            &ed,
+            "h1",
+            i18n!(CATALOG, "Enter your title"),
+            title_val,
+            true,
+        )?;
         let subtitle = init_widget(
             &ed,
             "h2",
-            i18n!(CATALOG, "Subtitle, or summary"),
+            i18n!(CATALOG, "Enter a subtitle, or a summary"),
             subtitle_val,
             true,
         )?;

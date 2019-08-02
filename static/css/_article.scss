@@ -389,7 +389,18 @@ main .article-meta {
 
   article {
     max-width: none;
-    min-height: 80vh;
+    min-height: 2em;
+  }
+
+  & > *[contenteditable] {
+    margin-left: -20px;
+    padding-left: 18px;
+    border-left: 2px solid transparent;
+    transition: border-left-color 0.1s ease-in;
+
+    &:hover {
+      border-left-color: transparentize($black, 0.6);
+    }
   }
 }
 
