@@ -1,0 +1,35 @@
+-- Your SQL goes here
+--#!|conn: &Connection, path: &Path| {
+--#!    use plume_common::utils::random_hex;
+--#!
+--#!	let client_id = random_hex();
+--#!    let client_secret = random_hex();
+--#!    let app = crate::apps::App::insert(
+--#!        &*conn,
+--#!        crate::apps::NewApp {
+--#!            name: "Plume web interface".into(),
+--#!            client_id,
+--#!            client_secret,
+--#!            redirect_uri: None,
+--#!            website: Some("https://joinplu.me".into()),
+--#!        },
+--#!    ).unwrap();
+--#!
+--#!    for i in 0..=(crate::users::User::count_local(conn).unwrap() as i32 / 20) {
+--#!		if let Ok(page) = crate::users::User::get_local_page(conn, (i * 20, (i + 1) * 20)) {
+--#!			for user in page {
+--#!				crate::api_tokens::ApiToken::insert(
+--#!			        conn,
+--#!			        crate::api_tokens::NewApiToken {
+--#!			            app_id: app.id,
+--#!			            user_id: user.id,
+--#!			            value: random_hex(),
+--#!			            scopes: "read+write".into(),
+--#!			        },
+--#!			    ).unwrap();
+--#!			}
+--#!		}
+--#!	}
+--#!
+--#!	Ok(())
+--#!}

@@ -13,6 +13,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
+    api_tokens::ApiToken,
     blogs::*,
     comments::{Comment, CommentTree},
     inbox::inbox,
@@ -156,7 +157,8 @@ pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, 
         None,
         ValidationErrors::default(),
         medias,
-        cl.0
+        cl.0,
+        ApiToken::web_token(&*conn, user.id)?.value
     )))
 }
 
@@ -210,7 +212,8 @@ pub fn edit(
         Some(post),
         ValidationErrors::default(),
         medias,
-        cl.0
+        cl.0,
+        ApiToken::web_token(&*conn, user.id)?.value
     )))
 }
 
@@ -366,7 +369,10 @@ pub fn update(
             Some(post),
             errors.clone(),
             medias.clone(),
-            cl.0
+            cl.0,
+            ApiToken::web_token(&*conn, user.id)
+                .expect("The default API token cannot be retrieved")
+                .value
         ))
         .into()
     }
@@ -550,7 +556,8 @@ pub fn create(
             None,
             errors.clone(),
             medias,
-            cl.0
+            cl.0,
+            ApiToken::web_token(&*conn, user.id)?.value
         ))
         .into())
     }

@@ -28,4 +28,5 @@ pub struct PostData {
     pub license: String,
     pub tags: Vec<String>,
     pub cover_id: Option<i32>,
+    pub url: String,
 }

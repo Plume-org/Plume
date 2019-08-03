@@ -8,6 +8,7 @@ extern crate gettext_macros;
 extern crate lazy_static;
 #[macro_use]
 extern crate stdweb;
+extern crate serde_json;
 
 use stdweb::web::{event::*, *};
 

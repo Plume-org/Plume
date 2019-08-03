@@ -1,6 +1,7 @@
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use heck::{CamelCase, KebabCase};
 use rocket_contrib::json::Json;
+use std::collections::HashSet;
 
 use crate::api::{authorization::*, Api};
 use plume_api::posts::*;
@@ -44,6 +45,7 @@ pub fn get(id: i32, auth: Option<Authorization<Read, Post>>, conn: DbConn) -> Ap
         published: post.published,
         license: post.license,
         cover_id: post.cover_id,
+        url: post.ap_url,
     }))
 }
 
@@ -91,6 +93,7 @@ pub fn list(
                     published: p.published,
                     license: p.license,
                     cover_id: p.cover_id,
+                    url: p.ap_url,
                 })
             })
             .collect(),
@@ -114,6 +117,20 @@ pub fn create(
         NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok()
     });
 
+    if slug.as_str() == "new" {
+        return Err(
+            Error::Validation("Sorry, but your article can't have this title.".into()).into(),
+        );
+    }
+
+    if payload.title.is_empty() {
+        return Err(Error::Validation("You have to give your article a title.".into()).into());
+    }
+
+    if payload.source.is_empty() {
+        return Err(Error::Validation("Your article can't be empty.".into()).into());
+    }
+
     let domain = &Instance::get_local()?.public_domain;
     let (content, mentions, hashtags) = md_to_html(
         &payload.source,
@@ -130,6 +147,10 @@ pub fn create(
             None
         }
     })?;
+
+    if !author.is_author_in(conn, &Blog::get(conn, blog)?)? {
+        return Err(Error::Unauthorized.into());
+    }
 
     if Post::find_by_slug(conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());
@@ -166,11 +187,19 @@ pub fn create(
     )?;
 
     if let Some(ref tags) = payload.tags {
+        let tags = tags
+            .iter()
+            .map(|t| t.to_camel_case())
+            .filter(|t| !t.is_empty())
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .filter_map(|t| Tag::build_activity(t).ok());
+
         for tag in tags {
             Tag::insert(
                 conn,
                 NewTag {
-                    tag: tag.to_string(),
+                    tag: tag.name_string().unwrap(),
                     is_hashtag: false,
                     post_id: post.id,
                 },
@@ -211,7 +240,6 @@ pub fn create(
             .into_iter()
             .map(|t| t.tag)
             .collect(),
-
         id: post.id,
         title: post.title,
         subtitle: post.subtitle,
@@ -221,7 +249,130 @@ pub fn create(
         published: post.published,
         license: post.license,
         cover_id: post.cover_id,
+        url: post.ap_url,
     }))
+}
+
+#[put("/posts/<id>", data = "<payload>")]
+pub fn update(
+    id: i32,
+    auth: Authorization<Write, Post>,
+    payload: Json<NewPostData>,
+    rockets: PlumeRocket,
+) -> Api<PostData> {
+    let conn = &*rockets.conn;
+    let mut post = Post::get(&*conn, id)?;
+    let author = User::get(conn, auth.0.user_id)?;
+    let b = post.get_blog(&*conn)?;
+
+    let new_slug = if !post.published {
+        payload.title.to_string().to_kebab_case()
+    } else {
+        post.slug.clone()
+    };
+
+    if new_slug != post.slug && Post::find_by_slug(&*conn, &new_slug, b.id).is_ok() {
+        return Err(Error::Validation("A post with the same title already exists.".into()).into());
+    }
+
+    if !author.is_author_in(&*conn, &b)? {
+        Err(Error::Unauthorized.into())
+    } else {
+        let (content, mentions, hashtags) = md_to_html(
+            &payload.source,
+            Some(&Instance::get_local()?.public_domain),
+            false,
+            Some(Media::get_media_processor(
+                &conn,
+                b.list_authors(&conn)?.iter().collect(),
+            )),
+        );
+
+        // update publication date if when this article is no longer a draft
+        let newly_published = if !post.published && payload.published.unwrap_or(post.published) {
+            post.published = true;
+            post.creation_date = Utc::now().naive_utc();
+            true
+        } else {
+            false
+        };
+
+        post.slug = new_slug.clone();
+        post.title = payload.title.clone();
+        post.subtitle = payload.subtitle.clone().unwrap_or_default();
+        post.content = SafeString::new(&content);
+        post.source = payload.source.clone();
+        post.license = payload.license.clone().unwrap_or_default();
+        post.cover_id = payload.cover_id;
+        post.update(&*conn, &rockets.searcher)?;
+
+        if post.published {
+            post.update_mentions(
+                &conn,
+                mentions
+                    .into_iter()
+                    .filter_map(|m| Mention::build_activity(&rockets, &m).ok())
+                    .collect(),
+            )?;
+        }
+
+        let tags = payload
+            .tags
+            .clone()
+            .unwrap_or_default()
+            .iter()
+            .map(|t| t.trim().to_camel_case())
+            .filter(|t| !t.is_empty())
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .filter_map(|t| Tag::build_activity(t).ok())
+            .collect::<Vec<_>>();
+        post.update_tags(&conn, tags)?;
+
+        let hashtags = hashtags
+            .into_iter()
+            .map(|h| h.to_camel_case())
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .filter_map(|t| Tag::build_activity(t).ok())
+            .collect::<Vec<_>>();
+        post.update_hashtags(&conn, hashtags)?;
+
+        if post.published {
+            if newly_published {
+                let act = post.create_activity(&conn)?;
+                let dest = User::one_by_instance(&*conn)?;
+                rockets
+                    .worker
+                    .execute(move || broadcast(&author, act, dest));
+            } else {
+                let act = post.update_activity(&*conn)?;
+                let dest = User::one_by_instance(&*conn)?;
+                rockets
+                    .worker
+                    .execute(move || broadcast(&author, act, dest));
+            }
+        }
+
+        Ok(Json(PostData {
+            authors: post.get_authors(conn)?.into_iter().map(|a| a.fqn).collect(),
+            creation_date: post.creation_date.format("%Y-%m-%d").to_string(),
+            tags: Tag::for_post(conn, post.id)?
+                .into_iter()
+                .map(|t| t.tag)
+                .collect(),
+            id: post.id,
+            title: post.title,
+            subtitle: post.subtitle,
+            content: post.content.to_string(),
+            source: Some(post.source),
+            blog_id: post.blog_id,
+            published: post.published,
+            license: post.license,
+            cover_id: post.cover_id,
+            url: post.ap_url,
+        }))
+    }
 }
 
 #[delete("/posts/<id>")]

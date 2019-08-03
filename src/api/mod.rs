@@ -37,6 +37,7 @@ impl<'r> Responder<'r> for ApiError {
                 "error": "You are not authorized to access this resource"
             }))
             .respond_to(req),
+            Error::Validation(msg) => Json(json!({ "error": msg })).respond_to(req),
             _ => Json(json!({
                 "error": "Server error"
             }))

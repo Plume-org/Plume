@@ -29,4 +29,5 @@ impl App {
     get!(apps);
     insert!(apps, NewApp);
     find_by!(apps, find_by_client_id, client_id as &str);
+    find_by!(apps, find_by_name, name as &str);
 }

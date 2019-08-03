@@ -9,9 +9,19 @@
 @use routes::posts::NewPostForm;
 @use routes::*;
 
-@(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
+@(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64, api_token: String)
 
 @:base(ctx, title.clone(), {}, {}, {
+    <script>
+        window.blog_id = @blog.id
+        window.api_token = '@api_token'
+        @if editing {
+            window.editing = true
+            window.post_id = @article.clone().unwrap().id
+        } else {
+            window.editing = false
+        }
+    </script>
     <div id="plume-editor" style="display: none;" dir="auto">
       <header>
         <a href="#" id="close-editor">@i18n!(ctx.1, "Classic editor (any changes will be lost)")</a>
@@ -34,7 +44,7 @@
             <a href="#" id="cancel-publish">@i18n!(ctx.1, "Cancel")</a>
             <p>@i18n!(ctx.1, "You are about to publish this article in {}"; &blog.title)</p>
             <button id="confirm-publish" class="button">@i18n!(ctx.1, "Confirm publication")</button>
-            <button id="draft" class="button secondary">@i18n!(ctx.1, "Save as draft")</button>
+            <button id="save-draft" class="button secondary">@i18n!(ctx.1, "Save as draft")</button>
         </div>
     </aside>
     </div>

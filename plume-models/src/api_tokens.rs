@@ -44,6 +44,18 @@ impl ApiToken {
     get!(api_tokens);
     insert!(api_tokens, NewApiToken);
     find_by!(api_tokens, find_by_value, value as &str);
+    find_by!(
+        api_tokens,
+        find_by_app_and_user,
+        app_id as i32,
+        user_id as i32
+    );
+
+    /// The token for Plume's front-end
+    pub fn web_token(conn: &crate::Connection, user_id: i32) -> Result<ApiToken> {
+        let app = crate::apps::App::find_by_name(conn, "Plume web interface")?;
+        Self::find_by_app_and_user(conn, app.id, user_id)
+    }
 
     pub fn can(&self, what: &'static str, scope: &'static str) -> bool {
         let full_scope = what.to_owned() + ":" + scope;

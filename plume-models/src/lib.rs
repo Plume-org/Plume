@@ -64,6 +64,7 @@ pub enum Error {
     Signature,
     Unauthorized,
     Url,
+    Validation(String),
     Webfinger,
     Expired,
 }
