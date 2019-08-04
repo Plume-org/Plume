@@ -1898,7 +1898,7 @@ dependencies = [
  "plume-models 0.3.0",
  "rocket 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)",
+ "rocket_csrf 0.1.0 (git+https://github.com/Plume-org/rocket_csrf?rev=89ecb380266234f858c651354216bf5bf3cc09b2)",
  "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
  "rpassword 3.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2438,7 +2438,7 @@ dependencies = [
 [[package]]
 name = "rocket_csrf"
 version = "0.1.0"
-source = "git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c#4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
+source = "git+https://github.com/Plume-org/rocket_csrf?rev=89ecb380266234f858c651354216bf5bf3cc09b2#89ecb380266234f858c651354216bf5bf3cc09b2"
 dependencies = [
  "data-encoding 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "ring 0.13.5 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3765,7 +3765,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "55b83fcf219c8b4980220231d5dd9eae167bdc63449fdab0a04b6c8b8cd361a8"
 "checksum rocket_codegen 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "5549dc59a729fbd0e6f5d5de33ba136340228871633485e4946664d36289ffd7"
 "checksum rocket_contrib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "5af691b5f5c06c3a30213217696681d3d3bdc2f10428fa3ce6bbaeab156b6409"
-"checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)" = "<none>"
+"checksum rocket_csrf 0.1.0 (git+https://github.com/Plume-org/rocket_csrf?rev=89ecb380266234f858c651354216bf5bf3cc09b2)" = "<none>"
 "checksum rocket_http 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "abec045da00893bd4eef6084307a4bec0742278a7635a6a8b943da023202a5f7"
 "checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)" = "<none>"
 "checksum rpassword 3.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "c34fa7bcae7fca3c8471e8417088bbc3ad9af8066b0ecf4f3c0d98a0d772716e"

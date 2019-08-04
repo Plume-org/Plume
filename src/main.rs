@@ -290,7 +290,7 @@ Then try to restart Plume
         .manage(Arc::new(workpool))
         .manage(searcher)
         .manage(include_i18n!())
-        /*.attach(
+        .attach(
             CsrfFairingBuilder::new()
                 .set_default_target(
                     "/csrf-violation?target=<uri>".to_owned(),
@@ -300,22 +300,18 @@ Then try to restart Plume
                     (
                         "/inbox".to_owned(),
                         "/inbox".to_owned(),
-                        rocket::http::Method::Post,
+                        Some(rocket::http::Method::Post),
                     ),
                     (
                         "/@/<name>/inbox".to_owned(),
                         "/@/<name>/inbox".to_owned(),
-                        rocket::http::Method::Post,
+                        Some(rocket::http::Method::Post),
                     ),
-                    (
-                        "/api/<path..>".to_owned(),
-                        "/api/<path..>".to_owned(),
-                        rocket::http::Method::Post,
-                    ),
+                    ("/api/<path..>".to_owned(), "/api/<path..>".to_owned(), None),
                 ])
                 .finalize()
                 .expect("main: csrf fairing creation error"),
-        )*/;
+        );
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);
