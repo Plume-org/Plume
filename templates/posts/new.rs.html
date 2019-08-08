@@ -25,12 +25,11 @@
     <div id="plume-editor" style="display: none;" dir="auto">
       <header>
         <a href="#" id="close-editor">@i18n!(ctx.1, "Classic editor (any changes will be lost)")</a>
-        <p id="char-count">@content_len</p>
       </header>
       <article id="edition-area">
         <h1 contenteditable id="editor-title" data-placeholder="@i18n!(ctx.1, "Type your title")">@form.title</h1>
         <h2 contenteditable id="editor-subtitle" data-placeholder="@i18n!(ctx.1, "Type a subtitle or a summary")">@form.subtitle</h2>
-        <p contenteditable id="editor-default-paragraph" data-placeholder="@i18n!(ctx.1, "Write your article. You can use Markdown.")">@form.content</p>
+        <article contenteditable id="editor-main" data-placeholder="@i18n!(ctx.1, "Write your article here. You can use markdown.")"></article>
       </article>
       <aside id="plume-editor-aside" style="display: none;">
         <div id="options-page">

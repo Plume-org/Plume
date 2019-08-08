@@ -411,7 +411,7 @@ main .article-meta {
     margin-top: 110px;
   }
 
-  #edition-area > *[contenteditable] {
+  #editor-title, #editor-subtitle, #editor-main > * {
     padding-left: 18px;
     border-left: 2px solid transparent;
     transition: border-left-color 0.1s ease-in;

@@ -6,6 +6,7 @@ extern crate gettext;
 extern crate gettext_macros;
 #[macro_use]
 extern crate lazy_static;
+extern crate pulldown_cmark;
 #[macro_use]
 extern crate stdweb;
 extern crate serde_json;

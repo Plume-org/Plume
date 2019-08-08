@@ -1,15 +1,180 @@
+use pulldown_cmark::{Event, Options, Parser, Tag};
 use stdweb::{
     unstable::{TryFrom, TryInto},
     web::{event::*, html_element::*, *},
 };
 use CATALOG;
 
-macro_rules! mv {
-    ( $( $var:ident ),* => $exp:expr ) => {
-        {
-            $( let $var = $var.clone(); )*
-            $exp
+fn from_md(md: &str) {
+    let md_parser = Parser::new_ext(md, Options::all());
+    md_parser.fold(
+        document().get_element_by_id("editor-main").unwrap(),
+        |last_elt, event| {
+            match event {
+                Event::Start(tag) => {
+                    let new = match tag {
+                        Tag::Paragraph => document().create_element("p").unwrap(),
+                        Tag::Rule => document().create_element("hr").unwrap(),
+                        Tag::Header(level) => {
+                            document().create_element(&format!("h{}", level)).unwrap()
+                        }
+                        Tag::BlockQuote => document().create_element("blockquote").unwrap(),
+                        Tag::CodeBlock(code) => {
+                            let pre = document().create_element("pre").unwrap();
+                            let code_elt = document().create_element("code").unwrap();
+                            code_elt.append_child(&document().create_text_node(&code));
+                            pre.append_child(&code_elt);
+                            pre
+                        }
+                        Tag::List(None) => document().create_element("ul").unwrap(),
+                        Tag::List(Some(_start_index)) => document().create_element("ol").unwrap(), // TODO: handle start_index
+                        Tag::Item => document().create_element("li").unwrap(),
+                        Tag::FootnoteDefinition(def) => {
+                            let note = document().create_element("div").unwrap();
+                            note.class_list().add("footnote");
+                            note.append_child(&document().create_text_node(&def));
+                            note
+                        }
+                        Tag::HtmlBlock => document().create_element("div").unwrap(),
+                        Tag::Table(_alignements) => document().create_element("table").unwrap(), // TODO: handle alignements
+                        Tag::TableHead => document().create_element("th").unwrap(),
+                        Tag::TableRow => document().create_element("tr").unwrap(),
+                        Tag::TableCell => document().create_element("td").unwrap(),
+                        Tag::Emphasis => document().create_element("em").unwrap(),
+                        Tag::Strong => document().create_element("strong").unwrap(),
+                        Tag::Strikethrough => document().create_element("s").unwrap(),
+                        Tag::Link(_link_type, url, text) => {
+                            let url: &str = &url;
+                            let text: &str = &text;
+                            let link = document().create_element("a").unwrap();
+                            js! {
+                                @{&link}.href = @{url};
+                                @{&link}.title = @{text};
+                            };
+                            link
+                        }
+                        Tag::Image(_link_type, url, text) => {
+                            let url: &str = &url;
+                            let text: &str = &text;
+                            let img = document().create_element("img").unwrap();
+                            js! {
+                                @{&img}.src = @{url};
+                                @{&img}.title = @{text};
+                                @{&img}.alt = @{text};
+                            };
+                            img
+                        }
+                    };
+                    last_elt.append_child(&new);
+                    new
+                }
+                Event::End(_) => last_elt.parent_element().unwrap(),
+                Event::Text(text) => {
+                    let node = document().create_text_node(&text);
+                    last_elt.append_child(&node);
+                    last_elt
+                }
+                Event::Code(code) => {
+                    let elt = document().create_element("code").unwrap();
+                    let content = document().create_text_node(&code);
+                    elt.append_child(&content);
+                    last_elt.append_child(&elt);
+                    last_elt
+                }
+                Event::Html(html) => {
+                    // TODO: sanitize it?
+                    last_elt.set_attribute("innerHtml", &html);
+                    last_elt
+                }
+                Event::InlineHtml(html) => {
+                    let elt = document().create_element("span").unwrap();
+                    elt.set_attribute("innerHtml", &html);
+                    last_elt.append_child(&elt);
+                    last_elt
+                }
+                Event::FootnoteReference(reference) => {
+                    last_elt // TODO
+                }
+                Event::SoftBreak => {
+                    last_elt.append_child(&document().create_element("br").unwrap());
+                    last_elt
+                }
+                Event::HardBreak => {
+                    last_elt // TODO
+                }
+                Event::TaskListMarker(done) => {
+                    last_elt // TODO
+                }
+            }
+        },
+    );
+}
+
+fn to_md() -> String {
+    let root = document().get_element_by_id("editor-main").unwrap();
+    fold_children(&root).join("")
+}
+
+fn fold_children(elt: &Element) -> Vec<String> {
+    elt.child_nodes().iter().fold(vec![], |mut blocks, node| {
+        blocks.push(html_to_md(&node));
+        blocks
+    })
+}
+
+fn html_to_md(node: &Node) -> String {
+    console!(log, node);
+    if let Ok(elt) = Element::try_from(node.clone()) {
+        console!(log, elt.node_name().to_lowercase());
+        match elt.node_name().to_lowercase().as_ref() {
+            "hr" => "---".into(),
+            "h1" => format!("# {}\n\n", fold_children(&elt).join("")),
+            "h2" => format!("## {}\n\n", fold_children(&elt).join("")),
+            "h3" => format!("### {}\n\n", fold_children(&elt).join("")),
+            "h4" => format!("#### {}\n\n", fold_children(&elt).join("")),
+            "h5" => format!("##### {}\n\n", fold_children(&elt).join("")),
+            "h6" => format!("###### {}\n\n", fold_children(&elt).join("")),
+            "blockquote" => format!("> {}\n\n", fold_children(&elt).join("> ")),
+            "pre" => format!("```\n{}\n```\n\n", node.text_content().unwrap_or_default()),
+            "li" => match elt
+                .parent_element()
+                .unwrap()
+                .node_name()
+                .to_lowercase()
+                .as_ref()
+            {
+                "ol" => format!(
+                    "{}. {}\n",
+                    elt.parent_element()
+                        .unwrap()
+                        .child_nodes()
+                        .iter()
+                        .position(|n| Element::try_from(n).unwrap() == elt)
+                        .unwrap_or_default(),
+                    fold_children(&elt).join(""),
+                ),
+                _ => format!("- {}\n", fold_children(&elt).join("")),
+            },
+            "em" => format!("_{}_", fold_children(&elt).join("")),
+            "strong" => format!("**{}**", fold_children(&elt).join("")),
+            "s" => format!("~~{}~~", fold_children(&elt).join("")),
+            "a" => format!(
+                "[{}]({})",
+                fold_children(&elt).join(""),
+                String::try_from(js! { return @{&elt}.href }).unwrap()
+            ),
+            "img" => format!(
+                "![{}]({})",
+                String::try_from(js! { return @{&elt}.alt }).unwrap(),
+                String::try_from(js! { return @{&elt}.src }).unwrap()
+            ),
+            other => {
+                console!(log, "Warning: unhandled element:", other);
+                String::new()
+            } // TODO: refs, tables, raw html
         }
+    } else {
+        node.text_content().unwrap_or_default()
     }
 }
 
@@ -116,27 +281,16 @@ fn init_editor() -> Result<(), EditorError> {
         // And pre-fill the new editor with this values
         let title = document().get_element_by_id("editor-title")?;
         let subtitle = document().get_element_by_id("editor-subtitle")?;
-        let content = document().get_element_by_id("editor-default-paragraph")?;
+        let source = get_elt_value("editor-content");
+
+        from_md(&source);
 
         title.add_event_listener(no_return);
         subtitle.add_event_listener(no_return);
 
         filter_paste(&title);
         filter_paste(&subtitle);
-        filter_paste(&content);
-
-        // character counter
-        content.add_event_listener(mv!(content => move |_: KeyDownEvent| {
-            window().set_timeout(mv!(content => move || {
-                if let Some(e) = document().get_element_by_id("char-count") {
-                    let count = chars_left("#plume-fallback-editor", &content).unwrap_or_default();
-                    let text = i18n!(CATALOG, "Around {} characters left"; count);
-                    HtmlElement::try_from(e).map(|e| {
-                        js!{@{e}.innerText = @{text}};
-                    }).ok();
-                };
-            }), 0);
-        }));
+        // TODO: filter_paste(&content);
 
         document()
             .get_element_by_id("publish")?
@@ -224,6 +378,7 @@ fn save(is_draft: bool) {
                 .ok();
         }
     });
+    console!(log, to_md());
     let data = plume_api::posts::NewPostData {
         title: HtmlElement::try_from(document().get_element_by_id("editor-title").unwrap())
             .unwrap()
@@ -231,13 +386,7 @@ fn save(is_draft: bool) {
         subtitle: document()
             .get_element_by_id("editor-subtitle")
             .map(|s| HtmlElement::try_from(s).unwrap().inner_text()),
-        source: HtmlElement::try_from(
-            document()
-                .get_element_by_id("editor-default-paragraph")
-                .unwrap(),
-        )
-        .unwrap()
-        .inner_text(),
+        source: to_md(),
         author: String::new(), // it is ignored anyway (TODO: remove it ??)
         blog_id: i32::try_from(js! { return window.blog_id }).ok(),
         published: Some(!is_draft),
@@ -285,32 +434,5 @@ fn show_errors() {
             .unwrap()
             .insert_before(&list, &header.next_sibling().unwrap())
             .unwrap();
-    }
-}
-
-fn chars_left(selector: &str, content: &Element) -> Option<i32> {
-    match document().query_selector(selector) {
-        Ok(Some(form)) => HtmlElement::try_from(form).ok().and_then(|form| {
-            if let Some(len) = form
-                .get_attribute("content-size")
-                .and_then(|s| s.parse::<i32>().ok())
-            {
-                (js! {
-                    let x = encodeURIComponent(@{content}.innerHTML)
-                        .replace(/%20/g, "+")
-                        .replace(/%0A/g, "%0D%0A")
-                        .replace(new RegExp("[!'*()]", "g"), "XXX") // replace exceptions of encodeURIComponent with placeholder
-                        .length + 2;
-                    console.log(x);
-                    return x;
-                })
-                .try_into()
-                .map(|c: i32| len - c)
-                .ok()
-            } else {
-                None
-            }
-        }),
-        _ => None,
     }
 }
