@@ -96,8 +96,8 @@ body > header {
   }
 
   p.success {
-    color: darken($green, 20%);
-    background: lighten($green, 40%);
+    color: darken($success-color, 20%);
+    background: lighten($success-color, 40%);
   }
 }
 
