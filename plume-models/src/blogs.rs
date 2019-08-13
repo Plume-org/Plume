@@ -147,7 +147,7 @@ impl Blog {
     }
 
     fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
-        resolve(acct.to_owned(), true)?
+        resolve_with_prefix(Prefix::Group, acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))

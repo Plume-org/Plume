@@ -9,7 +9,7 @@
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <main class="content">
         <header>
-            <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)">
+            <a class="author u-author h-card" href="@uri!(user::details: name = &author.fqn)" dir="auto">
                 @avatar(ctx.0, &author, Size::Small, true, ctx.1)
                 <span class="display-name p-name">@author.name()</span>
                 <small>@author.fqn</small>
@@ -27,7 +27,7 @@
         <div class="text p-content">
             @if comm.sensitive {
                 <details>
-                    <summary>@comm.spoiler_text</summary>
+                    <summary dir="auto">@comm.spoiler_text</summary>
             }
             @Html(&comm.content)
             @if comm.sensitive {

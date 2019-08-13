@@ -146,7 +146,7 @@ pub fn avatar(
 pub fn tabs(links: &[(&str, String, bool)]) -> Html<String> {
     let mut res = String::from(r#"<div class="tabs">"#);
     for (url, title, selected) in links {
-        res.push_str(r#"<a href=""#);
+        res.push_str(r#"<a dir="auto" href=""#);
         res.push_str(url);
         if *selected {
             res.push_str(r#"" class="selected">"#);
@@ -176,7 +176,7 @@ pub fn paginate_param(
             p
         })
         .unwrap_or_default();
-    res.push_str(r#"<div class="pagination">"#);
+    res.push_str(r#"<div class="pagination" dir="auto">"#);
     if page != 1 {
         res.push_str(
             format!(
@@ -239,13 +239,13 @@ macro_rules! input {
 
         Html(format!(
             r#"
-                <label for="{name}">
+                <label for="{name}" dir="auto">
                     {label}
                     {optional}
                     {details}
                 </label>
                 {error}
-                <input type="{kind}" id="{name}" name="{name}" value="{val}" {props}/>
+                <input type="{kind}" id="{name}" name="{name}" value="{val}" {props} dir="auto"/>
                 "#,
             name = stringify!($name),
             label = i18n!(cat, $label),
@@ -264,7 +264,7 @@ macro_rules! input {
                 $err.errors().get(stringify!($name))
             {
                 format!(
-                    r#"<p class="error">{}</p>"#,
+                    r#"<p class="error" dir="auto">{}</p>"#,
                     errs[0]
                         .message
                         .clone()
@@ -332,8 +332,8 @@ macro_rules! input {
         let cat = $catalog;
         Html(format!(
             r#"
-                <label for="{name}">{label}</label>
-                <input type="{kind}" id="{name}" name="{name}" {props}/>
+                <label for="{name}" dir="auto">{label}</label>
+                <input type="{kind}" id="{name}" name="{name}" {props} dir="auto"/>
                 "#,
             name = stringify!($name),
             label = i18n!(cat, $label),
