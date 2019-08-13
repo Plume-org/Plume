@@ -40,7 +40,7 @@ impl Timeline {
     insert!(timeline_definition, NewTimeline);
     get!(timeline_definition);
 
-    pub fn find_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
+    pub fn find_for_user_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
         if let Some(user_id) = user_id {
             timeline_definition::table
                 .filter(timeline_definition::user_id.eq(user_id))
@@ -102,7 +102,7 @@ impl Timeline {
                     .list_used_lists()
                     .into_iter()
                     .find_map(|(name, kind)| {
-                        let list = List::find_by_name(conn, Some(user_id), &name)
+                        let list = List::find_for_user_by_name(conn, Some(user_id), &name)
                             .map(|l| l.kind() == kind);
                         match list {
                             Ok(true) => None,
@@ -140,7 +140,7 @@ impl Timeline {
                     .list_used_lists()
                     .into_iter()
                     .find_map(|(name, kind)| {
-                        let list = List::find_by_name(conn, None, &name).map(|l| l.kind() == kind);
+                        let list = List::find_for_user_by_name(conn, None, &name).map(|l| l.kind() == kind);
                         match list {
                             Ok(true) => None,
                             Ok(false) => Some(Error::TimelineQuery(QueryError::RuntimeError(
@@ -284,11 +284,11 @@ mod tests {
             assert_eq!(tl1_u1, Timeline::get(conn, tl1_u1.id).unwrap());
             assert_eq!(
                 tl2_u1,
-                Timeline::find_by_name(conn, Some(users[0].id), "another timeline").unwrap()
+                Timeline::find_for_user_by_name(conn, Some(users[0].id), "another timeline").unwrap()
             );
             assert_eq!(
                 tl1_instance,
-                Timeline::find_by_name(conn, None, "english posts").unwrap()
+                Timeline::find_for_user_by_name(conn, None, "english posts").unwrap()
             );
 
             let tl_u1 = Timeline::list_for_user(conn, Some(users[0].id)).unwrap();

@@ -56,6 +56,93 @@ struct NewList<'a> {
     type_: i32,
 }
 
+
+macro_rules! func {
+    (@elem User $id:expr, $value:expr) => {
+        NewListElem {
+            list_id: $id,
+            user_id: Some(*$value),
+            blog_id: None,
+            word: None,
+        }
+    };
+    (@elem Blog $id:expr, $value:expr) => {
+        NewListElem {
+            list_id: $id,
+            user_id: None,
+            blog_id: Some(*$value),
+            word: None,
+        }
+    };
+    (@elem Word $id:expr, $value:expr) => {
+        NewListElem {
+            list_id: $id,
+            user_id: None,
+            blog_id: None,
+            word: Some($value),
+        }
+    };
+    (@elem Prefix $id:expr, $value:expr) => {
+        NewListElem {
+            list_id: $id,
+            user_id: None,
+            blog_id: None,
+            word: Some($value),
+        }
+    };
+    (@in_type User) => { i32 };
+    (@in_type Blog) => { i32 };
+    (@in_type Word) => { &str };
+    (@in_type Prefix) => { &str };
+    (@out_type User) => { User };
+    (@out_type Blog) => { Blog };
+    (@out_type Word) => { String };
+    (@out_type Prefix) => { String };
+
+    (add: $fn:ident, $kind:ident) => {
+        pub fn $fn(&self, conn: &Connection, vals: &[func!(@in_type $kind)]) -> Result<()> {
+            if self.kind() != ListType::$kind {
+                return Err(Error::InvalidValue);
+            }
+            diesel::insert_into(list_elems::table)
+                .values(
+                    vals
+                        .iter()
+                        .map(|u| func!(@elem $kind self.id, u))
+                        .collect::<Vec<_>>(),
+                )
+                .execute(conn)?;
+            Ok(())
+        }
+    };
+
+    (list: $fn:ident, $kind:ident, $table:ident) => {
+        pub fn $fn(&self, conn: &Connection) -> Result<Vec<func!(@out_type $kind)>> {
+            if self.kind() != ListType::$kind {
+                return Err(Error::InvalidValue);
+            }
+            list_elems::table
+                .filter(list_elems::list_id.eq(self.id))
+                .inner_join($table::table)
+                .select($table::all_columns)
+                .load(conn)
+                .map_err(Error::from)
+        }
+    };
+
+
+
+    (set: $fn:ident, $kind:ident, $add:ident) => {
+        pub fn $fn(&self, conn: &Connection, val: &[func!(@in_type $kind)]) -> Result<()> {
+            if self.kind() != ListType::$kind {
+                return Err(Error::InvalidValue);
+            }
+            self.clear(conn)?;
+            self.$add(conn, val)
+        }
+    }
+}
+
 #[derive(Clone, Queryable, Identifiable)]
 struct ListElem {
     pub id: i32,
@@ -99,7 +186,7 @@ impl List {
         }
     }
 
-    pub fn find_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
+    pub fn find_for_user_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
         if let Some(user_id) = user_id {
             lists::table
                 .filter(lists::user_id.eq(user_id))
@@ -155,132 +242,42 @@ impl List {
         private::ListElem::prefix_in_list(conn, self, word)
     }
 
+
+
     /// Insert new users in a list
-    /// returns Ok(false) if this list isn't for users
-    pub fn add_users(&self, conn: &Connection, users: &[i32]) -> Result<bool> {
-        if self.kind() != ListType::User {
-            return Ok(false);
-        }
-        diesel::insert_into(list_elems::table)
-            .values(
-                users
-                    .iter()
-                    .map(|u| NewListElem {
-                        list_id: self.id,
-                        user_id: Some(*u),
-                        blog_id: None,
-                        word: None,
-                    })
-                    .collect::<Vec<_>>(),
-            )
-            .execute(conn)?;
-        Ok(true)
-    }
+    func!{add: add_users, User}
 
     /// Insert new blogs in a list
-    /// returns Ok(false) if this list isn't for blog
-    pub fn add_blogs(&self, conn: &Connection, blogs: &[i32]) -> Result<bool> {
-        if self.kind() != ListType::Blog {
-            return Ok(false);
-        }
-        diesel::insert_into(list_elems::table)
-            .values(
-                blogs
-                    .iter()
-                    .map(|b| NewListElem {
-                        list_id: self.id,
-                        user_id: None,
-                        blog_id: Some(*b),
-                        word: None,
-                    })
-                    .collect::<Vec<_>>(),
-            )
-            .execute(conn)?;
-        Ok(true)
-    }
+    func!{add: add_blogs, Blog}
 
     /// Insert new words in a list
-    /// returns Ok(false) if this list isn't for words
-    pub fn add_words(&self, conn: &Connection, words: &[&str]) -> Result<bool> {
-        if self.kind() != ListType::Word {
-            return Ok(false);
-        }
-        diesel::insert_into(list_elems::table)
-            .values(
-                words
-                    .iter()
-                    .map(|w| NewListElem {
-                        list_id: self.id,
-                        user_id: None,
-                        blog_id: None,
-                        word: Some(w),
-                    })
-                    .collect::<Vec<_>>(),
-            )
-            .execute(conn)?;
-        Ok(true)
-    }
+    func!{add: add_words, Word}
 
     /// Insert new prefixes in a list
-    /// returns Ok(false) if this list isn't for prefix
-    pub fn add_prefixes(&self, conn: &Connection, prefixes: &[&str]) -> Result<bool> {
-        if self.kind() != ListType::Prefix {
-            return Ok(false);
-        }
-        diesel::insert_into(list_elems::table)
-            .values(
-                prefixes
-                    .iter()
-                    .map(|p| NewListElem {
-                        list_id: self.id,
-                        user_id: None,
-                        blog_id: None,
-                        word: Some(p),
-                    })
-                    .collect::<Vec<_>>(),
-            )
-            .execute(conn)?;
-        Ok(true)
-    }
+    func!{add: add_prefixes, Prefix}
+
 
     /// Get all users in the list
-    pub fn list_users(&self, conn: &Connection) -> Result<Vec<User>> {
-        list_elems::table
-            .filter(list_elems::list_id.eq(self.id))
-            .inner_join(users::table)
-            .select(users::all_columns)
-            .load(conn)
-            .map_err(Error::from)
-    }
+    func!{list: list_users, User, users}
+
 
     /// Get all blogs in the list
-    pub fn list_blogs(&self, conn: &Connection) -> Result<Vec<Blog>> {
-        list_elems::table
-            .filter(list_elems::list_id.eq(self.id))
-            .inner_join(blogs::table)
-            .select(blogs::all_columns)
-            .load(conn)
-            .map_err(Error::from)
-    }
+    func!{list: list_blogs, Blog, blogs}
 
     /// Get all words in the list
     pub fn list_words(&self, conn: &Connection) -> Result<Vec<String>> {
-        if self.kind() != ListType::Word {
-            return Ok(vec![]);
-        }
-        list_elems::table
-            .filter(list_elems::list_id.eq(self.id))
-            .filter(list_elems::word.is_not_null())
-            .select(list_elems::word)
-            .load::<Option<String>>(conn)
-            .map_err(Error::from)
-            .map(|r| r.into_iter().filter_map(|o| o).collect::<Vec<String>>())
+        self.list_stringlike(conn, ListType::Word)
     }
 
     /// Get all prefixes in the list
     pub fn list_prefixes(&self, conn: &Connection) -> Result<Vec<String>> {
-        if self.kind() != ListType::Prefix {
-            return Ok(vec![]);
+        self.list_stringlike(conn, ListType::Prefix)
+    }
+
+    #[inline(always)]
+    fn list_stringlike(&self, conn: &Connection, t: ListType) -> Result<Vec<String>> {
+        if self.kind() != t {
+            return Err(Error::InvalidValue);
         }
         list_elems::table
             .filter(list_elems::list_id.eq(self.id))
@@ -298,37 +295,10 @@ impl List {
             .map_err(Error::from)
     }
 
-    pub fn set_users(&self, conn: &Connection, users: &[i32]) -> Result<bool> {
-        if self.kind() != ListType::User {
-            return Ok(false);
-        }
-        self.clear(conn)?;
-        self.add_users(conn, users)
-    }
-
-    pub fn set_blogs(&self, conn: &Connection, blogs: &[i32]) -> Result<bool> {
-        if self.kind() != ListType::Blog {
-            return Ok(false);
-        }
-        self.clear(conn)?;
-        self.add_blogs(conn, blogs)
-    }
-
-    pub fn set_words(&self, conn: &Connection, words: &[&str]) -> Result<bool> {
-        if self.kind() != ListType::Word {
-            return Ok(false);
-        }
-        self.clear(conn)?;
-        self.add_words(conn, words)
-    }
-
-    pub fn set_prefixes(&self, conn: &Connection, prefixes: &[&str]) -> Result<bool> {
-        if self.kind() != ListType::Prefix {
-            return Ok(false);
-        }
-        self.clear(conn)?;
-        self.add_prefixes(conn, prefixes)
-    }
+    func!{set: set_users, User, add_users}
+    func!{set: set_blogs, Blog, add_blogs}
+    func!{set: set_words, Word, add_words}
+    func!{set: set_prefixes, Prefix, add_prefixes}
 }
 
 mod private {
@@ -439,11 +409,11 @@ mod tests {
 
             l_eq(
                 &l1,
-                &List::find_by_name(conn, l1.user_id, &l1.name).unwrap(),
+                &List::find_for_user_by_name(conn, l1.user_id, &l1.name).unwrap(),
             );
             l_eq(
                 &&l1u,
-                &List::find_by_name(conn, l1u.user_id, &l1u.name).unwrap(),
+                &List::find_for_user_by_name(conn, l1u.user_id, &l1u.name).unwrap(),
             );
             Ok(())
         });
@@ -461,15 +431,15 @@ mod tests {
             assert!(l.list_users(conn).unwrap().is_empty());
 
             assert!(!l.contains_user(conn, users[0].id).unwrap());
-            assert!(l.add_users(conn, &[users[0].id]).unwrap());
+            assert!(l.add_users(conn, &[users[0].id]).is_ok());
             assert!(l.contains_user(conn, users[0].id).unwrap());
 
-            assert!(l.add_users(conn, &[users[1].id]).unwrap());
+            assert!(l.add_users(conn, &[users[1].id]).is_ok());
             assert!(l.contains_user(conn, users[0].id).unwrap());
             assert!(l.contains_user(conn, users[1].id).unwrap());
             assert_eq!(2, l.list_users(conn).unwrap().len());
 
-            assert!(l.set_users(conn, &[users[0].id]).unwrap());
+            assert!(l.set_users(conn, &[users[0].id]).is_ok());
             assert!(l.contains_user(conn, users[0].id).unwrap());
             assert!(!l.contains_user(conn, users[1].id).unwrap());
             assert_eq!(1, l.list_users(conn).unwrap().len());
@@ -478,7 +448,7 @@ mod tests {
             l.clear(conn).unwrap();
             assert!(l.list_users(conn).unwrap().is_empty());
 
-            assert!(!l.add_blogs(conn, &[blogs[0].id]).unwrap());
+            assert!(l.add_blogs(conn, &[blogs[0].id]).is_err());
             Ok(())
         });
     }
@@ -495,15 +465,15 @@ mod tests {
             assert!(l.list_blogs(conn).unwrap().is_empty());
 
             assert!(!l.contains_blog(conn, blogs[0].id).unwrap());
-            assert!(l.add_blogs(conn, &[blogs[0].id]).unwrap());
+            assert!(l.add_blogs(conn, &[blogs[0].id]).is_ok());
             assert!(l.contains_blog(conn, blogs[0].id).unwrap());
 
-            assert!(l.add_blogs(conn, &[blogs[1].id]).unwrap());
+            assert!(l.add_blogs(conn, &[blogs[1].id]).is_ok());
             assert!(l.contains_blog(conn, blogs[0].id).unwrap());
             assert!(l.contains_blog(conn, blogs[1].id).unwrap());
             assert_eq!(2, l.list_blogs(conn).unwrap().len());
 
-            assert!(l.set_blogs(conn, &[blogs[0].id]).unwrap());
+            assert!(l.set_blogs(conn, &[blogs[0].id]).is_ok());
             assert!(l.contains_blog(conn, blogs[0].id).unwrap());
             assert!(!l.contains_blog(conn, blogs[1].id).unwrap());
             assert_eq!(1, l.list_blogs(conn).unwrap().len());
@@ -512,7 +482,7 @@ mod tests {
             l.clear(conn).unwrap();
             assert!(l.list_blogs(conn).unwrap().is_empty());
 
-            assert!(!l.add_users(conn, &[users[0].id]).unwrap());
+            assert!(l.add_users(conn, &[users[0].id]).is_err());
             Ok(())
         });
     }
@@ -527,16 +497,16 @@ mod tests {
             assert!(l.list_words(conn).unwrap().is_empty());
 
             assert!(!l.contains_word(conn, "plume").unwrap());
-            assert!(l.add_words(conn, &["plume"]).unwrap());
+            assert!(l.add_words(conn, &["plume"]).is_ok());
             assert!(l.contains_word(conn, "plume").unwrap());
             assert!(!l.contains_word(conn, "plumelin").unwrap());
 
-            assert!(l.add_words(conn, &["amsterdam"]).unwrap());
+            assert!(l.add_words(conn, &["amsterdam"]).is_ok());
             assert!(l.contains_word(conn, "plume").unwrap());
             assert!(l.contains_word(conn, "amsterdam").unwrap());
             assert_eq!(2, l.list_words(conn).unwrap().len());
 
-            assert!(l.set_words(conn, &["plume"]).unwrap());
+            assert!(l.set_words(conn, &["plume"]).is_ok());
             assert!(l.contains_word(conn, "plume").unwrap());
             assert!(!l.contains_word(conn, "amsterdam").unwrap());
             assert_eq!(1, l.list_words(conn).unwrap().len());
@@ -545,7 +515,7 @@ mod tests {
             l.clear(conn).unwrap();
             assert!(l.list_words(conn).unwrap().is_empty());
 
-            assert!(!l.add_prefixes(conn, &["something"]).unwrap());
+            assert!(!l.add_prefixes(conn, &["something"]).is_err());
             Ok(())
         });
     }
@@ -560,16 +530,16 @@ mod tests {
             assert!(l.list_prefixes(conn).unwrap().is_empty());
 
             assert!(!l.contains_prefix(conn, "plume").unwrap());
-            assert!(l.add_prefixes(conn, &["plume"]).unwrap());
+            assert!(l.add_prefixes(conn, &["plume"]).is_ok());
             assert!(l.contains_prefix(conn, "plume").unwrap());
             assert!(l.contains_prefix(conn, "plumelin").unwrap());
 
-            assert!(l.add_prefixes(conn, &["amsterdam"]).unwrap());
+            assert!(l.add_prefixes(conn, &["amsterdam"]).is_ok());
             assert!(l.contains_prefix(conn, "plume").unwrap());
             assert!(l.contains_prefix(conn, "amsterdam").unwrap());
             assert_eq!(2, l.list_prefixes(conn).unwrap().len());
 
-            assert!(l.set_prefixes(conn, &["plume"]).unwrap());
+            assert!(l.set_prefixes(conn, &["plume"]).is_ok());
             assert!(l.contains_prefix(conn, "plume").unwrap());
             assert!(!l.contains_prefix(conn, "amsterdam").unwrap());
             assert_eq!(1, l.list_prefixes(conn).unwrap().len());
@@ -578,7 +548,7 @@ mod tests {
             l.clear(conn).unwrap();
             assert!(l.list_prefixes(conn).unwrap().is_empty());
 
-            assert!(!l.add_words(conn, &["something"]).unwrap());
+            assert!(l.add_words(conn, &["something"]).is_err());
             Ok(())
         });
     }
