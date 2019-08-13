@@ -76,28 +76,28 @@ msgstr ""
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:97
-msgid "Your comment has been posted."
+# src/routes/comments.rs:89
+msgid "Your comment have been posted."
 msgstr ""
 
-# src/routes/comments.rs:172
-msgid "Your comment has been deleted."
+# src/routes/comments.rs:163
+msgid "Your comment have been deleted."
 msgstr ""
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} has been unblocked."
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} has been blocked."
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} has been banned."
+# src/routes/instance.rs:218
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -113,8 +113,8 @@ msgstr ""
 msgid "You are not allowed to delete this media."
 msgstr "Вие не сте автор на този блог."
 
-# src/routes/medias.rs:163
-msgid "Your avatar has been updated."
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
 msgstr ""
 
 # src/routes/posts.rs:140
@@ -151,24 +151,21 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr "Вие не сте автор на този блог."
 
-# src/routes/posts.rs:350
-msgid "Your article has been updated."
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
 msgstr ""
 
-# src/routes/posts.rs:532
-msgid "Your article has been saved."
+# src/routes/posts.rs:527
+msgid "Your post have been saved."
 msgstr ""
-
-msgid "New article"
-msgstr "Нова статия"
 
 # src/routes/posts.rs:140
 #, fuzzy
 msgid "You are not allowed to delete this article."
 msgstr "Вие не сте автор на този блог."
 
-# src/routes/posts.rs:597
-msgid "Your article has been deleted."
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
 msgstr ""
 
 # src/routes/posts.rs:593
@@ -207,6 +204,10 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr ""
 
+# src/routes/session.rs:263
+msgid "Sorry, but the link expired. Try again"
+msgstr ""
+
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
@@ -227,12 +228,12 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:398
-msgid "Your profile has been updated."
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
 msgstr ""
 
-# src/routes/user.rs:425
-msgid "Your account has been deleted."
+# src/routes/user.rs:409
+msgid "Your account have been deleted."
 msgstr ""
 
 # src/routes/user.rs:411
@@ -243,10 +244,9 @@ msgstr ""
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:491
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"
@@ -279,20 +279,14 @@ msgstr "Регистрация"
 msgid "About this instance"
 msgstr "За тази инстанция"
 
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Aдминистрация"
-
-msgid "Documentation"
-msgstr ""
-
 msgid "Source code"
 msgstr "Изходен код"
 
 msgid "Matrix room"
 msgstr ""
+
+msgid "Administration"
+msgstr "Aдминистрация"
 
 msgid "Welcome to {}"
 msgstr ""
@@ -369,9 +363,6 @@ msgstr "Запаметете тези настройките"
 msgid "About {0}"
 msgstr ""
 
-msgid "Runs Plume {0}"
-msgstr "Писти Pluma {0}"
-
 msgid "Home to <em>{0}</em> people"
 msgstr ""
 
@@ -384,22 +375,8 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
+msgid "Runs Plume {0}"
+msgstr "Писти Pluma {0}"
 
 msgid "Follow {}"
 msgstr ""
@@ -433,17 +410,6 @@ msgstr "Електронна поща"
 
 msgid "Summary"
 msgstr "Резюме"
-
-msgid "Theme"
-msgstr ""
-
-# src/template_utils.rs:217
-#, fuzzy
-msgid "Default theme"
-msgstr "Лиценз по подразбиране"
-
-msgid "Never load blogs custom themes"
-msgstr ""
 
 msgid "Update account"
 msgstr "Актуализиране на профил"
@@ -689,15 +655,6 @@ msgstr ""
 msgid "Update password"
 msgstr ""
 
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking"
-msgstr ""
-
-msgid "here"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr ""
 
@@ -780,6 +737,12 @@ msgstr ""
 msgid "Written by {0}"
 msgstr "Написано от {0}"
 
+msgid "Edit"
+msgstr ""
+
+msgid "Delete this article"
+msgstr ""
+
 msgid "All rights reserved."
 msgstr ""
 
@@ -830,18 +793,6 @@ msgstr "Публикувайте коментар"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Все още няма коментари. Бъдете първите!"
-
-msgid "Delete"
-msgstr ""
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Edit"
-msgstr ""
 
 msgid "Invalid CSRF token"
 msgstr ""
@@ -899,18 +850,10 @@ msgstr ""
 msgid "Blog banner"
 msgstr ""
 
-# src/template_utils.rs:217
-#, fuzzy
-msgid "Custom theme"
-msgstr "Лиценз по подразбиране"
-
 msgid "Update blog"
 msgstr ""
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Are you sure that you want to permanently delete this blog?"
 msgstr ""
 
 msgid "Permanently delete this blog"
@@ -927,6 +870,9 @@ msgstr "Създайте блог"
 
 msgid "{}'s icon"
 msgstr ""
+
+msgid "New article"
+msgstr "Нова статия"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -962,6 +908,9 @@ msgid "You don't have any media yet."
 msgstr ""
 
 msgid "Content warning: {0}"
+msgstr ""
+
+msgid "Delete"
 msgstr ""
 
 msgid "Details"

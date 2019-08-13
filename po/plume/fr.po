@@ -78,27 +78,27 @@ msgid "Your blog information have been updated."
 msgstr ""
 
 #, fuzzy
-msgid "Your comment has been posted."
+msgid "Your comment have been posted."
 msgstr "Vous n'avez pas encore de média."
 
 #, fuzzy
-msgid "Your comment has been deleted."
+msgid "Your comment have been deleted."
 msgstr "Vous n'avez pas encore de média."
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} has been unblocked."
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} has been blocked."
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} has been banned."
+# src/routes/instance.rs:218
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -114,9 +114,9 @@ msgstr ""
 msgid "You are not allowed to delete this media."
 msgstr "Vous n'êtes pas autorisé⋅e à supprimer ce blog."
 
-#, fuzzy
-msgid "Your avatar has been updated."
-msgstr "Vous n'avez pas encore de média."
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
 
 # src/routes/blogs.rs:217
 #, fuzzy
@@ -152,25 +152,22 @@ msgstr "Modifier {0}"
 msgid "You are not allowed to publish on this blog."
 msgstr "Vous n'êtes pas autorisé à éditer ce blog."
 
-#, fuzzy
-msgid "Your article has been updated."
-msgstr "Vous n'avez pas encore de média."
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
 
 #, fuzzy
-msgid "Your article has been saved."
+msgid "Your post have been saved."
 msgstr "Vous n'avez pas encore de média."
-
-msgid "New article"
-msgstr "Nouvel article"
 
 # src/routes/blogs.rs:172
 #, fuzzy
 msgid "You are not allowed to delete this article."
 msgstr "Vous n'êtes pas autorisé⋅e à supprimer ce blog."
 
-#, fuzzy
-msgid "Your article has been deleted."
-msgstr "Vous n'avez pas encore de média."
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
+msgstr ""
 
 # src/routes/posts.rs:593
 msgid ""
@@ -208,6 +205,10 @@ msgstr "Voici le lien pour réinitialiser votre mot de passe : {0}"
 msgid "Your password was successfully reset."
 msgstr "Votre mot de passe a été réinitialisé avec succès."
 
+# src/routes/session.rs:263
+msgid "Sorry, but the link expired. Try again"
+msgstr "Désolé, mais le lien a expiré. Réessayez"
+
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Vous devez vous connecter pour accéder à votre tableau de bord"
@@ -228,12 +229,12 @@ msgstr "Vous devez vous connecter pour vous abonner à quelqu'un"
 msgid "To edit your profile, you need to be logged in"
 msgstr "Vous devez vous connecter pour pour modifier votre profil"
 
-#, fuzzy
-msgid "Your profile has been updated."
-msgstr "Vous n'avez pas encore de média."
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
 
 #, fuzzy
-msgid "Your account has been deleted."
+msgid "Your account have been deleted."
 msgstr "Vous n'avez pas encore de média."
 
 # src/routes/user.rs:411
@@ -244,10 +245,9 @@ msgstr ""
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:491
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"
@@ -280,20 +280,14 @@ msgstr "S’inscrire"
 msgid "About this instance"
 msgstr "À propos de cette instance"
 
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Administration"
-
-msgid "Documentation"
-msgstr ""
-
 msgid "Source code"
 msgstr "Code source"
 
 msgid "Matrix room"
 msgstr "Salon Matrix"
+
+msgid "Administration"
+msgstr "Administration"
 
 msgid "Welcome to {}"
 msgstr "Bienvenue sur {0}"
@@ -371,9 +365,6 @@ msgstr "Sauvegarder ces paramètres"
 msgid "About {0}"
 msgstr "À propos de {0}"
 
-msgid "Runs Plume {0}"
-msgstr "Propulsé par Plume {0}"
-
 msgid "Home to <em>{0}</em> people"
 msgstr "Refuge de <em>{0}</em> personnes"
 
@@ -386,22 +377,8 @@ msgstr "Et sont connecté⋅es à <em>{0}</em> autres instances"
 msgid "Administred by"
 msgstr "Administré par"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
+msgid "Runs Plume {0}"
+msgstr "Propulsé par Plume {0}"
 
 #, fuzzy
 msgid "Follow {}"
@@ -439,17 +416,6 @@ msgstr "Adresse électronique"
 
 msgid "Summary"
 msgstr "Description"
-
-msgid "Theme"
-msgstr ""
-
-# src/template_utils.rs:217
-#, fuzzy
-msgid "Default theme"
-msgstr "Licence d'article par défaut"
-
-msgid "Never load blogs custom themes"
-msgstr ""
 
 msgid "Update account"
 msgstr "Mettre à jour le compte"
@@ -708,15 +674,6 @@ msgstr "Confirmation"
 msgid "Update password"
 msgstr "Mettre à jour le mot de passe"
 
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking"
-msgstr ""
-
-msgid "here"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr "Vérifiez votre boîte de réception!"
 
@@ -804,6 +761,12 @@ msgstr "Publiez votre message"
 msgid "Written by {0}"
 msgstr "Écrit par {0}"
 
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Delete this article"
+msgstr "Supprimer cet article"
+
 msgid "All rights reserved."
 msgstr "Tous droits réservés."
 
@@ -855,18 +818,6 @@ msgstr "Soumettre le commentaire"
 
 msgid "No comments yet. Be the first to react!"
 msgstr "Pas encore de commentaires. Soyez le premier à réagir !"
-
-msgid "Delete"
-msgstr "Supprimer"
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Edit"
-msgstr "Modifier"
 
 msgid "Invalid CSRF token"
 msgstr "Jeton CSRF invalide"
@@ -930,20 +881,11 @@ msgstr "Icône de blog"
 msgid "Blog banner"
 msgstr "Bannière de blog"
 
-# src/template_utils.rs:217
-#, fuzzy
-msgid "Custom theme"
-msgstr "Licence d'article par défaut"
-
 msgid "Update blog"
 msgstr "Mettre à jour le blog"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr "Attention, toute action prise ici ne peut pas être annulée."
-
-#, fuzzy
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "Supprimer définitivement ce blog"
 
 msgid "Permanently delete this blog"
 msgstr "Supprimer définitivement ce blog"
@@ -959,6 +901,9 @@ msgstr "Créer le blog"
 
 msgid "{}'s icon"
 msgstr "icône de {}"
+
+msgid "New article"
+msgstr "Nouvel article"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -998,6 +943,9 @@ msgstr "Vous n'avez pas encore de média."
 msgid "Content warning: {0}"
 msgstr "Avertissement du contenu : {0}"
 
+msgid "Delete"
+msgstr "Supprimer"
+
 msgid "Details"
 msgstr "Détails"
 
@@ -1032,18 +980,3 @@ msgstr "Copiez-le dans vos articles, à insérer ce média :"
 
 msgid "Use as an avatar"
 msgstr "Utiliser comme avatar"
-
-#, fuzzy
-#~ msgid "The theme have been rejected."
-#~ msgstr "Vous n'avez pas encore de média."
-
-#, fuzzy
-#~ msgid "The theme have been accepted."
-#~ msgstr "Vous n'avez pas encore de média."
-
-# src/routes/session.rs:263
-#~ msgid "Sorry, but the link expired. Try again"
-#~ msgstr "Désolé, mais le lien a expiré. Réessayez"
-
-#~ msgid "Delete this article"
-#~ msgstr "Supprimer cet article"

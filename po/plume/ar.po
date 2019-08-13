@@ -79,27 +79,27 @@ msgid "Your blog information have been updated."
 msgstr ""
 
 #, fuzzy
-msgid "Your comment has been posted."
+msgid "Your comment have been posted."
 msgstr "ليس لديك أية وسائط بعد."
 
 #, fuzzy
-msgid "Your comment has been deleted."
+msgid "Your comment have been deleted."
 msgstr "ليس لديك أية وسائط بعد."
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} has been unblocked."
+# src/routes/instance.rs:182
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} has been blocked."
+# src/routes/instance.rs:184
+msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} has been banned."
+# src/routes/instance.rs:218
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -115,9 +115,9 @@ msgstr ""
 msgid "You are not allowed to delete this media."
 msgstr "لا يسمح لك بحذف هذه المدونة."
 
-#, fuzzy
-msgid "Your avatar has been updated."
-msgstr "ليس لديك أية وسائط بعد."
+# src/routes/medias.rs:154
+msgid "Your avatar have been updated."
+msgstr ""
 
 # src/routes/blogs.rs:217
 #, fuzzy
@@ -153,25 +153,22 @@ msgstr "تعديل {0}"
 msgid "You are not allowed to publish on this blog."
 msgstr "لا يسمح لك بتعديل هذه المدونة."
 
-#, fuzzy
-msgid "Your article has been updated."
-msgstr "ليس لديك أية وسائط بعد."
+# src/routes/posts.rs:351
+msgid "Your article have been updated."
+msgstr ""
 
 #, fuzzy
-msgid "Your article has been saved."
+msgid "Your post have been saved."
 msgstr "ليس لديك أية وسائط بعد."
-
-msgid "New article"
-msgstr "مقال جديد"
 
 # src/routes/blogs.rs:172
 #, fuzzy
 msgid "You are not allowed to delete this article."
 msgstr "لا يسمح لك بحذف هذه المدونة."
 
-#, fuzzy
-msgid "Your article has been deleted."
-msgstr "ليس لديك أية وسائط بعد."
+# src/routes/posts.rs:589
+msgid "Your article have been deleted."
+msgstr ""
 
 # src/routes/posts.rs:593
 msgid ""
@@ -209,6 +206,10 @@ msgstr "ها هو رابط إعادة تعيين كلمتك السرية: {0}"
 msgid "Your password was successfully reset."
 msgstr "تمت إعادة تعيين كلمتك السرية بنجاح."
 
+# src/routes/session.rs:263
+msgid "Sorry, but the link expired. Try again"
+msgstr "عذراً، ولكن انتهت مدة صلاحية الرابط. حاول مرة أخرى"
+
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
 msgstr "يجب عليك تسجيل الدخول أولاللنفاذ إلى لوح المراقبة"
@@ -229,12 +230,12 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-#, fuzzy
-msgid "Your profile has been updated."
-msgstr "ليس لديك أية وسائط بعد."
+# src/routes/user.rs:390
+msgid "Your profile have been updated."
+msgstr ""
 
 #, fuzzy
-msgid "Your account has been deleted."
+msgid "Your account have been deleted."
 msgstr "ليس لديك أية وسائط بعد."
 
 # src/routes/user.rs:411
@@ -245,10 +246,9 @@ msgstr ""
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:491
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Your account have been created. You just need to login before you can use it."
 msgstr ""
 
 msgid "Plume"
@@ -281,20 +281,14 @@ msgstr "إنشاء حساب"
 msgid "About this instance"
 msgstr "عن مثيل الخادوم هذا"
 
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "الإدارة"
-
-msgid "Documentation"
-msgstr ""
-
 msgid "Source code"
 msgstr "الشيفرة المصدرية"
 
 msgid "Matrix room"
 msgstr "غرفة المحادثة على ماتريكس"
+
+msgid "Administration"
+msgstr "الإدارة"
 
 msgid "Welcome to {}"
 msgstr "مرحبا بكم في {0}"
@@ -371,9 +365,6 @@ msgstr "احفظ هذه الإعدادات"
 msgid "About {0}"
 msgstr "عن {0}"
 
-msgid "Runs Plume {0}"
-msgstr "مدعوم بـ Plume {0}"
-
 msgid "Home to <em>{0}</em> people"
 msgstr "يستضيف <em>{0}</em> أشخاص"
 
@@ -386,22 +377,8 @@ msgstr ""
 msgid "Administred by"
 msgstr "يديره"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
+msgid "Runs Plume {0}"
+msgstr "مدعوم بـ Plume {0}"
 
 #, fuzzy
 msgid "Follow {}"
@@ -437,17 +414,6 @@ msgstr "البريد الالكتروني"
 
 msgid "Summary"
 msgstr "الملخص"
-
-msgid "Theme"
-msgstr ""
-
-# src/template_utils.rs:217
-#, fuzzy
-msgid "Default theme"
-msgstr "الرخصة الافتراضية للمقال"
-
-msgid "Never load blogs custom themes"
-msgstr ""
 
 msgid "Update account"
 msgstr "تحديث الحساب"
@@ -695,15 +661,6 @@ msgstr "تأكيد"
 msgid "Update password"
 msgstr "تحديث الكلمة السرية"
 
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking"
-msgstr ""
-
-msgid "here"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr ""
 
@@ -787,6 +744,12 @@ msgstr "انشر منشورك"
 msgid "Written by {0}"
 msgstr "كتبه {0}"
 
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Delete this article"
+msgstr "احذف هذا المقال"
+
 msgid "All rights reserved."
 msgstr "جميع الحقوق محفوظة."
 
@@ -844,18 +807,6 @@ msgstr "ارسال التعليق"
 msgid "No comments yet. Be the first to react!"
 msgstr "لا توجد هناك تعليقات بعد. كن أول مَن يتفاعل معه!"
 
-msgid "Delete"
-msgstr "حذف"
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Edit"
-msgstr "تعديل"
-
 msgid "Invalid CSRF token"
 msgstr ""
 
@@ -911,20 +862,11 @@ msgstr "أيقونة المدونة"
 msgid "Blog banner"
 msgstr "شعار المدونة"
 
-# src/template_utils.rs:217
-#, fuzzy
-msgid "Custom theme"
-msgstr "الرخصة الافتراضية للمقال"
-
 msgid "Update blog"
 msgstr "تحديث المدونة"
 
 msgid "Be very careful, any action taken here can't be reversed."
 msgstr "توخى الحذر هنا، فأي إجراء تأخذه هنا لا يمكن الغاؤه."
-
-#, fuzzy
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "احذف هذه المدونة نهائيا"
 
 msgid "Permanently delete this blog"
 msgstr "احذف هذه المدونة نهائيا"
@@ -940,6 +882,9 @@ msgstr "انشاء مدونة"
 
 msgid "{}'s icon"
 msgstr "أيقونة {}"
+
+msgid "New article"
+msgstr "مقال جديد"
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
@@ -983,6 +928,9 @@ msgstr "ليس لديك أية وسائط بعد."
 msgid "Content warning: {0}"
 msgstr "تحذير عن المحتوى: {0}"
 
+msgid "Delete"
+msgstr "حذف"
+
 msgid "Details"
 msgstr "التفاصيل"
 
@@ -1015,18 +963,3 @@ msgstr ""
 
 msgid "Use as an avatar"
 msgstr "استخدمها كصورة رمزية"
-
-#, fuzzy
-#~ msgid "The theme have been rejected."
-#~ msgstr "ليس لديك أية وسائط بعد."
-
-#, fuzzy
-#~ msgid "The theme have been accepted."
-#~ msgstr "ليس لديك أية وسائط بعد."
-
-# src/routes/session.rs:263
-#~ msgid "Sorry, but the link expired. Try again"
-#~ msgstr "عذراً، ولكن انتهت مدة صلاحية الرابط. حاول مرة أخرى"
-
-#~ msgid "Delete this article"
-#~ msgstr "احذف هذا المقال"
