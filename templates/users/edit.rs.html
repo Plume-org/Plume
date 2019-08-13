@@ -23,13 +23,17 @@
             <label for="summary">@i18n!(ctx.1, "Summary")</label>
             <textarea id="summary" name="summary">@form.summary</textarea>
 
-            <label for="theme">@i18n!(ctx.1, "Theme")</label>
-            <select name="theme" id="theme">
-                <option value="" @if form.theme.is_none() { selected }>@i18n!(ctx.1, "Default theme")</option>
-                @for theme in Instance::list_themes() {
-                    <option value="@theme" @if Some(theme.clone()) == form.theme { selected }>@theme</option>
-                }
-            </select>
+            @if let Ok(themes) = Instance::list_themes() {
+                <label for="theme">@i18n!(ctx.1, "Theme")</label>
+                <select name="theme" id="theme">
+                    <option value="" @if form.theme.is_none() { selected }>@i18n!(ctx.1, "Default theme")</option>
+                    @for theme in themes {
+                        <option value="@theme" @if Some(theme.clone()) == form.theme { selected }>@theme</option>
+                    }
+                </select>
+            } else {
+                <p class="error">@i18n!(ctx.1, "Error while loading theme selector.")</p>
+            }
 
             <label for="hide_custom_css">
               <input type="checkbox" name="hide_custom_css" id="hide_custom_css" @if form.hide_custom_css { checked }>

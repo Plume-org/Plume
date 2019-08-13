@@ -190,7 +190,7 @@ impl Instance {
     /// Returns a list of the local instance themes (all files matching `static/css/NAME/theme.css`)
     ///
     /// The list only contains the name of the themes, without their extension or full path.
-    pub fn list_themes() -> Vec<String> {
+    pub fn list_themes() -> Result<Vec<String>> {
         // List all the files in static/css
         std::path::Path::new("static")
             .join("css")
@@ -211,13 +211,13 @@ impl Instance {
                     .filter(|f| !f.starts_with("blog-"))
                     .collect()
             })
-            .unwrap_or_default()
+            .map_err(Error::from)
     }
 
     /// Returns a list of the local blog themes (all files matching `static/css/blog-NAME/theme.css`)
     ///
     /// The list only contains the name of the themes, without their extension or full path.
-    pub fn list_blog_themes() -> Vec<String> {
+    pub fn list_blog_themes() -> Result<Vec<String>> {
         // List all the files in static/css
         std::path::Path::new("static")
             .join("css")
@@ -238,7 +238,7 @@ impl Instance {
                     .filter(|f| f.starts_with("blog-"))
                     .collect()
             })
-            .unwrap_or_default()
+            .map_err(Error::from)
     }
 }
 
