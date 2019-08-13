@@ -56,7 +56,6 @@ struct NewList<'a> {
     type_: i32,
 }
 
-
 macro_rules! func {
     (@elem User $id:expr, $value:expr) => {
         NewListElem {
@@ -186,7 +185,11 @@ impl List {
         }
     }
 
-    pub fn find_for_user_by_name(conn: &Connection, user_id: Option<i32>, name: &str) -> Result<Self> {
+    pub fn find_for_user_by_name(
+        conn: &Connection,
+        user_id: Option<i32>,
+        name: &str,
+    ) -> Result<Self> {
         if let Some(user_id) = user_id {
             lists::table
                 .filter(lists::user_id.eq(user_id))
@@ -242,27 +245,23 @@ impl List {
         private::ListElem::prefix_in_list(conn, self, word)
     }
 
-
-
     /// Insert new users in a list
-    func!{add: add_users, User}
+    func! {add: add_users, User}
 
     /// Insert new blogs in a list
-    func!{add: add_blogs, Blog}
+    func! {add: add_blogs, Blog}
 
     /// Insert new words in a list
-    func!{add: add_words, Word}
+    func! {add: add_words, Word}
 
     /// Insert new prefixes in a list
-    func!{add: add_prefixes, Prefix}
-
+    func! {add: add_prefixes, Prefix}
 
     /// Get all users in the list
-    func!{list: list_users, User, users}
-
+    func! {list: list_users, User, users}
 
     /// Get all blogs in the list
-    func!{list: list_blogs, Blog, blogs}
+    func! {list: list_blogs, Blog, blogs}
 
     /// Get all words in the list
     pub fn list_words(&self, conn: &Connection) -> Result<Vec<String>> {
@@ -295,10 +294,10 @@ impl List {
             .map_err(Error::from)
     }
 
-    func!{set: set_users, User, add_users}
-    func!{set: set_blogs, Blog, add_blogs}
-    func!{set: set_words, Word, add_words}
-    func!{set: set_prefixes, Prefix, add_prefixes}
+    func! {set: set_users, User, add_users}
+    func! {set: set_blogs, Blog, add_blogs}
+    func! {set: set_words, Word, add_words}
+    func! {set: set_prefixes, Prefix, add_prefixes}
 }
 
 mod private {
@@ -515,7 +514,7 @@ mod tests {
             l.clear(conn).unwrap();
             assert!(l.list_words(conn).unwrap().is_empty());
 
-            assert!(!l.add_prefixes(conn, &["something"]).is_err());
+            assert!(l.add_prefixes(conn, &["something"]).is_err());
             Ok(())
         });
     }

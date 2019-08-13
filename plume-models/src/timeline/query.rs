@@ -238,7 +238,8 @@ impl WithList {
     ) -> Result<bool> {
         match list {
             List::List(name) => {
-                let list = lists::List::find_for_user_by_name(&rocket.conn, timeline.user_id, &name)?;
+                let list =
+                    lists::List::find_for_user_by_name(&rocket.conn, timeline.user_id, &name)?;
                 match (self, list.kind()) {
                     (WithList::Blog, ListType::Blog) => {
                         list.contains_blog(&rocket.conn, post.blog_id)
