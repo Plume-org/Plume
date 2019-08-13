@@ -205,10 +205,10 @@ impl<'r> Responder<'r> for ThemeFile {
 }
 
 #[get("/static/cached/<_build_id>/css/<file..>", rank = 1)]
-pub fn theme_files<'a, 'r>(file: PathBuf, _build_id: &'a RawStr) -> Option<ThemeFile> {
+pub fn theme_files(file: PathBuf, _build_id: &RawStr) -> Option<ThemeFile> {
     NamedFile::open(Path::new("static/").join(file))
         .ok()
-        .map(|f| ThemeFile(f))
+        .map(ThemeFile)
 }
 
 #[get("/static/cached/<_build_id>/<file..>", rank = 2)]
