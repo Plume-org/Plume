@@ -18,7 +18,7 @@ guid-create = "0.1"
 heck = "0.3.0"
 lettre = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
 lettre_email = { git = "https://github.com/lettre/lettre", rev = "c988b1760ad8179d9e7f3fb8594d2b86cf2a0a49" }
-num_cpus = "1.0"
+num_cpus = "1.10"
 rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
 rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
