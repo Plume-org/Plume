@@ -36,8 +36,8 @@ commands:
     - run: git config --global --remove-section url."ssh://git@github.com"
     - restore_cache:
         keys:
-        - v0-<< parameters.cache >>-{{ .Branch }}
-        - v0-<< parameters.cache >>-master
+        - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-{{ .Branch }}
+        - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-master
 
   cache:
     description: push cache
@@ -47,7 +47,7 @@ commands:
         enum: ["clippy", "postgres", "sqlite", "release-postgres", "release-sqlite"]
     steps:
     - save_cache:
-        key: v0-<< parameters.cache >>-{{ .Branch }}
+        key: v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-{{ .Branch }}
         paths:
         - ~/.cargo/
         - ./target
