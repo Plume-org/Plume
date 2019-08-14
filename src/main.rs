@@ -207,6 +207,10 @@ Then try to restart Plume
             ],
         )
         .mount(
+            "/domain_validation/",
+            routes![routes::blogs::domain_validation,],
+        )
+        .mount(
             "/",
             routes![
                 routes::blogs::details,

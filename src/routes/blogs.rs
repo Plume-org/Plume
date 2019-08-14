@@ -95,6 +95,11 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
     ))
 }
 
+#[get("/validate/<validation_id>")]
+pub fn validate(validation_id: String, rockets: PlumeRocket) -> Result {
+    unimplemented!("No idea what to do here yet")
+}
+
 pub mod custom {
     use plume_common::activity_pub::{ActivityStream, ApRequest};
     use plume_models::{blogs::Blog, blogs::CustomGroup, blogs::Host, PlumeRocket};
