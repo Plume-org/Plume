@@ -1988,7 +1988,7 @@ dependencies = [
  "shrinkwraprs 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "validator 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "validator_derive 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "webfinger 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "webfinger 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -2086,7 +2086,7 @@ dependencies = [
  "shrinkwraprs 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tantivy 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "webfinger 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "webfinger 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "whatlang 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -3592,13 +3592,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "webfinger"
-version = "0.3.1"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "reqwest 0.9.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.91 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.91 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_json 1.0.40 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -4078,7 +4077,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum wasm-bindgen-macro 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)" = "f07d50f74bf7a738304f6b8157f4a581e1512cd9e9cdb5baad8c31bbe8ffd81d"
 "checksum wasm-bindgen-macro-support 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)" = "95cf8fe77e45ba5f91bc8f3da0c3aa5d464b3d8ed85d84f4d4c7cc106436b1d7"
 "checksum wasm-bindgen-shared 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)" = "d9c2d4d4756b2e46d3a5422e06277d02e4d3e1d62d138b76a4c681e925743623"
-"checksum webfinger 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "edc8f298f29f04bf5b6a85d7d448de4f16b7d45807d0a3ec422efcfbf1960519"
+"checksum webfinger 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "ec24b1b0700d4b466d280228ed0f62274eedeaa80206820f071fdc8ed787b664"
 "checksum whatlang 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)" = "bf61042986b0f0612917b71609b861d695e76c55f9fc81b8a8f8cd363646816c"
 "checksum winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "167dc9d6949a9b857f3451275e911c3f44255842c1f7a76f33c55103a909087a"
 "checksum winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)" = "f10e386af2b13e47c89e7236a7a14a086791a2b88ebad6df9bf42040195cf770"
