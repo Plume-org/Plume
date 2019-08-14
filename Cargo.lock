@@ -1941,7 +1941,7 @@ dependencies = [
  "rocket_contrib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)",
  "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
- "rpassword 3.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rpassword 4.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "ructe 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "runtime-fmt 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1971,7 +1971,7 @@ dependencies = [
  "diesel 1.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "plume-models 0.3.0",
- "rpassword 3.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rpassword 4.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -2513,12 +2513,11 @@ dependencies = [
 
 [[package]]
 name = "rpassword"
-version = "3.0.2"
+version = "4.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -3817,7 +3816,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)" = "<none>"
 "checksum rocket_http 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "abec045da00893bd4eef6084307a4bec0742278a7635a6a8b943da023202a5f7"
 "checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)" = "<none>"
-"checksum rpassword 3.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "c34fa7bcae7fca3c8471e8417088bbc3ad9af8066b0ecf4f3c0d98a0d772716e"
+"checksum rpassword 4.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "f072d931f11a96546efd97642e1e75e807345aced86b947f9239102f262d0fcd"
 "checksum rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)" = "7f4534cc03040beacd2668621815f26fe57e5b7cfe085790f98e5e87c1612316"
 "checksum ructe 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)" = "976a8c6d7b90407935443485911ba072dddbe188f14e173c687b16e0b5d22b43"
 "checksum runtime-fmt 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "647a821d66049faccc993fc3c379d1181b81a484097495cda79ffdb17b55b87f"
