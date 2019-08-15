@@ -5,8 +5,10 @@ use rocket::{
     http::ContentType,
     request::LenientForm,
     response::{content::Content, Flash, Redirect},
+    State,
 };
 use rocket_i18n::I18n;
+use std::time::Instant;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -96,8 +98,27 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
 }
 
 #[get("/validate/<validation_id>")]
-pub fn validate(validation_id: String, rockets: PlumeRocket) -> Result {
-    unimplemented!("No idea what to do here yet")
+pub fn domain_validation(
+    validation_id: String,
+    valid_domains: State<HashMap<&str, Instant>>,
+) -> Result<String, String> {
+    let value = valid_domains.inner().get(validation_id.as_str());
+    if value.is_none() {
+        return Err(String::from("404"));
+    }
+
+    // we have valid id, now check the time
+    let valid_until = value.unwrap();
+    let now = Instant::now();
+
+    // nope, expired (410: gone)
+    if now.checked_duration_since(*valid_until).unwrap().as_secs() > 0 {
+        valid_domains.inner().remove(validation_id.as_str());
+        return Err(String::from("410"));
+    }
+
+    valid_domains.inner().remove(validation_id.as_str());
+    return Ok(String::from("200"));
 }
 
 pub mod custom {

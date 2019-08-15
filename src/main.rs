@@ -1,5 +1,5 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene, try_trait)]
+#![feature(decl_macro, proc_macro_hygiene, checked_duration_since, try_trait)]
 
 extern crate activitypub;
 extern crate askama_escape;
@@ -53,9 +53,10 @@ use plume_models::{
 use rocket::{fairing::AdHoc, http::ext::IntoOwned, http::uri::Origin};
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
+use std::collections::HashMap;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 init_i18n!(
     "plume", ar, bg, ca, cs, de, en, eo, es, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr, sk, sv
@@ -196,6 +197,7 @@ Then try to restart Plume
         }
     });
 
+    let mut valid_domains: HashMap<&str, Instant> = HashMap::new();
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/custom_domains/",
@@ -322,6 +324,7 @@ Then try to restart Plume
         .manage(dbpool)
         .manage(Arc::new(workpool))
         .manage(searcher)
+        .manage(valid_domains)
         .manage(include_i18n!())
         .attach(
             CsrfFairingBuilder::new()
