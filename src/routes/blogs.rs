@@ -19,6 +19,7 @@ use plume_models::{
     blog_authors::*, blogs::*, instance::Instance, medias::*, posts::Post, safe_string::SafeString,
     users::User, Connection, PlumeRocket,
 };
+use reqwest::Client;
 use routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
@@ -183,12 +184,17 @@ fn valid_domain(domain: &str, valid_domains: State<Mutex<HashMap<String, Instant
     let mutex = valid_domains.inner().lock();
     let mut validation_map = mutex.unwrap();
 
+    let random_id = utils::random_hex();
     validation_map.insert(
-        utils::random_hex(),
+        random_id.clone(),
         Instant::now().checked_add(Duration::new(60, 0)).unwrap(),
     );
 
-    true
+    let client = Client::new();
+    let validation_uri = format!("https://{}/domain_validation/{}", domain, random_id);
+    let resp = client.get(&validation_uri).send();
+
+    resp.unwrap().status().is_success()
 }
 
 #[post("/blogs/new", data = "<form>")]

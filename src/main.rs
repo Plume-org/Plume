@@ -22,6 +22,7 @@ extern crate num_cpus;
 extern crate plume_api;
 extern crate plume_common;
 extern crate plume_models;
+extern crate reqwest;
 #[macro_use]
 extern crate rocket;
 extern crate rocket_contrib;
