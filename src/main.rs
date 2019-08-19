@@ -1,5 +1,5 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene, checked_duration_since, try_trait)]
+#![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
 extern crate activitypub;
 extern crate askama_escape;
@@ -197,7 +197,7 @@ Then try to restart Plume
         }
     });
 
-    let mut valid_domains: HashMap<&str, Instant> = HashMap::new();
+    let valid_domains: HashMap<String, Instant> = HashMap::new();
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/custom_domains/",
@@ -324,7 +324,7 @@ Then try to restart Plume
         .manage(dbpool)
         .manage(Arc::new(workpool))
         .manage(searcher)
-        .manage(valid_domains)
+        .manage(Mutex::new(valid_domains))
         .manage(include_i18n!())
         .attach(
             CsrfFairingBuilder::new()

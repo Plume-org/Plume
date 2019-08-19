@@ -2,12 +2,13 @@ use activitypub::collection::OrderedCollection;
 use atom_syndication::{Entry, FeedBuilder};
 use diesel::SaveChangesDsl;
 use rocket::{
-    http::ContentType,
+    http::{ContentType, Status},
     request::LenientForm,
     response::{content::Content, Flash, Redirect},
     State,
 };
 use rocket_i18n::I18n;
+use std::sync::Mutex;
 use std::time::Instant;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
@@ -100,11 +101,15 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
 #[get("/validate/<validation_id>")]
 pub fn domain_validation(
     validation_id: String,
-    valid_domains: State<HashMap<&str, Instant>>,
-) -> Result<String, String> {
-    let value = valid_domains.inner().get(validation_id.as_str());
+    valid_domains: State<Mutex<HashMap<String, Instant>>>,
+) -> Status {
+    let mutex = valid_domains.inner().lock();
+    let mut validation_map = mutex.unwrap();
+    let validation_getter = validation_map.clone();
+
+    let value = validation_getter.get(&validation_id);
     if value.is_none() {
-        return Err(String::from("404"));
+        return Status::new(404, "validation id not found");
     }
 
     // we have valid id, now check the time
@@ -112,13 +117,13 @@ pub fn domain_validation(
     let now = Instant::now();
 
     // nope, expired (410: gone)
-    if now.checked_duration_since(*valid_until).unwrap().as_secs() > 0 {
-        valid_domains.inner().remove(validation_id.as_str());
-        return Err(String::from("410"));
+    if now.duration_since(*valid_until).as_secs() > 0 {
+        validation_map.remove(&validation_id);
+        return Status::new(410, "validation expired");
     }
 
-    valid_domains.inner().remove(validation_id.as_str());
-    return Ok(String::from("200"));
+    validation_map.remove(&validation_id);
+    Status::Ok
 }
 
 pub mod custom {
