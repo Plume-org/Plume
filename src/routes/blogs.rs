@@ -9,7 +9,7 @@ use rocket::{
 };
 use rocket_i18n::I18n;
 use std::sync::Mutex;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -179,8 +179,24 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
     }
 }
 
+fn valid_domain(domain: &str, valid_domains: State<Mutex<HashMap<String, Instant>>>) -> bool {
+    let mutex = valid_domains.inner().lock();
+    let mut validation_map = mutex.unwrap();
+
+    validation_map.insert(
+        utils::random_hex(),
+        Instant::now().checked_add(Duration::new(60, 0)).unwrap(),
+    );
+
+    true
+}
+
 #[post("/blogs/new", data = "<form>")]
-pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOrRedirect {
+pub fn create(
+    form: LenientForm<NewBlogForm>,
+    rockets: PlumeRocket,
+    valid_domains: State<Mutex<HashMap<String, Instant>>>,
+) -> RespondOrRedirect {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -189,7 +205,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     let (custom_domain, dns_ok) = if form.custom_domain.is_empty() {
         (None, true)
     } else {
-        let dns_check = true; // TODO
+        let dns_check = valid_domain(&form.custom_domain.clone(), valid_domains);
         (Some(Host::new(form.custom_domain.clone())), dns_check)
     };
 
