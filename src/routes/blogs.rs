@@ -110,6 +110,7 @@ pub fn domain_validation(
 
     let value = validation_getter.get(&validation_id);
     if value.is_none() {
+        // don't know how to cast Status::NotFound to u16
         return Status::new(404, "validation id not found");
     }
 
@@ -120,6 +121,7 @@ pub fn domain_validation(
     // nope, expired (410: gone)
     if now.duration_since(*valid_until).as_secs() > 0 {
         validation_map.remove(&validation_id);
+        // don't know how to cast Status::Gone to u16
         return Status::new(410, "validation expired");
     }
 
@@ -192,9 +194,11 @@ fn valid_domain(domain: &str, valid_domains: State<Mutex<HashMap<String, Instant
 
     let client = Client::new();
     let validation_uri = format!("https://{}/domain_validation/{}", domain, random_id);
-    let resp = client.get(&validation_uri).send();
 
-    resp.unwrap().status().is_success()
+    match client.get(&validation_uri).send() {
+        Ok(resp) => resp.status().is_success(),
+        Err(_) => false,
+    }
 }
 
 #[post("/blogs/new", data = "<form>")]
