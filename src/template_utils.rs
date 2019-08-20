@@ -390,10 +390,13 @@ macro_rules! url {
                               $($custom_args = $custom_args,)*
                               );
             let path = origin
-                .segments() // first segment is /custom_domain,
-                .skip(2)// second is <domain>, drop both
+                .segments()
+                .skip(1)// skip is <custom_domain> part
                 .map(|seg| format!("/{}", seg)).collect::<String>();
-            let query = origin.query().map(|q| format!("?{}", q)).unwrap_or_default();
+            let query = origin.query()
+                .filter(|q| !q.is_empty())
+                .map(|q| format!("?{}", q))
+                .unwrap_or_default();
             format!("https://{}{}{}", &domain, path, query)
         } else {
             $(
