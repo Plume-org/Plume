@@ -8,8 +8,9 @@ use openssl::{
     sign::{Signer, Verifier},
 };
 use rocket::{
+    http::RawStr,
     outcome::IntoOutcome,
-    request::{self, FromRequest, Request},
+    request::{self, FromFormValue, FromRequest, Request},
 };
 use serde_json;
 use url::Url;
@@ -68,6 +69,15 @@ impl<'a, 'r> FromRequest<'a, 'r> for Host {
                 }
             })
             .or_forward(())
+    }
+}
+
+impl<'v> FromFormValue<'v> for Host {
+    type Error = &'v RawStr;
+
+    fn from_form_value(form_value: &'v RawStr) -> std::result::Result<Host, &'v RawStr> {
+        let val = String::from_form_value(form_value)?;
+        Ok(Host::new(&val))
     }
 }
 

@@ -333,6 +333,7 @@ pub struct EditForm {
     pub summary: String,
     pub icon: Option<i32>,
     pub banner: Option<i32>,
+    pub custom_domain: Option<Host>,
 }
 
 #[get("/~/<name>/edit")]
@@ -359,6 +360,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
                 summary: blog.summary.clone(),
                 icon: blog.icon_id,
                 banner: blog.banner_id,
+                custom_domain: blog.custom_domain.clone(),
             },
             ValidationErrors::default()
         )))
