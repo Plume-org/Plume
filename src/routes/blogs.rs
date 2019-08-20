@@ -99,7 +99,7 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
     ))
 }
 
-#[get("/validate/<validation_id>")]
+#[get("/domain_validation/<validation_id>")]
 pub fn domain_validation(
     validation_id: String,
     valid_domains: State<Mutex<HashMap<String, Instant>>>,
