@@ -73,6 +73,8 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
     pub summary_html: SafeString,
+    pub preferred_theme: Option<String>,
+    pub hide_custom_css: bool,
 }
 
 #[derive(Default, Insertable)]
@@ -200,30 +202,6 @@ impl User {
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
-    }
-
-    pub fn update(
-        &self,
-        conn: &Connection,
-        name: String,
-        email: String,
-        summary: String,
-    ) -> Result<User> {
-        diesel::update(self)
-            .set((
-                users::display_name.eq(name),
-                users::email.eq(email),
-                users::summary_html.eq(utils::md_to_html(
-                    &summary,
-                    None,
-                    false,
-                    Some(Media::get_media_processor(conn, vec![self])),
-                )
-                .0),
-                users::summary.eq(summary),
-            ))
-            .execute(conn)?;
-        User::get(conn, self.id)
     }
 
     pub fn count_local(conn: &Connection) -> Result<i64> {
@@ -668,7 +646,7 @@ impl User {
     pub fn avatar_url(&self, conn: &Connection) -> String {
         self.avatar_id
             .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-            .unwrap_or_else(|| "/static/default-avatar.png".to_string())
+            .unwrap_or_else(|| "/static/images/default-avatar.png".to_string())
     }
 
     pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {
@@ -1071,27 +1049,6 @@ pub(crate) mod tests {
             }
             inserted[0].grant_admin_rights(conn).unwrap();
             assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn update() {
-        let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
-            let updated = inserted[0]
-                .update(
-                    conn,
-                    "new name".to_owned(),
-                    "em@il".to_owned(),
-                    "<p>summary</p><script></script>".to_owned(),
-                )
-                .unwrap();
-            assert_eq!(updated.display_name, "new name");
-            assert_eq!(updated.email.unwrap(), "em@il");
-            assert_eq!(updated.summary_html.get(), "<p>summary</p>");
 
             Ok(())
         });

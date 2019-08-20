@@ -20,12 +20,9 @@
     @input!(ctx.1, name (text), "Name", form, errors.clone(), "props")
 
     <label for="open_registrations">
-      @if instance.open_registrations {
-          <input type="checkbox" name="open_registrations" id="open_registrations" checked>
-      } else {
-          <input type="checkbox" name="open_registrations" id="open_registrations">
-      }
+      <input type="checkbox" name="open_registrations" id="open_registrations" @if instance.open_registrations { checked }>
       @i18n!(ctx.1, "Allow anyone to register here")
+    </label>
 
       <label for="short_description">@i18n!(ctx.1, "Short description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
       <textarea id="short_description" name="short_description">@Html(form.short_description)</textarea>

@@ -5,6 +5,7 @@
 @use templates::{base, partials::post_card};
 @use template_utils::*;
 @use routes::*;
+@use std::path::Path;
 
 @(ctx: BaseContext, blog: Blog, authors: &[User], page: i32, n_pages: i32, posts: Vec<Post>)
 
@@ -23,6 +24,11 @@
 
 	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
+    @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
+        @if let Some(ref theme) = blog.theme {
+            <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(theme).join("theme.css"), _build_id = CACHE_NAME)">
+        }
+    }
 }, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)" dir="auto">@blog.title</a>
 }, {

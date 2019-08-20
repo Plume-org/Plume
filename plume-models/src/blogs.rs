@@ -44,6 +44,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub theme: Option<String>,
 }
 
 #[derive(Default, Insertable)]
@@ -61,6 +62,7 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub theme: Option<String>,
 }
 
 const BLOG_PREFIX: &str = "~";
@@ -272,7 +274,7 @@ impl Blog {
     pub fn icon_url(&self, conn: &Connection) -> String {
         self.icon_id
             .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-            .unwrap_or_else(|| "/static/default-avatar.png".to_string())
+            .unwrap_or_else(|| "/static/images/default-avatar.png".to_string())
     }
 
     pub fn banner_url(&self, conn: &Connection) -> Option<String> {
@@ -392,6 +394,7 @@ impl FromId<PlumeRocket> for Blog {
                         .summary_string()
                         .unwrap_or_default(),
                 ),
+                theme: None,
             },
         )
     }

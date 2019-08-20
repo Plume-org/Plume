@@ -1,10 +1,10 @@
 @font-face {
 	font-family: "Feather";
-	src: url('../fonts/Feather/Feather.eot'); /* IE9 */
-	src: url('../fonts/Feather/Feather.eot') format('embedded-opentype'), /* IE6-IE8 */
-		url('../fonts/Feather/Feather.woff') format('woff'), /* Chrome, Firefox */
-		url('../fonts/Feather/Feather.ttf') format('truetype'), /* Chrome, Firefox, Opera, Safari, Android, iOS 4.2+ */
-		url('../fonts/Feather/Feather.svg') format('svg'); /* iOS 4.1- */
+	src: url('./fonts/Feather/Feather.eot'); /* IE9 */
+	src: url('./fonts/Feather/Feather.eot') format('embedded-opentype'), /* IE6-IE8 */
+		url('./fonts/Feather/Feather.woff') format('woff'), /* Chrome, Firefox */
+		url('./fonts/Feather/Feather.ttf') format('truetype'), /* Chrome, Firefox, Opera, Safari, Android, iOS 4.2+ */
+		url('./fonts/Feather/Feather.svg') format('svg'); /* iOS 4.1- */
 }
 
 .feather {

@@ -186,6 +186,60 @@ impl Instance {
             .get_result(conn)
             .map_err(Error::from)
     }
+
+    /// Returns a list of the local instance themes (all files matching `static/css/NAME/theme.css`)
+    ///
+    /// The list only contains the name of the themes, without their extension or full path.
+    pub fn list_themes() -> Result<Vec<String>> {
+        // List all the files in static/css
+        std::path::Path::new("static")
+            .join("css")
+            .read_dir()
+            .map(|files| {
+                files
+                    .filter_map(std::result::Result::ok)
+                    // Only keep actual directories (each theme has its own dir)
+                    .filter(|f| f.file_type().map(|t| t.is_dir()).unwrap_or(false))
+                    // Only keep the directory name (= theme name)
+                    .filter_map(|f| {
+                        f.path()
+                            .file_name()
+                            .and_then(std::ffi::OsStr::to_str)
+                            .map(std::borrow::ToOwned::to_owned)
+                    })
+                    // Ignore the one starting with "blog-": these are the blog themes
+                    .filter(|f| !f.starts_with("blog-"))
+                    .collect()
+            })
+            .map_err(Error::from)
+    }
+
+    /// Returns a list of the local blog themes (all files matching `static/css/blog-NAME/theme.css`)
+    ///
+    /// The list only contains the name of the themes, without their extension or full path.
+    pub fn list_blog_themes() -> Result<Vec<String>> {
+        // List all the files in static/css
+        std::path::Path::new("static")
+            .join("css")
+            .read_dir()
+            .map(|files| {
+                files
+                    .filter_map(std::result::Result::ok)
+                    // Only keep actual directories (each theme has its own dir)
+                    .filter(|f| f.file_type().map(|t| t.is_dir()).unwrap_or(false))
+                    // Only keep the directory name (= theme name)
+                    .filter_map(|f| {
+                        f.path()
+                            .file_name()
+                            .and_then(std::ffi::OsStr::to_str)
+                            .map(std::borrow::ToOwned::to_owned)
+                    })
+                    // Only keep the one starting with "blog-": these are the blog themes
+                    .filter(|f| f.starts_with("blog-"))
+                    .collect()
+            })
+            .map_err(Error::from)
+    }
 }
 
 #[cfg(test)]

@@ -1,5 +1,6 @@
 @use validator::ValidationErrors;
 @use plume_models::blogs::Blog;
+@use plume_models::instance::Instance;
 @use plume_models::medias::Media;
 @use routes::blogs;
 @use routes::blogs::EditForm;
@@ -30,6 +31,18 @@
 
         @:image_select(ctx, "icon", i18n!(ctx.1, "Blog icon"), true, medias.clone(), form.icon)
         @:image_select(ctx, "banner", i18n!(ctx.1, "Blog banner"), true, medias, form.banner)
+
+        @if let Ok(themes) = Instance::list_themes() {
+            <label for="css">@i18n!(ctx.1, "Custom theme")</label>
+            <select name="theme" id="theme">
+                <option value="" @if form.theme.is_none() { selected }>@i18n!(ctx.1, "Default theme")</option>
+                @for theme in themes {
+                    <option value="@theme" @if Some(theme.clone()) == form.theme { selected }>@theme</option>
+                }
+            </select>
+        } else {
+            <p class="error">@i18n!(ctx.1, "Error while loading theme selector.")</p>
+        }
 
         <input type="submit" value="@i18n!(ctx.1, "Update blog")"/>
     </form>
