@@ -49,8 +49,7 @@ macro_rules! param_to_query {
     }
 }
 
-#[get("/search?<query..>")]
-pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
+fn search_guts(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
     let conn = &*rockets.conn;
     let query = query.map(Form::into_inner).unwrap_or_default();
     let page = query.page.unwrap_or_default();
@@ -81,5 +80,25 @@ pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
             page.0,
             next_page
         ))
+    }
+}
+
+#[get("/search?<query..>")]
+pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
+    search_guts(query, rockets)
+}
+
+pub mod custom {
+    use plume_models::PlumeRocket;
+    use rocket::request::Form;
+    use template_utils::Ructe;
+
+    #[get("/<_custom_domain>/search?<query..>")]
+    pub fn search(
+        _custom_domain: String,
+        query: Option<Form<super::SearchQuery>>,
+        rockets: PlumeRocket,
+    ) -> Ructe {
+        super::search_guts(query, rockets)
     }
 }

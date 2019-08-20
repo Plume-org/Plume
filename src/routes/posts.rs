@@ -31,28 +31,14 @@ use routes::{
 };
 use template_utils::{IntoContext, Ructe};
 
-#[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
-pub fn details(
-    blog: String,
-    slug: String,
+fn detail_guts(
+    blog: &Blog,
+    post: &Post,
     responding_to: Option<i32>,
-    rockets: PlumeRocket,
-) -> Result<Ructe, ErrorPage> {
+    rockets: &PlumeRocket,
+) -> Result<RespondOrRedirect, ErrorPage> {
     let conn = &*rockets.conn;
     let user = rockets.user.clone();
-    let blog = Blog::find_by_fqn(&rockets, &blog)?;
-    let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
-    if !(post.published
-        || post
-            .get_authors(&*conn)?
-            .into_iter()
-            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
-    {
-        return Ok(render!(errors::not_authorized(
-            &rockets.to_context(),
-            i18n!(rockets.intl.catalog, "This post isn't published yet.")
-        )));
-    }
 
     let comments = CommentTree::from_post(&*conn, &post, user.as_ref())?;
 
@@ -61,7 +47,7 @@ pub fn details(
     Ok(render!(posts::details(
             &rockets.to_context(),
             post.clone(),
-            blog,
+            blog.clone(),
             &NewCommentForm {
                 warning: previous.clone().map(|p| p.spoiler_text).unwrap_or_default(),
                 content: previous.clone().and_then(|p| Some(format!(
@@ -94,7 +80,85 @@ pub fn details(
             user.clone().and_then(|u| u.has_reshared(&*conn, &post).ok()).unwrap_or(false),
             user.and_then(|u| u.is_following(&*conn, post.get_authors(&*conn).ok()?[0].id).ok()).unwrap_or(false),
             post.get_authors(&*conn)?[0].clone()
-        )))
+        )).into())
+}
+
+#[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
+pub fn details(
+    blog: String,
+    slug: String,
+    responding_to: Option<i32>,
+    rockets: PlumeRocket,
+) -> Result<RespondOrRedirect, ErrorPage> {
+    let conn = &*rockets.conn;
+    let user = rockets.user.clone();
+    let blog = Blog::find_by_fqn(&rockets, &blog)?;
+    let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
+
+    if !(post.published
+        || post
+            .get_authors(&*conn)?
+            .into_iter()
+            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
+    {
+        return Ok(render!(errors::not_authorized(
+            &rockets.to_context(),
+            i18n!(rockets.intl.catalog, "This post isn't published yet.")
+        ))
+        .into());
+    }
+
+    // check this first, and return early
+    // doing this prevents partially moving `blog` into the `match (tuple)`,
+    // which makes it impossible to reuse then.
+    if blog.custom_domain == None {
+        return detail_guts(&blog, &post, responding_to, &rockets);
+    }
+
+    match (blog.custom_domain, responding_to) {
+        (Some(ref custom_domain), Some(ref responding_to)) => Ok(Redirect::to(format!(
+            "https://{}/{}?responding_to={}",
+            custom_domain, slug, responding_to
+        ))
+        .into()),
+        (Some(ref custom_domain), _) => {
+            Ok(Redirect::to(format!("https://{}/{}", custom_domain, slug)).into())
+        }
+        (None, _) => unreachable!("This code path should have already been handled!"),
+    }
+}
+
+pub mod custom {
+    use plume_models::{blogs::Blog, blogs::Host, posts::Post, PlumeRocket};
+    use routes::{errors::ErrorPage, RespondOrRedirect};
+    use template_utils::{IntoContext, Ructe};
+
+    #[get("/<custom_domain>/<slug>?<responding_to>", rank = 4)]
+    pub fn details(
+        custom_domain: String,
+        slug: String,
+        responding_to: Option<i32>,
+        rockets: PlumeRocket,
+    ) -> Result<RespondOrRedirect, ErrorPage> {
+        let conn = &*rockets.conn;
+        let user = rockets.user.clone();
+        let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
+        let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
+        if !(post.published
+            || post
+                .get_authors(&*conn)?
+                .into_iter()
+                .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
+        {
+            return Ok(render!(errors::not_authorized(
+                &rockets.to_context(),
+                i18n!(rockets.intl.catalog, "This post isn't published yet.")
+            ))
+            .into());
+        }
+
+        super::detail_guts(&blog, &post, responding_to, &rockets)
+    }
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]

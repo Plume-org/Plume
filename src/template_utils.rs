@@ -1,7 +1,10 @@
 use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
 
 use rocket::http::hyper::header::{ETag, EntityTag};
-use rocket::http::{Method, Status};
+use rocket::http::{
+    uri::{FromUriParam, Query},
+    Method, Status,
+};
 use rocket::request::Request;
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
@@ -12,6 +15,16 @@ use templates::Html;
 pub use askama_escape::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
+
+pub struct NoValue; // workarround for missing FromUriParam implementation for Option
+
+impl FromUriParam<Query, NoValue> for Option<i32> {
+    type Target = Option<i32>;
+
+    fn from_uri_param(_: NoValue) -> Self::Target {
+        None
+    }
+}
 
 pub type BaseContext<'a> = &'a (
     &'a Connection,
@@ -341,4 +354,91 @@ macro_rules! input {
             props = $props
         ))
     }};
+}
+
+/// This macro imitate rocket's uri!, but with support for custom domains
+///
+/// It takes one more argument, domain, which must appear first, and must be an Option<&str>
+/// sample call :
+/// assuming both take the same parameters
+/// url!(custom_domain=Some("something.tld"), posts::details: slug = "title", responding_to = _, blog = "blogname"));
+///
+/// assuming posts::details take one more parameter than posts::custom::details
+/// url!(custom_domain=Some("something.tld"), posts::details:
+///          common=[slug = "title", responding_to = _],
+///          normal=[blog = "blogname"]));
+///
+/// you can also provide custom=[] for custom-domain specific arguments
+/// custom_domain can be changed to anything, indicating custom domain varname in the custom-domain
+/// function (most likely custom_domain or _custom_domain)
+macro_rules! url {
+    ($custom_domain:ident=$domain:expr, $module:ident::$route:ident:
+        common=[$($common_args:tt = $common_val:expr),*],
+        normal=[$($normal_args:tt = $normal_val:expr),*],
+        custom=[$($custom_args:tt = $custom_val:expr),*]) => {{
+        let domain: &Option<plume_models::blogs::Host> = &$domain; //for type inference with None
+        $(
+            let $common_args = $common_val;
+        )*
+        if let Some(domain) = domain {
+            $(
+                let $custom_args = $custom_val;
+            )*
+            let origin = uri!(crate::routes::$module::custom::$route:
+                              $custom_domain = domain.to_string(),
+                              $($common_args = $common_args,)*
+                              $($custom_args = $custom_args,)*
+                              );
+            let path = origin
+                .segments()
+                .skip(1)// skip is <custom_domain> part
+                .map(|seg| format!("/{}", seg)).collect::<String>();
+            let query = origin.query()
+                .filter(|q| !q.is_empty())
+                .map(|q| format!("?{}", q))
+                .unwrap_or_default();
+            format!("https://{}{}{}", &domain, path, query)
+        } else {
+            $(
+                let $normal_args = $normal_val;
+            )*
+            url!($module::$route:
+                 $($common_args = $common_args,)*
+                 $($normal_args = $normal_args,)*)
+                .to_string()
+        }
+    }};
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        common=[$($tt:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[$($tt)*], normal=[], custom=[])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        normal=[$($tt:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[], normal=[$($tt)*], custom=[])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        custom=[$($tt:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[], normal=[], custom=[$($tt)*])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        common=[$($co:tt)*],
+        normal=[$($no:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[$($co)*], normal=[$($no)*], custom=[])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        common=[$($co:tt)*],
+        custom=[$($cu:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[$($co)*], normal=[], custom=[$($cu)*])
+    };
+    ($cd:ident=$d:expr, $m:ident::$r:ident:
+        normal=[$($no:tt)*],
+        custom=[$($cu:tt)*]) => {
+        url!($cd=$d, $m::$r: common=[], normal=[$($no)*], custom=[$($cu)*])
+    };
+    ($custom_domain:ident=$domain:expr, $module:ident::$route:ident: $($common_args:tt)*) => {
+        url!($custom_domain=$domain, $module::$route: common=[$($common_args)*])
+    };
+    ($module:ident::$route:ident: $($tt:tt)*) => {
+            uri!(crate::routes::$module::$route: $($tt)*)
+    };
 }

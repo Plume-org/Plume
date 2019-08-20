@@ -2,11 +2,14 @@ use activitypub::collection::OrderedCollection;
 use atom_syndication::{Entry, FeedBuilder};
 use diesel::SaveChangesDsl;
 use rocket::{
-    http::ContentType,
+    http::{ContentType, Status},
     request::LenientForm,
     response::{content::Content, Flash, Redirect},
+    State,
 };
 use rocket_i18n::I18n;
+use std::sync::Mutex;
+use std::time::{Duration, Instant};
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -16,14 +19,17 @@ use plume_models::{
     blog_authors::*, blogs::*, instance::Instance, medias::*, posts::Post, safe_string::SafeString,
     users::User, Connection, PlumeRocket,
 };
+use reqwest::Client;
 use routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
 
-#[get("/~/<name>?<page>", rank = 2)]
-pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+fn detail_guts(
+    blog: Blog,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<RespondOrRedirect, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &name)?;
     let posts = Post::blog_page(conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(conn, &blog)?;
     let authors = &blog.list_authors(conn)?;
@@ -35,7 +41,43 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
         page.0,
         Page::total(articles_count as i32),
         posts
-    )))
+    ))
+    .into())
+}
+
+#[get("/~/<name>?<page>", rank = 2)]
+pub fn details(
+    name: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<RespondOrRedirect, ErrorPage> {
+    let blog = Blog::find_by_fqn(&rockets, &name)?;
+
+    // check this first, and return early
+    // doing this prevents partially moving `blog` into the `match (tuple)`,
+    // which makes it impossible to reuse then.
+    if blog.custom_domain == None {
+        return detail_guts(blog, page, rockets);
+    }
+
+    match (blog.custom_domain, page) {
+        (Some(ref custom_domain), Some(ref page)) => {
+            Ok(Redirect::to(format!("https://{}/?page={}", custom_domain, page)).into())
+        }
+        (Some(ref custom_domain), _) => {
+            Ok(Redirect::to(format!("https://{}/", custom_domain)).into())
+        }
+        // we need this match arm, or the match won't compile
+        (None, _) => unreachable!("This code path should have already been handled!"),
+    }
+}
+
+pub fn activity_detail_guts(
+    blog: Blog,
+    rockets: PlumeRocket,
+    _ap: ApRequest,
+) -> Option<ActivityStream<CustomGroup>> {
+    Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
 }
 
 #[get("/~/<name>", rank = 1)]
@@ -45,7 +87,7 @@ pub fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
-    Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
+    activity_detail_guts(blog, rockets, _ap)
 }
 
 #[get("/blogs/new")]
@@ -55,6 +97,76 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
         &NewBlogForm::default(),
         ValidationErrors::default()
     ))
+}
+
+// mounted as /domain_validation/
+#[get("/<validation_id>")]
+pub fn domain_validation(
+    validation_id: String,
+    valid_domains: State<Mutex<HashMap<String, Instant>>>,
+) -> Status {
+    let mutex = valid_domains.inner().lock();
+    let mut validation_map = mutex.unwrap();
+    let validation_getter = validation_map.clone();
+
+    let value = validation_getter.get(&validation_id);
+    if value.is_none() {
+        // validation id not found
+        return Status::NotFound;
+    }
+
+    // we have valid id, now check the time
+    let valid_until = value.unwrap();
+    let now = Instant::now();
+
+    // nope, expired (410: gone)
+    if now.duration_since(*valid_until).as_secs() > 0 {
+        validation_map.remove(&validation_id);
+        // validation expired
+        return Status::Gone;
+    }
+
+    validation_map.remove(&validation_id);
+    Status::Ok
+}
+
+pub mod custom {
+    use plume_common::activity_pub::{ActivityStream, ApRequest};
+    use plume_models::{blogs::Blog, blogs::CustomGroup, blogs::Host, PlumeRocket};
+    use rocket::{http::Status, State};
+    use routes::{errors::ErrorPage, Page, RespondOrRedirect};
+    use std::collections::HashMap;
+    use std::sync::Mutex;
+    use std::time::Instant;
+
+    #[get("/<custom_domain>?<page>", rank = 2)]
+    pub fn details(
+        custom_domain: String,
+        page: Option<Page>,
+        rockets: PlumeRocket,
+    ) -> Result<RespondOrRedirect, ErrorPage> {
+        let blog = Blog::find_by_host(&rockets, Host::new(custom_domain))?;
+        super::detail_guts(blog, page, rockets)
+    }
+
+    #[get("/<custom_domain>", rank = 1)]
+    pub fn activity_details(
+        custom_domain: String,
+        rockets: PlumeRocket,
+        _ap: ApRequest,
+    ) -> Option<ActivityStream<CustomGroup>> {
+        let blog = Blog::find_by_host(&rockets, Host::new(custom_domain)).ok()?;
+        super::activity_detail_guts(blog, rockets, _ap)
+    }
+
+    // mounted as /custom_domains/domain_validation/
+    #[get("/<validation_id>")]
+    pub fn domain_validation(
+        validation_id: String,
+        valid_domains: State<Mutex<HashMap<String, Instant>>>,
+    ) -> Status {
+        super::domain_validation(validation_id, valid_domains)
+    }
 }
 
 #[get("/blogs/new", rank = 2)]
@@ -72,6 +184,7 @@ pub fn new_auth(i18n: I18n) -> Flash<Redirect> {
 pub struct NewBlogForm {
     #[validate(custom(function = "valid_slug", message = "Invalid name"))]
     pub title: String,
+    pub custom_domain: String,
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
@@ -83,12 +196,42 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
     }
 }
 
+fn valid_domain(domain: &str, valid_domains: State<Mutex<HashMap<String, Instant>>>) -> bool {
+    let mutex = valid_domains.inner().lock();
+    let mut validation_map = mutex.unwrap();
+
+    let random_id = utils::random_hex();
+    validation_map.insert(
+        random_id.clone(),
+        Instant::now().checked_add(Duration::new(60, 0)).unwrap(),
+    );
+
+    let client = Client::new();
+    let validation_uri = format!("https://{}/domain_validation/{}", domain, random_id);
+
+    match client.get(&validation_uri).send() {
+        Ok(resp) => resp.status().is_success(),
+        Err(_) => false,
+    }
+}
+
 #[post("/blogs/new", data = "<form>")]
-pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOrRedirect {
+pub fn create(
+    form: LenientForm<NewBlogForm>,
+    rockets: PlumeRocket,
+    valid_domains: State<Mutex<HashMap<String, Instant>>>,
+) -> RespondOrRedirect {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
     let user = rockets.user.clone().unwrap();
+
+    let (custom_domain, dns_ok) = if form.custom_domain.is_empty() {
+        (None, true)
+    } else {
+        let dns_check = valid_domain(&form.custom_domain.clone(), valid_domains);
+        (Some(Host::new(form.custom_domain.clone())), dns_check)
+    };
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -121,6 +264,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
             Instance::get_local()
                 .expect("blog::create: instance error")
                 .id,
+            custom_domain,
         )
         .expect("blog::create: new local error"),
     )
@@ -136,11 +280,19 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     )
     .expect("blog::create: author error");
 
-    Flash::success(
-        Redirect::to(uri!(details: name = slug.clone(), page = _)),
-        &i18n!(intl, "Your blog was successfully created!"),
-    )
-    .into()
+    if dns_ok {
+        Flash::success(
+            Redirect::to(uri!(details: name = slug.clone(), page = _)),
+            &i18n!(intl, "Your blog was successfully created!"),
+        )
+        .into()
+    } else {
+        Flash::warning(
+            Redirect::to(uri!(details: name = slug.clone(), page = _)),
+            &i18n!(intl, "Your blog was successfully created, but the custom domain seems invalid. Please check it is correct from your blog's settings."),
+        )
+        .into()
+    }
 }
 
 #[post("/~/<name>/delete")]
@@ -181,6 +333,7 @@ pub struct EditForm {
     pub summary: String,
     pub icon: Option<i32>,
     pub banner: Option<i32>,
+    pub custom_domain: Option<Host>,
 }
 
 #[get("/~/<name>/edit")]
@@ -207,6 +360,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
                 summary: blog.summary.clone(),
                 icon: blog.icon_id,
                 banner: blog.banner_id,
+                custom_domain: blog.custom_domain.clone(),
             },
             ValidationErrors::default()
         )))

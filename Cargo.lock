@@ -1973,6 +1973,7 @@ dependencies = [
  "plume-api 0.3.0",
  "plume-common 0.3.0",
  "plume-models 0.3.0",
+ "reqwest 0.9.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c)",

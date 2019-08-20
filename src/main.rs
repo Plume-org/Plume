@@ -22,6 +22,7 @@ extern crate num_cpus;
 extern crate plume_api;
 extern crate plume_common;
 extern crate plume_models;
+extern crate reqwest;
 #[macro_use]
 extern crate rocket;
 extern crate rocket_contrib;
@@ -42,17 +43,21 @@ extern crate webfinger;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
+    blogs::Blog,
+    blogs::Host,
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
     migrations::IMPORTED_MIGRATIONS,
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
+use rocket::{fairing::AdHoc, http::ext::IntoOwned, http::uri::Origin};
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
+use std::collections::HashMap;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 init_i18n!(
     "plume", ar, bg, ca, cs, de, en, eo, es, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr, sk, sv
@@ -87,6 +92,7 @@ fn init_pool() -> Option<DbPool> {
         .build(manager)
         .ok()?;
     Instance::cache_local(&pool.get().unwrap());
+    Blog::cache_custom_domains(&pool.get().unwrap());
     Some(pool)
 }
 
@@ -175,7 +181,42 @@ Then try to restart Plume
         println!("Please refer to the documentation to see how to configure it.");
     }
 
+    let custom_domain_fairing = AdHoc::on_request("Custom Blog Domains", |req, _data| {
+        let host = req.guard::<Host>();
+        if host.is_success()
+            && req
+                .uri()
+                .segments()
+                .next()
+                .map(|path| path != "static" && path != "api")
+                .unwrap_or(true)
+        {
+            let rewrite_uri = format!("/custom_domains/{}/{}", host.unwrap(), req.uri());
+            let uri = Origin::parse_owned(rewrite_uri).unwrap();
+            let uri = uri.to_normalized().into_owned();
+            req.set_uri(uri);
+        }
+    });
+
+    let valid_domains: HashMap<String, Instant> = HashMap::new();
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
+        .mount(
+            "/custom_domains/domain_validation/",
+            routes![routes::blogs::custom::domain_validation,],
+        )
+        .mount(
+            "/domain_validation/",
+            routes![routes::blogs::domain_validation,],
+        )
+        .mount(
+            "/custom_domains/",
+            routes![
+                routes::blogs::custom::details,
+                routes::posts::custom::details,
+                routes::blogs::custom::activity_details,
+                routes::search::custom::search,
+            ],
+        )
         .mount(
             "/",
             routes![
@@ -288,6 +329,7 @@ Then try to restart Plume
         .manage(dbpool)
         .manage(Arc::new(workpool))
         .manage(searcher)
+        .manage(Mutex::new(valid_domains))
         .manage(include_i18n!())
         .attach(
             CsrfFairingBuilder::new()
@@ -314,7 +356,8 @@ Then try to restart Plume
                 ])
                 .finalize()
                 .expect("main: csrf fairing creation error"),
-        );
+        )
+        .attach(custom_domain_fairing);
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);

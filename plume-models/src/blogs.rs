@@ -7,6 +7,11 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
+use rocket::{
+    http::RawStr,
+    outcome::IntoOutcome,
+    request::{self, FromFormValue, FromRequest, Request},
+};
 use serde_json;
 use url::Url;
 use webfinger::*;
@@ -21,10 +26,60 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
+use std::fmt::{self, Display};
+use std::sync::RwLock;
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
+
+#[derive(Clone, Debug, PartialEq, DieselNewType, Shrinkwrap)]
+pub struct Host(String);
+
+impl Host {
+    pub fn new(host: impl ToString) -> Host {
+        Host(host.to_string())
+    }
+}
+
+impl Display for Host {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl AsRef<str> for Host {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for Host {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Host, ()> {
+        request
+            .headers()
+            .get_one("Host")
+            .and_then(|x| {
+                if Blog::list_custom_domains().contains(&x.to_string()) {
+                    Some(Host::new(x))
+                } else {
+                    None
+                }
+            })
+            .or_forward(())
+    }
+}
+
+impl<'v> FromFormValue<'v> for Host {
+    type Error = &'v RawStr;
+
+    fn from_form_value(form_value: &'v RawStr) -> std::result::Result<Host, &'v RawStr> {
+        let val = String::from_form_value(form_value)?;
+        Ok(Host::new(&val))
+    }
+}
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
 #[changeset_options(treat_none_as_null = "true")]
@@ -44,6 +99,7 @@ pub struct Blog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_domain: Option<Host>,
 }
 
 #[derive(Default, Insertable)]
@@ -61,9 +117,14 @@ pub struct NewBlog {
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
+    pub custom_domain: Option<Host>,
 }
 
 const BLOG_PREFIX: &str = "~";
+
+lazy_static! {
+    static ref CUSTOM_DOMAINS: RwLock<Vec<String>> = RwLock::new(vec![]);
+}
 
 impl Blog {
     insert!(blogs, NewBlog, |inserted, conn| {
@@ -142,6 +203,13 @@ impl Blog {
         } else {
             Blog::fetch_from_webfinger(c, fqn)
         }
+    }
+
+    pub fn find_by_host(c: &PlumeRocket, host: Host) -> Result<Blog> {
+        blogs::table
+            .filter(blogs::custom_domain.eq(host))
+            .first::<Blog>(&*c.conn)
+            .map_err(|_| Error::NotFound)
     }
 
     fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
@@ -269,6 +337,19 @@ impl Blog {
         })
     }
 
+    pub fn url(&self) -> String {
+        format!(
+            "https://{}",
+            self.custom_domain
+                .clone()
+                .unwrap_or_else(|| Host::new(format!(
+                    "{}/~/{}",
+                    Instance::get_local().unwrap().public_domain,
+                    self.fqn,
+                )))
+        )
+    }
+
     pub fn icon_url(&self, conn: &Connection) -> String {
         self.icon_id
             .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
@@ -289,6 +370,23 @@ impl Blog {
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
+    }
+
+    pub fn list_custom_domains() -> Vec<String> {
+        CUSTOM_DOMAINS.read().unwrap().clone()
+    }
+
+    pub fn cache_custom_domains(conn: &Connection) {
+        *CUSTOM_DOMAINS.write().unwrap() = Blog::list_custom_domains_uncached(conn).unwrap();
+    }
+
+    pub fn list_custom_domains_uncached(conn: &Connection) -> Result<Vec<String>> {
+        blogs::table
+            .filter(blogs::custom_domain.is_not_null())
+            .select(blogs::custom_domain)
+            .load::<Option<String>>(conn)
+            .map_err(Error::from)
+            .map(|res| res.into_iter().map(Option::unwrap).collect::<Vec<_>>())
     }
 }
 
@@ -392,6 +490,7 @@ impl FromId<PlumeRocket> for Blog {
                         .summary_string()
                         .unwrap_or_default(),
                 ),
+                custom_domain: None,
             },
         )
     }
@@ -441,6 +540,7 @@ impl NewBlog {
         title: String,
         summary: String,
         instance_id: i32,
+        custom_domain: Option<Host>,
     ) -> Result<NewBlog> {
         let (pub_key, priv_key) = sign::gen_keypair();
         Ok(NewBlog {
@@ -450,6 +550,7 @@ impl NewBlog {
             instance_id,
             public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
             private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
+            custom_domain,
             ..NewBlog::default()
         })
     }
@@ -477,6 +578,7 @@ pub(crate) mod tests {
                 "Blog name".to_owned(),
                 "This is a small blog".to_owned(),
                 Instance::get_local().unwrap().id,
+                None,
             )
             .unwrap(),
         )
@@ -488,6 +590,7 @@ pub(crate) mod tests {
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
                 Instance::get_local().unwrap().id,
+                Some(Host::new("blog.myname.me")),
             )
             .unwrap(),
         )
@@ -499,6 +602,7 @@ pub(crate) mod tests {
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
                 Instance::get_local().unwrap().id,
+                None,
             )
             .unwrap(),
         )
@@ -559,6 +663,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("some.blog.com")),
                 )
                 .unwrap(),
             )
@@ -587,6 +692,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    None,
                 )
                 .unwrap(),
             )
@@ -598,6 +704,7 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("named.example.blog")),
                 )
                 .unwrap(),
             )
@@ -690,6 +797,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    None,
                 )
                 .unwrap(),
             )
@@ -714,6 +822,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("some.blog.com")),
                 )
                 .unwrap(),
             )
@@ -752,6 +861,7 @@ pub(crate) mod tests {
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    None,
                 )
                 .unwrap(),
             )
@@ -763,6 +873,7 @@ pub(crate) mod tests {
                     "Blog".to_owned(),
                     "I've named my blog Blog".to_owned(),
                     Instance::get_local().unwrap().id,
+                    Some(Host::new("my.blog.com")),
                 )
                 .unwrap(),
             )

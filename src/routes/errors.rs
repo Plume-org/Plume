@@ -1,6 +1,6 @@
-use plume_models::{Error, PlumeRocket};
+use plume_models::{instance::Instance, Error, PlumeRocket};
 use rocket::{
-    response::{self, Responder},
+    response::{self, Redirect, Responder},
     Request,
 };
 use template_utils::{IntoContext, Ructe};
@@ -29,9 +29,26 @@ impl<'r> Responder<'r> for ErrorPage {
 }
 
 #[catch(404)]
-pub fn not_found(req: &Request) -> Ructe {
+pub fn not_found(req: &Request) -> Result<Ructe, Redirect> {
     let rockets = req.guard::<PlumeRocket>().unwrap();
-    render!(errors::not_found(&rockets.to_context()))
+    if req
+        .uri()
+        .segments()
+        .next()
+        .map(|path| path == "custom_domains")
+        .unwrap_or(false)
+    {
+        let path = req
+            .uri()
+            .segments()
+            .skip(2)
+            .collect::<Vec<&str>>()
+            .join("/");
+        let public_domain = Instance::get_local().unwrap().public_domain;
+        Err(Redirect::to(format!("https://{}/{}", public_domain, path)))
+    } else {
+        Ok(render!(errors::not_found(&rockets.to_context())))
+    }
 }
 
 #[catch(422)]
