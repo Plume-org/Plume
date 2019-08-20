@@ -123,7 +123,7 @@ pub fn domain_validation(
     if now.duration_since(*valid_until).as_secs() > 0 {
         validation_map.remove(&validation_id);
         // don't know how to cast Status::Gone to u16
-        return Status::new(410, "validation expired");
+        return Custom(Status::Gone, "validation expired");
     }
 
     validation_map.remove(&validation_id);
