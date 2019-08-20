@@ -99,7 +99,8 @@ pub fn new(rockets: PlumeRocket, _user: User) -> Ructe {
     ))
 }
 
-#[get("/domain_validation/<validation_id>")]
+// mounted as /domain_validation/
+#[get("/<validation_id>")]
 pub fn domain_validation(
     validation_id: String,
     valid_domains: State<Mutex<HashMap<String, Instant>>>,
@@ -132,7 +133,11 @@ pub fn domain_validation(
 pub mod custom {
     use plume_common::activity_pub::{ActivityStream, ApRequest};
     use plume_models::{blogs::Blog, blogs::CustomGroup, blogs::Host, PlumeRocket};
+    use rocket::{http::Status, State};
     use routes::{errors::ErrorPage, Page, RespondOrRedirect};
+    use std::collections::HashMap;
+    use std::sync::Mutex;
+    use std::time::Instant;
 
     #[get("/<custom_domain>?<page>", rank = 2)]
     pub fn details(
@@ -152,6 +157,15 @@ pub mod custom {
     ) -> Option<ActivityStream<CustomGroup>> {
         let blog = Blog::find_by_host(&rockets, Host::new(custom_domain)).ok()?;
         super::activity_detail_guts(blog, rockets, _ap)
+    }
+
+    // mounted as /custom_domains/domain_validation/
+    #[get("/<validation_id>")]
+    pub fn domain_validation(
+        validation_id: String,
+        valid_domains: State<Mutex<HashMap<String, Instant>>>,
+    ) -> Status {
+        super::domain_validation(validation_id, valid_domains)
     }
 }
 

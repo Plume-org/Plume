@@ -201,6 +201,14 @@ Then try to restart Plume
     let valid_domains: HashMap<String, Instant> = HashMap::new();
     let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
+            "/custom_domains/domain_validation/",
+            routes![routes::blogs::custom::domain_validation,],
+        )
+        .mount(
+            "/domain_validation/",
+            routes![routes::blogs::domain_validation,],
+        )
+        .mount(
             "/custom_domains/",
             routes![
                 routes::blogs::custom::details,
@@ -208,10 +216,6 @@ Then try to restart Plume
                 routes::blogs::custom::activity_details,
                 routes::search::custom::search,
             ],
-        )
-        .mount(
-            "/domain_validation/",
-            routes![routes::blogs::domain_validation,],
         )
         .mount(
             "/",
