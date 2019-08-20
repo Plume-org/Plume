@@ -133,7 +133,7 @@ pub mod custom {
     use routes::{errors::ErrorPage, RespondOrRedirect};
     use template_utils::{IntoContext, Ructe};
 
-    #[get("/custom_domains/<custom_domain>/<slug>?<responding_to>", rank = 4)]
+    #[get("/<custom_domain>/<slug>?<responding_to>", rank = 4)]
     pub fn details(
         custom_domain: String,
         slug: String,
