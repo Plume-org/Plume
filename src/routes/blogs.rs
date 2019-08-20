@@ -111,8 +111,8 @@ pub fn domain_validation(
 
     let value = validation_getter.get(&validation_id);
     if value.is_none() {
-        // don't know how to cast Status::NotFound to u16
-        return Status::new(404, "validation id not found");
+        // validation id not found
+        return Status::NotFound;
     }
 
     // we have valid id, now check the time
@@ -122,8 +122,8 @@ pub fn domain_validation(
     // nope, expired (410: gone)
     if now.duration_since(*valid_until).as_secs() > 0 {
         validation_map.remove(&validation_id);
-        // don't know how to cast Status::Gone to u16
-        return Custom(Status::Gone, "validation expired");
+        // validation expired
+        return Status::Gone;
     }
 
     validation_map.remove(&validation_id);
