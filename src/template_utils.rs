@@ -5,7 +5,7 @@ use rocket::http::{Method, Status};
 use rocket::request::Request;
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
-use std::collections::hash_map::{DefaultHasher, HashMap};
+use std::collections::{btree_map::BTreeMap, hash_map::DefaultHasher};
 use std::hash::Hasher;
 use templates::Html;
 
@@ -262,7 +262,7 @@ pub struct Input {
     /// A small message to display next to the label.
     details: Option<String>,
     /// Additional HTML properties.
-    props: HashMap<String, String>,
+    props: BTreeMap<String, String>,
     /// The error message to show next to this field.
     error: Option<String>,
 }
@@ -277,7 +277,7 @@ impl Input {
             default: None,
             optional: false,
             details: None,
-            props: HashMap::new(),
+            props: BTreeMap::new(),
             error: None,
         }
     }
