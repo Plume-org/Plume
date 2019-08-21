@@ -26,19 +26,28 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
+use std::default::Default;
 use std::fmt::{self, Display};
+use std::ops::Deref;
 use std::sync::RwLock;
 use users::User;
 use {Connection, Error, PlumeRocket, Result};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
-#[derive(Clone, Debug, PartialEq, DieselNewType, Shrinkwrap)]
+#[derive(Clone, Debug, PartialEq, DieselNewType)]
 pub struct Host(String);
 
 impl Host {
     pub fn new(host: impl ToString) -> Host {
         Host(host.to_string())
+    }
+}
+
+impl Deref for Host {
+    type Target = str;
+    fn deref(&self) -> &str {
+        &self.0
     }
 }
 

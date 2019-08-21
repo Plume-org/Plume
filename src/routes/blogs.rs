@@ -333,7 +333,7 @@ pub struct EditForm {
     pub summary: String,
     pub icon: Option<i32>,
     pub banner: Option<i32>,
-    pub custom_domain: Option<Host>,
+    pub custom_domain: String,
 }
 
 #[get("/~/<name>/edit")]
@@ -351,6 +351,10 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
             .clone()
             .expect("blogs::edit: User was None while it shouldn't");
         let medias = Media::for_user(conn, user.id).expect("Couldn't list media");
+        let custom_domain = match blog.custom_domain {
+            Some(ref c) => c.to_string(),
+            _ => String::from(""),
+        };
         Ok(render!(blogs::edit(
             &rockets.to_context(),
             &blog,
@@ -360,7 +364,7 @@ pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
                 summary: blog.summary.clone(),
                 icon: blog.icon_id,
                 banner: blog.banner_id,
-                custom_domain: blog.custom_domain.clone(),
+                custom_domain: custom_domain,
             },
             ValidationErrors::default()
         )))
@@ -472,6 +476,10 @@ pub fn update(
             );
             blog.icon_id = form.icon;
             blog.banner_id = form.banner;
+            if !form.custom_domain.is_empty() {
+                blog.custom_domain = Some(Host::new(form.custom_domain.clone()))
+            }
+
             blog.save_changes::<Blog>(&*conn)
                 .expect("Couldn't save blog changes");
             Ok(Flash::success(

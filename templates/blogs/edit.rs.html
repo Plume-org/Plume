@@ -23,6 +23,8 @@
         <label for="summary">@i18n!(ctx.1, "Description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="summary" name="summary" rows="20">@form.summary</textarea>
 
+        @input!(ctx.1, custom_domain (optional text), "Custom Domain", form, errors, "")
+
         <p>
             @i18n!(ctx.1, "You can upload images to your gallery, to use them as blog icons, or banners.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload images")</a>

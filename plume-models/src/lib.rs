@@ -33,8 +33,6 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 #[macro_use]
-extern crate shrinkwraprs;
-#[macro_use]
 extern crate tantivy;
 extern crate url;
 extern crate webfinger;
