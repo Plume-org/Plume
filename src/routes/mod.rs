@@ -13,7 +13,6 @@ use rocket::{
 use std::{
     collections::hash_map::DefaultHasher,
     hash::Hasher,
-    io::Read,
     path::{Path, PathBuf},
 };
 use template_utils::Ructe;
@@ -177,14 +176,11 @@ pub struct CachedFile {
 pub struct ThemeFile(NamedFile);
 
 impl<'r> Responder<'r> for ThemeFile {
-    fn respond_to(mut self, r: &Request) -> response::Result<'r> {
-        let mut contents = String::new();
-        self.0
-            .read_to_string(&mut contents)
-            .map_err(|_| Status::InternalServerError)?;
+    fn respond_to(self, r: &Request) -> response::Result<'r> {
+        let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
 
         let mut hasher = DefaultHasher::new();
-        hasher.write(&contents.as_bytes());
+        hasher.write(&contents);
         let etag = format!("{:x}", hasher.finish());
 
         if r.headers()
@@ -206,7 +202,7 @@ impl<'r> Responder<'r> for ThemeFile {
 
 #[get("/static/cached/<_build_id>/css/<file..>", rank = 1)]
 pub fn theme_files(file: PathBuf, _build_id: &RawStr) -> Option<ThemeFile> {
-    NamedFile::open(Path::new("static/").join(file))
+    NamedFile::open(Path::new("static/css/").join(file))
         .ok()
         .map(ThemeFile)
 }
