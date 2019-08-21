@@ -23,7 +23,7 @@
             .default(&form.title)
             .error(&errors)
             .set_prop("minlenght", 1)
-            .to_html(ctx.1))
+            .html(ctx.1))
 
         <label for="summary">@i18n!(ctx.1, "Description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="summary" name="summary" rows="20">@form.summary</textarea>

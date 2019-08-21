@@ -21,12 +21,12 @@
             @(Input::new("display_name", i18n!(ctx.1, ""))
                 .default(&form.display_name)
                 .error(&errors)
-                .to_html(ctx.1))
+                .html(ctx.1))
             @(Input::new("email", i18n!(ctx.1, ""))
                 .default(&form.email)
                 .error(&errors)
                 .input_type("email")
-                .to_html(ctx.1))
+                .html(ctx.1))
             <label for="summary">@i18n!(ctx.1, "Summary")</label>
             <textarea id="summary" name="summary">@form.summary</textarea>
 

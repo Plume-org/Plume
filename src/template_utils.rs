@@ -329,7 +329,7 @@ impl Input {
     }
 
     /// Returns the HTML markup for this field.
-    pub fn to_html(mut self, cat: &Catalog) -> Html<String> {
+    pub fn html(mut self, cat: &Catalog) -> Html<String> {
         if !self.optional {
             self = self.set_prop("required", true);
         }

@@ -20,12 +20,12 @@
 	    			.default(&login_form.email_or_name)
 	    			.error(&login_errs)
 	    			.set_prop("minlenght", 1)
-	    			.to_html(ctx.1))
+	    			.html(ctx.1))
 	    		@(Input::new("password", i18n!(ctx.1, "Password"))
 	    			.default(login_form.password)
 	    			.error(&login_errs)
 	    			.set_prop("minlength", 1)
-	    			.to_html(ctx.1))
+	    			.html(ctx.1))
 		        <input type="submit" value="@i18n!(ctx.1, "Log in")" />
 	    	</form>
 
@@ -37,7 +37,7 @@
 					.default(&remote_form.remote)
 					.error(&remote_errs)
 					.set_prop("minlenght", 1)
-					.to_html(ctx.1))
+					.html(ctx.1))
 		    	<input type="submit" value="@i18n!(ctx.1, "Continue to your instance")"/>
 	    	</form>
 	    </div>

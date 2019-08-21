@@ -148,7 +148,7 @@
                         .default(&comment_form.warning)
                         .error(&comment_errors)
                         .optional()
-                        .to_html(ctx.1))
+                        .html(ctx.1))
 
                     <label for="plume-editor">@i18n!(ctx.1, "Your comment")</label>
                     @if let Some(ref prev) = previous_comment {

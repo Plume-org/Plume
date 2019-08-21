@@ -28,12 +28,12 @@
         @(Input::new("title", i18n!(ctx.1, "Title"))
             .default(&form.title)
             .error(&errors)
-            .to_html(ctx.1))
+            .html(ctx.1))
         @(Input::new("subtitle", i18n!(ctx.1, "Subtitle"))
             .default(&form.subtitle)
             .error(&errors)
             .optional()
-            .to_html(ctx.1))
+            .html(ctx.1))
 
         @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("content") {
             @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or_else(|| Cow::from("Unknown error")))
@@ -51,13 +51,13 @@
             .default(&form.tags)
             .error(&errors)
             .optional()
-            .to_html(ctx.1))
+            .html(ctx.1))
         @(Input::new("license", i18n!(ctx.1, "License"))
             .default(&form.license)
             .error(&errors)
             .optional()
             .details("Leave it empty to reserve all rights")
-            .to_html(ctx.1))
+            .html(ctx.1))
 
         @:image_select(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias, form.cover)
 

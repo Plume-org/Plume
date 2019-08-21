@@ -13,7 +13,7 @@
       		.default(&form.title)
       		.error(&errors)
       		.set_prop("minlength", 1)
-      		.to_html(ctx.1))
+      		.html(ctx.1))
       <input type="submit" value="@i18n!(ctx.1, "Create blog")" dir="auto"/>
   </form>
 })

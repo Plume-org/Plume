@@ -10,16 +10,16 @@
         @(Input::new("alt", i18n!(ctx.1, "Description"))
             .details(i18n!(ctx.1, "Useful for visually impaired people, as well as licensing information"))
             .set_prop("minlenght", 1)
-            .to_html(ctx.1))
+            .html(ctx.1))
 
         @(Input::new("cw", i18n!(ctx.1, "Content warning"))
             .details(i18n!(ctx.1, "Leave it empty, if none is needed"))
             .optional()
-            .to_html(ctx.1))
+            .html(ctx.1))
 
         @(Input::new("file", i18n!(ctx.1, "File"))
             .input_type("file")
-            .to_html(ctx.1))
+            .html(ctx.1))
 
         <input type="submit" value="@i18n!(ctx.1, "Send")"/>
     </form>
