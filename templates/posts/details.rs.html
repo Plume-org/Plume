@@ -144,7 +144,11 @@
 
             @if ctx.2.is_some() {
                 <form method="post" action="@uri!(comments::create: blog_name = &blog.fqn, slug = &article.slug)">
-                    @input!(ctx.1, warning (optional text), "Content warning", comment_form, comment_errors, "")
+                    @(Input::new("warning", i18n!(ctx.1, "Content warning"))
+                        .default(&comment_form.warning)
+                        .error(&comment_errors)
+                        .optional()
+                        .to_html(ctx.1))
 
                     <label for="plume-editor">@i18n!(ctx.1, "Your comment")</label>
                     @if let Some(ref prev) = previous_comment {

@@ -19,7 +19,11 @@
         <!-- Rocket hack to use various HTTP methods -->
         <input type=hidden name="_method" value="put">
 
-        @input!(ctx.1, title (text), "Title", form, errors.clone(), "minlenght=\"1\"")
+        @(Input::new("title", i18n!(ctx.1, "Title"))
+            .default(&form.title)
+            .error(&errors)
+            .set_prop("minlenght", 1)
+            .to_html(ctx.1))
 
         <label for="summary">@i18n!(ctx.1, "Description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
         <textarea id="summary" name="summary" rows="20">@form.summary</textarea>

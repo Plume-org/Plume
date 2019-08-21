@@ -17,7 +17,11 @@
   ])
 
   <form method="post" action="@uri!(instance::update_settings)">
-    @input!(ctx.1, name (text), "Name", form, errors.clone(), "props")
+    @(Input::new("name", i18n!(ctx.1, "Name"))
+        .default(&form.name)
+        .error(&errors)
+        .set_prop("minlength", 1)
+        .to_html(ctx.1))
 
     <label for="open_registrations">
       <input type="checkbox" name="open_registrations" id="open_registrations" @if instance.open_registrations { checked }>
@@ -30,7 +34,11 @@
       <label for="long_description">@i18n!(ctx.1, "Long description")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
       <textarea id="long_description" name="long_description">@Html(form.long_description)</textarea>
 
-      @input!(ctx.1, default_license (text), "Default article license", form, errors, "minlenght=\"1\"")
+      @(Input::new("default_license", i18n!(ctx.1, "Default article license"))
+        .default(&form.default_license)
+        .error(&errors)
+        .set_prop("minlength", 1)
+        .to_html(ctx.1))
 
       <input type="submit" value="@i18n!(ctx.1, "Save these settings")"/>
   </form>
