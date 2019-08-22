@@ -46,10 +46,13 @@ lazy_static! {
         let catalogs = include_i18n!();
         let lang = js! { return navigator.language }.into_string().unwrap();
         let lang = lang.splitn(2, '-').next().unwrap_or("en");
-        catalogs
+
+        let english_position = catalogs.iter()
+	    .position(|(language_code,_)| *language_code == "en").unwrap();
+	catalogs
             .iter()
             .find(|(l, _)| l == &lang)
-            .unwrap_or(&catalogs[0])
+            .unwrap_or(&catalogs[english_position])
             .clone()
             .1
     };
