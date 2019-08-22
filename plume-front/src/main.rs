@@ -47,9 +47,11 @@ lazy_static! {
         let lang = js! { return navigator.language }.into_string().unwrap();
         let lang = lang.splitn(2, '-').next().unwrap_or("en");
 
-        let english_position = catalogs.iter()
-	    .position(|(language_code,_)| *language_code == "en").unwrap();
-	catalogs
+        let english_position = catalogs
+            .iter()
+            .position(|(language_code, _)| *language_code == "en")
+            .unwrap();
+        catalogs
             .iter()
             .find(|(l, _)| l == &lang)
             .unwrap_or(&catalogs[english_position])
