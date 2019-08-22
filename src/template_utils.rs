@@ -356,7 +356,10 @@ impl Input {
                 .details
                 .map(|d| format!("<small>{}</small>", d))
                 .unwrap_or_default(),
-            error = self.error.unwrap_or_default(),
+            error = self
+                .error
+                .map(|e| format!(r#"<p class="error" dir="auto">{}</p>"#, e))
+                .unwrap_or_default(),
             val = escape(&self.default.unwrap_or_default()),
             props = self
                 .props
