@@ -58,6 +58,18 @@ lazy_static! {
 }
 
 fn main() {
+    std::panic::set_hook(Box::new(|info: &std::panic::PanicInfo| {
+        let mut msg = info.to_string();
+        msg.push_str("\n\nStack:\n\n");
+        let e = error::Error::new("Panicked");
+        let stack = js! { return @{&e}.stack; }
+            .into_string()
+            .unwrap_or_default();
+        msg.push_str(&stack);
+        msg.push_str("\n\n");
+        console!(error, msg);
+    }));
+
     menu();
     search();
     editor::init()

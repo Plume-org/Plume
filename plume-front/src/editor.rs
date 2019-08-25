@@ -108,6 +108,24 @@ fn from_md(md: &str) {
             }
         },
     );
+
+    MutationObserver::new(|muts, _obs| {
+        for m in muts {
+            console!(log, "mut!!");
+        }
+    })
+    .observe(
+        &document().get_element_by_id("editor-main").unwrap(),
+        MutationObserverInit {
+            child_list: true,
+            attributes: true,
+            character_data: false,
+            subtree: true,
+            attribute_old_value: true,
+            character_data_old_value: false,
+            attribute_filter: None,
+        },
+    );
 }
 
 fn to_md() -> String {
@@ -283,6 +301,7 @@ fn init_editor() -> Result<(), EditorError> {
         let subtitle = document().get_element_by_id("editor-subtitle")?;
         let source = get_elt_value("editor-content");
 
+        setup_toolbar();
         from_md(&source);
 
         title.add_event_listener(no_return);
@@ -330,6 +349,103 @@ fn init_editor() -> Result<(), EditorError> {
         setup_close_button();
     }
     Ok(())
+}
+
+fn select_style(style: &str) {
+    if let Some(select) = document()
+        .get_element_by_id("toolbar-style")
+        .and_then(|e| SelectElement::try_from(e).ok())
+    {
+        select.set_value(Some(style));
+    }
+}
+
+fn setup_toolbar() {
+    let toolbar = document().get_element_by_id("editor-toolbar").unwrap();
+
+    // List of styles (headings, quote, code, etc)
+    let style_select =
+        SelectElement::try_from(document().create_element("select").unwrap()).unwrap();
+    let options = vec![
+        ("p", i18n!(CATALOG, "Paragraph")),
+        ("ul", i18n!(CATALOG, "List")),
+        ("ol", i18n!(CATALOG, "Ordered list")),
+        ("h1", i18n!(CATALOG, "Heading 1")),
+        ("h2", i18n!(CATALOG, "Heading 2")),
+        ("h3", i18n!(CATALOG, "Heading 3")),
+        ("h4", i18n!(CATALOG, "Heading 4")),
+        ("h5", i18n!(CATALOG, "Heading 5")),
+        ("h6", i18n!(CATALOG, "Heading 6")),
+        ("blockquote", i18n!(CATALOG, "Quote")),
+        ("pre", i18n!(CATALOG, "Code")),
+    ];
+    for (tag, name) in options.clone() {
+        let opt = document().create_element("option").unwrap();
+        opt.set_attribute("value", tag);
+        opt.append_child(&document().create_text_node(&name));
+        style_select.append_child(&opt)
+    }
+    style_select.set_attribute("id", "toolbar-style");
+
+    let options_clone = options.clone();
+    document().add_event_listener(move |_: SelectionChangeEvent| {
+        let block = std::iter::successors(
+            window().get_selection().and_then(|s| s.anchor_node()),
+            |node| {
+                let t = node.node_name().to_lowercase();
+                if options_clone.iter().any(|(tag, _)| *tag == &t) {
+                    None
+                } else {
+                    node.parent_node()
+                }
+            },
+        )
+        .last();
+
+        if let Some(b) = block {
+            select_style(&b.node_name().to_lowercase());
+        }
+    });
+
+    style_select.add_event_listener(move |_: ChangeEvent| {
+        let block = std::iter::successors(
+            window().get_selection().and_then(|s| s.anchor_node()),
+            |node| {
+                let t = node.node_name().to_lowercase();
+                if options.iter().any(|(tag, _)| *tag == &t) {
+                    None
+                } else {
+                    node.parent_node()
+                }
+            },
+        )
+        .last();
+
+        if let Some(block) = block {
+            if let Some(select) = document()
+                .get_element_by_id("toolbar-style")
+                .and_then(|e| SelectElement::try_from(e).ok())
+            {
+                let tag = select.value();
+
+                let new = document().create_element(&tag.unwrap_or_default()).unwrap();
+                for ch in block.child_nodes() {
+                    block.remove_child(&ch);
+                    new.append_child(&ch);
+                }
+
+                block.parent_node().unwrap().replace_child(&new, &block);
+            }
+        }
+    });
+
+    // Bold
+
+    // Italics
+
+    // Insert an image
+
+    toolbar.append_child(&style_select);
 }
 
 fn save(is_draft: bool) {
