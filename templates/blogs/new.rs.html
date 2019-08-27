@@ -9,7 +9,11 @@
 @:base(ctx, i18n!(ctx.1, "New Blog"), {}, {}, {
   <h1 dir="auto">@i18n!(ctx.1, "Create a blog")</h1>
   <form method="post" action="@uri!(blogs::create)">
-      @input!(ctx.1, title (text), "Title", form, errors, "required minlength=\"1\"")
+      @(Input::new("title", i18n!(ctx.1, "Title"))
+      		.default(&form.title)
+      		.error(&errors)
+      		.set_prop("minlength", 1)
+      		.html(ctx.1))
       <input type="submit" value="@i18n!(ctx.1, "Create blog")" dir="auto"/>
   </form>
 })
