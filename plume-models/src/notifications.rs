@@ -64,6 +64,14 @@ impl Notification {
             .map_err(Error::from)
     }
 
+    pub fn find_followed_by(conn: &Connection, user: &User) -> Result<Vec<Notification>> {
+        notifications::table
+            .filter(notifications::kind.eq(notification_kind::FOLLOW))
+            .filter(notifications::object_id.eq(user.id))
+            .load::<Notification>(conn)
+            .map_err(Error::from)
+    }
+
     pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
