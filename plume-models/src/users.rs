@@ -7,7 +7,7 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -96,45 +96,14 @@ pub struct NewUser {
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
     pub summary_html: SafeString,
+    pub fqn: String,
 }
 
 pub const AUTH_COOKIE: &str = "user_id";
 const USER_PREFIX: &str = "@";
 
 impl User {
-    insert!(users, NewUser, |inserted, conn| {
-        let instance = inserted.get_instance(conn)?;
-        if inserted.outbox_url.is_empty() {
-            inserted.outbox_url = instance.compute_box(USER_PREFIX, &inserted.username, "outbox");
-        }
-
-        if inserted.inbox_url.is_empty() {
-            inserted.inbox_url = instance.compute_box(USER_PREFIX, &inserted.username, "inbox");
-        }
-
-        if inserted.ap_url.is_empty() {
-            inserted.ap_url = instance.compute_box(USER_PREFIX, &inserted.username, "");
-        }
-
-        if inserted.shared_inbox_url.is_none() {
-            inserted.shared_inbox_url = Some(ap_url(&format!("{}/inbox", instance.public_domain)));
-        }
-
-        if inserted.followers_endpoint.is_empty() {
-            inserted.followers_endpoint =
-                instance.compute_box(USER_PREFIX, &inserted.username, "followers");
-        }
-
-        if inserted.fqn.is_empty() {
-            if instance.local {
-                inserted.fqn = inserted.username.clone();
-            } else {
-                inserted.fqn = format!("{}@{}", inserted.username, instance.public_domain);
-            }
-        }
-
-        inserted.save_changes(conn).map_err(Error::from)
-    });
+    insert!(users, NewUser);
     get!(users);
     find_by!(users, find_by_email, email as &str);
     find_by!(users, find_by_name, username as &str, instance_id as i32);
@@ -771,6 +740,12 @@ impl FromId<PlumeRocket> for User {
             return Err(Error::InvalidValue);
         }
 
+        let fqn = if instance.local {
+            username.clone()
+        } else {
+            format!("{}@{}", username, instance.public_domain)
+        };
+
         let user = User::insert(
             &c.conn,
             NewUser {
@@ -811,6 +786,7 @@ impl FromId<PlumeRocket> for User {
                     .and_then(|e| e.shared_inbox_string())
                     .ok(),
                 followers_endpoint: acct.object.ap_actor_props.followers_string()?,
+                fqn,
                 avatar_id: None,
             },
         )?;
@@ -904,21 +880,28 @@ impl NewUser {
         password: String,
     ) -> Result<User> {
         let (pub_key, priv_key) = gen_keypair();
+        let instance = Instance::get_local()?;
+
         User::insert(
             conn,
             NewUser {
-                username,
+                username: username.clone(),
                 display_name,
                 is_admin,
                 summary: summary.to_owned(),
                 summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
                 hashed_password: Some(password),
-                instance_id: Instance::get_local()?.id,
-                ap_url: String::new(),
+                instance_id: instance.id,
                 public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
                 private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
-                ..NewUser::default()
+                outbox_url: instance.compute_box(USER_PREFIX, &username, "outbox"),
+                inbox_url: instance.compute_box(USER_PREFIX, &username, "inbox"),
+                ap_url: instance.compute_box(USER_PREFIX, &username, ""),
+                shared_inbox_url: Some(ap_url(&format!("{}/inbox", &instance.public_domain))),
+                followers_endpoint: instance.compute_box(USER_PREFIX, &username, "followers"),
+                fqn: username,
+                avatar_id: None,
             },
         )
     }
