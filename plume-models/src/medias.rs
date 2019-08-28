@@ -62,7 +62,14 @@ impl MediaCategory {
 impl Media {
     insert!(medias, NewMedia);
     get!(medias);
-    list_by!(medias, for_user, owner_id as i32);
+
+    pub fn for_user(conn: &Connection, owner: i32) -> Result<Vec<Media>> {
+        medias::table
+            .filter(medias::owner_id.eq(owner))
+            .order(medias::id.desc())
+            .load::<Self>(conn)
+            .map_err(Error::from)
+    }
 
     pub fn list_all_medias(conn: &Connection) -> Result<Vec<Media>> {
         medias::table.load::<Media>(conn).map_err(Error::from)
@@ -75,6 +82,7 @@ impl Media {
     ) -> Result<Vec<Media>> {
         medias::table
             .filter(medias::owner_id.eq(user.id))
+            .order(medias::id.desc())
             .offset(i64::from(min))
             .limit(i64::from(max - min))
             .load::<Media>(conn)
