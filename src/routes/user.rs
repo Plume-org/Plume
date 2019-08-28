@@ -1,5 +1,6 @@
 use activitypub::{activity::Create, collection::OrderedCollection};
 use atom_syndication::{Entry, FeedBuilder};
+use diesel::SaveChangesDsl;
 use rocket::{
     http::{ContentType, Cookies},
     request::LenientForm,
@@ -20,8 +21,10 @@ use plume_models::{
     headers::Headers,
     inbox::inbox as local_inbox,
     instance::Instance,
+    medias::Media,
     posts::{LicensedArticle, Post},
     reshares::Reshare,
+    safe_string::SafeString,
     users::*,
     Error, PlumeRocket,
 };
@@ -342,7 +345,9 @@ pub fn edit(name: String, user: User, rockets: PlumeRocket) -> Result<Ructe, Err
             UpdateUserForm {
                 display_name: user.display_name.clone(),
                 email: user.email.clone().unwrap_or_default(),
-                summary: user.summary,
+                summary: user.summary.clone(),
+                theme: user.preferred_theme,
+                hide_custom_css: user.hide_custom_css,
             },
             ValidationErrors::default()
         )))
@@ -367,34 +372,34 @@ pub struct UpdateUserForm {
     pub display_name: String,
     pub email: String,
     pub summary: String,
+    pub theme: Option<String>,
+    pub hide_custom_css: bool,
 }
 
 #[put("/@/<_name>/edit", data = "<form>")]
 pub fn update(
     _name: String,
     conn: DbConn,
-    user: User,
+    mut user: User,
     form: LenientForm<UpdateUserForm>,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    user.update(
-        &*conn,
-        if !form.display_name.is_empty() {
-            form.display_name.clone()
-        } else {
-            user.display_name.clone()
-        },
-        if !form.email.is_empty() {
-            form.email.clone()
-        } else {
-            user.email.clone().unwrap_or_default()
-        },
-        if !form.summary.is_empty() {
-            form.summary.clone()
-        } else {
-            user.summary.to_string()
-        },
-    )?;
+    user.display_name = form.display_name.clone();
+    user.email = Some(form.email.clone());
+    user.summary = form.summary.clone();
+    user.summary_html = SafeString::new(
+        &utils::md_to_html(
+            &form.summary,
+            None,
+            false,
+            Some(Media::get_media_processor(&conn, vec![&user])),
+        )
+        .0,
+    );
+    user.preferred_theme = form.theme.clone();
+    user.hide_custom_css = form.hide_custom_css;
+    let _: User = user.save_changes(&*conn).map_err(Error::from)?;
+
     Ok(Flash::success(
         Redirect::to(uri!(me)),
         i18n!(intl.catalog, "Your profile has been updated."),

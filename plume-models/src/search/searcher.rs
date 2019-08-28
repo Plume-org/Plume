@@ -148,6 +148,10 @@ impl Searcher {
     }
 
     pub fn add_document(&self, conn: &Connection, post: &Post) -> Result<()> {
+        if !post.published {
+            return Ok(());
+        }
+
         let schema = self.index.schema();
 
         let post_id = schema.get_field("post_id").unwrap();

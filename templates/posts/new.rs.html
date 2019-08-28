@@ -12,8 +12,8 @@
 @(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
 
 @:base(ctx, title.clone(), {}, {}, {
-    <h1 id="plume-editor-title">@title</h1>
-    <div id="plume-editor" style="display: none;">
+    <h1 id="plume-editor-title" dir="auto">@title</h1>
+    <div id="plume-editor" style="display: none;" dir="auto">
       <header>
         <button id="publish" class="button">@i18n!(ctx.1, "Publish")</button>
         <p id="char-count">@content_len</p>
@@ -25,29 +25,44 @@
     } else {
 	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)" content-size="@content_len">
     }
-        @input!(ctx.1, title (text), "Title", form, errors.clone(), "required")
-        @input!(ctx.1, subtitle (optional text), "Subtitle", form, errors.clone(), "")
+        @(Input::new("title", i18n!(ctx.1, "Title"))
+            .default(&form.title)
+            .error(&errors)
+            .html(ctx.1))
+        @(Input::new("subtitle", i18n!(ctx.1, "Subtitle"))
+            .default(&form.subtitle)
+            .error(&errors)
+            .optional()
+            .html(ctx.1))
 
         @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("content") {
             @format!(r#"<p class="error">{}</p>"#, errs[0].message.clone().unwrap_or_else(|| Cow::from("Unknown error")))
         }
 
-        <label for="editor-content">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
-        <textarea id="editor-content" name="content" rows="20">@Html(&form.content)</textarea>
-	    <small id="editor-left">@content_len</small>
-        <p>
+        <label for="editor-content" dir="auto">@i18n!(ctx.1, "Content")<small>@i18n!(ctx.1, "Markdown syntax is supported")</small></label>
+        <textarea id="editor-content" name="content" rows="20" dir="auto">@Html(&form.content)</textarea>
+	    <small id="editor-left" dir="auto">@content_len</small>
+        <p dir="auto">
             @i18n!(ctx.1, "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload media")</a>
         </p>
 
-        @input!(ctx.1, tags (optional text), "Tags, separated by commas", form, errors.clone(), "")
-
-        @input!(ctx.1, license (optional text), "License", "Leave it empty to reserve all rights", form, errors, "")
+        @(Input::new("tags", i18n!(ctx.1, "Tags, separated by commas"))
+            .default(&form.tags)
+            .error(&errors)
+            .optional()
+            .html(ctx.1))
+        @(Input::new("license", i18n!(ctx.1, "License"))
+            .default(&form.license)
+            .error(&errors)
+            .optional()
+            .details("Leave it empty to reserve all rights")
+            .html(ctx.1))
 
         @:image_select(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias, form.cover)
 
         @if is_draft {
-            <label for="draft">
+            <label for="draft" dir="auto">
                 <input type="checkbox" name="draft" id="draft" checked>
                 @i18n!(ctx.1, "This is a draft, don't publish it yet.")
             </label>

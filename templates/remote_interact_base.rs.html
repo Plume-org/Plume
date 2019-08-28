@@ -16,15 +16,28 @@
     		<form method="post" action="/login">
 	    		<h2>@i18n!(ctx.1, "I'm from this instance")</h2>
 	    		<p>@login_msg</p>
-	    		@input!(ctx.1, email_or_name (text), "Username, or email", login_form, login_errs.clone(), "minlenght=\"1\"")
-		        @input!(ctx.1, password (password), "Password", login_form, login_errs, "minlenght=\"1\"")
+	    		@(Input::new("email_or_name", i18n!(ctx.1, "Username, or email"))
+	    			.default(&login_form.email_or_name)
+	    			.error(&login_errs)
+	    			.set_prop("minlenght", 1)
+	    			.html(ctx.1))
+	    		@(Input::new("password", i18n!(ctx.1, "Password"))
+	    			.default(login_form.password)
+	    			.error(&login_errs)
+	    			.set_prop("minlength", 1)
+	    			.html(ctx.1))
 		        <input type="submit" value="@i18n!(ctx.1, "Log in")" />
 	    	</form>
 
 	    	<form method="post">
 	    		<h2>@i18n!(ctx.1, "I'm from another instance")</h2>
 	    		<p>@remote_msg</p>
-	    		@input!(ctx.1, remote (text), "Username", "Example: user@plu.me", remote_form, remote_errs.clone(), "minlenght=\"1\"")
+	    		@(Input::new("remote", i18n!(ctx.1, "Username"))
+					.details("Example: user@plu.me")
+					.default(&remote_form.remote)
+					.error(&remote_errs)
+					.set_prop("minlenght", 1)
+					.html(ctx.1))
 		    	<input type="submit" value="@i18n!(ctx.1, "Continue to your instance")"/>
 	    	</form>
 	    </div>

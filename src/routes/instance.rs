@@ -151,6 +151,7 @@ pub fn update_settings(
                 form.open_registrations,
                 form.short_description.clone(),
                 form.long_description.clone(),
+                form.default_license.clone(),
             )
             .expect("instance::update_settings: save error");
         Flash::success(

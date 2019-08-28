@@ -8,6 +8,7 @@
 @use validator::ValidationErrors;
 @use routes::comments::NewCommentForm;
 @use routes::*;
+@use std::path::Path;
 
 @(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 
@@ -19,6 +20,12 @@
     }
     <meta property="og:url" content="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)"/>
     <meta property="og:description" content="@article.subtitle"/>
+
+    @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
+        @if let Some(ref theme) = blog.theme {
+            <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(theme).join("theme.css"), _build_id = CACHE_NAME)">
+        }
+    }
 }, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {
@@ -28,8 +35,8 @@
         @if article.cover_id.is_some() { style="background-image: url('@article.cover_url(ctx.0).unwrap_or_default()'" }
     >
         <div>
-            <h1 class="article p-name">@article.title</h1>
-            <div class="article-info">
+            <h1 class="article p-name" dir="auto">@article.title</h1>
+            <div class="article-info" dir="auto">
                 <span class="author">
                     @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
                                         uri!(user::details: name = &author.fqn),
@@ -38,7 +45,7 @@
                 &mdash;
                 <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
             </div>
-            <h2 class="article p-summary">@article.subtitle</h2>
+            <h2 class="article p-summary" dir="auto">@article.subtitle</h2>
         </div>
         @if article.cover_id.is_some() {
             <div class="shadow"></div>
@@ -46,12 +53,12 @@
         }
     </header>
 
-    <article class="e-content">
+    <article class="e-content" dir="auto">
         @Html(&article.content)
     </article>
     <div class="article-meta">
         <section class="split">
-            <ul class="tags">
+            <ul class="tags" dir="auto">
                 @for tag in tags {
                     @if !tag.is_hashtag {
                         <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
@@ -60,7 +67,7 @@
                     }
                 }
             </ul>
-            <p class="right">
+            <p class="right" dir="auto">
                 @if article.license.is_empty() {
                     @i18n!(ctx.1, "All rights reserved."; &article.license)
                 } else {
@@ -116,7 +123,7 @@
             </section>
         }
         <section class="banner">
-            <div class="flex p-author h-card user">
+            <div class="flex p-author h-card user" dir="auto">
                 @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
                 <div class="grow">
                     <h2 class="p-name">
@@ -132,18 +139,22 @@
         	    }
             </div>
         </section>
-        <section class="comments">
+        <section class="comments" dir="auto">
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
             @if ctx.2.is_some() {
                 <form method="post" action="@uri!(comments::create: blog_name = &blog.fqn, slug = &article.slug)">
-                    @input!(ctx.1, warning (optional text), "Content warning", comment_form, comment_errors, "")
+                    @(Input::new("warning", i18n!(ctx.1, "Content warning"))
+                        .default(&comment_form.warning)
+                        .error(&comment_errors)
+                        .optional()
+                        .html(ctx.1))
 
                     <label for="plume-editor">@i18n!(ctx.1, "Your comment")</label>
                     @if let Some(ref prev) = previous_comment {
                         <input type="hidden" name="responding_to" value="@prev.id"/>
                     }
-                    <textarea id="plume-editor" name="content">@comment_form.content</textarea>
+                    <textarea id="plume-editor" name="content" dir="auto">@comment_form.content</textarea>
                     <input type="submit" value="@i18n!(ctx.1, "Submit comment")" />
                 </form>
             }
@@ -153,7 +164,7 @@
                     @:comment(ctx, &comm, Some(&article.ap_url), &blog.fqn, &article.slug)
                 }
             } else {
-                <p class="center">@i18n!(ctx.1, "No comments yet. Be the first to react!")</p>
+                <p class="center" dir="auto">@i18n!(ctx.1, "No comments yet. Be the first to react!")</p>
             }
         </section>
     </div>

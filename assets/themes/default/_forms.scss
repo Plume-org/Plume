@@ -13,14 +13,14 @@ input, textarea, select {
   -webkit-appearance: textarea;
 
  	background: $form-input-background;
- 	color: $black;
- 	border: solid $black thin;
+ 	color: $text-color;
+ 	border: solid $form-input-border thin;
 
  	font-size: 1.2em;
  	font-weight: 400;
 
  	&:focus {
- 	  border-color: $purple;
+ 	  border-color: $primary;
  	}
 }
 form input[type="submit"] {
@@ -64,7 +64,7 @@ form.inline {
       padding: 0;
       border: none;
       background: transparent;
-      color: $purple;
+      color: $primary;
       font-weight: normal;
     }
   }
@@ -78,15 +78,15 @@ form.inline {
  	margin: 0.5em auto;
  	padding: 0.75em 1em;
 
- 	background: $purple;
- 	color: $white;
+ 	background: $primary;
+ 	color: $primary-text-color;
   font-weight: bold;
   border: none;
 
  	cursor: pointer;
 
  	&:hover {
- 	  background: transparentize($purple, 0.1);
+ 	  background: transparentize($primary, 0.1);
  	}
 
  	&.destructive {
@@ -99,10 +99,10 @@ form.inline {
 
   &.secondary {
     background: $gray;
-    color: $black;
+    color: $text-color;
 
     &:hover {
-      background: transparentize($black, 0.9);
+      background: transparentize($text-color, 0.9);
     }
   }
 }

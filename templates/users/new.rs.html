@@ -11,13 +11,32 @@
     @if enabled {
         <h1>@i18n!(ctx.1, "Create an account")</h1>
         <form method="post" action="@uri!(user::create)">
-            @input!(ctx.1, username (text), "Username", form, errors.clone(), "minlenght=\"1\"")
-            @input!(ctx.1, email (text), "Email", form, errors.clone())
-            @input!(ctx.1, password (password), "Password", form, errors.clone(), "minlenght=\"8\"")
             @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("__all__") {
-	        <p class="error">@errs[0].message.as_ref().unwrap_or(&Cow::from("Unknown error"))</p>
+               <p class="error">@errs[0].message.as_ref().unwrap_or(&Cow::from("Unknown error"))</p>
             }
-            @input!(ctx.1, password_confirmation (password), "Password confirmation", form, errors, "minlenght=\"8\"")
+
+            @(Input::new("username", i18n!(ctx.1, ""))
+                .default(&form.username)
+                .error(&errors)
+                .set_prop("minlength", 1)
+                .html(ctx.1))
+            @(Input::new("email", i18n!(ctx.1, ""))
+                .default(&form.email)
+                .error(&errors)
+                .set_prop("minlength", 1)
+                .html(ctx.1))
+            @(Input::new("password", i18n!(ctx.1, ""))
+                .default(&form.password)
+                .error(&errors)
+                .set_prop("minlength", 8)
+                .input_type("password")
+                .html(ctx.1))
+            @(Input::new("password_confirmation", i18n!(ctx.1, ""))
+                .default(&form.password_confirmation)
+                .error(&errors)
+                .set_prop("minlength", 8)
+                .input_type("password")
+                .html(ctx.1))
 
             <input type="submit" value="@i18n!(ctx.1, "Create your account")" />
         </form>
