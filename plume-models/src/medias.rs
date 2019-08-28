@@ -82,6 +82,7 @@ impl Media {
     ) -> Result<Vec<Media>> {
         medias::table
             .filter(medias::owner_id.eq(user.id))
+            .order(medias::id.desc())
             .offset(i64::from(min))
             .limit(i64::from(max - min))
             .load::<Media>(conn)
