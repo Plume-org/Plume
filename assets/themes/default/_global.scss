@@ -74,7 +74,7 @@ body > main > *, .h-feed > * {
 }
 
 body > main > .h-entry, .h-feed {
-	margin: 0;
+	margin: 0.5;
 }
 
 body > main {
@@ -148,11 +148,11 @@ p.error {
  	display: flex;
  	flex-direction: row;
  	align-items: center;
-  margin: 0px;
+  margin: 0.5px;
 }
 
 .user .avatar.medium {
-  margin-left: 0px;
+  margin-left: 0.5px;
 }
 
 .badge {
@@ -543,7 +543,7 @@ figure {
         > *:last-child { margin-left: 1rem; }
         > nav hr {
           display: block;
-          margin: 0;
+          margin: 0.5;
           width: 100%;
           border: solid $background 0.1rem;
         }
