@@ -74,7 +74,7 @@ body > main > *, .h-feed > * {
 }
 
 body > main > .h-entry, .h-feed {
-	margin: 0.2;
+	margin: 0.1;
 }
 
 body > main {
@@ -148,11 +148,11 @@ p.error {
  	display: flex;
  	flex-direction: row;
  	align-items: center;
-  margin: 0.5px;
+  margin: 0.1px;
 }
 
 .user .avatar.medium {
-  margin-left: 0.2px;
+  margin-left: 0.1px;
 }
 
 .badge {
@@ -338,7 +338,7 @@ body > footer {
   margin-top: 5em;
 
   * {
-    margin: 0.2;
+    margin: 0.1;
   }
 
   hr {
