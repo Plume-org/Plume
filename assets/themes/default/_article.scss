@@ -114,7 +114,7 @@ main .article-meta, main .article-meta button {
 main .article-meta {
 
   > * {
-    margin: $margin;
+    margin: 5%;
   }
 
   > .banner {
@@ -170,7 +170,7 @@ main .article-meta {
     p {
       font-size: 1.5em;
       display: inline-block;
-      margin: 0;
+      margin: 0.1;
     }
 
     .action {
@@ -178,7 +178,7 @@ main .article-meta {
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
-     	margin: 0;
+     	margin: 0.1;
      	padding: 0;
      	background: none;
      	color: $text-color;
@@ -192,7 +192,7 @@ main .article-meta {
        	align-items: center;
        	justify-content: center;
 
-       	margin: 0.5em 0;
+       	margin: 0.1em 0;
        	width: 2.5em;
        	height: 2.5em;
 
@@ -259,7 +259,7 @@ main .article-meta {
 
   // Comments
   .comments {
-    margin: 0 $horizontal-margin;
+    margin: 0.1 $horizontal-margin;
 
     h2 {
      	color: $primary;
