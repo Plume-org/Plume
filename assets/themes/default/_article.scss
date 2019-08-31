@@ -170,7 +170,7 @@ main .article-meta {
     p {
       font-size: 1.5em;
       display: inline-block;
-      margin: 0.1;
+      margin: 0;
     }
 
     .action {
@@ -178,7 +178,7 @@ main .article-meta {
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
-     	margin: auto;
+     	margin: 0;
      	padding: 0;
      	background: none;
      	color: $text-color;
