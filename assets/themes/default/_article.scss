@@ -121,7 +121,7 @@ main .article-meta {
   > .banner {
     margin: 3em 0;
     & > * {
-      margin: 0.1;
+      margin: $margin;
     }
   }
 
