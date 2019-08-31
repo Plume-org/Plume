@@ -9,6 +9,7 @@ main header.article {
 
   &.illustrated {
     min-height: 75vh;
+    min-height: auto;
     color: $white;
 
     a, a:visited {
@@ -178,7 +179,7 @@ main .article-meta {
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
-     	margin: 18px;
+     	margin: auto;
      	padding: 0;
      	background: none;
      	color: $text-color;
