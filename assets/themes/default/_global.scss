@@ -73,8 +73,10 @@ body > main > *, .h-feed > * {
  	margin: 1em $horizontal-margin;
 }
 
-body > main > .h-entry, .h-feed {
-	margin: 0.1em;
+body > main > .h-entry {
+	margin: 0.1;
+} .h-feed {
+	margin: 0;
 }
 
 body > main {
