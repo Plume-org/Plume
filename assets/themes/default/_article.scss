@@ -37,7 +37,7 @@ main header.article {
     left: 0;
     right: 0;
     max-width: $article-width;
-    margin: 2em;
+    margin: 2em auto;
 
     display: flex;
     flex-direction: column;
