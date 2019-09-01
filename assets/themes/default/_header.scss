@@ -5,13 +5,13 @@ body > header {
     display: flex;
    	align-content: center;
    	justify-content: space-between;
+    overflow: hidden;
   }
 
   nav#menu {
     position: relative;
     display: none;
     appearance: none;
-    overflow: auto;
     transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
@@ -37,7 +37,6 @@ body > header {
     display: flex;
    	flex-direction: row;
    	align-items: center;
-    overflow: auto;
 
    	hr {
      	height: 100%;
