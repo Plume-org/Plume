@@ -490,3 +490,30 @@ input:checked ~ .cw-container > .cw-text {
     display: inline;
   }
 }
+
+// Small screens
+@media screen and (max-width: 600px) {
+  #plume-editor header {
+    flex-direction: column-reverse;
+
+    button {
+      flex: 0 0 0;
+    }
+  }
+
+  .popup {
+    top: 10vh;
+    bottom: 10vh;
+    left: 1vw;
+    right: 1vw;
+  }
+
+  main article {
+    margin: 2.5em .5em;
+    max-width: none;
+  }
+
+  main .article-meta > *, main .article-meta .comments, main .article-meta > .banner > * {
+    margin: 0 5%;
+  }
+}

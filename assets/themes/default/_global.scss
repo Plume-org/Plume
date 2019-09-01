@@ -490,6 +490,10 @@ figure {
 
 /// Small screens
 @media screen and (max-width: 600px) {
+  body > main > *, .h-feed > * {
+    margin: 1em;
+  }
+
   main .article-meta {
     > *, .comments {
       margin: 0 5%;
@@ -535,7 +539,7 @@ figure {
     margin: 0;
 
     & > * {
-      max-width: 100%;
+      max-width: 100% !important;
     }
   }
 
