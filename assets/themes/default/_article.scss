@@ -76,7 +76,10 @@ main .article-info {
 // The article itself
 main article {
   max-width: $article-width;
- 	margin: none;
+ 	margin: auto;
+  @media only screen and (min-width: 600px) {
+    margin: 0.5em;
+   }
  	font-family: $lora;
  	font-size: 1.2em;
  	line-height: 1.7;
