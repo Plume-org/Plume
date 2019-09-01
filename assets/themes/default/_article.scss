@@ -77,9 +77,6 @@ main .article-info {
 main article {
   max-width: $article-width;
  	margin: auto;
-  @media only screen and (min-width: 600px) {
-    margin: 0.5em;
-   }
  	font-family: $lora;
  	font-size: 1.2em;
  	line-height: 1.7;
@@ -105,6 +102,11 @@ main article {
     margin: 1em auto;
     padding: 0em 2em;
   }
+}
+@media only screen and (min-width: 600px) {
+     main article {
+          margin: 0.5em !important;
+        }
 }
 
 // Metadata under the article
