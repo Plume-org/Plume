@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/Plume-org/Plume/master/static/icons/trwnh/feather/plumeFeather64.png" alt="Plume's logo">
+  <img src="https://raw.githubusercontent.com/Plume-org/Plume/master/assets/icons/trwnh/feather/plumeFeather64.png" alt="Plume's logo">
   Plume
 </h1>
 <p align="center">
