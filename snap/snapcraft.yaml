@@ -1,0 +1,63 @@
+name: plume
+base: core18
+version: '0.3.0' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Multi-user blogging platform, federated over ActivityPub
+description: |
+  There is normally some text here; it should probably not be
+  this.
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+apps:
+  plume:
+    daemon: simple
+    command: set-environment bin/plume
+    plugs:
+      - network
+      - network-bind
+  plm:
+    command: set-environment bin/plm
+
+parts:
+  plume:
+    plugin: rust
+    source: .
+    rust-revision: nightly-2019-03-23
+    build-packages:
+      - libssl-dev
+      - pkg-config
+      - libsqlite3-dev
+      - gettext
+    after:
+      - diesel-cli
+      - cargo-web
+    override-build: |
+      export PATH=$PATH:$SNAPCRAFT_PROJECT_DIR/../.cargo/bin
+      cargo web deploy -p plume-front --release
+      cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
+      cargo install --force --no-default-features --features sqlite --path plume-cli --root ${SNAPCRAFT_PART_INSTALL}
+      cp -a assets migrations static target translations ${SNAPCRAFT_PART_INSTALL}
+      cp set-environment ${SNAPCRAFT_PART_INSTALL}
+    stage-packages:
+      - openssl
+      - libsqlite3-0
+
+  diesel-cli:
+    plugin: rust
+    source: https://github.com/diesel-rs/diesel.git
+    source-tag: v1.4.2
+    source-subdir: diesel_cli
+    rust-channel: stable
+    build-packages:
+      - libsqlite3-dev
+    override-pull: |
+      snapcraftctl pull
+      $SNAPCRAFT_PROJECT_DIR/../.cargo/bin/rustup install stable
+    override-build: |
+      export PATH=$PATH:$SNAPCRAFT_PROJECT_DIR/../.cargo/bin
+      cargo +stable install --no-default-features --features sqlite --root $SNAPCRAFT_PART_INSTALL diesel_cli
+
+  cargo-web:
+    plugin: rust
+    source: https://github.com/koute/cargo-web.git
+    source-tag: 0.6.26

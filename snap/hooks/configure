@@ -1,0 +1,25 @@
+#!/bin/sh
+
+db_type="$(snapctl get db.type)"
+db_url="$(snapctl get db.url)"
+if [ "${db_type}" = "sqlite" ]
+then
+    if [ -n "${db_url}" ]
+    then
+        echo "sqlite backend does not use db.url key"
+        exit 1
+    fi
+elif [ "${db_type}" = "postgres" ]
+then
+    if [ -z "${db_url}" ]
+    then
+        echo "postgres backend requires db.url to be set"
+        exit 1
+    fi
+elif [ -n "${db_type}" ]
+then
+    echo "Invalid db.type: " ${db_type}
+    exit 1
+fi
+
+exit 0
