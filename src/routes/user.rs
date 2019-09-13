@@ -522,7 +522,7 @@ pub fn create(
                 conn,
                 form.username.to_string(),
                 form.username.to_string(),
-                false,
+                Role::Normal,
                 "",
                 form.email.to_string(),
                 User::hash_pass(&form.password).map_err(to_validation)?,

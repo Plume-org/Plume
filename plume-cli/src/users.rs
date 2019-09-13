@@ -52,6 +52,12 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .long("admin")
                         .help("Makes the user an administrator of the instance"),
                 )
+                .arg(
+                    Arg::with_name("moderator")
+                        .short("m")
+                        .long("moderator")
+                        .help("Makes the user a moderator of the instance"),
+                )
                 .about("Create a new user on this instance"),
         )
         .subcommand(
@@ -94,7 +100,17 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         .value_of("display-name")
         .map(String::from)
         .unwrap_or_else(|| super::ask_for("Display name"));
+
     let admin = args.is_present("admin");
+    let moderator = args.is_present("moderator");
+    let role = if admin {
+        Role::Admin
+    } else if moderator {
+        Role::Moderator
+    } else {
+        Role::Normal
+    };
+
     let bio = args.value_of("biography").unwrap_or("").to_string();
     let email = args
         .value_of("email")
@@ -113,7 +129,7 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         conn,
         username,
         display_name,
-        admin,
+        role,
         &bio,
         email,
         User::hash_pass(&password).expect("Couldn't hash password"),

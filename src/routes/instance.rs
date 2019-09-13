@@ -1,17 +1,27 @@
 use rocket::{
-    request::LenientForm,
+    request::{FormItems, FromForm, LenientForm},
     response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
+use scheduled_thread_pool::ScheduledThreadPool;
 use serde_json;
+use std::str::FromStr;
 use validator::{Validate, ValidationErrors};
 
 use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
-    admin::Admin, comments::Comment, db_conn::DbConn, headers::Headers, instance::*, posts::Post,
-    safe_string::SafeString, users::User, Error, PlumeRocket, CONFIG,
+    admin::*,
+    comments::Comment,
+    db_conn::DbConn,
+    headers::Headers,
+    instance::*,
+    posts::Post,
+    safe_string::SafeString,
+    search::Searcher,
+    users::{Role, User},
+    Connection, Error, PlumeRocket, CONFIG,
 };
 use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use template_utils::{IntoContext, Ructe};
@@ -98,6 +108,11 @@ pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     )))
 }
 
+#[get("/admin", rank = 2)]
+pub fn admin_mod(_mod: Moderator, rockets: PlumeRocket) -> Ructe {
+    render!(instance::admin_mod(&rockets.to_context()))
+}
+
 #[derive(Clone, FromForm, Validate)]
 pub struct InstanceSettingsForm {
     #[validate(length(min = "1"))]
@@ -149,7 +164,7 @@ pub fn update_settings(
 
 #[get("/admin/instances?<page>")]
 pub fn admin_instances(
-    _admin: Admin,
+    _mod: Moderator,
     page: Option<Page>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
@@ -166,7 +181,7 @@ pub fn admin_instances(
 
 #[post("/admin/instances/<id>/block")]
 pub fn toggle_block(
-    _admin: Admin,
+    _mod: Moderator,
     conn: DbConn,
     id: i32,
     intl: I18n,
@@ -187,7 +202,7 @@ pub fn toggle_block(
 
 #[get("/admin/users?<page>")]
 pub fn admin_users(
-    _admin: Admin,
+    _mod: Moderator,
     page: Option<Page>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
@@ -200,27 +215,150 @@ pub fn admin_users(
     )))
 }
 
-#[post("/admin/users/<id>/ban")]
-pub fn ban(_admin: Admin, id: i32, rockets: PlumeRocket) -> Result<Flash<Redirect>, ErrorPage> {
-    let u = User::get(&*rockets.conn, id)?;
-    u.delete(&*rockets.conn, &rockets.searcher)?;
+/// A structure to handle forms that are a list of items on which actions are applied.
+///
+/// This is for instance the case of the user list in the administration.
+pub struct MultiAction<T>
+where
+    T: FromStr,
+{
+    ids: Vec<i32>,
+    action: T,
+}
+
+impl<'f, T> FromForm<'f> for MultiAction<T>
+where
+    T: FromStr,
+{
+    type Error = ();
+
+    fn from_form(items: &mut FormItems, _strict: bool) -> Result<Self, Self::Error> {
+        let (ids, act) = items.fold((vec![], None), |(mut ids, act), item| {
+            let (name, val) = item.key_value_decoded();
+
+            if name == "action" {
+                (ids, T::from_str(&val).ok())
+            } else if let Ok(id) = name.parse::<i32>() {
+                ids.push(id);
+                (ids, act)
+            } else {
+                (ids, act)
+            }
+        });
+
+        if let Some(act) = act {
+            Ok(MultiAction { ids, action: act })
+        } else {
+            Err(())
+        }
+    }
+}
+
+pub enum UserActions {
+    Admin,
+    RevokeAdmin,
+    Moderator,
+    RevokeModerator,
+    Ban,
+}
+
+impl FromStr for UserActions {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "admin" => Ok(UserActions::Admin),
+            "un-admin" => Ok(UserActions::RevokeAdmin),
+            "moderator" => Ok(UserActions::Moderator),
+            "un-moderator" => Ok(UserActions::RevokeModerator),
+            "ban" => Ok(UserActions::Ban),
+            _ => Err(()),
+        }
+    }
+}
+
+#[post("/admin/users/edit", data = "<form>")]
+pub fn edit_users(
+    moderator: Moderator,
+    form: LenientForm<MultiAction<UserActions>>,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
+    // you can't change your own rights
+    if form.ids.contains(&moderator.0.id) {
+        return Ok(Flash::error(
+            Redirect::to(uri!(admin_users: page = _)),
+            i18n!(rockets.intl.catalog, "You can't change your own rights."),
+        ));
+    }
+
+    // moderators can't grant or revoke admin rights
+    if !moderator.0.is_admin() {
+        match form.action {
+            UserActions::Admin | UserActions::RevokeAdmin => {
+                return Ok(Flash::error(
+                    Redirect::to(uri!(admin_users: page = _)),
+                    i18n!(
+                        rockets.intl.catalog,
+                        "You are not allowed to take this action."
+                    ),
+                ))
+            }
+            _ => {}
+        }
+    }
+
+    let conn = &rockets.conn;
+    let searcher = &*rockets.searcher;
+    let worker = &*rockets.worker;
+    match form.action {
+        UserActions::Admin => {
+            for u in form.ids.clone() {
+                User::get(conn, u)?.set_role(conn, Role::Admin)?;
+            }
+        }
+        UserActions::Moderator => {
+            for u in form.ids.clone() {
+                User::get(conn, u)?.set_role(conn, Role::Moderator)?;
+            }
+        }
+        UserActions::RevokeAdmin | UserActions::RevokeModerator => {
+            for u in form.ids.clone() {
+                User::get(conn, u)?.set_role(conn, Role::Normal)?;
+            }
+        }
+        UserActions::Ban => {
+            for u in form.ids.clone() {
+                ban(u, conn, searcher, worker)?;
+            }
+        }
+    }
+
+    Ok(Flash::success(
+        Redirect::to(uri!(admin_users: page = _)),
+        i18n!(rockets.intl.catalog, "Done."),
+    ))
+}
+
+fn ban(
+    id: i32,
+    conn: &Connection,
+    searcher: &Searcher,
+    worker: &ScheduledThreadPool,
+) -> Result<(), ErrorPage> {
+    let u = User::get(&*conn, id)?;
+    u.delete(&*conn, searcher)?;
 
     if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
     {
-        let target = User::one_by_instance(&*rockets.conn)?;
-        let delete_act = u.delete_activity(&*rockets.conn)?;
+        let target = User::one_by_instance(&*conn)?;
+        let delete_act = u.delete_activity(&*conn)?;
         let u_clone = u.clone();
-        rockets
-            .worker
-            .execute(move || broadcast(&u_clone, delete_act, target));
+        worker.execute(move || broadcast(&u_clone, delete_act, target));
     }
 
-    Ok(Flash::success(
-        Redirect::to(uri!(admin_users: page = _)),
-        i18n!(rockets.intl.catalog, "{} has been banned."; u.name()),
-    ))
+    Ok(())
 }
 
 #[post("/inbox", data = "<data>")]
