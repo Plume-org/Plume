@@ -18,8 +18,15 @@
             <!-- Rocket hack to use various HTTP methods -->
             <input type=hidden name="_method" value="put">
 
-            @input!(ctx.1, display_name (text), "Display name", form, errors.clone())
-            @input!(ctx.1, email (text), "Email", form, errors.clone())
+            @(Input::new("display_name", i18n!(ctx.1, ""))
+                .default(&form.display_name)
+                .error(&errors)
+                .html(ctx.1))
+            @(Input::new("email", i18n!(ctx.1, ""))
+                .default(&form.email)
+                .error(&errors)
+                .input_type("email")
+                .html(ctx.1))
             <label for="summary">@i18n!(ctx.1, "Summary")</label>
             <textarea id="summary" name="summary">@form.summary</textarea>
 

@@ -144,6 +144,7 @@ impl Instance {
         open_registrations: bool,
         short_description: SafeString,
         long_description: SafeString,
+        default_license: String,
     ) -> Result<()> {
         let (sd, _, _) = md_to_html(
             short_description.as_ref(),
@@ -165,6 +166,7 @@ impl Instance {
                 instances::long_description.eq(long_description),
                 instances::short_description_html.eq(sd),
                 instances::long_description_html.eq(ld),
+                instances::default_license.eq(default_license),
             ))
             .execute(conn)
             .map(|_| ())
@@ -474,6 +476,7 @@ pub(crate) mod tests {
                 false,
                 SafeString::new("[short](#link)"),
                 SafeString::new("[long_description](/with_link)"),
+                "CC-BY-SAO".to_owned(),
             )
             .unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
@@ -492,6 +495,7 @@ pub(crate) mod tests {
                 inst.short_description_html,
                 SafeString::new("<p><a href=\"#link\">short</a></p>\n")
             );
+            assert_eq!(inst.default_license, "CC-BY-SAO".to_owned());
             Ok(())
         });
     }

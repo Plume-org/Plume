@@ -12,8 +12,17 @@
         <p>@message</p>
     }
     <form method="post" action="@uri!(session::create)">
-        @input!(ctx.1, email_or_name (text), "Username, or email", form, errors.clone(), "minlenght=\"1\"")
-        @input!(ctx.1, password (password), "Password", form, errors, "minlenght=\"1\"")
+        @(Input::new("email_or_name", i18n!(ctx.1, "Username, or email"))
+            .default(&form.email_or_name)
+            .error(&errors)
+            .set_prop("minlenght", 1)
+            .html(ctx.1))
+        @(Input::new("password", i18n!(ctx.1, "Password"))
+            .default(&form.password)
+            .error(&errors)
+            .set_prop("minlenght", 8)
+            .input_type("password")
+            .html(ctx.1))
         <input type="submit" value="@i18n!(ctx.1, "Log in")" />
     </form>
     <a href="@uri!(session::password_reset_request_form)">Forgot your password?</a>

@@ -7,22 +7,19 @@
 @:base(ctx, i18n!(ctx.1, "Media upload"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media upload")</h1>
     <form method="post" enctype="multipart/form-data" action="@uri!(medias::upload)">
-        <label for="alt">
-            @i18n!(ctx.1, "Description")
-            <small>@i18n!(ctx.1, "Useful for visually impaired people, as well as licensing information")</small>
-        </label>
-        <input type="text" id="alt" name="alt" required minlenght="1"/>
+        @(Input::new("alt", i18n!(ctx.1, "Description"))
+            .details(i18n!(ctx.1, "Useful for visually impaired people, as well as licensing information"))
+            .set_prop("minlenght", 1)
+            .html(ctx.1))
 
-        <label for="cw">
-            @i18n!(ctx.1, "Content warning")
-            <small>@i18n!(ctx.1, "Leave it empty, if none is needed")</small>
-        </label>
-        <input type="txt" id="cw" name="cw"/>
+        @(Input::new("cw", i18n!(ctx.1, "Content warning"))
+            .details(i18n!(ctx.1, "Leave it empty, if none is needed"))
+            .optional()
+            .html(ctx.1))
 
-        <label for="file">
-            @i18n!(ctx.1, "File")
-        </label>
-        <input type="file" id="file" name="file" required/>
+        @(Input::new("file", i18n!(ctx.1, "File"))
+            .input_type("file")
+            .html(ctx.1))
 
         <input type="submit" value="@i18n!(ctx.1, "Send")"/>
     </form>
