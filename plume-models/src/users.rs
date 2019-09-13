@@ -42,6 +42,7 @@ use db_conn::DbConn;
 use follows::Follow;
 use instance::*;
 use medias::Media;
+use notifications::Notification;
 use post_authors::PostAuthor;
 use posts::Post;
 use safe_string::SafeString;
@@ -145,6 +146,10 @@ impl User {
             if !has_other_authors {
                 Post::get(conn, post_id)?.delete(conn, searcher)?;
             }
+        }
+
+        for notif in Notification::find_followed_by(conn, self)? {
+            notif.delete(conn)?
         }
 
         diesel::delete(self)
