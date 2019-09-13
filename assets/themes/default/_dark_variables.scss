@@ -1,0 +1,19 @@
+@import '_variables';
+
+// Color Scheme
+$gray: #1a3854;
+$black: #102e4a;
+$white: #F8F8F8;
+$purple: #7765E3;
+$lightpurple: #c2bbee;
+$red: #d16666;
+$yellow: #ff934f;
+$blue: #7f96ff;
+
+$background: $black;
+$form-input-background: $gray;
+$form-input-border: $white;
+$text-color: $white;
+$primary: $purple;
+$primary-text-color: $white; // text color on primary background (buttons for instance)
+$success-color: $blue;

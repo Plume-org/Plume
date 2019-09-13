@@ -47,6 +47,7 @@ table! {
         summary_html -> Text,
         icon_id -> Nullable<Int4>,
         banner_id -> Nullable<Int4>,
+        theme -> Nullable<Varchar>,
     }
 }
 
@@ -253,6 +254,8 @@ table! {
         last_fetched_date -> Timestamp,
         fqn -> Text,
         summary_html -> Text,
+        preferred_theme -> Nullable<Varchar>,
+        hide_custom_css -> Bool,
     }
 }
 

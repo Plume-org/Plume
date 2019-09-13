@@ -2,15 +2,19 @@
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use rocket::{
     http::{
-        hyper::header::{CacheControl, CacheDirective},
+        hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
         uri::{FromUriParam, Query},
         RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
-    response::{Flash, NamedFile, Redirect},
+    response::{self, Flash, NamedFile, Redirect, Responder, Response},
     Outcome,
 };
-use std::path::{Path, PathBuf};
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::Hasher,
+    path::{Path, PathBuf},
+};
 use template_utils::Ructe;
 
 use plume_models::{posts::Post, Connection};
@@ -167,6 +171,41 @@ pub mod well_known;
 pub struct CachedFile {
     inner: NamedFile,
     cache_control: CacheControl,
+}
+
+#[derive(Debug)]
+pub struct ThemeFile(NamedFile);
+
+impl<'r> Responder<'r> for ThemeFile {
+    fn respond_to(self, r: &Request) -> response::Result<'r> {
+        let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
+
+        let mut hasher = DefaultHasher::new();
+        hasher.write(&contents);
+        let etag = format!("{:x}", hasher.finish());
+
+        if r.headers()
+            .get("If-None-Match")
+            .any(|s| s[1..s.len() - 1] == etag)
+        {
+            Response::build()
+                .status(Status::NotModified)
+                .header(ETag(EntityTag::strong(etag)))
+                .ok()
+        } else {
+            Response::build()
+                .merge(self.0.respond_to(r)?)
+                .header(ETag(EntityTag::strong(etag)))
+                .ok()
+        }
+    }
+}
+
+#[get("/static/cached/<_build_id>/css/<file..>", rank = 1)]
+pub fn theme_files(file: PathBuf, _build_id: &RawStr) -> Option<ThemeFile> {
+    NamedFile::open(Path::new("static/css/").join(file))
+        .ok()
+        .map(ThemeFile)
 }
 
 #[get("/static/cached/<_build_id>/<file..>", rank = 2)]

@@ -8,6 +8,7 @@
 @use validator::ValidationErrors;
 @use routes::comments::NewCommentForm;
 @use routes::*;
+@use std::path::Path;
 
 @(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 
@@ -19,6 +20,12 @@
     }
     <meta property="og:url" content="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)"/>
     <meta property="og:description" content="@article.subtitle"/>
+
+    @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
+        @if let Some(ref theme) = blog.theme {
+            <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(theme).join("theme.css"), _build_id = CACHE_NAME)">
+        }
+    }
 }, {
     <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
 }, {

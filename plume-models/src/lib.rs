@@ -33,6 +33,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
 extern crate url;
+extern crate walkdir;
 extern crate webfinger;
 extern crate whatlang;
 

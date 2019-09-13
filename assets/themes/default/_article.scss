@@ -1,8 +1,8 @@
 // Heading
 main header.article {
   overflow: hidden;
-  background: $white;
-  color: $black;
+  background: $background;
+  color: $text-color;
   display: grid;
   background-size: cover;
   background-position: center;
@@ -52,14 +52,14 @@ main header.article {
 
     height: 100%;
     width: 100%;
-    background: linear-gradient(180deg, transparent 20vh, black 80vh);
+    background: linear-gradient(180deg, transparent 20vh, $black 80vh);
   }
 
   & > img {
     z-index: 1;
     min-width: 100%;
     min-height: 100%;
-    background: $purple;
+    background: $primary;
   }
 }
 
@@ -141,7 +141,7 @@ main .article-meta {
       padding: 0px;
       margin: 0px 10px 10px 0px;
       transition: all 0.2s ease-in;
-      border: 1px solid $purple;
+      border: 1px solid $primary;
 
       a {
         display: inline-block;
@@ -149,7 +149,7 @@ main .article-meta {
       }
 
       &:hover {
-        background: transparentize($purple, 0.9);
+        background: transparentize($primary, 0.9);
       }
     }
   }
@@ -181,7 +181,7 @@ main .article-meta {
      	margin: 0;
      	padding: 0;
      	background: none;
-     	color: $black;
+     	color: $text-color;
      	border: none;
      	font-size: 1.1em;
       cursor: pointer;
@@ -201,7 +201,7 @@ main .article-meta {
 
       &.reshared, &.liked {
         svg.feather {
-         	color: $white;
+         	color: $background;
          	font-weight: 900;
         }
       }
@@ -234,26 +234,26 @@ main .article-meta {
   }
 
   .reshares {
-    p, .action:hover { color: $purple; }
+    p, .action:hover { color: $primary; }
 
     .action svg.feather {
       padding: 0.7em;
      	box-sizing: border-box;
-     	color: $purple;
-     	border: solid $purple thin;
+     	color: $primary;
+     	border: solid $primary thin;
      	font-weight: 600;
     }
 
     .action:hover svg.feather {
-     	background: transparentize($purple, 0.85);
+     	background: transparentize($primary, 0.85);
     }
 
     .action.reshared svg.feather {
-      background: $purple;
+      background: $primary;
     }
     .action.reshared:hover svg.feather {
-     	background: transparentize($purple, 0.75)
-     	color: $purple;
+     	background: transparentize($primary, 0.75)
+     	color: $primary;
     }
   }
 
@@ -262,7 +262,7 @@ main .article-meta {
     margin: 0 $horizontal-margin;
 
     h2 {
-     	color: $purple;
+     	color: $primary;
      	font-size: 1.5em;
      	font-weight: 600;
     }
@@ -281,17 +281,17 @@ main .article-meta {
     a.button, form.inline, form.inline input {
      	padding: 0;
      	background: none;
-     	color: $black;
+     	color: $text-color;
      	margin-right: 2em;
      	font-family: $route159;
       font-weight: normal;
 
      	&::before {
-     	  color: $purple;
+     	  color: $primary;
      	  padding-right: 0.5em;
       }
 
-      &:hover { color: $purple; }
+      &:hover { color: $primary; }
     }
 
     .comment {
@@ -325,7 +325,7 @@ main .article-meta {
       }
 
       .dt-published a {
-        color: transparentize($black, 0.6);
+        color: transparentize($text-color, 0.6);
       }
 
      	.author {
@@ -339,11 +339,11 @@ main .article-meta {
        	}
 
        	.display-name {
-         	color: $black;
+         	color: $text-color;
         }
 
         &:hover {
-          .display-name { color: $purple; }
+          .display-name { color: $primary; }
           small { opacity: 1; }
         }
      	}
@@ -384,7 +384,7 @@ main .article-meta {
   }
 
   .placeholder {
-    color: transparentize($black, 0.6);
+    color: transparentize($text-color, 0.6);
   }
 
   article {
@@ -400,7 +400,7 @@ main .article-meta {
   left: 20vw;
   right: 20vw;
   background: $gray;
-  border: 1px solid $purple;
+  border: 1px solid $primary;
   z-index: 2;
   padding: 2em;
   overflow-y: auto;
