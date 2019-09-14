@@ -37,7 +37,7 @@ parts:
       cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
       cargo install --force --no-default-features --features sqlite --path plume-cli --root ${SNAPCRAFT_PART_INSTALL}
       cp -a assets migrations static target translations ${SNAPCRAFT_PART_INSTALL}
-      cp set-environment ${SNAPCRAFT_PART_INSTALL}
+      cp snap/local/set-environment ${SNAPCRAFT_PART_INSTALL}
     stage-packages:
       - openssl
       - libsqlite3-0
