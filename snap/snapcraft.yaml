@@ -29,7 +29,6 @@ parts:
       - libsqlite3-dev
       - gettext
     after:
-      - diesel-cli
       - cargo-web
     override-build: |
       export PATH=$PATH:$SNAPCRAFT_PROJECT_DIR/../.cargo/bin
@@ -41,21 +40,6 @@ parts:
     stage-packages:
       - openssl
       - libsqlite3-0
-
-  diesel-cli:
-    plugin: rust
-    source: https://github.com/diesel-rs/diesel.git
-    source-tag: v1.4.2
-    source-subdir: diesel_cli
-    rust-channel: stable
-    build-packages:
-      - libsqlite3-dev
-    override-pull: |
-      snapcraftctl pull
-      $SNAPCRAFT_PROJECT_DIR/../.cargo/bin/rustup install stable
-    override-build: |
-      export PATH=$PATH:$SNAPCRAFT_PROJECT_DIR/../.cargo/bin
-      cargo +stable install --no-default-features --features sqlite --root $SNAPCRAFT_PART_INSTALL diesel_cli
 
   cargo-web:
     plugin: rust
