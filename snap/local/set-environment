@@ -1,10 +1,11 @@
 #!/bin/sh
 
-#enabled="$(snapcraft get enabled)"
-#if [ -z "${enabled}" || "${enabled}" != "true" ]
-#    echo "Plume not yet enabled"
-#    exit -1
-#fi
+enabled="$(snapctl get enabled)"
+if [ -z "${enabled}" -o "${enabled}" != "true" ]
+then
+    echo "Plume not yet enabled"
+    exit 1
+fi
 
 export BASE_URL="$(snapctl get base-url)"
 database_type="$(snapctl get db.type)"
