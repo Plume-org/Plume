@@ -34,7 +34,7 @@ parts:
     after:
       - cargo-web
     override-build: |
-      export PATH=$PATH:$SNAPCRAFT_PROJECT_DIR/../.cargo/bin
+      export PATH=$PATH:$HOME/.cargo/bin
       cargo web deploy -p plume-front --release
       cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
       cargo install --force --no-default-features --features sqlite --path plume-cli --root ${SNAPCRAFT_PART_INSTALL}
@@ -49,5 +49,8 @@ parts:
     source: https://github.com/koute/cargo-web.git
     source-tag: 0.6.26
     override-pull: |
+        git clone https://github.com/koute/cargo-web.git ${SNAPCRAFT_PART_SRC}
+        git checkout 0.6.26
         printf "\n[Workspace]\n" >> ${SNAPCRAFT_PART_SRC}/Cargo.toml
-        snapcraftctl pull
+        export PATH=$PATH:$HOME/.cargo/bin
+        cargo fetch --path .
