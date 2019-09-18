@@ -7,7 +7,7 @@ use medias::Media;
 use plume_common::utils::md_to_html;
 use safe_string::SafeString;
 use schema::{instances, users};
-use users::User;
+use users::{Role, User};
 use {Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable)]
@@ -113,7 +113,7 @@ impl Instance {
     pub fn has_admin(&self, conn: &Connection) -> Result<bool> {
         users::table
             .filter(users::instance_id.eq(self.id))
-            .filter(users::is_admin.eq(true))
+            .filter(users::role.eq(Role::Admin as i32))
             .load::<User>(conn)
             .map_err(Error::from)
             .map(|r| !r.is_empty())
@@ -122,7 +122,7 @@ impl Instance {
     pub fn main_admin(&self, conn: &Connection) -> Result<User> {
         users::table
             .filter(users::instance_id.eq(self.id))
-            .filter(users::is_admin.eq(true))
+            .filter(users::role.eq(Role::Admin as i32))
             .first(conn)
             .map_err(Error::from)
     }

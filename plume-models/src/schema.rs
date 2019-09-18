@@ -239,7 +239,6 @@ table! {
         display_name -> Varchar,
         outbox_url -> Varchar,
         inbox_url -> Varchar,
-        is_admin -> Bool,
         summary -> Text,
         email -> Nullable<Text>,
         hashed_password -> Nullable<Text>,
@@ -254,6 +253,7 @@ table! {
         last_fetched_date -> Timestamp,
         fqn -> Text,
         summary_html -> Text,
+        role -> Int4,
         preferred_theme -> Nullable<Varchar>,
         hide_custom_css -> Bool,
     }

@@ -372,6 +372,7 @@ pub mod post_authors;
 pub mod posts;
 pub mod reshares;
 pub mod safe_string;
+#[allow(unused_imports)]
 pub mod schema;
 pub mod search;
 pub mod tags;

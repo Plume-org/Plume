@@ -44,7 +44,6 @@ CREATE TABLE users_before_themes (
     display_name VARCHAR NOT NULL DEFAULT '',
     outbox_url VARCHAR NOT NULL UNIQUE,
     inbox_url VARCHAR NOT NULL UNIQUE,
-    is_admin BOOLEAN NOT NULL DEFAULT 'f',
     summary TEXT NOT NULL DEFAULT '',
     email TEXT,
     hashed_password TEXT,
@@ -59,6 +58,7 @@ CREATE TABLE users_before_themes (
     last_fetched_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fqn TEXT NOT NULL DEFAULT '',
     summary_html TEXT NOT NULL DEFAULT '',
+    role INTEGER NOT NULL DEFAULT 2,
     FOREIGN KEY (avatar_id) REFERENCES medias(id) ON DELETE SET NULL,
     CONSTRAINT blog_authors_unique UNIQUE (username, instance_id)
 );
@@ -68,7 +68,6 @@ INSERT INTO users_before_themes SELECT
     display_name,
     outbox_url,
     inbox_url,
-    is_admin,
     summary,
     email,
     hashed_password,
@@ -82,7 +81,8 @@ INSERT INTO users_before_themes SELECT
     avatar_id,
     last_fetched_date,
     fqn,
-    summary_html
+    summary_html,
+    role
 FROM users;
 DROP TABLE users;
 ALTER TABLE users_before_themes RENAME TO users;
