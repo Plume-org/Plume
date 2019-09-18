@@ -48,3 +48,6 @@ parts:
     plugin: rust
     source: https://github.com/koute/cargo-web.git
     source-tag: 0.6.26
+    override-pull: |
+        printf "\n[Workspace]\n" >> ${SNAPCRAFT_PART_SRC}/Cargo.toml
+        snapcraftctl pull
