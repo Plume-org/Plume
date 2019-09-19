@@ -31,10 +31,9 @@ parts:
       - pkg-config
       - libsqlite3-dev
       - gettext
-    after:
-      - cargo-web
     override-build: |
       export PATH=$PATH:$HOME/.cargo/bin
+      cargo +stable install cargo-web
       cargo web deploy -p plume-front --release
       cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
       cargo install --force --no-default-features --features sqlite --path plume-cli --root ${SNAPCRAFT_PART_INSTALL}
@@ -44,13 +43,3 @@ parts:
       - openssl
       - libsqlite3-0
 
-  cargo-web:
-    plugin: rust
-    source: https://github.com/koute/cargo-web.git
-    source-tag: 0.6.26
-    override-pull: |
-        git clone https://github.com/koute/cargo-web.git ${SNAPCRAFT_PART_SRC}
-        git checkout 0.6.26
-        printf "\n[Workspace]\n" >> ${SNAPCRAFT_PART_SRC}/Cargo.toml
-        export PATH=$PATH:$HOME/.cargo/bin
-        cargo fetch --path .
