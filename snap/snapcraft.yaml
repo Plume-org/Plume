@@ -33,6 +33,7 @@ parts:
       - gettext
     override-build: |
       export PATH=$PATH:$HOME/.cargo/bin
+      rustup install stable
       cargo +stable install cargo-web
       cargo web deploy -p plume-front --release
       cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
