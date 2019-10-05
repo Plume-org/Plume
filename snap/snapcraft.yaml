@@ -31,11 +31,25 @@ parts:
       - pkg-config
       - libsqlite3-dev
       - gettext
+      - on arm64,armhf,ppc64el,s390x:
+        - lld-8
     override-build: |
       export PATH=$PATH:$HOME/.cargo/bin
       rustup install stable
       cargo +stable install cargo-web
-      cargo web deploy -p plume-front --release
+
+      # Only Tier 1 Rust platforms get rust-lld
+      # On the others (arm64, armhf, powerpc64, s390x) fall back to using
+      # the system LLD we've installed earlier.
+      case ${SNAPCRAFT_ARCH_TRIPLE} in \
+        aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
+          RUSTFLAGS="-C linker=lld-8" cargo web deploy -p plume-front --release \
+          ;; \
+        *) \
+          cargo web deploy -p plume-front --release \
+          ;; \
+      esac
+
       cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
       cargo install --force --no-default-features --features sqlite --path plume-cli --root ${SNAPCRAFT_PART_INSTALL}
       cp -a assets migrations static target translations ${SNAPCRAFT_PART_INSTALL}
