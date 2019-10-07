@@ -1,6 +1,6 @@
 extern crate rsass;
 extern crate ructe;
-use ructe::*;
+use ructe::Ructe;
 use std::process::{Command, Stdio};
 use std::{env, ffi::OsStr, fs::*, io::Write, path::*};
 
@@ -37,9 +37,10 @@ fn compute_static_hash() -> String {
 }
 
 fn main() {
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let in_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("templates");
-    compile_templates(&in_dir, &out_dir).expect("compile templates");
+    Ructe::from_env()
+        .expect("This must be run with cargo")
+        .compile_templates("templates")
+        .expect("compile templates");
 
     compile_themes().expect("Theme compilation error");
     recursive_copy(&Path::new("assets").join("icons"), &Path::new("static"))

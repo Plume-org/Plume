@@ -436,8 +436,7 @@ mod tests {
                 }
                 _ => panic!("Unexpected result"),
             };
-
             Ok(())
-        });
+        })
     }
 }

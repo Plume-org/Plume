@@ -4,7 +4,7 @@ use rocket_i18n::I18n;
 use plume_common::activity_pub::broadcast;
 use plume_common::utils;
 use plume_models::{
-    blogs::Blog, inbox::inbox, likes, posts::Post, users::User, Error, PlumeRocket,
+    blogs::Blog, inbox::inbox, likes, posts::Post, timeline::*, users::User, Error, PlumeRocket,
 };
 use routes::errors::ErrorPage;
 
@@ -22,6 +22,8 @@ pub fn create(
     if !user.has_liked(&*conn, &post)? {
         let like = likes::Like::insert(&*conn, likes::NewLike::new(&post, &user))?;
         like.notify(&*conn)?;
+
+        Timeline::add_to_all_timelines(&rockets, &post, Kind::Like(&user))?;
 
         let dest = User::one_by_instance(&*conn)?;
         let act = like.to_activity(&*conn)?;

@@ -7,7 +7,7 @@ use activitypub::{
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -48,6 +48,7 @@ use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
+use timeline::Timeline;
 use {ap_url, Connection, Error, PlumeRocket, Result};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
@@ -198,10 +199,8 @@ impl User {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .limit(1)
-            .load::<User>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
@@ -896,7 +895,7 @@ impl NewUser {
         let (pub_key, priv_key) = gen_keypair();
         let instance = Instance::get_local()?;
 
-        User::insert(
+        let res = User::insert(
             conn,
             NewUser {
                 username: username.clone(),
@@ -917,7 +916,12 @@ impl NewUser {
                 fqn: username,
                 avatar_id: None,
             },
-        )
+        )?;
+
+        // create default timeline
+        Timeline::new_for_user(conn, res.id, "My feed".into(), "followed".into())?;
+
+        Ok(res)
     }
 }
 
@@ -981,7 +985,6 @@ pub(crate) mod tests {
                 User::hash_pass("test_password").unwrap(),
             )
             .unwrap();
-
             assert_eq!(
                 test_user.id,
                 User::find_by_name(conn, "test", Instance::get_local().unwrap().id)
@@ -1009,7 +1012,6 @@ pub(crate) mod tests {
                 .unwrap()
                 .id
             );
-
             Ok(())
         });
     }
@@ -1023,7 +1025,6 @@ pub(crate) mod tests {
             assert!(User::get(conn, inserted[0].id).is_ok());
             inserted[0].delete(conn, &get_searcher()).unwrap();
             assert!(User::get(conn, inserted[0].id).is_err());
-
             Ok(())
         });
     }
@@ -1046,7 +1047,6 @@ pub(crate) mod tests {
             }
             inserted[0].set_role(conn, Role::Admin).unwrap();
             assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
-
             Ok(())
         });
     }
@@ -1069,7 +1069,6 @@ pub(crate) mod tests {
 
             assert!(test_user.auth("test_password"));
             assert!(!test_user.auth("other_password"));
-
             Ok(())
         });
     }
@@ -1099,7 +1098,6 @@ pub(crate) mod tests {
                     .len() as i64,
                 User::count_local(conn).unwrap()
             );
-
             Ok(())
         });
     }
@@ -1127,7 +1125,6 @@ pub(crate) mod tests {
             assert_eq!(user.avatar_url(conn), users[0].avatar_url(conn));
             assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
-
             Ok(())
         });
     }

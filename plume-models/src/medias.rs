@@ -324,8 +324,6 @@ pub(crate) mod tests {
         }
     }
 
-    //set_owner
-
     #[test]
     fn delete() {
         let conn = &db();
@@ -354,13 +352,11 @@ pub(crate) mod tests {
             assert!(!Path::new(&path).exists());
 
             clean(conn);
-
             Ok(())
         });
     }
 
     #[test]
-
     fn set_owner() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
@@ -404,7 +400,6 @@ pub(crate) mod tests {
                 .any(|m| m.id == media.id));
 
             clean(conn);
-
             Ok(())
         });
     }

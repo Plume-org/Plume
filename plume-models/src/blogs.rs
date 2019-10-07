@@ -1,6 +1,6 @@
 use activitypub::{actor::Group, collection::OrderedCollection, object::Image, CustomObject};
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -135,10 +135,8 @@ impl Blog {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
-            .limit(1)
-            .load::<Blog>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
@@ -572,9 +570,8 @@ pub(crate) mod tests {
                 Instance::get_local().unwrap().id
             );
             // TODO add tests for remote instance
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -674,9 +671,8 @@ pub(crate) mod tests {
                 .unwrap()
                 .iter()
                 .any(|b| b.id == blog[1].id));
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -699,9 +695,8 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(Blog::find_by_fqn(&r, "SomeName").unwrap().id, blog.id);
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -723,9 +718,8 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(blog.fqn, "SomeName");
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -736,9 +730,8 @@ pub(crate) mod tests {
 
             blogs[0].delete(conn, &get_searcher()).unwrap();
             assert!(Blog::get(conn, blogs[0].id).is_err());
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -807,9 +800,8 @@ pub(crate) mod tests {
             assert!(Blog::get(conn, blog[1].id).is_err());
             user[1].delete(conn, &searcher).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_err());
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -870,6 +862,6 @@ pub(crate) mod tests {
             assert_eq!(blog.banner_url(conn), blogs[0].banner_url(conn));
 
             Ok(())
-        });
+        })
     }
 }

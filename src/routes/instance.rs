@@ -20,6 +20,7 @@ use plume_models::{
     posts::Post,
     safe_string::SafeString,
     search::Searcher,
+    timeline::Timeline,
     users::{Role, User},
     Connection, Error, PlumeRocket, CONFIG,
 };
@@ -30,64 +31,23 @@ use template_utils::{IntoContext, Ructe};
 pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let inst = Instance::get_local()?;
-    let federated = Post::get_recents_page(conn, Page::default().limits())?;
-    let local = Post::get_instance_page(conn, inst.id, Page::default().limits())?;
-    let user_feed = rockets.user.clone().and_then(|user| {
-        let followed = user.get_followed(conn).ok()?;
-        let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
-        in_feed.push(user.id);
-        Post::user_feed_page(conn, in_feed, Page::default().limits()).ok()
-    });
+    let timelines = Timeline::list_all_for_user(&conn, rockets.user.clone().map(|u| u.id))?
+        .into_iter()
+        .filter_map(|t| {
+            if let Ok(latest) = t.get_latest(&conn, 12) {
+                Some((t, latest))
+            } else {
+                None
+            }
+        })
+        .collect();
 
     Ok(render!(instance::index(
         &rockets.to_context(),
         inst,
         User::count_local(conn)?,
         Post::count_local(conn)?,
-        local,
-        federated,
-        user_feed
-    )))
-}
-
-#[get("/local?<page>")]
-pub fn local(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let page = page.unwrap_or_default();
-    let instance = Instance::get_local()?;
-    let articles = Post::get_instance_page(&*rockets.conn, instance.id, page.limits())?;
-    Ok(render!(instance::local(
-        &rockets.to_context(),
-        instance,
-        articles,
-        page.0,
-        Page::total(Post::count_local(&*rockets.conn)? as i32)
-    )))
-}
-
-#[get("/feed?<page>")]
-pub fn feed(user: User, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let page = page.unwrap_or_default();
-    let followed = user.get_followed(&*rockets.conn)?;
-    let mut in_feed = followed.into_iter().map(|u| u.id).collect::<Vec<i32>>();
-    in_feed.push(user.id);
-    let articles = Post::user_feed_page(&*rockets.conn, in_feed, page.limits())?;
-    Ok(render!(instance::feed(
-        &rockets.to_context(),
-        articles,
-        page.0,
-        Page::total(Post::count_local(&*rockets.conn)? as i32)
-    )))
-}
-
-#[get("/federated?<page>")]
-pub fn federated(page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let page = page.unwrap_or_default();
-    let articles = Post::get_recents_page(&*rockets.conn, page.limits())?;
-    Ok(render!(instance::federated(
-        &rockets.to_context(),
-        articles,
-        page.0,
-        Page::total(Post::count_local(&*rockets.conn)? as i32)
+        timelines
     )))
 }
 

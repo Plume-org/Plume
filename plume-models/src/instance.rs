@@ -1,6 +1,5 @@
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use std::iter::Iterator;
 use std::sync::RwLock;
 
 use ap_url;
@@ -61,11 +60,8 @@ impl Instance {
     pub fn get_local_uncached(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
-            .limit(1)
-            .load::<Instance>(conn)?
-            .into_iter()
-            .nth(0)
-            .ok_or(Error::NotFound)
+            .first(conn)
+            .map_err(Error::from)
     }
 
     pub fn cache_local(conn: &Connection) {
@@ -127,8 +123,7 @@ impl Instance {
         users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::role.eq(Role::Admin as i32))
-            .limit(1)
-            .get_result::<User>(conn)
+            .first(conn)
             .map_err(Error::from)
     }
 
@@ -343,7 +338,6 @@ pub(crate) mod tests {
                 res.short_description_html.get(),
                 &inserted.short_description_html
             );
-
             Ok(())
         });
     }
@@ -404,7 +398,6 @@ pub(crate) mod tests {
                 assert!(last_domaine <= page[0].public_domain);
                 last_domaine = page[0].public_domain.clone();
             }
-
             Ok(())
         });
     }
@@ -467,7 +460,6 @@ pub(crate) mod tests {
                     .count(),
                 0
             );
-
             Ok(())
         });
     }
@@ -504,7 +496,6 @@ pub(crate) mod tests {
                 SafeString::new("<p><a href=\"#link\">short</a></p>\n")
             );
             assert_eq!(inst.default_license, "CC-BY-SAO".to_owned());
-
             Ok(())
         });
     }

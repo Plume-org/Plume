@@ -162,6 +162,7 @@ pub mod reshares;
 pub mod search;
 pub mod session;
 pub mod tags;
+pub mod timelines;
 pub mod user;
 pub mod well_known;
 

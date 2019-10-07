@@ -59,3 +59,19 @@ impl CustomizeConnection<Connection, ConnError> for PragmaForeignKey {
             })
     }
 }
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use super::*;
+    use diesel::Connection as _;
+
+    #[derive(Debug)]
+    pub struct TestConnectionCustomizer;
+    impl CustomizeConnection<Connection, ConnError> for TestConnectionCustomizer {
+        fn on_acquire(&self, conn: &mut Connection) -> Result<(), ConnError> {
+            PragmaForeignKey.on_acquire(conn)?;
+            Ok(conn.begin_test_transaction().unwrap())
+        }
+    }
+
+}

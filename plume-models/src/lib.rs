@@ -63,6 +63,7 @@ pub enum Error {
     SerDe,
     Search(search::SearcherError),
     Signature,
+    TimelineQuery(timeline::query::QueryError),
     Unauthorized,
     Url,
     Webfinger,
@@ -138,6 +139,12 @@ impl From<search::SearcherError> for Error {
     }
 }
 
+impl From<timeline::query::QueryError> for Error {
+    fn from(err: timeline::query::QueryError) -> Self {
+        Error::TimelineQuery(err)
+    }
+}
+
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
         Error::Io(err)
@@ -174,11 +181,8 @@ macro_rules! find_by {
         pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Result<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     };
 }
@@ -224,11 +228,8 @@ macro_rules! get {
         pub fn get(conn: &crate::Connection, id: i32) -> Result<Self> {
             $table::table
                 .filter($table::id.eq(id))
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     };
 }
@@ -281,11 +282,8 @@ macro_rules! last {
         pub fn last(conn: &crate::Connection) -> Result<Self> {
             $table::table
                 .order_by($table::id.desc())
-                .limit(1)
-                .load::<Self>(conn)?
-                .into_iter()
-                .next()
-                .ok_or(Error::NotFound)
+                .first(conn)
+                .map_err(Error::from)
         }
     };
 }
@@ -302,8 +300,6 @@ pub fn ap_url(url: &str) -> String {
 mod tests {
     use db_conn;
     use diesel::r2d2::ConnectionManager;
-    #[cfg(feature = "sqlite")]
-    use diesel::{dsl::sql_query, RunQueryDsl};
     use migrations::IMPORTED_MIGRATIONS;
     use plume_common::utils::random_hex;
     use scheduled_thread_pool::ScheduledThreadPool;
@@ -331,7 +327,7 @@ mod tests {
     lazy_static! {
         static ref DB_POOL: db_conn::DbPool = {
             let pool = db_conn::DbPool::builder()
-                .connection_customizer(Box::new(db_conn::PragmaForeignKey))
+                .connection_customizer(Box::new(db_conn::tests::TestConnectionCustomizer))
                 .build(ConnectionManager::<Conn>::new(CONFIG.database_url.as_str()))
                 .unwrap();
             let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
@@ -365,6 +361,7 @@ pub mod headers;
 pub mod inbox;
 pub mod instance;
 pub mod likes;
+pub mod lists;
 pub mod medias;
 pub mod mentions;
 pub mod migrations;
@@ -379,5 +376,6 @@ pub mod safe_string;
 pub mod schema;
 pub mod search;
 pub mod tags;
+pub mod timeline;
 pub mod users;
 pub use plume_rocket::PlumeRocket;
