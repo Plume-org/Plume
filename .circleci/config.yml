@@ -199,7 +199,7 @@ jobs:
     steps:
     - restore_env:
         cache: release-<<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
-    - run: cargo web deploy -p plume-front --release
+    - run: cargo web deploy -p plume-front
     - build:
         package: plume
         release: true

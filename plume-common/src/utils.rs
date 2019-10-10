@@ -97,7 +97,7 @@ fn inline_tags<'a>(
     }
 }
 
-pub type MediaProcessor<'a> = Box<'a + Fn(i32) -> Option<(String, Option<String>)>>;
+pub type MediaProcessor<'a> = Box<dyn 'a + Fn(i32) -> Option<(String, Option<String>)>>;
 
 fn process_image<'a, 'b>(
     evt: Event<'a>,
@@ -108,11 +108,8 @@ fn process_image<'a, 'b>(
         match evt {
             Event::Start(Tag::Image(id, title)) => {
                 if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
-                    if inline || cw.is_none() {
-                        Event::Start(Tag::Image(Cow::Owned(url), title))
-                    } else {
-                        // there is a cw, and where are not inline
-                        Event::Html(Cow::Owned(format!(
+                    match cw {
+                        Some(cw) if !inline => Event::Html(Cow::Owned(format!(
                             r#"<label for="postcontent-cw-{id}">
   <input type="checkbox" id="postcontent-cw-{id}" checked="checked" class="cw-checkbox">
   <span class="cw-container">
@@ -121,9 +118,10 @@ fn process_image<'a, 'b>(
     </span>
   <img src="{url}" alt=""#,
                             id = random_hex(),
-                            cw = cw.unwrap(),
+                            cw = cw,
                             url = url
-                        )))
+                        ))),
+                        _ => Event::Start(Tag::Image(Cow::Owned(url), title)),
                     }
                 } else {
                     Event::Start(Tag::Image(id, title))

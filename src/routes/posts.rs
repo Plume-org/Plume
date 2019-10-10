@@ -298,7 +298,7 @@ pub fn update(
             post.license = form.license.clone();
             post.cover_id = form.cover;
             post.update(&*conn, &rockets.searcher)
-                .expect("post::update: update error");;
+                .expect("post::update: update error");
 
             if post.published {
                 post.update_mentions(
@@ -308,7 +308,7 @@ pub fn update(
                         .filter_map(|m| Mention::build_activity(&rockets, &m).ok())
                         .collect(),
                 )
-                .expect("post::update: mentions error");;
+                .expect("post::update: mentions error");
             }
 
             let tags = form
@@ -406,7 +406,7 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, ErrorPage> {
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");;
+    let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");
     let slug = form.title.to_string().to_kebab_case();
     let user = rockets.user.clone().unwrap();
 

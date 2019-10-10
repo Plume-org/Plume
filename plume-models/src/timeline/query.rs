@@ -290,7 +290,8 @@ impl WithList {
                     (_, _) => Err(QueryError::RuntimeError(format!(
                         "The list '{}' is of the wrong type for this usage",
                         name
-                    )))?,
+                    ))
+                    .into()),
                 }
             }
             List::Array(list) => match self {
