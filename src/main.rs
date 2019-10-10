@@ -304,17 +304,17 @@ Then try to restart Plume
                     (
                         "/inbox".to_owned(),
                         "/inbox".to_owned(),
-                        rocket::http::Method::Post,
+                        None,
                     ),
                     (
                         "/@/<name>/inbox".to_owned(),
                         "/@/<name>/inbox".to_owned(),
-                        rocket::http::Method::Post,
+                        None,
                     ),
                     (
                         "/api/<path..>".to_owned(),
                         "/api/<path..>".to_owned(),
-                        rocket::http::Method::Post,
+                        None,
                     ),
                 ])
                 .finalize()
