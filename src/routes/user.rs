@@ -548,10 +548,15 @@ pub fn create(
         })
 }
 
-#[get("/@/<name>/outbox")]
-pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<OrderedCollection>> {
+#[get("/@/<name>/outbox?<page>")]
+pub fn outbox(
+    name: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Option<ActivityStream<OrderedCollection>> {
     let user = User::find_by_fqn(&rockets, &name).ok()?;
-    user.outbox(&*rockets.conn).ok()
+    let page = page.unwrap_or_default();
+    user.outbox_page(&*rockets.conn, page.limits()).ok()
 }
 
 #[post("/@/<name>/inbox", data = "<data>")]

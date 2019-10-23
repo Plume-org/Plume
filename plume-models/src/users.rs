@@ -321,8 +321,12 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        let acts = self.get_activities(conn)?;
+    pub fn outbox_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<ActivityStream<OrderedCollection>> {
+        let acts = self.get_activities_page(conn, (min, max))?;
         let n_acts = acts.len();
         let mut coll = OrderedCollection::default();
         coll.collection_props.items = serde_json::to_value(acts)?;
@@ -380,13 +384,19 @@ impl User {
             .collect::<Vec<String>>())
     }
 
-    fn get_activities(&self, conn: &Connection) -> Result<Vec<serde_json::Value>> {
+    fn get_activities_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<Vec<serde_json::Value>> {
         use schema::post_authors;
         use schema::posts;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table
             .filter(posts::published.eq(true))
             .filter(posts::id.eq_any(posts_by_self))
+            .offset(min.into())
+            .limit((max - min).into())
             .load::<Post>(conn)?;
         Ok(posts
             .into_iter()
