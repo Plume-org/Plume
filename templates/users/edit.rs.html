@@ -18,11 +18,11 @@
             <!-- Rocket hack to use various HTTP methods -->
             <input type=hidden name="_method" value="put">
 
-            @(Input::new("display_name", i18n!(ctx.1, ""))
+            @(Input::new("display_name", i18n!(ctx.1, "Display name"))
                 .default(&form.display_name)
                 .error(&errors)
                 .html(ctx.1))
-            @(Input::new("email", i18n!(ctx.1, ""))
+            @(Input::new("email", i18n!(ctx.1, "Email"))
                 .default(&form.email)
                 .error(&errors)
                 .input_type("email")
