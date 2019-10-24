@@ -17,9 +17,7 @@ use std::{
 };
 use template_utils::Ructe;
 
-use plume_models::{posts::Post, Connection};
-
-const ITEMS_PER_PAGE: i32 = 12;
+use plume_models::{posts::Post, Connection, ITEMS_PER_PAGE};
 
 /// Special return type used for routes that "cannot fail", and instead
 /// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response

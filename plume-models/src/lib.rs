@@ -75,7 +75,7 @@ impl From<bcrypt::BcryptError> for Error {
         Error::Signature
     }
 }
-
+pub const ITEMS_PER_PAGE: i32 = 12;
 impl From<openssl::error::ErrorStack> for Error {
     fn from(_: openssl::error::ErrorStack) -> Self {
         Error::Signature

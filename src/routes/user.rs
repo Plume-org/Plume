@@ -1,4 +1,7 @@
-use activitypub::{activity::Create, collection::OrderedCollection};
+use activitypub::{
+    activity::Create,
+    collection::{OrderedCollection, OrderedCollectionPage},
+};
 use atom_syndication::{Entry, FeedBuilder};
 use diesel::SaveChangesDsl;
 use rocket::{
@@ -548,17 +551,20 @@ pub fn create(
         })
 }
 
-#[get("/@/<name>/outbox?<page>")]
-pub fn outbox(
-    name: String,
-    page: Option<Page>,
-    rockets: PlumeRocket,
-) -> Option<ActivityStream<OrderedCollection>> {
+#[get("/@/<name>/outbox")]
+pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<OrderedCollection>> {
     let user = User::find_by_fqn(&rockets, &name).ok()?;
-    let page = page.unwrap_or_default();
+    user.outbox(&*rockets.conn).ok()
+}
+#[get("/@/<name>/outbox?<page>")]
+pub fn outbox_page(
+    name: String,
+    page: Page,
+    rockets: PlumeRocket,
+) -> Option<ActivityStream<OrderedCollectionPage>> {
+    let user = User::find_by_fqn(&rockets, &name).ok()?;
     user.outbox_page(&*rockets.conn, page.limits()).ok()
 }
-
 #[post("/@/<name>/inbox", data = "<data>")]
 pub fn inbox(
     name: String,

@@ -1,7 +1,7 @@
 use activitypub::{
     activity::Delete,
     actor::Person,
-    collection::OrderedCollection,
+    collection::{OrderedCollection, OrderedCollectionPage},
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
@@ -49,7 +49,7 @@ use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
 use timeline::Timeline;
-use {ap_url, Connection, Error, PlumeRocket, Result};
+use {ap_url, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -320,17 +320,46 @@ impl User {
             .load::<User>(conn)
             .map_err(Error::from)
     }
-
+    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        let mut coll = OrderedCollection::default();
+        let first = ap_url(&format!("{}?page=1", &self.outbox_url));
+        let last = ap_url(&format!(
+            "{}?page={}",
+            &self.outbox_url,
+            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE)
+        ));
+        coll.collection_props.set_first_link(Id::new(first))?;
+        coll.collection_props.set_last_link(Id::new(last))?;
+        coll.collection_props
+            .set_total_items_u64(self.get_activities_count(&conn) as u64)?;
+        Ok(ActivityStream::new(coll))
+    }
     pub fn outbox_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
-    ) -> Result<ActivityStream<OrderedCollection>> {
+    ) -> Result<ActivityStream<OrderedCollectionPage>> {
         let acts = self.get_activities_page(conn, (min, max))?;
-        let n_acts = acts.len();
-        let mut coll = OrderedCollection::default();
+        let mut coll = OrderedCollectionPage::default();
+        if acts.len() >= ITEMS_PER_PAGE as usize {
+            coll.collection_page_props
+                .set_next_link(Id::new(ap_url(&format!(
+                    "{}?page={}",
+                    &self.outbox_url,
+                    min / ITEMS_PER_PAGE + 1
+                ))))?;
+        }
+        if min > 0 {
+            coll.collection_page_props
+                .set_prev_link(Id::new(ap_url(&format!(
+                    "{}?page={}",
+                    &self.outbox_url,
+                    min / ITEMS_PER_PAGE - 1
+                ))))?;
+        }
         coll.collection_props.items = serde_json::to_value(acts)?;
-        coll.collection_props.set_total_items_u64(n_acts as u64)?;
+        coll.collection_page_props
+            .set_part_of_link(Id::new(ap_url(&self.outbox_url)))?;
         Ok(ActivityStream::new(coll))
     }
 
@@ -383,7 +412,17 @@ impl User {
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<String>>())
     }
-
+    fn get_activities_count(&self, conn: &Connection) -> i64 {
+        use schema::post_authors;
+        use schema::posts;
+        let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
+        posts::table
+            .filter(posts::published.eq(true))
+            .filter(posts::id.eq_any(posts_by_self))
+            .count()
+            .first(conn)
+            .unwrap()
+    }
     fn get_activities_page(
         &self,
         conn: &Connection,
@@ -395,6 +434,7 @@ impl User {
         let posts = posts::table
             .filter(posts::published.eq(true))
             .filter(posts::id.eq_any(posts_by_self))
+            .order(posts::creation_date.desc())
             .offset(min.into())
             .limit((max - min).into())
             .load::<Post>(conn)?;
