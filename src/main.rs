@@ -239,6 +239,7 @@ Then try to restart Plume
                 routes::theme_files,
                 routes::plume_static_files,
                 routes::static_files,
+                routes::plume_media_files,
                 routes::tags::tag,
                 routes::timelines::details,
                 routes::timelines::new,
