@@ -3,7 +3,7 @@ use multipart::server::{
     save::{SaveResult, SavedData},
     Multipart,
 };
-use plume_models::{db_conn::DbConn, medias::*, users::User, Error, PlumeRocket};
+use plume_models::{db_conn::DbConn, medias::*, users::User, Error, PlumeRocket, CONFIG};
 use rocket::{
     http::ContentType,
     response::{status, Flash, Redirect},
@@ -72,7 +72,12 @@ pub fn upload(
                     .map(|ext| format!(".{}", ext))
             })
             .unwrap_or_default();
-        let dest = format!("static/media/{}{}", GUID::rand().to_string(), ext);
+        let dest = format!(
+            "{}/{}{}",
+            CONFIG.media_directory,
+            GUID::rand().to_string(),
+            ext
+        );
 
         match fields["file"][0].data {
             SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)

@@ -17,8 +17,7 @@ use std::{
 };
 use template_utils::Ructe;
 
-use plume_models::{posts::Post, Connection};
-
+use plume_models::{posts::Post, Connection, CONFIG};
 const ITEMS_PER_PAGE: i32 = 12;
 
 /// Special return type used for routes that "cannot fail", and instead
@@ -212,7 +211,15 @@ pub fn theme_files(file: PathBuf, _build_id: &RawStr) -> Option<ThemeFile> {
 pub fn plume_static_files(file: PathBuf, _build_id: &RawStr) -> Option<CachedFile> {
     static_files(file)
 }
-
+#[get("/static/media/<file..>")]
+pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
+    NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
+        .ok()
+        .map(|f| CachedFile {
+            inner: f,
+            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+        })
+}
 #[get("/static/<file..>", rank = 3)]
 pub fn static_files(file: PathBuf) -> Option<CachedFile> {
     NamedFile::open(Path::new("static/").join(file))
