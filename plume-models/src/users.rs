@@ -340,19 +340,20 @@ impl User {
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         let acts = self.get_activities_page(conn, (min, max))?;
+        let n_acts = self.get_activities_count(&conn);
         let mut coll = OrderedCollectionPage::default();
-        if acts.len() >= ITEMS_PER_PAGE as usize {
+        if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
             coll.collection_page_props.set_next_link(Id::new(&format!(
                 "{}?page={}",
                 &self.outbox_url,
-                min / ITEMS_PER_PAGE + 1
+                min / ITEMS_PER_PAGE + 2
             )))?;
         }
         if min > 0 {
             coll.collection_page_props.set_prev_link(Id::new(&format!(
                 "{}?page={}",
                 &self.outbox_url,
-                min / ITEMS_PER_PAGE - 1
+                min / ITEMS_PER_PAGE
             )))?;
         }
         coll.collection_props.items = serde_json::to_value(acts)?;
@@ -415,9 +416,13 @@ impl User {
                     break;
                 }
                 items.extend(page.drain(..));
-                match nxt {
-                    Some(n) => next = n,
-                    None => break,
+                if let Some(n) = nxt {
+                    if n == next {
+                        break;
+                    }
+                    next = n;
+                } else {
+                    break;
                 }
             }
             Ok(items)
