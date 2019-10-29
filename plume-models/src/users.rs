@@ -326,7 +326,7 @@ impl User {
         let last = &format!(
             "{}?page={}",
             &self.outbox_url,
-            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE)
+            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE) + 1
         );
         coll.collection_props.set_first_link(Id::new(first))?;
         coll.collection_props.set_last_link(Id::new(last))?;
