@@ -322,12 +322,12 @@ impl User {
     }
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
         let mut coll = OrderedCollection::default();
-        let first = ap_url(&format!("{}?page=1", &self.outbox_url));
-        let last = ap_url(&format!(
+        let first = &format!("{}?page=1", &self.outbox_url);
+        let last = &format!(
             "{}?page={}",
             &self.outbox_url,
             self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE)
-        ));
+        );
         coll.collection_props.set_first_link(Id::new(first))?;
         coll.collection_props.set_last_link(Id::new(last))?;
         coll.collection_props
@@ -342,27 +342,54 @@ impl User {
         let acts = self.get_activities_page(conn, (min, max))?;
         let mut coll = OrderedCollectionPage::default();
         if acts.len() >= ITEMS_PER_PAGE as usize {
-            coll.collection_page_props
-                .set_next_link(Id::new(ap_url(&format!(
-                    "{}?page={}",
-                    &self.outbox_url,
-                    min / ITEMS_PER_PAGE + 1
-                ))))?;
+            coll.collection_page_props.set_next_link(Id::new(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                min / ITEMS_PER_PAGE + 1
+            )))?;
         }
         if min > 0 {
-            coll.collection_page_props
-                .set_prev_link(Id::new(ap_url(&format!(
-                    "{}?page={}",
-                    &self.outbox_url,
-                    min / ITEMS_PER_PAGE - 1
-                ))))?;
+            coll.collection_page_props.set_prev_link(Id::new(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                min / ITEMS_PER_PAGE - 1
+            )))?;
         }
         coll.collection_props.items = serde_json::to_value(acts)?;
         coll.collection_page_props
-            .set_part_of_link(Id::new(ap_url(&self.outbox_url)))?;
+            .set_part_of_link(Id::new(&self.outbox_url))?;
         Ok(ActivityStream::new(coll))
     }
+    fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
+            .get(url)
+            .header(
+                ACCEPT,
+                HeaderValue::from_str(
+                    &ap_accept_header()
+                        .into_iter()
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                )?,
+            )
+            .send()?;
+        let text = &res.text()?;
+        let json: serde_json::Value = serde_json::from_str(text)?;
+        let items = json["items"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .iter()
+            .filter_map(|j| serde_json::from_value(j.clone()).ok())
+            .collect::<Vec<T>>();
 
+        let next = match json.get("next") {
+            Some(x) => Some(x.as_str().unwrap().to_owned()),
+            None => None,
+        };
+        Ok((items, next))
+    }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
         let mut res = ClientBuilder::new()
             .connect_timeout(Some(std::time::Duration::from_secs(5)))
@@ -380,12 +407,28 @@ impl User {
             .send()?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
-        Ok(json["items"]
-            .as_array()
-            .unwrap_or(&vec![])
-            .iter()
-            .filter_map(|j| serde_json::from_value(j.clone()).ok())
-            .collect::<Vec<T>>())
+        if let Some(first) = json.get("first") {
+            let mut items: Vec<T> = Vec::new();
+            let mut next = first.as_str().unwrap().to_owned();
+            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
+                if page.is_empty() {
+                    break;
+                }
+                items.extend(page.drain(..));
+                match nxt {
+                    Some(n) => next = n,
+                    None => break,
+                }
+            }
+            Ok(items)
+        } else {
+            Ok(json["items"]
+                .as_array()
+                .unwrap_or(&vec![])
+                .iter()
+                .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                .collect::<Vec<T>>())
+        }
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
