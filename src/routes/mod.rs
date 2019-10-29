@@ -1,5 +1,6 @@
 #![warn(clippy::too_many_arguments)]
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
+use plume_models::{posts::Post, Connection, CONFIG, ITEMS_PER_PAGE};
 use rocket::{
     http::{
         hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
@@ -16,7 +17,6 @@ use std::{
     path::{Path, PathBuf},
 };
 use template_utils::Ructe;
-use plume_models::{posts::Post, Connection, ITEMS_PER_PAGE};
 
 /// Special return type used for routes that "cannot fail", and instead
 /// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response

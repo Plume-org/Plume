@@ -352,9 +352,10 @@ pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<Order
 pub fn outbox_page(
     name: String,
     page: Page,
-    _rockets: PlumeRocket,
+    rockets: PlumeRocket,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
-    None
+    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    Some(blog.outbox_page(&*rockets.conn, page.limits()).ok()?)
 }
 #[get("/~/<name>/atom.xml")]
 pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {

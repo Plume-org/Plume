@@ -226,7 +226,7 @@ impl Blog {
         coll.collection_props
             .set_total_items_u64(self.get_activities(conn)?.len() as u64)?;
         coll.collection_props
-            .set_first_link(Id::new(ap_url(&format!("{}?page=0", &self.outbox_url))))?;
+            .set_first_link(Id::new(ap_url(&format!("{}?page=1", &self.outbox_url))))?;
         coll.collection_props
             .set_last_link(Id::new(ap_url(&format!(
                 "{}?page={}",
