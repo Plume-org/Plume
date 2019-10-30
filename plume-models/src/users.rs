@@ -1,7 +1,7 @@
 use activitypub::{
     activity::Delete,
     actor::Person,
-    collection::OrderedCollection,
+    collection::{OrderedCollection, OrderedCollectionPage},
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
@@ -49,7 +49,7 @@ use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
 use timeline::Timeline;
-use {ap_url, Connection, Error, PlumeRocket, Result};
+use {ap_url, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -320,16 +320,77 @@ impl User {
             .load::<User>(conn)
             .map_err(Error::from)
     }
-
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        let acts = self.get_activities(conn)?;
-        let n_acts = acts.len();
         let mut coll = OrderedCollection::default();
-        coll.collection_props.items = serde_json::to_value(acts)?;
-        coll.collection_props.set_total_items_u64(n_acts as u64)?;
+        let first = &format!("{}?page=1", &self.outbox_url);
+        let last = &format!(
+            "{}?page={}",
+            &self.outbox_url,
+            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE) + 1
+        );
+        coll.collection_props.set_first_link(Id::new(first))?;
+        coll.collection_props.set_last_link(Id::new(last))?;
+        coll.collection_props
+            .set_total_items_u64(self.get_activities_count(&conn) as u64)?;
         Ok(ActivityStream::new(coll))
     }
+    pub fn outbox_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<ActivityStream<OrderedCollectionPage>> {
+        let acts = self.get_activities_page(conn, (min, max))?;
+        let n_acts = self.get_activities_count(&conn);
+        let mut coll = OrderedCollectionPage::default();
+        if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
+            coll.collection_page_props.set_next_link(Id::new(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                min / ITEMS_PER_PAGE + 2
+            )))?;
+        }
+        if min > 0 {
+            coll.collection_page_props.set_prev_link(Id::new(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                min / ITEMS_PER_PAGE
+            )))?;
+        }
+        coll.collection_props.items = serde_json::to_value(acts)?;
+        coll.collection_page_props
+            .set_part_of_link(Id::new(&self.outbox_url))?;
+        Ok(ActivityStream::new(coll))
+    }
+    fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
+            .get(url)
+            .header(
+                ACCEPT,
+                HeaderValue::from_str(
+                    &ap_accept_header()
+                        .into_iter()
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                )?,
+            )
+            .send()?;
+        let text = &res.text()?;
+        let json: serde_json::Value = serde_json::from_str(text)?;
+        let items = json["items"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .iter()
+            .filter_map(|j| serde_json::from_value(j.clone()).ok())
+            .collect::<Vec<T>>();
 
+        let next = match json.get("next") {
+            Some(x) => Some(x.as_str().unwrap().to_owned()),
+            None => None,
+        };
+        Ok((items, next))
+    }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
         let mut res = ClientBuilder::new()
             .connect_timeout(Some(std::time::Duration::from_secs(5)))
@@ -347,12 +408,32 @@ impl User {
             .send()?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
-        Ok(json["items"]
-            .as_array()
-            .unwrap_or(&vec![])
-            .iter()
-            .filter_map(|j| serde_json::from_value(j.clone()).ok())
-            .collect::<Vec<T>>())
+        if let Some(first) = json.get("first") {
+            let mut items: Vec<T> = Vec::new();
+            let mut next = first.as_str().unwrap().to_owned();
+            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
+                if page.is_empty() {
+                    break;
+                }
+                items.extend(page.drain(..));
+                if let Some(n) = nxt {
+                    if n == next {
+                        break;
+                    }
+                    next = n;
+                } else {
+                    break;
+                }
+            }
+            Ok(items)
+        } else {
+            Ok(json["items"]
+                .as_array()
+                .unwrap_or(&vec![])
+                .iter()
+                .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                .collect::<Vec<T>>())
+        }
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
@@ -379,14 +460,31 @@ impl User {
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<String>>())
     }
-
-    fn get_activities(&self, conn: &Connection) -> Result<Vec<serde_json::Value>> {
+    fn get_activities_count(&self, conn: &Connection) -> i64 {
+        use schema::post_authors;
+        use schema::posts;
+        let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
+        posts::table
+            .filter(posts::published.eq(true))
+            .filter(posts::id.eq_any(posts_by_self))
+            .count()
+            .first(conn)
+            .unwrap()
+    }
+    fn get_activities_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<Vec<serde_json::Value>> {
         use schema::post_authors;
         use schema::posts;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table
             .filter(posts::published.eq(true))
             .filter(posts::id.eq_any(posts_by_self))
+            .order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
             .load::<Post>(conn)?;
         Ok(posts
             .into_iter()

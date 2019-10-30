@@ -1,4 +1,4 @@
-use activitypub::collection::OrderedCollection;
+use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
 use atom_syndication::{Entry, FeedBuilder};
 use diesel::SaveChangesDsl;
 use rocket::{
@@ -347,7 +347,16 @@ pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<Order
     let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
     Some(blog.outbox(&*rockets.conn).ok()?)
 }
-
+#[allow(unused_variables)]
+#[get("/~/<name>/outbox?<page>")]
+pub fn outbox_page(
+    name: String,
+    page: Page,
+    rockets: PlumeRocket,
+) -> Option<ActivityStream<OrderedCollectionPage>> {
+    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    Some(blog.outbox_page(&*rockets.conn, page.limits()).ok()?)
+}
 #[get("/~/<name>/atom.xml")]
 pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
     let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
