@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+use serde_json;
 use stdweb::{
     unstable::{TryFrom, TryInto},
     web::{event::*, html_element::*, *},
@@ -62,7 +64,121 @@ impl From<stdweb::private::ConversionError> for EditorError {
         EditorError::TypeError
     }
 }
-
+#[derive(Serialize, Deserialize)]
+struct AutosaveInformation {
+    contents: String,
+    title: String,
+    last_saved: f64,
+}
+js_serializable!(AutosaveInformation);
+fn get_title_contents() -> String {
+    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
+        if basic_editor == "true" {
+            return InputElement::try_from(document().get_element_by_id("title").unwrap())
+                .ok()
+                .unwrap()
+                .raw_value();
+        }
+    }
+    let title_field = HtmlElement::try_from(
+        document()
+            .query_selector("#plume-editor > h1")
+            .ok()
+            .unwrap()
+            .unwrap(),
+    )
+    .ok()
+    .unwrap();
+    title_field.inner_text()
+}
+fn get_autosave_id() -> String {
+    format!(
+        "editor_contents={}",
+        window().location().unwrap().pathname().unwrap()
+    )
+}
+fn get_editor_contents() -> String {
+    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
+        if basic_editor == "true" {
+            console!(log, "Found basic editor");
+            let editor =
+                TextAreaElement::try_from(document().get_element_by_id("editor-content").unwrap())
+                    .ok()
+                    .unwrap();
+            console!(log, "Found the thing");
+            return editor.value();
+        }
+        return String::new();
+    } else {
+        let editor =
+            HtmlElement::try_from(document().query_selector("article").ok().unwrap().unwrap())
+                .ok()
+                .unwrap();
+        editor.child_nodes().iter().fold(String::new(), |md, ch| {
+            let to_append = match ch.node_type() {
+                NodeType::Element => {
+                    if js! { return @{&ch}.tagName; } == "DIV" {
+                        (js! { return @{&ch}.innerHTML; })
+                            .try_into()
+                            .unwrap_or_default()
+                    } else {
+                        (js! { return @{&ch}.outerHTML; })
+                            .try_into()
+                            .unwrap_or_default()
+                    }
+                }
+                NodeType::Text => ch.node_value().unwrap_or_default(),
+                _ => unreachable!(),
+            };
+            format!("{}\n\n{}", md, to_append)
+        })
+    }
+}
+fn autosave() {
+    let mut info: AutosaveInformation = AutosaveInformation {
+        contents: String::new(),
+        title: String::new(),
+        last_saved: Date::now(),
+    };
+    info.contents = get_editor_contents();
+    info.title = get_title_contents();
+    let id = get_autosave_id();
+    match window()
+        .local_storage()
+        .insert(&id, &serde_json::to_string(&info).unwrap())
+    {
+        Ok(_) => {}
+        _ => console!(log, "Autosave failed D:"),
+    }
+    window().set_timeout(autosave, 15000);
+}
+fn load_autosave() {
+    if let Some(autosave_str) = window().local_storage().get(&get_autosave_id()) {
+        let autosave_info: AutosaveInformation = serde_json::from_str(&autosave_str).ok().unwrap();
+        if js! {return confirm(@{format!("Do you want to load the local autosave last edited at {}?",
+        Date::from_time(autosave_info.last_saved).to_date_string())})}
+            == true
+        {
+            let editor: TextAreaElement =
+                TextAreaElement::try_from(document().get_element_by_id("editor-content").unwrap())
+                    .ok()
+                    .unwrap();
+            editor.set_value(&autosave_info.contents);
+            let title: InputElement =
+                InputElement::try_from(document().get_element_by_id("title").unwrap())
+                    .ok()
+                    .unwrap();
+            title.set_raw_value(&autosave_info.title);
+            console!(log, "Loaded autosave.");
+        } else {
+            clear_autosave();
+        }
+    }
+}
+fn clear_autosave() {
+    window().local_storage().remove(&get_autosave_id());
+    console!(log, &format!("Saved to {}", &get_autosave_id()));
+}
 fn init_widget(
     parent: &Element,
     tag: &'static str,
@@ -100,6 +216,11 @@ fn filter_paste(elt: &HtmlElement) {
 }
 
 pub fn init() -> Result<(), EditorError> {
+    if let Some(ed) = document().get_element_by_id("plume-fallback-editor") {
+        window().set_timeout(autosave, 15000);
+        load_autosave();
+        ed.add_event_listener(|_: SubmitEvent| clear_autosave());
+    }
     // Check if the user wants to use the basic editor
     if let Some(basic_editor) = window().local_storage().get("basic-editor") {
         if basic_editor == "true" {
@@ -305,6 +426,7 @@ fn init_popup(
             cover.parent_element().unwrap().remove_child(&cover).ok();
             old_ed.append_child(&cover);
             set_value("license", get_elt_value("popup-license"));
+            clear_autosave();
             js! {
                 @{&old_ed}.submit();
             };
