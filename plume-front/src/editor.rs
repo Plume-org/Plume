@@ -26,9 +26,14 @@ fn get_elt_value(id: &'static str) -> String {
 fn set_value<S: AsRef<str>>(id: &'static str, val: S) {
     let elt = document().get_element_by_id(id).unwrap();
     let inp: Result<InputElement, _> = elt.clone().try_into();
-    let textarea: Result<TextAreaElement, _> = elt.try_into();
+    let textarea: Result<TextAreaElement, _> = elt.clone().try_into();
+    let select: Result<SelectElement, _> = elt.try_into();
     inp.map(|i| i.set_raw_value(val.as_ref()))
-        .unwrap_or_else(|_| textarea.unwrap().set_value(val.as_ref()))
+        .unwrap_or_else(|_| {
+            textarea
+                .map(|t| t.set_value(val.as_ref()))
+                .unwrap_or_else(|_| select.unwrap().set_raw_value(val.as_ref()))
+        })
 }
 
 fn no_return(evt: KeyDownEvent) {
@@ -160,24 +165,11 @@ fn get_subtitle() -> String {
         subtitle_element.inner_text()
     }
 }
-fn set_subtitle(sub: &str) {
-    let subtitle: InputElement =
-        InputElement::try_from(document().get_element_by_id("subtitle").unwrap())
-            .ok()
-            .unwrap();
-    subtitle.set_raw_value(sub);
-}
 fn get_tags() -> String {
     let tags: InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap())
         .ok()
         .unwrap();
     tags.raw_value()
-}
-fn set_tags(tag_str: &str) {
-    let tags: InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap())
-        .ok()
-        .unwrap();
-    tags.set_raw_value(tag_str);
 }
 fn get_license() -> String {
     let license: InputElement =
@@ -187,13 +179,6 @@ fn get_license() -> String {
     console!(log, "Got license");
     license.raw_value()
 }
-fn set_license(lic: &str) {
-    let license: InputElement =
-        InputElement::try_from(document().get_element_by_id("license").unwrap())
-            .ok()
-            .unwrap();
-    license.set_raw_value(lic);
-}
 fn get_cover() -> String {
     let cover: SelectElement =
         SelectElement::try_from(document().get_element_by_id("cover").unwrap())
@@ -201,13 +186,6 @@ fn get_cover() -> String {
             .unwrap();
     console!(log, "Got cover");
     cover.raw_value()
-}
-fn set_cover(new_cover: &str) {
-    let cover: SelectElement =
-        SelectElement::try_from(document().get_element_by_id("cover").unwrap())
-            .ok()
-            .unwrap();
-    cover.set_raw_value(new_cover);
 }
 fn autosave() {
     let info: AutosaveInformation = AutosaveInformation {
@@ -228,27 +206,28 @@ fn autosave() {
         _ => console!(log, "Autosave failed D:"),
     }
 }
+//This is only necessary until we go to stdweb 4.20 at least
+fn confirm(message: &str) -> bool {
+    return js! {return confirm(@{message});} == true;
+}
 fn load_autosave() {
     if let Some(autosave_str) = window().local_storage().get(&get_autosave_id()) {
         let autosave_info: AutosaveInformation = serde_json::from_str(&autosave_str).ok().unwrap();
-        if js! {return confirm(@{format!("Do you want to load the local autosave last edited at {}?",
-        Date::from_time(autosave_info.last_saved).to_date_string())})}
-            == true
-        {
-            let editor: TextAreaElement =
-                TextAreaElement::try_from(document().get_element_by_id("editor-content").unwrap())
-                    .ok()
-                    .unwrap();
-            editor.set_value(&autosave_info.contents);
-            let title: InputElement =
-                InputElement::try_from(document().get_element_by_id("title").unwrap())
-                    .ok()
-                    .unwrap();
-            title.set_raw_value(&autosave_info.title);
-            set_subtitle(&autosave_info.subtitle);
-            set_tags(&autosave_info.tags);
-            set_license(&autosave_info.license);
-            set_cover(&autosave_info.cover);
+        let message = format!(
+            "{} {}?",
+            i18n!(
+                CATALOG,
+                "Do you want to load the local autosave last edited at"
+            ),
+            Date::from_time(autosave_info.last_saved).to_date_string()
+        );
+        if confirm(&message) {
+            set_value("editor-content", &autosave_info.contents);
+            set_value("title", &autosave_info.title);
+            set_value("subtitle", &autosave_info.subtitle);
+            set_value("tags", &autosave_info.tags);
+            set_value("license", &autosave_info.license);
+            set_value("cover", &autosave_info.cover);
             console!(log, "Loaded autosave.");
         } else {
             clear_autosave();
@@ -258,6 +237,14 @@ fn load_autosave() {
 fn clear_autosave() {
     window().local_storage().remove(&get_autosave_id());
     console!(log, &format!("Saved to {}", &get_autosave_id()));
+}
+static mut AUTOSAVE_TIMEOUT: Option<TimeoutHandle> = None;
+
+unsafe fn autosave_debounce(interval: u32) {
+    if let Some(timeout) = AUTOSAVE_TIMEOUT.take() {
+        timeout.clear();
+    }
+    AUTOSAVE_TIMEOUT = Some(window().set_clearable_timeout(autosave, interval));
 }
 fn init_widget(
     parent: &Element,
@@ -297,9 +284,6 @@ fn filter_paste(elt: &HtmlElement) {
 
 pub fn init() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-fallback-editor") {
-        js! {
-            setInterval(@{autosave},15000);
-        }
         load_autosave();
         ed.add_event_listener(|_: SubmitEvent| clear_autosave());
     }
@@ -318,6 +302,12 @@ pub fn init() -> Result<(), EditorError> {
                         &document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")),
                     );
                     editor.insert_before(&editor_button, &title_label).ok();
+                    document()
+                        .get_element_by_id("editor-content")
+                        .unwrap()
+                        .add_event_listener(|_: KeyDownEvent| unsafe {
+                            autosave_debounce(5000);
+                        });
                     return Ok(());
                 }
             }
@@ -373,6 +363,7 @@ fn init_editor() -> Result<(), EditorError> {
                     }).ok();
                 };
             }), 0);
+            unsafe {autosave_debounce(5000);}
         }));
 
         document().get_element_by_id("publish")?.add_event_listener(
