@@ -67,23 +67,23 @@ impl From<stdweb::private::ConversionError> for EditorError {
 #[derive(Serialize, Deserialize)]
 struct AutosaveInformation {
     contents: String,
+    cover: String,
     last_saved: f64,
-    license:String,
-    subtitle:String,
-    tags:String,
+    license: String,
+    subtitle: String,
+    tags: String,
     title: String,
-
 }
 js_serializable!(AutosaveInformation);
-fn is_basic_editor()->bool{
-    if let Some(basic_editor) = window().local_storage().get("basic-editor"){
+fn is_basic_editor() -> bool {
+    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
         basic_editor == "true"
-    }else{
+    } else {
         false
     }
 }
 fn get_title() -> String {
-    if is_basic_editor(){
+    if is_basic_editor() {
         return InputElement::try_from(document().get_element_by_id("title").unwrap())
             .ok()
             .unwrap()
@@ -143,48 +143,93 @@ fn get_editor_contents() -> String {
         })
     }
 }
-fn get_subtitle()->String{
-    if is_basic_editor(){
-        let subtitle:InputElement=InputElement::try_from(document().get_element_by_id("subtitle").unwrap()).ok().unwrap();
+fn get_subtitle() -> String {
+    if is_basic_editor() {
+        let subtitle: InputElement =
+            InputElement::try_from(document().get_element_by_id("subtitle").unwrap())
+                .ok()
+                .unwrap();
         subtitle.raw_value()
-    }else{
-        let subtitle_element=HtmlElement::try_from(document().query_selector("#plume-editor > h2").unwrap().unwrap()).ok().unwrap();
+    } else {
+        let subtitle_element = HtmlElement::try_from(
+            document()
+                .query_selector("#plume-editor > h2")
+                .unwrap()
+                .unwrap(),
+        )
+        .ok()
+        .unwrap();
         subtitle_element.inner_text()
     }
 }
-fn set_subtitle(sub:&str){
-    if is_basic_editor(){
-        let subtitle:InputElement=InputElement::try_from(document().get_element_by_id("subtitle").unwrap()).ok().unwrap();
+fn set_subtitle(sub: &str) {
+    if is_basic_editor() {
+        let subtitle: InputElement =
+            InputElement::try_from(document().get_element_by_id("subtitle").unwrap())
+                .ok()
+                .unwrap();
         subtitle.set_raw_value(sub);
-    }else{
-        let subtitle_element=HtmlElement::try_from(document().query_selector("#plume-editor > h2").unwrap().unwrap()).ok().unwrap();
-        js!{@{subtitle_element}.inner_text=@{sub}}
+    } else {
+        let subtitle_element = HtmlElement::try_from(
+            document()
+                .query_selector("#plume-editor > h2")
+                .unwrap()
+                .unwrap(),
+        )
+        .ok()
+        .unwrap();
+        js! {@{subtitle_element}.inner_text=@{sub}}
     }
 }
-fn get_tags()->String{
-    let tags:InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap()).ok().unwrap();
+fn get_tags() -> String {
+    let tags: InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap())
+        .ok()
+        .unwrap();
     tags.raw_value()
 }
-fn set_tags(tag_str:&str){
-    let tags:InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap()).ok().unwrap();
+fn set_tags(tag_str: &str) {
+    let tags: InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap())
+        .ok()
+        .unwrap();
     tags.set_raw_value(tag_str);
 }
-fn get_license()->String{
-    let license:InputElement = InputElement::try_from(document().get_element_by_id("license").unwrap()).ok().unwrap();
+fn get_license() -> String {
+    let license: InputElement =
+        InputElement::try_from(document().get_element_by_id("license").unwrap())
+            .ok()
+            .unwrap();
     license.raw_value()
 }
-fn set_license(lic:&str){
-    let license:InputElement = InputElement::try_from(document().get_element_by_id("license").unwrap()).ok().unwrap();
+fn set_license(lic: &str) {
+    let license: InputElement =
+        InputElement::try_from(document().get_element_by_id("license").unwrap())
+            .ok()
+            .unwrap();
     license.set_raw_value(lic);
+}
+fn get_cover() -> String {
+    let cover: InputElement =
+        InputElement::try_from(document().get_element_by_id("cover").unwrap())
+            .ok()
+            .unwrap();
+    cover.raw_value()
+}
+fn set_cover(new_cover: &str) {
+    let cover: InputElement =
+        InputElement::try_from(document().get_element_by_id("cover").unwrap())
+            .ok()
+            .unwrap();
+    cover.set_raw_value(new_cover);
 }
 fn autosave() {
     let info: AutosaveInformation = AutosaveInformation {
         contents: get_editor_contents(),
         title: get_title(),
-        subtitle:get_subtitle(),
+        subtitle: get_subtitle(),
         tags: get_tags(),
-        license:get_license(),
+        license: get_license(),
         last_saved: Date::now(),
+        cover: get_cover(),
     };
     let id = get_autosave_id();
     match window()
@@ -215,6 +260,7 @@ fn load_autosave() {
             set_subtitle(&autosave_info.subtitle);
             set_tags(&autosave_info.tags);
             set_license(&autosave_info.license);
+            set_cover(&autosave_info.cover);
             console!(log, "Loaded autosave.");
         } else {
             clear_autosave();
@@ -263,7 +309,7 @@ fn filter_paste(elt: &HtmlElement) {
 
 pub fn init() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-fallback-editor") {
-        js!{
+        js! {
             setInterval(@{autosave},15000);
         }
         load_autosave();
