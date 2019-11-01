@@ -67,18 +67,27 @@ impl From<stdweb::private::ConversionError> for EditorError {
 #[derive(Serialize, Deserialize)]
 struct AutosaveInformation {
     contents: String,
-    title: String,
     last_saved: f64,
+    license:String,
+    subtitle:String,
+    tags:String,
+    title: String,
+
 }
 js_serializable!(AutosaveInformation);
-fn get_title_contents() -> String {
-    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
-        if basic_editor == "true" {
-            return InputElement::try_from(document().get_element_by_id("title").unwrap())
-                .ok()
-                .unwrap()
-                .raw_value();
-        }
+fn is_basic_editor()->bool{
+    if let Some(basic_editor) = window().local_storage().get("basic-editor"){
+        basic_editor == "true"
+    }else{
+        false
+    }
+}
+fn get_title() -> String {
+    if is_basic_editor(){
+        return InputElement::try_from(document().get_element_by_id("title").unwrap())
+            .ok()
+            .unwrap()
+            .raw_value();
     }
     let title_field = HtmlElement::try_from(
         document()
@@ -134,14 +143,49 @@ fn get_editor_contents() -> String {
         })
     }
 }
+fn get_subtitle()->String{
+    if is_basic_editor(){
+        let subtitle:InputElement=InputElement::try_from(document().get_element_by_id("subtitle").unwrap()).ok().unwrap();
+        subtitle.raw_value()
+    }else{
+        let subtitle_element=HtmlElement::try_from(document().query_selector("#plume-editor > h2").unwrap().unwrap()).ok().unwrap();
+        subtitle_element.inner_text()
+    }
+}
+fn set_subtitle(sub:&str){
+    if is_basic_editor(){
+        let subtitle:InputElement=InputElement::try_from(document().get_element_by_id("subtitle").unwrap()).ok().unwrap();
+        subtitle.set_raw_value(sub);
+    }else{
+        let subtitle_element=HtmlElement::try_from(document().query_selector("#plume-editor > h2").unwrap().unwrap()).ok().unwrap();
+        js!{@{subtitle_element}.inner_text=@{sub}}
+    }
+}
+fn get_tags()->String{
+    let tags:InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap()).ok().unwrap();
+    tags.raw_value()
+}
+fn set_tags(tag_str:&str){
+    let tags:InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap()).ok().unwrap();
+    tags.set_raw_value(tag_str);
+}
+fn get_license()->String{
+    let license:InputElement = InputElement::try_from(document().get_element_by_id("license").unwrap()).ok().unwrap();
+    license.raw_value()
+}
+fn set_license(lic:&str){
+    let license:InputElement = InputElement::try_from(document().get_element_by_id("license").unwrap()).ok().unwrap();
+    license.set_raw_value(lic);
+}
 fn autosave() {
-    let mut info: AutosaveInformation = AutosaveInformation {
-        contents: String::new(),
-        title: String::new(),
+    let info: AutosaveInformation = AutosaveInformation {
+        contents: get_editor_contents(),
+        title: get_title(),
+        subtitle:get_subtitle(),
+        tags: get_tags(),
+        license:get_license(),
         last_saved: Date::now(),
     };
-    info.contents = get_editor_contents();
-    info.title = get_title_contents();
     let id = get_autosave_id();
     match window()
         .local_storage()
@@ -150,7 +194,6 @@ fn autosave() {
         Ok(_) => {}
         _ => console!(log, "Autosave failed D:"),
     }
-    window().set_timeout(autosave, 15000);
 }
 fn load_autosave() {
     if let Some(autosave_str) = window().local_storage().get(&get_autosave_id()) {
@@ -169,6 +212,9 @@ fn load_autosave() {
                     .ok()
                     .unwrap();
             title.set_raw_value(&autosave_info.title);
+            set_subtitle(&autosave_info.subtitle);
+            set_tags(&autosave_info.tags);
+            set_license(&autosave_info.license);
             console!(log, "Loaded autosave.");
         } else {
             clear_autosave();
@@ -217,7 +263,9 @@ fn filter_paste(elt: &HtmlElement) {
 
 pub fn init() -> Result<(), EditorError> {
     if let Some(ed) = document().get_element_by_id("plume-fallback-editor") {
-        window().set_timeout(autosave, 15000);
+        js!{
+            setInterval(@{autosave},15000);
+        }
         load_autosave();
         ed.add_event_listener(|_: SubmitEvent| clear_autosave());
     }
