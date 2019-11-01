@@ -107,17 +107,14 @@ fn get_autosave_id() -> String {
     )
 }
 fn get_editor_contents() -> String {
-    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
-        if basic_editor == "true" {
-            console!(log, "Found basic editor");
-            let editor =
-                TextAreaElement::try_from(document().get_element_by_id("editor-content").unwrap())
-                    .ok()
-                    .unwrap();
-            console!(log, "Found the thing");
-            return editor.value();
-        }
-        return String::new();
+    if is_basic_editor() {
+        console!(log, "Found basic editor");
+        let editor =
+            TextAreaElement::try_from(document().get_element_by_id("editor-content").unwrap())
+                .ok()
+                .unwrap();
+        console!(log, "Found the thing");
+        editor.value()
     } else {
         let editor =
             HtmlElement::try_from(document().query_selector("article").ok().unwrap().unwrap())
@@ -149,6 +146,7 @@ fn get_subtitle() -> String {
             InputElement::try_from(document().get_element_by_id("subtitle").unwrap())
                 .ok()
                 .unwrap();
+        console!(log, "Got subtitle");
         subtitle.raw_value()
     } else {
         let subtitle_element = HtmlElement::try_from(
@@ -163,23 +161,11 @@ fn get_subtitle() -> String {
     }
 }
 fn set_subtitle(sub: &str) {
-    if is_basic_editor() {
-        let subtitle: InputElement =
-            InputElement::try_from(document().get_element_by_id("subtitle").unwrap())
-                .ok()
-                .unwrap();
-        subtitle.set_raw_value(sub);
-    } else {
-        let subtitle_element = HtmlElement::try_from(
-            document()
-                .query_selector("#plume-editor > h2")
-                .unwrap()
-                .unwrap(),
-        )
-        .ok()
-        .unwrap();
-        js! {@{subtitle_element}.inner_text=@{sub}}
-    }
+    let subtitle: InputElement =
+        InputElement::try_from(document().get_element_by_id("subtitle").unwrap())
+            .ok()
+            .unwrap();
+    subtitle.set_raw_value(sub);
 }
 fn get_tags() -> String {
     let tags: InputElement = InputElement::try_from(document().get_element_by_id("tags").unwrap())
@@ -198,6 +184,7 @@ fn get_license() -> String {
         InputElement::try_from(document().get_element_by_id("license").unwrap())
             .ok()
             .unwrap();
+    console!(log, "Got license");
     license.raw_value()
 }
 fn set_license(lic: &str) {
@@ -208,15 +195,16 @@ fn set_license(lic: &str) {
     license.set_raw_value(lic);
 }
 fn get_cover() -> String {
-    let cover: InputElement =
-        InputElement::try_from(document().get_element_by_id("cover").unwrap())
+    let cover: SelectElement =
+        SelectElement::try_from(document().get_element_by_id("cover").unwrap())
             .ok()
             .unwrap();
+    console!(log, "Got cover");
     cover.raw_value()
 }
 fn set_cover(new_cover: &str) {
-    let cover: InputElement =
-        InputElement::try_from(document().get_element_by_id("cover").unwrap())
+    let cover: SelectElement =
+        SelectElement::try_from(document().get_element_by_id("cover").unwrap())
             .ok()
             .unwrap();
     cover.set_raw_value(new_cover);
