@@ -1,3 +1,6 @@
+use serde::{Deserialize, Serialize};
+use serde_json;
+use std::sync::Mutex;
 use stdweb::{
     unstable::{TryFrom, TryInto},
     web::{event::*, html_element::*, *},
@@ -16,17 +19,26 @@ macro_rules! mv {
 fn get_elt_value(id: &'static str) -> String {
     let elt = document().get_element_by_id(id).unwrap();
     let inp: Result<InputElement, _> = elt.clone().try_into();
-    let textarea: Result<TextAreaElement, _> = elt.try_into();
-    inp.map(|i| i.raw_value())
-        .unwrap_or_else(|_| textarea.unwrap().value())
+    let textarea: Result<TextAreaElement, _> = elt.clone().try_into();
+    let select: Result<SelectElement, _> = elt.try_into();
+    inp.map(|i| i.raw_value()).unwrap_or_else(|_| {
+        textarea
+            .map(|t| t.value())
+            .unwrap_or_else(|_| select.unwrap().raw_value())
+    })
 }
 
 fn set_value<S: AsRef<str>>(id: &'static str, val: S) {
     let elt = document().get_element_by_id(id).unwrap();
     let inp: Result<InputElement, _> = elt.clone().try_into();
-    let textarea: Result<TextAreaElement, _> = elt.try_into();
+    let textarea: Result<TextAreaElement, _> = elt.clone().try_into();
+    let select: Result<SelectElement, _> = elt.try_into();
     inp.map(|i| i.set_raw_value(val.as_ref()))
-        .unwrap_or_else(|_| textarea.unwrap().set_value(val.as_ref()))
+        .unwrap_or_else(|_| {
+            textarea
+                .map(|t| t.set_value(val.as_ref()))
+                .unwrap_or_else(|_| select.unwrap().set_raw_value(val.as_ref()))
+        })
 }
 
 fn no_return(evt: KeyDownEvent) {
@@ -62,7 +74,148 @@ impl From<stdweb::private::ConversionError> for EditorError {
         EditorError::TypeError
     }
 }
-
+const AUTOSAVE_DEBOUNCE_TIME: u32 = 5000;
+#[derive(Serialize, Deserialize)]
+struct AutosaveInformation {
+    contents: String,
+    cover: String,
+    last_saved: f64,
+    license: String,
+    subtitle: String,
+    tags: String,
+    title: String,
+}
+js_serializable!(AutosaveInformation);
+fn is_basic_editor() -> bool {
+    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
+        basic_editor == "true"
+    } else {
+        false
+    }
+}
+fn get_title() -> String {
+    if is_basic_editor() {
+        get_elt_value("title")
+    } else {
+        let title_field = HtmlElement::try_from(
+            document()
+                .query_selector("#plume-editor > h1")
+                .ok()
+                .unwrap()
+                .unwrap(),
+        )
+        .ok()
+        .unwrap();
+        title_field.inner_text()
+    }
+}
+fn get_autosave_id() -> String {
+    format!(
+        "editor_contents={}",
+        window().location().unwrap().pathname().unwrap()
+    )
+}
+fn get_editor_contents() -> String {
+    if is_basic_editor() {
+        get_elt_value("editor-content")
+    } else {
+        let editor =
+            HtmlElement::try_from(document().query_selector("article").ok().unwrap().unwrap())
+                .ok()
+                .unwrap();
+        editor.child_nodes().iter().fold(String::new(), |md, ch| {
+            let to_append = match ch.node_type() {
+                NodeType::Element => {
+                    if js! { return @{&ch}.tagName; } == "DIV" {
+                        (js! { return @{&ch}.innerHTML; })
+                            .try_into()
+                            .unwrap_or_default()
+                    } else {
+                        (js! { return @{&ch}.outerHTML; })
+                            .try_into()
+                            .unwrap_or_default()
+                    }
+                }
+                NodeType::Text => ch.node_value().unwrap_or_default(),
+                _ => unreachable!(),
+            };
+            format!("{}\n\n{}", md, to_append)
+        })
+    }
+}
+fn get_subtitle() -> String {
+    if is_basic_editor() {
+        get_elt_value("subtitle")
+    } else {
+        let subtitle_element = HtmlElement::try_from(
+            document()
+                .query_selector("#plume-editor > h2")
+                .unwrap()
+                .unwrap(),
+        )
+        .ok()
+        .unwrap();
+        subtitle_element.inner_text()
+    }
+}
+fn autosave() {
+    let info = AutosaveInformation {
+        contents: get_editor_contents(),
+        title: get_title(),
+        subtitle: get_subtitle(),
+        tags: get_elt_value("tags"),
+        license: get_elt_value("license"),
+        last_saved: Date::now(),
+        cover: get_elt_value("cover"),
+    };
+    let id = get_autosave_id();
+    match window()
+        .local_storage()
+        .insert(&id, &serde_json::to_string(&info).unwrap())
+    {
+        Ok(_) => {}
+        _ => console!(log, "Autosave failed D:"),
+    }
+}
+//This is only necessary until we go to stdweb 4.20 at least
+fn confirm(message: &str) -> bool {
+    let result: bool = js! {return confirm(@{message});} == true;
+    result
+}
+fn load_autosave() {
+    if let Some(autosave_str) = window().local_storage().get(&get_autosave_id()) {
+        let autosave_info: AutosaveInformation = serde_json::from_str(&autosave_str).ok().unwrap();
+        let message = i18n!(
+            CATALOG,
+            "Do you want to load the local autosave last edited at {}?";
+            Date::from_time(autosave_info.last_saved).to_date_string()
+        );
+        if confirm(&message) {
+            set_value("editor-content", &autosave_info.contents);
+            set_value("title", &autosave_info.title);
+            set_value("subtitle", &autosave_info.subtitle);
+            set_value("tags", &autosave_info.tags);
+            set_value("license", &autosave_info.license);
+            set_value("cover", &autosave_info.cover);
+        } else {
+            clear_autosave();
+        }
+    }
+}
+fn clear_autosave() {
+    window().local_storage().remove(&get_autosave_id());
+    console!(log, &format!("Saved to {}", &get_autosave_id()));
+}
+lazy_static! {
+    static ref AUTOSAVE_TIMEOUT: Mutex<Option<TimeoutHandle>> = Mutex::new(None);
+}
+fn autosave_debounce() {
+    let timeout = &mut AUTOSAVE_TIMEOUT.lock().unwrap();
+    if let Some(timeout) = timeout.take() {
+        timeout.clear();
+    }
+    **timeout = Some(window().set_clearable_timeout(autosave, AUTOSAVE_DEBOUNCE_TIME));
+}
 fn init_widget(
     parent: &Element,
     tag: &'static str,
@@ -100,6 +253,10 @@ fn filter_paste(elt: &HtmlElement) {
 }
 
 pub fn init() -> Result<(), EditorError> {
+    if let Some(ed) = document().get_element_by_id("plume-fallback-editor") {
+        load_autosave();
+        ed.add_event_listener(|_: SubmitEvent| clear_autosave());
+    }
     // Check if the user wants to use the basic editor
     if let Some(basic_editor) = window().local_storage().get("basic-editor") {
         if basic_editor == "true" {
@@ -115,6 +272,10 @@ pub fn init() -> Result<(), EditorError> {
                         &document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")),
                     );
                     editor.insert_before(&editor_button, &title_label).ok();
+                    document()
+                        .get_element_by_id("editor-content")
+                        .unwrap()
+                        .add_event_listener(|_: KeyDownEvent| autosave_debounce());
                     return Ok(());
                 }
             }
@@ -170,6 +331,7 @@ fn init_editor() -> Result<(), EditorError> {
                     }).ok();
                 };
             }), 0);
+            autosave_debounce();
         }));
 
         document().get_element_by_id("publish")?.add_event_listener(
@@ -305,6 +467,7 @@ fn init_popup(
             cover.parent_element().unwrap().remove_child(&cover).ok();
             old_ed.append_child(&cover);
             set_value("license", get_elt_value("popup-license"));
+            clear_autosave();
             js! {
                 @{&old_ed}.submit();
             };
