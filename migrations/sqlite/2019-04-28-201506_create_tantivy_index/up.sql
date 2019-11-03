@@ -1,10 +1,10 @@
 -- Your SQL goes here
 --#!|conn: &Connection, path: &Path| {
---#!    let mut pb = path.to_path_buf();
---#!    pb.push("search_index");
+--#!  use std::env::var;
+--#!  let mut pb = Path::new(&var("SEARCH_INDEX")
+--#!      .unwrap_or_else(|_|"search_index".to_owned())).to_path_buf();
 --#!	let searcher = super::search::Searcher::create(&pb)?;
 --#!	searcher.fill(conn)?;
 --#!	searcher.commit();
 --#!	Ok(())
 --#!}
-

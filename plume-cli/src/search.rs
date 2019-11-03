@@ -93,8 +93,11 @@ fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
 }
 
 fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searcher>) {
-    let path = args.value_of("path").unwrap_or(".");
-    let path = Path::new(path).join("search_index");
+    let path = args.value_of("path");
+    let path = match path {
+        Some(path) => Path::new(path).join("search_index"),
+        None => Path::new(&CONFIG.search_index).to_path_buf(),
+    };
     let searcher = searcher.unwrap_or_else(|| Searcher::open(&path).unwrap());
 
     searcher.fill(conn).expect("Couldn't import post");
@@ -103,9 +106,12 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
 }
 
 fn unlock<'a>(args: &ArgMatches<'a>) {
-    let path = args.value_of("path").unwrap_or(".");
-    let meta = Path::new(path).join("search_index/.tantivy-meta.lock");
+    let path = match args.value_of("path") {
+        None => Path::new(&CONFIG.search_index),
+        Some(x) => Path::new(x),
+    };
+    let meta = Path::new(path).join(".tantivy-meta.lock");
     remove_file(meta).unwrap();
-    let writer = Path::new(path).join("search_index/.tantivy-writer.lock");
+    let writer = Path::new(path).join(".tantivy-writer.lock");
     remove_file(writer).unwrap();
 }
