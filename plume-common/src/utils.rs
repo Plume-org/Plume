@@ -7,6 +7,8 @@ use rocket::{
 };
 use std::borrow::Cow;
 use std::collections::HashSet;
+use syntect::html::{ClassedHTMLGenerator};
+use syntect::parsing::SyntaxSet;
 
 /// Generates an hexadecimal representation of 32 bytes of random data
 pub fn random_hex() -> String {
@@ -55,7 +57,72 @@ fn to_inline(tag: Tag) -> Tag {
         t => t,
     }
 }
-
+struct HighlighterContext {
+    content: Vec<String>,
+    language: String,
+}
+fn highlight_code<'a>(
+    context: &mut Option<HighlighterContext>,
+    evt: Event<'a>,
+) -> Option<Vec<Event<'a>>> {
+    println!(
+        "{} Context,{:?}",
+        match context {
+            Some(_) => "Some",
+            _ => "No",
+        },
+        evt
+    );
+    match evt {
+        Event::Start(Tag::CodeBlock(lang)) => {
+            if lang.is_empty() {
+                Some(vec![Event::Start(Tag::CodeBlock(lang))])
+            } else {
+                *context = Some(HighlighterContext {
+                    content: vec![],
+                    language: lang.to_string(),
+                });
+                Some(vec![Event::Start(Tag::CodeBlock(lang))])
+            }
+        }
+        Event::End(Tag::CodeBlock(x)) => {
+            let mut result = vec![];
+            if let Some(ctx) = context.take() {
+                let syntax_set = SyntaxSet::load_defaults_newlines();
+                let syntax = syntax_set.find_syntax_by_name(&ctx.language).unwrap();
+                let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
+                for line in ctx.content {
+                    html.parse_html_for_line(&line);
+                }
+                let q = html.finalize();
+                println!("{}", &q);
+                result.push(Event::Html(q.into()));
+            }
+            result.push(Event::End(Tag::CodeBlock(x)));
+            println!("{:?}", result);
+            *context = None;
+            Some(result)
+        }
+        Event::Text(t) => {
+            if let Some(mut c) = context.take() {
+                c.content.push(t.to_string());
+                *context = Some(c);
+                Some(vec![])
+            } else {
+                Some(vec![Event::Text(t)])
+            }
+            /*
+            if let Some(mut c) = context.take(){
+                c.content.push(t.to_string());
+                *context=Some(c);
+                None
+            }else{
+                Some(Event::Text(t))
+            }*/
+        }
+        _ => Some(vec![evt]),
+    }
+}
 fn flatten_text<'a>(state: &mut Option<String>, evt: Event<'a>) -> Option<Vec<Event<'a>>> {
     let (s, res) = match evt {
         Event::Text(txt) => match state.take() {
@@ -168,6 +235,8 @@ pub fn md_to_html<'a>(
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
         // Flatten text because pulldown_cmark break #hashtag in two individual text elements
         .scan(None, flatten_text)
+        .flat_map(IntoIterator::into_iter)
+        .scan(None, highlight_code)
         .flat_map(IntoIterator::into_iter)
         .map(|evt| process_image(evt, inline, &media_processor))
         // Ignore headings, images, and tables if inline = true

@@ -623,3 +623,17 @@ figure {
     }
   }
 }
+
+//highlighting
+span .constant{
+    color: $red;
+}
+span .string{
+    color: $green;
+}
+span .keyword,.type{
+    color: $purple;
+}
+span .function{
+    color: $lightpurple;
+}

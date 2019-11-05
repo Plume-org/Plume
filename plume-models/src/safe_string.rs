@@ -31,7 +31,19 @@ lazy_static! {
             .add_tag_attributes("label", ["for"].iter())
             .add_tag_attributes("input", ["type", "checked"].iter())
             .add_allowed_classes("input", ["cw-checkbox"].iter())
-            .add_allowed_classes("span", ["cw-container", "cw-text"].iter())
+            .add_allowed_classes(
+                "span",
+                [
+                    "cw-container",
+                    "cw-text",
+                    "string",
+                    "keyword",
+                    "constant",
+                    "function",
+                    "type",
+                ]
+                .iter(),
+            )
             .attribute_filter(|elem, att, val| match (elem, att) {
                 ("input", "type") => Some("checkbox".into()),
                 ("input", "checked") => Some("checked".into()),

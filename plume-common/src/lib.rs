@@ -20,6 +20,7 @@ extern crate shrinkwraprs;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate syntect;
 extern crate tokio;
 
 pub mod activity_pub;
