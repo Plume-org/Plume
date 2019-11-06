@@ -626,14 +626,14 @@ figure {
 
 //highlighting
 span .constant{
-    color: $red;
+    color: $code-constant-color;
 }
 span .string{
-    color: $green;
+    color: $code-string-color;
 }
-span .keyword,.type{
-    color: $purple;
+span .keyword .type{
+    color: $code-keyword-color;
 }
-span .function{
-    color: $lightpurple;
+span .source{
+    color: $code-source-color;
 }
