@@ -90,6 +90,24 @@ fn menu() {
     }
 }
 
+/// Toggle menu on Apple's iOS specifically
+fn menu() {
+    if let Some(button) = document().get_element_by_id("menu") {
+        if let Some(menu) = document().get_element_by_id("content") {
+            button.add_event_listener(touchend {
+                document()
+                    .get_element_by_id("menu")
+                    .map(|menu| menu.class_list().add("show"));
+            });
+            menu.add_event_listener(touchend {
+                document()
+                    .get_element_by_id("menu")
+                    .map(|menu| menu.class_list().remove("show"));
+            });
+        }
+    }
+}
+
 /// Clear the URL of the search page before submitting request
 fn search() {
     if let Some(form) = document().get_element_by_id("form") {
