@@ -7,7 +7,7 @@ use rocket::{
 };
 use std::borrow::Cow;
 use std::collections::HashSet;
-use syntect::html::{ClassedHTMLGenerator};
+use syntect::html::ClassedHTMLGenerator;
 use syntect::parsing::SyntaxSet;
 
 /// Generates an hexadecimal representation of 32 bytes of random data
@@ -89,14 +89,22 @@ fn highlight_code<'a>(
             let mut result = vec![];
             if let Some(ctx) = context.take() {
                 let syntax_set = SyntaxSet::load_defaults_newlines();
-                let syntax = syntax_set.find_syntax_by_name(&ctx.language).unwrap();
-                let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
-                for line in ctx.content {
-                    html.parse_html_for_line(&line);
+                match syntax_set.find_syntax_by_name(&ctx.language) {
+                    Some(syntax) => {
+                        let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
+                        for line in ctx.content {
+                            html.parse_html_for_line(&line);
+                        }
+                        let q = html.finalize();
+                        println!("{}", &q);
+                        result.push(Event::Html(q.into()));
+                    }
+                    None => {
+                        for i in ctx.content {
+                            result.push(Event::Text(i.into()))
+                        }
+                    }
                 }
-                let q = html.finalize();
-                println!("{}", &q);
-                result.push(Event::Html(q.into()));
             }
             result.push(Event::End(Tag::CodeBlock(x)));
             println!("{:?}", result);
