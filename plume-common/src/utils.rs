@@ -59,29 +59,17 @@ fn to_inline(tag: Tag) -> Tag {
 }
 struct HighlighterContext {
     content: Vec<String>,
-    language: String,
 }
 fn highlight_code<'a>(
     context: &mut Option<HighlighterContext>,
     evt: Event<'a>,
 ) -> Option<Vec<Event<'a>>> {
-    println!(
-        "{} Context,{:?}",
-        match context {
-            Some(_) => "Some",
-            _ => "No",
-        },
-        evt
-    );
     match evt {
         Event::Start(Tag::CodeBlock(lang)) => {
             if lang.is_empty() {
                 Some(vec![Event::Start(Tag::CodeBlock(lang))])
             } else {
-                *context = Some(HighlighterContext {
-                    content: vec![],
-                    language: lang.to_string(),
-                });
+                *context = Some(HighlighterContext { content: vec![] });
                 Some(vec![Event::Start(Tag::CodeBlock(lang))])
             }
         }
@@ -89,25 +77,18 @@ fn highlight_code<'a>(
             let mut result = vec![];
             if let Some(ctx) = context.take() {
                 let syntax_set = SyntaxSet::load_defaults_newlines();
-                match syntax_set.find_syntax_by_name(&ctx.language) {
-                    Some(syntax) => {
-                        let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
-                        for line in ctx.content {
-                            html.parse_html_for_line(&line);
-                        }
-                        let q = html.finalize();
-                        println!("{}", &q);
-                        result.push(Event::Html(q.into()));
-                    }
-                    None => {
-                        for i in ctx.content {
-                            result.push(Event::Text(i.into()))
-                        }
-                    }
+                let syntax = syntax_set
+                    .find_syntax_by_name(&x)
+                    .unwrap_or_else(|| syntax_set.find_syntax_plain_text());
+                let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
+                for line in ctx.content {
+                    html.parse_html_for_line(&line);
                 }
+                let q = html.finalize();
+                println!("{}", &q);
+                result.push(Event::Html(q.into()));
             }
             result.push(Event::End(Tag::CodeBlock(x)));
-            println!("{:?}", result);
             *context = None;
             Some(result)
         }
@@ -119,14 +100,6 @@ fn highlight_code<'a>(
             } else {
                 Some(vec![Event::Text(t)])
             }
-            /*
-            if let Some(mut c) = context.take(){
-                c.content.push(t.to_string());
-                *context=Some(c);
-                None
-            }else{
-                Some(Event::Text(t))
-            }*/
         }
         _ => Some(vec![evt]),
     }
