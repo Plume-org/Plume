@@ -38,6 +38,7 @@ lazy_static! {
                     "cw-text",
                     //Scope classes for the syntax highlighting.
                     "attribute-name",
+                    "comment",
                     "constant",
                     "control",
                     "declaration",
