@@ -15,3 +15,6 @@
 --#!
 --#!	Ok(())
 --#!}
+
+INSERT INTO timeline (post_id, timeline_id) SELECT posts.id, (SELECT id FROM timeline_definition WHERE query = 'local' LIMIT 1) FROM blogs INNER JOIN posts ON posts.blog_id = blogs.id WHERE blogs.instance_id = 1;
+INSERT INTO timeline (post_id, timeline_id) SELECT posts.id, (SELECT id FROM timeline_definition WHERE query = 'all' LIMIT 1) FROM posts;
