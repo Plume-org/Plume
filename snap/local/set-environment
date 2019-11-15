@@ -24,6 +24,7 @@ ROCKET_ADDRESS="$(snapctl get listen.address)"
 ROCKET_PORT="$(snapctl get listen.port)"
 export ROCKET_SECRET_KEY="$(cat ${SNAP_COMMON}/rocket-secret-key)"
 export SEARCH_INDEX="${SNAP_DATA}/search_index"
+export MEDIA_UPLOAD_DIRECTORY="${SNAP_DATA}/media"
 
 cd ${SNAP}
 exec $@

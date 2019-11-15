@@ -45,4 +45,6 @@ then
     touch ${SNAP_COMMON}/initial-migrations-run
 fi
 
+mdkir "${SNAP_DATA}/media"
+
 exit 0
