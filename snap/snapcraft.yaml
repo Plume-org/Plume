@@ -1,6 +1,6 @@
 name: plume
 base: core18
-version: '0.3.0' # just for humans, typically '1.2+git' or '1.3.2'
+adopt-info: plume
 summary: Multi-user blogging platform, federated over ActivityPub
 description: |
   Plume is a federated blogging platform, featuring:
@@ -34,9 +34,10 @@ parts:
       - on arm64,armhf,ppc64el,s390x:
         - lld-8
     override-build: |
+      snapcraftctl set-version $(git describe --tags)
       export PATH=$PATH:$HOME/.cargo/bin
       rustup install stable
-      cargo +stable install cargo-web
+      cargo +stable install --force cargo-web
 
       # Only Tier 1 Rust platforms get rust-lld
       # On the others (arm64, armhf, powerpc64, s390x) fall back to using
