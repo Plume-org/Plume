@@ -37,7 +37,7 @@ parts:
       snapcraftctl set-version $(git describe --tags)
       export PATH=$PATH:$HOME/.cargo/bin
       rustup install stable
-      cargo +stable install cargo-web
+      cargo +stable install --force cargo-web
 
       # Only Tier 1 Rust platforms get rust-lld
       # On the others (arm64, armhf, powerpc64, s390x) fall back to using
