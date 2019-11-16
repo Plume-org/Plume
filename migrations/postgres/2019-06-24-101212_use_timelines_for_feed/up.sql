@@ -16,5 +16,10 @@
 --#!	Ok(())
 --#!}
 
+-- The code above creates the timelines, but does not fill them. We do it "manually" for the local and federated timeline here:
+
+-- Add all local articles to the local timeline
 INSERT INTO timeline (post_id, timeline_id) SELECT posts.id, (SELECT id FROM timeline_definition WHERE query = 'local' LIMIT 1) FROM blogs INNER JOIN posts ON posts.blog_id = blogs.id WHERE blogs.instance_id = 1;
+
+-- Add all articles to the the federated timeline
 INSERT INTO timeline (post_id, timeline_id) SELECT posts.id, (SELECT id FROM timeline_definition WHERE query = 'all' LIMIT 1) FROM posts;
