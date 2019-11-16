@@ -38,6 +38,11 @@ then
 with 'snap restart plume'"
 fi
 
+if [ ! -d ${SNAP_DATA}/media ]
+then
+    mkdir ${SNAP_DATA}/media
+fi
+
 if [ "${enabled}" = "true" -a ! -e ${SNAP_COMMON}/initial-migrations-run ]
 then
     cd ${SNAP}
