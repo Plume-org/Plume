@@ -481,3 +481,12 @@ input:checked ~ .cw-container > .cw-text {
     margin: auto $horizontal-margin;
   }
 }
+
+// Footnote related styles
+.footnote-definition {
+  p {
+    font-size: smaller;
+    // Make sur the definition is inline with the label-definition
+    display: inline;
+  }
+}
