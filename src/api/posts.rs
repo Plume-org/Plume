@@ -7,7 +7,7 @@ use plume_api::posts::*;
 use plume_common::{activity_pub::broadcast, utils::md_to_html};
 use plume_models::{
     blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::*, post_authors::*,
-    posts::*, safe_string::SafeString, tags::*, users::User, Error, PlumeRocket,
+    posts::*, safe_string::SafeString, tags::*, timeline::*, users::User, Error, PlumeRocket,
 };
 
 #[get("/posts/<id>")]
@@ -203,6 +203,8 @@ pub fn create(
         let dest = User::one_by_instance(&*conn)?;
         worker.execute(move || broadcast(&author, act, dest));
     }
+
+    Timeline::add_to_all_timelines(&rockets, &post, Kind::Original)?;
 
     Ok(Json(PostData {
         authors: post.get_authors(conn)?.into_iter().map(|a| a.fqn).collect(),

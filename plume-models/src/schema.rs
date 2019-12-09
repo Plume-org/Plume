@@ -111,6 +111,26 @@ table! {
 }
 
 table! {
+    list_elems (id) {
+        id -> Int4,
+        list_id -> Int4,
+        user_id -> Nullable<Int4>,
+        blog_id -> Nullable<Int4>,
+        word -> Nullable<Varchar>,
+    }
+}
+
+table! {
+    lists (id) {
+        id -> Int4,
+        name -> Varchar,
+        user_id -> Nullable<Int4>,
+        #[sql_name = "type"]
+        type_ -> Int4,
+    }
+}
+
+table! {
     medias (id) {
         id -> Int4,
         file_path -> Text,
@@ -196,13 +216,29 @@ table! {
 }
 
 table! {
+    timeline (id) {
+        id -> Int4,
+        post_id -> Int4,
+        timeline_id -> Int4,
+    }
+}
+
+table! {
+    timeline_definition (id) {
+        id -> Int4,
+        user_id -> Nullable<Int4>,
+        name -> Varchar,
+        query -> Varchar,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
         display_name -> Varchar,
         outbox_url -> Varchar,
         inbox_url -> Varchar,
-        is_admin -> Bool,
         summary -> Text,
         email -> Nullable<Text>,
         hashed_password -> Nullable<Text>,
@@ -217,6 +253,7 @@ table! {
         last_fetched_date -> Timestamp,
         fqn -> Text,
         summary_html -> Text,
+        role -> Int4,
         preferred_theme -> Nullable<Varchar>,
         hide_custom_css -> Bool,
     }
@@ -233,6 +270,10 @@ joinable!(comments -> posts (post_id));
 joinable!(comments -> users (author_id));
 joinable!(likes -> posts (post_id));
 joinable!(likes -> users (user_id));
+joinable!(list_elems -> blogs (blog_id));
+joinable!(list_elems -> lists (list_id));
+joinable!(list_elems -> users (user_id));
+joinable!(lists -> users (user_id));
 joinable!(mentions -> comments (comment_id));
 joinable!(mentions -> posts (post_id));
 joinable!(mentions -> users (mentioned_id));
@@ -244,6 +285,9 @@ joinable!(posts -> medias (cover_id));
 joinable!(reshares -> posts (post_id));
 joinable!(reshares -> users (user_id));
 joinable!(tags -> posts (post_id));
+joinable!(timeline -> posts (post_id));
+joinable!(timeline -> timeline_definition (timeline_id));
+joinable!(timeline_definition -> users (user_id));
 joinable!(users -> instances (instance_id));
 
 allow_tables_to_appear_in_same_query!(
@@ -256,6 +300,8 @@ allow_tables_to_appear_in_same_query!(
     follows,
     instances,
     likes,
+    list_elems,
+    lists,
     medias,
     mentions,
     notifications,
@@ -264,5 +310,7 @@ allow_tables_to_appear_in_same_query!(
     posts,
     reshares,
     tags,
+    timeline,
+    timeline_definition,
     users,
 );

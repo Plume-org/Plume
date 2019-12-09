@@ -135,7 +135,6 @@ pub(crate) mod tests {
                 }
                 _ => panic!("Unexpected result"),
             };
-
             Ok(())
         });
     }
@@ -170,7 +169,6 @@ pub(crate) mod tests {
                 }
                 _ => panic!("Unexpected result"),
             };
-
             Ok(())
         });
     }
@@ -212,7 +210,6 @@ pub(crate) mod tests {
                 }
                 _ => panic!("Unexpected result"),
             };
-
             Ok(())
         });
     }
@@ -255,9 +252,8 @@ pub(crate) mod tests {
                 "type": "Delete",
             });
             assert!(super::inbox(&r, ok_act).is_ok());
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -282,7 +278,6 @@ pub(crate) mod tests {
                 "type": "Delete",
             });
             assert!(super::inbox(&r, ok_act).is_ok());
-
             Ok(())
         });
     }
@@ -336,7 +331,6 @@ pub(crate) mod tests {
                 }
                 _ => panic!("Unexpected result"),
             }
-
             Ok(())
         });
     }
@@ -362,7 +356,6 @@ pub(crate) mod tests {
                 }
                 _ => panic!("Unexpected result"),
             }
-
             Ok(())
         });
     }
@@ -401,7 +394,6 @@ pub(crate) mod tests {
                 "type": "Undo",
             });
             assert!(super::inbox(&r, ok_act).is_ok());
-
             Ok(())
         });
     }
@@ -440,7 +432,6 @@ pub(crate) mod tests {
                 "type": "Undo",
             });
             assert!(super::inbox(&r, ok_act).is_ok());
-
             Ok(())
         });
     }
@@ -479,7 +470,6 @@ pub(crate) mod tests {
                 "type": "Undo",
             });
             assert!(super::inbox(&r, ok_act).is_ok());
-
             Ok(())
         });
     }
@@ -509,7 +499,6 @@ pub(crate) mod tests {
             });
 
             super::inbox(&r, act).unwrap();
-
             Ok(())
         });
     }

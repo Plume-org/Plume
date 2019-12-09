@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, ExpressionMethods, JoinOnDsl, QueryDsl, RunQueryDsl};
 
 use comments::Comment;
 use follows::Follow;
@@ -7,7 +7,7 @@ use likes::Like;
 use mentions::Mention;
 use posts::Post;
 use reshares::Reshare;
-use schema::notifications;
+use schema::{follows, notifications};
 use users::User;
 use {Connection, Error, Result};
 
@@ -60,6 +60,16 @@ impl Notification {
         notifications::table
             .filter(notifications::kind.eq(notification_kind::COMMENT))
             .filter(notifications::object_id.eq(comment.id))
+            .load::<Notification>(conn)
+            .map_err(Error::from)
+    }
+
+    pub fn find_followed_by(conn: &Connection, user: &User) -> Result<Vec<Notification>> {
+        notifications::table
+            .inner_join(follows::table.on(notifications::object_id.eq(follows::id)))
+            .filter(notifications::kind.eq(notification_kind::FOLLOW))
+            .filter(follows::follower_id.eq(user.id))
+            .select(notifications::all_columns)
             .load::<Notification>(conn)
             .map_err(Error::from)
     }

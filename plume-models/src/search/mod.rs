@@ -19,7 +19,7 @@ pub(crate) mod tests {
     use tests::db;
 
     pub(crate) fn get_searcher() -> Searcher {
-        let dir = temp_dir().join("plume-test");
+        let dir = temp_dir().join(&format!("plume-test-{}", random_hex()));
         if dir.exists() {
             Searcher::open(&dir)
         } else {
@@ -96,11 +96,10 @@ pub(crate) mod tests {
 
     #[test]
     fn open() {
+        let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
         {
-            get_searcher()
-        }; //make sure $tmp/plume-test-tantivy exist
-
-        let dir = temp_dir().join("plume-test");
+            Searcher::create(&dir).unwrap();
+        }
         Searcher::open(&dir).unwrap();
     }
 
@@ -175,7 +174,6 @@ pub(crate) mod tests {
             assert!(searcher
                 .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
                 .is_empty());
-
             Ok(())
         });
     }

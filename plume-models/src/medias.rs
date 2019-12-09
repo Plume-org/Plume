@@ -148,10 +148,12 @@ impl Media {
         if self.is_remote {
             Ok(self.remote_url.clone().unwrap_or_default())
         } else {
+            let p = Path::new(&self.file_path);
+            let filename: String = p.file_name().unwrap().to_str().unwrap().to_owned();
             Ok(ap_url(&format!(
-                "{}/{}",
+                "{}/static/media/{}",
                 Instance::get_local()?.public_domain,
-                self.file_path
+                &filename
             )))
         }
     }
@@ -202,10 +204,11 @@ impl Media {
             .next()
             .map(ToOwned::to_owned)
             .unwrap_or_else(|| String::from("png"));
-        let path =
-            Path::new("static")
-                .join("media")
-                .join(format!("{}.{}", GUID::rand().to_string(), ext));
+        let path = Path::new(&super::CONFIG.media_directory).join(format!(
+            "{}.{}",
+            GUID::rand().to_string(),
+            ext
+        ));
 
         let mut dest = fs::File::create(path.clone()).ok()?;
         reqwest::get(remote_url.as_str())
@@ -324,8 +327,6 @@ pub(crate) mod tests {
         }
     }
 
-    //set_owner
-
     #[test]
     fn delete() {
         let conn = &db();
@@ -354,13 +355,11 @@ pub(crate) mod tests {
             assert!(!Path::new(&path).exists());
 
             clean(conn);
-
             Ok(())
         });
     }
 
     #[test]
-
     fn set_owner() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
@@ -404,7 +403,6 @@ pub(crate) mod tests {
                 .any(|m| m.id == media.id));
 
             clean(conn);
-
             Ok(())
         });
     }

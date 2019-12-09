@@ -23,6 +23,7 @@ use plume_models::{
     posts::*,
     safe_string::SafeString,
     tags::*,
+    timeline::*,
     users::User,
     Error, PlumeRocket,
 };
@@ -339,6 +340,8 @@ pub fn update(
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&*conn).expect("post::update: dest error");
                     rockets.worker.execute(move || broadcast(&user, act, dest));
+
+                    Timeline::add_to_all_timelines(&rockets, &post, Kind::Original).ok();
                 } else {
                     let act = post
                         .update_activity(&*conn)
@@ -529,8 +532,10 @@ pub fn create(
                 .create_activity(&*conn)
                 .expect("posts::create: activity error");
             let dest = User::one_by_instance(&*conn).expect("posts::create: dest error");
-            let worker = rockets.worker;
+            let worker = &rockets.worker;
             worker.execute(move || broadcast(&user, act, dest));
+
+            Timeline::add_to_all_timelines(&rockets, &post, Kind::Original)?;
         }
 
         Ok(Flash::success(

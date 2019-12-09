@@ -235,7 +235,8 @@ mod tests {
             )
             .expect("Couldn't insert new follow");
             assert_eq!(follow.ap_url, String::from("https://some.url/"));
+
             Ok(())
-        });
+        })
     }
 }

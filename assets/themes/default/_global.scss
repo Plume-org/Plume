@@ -317,6 +317,10 @@ p.error {
     flex: 1;
     margin: 0 1em;
   }
+
+  .grow:first-child {
+    margin: 1em 0;
+  }
 }
 
 .left-icon {

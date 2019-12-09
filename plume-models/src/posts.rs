@@ -26,6 +26,7 @@ use safe_string::SafeString;
 use schema::posts;
 use search::Searcher;
 use tags::*;
+use timeline::*;
 use users::User;
 use {ap_url, Connection, Error, PlumeRocket, Result, CONFIG};
 
@@ -182,15 +183,6 @@ impl Post {
         query.get_results::<Post>(conn).map_err(Error::from)
     }
 
-    pub fn get_recents(conn: &Connection, limit: i64) -> Result<Vec<Post>> {
-        posts::table
-            .order(posts::creation_date.desc())
-            .filter(posts::published.eq(true))
-            .limit(limit)
-            .load::<Post>(conn)
-            .map_err(Error::from)
-    }
-
     pub fn get_recents_for_author(
         conn: &Connection,
         author: &User,
@@ -246,60 +238,6 @@ impl Post {
             .map_err(Error::from)
     }
 
-    /// Give a page of all the recent posts known to this instance (= federated timeline)
-    pub fn get_recents_page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Post>> {
-        posts::table
-            .order(posts::creation_date.desc())
-            .filter(posts::published.eq(true))
-            .offset(min.into())
-            .limit((max - min).into())
-            .load::<Post>(conn)
-            .map_err(Error::from)
-    }
-
-    /// Give a page of posts from a specific instance
-    pub fn get_instance_page(
-        conn: &Connection,
-        instance_id: i32,
-        (min, max): (i32, i32),
-    ) -> Result<Vec<Post>> {
-        use schema::blogs;
-
-        let blog_ids = blogs::table
-            .filter(blogs::instance_id.eq(instance_id))
-            .select(blogs::id);
-
-        posts::table
-            .order(posts::creation_date.desc())
-            .filter(posts::published.eq(true))
-            .filter(posts::blog_id.eq_any(blog_ids))
-            .offset(min.into())
-            .limit((max - min).into())
-            .load::<Post>(conn)
-            .map_err(Error::from)
-    }
-
-    /// Give a page of customized user feed, based on a list of followed users
-    pub fn user_feed_page(
-        conn: &Connection,
-        followed: Vec<i32>,
-        (min, max): (i32, i32),
-    ) -> Result<Vec<Post>> {
-        use schema::post_authors;
-        let post_ids = post_authors::table
-            .filter(post_authors::author_id.eq_any(followed))
-            .select(post_authors::post_id);
-
-        posts::table
-            .order(posts::creation_date.desc())
-            .filter(posts::published.eq(true))
-            .filter(posts::id.eq_any(post_ids))
-            .offset(min.into())
-            .limit((max - min).into())
-            .load::<Post>(conn)
-            .map_err(Error::from)
-    }
-
     pub fn drafts_by_author(conn: &Connection, author: &User) -> Result<Vec<Post>> {
         use schema::post_authors;
 
@@ -335,11 +273,8 @@ impl Post {
         use schema::blogs;
         blogs::table
             .filter(blogs::id.eq(self.blog_id))
-            .limit(1)
-            .load::<Blog>(conn)?
-            .into_iter()
-            .nth(0)
-            .ok_or(Error::NotFound)
+            .first(conn)
+            .map_err(Error::from)
     }
 
     pub fn count_likes(&self, conn: &Connection) -> Result<i64> {
@@ -717,6 +652,9 @@ impl FromId<PlumeRocket> for Post {
                     .ok();
             }
         }
+
+        Timeline::add_to_all_timelines(c, &post, Kind::Original)?;
+
         Ok(post)
     }
 }
@@ -928,7 +866,6 @@ mod tests {
                 }
                 _ => panic!("Unexpected result"),
             };
-
             Ok(())
         });
     }

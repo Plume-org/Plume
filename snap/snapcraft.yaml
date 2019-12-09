@@ -1,0 +1,60 @@
+name: plume
+base: core18
+adopt-info: plume
+summary: Multi-user blogging platform, federated over ActivityPub
+description: |
+  Plume is a federated blogging platform, featuring:
+   * A blog-centric approach: you can create as much blogs as you want with your account, to keep your different publications separated.
+   * Media management: you can upload pictures to illustrate your articles, but also audio files if you host a podcast, and manage them all from Plume.
+   * Federation: Plume is part of a network of interconnected websites called the Fediverse. Each of these websites (often called instances) have their own rules and thematics, but they can all communicate with each other.
+   * Collaborative writing: invite other people to your blogs, and write articles together.
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+apps:
+  plume:
+    daemon: simple
+    command: set-environment bin/plume
+    plugs:
+      - network
+      - network-bind
+  plm:
+    command: set-environment bin/plm
+
+parts:
+  plume:
+    plugin: rust
+    source: .
+    rust-revision: nightly-2019-03-23
+    build-packages:
+      - libssl-dev
+      - pkg-config
+      - libsqlite3-dev
+      - gettext
+      - on arm64,armhf,ppc64el,s390x:
+        - lld-8
+    override-build: |
+      snapcraftctl set-version $(git describe --tags)
+      export PATH=$PATH:$HOME/.cargo/bin
+      rustup install stable
+      cargo +stable install --force cargo-web
+
+      # Only Tier 1 Rust platforms get rust-lld
+      # On the others (arm64, armhf, powerpc64, s390x) fall back to using
+      # the system LLD we've installed earlier.
+      case ${SNAPCRAFT_ARCH_TRIPLE} in \
+        aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
+          RUSTFLAGS="-C linker=lld-8" cargo web deploy -p plume-front --release \
+          ;; \
+        *) \
+          cargo web deploy -p plume-front --release \
+          ;; \
+      esac
+
+      cargo install --force --no-default-features --features sqlite --path . --root ${SNAPCRAFT_PART_INSTALL}
+      cargo install --force --no-default-features --features sqlite --path plume-cli --root ${SNAPCRAFT_PART_INSTALL}
+      cp -a assets migrations static target translations ${SNAPCRAFT_PART_INSTALL}
+      cp snap/local/set-environment ${SNAPCRAFT_PART_INSTALL}
+    stage-packages:
+      - openssl
+      - libsqlite3-0

@@ -18,11 +18,11 @@
             <!-- Rocket hack to use various HTTP methods -->
             <input type=hidden name="_method" value="put">
 
-            @(Input::new("display_name", i18n!(ctx.1, ""))
+            @(Input::new("display_name", i18n!(ctx.1, "Display name"))
                 .default(&form.display_name)
                 .error(&errors)
                 .html(ctx.1))
-            @(Input::new("email", i18n!(ctx.1, ""))
+            @(Input::new("email", i18n!(ctx.1, "Email"))
                 .default(&form.email)
                 .error(&errors)
                 .input_type("email")
@@ -52,7 +52,7 @@
 
         <h2>@i18n!(ctx.1, "Danger zone")</h2>
         <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")
-        @if !u.is_admin {
+        @if !u.is_admin() {
             <form method="post" action="@uri!(user::delete: name = u.username)">
                 <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete your account")">
             </form>

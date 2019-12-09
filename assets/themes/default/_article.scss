@@ -482,6 +482,15 @@ input:checked ~ .cw-container > .cw-text {
   }
 }
 
+// Footnote related styles
+.footnote-definition {
+  p {
+    font-size: smaller;
+    // Make sur the definition is inline with the label-definition
+    display: inline;
+  }
+}
+
 // Small screens
 @media screen and (max-width: 600px) {
   #plume-editor header {

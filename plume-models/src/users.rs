@@ -1,13 +1,13 @@
 use activitypub::{
     activity::Delete,
     actor::Person,
-    collection::OrderedCollection,
+    collection::{OrderedCollection, OrderedCollectionPage},
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -42,14 +42,22 @@ use db_conn::DbConn;
 use follows::Follow;
 use instance::*;
 use medias::Media;
+use notifications::Notification;
 use post_authors::PostAuthor;
 use posts::Post;
 use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
-use {ap_url, Connection, Error, PlumeRocket, Result};
+use timeline::Timeline;
+use {ap_url, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
+
+pub enum Role {
+    Admin = 0,
+    Moderator = 1,
+    Normal = 2,
+}
 
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
 pub struct User {
@@ -58,7 +66,6 @@ pub struct User {
     pub display_name: String,
     pub outbox_url: String,
     pub inbox_url: String,
-    pub is_admin: bool,
     pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
@@ -73,6 +80,10 @@ pub struct User {
     pub last_fetched_date: NaiveDateTime,
     pub fqn: String,
     pub summary_html: SafeString,
+    /// 0 = admin
+    /// 1 = moderator
+    /// anything else = normal user
+    pub role: i32,
     pub preferred_theme: Option<String>,
     pub hide_custom_css: bool,
 }
@@ -84,7 +95,6 @@ pub struct NewUser {
     pub display_name: String,
     pub outbox_url: String,
     pub inbox_url: String,
-    pub is_admin: bool,
     pub summary: String,
     pub email: Option<String>,
     pub hashed_password: Option<String>,
@@ -96,6 +106,7 @@ pub struct NewUser {
     pub followers_endpoint: String,
     pub avatar_id: Option<i32>,
     pub summary_html: SafeString,
+    pub role: i32,
     pub fqn: String,
 }
 
@@ -108,6 +119,14 @@ impl User {
     find_by!(users, find_by_email, email as &str);
     find_by!(users, find_by_name, username as &str, instance_id as i32);
     find_by!(users, find_by_ap_url, ap_url as &str);
+
+    pub fn is_moderator(&self) -> bool {
+        self.role == Role::Admin as i32 || self.role == Role::Moderator as i32
+    }
+
+    pub fn is_admin(&self) -> bool {
+        self.role == Role::Admin as i32
+    }
 
     pub fn one_by_instance(conn: &Connection) -> Result<Vec<User>> {
         users::table
@@ -147,6 +166,10 @@ impl User {
             }
         }
 
+        for notif in Notification::find_followed_by(conn, self)? {
+            notif.delete(conn)?
+        }
+
         diesel::delete(self)
             .execute(conn)
             .map(|_| ())
@@ -157,17 +180,9 @@ impl User {
         Instance::get(conn, self.instance_id)
     }
 
-    pub fn grant_admin_rights(&self, conn: &Connection) -> Result<()> {
+    pub fn set_role(&self, conn: &Connection, new_role: Role) -> Result<()> {
         diesel::update(self)
-            .set(users::is_admin.eq(true))
-            .execute(conn)
-            .map(|_| ())
-            .map_err(Error::from)
-    }
-
-    pub fn revoke_admin_rights(&self, conn: &Connection) -> Result<()> {
-        diesel::update(self)
-            .set(users::is_admin.eq(false))
+            .set(users::role.eq(new_role as i32))
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
@@ -184,10 +199,8 @@ impl User {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .limit(1)
-            .load::<User>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
@@ -307,16 +320,77 @@ impl User {
             .load::<User>(conn)
             .map_err(Error::from)
     }
-
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        let acts = self.get_activities(conn)?;
-        let n_acts = acts.len();
         let mut coll = OrderedCollection::default();
-        coll.collection_props.items = serde_json::to_value(acts)?;
-        coll.collection_props.set_total_items_u64(n_acts as u64)?;
+        let first = &format!("{}?page=1", &self.outbox_url);
+        let last = &format!(
+            "{}?page={}",
+            &self.outbox_url,
+            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE) + 1
+        );
+        coll.collection_props.set_first_link(Id::new(first))?;
+        coll.collection_props.set_last_link(Id::new(last))?;
+        coll.collection_props
+            .set_total_items_u64(self.get_activities_count(&conn) as u64)?;
         Ok(ActivityStream::new(coll))
     }
+    pub fn outbox_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<ActivityStream<OrderedCollectionPage>> {
+        let acts = self.get_activities_page(conn, (min, max))?;
+        let n_acts = self.get_activities_count(&conn);
+        let mut coll = OrderedCollectionPage::default();
+        if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
+            coll.collection_page_props.set_next_link(Id::new(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                min / ITEMS_PER_PAGE + 2
+            )))?;
+        }
+        if min > 0 {
+            coll.collection_page_props.set_prev_link(Id::new(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                min / ITEMS_PER_PAGE
+            )))?;
+        }
+        coll.collection_props.items = serde_json::to_value(acts)?;
+        coll.collection_page_props
+            .set_part_of_link(Id::new(&self.outbox_url))?;
+        Ok(ActivityStream::new(coll))
+    }
+    fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
+        let mut res = ClientBuilder::new()
+            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .build()?
+            .get(url)
+            .header(
+                ACCEPT,
+                HeaderValue::from_str(
+                    &ap_accept_header()
+                        .into_iter()
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                )?,
+            )
+            .send()?;
+        let text = &res.text()?;
+        let json: serde_json::Value = serde_json::from_str(text)?;
+        let items = json["items"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .iter()
+            .filter_map(|j| serde_json::from_value(j.clone()).ok())
+            .collect::<Vec<T>>();
 
+        let next = match json.get("next") {
+            Some(x) => Some(x.as_str().unwrap().to_owned()),
+            None => None,
+        };
+        Ok((items, next))
+    }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
         let mut res = ClientBuilder::new()
             .connect_timeout(Some(std::time::Duration::from_secs(5)))
@@ -334,12 +408,32 @@ impl User {
             .send()?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
-        Ok(json["items"]
-            .as_array()
-            .unwrap_or(&vec![])
-            .iter()
-            .filter_map(|j| serde_json::from_value(j.clone()).ok())
-            .collect::<Vec<T>>())
+        if let Some(first) = json.get("first") {
+            let mut items: Vec<T> = Vec::new();
+            let mut next = first.as_str().unwrap().to_owned();
+            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
+                if page.is_empty() {
+                    break;
+                }
+                items.extend(page.drain(..));
+                if let Some(n) = nxt {
+                    if n == next {
+                        break;
+                    }
+                    next = n;
+                } else {
+                    break;
+                }
+            }
+            Ok(items)
+        } else {
+            Ok(json["items"]
+                .as_array()
+                .unwrap_or(&vec![])
+                .iter()
+                .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                .collect::<Vec<T>>())
+        }
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
@@ -366,14 +460,31 @@ impl User {
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<String>>())
     }
-
-    fn get_activities(&self, conn: &Connection) -> Result<Vec<serde_json::Value>> {
+    fn get_activities_count(&self, conn: &Connection) -> i64 {
+        use schema::post_authors;
+        use schema::posts;
+        let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
+        posts::table
+            .filter(posts::published.eq(true))
+            .filter(posts::id.eq_any(posts_by_self))
+            .count()
+            .first(conn)
+            .unwrap()
+    }
+    fn get_activities_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<Vec<serde_json::Value>> {
         use schema::post_authors;
         use schema::posts;
         let posts_by_self = PostAuthor::belonging_to(self).select(post_authors::post_id);
         let posts = posts::table
             .filter(posts::published.eq(true))
             .filter(posts::id.eq_any(posts_by_self))
+            .order(posts::creation_date.desc())
+            .offset(min.into())
+            .limit((max - min).into())
             .load::<Post>(conn)?;
         Ok(posts
             .into_iter()
@@ -757,7 +868,7 @@ impl FromId<PlumeRocket> for User {
                 username,
                 outbox_url: acct.object.ap_actor_props.outbox_string()?,
                 inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                is_admin: false,
+                role: 2,
                 summary: acct
                     .object
                     .object_props
@@ -874,7 +985,7 @@ impl NewUser {
         conn: &Connection,
         username: String,
         display_name: String,
-        is_admin: bool,
+        role: Role,
         summary: &str,
         email: String,
         password: String,
@@ -882,12 +993,12 @@ impl NewUser {
         let (pub_key, priv_key) = gen_keypair();
         let instance = Instance::get_local()?;
 
-        User::insert(
+        let res = User::insert(
             conn,
             NewUser {
                 username: username.clone(),
                 display_name,
-                is_admin,
+                role: role as i32,
                 summary: summary.to_owned(),
                 summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
                 email: Some(email),
@@ -903,7 +1014,12 @@ impl NewUser {
                 fqn: username,
                 avatar_id: None,
             },
-        )
+        )?;
+
+        // create default timeline
+        Timeline::new_for_user(conn, res.id, "My feed".into(), "followed".into())?;
+
+        Ok(res)
     }
 }
 
@@ -922,7 +1038,7 @@ pub(crate) mod tests {
             conn,
             "admin".to_owned(),
             "The admin".to_owned(),
-            true,
+            Role::Admin,
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
             "invalid_admin_password".to_owned(),
@@ -932,7 +1048,7 @@ pub(crate) mod tests {
             conn,
             "user".to_owned(),
             "Some user".to_owned(),
-            false,
+            Role::Normal,
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
             "invalid_user_password".to_owned(),
@@ -942,7 +1058,7 @@ pub(crate) mod tests {
             conn,
             "other".to_owned(),
             "Another user".to_owned(),
-            false,
+            Role::Normal,
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
             "invalid_other_password".to_owned(),
@@ -961,13 +1077,12 @@ pub(crate) mod tests {
                 conn,
                 "test".to_owned(),
                 "test user".to_owned(),
-                false,
+                Role::Normal,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
                 User::hash_pass("test_password").unwrap(),
             )
             .unwrap();
-
             assert_eq!(
                 test_user.id,
                 User::find_by_name(conn, "test", Instance::get_local().unwrap().id)
@@ -995,7 +1110,6 @@ pub(crate) mod tests {
                 .unwrap()
                 .id
             );
-
             Ok(())
         });
     }
@@ -1009,7 +1123,6 @@ pub(crate) mod tests {
             assert!(User::get(conn, inserted[0].id).is_ok());
             inserted[0].delete(conn, &get_searcher()).unwrap();
             assert!(User::get(conn, inserted[0].id).is_err());
-
             Ok(())
         });
     }
@@ -1026,13 +1139,12 @@ pub(crate) mod tests {
                 local_inst
                     .main_admin(conn)
                     .unwrap()
-                    .revoke_admin_rights(conn)
+                    .set_role(conn, Role::Normal)
                     .unwrap();
                 i += 1;
             }
-            inserted[0].grant_admin_rights(conn).unwrap();
+            inserted[0].set_role(conn, Role::Admin).unwrap();
             assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
-
             Ok(())
         });
     }
@@ -1046,7 +1158,7 @@ pub(crate) mod tests {
                 conn,
                 "test".to_owned(),
                 "test user".to_owned(),
-                false,
+                Role::Normal,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
                 User::hash_pass("test_password").unwrap(),
@@ -1055,7 +1167,6 @@ pub(crate) mod tests {
 
             assert!(test_user.auth("test_password"));
             assert!(!test_user.auth("other_password"));
-
             Ok(())
         });
     }
@@ -1085,7 +1196,6 @@ pub(crate) mod tests {
                     .len() as i64,
                 User::count_local(conn).unwrap()
             );
-
             Ok(())
         });
     }
@@ -1113,7 +1223,6 @@ pub(crate) mod tests {
             assert_eq!(user.avatar_url(conn), users[0].avatar_url(conn));
             assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
-
             Ok(())
         });
     }

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+db_type="$(snapctl get db.type)"
+db_url="$(snapctl get db.url)"
+if [ "${db_type}" = "sqlite" ]
+then
+    if [ -n "${db_url}" ]
+    then
+        echo "sqlite backend does not use db.url key"
+        exit 1
+    fi
+elif [ "${db_type}" = "postgres" ]
+then
+    if [ -z "${db_url}" ]
+    then
+        echo "postgres backend requires db.url to be set"
+        exit 1
+    fi
+elif [ -n "${db_type}" ]
+then
+    echo "Invalid db.type: " ${db_type}
+    exit 1
+fi
+
+base_url="$(snapctl get base-url)"
+enabled="$(snapctl get enabled)"
+
+if [ -n ${enabled} -a \( "${enabled}" != "true" -a "${enabled}" != "false" \) ]
+then
+    echo "Invalid 'enabled' setting: ${enabled}. Valid values are 'true' or 'false'"
+    exit 1
+fi
+
+if [ -n ${base_url} -a \( -z "${enabled}" -o "${enabled}" = "false" \) ]
+then
+    echo "All required configuration available."
+    echo "Plume can now be enabled by setting 'snap set plume enabled=true' and restarting the service \
+with 'snap restart plume'"
+fi
+
+if [ ! -d ${SNAP_DATA}/media ]
+then
+    mkdir ${SNAP_DATA}/media
+fi
+
+if [ "${enabled}" = "true" -a ! -e ${SNAP_COMMON}/initial-migrations-run ]
+then
+    cd ${SNAP}
+    exec ./set-environment bin/plm migration run --path ${SNAP_DATA}
+    touch ${SNAP_COMMON}/initial-migrations-run
+fi
+
+exit 0

@@ -108,6 +108,15 @@ pub fn translate_notification(ctx: BaseContext, notif: Notification) -> String {
     }
 }
 
+pub fn i18n_timeline_name(cat: &Catalog, tl: &str) -> String {
+    match tl {
+        "Your feed" => i18n!(cat, "Your feed"),
+        "Local feed" => i18n!(cat, "Local feed"),
+        "Federated feed" => i18n!(cat, "Federated feed"),
+        n => n.to_string(),
+    }
+}
+
 pub enum Size {
     Small,
     Medium,
@@ -143,11 +152,11 @@ pub fn avatar(
     ))
 }
 
-pub fn tabs(links: &[(&str, String, bool)]) -> Html<String> {
+pub fn tabs(links: &[(impl AsRef<str>, String, bool)]) -> Html<String> {
     let mut res = String::from(r#"<div class="tabs">"#);
     for (url, title, selected) in links {
         res.push_str(r#"<a dir="auto" href=""#);
-        res.push_str(url);
+        res.push_str(url.as_ref());
         if *selected {
             res.push_str(r#"" class="selected">"#);
         } else {
@@ -183,7 +192,7 @@ pub fn paginate_param(
                 r#"<a href="?{}page={}">{}</a>"#,
                 param,
                 page - 1,
-                catalog.gettext("Previous page")
+                i18n!(catalog, "Previous page")
             )
             .as_str(),
         );
@@ -194,7 +203,7 @@ pub fn paginate_param(
                 r#"<a href="?{}page={}">{}</a>"#,
                 param,
                 page + 1,
-                catalog.gettext("Next page")
+                i18n!(catalog, "Next page")
             )
             .as_str(),
         );

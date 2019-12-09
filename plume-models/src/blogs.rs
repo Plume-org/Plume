@@ -1,6 +1,11 @@
-use activitypub::{actor::Group, collection::OrderedCollection, object::Image, CustomObject};
+use activitypub::{
+    actor::Group,
+    collection::{OrderedCollection, OrderedCollectionPage},
+    object::Image,
+    CustomObject,
+};
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -22,7 +27,7 @@ use safe_string::SafeString;
 use schema::blogs;
 use search::Searcher;
 use users::User;
-use {Connection, Error, PlumeRocket, Result};
+use {ap_url, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE};
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -135,10 +140,8 @@ impl Blog {
     pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
-            .limit(1)
-            .load::<Blog>(&*c.conn)?
-            .into_iter()
-            .next();
+            .first(&*c.conn)
+            .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
@@ -222,10 +225,47 @@ impl Blog {
         coll.collection_props.items = serde_json::to_value(self.get_activities(conn)?)?;
         coll.collection_props
             .set_total_items_u64(self.get_activities(conn)?.len() as u64)?;
+        coll.collection_props
+            .set_first_link(Id::new(ap_url(&format!("{}?page=1", &self.outbox_url))))?;
+        coll.collection_props
+            .set_last_link(Id::new(ap_url(&format!(
+                "{}?page={}",
+                &self.outbox_url,
+                (self.get_activities(conn)?.len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
+                    / ITEMS_PER_PAGE as u64
+            ))))?;
         Ok(ActivityStream::new(coll))
     }
-
+    pub fn outbox_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<ActivityStream<OrderedCollectionPage>> {
+        let mut coll = OrderedCollectionPage::default();
+        let acts = self.get_activity_page(&conn, (min, max))?;
+        //This still doesn't do anything because the outbox
+        //doesn't do anything yet
+        coll.collection_page_props.set_next_link(Id::new(&format!(
+            "{}?page={}",
+            &self.outbox_url,
+            min / ITEMS_PER_PAGE + 1
+        )))?;
+        coll.collection_page_props.set_prev_link(Id::new(&format!(
+            "{}?page={}",
+            &self.outbox_url,
+            min / ITEMS_PER_PAGE - 1
+        )))?;
+        coll.collection_props.items = serde_json::to_value(acts)?;
+        Ok(ActivityStream::new(coll))
+    }
     fn get_activities(&self, _conn: &Connection) -> Result<Vec<serde_json::Value>> {
+        Ok(vec![])
+    }
+    fn get_activity_page(
+        &self,
+        _conn: &Connection,
+        (_min, _max): (i32, i32),
+    ) -> Result<Vec<serde_json::Value>> {
         Ok(vec![])
     }
 
@@ -572,9 +612,8 @@ pub(crate) mod tests {
                 Instance::get_local().unwrap().id
             );
             // TODO add tests for remote instance
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -674,9 +713,8 @@ pub(crate) mod tests {
                 .unwrap()
                 .iter()
                 .any(|b| b.id == blog[1].id));
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -699,9 +737,8 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(Blog::find_by_fqn(&r, "SomeName").unwrap().id, blog.id);
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -723,9 +760,8 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(blog.fqn, "SomeName");
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -736,9 +772,8 @@ pub(crate) mod tests {
 
             blogs[0].delete(conn, &get_searcher()).unwrap();
             assert!(Blog::get(conn, blogs[0].id).is_err());
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -807,9 +842,8 @@ pub(crate) mod tests {
             assert!(Blog::get(conn, blog[1].id).is_err());
             user[1].delete(conn, &searcher).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_err());
-
             Ok(())
-        });
+        })
     }
 
     #[test]
@@ -870,6 +904,6 @@ pub(crate) mod tests {
             assert_eq!(blog.banner_url(conn), blogs[0].banner_url(conn));
 
             Ok(())
-        });
+        })
     }
 }

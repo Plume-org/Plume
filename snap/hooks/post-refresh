@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd ${SNAP}
+exec ./set-environment bin/plm migration run --path ${SNAP_DATA}
