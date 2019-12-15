@@ -6,7 +6,7 @@ INSERT INTO timeline (post_id, timeline_id)
 	SELECT posts.id,timeline_definition.id FROM posts,timeline_definition
 	INNER JOIN blogs ON posts.blog_id = blogs.id
 	INNER JOIN instances ON blogs.instance_id = instances.id
-	WHERE timeline_definition.query = 'local' and instances.local = true;
+	WHERE timeline_definition.query = 'local' and instances.local = 1;
 
 INSERT INTO timeline (post_id, timeline_id)
 	SELECT posts.id,timeline_definition.id FROM posts
