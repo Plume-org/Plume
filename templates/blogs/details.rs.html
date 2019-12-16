@@ -24,6 +24,7 @@
 
 	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
+	<link href='@blog.ap_url' rel='canonical'>
     @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
         @if let Some(ref theme) = blog.theme {
             <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(theme).join("theme.css"), _build_id = CACHE_NAME)">
@@ -61,7 +62,7 @@
                     <a href="@uri!(blogs::edit: name = &blog.fqn)" class="button" dir="auto">@i18n!(ctx.1, "Edit")</a>
                 }
             </div>
-            
+
             <main class="user-summary" dir="auto">
                 <p>
                     @i18n!(ctx.1, "There's one author on this blog: ", "There are {0} authors on this blog: "; authors.len())
