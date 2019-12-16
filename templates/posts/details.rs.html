@@ -20,6 +20,7 @@
     }
     <meta property="og:url" content="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)"/>
     <meta property="og:description" content="@article.subtitle"/>
+    <link rel="canonical" href="@article.ap_url"/>
 
     @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
         @if let Some(ref theme) = blog.theme {
