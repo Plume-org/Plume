@@ -3,7 +3,8 @@ INSERT INTO timeline (post_id, timeline_id)
 	WHERE timeline_definition.query = 'all';
 
 INSERT INTO timeline (post_id, timeline_id)
-	SELECT posts.id,timeline_definition.id FROM posts,timeline_definition
+	SELECT posts.id,timeline_definition.id FROM posts
+	CROSS JOIN timeline_definition
 	INNER JOIN blogs ON posts.blog_id = blogs.id
 	INNER JOIN instances ON blogs.instance_id = instances.id
 	WHERE timeline_definition.query = 'local' and instances.local = true;
