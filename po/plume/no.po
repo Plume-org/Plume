@@ -3,264 +3,366 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-18 06:16\n"
-"Last-Translator: Ana Gelez (AnaGelez)\n"
+"PO-Revision-Date: 2019-12-16 21:07\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Language: no\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-# src/template_utils.rs:68
+# src/template_utils.rs:102
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} har kommentert artikkelen din."
 
-# src/template_utils.rs:69
+# src/template_utils.rs:103
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} har abbonert på deg."
 
-# src/template_utils.rs:70
+# src/template_utils.rs:104
 msgid "{0} liked your article."
-msgstr ""
+msgstr "{0} likte artikkelen din."
 
-# src/template_utils.rs:71
+# src/template_utils.rs:105
 msgid "{0} mentioned you."
-msgstr ""
+msgstr "{0} nevnte deg."
 
-# src/template_utils.rs:72
+# src/template_utils.rs:106
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} har fremhevet artikkelen din."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:142
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "{0}s avatar"
 
-# src/routes/blogs.rs:70
+# src/routes/blogs.rs:64
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Du må være logget inn for å lage en ny blogg"
 
-# src/routes/blogs.rs:109
+# src/routes/blogs.rs:106
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Det eksisterer allerede en blogg med dette navnet."
 
-# src/routes/blogs.rs:172
+# src/routes/blogs.rs:141
+msgid "Your blog was successfully created!"
+msgstr "Bloggen ble opprettet!"
+
+# src/routes/blogs.rs:163
+msgid "Your blog was deleted."
+msgstr "Bloggen din er nå slettet."
+
+# src/routes/blogs.rs:170
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Du har ikke rettigheter til å slette denne bloggen."
 
-# src/routes/blogs.rs:217
+# src/routes/blogs.rs:218
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Du har ikke rettigheter til å endre denne bloggen."
 
-# src/routes/blogs.rs:262
+# src/routes/blogs.rs:263
 msgid "You can't use this media as a blog icon."
+msgstr "Du kan ikke bruke dette bildet som bloggikon."
+
+# src/routes/blogs.rs:281
+msgid "You can't use this media as a blog banner."
+msgstr "Du kan ikke bruke dette bildet som bloggbanner."
+
+# src/routes/blogs.rs:314
+msgid "Your blog information have been updated."
+msgstr "Informasjon om bloggen er oppdatert."
+
+# src/routes/comments.rs:97
+msgid "Your comment has been posted."
+msgstr "Kommentaren din er lagt til."
+
+# src/routes/comments.rs:172
+msgid "Your comment has been deleted."
+msgstr "Kommentaren din er slettet."
+
+# src/routes/instance.rs:134
+msgid "Instance settings have been saved."
+msgstr "Innstillingene for instansen er lagret."
+
+# src/routes/instance.rs:175
+msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/blogs.rs:280
-msgid "You can't use this media as a blog banner."
+# src/routes/instance.rs:177
+msgid "{} have been blocked."
+msgstr ""
+
+# src/routes/instance.rs:221
+msgid "{} have been banned."
 msgstr ""
 
 # src/routes/likes.rs:51
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Du må være innlogget for å like ett innlegg"
 
-# src/routes/notifications.rs:29
+# src/routes/medias.rs:141
+msgid "Your media have been deleted."
+msgstr "Mediet er slettet."
+
+# src/routes/medias.rs:146
+msgid "You are not allowed to delete this media."
+msgstr "Du har ikke rettigheter til å slette dette mediet."
+
+# src/routes/medias.rs:163
+msgid "Your avatar has been updated."
+msgstr "Avataren din er oppdatert."
+
+# src/routes/medias.rs:168
+msgid "You are not allowed to use this media."
+msgstr "Du har ikke rettigheter til å bruke dette mediet."
+
+# src/routes/notifications.rs:28
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Du må være innlogget for se varsler"
 
 # src/routes/posts.rs:93
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Dette innlegget er ikke publisert enda."
 
 # src/routes/posts.rs:122
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Du må være innlogget for å skrive ett nytt innlegg"
 
-# src/routes/posts.rs:140
+# src/routes/posts.rs:139
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Du er ikke forfatter av denne bloggen."
 
-# src/routes/posts.rs:147
+# src/routes/posts.rs:146
 msgid "New post"
-msgstr ""
+msgstr "Nytt innlegg"
 
-# src/routes/posts.rs:192
+# src/routes/posts.rs:191
 msgid "Edit {0}"
-msgstr ""
+msgstr "Rediger {0}"
 
-# src/routes/posts.rs:630
+# src/routes/posts.rs:260
+msgid "You are not allowed to publish on this blog."
+msgstr "Du har ikke rettigheter til å publisere på denne bloggen."
+
+# src/routes/posts.rs:350
+msgid "Your article has been updated."
+msgstr "Artikkelen er oppdatert."
+
+# src/routes/posts.rs:532
+msgid "Your article has been saved."
+msgstr "Artikkelen er lagret."
+
+# src/routes/posts.rs:538
+msgid "New article"
+msgstr "Ny artikkel"
+
+# src/routes/posts.rs:572
+msgid "You are not allowed to delete this article."
+msgstr "Du har ikke rettigheter til å slette denne artikkelen."
+
+# src/routes/posts.rs:597
+msgid "Your article has been deleted."
+msgstr "Artikkelen er slettet."
+
+# src/routes/posts.rs:602
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgstr "Det ser ut som arikkelen du prøvde allerede er slettet; Kanskje den allerede er fjernet?"
+
+# src/routes/posts.rs:642
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "Klarte ikke å hente informasjon om kontoen din. Vennligst sjekk at brukernavnet er korrekt."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Du må være innlogget for å dele ett innlegg"
 
-# src/routes/session.rs:181
+# src/routes/session.rs:112
+msgid "You are now connected."
+msgstr "Du er nå koblet til."
+
+# src/routes/session.rs:131
+msgid "You are now logged off."
+msgstr "Du er logget ut."
+
+# src/routes/session.rs:188
 msgid "Password reset"
-msgstr ""
+msgstr "Gjenopprette passord"
 
-# src/routes/session.rs:182
+# src/routes/session.rs:189
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Her denne pekeren for å gjenopprette passordet ditt: {0}"
 
-# src/routes/session.rs:259
+# src/routes/session.rs:264
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Passordet ditt er gjenopprettet."
 
-# src/routes/session.rs:263
+# src/routes/session.rs:274
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Du må være innlogget for å se skrivebordet"
 
-# src/routes/user.rs:244
+# src/routes/user.rs:158
+msgid "You are no longer following {}."
+msgstr "Du følger ikke lenger {}."
+
+# src/routes/user.rs:175
+msgid "You are now following {}."
+msgstr "Du følger nå {}."
+
+# src/routes/user.rs:254
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Du må være innlogget for å følge noen"
 
-# src/routes/user.rs:344
+# src/routes/user.rs:356
 msgid "To edit your profile, you need to be logged in"
+msgstr "Du må være innlogget for å endre profilen din"
+
+# src/routes/user.rs:398
+msgid "Your profile has been updated."
+msgstr "Profilen din er oppdatert."
+
+# src/routes/user.rs:425
+msgid "Your account has been deleted."
+msgstr "Kontoen din er slettet."
+
+# src/routes/user.rs:431
+msgid "You can't delete someone else's account."
+msgstr "Du kan ikke slette andres kontoer."
+
+# src/routes/user.rs:503
+msgid "Registrations are closed on this instance."
+msgstr "Registrering er lukket på denne instansen."
+
+# src/routes/user.rs:527
+msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgstr "Kontoen din er opprettet. Du må logge inn for å bruke den."
+
+msgid "Internal server error"
+msgstr "Intern feil"
+
+msgid "Something broke on our side."
+msgstr "Noe brakk hos oss."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Beklager! Hvis du tror at dette er en programfeil, setter vi pris på at du sier ifra."
+
+msgid "You are not authorized."
+msgstr "Du har ikke tilgang."
+
+msgid "Page not found"
+msgstr "Siden ble ikke funnet"
+
+msgid "We couldn't find this page."
+msgstr "Vi fant desverre ikke denne siden."
+
+msgid "The link that led you here may be broken."
+msgstr "Lenken som ledet deg hit kan være utdatert."
+
+msgid "The content you sent can't be processed."
+msgstr "Innholdet du sendte inn kan ikke bearbeides."
+
+msgid "Maybe it was too long."
+msgstr "Kanskje det var for langt."
+
+msgid "Invalid CSRF token"
+msgstr "Ugyldig CSRF token"
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Noe er galt med CSRF token. Påse at informasjonskapsler er aktivert i nettleseren, prøv så å hente nettsiden på nytt. Hvis du fortsatt ser denne feilen, setter vi pris på om du sier ifra."
+
+msgid "Articles tagged \"{0}\""
+msgstr "Artikler med emneknaggen \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "Det er ingen artikler med den emneknaggen"
+
+msgid "New Blog"
+msgstr "Ny Blogg"
+
+msgid "Create a blog"
+msgstr "Opprett en blogg"
+
+# src/template_utils.rs:251
+msgid "Title"
 msgstr ""
 
-msgid "Reset your password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "E-mail"
-msgstr ""
-
-# src/template_utils.rs:220
+# src/template_utils.rs:254
 msgid "Optional"
-msgstr ""
+msgstr "Valgfritt"
 
-msgid "Send password reset link"
-msgstr ""
+msgid "Create blog"
+msgstr "Opprett blogg"
 
-msgid "Check your inbox!"
-msgstr ""
+msgid "Edit \"{}\""
+msgstr "Rediger \"{}\""
 
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
-
-msgid "Log in"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username, or email"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "New password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
-msgstr ""
-
-msgid "Administration of {0}"
-msgstr ""
-
-msgid "Instances"
-msgstr ""
-
-msgid "Configuration"
-msgstr ""
-
-msgid "Users"
-msgstr ""
-
-msgid "Unblock"
-msgstr ""
-
-msgid "Block"
-msgstr ""
-
-msgid "About {0}"
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
-
-msgid "Administred by"
-msgstr ""
-
-msgid "Runs Plume {0}"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Latest articles"
-msgstr ""
-
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "Ban"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
-
-msgid "Administration"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Name"
-msgstr ""
-
-msgid "Allow anyone to register here"
-msgstr ""
-
-msgid "Short description"
-msgstr ""
+msgid "Description"
+msgstr "Beskrivelse"
 
 msgid "Markdown syntax is supported"
+msgstr "Markdown syntax støttes"
+
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Du kan legge opp bilder til galleriet ditt for å bruke den som bloggikoner eller bannere."
+
+msgid "Upload images"
+msgstr "Last opp bilder"
+
+msgid "Blog icon"
+msgstr "Bloggikon"
+
+msgid "Blog banner"
+msgstr "Bloggbanner"
+
+msgid "Update blog"
+msgstr "Oppdater blogg"
+
+msgid "Danger zone"
+msgstr "Faresone"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Vær forsiktig. Endringer her kan ikke reverteres."
+
+msgid "Permanently delete this blog"
+msgstr "Slett denne bloggen permanent"
+
+msgid "{}'s icon"
+msgstr "{}s ikon"
+
+msgid "Edit"
+msgstr "Rediger"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Det er en forfatter av denne bloggen: "
+msgstr[1] "Det er {0} forfattere av denne bloggen: "
+
+msgid "Latest articles"
+msgstr "Siste artikler"
+
+msgid "No posts to see here yet."
+msgstr "Det er ingen artikler her enda."
+
+msgid "Search result(s) for \"{0}\""
 msgstr ""
 
-msgid "Long description"
+msgid "Search result(s)"
 msgstr ""
 
-# src/template_utils.rs:217
-msgid "Default article license"
+msgid "No results for your query"
 msgstr ""
 
-msgid "Save these settings"
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Search"
-msgstr ""
+msgstr "Søk"
 
 msgid "Your query"
 msgstr ""
@@ -268,168 +370,162 @@ msgstr ""
 msgid "Advanced search"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Article title matching these words"
 msgstr ""
 
-msgid "Title"
-msgstr ""
-
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Subtitle matching these words"
 msgstr ""
 
 msgid "Subtitle - byline"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Content matching these words"
 msgstr ""
 
 msgid "Body content"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "From this date"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "To this date"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Containing these tags"
 msgstr ""
 
 msgid "Tags"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Instance domain"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Posted by one of these authors"
 msgstr ""
 
-msgid "Authors"
+msgid "Author(s)"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Published under this license"
 msgstr ""
 
 msgid "Article license"
 msgstr ""
 
-msgid "Search result for \"{0}\""
+msgid "Interact with {}"
+msgstr "Interakter med {}"
+
+msgid "Log in to interact"
+msgstr "Logg inn for å interaktere"
+
+msgid "Enter your full username to interact"
+msgstr "Skriv inn ditt fulle brukernavn for å interaktere"
+
+msgid "Publish"
+msgstr "Publiser"
+
+msgid "Classic editor (any changes will be lost)"
+msgstr "Klassisk redigeringsverktøy (alle endringer vil gå tapt)"
+
+# src/template_utils.rs:251
+msgid "Subtitle"
 msgstr ""
 
-msgid "Search result"
+msgid "Content"
+msgstr "Innhold"
+
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgstr "Du kan laste opp medier til galleriet, og så lime inn Markdown syntaksen inn i artiklen for å bruke dem."
+
+msgid "Upload media"
+msgstr "Last opp medie"
+
+# src/template_utils.rs:251
+msgid "Tags, separated by commas"
+msgstr "Knagger, adskilt med komma"
+
+# src/template_utils.rs:251
+msgid "License"
+msgstr "Lisens"
+
+# src/template_utils.rs:259
+msgid "Leave it empty to reserve all rights"
 msgstr ""
 
-msgid "No result for your query"
-msgstr ""
+msgid "Illustration"
+msgstr "Illustrasjon"
 
-msgid "No more results for your query"
-msgstr ""
+msgid "This is a draft, don't publish it yet."
+msgstr "Dette er ett utkast, ikke publiser det enda."
 
-msgid "Edit \"{}\""
-msgstr ""
+msgid "Update"
+msgstr "Oppdater"
 
-msgid "Description"
-msgstr ""
+msgid "Update, or publish"
+msgstr "Oppdater eller publiser"
 
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-
-msgid "Upload images"
-msgstr ""
-
-msgid "Blog icon"
-msgstr ""
-
-msgid "Blog banner"
-msgstr ""
-
-msgid "Update blog"
-msgstr ""
-
-msgid "Danger zone"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr ""
-
-msgid "{}'s icon"
-msgstr ""
-
-msgid "New article"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "No posts to see here yet."
-msgstr ""
-
-msgid "New Blog"
-msgstr ""
-
-msgid "Create a blog"
-msgstr ""
-
-msgid "Create blog"
-msgstr ""
-
-msgid "Articles tagged \"{0}\""
-msgstr ""
-
-msgid "There are currently no articles with such a tag"
-msgstr ""
+msgid "Publish your post"
+msgstr "Publiser innlegget"
 
 msgid "Written by {0}"
-msgstr ""
-
-msgid "Are you sure?"
-msgstr ""
-
-msgid "Delete this article"
-msgstr ""
-
-msgid "Draft"
-msgstr ""
+msgstr "Skrevet av {0}"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Alt innhold er opphavsrettslig beskyttet."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Denne artikkelen er lisensiert under {0}."
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "En like"
+msgstr[1] "{0} likes"
+
+msgid "I don't like this anymore"
+msgstr "Jeg liker ikke dette lenger"
+
+msgid "Add yours"
+msgstr "Legg inn din egen"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "Fremhevet en gang"
+msgstr[1] "{0} fremhevinger"
+
+msgid "I don't want to boost this anymore"
+msgstr "Jeg vil ikke fremheve dette lenger"
+
+msgid "Boost"
+msgstr "Fremhev"
+
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr "{0}Logg inn{1} eller {2}bruk din Fediverse konto{3} for å interaktere med denne artikkelen"
 
 msgid "Unsubscribe"
 msgstr ""
@@ -437,124 +533,359 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't like this anymore"
-msgstr ""
-
-msgid "Add yours"
-msgstr ""
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't want to boost this anymore"
-msgstr ""
-
-msgid "Boost"
-msgstr ""
-
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
-
 msgid "Comments"
-msgstr ""
+msgstr "Kommentarer"
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Content warning"
-msgstr ""
+msgstr "Varsel om følsomt innhold"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Din kommentar"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Send kommentar"
 
 msgid "No comments yet. Be the first to react!"
+msgstr "Ingen kommentarer enda. Bli den første!"
+
+msgid "Are you sure?"
 msgstr ""
 
-msgid "Interact with {}"
+msgid "Delete"
+msgstr "Slett"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr "Denne artikkelen er ett utkast. Bare du og andre forfattere kan se den."
+
+msgid "Only you and other authors can edit this article."
+msgstr "Bare du og andre forfattere kan endre denne artikkelen."
+
+msgid "Media upload"
+msgstr "Last opp medie"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Anvendelig for synshemmede, samt for lisensinformasjon"
+
+msgid "Leave it empty, if none is needed"
+msgstr "La være tomt, hvis ingen trengs"
+
+msgid "File"
+msgstr "Fil"
+
+msgid "Send"
+msgstr "Send"
+
+msgid "Your media"
+msgstr "Dine medier"
+
+msgid "Upload"
+msgstr "Last opp"
+
+msgid "You don't have any media yet."
+msgstr "Du har ingen medier enda."
+
+msgid "Content warning: {0}"
+msgstr "Varsel om følsomt innhold: {0}"
+
+msgid "Details"
+msgstr "Detaljer"
+
+msgid "Media details"
+msgstr "Mediedetaljer"
+
+msgid "Go back to the gallery"
+msgstr "Gå tilbake til galleriet"
+
+msgid "Markdown syntax"
+msgstr "Markdown syntaks"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Kopier inn i artikkelen, for å sette inn dette mediet:"
+
+msgid "Use as an avatar"
+msgstr "Bruk som avatar"
+
+msgid "Notifications"
+msgstr "Varsler"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Meny"
+
+msgid "Dashboard"
+msgstr "Skrivebord"
+
+msgid "Log Out"
+msgstr "Logg ut"
+
+msgid "My account"
+msgstr "Min konto"
+
+msgid "Log In"
+msgstr "Logg inn"
+
+msgid "Register"
+msgstr "Registrer deg"
+
+msgid "About this instance"
+msgstr "Om denne instansen"
+
+msgid "Privacy policy"
+msgstr "Retningslinjer for personvern"
+
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "Documentation"
+msgstr "Dokumentasjon"
+
+msgid "Source code"
+msgstr "Kildekode"
+
+msgid "Matrix room"
+msgstr "Matrix rom"
+
+msgid "Your feed"
+msgstr "Din tidslinje"
+
+msgid "Federated feed"
+msgstr "Føderert tidslinje"
+
+msgid "Local feed"
+msgstr "Lokal tidslinje"
+
+msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
-msgid "Log in to interact"
+msgid "Articles from {}"
 msgstr ""
 
-msgid "Enter your full username to interact"
+msgid "All the articles of the Fediverse"
 msgstr ""
 
-msgid "Publish"
+msgid "Users"
+msgstr "Brukere"
+
+msgid "Configuration"
+msgstr "Innstillinger"
+
+msgid "Instances"
+msgstr "Instanser"
+
+msgid "Ban"
+msgstr "Bannlys"
+
+msgid "Administration of {0}"
+msgstr "Administrasjon av {0}"
+
+# src/template_utils.rs:251
+msgid "Name"
+msgstr "Navn"
+
+msgid "Allow anyone to register here"
+msgstr "Tillat alle å registrere seg"
+
+msgid "Short description"
+msgstr "Kort beskrivelse"
+
+msgid "Long description"
+msgstr "Lang beskrivelse"
+
+# src/template_utils.rs:251
+msgid "Default article license"
+msgstr "Standardlisens for artikler"
+
+msgid "Save these settings"
+msgstr "Lagre innstillingene"
+
+msgid "About {0}"
+msgstr "Om {0}"
+
+msgid "Runs Plume {0}"
+msgstr "Kjører Plume {0}"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "Hjemmet til <em>{0}</em> mennesker"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Som har skrevet <em>{0}</em> artikler"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "Og er koblet til <em>{0}</em> andre instanser"
+
+msgid "Administred by"
+msgstr "Administrert av"
+
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Hvis du besøker denne siden som gjest, lagres ingen informasjon om deg."
+
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr "For å registrere deg må du oppgi ett brukernavn (dette behøver ikke å samsvare med ditt ekte navn), en fungerende epost-adresse og ett passord. Dette gjør at du kan logge inn, skrive artikler og kommentarer. Innholdet du legger inn blir lagret inntil du sletter det."
+
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr "Når du logger inn lagrer vi to informasjonskapsler. Den har informasjon om sesjonen din, den andre beskytter identiteten din. Vi lagrer ingen andre informasjonskapsler."
+
+msgid "Welcome to {}"
+msgstr "Velkommen til {}"
+
+msgid "Unblock"
+msgstr "Fjern blokkering"
+
+msgid "Block"
+msgstr "Blokker"
+
+msgid "Reset your password"
 msgstr ""
 
-msgid "Classic editor (any changes will be lost)"
+# src/template_utils.rs:251
+msgid "New password"
 msgstr ""
 
-# src/template_utils.rs:217
-msgid "Subtitle"
+# src/template_utils.rs:251
+msgid "Confirmation"
 msgstr ""
 
-msgid "Content"
+msgid "Update password"
 msgstr ""
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgid "Log in"
+msgstr "Logg Inn"
+
+# src/template_utils.rs:251
+msgid "Username, or email"
+msgstr "Brukernavn eller e-post"
+
+# src/template_utils.rs:251
+msgid "Password"
+msgstr "Passord"
+
+# src/template_utils.rs:251
+msgid "E-mail"
 msgstr ""
 
-msgid "Upload media"
+msgid "Send password reset link"
+msgstr "Send lenke for tilbakestilling av passord"
+
+msgid "Check your inbox!"
 msgstr ""
 
-# src/template_utils.rs:217
-msgid "Tags, separated by commas"
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
-# src/template_utils.rs:217
-msgid "License"
+msgid "Admin"
+msgstr "Administrator"
+
+msgid "It is you"
+msgstr "Det er deg"
+
+msgid "Edit your profile"
+msgstr "Rediger din profil"
+
+msgid "Open on {0}"
 msgstr ""
 
-# src/template_utils.rs:225
-msgid "Leave it empty to reserve all rights"
+msgid "Follow {}"
+msgstr "Følg {}"
+
+msgid "Log in to follow"
+msgstr "Logg inn for å følge"
+
+msgid "Enter your full username handle to follow"
+msgstr "Skriv inn hele brukernavnet ditt for å følge"
+
+msgid "{0}'s subscriptions"
 msgstr ""
 
-msgid "Illustration"
-msgstr ""
+msgid "Articles"
+msgstr "Artikler"
 
-msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgid "Subscribers"
+msgstr "Abonnenter"
 
-msgid "Update"
-msgstr ""
+msgid "Subscriptions"
+msgstr "Abonnenter"
 
-msgid "Update, or publish"
-msgstr ""
+msgid "Create your account"
+msgstr "Opprett kontoen din"
 
-msgid "Publish your post"
-msgstr ""
+msgid "Create an account"
+msgstr "Opprett en konto"
 
-msgid "I'm from this instance"
-msgstr ""
-
-msgid "I'm from another instance"
-msgstr ""
-
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Username"
+msgstr "Brukernavn"
+
+# src/template_utils.rs:251
+msgid "Email"
+msgstr "E-post"
+
+# src/template_utils.rs:251
+msgid "Password confirmation"
 msgstr ""
 
-# src/template_utils.rs:225
-msgid "Example: user@plu.me"
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Beklager, nyregistreringer er lukket på denne instansen. Du kan istedet finne en annen instans."
+
+msgid "{0}'s subscribers"
 msgstr ""
 
-msgid "Continue to your instance"
+msgid "Edit your account"
+msgstr "Endre kontoen din"
+
+msgid "Your Profile"
+msgstr "Din profil"
+
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "For å endre avataren din må du legge den til galleriet og velge den der."
+
+msgid "Upload an avatar"
+msgstr "Last opp en avatar"
+
+# src/template_utils.rs:251
+msgid "Display name"
 msgstr ""
 
-msgid "View all"
-msgstr ""
+msgid "Summary"
+msgstr "Sammendrag"
 
-msgid "By {0}"
-msgstr ""
+msgid "Update account"
+msgstr "Oppdater konto"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Vær forsiktig. Endringer her kan ikke avbrytes."
+
+msgid "Delete your account"
+msgstr "Slett kontoen din"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Beklager, en administrator kan ikke forlate sin egen instans."
+
+msgid "Your Dashboard"
+msgstr "Skrivebordet ditt"
+
+msgid "Your Blogs"
+msgstr "Dine Blogger"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Du har ikke en blogg enda. Lag din egen, eller spør om å bli med i en."
+
+msgid "Start a new blog"
+msgstr "Opprett en ny blogg"
+
+msgid "Your Drafts"
+msgstr "Dine Utkast"
+
+msgid "Go to your gallery"
+msgstr "Gå til galleriet ditt"
+
+msgid "Atom feed"
+msgstr "Atom strøm"
+
+msgid "Recently boosted"
+msgstr "Nylig fremhveet"
 
 msgid "What is Plume?"
 msgstr ""
@@ -568,10 +899,22 @@ msgstr ""
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
-msgid "Create your account"
+msgid "Read the detailed rules"
 msgstr ""
 
-msgid "Read the detailed rules"
+msgid "View all"
+msgstr "Vis alle"
+
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
 msgstr ""
 
 msgid "Respond"
@@ -580,228 +923,16 @@ msgstr ""
 msgid "Delete this comment"
 msgstr ""
 
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "Notifications"
-msgstr ""
-
-msgid "Plume"
-msgstr ""
-
-msgid "Menu"
-msgstr ""
-
-msgid "Dashboard"
-msgstr ""
-
-msgid "Log Out"
-msgstr ""
-
-msgid "My account"
-msgstr ""
-
-msgid "Log In"
-msgstr ""
-
-msgid "Register"
-msgstr ""
-
-msgid "About this instance"
-msgstr ""
-
-msgid "Source code"
-msgstr ""
-
-msgid "Matrix room"
-msgstr ""
-
-msgid "Your media"
-msgstr ""
-
-msgid "Upload"
-msgstr ""
-
-msgid "You don't have any media yet."
-msgstr ""
-
-msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Media details"
-msgstr ""
-
-msgid "Go back to the gallery"
-msgstr ""
-
-msgid "Markdown syntax"
-msgstr ""
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr ""
-
-msgid "Use as an avatar"
-msgstr ""
-
-msgid "Media upload"
-msgstr ""
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
-
-msgid "Leave it empty, if none is needed"
-msgstr ""
-
-msgid "File"
-msgstr ""
-
-msgid "Send"
-msgstr ""
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Articles"
-msgstr ""
-
-msgid "Subscribers"
-msgstr ""
-
-msgid "Subscriptions"
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr ""
-
-msgid "Your Blogs"
-msgstr ""
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
+msgid "I'm from this instance"
+msgstr "Jeg er fra denne instansen"
 
-msgid "Start a new blog"
-msgstr ""
-
-msgid "Your Drafts"
-msgstr ""
-
-msgid "Go to your gallery"
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr ""
-
-msgid "Open on {0}"
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Edit your account"
-msgstr ""
-
-msgid "Your Profile"
-msgstr ""
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Display name"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr ""
-
-msgid "Summary"
-msgstr ""
-
-msgid "Update account"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr ""
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr ""
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Login to follow"
-msgstr ""
-
-msgid "Enter your full username to follow"
-msgstr ""
-
-msgid "Internal server error"
-msgstr ""
-
-msgid "Something broke on our side."
-msgstr ""
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-
-msgid "Page not found"
-msgstr ""
-
-msgid "We couldn't find this page."
-msgstr ""
+msgid "I'm from another instance"
+msgstr "Jeg er fra en annen instans"
 
-msgid "The link that led you here may be broken."
+# src/template_utils.rs:259
+msgid "Example: user@plu.me"
 msgstr ""
 
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr ""
-
-msgid "You are not authorized."
-msgstr ""
-
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
-msgstr ""
+msgid "Continue to your instance"
+msgstr "Gå til din instans"
 
