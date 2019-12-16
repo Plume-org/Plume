@@ -44,7 +44,7 @@ input[type="checkbox"] {
   -webkit-appearance: checkbox;
 }
 
-/** Inline forms (containing only CSRF token and a <submit>, for protected links) **/
+/* Inline forms (containing only CSRF token and a <submit>, for protected links) */
 
 form.inline {
   display: inline;
@@ -111,7 +111,7 @@ input[type="submit"] {
  -webkit-appearance: none;
 }
 
-//  Writing page
+/*  The writing page */
 form.new-post {
   max-width: 60em;
   .title {
