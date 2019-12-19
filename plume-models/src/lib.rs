@@ -1,6 +1,7 @@
 #![feature(try_trait)]
 #![feature(never_type)]
-#![feature(custom_attribute)]
+//#![feature(register_attr)]
+//#![feature(register_tool)]
 #![feature(proc_macro_hygiene)]
 
 extern crate activitypub;
@@ -253,6 +254,7 @@ macro_rules! insert {
     ($table:ident, $from:ident, |$val:ident, $conn:ident | $( $after:tt )+) => {
         last!($table);
 
+        #[allow(dead_code)]
         pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
             diesel::insert_into($table::table)
                 .values(new)
@@ -279,6 +281,7 @@ macro_rules! insert {
 /// ```
 macro_rules! last {
     ($table:ident) => {
+        #[allow(dead_code)]
         pub fn last(conn: &crate::Connection) -> Result<Self> {
             $table::table
                 .order_by($table::id.desc())

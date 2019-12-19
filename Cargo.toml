@@ -23,7 +23,7 @@ rocket = "0.4.0"
 rocket_contrib = { version = "0.4.0", features = ["json"] }
 rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
 rpassword = "4.0"
-runtime-fmt = "0.3.0"
+runtime-fmt = "0.4.0"
 scheduled-thread-pool = "0.2.2"
 serde = "1.0"
 serde_json = "1.0"
@@ -65,7 +65,7 @@ path = "plume-models"
 
 [dependencies.rocket_csrf]
 git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "4a72ea2ec716cb0b26188fb00bccf2ef7d1e031c"
+rev = "29910f2829e7e590a540da3804336577b48c7b31"
 
 [build-dependencies]
 ructe = "0.6.2"

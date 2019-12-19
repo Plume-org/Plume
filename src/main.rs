@@ -307,17 +307,17 @@ Then try to restart Plume
                     (
                         "/inbox".to_owned(),
                         "/inbox".to_owned(),
-                        rocket::http::Method::Post,
+                        Some(rocket::http::Method::Post),
                     ),
                     (
                         "/@/<name>/inbox".to_owned(),
                         "/@/<name>/inbox".to_owned(),
-                        rocket::http::Method::Post,
+                        Some(rocket::http::Method::Post),
                     ),
                     (
                         "/api/<path..>".to_owned(),
                         "/api/<path..>".to_owned(),
-                        rocket::http::Method::Post,
+                        Some(rocket::http::Method::Post),
                     ),
                 ])
                 .finalize()

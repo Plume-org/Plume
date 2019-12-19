@@ -97,7 +97,7 @@ fn inline_tags<'a>(
     }
 }
 
-pub type MediaProcessor<'a> = Box<'a + Fn(i32) -> Option<(String, Option<String>)>>;
+pub type MediaProcessor<'a> = Box<dyn 'a + Fn(i32) -> Option<(String, Option<String>)>>;
 
 fn process_image<'a, 'b>(
     evt: Event<'a>,

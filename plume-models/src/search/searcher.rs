@@ -72,7 +72,7 @@ impl Searcher {
         schema_builder.build()
     }
 
-    pub fn create(path: &AsRef<Path>) -> Result<Self> {
+    pub fn create(path: &dyn AsRef<Path>) -> Result<Self> {
         let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
 
         let content_tokenizer = SimpleTokenizer
@@ -111,7 +111,7 @@ impl Searcher {
         })
     }
 
-    pub fn open(path: &AsRef<Path>) -> Result<Self> {
+    pub fn open(path: &dyn AsRef<Path>) -> Result<Self> {
         let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
 
         let content_tokenizer = SimpleTokenizer
