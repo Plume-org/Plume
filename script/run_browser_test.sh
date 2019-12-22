@@ -5,6 +5,7 @@ export ROCKET_SECRET_KEY="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 
 plm migration run
 plm migration redo
+plm search init
 plm instance new -d plume-test.local -n plume-test
 plm users new -n admin -N 'Admin' -e 'email@exemple.com' -p 'password'
 

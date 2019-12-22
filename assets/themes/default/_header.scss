@@ -101,7 +101,7 @@ body > header {
   }
 }
 
-// Only enable label animations on normal screens
+/* Only enable label animations on large screens */
 @media screen and (min-width: 600px) {
  	header nav a {
  	  i {

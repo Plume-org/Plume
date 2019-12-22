@@ -1,4 +1,4 @@
-// Heading
+/* Heading */
 main header.article {
   overflow: hidden;
   background: $background;
@@ -73,7 +73,7 @@ main .article-info {
  	}
 }
 
-// The article itself
+/* The article itself */
 main article {
   max-width: $article-width;
  	margin: 2.5em auto;
@@ -104,7 +104,7 @@ main article {
   }
 }
 
-// Metadata under the article
+/* Metadata under the article */
 main .article-meta, main .article-meta button {
   padding: 0;
   font-size: 1.1em;
@@ -129,7 +129,7 @@ main .article-meta {
  	  font-size: 0.9em;
   }
 
-  // Article Tags
+  /* Article Tags */
   .tags {
     list-style: none;
     padding: 0px;
@@ -154,7 +154,7 @@ main .article-meta {
     }
   }
 
-  // Likes & Boosts
+  /* Likes & Boosts */
   .actions {
     display: flex;
    	flex-direction: row;
@@ -257,7 +257,7 @@ main .article-meta {
     }
   }
 
-  // Comments
+  /* Comments */
   .comments {
     margin: 0 $horizontal-margin;
 
@@ -271,7 +271,7 @@ main .article-meta {
       cursor: pointer;
     }
 
-    // New comment form
+    /* New comment form */
     > form input[type="submit"] {
       font-size: 1em;
       -webkit-appearance: none;
@@ -421,7 +421,7 @@ main .article-meta {
 }
 
 
-// content warning
+/* Content warning */
 .cw-container {
   position: relative;
   display: inline-block;
@@ -459,7 +459,7 @@ input:checked ~ .cw-container > .cw-text {
   transform: translateY(-50%);
 }
 
-// Bottom action bar
+/* Bottom action bar */
 
 .bottom-bar {
   z-index: 10;
@@ -482,11 +482,11 @@ input:checked ~ .cw-container > .cw-text {
   }
 }
 
-// Footnote related styles
+/* Footnote related styles */
 .footnote-definition {
   p {
     font-size: smaller;
-    // Make sur the definition is inline with the label-definition
+    /* Make sure the definition is inline with the label-definition */
     display: inline;
   }
 }
