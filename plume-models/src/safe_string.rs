@@ -63,6 +63,10 @@ lazy_static! {
                 ]
                 .iter(),
             )
+            // Related to https://github.com/Plume-org/Plume/issues/637
+            .add_allowed_classes("sup", ["footnote-reference", "footnote-definition-label"].iter())
+            .add_allowed_classes("div", ["footnote-definition"].iter())
+            .add_allowed_classes("span", ["cw-container", "cw-text"].iter())
             .attribute_filter(|elem, att, val| match (elem, att) {
                 ("input", "type") => Some("checkbox".into()),
                 ("input", "checked") => Some("checked".into()),

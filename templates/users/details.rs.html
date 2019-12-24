@@ -22,6 +22,7 @@
 
 	<link href='@Instance::get_local().unwrap().compute_box("@", &user.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@user.ap_url' rel='alternate' type='application/activity+json'>
+    <link rel="canonical"  href="@user.ap_url"/>
 }, {}, {
     @:header(ctx, &user, follows, is_remote, remote_url)
 

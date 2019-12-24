@@ -1,11 +1,4 @@
 #!/bin/sh
 
-db_type=$(snapctl get db.type)
-
-if [ -z "${db_type}" ]
-then
-    exit 0
-fi
-
 cd ${SNAP}
 exec ./set-environment bin/plm migration run --path ${SNAP_DATA}

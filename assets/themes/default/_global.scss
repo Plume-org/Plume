@@ -68,7 +68,7 @@ small {
 	appearance: none;
 }
 
-/// Main
+/* Main */
 body > main > *, .h-feed > * {
  	margin: 1em $horizontal-margin;
 }
@@ -137,13 +137,13 @@ main {
   }
 }
 
-/// Errors
+/* Errors */
 p.error {
  	color: $red;
  	font-weight: bold;
 }
 
-/// User page
+/* User page */
 .user h1 {
  	display: flex;
  	flex-direction: row;
@@ -170,7 +170,7 @@ p.error {
    margin: 2em 0px;
 }
 
-/// Cards
+/* Cards */
 .cards {
  	display: flex;
  	flex-direction: row;
@@ -249,7 +249,7 @@ p.error {
   }
 }
 
-/// Instance presentation
+/* Instance presentation */
 .presentation {
   max-width: none;
 
@@ -263,7 +263,7 @@ p.error {
   }
 }
 
-// Stats
+/* Stats */
 .stats {
  	display: flex;
  	justify-content: space-around;
@@ -287,7 +287,7 @@ p.error {
   }
 }
 
-/// Pagination
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: space-evenly;
@@ -297,7 +297,7 @@ p.error {
   }
 }
 
-/// Flex boxes
+/* Flex boxes */
 .flex {
   display: flex;
   flex-direction: row;
@@ -332,7 +332,7 @@ p.error {
     margin-right: 2em;
 }
 
-/// Footer
+/* Footer */
 body > footer {
   display: flex;
   align-content: center;

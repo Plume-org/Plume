@@ -258,32 +258,35 @@ pub fn init() -> Result<(), EditorError> {
         ed.add_event_listener(|_: SubmitEvent| clear_autosave());
     }
     // Check if the user wants to use the basic editor
-    if let Some(basic_editor) = window().local_storage().get("basic-editor") {
-        if basic_editor == "true" {
-            if let Some(editor) = document().get_element_by_id("plume-fallback-editor") {
-                if let Ok(Some(title_label)) = document().query_selector("label[for=title]") {
-                    let editor_button = document().create_element("a")?;
-                    js! { @{&editor_button}.href = "#"; }
-                    editor_button.add_event_listener(|_: ClickEvent| {
-                        window().local_storage().remove("basic-editor");
-                        window().history().go(0).ok(); // refresh
-                    });
-                    editor_button.append_child(
-                        &document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")),
-                    );
-                    editor.insert_before(&editor_button, &title_label).ok();
-                    document()
-                        .get_element_by_id("editor-content")
-                        .unwrap()
-                        .add_event_listener(|_: KeyDownEvent| autosave_debounce());
-                    return Ok(());
-                }
+    if window()
+        .local_storage()
+        .get("basic-editor")
+        .map(|x| x == "true")
+        .unwrap_or(true)
+    {
+        if let Some(editor) = document().get_element_by_id("plume-fallback-editor") {
+            if let Ok(Some(title_label)) = document().query_selector("label[for=title]") {
+                let editor_button = document().create_element("a")?;
+                js! { @{&editor_button}.href = "#"; }
+                editor_button.add_event_listener(|_: ClickEvent| {
+                    window().local_storage().remove("basic-editor");
+                    window().history().go(0).ok(); // refresh
+                });
+                editor_button.append_child(
+                    &document().create_text_node(&i18n!(CATALOG, "Open the rich text editor")),
+                );
+                editor.insert_before(&editor_button, &title_label).ok();
+                document()
+                    .get_element_by_id("editor-content")
+                    .unwrap()
+                    .add_event_listener(|_: KeyDownEvent| autosave_debounce());
             }
         }
-    }
 
-    // If we didn't returned above
-    init_editor()
+        Ok(())
+    } else {
+        init_editor()
+    }
 }
 
 fn init_editor() -> Result<(), EditorError> {

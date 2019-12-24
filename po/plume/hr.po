@@ -3,77 +3,75 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-04-17 20:49\n"
-"Last-Translator: Ana Gelez (AnaGelez)\n"
+"PO-Revision-Date: 2019-12-16 21:06\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Croatian\n"
 "Language: hr_HR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: crowdin.com\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Language: hr\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
-# src/template_utils.rs:68
+# src/template_utils.rs:102
 msgid "{0} commented on your article."
 msgstr "{0} komentira na vaš članak."
 
-# src/template_utils.rs:69
+# src/template_utils.rs:103
 msgid "{0} is subscribed to you."
 msgstr ""
 
-# src/template_utils.rs:70
+# src/template_utils.rs:104
 msgid "{0} liked your article."
 msgstr "{0} se svidio vaš članak."
 
-# src/template_utils.rs:71
+# src/template_utils.rs:105
 msgid "{0} mentioned you."
 msgstr ""
 
-# src/template_utils.rs:72
+# src/template_utils.rs:106
 msgid "{0} boosted your article."
 msgstr ""
 
-# src/template_utils.rs:108
+# src/template_utils.rs:142
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/routes/blogs.rs:70
+# src/routes/blogs.rs:64
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
-# src/routes/blogs.rs:109
+# src/routes/blogs.rs:106
 msgid "A blog with the same name already exists."
 msgstr ""
 
-# src/routes/blogs.rs:142
+# src/routes/blogs.rs:141
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:167
+# src/routes/blogs.rs:163
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:172
+# src/routes/blogs.rs:170
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:217
+# src/routes/blogs.rs:218
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:262
+# src/routes/blogs.rs:263
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:280
+# src/routes/blogs.rs:281
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:312
+# src/routes/blogs.rs:314
 msgid "Your blog information have been updated."
 msgstr ""
 
@@ -85,19 +83,19 @@ msgstr ""
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/instance.rs:145
+# src/routes/instance.rs:134
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:182
+# src/routes/instance.rs:175
 msgid "{} have been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:184
+# src/routes/instance.rs:177
 msgid "{} have been blocked."
 msgstr ""
 
-# src/routes/instance.rs:218
+# src/routes/instance.rs:221
 msgid "{} have been banned."
 msgstr ""
 
@@ -105,25 +103,23 @@ msgstr ""
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
-# src/routes/medias.rs:143
+# src/routes/medias.rs:141
 msgid "Your media have been deleted."
 msgstr ""
 
-# src/routes/posts.rs:140
-#, fuzzy
+# src/routes/medias.rs:146
 msgid "You are not allowed to delete this media."
-msgstr "Ti ne autor ovog bloga."
+msgstr ""
 
 # src/routes/medias.rs:163
 msgid "Your avatar has been updated."
 msgstr ""
 
-# src/routes/posts.rs:140
-#, fuzzy
+# src/routes/medias.rs:168
 msgid "You are not allowed to use this media."
-msgstr "Ti ne autor ovog bloga."
+msgstr ""
 
-# src/routes/notifications.rs:29
+# src/routes/notifications.rs:28
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
@@ -135,22 +131,21 @@ msgstr "Ovaj post još nije objavljen."
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:140
+# src/routes/posts.rs:139
 msgid "You are not an author of this blog."
 msgstr "Ti ne autor ovog bloga."
 
-# src/routes/posts.rs:147
+# src/routes/posts.rs:146
 msgid "New post"
 msgstr "Novi članak"
 
-# src/routes/posts.rs:192
+# src/routes/posts.rs:191
 msgid "Edit {0}"
 msgstr "Uredi {0}"
 
-# src/routes/posts.rs:140
-#, fuzzy
+# src/routes/posts.rs:260
 msgid "You are not allowed to publish on this blog."
-msgstr "Ti ne autor ovog bloga."
+msgstr ""
 
 # src/routes/posts.rs:350
 msgid "Your article has been updated."
@@ -160,55 +155,51 @@ msgstr ""
 msgid "Your article has been saved."
 msgstr ""
 
+# src/routes/posts.rs:538
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:140
-#, fuzzy
+# src/routes/posts.rs:572
 msgid "You are not allowed to delete this article."
-msgstr "Ti ne autor ovog bloga."
+msgstr ""
 
 # src/routes/posts.rs:597
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:593
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
+# src/routes/posts.rs:602
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:630
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
+# src/routes/posts.rs:642
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
-# src/routes/session.rs:108
+# src/routes/session.rs:112
 msgid "You are now connected."
 msgstr ""
 
-# src/routes/session.rs:124
+# src/routes/session.rs:131
 msgid "You are now logged off."
 msgstr ""
 
-# src/routes/session.rs:181
+# src/routes/session.rs:188
 msgid "Password reset"
 msgstr "Poništavanje zaporke"
 
-# src/routes/session.rs:182
+# src/routes/session.rs:189
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:259
+# src/routes/session.rs:264
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/session.rs:263
+# src/routes/session.rs:274
 msgid "Sorry, but the link expired. Try again"
 msgstr ""
 
@@ -220,15 +211,15 @@ msgstr ""
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:174
+# src/routes/user.rs:175
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:244
+# src/routes/user.rs:254
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:344
+# src/routes/user.rs:356
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
@@ -240,18 +231,16 @@ msgstr ""
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:411
+# src/routes/user.rs:431
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:473
+# src/routes/user.rs:503
 msgid "Registrations are closed on this instance."
 msgstr ""
 
 # src/routes/user.rs:527
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
 msgid "Internal server error"
@@ -284,10 +273,7 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
 
 msgid "Articles tagged \"{0}\""
@@ -302,10 +288,11 @@ msgstr ""
 msgid "Create a blog"
 msgstr ""
 
+# src/template_utils.rs:251
 msgid "Title"
 msgstr ""
 
-# src/template_utils.rs:220
+# src/template_utils.rs:254
 msgid "Optional"
 msgstr ""
 
@@ -321,8 +308,7 @@ msgstr ""
 msgid "Markdown syntax is supported"
 msgstr "Markdown sintaksa je podržana"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 msgid "Upload images"
@@ -385,68 +371,68 @@ msgstr ""
 msgid "Advanced search"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Article title matching these words"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Subtitle matching these words"
 msgstr ""
 
 msgid "Subtitle - byline"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Content matching these words"
 msgstr ""
 
 msgid "Body content"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "From this date"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "To this date"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Containing these tags"
 msgstr ""
 
 msgid "Tags"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Posted on one of these instances"
 msgstr ""
 
 msgid "Instance domain"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Posted by one of these authors"
 msgstr ""
 
 msgid "Author(s)"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Posted on one of these blogs"
 msgstr ""
 
 msgid "Blog title"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Written in this language"
 msgstr ""
 
 msgid "Language"
 msgstr ""
 
-# src/template_utils.rs:305
+# src/template_utils.rs:339
 msgid "Published under this license"
 msgstr ""
 
@@ -468,30 +454,28 @@ msgstr ""
 msgid "Classic editor (any changes will be lost)"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Subtitle"
 msgstr ""
 
 msgid "Content"
 msgstr ""
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Tags, separated by commas"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "License"
 msgstr ""
 
-# src/template_utils.rs:225
+# src/template_utils.rs:259
 msgid "Leave it empty to reserve all rights"
 msgstr ""
 
@@ -543,9 +527,7 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
 msgstr ""
 
 msgid "Unsubscribe"
@@ -557,7 +539,7 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Content warning"
 msgstr ""
 
@@ -682,7 +664,7 @@ msgid "Nothing to see here yet. Try subscribing to more people."
 msgstr ""
 
 msgid "Articles from {}"
-msgstr "Članci iz {}"
+msgstr ""
 
 msgid "All the articles of the Fediverse"
 msgstr ""
@@ -702,7 +684,7 @@ msgstr "Zabraniti"
 msgid "Administration of {0}"
 msgstr "Administracija od {0}"
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Name"
 msgstr ""
 
@@ -715,7 +697,7 @@ msgstr "Kratki opis"
 msgid "Long description"
 msgstr "Dugi opis"
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Default article license"
 msgstr ""
 
@@ -740,21 +722,13 @@ msgstr ""
 msgid "Administred by"
 msgstr ""
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
 msgstr ""
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
 msgstr ""
 
 msgid "Welcome to {}"
@@ -769,11 +743,11 @@ msgstr "Blokirati"
 msgid "Reset your password"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "New password"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Confirmation"
 msgstr ""
 
@@ -783,15 +757,15 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Username, or email"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Password"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "E-mail"
 msgstr ""
 
@@ -801,9 +775,7 @@ msgstr ""
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
 msgid "Admin"
@@ -845,21 +817,19 @@ msgstr ""
 msgid "Create an account"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Username"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Email"
 msgstr "E-pošta"
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Password confirmation"
 msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "{0}'s subscribers"
@@ -871,14 +841,13 @@ msgstr "Uredite svoj račun"
 msgid "Your Profile"
 msgstr "Tvoj Profil"
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
+msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
 msgstr ""
 
-# src/template_utils.rs:217
+# src/template_utils.rs:251
 msgid "Display name"
 msgstr ""
 
@@ -930,9 +899,7 @@ msgstr ""
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -965,9 +932,10 @@ msgstr ""
 msgid "I'm from another instance"
 msgstr ""
 
-# src/template_utils.rs:225
+# src/template_utils.rs:259
 msgid "Example: user@plu.me"
 msgstr ""
 
 msgid "Continue to your instance"
 msgstr ""
+
