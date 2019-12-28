@@ -217,9 +217,9 @@ pub fn md_to_html<'a>(
     let (parser, mentions, hashtags): (Vec<Event>, Vec<String>, Vec<String>) = parser
         // Flatten text because pulldown_cmark break #hashtag in two individual text elements
         .scan(None, flatten_text)
-        .flat_map(IntoIterator::into_iter)
+        .flatten()
         .scan(None, highlight_code)
-        .flat_map(IntoIterator::into_iter)
+        .flatten()
         .map(|evt| process_image(evt, inline, &media_processor))
         // Ignore headings, images, and tables if inline = true
         .scan((vec![], inline), inline_tags)
