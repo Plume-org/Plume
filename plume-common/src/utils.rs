@@ -85,7 +85,6 @@ fn highlight_code<'a>(
                     html.parse_html_for_line(&line);
                 }
                 let q = html.finalize();
-                println!("{}", &q);
                 result.push(Event::Html(q.into()));
             }
             result.push(Event::End(Tag::CodeBlock(x)));
