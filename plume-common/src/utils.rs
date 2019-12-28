@@ -77,9 +77,11 @@ fn highlight_code<'a>(
             let mut result = vec![];
             if let Some(ctx) = context.take() {
                 let syntax_set = SyntaxSet::load_defaults_newlines();
-                let syntax = syntax_set
-                    .find_syntax_by_name(&x)
-                    .unwrap_or_else(|| syntax_set.find_syntax_plain_text());
+                let syntax = syntax_set.find_syntax_by_token(&x).unwrap_or_else(|| {
+                    syntax_set
+                        .find_syntax_by_name(&x)
+                        .unwrap_or_else(|| syntax_set.find_syntax_plain_text())
+                });
                 let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
                 for line in ctx.content {
                     html.parse_html_for_line(&line);
