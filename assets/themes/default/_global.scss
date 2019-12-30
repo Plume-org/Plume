@@ -623,3 +623,28 @@ figure {
     }
   }
 }
+
+//highlighting
+code {
+  .constant{
+      color: $code-constant-color;
+  }
+  .string{
+      color: $code-string-color;
+  }
+  .keyword.type,.keyword.control,.type{
+      color: $code-keyword-color;
+  }
+  .keyword.operator{
+      color: $code-operator-color;
+  }
+  .source{
+      color: $code-source-color;
+  }
+  .comment{
+      color: $code-comment-color;
+  }
+  .function{
+      color:inherit;
+  }
+}
