@@ -1,5 +1,5 @@
 use rocket::{
-    request::{FormItems, FromForm, LenientForm},
+    request::{Form, FormItems, FromForm, LenientForm},
     response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
@@ -13,6 +13,7 @@ use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::*,
+    blacklisted_emails::*,
     comments::Comment,
     db_conn::DbConn,
     headers::Headers,
@@ -172,6 +173,56 @@ pub fn admin_users(
         User::get_local_page(&*rockets.conn, page.limits())?,
         page.0,
         Page::total(User::count_local(&*rockets.conn)? as i32)
+    )))
+}
+pub struct BlacklistEmailDeletion {
+    ids: Vec<i32>,
+}
+impl<'f> FromForm<'f> for BlacklistEmailDeletion {
+    type Error = ();
+    fn from_form(items: &mut FormItems<'f>, _strict: bool) -> Result<BlacklistEmailDeletion, ()> {
+        let mut c: BlacklistEmailDeletion = BlacklistEmailDeletion { ids: Vec::new() };
+        for item in items {
+            let key = item.key.parse::<i32>();
+            if let Ok(i) = key {
+                c.ids.push(i);
+            }
+        }
+        Ok(c)
+    }
+}
+#[post("/admin/emails/edit", data = "<form>")]
+pub fn edit_email_blacklist(
+    _mod: Moderator,
+    form: Form<BlacklistEmailDeletion>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    BlacklistedEmail::delete_entries(&*rockets.conn, form.0.ids);
+    admin_email_blacklist(_mod, Some(Page(0)), rockets)
+}
+
+#[post("/admin/emails/new", data = "<form>")]
+pub fn add_email_blacklist(
+    _mod: Moderator,
+    form: LenientForm<NewBlacklistedEmail>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    BlacklistedEmail::insert(&*rockets.conn, form.0)?;
+    admin_email_blacklist(_mod, Some(Page(0)), rockets)
+}
+#[get("/admin/emails?<page>")]
+pub fn admin_email_blacklist(
+    _mod: Moderator,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    println!("hi");
+    Ok(render!(instance::emailblacklist(
+        &rockets.to_context(),
+        BlacklistedEmail::page(&*rockets.conn, page.limits())?,
+        page.0,
+        Page::total(BlacklistedEmail::count(&*rockets.conn)? as i32)
     )))
 }
 

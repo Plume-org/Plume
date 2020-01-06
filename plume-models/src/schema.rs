@@ -73,6 +73,13 @@ table! {
         user_id -> Int4,
     }
 }
+table! {
+    email_blacklist(id){
+        id -> Int4,
+        email_address -> VarChar,
+        note -> Text,
+    }
+}
 
 table! {
     follows (id) {

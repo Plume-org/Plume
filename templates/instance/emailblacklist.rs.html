@@ -1,0 +1,35 @@
+@use templates::base;
+@use plume_models::blacklisted_emails::BlacklistedEmail;
+@use template_utils::*;
+@use routes::*;
+
+@(ctx:BaseContext, emails: Vec<BlacklistedEmail>, page:i32, n_pages:i32)
+    @:base(ctx, i18n!(ctx.1, "Blacklisted Emails"), {}, {}, {
+    <form method="post" action="@uri!(instance::add_email_blacklist)">
+        @(Input::new("email_address",i18n!(ctx.1,"Email address"))
+        .details(i18n!(ctx.1,"The email address you wish to block. In order to block domains, you can use the syntax permitted by the sql like operator, for example '%@gmail.com' blocks all addresses from gmail.com"))
+        .set_prop("minlength",1)
+        .html(ctx.1))
+        @(Input::new("note",i18n!(ctx.1,"Note")).optional().html(ctx.1))
+        <input type="submit"  value='@i18n!(ctx.1, "Add blacklisted address")'>
+    </form>
+    <form method="post" action="@uri!(instance::edit_email_blacklist)">
+        <header>
+            <input type="submit"  value='@i18n!(ctx.1, "Delete blacklisted emails")'>
+        </header>
+    <div class="list">
+        @for email in emails {
+        <div class="card flex compact">
+            <input type="checkbox" name="@email.id">
+            <p class="grow">
+                @i18n!(ctx.1,"Email address:") @email.email_address
+            </p>
+            <p class="grow">
+                @i18n!(ctx.1,"Blacklisted for:") @email.note
+            </p>
+        </div>
+        }
+    </div>
+    </form>
+    @paginate(ctx.1,page,n_pages)
+})

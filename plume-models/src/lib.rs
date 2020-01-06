@@ -22,6 +22,7 @@ extern crate plume_common;
 #[macro_use]
 extern crate plume_macro;
 extern crate reqwest;
+#[macro_use]
 extern crate rocket;
 extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
@@ -351,6 +352,7 @@ mod tests {
 pub mod admin;
 pub mod api_tokens;
 pub mod apps;
+pub mod blacklisted_emails;
 pub mod blog_authors;
 pub mod blogs;
 pub mod comment_seers;
