@@ -78,6 +78,8 @@ table! {
         id -> Int4,
         email_address -> VarChar,
         note -> Text,
+        notify_user -> Bool,
+        notification_text -> Text,
     }
 }
 

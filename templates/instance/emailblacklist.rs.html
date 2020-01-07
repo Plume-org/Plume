@@ -5,12 +5,27 @@
 
 @(ctx:BaseContext, emails: Vec<BlacklistedEmail>, page:i32, n_pages:i32)
     @:base(ctx, i18n!(ctx.1, "Blacklisted Emails"), {}, {}, {
+    @tabs(&[
+        (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
+        (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
+        (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
+        (&uri!(instance::admin_email_blacklist:page=_).to_string(),i18n!(ctx.1, "Email blacklist"), true)
+    ])
     <form method="post" action="@uri!(instance::add_email_blacklist)">
         @(Input::new("email_address",i18n!(ctx.1,"Email address"))
-        .details(i18n!(ctx.1,"The email address you wish to block. In order to block domains, you can use the syntax permitted by the sql like operator, for example '%@gmail.com' blocks all addresses from gmail.com"))
+        .details(i18n!(ctx.1,"The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@gmail.com' blocks all addresses from gmail.com"))
         .set_prop("minlength",1)
         .html(ctx.1))
         @(Input::new("note",i18n!(ctx.1,"Note")).optional().html(ctx.1))
+        <label for="notify_user">@i18n!(ctx.1,"Notify the user?")
+            <small>
+                @18n!(ctx.1,"Optional, shows a message to the user when they attempt to create an account with that address")
+            </small>
+        </label>
+        <input id="notify_user" type="checkbox" name="notify_user">
+        @(Input::new("notification_text",i18n!(ctx.1,"Blacklisting notification"))
+            .optional()
+        .details(i18n!(ctx.1,"The message to be shown when the user attempts to create an account with this email address")).html(ctx.1))
         <input type="submit"  value='@i18n!(ctx.1, "Add blacklisted address")'>
     </form>
     <form method="post" action="@uri!(instance::edit_email_blacklist)">
@@ -22,11 +37,27 @@
         <div class="card flex compact">
             <input type="checkbox" name="@email.id">
             <p class="grow">
-                @i18n!(ctx.1,"Email address:") @email.email_address
+                <strong>
+                    @i18n!(ctx.1,"Email address:")
+                </strong> @email.email_address
             </p>
             <p class="grow">
-                @i18n!(ctx.1,"Blacklisted for:") @email.note
+                <strong>
+                    @i18n!(ctx.1,"Blacklisted for:")
+                </strong> @email.note
             </p>
+
+            <p class="grow">
+                @if email.notify_user {
+                <strong>
+                    @i18n!(ctx.1,"Will notify them on account creation with this message:")
+                </strong>
+                @email.notification_text
+                } else {
+                @i18n!(ctx.1,"The user will be silently prevented from making an account")
+                }
+            </p>
+
         </div>
         }
     </div>

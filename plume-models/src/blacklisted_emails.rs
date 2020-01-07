@@ -2,7 +2,8 @@ use diesel::{
     self, delete, dsl::*, ExpressionMethods, JoinOnDsl, QueryDsl, RunQueryDsl,
     TextExpressionMethods,
 };
-use rocket::request::FromForm;
+use glob::Pattern;
+
 use schema::email_blacklist;
 use {Connection, Error, Result};
 
@@ -12,6 +13,8 @@ pub struct BlacklistedEmail {
     pub id: i32,
     pub email_address: String,
     pub note: String,
+    pub notify_user: bool,
+    pub notification_text: String,
 }
 
 #[derive(Insertable, FromForm)]
@@ -19,6 +22,8 @@ pub struct BlacklistedEmail {
 pub struct NewBlacklistedEmail {
     pub email_address: String,
     pub note: String,
+    pub notify_user: bool,
+    pub notification_text: String,
 }
 
 impl BlacklistedEmail {
@@ -40,18 +45,19 @@ impl BlacklistedEmail {
             .load::<BlacklistedEmail>(conn)
             .map_err(Error::from)
     }
-    pub fn matches_blacklist(conn: &Connection, email: &String) -> Result<bool> {
-        use diesel::expression::*;
-        use diesel::sql_types::Text;
-        select(exists(
-            email_blacklist::table.filter(
-                (email)
-                    .into_sql::<Text>()
-                    .like(email_blacklist::email_address),
-            ),
-        ))
-        .get_result(conn)
-        .map_err(Error::from)
+    pub fn matches_blacklist(
+        conn: &Connection,
+        email: &String,
+    ) -> Result<Option<BlacklistedEmail>> {
+        let mut result = email_blacklist::table.load::<BlacklistedEmail>(conn)?;
+        for i in result.drain(..) {
+            if let Ok(x) = Pattern::new(&i.email_address) {
+                if x.matches(email) {
+                    return Ok(Some(i));
+                }
+            }
+        }
+        return Ok(None);
     }
     pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<BlacklistedEmail>> {
         email_blacklist::table

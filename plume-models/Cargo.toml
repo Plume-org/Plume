@@ -28,6 +28,7 @@ webfinger = "0.4.1"
 whatlang = "0.7.1"
 shrinkwraprs = "0.2.1"
 diesel-derive-newtype = "0.1.2"
+glob = "0.3.0"
 
 [dependencies.chrono]
 features = ["serde"]

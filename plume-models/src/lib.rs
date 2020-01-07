@@ -33,6 +33,7 @@ extern crate serde_derive;
 extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
+extern crate glob;
 extern crate url;
 extern crate walkdir;
 extern crate webfinger;
@@ -54,6 +55,7 @@ pub type Connection = diesel::PgConnection;
 /// All the possible errors that can be encoutered in this crate
 #[derive(Debug)]
 pub enum Error {
+    Blacklisted(bool, String),
     Db(diesel::result::Error),
     Inbox(Box<InboxError<Error>>),
     InvalidValue,

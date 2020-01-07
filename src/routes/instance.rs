@@ -197,7 +197,7 @@ pub fn edit_email_blacklist(
     form: Form<BlacklistEmailDeletion>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    BlacklistedEmail::delete_entries(&*rockets.conn, form.0.ids);
+    BlacklistedEmail::delete_entries(&*rockets.conn, form.0.ids)?;
     admin_email_blacklist(_mod, Some(Page(0)), rockets)
 }
 
@@ -217,7 +217,6 @@ pub fn admin_email_blacklist(
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    println!("hi");
     Ok(render!(instance::emailblacklist(
         &rockets.to_context(),
         BlacklistedEmail::page(&*rockets.conn, page.limits())?,
@@ -358,11 +357,20 @@ fn ban(
 ) -> Result<(), ErrorPage> {
     let u = User::get(&*conn, id)?;
     u.delete(&*conn, searcher)?;
-
     if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
     {
+        BlacklistedEmail::insert(
+            &conn,
+            NewBlacklistedEmail {
+                email_address: u.email.clone().unwrap(),
+                note: "Banned".to_string(),
+                notify_user: false,
+                notification_text: "".to_owned(),
+            },
+        )
+        .unwrap();
         let target = User::one_by_instance(&*conn)?;
         let delete_act = u.delete_activity(&*conn)?;
         let u_clone = u.clone();

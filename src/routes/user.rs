@@ -484,8 +484,20 @@ pub fn validate_username(username: &str) -> Result<(), ValidationError> {
     }
 }
 
-fn to_validation(_: Error) -> ValidationErrors {
+fn to_validation(x: Error) -> ValidationErrors {
     let mut errors = ValidationErrors::new();
+    if let Error::Blacklisted(show, msg) = x {
+        if show {
+            errors.add(
+                "email",
+                ValidationError {
+                    code: Cow::from("blacklisted"),
+                    message: Some(Cow::from(msg)),
+                    params: HashMap::new(),
+                },
+            );
+        }
+    }
     errors.add(
         "",
         ValidationError {
@@ -529,8 +541,7 @@ pub fn create(
                 "",
                 form.email.to_string(),
                 User::hash_pass(&form.password).map_err(to_validation)?,
-            )
-            .map_err(to_validation)?;
+            ).map_err(to_validation)?;
             Ok(Flash::success(
                 Redirect::to(uri!(super::session::new: m = _)),
                 i18n!(
