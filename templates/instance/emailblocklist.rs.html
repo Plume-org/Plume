@@ -1,17 +1,17 @@
 @use templates::base;
-@use plume_models::blacklisted_emails::BlacklistedEmail;
+@use plume_models::blocklisted_emails::BlocklistedEmail;
 @use template_utils::*;
 @use routes::*;
 
-@(ctx:BaseContext, emails: Vec<BlacklistedEmail>, page:i32, n_pages:i32)
-    @:base(ctx, i18n!(ctx.1, "Blacklisted Emails"), {}, {}, {
+@(ctx:BaseContext, emails: Vec<BlocklistedEmail>, page:i32, n_pages:i32)
+    @:base(ctx, i18n!(ctx.1, "Blocklisted Emails"), {}, {}, {
     @tabs(&[
         (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
         (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
         (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
-        (&uri!(instance::admin_email_blacklist:page=_).to_string(),i18n!(ctx.1, "Email blacklist"), true)
+        (&uri!(instance::admin_email_blocklist:page=_).to_string(),i18n!(ctx.1, "Email blocklist"), true)
     ])
-    <form method="post" action="@uri!(instance::add_email_blacklist)">
+    <form method="post" action="@uri!(instance::add_email_blocklist)">
         @(Input::new("email_address",i18n!(ctx.1,"Email address"))
         .details(i18n!(ctx.1,"The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@gmail.com' blocks all addresses from gmail.com"))
         .set_prop("minlength",1)
@@ -23,14 +23,14 @@
             </small>
         </label>
         <input id="notify_user" type="checkbox" name="notify_user">
-        @(Input::new("notification_text",i18n!(ctx.1,"Blacklisting notification"))
+        @(Input::new("notification_text",i18n!(ctx.1,"Blocklisting notification"))
             .optional()
         .details(i18n!(ctx.1,"The message to be shown when the user attempts to create an account with this email address")).html(ctx.1))
-        <input type="submit"  value='@i18n!(ctx.1, "Add blacklisted address")'>
+        <input type="submit"  value='@i18n!(ctx.1, "Add blocklisted address")'>
     </form>
-    <form method="post" action="@uri!(instance::edit_email_blacklist)">
+    <form method="post" action="@uri!(instance::edit_email_blocklist)">
         <header>
-            <input type="submit"  value='@i18n!(ctx.1, "Delete blacklisted emails")'>
+            <input type="submit"  value='@i18n!(ctx.1, "Delete blocklisted emails")'>
         </header>
     <div class="list">
         @for email in emails {
@@ -43,7 +43,7 @@
             </p>
             <p class="grow">
                 <strong>
-                    @i18n!(ctx.1,"Blacklisted for:")
+                    @i18n!(ctx.1,"Blocklisted for:")
                 </strong> @email.note
             </p>
 

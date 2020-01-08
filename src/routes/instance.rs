@@ -13,7 +13,7 @@ use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::*,
-    blacklisted_emails::*,
+    blocklisted_emails::*,
     comments::Comment,
     db_conn::DbConn,
     headers::Headers,
@@ -175,13 +175,13 @@ pub fn admin_users(
         Page::total(User::count_local(&*rockets.conn)? as i32)
     )))
 }
-pub struct BlacklistEmailDeletion {
+pub struct BlocklistEmailDeletion {
     ids: Vec<i32>,
 }
-impl<'f> FromForm<'f> for BlacklistEmailDeletion {
+impl<'f> FromForm<'f> for BlocklistEmailDeletion {
     type Error = ();
-    fn from_form(items: &mut FormItems<'f>, _strict: bool) -> Result<BlacklistEmailDeletion, ()> {
-        let mut c: BlacklistEmailDeletion = BlacklistEmailDeletion { ids: Vec::new() };
+    fn from_form(items: &mut FormItems<'f>, _strict: bool) -> Result<BlocklistEmailDeletion, ()> {
+        let mut c: BlocklistEmailDeletion = BlocklistEmailDeletion { ids: Vec::new() };
         for item in items {
             let key = item.key.parse::<i32>();
             if let Ok(i) = key {
@@ -192,36 +192,36 @@ impl<'f> FromForm<'f> for BlacklistEmailDeletion {
     }
 }
 #[post("/admin/emails/edit", data = "<form>")]
-pub fn edit_email_blacklist(
+pub fn edit_email_blocklist(
     _mod: Moderator,
-    form: Form<BlacklistEmailDeletion>,
+    form: Form<BlocklistEmailDeletion>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    BlacklistedEmail::delete_entries(&*rockets.conn, form.0.ids)?;
-    admin_email_blacklist(_mod, Some(Page(0)), rockets)
+    BlocklistedEmail::delete_entries(&*rockets.conn, form.0.ids)?;
+    admin_email_blocklist(_mod, Some(Page(0)), rockets)
 }
 
 #[post("/admin/emails/new", data = "<form>")]
-pub fn add_email_blacklist(
+pub fn add_email_blocklist(
     _mod: Moderator,
-    form: LenientForm<NewBlacklistedEmail>,
+    form: LenientForm<NewBlocklistedEmail>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    BlacklistedEmail::insert(&*rockets.conn, form.0)?;
-    admin_email_blacklist(_mod, Some(Page(0)), rockets)
+    BlocklistedEmail::insert(&*rockets.conn, form.0)?;
+    admin_email_blocklist(_mod, Some(Page(0)), rockets)
 }
 #[get("/admin/emails?<page>")]
-pub fn admin_email_blacklist(
+pub fn admin_email_blocklist(
     _mod: Moderator,
     page: Option<Page>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    Ok(render!(instance::emailblacklist(
+    Ok(render!(instance::emailblocklist(
         &rockets.to_context(),
-        BlacklistedEmail::page(&*rockets.conn, page.limits())?,
+        BlocklistedEmail::page(&*rockets.conn, page.limits())?,
         page.0,
-        Page::total(BlacklistedEmail::count(&*rockets.conn)? as i32)
+        Page::total(BlocklistedEmail::count(&*rockets.conn)? as i32)
     )))
 }
 
@@ -361,9 +361,9 @@ fn ban(
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
     {
-        BlacklistedEmail::insert(
+        BlocklistedEmail::insert(
             &conn,
-            NewBlacklistedEmail {
+            NewBlocklistedEmail {
                 email_address: u.email.clone().unwrap(),
                 note: "Banned".to_string(),
                 notify_user: false,

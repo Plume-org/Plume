@@ -50,7 +50,7 @@ use schema::users;
 use search::Searcher;
 use timeline::Timeline;
 use {
-    ap_url, blacklisted_emails::BlacklistedEmail, Connection, Error, PlumeRocket, Result,
+    ap_url, blocklisted_emails::BlocklistedEmail, Connection, Error, PlumeRocket, Result,
     ITEMS_PER_PAGE,
 };
 
@@ -995,10 +995,9 @@ impl NewUser {
     ) -> Result<User> {
         let (pub_key, priv_key) = gen_keypair();
         let instance = Instance::get_local()?;
-        let blacklisted = BlacklistedEmail::matches_blacklist(conn, &email)?;
-        if let Some(x) = blacklisted {
-            println!("Blacklisted email");
-            return Err(Error::Blacklisted(x.notify_user, x.notification_text));
+        let blocklisted = BlocklistedEmail::matches_blocklist(conn, &email)?;
+        if let Some(x) = blocklisted {
+            return Err(Error::Blocklisted(x.notify_user, x.notification_text));
         }
 
         let res = User::insert(

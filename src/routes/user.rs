@@ -486,12 +486,12 @@ pub fn validate_username(username: &str) -> Result<(), ValidationError> {
 
 fn to_validation(x: Error) -> ValidationErrors {
     let mut errors = ValidationErrors::new();
-    if let Error::Blacklisted(show, msg) = x {
+    if let Error::Blocklisted(show, msg) = x {
         if show {
             errors.add(
                 "email",
                 ValidationError {
-                    code: Cow::from("blacklisted"),
+                    code: Cow::from("blocklisted"),
                     message: Some(Cow::from(msg)),
                     params: HashMap::new(),
                 },

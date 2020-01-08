@@ -74,7 +74,7 @@ table! {
     }
 }
 table! {
-    email_blacklist(id){
+    email_blocklist(id){
         id -> Int4,
         email_address -> VarChar,
         note -> Text,
