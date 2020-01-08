@@ -31,21 +31,18 @@ impl BlocklistedEmail {
         use diesel::delete;
         for i in ids {
             let be: BlocklistedEmail = BlocklistedEmail::find_by_id(&conn, i)?;
-            delete(&be).execute(conn);
+            delete(&be).execute(conn)?;
         }
         Ok(true)
     }
-    pub fn find_for_domain(conn: &Connection, domain: &String) -> Result<Vec<BlocklistedEmail>> {
+    pub fn find_for_domain(conn: &Connection, domain: &str) -> Result<Vec<BlocklistedEmail>> {
         let effective = format!("%{}", domain);
         email_blocklist::table
             .filter(email_blocklist::email_address.like(effective))
             .load::<BlocklistedEmail>(conn)
             .map_err(Error::from)
     }
-    pub fn matches_blocklist(
-        conn: &Connection,
-        email: &String,
-    ) -> Result<Option<BlocklistedEmail>> {
+    pub fn matches_blocklist(conn: &Connection, email: &str) -> Result<Option<BlocklistedEmail>> {
         let mut result = email_blocklist::table.load::<BlocklistedEmail>(conn)?;
         for i in result.drain(..) {
             if let Ok(x) = Pattern::new(&i.email_address) {
@@ -54,7 +51,7 @@ impl BlocklistedEmail {
                 }
             }
         }
-        return Ok(None);
+        Ok(None)
     }
     pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<BlocklistedEmail>> {
         email_blocklist::table
