@@ -1,6 +1,6 @@
 -- Your SQL goes here
-create table email_blocklist(id SERIAL primary key,
-                             email_address text ,
-                             note text,
-                             notify_user boolean default false,
-                             notification_text text);
+CREATE TABLE email_blocklist(id SERIAL PRIMARY KEY,
+                             email_address TEXT UNIQUE,
+                             note TEXT,
+                             notify_user BOOLEAN DEFAULT FALSE,
+                             notification_text TEXT);

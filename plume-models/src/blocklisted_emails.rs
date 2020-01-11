@@ -36,7 +36,7 @@ impl BlocklistedEmail {
         Ok(true)
     }
     pub fn find_for_domain(conn: &Connection, domain: &str) -> Result<Vec<BlocklistedEmail>> {
-        let effective = format!("%{}", domain);
+        let effective = format!("%@{}", domain);
         email_blocklist::table
             .filter(email_blocklist::email_address.like(effective))
             .load::<BlocklistedEmail>(conn)
@@ -68,10 +68,7 @@ impl BlocklistedEmail {
     }
     pub fn pattern_errors(pat: &str) -> Option<glob::PatternError> {
         let c = Pattern::new(pat);
-        match c {
-            Err(e) => Some(e),
-            _ => None,
-        }
+        c.err()
     }
     pub fn new(
         conn: &Connection,

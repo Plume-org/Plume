@@ -191,14 +191,17 @@ impl<'f> FromForm<'f> for BlocklistEmailDeletion {
         Ok(c)
     }
 }
-#[post("/admin/emails/edit", data = "<form>")]
-pub fn edit_email_blocklist(
+#[post("/admin/emails/delete", data = "<form>")]
+pub fn delete_email_blocklist(
     _mod: Moderator,
     form: Form<BlocklistEmailDeletion>,
     rockets: PlumeRocket,
-) -> Result<Ructe, ErrorPage> {
+) -> Result<Flash<Redirect>, ErrorPage> {
     BlocklistedEmail::delete_entries(&*rockets.conn, form.0.ids)?;
-    admin_email_blocklist(_mod, Some(Page(0)), rockets)
+    Ok(Flash::success(
+        Redirect::to(uri!(admin_email_blocklist: page = None)),
+        i18n!(rockets.intl.catalog, "Blocks deleted"),
+    ))
 }
 
 #[post("/admin/emails/new", data = "<form>")]
@@ -206,9 +209,12 @@ pub fn add_email_blocklist(
     _mod: Moderator,
     form: LenientForm<NewBlocklistedEmail>,
     rockets: PlumeRocket,
-) -> Result<Ructe, ErrorPage> {
+) -> Result<Flash<Redirect>, ErrorPage> {
     BlocklistedEmail::insert(&*rockets.conn, form.0)?;
-    admin_email_blocklist(_mod, Some(Page(0)), rockets)
+    Ok(Flash::success(
+        Redirect::to(uri!(admin_email_blocklist: page = None)),
+        i18n!(rockets.intl.catalog, "Email Blocked"),
+    ))
 }
 #[get("/admin/emails?<page>")]
 pub fn admin_email_blocklist(
