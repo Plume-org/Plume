@@ -18,10 +18,10 @@
         .set_prop("minlength", 1)
         .html(ctx.1))
         @(Input::new("note", i18n!(ctx.1, "Note")).optional().html(ctx.1))
-        <input id="notify_user" type="checkbox" name="notify_user">
         <label for="notify_user">@i18n!(ctx.1, "Notify the user?")
+            <input id="notify_user" type="checkbox" name="notify_user">
             <small>
-                @18n!(ctx.1, "Optional, shows a message to the user when they attempt to create an account with that address")
+                @i18n!(ctx.1, "Optional, shows a message to the user when they attempt to create an account with that address")
             </small>
         </label>
         @(Input::new("notification_text", i18n!(ctx.1, "Blocklisting notification"))
@@ -31,7 +31,11 @@
     </form>
     <form method="post" action="@uri!(instance::delete_email_blocklist)">
         <header>
-            <input type="submit" class="destructive" value='@i18n!(ctx.1, "Delete selected emails")'>
+            @if emails.is_empty() {
+               <input type="submit" class="destructive" value='@i18n!(ctx.1, "Delete selected emails")'>
+            } else {
+               <p class="center" >@i18n!(ctx.1, "There are no blocked emails on your instance")</p>
+            }
         </header>
     <div class="list">
         @for email in emails {
