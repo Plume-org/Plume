@@ -22,6 +22,7 @@ extern crate plume_common;
 #[macro_use]
 extern crate plume_macro;
 extern crate reqwest;
+#[macro_use]
 extern crate rocket;
 extern crate rocket_i18n;
 extern crate scheduled_thread_pool;
@@ -32,6 +33,7 @@ extern crate serde_derive;
 extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
+extern crate glob;
 extern crate url;
 extern crate walkdir;
 extern crate webfinger;
@@ -53,6 +55,7 @@ pub type Connection = diesel::PgConnection;
 /// All the possible errors that can be encoutered in this crate
 #[derive(Debug)]
 pub enum Error {
+    Blocklisted(bool, String),
     Db(diesel::result::Error),
     Inbox(Box<InboxError<Error>>),
     InvalidValue,
@@ -351,6 +354,7 @@ mod tests {
 pub mod admin;
 pub mod api_tokens;
 pub mod apps;
+pub mod blocklisted_emails;
 pub mod blog_authors;
 pub mod blogs;
 pub mod comment_seers;

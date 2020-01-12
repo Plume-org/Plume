@@ -1,5 +1,5 @@
 use rocket::{
-    request::{FormItems, FromForm, LenientForm},
+    request::{Form, FormItems, FromForm, LenientForm},
     response::{status, Flash, Redirect},
 };
 use rocket_contrib::json::Json;
@@ -13,6 +13,7 @@ use inbox;
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::*,
+    blocklisted_emails::*,
     comments::Comment,
     db_conn::DbConn,
     headers::Headers,
@@ -174,6 +175,61 @@ pub fn admin_users(
         Page::total(User::count_local(&*rockets.conn)? as i32)
     )))
 }
+pub struct BlocklistEmailDeletion {
+    ids: Vec<i32>,
+}
+impl<'f> FromForm<'f> for BlocklistEmailDeletion {
+    type Error = ();
+    fn from_form(items: &mut FormItems<'f>, _strict: bool) -> Result<BlocklistEmailDeletion, ()> {
+        let mut c: BlocklistEmailDeletion = BlocklistEmailDeletion { ids: Vec::new() };
+        for item in items {
+            let key = item.key.parse::<i32>();
+            if let Ok(i) = key {
+                c.ids.push(i);
+            }
+        }
+        Ok(c)
+    }
+}
+#[post("/admin/emails/delete", data = "<form>")]
+pub fn delete_email_blocklist(
+    _mod: Moderator,
+    form: Form<BlocklistEmailDeletion>,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
+    BlocklistedEmail::delete_entries(&*rockets.conn, form.0.ids)?;
+    Ok(Flash::success(
+        Redirect::to(uri!(admin_email_blocklist: page = None)),
+        i18n!(rockets.intl.catalog, "Blocks deleted"),
+    ))
+}
+
+#[post("/admin/emails/new", data = "<form>")]
+pub fn add_email_blocklist(
+    _mod: Moderator,
+    form: LenientForm<NewBlocklistedEmail>,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
+    BlocklistedEmail::insert(&*rockets.conn, form.0)?;
+    Ok(Flash::success(
+        Redirect::to(uri!(admin_email_blocklist: page = None)),
+        i18n!(rockets.intl.catalog, "Email Blocked"),
+    ))
+}
+#[get("/admin/emails?<page>")]
+pub fn admin_email_blocklist(
+    _mod: Moderator,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    Ok(render!(instance::emailblocklist(
+        &rockets.to_context(),
+        BlocklistedEmail::page(&*rockets.conn, page.limits())?,
+        page.0,
+        Page::total(BlocklistedEmail::count(&*rockets.conn)? as i32)
+    )))
+}
 
 /// A structure to handle forms that are a list of items on which actions are applied.
 ///
@@ -307,11 +363,20 @@ fn ban(
 ) -> Result<(), ErrorPage> {
     let u = User::get(&*conn, id)?;
     u.delete(&*conn, searcher)?;
-
     if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
     {
+        BlocklistedEmail::insert(
+            &conn,
+            NewBlocklistedEmail {
+                email_address: u.email.clone().unwrap(),
+                note: "Banned".to_string(),
+                notify_user: false,
+                notification_text: "".to_owned(),
+            },
+        )
+        .unwrap();
         let target = User::one_by_instance(&*conn)?;
         let delete_act = u.delete_activity(&*conn)?;
         let u_clone = u.clone();

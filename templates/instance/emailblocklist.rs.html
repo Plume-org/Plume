@@ -1,0 +1,71 @@
+@use templates::base;
+@use plume_models::blocklisted_emails::BlocklistedEmail;
+@use template_utils::*;
+@use routes::*;
+
+@(ctx:BaseContext, emails: Vec<BlocklistedEmail>, page:i32, n_pages:i32)
+    @:base(ctx, i18n!(ctx.1, "Blocklisted Emails"), {}, {}, {
+    <h1>@i18n!(ctx.1,"Blocklisted Emails")</h1>
+    @tabs(&[
+        (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
+        (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
+        (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
+        (&uri!(instance::admin_email_blocklist:page=_).to_string(), i18n!(ctx.1, "Email blocklist"), true),
+    ])
+    <form method="post" action="@uri!(instance::add_email_blocklist)">
+        @(Input::new("email_address", i18n!(ctx.1, "Email address"))
+        .details(i18n!(ctx.1, "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"))
+        .set_prop("minlength", 1)
+        .html(ctx.1))
+        @(Input::new("note", i18n!(ctx.1, "Note")).optional().html(ctx.1))
+        <label for="notify_user">@i18n!(ctx.1, "Notify the user?")
+            <input id="notify_user" type="checkbox" name="notify_user">
+            <small>
+                @i18n!(ctx.1, "Optional, shows a message to the user when they attempt to create an account with that address")
+            </small>
+        </label>
+        @(Input::new("notification_text", i18n!(ctx.1, "Blocklisting notification"))
+            .optional()
+        .details(i18n!(ctx.1, "The message to be shown when the user attempts to create an account with this email address")).html(ctx.1))
+        <input type="submit"  value='@i18n!(ctx.1, "Add blocklisted address")'>
+    </form>
+    <form method="post" action="@uri!(instance::delete_email_blocklist)">
+        <header>
+            @if emails.is_empty() {
+               <input type="submit" class="destructive" value='@i18n!(ctx.1, "Delete selected emails")'>
+            } else {
+               <p class="center" >@i18n!(ctx.1, "There are no blocked emails on your instance")</p>
+            }
+        </header>
+    <div class="list">
+        @for email in emails {
+        <div class="card flex compact">
+            <input type="checkbox" name="@email.id">
+            <p class="grow">
+                <strong>
+                    @i18n!(ctx.1, "Email address:")
+                </strong> @email.email_address
+            </p>
+            <p class="grow">
+                <strong>
+                    @i18n!(ctx.1, "Blocklisted for:")
+                </strong> @email.note
+            </p>
+
+            <p class="grow">
+                @if email.notify_user {
+                <strong>
+                    @i18n!(ctx.1, "Will notify them on account creation with this message:")
+                </strong>
+                @email.notification_text
+                } else {
+                @i18n!(ctx.1, "The user will be silently prevented from making an account")
+                }
+            </p>
+
+        </div>
+        }
+    </div>
+    </form>
+    @paginate(ctx.1, page, n_pages)
+})

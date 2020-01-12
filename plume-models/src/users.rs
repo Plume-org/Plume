@@ -49,7 +49,10 @@ use safe_string::SafeString;
 use schema::users;
 use search::Searcher;
 use timeline::Timeline;
-use {ap_url, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE};
+use {
+    ap_url, blocklisted_emails::BlocklistedEmail, Connection, Error, PlumeRocket, Result,
+    ITEMS_PER_PAGE,
+};
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
 
@@ -992,6 +995,10 @@ impl NewUser {
     ) -> Result<User> {
         let (pub_key, priv_key) = gen_keypair();
         let instance = Instance::get_local()?;
+        let blocklisted = BlocklistedEmail::matches_blocklist(conn, &email)?;
+        if let Some(x) = blocklisted {
+            return Err(Error::Blocklisted(x.notify_user, x.notification_text));
+        }
 
         let res = User::insert(
             conn,
