@@ -223,7 +223,15 @@ pub fn md_to_html<'a>(
         .map(|evt| process_image(evt, inline, &media_processor))
         // Ignore headings, images, and tables if inline = true
         .scan((vec![], inline), inline_tags)
-        .map(|evt| match evt {
+        .scan(false, |in_code, evt| match evt {
+            Event::Start(Tag::CodeBlock(_)) | Event::Start(Tag::Code) => {
+                *in_code = true;
+                Some((vec![evt], vec![], vec![]))
+            }
+            Event::End(Tag::CodeBlock(_)) | Event::End(Tag::Code) => {
+                *in_code = false;
+                Some((vec![evt], vec![], vec![]))
+            }
             Event::Text(txt) => {
                 let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold(
                     (vec![], State::Ready, String::new(), 0, vec![], vec![]),
@@ -292,7 +300,7 @@ pub fn md_to_html<'a>(
                                 }
                             }
                             State::Ready => {
-                                if c == '@' {
+                                if !*in_code && c == '@' {
                                     events.push(Event::Text(text_acc.into()));
                                     (
                                         events,
@@ -302,7 +310,7 @@ pub fn md_to_html<'a>(
                                         mentions,
                                         hashtags,
                                     )
-                                } else if c == '#' {
+                                } else if !*in_code && c == '#' {
                                     events.push(Event::Text(text_acc.into()));
                                     (
                                         events,
@@ -347,9 +355,9 @@ pub fn md_to_html<'a>(
                         }
                     },
                 );
-                (evts, new_mentions, new_hashtags)
+                Some((evts, new_mentions, new_hashtags))
             }
-            _ => (vec![evt], vec![], vec![]),
+            _ => Some((vec![evt], vec![], vec![])),
         })
         .fold(
             (vec![], vec![], vec![]),
@@ -386,9 +394,11 @@ mod tests {
             ("mention at @end", vec!["end"]),
             ("between parenthesis (@test)", vec!["test"]),
             ("with some punctuation @test!", vec!["test"]),
-            ("      @spaces     ", vec!["spaces"]),
+            (" @spaces     ", vec!["spaces"]),
             ("@is_a@mention", vec!["is_a@mention"]),
             ("not_a@mention", vec![]),
+            ("`@helo`", vec![]),
+            ("```\n@hello\n```", vec![]),
         ];
 
         for (md, mentions) in tests {
@@ -412,7 +422,7 @@ mod tests {
             ("hashtag at #end", vec!["end"]),
             ("between parenthesis (#test)", vec!["test"]),
             ("with some punctuation #test!", vec!["test"]),
-            ("      #spaces     ", vec!["spaces"]),
+            (" #spaces     ", vec!["spaces"]),
             ("not_a#hashtag", vec![]),
         ];
 
