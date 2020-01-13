@@ -230,20 +230,28 @@ impl User {
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {
+        let mut headers = plume_common::activity_pub::request::headers();
+        headers.insert(
+            ACCEPT,
+            HeaderValue::from_str(
+                &ap_accept_header()
+                    .into_iter()
+                    .collect::<Vec<_>>()
+                    .join(", "),
+            )?,
+        );
+        let lu = Instance::get_local_user()?;
         let mut res = ClientBuilder::new()
             .connect_timeout(Some(std::time::Duration::from_secs(5)))
             .build()?
             .get(url)
+            .headers(headers.clone())
             .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
+                "Signature",
+                plume_common::activity_pub::request::signature(&lu, &headers).expect(""),
             )
             .send()?;
+
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;

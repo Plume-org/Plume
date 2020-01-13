@@ -29,7 +29,6 @@ table! {
         is_owner -> Bool,
     }
 }
-
 table! {
     blogs (id) {
         id -> Int4,
