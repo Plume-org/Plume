@@ -139,6 +139,7 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
                 })
                 .collect::<Vec<Person>>(),
         )
+        .id(post.id.to_string())
         .links(vec![LinkBuilder::default()
             .href(post.ap_url)
             .build()
