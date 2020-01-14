@@ -42,7 +42,6 @@ pub struct NewInstance {
 
 lazy_static! {
     static ref LOCAL_INSTANCE: RwLock<Option<Instance>> = RwLock::new(None);
-    static ref INSTANCE_USER: RwLock<Option<User>> = RwLock::new(None);
 }
 
 impl Instance {
@@ -57,15 +56,6 @@ impl Instance {
             .clone()
             .ok_or(Error::NotFound)
     }
-
-    pub fn set_local_user(u: User) {
-        INSTANCE_USER.write().unwrap().replace(u);
-    }
-
-    pub fn get_local_user() -> Result<User> {
-        INSTANCE_USER.read().unwrap().clone().ok_or(Error::NotFound)
-    }
-
     pub fn get_local_uncached(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
