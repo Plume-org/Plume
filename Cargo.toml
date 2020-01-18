@@ -69,7 +69,7 @@ git = "https://github.com/fdb-hiroshima/rocket_csrf"
 rev = "29910f2829e7e590a540da3804336577b48c7b31"
 
 [build-dependencies]
-ructe = "0.6.2"
+ructe = "0.9.0"
 rsass = "0.9"
 
 [features]
