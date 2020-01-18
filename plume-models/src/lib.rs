@@ -1,6 +1,5 @@
 #![feature(try_trait)]
 #![feature(never_type)]
-#![feature(custom_attribute)]
 #![feature(proc_macro_hygiene)]
 
 extern crate activitypub;
