@@ -579,9 +579,7 @@ pub fn delete(
             .any(|a| a.id == user.id)
         {
             return Ok(Flash::error(
-                Redirect::to(
-                    uri!(details: blog = blog_name, slug = slug, responding_to = _),
-                ),
+                Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
                 i18n!(intl.catalog, "You are not allowed to delete this article."),
             ));
         }
