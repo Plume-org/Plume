@@ -153,7 +153,7 @@ impl PlumeQuery {
 
     /// Convert this Query to a Tantivy Query
     pub fn into_query(self) -> BooleanQuery {
-        let mut result: Vec<(Occur, Box<Query>)> = Vec::new();
+        let mut result: Vec<(Occur, Box<dyn Query>)> = Vec::new();
         gen_to_query!(self, result; normal: title, subtitle, content, tag;
                       oneoff: instance, author, blog, lang, license);
 
@@ -279,7 +279,7 @@ impl PlumeQuery {
     }
 
     // map a token and it's field to a query
-    fn token_to_query(token: &str, field_name: &str) -> Box<Query> {
+    fn token_to_query(token: &str, field_name: &str) -> Box<dyn Query> {
         let token = token.to_lowercase();
         let token = token.as_str();
         let field = Searcher::schema().get_field(field_name).unwrap();

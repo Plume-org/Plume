@@ -79,7 +79,7 @@ impl<'a> Token<'a> {
 impl<'a> ToString for Token<'a> {
     fn to_string(&self) -> String {
         if let Token::Word(0, 0, v) = self {
-            return v.to_string();
+            return (*v).to_string();
         }
         format!(
             "'{}'",
@@ -181,7 +181,7 @@ impl<'a> TQ<'a> {
             TQ::Or(inner) => inner.iter().flat_map(TQ::list_used_lists).collect(),
             TQ::And(inner) => inner.iter().flat_map(TQ::list_used_lists).collect(),
             TQ::Arg(Arg::In(typ, List::List(name)), _) => vec![(
-                name.to_string(),
+                (*name).to_string(),
                 match typ {
                     WithList::Blog => ListType::Blog,
                     WithList::Author { .. } => ListType::User,
@@ -290,7 +290,7 @@ impl WithList {
                     (_, _) => Err(QueryError::RuntimeError(format!(
                         "The list '{}' is of the wrong type for this usage",
                         name
-                    )))?,
+                    )).into()),
                 }
             }
             List::Array(list) => match self {

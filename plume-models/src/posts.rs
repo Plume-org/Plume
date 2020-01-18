@@ -632,7 +632,7 @@ impl FromId<PlumeRocket> for Post {
             .into_iter()
             .map(|s| s.to_camel_case())
             .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag.clone() {
+        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag {
             for tag in tags {
                 serde_json::from_value::<link::Mention>(tag.clone())
                     .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
@@ -725,7 +725,7 @@ impl FromId<PlumeRocket> for PostUpdate {
                 .ok()
                 .map(|x| x.content),
             license: updated.custom_props.license_string().ok(),
-            tags: updated.object.object_props.tag.clone(),
+            tags: updated.object.object_props.tag,
         })
     }
 }
@@ -806,7 +806,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
 
 impl IntoId for Post {
     fn into_id(self) -> Id {
-        Id::new(self.ap_url.clone())
+        Id::new(self.ap_url)
     }
 }
 

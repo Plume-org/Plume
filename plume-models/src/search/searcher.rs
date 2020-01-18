@@ -72,7 +72,7 @@ impl Searcher {
         schema_builder.build()
     }
 
-    pub fn create(path: &AsRef<Path>) -> Result<Self> {
+    pub fn create(path: &dyn AsRef<Path>) -> Result<Self> {
         let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
 
         let content_tokenizer = SimpleTokenizer
@@ -111,7 +111,7 @@ impl Searcher {
         })
     }
 
-    pub fn open(path: &AsRef<Path>) -> Result<Self> {
+    pub fn open(path: &dyn AsRef<Path>) -> Result<Self> {
         let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
 
         let content_tokenizer = SimpleTokenizer
@@ -175,7 +175,7 @@ impl Searcher {
             post_id => i64::from(post.id),
             author => post.get_authors(conn)?.into_iter().map(|u| u.fqn).join(" "),
             creation_date => i64::from(post.creation_date.num_days_from_ce()),
-            instance => Instance::get(conn, post.get_blog(conn)?.instance_id)?.public_domain.clone(),
+            instance => Instance::get(conn, post.get_blog(conn)?.instance_id)?.public_domain,
             tag => Tag::for_post(conn, post.id)?.into_iter().map(|t| t.tag).join(" "),
             blog_name => post.get_blog(conn)?.title,
             content => post.content.get().clone(),

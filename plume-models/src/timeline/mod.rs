@@ -119,7 +119,7 @@ impl Timeline {
                         }
                     })
             {
-                Err(err)?;
+                return Err(err);
             }
         }
         Self::insert(
@@ -157,7 +157,7 @@ impl Timeline {
                         }
                     })
             {
-                Err(err)?;
+                return Err(err);
             }
         }
         Self::insert(
