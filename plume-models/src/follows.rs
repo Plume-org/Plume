@@ -56,8 +56,7 @@ impl Follow {
         let target = User::get(conn, self.following_id)?;
 
         let mut act = FollowAct::default();
-        act.follow_props
-            .set_actor_link::<Id>(user.into_id())?;
+        act.follow_props.set_actor_link::<Id>(user.into_id())?;
         act.follow_props
             .set_object_link::<Id>(target.clone().into_id())?;
         act.object_props.set_id_string(self.ap_url.clone())?;

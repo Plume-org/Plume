@@ -157,9 +157,7 @@ fn process_image<'a, 'b>(
         match evt {
             Event::Start(Tag::Image(id, title)) => {
                 if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
-                    if inline || cw.is_none() {
-                        Event::Start(Tag::Image(Cow::Owned(url), title))
-                    } else {
+                    if let (Some(cw), false) = (cw, inline) {
                         // there is a cw, and where are not inline
                         Event::Html(Cow::Owned(format!(
                             r#"<label for="postcontent-cw-{id}">
@@ -170,9 +168,11 @@ fn process_image<'a, 'b>(
     </span>
   <img src="{url}" alt=""#,
                             id = random_hex(),
-                            cw = cw.unwrap(),
+                            cw = cw,
                             url = url
                         )))
+                    } else {
+                        Event::Start(Tag::Image(Cow::Owned(url), title))
                     }
                 } else {
                     Event::Start(Tag::Image(id, title))
@@ -247,7 +247,7 @@ pub fn md_to_html<'a>(
                                         text_acc.push(c)
                                     }
                                     let mention = text_acc;
-                                    let short_mention = mention.splitn(1, '@').nth(0).unwrap_or("");
+                                    let short_mention = mention.splitn(1, '@').next().unwrap_or("");
                                     let link = Tag::Link(
                                         format!("{}@/{}/", base_url, &mention).into(),
                                         short_mention.to_owned().into(),

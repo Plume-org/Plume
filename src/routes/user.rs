@@ -355,7 +355,7 @@ pub fn edit(name: String, user: User, rockets: PlumeRocket) -> Result<Ructe, Err
             ValidationErrors::default()
         )))
     } else {
-        Err(Error::Unauthorized)?
+        Err(Error::Unauthorized.into())
     }
 }
 

@@ -367,8 +367,8 @@ pub fn update(
             &*form,
             form.draft,
             Some(post),
-            errors.clone(),
-            medias.clone(),
+            errors,
+            medias,
             cl.0
         ))
         .into()
@@ -553,7 +553,7 @@ pub fn create(
             &*form,
             form.draft,
             None,
-            errors.clone(),
+            errors,
             medias,
             cl.0
         ))
@@ -580,7 +580,7 @@ pub fn delete(
         {
             return Ok(Flash::error(
                 Redirect::to(
-                    uri!(details: blog = blog_name.clone(), slug = slug.clone(), responding_to = _),
+                    uri!(details: blog = blog_name, slug = slug, responding_to = _),
                 ),
                 i18n!(intl.catalog, "You are not allowed to delete this article."),
             ));

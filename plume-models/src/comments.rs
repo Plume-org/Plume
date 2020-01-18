@@ -127,8 +127,7 @@ impl Comment {
             )?))?;
         note.object_props
             .set_published_string(chrono::Utc::now().to_rfc3339())?;
-        note.object_props
-            .set_attributed_to_link(author.into_id())?;
+        note.object_props.set_attributed_to_link(author.into_id())?;
         note.object_props.set_to_link_vec(to)?;
         note.object_props.set_tag_link_vec(
             mentions

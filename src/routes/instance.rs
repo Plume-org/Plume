@@ -379,8 +379,7 @@ fn ban(
         .unwrap();
         let target = User::one_by_instance(&*conn)?;
         let delete_act = u.delete_activity(&*conn)?;
-        let u_clone = u.clone();
-        worker.execute(move || broadcast(&u_clone, delete_act, target));
+        worker.execute(move || broadcast(&u, delete_act, target));
     }
 
     Ok(())

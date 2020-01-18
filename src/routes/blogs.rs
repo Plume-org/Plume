@@ -137,7 +137,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
     .expect("blog::create: author error");
 
     Flash::success(
-        Redirect::to(uri!(details: name = slug.clone(), page = _)),
+        Redirect::to(uri!(details: name = slug, page = _)),
         &i18n!(intl, "Your blog was successfully created!"),
     )
     .into()
