@@ -811,9 +811,17 @@ mod tests {
         );
 
         let expect_keyword = TimelineQuery::parse(r#"not_a_field contains something"#).unwrap_err();
-        assert_eq!(expect_keyword, QueryError::SyntaxError(0, 11, "Syntax Error: Expected one of 'blog', \
+        assert_eq!(
+            expect_keyword,
+            QueryError::SyntaxError(
+                0,
+                11,
+                "Syntax Error: Expected one of 'blog', \
 'author', 'license', 'tags', 'lang', 'title', 'subtitle', 'content', 'followed', 'has_cover', \
-'local' or 'all', got 'not_a_field'".to_owned()));
+'local' or 'all', got 'not_a_field'"
+                    .to_owned()
+            )
+        );
 
         let expect_bracket_or_comma = TimelineQuery::parse(r#"lang in [en ["#).unwrap_err();
         assert_eq!(
