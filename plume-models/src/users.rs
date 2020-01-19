@@ -813,7 +813,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
 
 impl IntoId for User {
     fn into_id(self) -> Id {
-        Id::new(self.ap_url.clone())
+        Id::new(self.ap_url)
     }
 }
 

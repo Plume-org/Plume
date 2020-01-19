@@ -103,19 +103,17 @@ fn file_to_migration(file: &str) -> TokenStream2 {
                 acc.push_str(line);
                 acc.push('\n');
             }
+        } else if line.starts_with("--#!") {
+            acc.push_str(&line[4..]);
+            acc.push('\n');
+        } else if line.starts_with("--") {
+            continue;
         } else {
-            if line.starts_with("--#!") {
-                acc.push_str(&line[4..]);
-                acc.push('\n');
-            } else if line.starts_with("--") {
-                continue;
-            } else {
-                let func: TokenStream2 = trampoline(TokenStream::from_str(&acc).unwrap().into());
-                actions.push(quote!(Action::Function(&#func)));
-                sql = true;
-                acc = line.to_string();
-                acc.push('\n');
-            }
+            let func: TokenStream2 = trampoline(TokenStream::from_str(&acc).unwrap().into());
+            actions.push(quote!(Action::Function(&#func)));
+            sql = true;
+            acc = line.to_string();
+            acc.push('\n');
         }
     }
     if !acc.trim().is_empty() {

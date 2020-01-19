@@ -73,5 +73,4 @@ pub(crate) mod tests {
             Ok(conn.begin_test_transaction().unwrap())
         }
     }
-
 }

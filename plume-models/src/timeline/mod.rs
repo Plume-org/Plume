@@ -119,7 +119,7 @@ impl Timeline {
                         }
                     })
             {
-                Err(err)?;
+                return Err(err);
             }
         }
         Self::insert(
@@ -157,7 +157,7 @@ impl Timeline {
                         }
                     })
             {
-                Err(err)?;
+                return Err(err);
             }
         }
         Self::insert(
@@ -495,8 +495,7 @@ mod tests {
                     ),
                     published: true,
                     license: "GPL".to_string(),
-                    source: "Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better."
-                        .to_string(),
+                    source: "Actually, GNU+Linux, GNU×Linux, or GNU¿Linux are better.".to_string(),
                     ap_url: "".to_string(),
                     creation_date: None,
                     subtitle: "".to_string(),
