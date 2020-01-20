@@ -1,4 +1,5 @@
 #![warn(clippy::too_many_arguments)]
+use crate::template_utils::Ructe;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person, PersonBuilder};
 use plume_models::{posts::Post, Connection, CONFIG, ITEMS_PER_PAGE};
 use rocket::{
@@ -16,7 +17,6 @@ use std::{
     hash::Hasher,
     path::{Path, PathBuf},
 };
-use template_utils::Ructe;
 
 /// Special return type used for routes that "cannot fail", and instead
 /// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response
@@ -178,7 +178,7 @@ pub struct CachedFile {
 pub struct ThemeFile(NamedFile);
 
 impl<'r> Responder<'r> for ThemeFile {
-    fn respond_to(self, r: &Request) -> response::Result<'r> {
+    fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
         let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
 
         let mut hasher = DefaultHasher::new();

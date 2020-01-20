@@ -1,7 +1,7 @@
-@use templates::base;
 @use plume_models::blocklisted_emails::BlocklistedEmail;
-@use template_utils::*;
-@use routes::*;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx:BaseContext, emails: Vec<BlocklistedEmail>, page:i32, n_pages:i32)
     @:base(ctx, i18n!(ctx.1, "Blocklisted Emails"), {}, {}, {

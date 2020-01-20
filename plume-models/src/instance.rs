@@ -1,14 +1,15 @@
+use crate::{
+    ap_url,
+    medias::Media,
+    safe_string::SafeString,
+    schema::{instances, users},
+    users::{Role, User},
+    Connection, Error, Result,
+};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use std::sync::RwLock;
-
-use ap_url;
-use medias::Media;
 use plume_common::utils::md_to_html;
-use safe_string::SafeString;
-use schema::{instances, users};
-use users::{Role, User};
-use {Connection, Error, Result};
+use std::sync::RwLock;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
@@ -242,9 +243,8 @@ impl Instance {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use crate::{tests::db, Connection as Conn};
     use diesel::Connection;
-    use tests::db;
-    use Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
         let res = vec![

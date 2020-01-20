@@ -1,6 +1,6 @@
 @use plume_models::posts::Post;
-@use template_utils::*;
-@use routes::*;
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, article: Post)
 
@@ -31,4 +31,3 @@
         }
     </footer>
 </div>
-

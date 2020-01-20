@@ -1,5 +1,5 @@
-@use templates::errors::base;
-@use template_utils::*;
+@use crate::templates::errors::base;
+@use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
@@ -7,4 +7,3 @@
   <h1>@i18n!(ctx.1, "We couldn't find this page.")</h1>
   <p>@i18n!(ctx.1, "The link that led you here may be broken.")</p>
 })
-

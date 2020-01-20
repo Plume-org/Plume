@@ -2,10 +2,10 @@
 @use plume_models::instance::Instance;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
-@use templates::{base, partials::post_card};
-@use template_utils::*;
-@use routes::*;
 @use std::path::Path;
+@use crate::templates::{base, partials::post_card};
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, blog: Blog, authors: &[User], page: i32, n_pages: i32, posts: Vec<Post>)
 

@@ -1,7 +1,6 @@
+use crate::{schema::password_reset_requests, Connection, Error, Result};
 use chrono::{offset::Utc, Duration, NaiveDateTime};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
-use schema::password_reset_requests;
-use {Connection, Error, Result};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct PasswordResetRequest {
@@ -75,9 +74,8 @@ impl PasswordResetRequest {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{tests::db, users::tests as user_tests};
     use diesel::Connection;
-    use tests::db;
-    use users::tests as user_tests;
 
     #[test]
     fn test_insert_and_find_password_reset_request() {

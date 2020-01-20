@@ -1,7 +1,3 @@
-extern crate diesel;
-extern crate plume_common;
-extern crate plume_models;
-
 use diesel::Connection;
 use plume_common::utils::random_hex;
 use plume_models::migrations::IMPORTED_MIGRATIONS;

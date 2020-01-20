@@ -1,14 +1,14 @@
-use blogs::Blog;
-use lists::{self, ListType};
+use crate::{
+    blogs::Blog,
+    lists::{self, ListType},
+    posts::Post,
+    tags::Tag,
+    timeline::Timeline,
+    users::User,
+    PlumeRocket, Result,
+};
 use plume_common::activity_pub::inbox::AsActor;
-use posts::Post;
-use tags::Tag;
-use users::User;
 use whatlang::{self, Lang};
-
-use {PlumeRocket, Result};
-
-use super::Timeline;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum QueryError {
@@ -65,7 +65,7 @@ impl<'a> Token<'a> {
         }
     }
 
-    fn get_error<T>(&self, token: Token) -> QueryResult<T> {
+    fn get_error<T>(&self, token: Token<'_>) -> QueryResult<T> {
         let (b, e) = self.get_pos();
         let message = format!(
             "Syntax Error: Expected {}, got {}",
@@ -127,7 +127,7 @@ macro_rules! gen_tokenizer {
     }
 }
 
-fn lex(stream: &str) -> Vec<Token> {
+fn lex(stream: &str) -> Vec<Token<'_>> {
     stream
         .chars()
         .chain(" ".chars()) // force a last whitespace to empty scan's state
@@ -163,7 +163,7 @@ impl<'a> TQ<'a> {
         rocket: &PlumeRocket,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind,
+        kind: Kind<'_>,
     ) -> Result<bool> {
         match self {
             TQ::Or(inner) => inner.iter().try_fold(false, |s, e| {
@@ -208,7 +208,7 @@ impl<'a> Arg<'a> {
         rocket: &PlumeRocket,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind,
+        kind: Kind<'_>,
     ) -> Result<bool> {
         match self {
             Arg::In(t, l) => t.matches(rocket, timeline, post, l, kind),
@@ -233,8 +233,8 @@ impl WithList {
         rocket: &PlumeRocket,
         timeline: &Timeline,
         post: &Post,
-        list: &List,
-        kind: Kind,
+        list: &List<'_>,
+        kind: Kind<'_>,
     ) -> Result<bool> {
         match list {
             List::List(name) => {
@@ -374,7 +374,7 @@ impl Bool {
         rocket: &PlumeRocket,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind,
+        kind: Kind<'_>,
     ) -> Result<bool> {
         match self {
             Bool::Followed { boosts, likes } => {
@@ -645,7 +645,7 @@ impl<'a> TimelineQuery<'a> {
         rocket: &PlumeRocket,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind,
+        kind: Kind<'_>,
     ) -> Result<bool> {
         self.0.matches(rocket, timeline, post, kind)
     }

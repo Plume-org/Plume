@@ -1,13 +1,13 @@
-@use templates::base;
-@use templates::partials::image_select;
-@use template_utils::*;
-@use validator::{ValidationErrors, ValidationErrorsKind};
-@use std::borrow::Cow;
 @use plume_models::medias::*;
 @use plume_models::blogs::Blog;
 @use plume_models::posts::Post;
-@use routes::posts::NewPostForm;
-@use routes::*;
+@use std::borrow::Cow;
+@use validator::{ValidationErrors, ValidationErrorsKind};
+@use crate::templates::base;
+@use crate::templates::partials::image_select;
+@use crate::template_utils::*;
+@use crate::routes::posts::NewPostForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
 

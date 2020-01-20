@@ -1,3 +1,4 @@
+use crate::CATALOG;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::sync::Mutex;
@@ -5,7 +6,6 @@ use stdweb::{
     unstable::{TryFrom, TryInto},
     web::{event::*, html_element::*, *},
 };
-use CATALOG;
 
 macro_rules! mv {
     ( $( $var:ident ),* => $exp:expr ) => {

@@ -1,3 +1,7 @@
+use crate::{
+    ap_url, instance::*, medias::Media, posts::Post, safe_string::SafeString, schema::blogs,
+    search::Searcher, users::User, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE,
+};
 use activitypub::{
     actor::Group,
     collection::{OrderedCollection, OrderedCollectionPage},
@@ -12,22 +16,13 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
-use serde_json;
-use url::Url;
-use webfinger::*;
-
-use instance::*;
-use medias::Media;
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
-use posts::Post;
-use safe_string::SafeString;
-use schema::blogs;
-use search::Searcher;
-use users::User;
-use {ap_url, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE};
+use serde_json;
+use url::Url;
+use webfinger::*;
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
 
@@ -106,8 +101,8 @@ impl Blog {
     }
 
     pub fn list_authors(&self, conn: &Connection) -> Result<Vec<User>> {
-        use schema::blog_authors;
-        use schema::users;
+        use crate::schema::blog_authors;
+        use crate::schema::users;
         let authors_ids = blog_authors::table
             .filter(blog_authors::blog_id.eq(self.id))
             .select(blog_authors::author_id);
@@ -118,7 +113,7 @@ impl Blog {
     }
 
     pub fn count_authors(&self, conn: &Connection) -> Result<i64> {
-        use schema::blog_authors;
+        use crate::schema::blog_authors;
         blog_authors::table
             .filter(blog_authors::blog_id.eq(self.id))
             .count()
@@ -127,7 +122,7 @@ impl Blog {
     }
 
     pub fn find_for_author(conn: &Connection, author: &User) -> Result<Vec<Blog>> {
-        use schema::blog_authors;
+        use crate::schema::blog_authors;
         let author_ids = blog_authors::table
             .filter(blog_authors::author_id.eq(author.id))
             .select(blog_authors::blog_id);
@@ -501,14 +496,16 @@ impl NewBlog {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use blog_authors::*;
+    use crate::{
+        blog_authors::*,
+        instance::tests as instance_tests,
+        medias::NewMedia,
+        search::tests::get_searcher,
+        tests::{db, rockets},
+        users::tests as usersTests,
+        Connection as Conn,
+    };
     use diesel::Connection;
-    use instance::tests as instance_tests;
-    use medias::NewMedia;
-    use search::tests::get_searcher;
-    use tests::{db, rockets};
-    use users::tests as usersTests;
-    use Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Blog>) {
         instance_tests::fill_database(conn);

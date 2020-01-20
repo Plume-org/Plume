@@ -1,16 +1,15 @@
+use crate::{
+    ap_url, notifications::*, schema::follows, users::User, Connection, Error, PlumeRocket, Result,
+    CONFIG,
+};
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
-
-use notifications::*;
 use plume_common::activity_pub::{
     broadcast,
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
-use schema::follows;
-use users::User;
-use {ap_url, Connection, Error, PlumeRocket, Result, CONFIG};
 
 #[derive(Clone, Queryable, Identifiable, Associations, AsChangeset)]
 #[belongs_to(User, foreign_key = "following_id")]
@@ -201,9 +200,8 @@ impl IntoId for Follow {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{tests::db, users::tests as user_tests};
     use diesel::Connection;
-    use tests::db;
-    use users::tests as user_tests;
 
     #[test]
     fn test_id() {

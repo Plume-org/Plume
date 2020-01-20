@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 
+use crate::routes::Page;
+use crate::template_utils::IntoContext;
 use crate::{routes::errors::ErrorPage, template_utils::Ructe};
 use plume_models::{timeline::*, PlumeRocket};
 use rocket::response::Redirect;
-use routes::Page;
-use template_utils::IntoContext;
 
 #[get("/timeline/<id>?<page>")]
 pub fn details(id: i32, rockets: PlumeRocket, page: Option<Page>) -> Result<Ructe, ErrorPage> {

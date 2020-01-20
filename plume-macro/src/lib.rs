@@ -1,8 +1,7 @@
 #![recursion_limit = "128"]
-extern crate proc_macro;
+
 #[macro_use]
 extern crate quote;
-extern crate syn;
 
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;

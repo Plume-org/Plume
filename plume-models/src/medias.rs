@@ -1,20 +1,17 @@
+use crate::{
+    ap_url, instance::Instance, safe_string::SafeString, schema::medias, users::User, Connection,
+    Error, PlumeRocket, Result,
+};
 use activitypub::object::Image;
 use askama_escape::escape;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
-use reqwest;
-use std::{fs, path::Path};
-
 use plume_common::{
     activity_pub::{inbox::FromId, Id},
     utils::MediaProcessor,
 };
-
-use instance::Instance;
-use safe_string::SafeString;
-use schema::medias;
-use users::User;
-use {ap_url, Connection, Error, PlumeRocket, Result};
+use reqwest;
+use std::{fs, path::Path};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Media {
@@ -263,13 +260,11 @@ impl Media {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use crate::{tests::db, users::tests as usersTests, Connection as Conn};
     use diesel::Connection;
     use std::env::{current_dir, set_current_dir};
     use std::fs;
     use std::path::Path;
-    use tests::db;
-    use users::tests as usersTests;
-    use Connection as Conn;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Media>) {
         let mut wd = current_dir().unwrap().to_path_buf();

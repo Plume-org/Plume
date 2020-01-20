@@ -1,10 +1,6 @@
-use Connection;
-use Error;
-use Result;
-
+use crate::{Connection, Error, Result};
 use diesel::connection::{Connection as Conn, SimpleConnection};
 use migrations_internals::{setup_database, MigrationConnection};
-
 use std::path::Path;
 
 #[allow(dead_code)] //variants might not be constructed if not required by current migrations

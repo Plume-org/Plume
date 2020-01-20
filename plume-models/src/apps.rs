@@ -1,8 +1,6 @@
+use crate::{schema::apps, Error, Result};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use schema::apps;
-use {Error, Result};
 
 #[derive(Clone, Queryable, Serialize)]
 pub struct App {

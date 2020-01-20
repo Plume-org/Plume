@@ -1,10 +1,9 @@
+use crate::users::User;
 use rocket::{
     http::Status,
     request::{self, FromRequest, Request},
     Outcome,
 };
-
-use users::User;
 
 /// Wrapper around User to use as a request guard on pages reserved to admins.
 pub struct Admin(pub User);

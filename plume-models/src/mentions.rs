@@ -1,14 +1,10 @@
+use crate::{
+    comments::Comment, notifications::*, posts::Post, schema::mentions, users::User, Connection,
+    Error, PlumeRocket, Result,
+};
 use activitypub::link;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use comments::Comment;
-use notifications::*;
 use plume_common::activity_pub::inbox::AsActor;
-use posts::Post;
-use schema::mentions;
-use users::User;
-use PlumeRocket;
-use {Connection, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Mention {

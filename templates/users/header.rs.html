@@ -1,6 +1,6 @@
-@use template_utils::*;
 @use plume_models::users::User;
-@use routes::*;
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, user: &User, follows: bool, is_remote: bool, instance_url: String)
 

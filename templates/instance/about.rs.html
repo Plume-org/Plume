@@ -1,7 +1,7 @@
 @use plume_models::{instance::Instance, users::User};
-@use templates::base;
-@use template_utils::*;
-@use routes::*;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, instance: Instance, admin: User, n_users: i64, n_articles: i64, n_instances: i64)
 

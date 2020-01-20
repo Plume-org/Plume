@@ -2,12 +2,12 @@
 @use plume_models::blogs::Blog;
 @use plume_models::instance::Instance;
 @use plume_models::medias::Media;
-@use routes::blogs;
-@use routes::blogs::EditForm;
-@use routes::medias;
-@use template_utils::*;
-@use templates::base;
-@use templates::partials::image_select;
+@use crate::template_utils::*;
+@use crate::templates::base;
+@use crate::templates::partials::image_select;
+@use crate::routes::blogs;
+@use crate::routes::blogs::EditForm;
+@use crate::routes::medias;
 
 @(ctx: BaseContext, blog: &Blog, medias: Vec<Media>, form: &EditForm, errors: ValidationErrors)
 

@@ -1,13 +1,13 @@
 use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;
 
+use crate::routes::errors::ErrorPage;
 use plume_common::activity_pub::broadcast;
 use plume_common::utils;
 use plume_models::{
     blogs::Blog, inbox::inbox, posts::Post, reshares::*, timeline::*, users::User, Error,
     PlumeRocket,
 };
-use routes::errors::ErrorPage;
 
 #[post("/~/<blog>/<slug>/reshare")]
 pub fn create(

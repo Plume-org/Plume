@@ -1,6 +1,6 @@
-@use template_utils::*;
 @use plume_models::comments::CommentTree;
-@use routes::*;
+@use crate::template_utils::*;
+@use crate::routes::*;
 
 @(ctx: BaseContext, comment_tree: &CommentTree, in_reply_to: Option<&str>, blog: &str, slug: &str)
 
