@@ -1,9 +1,9 @@
-@use templates::base;
-@use template_utils::*;
 @use plume_models::instance::Instance;
-@use routes::user::UpdateUserForm;
 @use validator::ValidationErrors;
-@use routes::*;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::user::UpdateUserForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, form: UpdateUserForm, errors: ValidationErrors)
 

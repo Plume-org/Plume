@@ -10,14 +10,14 @@ use rocket_i18n::I18n;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
+use crate::routes::{errors::ErrorPage, Page, RespondOrRedirect};
+use crate::template_utils::{IntoContext, Ructe};
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
     blog_authors::*, blogs::*, instance::Instance, medias::*, posts::Post, safe_string::SafeString,
     users::User, Connection, PlumeRocket,
 };
-use routes::{errors::ErrorPage, Page, RespondOrRedirect};
-use template_utils::{IntoContext, Ructe};
 
 #[get("/~/<name>?<page>", rank = 2)]
 pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {

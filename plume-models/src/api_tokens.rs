@@ -1,3 +1,4 @@
+use crate::{db_conn::DbConn, schema::api_tokens, Error, Result};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::{
@@ -5,10 +6,6 @@ use rocket::{
     request::{self, FromRequest, Request},
     Outcome,
 };
-
-use db_conn::DbConn;
-use schema::api_tokens;
-use {Error, Result};
 
 #[derive(Clone, Queryable)]
 pub struct ApiToken {

@@ -1,16 +1,16 @@
+use crate::{
+    lists::List,
+    posts::Post,
+    schema::{posts, timeline, timeline_definition},
+    Connection, Error, PlumeRocket, Result,
+};
 use diesel::{self, BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use lists::List;
-use posts::Post;
-use schema::{posts, timeline, timeline_definition};
 use std::ops::Deref;
-use {Connection, Error, PlumeRocket, Result};
 
 pub(crate) mod query;
 
-use self::query::{QueryError, TimelineQuery};
-
 pub use self::query::Kind;
+use self::query::{QueryError, TimelineQuery};
 
 #[derive(Clone, Debug, PartialEq, Queryable, Identifiable, AsChangeset)]
 #[table_name = "timeline_definition"]
@@ -208,7 +208,7 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(rocket: &PlumeRocket, post: &Post, kind: Kind) -> Result<()> {
+    pub fn add_to_all_timelines(rocket: &PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<()> {
         let timelines = timeline_definition::table
             .load::<Self>(rocket.conn.deref())
             .map_err(Error::from)?;
@@ -231,7 +231,7 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn matches(&self, rocket: &PlumeRocket, post: &Post, kind: Kind) -> Result<bool> {
+    pub fn matches(&self, rocket: &PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
         query.matches(rocket, self, post, kind)
     }
@@ -240,16 +240,18 @@ impl Timeline {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use blogs::tests as blogTests;
+    use crate::{
+        blogs::tests as blogTests,
+        follows::*,
+        lists::ListType,
+        post_authors::{NewPostAuthor, PostAuthor},
+        posts::NewPost,
+        safe_string::SafeString,
+        tags::Tag,
+        tests::{db, rockets},
+        users::tests as userTests,
+    };
     use diesel::Connection;
-    use follows::*;
-    use lists::ListType;
-    use post_authors::{NewPostAuthor, PostAuthor};
-    use posts::NewPost;
-    use safe_string::SafeString;
-    use tags::Tag;
-    use tests::{db, rockets};
-    use users::tests as userTests;
 
     #[test]
     fn test_timeline() {

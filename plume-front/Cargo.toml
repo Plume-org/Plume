@@ -2,6 +2,7 @@
 name = "plume-front"
 version = "0.4.0"
 authors = ["Plume contributors"]
+edition = "2018"
 
 [dependencies]
 stdweb = "=0.4.18"

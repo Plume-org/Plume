@@ -1,8 +1,9 @@
 @use plume_models::CONFIG;
 @use plume_models::instance::Instance;
-@use template_utils::*;
-@use routes::*;
 @use std::path::Path;
+@use crate::template_utils::*;
+@use crate::routes::*;
+
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
 
 <!DOCTYPE html>

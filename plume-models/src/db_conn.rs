@@ -1,3 +1,4 @@
+use crate::Connection;
 use diesel::r2d2::{
     ConnectionManager, CustomizeConnection, Error as ConnError, Pool, PooledConnection,
 };
@@ -9,8 +10,6 @@ use rocket::{
     Outcome, Request, State,
 };
 use std::ops::Deref;
-
-use Connection;
 
 pub type DbPool = Pool<ConnectionManager<Connection>>;
 
@@ -26,7 +25,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-        let pool = request.guard::<State<DbPool>>()?;
+        let pool = request.guard::<State<'_, DbPool>>()?;
         match pool.get() {
             Ok(conn) => Outcome::Success(DbConn(conn)),
             Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),

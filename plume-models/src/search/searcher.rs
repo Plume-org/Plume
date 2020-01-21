@@ -1,9 +1,11 @@
-use instance::Instance;
-use posts::Post;
-use schema::posts;
-use tags::Tag;
-use Connection;
-
+use crate::{
+    instance::Instance,
+    posts::Post,
+    schema::posts,
+    search::{query::PlumeQuery, tokenizer},
+    tags::Tag,
+    Connection, Result,
+};
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
@@ -13,10 +15,6 @@ use tantivy::{
     IndexWriter, ReloadPolicy, Term,
 };
 use whatlang::{detect as detect_lang, Lang};
-
-use super::tokenizer;
-use search::query::PlumeQuery;
-use Result;
 
 #[derive(Debug)]
 pub enum SearcherError {

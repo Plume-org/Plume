@@ -1,5 +1,5 @@
+use crate::search::searcher::Searcher;
 use chrono::{naive::NaiveDate, offset::Utc, Datelike};
-use search::searcher::Searcher;
 use std::{cmp, ops::Bound};
 use tantivy::{query::*, schema::*, Term};
 

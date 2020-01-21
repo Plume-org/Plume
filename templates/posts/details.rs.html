@@ -1,14 +1,14 @@
-@use templates::{base, partials::comment};
-@use template_utils::*;
 @use plume_models::blogs::Blog;
 @use plume_models::comments::{Comment, CommentTree};
 @use plume_models::posts::Post;
 @use plume_models::tags::Tag;
 @use plume_models::users::User;
-@use validator::ValidationErrors;
-@use routes::comments::NewCommentForm;
-@use routes::*;
 @use std::path::Path;
+@use validator::ValidationErrors;
+@use crate::templates::{base, partials::comment};
+@use crate::template_utils::*;
+@use crate::routes::comments::NewCommentForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
 

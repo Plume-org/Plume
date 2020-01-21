@@ -1,3 +1,15 @@
+use crate::{
+    comment_seers::{CommentSeers, NewCommentSeers},
+    instance::Instance,
+    medias::Media,
+    mentions::Mention,
+    notifications::*,
+    posts::Post,
+    safe_string::SafeString,
+    schema::comments,
+    users::User,
+    Connection, Error, PlumeRocket, Result,
+};
 use activitypub::{
     activity::{Create, Delete},
     link,
@@ -5,25 +17,15 @@ use activitypub::{
 };
 use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
-use serde_json;
-
-use std::collections::HashSet;
-
-use comment_seers::{CommentSeers, NewCommentSeers};
-use instance::Instance;
-use medias::Media;
-use mentions::Mention;
-use notifications::*;
-use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, FromId},
-    Id, IntoId, PUBLIC_VISIBILITY,
+use plume_common::{
+    activity_pub::{
+        inbox::{AsActor, AsObject, FromId},
+        Id, IntoId, PUBLIC_VISIBILITY,
+    },
+    utils,
 };
-use plume_common::utils;
-use posts::Post;
-use safe_string::SafeString;
-use schema::comments;
-use users::User;
-use {Connection, Error, PlumeRocket, Result};
+use serde_json;
+use std::collections::HashSet;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]
 pub struct Comment {
@@ -77,7 +79,7 @@ impl Comment {
     }
 
     pub fn count_local(conn: &Connection) -> Result<i64> {
-        use schema::users;
+        use crate::schema::users;
         let local_authors = users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
             .select(users::id);

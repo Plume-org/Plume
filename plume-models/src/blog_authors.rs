@@ -1,7 +1,5 @@
+use crate::{schema::blog_authors, Error, Result};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use schema::blog_authors;
-use {Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct BlogAuthor {

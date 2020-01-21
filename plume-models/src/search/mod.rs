@@ -8,15 +8,17 @@ pub use self::searcher::*;
 pub(crate) mod tests {
     use super::{Query, Searcher};
     use diesel::Connection;
+    use plume_common::utils::random_hex;
     use std::env::temp_dir;
     use std::str::FromStr;
 
-    use blogs::tests::fill_database;
-    use plume_common::utils::random_hex;
-    use post_authors::*;
-    use posts::{NewPost, Post};
-    use safe_string::SafeString;
-    use tests::db;
+    use crate::{
+        blogs::tests::fill_database,
+        post_authors::*,
+        posts::{NewPost, Post},
+        safe_string::SafeString,
+        tests::db,
+    };
 
     pub(crate) fn get_searcher() -> Searcher {
         let dir = temp_dir().join(&format!("plume-test-{}", random_hex()));

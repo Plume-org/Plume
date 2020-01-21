@@ -1,10 +1,11 @@
+use crate::{
+    blogs::Blog,
+    schema::{blogs, list_elems, lists, users},
+    users::User,
+    Connection, Error, Result,
+};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use blogs::Blog;
-use schema::{blogs, list_elems, lists, users};
 use std::convert::{TryFrom, TryInto};
-use users::User;
-use {Connection, Error, Result};
 
 /// Represent what a list is supposed to store. Represented in database as an integer
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -164,7 +165,7 @@ impl List {
     last!(lists);
     get!(lists);
 
-    fn insert(conn: &Connection, val: NewList) -> Result<Self> {
+    fn insert(conn: &Connection, val: NewList<'_>) -> Result<Self> {
         diesel::insert_into(lists::table)
             .values(val)
             .execute(conn)?;
@@ -309,7 +310,7 @@ mod private {
     };
 
     impl ListElem {
-        insert!(list_elems, NewListElem);
+        insert!(list_elems, NewListElem<'_>);
 
         pub fn user_in_list(conn: &Connection, list: &List, user: i32) -> Result<bool> {
             dsl::select(dsl::exists(
@@ -359,9 +360,8 @@ mod private {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use blogs::tests as blog_tests;
+    use crate::{blogs::tests as blog_tests, tests::db};
     use diesel::Connection;
-    use tests::db;
 
     #[test]
     fn list_type() {

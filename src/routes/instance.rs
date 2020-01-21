@@ -9,7 +9,9 @@ use serde_json;
 use std::str::FromStr;
 use validator::{Validate, ValidationErrors};
 
-use inbox;
+use crate::inbox;
+use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
+use crate::template_utils::{IntoContext, Ructe};
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::*,
@@ -25,8 +27,6 @@ use plume_models::{
     users::{Role, User},
     Connection, Error, PlumeRocket, CONFIG,
 };
-use routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
-use template_utils::{IntoContext, Ructe};
 
 #[get("/")]
 pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
@@ -248,7 +248,7 @@ where
 {
     type Error = ();
 
-    fn from_form(items: &mut FormItems, _strict: bool) -> Result<Self, Self::Error> {
+    fn from_form(items: &mut FormItems<'_>, _strict: bool) -> Result<Self, Self::Error> {
         let (ids, act) = items.fold((vec![], None), |(mut ids, act), item| {
             let (name, val) = item.key_value_decoded();
 
@@ -389,7 +389,7 @@ fn ban(
 pub fn shared_inbox(
     rockets: PlumeRocket,
     data: inbox::SignedJson<serde_json::Value>,
-    headers: Headers,
+    headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
     inbox::handle_incoming(rockets, data, headers)
 }

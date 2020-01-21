@@ -1,15 +1,12 @@
 #![recursion_limit = "128"]
 #![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
-extern crate gettext;
 #[macro_use]
 extern crate gettext_macros;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate stdweb;
-extern crate serde;
-extern crate serde_json;
 use stdweb::web::{event::*, *};
 
 init_i18n!(

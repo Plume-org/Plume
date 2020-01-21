@@ -2,9 +2,7 @@ pub use self::module::PlumeRocket;
 
 #[cfg(not(test))]
 mod module {
-    use crate::db_conn::DbConn;
-    use crate::search;
-    use crate::users;
+    use crate::{db_conn::DbConn, search, users};
     use rocket::{
         request::{self, FlashMessage, FromRequest, Request},
         Outcome, State,
@@ -29,9 +27,9 @@ mod module {
             let conn = request.guard::<DbConn>()?;
             let intl = request.guard::<rocket_i18n::I18n>()?;
             let user = request.guard::<users::User>().succeeded();
-            let worker = request.guard::<State<Arc<ScheduledThreadPool>>>()?;
-            let searcher = request.guard::<State<Arc<search::Searcher>>>()?;
-            let flash_msg = request.guard::<FlashMessage>().succeeded();
+            let worker = request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>()?;
+            let searcher = request.guard::<'_, State<'_, Arc<search::Searcher>>>()?;
+            let flash_msg = request.guard::<FlashMessage<'_, '_>>().succeeded();
             Outcome::Success(PlumeRocket {
                 conn,
                 intl,
@@ -46,9 +44,7 @@ mod module {
 
 #[cfg(test)]
 mod module {
-    use crate::db_conn::DbConn;
-    use crate::search;
-    use crate::users;
+    use crate::{db_conn::DbConn, search, users};
     use rocket::{
         request::{self, FromRequest, Request},
         Outcome, State,
@@ -70,8 +66,8 @@ mod module {
         fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket, ()> {
             let conn = request.guard::<DbConn>()?;
             let user = request.guard::<users::User>().succeeded();
-            let worker = request.guard::<State<Arc<ScheduledThreadPool>>>()?;
-            let searcher = request.guard::<State<Arc<search::Searcher>>>()?;
+            let worker = request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>()?;
+            let searcher = request.guard::<'_, State<'_, Arc<search::Searcher>>>()?;
             Outcome::Success(PlumeRocket {
                 conn,
                 user,

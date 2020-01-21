@@ -14,7 +14,7 @@ use std::io::Read;
 pub fn handle_incoming(
     rockets: PlumeRocket,
     data: SignedJson<serde_json::Value>,
-    headers: Headers,
+    headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
     let conn = &*rockets.conn;
     let act = data.1.into_inner();
@@ -74,7 +74,7 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
     type Borrowed = str;
 
     fn transform(
-        r: &Request,
+        r: &Request<'_>,
         d: Data,
     ) -> Transform<rocket::data::Outcome<Self::Owned, Self::Error>> {
         let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
@@ -86,7 +86,7 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
     }
 
     fn from_data(
-        _: &Request,
+        _: &Request<'_>,
         o: Transformed<'a, Self>,
     ) -> rocket::data::Outcome<Self, Self::Error> {
         let string = o.borrowed()?;

@@ -1,9 +1,9 @@
-@use templates::base;
-@use template_utils::*;
-@use routes::user::NewUserForm;
-@use validator::{ValidationErrors, ValidationErrorsKind};
-@use routes::*;
 @use std::borrow::Cow;
+@use validator::{ValidationErrors, ValidationErrorsKind};
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::user::NewUserForm;
+@use crate::routes::*;
 
 @(ctx: BaseContext, enabled: bool, form: &NewUserForm, errors: ValidationErrors)
 

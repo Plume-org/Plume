@@ -1,17 +1,14 @@
+use crate::{
+    notifications::*, posts::Post, schema::reshares, timeline::*, users::User, Connection, Error,
+    PlumeRocket, Result,
+};
 use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use notifications::*;
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
     Id, IntoId, PUBLIC_VISIBILITY,
 };
-use posts::Post;
-use schema::reshares;
-use timeline::*;
-use users::User;
-use {Connection, Error, PlumeRocket, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 pub struct Reshare {

@@ -1,8 +1,6 @@
+use crate::{schema::email_blocklist, Connection, Error, Result};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, TextExpressionMethods};
 use glob::Pattern;
-
-use schema::email_blocklist;
-use {Connection, Error, Result};
 
 #[derive(Clone, Queryable, Identifiable)]
 #[table_name = "email_blocklist"]
@@ -89,10 +87,9 @@ impl BlocklistedEmail {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use crate::{instance::tests as instance_tests, tests::rockets, Connection as Conn};
     use diesel::Connection;
-    use instance::tests as instance_tests;
-    use tests::rockets;
-    use Connection as Conn;
+
     pub(crate) fn fill_database(conn: &Conn) -> Vec<BlocklistedEmail> {
         instance_tests::fill_database(conn);
         let domainblock =

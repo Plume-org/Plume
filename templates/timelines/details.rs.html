@@ -1,9 +1,9 @@
 @use plume_models::posts::Post;
 @use plume_models::timeline::Timeline;
-@use template_utils::*;
-@use templates::base;
-@use templates::partials::post_card;
-@use routes::*;
+@use crate::template_utils::*;
+@use crate::templates::base;
+@use crate::templates::partials::post_card;
+@use crate::routes::*;
 
 @(ctx: BaseContext, tl: Timeline, articles: Vec<Post>, all_tl: Vec<Timeline>, page: i32, n_pages: i32)
 
