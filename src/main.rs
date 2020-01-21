@@ -21,7 +21,6 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
@@ -272,25 +271,7 @@ Then try to restart Plume
         .manage(dbpool)
         .manage(Arc::new(workpool))
         .manage(searcher)
-        .manage(include_i18n!())
-        .attach(
-            CsrfFairingBuilder::new()
-                .set_default_target(
-                    "/csrf-violation?target=<uri>".to_owned(),
-                    rocket::http::Method::Post,
-                )
-                .add_exceptions(vec![
-                    ("/inbox".to_owned(), "/inbox".to_owned(), None),
-                    (
-                        "/@/<name>/inbox".to_owned(),
-                        "/@/<name>/inbox".to_owned(),
-                        None,
-                    ),
-                    ("/api/<path..>".to_owned(), "/api/<path..>".to_owned(), None),
-                ])
-                .finalize()
-                .expect("main: csrf fairing creation error"),
-        );
+        .manage(include_i18n!());
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);
