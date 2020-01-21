@@ -1,4 +1,5 @@
 #![recursion_limit = "128"]
+#![warn(missing_docs)]
 
 #[macro_use]
 extern crate quote;
