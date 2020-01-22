@@ -15,8 +15,7 @@ itertools = "0.8.0"
 lazy_static = "1.0"
 migrations_internals= "1.4.0"
 openssl = "0.10.22"
-rocket = "0.4.0"
-rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "async" }
 reqwest = "0.9"
 scheduled-thread-pool = "0.2.2"
 serde = "1.0"
@@ -47,6 +46,12 @@ path = "../plume-common"
 
 [dependencies.plume-macro]
 path = "../plume-macro"
+
+[dependencies.rocket_i18n]
+git = "https://github.com/Plume-org/rocket_i18n"
+branch = "go-async"
+default-features = false
+features = ["rocket"]
 
 [dev-dependencies]
 diesel_migrations = "1.3.0"
