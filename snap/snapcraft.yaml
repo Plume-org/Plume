@@ -31,6 +31,7 @@ parts:
       - pkg-config
       - libsqlite3-dev
       - gettext
+      - libclang-8-dev
       - on arm64,armhf,ppc64el,s390x:
         - lld-8
     override-build: |
