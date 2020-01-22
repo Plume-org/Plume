@@ -1,5 +1,5 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene, try_trait)]
+#![feature(proc_macro_hygiene, try_trait)]
 
 #[macro_use]
 extern crate gettext_macros;
