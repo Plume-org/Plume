@@ -43,7 +43,7 @@ parts:
       # Only Tier 1 Rust platforms get rust-lld
       # On the others (arm64, armhf, powerpc64, s390x) fall back to using
       # the system LLD we've installed earlier.
-      case ${SNAPCRAFT_ARCH_TRIPLE} in \
+      case ${SNAPCRAFT_ARCH_TRIPLET} in \
         aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
           RUSTFLAGS="-C linker=lld-8" cargo web deploy -p plume-front --release \
           ;; \
