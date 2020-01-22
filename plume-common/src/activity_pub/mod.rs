@@ -4,7 +4,7 @@ use reqwest::r#async::ClientBuilder;
 use rocket::{
     http::Status,
     request::{FromRequest, Request},
-    response::{Responder, Response},
+    response::{Responder, Response, ResultFuture},
     Outcome,
 };
 use serde_json;
@@ -63,14 +63,21 @@ impl<T> ActivityStream<T> {
     }
 }
 
-impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
-    fn respond_to(self, request: &Request<'_>) -> Result<Response<'r>, Status> {
-        let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
-        json["@context"] = context();
-        serde_json::to_string(&json).respond_to(request).map(|r| {
-            Response::build_from(r)
-                .raw_header("Content-Type", "application/activity+json")
-                .finalize()
+impl<'r, O: Object + Send + 'r> Responder<'r> for ActivityStream<O> {
+    fn respond_to(self, request: &'r Request<'_>) -> ResultFuture<'r> {
+        Box::pin(async move {
+            let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
+            json["@context"] = context();
+            let result = serde_json::to_string(&json).map_err(rocket::response::Debug);
+            match result.respond_to(request).await {
+                Ok(r) => {
+                    Response::build_from(r)
+                        .raw_header("Content-Type", "application/activity+json")
+                        .ok()
+                        .await
+                }
+                Err(e) => Err(e),
+            }
         })
     }
 }
