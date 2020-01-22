@@ -8,7 +8,7 @@ description: |
    * Media management: you can upload pictures to illustrate your articles, but also audio files if you host a podcast, and manage them all from Plume.
    * Federation: Plume is part of a network of interconnected websites called the Fediverse. Each of these websites (often called instances) have their own rules and thematics, but they can all communicate with each other.
    * Collaborative writing: invite other people to your blogs, and write articles together.
-grade: devel # must be 'stable' to release into candidate/stable channels
+grade: stable
 confinement: strict
 
 apps:
@@ -25,12 +25,13 @@ parts:
   plume:
     plugin: rust
     source: .
-    rust-revision: nightly-2019-03-23
+    rust-revision: nightly-2020-01-15
     build-packages:
       - libssl-dev
       - pkg-config
       - libsqlite3-dev
       - gettext
+      - libclang-8-dev
       - on arm64,armhf,ppc64el,s390x:
         - lld-8
     override-build: |
@@ -42,7 +43,7 @@ parts:
       # Only Tier 1 Rust platforms get rust-lld
       # On the others (arm64, armhf, powerpc64, s390x) fall back to using
       # the system LLD we've installed earlier.
-      case ${SNAPCRAFT_ARCH_TRIPLE} in \
+      case ${SNAPCRAFT_ARCH_TRIPLET} in \
         aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
           RUSTFLAGS="-C linker=lld-8" cargo web deploy -p plume-front --release \
           ;; \
