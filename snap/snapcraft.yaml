@@ -8,7 +8,7 @@ description: |
    * Media management: you can upload pictures to illustrate your articles, but also audio files if you host a podcast, and manage them all from Plume.
    * Federation: Plume is part of a network of interconnected websites called the Fediverse. Each of these websites (often called instances) have their own rules and thematics, but they can all communicate with each other.
    * Collaborative writing: invite other people to your blogs, and write articles together.
-grade: devel # must be 'stable' to release into candidate/stable channels
+grade: stable
 confinement: strict
 
 apps:
