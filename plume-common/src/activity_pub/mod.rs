@@ -3,7 +3,7 @@ use array_tool::vec::Uniq;
 use reqwest::r#async::ClientBuilder;
 use rocket::{
     http::Status,
-    request::{FromRequest, Request},
+    request::{FromRequestFuture, FromRequestAsync, Request},
     response::{Responder, Response, ResultFuture},
     Outcome,
 };
@@ -84,35 +84,38 @@ impl<'r, O: Object + Send + 'r> Responder<'r> for ActivityStream<O> {
 
 #[derive(Clone)]
 pub struct ApRequest;
-impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
+impl<'a, 'r> FromRequestAsync<'a, 'r> for ApRequest {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
-        request
-            .headers()
-            .get_one("Accept")
-            .map(|header| {
-                header
-                    .split(',')
-                    .map(|ct| match ct.trim() {
-                        // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
-                        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
-                        | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
-                        | "application/activity+json"
-                        | "application/ld+json" => Outcome::Success(ApRequest),
-                        "text/html" => Outcome::Forward(true),
-                        _ => Outcome::Forward(false),
-                    })
-                    .fold(Outcome::Forward(false), |out, ct| {
-                        if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
-                            out
-                        } else {
-                            ct
-                        }
-                    })
-                    .map_forward(|_| ())
-            })
-            .unwrap_or(Outcome::Forward(()))
+    fn from_request(request: &'a Request<'r>) -> FromRequestFuture<'a, Self, Self::Error> {
+        Box::pin(async move {
+            request
+                .headers()
+                .get_one("Accept")
+                .map(|header| {
+                    header
+                        .split(',')
+                        .map(|ct| match ct.trim() {
+                            // bool for Forward: true if found a valid Content-Type for Plume first (HTML),
+                            // false otherwise
+                            "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
+                            | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
+                            | "application/activity+json"
+                            | "application/ld+json" => Outcome::Success(ApRequest),
+                            "text/html" => Outcome::Forward(true),
+                            _ => Outcome::Forward(false),
+                        })
+                        .fold(Outcome::Forward(false), |out, ct| {
+                            if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
+                                out
+                            } else {
+                                ct
+                            }
+                        })
+                        .map_forward(|_| ())
+                })
+                .unwrap_or(Outcome::Forward(()))
+        })
     }
 }
 pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>)
