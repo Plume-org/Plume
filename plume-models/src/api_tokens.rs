@@ -90,7 +90,7 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for ApiToken {
             if let Some(auth_type) = parsed_header.next() {
                 if let Some(val) = parsed_header.next() {
                     if auth_type == "Bearer" {
-                        if let Outcome::Success(conn) = request.guard::<DbConn>() {
+                        if let Outcome::Success(conn) = DbConn::from_request(request).await {
                             if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
                                 return Outcome::Success(token);
                             }
