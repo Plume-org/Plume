@@ -13,7 +13,7 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for Admin {
 
     fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
         Box::pin(async move {
-            let user = try_outcome!(request.guard::<User>());
+            let user = try_outcome!(User::from_request(request).await);
             if user.is_admin() {
                 Outcome::Success(Admin(user))
             } else {
@@ -31,7 +31,7 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for Moderator {
 
     fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
         Box::pin(async move {
-            let user = try_outcome!(request.guard::<User>());
+            let user = try_outcome!(User::from_request(request).await);
             if user.is_moderator() {
                 Outcome::Success(Moderator(user))
             } else {
