@@ -2854,7 +2854,7 @@ dependencies = [
 [[package]]
 name = "rocket"
 version = "0.5.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket?rev=async#30c83d5619b8d670fc5f2d499a1a2dbb6f0bc31b"
+source = "git+https://github.com/SergioBenitez/Rocket?rev=async#22cee513987dc6b627d732442df597190e391309"
 dependencies = [
  "atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "base16 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2877,7 +2877,7 @@ dependencies = [
 [[package]]
 name = "rocket_codegen"
 version = "0.5.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket?rev=async#30c83d5619b8d670fc5f2d499a1a2dbb6f0bc31b"
+source = "git+https://github.com/SergioBenitez/Rocket?rev=async#22cee513987dc6b627d732442df597190e391309"
 dependencies = [
  "devise 0.3.0 (git+https://github.com/SergioBenitez/Devise.git?rev=e58b3ac9a)",
  "indexmap 1.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2903,7 +2903,7 @@ dependencies = [
 [[package]]
 name = "rocket_http"
 version = "0.5.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket?rev=async#30c83d5619b8d670fc5f2d499a1a2dbb6f0bc31b"
+source = "git+https://github.com/SergioBenitez/Rocket?rev=async#22cee513987dc6b627d732442df597190e391309"
 dependencies = [
  "cookie 0.12.0 (git+https://github.com/SergioBenitez/cookie-rs?rev=e0f3e6c)",
  "http 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2923,7 +2923,7 @@ dependencies = [
 [[package]]
 name = "rocket_i18n"
 version = "0.5.0"
-source = "git+https://github.com/Plume-org/rocket_i18n?branch=go-async#c9f220b27267806f99bcaf0fe19cb45ca5eca4ab"
+source = "git+https://github.com/Plume-org/rocket_i18n?branch=go-async#a6c8cfb3c516d857493d938ec0c89e7bd0c29cad"
 dependencies = [
  "gettext 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.5.0-dev (git+https://github.com/SergioBenitez/Rocket?rev=async)",
