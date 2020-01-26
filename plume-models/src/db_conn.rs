@@ -28,7 +28,7 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for DbConn {
         Box::pin(async move {
             match DbConn::from_request(request).await {
                 Outcome::Success(a) => return Outcome::Success(a),
-                Outcome::Failure(_) => return Outcome::Failure((Status::ServiceUnavailable, ())),
+                _ => return Outcome::Failure((Status::ServiceUnavailable, ())),
             };
         })
     }

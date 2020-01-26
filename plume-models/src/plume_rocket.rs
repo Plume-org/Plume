@@ -4,7 +4,7 @@ pub use self::module::PlumeRocket;
 mod module {
     use crate::{db_conn::DbConn, search, users};
     use rocket::{
-        request::{self, FlashMessage, FromRequest, FromRequestAsync, Request},
+        request::{self, FlashMessage, FromRequestAsync, Request},
         Outcome, State,
     };
     use scheduled_thread_pool::ScheduledThreadPool;
@@ -28,13 +28,13 @@ mod module {
                 let conn = try_outcome!(DbConn::from_request(request).await);
                 let intl = try_outcome!(rocket_i18n::I18n::from_request(request).await);
                 let user = try_outcome!(users::User::from_request(request).await);
-                let worker = request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>()?;
-                let searcher = request.guard::<'_, State<'_, Arc<search::Searcher>>>()?;
+                let worker = try_outcome!(request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>());
+                let searcher = try_outcome!(request.guard::<'_, State<'_, Arc<search::Searcher>>>());
                 let flash_msg = request.guard::<FlashMessage<'_, '_>>().succeeded();
                 Outcome::Success(PlumeRocket {
                     conn,
                     intl,
-                    user,
+                    user: Some(user),
                     flash_msg: flash_msg.map(|f| (f.name().into(), f.msg().into())),
                     worker: worker.clone(),
                     searcher: searcher.clone(),
