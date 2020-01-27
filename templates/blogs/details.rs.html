@@ -2,7 +2,9 @@
 @use plume_models::instance::Instance;
 @use plume_models::posts::Post;
 @use plume_models::users::User;
+@use rocket::http::RawStr;
 @use std::path::Path;
+@use std::path::PathBuf;
 @use crate::templates::{base, partials::post_card};
 @use crate::template_utils::*;
 @use crate::routes::*;

@@ -5,9 +5,11 @@
 @use crate::template_utils::*;
 @use crate::templates::base;
 @use crate::templates::partials::image_select;
+@use crate::routes::Page;
 @use crate::routes::blogs;
 @use crate::routes::blogs::EditForm;
 @use crate::routes::medias;
+
 
 @(ctx: BaseContext, blog: &Blog, medias: Vec<Media>, form: &EditForm, errors: ValidationErrors)
 

@@ -1,8 +1,12 @@
 @use plume_models::CONFIG;
 @use plume_models::instance::Instance;
+@use rocket::http::RawStr;
+@use rocket::request::Form;
 @use std::path::Path;
+@use std::path::PathBuf;
 @use crate::template_utils::*;
 @use crate::routes::*;
+@use crate::routes::search::SearchQuery;
 
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
 
