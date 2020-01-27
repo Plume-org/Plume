@@ -4,9 +4,8 @@ use atom_syndication::{ContentBuilder, Entry, EntryBuilder, LinkBuilder, Person,
 use plume_models::{posts::Post, Connection, CONFIG, ITEMS_PER_PAGE};
 use rocket::{
     http::{
-        hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
         uri::{FromUriParam, Query},
-        RawStr, Status,
+        Header, RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
     response::{self, Flash, NamedFile, Redirect, Responder, Response},
@@ -171,7 +170,7 @@ pub mod well_known;
 #[response()]
 pub struct CachedFile {
     inner: NamedFile,
-    cache_control: CacheControl,
+    cache_control: Header<'static>,
 }
 
 #[derive(Debug)]
@@ -191,12 +190,12 @@ impl<'r> Responder<'r> for ThemeFile {
         {
             Response::build()
                 .status(Status::NotModified)
-                .header(ETag(EntityTag::strong(etag)))
+                .header("ETag", etag)
                 .ok()
         } else {
             Response::build()
                 .merge(self.0.respond_to(r)?)
-                .header(ETag(EntityTag::strong(etag)))
+                .header("ETag", etag)
                 .ok()
         }
     }
@@ -219,7 +218,7 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
         .ok()
         .map(|f| CachedFile {
             inner: f,
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            cache_control: Header::new("Cache-Control", format!("max-age={}", 60 * 60 * 24 * 30)),
         })
 }
 #[get("/static/<file..>", rank = 3)]
@@ -228,6 +227,6 @@ pub fn static_files(file: PathBuf) -> Option<CachedFile> {
         .ok()
         .map(|f| CachedFile {
             inner: f,
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            cache_control: Header::new("Cache-Control", format!("max-age={}", 60 * 60 * 24 * 30)),
         })
 }
