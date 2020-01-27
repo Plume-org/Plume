@@ -1,7 +1,6 @@
 use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
 
 use crate::templates::Html;
-use rocket::http::hyper::header::{ETag, EntityTag};
 use rocket::http::{Method, Status};
 use rocket::request::Request;
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
@@ -67,12 +66,12 @@ impl<'r> Responder<'r> for Ructe {
         {
             Response::build()
                 .status(Status::NotModified)
-                .header(ETag(EntityTag::strong(etag)))
+                .header("ETag", etag)
                 .ok()
         } else {
             Response::build()
                 .merge(HtmlCt(self.0).respond_to(r)?)
-                .header(ETag(EntityTag::strong(etag)))
+                .header("ETag", etag)
                 .ok()
         }
     }
