@@ -48,7 +48,7 @@ mod module {
 mod module {
     use crate::{db_conn::DbConn, search, users};
     use rocket::{
-        request::{self, FromRequest, Request},
+        request::{self, FromRequestAsync, Request},
         Outcome, State,
     };
     use scheduled_thread_pool::ScheduledThreadPool;
@@ -62,19 +62,21 @@ mod module {
         pub worker: Arc<ScheduledThreadPool>,
     }
 
-    impl<'a, 'r> FromRequest<'a, 'r> for PlumeRocket {
+    impl<'a, 'r> FromRequestAsync<'a, 'r> for PlumeRocket {
         type Error = ();
 
-        fn from_request(request: &'a Request<'r>) -> request::Outcome<PlumeRocket, ()> {
-            let conn = DbConn::from_request(request).await;
-            let user = request.guard::<users::User>().succeeded();
-            let worker = request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>()?;
-            let searcher = request.guard::<'_, State<'_, Arc<search::Searcher>>>()?;
-            Outcome::Success(PlumeRocket {
-                conn,
-                user,
-                worker: worker.clone(),
-                searcher: searcher.clone(),
+        fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
+            Box::pin(async move {
+                let conn = try_outcome!(DbConn::from_request(request).await);
+                let user = try_outcome!(users::User::from_request(request).await);
+                let worker = try_outcome!(request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>());
+                let searcher = try_outcome!(request.guard::<'_, State<'_, Arc<search::Searcher>>>());
+                Outcome::Success(PlumeRocket {
+                    conn,
+                    user: Some(user),
+                    worker: worker.clone(),
+                    searcher: searcher.clone(),
+                })
             })
         }
     }
