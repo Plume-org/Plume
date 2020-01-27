@@ -11,7 +11,7 @@ use std::{
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::routes::{
-    comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm, RespondOrRedirect,
+    comments::NewCommentForm, errors::ErrorPage, Page, ContentLen, RemoteForm, RespondOrRedirect,
 };
 use crate::template_utils::{IntoContext, Ructe};
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};

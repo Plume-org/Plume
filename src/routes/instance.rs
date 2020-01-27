@@ -7,6 +7,7 @@ use rocket_i18n::I18n;
 use scheduled_thread_pool::ScheduledThreadPool;
 use serde_json;
 use std::str::FromStr;
+use std::path::PathBuf;
 use validator::{Validate, ValidationErrors};
 
 use crate::inbox;
