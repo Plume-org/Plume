@@ -1,6 +1,6 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use reqwest::r#async::ClientBuilder;
+use reqwest::ClientBuilder;
 use rocket::{
     http::Status,
     request::{FromRequestFuture, FromRequestAsync, Request},
@@ -118,9 +118,10 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for ApRequest {
         })
     }
 }
-pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>)
+pub fn broadcast<S, A, T, C>(sender: &'static S, act: A, to: Vec<T>)
 where
     S: sign::Signer,
+    S: std::marker::Sync,
     A: Activity,
     T: inbox::AsActor<C>,
 {
@@ -140,7 +141,9 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
-    let mut rt = tokio::runtime::current_thread::Runtime::new()
+    let mut rt = tokio::runtime::Builder::new()
+        .threaded_scheduler()
+        .build()
         .expect("Error while initializing tokio runtime for federation");
     let client = ClientBuilder::new()
         .connect_timeout(std::time::Duration::from_secs(5))
@@ -150,7 +153,7 @@ where
         let body = signed.to_string();
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
-        rt.spawn(
+        rt.spawn(async move{
             client
                 .post(&inbox)
                 .headers(headers.clone())
@@ -161,15 +164,17 @@ where
                 )
                 .body(body)
                 .send()
-                .and_then(|r| r.into_body().concat2())
+                .await
+                .unwrap()
+                .text()
+                .await
                 .map(move |response| {
                     println!("Successfully sent activity to inbox ({})", inbox);
                     println!("Response: \"{:?}\"\n", response)
                 })
-                .map_err(|e| println!("Error while sending to inbox ({:?})", e)),
-        );
+                .map_err(|e| println!("Error while sending to inbox ({:?})", e))
+        });
     }
-    rt.run().unwrap();
 }
 
 #[derive(Shrinkwrap, Clone, Serialize, Deserialize)]
