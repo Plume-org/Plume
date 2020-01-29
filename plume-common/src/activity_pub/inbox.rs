@@ -280,7 +280,7 @@ pub trait FromId<C>: Sized {
     /// Dereferences an ID
     fn deref(id: &str) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
         reqwest::ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()
             .map_err(|_| (None, InboxError::DerefError.into()))?
             .get(id)

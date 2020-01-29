@@ -27,20 +27,20 @@ impl From<std::option::NoneError> for ApiError {
 }
 
 impl<'r> Responder<'r> for ApiError {
-    fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
+    fn respond_to(self, req: &'r Request) -> response::ResultFuture<'r> {
         match self.0 {
             Error::NotFound => Json(json!({
                 "error": "Not found"
             }))
-            .respond_to(req),
+                .respond_to(req),
             Error::Unauthorized => Json(json!({
                 "error": "You are not authorized to access this resource"
             }))
-            .respond_to(req),
+                .respond_to(req),
             _ => Json(json!({
                 "error": "Server error"
             }))
-            .respond_to(req),
+                .respond_to(req),
         }
     }
 }

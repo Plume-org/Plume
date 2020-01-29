@@ -73,32 +73,32 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
     type Owned = String;
     type Borrowed = str;
 
-    fn transform(
-        r: &Request<'_>,
-        d: Data,
-    ) -> Transform<rocket::data::Outcome<Self::Owned, Self::Error>> {
-        let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
-        let mut s = String::with_capacity(512);
-        match d.open().take(size_limit).read_to_string(&mut s) {
-            Ok(_) => Transform::Borrowed(Success(s)),
-            Err(e) => Transform::Borrowed(Failure((Status::BadRequest, JsonError::Io(e)))),
-        }
+    fn transform<'r>(
+        r: &'r Request,
+        d: Data
+    ) -> TransformFuture<'r, Self::Owned, Self::Error> {
+        Box::pin(async move {
+            let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
+            let mut s = String::with_capacity(512);
+            let outcome = match d.open().take(size_limit).read_to_string(&mut s) {
+                Ok(_) => Success(s),
+                Err(e) => Failure((Status::BadRequest, JsonError::Io(e))),
+            };
+            Transform::Borrowed(outcome)
+        })
     }
 
     fn from_data(
         _: &Request<'_>,
         o: Transformed<'a, Self>,
-    ) -> rocket::data::Outcome<Self, Self::Error> {
-        let string = o.borrowed()?;
-        match serde_json::from_str(&string) {
-            Ok(v) => Success(SignedJson(Digest::from_body(&string), Json(v))),
-            Err(e) => {
-                if e.is_data() {
-                    Failure((Status::UnprocessableEntity, JsonError::Parse(string, e)))
-                } else {
-                    Failure((Status::BadRequest, JsonError::Parse(string, e)))
-                }
+    ) -> FromDataFuture<'a, Self, Self::Error> {
+        Box::pin(async move {
+            let string = try_outcome!(o.borrowed());
+            match serde_json::from_str(&string) {
+                Ok(v) => Success(SignedJson(Digest::from_body(&string), Json(v))),
+                Err(e) if e.is_data() => return Failure((Status::UnprocessableEntity, JsonError::Parse(string, e))),
+                Err(e) => Failure((Status::BadRequest, JsonError::Parse(string, e))),
             }
-        }
+        })
     }
 }
