@@ -24,9 +24,9 @@ if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     apt-get install -y --no-install-recommends build-essential subversion ninja-build cmake
     mkdir -p /scratch/src
     cd /scratch/src
-    svn co http://llvm.org/svn/llvm-project/llvm/tags/RELEASE_800/final/ llvm
+    svn co http://llvm.org/svn/llvm-project/llvm/tags/RELEASE_900/final/ llvm
     cd /scratch/src/llvm/tools
-    svn co http://llvm.org/svn/llvm-project/lld/tags/RELEASE_800/final/ lld
+    svn co http://llvm.org/svn/llvm-project/lld/tags/RELEASE_900/final/ lld
     mkdir -p /scratch/build/arm
     cd /scratch/build/arm
     if [ "$ARCH" == "aarch64" ] ; then
