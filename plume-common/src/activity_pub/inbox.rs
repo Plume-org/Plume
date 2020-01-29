@@ -297,7 +297,7 @@ pub trait FromId<C>: Sized {
             )
             .send()
             .map_err(|_| (None, InboxError::DerefError))
-            .and_then(|mut r| {
+            .and_then(|r| {
                 let json: serde_json::Value = r
                     .json()
                     .map_err(|_| (None, InboxError::InvalidObject(None)))?;
