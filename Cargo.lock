@@ -3180,6 +3180,7 @@ dependencies = [
  "percent-encoding 2.1.0",
  "pin-project-lite",
  "serde",
+ "serde_json",
  "serde_urlencoded 0.6.1",
  "time",
  "tokio 0.2.20",

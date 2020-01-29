@@ -16,7 +16,6 @@ lazy_static = "1.0"
 migrations_internals= "1.4.0"
 openssl = "0.10.22"
 rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "async" }
-reqwest = "0.10"
 scheduled-thread-pool = "0.2.2"
 serde = "1.0"
 serde_derive = "1.0"
@@ -46,6 +45,11 @@ path = "../plume-common"
 
 [dependencies.plume-macro]
 path = "../plume-macro"
+
+[dependencies.reqwest]
+features = ["json", "blocking"]
+version = "0.10"
+
 
 [dependencies.rocket_i18n]
 git = "https://github.com/Plume-org/rocket_i18n"
