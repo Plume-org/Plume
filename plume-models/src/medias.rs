@@ -12,6 +12,7 @@ use plume_common::{
 };
 use reqwest;
 use std::{fs, path::Path};
+use tokio::prelude::*;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Media {
@@ -197,7 +198,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(c: &PlumeRocket, image: &Image) -> Result<Media> {
+    pub async fn from_activity(c: &PlumeRocket, image: &Image) -> Result<Media> {
         let conn = &*c.conn;
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
@@ -211,11 +212,12 @@ impl Media {
             ext
         ));
 
-        let mut dest = fs::File::create(path.clone()).ok()?;
-        reqwest::get(remote_url.as_str())
-            .ok()?
-            .copy_to(&mut dest)
-            .ok()?;
+        let mut dest = tokio::fs::File::create(path.clone()).await?;
+        let contents = reqwest::get(remote_url.as_str())
+            .await?
+            .bytes()
+            .await?;
+        dest.write_all(&contents).await?;
 
         Media::insert(
             conn,

@@ -81,10 +81,10 @@ impl Follow {
 
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
-    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
+    pub fn accept_follow<A: Signer + IntoId + Clone + Sync, B: Clone + AsActor<T> + IntoId, T>(
         conn: &Connection,
         from: &B,
-        target: &A,
+        target: &'static A,
         follow: FollowAct,
         from_id: i32,
         target_id: i32,

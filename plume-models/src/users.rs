@@ -222,7 +222,7 @@ impl User {
 
     fn fetch(url: &str) -> Result<CustomPerson> {
         let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(url)
             .header(
@@ -357,7 +357,7 @@ impl User {
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
         let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(url)
             .header(
@@ -387,7 +387,7 @@ impl User {
     }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
         let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(&self.outbox_url[..])
             .header(
@@ -432,7 +432,7 @@ impl User {
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
         let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(&self.followers_endpoint[..])
             .header(
