@@ -2718,6 +2718,7 @@ dependencies = [
  "serde_json",
  "shrinkwraprs 0.3.0",
  "tantivy",
+ "tokio 0.2.20",
  "url 2.1.1",
  "walkdir",
  "webfinger",
