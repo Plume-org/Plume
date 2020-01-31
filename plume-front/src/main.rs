@@ -1,6 +1,6 @@
 #![recursion_limit = "128"]
 #![feature(decl_macro, proc_macro_hygiene, try_trait)]
-#![warn(missing_docs)]
+#![cfg_attr(not(feature = "ci"), warn(missing_docs))]
 
 #[macro_use]
 extern crate gettext_macros;

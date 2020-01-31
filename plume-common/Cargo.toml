@@ -30,3 +30,6 @@ version = "0.4"
 [dependencies.pulldown-cmark]
 default-features = false
 version = "0.2.0"
+
+[features]
+ci = []

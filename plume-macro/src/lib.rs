@@ -1,5 +1,5 @@
 #![recursion_limit = "128"]
-#![warn(missing_docs)]
+#![cfg_attr(not(feature = "ci"), warn(missing_docs))]
 
 #[macro_use]
 extern crate quote;

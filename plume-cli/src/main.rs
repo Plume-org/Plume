@@ -1,7 +1,8 @@
-use dotenv;
+#![cfg_attr(not(feature = "ci"), warn(missing_docs))]
 
 use clap::App;
 use diesel::Connection;
+use dotenv;
 use plume_models::{instance::Instance, Connection as Conn, CONFIG};
 use std::io::{self, prelude::*};
 

@@ -54,3 +54,4 @@ diesel_migrations = "1.3.0"
 [features]
 postgres = ["diesel/postgres", "plume-macro/postgres" ]
 sqlite = ["diesel/sqlite", "plume-macro/sqlite" ]
+ci = ["plume-macro/ci"]

@@ -19,3 +19,4 @@ syn = "0.15.27"
 default = []
 postgres = []
 sqlite = []
+ci = []
