@@ -19,7 +19,7 @@ executors:
     working_directory: ~/projects/Plume
     environment:
       RUST_TEST_THREADS: 1
-      FEATURES: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>> ci
+      FEATURES: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>,ci
       DATABASE_URL: <<#parameters.postgres>>postgres://postgres@localhost/plume<</parameters.postgres>><<^parameters.postgres>>plume.sqlite<</parameters.postgres>>
 
 
