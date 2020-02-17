@@ -9,7 +9,6 @@ use plume_models::{
 use rocket::{data::*, http::Status, response::status, Outcome::*, Request};
 use rocket_contrib::json::*;
 use serde::Deserialize;
-use std::io::Read;
 use tokio::io::AsyncReadExt;
 
 pub fn handle_incoming(
@@ -78,7 +77,7 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
         Box::pin(async move {
             let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
             let mut s = String::with_capacity(512);
-            let outcome = match d.open().take(size_limit).read_to_string(&mut s) {
+            let outcome = match d.open().take(size_limit).read_to_string(&mut s).await {
                 Ok(_) => Success(s),
                 Err(e) => Failure((Status::BadRequest, JsonError::Io(e))),
             };
