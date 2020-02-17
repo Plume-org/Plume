@@ -120,10 +120,9 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for ApRequest {
         })
     }
 }
-pub fn broadcast<S, A, T, C>(sender: &'static S, act: A, to: Vec<T>)
+pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>)
 where
     S: sign::Signer,
-    S: std::marker::Sync,
     A: Activity,
     T: inbox::AsActor<C>,
 {
@@ -151,6 +150,8 @@ where
         let body = signed.to_string();
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
+        let sig = request::signature(sender, &headers)
+                        .expect("activity_pub::broadcast: request signature error");
         rt.spawn(async move {
             let client = ClientBuilder::new()
                 .connect_timeout(std::time::Duration::from_secs(5))
@@ -159,11 +160,7 @@ where
             client
                 .post(&inbox)
                 .headers(headers.clone())
-                .header(
-                    "Signature",
-                    request::signature(sender, &headers)
-                        .expect("activity_pub::broadcast: request signature error"),
-                )
+                .header("Signature", sig)
                 .body(body)
                 .send()
                 .await
