@@ -151,12 +151,12 @@ where
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
         let sig = request::signature(sender, &headers)
-                        .expect("activity_pub::broadcast: request signature error");
+            .expect("activity_pub::broadcast: request signature error");
+        let client = ClientBuilder::new()
+            .connect_timeout(std::time::Duration::from_secs(5))
+            .build()
+            .expect("Can't build client");
         rt.spawn(async move {
-            let client = ClientBuilder::new()
-                .connect_timeout(std::time::Duration::from_secs(5))
-                .build()
-                .expect("Can't build client");
             client
                 .post(&inbox)
                 .headers(headers.clone())
