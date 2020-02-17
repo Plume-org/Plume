@@ -10,6 +10,7 @@ use rocket::{data::*, http::Status, response::status, Outcome::*, Request};
 use rocket_contrib::json::*;
 use serde::Deserialize;
 use std::io::Read;
+use tokio::io::AsyncReadExt;
 
 pub fn handle_incoming(
     rockets: PlumeRocket,
@@ -73,10 +74,7 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
     type Owned = String;
     type Borrowed = str;
 
-    fn transform<'r>(
-        r: &'r Request,
-        d: Data
-    ) -> TransformFuture<'r, Self::Owned, Self::Error> {
+    fn transform<'r>(r: &'r Request, d: Data) -> TransformFuture<'r, Self::Owned, Self::Error> {
         Box::pin(async move {
             let size_limit = r.limits().get("json").unwrap_or(JSON_LIMIT);
             let mut s = String::with_capacity(512);
@@ -96,7 +94,9 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
             let string = try_outcome!(o.borrowed());
             match serde_json::from_str(&string) {
                 Ok(v) => Success(SignedJson(Digest::from_body(&string), Json(v))),
-                Err(e) if e.is_data() => return Failure((Status::UnprocessableEntity, JsonError::Parse(string, e))),
+                Err(e) if e.is_data() => {
+                    return Failure((Status::UnprocessableEntity, JsonError::Parse(string, e)))
+                }
                 Err(e) => Failure((Status::BadRequest, JsonError::Parse(string, e))),
             }
         })
