@@ -715,7 +715,7 @@ impl FromId<PlumeRocket> for PostUpdate {
             title: updated.object.object_props.name_string().ok(),
             subtitle: updated.object.object_props.summary_string().ok(),
             content: updated.object.object_props.content_string().ok(),
-            cover: cover,
+            cover,
             source: updated
                 .object
                 .ap_object_props
