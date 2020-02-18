@@ -24,7 +24,7 @@ tantivy = "0.10.1"
 tokio = "0.2"
 url = "2.1"
 walkdir = "2.2"
-webfinger = "0.5"
+webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "update-deps" }
 whatlang = "0.7.1"
 shrinkwraprs = "0.3"
 diesel-derive-newtype = "0.1.2"

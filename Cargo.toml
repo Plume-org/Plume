@@ -33,7 +33,7 @@ syntect = "3.3"
 tokio = "0.2"
 validator = "0.8"
 validator_derive = "0.8"
-webfinger = "0.5"
+webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "update-deps" }
 
 [[bin]]
 name = "plume"
