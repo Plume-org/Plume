@@ -2529,6 +2529,7 @@ dependencies = [
  "diesel",
  "diesel-derive-newtype",
  "diesel_migrations",
+ "futures 0.3.4",
  "glob",
  "guid-create",
  "heck",
