@@ -17,6 +17,7 @@ use activitypub::{
 };
 use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use futures::stream::{self, StreamExt};
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
@@ -105,7 +106,7 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, c: &PlumeRocket) -> Result<Note> {
+    pub async fn to_activity(&self, c: &PlumeRocket) -> Result<Note> {
         let author = User::get(&c.conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
@@ -132,18 +133,18 @@ impl Comment {
         note.object_props.set_attributed_to_link(author.into_id())?;
         note.object_props.set_to_link_vec(to)?;
         note.object_props.set_tag_link_vec(
-            mentions
-                .into_iter()
-                .filter_map(|m| Mention::build_activity(c, &m).ok())
-                .collect::<Vec<link::Mention>>(),
+            stream::iter(mentions)
+                .filter_map(|m| async move { Mention::build_activity(c, &m).await.ok() })
+                .collect::<Vec<link::Mention>>()
+                .await,
         )?;
         Ok(note)
     }
 
-    pub fn create_activity(&self, c: &PlumeRocket) -> Result<Create> {
+    pub async fn create_activity(&self, c: &PlumeRocket) -> Result<Create> {
         let author = User::get(&c.conn, self.author_id)?;
 
-        let note = self.to_activity(c)?;
+        let note = self.to_activity(c).await?;
         let mut act = Create::default();
         act.create_props.set_actor_link(author.into_id())?;
         act.create_props.set_object_object(note.clone())?;

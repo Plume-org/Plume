@@ -52,8 +52,8 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(c: &PlumeRocket, ment: &str) -> Result<link::Mention> {
-        let user = User::find_by_fqn(c, ment)?;
+    pub async fn build_activity(c: &PlumeRocket, ment: &str) -> Result<link::Mention> {
+        let user = User::find_by_fqn(c, ment).await?;
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.ap_url)?;
         mention.link_props.set_name_string(format!("@{}", ment))?;
