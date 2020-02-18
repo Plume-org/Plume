@@ -32,15 +32,15 @@ impl<'r> Responder<'r> for ApiError {
             Error::NotFound => Json(json!({
                 "error": "Not found"
             }))
-                .respond_to(req),
+            .respond_to(req),
             Error::Unauthorized => Json(json!({
                 "error": "You are not authorized to access this resource"
             }))
-                .respond_to(req),
+            .respond_to(req),
             _ => Json(json!({
                 "error": "Server error"
             }))
-                .respond_to(req),
+            .respond_to(req),
         }
     }
 }

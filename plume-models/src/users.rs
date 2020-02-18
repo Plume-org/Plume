@@ -234,7 +234,8 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send().await?;
+            .send()
+            .await?;
         let text = &res.text().await?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;
@@ -370,7 +371,8 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send().await?;
+            .send()
+            .await?;
         let text = &res.text().await?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
@@ -400,7 +402,8 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send().await?;
+            .send()
+            .await?;
         let text = &res.text().await?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         if let Some(first) = json.get("first") {
@@ -445,7 +448,8 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send().await?;
+            .send()
+            .await?;
         let text = &res.text().await?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         Ok(json["items"]

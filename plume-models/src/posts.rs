@@ -580,14 +580,11 @@ impl FromId<PlumeRocket> for Post {
                 }
             });
 
-        let image = article
-            .object_props
-            .icon_object::<Image>()
-            .ok()
-            .unwrap();
+        let image = article.object_props.icon_object::<Image>().ok().unwrap();
 
         let mut r = Runtime::new().unwrap();
-        let cover = Some(r.block_on(async {Media::from_activity(&c, &image).await.ok().unwrap().id}));
+        let cover =
+            Some(r.block_on(async { Media::from_activity(&c, &image).await.ok().unwrap().id }));
 
         let title = article.object_props.name_string()?;
         let post = Post::insert(
@@ -710,7 +707,8 @@ impl FromId<PlumeRocket> for PostUpdate {
             .ok()
             .unwrap();
         let mut r = Runtime::new().unwrap();
-        let cover = Some(r.block_on(async {Media::from_activity(&c, &image).await.ok().unwrap().id}));
+        let cover =
+            Some(r.block_on(async { Media::from_activity(&c, &image).await.ok().unwrap().id }));
 
         Ok(PostUpdate {
             ap_url: updated.object.object_props.id_string()?,
