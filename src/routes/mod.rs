@@ -177,27 +177,31 @@ pub struct CachedFile {
 pub struct ThemeFile(NamedFile);
 
 impl<'r> Responder<'r> for ThemeFile {
-    fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
-        let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
+    fn respond_to(self, r: &'r Request<'_>) -> response::ResultFuture<'r> {
+        Box::pin(async move {
+            let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
 
-        let mut hasher = DefaultHasher::new();
-        hasher.write(&contents);
-        let etag = format!("{:x}", hasher.finish());
+            let mut hasher = DefaultHasher::new();
+            hasher.write(&contents);
+            let etag = format!("{:x}", hasher.finish());
 
-        if r.headers()
-            .get("If-None-Match")
-            .any(|s| s[1..s.len() - 1] == etag)
-        {
-            Response::build()
-                .status(Status::NotModified)
-                .header("ETag", etag)
-                .ok()
-        } else {
-            Response::build()
-                .merge(self.0.respond_to(r)?)
-                .header("ETag", etag)
-                .ok()
-        }
+            if r.headers()
+                .get("If-None-Match")
+                .any(|s| s[1..s.len() - 1] == etag)
+            {
+                Response::build()
+                    .status(Status::NotModified)
+                    .header(Header::new("ETag", etag))
+                    .ok()
+                    .await
+            } else {
+                Response::build()
+                    .merge(self.0.respond_to(r).await.ok().unwrap())
+                    .header(Header::new("ETag", etag))
+                    .ok()
+                    .await
+            }
+        })
     }
 }
 

@@ -1,6 +1,7 @@
 use crate::template_utils::{IntoContext, Ructe};
 use plume_models::{Error, PlumeRocket};
 use rocket::{
+    request::FromRequestAsync,
     response::{self, Responder},
     Request,
 };
@@ -15,16 +16,28 @@ impl From<Error> for ErrorPage {
 }
 
 impl<'r> Responder<'r> for ErrorPage {
-    fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
-        let rockets = req.guard::<PlumeRocket>().unwrap();
+    fn respond_to(self, req: &'r Request<'_>) -> response::ResultFuture<'r> {
+        Box::pin(async move {
+            let rockets = PlumeRocket::from_request(req).await.unwrap();
 
-        match self.0 {
-            Error::NotFound => render!(errors::not_found(&rockets.to_context())).respond_to(req),
-            Error::Unauthorized => {
-                render!(errors::not_found(&rockets.to_context())).respond_to(req)
+            match self.0 {
+                Error::NotFound => {
+                    render!(errors::not_found(&rockets.to_context()))
+                        .respond_to(req)
+                        .await
+                }
+                Error::Unauthorized => {
+                    render!(errors::not_found(&rockets.to_context()))
+                        .respond_to(req)
+                        .await
+                }
+                _ => {
+                    render!(errors::not_found(&rockets.to_context()))
+                        .respond_to(req)
+                        .await
+                }
             }
-            _ => render!(errors::not_found(&rockets.to_context())).respond_to(req),
-        }
+        })
     }
 }
 
