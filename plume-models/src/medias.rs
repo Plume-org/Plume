@@ -213,10 +213,7 @@ impl Media {
         ));
 
         let mut dest = tokio::fs::File::create(path.clone()).await?;
-        let contents = reqwest::get(remote_url.as_str())
-            .await?
-            .bytes()
-            .await?;
+        let contents = reqwest::get(remote_url.as_str()).await?.bytes().await?;
         dest.write_all(&contents).await?;
 
         Media::insert(

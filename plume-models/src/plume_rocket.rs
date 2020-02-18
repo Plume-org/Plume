@@ -23,13 +23,17 @@ mod module {
     impl<'a, 'r> FromRequestAsync<'a, 'r> for PlumeRocket {
         type Error = ();
 
-        fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
+        fn from_request(
+            request: &'a Request<'r>,
+        ) -> request::FromRequestFuture<'a, Self, Self::Error> {
             Box::pin(async move {
                 let conn = try_outcome!(DbConn::from_request(request).await);
                 let intl = try_outcome!(rocket_i18n::I18n::from_request(request).await);
                 let user = try_outcome!(users::User::from_request(request).await);
-                let worker = try_outcome!(request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>());
-                let searcher = try_outcome!(request.guard::<'_, State<'_, Arc<search::Searcher>>>());
+                let worker =
+                    try_outcome!(request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>());
+                let searcher =
+                    try_outcome!(request.guard::<'_, State<'_, Arc<search::Searcher>>>());
                 let flash_msg = request.guard::<FlashMessage<'_, '_>>().succeeded();
                 Outcome::Success(PlumeRocket {
                     conn,
@@ -65,12 +69,16 @@ mod module {
     impl<'a, 'r> FromRequestAsync<'a, 'r> for PlumeRocket {
         type Error = ();
 
-        fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
+        fn from_request(
+            request: &'a Request<'r>,
+        ) -> request::FromRequestFuture<'a, Self, Self::Error> {
             Box::pin(async move {
                 let conn = try_outcome!(DbConn::from_request(request).await);
                 let user = try_outcome!(users::User::from_request(request).await);
-                let worker = try_outcome!(request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>());
-                let searcher = try_outcome!(request.guard::<'_, State<'_, Arc<search::Searcher>>>());
+                let worker =
+                    try_outcome!(request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>());
+                let searcher =
+                    try_outcome!(request.guard::<'_, State<'_, Arc<search::Searcher>>>());
                 Outcome::Success(PlumeRocket {
                     conn,
                     user: Some(user),

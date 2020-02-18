@@ -95,7 +95,10 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for ApiToken {
                                 return Outcome::Success(token);
                             }
                         } else {
-                            return Outcome::Failure((Status::InternalServerError, TokenError::DbError));
+                            return Outcome::Failure((
+                                Status::InternalServerError,
+                                TokenError::DbError,
+                            ));
                         }
                     }
                 } else {
@@ -104,7 +107,6 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for ApiToken {
             } else {
                 return Outcome::Failure((Status::BadRequest, TokenError::NoType));
             }
-
 
             Outcome::Forward(())
         })
