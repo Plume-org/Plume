@@ -191,7 +191,7 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
+    pub async fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
             .first(&*c.conn)
@@ -199,12 +199,13 @@ impl User {
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            User::fetch_from_webfinger(c, fqn)
+            User::fetch_from_webfinger(c, fqn).await
         }
     }
 
-    fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
-        let link = resolve(acct.to_owned(), true)?
+    async fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
+        let link = resolve(acct.to_owned(), true)
+            .await?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
@@ -212,8 +213,9 @@ impl User {
         User::from_id(c, link.href.as_ref()?, None).map_err(|(_, e)| e)
     }
 
-    pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
-        resolve(acct.to_owned(), true)?
+    pub async fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
+        resolve(acct.to_owned(), true)
+            .await?
             .links
             .into_iter()
             .find(|l| l.rel == "http://ostatus.org/schema/1.0/subscribe")

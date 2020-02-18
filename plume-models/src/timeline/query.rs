@@ -311,10 +311,19 @@ impl WithList {
                     })
                 }
                 WithList::Author { boosts, likes } => match kind {
-                    Kind::Original => Ok(list
-                        .iter()
-                        .filter_map(|a| User::find_by_fqn(rocket, a).ok())
-                        .any(|a| post.is_author(&rocket.conn, a.id).unwrap_or(false))),
+                    Kind::Original => {
+                        let mut rt = Runtime::new().unwrap();
+                        rt.block_on(async move {
+                            Ok(stream::iter(list)
+                                .filter_map(|a| async move {
+                                    Some(User::find_by_fqn(rocket, a).await.ok().unwrap())
+                                })
+                                .collect::<Vec<_>>()
+                                .await
+                                .into_iter()
+                                .any(|a| post.is_author(&rocket.conn, a.id).unwrap_or(false)))
+                        })
+                    }
                     Kind::Reshare(u) => {
                         if *boosts {
                             Ok(list.iter().any(|user| &u.fqn == user))
