@@ -25,6 +25,7 @@
 	    			.default(login_form.password)
 	    			.error(&login_errs)
 	    			.set_prop("minlength", 1)
+				    .input_type("password")
 	    			.html(ctx.1))
 		        <input type="submit" value="@i18n!(ctx.1, "Log in")" />
 	    	</form>
