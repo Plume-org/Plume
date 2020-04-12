@@ -17,17 +17,30 @@
         <p class="p-summary" dir="auto">@article.subtitle</p>
     </main>
     <footer class="authors">
-        @Html(i18n!(ctx.1, "By {0}"; format!(
-            "<a class=\"p-author h-card\" href=\"{}\">{}</a>",
-            uri!(user::details: name = &article.get_authors(ctx.0).unwrap_or_default()[0].fqn),
-            escape(&article.get_authors(ctx.0).unwrap_or_default()[0].name())
-        )))
-        @if article.published {
-	       ⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
-        }
-        ⋅ <a href="@uri!(blogs::details: name = &article.get_blog(ctx.0).unwrap().fqn, page = _)">@article.get_blog(ctx.0).unwrap().title</a>
+        <div>
+            @Html(i18n!(ctx.1, "By {0}"; format!(
+                "<a class=\"p-author h-card\" href=\"{}\">{}</a>",
+                uri!(user::details: name = &article.get_authors(ctx.0).unwrap_or_default()[0].fqn),
+                escape(&article.get_authors(ctx.0).unwrap_or_default()[0].name())
+            )))
+            @if article.published {
+                ⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
+            }
+            ⋅ <a href="@uri!(blogs::details: name = &article.get_blog(ctx.0).unwrap().fqn, page = _)">@article.get_blog(ctx.0).unwrap().title</a>
+            ⋅
+        </div>
         @if !article.published {
-            ⋅ @i18n!(ctx.1, "Draft")
+            <div>⋅ @i18n!(ctx.1, "Draft")</div>
+        } else {
+            <div>
+                <span class="likes" aria-label="@i18n!(ctx.1, "One like", "{0} likes"; article.count_likes(ctx.0).unwrap_or_default())" title="@i18n!(ctx.1, "One like", "{0} likes"; article.count_likes(ctx.0).unwrap_or_default())">
+                    @icon!("heart") @article.count_likes(ctx.0).unwrap_or_default()
+                </span>
+                ⋅
+                <span class="reshares" aria-label="@i18n!(ctx.1, "One like", "{0} boost"; article.count_reshares(ctx.0).unwrap_or_default())" title="@i18n!(ctx.1, "One boost", "{0} boosts"; article.count_reshares(ctx.0).unwrap_or_default())">
+                    @icon!("repeat") @article.count_reshares(ctx.0).unwrap_or_default()
+                </span>
+            </div>
         }
     </footer>
 </div>

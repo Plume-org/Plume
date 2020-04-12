@@ -190,7 +190,28 @@ p.error {
 
  	background: $gray;
 
- 	text-overflow: ellipsis;
+  text-overflow: ellipsis;
+
+  footer.authors {
+    div {
+      float: left;
+      margin-right: 0.25em;
+    }
+
+    .likes { color: $red; }
+    .reshares { color: $primary; }
+
+    span.likes, span.resahres {
+      font-family: "Route159",serif;
+      font-size: 1em;
+    }
+
+    svg.feather {
+      width: 0.85em;
+      height: 0.85em;
+    }
+  }
+
 
  	> * {
  	  margin: 20px;
