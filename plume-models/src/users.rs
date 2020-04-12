@@ -54,6 +54,7 @@ pub enum Role {
 }
 
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
+#[changeset_options(treat_none_as_null="true")]
 pub struct User {
     pub id: i32,
     pub username: String,
