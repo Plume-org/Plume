@@ -226,6 +226,7 @@ jobs:
     steps:
     - restore_env:
         cache: none
+    - run: cargo build
     - run: crowdin upload -b master
 
 workflows:
