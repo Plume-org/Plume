@@ -32,9 +32,9 @@
     <form method="post" action="@uri!(instance::delete_email_blocklist)">
         <header>
             @if emails.is_empty() {
-               <input type="submit" class="destructive" value='@i18n!(ctx.1, "Delete selected emails")'>
-            } else {
                <p class="center" >@i18n!(ctx.1, "There are no blocked emails on your instance")</p>
+            } else {
+               <input type="submit" class="destructive" value='@i18n!(ctx.1, "Delete selected emails")'>
             }
         </header>
     <div class="list">
