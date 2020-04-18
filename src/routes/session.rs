@@ -3,7 +3,7 @@ use lettre::Transport;
 use rocket::http::ext::IntoOwned;
 use rocket::{
     http::{uri::Uri, Cookie, Cookies, SameSite},
-    request::{Form, LenientForm},
+    request::LenientForm,
     response::{Flash, Redirect},
     State,
 };
@@ -159,7 +159,7 @@ pub struct ResetForm {
 #[post("/password-reset", data = "<form>")]
 pub fn password_reset_request(
     mail: State<'_, Arc<Mutex<Mailer>>>,
-    form: Form<ResetForm>,
+    form: LenientForm<ResetForm>,
     rockets: PlumeRocket,
 ) -> Ructe {
     if User::find_by_email(&*rockets.conn, &form.email).is_ok() {
@@ -216,7 +216,7 @@ fn passwords_match(form: &NewPasswordForm) -> Result<(), ValidationError> {
 #[post("/password-reset/<token>", data = "<form>")]
 pub fn password_reset(
     token: String,
-    form: Form<NewPasswordForm>,
+    form: LenientForm<NewPasswordForm>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
     form.validate()
