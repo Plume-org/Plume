@@ -35,9 +35,30 @@ msgstr "{0} ви спомена(ха)."
 msgid "{0} boosted your article."
 msgstr "{0} подсили(ха) вашата статия."
 
+msgid "Your feed"
+msgstr "Вашата емисия"
+
+msgid "Local feed"
+msgstr "Местна емисия"
+
+msgid "Federated feed"
+msgstr "Федерална емисия"
+
 # src/template_utils.rs:142
 msgid "{0}'s avatar"
 msgstr "Аватар {0}"
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
+
+# src/template_utils.rs:254
+msgid "Optional"
+msgstr "По избор"
 
 # src/routes/blogs.rs:64
 msgid "To create a new blog, you need to be logged in"
@@ -87,16 +108,34 @@ msgstr ""
 msgid "Instance settings have been saved."
 msgstr "Настройките на инстанциите са запазени."
 
-# src/routes/instance.rs:175
-msgid "{} have been unblocked."
+# src/routes/instance.rs:152
+msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} have been blocked."
+# src/routes/instance.rs:154
+msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} have been banned."
+# src/routes/blogs.rs:163
+#, fuzzy
+msgid "Blocks deleted"
+msgstr "Блогът ви бе изтрит."
+
+# src/routes/instance.rs:216
+msgid "Email Blocked"
+msgstr ""
+
+# src/routes/instance.rs:306
+msgid "You can't change your own rights."
+msgstr ""
+
+# src/routes/posts.rs:572
+#, fuzzy
+msgid "You are not allowed to take this action."
+msgstr "Нямате права за изтриване на тази статия."
+
+# src/routes/instance.rs:354
+msgid "Done."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -168,12 +207,20 @@ msgid "Your article has been deleted."
 msgstr ""
 
 # src/routes/posts.rs:602
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr "Изглежда, че статията, която се опитвате да изтриете не съществува. Може би вече я няма?"
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+"Изглежда, че статията, която се опитвате да изтриете не съществува. Може би "
+"вече я няма?"
 
 # src/routes/posts.rs:642
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "Не можа да се получи достатъчно информация за профила ви. Моля, уверете се, че потребителското ви име е правилно."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+"Не можа да се получи достатъчно информация за профила ви. Моля, уверете се, "
+"че потребителското ви име е правилно."
 
 # src/routes/reshares.rs:51
 msgid "To reshare a post, you need to be logged in"
@@ -199,13 +246,11 @@ msgstr "Ето и връзка, на която да зададете нова �
 msgid "Your password was successfully reset."
 msgstr "Вашата парола бе успешно възстановена."
 
-# src/routes/session.rs:274
-msgid "Sorry, but the link expired. Try again"
-msgstr ""
-
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
-msgstr "За да получите достъп до таблото си за управление, трябва да сте влезли в профила си"
+msgstr ""
+"За да получите достъп до таблото си за управление, трябва да сте влезли в "
+"профила си"
 
 # src/routes/user.rs:158
 msgid "You are no longer following {}."
@@ -240,8 +285,243 @@ msgid "Registrations are closed on this instance."
 msgstr "Регистрациите са затворени в тази инстанция."
 
 # src/routes/user.rs:527
-msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
 msgstr ""
+
+msgid "Plume"
+msgstr "Pluma"
+
+msgid "Menu"
+msgstr "Меню"
+
+msgid "Search"
+msgstr "Търсене"
+
+msgid "Dashboard"
+msgstr "Контролен панел"
+
+msgid "Notifications"
+msgstr "Известия"
+
+msgid "Log Out"
+msgstr "Излез"
+
+msgid "My account"
+msgstr "Моят профил"
+
+msgid "Log In"
+msgstr "Влез"
+
+msgid "Register"
+msgstr "Регистрация"
+
+msgid "About this instance"
+msgstr "За тази инстанция"
+
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Aдминистрация"
+
+msgid "Documentation"
+msgstr ""
+
+msgid "Source code"
+msgstr "Изходен код"
+
+msgid "Matrix room"
+msgstr "Matrix стая"
+
+msgid "Media upload"
+msgstr "Качи медия"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Полезно е за хора със зрителни увреждания, както и лицензна информация"
+
+# src/template_utils.rs:251
+msgid "Content warning"
+msgstr "Предупреждение за съдържанието"
+
+msgid "Leave it empty, if none is needed"
+msgstr "Оставете го празно, ако не е необходимо"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "Send"
+msgstr "Изпрати"
+
+msgid "Your media"
+msgstr "Вашите медия файлове"
+
+msgid "Upload"
+msgstr "Качи"
+
+msgid "You don't have any media yet."
+msgstr "Все още нямате никакви медии."
+
+msgid "Content warning: {0}"
+msgstr "Предупреждение за съдържание: {0}"
+
+msgid "Delete"
+msgstr "Изтрий"
+
+msgid "Details"
+msgstr "Детайли"
+
+msgid "Media details"
+msgstr "Детайли за медията"
+
+msgid "Go back to the gallery"
+msgstr "Върнете се в галерията"
+
+msgid "Markdown syntax"
+msgstr "Markdown синтаксис"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Копирайте го в статиите си, за да вмъкнете медията:"
+
+msgid "Use as an avatar"
+msgstr "Използвайте като аватар"
+
+msgid "Publish"
+msgstr "Публикувайте"
+
+msgid "Classic editor (any changes will be lost)"
+msgstr "Класически редактор (всички промени ще бъдат загубени)"
+
+# src/template_utils.rs:251
+msgid "Title"
+msgstr "Заглавие"
+
+# src/template_utils.rs:251
+msgid "Subtitle"
+msgstr "Подзаглавие"
+
+msgid "Content"
+msgstr "Съдържание"
+
+msgid "Markdown syntax is supported"
+msgstr "Поддържа се Markdown синтаксис"
+
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+"Можете да качвате мултимедия в галерията си, а след това да копирате "
+"Markdown кода в статиите си за да я вмъкнете."
+
+msgid "Upload media"
+msgstr "Качете медия"
+
+# src/template_utils.rs:251
+msgid "Tags, separated by commas"
+msgstr "Тагове, разделени със запетая"
+
+# src/template_utils.rs:251
+msgid "License"
+msgstr "Лиценз"
+
+msgid "Illustration"
+msgstr "Илюстрация"
+
+msgid "This is a draft, don't publish it yet."
+msgstr "Това е проект, все още не го публикувайте."
+
+msgid "Update"
+msgstr "Актуализация"
+
+msgid "Update, or publish"
+msgstr "Актуализирайте или публикувайте"
+
+msgid "Publish your post"
+msgstr "Публикувайте публикацията си"
+
+msgid "Interact with {}"
+msgstr "Взаимодействие с {}"
+
+msgid "Log in to interact"
+msgstr "Влезте, за да си взаимодействате"
+
+msgid "Enter your full username to interact"
+msgstr "Въведете пълното си потребителско име, за да си взаимодействате"
+
+msgid "Written by {0}"
+msgstr "Написано от {0}"
+
+msgid "All rights reserved."
+msgstr "Всички права запазени."
+
+msgid "This article is under the {0} license."
+msgstr "Тази статия се разпространява под {0} лиценз."
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Едно харесване"
+msgstr[1] "{0} харесвания"
+
+msgid "I don't like this anymore"
+msgstr "Това вече не ми харесва"
+
+msgid "Add yours"
+msgstr "Добави твоето"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "Едно Подсилване"
+msgstr[1] "{0} Подсилвания"
+
+msgid "I don't want to boost this anymore"
+msgstr "Не искам повече да го подсилвам"
+
+msgid "Boost"
+msgstr "Подсилване"
+
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
+msgstr ""
+"{0}Влезте {1}или {2}използвайте акаунта си в Fediverse{3}, за да "
+"взаимодействате с тази статия"
+
+msgid "Unsubscribe"
+msgstr "Отписване"
+
+msgid "Subscribe"
+msgstr "Абонирай се"
+
+msgid "Comments"
+msgstr "Коментари"
+
+msgid "Your comment"
+msgstr "Вашият коментар"
+
+msgid "Submit comment"
+msgstr "Публикувайте коментар"
+
+msgid "No comments yet. Be the first to react!"
+msgstr "Все още няма коментари. Бъдете първите!"
+
+msgid "Are you sure?"
+msgstr "Сигурен ли си?"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Редакция"
+
+msgid "You are not authorized."
+msgstr "Не сте упълномощени."
 
 msgid "Internal server error"
 msgstr "Вътрешна грешка в сървъра"
@@ -250,10 +530,26 @@ msgid "Something broke on our side."
 msgstr "Възникна грешка от ваша страна."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Извиняваме се за това. Ако смятате, че това е грешка, моля докладвайте я."
+msgstr ""
+"Извиняваме се за това. Ако смятате, че това е грешка, моля докладвайте я."
 
-msgid "You are not authorized."
-msgstr "Не сте упълномощени."
+msgid "Invalid CSRF token"
+msgstr "Невалиден CSRF token (маркер)"
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Нещо не е наред с вашия CSRF token (маркер). Уверете се, че бисквитките са "
+"активирани в браузъра и опитайте да заредите отново тази страница. Ако "
+"продължите да виждате това съобщение за грешка, моля, подайте сигнал за това."
+
+msgid "The content you sent can't be processed."
+msgstr "Съдържанието, което сте изпратили не може да бъде обработено."
+
+msgid "Maybe it was too long."
+msgstr "Може би беше твърде дълго."
 
 msgid "Page not found"
 msgstr "Страницата не е намерена"
@@ -264,108 +560,18 @@ msgstr "Не можахме да намерим тази страница."
 msgid "The link that led you here may be broken."
 msgstr "Възможно е връзката, от която сте дошли да е неправилна."
 
-msgid "The content you sent can't be processed."
-msgstr "Съдържанието, което сте изпратили не може да бъде обработено."
-
-msgid "Maybe it was too long."
-msgstr "Може би беше твърде дълго."
-
-msgid "Invalid CSRF token"
-msgstr "Невалиден CSRF token (маркер)"
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "Нещо не е наред с вашия CSRF token (маркер). Уверете се, че бисквитките са активирани в браузъра и опитайте да заредите отново тази страница. Ако продължите да виждате това съобщение за грешка, моля, подайте сигнал за това."
-
 msgid "Articles tagged \"{0}\""
 msgstr "Маркирани статии \"{0}\""
 
 msgid "There are currently no articles with such a tag"
 msgstr "Понастоящем няма статии с такъв маркер"
 
-msgid "New Blog"
-msgstr "Нов блог"
-
-msgid "Create a blog"
-msgstr "Създайте блог"
-
-# src/template_utils.rs:251
-msgid "Title"
-msgstr "Заглавие"
-
-# src/template_utils.rs:254
-msgid "Optional"
-msgstr "По избор"
-
-msgid "Create blog"
-msgstr "Създайте блог"
-
-msgid "Edit \"{}\""
-msgstr "редактирам \"{}\""
-
-msgid "Description"
-msgstr "Описание"
-
-msgid "Markdown syntax is supported"
-msgstr "Поддържа се Markdown синтаксис"
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "Можете да качвате изображения в галерията си и да ги използвате като икони на блога или банери."
-
-msgid "Upload images"
-msgstr "Качване на изображения"
-
-msgid "Blog icon"
-msgstr "Икона на блога"
-
-msgid "Blog banner"
-msgstr "Банер в блога"
-
-msgid "Update blog"
-msgstr "Актуализация блог"
-
-msgid "Danger zone"
-msgstr "Опасна зона"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Бъдете много внимателни, всяко действие, предприето тук не може да бъде отменено."
-
-msgid "Permanently delete this blog"
-msgstr "Изтрийте Завинаги този блог"
-
-msgid "{}'s icon"
-msgstr "{} икона"
-
-msgid "Edit"
-msgstr "Редакция"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Има Един автор в този блог: "
-msgstr[1] "Има {0} автора в този блог: "
-
 msgid "Latest articles"
 msgstr "Последни статии"
 
-msgid "No posts to see here yet."
+#, fuzzy
+msgid "Nothing to see here yet."
 msgstr "Все още няма публикации."
-
-msgid "Search result(s) for \"{0}\""
-msgstr "Резултат(и) от търсенето за \"{0}\""
-
-msgid "Search result(s)"
-msgstr "Резултат(и) от търсенето"
-
-msgid "No results for your query"
-msgstr "Няма резултати от вашата заявка"
-
-msgid "No more results for your query"
-msgstr "Няма повече резултати за вашата заявка"
-
-msgid "Search"
-msgstr "Търсене"
-
-msgid "Your query"
-msgstr ""
 
 msgid "Advanced search"
 msgstr "Разширено търсене"
@@ -378,12 +584,10 @@ msgstr "Заглавие на статията, съответстващо на 
 msgid "Subtitle matching these words"
 msgstr "Подзаглавие, съответстващо на тези думи"
 
-msgid "Subtitle - byline"
-msgstr ""
-
 # src/template_utils.rs:339
-msgid "Content matching these words"
-msgstr ""
+#, fuzzy
+msgid "Content macthing these words"
+msgstr "Подзаглавие, съответстващо на тези думи"
 
 msgid "Body content"
 msgstr "Съдържание на тялото"
@@ -438,248 +642,312 @@ msgstr "Публикувано под този лиценз"
 msgid "Article license"
 msgstr "Лиценз на статията"
 
-msgid "Interact with {}"
-msgstr "Взаимодействие с {}"
+msgid "Search result(s) for \"{0}\""
+msgstr "Резултат(и) от търсенето за \"{0}\""
 
-msgid "Log in to interact"
-msgstr "Влезте, за да си взаимодействате"
+msgid "Search result(s)"
+msgstr "Резултат(и) от търсенето"
 
-msgid "Enter your full username to interact"
-msgstr "Въведете пълното си потребителско име, за да си взаимодействате"
+msgid "No results for your query"
+msgstr "Няма резултати от вашата заявка"
 
-msgid "Publish"
-msgstr "Публикувайте"
+msgid "No more results for your query"
+msgstr "Няма повече резултати за вашата заявка"
 
-msgid "Classic editor (any changes will be lost)"
-msgstr "Класически редактор (всички промени ще бъдат загубени)"
+msgid "New Blog"
+msgstr "Нов блог"
 
-# src/template_utils.rs:251
-msgid "Subtitle"
-msgstr "Подзаглавие"
+msgid "Create a blog"
+msgstr "Създайте блог"
 
-msgid "Content"
-msgstr "Съдържание"
+msgid "Create blog"
+msgstr "Създайте блог"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "Можете да качвате мултимедия в галерията си, а след това да копирате Markdown кода в статиите си за да я вмъкнете."
+msgid "{}'s icon"
+msgstr "{} икона"
 
-msgid "Upload media"
-msgstr "Качете медия"
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Има Един автор в този блог: "
+msgstr[1] "Има {0} автора в този блог: "
 
-# src/template_utils.rs:251
-msgid "Tags, separated by commas"
-msgstr "Тагове, разделени със запетая"
+msgid "No posts to see here yet."
+msgstr "Все още няма публикации."
 
-# src/template_utils.rs:251
-msgid "License"
-msgstr "Лиценз"
+msgid "Edit \"{}\""
+msgstr "редактирам \"{}\""
 
-# src/template_utils.rs:259
-msgid "Leave it empty to reserve all rights"
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+"Можете да качвате изображения в галерията си и да ги използвате като икони "
+"на блога или банери."
+
+msgid "Upload images"
+msgstr "Качване на изображения"
+
+msgid "Blog icon"
+msgstr "Икона на блога"
+
+msgid "Blog banner"
+msgstr "Банер в блога"
+
+msgid "Custom theme"
 msgstr ""
 
-msgid "Illustration"
-msgstr "Илюстрация"
+# src/template_utils.rs:251
+#, fuzzy
+msgid "Default theme"
+msgstr "Лиценз по подразбиране"
 
-msgid "This is a draft, don't publish it yet."
-msgstr "Това е проект, все още не го публикувайте."
+msgid "Error while loading theme selector."
+msgstr ""
 
-msgid "Update"
-msgstr "Актуализация"
+msgid "Update blog"
+msgstr "Актуализация блог"
 
-msgid "Update, or publish"
-msgstr "Актуализирайте или публикувайте"
+msgid "Danger zone"
+msgstr "Опасна зона"
 
-msgid "Publish your post"
-msgstr "Публикувайте публикацията си"
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+"Бъдете много внимателни, всяко действие, предприето тук не може да бъде "
+"отменено."
 
-msgid "Written by {0}"
-msgstr "Написано от {0}"
+#, fuzzy
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Изтрийте Завинаги този блог"
 
-msgid "All rights reserved."
-msgstr "Всички права запазени."
+msgid "Permanently delete this blog"
+msgstr "Изтрийте Завинаги този блог"
 
-msgid "This article is under the {0} license."
-msgstr "Тази статия се разпространява под {0} лиценз."
+msgid "None"
+msgstr "Няма"
 
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "Едно харесване"
-msgstr[1] "{0} харесвания"
+msgid "No description"
+msgstr "Няма описание"
 
-msgid "I don't like this anymore"
-msgstr "Това вече не ми харесва"
+msgid "What is Plume?"
+msgstr "Какво е Pluma?"
 
-msgid "Add yours"
-msgstr "Добави твоето"
+msgid "Plume is a decentralized blogging engine."
+msgstr "Pluma е децентрализиран двигател за блогове."
 
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] "Едно Подсилване"
-msgstr[1] "{0} Подсилвания"
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+"Авторите могат да управляват множество блогове, всеки като свой уникален "
+"уебсайт."
 
-msgid "I don't want to boost this anymore"
-msgstr "Не искам повече да го подсилвам"
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"Статиите се виждат и на други Plume инстанции като можете да взаимодействате "
+"с тях директно и от други платформи като Mastodon."
 
-msgid "Boost"
-msgstr "Подсилване"
+msgid "Create your account"
+msgstr "Създай профил"
 
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr "{0}Влезте {1}или {2}използвайте акаунта си в Fediverse{3}, за да взаимодействате с тази статия"
+msgid "About {0}"
+msgstr "Относно {0}"
 
-msgid "Unsubscribe"
-msgstr "Отписване"
+msgid "Home to <em>{0}</em> people"
+msgstr "Дом за <em>{0}</em> хора"
 
-msgid "Subscribe"
-msgstr "Абонирай се"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Кой е написал <em>{0}</em> статии"
 
-msgid "Comments"
-msgstr "Коментари"
+msgid "Read the detailed rules"
+msgstr "Прочетете подробните правила"
+
+msgid "By {0}"
+msgstr "От {0}"
+
+msgid "Draft"
+msgstr "Проект"
+
+msgid "Respond"
+msgstr "Отговори"
+
+msgid "Delete this comment"
+msgstr "Изтриване на този коментар"
+
+msgid "Reset your password"
+msgstr "Промяна на паролата ви"
 
 # src/template_utils.rs:251
-msgid "Content warning"
-msgstr "Предупреждение за съдържанието"
+msgid "New password"
+msgstr "Нова парола"
 
-msgid "Your comment"
-msgstr "Вашият коментар"
+# src/template_utils.rs:251
+msgid "Confirmation"
+msgstr "Потвърждение"
 
-msgid "Submit comment"
-msgstr "Публикувайте коментар"
+msgid "Update password"
+msgstr "Обнови паролата"
 
-msgid "No comments yet. Be the first to react!"
-msgstr "Все още няма коментари. Бъдете първите!"
+# src/template_utils.rs:251
+msgid "Email"
+msgstr "Електронна поща"
 
-msgid "Are you sure?"
-msgstr "Сигурен ли си?"
+msgid "Send password reset link"
+msgstr "Изпращане на връзка за възстановяване на парола"
 
-msgid "Delete"
-msgstr "Изтрий"
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Media upload"
-msgstr "Качи медия"
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Полезно е за хора със зрителни увреждания, както и лицензна информация"
-
-msgid "Leave it empty, if none is needed"
-msgstr "Оставете го празно, ако не е необходимо"
-
-msgid "File"
-msgstr "Файл"
-
-msgid "Send"
-msgstr "Изпрати"
-
-msgid "Your media"
-msgstr "Вашите медия файлове"
-
-msgid "Upload"
-msgstr "Качи"
-
-msgid "You don't have any media yet."
-msgstr "Все още нямате никакви медии."
-
-msgid "Content warning: {0}"
-msgstr "Предупреждение за съдържание: {0}"
-
-msgid "Details"
-msgstr "Детайли"
-
-msgid "Media details"
-msgstr "Детайли за медията"
-
-msgid "Go back to the gallery"
-msgstr "Върнете се в галерията"
-
-msgid "Markdown syntax"
-msgstr "Markdown синтаксис"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "Копирайте го в статиите си, за да вмъкнете медията:"
-
-msgid "Use as an avatar"
-msgstr "Използвайте като аватар"
-
-msgid "Notifications"
-msgstr "Известия"
-
-msgid "Plume"
-msgstr "Pluma"
-
-msgid "Menu"
-msgstr "Меню"
-
-msgid "Dashboard"
-msgstr "Контролен панел"
-
-msgid "Log Out"
-msgstr "Излез"
-
-msgid "My account"
-msgstr "Моят профил"
-
-msgid "Log In"
+msgid "Log in"
 msgstr "Влез"
 
-msgid "Register"
-msgstr "Регистрация"
+# src/template_utils.rs:251
+msgid "Username, or email"
+msgstr "Потребителско име или имейл"
 
-msgid "About this instance"
-msgstr "За тази инстанция"
+# src/template_utils.rs:251
+msgid "Password"
+msgstr "Парола"
 
-msgid "Privacy policy"
+msgid "This token has expired"
 msgstr ""
 
-msgid "Administration"
-msgstr "Aдминистрация"
-
-msgid "Documentation"
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
 msgstr ""
 
-msgid "Source code"
-msgstr "Изходен код"
+msgid "Check your inbox!"
+msgstr "Провери си пощата!"
 
-msgid "Matrix room"
-msgstr "Matrix стая"
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+"Изпратихме емайл на адреса, който ни дадохте с връзка за възстановяване на "
+"паролата ви."
 
-msgid "Your feed"
-msgstr "Вашата емисия"
-
-msgid "Federated feed"
-msgstr "Федерална емисия"
-
-msgid "Local feed"
-msgstr "Местна емисия"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid "Articles from {}"
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
 msgstr ""
 
-msgid "All the articles of the Fediverse"
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
-msgid "Users"
-msgstr "Потребители"
-
-msgid "Configuration"
-msgstr "Конфигурация"
+msgid "Administration of {0}"
+msgstr "Администрирано от {0}"
 
 msgid "Instances"
 msgstr "Инстанция"
 
+msgid "Configuration"
+msgstr "Конфигурация"
+
+msgid "Users"
+msgstr "Потребители"
+
+msgid "Email blocklist"
+msgstr ""
+
+msgid "Unblock"
+msgstr "Отблокирай"
+
+msgid "Block"
+msgstr "Блокирай"
+
+msgid "Welcome to {}"
+msgstr "Добре дошли в {}"
+
+msgid "View all"
+msgstr "Виж всичко"
+
+#, fuzzy
+msgid "Moderation"
+msgstr "Няма описание"
+
+msgid "Home"
+msgstr ""
+
+msgid "Grant admin rights"
+msgstr ""
+
+msgid "Revoke admin rights"
+msgstr ""
+
+msgid "Grant moderator rights"
+msgstr ""
+
+msgid "Revoke moderator rights"
+msgstr ""
+
 msgid "Ban"
 msgstr "Забрани"
 
-msgid "Administration of {0}"
-msgstr "Администрирано от {0}"
+msgid "Run on selected users"
+msgstr ""
+
+msgid "Admin"
+msgstr "Администратор"
+
+msgid "Moderator"
+msgstr ""
+
+msgid "Blocklisted Emails"
+msgstr ""
+
+msgid "Email address"
+msgstr ""
+
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Notify the user?"
+msgstr ""
+
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
+msgstr ""
+
+msgid "Blocklisting notification"
+msgstr ""
+
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
+msgstr ""
+
+msgid "Add blocklisted address"
+msgstr ""
+
+msgid "Delete selected emails"
+msgstr ""
+
+msgid "There are no blocked emails on your instance"
+msgstr ""
+
+msgid "Email address:"
+msgstr ""
+
+msgid "Blocklisted for:"
+msgstr ""
+
+msgid "Will notify them on account creation with this message:"
+msgstr ""
+
+msgid "The user will be silently prevented from making an account"
+msgstr ""
 
 # src/template_utils.rs:251
 msgid "Name"
@@ -701,17 +969,8 @@ msgstr "Лиценз по подразбиране"
 msgid "Save these settings"
 msgstr "Запаметете тези настройки"
 
-msgid "About {0}"
-msgstr "Относно {0}"
-
 msgid "Runs Plume {0}"
 msgstr "Осъществено с Plume {0}"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Дом за <em>{0}</em> хора"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Кой е написал <em>{0}</em> статии"
 
 msgid "And are connected to <em>{0}</em> other instances"
 msgstr "И е свързана с <em> {0} </em> други инстанции"
@@ -719,64 +978,23 @@ msgstr "И е свързана с <em> {0} </em> други инстанции"
 msgid "Administred by"
 msgstr "Администрира се от"
 
-msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgid "Create an account"
+msgstr "Създай профил"
+
+# src/template_utils.rs:251
+msgid "Username"
+msgstr "Потребителско име"
+
+# src/template_utils.rs:251
+msgid "Password confirmation"
 msgstr ""
 
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
-
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr "Добре дошли в {}"
-
-msgid "Unblock"
-msgstr "Отблокирай"
-
-msgid "Block"
-msgstr "Блокирай"
-
-msgid "Reset your password"
-msgstr "Промяна на паролата ви"
-
-# src/template_utils.rs:251
-msgid "New password"
-msgstr "Нова парола"
-
-# src/template_utils.rs:251
-msgid "Confirmation"
-msgstr "Потвърждение"
-
-msgid "Update password"
-msgstr "Обнови паролата"
-
-msgid "Log in"
-msgstr "Влез"
-
-# src/template_utils.rs:251
-msgid "Username, or email"
-msgstr "Потребителско име или имейл"
-
-# src/template_utils.rs:251
-msgid "Password"
-msgstr "Парола"
-
-# src/template_utils.rs:251
-msgid "E-mail"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr "Изпращане на връзка за възстановяване на парола"
-
-msgid "Check your inbox!"
-msgstr "Провери си пощата!"
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "Изпратихме емайл на адреса, който ни дадохте с връзка за възстановяване на паролата ви."
-
-msgid "Admin"
-msgstr "Администратор"
+"Извиняваме се, но регистрациите са затворени за тази конкретна инстанция. "
+"Можете обаче да намерите друга."
 
 msgid "It is you"
 msgstr "Това си ти"
@@ -787,17 +1005,28 @@ msgstr "Редактиране на вашият профил"
 msgid "Open on {0}"
 msgstr "Отворен на {0}"
 
-msgid "Follow {}"
-msgstr "Последвай {}"
+msgid "Your Dashboard"
+msgstr "Вашият контролен панел"
 
-msgid "Log in to follow"
-msgstr "Влезте, за да следвате"
+msgid "Your Blogs"
+msgstr "Вашият Блог"
 
-msgid "Enter your full username handle to follow"
-msgstr "Въведете пълното потребителско име, което искате да следвате"
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Все още нямате блог. Създайте свой собствен или поискайте да се присъедините "
+"към някой друг."
 
-msgid "{0}'s subscriptions"
-msgstr "{0} абонаменти"
+msgid "Start a new blog"
+msgstr "Започнете нов блог"
+
+msgid "Your Drafts"
+msgstr "Вашите Проекти"
+
+msgid "Go to your gallery"
+msgstr "Отидете в галерията си"
+
+msgid "{0}'s subscribers"
+msgstr "{0} абонати"
 
 msgid "Articles"
 msgstr "Статии"
@@ -808,29 +1037,23 @@ msgstr "Абонати"
 msgid "Subscriptions"
 msgstr "Абонаменти"
 
-msgid "Create your account"
-msgstr "Създай профил"
+msgid "{0}'s subscriptions"
+msgstr "{0} абонаменти"
 
-msgid "Create an account"
-msgstr "Създай профил"
+msgid "Atom feed"
+msgstr "Atom емисия"
 
-# src/template_utils.rs:251
-msgid "Username"
-msgstr "Потребителско име"
+msgid "Recently boosted"
+msgstr "Наскоро подсилен"
 
-# src/template_utils.rs:251
-msgid "Email"
-msgstr "Електронна поща"
+msgid "Follow {}"
+msgstr "Последвай {}"
 
-# src/template_utils.rs:251
-msgid "Password confirmation"
-msgstr ""
+msgid "Log in to follow"
+msgstr "Влезте, за да следвате"
 
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "Извиняваме се, но регистрациите са затворени за тази конкретна инстанция. Можете обаче да намерите друга."
-
-msgid "{0}'s subscribers"
-msgstr "{0} абонати"
+msgid "Enter your full username handle to follow"
+msgstr "Въведете пълното потребителско име, което искате да следвате"
 
 msgid "Edit your account"
 msgstr "Редактирайте профила си"
@@ -838,8 +1061,10 @@ msgstr "Редактирайте профила си"
 msgid "Your Profile"
 msgstr "Вашият профил"
 
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "За да промените аватара си, качете го в галерията и след това го изберете."
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+"За да промените аватара си, качете го в галерията и след това го изберете."
 
 msgid "Upload an avatar"
 msgstr "Качете аватар"
@@ -851,77 +1076,27 @@ msgstr ""
 msgid "Summary"
 msgstr "Резюме"
 
+msgid "Theme"
+msgstr ""
+
+msgid "Never load blogs custom themes"
+msgstr ""
+
 msgid "Update account"
 msgstr "Актуализиране на профил"
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Бъдете много внимателни, всяко действие предприето тук не може да бъде отменено."
+msgstr ""
+"Бъдете много внимателни, всяко действие предприето тук не може да бъде "
+"отменено."
 
 msgid "Delete your account"
 msgstr "Изтриване на вашият профил"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "За съжаление, като администратор не можете да напуснете своята собствена инстанция."
-
-msgid "Your Dashboard"
-msgstr "Вашият контролен панел"
-
-msgid "Your Blogs"
-msgstr "Вашият Блог"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "Все още нямате блог. Създайте свой собствен или поискайте да се присъедините към някой друг."
-
-msgid "Start a new blog"
-msgstr "Започнете нов блог"
-
-msgid "Your Drafts"
-msgstr "Вашите Проекти"
-
-msgid "Go to your gallery"
-msgstr "Отидете в галерията си"
-
-msgid "Atom feed"
-msgstr "Atom емисия"
-
-msgid "Recently boosted"
-msgstr "Наскоро подсилен"
-
-msgid "What is Plume?"
-msgstr "Какво е Pluma?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Pluma е децентрализиран двигател за блогове."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "Авторите могат да управляват множество блогове, всеки като свой уникален уебсайт."
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "Статиите се виждат и на други Plume инстанции като можете да взаимодействате с тях директно и от други платформи като Mastodon."
-
-msgid "Read the detailed rules"
-msgstr "Прочетете подробните правила"
-
-msgid "View all"
-msgstr "Виж всичко"
-
-msgid "None"
-msgstr "Няма"
-
-msgid "No description"
-msgstr "Няма описание"
-
-msgid "By {0}"
-msgstr "От {0}"
-
-msgid "Draft"
-msgstr "Проект"
-
-msgid "Respond"
-msgstr "Отговори"
-
-msgid "Delete this comment"
-msgstr "Изтриване на този коментар"
+msgstr ""
+"За съжаление, като администратор не можете да напуснете своята собствена "
+"инстанция."
 
 msgid "I'm from this instance"
 msgstr "Аз съм от тази инстанция"
@@ -929,10 +1104,5 @@ msgstr "Аз съм от тази инстанция"
 msgid "I'm from another instance"
 msgstr "Аз съм от друга инстанция"
 
-# src/template_utils.rs:259
-msgid "Example: user@plu.me"
-msgstr ""
-
 msgid "Continue to your instance"
 msgstr "Продължете към инстанцията си"
-
