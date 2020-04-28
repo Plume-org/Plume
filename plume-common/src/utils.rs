@@ -424,6 +424,7 @@ mod tests {
             ("with some punctuation #test!", vec!["test"]),
             (" #spaces     ", vec!["spaces"]),
             ("not_a#hashtag", vec![]),
+            ("#نرم‌افزار_آزاد", vec!["نرم‌افزار_آزاد"]),
         ];
 
         for (md, mentions) in tests {
