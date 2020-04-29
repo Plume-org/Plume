@@ -1,6 +1,7 @@
 use heck::CamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, Event, Options, Parser, Tag};
+use regex_syntax::is_word_character;
 use rocket::{
     http::uri::Uri,
     response::{Flash, Redirect},
@@ -269,7 +270,7 @@ pub fn md_to_html<'a>(
                                 }
                             }
                             State::Hashtag => {
-                                let char_matches = c.is_alphanumeric() || "-_".contains(c);
+                                let char_matches = c == '-' || is_word_character(c);
                                 if char_matches && (n < (txt.chars().count() - 1)) {
                                     text_acc.push(c);
                                     (events, State::Hashtag, text_acc, n + 1, mentions, hashtags)
@@ -424,6 +425,7 @@ mod tests {
             ("with some punctuation #test!", vec!["test"]),
             (" #spaces     ", vec!["spaces"]),
             ("not_a#hashtag", vec![]),
+            ("#نرم‌افزار_آزاد", vec!["نرم‌افزار_آزاد"]),
         ];
 
         for (md, mentions) in tests {
