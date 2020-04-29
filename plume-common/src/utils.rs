@@ -1,6 +1,7 @@
 use heck::CamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, Event, Options, Parser, Tag};
+use regex_syntax::is_word_character;
 use rocket::{
     http::uri::Uri,
     response::{Flash, Redirect},
@@ -9,7 +10,6 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use syntect::html::ClassedHTMLGenerator;
 use syntect::parsing::SyntaxSet;
-use regex_syntax::is_word_character;
 
 /// Generates an hexadecimal representation of 32 bytes of random data
 pub fn random_hex() -> String {
