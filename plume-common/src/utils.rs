@@ -9,6 +9,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use syntect::html::ClassedHTMLGenerator;
 use syntect::parsing::SyntaxSet;
+use regex_syntax::is_word_character;
 
 /// Generates an hexadecimal representation of 32 bytes of random data
 pub fn random_hex() -> String {
@@ -269,7 +270,7 @@ pub fn md_to_html<'a>(
                                 }
                             }
                             State::Hashtag => {
-                                let char_matches = c.is_alphanumeric() || "-_".contains(c);
+                                let char_matches = c == '-' || is_word_character(c);
                                 if char_matches && (n < (txt.chars().count() - 1)) {
                                     text_acc.push(c);
                                     (events, State::Hashtag, text_acc, n + 1, mentions, hashtags)
