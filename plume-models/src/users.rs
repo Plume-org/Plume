@@ -34,6 +34,7 @@ use reqwest::{
     ClientBuilder,
 };
 use rocket::{
+    http::uri::Uri,
     outcome::IntoOutcome,
     request::{self, FromRequest, Request},
 };
@@ -992,6 +993,7 @@ impl NewUser {
             return Err(Error::Blocklisted(x.notify_user, x.notification_text));
         }
 
+        let encoded_username = Uri::percent_encode(&username);
         let res = User::insert(
             conn,
             NewUser {
@@ -1005,11 +1007,15 @@ impl NewUser {
                 instance_id: instance.id,
                 public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
                 private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
-                outbox_url: instance.compute_box(USER_PREFIX, &username, "outbox"),
-                inbox_url: instance.compute_box(USER_PREFIX, &username, "inbox"),
-                ap_url: instance.compute_box(USER_PREFIX, &username, ""),
+                outbox_url: instance.compute_box(USER_PREFIX, &encoded_username, "outbox"),
+                inbox_url: instance.compute_box(USER_PREFIX, &encoded_username, "inbox"),
+                ap_url: instance.compute_box(USER_PREFIX, &encoded_username, ""),
                 shared_inbox_url: Some(ap_url(&format!("{}/inbox", &instance.public_domain))),
-                followers_endpoint: instance.compute_box(USER_PREFIX, &username, "followers"),
+                followers_endpoint: instance.compute_box(
+                    USER_PREFIX,
+                    &encoded_username,
+                    "followers",
+                ),
                 fqn: username,
                 avatar_id: None,
             },
