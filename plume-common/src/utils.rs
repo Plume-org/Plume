@@ -431,6 +431,7 @@ mod tests {
             (" #spaces     ", vec!["spaces"]),
             ("not_a#hashtag", vec![]),
             ("#نرم‌افزار_آزاد", vec!["نرم‌افزار_آزاد"]),
+            ("[#hash in link](https://example.org/)", vec![]),
         ];
 
         for (md, mentions) in tests {
