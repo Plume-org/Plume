@@ -371,7 +371,7 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
     .to_rfc3339();
     let uri = uri!(atom_feed: name = name).to_string();
     let feed = FeedBuilder::default()
-        .title(blog.title.clone())
+        .title(blog.title)
         .id(&uri)
         .updated(updated)
         .entries(
