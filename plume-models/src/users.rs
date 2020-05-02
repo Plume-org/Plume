@@ -760,7 +760,7 @@ impl User {
                     mime_type: None,
                     href: None,
                     template: Some(format!(
-                        "https://{}/remote_interact?{{uri}}",
+                        "https://{}/remote_interact?target={{uri}}",
                         self.get_instance(conn)?.public_domain
                     )),
                 },
