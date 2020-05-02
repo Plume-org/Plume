@@ -2,7 +2,8 @@ use activitypub::{
     activity::Create,
     collection::{OrderedCollection, OrderedCollectionPage},
 };
-use atom_syndication::{Entry, FeedBuilder};
+use atom_syndication::{Entry, FeedBuilder, LinkBuilder};
+use chrono::{offset::TimeZone, Utc};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::{ContentType, Cookies},
@@ -619,18 +620,30 @@ pub fn ap_followers(
 pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
     let conn = &*rockets.conn;
     let author = User::find_by_fqn(&rockets, &name).ok()?;
+    let entries = Post::get_recents_for_author(conn, &author, 15).ok()?;
+    let updated = if entries.is_empty() {
+        Utc::now()
+    } else {
+        Utc.from_utc_datetime(&entries[0].creation_date)
+    }
+    .to_rfc3339();
+    let uri = uri!(atom_feed: name = name).to_string();
     let feed = FeedBuilder::default()
         .title(author.display_name.clone())
-        .id(Instance::get_local()
-            .unwrap()
-            .compute_box("@", &name, "atom.xml"))
+        .id(&uri)
+        .updated(updated)
         .entries(
-            Post::get_recents_for_author(conn, &author, 15)
-                .ok()?
+            entries
                 .into_iter()
                 .map(|p| super::post_to_atom(p, conn))
                 .collect::<Vec<Entry>>(),
         )
+        .links(vec![LinkBuilder::default()
+            .href(&uri)
+            .rel("self")
+            .mime_type("application/atom+xml".to_string())
+            .build()
+            .expect("Atom feed: link error")])
         .build()
         .expect("user::atom_feed: Error building Atom feed");
     Some(Content(

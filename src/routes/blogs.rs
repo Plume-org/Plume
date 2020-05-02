@@ -1,5 +1,6 @@
 use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
-use atom_syndication::{Entry, FeedBuilder};
+use atom_syndication::{Entry, FeedBuilder, LinkBuilder};
+use chrono::{offset::TimeZone, Utc};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
@@ -361,18 +362,30 @@ pub fn outbox_page(
 pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
     let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
     let conn = &*rockets.conn;
+    let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
+    let updated = if entries.is_empty() {
+        Utc::now()
+    } else {
+        Utc.from_utc_datetime(&entries[0].creation_date)
+    }
+    .to_rfc3339();
+    let uri = uri!(atom_feed: name = name).to_string();
     let feed = FeedBuilder::default()
         .title(blog.title.clone())
-        .id(Instance::get_local()
-            .ok()?
-            .compute_box("~", &name, "atom.xml"))
+        .id(&uri)
+        .updated(updated)
         .entries(
-            Post::get_recents_for_blog(&*conn, &blog, 15)
-                .ok()?
+            entries
                 .into_iter()
                 .map(|p| super::post_to_atom(p, &*conn))
                 .collect::<Vec<Entry>>(),
         )
+        .links(vec![LinkBuilder::default()
+            .href(&uri)
+            .rel("self")
+            .mime_type("application/atom+xml".to_string())
+            .build()
+            .expect("Atom feed: link error")])
         .build()
         .ok()?;
     Some(Content(

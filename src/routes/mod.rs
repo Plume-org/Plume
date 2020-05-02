@@ -121,7 +121,6 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
         .content(
             ContentBuilder::default()
                 .value(format!("<![CDATA[{}]]>", *post.content.get()))
-                .src(post.ap_url.clone())
                 .content_type("html".to_string())
                 .build()
                 .expect("Atom feed: content error"),
@@ -142,7 +141,8 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
         // Using RFC 4287 format, see https://tools.ietf.org/html/rfc4287#section-3.3 for dates
         // eg: 2003-12-13T18:30:02Z (Z is here because there is no timezone support with the NaiveDateTime crate)
         .published(post.creation_date.format("%Y-%m-%dT%H:%M:%SZ").to_string())
-        .id(post.id.to_string())
+        .updated(post.creation_date.format("%Y-%m-%dT%H:%M:%SZ").to_string())
+        .id(post.ap_url.clone())
         .links(vec![LinkBuilder::default()
             .href(post.ap_url)
             .build()
