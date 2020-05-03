@@ -204,6 +204,7 @@ fn process_image<'a, 'b>(
 #[derive(Default, Debug)]
 struct DocumentContext {
     in_code: bool,
+    in_link: bool,
 }
 
 /// Returns (HTML, mentions, hashtags)
