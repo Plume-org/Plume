@@ -201,7 +201,7 @@ fn process_image<'a, 'b>(
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 struct DocumentContext {
     in_code: bool,
 }
