@@ -315,7 +315,7 @@ pub fn md_to_html<'a>(
                                 }
                             }
                             State::Ready => {
-                                if !ctx.in_code && c == '@' {
+                                if !ctx.in_code && !ctx.in_link && c == '@' {
                                     events.push(Event::Text(text_acc.into()));
                                     (
                                         events,
