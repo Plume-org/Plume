@@ -201,6 +201,12 @@ fn process_image<'a, 'b>(
     }
 }
 
+#[derive(Default, Debug)]
+struct DocumentContext {
+    in_code: bool,
+    in_link: bool,
+}
+
 /// Returns (HTML, mentions, hashtags)
 pub fn md_to_html<'a>(
     md: &str,
@@ -224,13 +230,21 @@ pub fn md_to_html<'a>(
         .map(|evt| process_image(evt, inline, &media_processor))
         // Ignore headings, images, and tables if inline = true
         .scan((vec![], inline), inline_tags)
-        .scan(false, |in_code, evt| match evt {
+        .scan(&mut DocumentContext::default(), |ctx, evt| match evt {
             Event::Start(Tag::CodeBlock(_)) | Event::Start(Tag::Code) => {
-                *in_code = true;
+                ctx.in_code = true;
                 Some((vec![evt], vec![], vec![]))
             }
             Event::End(Tag::CodeBlock(_)) | Event::End(Tag::Code) => {
-                *in_code = false;
+                ctx.in_code = false;
+                Some((vec![evt], vec![], vec![]))
+            }
+            Event::Start(Tag::Link(_, _)) => {
+                ctx.in_link = true;
+                Some((vec![evt], vec![], vec![]))
+            }
+            Event::End(Tag::Link(_, _)) => {
+                ctx.in_link = false;
                 Some((vec![evt], vec![], vec![]))
             }
             Event::Text(txt) => {
@@ -301,7 +315,7 @@ pub fn md_to_html<'a>(
                                 }
                             }
                             State::Ready => {
-                                if !*in_code && c == '@' {
+                                if !ctx.in_code && !ctx.in_link && c == '@' {
                                     events.push(Event::Text(text_acc.into()));
                                     (
                                         events,
@@ -311,7 +325,7 @@ pub fn md_to_html<'a>(
                                         mentions,
                                         hashtags,
                                     )
-                                } else if !*in_code && c == '#' {
+                                } else if !ctx.in_code && !ctx.in_link && c == '#' {
                                     events.push(Event::Text(text_acc.into()));
                                     (
                                         events,
@@ -400,6 +414,7 @@ mod tests {
             ("not_a@mention", vec![]),
             ("`@helo`", vec![]),
             ("```\n@hello\n```", vec![]),
+            ("[@atmark in link](https://example.org/)", vec![]),
         ];
 
         for (md, mentions) in tests {
@@ -426,6 +441,7 @@ mod tests {
             (" #spaces     ", vec!["spaces"]),
             ("not_a#hashtag", vec![]),
             ("#نرم‌افزار_آزاد", vec!["نرم‌افزار_آزاد"]),
+            ("[#hash in link](https://example.org/)", vec![]),
         ];
 
         for (md, mentions) in tests {
