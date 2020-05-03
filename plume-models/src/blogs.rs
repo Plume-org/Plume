@@ -20,7 +20,6 @@ use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
-use rocket::http::uri::Uri;
 use serde_json;
 use url::Url;
 use webfinger::*;
@@ -482,18 +481,13 @@ impl NewBlog {
         instance_id: i32,
     ) -> Result<NewBlog> {
         let (pub_key, priv_key) = sign::gen_keypair();
-        let instance = Instance::get_local()?;
-        let encoded_actor_id = Uri::percent_encode(&actor_id);
         Ok(NewBlog {
-            actor_id: actor_id.clone(),
+            actor_id,
             title,
             summary,
             instance_id,
             public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
             private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
-            outbox_url: instance.compute_box(BLOG_PREFIX, &encoded_actor_id, "outbox"),
-            inbox_url: instance.compute_box(BLOG_PREFIX, &encoded_actor_id, "inbox"),
-            ap_url: instance.compute_box(BLOG_PREFIX, &encoded_actor_id, ""),
             ..NewBlog::default()
         })
     }

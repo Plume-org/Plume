@@ -19,7 +19,6 @@ use plume_common::{
     },
     utils::md_to_html,
 };
-use rocket::http::uri::Uri;
 use serde_json;
 use std::collections::HashSet;
 
@@ -70,12 +69,11 @@ impl Post {
             .execute(conn)?;
         let mut post = Self::last(conn)?;
         if post.ap_url.is_empty() {
-            // Should use uri!(plume::routes::posts::detauls) if possible
             post.ap_url = ap_url(&format!(
                 "{}/~/{}/{}/",
                 CONFIG.base_url,
-                Uri::percent_encode(&post.get_blog(conn)?.fqn),
-                Uri::percent_encode(&post.slug)
+                post.get_blog(conn)?.fqn,
+                post.slug
             ));
             let _: Post = post.save_changes(conn)?;
         }
