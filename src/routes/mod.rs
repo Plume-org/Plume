@@ -116,6 +116,7 @@ pub struct RemoteForm {
 }
 
 pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
+    let formatted_creation_date = post.creation_date.format("%Y-%m-%dT%H:%M:%SZ").to_string();
     EntryBuilder::default()
         .title(format!("<![CDATA[{}]]>", post.title))
         .content(
@@ -140,8 +141,8 @@ pub fn post_to_atom(post: Post, conn: &Connection) -> Entry {
         )
         // Using RFC 4287 format, see https://tools.ietf.org/html/rfc4287#section-3.3 for dates
         // eg: 2003-12-13T18:30:02Z (Z is here because there is no timezone support with the NaiveDateTime crate)
-        .published(post.creation_date.format("%Y-%m-%dT%H:%M:%SZ").to_string())
-        .updated(post.creation_date.format("%Y-%m-%dT%H:%M:%SZ").to_string())
+        .published(formatted_creation_date.clone())
+        .updated(formatted_creation_date)
         .id(post.ap_url.clone())
         .links(vec![LinkBuilder::default()
             .href(post.ap_url)
