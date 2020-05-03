@@ -414,6 +414,7 @@ mod tests {
             ("not_a@mention", vec![]),
             ("`@helo`", vec![]),
             ("```\n@hello\n```", vec![]),
+            ("[@atmark in link](https://example.org/)", vec![]),
         ];
 
         for (md, mentions) in tests {
