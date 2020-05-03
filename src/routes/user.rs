@@ -627,7 +627,9 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
         Utc.from_utc_datetime(&entries[0].creation_date)
     }
     .to_rfc3339();
-    let uri = uri!(atom_feed: name = name).to_string();
+    let uri = Instance::get_local()
+        .ok()?
+        .compute_box("@", &name, "atom.xml");
     let feed = FeedBuilder::default()
         .title(author.display_name)
         .id(&uri)
