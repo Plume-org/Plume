@@ -364,7 +364,7 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
     let conn = &*rockets.conn;
     let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
     let updated = if entries.is_empty() {
-        Utc::now()
+        Utc.from_utc_datetime(&blog.creation_date)
     } else {
         Utc.from_utc_datetime(&entries[0].creation_date)
     }

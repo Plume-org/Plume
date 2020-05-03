@@ -622,7 +622,7 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
     let author = User::find_by_fqn(&rockets, &name).ok()?;
     let entries = Post::get_recents_for_author(conn, &author, 15).ok()?;
     let updated = if entries.is_empty() {
-        Utc::now()
+        Utc.from_utc_datetime(&author.creation_date)
     } else {
         Utc.from_utc_datetime(&entries[0].creation_date)
     }
