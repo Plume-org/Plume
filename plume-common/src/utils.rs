@@ -239,6 +239,14 @@ pub fn md_to_html<'a>(
                 ctx.in_code = false;
                 Some((vec![evt], vec![], vec![]))
             }
+            Event::Start(Tag::Link(_, _)) => {
+                ctx.in_link = true;
+                Some((vec![evt], vec![], vec![]))
+            }
+            Event::End(Tag::Link(_, _)) => {
+                ctx.in_link = false;
+                Some((vec![evt], vec![], vec![]))
+            }
             Event::Text(txt) => {
                 let (evts, _, _, _, new_mentions, new_hashtags) = txt.chars().fold(
                     (vec![], State::Ready, String::new(), 0, vec![], vec![]),
@@ -317,7 +325,7 @@ pub fn md_to_html<'a>(
                                         mentions,
                                         hashtags,
                                     )
-                                } else if !ctx.in_code && c == '#' {
+                                } else if !ctx.in_code && !ctx.in_link && c == '#' {
                                     events.push(Event::Text(text_acc.into()));
                                     (
                                         events,
