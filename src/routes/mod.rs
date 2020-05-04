@@ -134,7 +134,7 @@ pub fn build_atom_feed(
     FeedBuilder::default()
         .title(title)
         .id(uri)
-        .updated(updated.format("%Y-%m-%d %H:%M:%SZ").to_string())
+        .updated(updated.format("%Y-%m-%dT%H:%M:%SZ").to_string())
         .entries(
             entries
                 .into_iter()
