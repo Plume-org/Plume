@@ -1,6 +1,5 @@
 use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
 use atom_syndication::{Entry, FeedBuilder, LinkBuilder};
-use chrono::{offset::TimeZone, Utc};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
@@ -364,18 +363,17 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
     let conn = &*rockets.conn;
     let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
     let updated = if entries.is_empty() {
-        Utc.from_utc_datetime(&blog.creation_date)
+        &blog.creation_date
     } else {
-        Utc.from_utc_datetime(&entries[0].creation_date)
-    }
-    .to_rfc3339();
+        &entries[0].creation_date
+    };
     let uri = Instance::get_local()
         .ok()?
         .compute_box("~", &name, "atom.xml");
     let feed = FeedBuilder::default()
         .title(blog.title)
         .id(&uri)
-        .updated(updated)
+        .updated(updated.format("%Y-%m-%d %H:%M:%SZ").to_string())
         .entries(
             entries
                 .into_iter()
