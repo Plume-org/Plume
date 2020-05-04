@@ -1,5 +1,4 @@
 use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
-use atom_syndication::{Entry, FeedBuilder};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
@@ -361,20 +360,13 @@ pub fn outbox_page(
 pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
     let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
     let conn = &*rockets.conn;
-    let feed = FeedBuilder::default()
-        .title(blog.title.clone())
-        .id(Instance::get_local()
-            .ok()?
-            .compute_box("~", &name, "atom.xml"))
-        .entries(
-            Post::get_recents_for_blog(&*conn, &blog, 15)
-                .ok()?
-                .into_iter()
-                .map(|p| super::post_to_atom(p, &*conn))
-                .collect::<Vec<Entry>>(),
-        )
-        .build()
-        .ok()?;
+    let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
+    let uri = Instance::get_local()
+        .ok()?
+        .compute_box("~", &name, "atom.xml");
+    let title = &blog.title;
+    let default_updated = &blog.creation_date;
+    let feed = super::build_atom_feed(entries, &uri, title, default_updated, conn);
     Some(Content(
         ContentType::new("application", "atom+xml"),
         feed.to_string(),
