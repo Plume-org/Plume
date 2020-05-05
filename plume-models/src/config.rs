@@ -11,6 +11,8 @@ pub struct Config {
     pub base_url: String,
     pub database_url: String,
     pub db_name: &'static str,
+    pub db_max_size: Option<u32>,
+    pub db_min_idle: Option<u32>,
     pub search_index: String,
     pub rocket: Result<RocketConfig, RocketError>,
     pub logo: LogoConfig,
@@ -193,6 +195,11 @@ lazy_static! {
             var("ROCKET_PORT").unwrap_or_else(|_| "7878".to_owned())
         )),
         db_name: DB_NAME,
+        db_max_size: var("DB_MAX_SIZE").map_or(None, |s| Some(
+            s.parse::<u32>()
+                .expect("Couldn't parse DB_MAX_SIZE into u32")
+        )),
+        db_min_idle: var("DB_MIN_IDLE").map_or(None, |s| s.parse::<u32>().ok()),
         #[cfg(feature = "postgres")]
         database_url: var("DATABASE_URL")
             .unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME)),
