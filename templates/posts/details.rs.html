@@ -40,7 +40,7 @@
             <div class="article-info" dir="auto">
                 <span class="author">
                     @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
-                                        uri!(user::details: name = &author.fqn),
+                                        escape(&uri!(user::details: name = &author.fqn).to_string()),
                                         escape(&author.name()))))
                 </span>
                 &mdash;
@@ -103,8 +103,8 @@
             </section>
         } else {
             <p class="center">@Html(i18n!(ctx.1, "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article";
-                format!("<a href='{}'>", uri!(session::new: m = _)), "</a>",
-                format!("<a href='{}'>", uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)), "</a>"
+                format!("<a href='{}'>", escape(&uri!(session::new: m = _).to_string())), "</a>",
+                format!("<a href='{}'>", escape(&uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug).to_string())), "</a>"
                 ))
             </p>
             <section class="actions">
