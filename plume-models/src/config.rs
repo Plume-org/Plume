@@ -199,7 +199,10 @@ lazy_static! {
             s.parse::<u32>()
                 .expect("Couldn't parse DB_MAX_SIZE into u32")
         )),
-        db_min_idle: var("DB_MIN_IDLE").map_or(None, |s| s.parse::<u32>().ok()),
+        db_min_idle: var("DB_MIN_IDLE").map_or(None, |s| Some(
+            s.parse::<u32>()
+                .expect("Couldn't parse DB_MIN_IDLE into u32")
+        )),
         #[cfg(feature = "postgres")]
         database_url: var("DATABASE_URL")
             .unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME)),
