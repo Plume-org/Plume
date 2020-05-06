@@ -55,10 +55,13 @@ fn init_pool() -> Option<DbPool> {
     }
 
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
-    let pool = DbPool::builder()
+    let mut builder = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
-        .build(manager)
-        .ok()?;
+        .min_idle(CONFIG.db_min_idle);
+    if let Some(max_size) = CONFIG.db_max_size {
+        builder = builder.max_size(max_size);
+    };
+    let pool = builder.build(manager).ok()?;
     Instance::cache_local(&pool.get().unwrap());
     Some(pool)
 }
