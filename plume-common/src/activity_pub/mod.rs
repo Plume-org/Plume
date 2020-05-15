@@ -3,8 +3,8 @@ use array_tool::vec::Uniq;
 use reqwest::ClientBuilder;
 use rocket::{
     http::Status,
-    request::{FromRequestAsync, FromRequestFuture, Request},
-    response::{Responder, Response, ResultFuture},
+    request::{FromRequest, Request},
+    response::{Responder, Response, Result},
     Outcome,
 };
 use serde_json;
@@ -61,42 +61,36 @@ impl<T> ActivityStream<T> {
         ActivityStream(t)
     }
 }
-
+#[rocket::async_trait]
 impl<'r, O: Object + Send + 'r> Responder<'r> for ActivityStream<O> {
-    fn respond_to(self, request: &'r Request<'_>) -> ResultFuture<'r> {
-        Box::pin(async move {
-            let mut json =
-                serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
-            json["@context"] = context();
-            let result = serde_json::to_string(&json).map_err(rocket::response::Debug);
-            match result.respond_to(request).await {
-                Ok(r) => {
-                    Response::build_from(r)
-                        .raw_header("Content-Type", "application/activity+json")
-                        .ok()
-                        .await
-                }
-                Err(e) => Err(e),
-            }
-        })
+    async fn respond_to(self, request: &'r Request<'_>) -> Result<'r> {
+        let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
+        json["@context"] = context();
+        let result = serde_json::to_string(&json).map_err(rocket::response::Debug);
+        match result.respond_to(request).await {
+            Ok(r) => Response::build_from(r)
+                .raw_header("Content-Type", "application/activity+json")
+                .ok(),
+            Err(e) => Err(e),
+        }
     }
 }
 
 #[derive(Clone)]
 pub struct ApRequest;
-impl<'a, 'r> FromRequestAsync<'a, 'r> for ApRequest {
+#[rocket::async_trait]
+impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> FromRequestFuture<'a, Self, Self::Error> {
-        Box::pin(async move {
-            request
-                .headers()
-                .get_one("Accept")
-                .map(|header| {
-                    header
-                        .split(',')
-                        .map(|ct| {
-                            match ct.trim() {
+    async fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
+        request
+            .headers()
+            .get_one("Accept")
+            .map(|header| {
+                header
+                    .split(',')
+                    .map(|ct| {
+                        match ct.trim() {
                             // bool for Forward: true if found a valid Content-Type for Plume first (HTML),
                             // false otherwise
                             "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
@@ -106,18 +100,17 @@ impl<'a, 'r> FromRequestAsync<'a, 'r> for ApRequest {
                             "text/html" => Outcome::Forward(true),
                             _ => Outcome::Forward(false),
                         }
-                        })
-                        .fold(Outcome::Forward(false), |out, ct| {
-                            if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
-                                out
-                            } else {
-                                ct
-                            }
-                        })
-                        .map_forward(|_| ())
-                })
-                .unwrap_or(Outcome::Forward(()))
-        })
+                    })
+                    .fold(Outcome::Forward(false), |out, ct| {
+                        if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
+                            out
+                        } else {
+                            ct
+                        }
+                    })
+                    .map_forward(|_| ())
+            })
+            .unwrap_or(Outcome::Forward(()))
     }
 }
 pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>)
@@ -217,8 +210,7 @@ pub struct PublicKey {
     pub public_key_pem: Option<serde_json::Value>,
 }
 
-#[derive(Clone, Debug, Default, UnitString)]
-#[activitystreams(Hashtag)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct HashtagType;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]

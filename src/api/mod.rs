@@ -2,6 +2,7 @@
 use rocket::{
     request::{Form, Request},
     response::{self, Responder},
+    Outcome,
 };
 use rocket_contrib::json::Json;
 use serde_json;
@@ -26,21 +27,31 @@ impl From<std::option::NoneError> for ApiError {
     }
 }
 
+#[rocket::async_trait]
 impl<'r> Responder<'r> for ApiError {
-    fn respond_to(self, req: &'r Request) -> response::ResultFuture<'r> {
+    async fn respond_to(self, req: &'r Request<'_>) -> response::Result<'r> {
         match self.0 {
-            Error::NotFound => Json(json!({
-                "error": "Not found"
-            }))
-            .respond_to(req),
-            Error::Unauthorized => Json(json!({
-                "error": "You are not authorized to access this resource"
-            }))
-            .respond_to(req),
-            _ => Json(json!({
-                "error": "Server error"
-            }))
-            .respond_to(req),
+            Error::NotFound => {
+                Json(json!({
+                    "error": "Not found"
+                }))
+                .respond_to(req)
+                .await
+            }
+            Error::Unauthorized => {
+                Json(json!({
+                    "error": "You are not authorized to access this resource"
+                }))
+                .respond_to(req)
+                .await
+            }
+            _ => {
+                Json(json!({
+                    "error": "Server error"
+                }))
+                .respond_to(req)
+                .await
+            }
         }
     }
 }
@@ -62,7 +73,7 @@ pub fn oauth(
     let conn = &*rockets.conn;
     let app = App::find_by_client_id(conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::find_by_fqn(&rockets, &query.username) {
+        if let Outcome::Success(user) = User::find_by_fqn(&rockets, &query.username) {
             if user.auth(&query.password) {
                 let token = ApiToken::insert(
                     conn,

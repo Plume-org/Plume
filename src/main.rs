@@ -6,8 +6,6 @@ extern crate gettext_macros;
 #[macro_use]
 extern crate rocket;
 #[macro_use]
-extern crate runtime_fmt;
-#[macro_use]
 extern crate serde_json;
 #[macro_use]
 extern crate validator_derive;

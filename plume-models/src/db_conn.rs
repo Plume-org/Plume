@@ -6,7 +6,7 @@ use diesel::r2d2::{
 use diesel::{dsl::sql_query, ConnectionError, RunQueryDsl};
 use rocket::{
     http::Status,
-    request::{self, FromRequestAsync},
+    request::{self, FromRequest},
     Outcome, Request,
 };
 use std::ops::Deref;
@@ -21,16 +21,15 @@ pub struct DbConn(pub PooledConnection<ConnectionManager<Connection>>);
 /// Attempts to retrieve a single connection from the managed database pool. If
 /// no pool is currently managed, fails with an `InternalServerError` status. If
 /// no connections are available, fails with a `ServiceUnavailable` status.
-impl<'a, 'r> FromRequestAsync<'a, 'r> for DbConn {
+#[rocket::async_trait]
+impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
-        Box::pin(async move {
-            match DbConn::from_request(request).await {
-                Outcome::Success(a) => return Outcome::Success(a),
-                _ => return Outcome::Failure((Status::ServiceUnavailable, ())),
-            };
-        })
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        match DbConn::from_request(request).await {
+            Outcome::Success(a) => return Outcome::Success(a),
+            _ => return Outcome::Failure((Status::ServiceUnavailable, ())),
+        };
     }
 }
 

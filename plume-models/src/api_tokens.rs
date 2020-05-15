@@ -3,7 +3,7 @@ use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::{
     http::Status,
-    request::{self, FromRequestAsync, Request},
+    request::{self, FromRequest, Request},
     Outcome,
 };
 
@@ -76,39 +76,38 @@ pub enum TokenError {
     DbError,
 }
 
-impl<'a, 'r> FromRequestAsync<'a, 'r> for ApiToken {
+#[rocket::async_trait]
+impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
     type Error = TokenError;
 
-    fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
-        Box::pin(async move {
-            let headers: Vec<_> = request.headers().get("Authorization").collect();
-            if headers.len() != 1 {
-                return Outcome::Failure((Status::BadRequest, TokenError::NoHeader));
-            }
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        let headers: Vec<_> = request.headers().get("Authorization").collect();
+        if headers.len() != 1 {
+            return Outcome::Failure((Status::BadRequest, TokenError::NoHeader));
+        }
 
-            let mut parsed_header = headers[0].split(' ');
-            if let Some(auth_type) = parsed_header.next() {
-                if let Some(val) = parsed_header.next() {
-                    if auth_type == "Bearer" {
-                        if let Outcome::Success(conn) = DbConn::from_request(request).await {
-                            if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
-                                return Outcome::Success(token);
-                            }
-                        } else {
-                            return Outcome::Failure((
-                                Status::InternalServerError,
-                                TokenError::DbError,
-                            ));
+        let mut parsed_header = headers[0].split(' ');
+        if let Some(auth_type) = parsed_header.next() {
+            if let Some(val) = parsed_header.next() {
+                if auth_type == "Bearer" {
+                    if let Outcome::Success(conn) = DbConn::from_request(request).await {
+                        if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
+                            return Outcome::Success(token);
                         }
+                    } else {
+                        return Outcome::Failure((
+                            Status::InternalServerError,
+                            TokenError::DbError,
+                        ));
                     }
-                } else {
-                    return Outcome::Failure((Status::BadRequest, TokenError::NoValue));
                 }
             } else {
-                return Outcome::Failure((Status::BadRequest, TokenError::NoType));
+                return Outcome::Failure((Status::BadRequest, TokenError::NoValue));
             }
+        } else {
+            return Outcome::Failure((Status::BadRequest, TokenError::NoType));
+        }
 
-            Outcome::Forward(())
-        })
+        Outcome::Forward(())
     }
 }

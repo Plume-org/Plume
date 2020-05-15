@@ -1,42 +1,40 @@
 use crate::users::User;
 use rocket::{
     http::Status,
-    request::{self, FromRequestAsync, Request},
+    request::{self, FromRequest, Request},
     Outcome,
 };
 
 /// Wrapper around User to use as a request guard on pages reserved to admins.
 pub struct Admin(pub User);
 
-impl<'a, 'r> FromRequestAsync<'a, 'r> for Admin {
+#[rocket::async_trait]
+impl<'a, 'r> FromRequest<'a, 'r> for Admin {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
-        Box::pin(async move {
-            let user = try_outcome!(User::from_request(request).await);
-            if user.is_admin() {
-                Outcome::Success(Admin(user))
-            } else {
-                Outcome::Failure((Status::Unauthorized, ()))
-            }
-        })
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        let user = try_outcome!(User::from_request(request).await);
+        if user.is_admin() {
+            Outcome::Success(Admin(user))
+        } else {
+            Outcome::Failure((Status::Unauthorized, ()))
+        }
     }
 }
 
 /// Same as `Admin` but for moderators.
 pub struct Moderator(pub User);
 
-impl<'a, 'r> FromRequestAsync<'a, 'r> for Moderator {
+#[rocket::async_trait]
+impl<'a, 'r> FromRequest<'a, 'r> for Moderator {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
-        Box::pin(async move {
-            let user = try_outcome!(User::from_request(request).await);
-            if user.is_moderator() {
-                Outcome::Success(Moderator(user))
-            } else {
-                Outcome::Failure((Status::Unauthorized, ()))
-            }
-        })
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        let user = try_outcome!(User::from_request(request).await);
+        if user.is_moderator() {
+            Outcome::Success(Moderator(user))
+        } else {
+            Outcome::Failure((Status::Unauthorized, ()))
+        }
     }
 }

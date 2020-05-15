@@ -201,15 +201,14 @@ pub fn follow_not_connected(
         if let Some(uri) = User::fetch_remote_interact_uri(&remote_form)
             .ok()
             .and_then(|uri| {
-                rt_format!(
-                    uri,
-                    uri = format!(
+                uri.replace(
+                    "{uri}",
+                    format!(
                         "{}@{}",
                         target.fqn,
                         target.get_instance(&rockets.conn).ok()?.public_domain
-                    )
+                    ),
                 )
-                .ok()
             })
         {
             Ok(Redirect::to(uri).into())

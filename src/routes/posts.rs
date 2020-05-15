@@ -643,7 +643,7 @@ pub fn remote_interact_post(
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
         .ok()
-        .and_then(|uri| rt_format!(uri, uri = target.ap_url).ok())
+        .and_then(|uri| uri.replace("{uri}", format!("{}", target.ap_url)).ok())
     {
         Ok(Redirect::to(uri).into())
     } else {

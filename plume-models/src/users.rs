@@ -35,7 +35,7 @@ use reqwest::{
 };
 use rocket::{
     outcome::IntoOutcome,
-    request::{self, FromRequestAsync, Request},
+    request::{self, FromRequest, Request},
 };
 use serde_json;
 use std::{
@@ -796,19 +796,18 @@ impl User {
     }
 }
 
-impl<'a, 'r> FromRequestAsync<'a, 'r> for User {
+#[rocket::async_trait]
+impl<'a, 'r> FromRequest<'a, 'r> for User {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::FromRequestFuture<'a, Self, Self::Error> {
-        Box::pin(async move {
-            let conn = try_outcome!(DbConn::from_request(request).await);
-            request
-                .cookies()
-                .get_private(AUTH_COOKIE)
-                .and_then(|cookie| cookie.value().parse().ok())
-                .and_then(|id| User::get(&*conn, id).ok())
-                .or_forward(())
-        })
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        let conn = try_outcome!(DbConn::from_request(request).await);
+        request
+            .cookies()
+            .get_private(AUTH_COOKIE)
+            .and_then(|cookie| cookie.value().parse().ok())
+            .and_then(|id| User::get(&*conn, id).ok())
+            .or_forward(())
     }
 }
 

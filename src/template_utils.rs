@@ -51,33 +51,30 @@ impl IntoContext for PlumeRocket {
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);
 
+#[rocket::async_trait]
 impl<'r> Responder<'r> for Ructe {
-    fn respond_to(self, r: &'r Request) -> response::ResultFuture<'r> {
-        Box::pin(async move {
-            //if method is not Get or page contain a form, no caching
-            if r.method() != Method::Get || self.0.windows(6).any(|w| w == b"<form ") {
-                return HtmlCt(self.0).respond_to(r).await;
-            }
-            let mut hasher = DefaultHasher::new();
-            hasher.write(&self.0);
-            let etag = format!("{:x}", hasher.finish());
-            if r.headers()
-                .get("If-None-Match")
-                .any(|s| s[1..s.len() - 1] == etag)
-            {
-                Response::build()
-                    .status(Status::NotModified)
-                    .header(Header::new("ETag", etag))
-                    .ok()
-                    .await
-            } else {
-                Response::build()
-                    .merge(HtmlCt(self.0).respond_to(r).await.ok().unwrap())
-                    .header(Header::new("ETag", etag))
-                    .ok()
-                    .await
-            }
-        })
+    async fn respond_to(self, r: &'r Request<'_>) -> response::Result<'r> {
+        //if method is not Get or page contain a form, no caching
+        if r.method() != Method::Get || self.0.windows(6).any(|w| w == b"<form ") {
+            return HtmlCt(self.0).respond_to(r).await;
+        }
+        let mut hasher = DefaultHasher::new();
+        hasher.write(&self.0);
+        let etag = format!("{:x}", hasher.finish());
+        if r.headers()
+            .get("If-None-Match")
+            .any(|s| s[1..s.len() - 1] == etag)
+        {
+            Response::build()
+                .status(Status::NotModified)
+                .header(Header::new("ETag", etag))
+                .ok()
+        } else {
+            Response::build()
+                .merge(HtmlCt(self.0).respond_to(r).await.ok().unwrap())
+                .header(Header::new("ETag", etag))
+                .ok()
+        }
     }
 }
 
