@@ -66,14 +66,14 @@ pub struct OAuthRequest {
 }
 
 #[get("/oauth2?<query..>")]
-pub fn oauth(
+pub async fn oauth(
     query: Form<OAuthRequest>,
     rockets: PlumeRocket,
 ) -> Result<Json<serde_json::Value>, ApiError> {
     let conn = &*rockets.conn;
     let app = App::find_by_client_id(conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Outcome::Success(user) = User::find_by_fqn(&rockets, &query.username) {
+        if let Ok(user) = User::find_by_fqn(&rockets, &query.username).await {
             if user.auth(&query.password) {
                 let token = ApiToken::insert(
                     conn,

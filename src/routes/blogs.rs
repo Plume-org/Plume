@@ -38,12 +38,12 @@ pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result
 }
 
 #[get("/~/<name>", rank = 1)]
-pub fn activity_details(
+pub async fn activity_details(
     name: String,
     rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
     Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
 }
 
@@ -93,7 +93,7 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Blog::find_by_fqn(&rockets, &slug).is_ok() {
+    if Blog::find_by_fqn(&rockets, &slug).await.is_ok() {
         errors.add(
             "title",
             ValidationError {
@@ -184,9 +184,9 @@ pub struct EditForm {
 }
 
 #[get("/~/<name>/edit")]
-pub fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub async fn edit(name: String, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &name)?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?;
     if rockets
         .user
         .clone()
@@ -233,14 +233,16 @@ fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
 }
 
 #[put("/~/<name>/edit", data = "<form>")]
-pub fn update(
+pub async fn update(
     name: String,
     form: LenientForm<EditForm>,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
-    let mut blog = Blog::find_by_fqn(&rockets, &name).expect("blog::update: blog not found");
+    let mut blog = Blog::find_by_fqn(&rockets, &name)
+        .await
+        .expect("blog::update: blog not found");
     if !rockets
         .user
         .clone()
@@ -342,23 +344,26 @@ pub fn update(
 }
 
 #[get("/~/<name>/outbox")]
-pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+pub async fn outbox(
+    name: String,
+    rockets: PlumeRocket,
+) -> Option<ActivityStream<OrderedCollection>> {
+    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
     Some(blog.outbox(&*rockets.conn).ok()?)
 }
 #[allow(unused_variables)]
 #[get("/~/<name>/outbox?<page>")]
-pub fn outbox_page(
+pub async fn outbox_page(
     name: String,
     page: Page,
     rockets: PlumeRocket,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
     Some(blog.outbox_page(&*rockets.conn, page.limits()).ok()?)
 }
 #[get("/~/<name>/atom.xml")]
-pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).ok()?;
+pub async fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
+    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
     let conn = &*rockets.conn;
     let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
     let uri = Instance::get_local()

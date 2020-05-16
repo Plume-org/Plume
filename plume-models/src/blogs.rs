@@ -71,7 +71,8 @@ impl Blog {
     insert!(blogs, NewBlog, |inserted, conn| {
         let instance = inserted.get_instance(conn)?;
         if inserted.outbox_url.is_empty() {
-            inserted.outbox_url = instance.compute_box(BLOG_PREFIX, &inserted.actor_id, "outbox");
+            inserted.outbox_url =
+                instance.compute_box(BLOG_PREFIX, &inserted.actor_id, r#"outbox"#);
         }
 
         if inserted.inbox_url.is_empty() {

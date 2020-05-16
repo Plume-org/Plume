@@ -162,7 +162,7 @@ pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, 
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-pub fn edit(
+pub async fn edit(
     blog: String,
     slug: String,
     cl: ContentLen,
@@ -170,7 +170,7 @@ pub fn edit(
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
-    let b = Blog::find_by_fqn(&rockets, &blog)?;
+    let b = Blog::find_by_fqn(&rockets, &blog).await?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
     let user = rockets.user.clone().unwrap();
 
@@ -216,7 +216,7 @@ pub fn edit(
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
-pub fn update(
+pub async fn update(
     blog: String,
     slug: String,
     cl: ContentLen,
@@ -224,7 +224,9 @@ pub fn update(
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    let b = Blog::find_by_fqn(&rockets, &blog).expect("post::update: blog error");
+    let b = Blog::find_by_fqn(&rockets, &blog)
+        .await
+        .expect("post::update: blog error");
     let mut post =
         Post::find_by_slug(&*conn, &slug, b.id).expect("post::update: find by slug error");
     let user = rockets.user.clone().unwrap();
@@ -302,11 +304,11 @@ pub fn update(
 
             if post.published {
                 post.update_mentions(
-                    &conn,
                     mentions
                         .into_iter()
-                        .filter_map(|m| Mention::build_activity(&rockets, &m).ok())
+                        .filter_map(|m| Mention::build_activity(&rockets, &m).await.ok())
                         .collect(),
+                    &conn,
                 )
                 .expect("post::update: mentions error");
             }
@@ -321,7 +323,7 @@ pub fn update(
                 .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
             post.update_tags(&conn, tags)
-                .expect("post::update: tags error");
+                .expect(r#"post::update: tags error"#);
 
             let hashtags = hashtags
                 .into_iter()
@@ -615,12 +617,13 @@ pub fn delete(
 }
 
 #[get("/~/<blog_name>/<slug>/remote_interact")]
-pub fn remote_interact(
+pub async fn remote_interact(
     rockets: PlumeRocket,
     blog_name: String,
     slug: String,
 ) -> Result<Ructe, ErrorPage> {
     let target = Blog::find_by_fqn(&rockets, &blog_name)
+        .await
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
     Ok(render!(posts::remote_interact(
         &rockets.to_context(),
@@ -633,17 +636,18 @@ pub fn remote_interact(
 }
 
 #[post("/~/<blog_name>/<slug>/remote_interact", data = "<remote>")]
-pub fn remote_interact_post(
+pub async fn remote_interact_post(
     rockets: PlumeRocket,
     blog_name: String,
     slug: String,
     remote: LenientForm<RemoteForm>,
 ) -> Result<RespondOrRedirect, ErrorPage> {
     let target = Blog::find_by_fqn(&rockets, &blog_name)
+        .await
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
-        .ok()
-        .and_then(|uri| uri.replace("{uri}", format!("{}", target.ap_url)).ok())
+        .await
+        .map(|uri| uri.replace("{uri}", format!("{}", target.ap_url)).ok())
     {
         Ok(Redirect::to(uri).into())
     } else {
