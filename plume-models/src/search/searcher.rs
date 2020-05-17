@@ -34,7 +34,7 @@ impl Searcher {
     pub fn schema() -> Schema {
         let tag_indexing = TextOptions::default().set_indexing_options(
             TextFieldIndexing::default()
-                .set_tokenizer("whitespace_tokenizer")
+                .set_tokenizer("tag_tokenizer")
                 .set_index_option(IndexRecordOption::Basic),
         );
 
@@ -92,7 +92,7 @@ impl Searcher {
 
         {
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("whitespace_tokenizer", whitespace_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", whitespace_tokenizer);
             tokenizer_manager.register("content_tokenizer", content_tokenizer);
             tokenizer_manager.register("property_tokenizer", property_tokenizer);
         } //to please the borrow checker
@@ -128,7 +128,7 @@ impl Searcher {
 
         {
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("whitespace_tokenizer", whitespace_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", whitespace_tokenizer);
             tokenizer_manager.register("content_tokenizer", content_tokenizer);
             tokenizer_manager.register("property_tokenizer", property_tokenizer);
         } //to please the borrow checker
