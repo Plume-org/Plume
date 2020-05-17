@@ -71,13 +71,15 @@ impl Searcher {
     }
 
     pub fn create(path: &dyn AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
+        let whitespace_tokenizer =
+            TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser);
 
-        let content_tokenizer = SimpleTokenizer
+        let content_tokenizer = TextAnalyzer::from(SimpleTokenizer)
             .filter(RemoveLongFilter::limit(40))
             .filter(LowerCaser);
 
-        let property_tokenizer = NgramTokenizer::new(2, 8, false).filter(LowerCaser);
+        let property_tokenizer =
+            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
 
         let schema = Self::schema();
 
@@ -110,13 +112,15 @@ impl Searcher {
     }
 
     pub fn open(path: &dyn AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer = tokenizer::WhitespaceTokenizer.filter(LowerCaser);
+        let whitespace_tokenizer =
+            TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser);
 
-        let content_tokenizer = SimpleTokenizer
+        let content_tokenizer = TextAnalyzer::from(SimpleTokenizer)
             .filter(RemoveLongFilter::limit(40))
             .filter(LowerCaser);
 
-        let property_tokenizer = NgramTokenizer::new(2, 8, false).filter(LowerCaser);
+        let property_tokenizer =
+            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
 
         let index =
             Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?)
