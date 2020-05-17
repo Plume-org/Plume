@@ -10,24 +10,24 @@ ammonia = "2.1.1"
 askama_escape = "0.1"
 bcrypt = "0.5"
 guid-create = "0.1"
+futures = "0.3"
 heck = "0.3.0"
 itertools = "0.8.0"
 lazy_static = "1.0"
 migrations_internals= "1.4.0"
 openssl = "0.10.22"
-rocket = "0.4.0"
-rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
-reqwest = "0.9"
+rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "async" }
 scheduled-thread-pool = "0.2.2"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
 tantivy = "0.10.1"
+tokio = "0.2"
 url = "2.1"
 walkdir = "2.2"
-webfinger = "0.4.1"
+webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "update-deps" }
 whatlang = "0.7.1"
-shrinkwraprs = "0.2.1"
+shrinkwraprs = "0.3"
 diesel-derive-newtype = "0.1.2"
 glob = "0.3.0"
 
@@ -48,8 +48,19 @@ path = "../plume-common"
 [dependencies.plume-macro]
 path = "../plume-macro"
 
+[dependencies.reqwest]
+features = ["json", "blocking"]
+version = "0.10"
+
+
+[dependencies.rocket_i18n]
+git = "https://github.com/Plume-org/rocket_i18n"
+branch = "go-async"
+default-features = false
+features = ["rocket"]
+
 [dev-dependencies]
-diesel_migrations = "1.3.0"
+diesel_migrations = "1.4.0"
 
 [features]
 postgres = ["diesel/postgres", "plume-macro/postgres" ]

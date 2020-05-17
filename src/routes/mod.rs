@@ -7,9 +7,8 @@ use chrono::naive::NaiveDateTime;
 use plume_models::{posts::Post, Connection, CONFIG, ITEMS_PER_PAGE};
 use rocket::{
     http::{
-        hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
         uri::{FromUriParam, Query},
-        RawStr, Status,
+        Header, RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
     response::{self, Flash, NamedFile, Redirect, Responder, Response},
@@ -95,10 +94,11 @@ impl Page {
 #[derive(Shrinkwrap)]
 pub struct ContentLen(pub u64);
 
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for ContentLen {
     type Error = ();
 
-    fn from_request(r: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    async fn from_request(r: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         match r.limits().get("forms") {
             Some(l) => Outcome::Success(ContentLen(l)),
             None => Outcome::Failure((Status::InternalServerError, ())),
@@ -208,14 +208,15 @@ pub mod well_known;
 #[response()]
 pub struct CachedFile {
     inner: NamedFile,
-    cache_control: CacheControl,
+    cache_control: Header<'static>,
 }
 
 #[derive(Debug)]
 pub struct ThemeFile(NamedFile);
 
+#[rocket::async_trait]
 impl<'r> Responder<'r> for ThemeFile {
-    fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
+    async fn respond_to(self, r: &'r Request<'_>) -> response::Result<'r> {
         let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
 
         let mut hasher = DefaultHasher::new();
@@ -228,12 +229,12 @@ impl<'r> Responder<'r> for ThemeFile {
         {
             Response::build()
                 .status(Status::NotModified)
-                .header(ETag(EntityTag::strong(etag)))
+                .header(Header::new("ETag", etag))
                 .ok()
         } else {
             Response::build()
-                .merge(self.0.respond_to(r)?)
-                .header(ETag(EntityTag::strong(etag)))
+                .merge(self.0.respond_to(r).await.ok().unwrap())
+                .header(Header::new("ETag", etag))
                 .ok()
         }
     }
@@ -256,7 +257,7 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
         .ok()
         .map(|f| CachedFile {
             inner: f,
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            cache_control: Header::new("Cache-Control", format!("max-age={}", 60 * 60 * 24 * 30)),
         })
 }
 #[get("/static/<file..>", rank = 3)]
@@ -265,6 +266,6 @@ pub fn static_files(file: PathBuf) -> Option<CachedFile> {
         .ok()
         .map(|f| CachedFile {
             inner: f,
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            cache_control: Header::new("Cache-Control", format!("max-age={}", 60 * 60 * 24 * 30)),
         })
 }

@@ -7,7 +7,9 @@ use crate::{
     users::User,
     PlumeRocket, Result,
 };
+use futures::stream::{self, StreamExt};
 use plume_common::activity_pub::inbox::AsActor;
+use tokio::runtime::Runtime;
 use whatlang::{self, Lang};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -295,15 +297,33 @@ impl WithList {
                 }
             }
             List::Array(list) => match self {
-                WithList::Blog => Ok(list
-                    .iter()
-                    .filter_map(|b| Blog::find_by_fqn(rocket, b).ok())
-                    .any(|b| b.id == post.blog_id)),
+                WithList::Blog => {
+                    let mut rt = Runtime::new().unwrap();
+                    rt.block_on(async move {
+                        Ok(stream::iter(list)
+                            .filter_map(|b| async move {
+                                Some(Blog::find_by_fqn(rocket, b).await.ok().unwrap())
+                            })
+                            .collect::<Vec<_>>()
+                            .await
+                            .into_iter()
+                            .any(|b| b.id == post.blog_id))
+                    })
+                }
                 WithList::Author { boosts, likes } => match kind {
-                    Kind::Original => Ok(list
-                        .iter()
-                        .filter_map(|a| User::find_by_fqn(rocket, a).ok())
-                        .any(|a| post.is_author(&rocket.conn, a.id).unwrap_or(false))),
+                    Kind::Original => {
+                        let mut rt = Runtime::new().unwrap();
+                        rt.block_on(async move {
+                            Ok(stream::iter(list)
+                                .filter_map(|a| async move {
+                                    Some(User::find_by_fqn(rocket, a).await.ok().unwrap())
+                                })
+                                .collect::<Vec<_>>()
+                                .await
+                                .into_iter()
+                                .any(|a| post.is_author(&rocket.conn, a.id).unwrap_or(false)))
+                        })
+                    }
                     Kind::Reshare(u) => {
                         if *boosts {
                             Ok(list.iter().any(|user| &u.fqn == user))

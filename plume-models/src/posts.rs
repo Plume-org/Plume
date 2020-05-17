@@ -21,6 +21,7 @@ use plume_common::{
 };
 use serde_json;
 use std::collections::HashSet;
+use tokio::runtime::Runtime;
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -579,11 +580,11 @@ impl FromId<PlumeRocket> for Post {
                 }
             });
 
-        let cover = article
-            .object_props
-            .icon_object::<Image>()
-            .ok()
-            .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id));
+        let image = article.object_props.icon_object::<Image>().ok().unwrap();
+
+        let mut r = Runtime::new().unwrap();
+        let cover =
+            Some(r.block_on(async { Media::from_activity(&c, &image).await.ok().unwrap().id }));
 
         let title = article.object_props.name_string()?;
         let post = Post::insert(
@@ -699,17 +700,22 @@ impl FromId<PlumeRocket> for PostUpdate {
     }
 
     fn from_activity(c: &PlumeRocket, updated: LicensedArticle) -> Result<Self> {
+        let image = updated
+            .object
+            .object_props
+            .icon_object::<Image>()
+            .ok()
+            .unwrap();
+        let mut r = Runtime::new().unwrap();
+        let cover =
+            Some(r.block_on(async { Media::from_activity(&c, &image).await.ok().unwrap().id }));
+
         Ok(PostUpdate {
             ap_url: updated.object.object_props.id_string()?,
             title: updated.object.object_props.name_string().ok(),
             subtitle: updated.object.object_props.summary_string().ok(),
             content: updated.object.object_props.content_string().ok(),
-            cover: updated
-                .object
-                .object_props
-                .icon_object::<Image>()
-                .ok()
-                .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id)),
+            cover,
             source: updated
                 .object
                 .ap_object_props

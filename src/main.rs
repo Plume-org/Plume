@@ -1,12 +1,10 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene, try_trait)]
+#![feature(proc_macro_hygiene, try_trait)]
 
 #[macro_use]
 extern crate gettext_macros;
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate runtime_fmt;
 #[macro_use]
 extern crate serde_json;
 #[macro_use]
@@ -21,7 +19,6 @@ use plume_models::{
     search::{Searcher as UnmanagedSearcher, SearcherError},
     Connection, Error, CONFIG,
 };
-use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
@@ -275,25 +272,7 @@ Then try to restart Plume
         .manage(dbpool)
         .manage(Arc::new(workpool))
         .manage(searcher)
-        .manage(include_i18n!())
-        .attach(
-            CsrfFairingBuilder::new()
-                .set_default_target(
-                    "/csrf-violation?target=<uri>".to_owned(),
-                    rocket::http::Method::Post,
-                )
-                .add_exceptions(vec![
-                    ("/inbox".to_owned(), "/inbox".to_owned(), None),
-                    (
-                        "/@/<name>/inbox".to_owned(),
-                        "/@/<name>/inbox".to_owned(),
-                        None,
-                    ),
-                    ("/api/<path..>".to_owned(), "/api/<path..>".to_owned(), None),
-                ])
-                .finalize()
-                .expect("main: csrf fairing creation error"),
-        );
+        .manage(include_i18n!());
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);

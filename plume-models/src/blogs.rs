@@ -71,7 +71,8 @@ impl Blog {
     insert!(blogs, NewBlog, |inserted, conn| {
         let instance = inserted.get_instance(conn)?;
         if inserted.outbox_url.is_empty() {
-            inserted.outbox_url = instance.compute_box(BLOG_PREFIX, &inserted.actor_id, "outbox");
+            inserted.outbox_url =
+                instance.compute_box(BLOG_PREFIX, &inserted.actor_id, r#"outbox"#);
         }
 
         if inserted.inbox_url.is_empty() {
@@ -132,7 +133,7 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
+    pub async fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
             .first(&*c.conn)
@@ -140,12 +141,13 @@ impl Blog {
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            Blog::fetch_from_webfinger(c, fqn)
+            Blog::fetch_from_webfinger(c, fqn).await
         }
     }
 
-    fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
-        resolve_with_prefix(Prefix::Group, acct.to_owned(), true)?
+    async fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
+        resolve_with_prefix(Prefix::Group, acct.to_owned(), true)
+            .await?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))

@@ -1,14 +1,13 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use reqwest::r#async::ClientBuilder;
+use reqwest::ClientBuilder;
 use rocket::{
     http::Status,
     request::{FromRequest, Request},
-    response::{Responder, Response},
+    response::{Responder, Response, Result},
     Outcome,
 };
 use serde_json;
-use tokio::prelude::*;
 
 use self::sign::Signable;
 
@@ -62,39 +61,45 @@ impl<T> ActivityStream<T> {
         ActivityStream(t)
     }
 }
-
-impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
-    fn respond_to(self, request: &Request<'_>) -> Result<Response<'r>, Status> {
+#[rocket::async_trait]
+impl<'r, O: Object + Send + 'r> Responder<'r> for ActivityStream<O> {
+    async fn respond_to(self, request: &'r Request<'_>) -> Result<'r> {
         let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();
-        serde_json::to_string(&json).respond_to(request).map(|r| {
-            Response::build_from(r)
+        let result = serde_json::to_string(&json).map_err(rocket::response::Debug);
+        match result.respond_to(request).await {
+            Ok(r) => Response::build_from(r)
                 .raw_header("Content-Type", "application/activity+json")
-                .finalize()
-        })
+                .ok(),
+            Err(e) => Err(e),
+        }
     }
 }
 
 #[derive(Clone)]
 pub struct ApRequest;
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
+    async fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
         request
             .headers()
             .get_one("Accept")
             .map(|header| {
                 header
                     .split(',')
-                    .map(|ct| match ct.trim() {
-                        // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
-                        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
-                        | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
-                        | "application/activity+json"
-                        | "application/ld+json" => Outcome::Success(ApRequest),
-                        "text/html" => Outcome::Forward(true),
-                        _ => Outcome::Forward(false),
+                    .map(|ct| {
+                        match ct.trim() {
+                            // bool for Forward: true if found a valid Content-Type for Plume first (HTML),
+                            // false otherwise
+                            "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
+                            | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
+                            | "application/activity+json"
+                            | "application/ld+json" => Outcome::Success(ApRequest),
+                            "text/html" => Outcome::Forward(true),
+                            _ => Outcome::Forward(false),
+                        }
                     })
                     .fold(Outcome::Forward(false), |out, ct| {
                         if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
@@ -130,36 +135,38 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
-    let mut rt = tokio::runtime::current_thread::Runtime::new()
-        .expect("Error while initializing tokio runtime for federation");
-    let client = ClientBuilder::new()
-        .connect_timeout(std::time::Duration::from_secs(5))
+    let rt = tokio::runtime::Builder::new()
+        .threaded_scheduler()
         .build()
-        .expect("Can't build client");
+        .expect("Error while initializing tokio runtime for federation");
     for inbox in boxes {
         let body = signed.to_string();
         let mut headers = request::headers();
         headers.insert("Digest", request::Digest::digest(&body));
-        rt.spawn(
+        let sig = request::signature(sender, &headers)
+            .expect("activity_pub::broadcast: request signature error");
+        let client = ClientBuilder::new()
+            .connect_timeout(std::time::Duration::from_secs(5))
+            .build()
+            .expect("Can't build client");
+        rt.spawn(async move {
             client
                 .post(&inbox)
                 .headers(headers.clone())
-                .header(
-                    "Signature",
-                    request::signature(sender, &headers)
-                        .expect("activity_pub::broadcast: request signature error"),
-                )
+                .header("Signature", sig)
                 .body(body)
                 .send()
-                .and_then(|r| r.into_body().concat2())
+                .await
+                .unwrap()
+                .text()
+                .await
                 .map(move |response| {
                     println!("Successfully sent activity to inbox ({})", inbox);
                     println!("Response: \"{:?}\"\n", response)
                 })
-                .map_err(|e| println!("Error while sending to inbox ({:?})", e)),
-        );
+                .map_err(|e| println!("Error while sending to inbox ({:?})", e))
+        });
     }
-    rt.run().unwrap();
 }
 
 #[derive(Shrinkwrap, Clone, Serialize, Deserialize)]
@@ -203,8 +210,7 @@ pub struct PublicKey {
     pub public_key_pem: Option<serde_json::Value>,
 }
 
-#[derive(Clone, Debug, Default, UnitString)]
-#[activitystreams(Hashtag)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct HashtagType;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]

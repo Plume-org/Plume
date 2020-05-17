@@ -279,8 +279,9 @@ pub trait FromId<C>: Sized {
 
     /// Dereferences an ID
     fn deref(id: &str) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        reqwest::ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+        // Use blocking reqwest API here, since defer cannot be async (yet)
+        reqwest::blocking::Client::builder()
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()
             .map_err(|_| (None, InboxError::DerefError.into()))?
             .get(id)
@@ -296,7 +297,7 @@ pub trait FromId<C>: Sized {
             )
             .send()
             .map_err(|_| (None, InboxError::DerefError))
-            .and_then(|mut r| {
+            .and_then(|r| {
                 let json: serde_json::Value = r
                     .json()
                     .map_err(|_| (None, InboxError::InvalidObject(None)))?;

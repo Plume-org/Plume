@@ -98,7 +98,7 @@ pub fn list(
 }
 
 #[post("/posts", data = "<payload>")]
-pub fn create(
+pub async fn create(
     auth: Authorization<Write, Post>,
     payload: Json<NewPostData>,
     rockets: PlumeRocket,
@@ -192,7 +192,7 @@ pub fn create(
         for m in mentions.into_iter() {
             Mention::from_activity(
                 &*conn,
-                &Mention::build_activity(&rockets, &m)?,
+                &Mention::build_activity(&rockets, &m).await?,
                 post.id,
                 true,
                 true,

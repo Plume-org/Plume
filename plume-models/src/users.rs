@@ -191,7 +191,7 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
+    pub async fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
             .first(&*c.conn)
@@ -199,12 +199,13 @@ impl User {
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            User::fetch_from_webfinger(c, fqn)
+            User::fetch_from_webfinger(c, fqn).await
         }
     }
 
-    fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
-        let link = resolve(acct.to_owned(), true)?
+    async fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
+        let link = resolve(acct.to_owned(), true)
+            .await?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
@@ -212,8 +213,9 @@ impl User {
         User::from_id(c, link.href.as_ref()?, None).map_err(|(_, e)| e)
     }
 
-    pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
-        resolve(acct.to_owned(), true)?
+    pub async fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
+        resolve(acct.to_owned(), true)
+            .await?
             .links
             .into_iter()
             .find(|l| l.rel == "http://ostatus.org/schema/1.0/subscribe")
@@ -221,9 +223,9 @@ impl User {
             .ok_or(Error::Webfinger)
     }
 
-    fn fetch(url: &str) -> Result<CustomPerson> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+    async fn fetch(url: &str) -> Result<CustomPerson> {
+        let res = ClientBuilder::new()
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(url)
             .header(
@@ -235,8 +237,9 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send()?;
-        let text = &res.text()?;
+            .send()
+            .await?;
+        let text = &res.text().await?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;
         let mut json = serde_json::from_str::<CustomPerson>(text)?;
@@ -244,48 +247,48 @@ impl User {
         Ok(json)
     }
 
-    pub fn fetch_from_url(c: &PlumeRocket, url: &str) -> Result<User> {
-        User::fetch(url).and_then(|json| User::from_activity(c, json))
+    pub async fn fetch_from_url(c: &PlumeRocket, url: &str) -> Result<User> {
+        let json = User::fetch(url).await?;
+        User::from_activity(c, json)
     }
 
-    pub fn refetch(&self, conn: &Connection) -> Result<()> {
-        User::fetch(&self.ap_url.clone()).and_then(|json| {
-            let avatar = Media::save_remote(
-                conn,
-                json.object
-                    .object_props
-                    .icon_image()?
-                    .object_props
-                    .url_string()?,
-                &self,
-            )
-            .ok();
+    pub async fn refetch(&self, conn: &Connection) -> Result<()> {
+        let json = User::fetch(&self.ap_url.clone()).await?;
+        let avatar = Media::save_remote(
+            conn,
+            json.object
+                .object_props
+                .icon_image()?
+                .object_props
+                .url_string()?,
+            &self,
+        )
+        .ok();
 
-            diesel::update(self)
-                .set((
-                    users::username.eq(json.object.ap_actor_props.preferred_username_string()?),
-                    users::display_name.eq(json.object.object_props.name_string()?),
-                    users::outbox_url.eq(json.object.ap_actor_props.outbox_string()?),
-                    users::inbox_url.eq(json.object.ap_actor_props.inbox_string()?),
-                    users::summary.eq(SafeString::new(
-                        &json
-                            .object
-                            .object_props
-                            .summary_string()
-                            .unwrap_or_default(),
-                    )),
-                    users::followers_endpoint.eq(json.object.ap_actor_props.followers_string()?),
-                    users::avatar_id.eq(avatar.map(|a| a.id)),
-                    users::last_fetched_date.eq(Utc::now().naive_utc()),
-                    users::public_key.eq(json
-                        .custom_props
-                        .public_key_publickey()?
-                        .public_key_pem_string()?),
-                ))
-                .execute(conn)
-                .map(|_| ())
-                .map_err(Error::from)
-        })
+        diesel::update(self)
+            .set((
+                users::username.eq(json.object.ap_actor_props.preferred_username_string()?),
+                users::display_name.eq(json.object.object_props.name_string()?),
+                users::outbox_url.eq(json.object.ap_actor_props.outbox_string()?),
+                users::inbox_url.eq(json.object.ap_actor_props.inbox_string()?),
+                users::summary.eq(SafeString::new(
+                    &json
+                        .object
+                        .object_props
+                        .summary_string()
+                        .unwrap_or_default(),
+                )),
+                users::followers_endpoint.eq(json.object.ap_actor_props.followers_string()?),
+                users::avatar_id.eq(avatar.map(|a| a.id)),
+                users::last_fetched_date.eq(Utc::now().naive_utc()),
+                users::public_key.eq(json
+                    .custom_props
+                    .public_key_publickey()?
+                    .public_key_pem_string()?),
+            ))
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
     }
 
     pub fn hash_pass(pass: &str) -> Result<String> {
@@ -356,9 +359,10 @@ impl User {
             .set_part_of_link(Id::new(&self.outbox_url))?;
         Ok(ActivityStream::new(coll))
     }
-    fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+
+    async fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
+        let res = ClientBuilder::new()
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(url)
             .header(
@@ -370,8 +374,9 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send()?;
-        let text = &res.text()?;
+            .send()
+            .await?;
+        let text = &res.text().await?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
             .as_array()
@@ -386,9 +391,9 @@ impl User {
         };
         Ok((items, next))
     }
-    pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+    pub async fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
+        let res = ClientBuilder::new()
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(&self.outbox_url[..])
             .header(
@@ -400,13 +405,14 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send()?;
-        let text = &res.text()?;
+            .send()
+            .await?;
+        let text = &res.text().await?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         if let Some(first) = json.get("first") {
             let mut items: Vec<T> = Vec::new();
             let mut next = first.as_str().unwrap().to_owned();
-            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
+            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next).await {
                 if page.is_empty() {
                     break;
                 }
@@ -431,9 +437,9 @@ impl User {
         }
     }
 
-    pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
+    pub async fn fetch_followers_ids(&self) -> Result<Vec<String>> {
+        let res = ClientBuilder::new()
+            .connect_timeout(std::time::Duration::from_secs(5))
             .build()?
             .get(&self.followers_endpoint[..])
             .header(
@@ -445,8 +451,9 @@ impl User {
                         .join(", "),
                 )?,
             )
-            .send()?;
-        let text = &res.text()?;
+            .send()
+            .await?;
+        let text = &res.text().await?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         Ok(json["items"]
             .as_array()
@@ -789,11 +796,12 @@ impl User {
     }
 }
 
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for User {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<User, ()> {
-        let conn = request.guard::<DbConn>()?;
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        let conn = try_outcome!(DbConn::from_request(request).await);
         request
             .cookies()
             .get_private(AUTH_COOKIE)

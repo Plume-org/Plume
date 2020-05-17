@@ -44,19 +44,45 @@ pub fn host_meta() -> String {
 struct WebfingerResolver;
 
 impl Resolver<PlumeRocket> for WebfingerResolver {
-    fn instance_domain<'a>() -> &'a str {
+    fn instance_domain<'a>(&self) -> &'a str {
         CONFIG.base_url.as_str()
     }
 
-    fn find(prefix: Prefix, acct: String, ctx: PlumeRocket) -> Result<Webfinger, ResolverError> {
+    fn find(
+        &self,
+        prefix: Prefix,
+        acct: String,
+        ctx: PlumeRocket,
+    ) -> Result<Webfinger, ResolverError> {
         match prefix {
             Prefix::Acct => User::find_by_fqn(&ctx, &acct)
+                .await
                 .and_then(|usr| usr.webfinger(&*ctx.conn))
                 .or(Err(ResolverError::NotFound)),
             Prefix::Group => Blog::find_by_fqn(&ctx, &acct)
+                .await
                 .and_then(|blog| blog.webfinger(&*ctx.conn))
                 .or(Err(ResolverError::NotFound)),
             Prefix::Custom(_) => Err(ResolverError::NotFound),
+        }
+    }
+    fn endpoint(
+        &self,
+        resource: impl Into<String>,
+        resource_repo: PlumeRocket,
+    ) -> Result<Webfinger, ResolverError> {
+        let resource = resource.into();
+        let mut parsed_query = resource.splitn(2, ':');
+        let res_prefix = Prefix::from(parsed_query.next().ok_or(ResolverError::InvalidResource)?);
+        let res = parsed_query.next().ok_or(ResolverError::InvalidResource)?;
+
+        let mut parsed_res = res.splitn(2, '@');
+        let user = parsed_res.next().ok_or(ResolverError::InvalidResource)?;
+        let domain = parsed_res.next().ok_or(ResolverError::InvalidResource)?;
+        if domain == webfinger.instance_domain() {
+            webfinger.find(res_prefix, user.to_string(), resource_repo)
+        } else {
+            Err(ResolverError::WrongDomain)
         }
     }
 }

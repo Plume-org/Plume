@@ -1,8 +1,7 @@
 use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
 
 use crate::templates::Html;
-use rocket::http::hyper::header::{ETag, EntityTag};
-use rocket::http::{Method, Status};
+use rocket::http::{Header, Method, Status};
 use rocket::request::Request;
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
 use rocket_i18n::Catalog;
@@ -52,11 +51,12 @@ impl IntoContext for PlumeRocket {
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);
 
+#[rocket::async_trait]
 impl<'r> Responder<'r> for Ructe {
-    fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
+    async fn respond_to(self, r: &'r Request<'_>) -> response::Result<'r> {
         //if method is not Get or page contain a form, no caching
         if r.method() != Method::Get || self.0.windows(6).any(|w| w == b"<form ") {
-            return HtmlCt(self.0).respond_to(r);
+            return HtmlCt(self.0).respond_to(r).await;
         }
         let mut hasher = DefaultHasher::new();
         hasher.write(&self.0);
@@ -67,12 +67,12 @@ impl<'r> Responder<'r> for Ructe {
         {
             Response::build()
                 .status(Status::NotModified)
-                .header(ETag(EntityTag::strong(etag)))
+                .header(Header::new("ETag", etag))
                 .ok()
         } else {
             Response::build()
-                .merge(HtmlCt(self.0).respond_to(r)?)
-                .header(ETag(EntityTag::strong(etag)))
+                .merge(HtmlCt(self.0).respond_to(r).await.ok().unwrap())
+                .header(Header::new("ETag", etag))
                 .ok()
         }
     }

@@ -35,6 +35,7 @@ impl Scope for plume_models::posts::Post {
 
 pub struct Authorization<A, S>(pub ApiToken, PhantomData<(A, S)>);
 
+#[rocket::async_trait]
 impl<'a, 'r, A, S> FromRequest<'a, 'r> for Authorization<A, S>
 where
     A: Action,
@@ -42,9 +43,10 @@ where
 {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Authorization<A, S>, ()> {
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Authorization<A, S>, ()> {
         request
             .guard::<ApiToken>()
+            .await
             .map_failure(|_| (Status::Unauthorized, ()))
             .and_then(|token| {
                 if token.can(A::to_str(), S::to_str()) {

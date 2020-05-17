@@ -76,32 +76,36 @@ pub enum TokenError {
     DbError,
 }
 
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
     type Error = TokenError;
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<ApiToken, TokenError> {
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         let headers: Vec<_> = request.headers().get("Authorization").collect();
         if headers.len() != 1 {
             return Outcome::Failure((Status::BadRequest, TokenError::NoHeader));
         }
 
         let mut parsed_header = headers[0].split(' ');
-        let auth_type = parsed_header.next().map_or_else(
-            || Outcome::Failure((Status::BadRequest, TokenError::NoType)),
-            Outcome::Success,
-        )?;
-        let val = parsed_header.next().map_or_else(
-            || Outcome::Failure((Status::BadRequest, TokenError::NoValue)),
-            Outcome::Success,
-        )?;
-
-        if auth_type == "Bearer" {
-            let conn = request
-                .guard::<DbConn>()
-                .map_failure(|_| (Status::InternalServerError, TokenError::DbError))?;
-            if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
-                return Outcome::Success(token);
+        if let Some(auth_type) = parsed_header.next() {
+            if let Some(val) = parsed_header.next() {
+                if auth_type == "Bearer" {
+                    if let Outcome::Success(conn) = DbConn::from_request(request).await {
+                        if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
+                            return Outcome::Success(token);
+                        }
+                    } else {
+                        return Outcome::Failure((
+                            Status::InternalServerError,
+                            TokenError::DbError,
+                        ));
+                    }
+                }
+            } else {
+                return Outcome::Failure((Status::BadRequest, TokenError::NoValue));
             }
+        } else {
+            return Outcome::Failure((Status::BadRequest, TokenError::NoType));
         }
 
         Outcome::Forward(())

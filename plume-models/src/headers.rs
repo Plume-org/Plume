@@ -6,10 +6,11 @@ use rocket::{
 
 pub struct Headers<'r>(pub HeaderMap<'r>);
 
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for Headers<'r> {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, ()> {
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, ()> {
         let mut headers = HeaderMap::new();
         for header in request.headers().clone().into_iter() {
             headers.add(header);

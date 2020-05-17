@@ -20,20 +20,19 @@ heck = "0.3.0"
 lettre = "0.9.2"
 lettre_email = "0.9.2"
 num_cpus = "1.10"
-rocket = "0.4.2"
-rocket_contrib = { version = "0.4.2", features = ["json"] }
-rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "async" }
+rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket", rev = "async" , features = ["json"] }
 rpassword = "4.0"
-runtime-fmt = "0.4.0"
 scheduled-thread-pool = "0.2.2"
 serde = "1.0"
 serde_json = "1.0"
 serde_qs = "0.5"
 shrinkwraprs = "0.2.1"
 syntect = "3.3"
+tokio = "0.2"
 validator = "0.8"
 validator_derive = "0.8"
-webfinger = "0.4.1"
+webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "update-deps" }
 
 [[bin]]
 name = "plume"
@@ -65,9 +64,11 @@ path = "plume-common"
 [dependencies.plume-models]
 path = "plume-models"
 
-[dependencies.rocket_csrf]
-git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "29910f2829e7e590a540da3804336577b48c7b31"
+[dependencies.rocket_i18n]
+git = "https://github.com/Plume-org/rocket_i18n"
+branch = "go-async"
+default-features = false
+features = ["rocket"]
 
 [build-dependencies]
 ructe = "0.9.0"
