@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "ci"), warn(missing_docs))]
 #![feature(associated_type_defaults)]
 
 #[macro_use]

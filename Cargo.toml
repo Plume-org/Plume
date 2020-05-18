@@ -79,6 +79,7 @@ postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
 debug-mailer = []
 test = []
+ci = ["plume-models/ci", "plume-api/ci", "plume-common/ci"]
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front", "plume-macro"]

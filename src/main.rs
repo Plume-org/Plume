@@ -1,4 +1,5 @@
 #![allow(clippy::too_many_arguments)]
+#![cfg_attr(not(feature = "ci"), warn(missing_docs))]
 #![feature(decl_macro, proc_macro_hygiene, try_trait)]
 
 #[macro_use]
