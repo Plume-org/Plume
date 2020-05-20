@@ -1,5 +1,5 @@
 use std::str::CharIndices;
-use tantivy::tokenizer::{Token, TokenStream, Tokenizer};
+use tantivy::tokenizer::{BoxTokenStream, Token, TokenStream, Tokenizer};
 
 /// Tokenize the text by splitting on whitespaces. Pretty much a copy of Tantivy's SimpleTokenizer,
 /// but not splitting on punctuation
@@ -12,15 +12,13 @@ pub struct WhitespaceTokenStream<'a> {
     token: Token,
 }
 
-impl<'a> Tokenizer<'a> for WhitespaceTokenizer {
-    type TokenStreamImpl = WhitespaceTokenStream<'a>;
-
-    fn token_stream(&self, text: &'a str) -> Self::TokenStreamImpl {
-        WhitespaceTokenStream {
+impl Tokenizer for WhitespaceTokenizer {
+    fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
+        BoxTokenStream::from(WhitespaceTokenStream {
             text,
             chars: text.char_indices(),
             token: Token::default(),
-        }
+        })
     }
 }
 impl<'a> WhitespaceTokenStream<'a> {
