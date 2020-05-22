@@ -36,8 +36,12 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("comments::create: blog error");
-    let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
+    let blog = Blog::find_by_fqn(&rockets, &blog_name)
+        .await
+        .expect("comments::create: blog error");
+    let post = Post::find_by_slug(&*conn, &slug, blog.id)
+        .await
+        .expect("comments::create: post error");
     form.validate()
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(

@@ -42,7 +42,7 @@ pub fn me(user: Option<User>) -> RespondOrRedirect {
 }
 
 #[get("/@/<name>", rank = 2)]
-pub fn details(
+pub async fn details(
     name: String,
     rockets: PlumeRocket,
     fetch_rockets: PlumeRocket,
@@ -61,6 +61,7 @@ pub fn details(
         worker.execute(move || {
             for create_act in user_clone
                 .fetch_outbox::<Create>()
+                .await
                 .expect("Remote user: outbox couldn't be fetched")
             {
                 match create_act.create_props.object_object::<LicensedArticle>() {
@@ -79,6 +80,7 @@ pub fn details(
         worker.execute(move || {
             for user_id in user_clone
                 .fetch_followers_ids()
+                .await
                 .expect("Remote user: fetching followers error")
             {
                 let follower = User::from_id(&fetch_followers_rockets, &user_id, None)
@@ -101,6 +103,7 @@ pub fn details(
             worker.execute(move || {
                 user_clone
                     .refetch(&*update_conn)
+                    .await
                     .expect("Couldn't update user info");
             });
         }
@@ -152,7 +155,7 @@ pub fn follow(
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let conn = &*rockets.conn;
-    let target = User::find_by_fqn(&rockets, &name)?;
+    let target = User::find_by_fqn(&rockets, &name).await?;
     let message = if let Ok(follow) = follows::Follow::find(&*conn, user.id, target.id) {
         let delete_act = follow.build_undo(&*conn)?;
         local_inbox(
@@ -196,9 +199,10 @@ pub fn follow_not_connected(
     remote_form: Option<LenientForm<RemoteForm>>,
     i18n: I18n,
 ) -> Result<RespondOrRedirect, ErrorPage> {
-    let target = User::find_by_fqn(&rockets, &name)?;
+    let target = User::find_by_fqn(&rockets, &name).await?;
     if let Some(remote_form) = remote_form {
         if let Some(uri) = User::fetch_remote_interact_uri(&remote_form)
+            .await
             .ok()
             .and_then(|uri| {
                 uri.replace(
@@ -265,15 +269,15 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/@/<name>/followers?<page>", rank = 2)]
-pub fn followers(
-    name: String,
+pub async fn followers(
+    String,
     page: Option<Page>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&rockets, &name)?;
-    let followers_count = user.count_followers(&*conn)?;
+    let user = User::find_by_fqn(&rockets, &name).await?;
+    let followers_count = user.count_followers(&*;
 
     Ok(render!(users::followers(
         &rockets.to_context(),
@@ -299,7 +303,7 @@ pub fn followed(
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&rockets, &name)?;
+    let user = User::find_by_fqn(&rockets, &name).await?;
     let followed_count = user.count_followed(conn)?;
 
     Ok(render!(users::followed(
@@ -319,13 +323,13 @@ pub fn followed(
 }
 
 #[get("/@/<name>", rank = 1)]
-pub fn activity_details(
+pub async fn activity_details(
     name: String,
     rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_by_fqn(&rockets, &name).ok()?;
-    Some(ActivityStream::new(user.to_activity(&*rockets.conn).ok()?))
+    let user = User::find_by_fqn(&rockets, &name).await?.ok()?;
+    Some(ActivityStream::new(user.to_activity(&*roonn).ok()?))
 }
 
 #[get("/users/new")]
@@ -411,39 +415,38 @@ pub fn update(
 }
 
 #[post("/@/<name>/delete")]
-pub fn delete(
+pub async fn delete(
     name: String,
     user: User,
     mut cookies: Cookies<'_>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let account = User::find_by_fqn(&rockets, &name)?;
-    if user.id == account.id {
-        account.delete(&*rockets.conn, &rockets.searcher)?;
-
-        let target = User::one_by_instance(&*rockets.conn)?;
-        let delete_act = account.delete_activity(&*rockets.conn)?;
-        rockets
-            .worker
-            .execute(move || broadcast(&account, delete_act, target));
-
-        if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
-            cookies.remove_private(cookie);
-        }
-
-        Ok(Flash::success(
-            Redirect::to(uri!(super::instance::index)),
-            i18n!(rockets.intl.catalog, "Your account has been deleted."),
-        ))
-    } else {
-        Ok(Flash::error(
+    let account = User::find_by_fqn(&rockets, &name).await?;
+    if user.id != account.id {
+        return Ok(Flash::error(
             Redirect::to(uri!(edit: name = name)),
             i18n!(
                 rockets.intl.catalog,
                 "You can't delete someone else's account."
             ),
-        ))
+        ));
     }
+    account.delete(&*rockets.conn, &rockets.searcher)?;
+
+    let target = User::one_by_instance(&*rockets.conn)?;
+    let delete_act = account.delete_activity(&*rockets.conn)?;
+    rockets
+        .worker
+        .execute(move || broadcast(&account, delete_act, target));
+
+    if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
+        cookies.remove_private(cookie);
+    }
+
+    Ok(Flash::success(
+        Redirect::to(uri!(super::instance::index)),
+        i18n!(rockets.intl.catalog, "Your account has been deleted."),
+    ))
 }
 
 #[derive(Default, FromForm, Validate)]
@@ -564,37 +567,44 @@ pub fn create(
 }
 
 #[get("/@/<name>/outbox")]
-pub fn outbox(name: String, rockets: PlumeRocket) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&rockets, &name).ok()?;
+pub async fn outbox(
+    name: String,
+    rockets: PlumeRocket,
+) -> Option<ActivityStream<OrderedCollection>> {
+    let user = User::find_by_fqn(&rockets, &name).await.ok()?;
     user.outbox(&*rockets.conn).ok()
 }
+
 #[get("/@/<name>/outbox?<page>")]
-pub fn outbox_page(
+pub async fn outbox_page(
     name: String,
     page: Page,
     rockets: PlumeRocket,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
-    let user = User::find_by_fqn(&rockets, &name).ok()?;
+    let user = User::find_by_fqn(&rockets, &name).await.ok()?;
     user.outbox_page(&*rockets.conn, page.limits()).ok()
 }
+
 #[post("/@/<name>/inbox", data = "<data>")]
-pub fn inbox(
+pub async fn inbox(
     name: String,
     data: inbox::SignedJson<serde_json::Value>,
     headers: Headers<'_>,
     rockets: PlumeRocket,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    User::find_by_fqn(&rockets, &name).map_err(|_| status::BadRequest(Some("User not found")))?;
+    User::find_by_fqn(&rockets, &name)
+        .await
+        .map_err(|_| status::BadRequest(Some("User not found")))?;
     inbox::handle_incoming(rockets, data, headers)
 }
 
 #[get("/@/<name>/followers", rank = 1)]
-pub fn ap_followers(
+pub async fn ap_followers(
     name: String,
     rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&rockets, &name).ok()?;
+    let user = User::find_by_fqn(&rockets, &name).await?.ok()?;
     let followers = user
         .get_followers(&*rockets.conn)
         .ok()?
@@ -614,9 +624,9 @@ pub fn ap_followers(
 }
 
 #[get("/@/<name>/atom.xml")]
-pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
+pub async fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
     let conn = &*rockets.conn;
-    let author = User::find_by_fqn(&rockets, &name).ok()?;
+    let author = User::find_by_fqn(&rockets, &name).await?.ok()?;
     let entries = Post::get_recents_for_author(conn, &author, 15).ok()?;
     let uri = Instance::get_local()
         .ok()?

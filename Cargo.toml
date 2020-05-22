@@ -8,6 +8,7 @@ edition = "2018"
 [dependencies]
 activitypub = "0.1.3"
 askama_escape = "0.1"
+async-trait = "*"
 atom_syndication = "0.6"
 clap = "2.33"
 colored = "1.8"
@@ -32,7 +33,7 @@ syntect = "3.3"
 tokio = "0.2"
 validator = "0.8"
 validator_derive = "0.8"
-webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "update-deps" }
+webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "4e8f12810c4a7ba7a07bbcb722cd265fdff512b6", features = ["async"] }
 
 [[bin]]
 name = "plume"
