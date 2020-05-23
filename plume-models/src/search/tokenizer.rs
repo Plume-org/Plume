@@ -1,5 +1,29 @@
+use lindera_tantivy::tokenizer::LinderaTokenizer;
 use std::str::CharIndices;
-use tantivy::tokenizer::{BoxTokenStream, Token, TokenStream, Tokenizer};
+use tantivy::tokenizer::*;
+
+#[derive(Clone, Copy)]
+pub enum SearchTokenizer {
+    Simple,
+    Ngram,
+    Whitespace,
+    Lindera,
+}
+
+impl From<SearchTokenizer> for TextAnalyzer {
+    fn from(tokenizer: SearchTokenizer) -> TextAnalyzer {
+        use SearchTokenizer::*;
+
+        match tokenizer {
+            Simple => TextAnalyzer::from(SimpleTokenizer)
+                .filter(RemoveLongFilter::limit(40))
+                .filter(LowerCaser),
+            Ngram => TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser),
+            Whitespace => TextAnalyzer::from(WhitespaceTokenizer).filter(LowerCaser),
+            Lindera => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
+        }
+    }
+}
 
 /// Tokenize the text by splitting on whitespaces. Pretty much a copy of Tantivy's SimpleTokenizer,
 /// but not splitting on punctuation

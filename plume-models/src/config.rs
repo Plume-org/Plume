@@ -1,8 +1,7 @@
-use lindera_tantivy::tokenizer::LinderaTokenizer;
+use crate::search::SearchTokenizer;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::env::{self, var};
-use tantivy::tokenizer::TextAnalyzer;
 
 #[cfg(not(test))]
 const DB_NAME: &str = "plume";
@@ -187,31 +186,6 @@ impl Default for LogoConfig {
                 "icons/trwnh/feather-filled/plumeFeatherFilled64.png".to_owned()
             }),
             other,
-        }
-    }
-}
-
-#[derive(Clone, Copy)]
-pub enum SearchTokenizer {
-    Simple,
-    Ngram,
-    Whitespace,
-    Lindera,
-}
-
-impl From<SearchTokenizer> for TextAnalyzer {
-    fn from(tokenizer: SearchTokenizer) -> TextAnalyzer {
-        use crate::search::tokenizer::WhitespaceTokenizer;
-        use tantivy::tokenizer::*;
-        use SearchTokenizer::*;
-
-        match tokenizer {
-            Simple => TextAnalyzer::from(SimpleTokenizer)
-                .filter(RemoveLongFilter::limit(40))
-                .filter(LowerCaser),
-            Ngram => TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser),
-            Whitespace => TextAnalyzer::from(WhitespaceTokenizer).filter(LowerCaser),
-            Lindera => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
         }
     }
 }
