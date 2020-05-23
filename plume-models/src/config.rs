@@ -227,18 +227,12 @@ impl SearchTokenizerConfig {
         use SearchTokenizer::*;
 
         let tag_tokenizer = match var("SEARCH_TAG_TOKENIZER") {
-            Ok(specifier) => match specifier.as_str() {
-                "lindera" => Lindera,
-                _ => Whitespace,
-            },
+            Ok(specifier) if specifier == "lindera" => Lindera,
             _ => Whitespace,
         };
 
         let content_tokenizer = match var("SEARCH_CONTENT_TOKENIZER") {
-            Ok(specifier) => match specifier.as_str() {
-                "lindera" => Lindera,
-                _ => Simple,
-            },
+            Ok(specifier) if specifier == "lindera" => Lindera,
             _ => Simple,
         };
 
