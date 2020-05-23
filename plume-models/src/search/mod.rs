@@ -1,6 +1,6 @@
 mod query;
 mod searcher;
-mod tokenizer;
+pub(crate) mod tokenizer;
 pub use self::query::PlumeQuery as Query;
 pub use self::searcher::*;
 

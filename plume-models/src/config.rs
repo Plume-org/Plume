@@ -1,3 +1,5 @@
+use crate::search::tokenizer;
+use lindera_tantivy::tokenizer::LinderaTokenizer;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::env::{self, var};
@@ -184,6 +186,47 @@ impl Default for LogoConfig {
                 "icons/trwnh/feather-filled/plumeFeatherFilled64.png".to_owned()
             }),
             other,
+        }
+    }
+}
+
+pub struct SearchTokenizerConfig {
+    pub tag_tokenizer: tantivy::tokenizer::TextAnalyzer,
+    pub content_tokenizer: tantivy::tokenizer::TextAnalyzer,
+    pub property_tokenizer: tantivy::tokenizer::TextAnalyzer,
+}
+
+impl SearchTokenizerConfig {
+    pub fn init() -> Self {
+        use tantivy::tokenizer::*;
+
+        let tag_tokenizer = match var("SEARCH_TAG_TOKENIZER") {
+            Ok(specifier) => match specifier.as_str() {
+                "lindera" => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
+                _ => TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser),
+            },
+            _ => TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser),
+        };
+
+        let content_tokenizer = match var("SEARCH_CONTENT_TOKENIZER") {
+            Ok(specifier) => match specifier.as_str() {
+                "lindera" => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
+                _ => TextAnalyzer::from(SimpleTokenizer)
+                    .filter(RemoveLongFilter::limit(40))
+                    .filter(LowerCaser),
+            },
+            _ => TextAnalyzer::from(SimpleTokenizer)
+                .filter(RemoveLongFilter::limit(40))
+                .filter(LowerCaser),
+        };
+
+        let property_tokenizer =
+            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
+
+        Self {
+            tag_tokenizer,
+            content_tokenizer,
+            property_tokenizer,
         }
     }
 }
