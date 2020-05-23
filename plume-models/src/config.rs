@@ -218,6 +218,18 @@ impl SearchTokenizerConfig {
             property_tokenizer,
         }
     }
+
+    fn determine_tokenizer(var_name: &str, default: SearchTokenizer) -> SearchTokenizer {
+        use SearchTokenizer::*;
+
+        match var(var_name).ok().as_deref() {
+            Some("simple") => Simple,
+            Some("ngram") => Ngram,
+            Some("whitespace") => Whitespace,
+            Some("lindera") => Lindera,
+            _ => default,
+        }
+    }
 }
 
 lazy_static! {
