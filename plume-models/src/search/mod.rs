@@ -184,6 +184,62 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn search_japanese() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let tokenizers = SearchTokenizerConfig {
+                tag_tokenizer: TokenizerKind::Lindera,
+                content_tokenizer: TokenizerKind::Lindera,
+                property_tokenizer: TokenizerKind::Ngram,
+            };
+            let searcher = get_searcher(&tokenizers);
+            let blog = &fill_database(conn).1[0];
+
+            let title = random_hex()[..8].to_owned();
+
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog.id,
+                    slug: title.clone(),
+                    title: title.clone(),
+                    content: SafeString::new("ブログエンジンPlumeです。"),
+                    published: true,
+                    license: "CC-BY-SA".to_owned(),
+                    ap_url: "".to_owned(),
+                    creation_date: None,
+                    subtitle: "".to_owned(),
+                    source: "".to_owned(),
+                    cover_id: None,
+                },
+                &searcher,
+            )
+            .unwrap();
+
+            searcher.commit();
+
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("ブログエンジン").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("Plume").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("です").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("。").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn drop_writer() {
         let searcher = get_searcher(&CONFIG.search_tokenizers);
         searcher.drop_writer();
