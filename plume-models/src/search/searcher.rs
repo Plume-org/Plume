@@ -4,7 +4,7 @@ use crate::{
     schema::posts,
     search::{query::PlumeQuery, tokenizer},
     tags::Tag,
-    Connection, Result,
+    Connection, Result, CONFIG,
 };
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -91,10 +91,11 @@ impl Searcher {
         .map_err(|_| SearcherError::IndexCreationError)?;
 
         {
+            let config = &CONFIG.search_tokenizers;
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("tag_tokenizer", whitespace_tokenizer);
-            tokenizer_manager.register("content_tokenizer", content_tokenizer);
-            tokenizer_manager.register("property_tokenizer", property_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer.clone());
+            tokenizer_manager.register("content_tokenizer", config.content_tokenizer.clone());
+            tokenizer_manager.register("property_tokenizer", config.property_tokenizer.clone());
         } //to please the borrow checker
         Ok(Self {
             writer: Mutex::new(Some(
@@ -127,10 +128,11 @@ impl Searcher {
                 .map_err(|_| SearcherError::IndexOpeningError)?;
 
         {
+            let config = &CONFIG.search_tokenizers;
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("tag_tokenizer", whitespace_tokenizer);
-            tokenizer_manager.register("content_tokenizer", content_tokenizer);
-            tokenizer_manager.register("property_tokenizer", property_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer.clone());
+            tokenizer_manager.register("content_tokenizer", config.content_tokenizer.clone());
+            tokenizer_manager.register("property_tokenizer", config.property_tokenizer.clone());
         } //to please the borrow checker
         let writer = index
             .writer(50_000_000)

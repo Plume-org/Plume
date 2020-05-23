@@ -191,6 +191,7 @@ impl Default for LogoConfig {
     }
 }
 
+#[derive(Clone)]
 pub struct SearchTokenizerConfig {
     pub tag_tokenizer: tantivy::tokenizer::TextAnalyzer,
     pub content_tokenizer: tantivy::tokenizer::TextAnalyzer,
