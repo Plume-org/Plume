@@ -19,10 +19,14 @@ use plume_models::{
 };
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(name: String, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub async fn details(
+    name: String,
+    page: Option<Page>,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &name)?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?;
     let posts = Post::blog_page(conn, &blog, page.limits())?;
     let articles_count = Post::count_for_blog(conn, &blog)?;
     let authors = &blog.list_authors(conn)?;
@@ -43,7 +47,7 @@ pub async fn activity_details(
     rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?;
     Some(ActivityStream::new(blog.to_activity(&*rockets.conn).ok()?))
 }
 
@@ -83,7 +87,7 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOrRedirect {
+pub async fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOrRedirect {
     let slug = utils::make_actor_id(&form.title);
     let conn = &*rockets.conn;
     let intl = &rockets.intl.catalog;
@@ -143,9 +147,11 @@ pub fn create(form: LenientForm<NewBlogForm>, rockets: PlumeRocket) -> RespondOr
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, rockets: PlumeRocket) -> RespondOrRedirect {
+pub async fn delete(name: String, rockets: PlumeRocket) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &name).expect("blog::delete: blog not found");
+    let blog = Blog::find_by_fqn(&rockets, &name)
+        .await
+        .expect("blog::delete: blog not found");
 
     if rockets
         .user
@@ -348,9 +354,10 @@ pub async fn outbox(
     name: String,
     rockets: PlumeRocket,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?;
     Some(blog.outbox(&*rockets.conn).ok()?)
 }
+
 #[allow(unused_variables)]
 #[get("/~/<name>/outbox?<page>")]
 pub async fn outbox_page(
@@ -358,12 +365,13 @@ pub async fn outbox_page(
     page: Page,
     rockets: PlumeRocket,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?;
     Some(blog.outbox_page(&*rockets.conn, page.limits()).ok()?)
 }
+
 #[get("/~/<name>/atom.xml")]
 pub async fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&rockets, &name).await?.ok()?;
+    let blog = Blog::find_by_fqn(&rockets, &name).await?;
     let conn = &*rockets.conn;
     let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
     let uri = Instance::get_local()

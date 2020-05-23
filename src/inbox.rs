@@ -11,7 +11,7 @@ use rocket_contrib::json::*;
 use serde::Deserialize;
 use tokio::io::AsyncReadExt;
 
-pub fn handle_incoming(
+pub async fn handle_incoming(
     rockets: PlumeRocket,
     data: SignedJson<serde_json::Value>,
     headers: Headers<'_>,
@@ -32,6 +32,7 @@ pub fn handle_incoming(
         // maybe we just know an old key?
         actor
             .refetch(conn)
+            .await
             .and_then(|_| User::get(conn, actor.id))
             .and_then(|u| {
                 if verify_http_headers(&u, &headers.0, &sig).is_secure() || act.clone().verify(&u) {

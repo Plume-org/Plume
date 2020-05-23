@@ -28,7 +28,7 @@ pub struct NewCommentForm {
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<form>")]
-pub fn create(
+pub async fn create(
     blog_name: String,
     slug: String,
     form: LenientForm<NewCommentForm>,
@@ -39,9 +39,7 @@ pub fn create(
     let blog = Blog::find_by_fqn(&rockets, &blog_name)
         .await
         .expect("comments::create: blog error");
-    let post = Post::find_by_slug(&*conn, &slug, blog.id)
-        .await
-        .expect("comments::create: post error");
+    let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
     form.validate()
         .map(|_| {
             let (html, mentions, _hashtags) = utils::md_to_html(
@@ -70,6 +68,7 @@ pub fn create(
             .expect("comments::create: insert error");
             let new_comment = comm
                 .create_activity(&rockets)
+                .await
                 .expect("comments::create: activity error");
 
             // save mentions
@@ -77,6 +76,7 @@ pub fn create(
                 Mention::from_activity(
                     &*conn,
                     &Mention::build_activity(&rockets, &ment)
+                        .await
                         .expect("comments::create: build mention error"),
                     comm.id,
                     false,
@@ -185,8 +185,9 @@ pub fn activity_pub(
     _ap: ApRequest,
     rockets: PlumeRocket,
 ) -> Option<ActivityStream<Note>> {
-    Comment::get(&*rockets.conn, id)
-        .and_then(|c| c.to_activity(&rockets))
-        .ok()
-        .map(ActivityStream::new)
+    let c = match Comment::get(&*rockets.conn, id) {
+        Ok(c) => c.to_activity(&rockets).await.ok(),
+        Err(_) => None,
+    };
+    c.map(ActivityStream::new)
 }

@@ -42,14 +42,16 @@ pub struct LoginForm {
 }
 
 #[post("/login", data = "<form>")]
-pub fn create(
+pub async fn create(
     form: LenientForm<LoginForm>,
     mut cookies: Cookies<'_>,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    let user = User::find_by_email(&*conn, &form.email_or_name)
-        .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
+    let user = match User::find_by_email(&*conn, &form.email_or_name) {
+        Ok(user) => Ok(user),
+        Err(_) => User::find_by_fqn(&rockets, &form.email_or_name).await,
+    };
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,

@@ -41,20 +41,20 @@ impl<'r> Responder<'r> for ErrorPage {
 }
 
 #[catch(404)]
-pub fn not_found(req: &Request<'_>) -> Ructe {
-    let rockets = req.guard::<PlumeRocket>().unwrap();
+pub async fn not_found(req: &Request<'_>) -> Ructe {
+    let rockets = req.guard::<PlumeRocket>().await.unwrap();
     render!(errors::not_found(&rockets.to_context()))
 }
 
 #[catch(422)]
-pub fn unprocessable_entity(req: &Request<'_>) -> Ructe {
-    let rockets = req.guard::<PlumeRocket>().unwrap();
+pub async fn unprocessable_entity(req: &Request<'_>) -> Ructe {
+    let rockets = req.guard::<PlumeRocket>().await.unwrap();
     render!(errors::unprocessable_entity(&rockets.to_context()))
 }
 
 #[catch(500)]
-pub fn server_error(req: &Request<'_>) -> Ructe {
-    let rockets = req.guard::<PlumeRocket>().unwrap();
+pub async fn server_error(req: &Request<'_>) -> Ructe {
+    let rockets = req.guard::<PlumeRocket>().await.unwrap();
     render!(errors::server_error(&rockets.to_context()))
 }
 

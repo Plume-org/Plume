@@ -50,7 +50,7 @@ pub async fn details(
     update_conn: DbConn,
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
-    let user = User::find_by_fqn(&rockets, &name)?;
+    let user = User::find_by_fqn(&rockets, &name).await?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
     let worker = &rockets.worker;
@@ -149,7 +149,7 @@ pub fn dashboard_auth(i18n: I18n) -> Flash<Redirect> {
 }
 
 #[post("/@/<name>/follow")]
-pub fn follow(
+pub async fn follow(
     name: String,
     user: User,
     rockets: PlumeRocket,
@@ -193,7 +193,7 @@ pub fn follow(
 }
 
 #[post("/@/<name>/follow", data = "<remote_form>", rank = 2)]
-pub fn follow_not_connected(
+pub async fn follow_not_connected(
     rockets: PlumeRocket,
     name: String,
     remote_form: Option<LenientForm<RemoteForm>>,
@@ -205,14 +205,14 @@ pub fn follow_not_connected(
             .await
             .ok()
             .and_then(|uri| {
-                uri.replace(
+                Some(uri.replace(
                     "{uri}",
-                    format!(
+                    &format!(
                         "{}@{}",
                         target.fqn,
                         target.get_instance(&rockets.conn).ok()?.public_domain
                     ),
-                )
+                ))
             })
         {
             Ok(Redirect::to(uri).into())
@@ -270,14 +270,14 @@ pub fn follow_auth(name: String, i18n: I18n) -> Flash<Redirect> {
 
 #[get("/@/<name>/followers?<page>", rank = 2)]
 pub async fn followers(
-    String,
+    name: String,
     page: Option<Page>,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
-    let user = User::find_by_fqn(&rockets, &name).await?;
-    let followers_count = user.count_followers(&*;
+    let user: User = User::find_by_fqn(&rockets, &name).await?;
+    let followers_count = user.count_followers(&conn);
 
     Ok(render!(users::followers(
         &rockets.to_context(),
@@ -296,7 +296,7 @@ pub async fn followers(
 }
 
 #[get("/@/<name>/followed?<page>", rank = 2)]
-pub fn followed(
+pub async fn followed(
     name: String,
     page: Option<Page>,
     rockets: PlumeRocket,
@@ -328,8 +328,8 @@ pub async fn activity_details(
     rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
-    let user = User::find_by_fqn(&rockets, &name).await?.ok()?;
-    Some(ActivityStream::new(user.to_activity(&*roonn).ok()?))
+    let user: User = User::find_by_fqn(&rockets, &name).await?;
+    Some(ActivityStream::new(user.to_activity(&*rockets.conn).ok()?))
 }
 
 #[get("/users/new")]
@@ -595,7 +595,7 @@ pub async fn inbox(
     User::find_by_fqn(&rockets, &name)
         .await
         .map_err(|_| status::BadRequest(Some("User not found")))?;
-    inbox::handle_incoming(rockets, data, headers)
+    inbox::handle_incoming(rockets, data, headers).await
 }
 
 #[get("/@/<name>/followers", rank = 1)]
@@ -604,7 +604,7 @@ pub async fn ap_followers(
     rockets: PlumeRocket,
     _ap: ApRequest,
 ) -> Option<ActivityStream<OrderedCollection>> {
-    let user = User::find_by_fqn(&rockets, &name).await?.ok()?;
+    let user = User::find_by_fqn(&rockets, &name).await?;
     let followers = user
         .get_followers(&*rockets.conn)
         .ok()?
@@ -626,7 +626,7 @@ pub async fn ap_followers(
 #[get("/@/<name>/atom.xml")]
 pub async fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> {
     let conn = &*rockets.conn;
-    let author = User::find_by_fqn(&rockets, &name).await?.ok()?;
+    let author = User::find_by_fqn(&rockets, &name).await?;
     let entries = Post::get_recents_for_author(conn, &author, 15).ok()?;
     let uri = Instance::get_local()
         .ok()?

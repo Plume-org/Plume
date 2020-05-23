@@ -1,3 +1,4 @@
+use async_trait;
 use rocket::http::ContentType;
 use rocket::response::Content;
 use serde_json;
@@ -43,12 +44,14 @@ pub fn host_meta() -> String {
 
 struct WebfingerResolver;
 
-impl Resolver<PlumeRocket> for WebfingerResolver {
-    fn instance_domain<'a>(&self) -> &'a str {
+#[async_trait::async_trait]
+impl AsyncResolver for WebfingerResolver {
+    type Repo = PlumeRocket;
+    async fn instance_domain<'a>(&self) -> &'a str {
         CONFIG.base_url.as_str()
     }
 
-    fn find(
+    async fn find(
         &self,
         prefix: Prefix,
         acct: String,
@@ -66,9 +69,9 @@ impl Resolver<PlumeRocket> for WebfingerResolver {
             Prefix::Custom(_) => Err(ResolverError::NotFound),
         }
     }
-    fn endpoint(
+    async fn endpoint(
         &self,
-        resource: impl Into<String>,
+        resource: impl Into<String> + 'async_trait,
         resource_repo: PlumeRocket,
     ) -> Result<Webfinger, ResolverError> {
         let resource = resource.into();
@@ -80,7 +83,9 @@ impl Resolver<PlumeRocket> for WebfingerResolver {
         let user = parsed_res.next().ok_or(ResolverError::InvalidResource)?;
         let domain = parsed_res.next().ok_or(ResolverError::InvalidResource)?;
         if domain == webfinger.instance_domain() {
-            webfinger.find(res_prefix, user.to_string(), resource_repo)
+            webfinger
+                .find(res_prefix, user.to_string(), resource_repo)
+                .await
         } else {
             Err(ResolverError::WrongDomain)
         }
@@ -88,8 +93,9 @@ impl Resolver<PlumeRocket> for WebfingerResolver {
 }
 
 #[get("/.well-known/webfinger?<resource>")]
-pub fn webfinger(resource: String, rockets: PlumeRocket) -> Content<String> {
+pub async fn webfinger(resource: String, rockets: PlumeRocket) -> Content<String> {
     match WebfingerResolver::endpoint(resource, rockets)
+        .await
         .and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound))
     {
         Ok(wf) => Content(ContentType::new("application", "jrd+json"), wf),

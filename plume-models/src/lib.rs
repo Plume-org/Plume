@@ -76,6 +76,12 @@ impl From<std::option::NoneError> for Error {
     }
 }
 
+impl From<Error> for std::option::NoneError {
+    fn from(_: Error) -> Self {
+        std::option::NoneError
+    }
+}
+
 impl From<url::ParseError> for Error {
     fn from(_: url::ParseError) -> Self {
         Error::Url

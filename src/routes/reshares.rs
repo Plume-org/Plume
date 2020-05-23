@@ -10,14 +10,14 @@ use plume_models::{
 };
 
 #[post("/~/<blog>/<slug>/reshare")]
-pub fn create(
+pub async fn create(
     blog: String,
     slug: String,
     user: User,
     rockets: PlumeRocket,
 ) -> Result<Redirect, ErrorPage> {
     let conn = &*rockets.conn;
-    let b = Blog::find_by_fqn(&rockets, &blog)?;
+    let b = Blog::find_by_fqn(&rockets, &blog).await?;
     let post = Post::find_by_slug(&*conn, &slug, b.id)?;
 
     if !user.has_reshared(&*conn, &post)? {

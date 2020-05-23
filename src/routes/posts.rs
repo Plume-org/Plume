@@ -304,11 +304,11 @@ pub async fn update(
 
             if post.published {
                 post.update_mentions(
+                    &conn,
                     mentions
                         .into_iter()
                         .filter_map(|m| Mention::build_activity(&rockets, &m).await.ok())
                         .collect(),
-                    &conn,
                 )
                 .expect("post::update: mentions error");
             }
@@ -645,9 +645,10 @@ pub async fn remote_interact_post(
     let target = Blog::find_by_fqn(&rockets, &blog_name)
         .await
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
-    if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
+    if let uri = User::fetch_remote_interact_uri(&remote.remote)
         .await
-        .map(|uri| uri.replace("{uri}", format!("{}", target.ap_url)).ok())
+        .map(|uri| uri.replace("{uri}", &format!("{}", target.ap_url)))
+        .unwrap()
     {
         Ok(Redirect::to(uri).into())
     } else {
