@@ -1,8 +1,8 @@
-use crate::search::tokenizer;
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::env::{self, var};
+use tantivy::tokenizer::TextAnalyzer;
 
 #[cfg(not(test))]
 const DB_NAME: &str = "plume";
@@ -191,39 +191,58 @@ impl Default for LogoConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
+pub enum SearchTokenizer {
+    Simple,
+    Ngram,
+    Whitespace,
+    Lindera,
+}
+
+impl From<SearchTokenizer> for TextAnalyzer {
+    fn from(tokenizer: SearchTokenizer) -> TextAnalyzer {
+        use crate::search::tokenizer::WhitespaceTokenizer;
+        use tantivy::tokenizer::*;
+        use SearchTokenizer::*;
+
+        match tokenizer {
+            Simple => TextAnalyzer::from(SimpleTokenizer)
+                .filter(RemoveLongFilter::limit(40))
+                .filter(LowerCaser),
+            Ngram => TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser),
+            Whitespace => TextAnalyzer::from(WhitespaceTokenizer).filter(LowerCaser),
+            Lindera => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
+        }
+    }
+}
+
 pub struct SearchTokenizerConfig {
-    pub tag_tokenizer: tantivy::tokenizer::TextAnalyzer,
-    pub content_tokenizer: tantivy::tokenizer::TextAnalyzer,
-    pub property_tokenizer: tantivy::tokenizer::TextAnalyzer,
+    pub tag_tokenizer: SearchTokenizer,
+    pub content_tokenizer: SearchTokenizer,
+    pub property_tokenizer: SearchTokenizer,
 }
 
 impl SearchTokenizerConfig {
     pub fn init() -> Self {
-        use tantivy::tokenizer::*;
+        use SearchTokenizer::*;
 
         let tag_tokenizer = match var("SEARCH_TAG_TOKENIZER") {
             Ok(specifier) => match specifier.as_str() {
-                "lindera" => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
-                _ => TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser),
+                "lindera" => Lindera,
+                _ => Whitespace,
             },
-            _ => TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser),
+            _ => Whitespace,
         };
 
         let content_tokenizer = match var("SEARCH_CONTENT_TOKENIZER") {
             Ok(specifier) => match specifier.as_str() {
-                "lindera" => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")),
-                _ => TextAnalyzer::from(SimpleTokenizer)
-                    .filter(RemoveLongFilter::limit(40))
-                    .filter(LowerCaser),
+                "lindera" => Lindera,
+                _ => Simple,
             },
-            _ => TextAnalyzer::from(SimpleTokenizer)
-                .filter(RemoveLongFilter::limit(40))
-                .filter(LowerCaser),
+            _ => Simple,
         };
 
-        let property_tokenizer =
-            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
+        let property_tokenizer = Ngram;
 
         Self {
             tag_tokenizer,

@@ -1,9 +1,5 @@
 use crate::{
-    instance::Instance,
-    posts::Post,
-    schema::posts,
-    search::{query::PlumeQuery, tokenizer},
-    tags::Tag,
+    instance::Instance, posts::Post, schema::posts, search::query::PlumeQuery, tags::Tag,
     Connection, Result, CONFIG,
 };
 use chrono::Datelike;
@@ -11,8 +7,8 @@ use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
 use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 use tantivy::{
-    collector::TopDocs, directory::MmapDirectory, schema::*, tokenizer::*, Index, IndexReader,
-    IndexWriter, ReloadPolicy, Term,
+    collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
+    ReloadPolicy, Term,
 };
 use whatlang::{detect as detect_lang, Lang};
 
@@ -71,16 +67,6 @@ impl Searcher {
     }
 
     pub fn create(path: &dyn AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer =
-            TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser);
-
-        let content_tokenizer = TextAnalyzer::from(SimpleTokenizer)
-            .filter(RemoveLongFilter::limit(40))
-            .filter(LowerCaser);
-
-        let property_tokenizer =
-            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
-
         let schema = Self::schema();
 
         create_dir_all(path).map_err(|_| SearcherError::IndexCreationError)?;
@@ -93,9 +79,9 @@ impl Searcher {
         {
             let config = &CONFIG.search_tokenizers;
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer.clone());
-            tokenizer_manager.register("content_tokenizer", config.content_tokenizer.clone());
-            tokenizer_manager.register("property_tokenizer", config.property_tokenizer.clone());
+            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer);
+            tokenizer_manager.register("content_tokenizer", config.content_tokenizer);
+            tokenizer_manager.register("property_tokenizer", config.property_tokenizer);
         } //to please the borrow checker
         Ok(Self {
             writer: Mutex::new(Some(
@@ -113,16 +99,6 @@ impl Searcher {
     }
 
     pub fn open(path: &dyn AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer =
-            TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser);
-
-        let content_tokenizer = TextAnalyzer::from(SimpleTokenizer)
-            .filter(RemoveLongFilter::limit(40))
-            .filter(LowerCaser);
-
-        let property_tokenizer =
-            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
-
         let mut index =
             Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?)
                 .map_err(|_| SearcherError::IndexOpeningError)?;
@@ -130,9 +106,9 @@ impl Searcher {
         {
             let config = &CONFIG.search_tokenizers;
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer.clone());
-            tokenizer_manager.register("content_tokenizer", config.content_tokenizer.clone());
-            tokenizer_manager.register("property_tokenizer", config.property_tokenizer.clone());
+            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer);
+            tokenizer_manager.register("content_tokenizer", config.content_tokenizer);
+            tokenizer_manager.register("property_tokenizer", config.property_tokenizer);
         } //to please the borrow checker
         let writer = index
             .writer(50_000_000)
