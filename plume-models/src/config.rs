@@ -210,7 +210,7 @@ impl SearchTokenizerConfig {
                 tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Whitespace),
                 content_tokenizer: Self::determine_tokenizer("SEARCH_CONTENT_TOKENIZER", Simple),
                 property_tokenizer: Ngram,
-            }
+            },
         }
     }
 

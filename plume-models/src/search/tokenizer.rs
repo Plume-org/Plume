@@ -20,7 +20,9 @@ impl From<TokenizerKind> for TextAnalyzer {
                 .filter(LowerCaser),
             Ngram => TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser),
             Whitespace => TextAnalyzer::from(WhitespaceTokenizer).filter(LowerCaser),
-            Lindera => TextAnalyzer::from(LinderaTokenizer::new("decompose", "")).filter(LowerCaser),
+            Lindera => {
+                TextAnalyzer::from(LinderaTokenizer::new("decompose", "")).filter(LowerCaser)
+            }
         }
     }
 }

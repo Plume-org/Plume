@@ -219,7 +219,9 @@ pub(crate) mod tests {
             searcher.commit();
 
             assert_eq!(
-                searcher.search_document(conn, Query::from_str("ブログエンジン").unwrap(), (0, 1))[0].id,
+                searcher.search_document(conn, Query::from_str("ブログエンジン").unwrap(), (0, 1))
+                    [0]
+                .id,
                 post.id
             );
             assert_eq!(
