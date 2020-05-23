@@ -200,10 +200,17 @@ impl SearchTokenizerConfig {
     pub fn init() -> Self {
         use SearchTokenizer::*;
 
-        Self {
-            tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Whitespace),
-            content_tokenizer: Self::determine_tokenizer("SEARCH_CONTENT_TOKENIZER", Simple),
-            property_tokenizer: Ngram,
+        match var("SEARCH_LANG").ok().as_deref() {
+            Some("ja") => Self {
+                tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Lindera),
+                content_tokenizer: Self::determine_tokenizer("SEARCH_CONTENT_TOKENIZER", Lindera),
+                property_tokenizer: Ngram,
+            },
+            _ => Self {
+                tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Whitespace),
+                content_tokenizer: Self::determine_tokenizer("SEARCH_CONTENT_TOKENIZER", Simple),
+                property_tokenizer: Ngram,
+            }
         }
     }
 
