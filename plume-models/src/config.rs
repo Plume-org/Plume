@@ -16,6 +16,7 @@ pub struct Config {
     pub db_max_size: Option<u32>,
     pub db_min_idle: Option<u32>,
     pub search_index: String,
+    pub search_tokenizers: SearchTokenizerConfig,
     pub rocket: Result<RocketConfig, RocketError>,
     pub logo: LogoConfig,
     pub default_theme: String,
@@ -252,6 +253,7 @@ lazy_static! {
         #[cfg(feature = "sqlite")]
         database_url: var("DATABASE_URL").unwrap_or_else(|_| format!("{}.sqlite", DB_NAME)),
         search_index: var("SEARCH_INDEX").unwrap_or_else(|_| "search_index".to_owned()),
+        search_tokenizers: SearchTokenizerConfig::init(),
         rocket: get_rocket_config(),
         logo: LogoConfig::default(),
         default_theme: var("DEFAULT_THEME").unwrap_or_else(|_| "default-light".to_owned()),
