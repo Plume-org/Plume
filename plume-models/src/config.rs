@@ -226,13 +226,13 @@ impl SearchTokenizerConfig {
     pub fn init() -> Self {
         use SearchTokenizer::*;
 
-        let tag_tokenizer = match var("SEARCH_TAG_TOKENIZER") {
-            Ok(specifier) if specifier == "lindera" => Lindera,
+        let tag_tokenizer = match var("SEARCH_TAG_TOKENIZER").ok().as_deref() {
+            Some("lindera") => Lindera,
             _ => Whitespace,
         };
 
-        let content_tokenizer = match var("SEARCH_CONTENT_TOKENIZER") {
-            Ok(specifier) if specifier == "lindera" => Lindera,
+        let content_tokenizer = match var("SEARCH_CONTENT_TOKENIZER").ok().as_deref() {
+            Some("lindera") => Lindera,
             _ => Simple,
         };
 
