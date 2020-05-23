@@ -200,22 +200,10 @@ impl SearchTokenizerConfig {
     pub fn init() -> Self {
         use SearchTokenizer::*;
 
-        let tag_tokenizer = match var("SEARCH_TAG_TOKENIZER").ok().as_deref() {
-            Some("lindera") => Lindera,
-            _ => Whitespace,
-        };
-
-        let content_tokenizer = match var("SEARCH_CONTENT_TOKENIZER").ok().as_deref() {
-            Some("lindera") => Lindera,
-            _ => Simple,
-        };
-
-        let property_tokenizer = Ngram;
-
         Self {
-            tag_tokenizer,
-            content_tokenizer,
-            property_tokenizer,
+            tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Whitespace),
+            content_tokenizer: Self::determine_tokenizer("SEARCH_CONTENT_TOKENIZER", Simple),
+            property_tokenizer: Ngram,
         }
     }
 
