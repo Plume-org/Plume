@@ -82,7 +82,7 @@ fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         }
     };
     if can_do || force {
-        let searcher = Searcher::create(&path).unwrap();
+        let searcher = Searcher::create(&path, &CONFIG.search_tokenizers).unwrap();
         refill(args, conn, Some(searcher));
     } else {
         eprintln!(
@@ -98,7 +98,7 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
         Some(path) => Path::new(path).join("search_index"),
         None => Path::new(&CONFIG.search_index).to_path_buf(),
     };
-    let searcher = searcher.unwrap_or_else(|| Searcher::open(&path).unwrap());
+    let searcher = searcher.unwrap_or_else(|| Searcher::open(&path, &CONFIG.search_tokenizers).unwrap());
 
     searcher.fill(conn).expect("Couldn't import post");
     println!("Commiting result");

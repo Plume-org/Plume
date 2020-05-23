@@ -1,6 +1,6 @@
 use crate::{
-    instance::Instance, posts::Post, schema::posts, search::query::PlumeQuery, tags::Tag,
-    Connection, Result, CONFIG,
+    config::SearchTokenizerConfig, instance::Instance, posts::Post, schema::posts,
+    search::query::PlumeQuery, tags::Tag, Connection, Result,
 };
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -66,7 +66,7 @@ impl Searcher {
         schema_builder.build()
     }
 
-    pub fn create(path: &dyn AsRef<Path>) -> Result<Self> {
+    pub fn create(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
         let schema = Self::schema();
 
         create_dir_all(path).map_err(|_| SearcherError::IndexCreationError)?;
@@ -77,11 +77,10 @@ impl Searcher {
         .map_err(|_| SearcherError::IndexCreationError)?;
 
         {
-            let config = &CONFIG.search_tokenizers;
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer);
-            tokenizer_manager.register("content_tokenizer", config.content_tokenizer);
-            tokenizer_manager.register("property_tokenizer", config.property_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", tokenizers.tag_tokenizer);
+            tokenizer_manager.register("content_tokenizer", tokenizers.content_tokenizer);
+            tokenizer_manager.register("property_tokenizer", tokenizers.property_tokenizer);
         } //to please the borrow checker
         Ok(Self {
             writer: Mutex::new(Some(
@@ -98,17 +97,16 @@ impl Searcher {
         })
     }
 
-    pub fn open(path: &dyn AsRef<Path>) -> Result<Self> {
+    pub fn open(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
         let mut index =
             Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?)
                 .map_err(|_| SearcherError::IndexOpeningError)?;
 
         {
-            let config = &CONFIG.search_tokenizers;
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("tag_tokenizer", config.tag_tokenizer);
-            tokenizer_manager.register("content_tokenizer", config.content_tokenizer);
-            tokenizer_manager.register("property_tokenizer", config.property_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", tokenizers.tag_tokenizer);
+            tokenizer_manager.register("content_tokenizer", tokenizers.content_tokenizer);
+            tokenizer_manager.register("property_tokenizer", tokenizers.property_tokenizer);
         } //to please the borrow checker
         let writer = index
             .writer(50_000_000)
