@@ -3,7 +3,7 @@ mod searcher;
 mod tokenizer;
 pub use self::query::PlumeQuery as Query;
 pub use self::searcher::*;
-pub use self::tokenizer::SearchTokenizer;
+pub use self::tokenizer::TokenizerKind;
 
 #[cfg(test)]
 pub(crate) mod tests {

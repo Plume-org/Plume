@@ -3,16 +3,16 @@ use std::str::CharIndices;
 use tantivy::tokenizer::*;
 
 #[derive(Clone, Copy)]
-pub enum SearchTokenizer {
+pub enum TokenizerKind {
     Simple,
     Ngram,
     Whitespace,
     Lindera,
 }
 
-impl From<SearchTokenizer> for TextAnalyzer {
-    fn from(tokenizer: SearchTokenizer) -> TextAnalyzer {
-        use SearchTokenizer::*;
+impl From<TokenizerKind> for TextAnalyzer {
+    fn from(tokenizer: TokenizerKind) -> TextAnalyzer {
+        use TokenizerKind::*;
 
         match tokenizer {
             Simple => TextAnalyzer::from(SimpleTokenizer)

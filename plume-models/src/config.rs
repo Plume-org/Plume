@@ -1,4 +1,4 @@
-use crate::search::SearchTokenizer;
+use crate::search::TokenizerKind as SearchTokenizer;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::env::{self, var};
