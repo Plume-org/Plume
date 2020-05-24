@@ -277,7 +277,10 @@ pub async fn followers(
     let conn = &*rockets.conn;
     let page = page.unwrap_or_default();
     let user: User = User::find_by_fqn(&rockets, &name).await?;
-    let followers_count = user.count_followers(&conn);
+    let followers_count = match user.count_followers(&conn) {
+        Ok(num) => num,
+        Err(_) => 0,
+    };
 
     Ok(render!(users::followers(
         &rockets.to_context(),

@@ -401,7 +401,7 @@ pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<form>")]
-pub fn create(
+pub async fn create(
     blog_name: String,
     form: LenientForm<NewPostForm>,
     cl: ContentLen,
