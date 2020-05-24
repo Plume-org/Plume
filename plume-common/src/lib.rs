@@ -2,9 +2,7 @@
 
 #[macro_use]
 extern crate activitystreams_derive;
-use activitystreams_traits;
 
-use serde;
 #[macro_use]
 extern crate shrinkwraprs;
 #[macro_use]
