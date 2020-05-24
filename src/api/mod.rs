@@ -64,7 +64,6 @@ pub struct OAuthRequest {
 }
 
 #[get("/oauth2?<query..>")]
-#[rocket::async_trait(?Send)]
 pub async fn oauth(
     query: Form<OAuthRequest>,
     rockets: PlumeRocket,
