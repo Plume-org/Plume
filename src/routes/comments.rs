@@ -178,7 +178,7 @@ pub fn delete(
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]
-pub fn activity_pub(
+pub async fn activity_pub(
     _blog: String,
     _slug: String,
     id: i32,

@@ -33,7 +33,7 @@ use plume_models::{
 };
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
-pub fn details(
+pub async fn details(
     blog: String,
     slug: String,
     responding_to: Option<i32>,
@@ -41,7 +41,7 @@ pub fn details(
 ) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
     let user = rockets.user.clone();
-    let blog = Blog::find_by_fqn(&rockets, &blog)?;
+    let blog = Blog::find_by_fqn(&rockets, &blog).await?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id)?;
     if !(post.published
         || post
@@ -99,14 +99,14 @@ pub fn details(
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-pub fn activity_details(
+pub async fn activity_details(
     blog: String,
     slug: String,
     _ap: ApRequest,
     rockets: PlumeRocket,
 ) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &blog).map_err(|_| None)?;
+    let blog = Blog::find_by_fqn(&rockets, &blog).await.map_err(|_| None)?;
     let post = Post::find_by_slug(&*conn, &slug, blog.id).map_err(|_| None)?;
     if post.published {
         Ok(ActivityStream::new(
@@ -130,9 +130,9 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-pub fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub async fn new(blog: String, cl: ContentLen, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let conn = &*rockets.conn;
-    let b = Blog::find_by_fqn(&rockets, &blog)?;
+    let b = Blog::find_by_fqn(&rockets, &blog).await?;
     let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&*conn, &b)? {
@@ -408,7 +408,9 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, ErrorPage> {
     let conn = &*rockets.conn;
-    let blog = Blog::find_by_fqn(&rockets, &blog_name).expect("post::create: blog error");
+    let blog = Blog::find_by_fqn(&rockets, &blog_name)
+        .await
+        .expect("post::create: blog error");
     let slug = form.title.to_string().to_kebab_case();
     let user = rockets.user.clone().unwrap();
 
@@ -522,6 +524,7 @@ pub fn create(
                 Mention::from_activity(
                     &*conn,
                     &Mention::build_activity(&rockets, &m)
+                        .await
                         .expect("post::create: mention build error"),
                     post.id,
                     true,
@@ -564,7 +567,7 @@ pub fn create(
 }
 
 #[post("/~/<blog_name>/<slug>/delete")]
-pub fn delete(
+pub async fn delete(
     blog_name: String,
     slug: String,
     rockets: PlumeRocket,
@@ -572,6 +575,7 @@ pub fn delete(
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let user = rockets.user.clone().unwrap();
     let post = Blog::find_by_fqn(&rockets, &blog_name)
+        .await
         .and_then(|blog| Post::find_by_slug(&*rockets.conn, &slug, blog.id));
 
     if let Ok(post) = post {

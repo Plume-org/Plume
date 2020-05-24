@@ -387,17 +387,21 @@ fn ban(
 }
 
 #[post("/inbox", data = "<data>")]
-pub fn shared_inbox(
+pub async fn shared_inbox(
     rockets: PlumeRocket,
     data: inbox::SignedJson<serde_json::Value>,
     headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    inbox::handle_incoming(rockets, data, headers)
+    inbox::handle_incoming(rockets, data, headers).await
 }
 
 #[get("/remote_interact?<target>")]
-pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Option<Redirect> {
-    if User::find_by_fqn(&rockets, &target).is_ok() {
+pub async fn interact(
+    rockets: PlumeRocket,
+    user: Option<User>,
+    target: String,
+) -> Option<Redirect> {
+    if User::find_by_fqn(&rockets, &target).await.is_ok() {
         return Some(Redirect::to(uri!(super::user::details: name = target)));
     }
 
