@@ -455,12 +455,12 @@ pub async fn delete(
 #[derive(Default, FromForm, Validate)]
 #[validate(schema(
     function = "passwords_match",
-    skip_on_field_errors = "false",
+    skip_on_field_errors = false,
     message = "Passwords are not matching"
 ))]
 pub struct NewUserForm {
     #[validate(
-        length(min = "1", message = "Username can't be empty"),
+        length(min = 1, message = "Username can't be empty"),
         custom(
             function = "validate_username",
             message = "User name is not allowed to contain any of < > & @ ' or \""
@@ -469,9 +469,9 @@ pub struct NewUserForm {
     pub username: String,
     #[validate(email(message = "Invalid email"))]
     pub email: String,
-    #[validate(length(min = "8", message = "Password should be at least 8 characters long"))]
+    #[validate(length(min = 8, message = "Password should be at least 8 characters long"))]
     pub password: String,
-    #[validate(length(min = "8", message = "Password should be at least 8 characters long"))]
+    #[validate(length(min = 8, message = "Password should be at least 8 characters long"))]
     pub password_confirmation: String,
 }
 

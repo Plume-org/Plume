@@ -9,6 +9,7 @@ extern crate rocket;
 extern crate serde_json;
 #[macro_use]
 extern crate validator_derive;
+extern crate validator;
 
 use clap::App;
 use diesel::r2d2::ConnectionManager;

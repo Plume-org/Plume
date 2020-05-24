@@ -31,8 +31,8 @@ serde_qs = "0.5"
 shrinkwraprs = "0.2.1"
 syntect = "3.3"
 tokio = "0.2"
-validator = "0.8"
-validator_derive = "0.8"
+validator = "0.10"
+validator_derive = "0.10"
 webfinger = { git = "https://github.com/Plume-org/webfinger", rev = "4e8f12810c4a7ba7a07bbcb722cd265fdff512b6", features = ["async"] }
 
 [[bin]]
