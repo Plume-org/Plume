@@ -40,8 +40,8 @@ pub async fn create(
         .await
         .expect("comments::create: blog error");
     let post = Post::find_by_slug(&*conn, &slug, blog.id).expect("comments::create: post error");
-    form.validate()
-        .map(|_| {
+    match form.validate() {
+        Ok(_ok) => {
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
                 Some(
@@ -94,14 +94,14 @@ pub async fn create(
                 .worker
                 .execute(move || broadcast(&user_clone, new_comment, dest));
 
-            Flash::success(
+            return Ok(Flash::success(
                 Redirect::to(
                     uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
                 ),
                 i18n!(&rockets.intl.catalog, "Your comment has been posted."),
-            )
-        })
-        .map_err(|errors| {
+            ));
+        }
+        Err(errors) => {
             // TODO: de-duplicate this code
             let comments = CommentTree::from_post(&*conn, &post, Some(&user))
                 .expect("comments::create: comments error");
@@ -110,7 +110,7 @@ pub async fn create(
                 .responding_to
                 .and_then(|r| Comment::get(&*conn, r).ok());
 
-            render!(posts::details(
+            return Err(render!(posts::details(
                 &rockets.to_context(),
                 post.clone(),
                 blog,
@@ -137,8 +137,9 @@ pub async fn create(
                 post.get_authors(&*conn)
                     .expect("comments::create: authors error")[0]
                     .clone()
-            ))
-        })
+            )));
+        }
+    }
 }
 
 #[post("/~/<blog>/<slug>/comment/<id>/delete")]
