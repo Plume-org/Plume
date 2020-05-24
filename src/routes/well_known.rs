@@ -69,9 +69,9 @@ impl AsyncResolver for WebfingerResolver {
             Prefix::Custom(_) => Err(ResolverError::NotFound),
         }
     }
-    async fn endpoint(
+    async fn endpoint<R: Into<String> + Send>(
         &self,
-        resource: impl Into<String> + 'async_trait,
+        resource: R,
         resource_repo: PlumeRocket,
     ) -> Result<Webfinger, ResolverError> {
         let resource = resource.into();
@@ -82,10 +82,8 @@ impl AsyncResolver for WebfingerResolver {
         let mut parsed_res = res.splitn(2, '@');
         let user = parsed_res.next().ok_or(ResolverError::InvalidResource)?;
         let domain = parsed_res.next().ok_or(ResolverError::InvalidResource)?;
-        if domain == webfinger.instance_domain() {
-            webfinger
-                .find(res_prefix, user.to_string(), resource_repo)
-                .await
+        if domain == self.instance_domain().await {
+            self.find(res_prefix, user.to_string(), resource_repo).await
         } else {
             Err(ResolverError::WrongDomain)
         }
@@ -94,7 +92,9 @@ impl AsyncResolver for WebfingerResolver {
 
 #[get("/.well-known/webfinger?<resource>")]
 pub async fn webfinger(resource: String, rockets: PlumeRocket) -> Content<String> {
-    match WebfingerResolver::endpoint(resource, rockets)
+    let wf_resolver = WebfingerResolver;
+    match wf_resolver
+        .endpoint(resource, rockets)
         .await
         .and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound))
     {
