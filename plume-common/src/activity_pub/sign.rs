@@ -1,10 +1,7 @@
 use super::request;
-use base64;
 use chrono::{naive::NaiveDateTime, DateTime, Duration, Utc};
-use hex;
 use openssl::{pkey::PKey, rsa::Rsa, sha::sha256};
 use rocket::http::HeaderMap;
-use serde_json;
 
 /// Returns (public key, private key)
 pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {

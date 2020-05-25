@@ -11,7 +11,6 @@ use activitypub::{
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
-use bcrypt;
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use openssl::{
@@ -37,7 +36,6 @@ use rocket::{
     outcome::IntoOutcome,
     request::{self, FromRequest, Request},
 };
-use serde_json;
 use std::{
     cmp::PartialEq,
     hash::{Hash, Hasher},

@@ -7,7 +7,6 @@ use rocket::{
     response::{Responder, Response, Result},
     Outcome,
 };
-use serde_json;
 
 use self::sign::Signable;
 

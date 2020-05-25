@@ -7,8 +7,8 @@ use crate::{
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use std::convert::{TryFrom, TryInto};
 
-/// Represent what a list is supposed to store. Represented in database as an integer
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+/// Represent what a list is supposed to store. Represented in database as an integer
 pub enum ListType {
     User,
     Blog,
