@@ -94,12 +94,12 @@ pub async fn create(
                 .worker
                 .execute(move || broadcast(&user_clone, new_comment, dest));
 
-            return Ok(Flash::success(
+            Ok(Flash::success(
                 Redirect::to(
                     uri!(super::posts::details: blog = blog_name, slug = slug, responding_to = _),
                 ),
                 i18n!(&rockets.intl.catalog, "Your comment has been posted."),
-            ));
+            ))
         }
         Err(errors) => {
             // TODO: de-duplicate this code
@@ -110,7 +110,7 @@ pub async fn create(
                 .responding_to
                 .and_then(|r| Comment::get(&*conn, r).ok());
 
-            return Err(render!(posts::details(
+            Err(render!(posts::details(
                 &rockets.to_context(),
                 post.clone(),
                 blog,
@@ -137,7 +137,7 @@ pub async fn create(
                 post.get_authors(&*conn)
                     .expect("comments::create: authors error")[0]
                     .clone()
-            )));
+            )))
         }
     }
 }
