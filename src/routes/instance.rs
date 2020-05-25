@@ -5,7 +5,6 @@ use rocket::{
 use rocket_contrib::json::Json;
 use rocket_i18n::I18n;
 use scheduled_thread_pool::ScheduledThreadPool;
-use serde_json;
 use std::path::PathBuf;
 use std::str::FromStr;
 use validator::{Validate, ValidationErrors};
