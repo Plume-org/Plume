@@ -58,7 +58,11 @@ struct NewList<'a> {
 }
 
 macro_rules! func {
-    (@elem User $id:expr, $value:expr) => {
+    (
+        $(#[$outer:meta])*
+        @elem User $id:expr, $value:expr
+    ) => {
+        $(#[$outer])*
         NewListElem {
             list_id: $id,
             user_id: Some(*$value),
@@ -66,7 +70,11 @@ macro_rules! func {
             word: None,
         }
     };
-    (@elem Blog $id:expr, $value:expr) => {
+    (
+        $(#[$outer:meta])*
+        @elem Blog $id:expr, $value:expr
+    ) => {
+        $(#[$outer])*
         NewListElem {
             list_id: $id,
             user_id: None,
@@ -74,7 +82,11 @@ macro_rules! func {
             word: None,
         }
     };
-    (@elem Word $id:expr, $value:expr) => {
+    (
+        $(#[$outer:meta])*
+        @elem Word $id:expr, $value:expr
+    ) => {
+        $(#[$outer])*
         NewListElem {
             list_id: $id,
             user_id: None,
@@ -82,7 +94,11 @@ macro_rules! func {
             word: Some($value),
         }
     };
-    (@elem Prefix $id:expr, $value:expr) => {
+    (
+        $(#[$outer:meta])*
+        @elem Prefix $id:expr, $value:expr
+    ) => {
+        $(#[$outer])*
         NewListElem {
             list_id: $id,
             user_id: None,
@@ -99,7 +115,11 @@ macro_rules! func {
     (@out_type Word) => { String };
     (@out_type Prefix) => { String };
 
-    (add: $fn:ident, $kind:ident) => {
+    (
+        $(#[$outer:meta])*
+        add: $fn:ident, $kind:ident
+    ) => {
+        $(#[$outer])*
         pub fn $fn(&self, conn: &Connection, vals: &[func!(@in_type $kind)]) -> Result<()> {
             if self.kind() != ListType::$kind {
                 return Err(Error::InvalidValue);
@@ -116,7 +136,11 @@ macro_rules! func {
         }
     };
 
-    (list: $fn:ident, $kind:ident, $table:ident) => {
+    (
+        $(#[$outer:meta])*
+        list: $fn:ident, $kind:ident, $table:ident
+    ) => {
+        $(#[$outer])*
         pub fn $fn(&self, conn: &Connection) -> Result<Vec<func!(@out_type $kind)>> {
             if self.kind() != ListType::$kind {
                 return Err(Error::InvalidValue);
@@ -132,7 +156,11 @@ macro_rules! func {
 
 
 
-    (set: $fn:ident, $kind:ident, $add:ident) => {
+    (
+        $(#[$outer:meta])*
+        set: $fn:ident, $kind:ident, $add:ident
+    ) => {
+        $(#[$outer])*
         pub fn $fn(&self, conn: &Connection, val: &[func!(@in_type $kind)]) -> Result<()> {
             if self.kind() != ListType::$kind {
                 return Err(Error::InvalidValue);
@@ -246,23 +274,35 @@ impl List {
         private::ListElem::prefix_in_list(conn, self, word)
     }
 
-    /// Insert new users in a list
-    func! {add: add_users, User}
+    func! {
+        /// Insert new users in a list
+        add: add_users, User
+    }
 
-    /// Insert new blogs in a list
-    func! {add: add_blogs, Blog}
+    func! {
+        /// Insert new blogs in a list
+        add: add_blogs, Blog
+    }
 
-    /// Insert new words in a list
-    func! {add: add_words, Word}
+    func! {
+        /// Insert new words in a list
+        add: add_words, Word
+    }
 
-    /// Insert new prefixes in a list
-    func! {add: add_prefixes, Prefix}
+    func! {
+        /// Insert new prefixes in a list
+        add: add_prefixes, Prefix
+    }
 
-    /// Get all users in the list
-    func! {list: list_users, User, users}
+    func! {
+        /// Get all users in the list
+        list: list_users, User, users
+    }
 
-    /// Get all blogs in the list
-    func! {list: list_blogs, Blog, blogs}
+    func! {
+        /// Get all blogs in the list
+        list: list_blogs, Blog, blogs
+    }
 
     /// Get all words in the list
     pub fn list_words(&self, conn: &Connection) -> Result<Vec<String>> {
