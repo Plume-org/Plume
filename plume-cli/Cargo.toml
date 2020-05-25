@@ -23,3 +23,4 @@ path = "../plume-models"
 [features]
 postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
+search-lindera = ["plume-models/search-lindera"]

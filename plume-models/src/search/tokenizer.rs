@@ -1,3 +1,4 @@
+#[cfg(feature = "search-lindera")]
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 use std::str::CharIndices;
 use tantivy::tokenizer::*;
@@ -7,6 +8,7 @@ pub enum TokenizerKind {
     Simple,
     Ngram,
     Whitespace,
+    #[cfg(feature = "search-lindera")]
     Lindera,
 }
 
@@ -20,6 +22,7 @@ impl From<TokenizerKind> for TextAnalyzer {
                 .filter(LowerCaser),
             Ngram => TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser),
             Whitespace => TextAnalyzer::from(WhitespaceTokenizer).filter(LowerCaser),
+            #[cfg(feature = "search-lindera")]
             Lindera => {
                 TextAnalyzer::from(LinderaTokenizer::new("decompose", "")).filter(LowerCaser)
             }

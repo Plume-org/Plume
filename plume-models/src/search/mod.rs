@@ -183,6 +183,7 @@ pub(crate) mod tests {
         });
     }
 
+    #[cfg(feature = "search-lindera")]
     #[test]
     fn search_japanese() {
         let conn = &db();
