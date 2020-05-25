@@ -554,12 +554,11 @@ impl FromId<PlumeRocket> for Post {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Self::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, article: LicensedArticle) -> Result<Self> {
-        let conn = &*c.conn;
+    fn from_activity(c: &mut PlumeRocket, article: LicensedArticle) -> Result<Self> {
         let searcher = &c.searcher;
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
@@ -570,12 +569,12 @@ impl FromId<PlumeRocket> for Post {
             .into_iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
                 let url = link;
-                match User::from_id(&c, &url, None) {
+                match User::from_id(&mut c, &url, None) {
                     Ok(u) => {
                         authors.push(u);
                         (blog, authors)
                     }
-                    Err(_) => (blog.or_else(|| Blog::from_id(&c, &url, None).ok()), authors),
+                    Err(_) => (blog.or_else(|| Blog::from_id(&mut c, &url, None).ok()), authors),
                 }
             });
 
@@ -583,11 +582,11 @@ impl FromId<PlumeRocket> for Post {
 
         let mut r = Runtime::new().unwrap();
         let cover =
-            Some(r.block_on(async { Media::from_activity(&c, &image).await.ok().unwrap().id }));
+            Some(r.block_on(async { Media::from_activity(&mut c, &image).await.ok().unwrap().id }));
 
         let title = article.object_props.name_string()?;
         let post = Post::insert(
-            conn,
+            &mut c.conn,
             NewPost {
                 blog_id: blog?.id,
                 slug: title.to_kebab_case(),
@@ -610,7 +609,7 @@ impl FromId<PlumeRocket> for Post {
 
         for author in authors {
             PostAuthor::insert(
-                conn,
+                &mut c.conn,
                 NewPostAuthor {
                     post_id: post.id,
                     author_id: author.id,
@@ -627,7 +626,7 @@ impl FromId<PlumeRocket> for Post {
         if let Some(serde_json::Value::Array(tags)) = article.object_props.tag {
             for tag in tags {
                 serde_json::from_value::<link::Mention>(tag.clone())
-                    .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
+                    .map(|m| Mention::from_activity(&mut c.conn, &m, post.id, true, true))
                     .ok();
 
                 serde_json::from_value::<Hashtag>(tag.clone())
@@ -635,7 +634,7 @@ impl FromId<PlumeRocket> for Post {
                     .and_then(|t| {
                         let tag_name = t.name_string()?;
                         Ok(Tag::from_activity(
-                            conn,
+                            &mut c.conn,
                             &t,
                             post.id,
                             hashtags.remove(&tag_name),
@@ -651,21 +650,21 @@ impl FromId<PlumeRocket> for Post {
     }
 }
 
-impl AsObject<User, Create, &PlumeRocket> for Post {
+impl AsObject<User, Create, &mut PlumeRocket> for Post {
     type Error = Error;
     type Output = Post;
 
-    fn activity(self, _c: &PlumeRocket, _actor: User, _id: &str) -> Result<Post> {
+    fn activity(self, _c: &mut PlumeRocket, _actor: User, _id: &str) -> Result<Post> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for Post {
+impl AsObject<User, Delete, &mut PlumeRocket> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let can_delete = self
             .get_authors(&c.conn)?
             .into_iter()
@@ -693,12 +692,12 @@ impl FromId<PlumeRocket> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(_: &PlumeRocket, _: &str) -> Result<Self> {
+    fn from_db(_: &mut PlumeRocket, _: &str) -> Result<Self> {
         // Always fail because we always want to deserialize the AP object
         Err(Error::NotFound)
     }
 
-    fn from_activity(c: &PlumeRocket, updated: LicensedArticle) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, updated: LicensedArticle) -> Result<Self> {
         let image = updated
             .object
             .object_props
@@ -707,7 +706,7 @@ impl FromId<PlumeRocket> for PostUpdate {
             .unwrap();
         let mut r = Runtime::new().unwrap();
         let cover =
-            Some(r.block_on(async { Media::from_activity(&c, &image).await.ok().unwrap().id }));
+            Some(r.block_on(async { Media::from_activity(&mut c, &image).await.ok().unwrap().id }));
 
         Ok(PostUpdate {
             ap_url: updated.object.object_props.id_string()?,
@@ -727,11 +726,11 @@ impl FromId<PlumeRocket> for PostUpdate {
     }
 }
 
-impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
+impl AsObject<User, Update, &mut PlumeRocket> for PostUpdate {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
         let searcher = &c.searcher;
         let mut post = Post::from_id(c, &self.ap_url, None).map_err(|(_, e)| e)?;

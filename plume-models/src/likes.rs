@@ -83,11 +83,11 @@ impl Like {
     }
 }
 
-impl AsObject<User, activity::Like, &PlumeRocket> for Post {
+impl AsObject<User, activity::Like, &mut PlumeRocket> for Post {
     type Error = Error;
     type Output = Like;
 
-    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Like> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             &c.conn,
             NewLike {
@@ -107,11 +107,11 @@ impl FromId<PlumeRocket> for Like {
     type Error = Error;
     type Object = activity::Like;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Like::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, act: activity::Like) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, act: activity::Like) -> Result<Self> {
         let res = Like::insert(
             &c.conn,
             NewLike {
@@ -129,11 +129,11 @@ impl FromId<PlumeRocket> for Like {
     }
 }
 
-impl AsObject<User, activity::Undo, &PlumeRocket> for Like {
+impl AsObject<User, activity::Undo, &mut PlumeRocket> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
         if actor.id == self.user_id {
             diesel::delete(&self).execute(conn)?;

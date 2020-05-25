@@ -136,11 +136,11 @@ impl Follow {
     }
 }
 
-impl AsObject<User, FollowAct, &PlumeRocket> for User {
+impl AsObject<User, FollowAct, &mut PlumeRocket> for User {
     type Error = Error;
     type Output = Follow;
 
-    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Follow> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
         let mut follow = FollowAct::default();
@@ -156,11 +156,11 @@ impl FromId<PlumeRocket> for Follow {
     type Error = Error;
     type Object = FollowAct;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Follow::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, follow: FollowAct) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, follow: FollowAct) -> Result<Self> {
         let actor =
             User::from_id(c, &follow.follow_props.actor_link::<Id>()?, None).map_err(|(_, e)| e)?;
 
@@ -170,11 +170,11 @@ impl FromId<PlumeRocket> for Follow {
     }
 }
 
-impl AsObject<User, Undo, &PlumeRocket> for Follow {
+impl AsObject<User, Undo, &mut PlumeRocket> for Follow {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
         if self.follower_id == actor.id {
             diesel::delete(&self).execute(conn)?;

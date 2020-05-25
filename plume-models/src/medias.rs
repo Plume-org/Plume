@@ -197,8 +197,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub async fn from_activity(c: &PlumeRocket, image: &Image) -> Result<Media> {
-        let conn = &*c.conn;
+    pub async fn from_activity(c: &mut PlumeRocket, image: &Image) -> Result<Media> {
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
             .rsplit('.')
@@ -215,8 +214,22 @@ impl Media {
         let contents = reqwest::get(remote_url.as_str()).await?.bytes().await?;
         dest.write_all(&contents).await?;
 
+        let owner_id = User::from_id(
+            c,
+            image
+                .object_props
+                .attributed_to_link_vec::<Id>()
+                .ok()?
+                .into_iter()
+                .next()?
+                .as_ref(),
+            None,
+        )
+        .map_err(|(_, e)| e)?
+        .id;
+
         Media::insert(
-            conn,
+            &mut c.conn,
             NewMedia {
                 file_path: path.to_str()?.to_string(),
                 alt_text: image.object_props.content_string().ok()?,
@@ -224,19 +237,7 @@ impl Media {
                 remote_url: None,
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),
-                owner_id: User::from_id(
-                    c,
-                    image
-                        .object_props
-                        .attributed_to_link_vec::<Id>()
-                        .ok()?
-                        .into_iter()
-                        .next()?
-                        .as_ref(),
-                    None,
-                )
-                .map_err(|(_, e)| e)?
-                .id,
+                owner_id
             },
         )
     }

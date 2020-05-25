@@ -45,7 +45,7 @@ impl_into_inbox_result! {
     Reshare => Reshared
 }
 
-pub fn inbox(ctx: &PlumeRocket, act: serde_json::Value) -> Result<InboxResult, Error> {
+pub fn inbox(ctx: &mut PlumeRocket, act: serde_json::Value) -> Result<InboxResult, Error> {
     Inbox::handle(ctx, act)
         .with::<User, Announce, Post>()
         .with::<User, Create, Comment>()
@@ -72,7 +72,7 @@ pub(crate) mod tests {
     use diesel::Connection;
 
     pub fn fill_database(
-        rockets: &PlumeRocket,
+        rockets: &mut PlumeRocket,
     ) -> (
         Vec<crate::posts::Post>,
         Vec<crate::users::User>,
