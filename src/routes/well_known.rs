@@ -1,7 +1,5 @@
-use async_trait;
 use rocket::http::ContentType;
 use rocket::response::Content;
-use serde_json;
 use webfinger::*;
 
 use plume_models::{ap_url, blogs::Blog, users::User, PlumeRocket, CONFIG};
