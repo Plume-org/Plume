@@ -27,9 +27,9 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
 
     async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         match DbConn::from_request(request).await {
-            Outcome::Success(a) => return Outcome::Success(a),
-            _ => return Outcome::Failure((Status::ServiceUnavailable, ())),
-        };
+            Outcome::Success(a) => Outcome::Success(a),
+            _ => Outcome::Failure((Status::ServiceUnavailable, ())),
+        }
     }
 }
 
