@@ -17,7 +17,6 @@ use activitypub::{
 };
 use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
-use futures::stream::{self, StreamExt};
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
@@ -131,12 +130,16 @@ impl Comment {
             .set_published_string(chrono::Utc::now().to_rfc3339())?;
         note.object_props.set_attributed_to_link(author.into_id())?;
         note.object_props.set_to_link_vec(to)?;
-        note.object_props.set_tag_link_vec(
-            stream::iter(mentions)
-                .filter_map(|m| async move { Mention::build_activity(c, &m).await.ok() })
-                .collect::<Vec<link::Mention>>()
-                .await,
-        )?;
+
+        let mut tag_link_vec = vec![];
+        let mut iter = mentions.into_iter();
+        while let Some(m) = iter.next() {
+            if let Ok(a) = Mention::build_activity(c, &m).await {
+                tag_link_vec.push(a);
+            }
+        }
+        note.object_props.set_tag_link_vec(tag_link_vec)?;
+
         Ok(note)
     }
 
