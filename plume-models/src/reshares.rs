@@ -107,11 +107,11 @@ impl Reshare {
     }
 }
 
-impl AsObject<User, Announce, &PlumeRocket> for Post {
+impl AsObject<User, Announce, &mut PlumeRocket> for Post {
     type Error = Error;
     type Output = Reshare;
 
-    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Reshare> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, id: &str) -> Result<Reshare> {
         let conn = &*c.conn;
         let reshare = Reshare::insert(
             conn,
@@ -132,11 +132,11 @@ impl FromId<PlumeRocket> for Reshare {
     type Error = Error;
     type Object = Announce;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Reshare::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, act: Announce) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, act: Announce) -> Result<Self> {
         let res = Reshare::insert(
             &c.conn,
             NewReshare {
@@ -154,11 +154,11 @@ impl FromId<PlumeRocket> for Reshare {
     }
 }
 
-impl AsObject<User, Undo, &PlumeRocket> for Reshare {
+impl AsObject<User, Undo, &mut PlumeRocket> for Reshare {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
         if actor.id == self.user_id {
             diesel::delete(&self).execute(conn)?;

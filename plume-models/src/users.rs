@@ -189,7 +189,7 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub async fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
+    pub async fn find_by_fqn(c: &mut PlumeRocket, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
             .first(&*c.conn)
@@ -201,7 +201,7 @@ impl User {
         }
     }
 
-    async fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
+    async fn fetch_from_webfinger(c: &mut PlumeRocket, acct: &str) -> Result<User> {
         let link = resolve(acct.to_owned(), true)
             .await?
             .links
@@ -245,7 +245,7 @@ impl User {
         Ok(json)
     }
 
-    pub async fn fetch_from_url(c: &PlumeRocket, url: &str) -> Result<User> {
+    pub async fn fetch_from_url(c: &mut PlumeRocket, url: &str) -> Result<User> {
         let json = User::fetch(url).await?;
         User::from_activity(c, json)
     }
@@ -821,11 +821,11 @@ impl FromId<PlumeRocket> for User {
     type Error = Error;
     type Object = CustomPerson;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Self::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, acct: CustomPerson) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, acct: CustomPerson) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
         let inst = url.host_str()?;
         let instance = Instance::find_by_domain(&c.conn, inst).or_else(|_| {
@@ -917,7 +917,7 @@ impl FromId<PlumeRocket> for User {
     }
 }
 
-impl AsActor<&PlumeRocket> for User {
+impl AsActor<&mut PlumeRocket> for User {
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
@@ -933,11 +933,11 @@ impl AsActor<&PlumeRocket> for User {
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for User {
+impl AsObject<User, Delete, &mut PlumeRocket> for User {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
             self.delete(&c.conn, &c.searcher).map(|_| ())
         } else {

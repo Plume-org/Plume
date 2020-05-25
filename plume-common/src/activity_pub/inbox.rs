@@ -86,7 +86,7 @@ where
     /// - the context to be passed to each handler.
     /// - the activity
     /// - the reason it has not been handled yet
-    NotHandled(&'a C, serde_json::Value, InboxError<E>),
+    NotHandled(&'a mut C, serde_json::Value, InboxError<E>),
 
     /// A matching handler have been found but failed
     ///
@@ -139,16 +139,16 @@ where
     ///
     /// - `ctx`: the context to pass to each handler
     /// - `json`: the JSON representation of the incoming activity
-    pub fn handle(ctx: &'a C, json: serde_json::Value) -> Inbox<'a, C, E, R> {
+    pub fn handle(ctx: &'a mut C, json: serde_json::Value) -> Inbox<'a, C, E, R> {
         Inbox::NotHandled(ctx, json, InboxError::NoMatch)
     }
 
     /// Registers an handler on this Inbox.
     pub fn with<A, V, M>(self) -> Inbox<'a, C, E, R>
     where
-        A: AsActor<&'a C> + FromId<C, Error = E>,
+        A: AsActor<&'a mut C> + FromId<C, Error = E>,
         V: activitypub::Activity,
-        M: AsObject<A, V, &'a C, Error = E> + FromId<C, Error = E>,
+        M: AsObject<A, V, &'a mut C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
         if let Inbox::NotHandled(ctx, mut act, e) = self {
@@ -264,7 +264,7 @@ pub trait FromId<C>: Sized {
     /// - `object`: optional object that will be used if the object was not found in the database
     ///   If absent, the ID will be dereferenced.
     fn from_id(
-        ctx: &C,
+        ctx: &mut C,
         id: &str,
         object: Option<Self::Object>,
     ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
@@ -308,10 +308,10 @@ pub trait FromId<C>: Sized {
     }
 
     /// Builds a `Self` from its ActivityPub representation
-    fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
+    fn from_activity(ctx: &mut C, activity: Self::Object) -> Result<Self, Self::Error>;
 
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
-    fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+    fn from_db(ctx: &mut C, id: &str) -> Result<Self, Self::Error>;
 }
 
 /// Should be implemented by anything representing an ActivityPub actor.

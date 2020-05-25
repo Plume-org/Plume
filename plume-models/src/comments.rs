@@ -105,7 +105,7 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub async fn to_activity(&self, c: &PlumeRocket) -> Result<Note> {
+    pub async fn to_activity(&self, c: &mut PlumeRocket) -> Result<Note> {
         let author = User::get(&c.conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
@@ -140,7 +140,7 @@ impl Comment {
         Ok(note)
     }
 
-    pub async fn create_activity(&self, c: &PlumeRocket) -> Result<Create> {
+    pub async fn create_activity(&self, c: &mut PlumeRocket) -> Result<Create> {
         let author = User::get(&c.conn, self.author_id)?;
 
         let note = self.to_activity(c).await?;
@@ -198,11 +198,11 @@ impl FromId<PlumeRocket> for Comment {
     type Error = Error;
     type Object = Note;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Self::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, note: Note) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, note: Note) -> Result<Self> {
         let conn = &*c.conn;
         let comm = {
             let previous_url = note.object_props.in_reply_to.as_ref()?.as_str()?;
@@ -322,21 +322,21 @@ impl FromId<PlumeRocket> for Comment {
     }
 }
 
-impl AsObject<User, Create, &PlumeRocket> for Comment {
+impl AsObject<User, Create, &mut PlumeRocket> for Comment {
     type Error = Error;
     type Output = Self;
 
-    fn activity(self, _c: &PlumeRocket, _actor: User, _id: &str) -> Result<Self> {
+    fn activity(self, _c: &mut PlumeRocket, _actor: User, _id: &str) -> Result<Self> {
         // The actual creation takes place in the FromId impl
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for Comment {
+impl AsObject<User, Delete, &mut PlumeRocket> for Comment {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, c: &mut PlumeRocket, actor: User, _id: &str) -> Result<()> {
         if self.author_id != actor.id {
             return Err(Error::Unauthorized);
         }

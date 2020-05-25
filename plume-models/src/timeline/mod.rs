@@ -208,7 +208,7 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(rocket: &PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<()> {
+    pub fn add_to_all_timelines(rocket: &mut PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<()> {
         let timelines = timeline_definition::table
             .load::<Self>(rocket.conn.deref())
             .map_err(Error::from)?;
@@ -231,7 +231,7 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn matches(&self, rocket: &PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<bool> {
+    pub fn matches(&self, rocket: &mut PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
         query.matches(rocket, self, post, kind)
     }

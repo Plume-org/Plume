@@ -132,7 +132,7 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub async fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
+    pub async fn find_by_fqn(c: &mut PlumeRocket, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
             .first(&*c.conn)
@@ -144,7 +144,7 @@ impl Blog {
         }
     }
 
-    async fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
+    async fn fetch_from_webfinger(c: &mut PlumeRocket, acct: &str) -> Result<Blog> {
         resolve_with_prefix(Prefix::Group, acct.to_owned(), true)
             .await?
             .links
@@ -340,11 +340,11 @@ impl FromId<PlumeRocket> for Blog {
     type Error = Error;
     type Object = CustomGroup;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
+    fn from_db(c: &mut PlumeRocket, id: &str) -> Result<Self> {
         Self::find_by_ap_url(&c.conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, acct: CustomGroup) -> Result<Self> {
+    fn from_activity(c: &mut PlumeRocket, acct: CustomGroup) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
         let inst = url.host_str()?;
         let instance = Instance::find_by_domain(&c.conn, inst).or_else(|_| {
@@ -436,7 +436,7 @@ impl FromId<PlumeRocket> for Blog {
     }
 }
 
-impl AsActor<&PlumeRocket> for Blog {
+impl AsActor<&mut PlumeRocket> for Blog {
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
