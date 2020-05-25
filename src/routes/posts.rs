@@ -1,3 +1,4 @@
+use activitypub::link;
 use chrono::Utc;
 use heck::{CamelCase, KebabCase};
 use rocket::request::LenientForm;
@@ -303,14 +304,16 @@ pub async fn update(
                 .expect("post::update: update error");
 
             if post.published {
-                post.update_mentions(
-                    &conn,
-                    mentions
-                        .into_iter()
-                        .filter_map(|m| Mention::build_activity(&rockets, &m).await.ok())
-                        .collect(),
-                )
-                .expect("post::update: mentions error");
+                // NOTE: here we unroll a filter_map(), so we can use .await painlessly
+                let mut filtered_mentions: Vec<link::Mention> = vec![];
+                for m in mentions.into_iter() {
+                    match Mention::build_activity(&rockets, &m).await {
+                        Ok(m) => filtered_mentions.push(m),
+                        Err(_) => {}
+                    }
+                }
+                post.update_mentions(&conn, filtered_mentions)
+                    .expect("post::update: mentions error");
             }
 
             let tags = form
