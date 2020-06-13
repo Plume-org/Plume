@@ -203,7 +203,7 @@ impl SearchTokenizerConfig {
         match var("SEARCH_LANG").ok().as_deref() {
             Some("ja") => {
                 #[cfg(not(feature = "search-lindera"))]
-                panic!("You need build Plume with search-lindera feature, or execute it with SEARCH_TAG_TOKENIZER=bigran and SEARCH_CONTENT_TOKENIZER=bigran to enable Japanese search feature");
+                panic!("You need build Plume with search-lindera feature, or execute it with SEARCH_TAG_TOKENIZER=ngram and SEARCH_CONTENT_TOKENIZER=ngram to enable Japanese search feature");
                 #[cfg(feature = "search-lindera")]
                 Self {
                     tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Lindera),
