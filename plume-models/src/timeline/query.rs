@@ -406,8 +406,8 @@ impl Bool {
                 }
             }
             Bool::HasCover => Ok(post.cover_id.is_some()),
-            Bool::Local => Ok(post.get_blog(&rocket.conn)?.is_local()),
-            Bool::All => Ok(true),
+            Bool::Local => Ok(post.get_blog(&rocket.conn)?.is_local() && kind == Kind::Original),
+            Bool::All => Ok(kind == Kind::Original),
         }
     }
 }
