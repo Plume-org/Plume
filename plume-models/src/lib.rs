@@ -320,7 +320,7 @@ mod tests {
     pub fn rockets() -> super::PlumeRocket {
         super::PlumeRocket {
             conn: db_conn::DbConn((*DB_POOL).get().unwrap()),
-            searcher: Arc::new(search::tests::get_searcher()),
+            searcher: Arc::new(search::tests::get_searcher(&CONFIG.search_tokenizers)),
             worker: Arc::new(ScheduledThreadPool::new(2)),
             user: None,
         }

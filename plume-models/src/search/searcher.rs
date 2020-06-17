@@ -1,18 +1,14 @@
 use crate::{
-    instance::Instance,
-    posts::Post,
-    schema::posts,
-    search::{query::PlumeQuery, tokenizer},
-    tags::Tag,
-    Connection, Result,
+    config::SearchTokenizerConfig, instance::Instance, posts::Post, schema::posts,
+    search::query::PlumeQuery, tags::Tag, Connection, Result,
 };
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
 use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
 use tantivy::{
-    collector::TopDocs, directory::MmapDirectory, schema::*, tokenizer::*, Index, IndexReader,
-    IndexWriter, ReloadPolicy, Term,
+    collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
+    ReloadPolicy, Term,
 };
 use whatlang::{detect as detect_lang, Lang};
 
@@ -34,7 +30,7 @@ impl Searcher {
     pub fn schema() -> Schema {
         let tag_indexing = TextOptions::default().set_indexing_options(
             TextFieldIndexing::default()
-                .set_tokenizer("whitespace_tokenizer")
+                .set_tokenizer("tag_tokenizer")
                 .set_index_option(IndexRecordOption::Basic),
         );
 
@@ -70,17 +66,7 @@ impl Searcher {
         schema_builder.build()
     }
 
-    pub fn create(path: &dyn AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer =
-            TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser);
-
-        let content_tokenizer = TextAnalyzer::from(SimpleTokenizer)
-            .filter(RemoveLongFilter::limit(40))
-            .filter(LowerCaser);
-
-        let property_tokenizer =
-            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
-
+    pub fn create(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
         let schema = Self::schema();
 
         create_dir_all(path).map_err(|_| SearcherError::IndexCreationError)?;
@@ -92,9 +78,9 @@ impl Searcher {
 
         {
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("whitespace_tokenizer", whitespace_tokenizer);
-            tokenizer_manager.register("content_tokenizer", content_tokenizer);
-            tokenizer_manager.register("property_tokenizer", property_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", tokenizers.tag_tokenizer);
+            tokenizer_manager.register("content_tokenizer", tokenizers.content_tokenizer);
+            tokenizer_manager.register("property_tokenizer", tokenizers.property_tokenizer);
         } //to please the borrow checker
         Ok(Self {
             writer: Mutex::new(Some(
@@ -111,26 +97,16 @@ impl Searcher {
         })
     }
 
-    pub fn open(path: &dyn AsRef<Path>) -> Result<Self> {
-        let whitespace_tokenizer =
-            TextAnalyzer::from(tokenizer::WhitespaceTokenizer).filter(LowerCaser);
-
-        let content_tokenizer = TextAnalyzer::from(SimpleTokenizer)
-            .filter(RemoveLongFilter::limit(40))
-            .filter(LowerCaser);
-
-        let property_tokenizer =
-            TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser);
-
+    pub fn open(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
         let mut index =
             Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?)
                 .map_err(|_| SearcherError::IndexOpeningError)?;
 
         {
             let tokenizer_manager = index.tokenizers();
-            tokenizer_manager.register("whitespace_tokenizer", whitespace_tokenizer);
-            tokenizer_manager.register("content_tokenizer", content_tokenizer);
-            tokenizer_manager.register("property_tokenizer", property_tokenizer);
+            tokenizer_manager.register("tag_tokenizer", tokenizers.tag_tokenizer);
+            tokenizer_manager.register("content_tokenizer", tokenizers.content_tokenizer);
+            tokenizer_manager.register("property_tokenizer", tokenizers.property_tokenizer);
         } //to please the borrow checker
         let writer = index
             .writer(50_000_000)

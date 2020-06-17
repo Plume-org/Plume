@@ -98,7 +98,7 @@ Then try to restart Plume.
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     #[allow(clippy::match_wild_err_arm)]
-    let searcher = match UnmanagedSearcher::open(&CONFIG.search_index) {
+    let searcher = match UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers) {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(
                 r#"

@@ -498,6 +498,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         blog_authors::*,
+        config::CONFIG,
         instance::tests as instance_tests,
         medias::NewMedia,
         search::tests::get_searcher,
@@ -767,7 +768,9 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let (_, blogs) = fill_database(conn);
 
-            blogs[0].delete(conn, &get_searcher()).unwrap();
+            blogs[0]
+                .delete(conn, &get_searcher(&CONFIG.search_tokenizers))
+                .unwrap();
             assert!(Blog::get(conn, blogs[0].id).is_err());
             Ok(())
         })
@@ -777,7 +780,7 @@ pub(crate) mod tests {
     fn delete_via_user() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let searcher = get_searcher();
+            let searcher = get_searcher(&CONFIG.search_tokenizers);
             let (user, _) = fill_database(conn);
 
             let b1 = Blog::insert(

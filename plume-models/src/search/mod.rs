@@ -3,10 +3,11 @@ mod searcher;
 mod tokenizer;
 pub use self::query::PlumeQuery as Query;
 pub use self::searcher::*;
+pub use self::tokenizer::TokenizerKind;
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use super::{Query, Searcher};
+    use super::{Query, Searcher, TokenizerKind};
     use diesel::Connection;
     use plume_common::utils::random_hex;
     use std::env::temp_dir;
@@ -14,18 +15,20 @@ pub(crate) mod tests {
 
     use crate::{
         blogs::tests::fill_database,
+        config::SearchTokenizerConfig,
         post_authors::*,
         posts::{NewPost, Post},
         safe_string::SafeString,
         tests::db,
+        CONFIG,
     };
 
-    pub(crate) fn get_searcher() -> Searcher {
+    pub(crate) fn get_searcher(tokenizers: &SearchTokenizerConfig) -> Searcher {
         let dir = temp_dir().join(&format!("plume-test-{}", random_hex()));
         if dir.exists() {
-            Searcher::open(&dir)
+            Searcher::open(&dir, tokenizers)
         } else {
-            Searcher::create(&dir)
+            Searcher::create(&dir, tokenizers)
         }
         .unwrap()
     }
@@ -100,27 +103,27 @@ pub(crate) mod tests {
     fn open() {
         let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
         {
-            Searcher::create(&dir).unwrap();
+            Searcher::create(&dir, &CONFIG.search_tokenizers).unwrap();
         }
-        Searcher::open(&dir).unwrap();
+        Searcher::open(&dir, &CONFIG.search_tokenizers).unwrap();
     }
 
     #[test]
     fn create() {
         let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
 
-        assert!(Searcher::open(&dir).is_err());
+        assert!(Searcher::open(&dir, &CONFIG.search_tokenizers).is_err());
         {
-            Searcher::create(&dir).unwrap();
+            Searcher::create(&dir, &CONFIG.search_tokenizers).unwrap();
         }
-        Searcher::open(&dir).unwrap(); //verify it's well created
+        Searcher::open(&dir, &CONFIG.search_tokenizers).unwrap(); //verify it's well created
     }
 
     #[test]
     fn search() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let searcher = get_searcher();
+            let searcher = get_searcher(&CONFIG.search_tokenizers);
             let blog = &fill_database(conn).1[0];
             let author = &blog.list_authors(conn).unwrap()[0];
 
@@ -180,10 +183,69 @@ pub(crate) mod tests {
         });
     }
 
+    #[cfg(feature = "search-lindera")]
+    #[test]
+    fn search_japanese() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let tokenizers = SearchTokenizerConfig {
+                tag_tokenizer: TokenizerKind::Lindera,
+                content_tokenizer: TokenizerKind::Lindera,
+                property_tokenizer: TokenizerKind::Ngram,
+            };
+            let searcher = get_searcher(&tokenizers);
+            let blog = &fill_database(conn).1[0];
+
+            let title = random_hex()[..8].to_owned();
+
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog.id,
+                    slug: title.clone(),
+                    title: title.clone(),
+                    content: SafeString::new("ブログエンジンPlumeです。"),
+                    published: true,
+                    license: "CC-BY-SA".to_owned(),
+                    ap_url: "".to_owned(),
+                    creation_date: None,
+                    subtitle: "".to_owned(),
+                    source: "".to_owned(),
+                    cover_id: None,
+                },
+                &searcher,
+            )
+            .unwrap();
+
+            searcher.commit();
+
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("ブログエンジン").unwrap(), (0, 1))
+                    [0]
+                .id,
+                post.id
+            );
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("Plume").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("です").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+            assert_eq!(
+                searcher.search_document(conn, Query::from_str("。").unwrap(), (0, 1))[0].id,
+                post.id
+            );
+
+            Ok(())
+        });
+    }
+
     #[test]
     fn drop_writer() {
-        let searcher = get_searcher();
+        let searcher = get_searcher(&CONFIG.search_tokenizers);
         searcher.drop_writer();
-        get_searcher();
+        get_searcher(&CONFIG.search_tokenizers);
     }
 }

@@ -1,3 +1,4 @@
+use crate::search::TokenizerKind as SearchTokenizer;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::env::{self, var};
@@ -14,6 +15,7 @@ pub struct Config {
     pub db_max_size: Option<u32>,
     pub db_min_idle: Option<u32>,
     pub search_index: String,
+    pub search_tokenizers: SearchTokenizerConfig,
     pub rocket: Result<RocketConfig, RocketError>,
     pub logo: LogoConfig,
     pub default_theme: String,
@@ -188,6 +190,56 @@ impl Default for LogoConfig {
     }
 }
 
+pub struct SearchTokenizerConfig {
+    pub tag_tokenizer: SearchTokenizer,
+    pub content_tokenizer: SearchTokenizer,
+    pub property_tokenizer: SearchTokenizer,
+}
+
+impl SearchTokenizerConfig {
+    pub fn init() -> Self {
+        use SearchTokenizer::*;
+
+        match var("SEARCH_LANG").ok().as_deref() {
+            Some("ja") => {
+                #[cfg(not(feature = "search-lindera"))]
+                panic!("You need build Plume with search-lindera feature, or execute it with SEARCH_TAG_TOKENIZER=ngram and SEARCH_CONTENT_TOKENIZER=ngram to enable Japanese search feature");
+                #[cfg(feature = "search-lindera")]
+                Self {
+                    tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Lindera),
+                    content_tokenizer: Self::determine_tokenizer(
+                        "SEARCH_CONTENT_TOKENIZER",
+                        Lindera,
+                    ),
+                    property_tokenizer: Ngram,
+                }
+            }
+            _ => Self {
+                tag_tokenizer: Self::determine_tokenizer("SEARCH_TAG_TOKENIZER", Whitespace),
+                content_tokenizer: Self::determine_tokenizer("SEARCH_CONTENT_TOKENIZER", Simple),
+                property_tokenizer: Ngram,
+            },
+        }
+    }
+
+    fn determine_tokenizer(var_name: &str, default: SearchTokenizer) -> SearchTokenizer {
+        use SearchTokenizer::*;
+
+        match var(var_name).ok().as_deref() {
+            Some("simple") => Simple,
+            Some("ngram") => Ngram,
+            Some("whitespace") => Whitespace,
+            Some("lindera") => {
+                #[cfg(not(feature = "search-lindera"))]
+                panic!("You need build Plume with search-lindera feature to use Lindera tokenizer");
+                #[cfg(feature = "search-lindera")]
+                Lindera
+            }
+            _ => default,
+        }
+    }
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -209,6 +261,7 @@ lazy_static! {
         #[cfg(feature = "sqlite")]
         database_url: var("DATABASE_URL").unwrap_or_else(|_| format!("{}.sqlite", DB_NAME)),
         search_index: var("SEARCH_INDEX").unwrap_or_else(|_| "search_index".to_owned()),
+        search_tokenizers: SearchTokenizerConfig::init(),
         rocket: get_rocket_config(),
         logo: LogoConfig::default(),
         default_theme: var("DEFAULT_THEME").unwrap_or_else(|_| "default-light".to_owned()),

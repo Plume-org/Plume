@@ -1026,6 +1026,7 @@ impl NewUser {
 pub(crate) mod tests {
     use super::*;
     use crate::{
+        config::CONFIG,
         instance::{tests as instance_tests, Instance},
         search::tests::get_searcher,
         tests::{db, rockets},
@@ -1122,7 +1123,9 @@ pub(crate) mod tests {
             let inserted = fill_database(conn);
 
             assert!(User::get(conn, inserted[0].id).is_ok());
-            inserted[0].delete(conn, &get_searcher()).unwrap();
+            inserted[0]
+                .delete(conn, &get_searcher(&CONFIG.search_tokenizers))
+                .unwrap();
             assert!(User::get(conn, inserted[0].id).is_err());
             Ok(())
         });
