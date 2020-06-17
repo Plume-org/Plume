@@ -19,6 +19,7 @@ init_i18n!(
     en,
     eo,
     es,
+    fa,
     fr,
     gl,
     hi,
