@@ -1,5 +1,5 @@
-"project_identifier": "plume"
-"api_key_env": CROWDIN_API_KEY
+"project_id": 352097
+"api_token_env": "CROWDIN_API_KEY"
 preserve_hierarchy: true
 files:
   - source: /po/plume/plume.pot

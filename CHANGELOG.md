@@ -2,7 +2,7 @@
 
 <!-- next-header -->
 
-## [Unreleased]
+## [Unreleased] - No release date
 
 ## [0.5.0] - 2020-06-21
 
@@ -150,6 +150,7 @@
 - Limited federation on other platforms and subscribing to users
 - Ability to create multiple blogs
 
+<!-- next-url -->
 [Unreleased]: https://github.com/Plume-org/Plume/compare/0.5.0...HEAD
 [0.5.0]: https://github.com/Plume-org/Plume/compare/0.4.0-alpha-4...0.5.0
 [0.4.0]: https://github.com/Plume-org/Plume/compare/0.3.0-alpha-2...0.4.0-alpha-4
