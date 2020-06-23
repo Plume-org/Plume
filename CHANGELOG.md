@@ -1,10 +1,12 @@
+# Changelog
+
 <!-- next-header -->
 
-## Unreleased - ReleaseDate
+## [Unreleased]
 
-## 0.5.0 - 21.06.2020
+## [0.5.0] - 2020-06-21
 
-### New features
+### Added
 
 - Email blocklisting (#718)
 - Syntax highlighting (#691)
@@ -12,11 +14,15 @@
 - Switchable tokenizer - enables Japanese full-text search (#776)
 - Make database connections configurable by environment variables (#768)
 
-### Changes
+### Changed
 
 - Display likes and boost on post cards (#744)
+- Rust 2018 (#726)
+- Bump to LLVM to 9.0.0 to fix ARM builds (#737)
+- Remove dependency on runtime-fmt (#773)
+- Drop the -alpha suffix in release names, it is implied that Plume is not stable yet because of the 0 major version (Plume 1.0.0 will be the first stable release).
 
-### Fixes
+### Fixed
 
 - Fix parsing of mentions inside a Markdown code block (be430c6)
 - Fix RSS issues (#720)
@@ -28,16 +34,9 @@
 - Don't show boosts and likes for "all" and "local" in timelines (#781)
 - Fix liking and boosting posts on remote instances (#762)
 
-### Internal
+## [0.4.0] - 2019-12-23
 
-- Rust 2018 (#726)
-- Bump to LLVM to 9.0.0 to fix ARM builds (#737)
-- Remove dependency on runtime-fmt (#773)
-- Drop the -alpha suffix in release names, it is implied that Plume is not stable yet because of the 0 major version (Plume 1.0.0 will be the first stable release).
-
-## 0.4.0 - 23.12.2019
-
-### New features
+### Added
 
 - Add support for generic timeline (#525)
 - Federate user deletion (#551)
@@ -51,8 +50,10 @@
 - Add Snapcraft metadata and install/maintenance hooks (#666)
 - Add environmental variable to control path of media (#683)
 - Add autosaving to the editor (#688)
+- CI: Upload artifacts to pull request deploy environment (#539)
+- CI: Upload artifact of wasm binary (#571)
 
-### Changes
+### Changed
 
 - Update follow_remote.rs.html grammar (#548)
 - Add some feedback when performing some actions (#552)
@@ -64,12 +65,23 @@
 - Store password reset requests in database (#610)
 - Use futures and tokio to send activities (#620)
 - Don't ignore dotenv errors (#630)
+- Replace the input! macro with an Input builder (#646)
 - Update default license (#659)
 - Paginate the outbox responses. Fixes #669 (#681)
 - Use the "classic" editor by default (#697)
 - Fix issue #705 (#708)
+- Make comments in styleshhets a bit clearer (#545)
+- Rewrite circleci config (#558)
+- Use openssl instead of sha256sum for build.rs (#568)
+- Update dependencies (#574)
+- Refactor code to use Shrinkwraprs and diesel-derive-newtype (#598)
+- Add enum containing all successful route returns (#614)
+- Update dependencies which depended on nix -- fixes arm32 builds (#615)
+- Update some documents (#616)
+- Update dependencies (#643)
+- Make the comment syntax consistent across all CSS (#487)
 
-### Fixes
+### Fixed
 
 - Remove r (#535)
 - Fix certain improper rendering of forms (#560)
@@ -96,31 +108,17 @@
 - Make search items optional (#693)
 - Various snap fixes (#698)
 - Fix #637 : Markdown footnotes (#700)
-
-### Internal (refactoring, CI, etc.)
-
-- Upload artifacts to pull request deploy environment (#539)
-- Remove Canapi (#540)
-- Make comments in styleshhets a bit clearer (#545)
-- Rewrite circleci config (#558)
-- Use openssl instead of sha256sum for build.rs (#568)
-- Upload artifact of wasm binary (#571)
-- Update dependancies (#574)
-- Fix Crowdin upload (#576)
-- Refactor code to use Shrinkwraprs and diesel-derive-newtype (#598)
-- Add enum containing all successful route returns (#614)
-- Update dependencies which depended on nix -- fixes arm32 builds (#615)
-- Update some documents (#616)
-- Replace the input! macro with an Input builder (#646)
-- Update dependencies (#643)
-- Remove use of rust in migration (#704)
 - Fix lettre (#706)
-- Make the comment syntax consistent across all CSS (#487
+- CI: Fix Crowdin upload (#576)
 
+### Removed
 
-## 0.3.0 - 19.04.2019
+- Remove the Canapi dependency (#540)
+- Remove use of Rust in migrations (#704)
 
-### Notable changes
+## [0.3.0] - 2019-04-19
+
+### Added
 
 - Cover for articles (#299, #387)
 - Password reset (#448)
@@ -128,15 +126,21 @@
 - Search (#324, #375, #445)
 - Edit blogs (#460, #494, #497)
 - Hashtags in articles (#283, #295)
-- Federation improvements (#216, #217, #357, #364, #399, #443, #446, #455, #502, #519)
-- UI usability fixes (#370, #386, #401, #417, #418, #444, #452, #480, #516, #518, #522, #532)
 - API endpoints (#245, #285, #307)
 - A bunch of new translations! (#479, #501, #506, #510, #512, #514)
+
+### Changed
+
+- Federation improvements (#216, #217, #357, #364, #399, #443, #446, #455, #502, #519)
 - Improved build process (#281, #374, #392, #402, #489, #498, #503, #511, #513, #515, #528)
 
-## 0.2.0 - 12.09.2018
+### Fixes
 
-### Notable Changes
+- UI usability fixes (#370, #386, #401, #417, #418, #444, #452, #480, #516, #518, #522, #532)
+
+## [0.2.0] - 2018-09-12
+
+### Added
 
 - Article publishing, or save as a draft
 - Like, or boost an article
@@ -145,3 +149,9 @@
 - User account creation
 - Limited federation on other platforms and subscribing to users
 - Ability to create multiple blogs
+
+[Unreleased]: https://github.com/Plume-org/Plume/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/Plume-org/Plume/compare/0.4.0-alpha-4...0.5.0
+[0.4.0]: https://github.com/Plume-org/Plume/compare/0.3.0-alpha-2...0.4.0-alpha-4
+[0.3.0]: https://github.com/Plume-org/Plume/compare/0.2.0-alpha-1...0.3.0-alpha-2
+[0.2.0]: https://github.com/Plume-org/Plume/releases/tag/0.2.0-alpha-1
