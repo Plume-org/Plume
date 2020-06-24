@@ -1,10 +1,10 @@
 /* Color Scheme */
-$gray: #F3F3F3;
+$gray: #f3f3f3;
 $black: #242424;
-$white: #F8F8F8;
-$purple: #7765E3;
+$white: #f8f8f8;
+$purple: #7765e3;
 $lightpurple: #c2bbee;
-$red: #E92F2F;
+$red: #e92f2f;
 $yellow: #ffe347;
 $green: #23f0c7;
 
@@ -24,14 +24,14 @@ $margin: 0 $horizontal-margin;
 
 /* Fonts */
 
-$route159: "Route159", serif;
-$playfair: "Playfair Display", serif;
-$lora: "Lora", serif;
+$route159: "Shabnam", "Route159", serif;
+$playfair: "Vazir", "Playfair Display", serif;
+$lora: "Vazir", "Lora", serif;
 
 //Code Highlighting
 $code-keyword-color: #45244a;
 $code-source-color: #4c588c;
-$code-constant-color: scale-color(magenta,$lightness:-5%);
-$code-operator-color: scale-color($code-source-color,$lightness:-5%);
+$code-constant-color: scale-color(magenta, $lightness: -5%);
+$code-operator-color: scale-color($code-source-color, $lightness: -5%);
 $code-string-color: #8a571c;
 $code-comment-color: #1c4c8a;
