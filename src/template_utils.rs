@@ -63,7 +63,7 @@ impl<'r> Responder<'r> for Ructe {
         let etag = format!("{:x}", hasher.finish());
         if r.headers()
             .get("If-None-Match")
-            .any(|s| s[1..s.len() - 1] == etag)
+            .any(|s| s[1..s.len() - 1] == etag || s[3..s.len() - 1] == etag)
         {
             Response::build()
                 .status(Status::NotModified)
