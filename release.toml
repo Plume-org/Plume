@@ -5,7 +5,6 @@ sign-commit = false
 dev-version-ext = 'dev'
 # update all crates in plume at once:
 consolidate-commits = true
-tag-prefix = ''
 
 pre-release-hook = ["crowdin", "pull"]
 
