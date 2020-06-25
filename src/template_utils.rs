@@ -63,6 +63,9 @@ impl<'r> Responder<'r> for Ructe {
         let etag = format!("{:x}", hasher.finish());
         if r.headers()
             .get("If-None-Match")
+            // This check matches both weak and strong ETags
+            // NGINX (and maybe other software) sometimes sends ETags with a
+            // "W/" prefix, that we ignore here
             .any(|s| s[1..s.len() - 1] == etag || s[3..s.len() - 1] == etag)
         {
             Response::build()
