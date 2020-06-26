@@ -36,7 +36,7 @@ local restoreCache = {
         archive_format: "gzip",
         mount: [ "~/.cargo/", "./target" ]
     },
-    volumes: { name: "cache", path: "/tmp/cache" }
+    volumes: [ { name: "cache", path: "/tmp/cache" } ]
 };
 
 // And a step that saves the cache.
@@ -51,7 +51,7 @@ local saveCache = {
         archive_format: "gzip",
         mount: [ "~/.cargo/", "./target" ]
     },
-    volumes: { name: "cache", path: "/tmp/cache" }
+    volumes: [ { name: "cache", path: "/tmp/cache" } ]
 };
 
 // Finally, the Docker volume to store the cache
@@ -114,10 +114,10 @@ local Clippy(db) = basePipeline(
 
 // TODO
 
-local Unit(db) = {};
-local Integration(db) = {};
-local Release(db) = {};
-local PushTranslations() = {};
+local Unit(db) = basePipeline("unit-" + db, []);
+local Integration(db) = basePipeline("integration-" + db, []);
+local Release(db) = basePipeline("release-" + db, []);
+local PushTranslations() = basePipeline("push-translations", []);
 
 // And finally, the list of all our pipelines:
 [
