@@ -85,7 +85,7 @@ local CargoFmt() = basePipeline(
         {
             name: "cargo-fmt",
             image: plumeEnv,
-            commands: [ "cargo fmt --all -- --check" ]
+            commands: [ "cargo fmt --all -- --check" ],
         },
         saveCache,
     ]
