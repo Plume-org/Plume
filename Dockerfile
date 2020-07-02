@@ -1,4 +1,4 @@
-FROM rust:1-stretch as builder
+FROM rust:1-buster as builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -28,7 +28,7 @@ RUN cargo install --path ./ --force --no-default-features --features postgres
 RUN cargo install --path plume-cli --force --no-default-features --features postgres
 RUN cargo clean
 
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
