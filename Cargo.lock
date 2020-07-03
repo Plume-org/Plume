@@ -1626,22 +1626,22 @@ dependencies = [
 
 [[package]]
 name = "lindera"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "encoding 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-dictionary 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-ipadic 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-dictionary 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-ipadic 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.106 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.53 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "lindera-core"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1653,12 +1653,12 @@ dependencies = [
 
 [[package]]
 name = "lindera-dictionary"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1674,14 +1674,14 @@ dependencies = [
 
 [[package]]
 name = "lindera-ipadic"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "flate2 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-ipadic-builder 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-ipadic-builder 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.10.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "tar 0.4.28 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio 0.2.21 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1689,7 +1689,7 @@ dependencies = [
 
 [[package]]
 name = "lindera-ipadic-builder"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1697,16 +1697,16 @@ dependencies = [
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "encoding 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)",
  "glob 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lindera-fst 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "lindera-tantivy"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "lindera 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tantivy 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -2465,7 +2465,7 @@ dependencies = [
  "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "lindera-tantivy 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lindera-tantivy 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "migrations_internals 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.10.29 (registry+https://github.com/rust-lang/crates.io-index)",
  "plume-api 0.4.0",
@@ -4484,13 +4484,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum libc 0.2.69 (registry+https://github.com/rust-lang/crates.io-index)" = "99e85c08494b21a9054e7fe1374a732aeadaff3980b6990b94bfd3a70f690005"
 "checksum libloading 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f2b111a074963af1d37a139918ac6d49ad1d0d5e47f72fd55388619691a7d753"
 "checksum libsqlite3-sys 0.17.3 (registry+https://github.com/rust-lang/crates.io-index)" = "56d90181c2904c287e5390186be820e5ef311a3c62edebb7d6ca3d6a48ce041d"
-"checksum lindera 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "781a3344e39a94cd793cf0214341f6dea2577988658bf2fa0f509f217f2c97da"
-"checksum lindera-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "38b7801675854c781cc4c1d1de8354fafb652a1c4c1339898bcfae1808903ab5"
-"checksum lindera-dictionary 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1726afd2d81f647397f751b96fc497c40b8079eae674f446bd22e59efb1b6841"
+"checksum lindera 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "c55866bf23bafeef0c16fc49b3a7015cdfa048add59a87024fbc6fb4605de1eb"
+"checksum lindera-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "45e446215bde65aed716b46bda25d9ef5c5744a7f3a828200c815aab9dbef746"
+"checksum lindera-dictionary 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7a28a196e8dac4852619716105b59ce952cbbc7ebc8ac64167aa489509750e44"
 "checksum lindera-fst 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a6098a7ca6679296cd2d227efa232f990552c5278394c845bec8a70ab0284ae0"
-"checksum lindera-ipadic 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "afed42163182d72c3f604f80783c2e88bfdb074d5f1230225ddde352d8a29d62"
-"checksum lindera-ipadic-builder 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1c8ce9b2412bd6d46303f3b956c8bacdbc1cd547d52d9e8540ac56642503ad18"
-"checksum lindera-tantivy 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "5522106f06e9d69ed913dcb423e95312b4070444d944eb20f31defb3bc28e8c5"
+"checksum lindera-ipadic 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "bf066e3137ae9e6cb4ce223c7e49e4217c0216328f979039a51c3eeca8938d32"
+"checksum lindera-ipadic-builder 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a617422d3b9fa3bcaef470423f6b686aa8954e7081bd148ced8d8cf3c08925b6"
+"checksum lindera-tantivy 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "b1bd76e0573b2f28cfeb16f2ee50f8cc6ea14a1e307f328be1d9744053a97633"
 "checksum line-wrap 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "f30344350a2a51da54c1d53be93fade8a237e545dbcc4bdbe635413f2117cab9"
 "checksum linked-hash-map 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "ae91b68aebc4ddb91978b11a1b02ddd8602a05ec19002801c5666000e05e0f83"
 "checksum lock_api 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "c4da24a77a3d8a6d4862d95f72e6fdb9c09a643ecdb402d754004a557f2bec75"
