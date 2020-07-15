@@ -161,7 +161,9 @@ local Release(db) = cachedPipeline(
         "cargo build --release --no-default-features --features=" + db + " -p plume",
         "cargo build --release --no-default-features --features=" + db + " -p plume-cli",
         "./script/generate_artifact.sh",
-    ] + if db == "sqlite" then [ "./script/upload_test_environment.sh" ] else []
+    ] + if db == "sqlite" then
+    [ "./script/upload_test_environment.sh" ] else
+    []
 );
 
 // PIPELINE 6: upload the new PO templates (.pot) to Crowdin
