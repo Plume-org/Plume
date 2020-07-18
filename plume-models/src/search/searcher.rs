@@ -5,10 +5,11 @@ use crate::{
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
-use std::{cmp, fs::create_dir_all, path::Path, sync::Mutex};
+use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
     ReloadPolicy, Term,
+    TantivyError,
 };
 use whatlang::{detect as detect_lang, Lang};
 
@@ -18,6 +19,7 @@ pub enum SearcherError {
     WriteLockAcquisitionError,
     IndexOpeningError,
     IndexEditionError,
+    InvalidIndexDataError,
 }
 
 pub struct Searcher {
@@ -135,7 +137,19 @@ impl Searcher {
                 .reader_builder()
                 .reload_policy(ReloadPolicy::Manual)
                 .try_into()
-                .map_err(|_| SearcherError::IndexCreationError)?,
+                .map_err(|e| {
+                    if let TantivyError::IOError(err) = e {
+                        let err: io::Error = err.into();
+                        if err.kind() == io::ErrorKind::InvalidData {
+                            // Search index was created in older Tantivy format.
+                            SearcherError::InvalidIndexDataError
+                        } else {
+                            SearcherError::IndexCreationError
+                        }
+                    } else {
+                        SearcherError::IndexCreationError
+                    }
+                })?,
             index,
         })
     }
