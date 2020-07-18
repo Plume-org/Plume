@@ -98,8 +98,15 @@ Then try to restart Plume.
     }
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
+    let mut open_searcher =
+        UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
+    if let Err(Error::Search(SearcherError::InvalidIndexDataError)) = open_searcher {
+        UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers)
+            .expect("main: recreating search index error. Try backing up search index, removing it and running `plm search init`");
+        open_searcher = UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
+    }
     #[allow(clippy::match_wild_err_arm)]
-    let searcher = match UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers) {
+    let searcher = match open_searcher {
         Err(Error::Search(e)) => match e {
             SearcherError::WriteLockAcquisitionError => panic!(
                 r#"
