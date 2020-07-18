@@ -10,6 +10,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate validator_derive;
 
+use chrono::Utc;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
@@ -21,6 +22,8 @@ use plume_models::{
 };
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
+use std::fs;
+use std::path::Path;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -102,7 +105,25 @@ Then try to restart Plume.
         UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
     if let Err(Error::Search(SearcherError::InvalidIndexDataError)) = open_searcher {
         UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers)
-            .expect("main: recreating search index error. Try backing up search index, removing it and running `plm search init`");
+            .or_else(|_| {
+                let current_path = Path::new(&CONFIG.search_index);
+                let backup_path = format!("{}.{}", &current_path.display(), Utc::now().timestamp());
+                let backup_path = Path::new(&backup_path);
+                fs::rename(current_path, backup_path)
+                    .expect("main: error on backing up search index directory for recreating");
+                UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).and_then(
+                    |searcher| {
+                        if fs::remove_dir_all(backup_path).is_err() {
+                            eprintln!(
+                                "error on removing backup directory: {}. it remains",
+                                backup_path.display()
+                            );
+                        }
+                        Ok(searcher)
+                    },
+                )
+            })
+            .expect("main: error on recreating search index in new index format");
         open_searcher = UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
     }
     #[allow(clippy::match_wild_err_arm)]
