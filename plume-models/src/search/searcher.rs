@@ -8,8 +8,7 @@ use itertools::Itertools;
 use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
-    ReloadPolicy, Term,
-    TantivyError,
+    ReloadPolicy, TantivyError, Term,
 };
 use whatlang::{detect as detect_lang, Lang};
 
