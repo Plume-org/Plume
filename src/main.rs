@@ -104,26 +104,23 @@ Then try to restart Plume.
     let mut open_searcher =
         UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
     if let Err(Error::Search(SearcherError::InvalidIndexDataError)) = open_searcher {
-        UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers)
-            .or_else(|_| {
-                let current_path = Path::new(&CONFIG.search_index);
-                let backup_path = format!("{}.{}", &current_path.display(), Utc::now().timestamp());
-                let backup_path = Path::new(&backup_path);
-                fs::rename(current_path, backup_path)
-                    .expect("main: error on backing up search index directory for recreating");
-                UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).and_then(
-                    |searcher| {
-                        if fs::remove_dir_all(backup_path).is_err() {
-                            eprintln!(
-                                "error on removing backup directory: {}. it remains",
-                                backup_path.display()
-                            );
-                        }
-                        Ok(searcher)
-                    },
-                )
-            })
-            .expect("main: error on recreating search index in new index format. remove search index and run `plm search init` manually");
+        if UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_err() {
+            let current_path = Path::new(&CONFIG.search_index);
+            let backup_path = format!("{}.{}", &current_path.display(), Utc::now().timestamp());
+            let backup_path = Path::new(&backup_path);
+            fs::rename(current_path, backup_path)
+                .expect("main: error on backing up search index directory for recreating");
+            if UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_ok() {
+                if fs::remove_dir_all(backup_path).is_err() {
+                    eprintln!(
+                        "error on removing backup directory: {}. it remains",
+                        backup_path.display()
+                    );
+                }
+            } else {
+                panic!("main: error on recreating search index in new index format. remove search index and run `plm search init` manually");
+            }
+        }
         open_searcher = UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
     }
     #[allow(clippy::match_wild_err_arm)]
