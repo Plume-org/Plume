@@ -123,7 +123,7 @@ Then try to restart Plume.
                     },
                 )
             })
-            .expect("main: error on recreating search index in new index format");
+            .expect("main: error on recreating search index in new index format. remove search index and run `plm search init` manually");
         open_searcher = UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
     }
     #[allow(clippy::match_wild_err_arm)]
