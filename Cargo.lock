@@ -2612,6 +2612,7 @@ dependencies = [
  "plume-macro 0.4.0",
  "reqwest 0.9.24 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rocket_contrib 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)",
  "scheduled-thread-pool 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.114 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3128,11 +3129,25 @@ name = "rocket_contrib"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
+ "diesel 1.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "notify 4.0.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "r2d2 0.8.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rocket_contrib_codegen 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.114 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.56 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "rocket_contrib_codegen"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "devise 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "version_check 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "yansi 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -4842,6 +4857,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "6130967b369cfb8411b0b73e96fcba1229c32a9cc6f295d144f879bfced13c6e"
 "checksum rocket_codegen 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "cb852e6da168fb948a8f2b798ba2e2f0e4fc860eae0efa9cf2bf0f5466bb0425"
 "checksum rocket_contrib 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "e3946ca815127041d8f64455561031d058c22ae1b135251502c5ea523cf9e14b"
+"checksum rocket_contrib_codegen 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "fbc1c93c930af81f5097b8fd3cbc245a8b47c906a45a30c167cb3df0cd7ac404"
 "checksum rocket_csrf 0.1.0 (git+https://github.com/fdb-hiroshima/rocket_csrf?rev=29910f2829e7e590a540da3804336577b48c7b31)" = "<none>"
 "checksum rocket_http 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "1aff5a5480175f2f553a876b251e9350c74196128806d176da3a51c82aab5428"
 "checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)" = "<none>"

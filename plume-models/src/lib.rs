@@ -11,6 +11,8 @@ extern crate plume_macro;
 #[macro_use]
 extern crate rocket;
 #[macro_use]
+extern crate rocket_contrib;
+#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;

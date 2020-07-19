@@ -74,8 +74,8 @@ rsass = "0.9"
 
 [features]
 default = ["postgres"]
-postgres = ["plume-models/postgres", "diesel/postgres"]
-sqlite = ["plume-models/sqlite", "diesel/sqlite"]
+postgres = ["plume-models/postgres", "diesel/postgres", "rocket_contrib/diesel_postgres_pool"]
+sqlite = ["plume-models/sqlite", "diesel/sqlite", "rocket_contrib/diesel_sqlite_pool"]
 debug-mailer = []
 test = []
 search-lindera = ["plume-models/search-lindera"]
