@@ -78,14 +78,14 @@ impl Post {
             let _: Post = post.save_changes(conn)?;
         }
 
-        searcher.add_document(conn, &post)?;
+        searcher.add_document(&post)?;
         Ok(post)
     }
 
     pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
-        searcher.update_document(conn, &post)?;
+        searcher.update_document(&post)?;
         Ok(post)
     }
 

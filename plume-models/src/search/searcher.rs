@@ -1,6 +1,6 @@
 use crate::{
-    config::SearchTokenizerConfig, instance::Instance, posts::Post, schema::posts,
-    search::query::PlumeQuery, tags::Tag, Connection, Result,
+    config::SearchTokenizerConfig, db_conn::DbPool, instance::Instance, posts::Post, schema::posts,
+    search::query::PlumeQuery, tags::Tag, Result,
 };
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -25,6 +25,7 @@ pub struct Searcher {
     index: Index,
     reader: IndexReader,
     writer: Mutex<Option<IndexWriter>>,
+    dbpool: DbPool,
 }
 
 impl Searcher {
@@ -67,7 +68,11 @@ impl Searcher {
         schema_builder.build()
     }
 
-    pub fn create(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
+    pub fn create(
+        path: &dyn AsRef<Path>,
+        dbpool: DbPool,
+        tokenizers: &SearchTokenizerConfig,
+    ) -> Result<Self> {
         let schema = Self::schema();
 
         create_dir_all(path).map_err(|_| SearcherError::IndexCreationError)?;
@@ -95,10 +100,15 @@ impl Searcher {
                 .try_into()
                 .map_err(|_| SearcherError::IndexCreationError)?,
             index,
+            dbpool,
         })
     }
 
-    pub fn open(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
+    pub fn open(
+        path: &dyn AsRef<Path>,
+        dbpool: DbPool,
+        tokenizers: &SearchTokenizerConfig,
+    ) -> Result<Self> {
         let mut index =
             Index::open(MmapDirectory::open(path).map_err(|_| SearcherError::IndexOpeningError)?)
                 .map_err(|_| SearcherError::IndexOpeningError)?;
@@ -150,10 +160,11 @@ impl Searcher {
                     }
                 })?,
             index,
+            dbpool,
         })
     }
 
-    pub fn add_document(&self, conn: &Connection, post: &Post) -> Result<()> {
+    pub fn add_document(&self, post: &Post) -> Result<()> {
         if !post.published {
             return Ok(());
         }
@@ -175,15 +186,16 @@ impl Searcher {
         let lang = schema.get_field("lang").unwrap();
         let license = schema.get_field("license").unwrap();
 
+        let conn = self.dbpool.get().unwrap();
         let mut writer = self.writer.lock().unwrap();
         let writer = writer.as_mut().unwrap();
         writer.add_document(doc!(
             post_id => i64::from(post.id),
-            author => post.get_authors(conn)?.into_iter().map(|u| u.fqn).join(" "),
+            author => post.get_authors(&conn)?.into_iter().map(|u| u.fqn).join(" "),
             creation_date => i64::from(post.creation_date.num_days_from_ce()),
-            instance => Instance::get(conn, post.get_blog(conn)?.instance_id)?.public_domain,
-            tag => Tag::for_post(conn, post.id)?.into_iter().map(|t| t.tag).join(" "),
-            blog_name => post.get_blog(conn)?.title,
+            instance => Instance::get(&conn, post.get_blog(&conn)?.instance_id)?.public_domain,
+            tag => Tag::for_post(&conn, post.id)?.into_iter().map(|t| t.tag).join(" "),
+            blog_name => post.get_blog(&conn)?.title,
             content => post.content.get().clone(),
             subtitle => post.subtitle.clone(),
             title => post.title.clone(),
@@ -203,17 +215,12 @@ impl Searcher {
         writer.delete_term(doc_id);
     }
 
-    pub fn update_document(&self, conn: &Connection, post: &Post) -> Result<()> {
+    pub fn update_document(&self, post: &Post) -> Result<()> {
         self.delete_document(post);
-        self.add_document(conn, post)
+        self.add_document(post)
     }
 
-    pub fn search_document(
-        &self,
-        conn: &Connection,
-        query: PlumeQuery,
-        (min, max): (i32, i32),
-    ) -> Vec<Post> {
+    pub fn search_document(&self, query: PlumeQuery, (min, max): (i32, i32)) -> Vec<Post> {
         let schema = self.index.schema();
         let post_id = schema.get_field("post_id").unwrap();
 
@@ -222,24 +229,27 @@ impl Searcher {
         let searcher = self.reader.searcher();
         let res = searcher.search(&query.into_query(), &collector).unwrap();
 
+        let conn = self.dbpool.get().unwrap();
+
         res.get(min as usize..)
             .unwrap_or(&[])
             .iter()
             .filter_map(|(_, doc_add)| {
                 let doc = searcher.doc(*doc_add).ok()?;
                 let id = doc.get_first(post_id)?;
-                Post::get(conn, id.i64_value() as i32).ok()
+                Post::get(&conn, id.i64_value() as i32).ok()
                 //borrow checker don't want me to use filter_map or and_then here
             })
             .collect()
     }
 
-    pub fn fill(&self, conn: &Connection) -> Result<()> {
+    pub fn fill(&self) -> Result<()> {
+        let conn = self.dbpool.get().unwrap();
         for post in posts::table
             .filter(posts::published.eq(true))
-            .load::<Post>(conn)?
+            .load::<Post>(&conn)?
         {
-            self.update_document(conn, &post)?
+            self.update_document(&post)?
         }
         Ok(())
     }
