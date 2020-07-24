@@ -7,7 +7,7 @@ pub use self::tokenizer::TokenizerKind;
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use super::{Query, Searcher, TokenizerKind};
+    use super::{Query, Searcher};
     use diesel::Connection;
     use plume_common::utils::random_hex;
     use std::env::temp_dir;
@@ -20,15 +20,16 @@ pub(crate) mod tests {
         posts::{NewPost, Post},
         safe_string::SafeString,
         tests::db,
+        tests::pool,
         CONFIG,
     };
 
     pub(crate) fn get_searcher(tokenizers: &SearchTokenizerConfig) -> Searcher {
         let dir = temp_dir().join(&format!("plume-test-{}", random_hex()));
         if dir.exists() {
-            Searcher::open(&dir, tokenizers)
+            Searcher::open(&dir, pool(), tokenizers)
         } else {
-            Searcher::create(&dir, tokenizers)
+            Searcher::create(&dir, pool(), tokenizers)
         }
         .unwrap()
     }
@@ -103,20 +104,20 @@ pub(crate) mod tests {
     fn open() {
         let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
         {
-            Searcher::create(&dir, &CONFIG.search_tokenizers).unwrap();
+            Searcher::create(&dir, pool(), &CONFIG.search_tokenizers).unwrap();
         }
-        Searcher::open(&dir, &CONFIG.search_tokenizers).unwrap();
+        Searcher::open(&dir, pool(), &CONFIG.search_tokenizers).unwrap();
     }
 
     #[test]
     fn create() {
         let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
 
-        assert!(Searcher::open(&dir, &CONFIG.search_tokenizers).is_err());
+        assert!(Searcher::open(&dir, pool(), &CONFIG.search_tokenizers).is_err());
         {
-            Searcher::create(&dir, &CONFIG.search_tokenizers).unwrap();
+            Searcher::create(&dir, pool(), &CONFIG.search_tokenizers).unwrap();
         }
-        Searcher::open(&dir, &CONFIG.search_tokenizers).unwrap(); //verify it's well created
+        Searcher::open(&dir, pool(), &CONFIG.search_tokenizers).unwrap(); //verify it's well created
     }
 
     #[test]
@@ -158,7 +159,7 @@ pub(crate) mod tests {
 
             searcher.commit();
             assert_eq!(
-                searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
+                searcher.search_document(Query::from_str(&title).unwrap(), (0, 1))[0].id,
                 post.id
             );
 
@@ -167,17 +168,17 @@ pub(crate) mod tests {
             post.update(conn, &searcher).unwrap();
             searcher.commit();
             assert_eq!(
-                searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
+                searcher.search_document(Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
                 post.id
             );
             assert!(searcher
-                .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
+                .search_document(Query::from_str(&title).unwrap(), (0, 1))
                 .is_empty());
 
             post.delete(conn, &searcher).unwrap();
             searcher.commit();
             assert!(searcher
-                .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
+                .search_document(Query::from_str(&newtitle).unwrap(), (0, 1))
                 .is_empty());
             Ok(())
         });
