@@ -78,7 +78,7 @@ Then try to restart Plume.
     }
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
 
-    let searcher = Searcher::new(dbpool.clone());
+    let searcher = Arc::new(Searcher::new(dbpool.clone()));
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(
         Duration::from_secs(5),

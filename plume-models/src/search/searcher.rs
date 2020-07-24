@@ -5,13 +5,7 @@ use crate::{
 use chrono::{Datelike, Utc};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
-use std::{
-    cmp,
-    fs::create_dir_all,
-    io,
-    path::Path,
-    sync::{Arc, Mutex},
-};
+use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
     ReloadPolicy, TantivyError, Term,
@@ -55,7 +49,7 @@ impl Searcher {
     ///
     /// The panic messages are normally explicit enough for a human to
     /// understand how to fix the issue when they see it.
-    pub fn new(db_pool: DbPool) -> Arc<Self> {
+    pub fn new(db_pool: DbPool) -> Self {
         // We try to open the index a first time
         let searcher = match Self::open(
             &CONFIG.search_index,
@@ -131,7 +125,7 @@ Then try to restart Plume
                 e => Err(e).unwrap(),
             },
             Err(_) => panic!("Unexpected error while opening search index"),
-            Ok(s) => Arc::new(s),
+            Ok(s) => s,
         }
     }
 
