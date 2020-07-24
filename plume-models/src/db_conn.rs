@@ -1,4 +1,4 @@
-use crate::Connection;
+use crate::{instance::Instance, Connection, CONFIG};
 use diesel::r2d2::{
     ConnectionManager, CustomizeConnection, Error as ConnError, Pool, PooledConnection,
 };
@@ -12,6 +12,20 @@ use rocket::{
 use std::ops::Deref;
 
 pub type DbPool = Pool<ConnectionManager<Connection>>;
+
+/// Initializes a database pool.
+pub fn init_pool() -> Option<DbPool> {
+    let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
+    let mut builder = DbPool::builder()
+        .connection_customizer(Box::new(PragmaForeignKey))
+        .min_idle(CONFIG.db_min_idle);
+    if let Some(max_size) = CONFIG.db_max_size {
+        builder = builder.max_size(max_size);
+    };
+    let pool = builder.build(manager).ok()?;
+    Instance::cache_local(&pool.get().unwrap());
+    Some(pool)
+}
 
 // From rocket documentation
 

@@ -1,6 +1,6 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
 
-use plume_models::{search::Searcher, Connection, CONFIG};
+use plume_models::{db_conn::DbPool, search::Searcher, CONFIG};
 use std::fs::{read_dir, remove_file};
 use std::io::ErrorKind;
 use std::path::Path;
@@ -52,7 +52,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
         )
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
+pub fn run<'a>(args: &ArgMatches<'a>, conn: DbPool) {
     let conn = conn;
     match args.subcommand() {
         ("init", Some(x)) => init(x, conn),
@@ -63,7 +63,7 @@ pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     }
 }
 
-fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
+fn init<'a>(args: &ArgMatches<'a>, db_pool: DbPool) {
     let path = args
         .value_of("path")
         .map(|p| Path::new(p).join("search_index"))
@@ -82,8 +82,8 @@ fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         }
     };
     if can_do || force {
-        let searcher = Searcher::create(&path, &CONFIG.search_tokenizers).unwrap();
-        refill(args, conn, Some(searcher));
+        let searcher = Searcher::create(&path, db_pool.clone(), &CONFIG.search_tokenizers).unwrap();
+        refill(args, db_pool, Some(searcher));
     } else {
         eprintln!(
             "Can't create new index, {} exist and is not empty",
@@ -92,16 +92,16 @@ fn init<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     }
 }
 
-fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searcher>) {
+fn refill<'a>(args: &ArgMatches<'a>, db_pool: DbPool, searcher: Option<Searcher>) {
     let path = args.value_of("path");
     let path = match path {
         Some(path) => Path::new(path).join("search_index"),
         None => Path::new(&CONFIG.search_index).to_path_buf(),
     };
-    let searcher =
-        searcher.unwrap_or_else(|| Searcher::open(&path, &CONFIG.search_tokenizers).unwrap());
+    let searcher = searcher
+        .unwrap_or_else(|| Searcher::open(&path, db_pool, &CONFIG.search_tokenizers).unwrap());
 
-    searcher.fill(conn).expect("Couldn't import post");
+    searcher.fill().expect("Couldn't import post");
     println!("Commiting result");
     searcher.commit();
 }

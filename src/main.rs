@@ -10,20 +10,10 @@ extern crate serde_json;
 #[macro_use]
 extern crate validator_derive;
 
-use chrono::Utc;
 use clap::App;
-use diesel::r2d2::ConnectionManager;
-use plume_models::{
-    db_conn::{DbPool, PragmaForeignKey},
-    instance::Instance,
-    migrations::IMPORTED_MIGRATIONS,
-    search::{Searcher as UnmanagedSearcher, SearcherError},
-    Connection, Error, CONFIG,
-};
+use plume_models::{db_conn::init_pool, migrations::IMPORTED_MIGRATIONS, search::Searcher, CONFIG};
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
-use std::fs;
-use std::path::Path;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -48,26 +38,6 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 compile_i18n!();
 
-/// Initializes a database pool.
-fn init_pool() -> Option<DbPool> {
-    match dotenv::dotenv() {
-        Ok(path) => println!("Configuration read from {}", path.display()),
-        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
-        e => e.map(|_| ()).unwrap(),
-    }
-
-    let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
-    let mut builder = DbPool::builder()
-        .connection_customizer(Box::new(PragmaForeignKey))
-        .min_idle(CONFIG.db_min_idle);
-    if let Some(max_size) = CONFIG.db_max_size {
-        builder = builder.max_size(max_size);
-    };
-    let pool = builder.build(manager).ok()?;
-    Instance::cache_local(&pool.get().unwrap());
-    Some(pool)
-}
-
 fn main() {
     App::new("Plume")
         .bin_name("plume")
@@ -82,6 +52,13 @@ and https://docs.joinplu.me/installation/init for more info.
         "#,
         )
         .get_matches();
+
+    match dotenv::dotenv() {
+        Ok(path) => println!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
+
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
@@ -100,60 +77,8 @@ Then try to restart Plume.
         )
     }
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
-    // we want a fast exit here, so
-    let mut open_searcher =
-        UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
-    if let Err(Error::Search(SearcherError::InvalidIndexDataError)) = open_searcher {
-        if UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_err() {
-            let current_path = Path::new(&CONFIG.search_index);
-            let backup_path = format!("{}.{}", &current_path.display(), Utc::now().timestamp());
-            let backup_path = Path::new(&backup_path);
-            fs::rename(current_path, backup_path)
-                .expect("main: error on backing up search index directory for recreating");
-            if UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_ok() {
-                if fs::remove_dir_all(backup_path).is_err() {
-                    eprintln!(
-                        "error on removing backup directory: {}. it remains",
-                        backup_path.display()
-                    );
-                }
-            } else {
-                panic!("main: error on recreating search index in new index format. remove search index and run `plm search init` manually");
-            }
-        }
-        open_searcher = UnmanagedSearcher::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
-    }
-    #[allow(clippy::match_wild_err_arm)]
-    let searcher = match open_searcher {
-        Err(Error::Search(e)) => match e {
-            SearcherError::WriteLockAcquisitionError => panic!(
-                r#"
-Your search index is locked. Plume can't start. To fix this issue
-make sure no other Plume instance is started, and run:
 
-    plm search unlock
-
-Then try to restart Plume.
-"#
-            ),
-            SearcherError::IndexOpeningError => panic!(
-                r#"
-Plume was unable to open the search index. If you created the index
-before, make sure to run Plume in the same directory it was created in, or
-to set SEARCH_INDEX accordingly. If you did not yet create the search
-index, run this command:
-
-    plm search init
-
-Then try to restart Plume
-"#
-            ),
-            e => Err(e).unwrap(),
-        },
-        Err(_) => panic!("Unexpected error while opening search index"),
-        Ok(s) => Arc::new(s),
-    };
-
+    let searcher = Searcher::new(dbpool.clone());
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(
         Duration::from_secs(5),

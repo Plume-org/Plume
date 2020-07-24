@@ -1,11 +1,17 @@
 use crate::{
     config::SearchTokenizerConfig, db_conn::DbPool, instance::Instance, posts::Post, schema::posts,
-    search::query::PlumeQuery, tags::Tag, Error, Result,
+    search::query::PlumeQuery, tags::Tag, Error, Result, CONFIG,
 };
-use chrono::Datelike;
+use chrono::{Datelike, Utc};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
-use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
+use std::{
+    cmp,
+    fs::create_dir_all,
+    io,
+    path::Path,
+    sync::{Arc, Mutex},
+};
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
     ReloadPolicy, TantivyError, Term,
@@ -29,6 +35,106 @@ pub struct Searcher {
 }
 
 impl Searcher {
+    /// Initializes a new `Searcher`, ready to be used by
+    /// Plume.
+    ///
+    /// The main task of this function is to try everything
+    /// to get a valid `Searcher`:
+    ///
+    /// - first it tries to open the search index normally (using the options from `CONFIG`)
+    /// - if it fails, it makes a back-up of the index files, deletes the original ones,
+    ///   and recreate the whole index. It removes the backup only if the re-creation
+    ///   succeeds.
+    ///
+    /// # Panics
+    ///
+    /// This function panics if it needs to create a backup and it can't, or if it fails
+    /// to recreate the search index.
+    ///
+    /// After that, it can also panic if there are still errors remaining.
+    ///
+    /// The panic messages are normally explicit enough for a human to
+    /// understand how to fix the issue when they see it.
+    pub fn new(db_pool: DbPool) -> Arc<Self> {
+        // We try to open the index a first time
+        let searcher = match Self::open(
+            &CONFIG.search_index,
+            db_pool.clone(),
+            &CONFIG.search_tokenizers,
+        ) {
+            // The index may be corrupted, inexistent or use an older format.
+            // In this case, we can easily recover by deleting and re-creating it.
+            Err(Error::Search(SearcherError::InvalidIndexDataError)) => {
+                if Self::create(
+                    &CONFIG.search_index,
+                    db_pool.clone(),
+                    &CONFIG.search_tokenizers,
+                )
+                .is_err()
+                {
+                    let current_path = Path::new(&CONFIG.search_index);
+                    let backup_path =
+                        format!("{}.{}", &current_path.display(), Utc::now().timestamp());
+                    let backup_path = Path::new(&backup_path);
+                    std::fs::rename(current_path, backup_path)
+                        .expect("Error while backing up search index directory for re-creation");
+                    if Self::create(
+                        &CONFIG.search_index,
+                        db_pool.clone(),
+                        &CONFIG.search_tokenizers,
+                    )
+                    .is_ok()
+                    {
+                        if std::fs::remove_dir_all(backup_path).is_err() {
+                            eprintln!(
+                                "error on removing backup directory: {}. it remains",
+                                backup_path.display()
+                            );
+                        }
+                    } else {
+                        panic!("Error while re-creating search index in new index format. Remove search index and run `plm search init` manually.");
+                    }
+                }
+                Self::open(&CONFIG.search_index, db_pool, &CONFIG.search_tokenizers)
+            }
+            // If it opened successfully or if it was another kind of
+            // error (that we don't know how to handle), don't do anything more
+            other => other,
+        };
+
+        // At this point, if there are still errors, we just panic
+        #[allow(clippy::match_wild_err_arm)]
+        match searcher {
+            Err(Error::Search(e)) => match e {
+                SearcherError::WriteLockAcquisitionError => panic!(
+                    r#"
+Your search index is locked. Plume can't start. To fix this issue
+make sure no other Plume instance is started, and run:
+
+    plm search unlock
+
+Then try to restart Plume.
+"#
+                ),
+                SearcherError::IndexOpeningError => panic!(
+                    r#"
+Plume was unable to open the search index. If you created the index
+before, make sure to run Plume in the same directory it was created in, or
+to set SEARCH_INDEX accordingly. If you did not yet create the search
+index, run this command:
+
+    plm search init
+
+Then try to restart Plume
+"#
+                ),
+                e => Err(e).unwrap(),
+            },
+            Err(_) => panic!("Unexpected error while opening search index"),
+            Ok(s) => Arc::new(s),
+        }
+    }
+
     pub fn schema() -> Schema {
         let tag_indexing = TextOptions::default().set_indexing_options(
             TextFieldIndexing::default()
@@ -234,7 +340,7 @@ impl Searcher {
 
         let conn = match self.dbpool.get() {
             Ok(c) => c,
-            Err(_) => return Err(Error::DbPool),
+            Err(_) => return Vec::new(),
         };
 
         res.get(min as usize..)

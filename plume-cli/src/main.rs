@@ -1,8 +1,7 @@
 use dotenv;
 
 use clap::App;
-use diesel::Connection;
-use plume_models::{instance::Instance, Connection as Conn, CONFIG};
+use plume_models::{db_conn::init_pool, instance::Instance};
 use std::io::{self, prelude::*};
 
 mod instance;
@@ -26,22 +25,27 @@ fn main() {
         Err(ref e) if e.not_found() => eprintln!("no .env was found"),
         e => e.map(|_| ()).unwrap(),
     }
-    let conn = Conn::establish(CONFIG.database_url.as_str());
-    let _ = conn.as_ref().map(|conn| Instance::cache_local(conn));
+    let db_pool = init_pool()
+        .expect("Couldn't create a database pool, please check DATABASE_URL in your .env");
+    let _ = db_pool
+        .get()
+        .as_ref()
+        .map(|conn| Instance::cache_local(conn));
 
     match matches.subcommand() {
-        ("instance", Some(args)) => {
-            instance::run(args, &conn.expect("Couldn't connect to the database."))
-        }
-        ("migration", Some(args)) => {
-            migration::run(args, &conn.expect("Couldn't connect to the database."))
-        }
-        ("search", Some(args)) => {
-            search::run(args, &conn.expect("Couldn't connect to the database."))
-        }
-        ("users", Some(args)) => {
-            users::run(args, &conn.expect("Couldn't connect to the database."))
-        }
+        ("instance", Some(args)) => instance::run(
+            args,
+            &db_pool.get().expect("Couldn't connect to the database."),
+        ),
+        ("migration", Some(args)) => migration::run(
+            args,
+            &db_pool.get().expect("Couldn't connect to the database."),
+        ),
+        ("search", Some(args)) => search::run(args, db_pool),
+        ("users", Some(args)) => users::run(
+            args,
+            &db_pool.get().expect("Couldn't connect to the database."),
+        ),
         _ => app.print_help().expect("Couldn't print help"),
     };
 }

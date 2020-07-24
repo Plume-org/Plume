@@ -51,7 +51,6 @@ macro_rules! param_to_query {
 
 #[get("/search?<query..>")]
 pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
-    let conn = &*rockets.conn;
     let query = query.map(Form::into_inner).unwrap_or_default();
     let page = query.page.unwrap_or_default();
     let mut parsed_query =
@@ -72,7 +71,7 @@ pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
     } else {
         let res = rockets
             .searcher
-            .search_document(&conn, parsed_query, page.limits());
+            .search_document(parsed_query, page.limits());
         let next_page = if res.is_empty() { 0 } else { page.0 + 1 };
         render!(search::result(
             &rockets.to_context(),
