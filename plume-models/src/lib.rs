@@ -40,6 +40,7 @@ pub enum Error {
     Io(std::io::Error),
     MissingApProperty,
     NotFound,
+    DbPool,
     Request,
     SerDe,
     Search(search::SearcherError),

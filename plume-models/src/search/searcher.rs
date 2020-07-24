@@ -1,6 +1,6 @@
 use crate::{
     config::SearchTokenizerConfig, db_conn::DbPool, instance::Instance, posts::Post, schema::posts,
-    search::query::PlumeQuery, tags::Tag, Result,
+    search::query::PlumeQuery, tags::Tag, Error, Result,
 };
 use chrono::Datelike;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -186,7 +186,10 @@ impl Searcher {
         let lang = schema.get_field("lang").unwrap();
         let license = schema.get_field("license").unwrap();
 
-        let conn = self.dbpool.get().unwrap();
+        let conn = match self.dbpool.get() {
+            Ok(c) => c,
+            Err(_) => return Err(Error::DbPool),
+        };
         let mut writer = self.writer.lock().unwrap();
         let writer = writer.as_mut().unwrap();
         writer.add_document(doc!(
@@ -229,7 +232,10 @@ impl Searcher {
         let searcher = self.reader.searcher();
         let res = searcher.search(&query.into_query(), &collector).unwrap();
 
-        let conn = self.dbpool.get().unwrap();
+        let conn = match self.dbpool.get() {
+            Ok(c) => c,
+            Err(_) => return Err(Error::DbPool),
+        };
 
         res.get(min as usize..)
             .unwrap_or(&[])
@@ -244,7 +250,10 @@ impl Searcher {
     }
 
     pub fn fill(&self) -> Result<()> {
-        let conn = self.dbpool.get().unwrap();
+        let conn = match self.dbpool.get() {
+            Ok(c) => c,
+            Err(_) => return Err(Error::DbPool),
+        };
         for post in posts::table
             .filter(posts::published.eq(true))
             .load::<Post>(&conn)?
