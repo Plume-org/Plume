@@ -5,6 +5,7 @@ use crate::{
 use chrono::{Datelike, Utc};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
+use rocket::request::{self, FromRequest, Outcome, Request, State};
 use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
@@ -371,5 +372,14 @@ Then try to restart Plume
 
     pub fn drop_writer(&self) {
         self.writer.lock().unwrap().take();
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for Searcher {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Searcher, Self::Error> {
+        let searcher = request.guard::<State<'_, Searcher>>()?;
+        Outcome::Success(*searcher.inner())
     }
 }

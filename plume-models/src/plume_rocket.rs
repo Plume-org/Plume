@@ -2,7 +2,7 @@ pub use self::module::PlumeRocket;
 
 #[cfg(not(test))]
 mod module {
-    use crate::{db_conn::DbConn, search, users};
+    use crate::{db_conn::DbConn, users};
     use rocket::{
         request::{self, FlashMessage, FromRequest, Request},
         Outcome, State,
@@ -15,7 +15,6 @@ mod module {
         pub conn: DbConn,
         pub intl: rocket_i18n::I18n,
         pub user: Option<users::User>,
-        pub searcher: Arc<search::Searcher>,
         pub worker: Arc<ScheduledThreadPool>,
         pub flash_msg: Option<(String, String)>,
     }
@@ -28,7 +27,6 @@ mod module {
             let intl = request.guard::<rocket_i18n::I18n>()?;
             let user = request.guard::<users::User>().succeeded();
             let worker = request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>()?;
-            let searcher = request.guard::<'_, State<'_, Arc<search::Searcher>>>()?;
             let flash_msg = request.guard::<FlashMessage<'_, '_>>().succeeded();
             Outcome::Success(PlumeRocket {
                 conn,
@@ -36,7 +34,6 @@ mod module {
                 user,
                 flash_msg: flash_msg.map(|f| (f.name().into(), f.msg().into())),
                 worker: worker.clone(),
-                searcher: searcher.clone(),
             })
         }
     }
@@ -56,7 +53,6 @@ mod module {
     pub struct PlumeRocket {
         pub conn: DbConn,
         pub user: Option<users::User>,
-        pub searcher: Arc<search::Searcher>,
         pub worker: Arc<ScheduledThreadPool>,
     }
 
@@ -67,12 +63,10 @@ mod module {
             let conn = request.guard::<DbConn>()?;
             let user = request.guard::<users::User>().succeeded();
             let worker = request.guard::<'_, State<'_, Arc<ScheduledThreadPool>>>()?;
-            let searcher = request.guard::<'_, State<'_, Arc<search::Searcher>>>()?;
             Outcome::Success(PlumeRocket {
                 conn,
                 user,
                 worker: worker.clone(),
-                searcher: searcher.clone(),
             })
         }
     }
