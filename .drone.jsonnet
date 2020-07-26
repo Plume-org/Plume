@@ -7,6 +7,28 @@
 // Its Dockerfile can be found at https://git.joinplu.me/plume/buildenv
 local plumeEnv = "plumeorg/plume-buildenv:v0.0.9";
 
+// Common cache config
+local cacheConfig(name, extra) = {
+    name: name,
+    image: "meltwater/drone-cache:dev",
+    pull: true,
+    environment: {
+      AWS_ACCESS_KEY_ID: { from_secret: 'minio_key' },
+      AWS_SECRET_ACCESS_KEY: { from_secret: 'minio_secret' },
+    },
+    settings: extra + {
+        cache_key: 'v0-{{ checksum "Cargo.lock" }}-{{ .Commit.Branch }}',
+        archive_format: "gzip",
+        mount: [ "~/.cargo/", "./target" ],
+        bucket: 'cache',
+        region: 'eu-west-1',
+        path_style: true,
+        endpoints: "127.0.0.1:9000",
+    },
+    volumes: [ { name: "cache", path: "/tmp/cache" } ]
+};
+
+
 // A pipeline step that restores the cache.
 // The cache contains all the cargo build files.
 // Thus, we don't have to download and compile all of our dependencies for each
@@ -17,42 +39,9 @@ local plumeEnv = "plumeorg/plume-buildenv:v0.0.9";
 //
 // Potential TODO: use one cache per pipeline, as we used to do when we were
 // using CircleCI.
-local restoreCache = {
-    name: "restore-cache",
-    image: "meltwater/drone-cache:dev",
-    pull: true,
-    settings: {
-        backend: "filesystem",
-        restore: true,
-        cache_key: 'v0-{{ checksum "Cargo.lock" }}-{{ .Commit.Branch }}',
-        archive_format: "gzip",
-        mount: [ "~/.cargo/", "./target" ]
-    },
-    volumes: [ { name: "cache", path: "/tmp/cache" } ]
-};
-
+local restoreCache = cacheConfig("restore-cache", { restore: true });
 // And a step that saves the cache.
-local saveCache = {
-    name: "save-cache",
-    image: "meltwater/drone-cache:dev",
-    pull: true,
-    settings: {
-        backend: "filesystem",
-        rebuild: true,
-        cache_key: 'v0-{{ checksum "Cargo.lock" }}-{{ .Commit.Branch }}',
-        archive_format: "gzip",
-        mount: [ "~/.cargo/", "./target" ]
-    },
-    volumes: [ { name: "cache", path: "/tmp/cache" } ]
-};
-
-// Finally, the Docker volume to store the cache
-local cacheVolume = {
-    name: "cache",
-    host: {
-        path: "/var/lib/cache"
-    }
-};
+local saveCache = cacheConfig("save-cache", { rebuild: true });
 
 // This step starts a PostgreSQL database if the db parameter is "postgres",
 // otherwise it does nothing.
