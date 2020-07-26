@@ -21,7 +21,6 @@ local cacheConfig(name, extra) = {
         archive_format: "gzip",
         mount: [ "~/.cargo/", "./target" ],
         bucket: 'cache',
-        region: 'eu-west-1',
         path_style: true,
         endpoints: "127.0.0.1:9000",
     },
