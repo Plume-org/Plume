@@ -88,7 +88,7 @@ local upload(name, source) = {
     settings: {
         bucket: 'artifacts',
         source: source,
-        target: '/',
+        target: '/${DRONE_BUILD_NUMBER}',
         path_style: true,
         endpoint: 'http://127.0.0.1:9000',
         access_key: { from_secret: 'minio_key' },
