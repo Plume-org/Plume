@@ -149,7 +149,7 @@ local Integration(db) = cachedPipeline(
         + db + '",test --force --path .',
         // Install plm
         'cargo install --debug --no-default-features --features="'
-        + db + '",test --force --path plume-cli',
+        + db + '" --force --path plume-cli',
         // Run the tests
         "./script/run_browser_test.sh"
     ]
