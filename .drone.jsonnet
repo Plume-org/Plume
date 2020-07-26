@@ -91,7 +91,7 @@ local CargoFmt() = cachedPipeline(
 
 // Helper function:
 local cmd(db, pkg, features=true) = if features then
-    "cargo clippy --no-default-features --features " + db + "--release -p "
+    "cargo clippy --no-default-features --features " + db + " --release -p "
     + pkg + " -- -D warnings"
 else
     "cargo clippy --no-default-features --release -p "
