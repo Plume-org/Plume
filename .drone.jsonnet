@@ -23,6 +23,7 @@ local cacheConfig(name, extra) = {
         bucket: 'cache',
         path_style: true,
         endpoints: "127.0.0.1:9000",
+        region: 'eu-west-1',
     },
     volumes: [ { name: "cache", path: "/tmp/cache" } ]
 };
