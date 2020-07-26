@@ -61,6 +61,9 @@ local basePipeline(name, steps) = {
     kind: "pipeline",
     name: name,
     type: "docker",
+    environment: {
+        RUST_TEST_THREADS: '1',
+    },
     steps: steps
 };
 
