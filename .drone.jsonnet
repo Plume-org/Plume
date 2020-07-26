@@ -129,7 +129,7 @@ local Unit(db) = cachedPipeline(
     "unit-" + db,
     [
         "cargo test --all --exclude plume-front --exclude plume-macro"
-        + "--no-run --no-default-features --features=" + db
+        + " --no-run --no-default-features --features=" + db
     ]
 );
 
