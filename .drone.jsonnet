@@ -24,6 +24,7 @@ local cacheConfig(name, extra) = {
         path_style: true,
         endpoints: "127.0.0.1:9000",
         region: 'us-east-1',
+        debug: true,
     },
     volumes: [ { name: "cache", path: "/tmp/cache" } ]
 };
