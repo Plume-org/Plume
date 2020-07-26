@@ -78,6 +78,21 @@ local cachedPipeline(name, commands) = basePipeline(
     ]
 );
 
+// This function creates a step to upload artifacts to Minio
+local upload(name, source) = {
+    name: name,
+    image: 'plugins/s3',
+    settings: {
+        bucket: 'artifacts',
+        source: source,
+        target: '/',
+        path_style: true,
+        endpoint: 'http://127.0.0.1:9000',
+        access_key: { from_secret: 'minio_key' },
+        secret_key: { from_secret: 'minio_secret' },
+    },
+};
+
 
 // Here starts the actual list of pipelines!
 
@@ -142,18 +157,26 @@ local Integration(db) = cachedPipeline(
 // It should also deploy the SQlite build to a test instance
 // located at https://pr-XXX.joinplu.me (but this system is not very
 // stable, and often breaks).
-//
-// TODO: save the artifacts that are generated somewhere
-local Release(db) = cachedPipeline(
+local Release(db) = basePipeline(
     "release-" + db,
     [
-        "cargo web deploy -p plume-front --release",
-        "cargo build --release --no-default-features --features=" + db + " -p plume",
-        "cargo build --release --no-default-features --features=" + db + " -p plume-cli",
-        "./script/generate_artifact.sh",
-    ] + if db == "sqlite" then
-    [ "./script/upload_test_environment.sh" ] else
-    []
+        restoreCache,
+        {
+            name: 'release-' + db,
+            image: plumeEnv,
+            commands: [
+                "cargo web deploy -p plume-front --release",
+                "cargo build --release --no-default-features --features=" + db + " -p plume",
+                "cargo build --release --no-default-features --features=" + db + " -p plume-cli",
+                "./script/generate_artifact.sh",
+            ] + if db == "sqlite" then
+            [ "./script/upload_test_environment.sh" ] else
+            []
+        },
+        upload('artifacts-' + db, '*.tar.gz'),
+        saveCache,
+    ]
+
 );
 
 // PIPELINE 6: upload the new PO templates (.pot) to Crowdin
