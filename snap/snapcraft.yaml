@@ -32,7 +32,13 @@ parts:
       - libsqlite3-dev
       - gettext
       - libclang-8-dev
-      - on arm64,armhf,ppc64el,s390x:
+      - on arm64:
+        - lld-8
+      - on armhf:
+        - lld-8
+      - on ppc64el:
+        - lld-8
+      - on s390x:
         - lld-8
     override-build: |
       snapcraftctl set-version $(git describe --tags)
