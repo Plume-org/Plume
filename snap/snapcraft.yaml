@@ -31,15 +31,15 @@ parts:
       - pkg-config
       - libsqlite3-dev
       - gettext
-      - libclang-8-dev
+      - libclang-10-dev
       - on arm64:
-        - lld-8
+        - lld-10
       - on armhf:
-        - lld-8
+        - lld-10
       - on ppc64el:
-        - lld-8
+        - lld-10
       - on s390x:
-        - lld-8
+        - lld-10
     override-build: |
       snapcraftctl set-version $(git describe --tags)
       export PATH=$PATH:$HOME/.cargo/bin
@@ -51,7 +51,7 @@ parts:
       # the system LLD we've installed earlier.
       case ${SNAPCRAFT_ARCH_TRIPLET} in \
         aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
-          RUSTFLAGS="-C linker=lld-8" cargo web deploy -p plume-front --release \
+          RUSTFLAGS="-C linker=lld-10" cargo web deploy -p plume-front --release \
           ;; \
         *) \
           cargo web deploy -p plume-front --release \
