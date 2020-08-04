@@ -50,10 +50,12 @@ parts:
       # On the others (arm64, armhf, powerpc64, s390x) fall back to using
       # the system LLD we've installed earlier.
       case ${SNAPCRAFT_ARCH_TRIPLET} in \
-        aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
+        aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64le-linux-gnu|s390x-linux-gnu) \
+          echo "Tier 2 platform ${SNAPCRAFT_ARCH_TRIPLET} detected, using lld-10 as linker" \
           RUSTFLAGS="-C linker=lld-10" cargo web deploy -p plume-front --release \
           ;; \
         *) \
+          echo "Tier 1 platform ${SNAPCRAFT_ARCH_TRIPLET} detected. Using default rust-lld linker" \
           cargo web deploy -p plume-front --release \
           ;; \
       esac
