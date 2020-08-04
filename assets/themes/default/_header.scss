@@ -16,6 +16,7 @@ body > header {
     padding: 1em 1em 1em 2em;
     background: $primary;
     align-self: flex-start;
+    -webkit-transform: translateZ(0);
 
     a {
       transform: skewX(15deg);
