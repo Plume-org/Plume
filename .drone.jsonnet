@@ -55,7 +55,7 @@ local startDb(db) = if db == "postgres" then {
         POSTGRES_DB: "plume",
         POSTGRES_HOST_AUTH_METHOD: "trust",
     }
-};
+} else {};
 
 // A utility function to generate a new pipeline
 local basePipeline(name, steps) = {
