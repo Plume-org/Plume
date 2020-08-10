@@ -20,4 +20,5 @@ class Browser(unittest.TestCase):
         self.driver.close()
 
     def get(self, url):
-        return self.driver.get("https://localhost" + url)
+        # Like "selenium", integration is mapped to the container that runs the plume instance
+        return self.driver.get("https://integration" + url)

@@ -151,7 +151,7 @@ local Integration(db) = basePipeline(
             detach: true,
         },
         {
-            name: "integration-" + db,
+            name: "integration",
             image: plumeEnv,
             environment: {
                 BROWSER: "firefox",
