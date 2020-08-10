@@ -53,7 +53,7 @@ local startDb(db) = if db == "postgres" then {
     environment: {
         POSTGRES_USER: "plume",
         POSTGRES_DB: "plume",
-        POSTGRES_PASSWORD: "not really needed for connections from localhost",
+        POSTGRES_PASSWORD: "password",
     }
 } else {};
 
@@ -151,7 +151,7 @@ local Integration(db) = {
             image: plumeEnv,
             environment: {
                 BROWSER: "firefox",
-                DATABASE_URL: if db == "postgres" then "postgres://plume@start-db/plume" else "plume.db",
+                DATABASE_URL: if db == "postgres" then "postgres://plume:password@start-db/plume" else "plume.db",
             },
             commands: [
                 // Install the front-end
