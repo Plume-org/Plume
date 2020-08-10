@@ -139,19 +139,32 @@ local Unit(db) = cachedPipeline(
 // PIPELINE 4: runs integration tests
 // It installs a local instance an run integration test with Python scripts
 // that use Selenium (located in scripts/browser_test).
-local Integration(db) = cachedPipeline(
+local Integration(db) = {
+} + basePipeline(
     "integration-" + db,
     [
-        // Install the front-end
-        "cargo web deploy -p plume-front",
-        // Install the server
-        'cargo install --debug --no-default-features --features="'
-        + db + '",test --force --path .',
-        // Install plm
-        'cargo install --debug --no-default-features --features="'
-        + db + '" --force --path plume-cli',
-        // Run the tests
-        "./script/run_browser_test.sh"
+        restoreCache,
+        startDb(db),
+        {
+            name: "integration-" + db,
+            image: plumeEnv,
+            environment: {
+                BROWSER: "firefox",
+            },
+            commands: [
+                // Install the front-end
+                "cargo web deploy -p plume-front",
+                // Install the server
+                'cargo install --debug --no-default-features --features="'
+                + db + '",test --force --path .',
+                // Install plm
+                'cargo install --debug --no-default-features --features="'
+                + db + '" --force --path plume-cli',
+                // Run the tests
+                "./script/run_browser_test.sh"
+            ],
+        },
+        saveCache,
     ]
 );
 
