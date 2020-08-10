@@ -52,7 +52,8 @@ local startDb(db) = if db == "postgres" then {
     detach: true,
     environment: {
         POSTGRES_USER: "postgres",
-        POSTGRES_DB: "plume"
+        POSTGRES_DB: "plume",
+        POSTGRES_HOST_AUTH_METHOD: "trust",
     }
 };
 
