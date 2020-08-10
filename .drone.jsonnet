@@ -5,7 +5,7 @@
 
 // This Docker image contains everything we need to build Plume.
 // Its Dockerfile can be found at https://git.joinplu.me/plume/buildenv
-local plumeEnv = "plumeorg/plume-buildenv:v0.0.9";
+local plumeEnv = "plumeorg/plume-buildenv:v0.2.0";
 
 // Common cache config
 local cacheConfig(name, extra) = {
