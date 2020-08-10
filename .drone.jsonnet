@@ -51,9 +51,9 @@ local startDb(db) = if db == "postgres" then {
     image: "postgres:12.3-alpine",
     detach: true,
     environment: {
-        POSTGRES_USER: "postgres",
+        POSTGRES_USER: "plume",
         POSTGRES_DB: "plume",
-        POSTGRES_HOST_AUTH_METHOD: "trust",
+        POSTGRES_PASSWORD: "not really needed for connections from localhost",
     }
 } else {};
 
