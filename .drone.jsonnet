@@ -142,7 +142,7 @@ local Unit(db) = cachedPipeline(
 // that use Selenium (located in scripts/browser_test).
 local Integration(db) = {
     volumes: [
-        name: 'webdriver-socket', temp: {},
+        { name: 'webdriver-socket', temp: {}, },
     ]
 } + basePipeline(
     "integration-" + db,
