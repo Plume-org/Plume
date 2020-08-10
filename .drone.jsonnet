@@ -48,7 +48,7 @@ local saveCache = cacheConfig("save-cache", { rebuild: true });
 // otherwise it does nothing.
 local startDb(db) = if db == "postgres" then {
     name: "start-db",
-    image: "postgres:9.6-alpine",
+    image: "postgres:12.3-alpine",
     detach: true,
     environment: {
         POSTGRES_USER: "postgres",
