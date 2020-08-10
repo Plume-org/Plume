@@ -147,6 +147,11 @@ local Integration(db) = {
         restoreCache,
         startDb(db),
         {
+            name: 'selenium',
+            image: 'elgalu/selenium:latest',
+            detach: true,
+        },
+        {
             name: "integration-" + db,
             image: plumeEnv,
             environment: {
