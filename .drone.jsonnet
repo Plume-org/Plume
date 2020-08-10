@@ -151,6 +151,7 @@ local Integration(db) = {
             image: plumeEnv,
             environment: {
                 BROWSER: "firefox",
+                DATABASE_URL: if db == "postgres" then "postgres://plume@start-db/plume" else "plume.db",
             },
             commands: [
                 // Install the front-end
