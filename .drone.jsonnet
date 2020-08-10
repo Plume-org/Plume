@@ -140,11 +140,7 @@ local Unit(db) = cachedPipeline(
 // PIPELINE 4: runs integration tests
 // It installs a local instance an run integration test with Python scripts
 // that use Selenium (located in scripts/browser_test).
-local Integration(db) = {
-    volumes: [
-        { name: 'webdriver-socket', temp: {}, },
-    ]
-} + basePipeline(
+local Integration(db) = basePipeline(
     "integration-" + db,
     [
         restoreCache,
@@ -153,9 +149,6 @@ local Integration(db) = {
             name: 'selenium',
             image: 'elgalu/selenium:latest',
             detach: true,
-            volumes: [
-                { name: 'webdriver-socket', path: '/wd' },
-            ]
         },
         {
             name: "integration-" + db,
@@ -164,9 +157,6 @@ local Integration(db) = {
                 BROWSER: "firefox",
                 DATABASE_URL: if db == "postgres" then "postgres://plume:password@start-db/plume" else "plume.db",
             },
-            volumes: [
-                { name: 'webdriver-socket', path: '/wd' },
-            ],
             commands: [
                 // Install the front-end
                 "cargo web deploy -p plume-front",

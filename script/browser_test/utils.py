@@ -13,7 +13,8 @@ class Browser(unittest.TestCase):
             raise Exception("No browser was requested")
         capabilities['acceptSslCerts'] = True
         self.driver = webdriver.Remote(
-            command_executor='http://localhost:24444/wd/hub',
+            # The "selenium" address is set up by Drone CI and "points" to the container running selenium
+            command_executor='http://selenium:24444/wd/hub',
             desired_capabilities=capabilities)
     def tearDown(self):
         self.driver.close()
