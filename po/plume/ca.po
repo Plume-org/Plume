@@ -35,9 +35,30 @@ msgstr "{0} us ha esmentat."
 msgid "{0} boosted your article."
 msgstr ""
 
+msgid "Your feed"
+msgstr ""
+
+msgid "Local feed"
+msgstr ""
+
+msgid "Federated feed"
+msgstr ""
+
 # src/template_utils.rs:142
 msgid "{0}'s avatar"
 msgstr ""
+
+# src/template_utils.rs:195
+msgid "Previous page"
+msgstr ""
+
+# src/template_utils.rs:206
+msgid "Next page"
+msgstr ""
+
+# src/template_utils.rs:254
+msgid "Optional"
+msgstr "Opcional"
 
 # src/routes/blogs.rs:64
 msgid "To create a new blog, you need to be logged in"
@@ -87,16 +108,33 @@ msgstr "S’ha suprimit el vostre comentari."
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} have been unblocked."
+# src/routes/instance.rs:152
+msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:177
-msgid "{} have been blocked."
+# src/routes/instance.rs:154
+msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:221
-msgid "{} have been banned."
+# src/routes/blogs.rs:163
+#, fuzzy
+msgid "Blocks deleted"
+msgstr "S’ha suprimit el vostre blog."
+
+# src/routes/instance.rs:216
+msgid "Email Blocked"
+msgstr ""
+
+# src/routes/instance.rs:306
+msgid "You can't change your own rights."
+msgstr ""
+
+# src/routes/instance.rs:317
+msgid "You are not allowed to take this action."
+msgstr ""
+
+# src/routes/instance.rs:354
+msgid "Done."
 msgstr ""
 
 # src/routes/likes.rs:51
@@ -168,11 +206,15 @@ msgid "Your article has been deleted."
 msgstr "S’ha suprimit el vostre article."
 
 # src/routes/posts.rs:602
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
 msgstr ""
 
 # src/routes/posts.rs:642
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
 msgstr ""
 
 # src/routes/reshares.rs:51
@@ -198,10 +240,6 @@ msgstr ""
 # src/routes/session.rs:264
 msgid "Your password was successfully reset."
 msgstr "S’ha reinicialitzat la vostra contrasenya correctament."
-
-# src/routes/session.rs:274
-msgid "Sorry, but the link expired. Try again"
-msgstr ""
 
 # src/routes/user.rs:136
 msgid "To access your dashboard, you need to be logged in"
@@ -240,7 +278,238 @@ msgid "Registrations are closed on this instance."
 msgstr ""
 
 # src/routes/user.rs:527
-msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
+msgstr ""
+
+msgid "Plume"
+msgstr ""
+
+msgid "Menu"
+msgstr "Menú"
+
+msgid "Search"
+msgstr "Cerca"
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Notifications"
+msgstr "Notificacions"
+
+msgid "Log Out"
+msgstr "Finalitza la sessió"
+
+msgid "My account"
+msgstr "El meu compte"
+
+msgid "Log In"
+msgstr "Inicia la sessió"
+
+msgid "Register"
+msgstr "Registre"
+
+msgid "About this instance"
+msgstr "Quant a aquesta instància"
+
+msgid "Privacy policy"
+msgstr "Política de privadesa"
+
+msgid "Administration"
+msgstr "Administració"
+
+msgid "Documentation"
+msgstr "Documentació"
+
+msgid "Source code"
+msgstr "Codi font"
+
+msgid "Matrix room"
+msgstr ""
+
+msgid "Media upload"
+msgstr ""
+
+msgid "Description"
+msgstr "Descripció"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr ""
+
+# src/template_utils.rs:251
+msgid "Content warning"
+msgstr ""
+
+msgid "Leave it empty, if none is needed"
+msgstr ""
+
+msgid "File"
+msgstr "Fitxer"
+
+msgid "Send"
+msgstr "Envia"
+
+msgid "Your media"
+msgstr ""
+
+msgid "Upload"
+msgstr "Puja"
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Content warning: {0}"
+msgstr ""
+
+msgid "Delete"
+msgstr "Suprimeix"
+
+msgid "Details"
+msgstr "Detalls"
+
+msgid "Media details"
+msgstr "Detalls del fitxer multimèdia"
+
+msgid "Go back to the gallery"
+msgstr "Torna a la galeria"
+
+msgid "Markdown syntax"
+msgstr "Sintaxi Markdown"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr ""
+
+msgid "Use as an avatar"
+msgstr ""
+
+msgid "Publish"
+msgstr "Publica"
+
+msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
+# src/template_utils.rs:251
+msgid "Title"
+msgstr "Títol"
+
+# src/template_utils.rs:251
+msgid "Subtitle"
+msgstr "Subtítol"
+
+msgid "Content"
+msgstr "Contingut"
+
+msgid "Markdown syntax is supported"
+msgstr ""
+
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+
+msgid "Upload media"
+msgstr ""
+
+# src/template_utils.rs:251
+msgid "Tags, separated by commas"
+msgstr ""
+
+# src/template_utils.rs:251
+msgid "License"
+msgstr ""
+
+msgid "Illustration"
+msgstr ""
+
+msgid "This is a draft, don't publish it yet."
+msgstr ""
+
+msgid "Update"
+msgstr "Actualitza"
+
+msgid "Update, or publish"
+msgstr "Actualitza o publica"
+
+msgid "Publish your post"
+msgstr ""
+
+msgid "Interact with {}"
+msgstr ""
+
+msgid "Log in to interact"
+msgstr ""
+
+msgid "Enter your full username to interact"
+msgstr ""
+
+msgid "Written by {0}"
+msgstr "Escrit per {0}"
+
+msgid "All rights reserved."
+msgstr "Tots els drets reservats."
+
+msgid "This article is under the {0} license."
+msgstr ""
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't like this anymore"
+msgstr "Això ja no m’agrada"
+
+msgid "Add yours"
+msgstr ""
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I don't want to boost this anymore"
+msgstr ""
+
+msgid "Boost"
+msgstr ""
+
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "Comments"
+msgstr "Comentaris"
+
+msgid "Your comment"
+msgstr "El vostre comentari"
+
+msgid "Submit comment"
+msgstr "Envia el comentari"
+
+msgid "No comments yet. Be the first to react!"
+msgstr ""
+
+msgid "Are you sure?"
+msgstr "N’esteu segur?"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr ""
+
+msgid "Only you and other authors can edit this article."
+msgstr ""
+
+msgid "Edit"
+msgstr "Edita"
+
+msgid "You are not authorized."
 msgstr ""
 
 msgid "Internal server error"
@@ -252,7 +521,19 @@ msgstr ""
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
 
-msgid "You are not authorized."
+msgid "Invalid CSRF token"
+msgstr ""
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
 msgstr ""
 
 msgid "Page not found"
@@ -264,108 +545,18 @@ msgstr ""
 msgid "The link that led you here may be broken."
 msgstr ""
 
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
-msgstr ""
-
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr ""
-
 msgid "Articles tagged \"{0}\""
 msgstr "Articles amb l’etiqueta «{0}»"
 
 msgid "There are currently no articles with such a tag"
 msgstr ""
 
-msgid "New Blog"
-msgstr "Blog nou"
-
-msgid "Create a blog"
-msgstr "Crea un blog"
-
-# src/template_utils.rs:251
-msgid "Title"
-msgstr "Títol"
-
-# src/template_utils.rs:254
-msgid "Optional"
-msgstr "Opcional"
-
-msgid "Create blog"
-msgstr "Crea un blog"
-
-msgid "Edit \"{}\""
-msgstr "Edita «{}»"
-
-msgid "Description"
-msgstr "Descripció"
-
-msgid "Markdown syntax is supported"
-msgstr ""
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-
-msgid "Upload images"
-msgstr ""
-
-msgid "Blog icon"
-msgstr "Icona del blog"
-
-msgid "Blog banner"
-msgstr "Bàner del blog"
-
-msgid "Update blog"
-msgstr "Actualitza el blog"
-
-msgid "Danger zone"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Aneu amb compte: les accions que són ací no es poden desfer."
-
-msgid "Permanently delete this blog"
-msgstr "Suprimeix permanentment aquest blog"
-
-msgid "{}'s icon"
-msgstr "Icona per a {}"
-
-msgid "Edit"
-msgstr "Edita"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Hi ha 1 autor en aquest blog: "
-msgstr[1] "Hi ha {0} autors en aquest blog: "
-
 msgid "Latest articles"
 msgstr "Darrers articles"
 
-msgid "No posts to see here yet."
+#, fuzzy
+msgid "Nothing to see here yet."
 msgstr "Encara no hi ha cap apunt."
-
-msgid "Search result(s) for \"{0}\""
-msgstr ""
-
-msgid "Search result(s)"
-msgstr ""
-
-msgid "No results for your query"
-msgstr ""
-
-msgid "No more results for your query"
-msgstr ""
-
-msgid "Search"
-msgstr "Cerca"
-
-msgid "Your query"
-msgstr ""
 
 msgid "Advanced search"
 msgstr "Cerca avançada"
@@ -378,11 +569,7 @@ msgstr ""
 msgid "Subtitle matching these words"
 msgstr ""
 
-msgid "Subtitle - byline"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "Content matching these words"
+msgid "Content macthing these words"
 msgstr ""
 
 msgid "Body content"
@@ -438,247 +625,301 @@ msgstr "Publicat segons aquesta llicència"
 msgid "Article license"
 msgstr ""
 
-msgid "Interact with {}"
+msgid "Search result(s) for \"{0}\""
 msgstr ""
 
-msgid "Log in to interact"
+msgid "Search result(s)"
 msgstr ""
 
-msgid "Enter your full username to interact"
+msgid "No results for your query"
 msgstr ""
 
-msgid "Publish"
-msgstr "Publica"
+msgid "No more results for your query"
+msgstr ""
 
-msgid "Classic editor (any changes will be lost)"
+msgid "New Blog"
+msgstr "Blog nou"
+
+msgid "Create a blog"
+msgstr "Crea un blog"
+
+msgid "Create blog"
+msgstr "Crea un blog"
+
+msgid "{}'s icon"
+msgstr "Icona per a {}"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Hi ha 1 autor en aquest blog: "
+msgstr[1] "Hi ha {0} autors en aquest blog: "
+
+msgid "No posts to see here yet."
+msgstr "Encara no hi ha cap apunt."
+
+msgid "Edit \"{}\""
+msgstr "Edita «{}»"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr "Icona del blog"
+
+msgid "Blog banner"
+msgstr "Bàner del blog"
+
+msgid "Custom theme"
 msgstr ""
 
 # src/template_utils.rs:251
-msgid "Subtitle"
-msgstr "Subtítol"
+#, fuzzy
+msgid "Default theme"
+msgstr "Llicència per defecte dels articles"
 
-msgid "Content"
-msgstr "Contingut"
-
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgid "Error while loading theme selector."
 msgstr ""
 
-msgid "Upload media"
+msgid "Update blog"
+msgstr "Actualitza el blog"
+
+msgid "Danger zone"
 msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Aneu amb compte: les accions que són ací no es poden desfer."
+
+#, fuzzy
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Suprimeix permanentment aquest blog"
+
+msgid "Permanently delete this blog"
+msgstr "Suprimeix permanentment aquest blog"
+
+msgid "None"
+msgstr "Cap"
+
+msgid "No description"
+msgstr "Cap descripció"
+
+msgid "What is Plume?"
+msgstr "Què és el Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Create your account"
+msgstr ""
+
+msgid "About {0}"
+msgstr "Quant a {0}"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "Llar de <em>{0}</em> persones"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Les quals han escrit <em>{0}</em> articles"
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "By {0}"
+msgstr "Per {0}"
+
+msgid "Draft"
+msgstr "Esborrany"
+
+msgid "Respond"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr "Suprimeix aquest comentari"
+
+msgid "Reset your password"
+msgstr "Reinicialitza la contrasenya"
 
 # src/template_utils.rs:251
-msgid "Tags, separated by commas"
-msgstr ""
+msgid "New password"
+msgstr "Contrasenya nova"
 
 # src/template_utils.rs:251
-msgid "License"
-msgstr ""
+msgid "Confirmation"
+msgstr "Confirmació"
 
-# src/template_utils.rs:259
-msgid "Leave it empty to reserve all rights"
-msgstr ""
-
-msgid "Illustration"
-msgstr ""
-
-msgid "This is a draft, don't publish it yet."
-msgstr ""
-
-msgid "Update"
-msgstr "Actualitza"
-
-msgid "Update, or publish"
-msgstr "Actualitza o publica"
-
-msgid "Publish your post"
-msgstr ""
-
-msgid "Written by {0}"
-msgstr "Escrit per {0}"
-
-msgid "All rights reserved."
-msgstr "Tots els drets reservats."
-
-msgid "This article is under the {0} license."
-msgstr ""
-
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't like this anymore"
-msgstr "Això ja no m’agrada"
-
-msgid "Add yours"
-msgstr ""
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't want to boost this anymore"
-msgstr ""
-
-msgid "Boost"
-msgstr ""
-
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
-
-msgid "Unsubscribe"
-msgstr ""
-
-msgid "Subscribe"
-msgstr ""
-
-msgid "Comments"
-msgstr "Comentaris"
+msgid "Update password"
+msgstr "Actualitza la contrasenya"
 
 # src/template_utils.rs:251
-msgid "Content warning"
+msgid "Email"
+msgstr "Adreça electrònica"
+
+msgid "Send password reset link"
 msgstr ""
 
-msgid "Your comment"
-msgstr "El vostre comentari"
+msgid "Log in"
+msgstr "Inicia una sessió"
 
-msgid "Submit comment"
-msgstr "Envia el comentari"
+# src/template_utils.rs:251
+msgid "Username, or email"
+msgstr "Nom d’usuari o adreça electrònica"
 
-msgid "No comments yet. Be the first to react!"
+# src/template_utils.rs:251
+msgid "Password"
+msgstr "Contrasenya"
+
+msgid "This token has expired"
 msgstr ""
 
-msgid "Are you sure?"
-msgstr "N’esteu segur?"
-
-msgid "Delete"
-msgstr "Suprimeix"
-
-msgid "This article is still a draft. Only you and other authors can see it."
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
 msgstr ""
 
-msgid "Only you and other authors can edit this article."
+msgid "Check your inbox!"
+msgstr "Reviseu la vostra safata d’entrada."
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
 msgstr ""
 
-msgid "Media upload"
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid "Useful for visually impaired people, as well as licensing information"
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
 msgstr ""
 
-msgid "Leave it empty, if none is needed"
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
 msgstr ""
 
-msgid "File"
-msgstr "Fitxer"
-
-msgid "Send"
-msgstr "Envia"
-
-msgid "Your media"
+msgid "Administration of {0}"
 msgstr ""
-
-msgid "Upload"
-msgstr "Puja"
-
-msgid "You don't have any media yet."
-msgstr ""
-
-msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Details"
-msgstr "Detalls"
-
-msgid "Media details"
-msgstr "Detalls del fitxer multimèdia"
-
-msgid "Go back to the gallery"
-msgstr "Torna a la galeria"
-
-msgid "Markdown syntax"
-msgstr "Sintaxi Markdown"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr ""
-
-msgid "Use as an avatar"
-msgstr ""
-
-msgid "Notifications"
-msgstr "Notificacions"
-
-msgid "Plume"
-msgstr ""
-
-msgid "Menu"
-msgstr "Menú"
-
-msgid "Dashboard"
-msgstr ""
-
-msgid "Log Out"
-msgstr "Finalitza la sessió"
-
-msgid "My account"
-msgstr "El meu compte"
-
-msgid "Log In"
-msgstr "Inicia la sessió"
-
-msgid "Register"
-msgstr "Registre"
-
-msgid "About this instance"
-msgstr "Quant a aquesta instància"
-
-msgid "Privacy policy"
-msgstr "Política de privadesa"
-
-msgid "Administration"
-msgstr "Administració"
-
-msgid "Documentation"
-msgstr "Documentació"
-
-msgid "Source code"
-msgstr "Codi font"
-
-msgid "Matrix room"
-msgstr ""
-
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Users"
-msgstr "Usuaris"
-
-msgid "Configuration"
-msgstr "Configuració"
 
 msgid "Instances"
 msgstr "Instàncies"
 
+msgid "Configuration"
+msgstr "Configuració"
+
+msgid "Users"
+msgstr "Usuaris"
+
+msgid "Email blocklist"
+msgstr ""
+
+msgid "Unblock"
+msgstr "Desbloca"
+
+msgid "Block"
+msgstr "Bloca"
+
+msgid "Welcome to {}"
+msgstr "Us donem la benvinguda a {}"
+
+msgid "View all"
+msgstr "Mostra-ho tot"
+
+#, fuzzy
+msgid "Moderation"
+msgstr "Cap descripció"
+
+msgid "Home"
+msgstr ""
+
+msgid "Grant admin rights"
+msgstr ""
+
+msgid "Revoke admin rights"
+msgstr ""
+
+msgid "Grant moderator rights"
+msgstr ""
+
+msgid "Revoke moderator rights"
+msgstr ""
+
 msgid "Ban"
 msgstr ""
 
-msgid "Administration of {0}"
+msgid "Run on selected users"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "Moderator"
+msgstr ""
+
+msgid "Blocklisted Emails"
+msgstr ""
+
+msgid "Email address"
+msgstr ""
+
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Notify the user?"
+msgstr ""
+
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
+msgstr ""
+
+msgid "Blocklisting notification"
+msgstr ""
+
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
+msgstr ""
+
+msgid "Add blocklisted address"
+msgstr ""
+
+msgid "Delete selected emails"
+msgstr ""
+
+msgid "There are no blocked emails on your instance"
+msgstr ""
+
+msgid "Email address:"
+msgstr ""
+
+msgid "Blocklisted for:"
+msgstr ""
+
+msgid "Will notify them on account creation with this message:"
+msgstr ""
+
+msgid "The user will be silently prevented from making an account"
 msgstr ""
 
 # src/template_utils.rs:251
@@ -701,114 +942,13 @@ msgstr "Llicència per defecte dels articles"
 msgid "Save these settings"
 msgstr "Desa aquests paràmetres"
 
-msgid "About {0}"
-msgstr "Quant a {0}"
-
 msgid "Runs Plume {0}"
 msgstr "Funciona amb el Plume {0}"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Llar de <em>{0}</em> persones"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Les quals han escrit <em>{0}</em> articles"
 
 msgid "And are connected to <em>{0}</em> other instances"
 msgstr ""
 
 msgid "Administred by"
-msgstr ""
-
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr ""
-
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr "Us donem la benvinguda a {}"
-
-msgid "Unblock"
-msgstr "Desbloca"
-
-msgid "Block"
-msgstr "Bloca"
-
-msgid "Reset your password"
-msgstr "Reinicialitza la contrasenya"
-
-# src/template_utils.rs:251
-msgid "New password"
-msgstr "Contrasenya nova"
-
-# src/template_utils.rs:251
-msgid "Confirmation"
-msgstr "Confirmació"
-
-msgid "Update password"
-msgstr "Actualitza la contrasenya"
-
-msgid "Log in"
-msgstr "Inicia una sessió"
-
-# src/template_utils.rs:251
-msgid "Username, or email"
-msgstr "Nom d’usuari o adreça electrònica"
-
-# src/template_utils.rs:251
-msgid "Password"
-msgstr "Contrasenya"
-
-# src/template_utils.rs:251
-msgid "E-mail"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr ""
-
-msgid "Check your inbox!"
-msgstr "Reviseu la vostra safata d’entrada."
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr ""
-
-msgid "Open on {0}"
-msgstr ""
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Log in to follow"
-msgstr ""
-
-msgid "Enter your full username handle to follow"
-msgstr ""
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Articles"
-msgstr "Articles"
-
-msgid "Subscribers"
-msgstr "Subscriptors"
-
-msgid "Subscriptions"
-msgstr "Subscripcions"
-
-msgid "Create your account"
 msgstr ""
 
 msgid "Create an account"
@@ -819,48 +959,21 @@ msgid "Username"
 msgstr "Nom d’usuari"
 
 # src/template_utils.rs:251
-msgid "Email"
-msgstr "Adreça electrònica"
-
-# src/template_utils.rs:251
 msgid "Password confirmation"
 msgstr ""
 
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 
-msgid "{0}'s subscribers"
+msgid "It is you"
 msgstr ""
 
-msgid "Edit your account"
+msgid "Edit your profile"
 msgstr ""
 
-msgid "Your Profile"
-msgstr "El vostre perfil"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr "Resum"
-
-msgid "Update account"
-msgstr "Actualitza el compte"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr ""
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
+msgid "Open on {0}"
 msgstr ""
 
 msgid "Your Dashboard"
@@ -881,47 +994,73 @@ msgstr ""
 msgid "Go to your gallery"
 msgstr ""
 
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Articles"
+msgstr "Articles"
+
+msgid "Subscribers"
+msgstr "Subscriptors"
+
+msgid "Subscriptions"
+msgstr "Subscripcions"
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
 msgid "Atom feed"
 msgstr ""
 
 msgid "Recently boosted"
 msgstr ""
 
-msgid "What is Plume?"
-msgstr "Què és el Plume?"
-
-msgid "Plume is a decentralized blogging engine."
+msgid "Follow {}"
 msgstr ""
 
-msgid "Authors can manage multiple blogs, each as its own website."
+msgid "Log in to follow"
 msgstr ""
 
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgid "Enter your full username handle to follow"
 msgstr ""
 
-msgid "Read the detailed rules"
+msgid "Edit your account"
 msgstr ""
 
-msgid "View all"
-msgstr "Mostra-ho tot"
+msgid "Your Profile"
+msgstr "El vostre perfil"
 
-msgid "None"
-msgstr "Cap"
-
-msgid "No description"
-msgstr "Cap descripció"
-
-msgid "By {0}"
-msgstr "Per {0}"
-
-msgid "Draft"
-msgstr "Esborrany"
-
-msgid "Respond"
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
-msgid "Delete this comment"
-msgstr "Suprimeix aquest comentari"
+msgid "Upload an avatar"
+msgstr ""
+
+# src/template_utils.rs:251
+msgid "Display name"
+msgstr ""
+
+msgid "Summary"
+msgstr "Resum"
+
+msgid "Theme"
+msgstr ""
+
+msgid "Never load blogs custom themes"
+msgstr ""
+
+msgid "Update account"
+msgstr "Actualitza el compte"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr ""
+
+msgid "Delete your account"
+msgstr ""
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
 
 msgid "I'm from this instance"
 msgstr ""
@@ -929,10 +1068,5 @@ msgstr ""
 msgid "I'm from another instance"
 msgstr ""
 
-# src/template_utils.rs:259
-msgid "Example: user@plu.me"
-msgstr ""
-
 msgid "Continue to your instance"
 msgstr ""
-
