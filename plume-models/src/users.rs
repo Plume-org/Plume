@@ -292,11 +292,47 @@ impl User {
         bcrypt::hash(pass, 10).map_err(Error::from)
     }
 
-    pub fn auth(&self, pass: &str) -> bool {
-        self.hashed_password
-            .clone()
-            .map(|hashed| bcrypt::verify(pass, hashed.as_ref()).unwrap_or(false))
-            .unwrap_or(false)
+    fn ldap_register() -> Result<User> {
+        return Err(Error::NotFound);
+        unimplemented!()
+    }
+
+    fn ldap_login(&self) -> bool {
+        return false;
+    }
+
+    pub fn login(conn: &Connection, ident: &str, password: &str) -> Result<User> {
+        let local_id = Instance::get_local()?.id;
+        let user = User::find_by_email(conn, ident)
+            .or_else(|_| User::find_by_name(conn, ident, local_id))
+            .or_else(|_| User::ldap_register())
+            .and_then(|u| if u.instance_id == local_id {
+                Ok(u)
+            } else {
+                Err(Error::NotFound)
+            });
+
+        match user {
+            Ok(user) if user.hashed_password.is_some() => {
+                if bcrypt::verify(password, user.hashed_password.as_ref().unwrap()).unwrap_or(false) {
+                    Ok(user)
+                } else {
+                    Err(Error::NotFound)
+                }
+            },
+            Ok(user) => {
+                if user.ldap_login() {
+                    Ok(user)
+                } else {
+                    Err(Error::NotFound)
+                }
+            },
+            e => {
+                let other = User::get(&*conn, 1).expect("No user is registered").hashed_password;
+                other.map(|pass| bcrypt::verify(password, &pass));
+                e
+            },
+        }
     }
 
     pub fn reset_password(&self, conn: &Connection, pass: &str) -> Result<()> {

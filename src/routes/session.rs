@@ -48,38 +48,19 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let conn = &*rockets.conn;
-    let user = User::find_by_email(&*conn, &form.email_or_name)
-        .or_else(|_| User::find_by_fqn(&rockets, &form.email_or_name));
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-
+    let user = User::login(conn, &form.email_or_name, &form.password);
     let user_id = if let Ok(user) = user {
-        if !user.auth(&form.password) {
-            let mut err = ValidationError::new("invalid_login");
-            err.message = Some(Cow::from("Invalid username, or password"));
-            errors.add("email_or_name", err);
-            String::new()
-        } else {
-            user.id.to_string()
-        }
+        user.id.to_string()
     } else {
-        // Fake password verification, only to avoid different login times
-        // that could be used to see if an email adress is registered or not
-        User::get(&*conn, 1)
-            .map(|u| u.auth(&form.password))
-            .expect("No user is registered");
-
         let mut err = ValidationError::new("invalid_login");
         err.message = Some(Cow::from("Invalid username, or password"));
         errors.add("email_or_name", err);
-        String::new()
-    };
-
-    if !errors.is_empty() {
         return render!(session::login(&rockets.to_context(), None, &*form, errors)).into();
-    }
+    };
 
     cookies.add_private(
         Cookie::build(AUTH_COOKIE, user_id)
