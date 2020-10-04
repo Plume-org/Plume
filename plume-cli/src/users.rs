@@ -132,7 +132,7 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         role,
         &bio,
         email,
-        User::hash_pass(&password).expect("Couldn't hash password"),
+        Some(User::hash_pass(&password).expect("Couldn't hash password")),
     )
     .expect("Couldn't save new user");
 }
