@@ -541,7 +541,7 @@ pub fn create(
                 Role::Normal,
                 "",
                 form.email.to_string(),
-                User::hash_pass(&form.password).map_err(to_validation)?,
+                Some(User::hash_pass(&form.password).map_err(to_validation)?),
             ).map_err(to_validation)?;
             Ok(Flash::success(
                 Redirect::to(uri!(super::session::new: m = _)),
