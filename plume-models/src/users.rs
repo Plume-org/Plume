@@ -1,8 +1,8 @@
 use crate::{
-    ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, config::CONFIG, db_conn::DbConn, follows::Follow,
-    instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
-    safe_string::SafeString, schema::users, search::Searcher, timeline::Timeline, Connection,
-    Error, PlumeRocket, Result, ITEMS_PER_PAGE,
+    ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, config::CONFIG, db_conn::DbConn,
+    follows::Follow, instance::*, medias::Media, notifications::Notification,
+    post_authors::PostAuthor, posts::Post, safe_string::SafeString, schema::users,
+    search::Searcher, timeline::Timeline, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE,
 };
 use activitypub::{
     activity::Delete,
@@ -14,7 +14,7 @@ use activitypub::{
 use bcrypt;
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
-use ldap3::{LdapConn, SearchEntry, Scope};
+use ldap3::{LdapConn, Scope, SearchEntry};
 use openssl::{
     hash::MessageDigest,
     pkey::{PKey, Private},
@@ -297,16 +297,23 @@ impl User {
         if let Some(ldap) = CONFIG.ldap.as_ref() {
             let mut ldap_conn = LdapConn::new(&ldap.addr).map_err(|_| Error::NotFound)?;
             let ldap_name = format!("{}={},{}", ldap.user_name_attr, name, ldap.base_dn);
-            let bind = ldap_conn.simple_bind(&ldap_name, password).map_err(|_| Error::NotFound)?;
+            let bind = ldap_conn
+                .simple_bind(&ldap_name, password)
+                .map_err(|_| Error::NotFound)?;
             if bind.success().is_ok() {
-                let search = ldap_conn.search(&ldap_name, Scope::Base, "(|(objectClass=person)(objectClass=user))", vec![&ldap.mail_attr])
+                let search = ldap_conn
+                    .search(
+                        &ldap_name,
+                        Scope::Base,
+                        "(|(objectClass=person)(objectClass=user))",
+                        vec![&ldap.mail_attr],
+                    )
                     .map_err(|_| Error::NotFound)?
                     .success()
                     .map_err(|_| Error::NotFound)?;
                 for entry in search.0 {
                     let entry = SearchEntry::construct(entry);
-                    let email = entry.attrs.get("mail")
-                        .and_then(|vec| vec.first());
+                    let email = entry.attrs.get("mail").and_then(|vec| vec.first());
                     if email.is_some() {
                         let _ = ldap_conn.unbind();
                         return NewUser::new_local(
@@ -337,7 +344,10 @@ impl User {
             } else {
                 return false;
             };
-            let name = format!("{}={},{}", ldap.user_name_attr, &self.username, ldap.base_dn);
+            let name = format!(
+                "{}={},{}",
+                ldap.user_name_attr, &self.username, ldap.base_dn
+            );
             if let Ok(bind) = conn.simple_bind(&name, password) {
                 bind.success().is_ok()
             } else {
@@ -352,35 +362,40 @@ impl User {
         let local_id = Instance::get_local()?.id;
         let user = User::find_by_email(conn, ident)
             .or_else(|_| User::find_by_name(conn, ident, local_id))
-            .and_then(|u| if u.instance_id == local_id {
-                Ok(u)
-            } else {
-                Err(Error::NotFound)
+            .and_then(|u| {
+                if u.instance_id == local_id {
+                    Ok(u)
+                } else {
+                    Err(Error::NotFound)
+                }
             });
 
         match user {
             Ok(user) if user.hashed_password.is_some() => {
-                if bcrypt::verify(password, user.hashed_password.as_ref().unwrap()).unwrap_or(false) {
+                if bcrypt::verify(password, user.hashed_password.as_ref().unwrap()).unwrap_or(false)
+                {
                     Ok(user)
                 } else {
                     Err(Error::NotFound)
                 }
-            },
+            }
             Ok(user) => {
                 if user.ldap_login(password) {
                     Ok(user)
                 } else {
                     Err(Error::NotFound)
                 }
-            },
+            }
             e => {
                 if let Ok(user) = User::ldap_register(conn, ident, password) {
                     return Ok(user);
                 }
-                let other = User::get(&*conn, 1).expect("No user is registered").hashed_password;
+                let other = User::get(&*conn, 1)
+                    .expect("No user is registered")
+                    .hashed_password;
                 other.map(|pass| bcrypt::verify(password, &pass));
                 e
-            },
+            }
         }
     }
 

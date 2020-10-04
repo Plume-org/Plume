@@ -255,9 +255,9 @@ fn get_ldap_config() -> Option<LdapConfig> {
     if addr.is_some() && base_dn.is_some() {
         let tls = var("LDAP_TLS").unwrap_or_else(|_| "false".to_owned());
         let tls = match tls.as_ref() {
-            "1" | "true"  | "TRUE"  => true,
+            "1" | "true" | "TRUE" => true,
             "0" | "false" | "FALSE" => false,
-            _ => panic!("Invalid LDAP configuration : tls")
+            _ => panic!("Invalid LDAP configuration : tls"),
         };
         let user_name_attr = var("LDAP_USER_NAME_ATTR").unwrap_or_else(|_| "cn".to_owned());
         let mail_attr = var("LDAP_USER_MAIL_ATTR").unwrap_or_else(|_| "mail".to_owned());
