@@ -364,14 +364,15 @@ impl User {
         let local_id = Instance::get_local()?.id;
         let user = match User::find_by_email(conn, ident) {
             Ok(user) => Ok(user),
-            _  => User::find_by_name(conn, ident, local_id),
-        }.and_then(|u| {
-                if u.instance_id == local_id {
-                    Ok(u)
-                } else {
-                    Err(Error::NotFound)
-                }
-            });
+            _ => User::find_by_name(conn, ident, local_id),
+        }
+        .and_then(|u| {
+            if u.instance_id == local_id {
+                Ok(u)
+            } else {
+                Err(Error::NotFound)
+            }
+        });
 
         match user {
             Ok(user) if user.hashed_password.is_some() => {
