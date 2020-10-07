@@ -268,7 +268,7 @@ fn get_ldap_config() -> Option<LdapConfig> {
             user_name_attr,
             mail_attr,
         })
-    } else if addr.is_some() && base_dn.is_some() {
+    } else if addr.is_some() || base_dn.is_some() {
         panic!("Invalid LDAP configuration : both LDAP_ADDR and LDAP_BASE_DN must be set")
     } else {
         None

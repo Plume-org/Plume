@@ -294,47 +294,49 @@ impl User {
     }
 
     fn ldap_register(conn: &Connection, name: &str, password: &str) -> Result<User> {
-        if let Some(ldap) = CONFIG.ldap.as_ref() {
-            let mut ldap_conn = LdapConn::new(&ldap.addr).map_err(|_| Error::NotFound)?;
-            let ldap_name = format!("{}={},{}", ldap.user_name_attr, name, ldap.base_dn);
-            let bind = ldap_conn
-                .simple_bind(&ldap_name, password)
-                .map_err(|_| Error::NotFound)?;
-            if bind.success().is_ok() {
-                let search = ldap_conn
-                    .search(
-                        &ldap_name,
-                        Scope::Base,
-                        "(|(objectClass=person)(objectClass=user))",
-                        vec![&ldap.mail_attr],
-                    )
-                    .map_err(|_| Error::NotFound)?
-                    .success()
-                    .map_err(|_| Error::NotFound)?;
-                for entry in search.0 {
-                    let entry = SearchEntry::construct(entry);
-                    let email = entry.attrs.get("mail").and_then(|vec| vec.first());
-                    if email.is_some() {
-                        let _ = ldap_conn.unbind();
-                        return NewUser::new_local(
-                            conn,
-                            name.to_owned(),
-                            name.to_owned(),
-                            Role::Normal,
-                            "",
-                            email.unwrap().to_owned(),
-                            None,
-                        );
-                    }
-                }
-                let _ = ldap_conn.unbind();
-                Err(Error::NotFound)
-            } else {
-                Err(Error::NotFound)
-            }
-        } else {
-            Err(Error::NotFound)
+        if CONFIG.ldap.is_none() {
+            return Err(Error::NotFound);
         }
+        let ldap = CONFIG.ldap.as_ref().unwrap();
+
+        let mut ldap_conn = LdapConn::new(&ldap.addr).map_err(|_| Error::NotFound)?;
+        let ldap_name = format!("{}={},{}", ldap.user_name_attr, name, ldap.base_dn);
+        let bind = ldap_conn
+            .simple_bind(&ldap_name, password)
+            .map_err(|_| Error::NotFound)?;
+
+        if bind.success().is_err() {
+            return Err(Error::NotFound);
+        }
+
+        let search = ldap_conn
+            .search(
+                &ldap_name,
+                Scope::Base,
+                "(|(objectClass=person)(objectClass=user))",
+                vec![&ldap.mail_attr],
+            )
+            .map_err(|_| Error::NotFound)?
+            .success()
+            .map_err(|_| Error::NotFound)?;
+        for entry in search.0 {
+            let entry = SearchEntry::construct(entry);
+            let email = entry.attrs.get("mail").and_then(|vec| vec.first());
+            if email.is_some() {
+                let _ = ldap_conn.unbind();
+                return NewUser::new_local(
+                    conn,
+                    name.to_owned(),
+                    name.to_owned(),
+                    Role::Normal,
+                    "",
+                    email.unwrap().to_owned(),
+                    None,
+                );
+            }
+        }
+        let _ = ldap_conn.unbind();
+        Err(Error::NotFound)
     }
 
     fn ldap_login(&self, password: &str) -> bool {
@@ -360,9 +362,10 @@ impl User {
 
     pub fn login(conn: &Connection, ident: &str, password: &str) -> Result<User> {
         let local_id = Instance::get_local()?.id;
-        let user = User::find_by_email(conn, ident)
-            .or_else(|_| User::find_by_name(conn, ident, local_id))
-            .and_then(|u| {
+        let user = match User::find_by_email(conn, ident) {
+            Ok(user) => Ok(user),
+            _  => User::find_by_name(conn, ident, local_id),
+        }.and_then(|u| {
                 if u.instance_id == local_id {
                     Ok(u)
                 } else {
@@ -390,6 +393,8 @@ impl User {
                 if let Ok(user) = User::ldap_register(conn, ident, password) {
                     return Ok(user);
                 }
+                // if no user was found, and we were unable to auto-register from ldap
+                // fake-verify a password, and return an error.
                 let other = User::get(&*conn, 1)
                     .expect("No user is registered")
                     .hashed_password;
