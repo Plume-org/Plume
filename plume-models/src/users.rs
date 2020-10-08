@@ -322,7 +322,7 @@ impl User {
         for entry in search.0 {
             let entry = SearchEntry::construct(entry);
             let email = entry.attrs.get("mail").and_then(|vec| vec.first());
-            if email.is_some() {
+            if let Some(email) = email {
                 let _ = ldap_conn.unbind();
                 return NewUser::new_local(
                     conn,
@@ -330,7 +330,7 @@ impl User {
                     name.to_owned(),
                     Role::Normal,
                     "",
-                    email.unwrap().to_owned(),
+                    email.to_owned(),
                     None,
                 );
             }
@@ -1275,7 +1275,10 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(User::login(conn, "test", "test_password").unwrap().id, test_user.id);
+            assert_eq!(
+                User::login(conn, "test", "test_password").unwrap().id,
+                test_user.id
+            );
             assert!(User::login(conn, "test", "other_password").is_err());
             Ok(())
         });
