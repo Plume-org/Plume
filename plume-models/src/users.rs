@@ -322,7 +322,7 @@ impl User {
         for entry in search.0 {
             let entry = SearchEntry::construct(entry);
             let email = entry.attrs.get("mail").and_then(|vec| vec.first());
-            if email.is_some() {
+            if let Some(email) = email {
                 let _ = ldap_conn.unbind();
                 return NewUser::new_local(
                     conn,
@@ -330,7 +330,7 @@ impl User {
                     name.to_owned(),
                     Role::Normal,
                     "",
-                    email.unwrap().to_owned(),
+                    email.to_owned(),
                     None,
                 );
             }
@@ -1149,7 +1149,7 @@ pub(crate) mod tests {
             Role::Admin,
             "Hello there, I'm the admin",
             "admin@example.com".to_owned(),
-            "invalid_admin_password".to_owned(),
+            Some("invalid_admin_password".to_owned()),
         )
         .unwrap();
         let user = NewUser::new_local(
@@ -1159,7 +1159,7 @@ pub(crate) mod tests {
             Role::Normal,
             "Hello there, I'm no one",
             "user@example.com".to_owned(),
-            "invalid_user_password".to_owned(),
+            Some("invalid_user_password".to_owned()),
         )
         .unwrap();
         let other = NewUser::new_local(
@@ -1169,7 +1169,7 @@ pub(crate) mod tests {
             Role::Normal,
             "Hello there, I'm someone else",
             "other@example.com".to_owned(),
-            "invalid_other_password".to_owned(),
+            Some("invalid_other_password".to_owned()),
         )
         .unwrap();
         vec![admin, user, other]
@@ -1188,7 +1188,7 @@ pub(crate) mod tests {
                 Role::Normal,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password").unwrap(),
+                Some(User::hash_pass("test_password").unwrap()),
             )
             .unwrap();
             assert_eq!(
@@ -1271,12 +1271,15 @@ pub(crate) mod tests {
                 Role::Normal,
                 "Hello I'm a test",
                 "test@example.com".to_owned(),
-                User::hash_pass("test_password").unwrap(),
+                Some(User::hash_pass("test_password").unwrap()),
             )
             .unwrap();
 
-            assert!(test_user.auth("test_password"));
-            assert!(!test_user.auth("other_password"));
+            assert_eq!(
+                User::login(conn, "test", "test_password").unwrap().id,
+                test_user.id
+            );
+            assert!(User::login(conn, "test", "other_password").is_err());
             Ok(())
         });
     }

@@ -252,26 +252,28 @@ pub struct LdapConfig {
 fn get_ldap_config() -> Option<LdapConfig> {
     let addr = var("LDAP_ADDR").ok();
     let base_dn = var("LDAP_BASE_DN").ok();
-    if addr.is_some() && base_dn.is_some() {
-        let tls = var("LDAP_TLS").unwrap_or_else(|_| "false".to_owned());
-        let tls = match tls.as_ref() {
-            "1" | "true" | "TRUE" => true,
-            "0" | "false" | "FALSE" => false,
-            _ => panic!("Invalid LDAP configuration : tls"),
-        };
-        let user_name_attr = var("LDAP_USER_NAME_ATTR").unwrap_or_else(|_| "cn".to_owned());
-        let mail_attr = var("LDAP_USER_MAIL_ATTR").unwrap_or_else(|_| "mail".to_owned());
-        Some(LdapConfig {
-            addr: addr.unwrap(),
-            base_dn: base_dn.unwrap(),
-            tls,
-            user_name_attr,
-            mail_attr,
-        })
-    } else if addr.is_some() || base_dn.is_some() {
-        panic!("Invalid LDAP configuration : both LDAP_ADDR and LDAP_BASE_DN must be set")
-    } else {
-        None
+    match (addr, base_dn) {
+        (Some(addr), Some(base_dn)) => {
+            let tls = var("LDAP_TLS").unwrap_or_else(|_| "false".to_owned());
+            let tls = match tls.as_ref() {
+                "1" | "true" | "TRUE" => true,
+                "0" | "false" | "FALSE" => false,
+                _ => panic!("Invalid LDAP configuration : tls"),
+            };
+            let user_name_attr = var("LDAP_USER_NAME_ATTR").unwrap_or_else(|_| "cn".to_owned());
+            let mail_attr = var("LDAP_USER_MAIL_ATTR").unwrap_or_else(|_| "mail".to_owned());
+            Some(LdapConfig {
+                addr,
+                base_dn,
+                tls,
+                user_name_attr,
+                mail_attr,
+            })
+        }
+        (None, None) => None,
+        (_, _) => {
+            panic!("Invalid LDAP configuration : both LDAP_ADDR and LDAP_BASE_DN must be set")
+        }
     }
 }
 
