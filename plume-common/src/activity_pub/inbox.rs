@@ -71,8 +71,8 @@ use std::fmt::Debug;
 /// # let conn = ();
 /// #
 /// let result: Result<(), ()> = Inbox::handle(&conn, activity_json)
-///    .with::<User, Announce, Message>()
-///    .with::<User, Create,   Message>()
+///    .with::<User, Announce, Message>(None)
+///    .with::<User, Create,   Message>(None)
 ///    .done();
 /// ```
 pub enum Inbox<'a, C, E, R>
