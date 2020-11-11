@@ -62,30 +62,20 @@ pub fn oauth(
     let conn = &*rockets.conn;
     let app = App::find_by_client_id(conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::find_by_fqn(&rockets, &query.username) {
-            if user.auth(&query.password) {
-                let token = ApiToken::insert(
-                    conn,
-                    NewApiToken {
-                        app_id: app.id,
-                        user_id: user.id,
-                        value: random_hex(),
-                        scopes: query.scopes.clone(),
-                    },
-                )?;
-                Ok(Json(json!({
-                    "token": token.value
-                })))
-            } else {
-                Ok(Json(json!({
-                    "error": "Invalid credentials"
-                })))
-            }
+        if let Ok(user) = User::login(conn, &query.username, &query.password) {
+            let token = ApiToken::insert(
+                conn,
+                NewApiToken {
+                    app_id: app.id,
+                    user_id: user.id,
+                    value: random_hex(),
+                    scopes: query.scopes.clone(),
+                },
+            )?;
+            Ok(Json(json!({
+                "token": token.value
+            })))
         } else {
-            // Making fake password verification to avoid different
-            // response times that would make it possible to know
-            // if a username is registered or not.
-            User::get(conn, 1)?.auth(&query.password);
             Ok(Json(json!({
                 "error": "Invalid credentials"
             })))
