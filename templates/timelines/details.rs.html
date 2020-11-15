@@ -10,9 +10,6 @@
 @:base(ctx, tl.name.clone(), {}, {}, {
 	<section class="flex wrap" dir="auto">
 		<h1 class="grow">@i18n_timeline_name(ctx.1, &tl.name)</h1>
-        @if ctx.clone().2.map(|u| (u.is_admin() && tl.user_id.is_none()) || Some(u.id) == tl.user_id).unwrap_or(false) {
-		  <a href="@uri!(timelines::edit: _id = tl.id)" class="button inline-block">@i18n!(ctx.1, "Edit")</a>
-        }
 	</section>
 
     @tabs(&vec![(format!("{}", uri!(instance::index)), i18n!(ctx.1, "Latest articles"), false)]
