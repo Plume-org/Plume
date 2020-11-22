@@ -1,5 +1,5 @@
 use chrono::Utc;
-use heck::{CamelCase, KebabCase};
+use heck::KebabCase;
 use rocket::request::LenientForm;
 use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;
@@ -314,18 +314,19 @@ pub fn update(
             let tags = form
                 .tags
                 .split(',')
-                .map(|t| t.trim().to_camel_case())
+                .map(|t| t.trim())
                 .filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(t).ok())
+                .filter_map(|t| {
+                    Tag::build_activity(t.to_string()).ok()
+                })
                 .collect::<Vec<_>>();
             post.update_tags(&conn, tags)
                 .expect("post::update: tags error");
 
             let hashtags = hashtags
                 .into_iter()
-                .map(|h| h.to_camel_case())
                 .collect::<HashSet<_>>()
                 .into_iter()
                 .filter_map(|t| Tag::build_activity(t).ok())
@@ -489,14 +490,14 @@ pub fn create(
         let tags = form
             .tags
             .split(',')
-            .map(|t| t.trim().to_camel_case())
+            .map(|t| t.trim())
             .filter(|t| !t.is_empty())
             .collect::<HashSet<_>>();
         for tag in tags {
             Tag::insert(
                 &*conn,
                 NewTag {
-                    tag,
+                    tag: tag.to_string(),
                     is_hashtag: false,
                     post_id: post.id,
                 },
@@ -507,7 +508,7 @@ pub fn create(
             Tag::insert(
                 &*conn,
                 NewTag {
-                    tag: hashtag.to_camel_case(),
+                    tag: hashtag,
                     is_hashtag: true,
                     post_id: post.id,
                 },

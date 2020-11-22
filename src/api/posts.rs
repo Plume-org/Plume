@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use heck::{CamelCase, KebabCase};
+use heck::KebabCase;
 use rocket_contrib::json::Json;
 
 use crate::api::{authorization::*, Api};
@@ -181,7 +181,7 @@ pub fn create(
         Tag::insert(
             conn,
             NewTag {
-                tag: hashtag.to_camel_case(),
+                tag: hashtag,
                 is_hashtag: true,
                 post_id: post.id,
             },
