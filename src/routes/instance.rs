@@ -210,11 +210,19 @@ pub fn add_email_blocklist(
     form: LenientForm<NewBlocklistedEmail>,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    BlocklistedEmail::insert(&*rockets.conn, form.0)?;
-    Ok(Flash::success(
-        Redirect::to(uri!(admin_email_blocklist: page = None)),
-        i18n!(rockets.intl.catalog, "Email Blocked"),
-    ))
+    let result = BlocklistedEmail::insert(&*rockets.conn, form.0);
+
+    if let Err(Error::Db(_)) = result {
+        Ok(Flash::error(
+            Redirect::to(uri!(admin_email_blocklist: page = None)),
+            i18n!(rockets.intl.catalog, "Email already blocked")
+        ))
+    } else {
+        Ok(Flash::success(
+            Redirect::to(uri!(admin_email_blocklist: page = None)),
+            i18n!(rockets.intl.catalog, "Email Blocked"),
+        ))
+    }
 }
 #[get("/admin/emails?<page>")]
 pub fn admin_email_blocklist(
