@@ -11,7 +11,7 @@ use activitypub::{
 };
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
-use heck::{CamelCase, KebabCase};
+use heck::KebabCase;
 use plume_common::{
     activity_pub::{
         inbox::{AsObject, FromId},
@@ -622,7 +622,6 @@ impl FromId<PlumeRocket> for Post {
         let mut hashtags = md_to_html(&post.source, None, false, None)
             .2
             .into_iter()
-            .map(|s| s.to_camel_case())
             .collect::<HashSet<_>>();
         if let Some(serde_json::Value::Array(tags)) = article.object_props.tag {
             for tag in tags {
@@ -762,7 +761,6 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
         let mut txt_hashtags = md_to_html(&post.source, None, false, None)
             .2
             .into_iter()
-            .map(|s| s.to_camel_case())
             .collect::<HashSet<_>>();
         if let Some(serde_json::Value::Array(mention_tags)) = self.tags {
             let mut mentions = vec![];
