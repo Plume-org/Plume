@@ -215,7 +215,7 @@ pub fn add_email_blocklist(
     if let Err(Error::Db(_)) = result {
         Ok(Flash::error(
             Redirect::to(uri!(admin_email_blocklist: page = None)),
-            i18n!(rockets.intl.catalog, "Email already blocked")
+            i18n!(rockets.intl.catalog, "Email already blocked"),
         ))
     } else {
         Ok(Flash::success(
