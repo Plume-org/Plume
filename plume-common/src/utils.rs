@@ -294,8 +294,7 @@ pub fn md_to_html<'a>(
                                     }
                                     let hashtag = text_acc;
                                     let link = Tag::Link(
-                                        format!("{}tag/{}", base_url, &hashtag)
-                                            .into(),
+                                        format!("{}tag/{}", base_url, &hashtag).into(),
                                         hashtag.to_owned().into(),
                                     );
 
