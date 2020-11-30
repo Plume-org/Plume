@@ -1,6 +1,7 @@
 #![feature(try_trait)]
 #![feature(never_type)]
 #![feature(proc_macro_hygiene)]
+#![feature(box_patterns)]
 
 #[macro_use]
 extern crate diesel;
