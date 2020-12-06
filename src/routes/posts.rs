@@ -318,9 +318,7 @@ pub fn update(
                 .filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| {
-                    Tag::build_activity(t.to_string()).ok()
-                })
+                .filter_map(|t| Tag::build_activity(t.to_string()).ok())
                 .collect::<Vec<_>>();
             post.update_tags(&conn, tags)
                 .expect("post::update: tags error");
