@@ -20,6 +20,7 @@ pub struct Config {
     pub logo: LogoConfig,
     pub default_theme: String,
     pub media_directory: String,
+    pub ldap: Option<LdapConfig>,
 }
 
 #[derive(Debug, Clone)]
@@ -240,6 +241,42 @@ impl SearchTokenizerConfig {
     }
 }
 
+pub struct LdapConfig {
+    pub addr: String,
+    pub base_dn: String,
+    pub tls: bool,
+    pub user_name_attr: String,
+    pub mail_attr: String,
+}
+
+fn get_ldap_config() -> Option<LdapConfig> {
+    let addr = var("LDAP_ADDR").ok();
+    let base_dn = var("LDAP_BASE_DN").ok();
+    match (addr, base_dn) {
+        (Some(addr), Some(base_dn)) => {
+            let tls = var("LDAP_TLS").unwrap_or_else(|_| "false".to_owned());
+            let tls = match tls.as_ref() {
+                "1" | "true" | "TRUE" => true,
+                "0" | "false" | "FALSE" => false,
+                _ => panic!("Invalid LDAP configuration : tls"),
+            };
+            let user_name_attr = var("LDAP_USER_NAME_ATTR").unwrap_or_else(|_| "cn".to_owned());
+            let mail_attr = var("LDAP_USER_MAIL_ATTR").unwrap_or_else(|_| "mail".to_owned());
+            Some(LdapConfig {
+                addr,
+                base_dn,
+                tls,
+                user_name_attr,
+                mail_attr,
+            })
+        }
+        (None, None) => None,
+        (_, _) => {
+            panic!("Invalid LDAP configuration : both LDAP_ADDR and LDAP_BASE_DN must be set")
+        }
+    }
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -267,5 +304,6 @@ lazy_static! {
         default_theme: var("DEFAULT_THEME").unwrap_or_else(|_| "default-light".to_owned()),
         media_directory: var("MEDIA_UPLOAD_DIRECTORY")
             .unwrap_or_else(|_| "static/media".to_owned()),
+        ldap: get_ldap_config(),
     };
 }

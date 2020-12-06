@@ -1,0 +1,17 @@
+# we don't have a crate yet, so
+disable-publish = true
+# change when we all have gpg keys
+sign-commit = false
+dev-version-ext = 'dev'
+# update all crates in plume at once:
+consolidate-commits = true
+
+pre-release-hook = ["crowdin", "pull"]
+
+pre-release-replacements = [
+  {file="CHANGELOG.md", search="Unreleased", replace="[{{version}}]"},
+  {file="CHANGELOG.md", search="\\.\\.\\.HEAD", replace="...{{tag_name}}", exactly=1},
+  {file="CHANGELOG.md", search="No release date", replace="{{date}}"},
+  {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n\n## [Unreleased] - ReleaseDate", exactly=1},
+  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: https://github.com/Plume-org/Plume/compare/{{tag_name}}...HEAD", exactly=1},
+]

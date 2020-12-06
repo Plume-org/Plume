@@ -269,7 +269,13 @@ pub fn init() -> Result<(), EditorError> {
                 let editor_button = document().create_element("a")?;
                 js! { @{&editor_button}.href = "#"; }
                 editor_button.add_event_listener(|_: ClickEvent| {
-                    window().local_storage().remove("basic-editor");
+                    if window()
+                        .local_storage()
+                        .insert("basic-editor", "false")
+                        .is_err()
+                    {
+                        console!(log, "Failed to write into local storage");
+                    }
                     window().history().go(0).ok(); // refresh
                 });
                 editor_button.append_child(

@@ -1,4 +1,4 @@
-FROM debian:stretch-20190326
+FROM debian:buster-20201117
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 #install native/circleci/build dependancies
