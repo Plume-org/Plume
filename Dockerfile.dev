@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     make \
     openssl \
-    libssl-dev
+    libssl-dev\
+    clang
 
 WORKDIR /scratch
 COPY script/wasm-deps.sh .
