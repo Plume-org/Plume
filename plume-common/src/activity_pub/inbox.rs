@@ -242,11 +242,11 @@ where
         match attributed_to {
             Array(v) => v.iter().all(|i| match i {
                 String(s) => s != actor_id,
-                Object(_) => false, // TODO: Validate recursively"
+                Object(obj) => obj.get("id").map_or(true, |s| s != actor_id),
                 _ => false,
             }),
             String(s) => s != actor_id,
-            Object(_) => false, // TODO: Validate Recursively
+            Object(obj) => obj.get("id").map_or(true, |s| s != actor_id),
             _ => false,
         }
     }
