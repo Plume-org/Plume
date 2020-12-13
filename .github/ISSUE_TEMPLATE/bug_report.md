@@ -7,6 +7,16 @@ assignees: ''
 
 ---
 
+<!--
+We would appreciated if you report a bug at our Gitea instance's issue page:
+https://git.joinplu.me/Plume/Plume/issues
+You can login to the Gitea with your GitHub account.
+
+We welcome to receive bug reports here, GitHub, too.
+-->
+
+
+
 <!-- Describe your bug, explaining how to reproduce it, and what was expected -->
 
 
