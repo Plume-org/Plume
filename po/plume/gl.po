@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-12-16 21:07\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2020-12-19 09:55\n"
+"Last-Translator: \n"
 "Language-Team: Galician\n"
 "Language: gl_ES\n"
 "MIME-Version: 1.0\n"
@@ -12,66 +12,92 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: plume\n"
+"X-Crowdin-Project-ID: 352097\n"
 "X-Crowdin-Language: gl\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
+"X-Crowdin-File-ID: 8\n"
 
-# src/template_utils.rs:102
+# src/template_utils.rs:105
 msgid "{0} commented on your article."
 msgstr "{0} comentou o teu artigo."
 
-# src/template_utils.rs:103
+# src/template_utils.rs:106
 msgid "{0} is subscribed to you."
 msgstr "{0} está suscrita aos teus artigos."
 
-# src/template_utils.rs:104
+# src/template_utils.rs:107
 msgid "{0} liked your article."
 msgstr "a {0} gustoulle o teu artigo."
 
-# src/template_utils.rs:105
+# src/template_utils.rs:108
 msgid "{0} mentioned you."
 msgstr "{0} mencionoute."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:109
 msgid "{0} boosted your article."
 msgstr "{0} promoveu o teu artigo."
 
-# src/template_utils.rs:142
+# src/template_utils.rs:116
+msgid "Your feed"
+msgstr "O seu contido"
+
+# src/template_utils.rs:117
+msgid "Local feed"
+msgstr "Contido local"
+
+# src/template_utils.rs:118
+msgid "Federated feed"
+msgstr "Contido federado"
+
+# src/template_utils.rs:154
 msgid "{0}'s avatar"
 msgstr "Avatar de {0}"
 
-# src/routes/blogs.rs:64
+# src/template_utils.rs:198
+msgid "Previous page"
+msgstr "Páxina anterior"
+
+# src/template_utils.rs:209
+msgid "Next page"
+msgstr "Páxina seguinte"
+
+# src/template_utils.rs:363
+msgid "Optional"
+msgstr "Opcional"
+
+# src/routes/blogs.rs:63
 msgid "To create a new blog, you need to be logged in"
 msgstr "Para crear un novo blog debes estar conectada"
 
-# src/routes/blogs.rs:106
+# src/routes/blogs.rs:102
 msgid "A blog with the same name already exists."
 msgstr "Xa existe un blog co mesmo nome."
 
-# src/routes/blogs.rs:141
+# src/routes/blogs.rs:140
 msgid "Your blog was successfully created!"
 msgstr "O teu blog creouse correctamente!"
 
-# src/routes/blogs.rs:163
+# src/routes/blogs.rs:160
 msgid "Your blog was deleted."
 msgstr "Eliminaches o blog."
 
-# src/routes/blogs.rs:170
+# src/routes/blogs.rs:168
 msgid "You are not allowed to delete this blog."
 msgstr "Non tes permiso para eliminar este blog."
 
-# src/routes/blogs.rs:218
+# src/routes/blogs.rs:219
 msgid "You are not allowed to edit this blog."
 msgstr "Non podes editar este blog."
 
-# src/routes/blogs.rs:263
+# src/routes/blogs.rs:275
 msgid "You can't use this media as a blog icon."
 msgstr "Non podes utilizar este medio como icona do blog."
 
-# src/routes/blogs.rs:281
+# src/routes/blogs.rs:293
 msgid "You can't use this media as a blog banner."
-msgstr "Non podes utilizar este medio como banner do blog."
+msgstr "Non podes utilizar este medio como cabeceira do blog."
 
-# src/routes/blogs.rs:314
+# src/routes/blogs.rs:327
 msgid "Your blog information have been updated."
 msgstr "Actualizouse a información sobre o blog."
 
@@ -83,39 +109,59 @@ msgstr "O teu comentario foi publicado."
 msgid "Your comment has been deleted."
 msgstr "Eliminouse o comentario."
 
-# src/routes/instance.rs:134
+# src/routes/instance.rs:120
 msgid "Instance settings have been saved."
 msgstr "Gardáronse os axustes das instancia."
 
-# src/routes/instance.rs:175
-msgid "{} have been unblocked."
+# src/routes/instance.rs:152
+msgid "{} has been unblocked."
 msgstr "{} foi desbloqueada."
 
-# src/routes/instance.rs:177
-msgid "{} have been blocked."
+# src/routes/instance.rs:154
+msgid "{} has been blocked."
 msgstr "{} foi bloqueada."
 
-# src/routes/instance.rs:221
-msgid "{} have been banned."
-msgstr "{} foi expulsada."
+# src/routes/instance.rs:203
+msgid "Blocks deleted"
+msgstr "Bloqueos eliminados"
 
-# src/routes/likes.rs:51
+# src/routes/instance.rs:218
+msgid "Email already blocked"
+msgstr ""
+
+# src/routes/instance.rs:223
+msgid "Email Blocked"
+msgstr "Email bloqueado"
+
+# src/routes/instance.rs:314
+msgid "You can't change your own rights."
+msgstr "Non podes cambiar os teus propios permisos."
+
+# src/routes/instance.rs:325
+msgid "You are not allowed to take this action."
+msgstr "Non tes permiso para realizar esta acción."
+
+# src/routes/instance.rs:362
+msgid "Done."
+msgstr "Feito."
+
+# src/routes/likes.rs:53
 msgid "To like a post, you need to be logged in"
 msgstr "Para darlle a gústame, debes estar conectada"
 
-# src/routes/medias.rs:141
+# src/routes/medias.rs:145
 msgid "Your media have been deleted."
 msgstr "Eliminouse o ficheiro de medios."
 
-# src/routes/medias.rs:146
+# src/routes/medias.rs:150
 msgid "You are not allowed to delete this media."
 msgstr "Non tes permiso para eliminar este ficheiro."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:167
 msgid "Your avatar has been updated."
 msgstr "Actualizouse o avatar."
 
-# src/routes/medias.rs:168
+# src/routes/medias.rs:172
 msgid "You are not allowed to use this media."
 msgstr "Non tes permiso para usar este ficheiro de medios."
 
@@ -123,125 +169,367 @@ msgstr "Non tes permiso para usar este ficheiro de medios."
 msgid "To see your notifications, you need to be logged in"
 msgstr "Para ver as túas notificacións, debes estar conectada"
 
-# src/routes/posts.rs:93
+# src/routes/posts.rs:54
 msgid "This post isn't published yet."
 msgstr "Esto é un borrador, non publicar por agora."
 
-# src/routes/posts.rs:122
+# src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
 msgstr "Para escribir un novo artigo, debes estar conectada"
 
-# src/routes/posts.rs:139
+# src/routes/posts.rs:142
 msgid "You are not an author of this blog."
 msgstr "Non es autora de este blog."
 
-# src/routes/posts.rs:146
+# src/routes/posts.rs:149
 msgid "New post"
 msgstr "Novo artigo"
 
-# src/routes/posts.rs:191
+# src/routes/posts.rs:194
 msgid "Edit {0}"
 msgstr "Editar {0}"
 
-# src/routes/posts.rs:260
+# src/routes/posts.rs:263
 msgid "You are not allowed to publish on this blog."
 msgstr "Non tes permiso para publicar en este blog."
 
-# src/routes/posts.rs:350
+# src/routes/posts.rs:355
 msgid "Your article has been updated."
 msgstr "Actualizouse o artigo."
 
-# src/routes/posts.rs:532
+# src/routes/posts.rs:542
 msgid "Your article has been saved."
 msgstr "Gardouse o artigo."
 
-# src/routes/posts.rs:538
+# src/routes/posts.rs:549
 msgid "New article"
 msgstr "Novo artigo"
 
-# src/routes/posts.rs:572
+# src/routes/posts.rs:582
 msgid "You are not allowed to delete this article."
 msgstr "Non tes permiso para eliminar este artigo."
 
-# src/routes/posts.rs:597
+# src/routes/posts.rs:607
 msgid "Your article has been deleted."
 msgstr "Eliminouse o artigo."
 
-# src/routes/posts.rs:602
+# src/routes/posts.rs:612
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr "Semella que o artigo que quere eliminar non existe. Igual xa foi eliminado?"
 
-# src/routes/posts.rs:642
+# src/routes/posts.rs:652
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr "Non se puido obter información suficiente sobre a súa conta. Por favor asegúrese de que o nome de usuaria é correcto."
 
-# src/routes/reshares.rs:51
+# src/routes/reshares.rs:54
 msgid "To reshare a post, you need to be logged in"
 msgstr "Para compartir un artigo, debe estar conectada"
 
-# src/routes/session.rs:112
+# src/routes/session.rs:87
 msgid "You are now connected."
 msgstr "Está conectada."
 
-# src/routes/session.rs:131
+# src/routes/session.rs:108
 msgid "You are now logged off."
 msgstr "Está desconectada."
 
-# src/routes/session.rs:188
+# src/routes/session.rs:153
 msgid "Password reset"
 msgstr "Restablecer contrasinal"
 
-# src/routes/session.rs:189
+# src/routes/session.rs:154
 msgid "Here is the link to reset your password: {0}"
 msgstr "Aquí está a ligazón para restablecer o contrasinal: {0}"
 
-# src/routes/session.rs:264
+# src/routes/session.rs:216
 msgid "Your password was successfully reset."
 msgstr "O contrasinal restableceuse correctamente."
 
-# src/routes/session.rs:274
-msgid "Sorry, but the link expired. Try again"
-msgstr "Sentímolo, pero a ligazón caducou. Inténtao de novo"
-
-# src/routes/user.rs:136
+# src/routes/user.rs:141
 msgid "To access your dashboard, you need to be logged in"
-msgstr "Para acceder ao taboleiro, debe estar conectada"
+msgstr "Para acceder ao taboleiro, debes estar conectada"
 
-# src/routes/user.rs:158
+# src/routes/user.rs:163
 msgid "You are no longer following {}."
 msgstr "Xa non está a seguir a {}."
 
-# src/routes/user.rs:175
+# src/routes/user.rs:180
 msgid "You are now following {}."
 msgstr "Está a seguir a {}."
 
-# src/routes/user.rs:254
+# src/routes/user.rs:260
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Para suscribirse a un blog, debe estar conectada"
 
-# src/routes/user.rs:356
+# src/routes/user.rs:364
 msgid "To edit your profile, you need to be logged in"
 msgstr "Para editar o seu perfil, debe estar conectada"
 
-# src/routes/user.rs:398
+# src/routes/user.rs:409
 msgid "Your profile has been updated."
 msgstr "Actualizouse o perfil."
 
-# src/routes/user.rs:425
+# src/routes/user.rs:436
 msgid "Your account has been deleted."
 msgstr "Eliminouse a túa conta."
 
-# src/routes/user.rs:431
+# src/routes/user.rs:442
 msgid "You can't delete someone else's account."
 msgstr "Non pode eliminar a conta de outra persoa."
 
-# src/routes/user.rs:503
+# src/routes/user.rs:526
 msgid "Registrations are closed on this instance."
 msgstr "O rexistro está pechado en esta instancia."
 
-# src/routes/user.rs:527
+# src/routes/user.rs:549
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr "Creouse a túa conta. Agora só tes que conectarte para poder utilizala."
+
+msgid "Media upload"
+msgstr "Subir medios"
+
+msgid "Description"
+msgstr "Descrición"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Útil para persoas con deficiencias visuais, así como información da licenza"
+
+msgid "Content warning"
+msgstr "Aviso sobre o contido"
+
+msgid "Leave it empty, if none is needed"
+msgstr "Deixar baldeiro se non precisa ningunha"
+
+msgid "File"
+msgstr "Ficheiro"
+
+msgid "Send"
+msgstr "Enviar"
+
+msgid "Your media"
+msgstr "O teu multimedia"
+
+msgid "Upload"
+msgstr "Subir"
+
+msgid "You don't have any media yet."
+msgstr "Aínda non subeu ficheiros de medios."
+
+msgid "Content warning: {0}"
+msgstr "Aviso de contido: {0}"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "Media details"
+msgstr "Detalle dos medios"
+
+msgid "Go back to the gallery"
+msgstr "Voltar a galería"
+
+msgid "Markdown syntax"
+msgstr "Sintaxe Markdown"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Copie e pegue este código para incrustar no artigo:"
+
+msgid "Use as an avatar"
+msgstr "Utilizar como avatar"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menú"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Dashboard"
+msgstr "Taboleiro"
+
+msgid "Notifications"
+msgstr "Notificacións"
+
+msgid "Log Out"
+msgstr "Desconectar"
+
+msgid "My account"
+msgstr "A miña conta"
+
+msgid "Log In"
+msgstr "Conectar"
+
+msgid "Register"
+msgstr "Rexistrar"
+
+msgid "About this instance"
+msgstr "Sobre esta instancia"
+
+msgid "Privacy policy"
+msgstr "Política de intimidade"
+
+msgid "Administration"
+msgstr "Administración"
+
+msgid "Documentation"
+msgstr "Documentación"
+
+msgid "Source code"
+msgstr "Código fonte"
+
+msgid "Matrix room"
+msgstr "Sala Matrix"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "It is you"
+msgstr "Es ti"
+
+msgid "Edit your profile"
+msgstr "Edite o seu perfil"
+
+msgid "Open on {0}"
+msgstr "Aberto en {0}"
+
+msgid "Unsubscribe"
+msgstr "Cancelar subscrición"
+
+msgid "Subscribe"
+msgstr "Subscribirse"
+
+msgid "Follow {}"
+msgstr "Seguimento {}"
+
+msgid "Log in to follow"
+msgstr "Conéctese para seguir"
+
+msgid "Enter your full username handle to follow"
+msgstr "Introduza o se nome de usuaria completo para continuar"
+
+msgid "{0}'s subscribers"
+msgstr "Subscritoras de {0}"
+
+msgid "Articles"
+msgstr "Artigos"
+
+msgid "Subscribers"
+msgstr "Subscritoras"
+
+msgid "Subscriptions"
+msgstr "Subscricións"
+
+msgid "Create your account"
+msgstr "Cree a súa conta"
+
+msgid "Create an account"
+msgstr "Crear unha conta"
+
+msgid "Username"
+msgstr "Nome de usuaria"
+
+msgid "Email"
+msgstr "Correo-e"
+
+msgid "Password"
+msgstr "Contrasinal"
+
+msgid "Password confirmation"
+msgstr "Confirmación do contrasinal"
+
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Desculpe, pero o rexistro en esta instancia está pechado. Porén pode atopar outra no fediverso."
+
+msgid "{0}'s subscriptions"
+msgstr "Suscricións de {0}"
+
+msgid "Your Dashboard"
+msgstr "O teu taboleiro"
+
+msgid "Your Blogs"
+msgstr "Os teus Blogs"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Aínda non ten blogs. Publique un de seu ou ben solicite unirse a un."
+
+msgid "Start a new blog"
+msgstr "Iniciar un blog"
+
+msgid "Your Drafts"
+msgstr "Os teus Borradores"
+
+msgid "Go to your gallery"
+msgstr "Ir a súa galería"
+
+msgid "Edit your account"
+msgstr "Edite a súa conta"
+
+msgid "Your Profile"
+msgstr "O seu Perfil"
+
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "Para cambiar o avatar, suba a imaxe a súa galería e despois escollaa desde alí."
+
+msgid "Upload an avatar"
+msgstr "Subir un avatar"
+
+msgid "Display name"
+msgstr "Mostrar nome"
+
+msgid "Summary"
+msgstr "Resumen"
+
+msgid "Theme"
+msgstr "Decorado"
+
+msgid "Default theme"
+msgstr "Decorado por omisión"
+
+msgid "Error while loading theme selector."
+msgstr "Erro ao cargar o selector de decorados."
+
+msgid "Never load blogs custom themes"
+msgstr "Non cargar decorados de blog personalizados"
+
+msgid "Update account"
+msgstr "Actualizar conta"
+
+msgid "Danger zone"
+msgstr "Zona perigosa"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Teña tino, todo o que faga aquí non se pode retrotraer."
+
+msgid "Delete your account"
+msgstr "Eliminar a súa conta"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Lamentámolo, pero como administradora, non pode deixar a súa propia instancia."
+
+msgid "Latest articles"
+msgstr "Últimos artigos"
+
+msgid "Atom feed"
+msgstr "Fonte Atom"
+
+msgid "Recently boosted"
+msgstr "Promocionada recentemente"
+
+msgid "Articles tagged \"{0}\""
+msgstr "Artigos etiquetados \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "Non hai artigos con esa etiqueta"
+
+msgid "The content you sent can't be processed."
+msgstr "O contido que enviou non se pode procesar."
+
+msgid "Maybe it was too long."
+msgstr "Pode que sexa demasiado longo."
 
 msgid "Internal server error"
 msgstr "Fallo interno do servidor"
@@ -251,6 +539,12 @@ msgstr "Algo fallou pola nosa parte"
 
 msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr "Lamentálmolo. Si cree que é un bug, infórmenos por favor."
+
+msgid "Invalid CSRF token"
+msgstr "Testemuño CSRF non válido"
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas no navegador, e recargue a páxina. Si persiste o aviso de este fallo,  informe por favor."
 
 msgid "You are not authorized."
 msgstr "Non ten permiso."
@@ -264,179 +558,152 @@ msgstr "Non atopamos esta páxina"
 msgid "The link that led you here may be broken."
 msgstr "A ligazón que a trouxo aquí podería estar quebrado"
 
-msgid "The content you sent can't be processed."
-msgstr "O contido que enviou non se pode procesar."
+msgid "Users"
+msgstr "Usuarias"
 
-msgid "Maybe it was too long."
-msgstr "Pode que sexa demasiado longo."
+msgid "Configuration"
+msgstr "Axustes"
 
-msgid "Invalid CSRF token"
-msgstr "Testemuño CSRF non válido"
+msgid "Instances"
+msgstr "Instancias"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "Hai un problema co seu testemuño CSRF. Asegúrese de ter as cookies activadas no navegador, e recargue a páxina. Si persiste o aviso de este fallo,  informe por favor."
+msgid "Email blocklist"
+msgstr "Lista de bloqueo"
 
-msgid "Articles tagged \"{0}\""
-msgstr "Artigos etiquetados \"{0}\""
+msgid "Grant admin rights"
+msgstr "Conceder permisos de admin"
 
-msgid "There are currently no articles with such a tag"
-msgstr "Non hai artigos con esa etiqueta"
+msgid "Revoke admin rights"
+msgstr "Revogar permisos de admin"
 
-msgid "New Blog"
-msgstr "Novo Blog"
+msgid "Grant moderator rights"
+msgstr "Conceder permisos de moderación"
 
-msgid "Create a blog"
-msgstr "Crear un blog"
+msgid "Revoke moderator rights"
+msgstr "Revogar permisos de moderación"
 
-# src/template_utils.rs:251
-msgid "Title"
-msgstr "Título"
+msgid "Ban"
+msgstr "Prohibir"
 
-# src/template_utils.rs:254
-msgid "Optional"
-msgstr "Opcional"
+msgid "Run on selected users"
+msgstr "Executar en usuarias seleccionadas"
 
-msgid "Create blog"
-msgstr "Crear blog"
+msgid "Moderator"
+msgstr "Moderadora"
 
-msgid "Edit \"{}\""
-msgstr "Editar \"{}\""
+msgid "Moderation"
+msgstr "Moderación"
 
-msgid "Description"
-msgstr "Descrición"
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Administration of {0}"
+msgstr "Administración de {0}"
+
+msgid "Unblock"
+msgstr "Desbloquear"
+
+msgid "Block"
+msgstr "Bloquear"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Allow anyone to register here"
+msgstr "Permitir o rexistro aberto a calquera"
+
+msgid "Short description"
+msgstr "Descrición curta"
 
 msgid "Markdown syntax is supported"
 msgstr "Pode utilizar sintaxe Markdown"
 
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "Pode subir imaxes a súa galería, e utilizalas como iconas do blog ou banners."
+msgid "Long description"
+msgstr "Descrición longa"
 
-msgid "Upload images"
-msgstr "Subir imaxes"
+msgid "Default article license"
+msgstr "Licenza por omisión dos artigos"
 
-msgid "Blog icon"
-msgstr "Icona de blog"
+msgid "Save these settings"
+msgstr "Gardar estas preferencias"
 
-msgid "Blog banner"
-msgstr "Banner do blog"
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Se estás lendo esta web como visitante non se recollen datos sobre ti."
 
-msgid "Update blog"
-msgstr "Actualizar blog"
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr "Como usuaria rexistrada, tes que proporcionar un nome de usuaria (que non ten que ser o teu nome real), un enderezo activo de correo electrónico e un contrasinal, para poder conectarte, escribir artigos e comentar. O contido que envíes permanece ata que o borres."
 
-msgid "Danger zone"
-msgstr "Zona perigosa"
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr "Cando te conectas, gardamos dous testemuños, un para manter a sesión aberta e o segundo para previr que outra xente actúe no teu nome. Non gardamos máis testemuños."
 
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Teña tino, todo o que faga aquí non se pode reverter."
+msgid "Blocklisted Emails"
+msgstr "Emails na lista de bloqueo"
 
-msgid "Permanently delete this blog"
-msgstr "Eliminar o blog de xeito permanente"
+msgid "Email address"
+msgstr "Enderezo de email"
 
-msgid "{}'s icon"
-msgstr "Icona de {}"
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgstr "O enderezo de email que queres bloquear. Para poder bloquear dominios, podes usar sintaxe globbing, por exemplo '*@exemplo.com' bloquea todos os enderezos de exemplo.com"
 
-msgid "Edit"
-msgstr "Editar"
+msgid "Note"
+msgstr "Nota"
 
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Este blog ten unha autora: "
-msgstr[1] "Este blog ten {0} autoras: "
+msgid "Notify the user?"
+msgstr "Notificar a usuaria?"
 
-msgid "Latest articles"
-msgstr "Últimos artigos"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgstr "Optativo, mostra unha mensaxe a usuaria cando intenta crear unha conta con ese enderezo"
 
-msgid "No posts to see here yet."
-msgstr "Aínda non hai entradas publicadas"
+msgid "Blocklisting notification"
+msgstr "Notificación do bloqueo"
 
-msgid "Search result(s) for \"{0}\""
-msgstr "Resultado(s) da busca \"{0}\""
+msgid "The message to be shown when the user attempts to create an account with this email address"
+msgstr "A mensaxe será amosada cando a usuaria intente crear unha conta on ese enderezo de email"
 
-msgid "Search result(s)"
-msgstr "Resultado(s) da busca"
+msgid "Add blocklisted address"
+msgstr "Engadir a lista de bloqueo"
 
-msgid "No results for your query"
-msgstr "Sen resultados para a consulta"
+msgid "There are no blocked emails on your instance"
+msgstr "Non hai emails bloqueados na túa instancia"
 
-msgid "No more results for your query"
-msgstr "Sen máis resultados para a súa consulta"
+msgid "Delete selected emails"
+msgstr "Eliminar emails seleccionados"
 
-msgid "Search"
-msgstr "Buscar"
+msgid "Email address:"
+msgstr "Enderezo de email:"
 
-msgid "Your query"
-msgstr "A consulta"
+msgid "Blocklisted for:"
+msgstr "Bloqueado por:"
 
-msgid "Advanced search"
-msgstr "Busca avanzada"
+msgid "Will notify them on account creation with this message:"
+msgstr "Enviaralles notificación con esta mensaxe cando se cree a conta:"
 
-# src/template_utils.rs:339
-msgid "Article title matching these words"
-msgstr "Título de artigo coincidente con estas palabras"
+msgid "The user will be silently prevented from making an account"
+msgstr "Previrase caladamente que a usuaria cree conta"
 
-# src/template_utils.rs:339
-msgid "Subtitle matching these words"
-msgstr "O subtítulo coincide con estas palabras"
+msgid "Welcome to {}"
+msgstr "Benvida a {}"
 
-msgid "Subtitle - byline"
-msgstr "Subtítulo - temática"
+msgid "View all"
+msgstr "Ver todos"
 
-# src/template_utils.rs:339
-msgid "Content matching these words"
-msgstr "Contido coincidente coas palabras"
+msgid "About {0}"
+msgstr "Acerca de {0}"
 
-msgid "Body content"
-msgstr "Contido do corpo"
+msgid "Runs Plume {0}"
+msgstr "Versión Plume {0}"
 
-# src/template_utils.rs:339
-msgid "From this date"
-msgstr "Desde esta data"
+msgid "Home to <em>{0}</em> people"
+msgstr "Lar de <em>{0}</em> persoas"
 
-# src/template_utils.rs:339
-msgid "To this date"
-msgstr "Ata esta data"
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Que escribiron <em>{0}</em> artigos"
 
-# src/template_utils.rs:339
-msgid "Containing these tags"
-msgstr "Contendo estas etiquetas"
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "E están conectadas a outras <em>{0}</em> instancias"
 
-msgid "Tags"
-msgstr "Etiquetas"
-
-# src/template_utils.rs:339
-msgid "Posted on one of these instances"
-msgstr "Publicado en algunha de estas instancias"
-
-msgid "Instance domain"
-msgstr "Dominio da instancia"
-
-# src/template_utils.rs:339
-msgid "Posted by one of these authors"
-msgstr "Publicado por unha de estas autoras"
-
-msgid "Author(s)"
-msgstr "Autor(es)"
-
-# src/template_utils.rs:339
-msgid "Posted on one of these blogs"
-msgstr "Publicado en un de estos blogs"
-
-msgid "Blog title"
-msgstr "Título do blog"
-
-# src/template_utils.rs:339
-msgid "Written in this language"
-msgstr "Escrito en este idioma"
-
-msgid "Language"
-msgstr "Idioma"
-
-# src/template_utils.rs:339
-msgid "Published under this license"
-msgstr "Publicado baixo esta licenza"
-
-msgid "Article license"
-msgstr "Licenza do artigo"
+msgid "Administred by"
+msgstr "Administrada por"
 
 msgid "Interact with {}"
 msgstr "Interactúe con {}"
@@ -453,7 +720,9 @@ msgstr "Publicar"
 msgid "Classic editor (any changes will be lost)"
 msgstr "Editor clásico (calquera perderanse os cambios)"
 
-# src/template_utils.rs:251
+msgid "Title"
+msgstr "Título"
+
 msgid "Subtitle"
 msgstr "Subtítulo"
 
@@ -466,17 +735,11 @@ msgstr "Pode subir medios a galería e despois copiar o seu código Markdown nos
 msgid "Upload media"
 msgstr "Subir medios"
 
-# src/template_utils.rs:251
 msgid "Tags, separated by commas"
 msgstr "Etiquetas, separadas por vírgulas"
 
-# src/template_utils.rs:251
 msgid "License"
 msgstr "Licenza"
-
-# src/template_utils.rs:259
-msgid "Leave it empty to reserve all rights"
-msgstr "Deixar baldeiro para reservar todos os dereitos"
 
 msgid "Illustration"
 msgstr "Ilustración"
@@ -511,7 +774,7 @@ msgid "I don't like this anymore"
 msgstr "Xa non me gusta"
 
 msgid "Add yours"
-msgstr "Engada os seus"
+msgstr "Engade os teus"
 
 msgid "One boost"
 msgid_plural "{0} boosts"
@@ -527,18 +790,8 @@ msgstr "Promover"
 msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
 msgstr "{0}Conectar{1}, ou {2}utilice a súa conta no Fediverso{3} para interactuar con este artigo"
 
-msgid "Unsubscribe"
-msgstr "Cancelar subscrición"
-
-msgid "Subscribe"
-msgstr "Subscribirse"
-
 msgid "Comments"
 msgstr "Comentarios"
-
-# src/template_utils.rs:251
-msgid "Content warning"
-msgstr "Aviso sobre o contido"
 
 msgid "Your comment"
 msgstr "O seu comentario"
@@ -552,222 +805,41 @@ msgstr "Sen comentarios. Sexa a primeira persoa en facelo!"
 msgid "Are you sure?"
 msgstr "Está segura?"
 
-msgid "Delete"
-msgstr "Eliminar"
-
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr "Este artigo é un borrador. Só ti e as outras autoras poden velo."
 
 msgid "Only you and other authors can edit this article."
 msgstr "Só ti e as outras autoras poden editar este artigo."
 
-msgid "Media upload"
-msgstr "Subir medios"
+msgid "Edit"
+msgstr "Editar"
 
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Útil para persoas con deficiencias visuais, así como información da licenza"
+msgid "I'm from this instance"
+msgstr "Eu formo parte de esta instancia"
 
-msgid "Leave it empty, if none is needed"
-msgstr "Deixar baldeiro se non precisa ningunha"
+msgid "Username, or email"
+msgstr "Nome de usuaria ou correo"
 
-msgid "File"
-msgstr "Ficheiro"
-
-msgid "Send"
-msgstr "Enviar"
-
-msgid "Your media"
-msgstr "Os seus medios"
-
-msgid "Upload"
-msgstr "Subir"
-
-msgid "You don't have any media yet."
-msgstr "Aínda non subeu ficheiros de medios."
-
-msgid "Content warning: {0}"
-msgstr "Aviso de contido: {0}"
-
-msgid "Details"
-msgstr "Detalles"
-
-msgid "Media details"
-msgstr "Detalle dos medios"
-
-msgid "Go back to the gallery"
-msgstr "Voltar a galería"
-
-msgid "Markdown syntax"
-msgstr "Sintaxe Markdown"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "Copie e pegue este código para incrustar no artigo:"
-
-msgid "Use as an avatar"
-msgstr "Utilizar como avatar"
-
-msgid "Notifications"
-msgstr "Notificacións"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "Menú"
-
-msgid "Dashboard"
-msgstr "Taboleiro"
-
-msgid "Log Out"
-msgstr "Desconectar"
-
-msgid "My account"
-msgstr "A miña conta"
-
-msgid "Log In"
+msgid "Log in"
 msgstr "Conectar"
 
-msgid "Register"
-msgstr "Rexistrar"
+msgid "I'm from another instance"
+msgstr "Veño desde outra instancia"
 
-msgid "About this instance"
-msgstr "Sobre esta instancia"
-
-msgid "Privacy policy"
-msgstr "Política de intimidade"
-
-msgid "Administration"
-msgstr "Administración"
-
-msgid "Documentation"
-msgstr "Documentación"
-
-msgid "Source code"
-msgstr "Código fonte"
-
-msgid "Matrix room"
-msgstr "Sala Matrix"
-
-msgid "Your feed"
-msgstr "O seu contido"
-
-msgid "Federated feed"
-msgstr "Contido federado"
-
-msgid "Local feed"
-msgstr "Contido local"
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr "Nada por aquí. Inténtao subscribíndote a máis persoas."
-
-msgid "Articles from {}"
-msgstr "Artigos de {}"
-
-msgid "All the articles of the Fediverse"
-msgstr "Todos os artigos do Fediverso"
-
-msgid "Users"
-msgstr "Usuarias"
-
-msgid "Configuration"
-msgstr "Axustes"
-
-msgid "Instances"
-msgstr "Instancias"
-
-msgid "Ban"
-msgstr "Prohibir"
-
-msgid "Administration of {0}"
-msgstr "Administración de {0}"
-
-# src/template_utils.rs:251
-msgid "Name"
-msgstr "Nome"
-
-msgid "Allow anyone to register here"
-msgstr "Permitir o rexistro aberto a calquera"
-
-msgid "Short description"
-msgstr "Descrición curta"
-
-msgid "Long description"
-msgstr "Descrición longa"
-
-# src/template_utils.rs:251
-msgid "Default article license"
-msgstr "Licenza por omisión dos artigos"
-
-msgid "Save these settings"
-msgstr "Gardar estas preferencias"
-
-msgid "About {0}"
-msgstr "Acerca de {0}"
-
-msgid "Runs Plume {0}"
-msgstr "Versión Plume {0}"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Lar de <em>{0}</em> persoas"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Que escribiron <em>{0}</em> artigos"
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr "E están conectadas a outras <em>{0}</em> instancias"
-
-msgid "Administred by"
-msgstr "Administrada por"
-
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr "Se estás lendo esta web como visitante non se recollen datos sobre ti."
-
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr "Como usuaria rexistrada, tes que proporcionar un nome de usuaria (que non ten que ser o teu nome real), un enderezo activo de correo electrónico e un contrasinal, para poder conectarte, escribir artigos e comentar. O contido que envíes permanece ata que o borres."
-
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr "Cando te conectas, gardamos dous testemuños, un para manter a sesión aberta e o segundo para previr que outra xente actúe no teu nome. Non gardamos máis testemuños."
-
-msgid "Welcome to {}"
-msgstr "Benvida a {}"
-
-msgid "Unblock"
-msgstr "Desbloquear"
-
-msgid "Block"
-msgstr "Bloquear"
+msgid "Continue to your instance"
+msgstr "Continuar hacia a súa instancia"
 
 msgid "Reset your password"
 msgstr "Restablecer contrasinal"
 
-# src/template_utils.rs:251
 msgid "New password"
 msgstr "Novo contrasinal"
 
-# src/template_utils.rs:251
 msgid "Confirmation"
 msgstr "Confirmación"
 
 msgid "Update password"
 msgstr "Actualizar contrasinal"
-
-msgid "Log in"
-msgstr "Conectar"
-
-# src/template_utils.rs:251
-msgid "Username, or email"
-msgstr "Nome de usuaria ou correo"
-
-# src/template_utils.rs:251
-msgid "Password"
-msgstr "Contrasinal"
-
-# src/template_utils.rs:251
-msgid "E-mail"
-msgstr "Correo-e"
-
-msgid "Send password reset link"
-msgstr "Enviar ligazón para restablecer contrasinal"
 
 msgid "Check your inbox!"
 msgstr "Comprobe o seu correo!"
@@ -775,117 +847,79 @@ msgstr "Comprobe o seu correo!"
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr "Enviamoslle un correo ao enderezo que nos deu, con unha ligazón para restablecer o contrasinal."
 
-msgid "Admin"
-msgstr "Admin"
+msgid "Send password reset link"
+msgstr "Enviar ligazón para restablecer contrasinal"
 
-msgid "It is you"
-msgstr "É vostede"
+msgid "This token has expired"
+msgstr "O testemuño caducou"
 
-msgid "Edit your profile"
-msgstr "Edite o seu perfil"
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
+msgstr "Inicia o preceso de novo premendo <a href=\"/password-reset\">aquí</a>."
 
-msgid "Open on {0}"
-msgstr "Aberto en {0}"
+msgid "New Blog"
+msgstr "Novo Blog"
 
-msgid "Follow {}"
-msgstr "Seguimento {}"
+msgid "Create a blog"
+msgstr "Crear un blog"
 
-msgid "Log in to follow"
-msgstr "Conéctese para seguir"
+msgid "Create blog"
+msgstr "Crear blog"
 
-msgid "Enter your full username handle to follow"
-msgstr "Introduza o se nome de usuaria completo para continuar"
+msgid "Edit \"{}\""
+msgstr "Editar \"{}\""
 
-msgid "{0}'s subscriptions"
-msgstr "Suscricións de {0}"
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Pode subir imaxes a súa galería, e utilizalas como iconas do blog ou banners."
 
-msgid "Articles"
-msgstr "Artigos"
+msgid "Upload images"
+msgstr "Subir imaxes"
 
-msgid "Subscribers"
-msgstr "Subscritoras"
+msgid "Blog icon"
+msgstr "Icona de blog"
 
-msgid "Subscriptions"
-msgstr "Subscricións"
+msgid "Blog banner"
+msgstr "Banner do blog"
 
-msgid "Create your account"
-msgstr "Cree a súa conta"
+msgid "Custom theme"
+msgstr "Decorado personalizado"
 
-msgid "Create an account"
-msgstr "Crear unha conta"
+msgid "Update blog"
+msgstr "Actualizar blog"
 
-# src/template_utils.rs:251
-msgid "Username"
-msgstr "Nome de usuaria"
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Teña tino, todo o que faga aquí non se pode reverter."
 
-# src/template_utils.rs:251
-msgid "Email"
-msgstr "Correo-e"
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Tes a certeza de querer eliminar definitivamente este blog?"
 
-# src/template_utils.rs:251
-msgid "Password confirmation"
-msgstr "Confirmación do contrasinal"
+msgid "Permanently delete this blog"
+msgstr "Eliminar o blog de xeito permanente"
 
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "Desculpe, pero o rexistro en esta instancia está pechado. Porén pode atopar outra no fediverso."
+msgid "{}'s icon"
+msgstr "Icona de {}"
 
-msgid "{0}'s subscribers"
-msgstr "Subscritoras de {0}"
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Este blog ten unha autora: "
+msgstr[1] "Este blog ten {0} autoras: "
 
-msgid "Edit your account"
-msgstr "Edite a súa conta"
+msgid "No posts to see here yet."
+msgstr "Aínda non hai entradas publicadas"
 
-msgid "Your Profile"
-msgstr "O seu Perfil"
+msgid "Nothing to see here yet."
+msgstr "Aínda non hai nada publicado."
 
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "Para cambiar o avatar, suba a imaxe a súa galería e despois escollaa desde alí."
+msgid "None"
+msgstr "Ningunha"
 
-msgid "Upload an avatar"
-msgstr "Subir un avatar"
+msgid "No description"
+msgstr "Sen descrición"
 
-# src/template_utils.rs:251
-msgid "Display name"
-msgstr "Mostrar nome"
+msgid "Respond"
+msgstr "Respostar"
 
-msgid "Summary"
-msgstr "Resumen"
-
-msgid "Update account"
-msgstr "Actualizar conta"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Teña tino, todo o que faga aquí non se pode retrotraer."
-
-msgid "Delete your account"
-msgstr "Eliminar a súa conta"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "Lamentámolo, pero como administradora, non pode deixar a súa propia instancia."
-
-msgid "Your Dashboard"
-msgstr "O seu taboleiro"
-
-msgid "Your Blogs"
-msgstr "Os seus Blogs"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "Aínda non ten blogs. Publique un de seu ou ben solicite unirse a un."
-
-msgid "Start a new blog"
-msgstr "Iniciar un blog"
-
-msgid "Your Drafts"
-msgstr "O seus Borradores"
-
-msgid "Go to your gallery"
-msgstr "Ir a súa galería"
-
-msgid "Atom feed"
-msgstr "Fonte Atom"
-
-msgid "Recently boosted"
-msgstr "Promocionada recentemente"
+msgid "Delete this comment"
+msgstr "Eliminar o comentario"
 
 msgid "What is Plume?"
 msgstr "Qué é Plume?"
@@ -902,37 +936,78 @@ msgstr "Os artigos tamén son visibles en outras instancias Plume, e pode intera
 msgid "Read the detailed rules"
 msgstr "Lea o detalle das normas"
 
-msgid "View all"
-msgstr "Ver todos"
-
-msgid "None"
-msgstr "Ningunha"
-
-msgid "No description"
-msgstr "Sen descrición"
-
 msgid "By {0}"
 msgstr "Por {0}"
 
 msgid "Draft"
 msgstr "Borrador"
 
-msgid "Respond"
-msgstr "Respostar"
+msgid "Search result(s) for \"{0}\""
+msgstr "Resultado(s) da busca \"{0}\""
 
-msgid "Delete this comment"
-msgstr "Eliminar o comentario"
+msgid "Search result(s)"
+msgstr "Resultado(s) da busca"
 
-msgid "I'm from this instance"
-msgstr "Eu formo parte de esta instancia"
+msgid "No results for your query"
+msgstr "Sen resultados para a consulta"
 
-msgid "I'm from another instance"
-msgstr "Veño desde outra instancia"
+msgid "No more results for your query"
+msgstr "Sen máis resultados para a súa consulta"
 
-# src/template_utils.rs:259
-msgid "Example: user@plu.me"
-msgstr "Exemplo: usuaria@plu.me"
+msgid "Advanced search"
+msgstr "Busca avanzada"
 
-msgid "Continue to your instance"
-msgstr "Continuar hacia a súa instancia"
+msgid "Article title matching these words"
+msgstr "Título de artigo coincidente con estas palabras"
+
+msgid "Subtitle matching these words"
+msgstr "O subtítulo coincide con estas palabras"
+
+msgid "Content macthing these words"
+msgstr "Contido coincidente con estas palabras"
+
+msgid "Body content"
+msgstr "Contido do corpo"
+
+msgid "From this date"
+msgstr "Desde esta data"
+
+msgid "To this date"
+msgstr "Ata esta data"
+
+msgid "Containing these tags"
+msgstr "Contendo estas etiquetas"
+
+msgid "Tags"
+msgstr "Etiquetas"
+
+msgid "Posted on one of these instances"
+msgstr "Publicado en algunha de estas instancias"
+
+msgid "Instance domain"
+msgstr "Dominio da instancia"
+
+msgid "Posted by one of these authors"
+msgstr "Publicado por unha de estas autoras"
+
+msgid "Author(s)"
+msgstr "Autor(es)"
+
+msgid "Posted on one of these blogs"
+msgstr "Publicado en un de estos blogs"
+
+msgid "Blog title"
+msgstr "Título do blog"
+
+msgid "Written in this language"
+msgstr "Escrito en este idioma"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Published under this license"
+msgstr "Publicado baixo esta licenza"
+
+msgid "Article license"
+msgstr "Licenza do artigo"
 

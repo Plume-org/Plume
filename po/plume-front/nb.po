@@ -12,6 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+# plume-front/src/editor.rs:189
+msgid "Do you want to load the local autosave last edited at {}?"
+msgstr ""
+
 # plume-front/src/editor.rs:115
 msgid "Open the rich text editor"
 msgstr ""

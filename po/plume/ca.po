@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-12-16 21:06\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2020-12-19 09:55\n"
+"Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
 "MIME-Version: 1.0\n"
@@ -12,66 +12,92 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: plume\n"
+"X-Crowdin-Project-ID: 352097\n"
 "X-Crowdin-Language: ca\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
+"X-Crowdin-File-ID: 8\n"
 
-# src/template_utils.rs:102
+# src/template_utils.rs:105
 msgid "{0} commented on your article."
-msgstr ""
+msgstr "{0} han comentat el teu article."
 
-# src/template_utils.rs:103
+# src/template_utils.rs:106
 msgid "{0} is subscribed to you."
-msgstr ""
+msgstr "{0} s'ha subscrit."
 
-# src/template_utils.rs:104
+# src/template_utils.rs:107
 msgid "{0} liked your article."
 msgstr "A {0} li ha agradat el vostre article."
 
-# src/template_utils.rs:105
+# src/template_utils.rs:108
 msgid "{0} mentioned you."
 msgstr "{0} us ha esmentat."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:109
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} ha impulsat el teu article."
 
-# src/template_utils.rs:142
+# src/template_utils.rs:116
+msgid "Your feed"
+msgstr "El teu feed"
+
+# src/template_utils.rs:117
+msgid "Local feed"
+msgstr "Feed local"
+
+# src/template_utils.rs:118
+msgid "Federated feed"
+msgstr "Feed federat"
+
+# src/template_utils.rs:154
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "avatar de {0}"
 
-# src/routes/blogs.rs:64
+# src/template_utils.rs:198
+msgid "Previous page"
+msgstr "Pàgina anterior"
+
+# src/template_utils.rs:209
+msgid "Next page"
+msgstr "Pàgina següent"
+
+# src/template_utils.rs:363
+msgid "Optional"
+msgstr "Opcional"
+
+# src/routes/blogs.rs:63
 msgid "To create a new blog, you need to be logged in"
 msgstr "Per a crear un blog nou, heu d’iniciar una sessió"
 
-# src/routes/blogs.rs:106
+# src/routes/blogs.rs:102
 msgid "A blog with the same name already exists."
 msgstr "Ja existeix un blog amb el mateix nom."
 
-# src/routes/blogs.rs:141
+# src/routes/blogs.rs:140
 msgid "Your blog was successfully created!"
 msgstr "S’ha creat el vostre blog correctament."
 
-# src/routes/blogs.rs:163
+# src/routes/blogs.rs:160
 msgid "Your blog was deleted."
 msgstr "S’ha suprimit el vostre blog."
 
-# src/routes/blogs.rs:170
+# src/routes/blogs.rs:168
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "No tens permís per a esborrar aquest blog."
 
-# src/routes/blogs.rs:218
+# src/routes/blogs.rs:219
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "No tens permís per a editar aquest blog."
 
-# src/routes/blogs.rs:263
+# src/routes/blogs.rs:275
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "No pots usar aquest Mèdia com a icona del blog."
 
-# src/routes/blogs.rs:281
+# src/routes/blogs.rs:293
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "No pots usar aquest Mèdia com a capçalera del blog."
 
-# src/routes/blogs.rs:314
+# src/routes/blogs.rs:327
 msgid "Your blog information have been updated."
 msgstr "S’ha actualitzat la informació del vostre blog."
 
@@ -83,492 +109,196 @@ msgstr "S’ha publicat el vostre comentari."
 msgid "Your comment has been deleted."
 msgstr "S’ha suprimit el vostre comentari."
 
-# src/routes/instance.rs:134
+# src/routes/instance.rs:120
 msgid "Instance settings have been saved."
+msgstr "S'han desat les configuracions de l'instància."
+
+# src/routes/instance.rs:152
+msgid "{} has been unblocked."
+msgstr "{0} ha estat desbloquejat."
+
+# src/routes/instance.rs:154
+msgid "{} has been blocked."
+msgstr "{0} ha estat bloquejat."
+
+# src/routes/instance.rs:203
+msgid "Blocks deleted"
+msgstr "Bloquejos esborrats"
+
+# src/routes/instance.rs:218
+msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} have been unblocked."
-msgstr ""
+# src/routes/instance.rs:223
+msgid "Email Blocked"
+msgstr "Adreça de correu bloquejada"
 
-# src/routes/instance.rs:177
-msgid "{} have been blocked."
-msgstr ""
+# src/routes/instance.rs:314
+msgid "You can't change your own rights."
+msgstr "No pots canviar els teus propis drets."
 
-# src/routes/instance.rs:221
-msgid "{} have been banned."
-msgstr ""
+# src/routes/instance.rs:325
+msgid "You are not allowed to take this action."
+msgstr "No tens permís per a prendre aquesta acció."
 
-# src/routes/likes.rs:51
+# src/routes/instance.rs:362
+msgid "Done."
+msgstr "Fet."
+
+# src/routes/likes.rs:53
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Per a agradar-te una publicació necessites iniciar sessió"
 
-# src/routes/medias.rs:141
+# src/routes/medias.rs:145
 msgid "Your media have been deleted."
-msgstr ""
+msgstr "S'ha esborrat el teu Mèdia."
 
-# src/routes/medias.rs:146
+# src/routes/medias.rs:150
 msgid "You are not allowed to delete this media."
-msgstr ""
+msgstr "No tens permís per a esborrar aquest Mèdia."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:167
 msgid "Your avatar has been updated."
-msgstr ""
+msgstr "S'ha actualitzat el teu avatar."
 
-# src/routes/medias.rs:168
+# src/routes/medias.rs:172
 msgid "You are not allowed to use this media."
-msgstr ""
+msgstr "No tens permís per a usar aquest Mèdia."
 
 # src/routes/notifications.rs:28
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Per a veure les teves notificacions necessites iniciar sessió"
 
-# src/routes/posts.rs:93
+# src/routes/posts.rs:54
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Aquesta entrada encara no està publicada."
 
-# src/routes/posts.rs:122
+# src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Per a escriure una nova entrada cal iniciar sessió"
 
-# src/routes/posts.rs:139
+# src/routes/posts.rs:142
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "No ets un autor d'aquest blog."
 
-# src/routes/posts.rs:146
+# src/routes/posts.rs:149
 msgid "New post"
 msgstr "Apunt nou"
 
-# src/routes/posts.rs:191
+# src/routes/posts.rs:194
 msgid "Edit {0}"
 msgstr "Edita {0}"
 
-# src/routes/posts.rs:260
+# src/routes/posts.rs:263
 msgid "You are not allowed to publish on this blog."
-msgstr ""
+msgstr "No tens permís per a publicar en aquest blog."
 
-# src/routes/posts.rs:350
+# src/routes/posts.rs:355
 msgid "Your article has been updated."
 msgstr "S’ha actualitzat el vostre article."
 
-# src/routes/posts.rs:532
+# src/routes/posts.rs:542
 msgid "Your article has been saved."
 msgstr "S’ha desat el vostre article."
 
-# src/routes/posts.rs:538
+# src/routes/posts.rs:549
 msgid "New article"
 msgstr "Article nou"
 
-# src/routes/posts.rs:572
+# src/routes/posts.rs:582
 msgid "You are not allowed to delete this article."
-msgstr ""
+msgstr "No tens permís per a esborrar aquest article."
 
-# src/routes/posts.rs:597
+# src/routes/posts.rs:607
 msgid "Your article has been deleted."
 msgstr "S’ha suprimit el vostre article."
 
-# src/routes/posts.rs:602
+# src/routes/posts.rs:612
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr ""
+msgstr "Sembla que l'article que intentes esborrar no existeix. Potser ja no hi és?"
 
-# src/routes/posts.rs:642
+# src/routes/posts.rs:652
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "No s'ha pogut obtenir informació sobre el teu compte. Si us plau, assegura't que el teu nom d'usuari és correcte."
 
-# src/routes/reshares.rs:51
+# src/routes/reshares.rs:54
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Per a impulsar una entrada cal iniciar sessió"
 
-# src/routes/session.rs:112
+# src/routes/session.rs:87
 msgid "You are now connected."
-msgstr ""
+msgstr "Ara estàs connectat."
 
-# src/routes/session.rs:131
+# src/routes/session.rs:108
 msgid "You are now logged off."
-msgstr ""
+msgstr "Ara estàs desconnectat."
 
-# src/routes/session.rs:188
+# src/routes/session.rs:153
 msgid "Password reset"
 msgstr "Reinicialització de contrasenya"
 
-# src/routes/session.rs:189
+# src/routes/session.rs:154
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Aquí està l'enllaç per a reiniciar la teva contrasenya: {0}"
 
-# src/routes/session.rs:264
+# src/routes/session.rs:216
 msgid "Your password was successfully reset."
 msgstr "S’ha reinicialitzat la vostra contrasenya correctament."
 
-# src/routes/session.rs:274
-msgid "Sorry, but the link expired. Try again"
-msgstr ""
-
-# src/routes/user.rs:136
+# src/routes/user.rs:141
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Per a accedir al teu panell cal iniciar sessió"
 
-# src/routes/user.rs:158
+# src/routes/user.rs:163
 msgid "You are no longer following {}."
-msgstr ""
+msgstr "Ja no segueixes a {}."
 
-# src/routes/user.rs:175
+# src/routes/user.rs:180
 msgid "You are now following {}."
-msgstr ""
+msgstr "Ara estàs seguint a {}."
 
-# src/routes/user.rs:254
+# src/routes/user.rs:260
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Per a subscriure't a algú cal iniciar sessió"
 
-# src/routes/user.rs:356
+# src/routes/user.rs:364
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Per a editar el teu perfil cal iniciar sessió"
 
-# src/routes/user.rs:398
+# src/routes/user.rs:409
 msgid "Your profile has been updated."
-msgstr ""
+msgstr "El teu perfil s'ha actualitzat."
 
-# src/routes/user.rs:425
+# src/routes/user.rs:436
 msgid "Your account has been deleted."
-msgstr ""
+msgstr "El teu compte s'ha esborrat."
 
-# src/routes/user.rs:431
+# src/routes/user.rs:442
 msgid "You can't delete someone else's account."
-msgstr ""
+msgstr "No pots esborrar el compte d'algú altre."
 
-# src/routes/user.rs:503
+# src/routes/user.rs:526
 msgid "Registrations are closed on this instance."
-msgstr ""
+msgstr "El registre d'aquesta instància és tancat."
 
-# src/routes/user.rs:527
+# src/routes/user.rs:549
 msgid "Your account has been created. Now you just need to log in, before you can use it."
-msgstr ""
+msgstr "S'ha creat el teu compte. Ara cal iniciar sessió per a començar a usar-lo."
 
-msgid "Internal server error"
-msgstr ""
-
-msgid "Something broke on our side."
-msgstr ""
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-
-msgid "You are not authorized."
-msgstr ""
-
-msgid "Page not found"
-msgstr "No s’ha trobat la pàgina"
-
-msgid "We couldn't find this page."
-msgstr ""
-
-msgid "The link that led you here may be broken."
-msgstr ""
-
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
-msgstr ""
-
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr ""
-
-msgid "Articles tagged \"{0}\""
-msgstr "Articles amb l’etiqueta «{0}»"
-
-msgid "There are currently no articles with such a tag"
-msgstr ""
-
-msgid "New Blog"
-msgstr "Blog nou"
-
-msgid "Create a blog"
-msgstr "Crea un blog"
-
-# src/template_utils.rs:251
-msgid "Title"
-msgstr "Títol"
-
-# src/template_utils.rs:254
-msgid "Optional"
-msgstr "Opcional"
-
-msgid "Create blog"
-msgstr "Crea un blog"
-
-msgid "Edit \"{}\""
-msgstr "Edita «{}»"
+msgid "Media upload"
+msgstr "Carregar Mèdia"
 
 msgid "Description"
 msgstr "Descripció"
 
-msgid "Markdown syntax is supported"
-msgstr ""
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-
-msgid "Upload images"
-msgstr ""
-
-msgid "Blog icon"
-msgstr "Icona del blog"
-
-msgid "Blog banner"
-msgstr "Bàner del blog"
-
-msgid "Update blog"
-msgstr "Actualitza el blog"
-
-msgid "Danger zone"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Aneu amb compte: les accions que són ací no es poden desfer."
-
-msgid "Permanently delete this blog"
-msgstr "Suprimeix permanentment aquest blog"
-
-msgid "{}'s icon"
-msgstr "Icona per a {}"
-
-msgid "Edit"
-msgstr "Edita"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Hi ha 1 autor en aquest blog: "
-msgstr[1] "Hi ha {0} autors en aquest blog: "
-
-msgid "Latest articles"
-msgstr "Darrers articles"
-
-msgid "No posts to see here yet."
-msgstr "Encara no hi ha cap apunt."
-
-msgid "Search result(s) for \"{0}\""
-msgstr ""
-
-msgid "Search result(s)"
-msgstr ""
-
-msgid "No results for your query"
-msgstr ""
-
-msgid "No more results for your query"
-msgstr ""
-
-msgid "Search"
-msgstr "Cerca"
-
-msgid "Your query"
-msgstr ""
-
-msgid "Advanced search"
-msgstr "Cerca avançada"
-
-# src/template_utils.rs:339
-msgid "Article title matching these words"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "Subtitle matching these words"
-msgstr ""
-
-msgid "Subtitle - byline"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "Content matching these words"
-msgstr ""
-
-msgid "Body content"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "From this date"
-msgstr "A partir d’aquesta data"
-
-# src/template_utils.rs:339
-msgid "To this date"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "Containing these tags"
-msgstr ""
-
-msgid "Tags"
-msgstr "Etiquetes"
-
-# src/template_utils.rs:339
-msgid "Posted on one of these instances"
-msgstr ""
-
-msgid "Instance domain"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "Posted by one of these authors"
-msgstr ""
-
-msgid "Author(s)"
-msgstr ""
-
-# src/template_utils.rs:339
-msgid "Posted on one of these blogs"
-msgstr ""
-
-msgid "Blog title"
-msgstr "Títol del blog"
-
-# src/template_utils.rs:339
-msgid "Written in this language"
-msgstr "Escrit en aquesta llengua"
-
-msgid "Language"
-msgstr "Llengua"
-
-# src/template_utils.rs:339
-msgid "Published under this license"
-msgstr "Publicat segons aquesta llicència"
-
-msgid "Article license"
-msgstr ""
-
-msgid "Interact with {}"
-msgstr ""
-
-msgid "Log in to interact"
-msgstr ""
-
-msgid "Enter your full username to interact"
-msgstr ""
-
-msgid "Publish"
-msgstr "Publica"
-
-msgid "Classic editor (any changes will be lost)"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Subtitle"
-msgstr "Subtítol"
-
-msgid "Content"
-msgstr "Contingut"
-
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr ""
-
-msgid "Upload media"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Tags, separated by commas"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "License"
-msgstr ""
-
-# src/template_utils.rs:259
-msgid "Leave it empty to reserve all rights"
-msgstr ""
-
-msgid "Illustration"
-msgstr ""
-
-msgid "This is a draft, don't publish it yet."
-msgstr ""
-
-msgid "Update"
-msgstr "Actualitza"
-
-msgid "Update, or publish"
-msgstr "Actualitza o publica"
-
-msgid "Publish your post"
-msgstr ""
-
-msgid "Written by {0}"
-msgstr "Escrit per {0}"
-
-msgid "All rights reserved."
-msgstr "Tots els drets reservats."
-
-msgid "This article is under the {0} license."
-msgstr ""
-
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't like this anymore"
-msgstr "Això ja no m’agrada"
-
-msgid "Add yours"
-msgstr ""
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "I don't want to boost this anymore"
-msgstr ""
-
-msgid "Boost"
-msgstr ""
-
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
-
-msgid "Unsubscribe"
-msgstr ""
-
-msgid "Subscribe"
-msgstr ""
-
-msgid "Comments"
-msgstr "Comentaris"
-
-# src/template_utils.rs:251
-msgid "Content warning"
-msgstr ""
-
-msgid "Your comment"
-msgstr "El vostre comentari"
-
-msgid "Submit comment"
-msgstr "Envia el comentari"
-
-msgid "No comments yet. Be the first to react!"
-msgstr ""
-
-msgid "Are you sure?"
-msgstr "N’esteu segur?"
-
-msgid "Delete"
-msgstr "Suprimeix"
-
-msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-
-msgid "Only you and other authors can edit this article."
-msgstr ""
-
-msgid "Media upload"
-msgstr ""
-
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
+msgstr "Molt útil per a persones amb deficiències visuals aixó com informació sobre llicències"
+
+msgid "Content warning"
+msgstr "Advertència sobre el contingut"
 
 msgid "Leave it empty, if none is needed"
-msgstr ""
+msgstr "Deixa-ho buit si no és necessari cap"
 
 msgid "File"
 msgstr "Fitxer"
@@ -577,16 +307,19 @@ msgid "Send"
 msgstr "Envia"
 
 msgid "Your media"
-msgstr ""
+msgstr "Els teus Mèdia"
 
 msgid "Upload"
 msgstr "Puja"
 
 msgid "You don't have any media yet."
-msgstr ""
+msgstr "Encara no tens cap Mèdia."
 
 msgid "Content warning: {0}"
-msgstr ""
+msgstr "Advertència sobre el contingut: {0}"
+
+msgid "Delete"
+msgstr "Suprimeix"
 
 msgid "Details"
 msgstr "Detalls"
@@ -601,22 +334,25 @@ msgid "Markdown syntax"
 msgstr "Sintaxi Markdown"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr ""
+msgstr "Copia-ho dins els teus articles, per a inserir aquest Mèdia:"
 
 msgid "Use as an avatar"
-msgstr ""
-
-msgid "Notifications"
-msgstr "Notificacions"
+msgstr "Utilitza-ho com a avatar"
 
 msgid "Plume"
-msgstr ""
+msgstr "Plume"
 
 msgid "Menu"
 msgstr "Menú"
 
+msgid "Search"
+msgstr "Cerca"
+
 msgid "Dashboard"
-msgstr ""
+msgstr "Panell de control"
+
+msgid "Notifications"
+msgstr "Notificacions"
 
 msgid "Log Out"
 msgstr "Finalitza la sessió"
@@ -646,25 +382,181 @@ msgid "Source code"
 msgstr "Codi font"
 
 msgid "Matrix room"
-msgstr ""
+msgstr "Sala Matrix"
 
-msgid "Your feed"
-msgstr ""
+msgid "Admin"
+msgstr "Admin"
 
-msgid "Federated feed"
-msgstr ""
+msgid "It is you"
+msgstr "Ets tu"
 
-msgid "Local feed"
-msgstr ""
+msgid "Edit your profile"
+msgstr "Edita el teu perfil"
 
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
+msgid "Open on {0}"
+msgstr "Obrir a {0}"
 
-msgid "Articles from {}"
-msgstr ""
+msgid "Unsubscribe"
+msgstr "Cancel·lar la subscripció"
 
-msgid "All the articles of the Fediverse"
-msgstr ""
+msgid "Subscribe"
+msgstr "Subscriure’s"
+
+msgid "Follow {}"
+msgstr "Segueix a {}"
+
+msgid "Log in to follow"
+msgstr "Inicia sessió per seguir-lo"
+
+msgid "Enter your full username handle to follow"
+msgstr "Introdueix el teu nom d'usuari complet per a seguir-lo"
+
+msgid "{0}'s subscribers"
+msgstr "Subscriptors de {0}"
+
+msgid "Articles"
+msgstr "Articles"
+
+msgid "Subscribers"
+msgstr "Subscriptors"
+
+msgid "Subscriptions"
+msgstr "Subscripcions"
+
+msgid "Create your account"
+msgstr "Crea el teu compte"
+
+msgid "Create an account"
+msgstr "Crear un compte"
+
+msgid "Username"
+msgstr "Nom d’usuari"
+
+msgid "Email"
+msgstr "Adreça electrònica"
+
+msgid "Password"
+msgstr "Contrasenya"
+
+msgid "Password confirmation"
+msgstr "Confirmació de la contrasenya"
+
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Disculpa, el registre d'aquesta instància és tancat. Pots trobar-ne un altre diferent."
+
+msgid "{0}'s subscriptions"
+msgstr "Subscripcions de {0}"
+
+msgid "Your Dashboard"
+msgstr "El teu panell de control"
+
+msgid "Your Blogs"
+msgstr "Els vostres blogs"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Encara no tens cap bloc. Crea el teu propi o pregunta per a unir-te a un."
+
+msgid "Start a new blog"
+msgstr "Inicia un nou bloc"
+
+msgid "Your Drafts"
+msgstr "Els teus esborranys"
+
+msgid "Go to your gallery"
+msgstr "Anar a la teva galeria"
+
+msgid "Edit your account"
+msgstr "Edita el teu compte"
+
+msgid "Your Profile"
+msgstr "El vostre perfil"
+
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "Per a canviar el teu avatar, puja'l a la teva galeria i desprès selecciona'l allà."
+
+msgid "Upload an avatar"
+msgstr "Puja un avatar"
+
+msgid "Display name"
+msgstr "Nom a mostrar"
+
+msgid "Summary"
+msgstr "Resum"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "Default theme"
+msgstr "Tema per defecte"
+
+msgid "Error while loading theme selector."
+msgstr "S'ha produït un error al carregar el selector de temes."
+
+msgid "Never load blogs custom themes"
+msgstr "No carregar mai els temes personalitzats dels blocs"
+
+msgid "Update account"
+msgstr "Actualitza el compte"
+
+msgid "Danger zone"
+msgstr "Zona perillosa"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Vés amb compte: qualsevol acció presa aquí no es pot desfer."
+
+msgid "Delete your account"
+msgstr "Elimina el teu compte"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Ho sentim però com a admin, no pots abandonar la teva pròpia instància."
+
+msgid "Latest articles"
+msgstr "Darrers articles"
+
+msgid "Atom feed"
+msgstr "Font Atom"
+
+msgid "Recently boosted"
+msgstr "Impulsat recentment"
+
+msgid "Articles tagged \"{0}\""
+msgstr "Articles amb l’etiqueta «{0}»"
+
+msgid "There are currently no articles with such a tag"
+msgstr "No hi ha cap article amb aquesta etiqueta"
+
+msgid "The content you sent can't be processed."
+msgstr "El contingut que has enviat no pot ser processat."
+
+msgid "Maybe it was too long."
+msgstr "Potser era massa gran."
+
+msgid "Internal server error"
+msgstr "Error intern del servidor"
+
+msgid "Something broke on our side."
+msgstr "Alguna cosa nostre s'ha trencat."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Disculpa-n's. Si creus que això és un error, si us plau reporta-ho."
+
+msgid "Invalid CSRF token"
+msgstr "Token CSRF invalid"
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Alguna cosa no és correcte amb el teu token CSRF. Assegura't que no bloqueges les galetes en el teu navegador i prova refrescant la pàgina. Si continues veient aquest missatge d'error, si us plau informa-ho."
+
+msgid "You are not authorized."
+msgstr "No estàs autoritzat."
+
+msgid "Page not found"
+msgstr "No s’ha trobat la pàgina"
+
+msgid "We couldn't find this page."
+msgstr "No podem trobar aquesta pàgina."
+
+msgid "The link that led you here may be broken."
+msgstr "L'enllaç que t'ha portat aquí podria estar trencat."
 
 msgid "Users"
 msgstr "Usuaris"
@@ -675,31 +567,125 @@ msgstr "Configuració"
 msgid "Instances"
 msgstr "Instàncies"
 
+msgid "Email blocklist"
+msgstr "Llista d'adreces de correu bloquejades"
+
+msgid "Grant admin rights"
+msgstr "Dóna drets d'administrador"
+
+msgid "Revoke admin rights"
+msgstr "Treu els drets d'administrador"
+
+msgid "Grant moderator rights"
+msgstr "Dona els drets de moderador"
+
+msgid "Revoke moderator rights"
+msgstr "Treu els drets de moderador"
+
 msgid "Ban"
-msgstr ""
+msgstr "Prohibir"
+
+msgid "Run on selected users"
+msgstr "Executar sobre els usuaris seleccionats"
+
+msgid "Moderator"
+msgstr "Moderador"
+
+msgid "Moderation"
+msgstr "Moderació"
+
+msgid "Home"
+msgstr "Inici"
 
 msgid "Administration of {0}"
-msgstr ""
+msgstr "Administració de {0}"
 
-# src/template_utils.rs:251
+msgid "Unblock"
+msgstr "Desbloca"
+
+msgid "Block"
+msgstr "Bloca"
+
 msgid "Name"
 msgstr "Nom"
 
 msgid "Allow anyone to register here"
-msgstr ""
+msgstr "Permetre a qualsevol registrar-se aquí"
 
 msgid "Short description"
 msgstr "Descripció breu"
 
+msgid "Markdown syntax is supported"
+msgstr "La sintaxi de Markdown és suportada"
+
 msgid "Long description"
 msgstr "Descripció extensa"
 
-# src/template_utils.rs:251
 msgid "Default article license"
 msgstr "Llicència per defecte dels articles"
 
 msgid "Save these settings"
 msgstr "Desa aquests paràmetres"
+
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Si estàs navegant aquest lloc com a visitant cap dada sobre tu serà recollida."
+
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr "Com a usuari registrat has de proporcionar un nom d'usuari (que no ha de ser el teu nom real), una adreça de correu funcional i una contrasenya per a poder ser capaç d'iniciar sessió, escriure articles i comentar-los. El contingut que enviïs es guarda fins que tu l'esborris."
+
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr "Quan inicies sessió guardem dues galetes, una per a mantenir la sessió oberta i l l'altre per a evitar que d'altres persones actuïn en el teu nom. No guardem cap altre galeta."
+
+msgid "Blocklisted Emails"
+msgstr "Llista de bloqueig d'adreces de correu"
+
+msgid "Email address"
+msgstr "Adreça de correu electrònic"
+
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgstr "L'adreça de correu electrònic que desitges bloquejar. Per a bloquejar dominis pots usar la sintaxi global, per exemple '*@exemple.com' bloqueja totes les adreces de exemple.com"
+
+msgid "Note"
+msgstr "Nota"
+
+msgid "Notify the user?"
+msgstr "Notificar l'usuari?"
+
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgstr "Opcional, mostra un missatge al usuari quan intenta crear un compte amb aquesta adreça"
+
+msgid "Blocklisting notification"
+msgstr "Notificacions de la llista de bloqueig"
+
+msgid "The message to be shown when the user attempts to create an account with this email address"
+msgstr "El missatge per a ser mostrat quan l'usuari intenta crear un compte amb aquesta adreça de correu"
+
+msgid "Add blocklisted address"
+msgstr "Afegir adreça a la llista de bloquejos"
+
+msgid "There are no blocked emails on your instance"
+msgstr "En la teva instància no hi ha adreces de correu bloquejades"
+
+msgid "Delete selected emails"
+msgstr "Esborra les adreces de correu seleccionades"
+
+msgid "Email address:"
+msgstr "Adreça de correu electrònic:"
+
+msgid "Blocklisted for:"
+msgstr "Bloquejat per:"
+
+msgid "Will notify them on account creation with this message:"
+msgstr "S'els notificarà en la creació del compte amb aquest missatge:"
+
+msgid "The user will be silently prevented from making an account"
+msgstr "L’usuari es veurà impedit en silenci de crear un compte"
+
+msgid "Welcome to {}"
+msgstr "Us donem la benvinguda a {}"
+
+msgid "View all"
+msgstr "Mostra-ho tot"
 
 msgid "About {0}"
 msgstr "Quant a {0}"
@@ -714,196 +700,214 @@ msgid "Who wrote <em>{0}</em> articles"
 msgstr "Les quals han escrit <em>{0}</em> articles"
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
+msgstr "I estan connectats a <em>{0}</em> altres instàncies"
 
 msgid "Administred by"
-msgstr ""
+msgstr "Administrat per"
 
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
+msgid "Interact with {}"
+msgstr "Interacciona amb {}"
 
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr ""
+msgid "Log in to interact"
+msgstr "Inicia sessió per a interactuar"
 
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr ""
+msgid "Enter your full username to interact"
+msgstr "Introdueix el teu nom d'usuari complet per a interactuar"
 
-msgid "Welcome to {}"
-msgstr "Us donem la benvinguda a {}"
+msgid "Publish"
+msgstr "Publica"
 
-msgid "Unblock"
-msgstr "Desbloca"
+msgid "Classic editor (any changes will be lost)"
+msgstr "Editor clàssic (es perdera qualsevol canvi)"
 
-msgid "Block"
-msgstr "Bloca"
+msgid "Title"
+msgstr "Títol"
+
+msgid "Subtitle"
+msgstr "Subtítol"
+
+msgid "Content"
+msgstr "Contingut"
+
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgstr "Pots pujar Mèdia a la teva galeria i desprès copiar el codi Markdown dels teus articles per a inserir-los."
+
+msgid "Upload media"
+msgstr "Pujar Mèdia"
+
+msgid "Tags, separated by commas"
+msgstr "Etiquetes, separades per comes"
+
+msgid "License"
+msgstr "Llicència"
+
+msgid "Illustration"
+msgstr "Iŀlustració"
+
+msgid "This is a draft, don't publish it yet."
+msgstr "Això és un esborrany, no ho publiquis encara."
+
+msgid "Update"
+msgstr "Actualitza"
+
+msgid "Update, or publish"
+msgstr "Actualitza o publica"
+
+msgid "Publish your post"
+msgstr "Publica l'entrada"
+
+msgid "Written by {0}"
+msgstr "Escrit per {0}"
+
+msgid "All rights reserved."
+msgstr "Tots els drets reservats."
+
+msgid "This article is under the {0} license."
+msgstr "Aquest article està sota la llicència {0}."
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Un favorit"
+msgstr[1] "{0} favorits"
+
+msgid "I don't like this anymore"
+msgstr "Això ja no m’agrada"
+
+msgid "Add yours"
+msgstr "Afegeix el teu"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "Un impuls"
+msgstr[1] "{0} impulsos"
+
+msgid "I don't want to boost this anymore"
+msgstr "Ja no vull impulsar més això"
+
+msgid "Boost"
+msgstr "Impuls"
+
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr "{0}Inicia sessió{1}, o {2}usa el teu compte del Fedivers{3} per a interactuar amb aquest article"
+
+msgid "Comments"
+msgstr "Comentaris"
+
+msgid "Your comment"
+msgstr "El vostre comentari"
+
+msgid "Submit comment"
+msgstr "Envia el comentari"
+
+msgid "No comments yet. Be the first to react!"
+msgstr "Encara sense comentaris. Sigues el primer a reaccionar!"
+
+msgid "Are you sure?"
+msgstr "N’esteu segur?"
+
+msgid "This article is still a draft. Only you and other authors can see it."
+msgstr "Aquest article és encara un esborrany. Només tu i altres autors podeu veure'l."
+
+msgid "Only you and other authors can edit this article."
+msgstr "Només tu i altres autors podeu editar aquest article."
+
+msgid "Edit"
+msgstr "Edita"
+
+msgid "I'm from this instance"
+msgstr "Sóc d'aquesta instància"
+
+msgid "Username, or email"
+msgstr "Nom d’usuari o adreça electrònica"
+
+msgid "Log in"
+msgstr "Inicia una sessió"
+
+msgid "I'm from another instance"
+msgstr "Sóc d'un altre instància"
+
+msgid "Continue to your instance"
+msgstr "Continua a la teva instància"
 
 msgid "Reset your password"
 msgstr "Reinicialitza la contrasenya"
 
-# src/template_utils.rs:251
 msgid "New password"
 msgstr "Contrasenya nova"
 
-# src/template_utils.rs:251
 msgid "Confirmation"
 msgstr "Confirmació"
 
 msgid "Update password"
 msgstr "Actualitza la contrasenya"
 
-msgid "Log in"
-msgstr "Inicia una sessió"
-
-# src/template_utils.rs:251
-msgid "Username, or email"
-msgstr "Nom d’usuari o adreça electrònica"
-
-# src/template_utils.rs:251
-msgid "Password"
-msgstr "Contrasenya"
-
-# src/template_utils.rs:251
-msgid "E-mail"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr ""
-
 msgid "Check your inbox!"
 msgstr "Reviseu la vostra safata d’entrada."
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
+msgstr "Hem enviat un correu a l'adreça que ens vas donar, amb un enllaç per a reiniciar la teva contrasenya."
 
-msgid "Admin"
-msgstr ""
+msgid "Send password reset link"
+msgstr "Envia l'enllaç per a reiniciar la contrasenya"
 
-msgid "It is you"
-msgstr ""
+msgid "This token has expired"
+msgstr "Aquest token ha caducat"
 
-msgid "Edit your profile"
-msgstr ""
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
+msgstr "Si us plau inicia el procés clicant <a href=\"/password-reset\">aquí</a>."
 
-msgid "Open on {0}"
-msgstr ""
+msgid "New Blog"
+msgstr "Blog nou"
 
-msgid "Follow {}"
-msgstr ""
+msgid "Create a blog"
+msgstr "Crea un blog"
 
-msgid "Log in to follow"
-msgstr ""
+msgid "Create blog"
+msgstr "Crea un blog"
 
-msgid "Enter your full username handle to follow"
-msgstr ""
+msgid "Edit \"{}\""
+msgstr "Edita «{}»"
 
-msgid "{0}'s subscriptions"
-msgstr ""
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Pots pujar imatges a la teva galeria per a usar-les com a icones o capçaleres del bloc."
 
-msgid "Articles"
-msgstr "Articles"
+msgid "Upload images"
+msgstr "Pujar imatges"
 
-msgid "Subscribers"
-msgstr "Subscriptors"
+msgid "Blog icon"
+msgstr "Icona del blog"
 
-msgid "Subscriptions"
-msgstr "Subscripcions"
+msgid "Blog banner"
+msgstr "Bàner del blog"
 
-msgid "Create your account"
-msgstr ""
+msgid "Custom theme"
+msgstr "Tema personalitzat"
 
-msgid "Create an account"
-msgstr ""
+msgid "Update blog"
+msgstr "Actualitza el blog"
 
-# src/template_utils.rs:251
-msgid "Username"
-msgstr "Nom d’usuari"
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Aneu amb compte: les accions que són ací no es poden desfer."
 
-# src/template_utils.rs:251
-msgid "Email"
-msgstr "Adreça electrònica"
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Estàs segur que vols esborrar permanentment aquest bloc?"
 
-# src/template_utils.rs:251
-msgid "Password confirmation"
-msgstr ""
+msgid "Permanently delete this blog"
+msgstr "Suprimeix permanentment aquest blog"
 
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
+msgid "{}'s icon"
+msgstr "Icona per a {}"
 
-msgid "{0}'s subscribers"
-msgstr ""
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Hi ha 1 autor en aquest blog: "
+msgstr[1] "Hi ha {0} autors en aquest blog: "
 
-msgid "Edit your account"
-msgstr ""
+msgid "No posts to see here yet."
+msgstr "Encara no hi ha cap apunt."
 
-msgid "Your Profile"
-msgstr "El vostre perfil"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr "Resum"
-
-msgid "Update account"
-msgstr "Actualitza el compte"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr ""
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr ""
-
-msgid "Your Blogs"
-msgstr "Els vostres blogs"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-
-msgid "Start a new blog"
-msgstr ""
-
-msgid "Your Drafts"
-msgstr ""
-
-msgid "Go to your gallery"
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr "Què és el Plume?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "View all"
-msgstr "Mostra-ho tot"
+msgid "Nothing to see here yet."
+msgstr "Encara res a veure aquí."
 
 msgid "None"
 msgstr "Cap"
@@ -911,28 +915,99 @@ msgstr "Cap"
 msgid "No description"
 msgstr "Cap descripció"
 
+msgid "Respond"
+msgstr "Respondre"
+
+msgid "Delete this comment"
+msgstr "Suprimeix aquest comentari"
+
+msgid "What is Plume?"
+msgstr "Què és el Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume és un motor de blocs descentralitzats."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr "Els autors poden gestionar diversos blocs, cadascun amb la seva pròpia pàgina."
+
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgstr "Els articles son visibles en altres instàncies Plume i pots interactuar directament amb ells des d'altres plataformes com ara Mastodon."
+
+msgid "Read the detailed rules"
+msgstr "Llegeix les normes detallades"
+
 msgid "By {0}"
 msgstr "Per {0}"
 
 msgid "Draft"
 msgstr "Esborrany"
 
-msgid "Respond"
-msgstr ""
+msgid "Search result(s) for \"{0}\""
+msgstr "Resultat(s) de la cerca per a \"{0}\""
 
-msgid "Delete this comment"
-msgstr "Suprimeix aquest comentari"
+msgid "Search result(s)"
+msgstr "Resultat(s) de la cerca"
 
-msgid "I'm from this instance"
-msgstr ""
+msgid "No results for your query"
+msgstr "La teva consulta no té resultats"
 
-msgid "I'm from another instance"
-msgstr ""
+msgid "No more results for your query"
+msgstr "No hi ha més resultats per a la teva consulta"
 
-# src/template_utils.rs:259
-msgid "Example: user@plu.me"
-msgstr ""
+msgid "Advanced search"
+msgstr "Cerca avançada"
 
-msgid "Continue to your instance"
-msgstr ""
+msgid "Article title matching these words"
+msgstr "Títol d'article que coincideix amb aquestes paraules"
+
+msgid "Subtitle matching these words"
+msgstr "Subtítol que coincideix amb aquestes paraules"
+
+msgid "Content macthing these words"
+msgstr "Contingut que coincideix amb aquestes paraules"
+
+msgid "Body content"
+msgstr "Contingut del cos"
+
+msgid "From this date"
+msgstr "A partir d’aquesta data"
+
+msgid "To this date"
+msgstr "Fins a aquesta data"
+
+msgid "Containing these tags"
+msgstr "Que conté aquestes etiquetes"
+
+msgid "Tags"
+msgstr "Etiquetes"
+
+msgid "Posted on one of these instances"
+msgstr "Publicat en una d'aquestes instàncies"
+
+msgid "Instance domain"
+msgstr "Domini de l'instància"
+
+msgid "Posted by one of these authors"
+msgstr "Publicat per un d'aquests autors"
+
+msgid "Author(s)"
+msgstr "Autor(s)"
+
+msgid "Posted on one of these blogs"
+msgstr "Publicat en un d'aquests blocs"
+
+msgid "Blog title"
+msgstr "Títol del blog"
+
+msgid "Written in this language"
+msgstr "Escrit en aquesta llengua"
+
+msgid "Language"
+msgstr "Llengua"
+
+msgid "Published under this license"
+msgstr "Publicat segons aquesta llicència"
+
+msgid "Article license"
+msgstr "Llicència del article"
 
