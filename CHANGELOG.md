@@ -29,6 +29,10 @@
 - Remove link to unimplemented page (#827)
 - Fix displaying not found page when submitting a duplicated blocklist email (#831)
 
+### Security
+
+- Validate spoofing of Create activity
+
 ## [0.5.0] - 2020-06-21
 
 ### Added
@@ -58,10 +62,6 @@
 - Fix French grammar for for 0 (#760)
 - Don't show boosts and likes for "all" and "local" in timelines (#781)
 - Fix liking and boosting posts on remote instances (#762)
-
-### Security
-
-- Validate spoofing of Create activity
 
 ## [0.4.0] - 2019-12-23
 
