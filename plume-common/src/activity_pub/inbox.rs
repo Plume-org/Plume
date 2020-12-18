@@ -164,6 +164,11 @@ where
                     Some(x) => x,
                     None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
                 };
+
+                if Self::is_spoofed_activity(&actor_id, &act) {
+                    return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None));
+                }
+
                 // Transform this actor to a model (see FromId for details about the from_id function)
                 let actor = match A::from_id(
                     ctx,
@@ -220,6 +225,29 @@ where
             Inbox::Handled(res) => Ok(res),
             Inbox::NotHandled(_, _, err) => Err(E::from(err)),
             Inbox::Failed(err) => Err(err),
+        }
+    }
+
+    fn is_spoofed_activity(actor_id: &str, act: &serde_json::Value) -> bool {
+        use serde_json::Value::{Array, Object, String};
+
+        if act["type"] != String("Create".to_string()) {
+            return false;
+        }
+        let attributed_to = act["object"].get("attributedTo");
+        if attributed_to.is_none() {
+            return false;
+        }
+        let attributed_to = attributed_to.unwrap();
+        match attributed_to {
+            Array(v) => v.iter().all(|i| match i {
+                String(s) => s != actor_id,
+                Object(obj) => obj.get("id").map_or(true, |s| s != actor_id),
+                _ => false,
+            }),
+            String(s) => s != actor_id,
+            Object(obj) => obj.get("id").map_or(true, |s| s != actor_id),
+            _ => false,
         }
     }
 }

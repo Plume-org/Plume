@@ -174,6 +174,97 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn spoof_comment() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (posts, users, _) = fill_database(&r);
+            let act = json!({
+                "id": "https://plu.me/comment/1/activity",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Note",
+                    "id": "https://plu.me/comment/1",
+                    "attributedTo": users[1].ap_url,
+                    "inReplyTo": posts[0].ap_url,
+                    "content": "Hello.",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(matches!(
+                super::inbox(&r, act.clone()),
+                Err(super::Error::Inbox(
+                    box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
+                ))
+            ));
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn spoof_comment_by_object_with_id() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (posts, users, _) = fill_database(&r);
+            let act = json!({
+                "id": "https://plu.me/comment/1/activity",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Note",
+                    "id": "https://plu.me/comment/1",
+                    "attributedTo": {
+                        "id": users[1].ap_url
+                    },
+                    "inReplyTo": posts[0].ap_url,
+                    "content": "Hello.",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(matches!(
+                super::inbox(&r, act.clone()),
+                Err(super::Error::Inbox(
+                    box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
+                ))
+            ));
+            Ok(())
+        });
+    }
+    #[test]
+    fn spoof_comment_by_object_without_id() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (posts, users, _) = fill_database(&r);
+            let act = json!({
+                "id": "https://plu.me/comment/1/activity",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Note",
+                    "id": "https://plu.me/comment/1",
+                    "attributedTo": {},
+                    "inReplyTo": posts[0].ap_url,
+                    "content": "Hello.",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(matches!(
+                super::inbox(&r, act.clone()),
+                Err(super::Error::Inbox(
+                    box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
+                ))
+            ));
+            Ok(())
+        });
+    }
+
+    #[test]
     fn create_post() {
         let r = rockets();
         let conn = &*r.conn;
@@ -210,6 +301,117 @@ pub(crate) mod tests {
                 }
                 _ => panic!("Unexpected result"),
             };
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn spoof_post() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (_, users, blogs) = fill_database(&r);
+            let act = json!({
+                "id": "https://plu.me/comment/1/activity",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Article",
+                    "id": "https://plu.me/~/Blog/my-article",
+                    "attributedTo": [users[1].ap_url, blogs[0].ap_url],
+                    "content": "Hello.",
+                    "name": "My Article",
+                    "summary": "Bye.",
+                    "source": {
+                        "content": "Hello.",
+                        "mediaType": "text/markdown"
+                    },
+                    "published": "2014-12-12T12:12:12Z",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(matches!(
+                super::inbox(&r, act.clone()),
+                Err(super::Error::Inbox(
+                    box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
+                ))
+            ));
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn spoof_post_by_object_with_id() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (_, users, blogs) = fill_database(&r);
+            let act = json!({
+                "id": "https://plu.me/comment/1/activity",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Article",
+                    "id": "https://plu.me/~/Blog/my-article",
+                    "attributedTo": [
+                        {"id": users[1].ap_url},
+                        blogs[0].ap_url
+                    ],
+                    "content": "Hello.",
+                    "name": "My Article",
+                    "summary": "Bye.",
+                    "source": {
+                        "content": "Hello.",
+                        "mediaType": "text/markdown"
+                    },
+                    "published": "2014-12-12T12:12:12Z",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(matches!(
+                super::inbox(&r, act.clone()),
+                Err(super::Error::Inbox(
+                    box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
+                ))
+            ));
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn spoof_post_by_object_without_id() {
+        let r = rockets();
+        let conn = &*r.conn;
+        conn.test_transaction::<_, (), _>(|| {
+            let (_, users, blogs) = fill_database(&r);
+            let act = json!({
+                "id": "https://plu.me/comment/1/activity",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Article",
+                    "id": "https://plu.me/~/Blog/my-article",
+                    "attributedTo": [{}, blogs[0].ap_url],
+                    "content": "Hello.",
+                    "name": "My Article",
+                    "summary": "Bye.",
+                    "source": {
+                        "content": "Hello.",
+                        "mediaType": "text/markdown"
+                    },
+                    "published": "2014-12-12T12:12:12Z",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(matches!(
+                super::inbox(&r, act.clone()),
+                Err(super::Error::Inbox(
+                    box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
+                ))
+            ));
             Ok(())
         });
     }

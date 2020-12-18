@@ -59,6 +59,10 @@
 - Don't show boosts and likes for "all" and "local" in timelines (#781)
 - Fix liking and boosting posts on remote instances (#762)
 
+### Security
+
+- Validate spoofing of Create activity
+
 ## [0.4.0] - 2019-12-23
 
 ### Added
