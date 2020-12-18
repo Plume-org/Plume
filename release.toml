@@ -6,6 +6,8 @@ dev-version-ext = 'dev'
 # update all crates in plume at once:
 consolidate-commits = true
 
+tag-name = "{{prefix}}{{version}}"
+
 pre-release-hook = ["crowdin", "pull", "--branch", "master"]
 
 pre-release-replacements = [
