@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:55\n"
+"PO-Revision-Date: 2020-12-19 09:56\n"
 "Last-Translator: \n"
-"Language-Team: Hebrew\n"
-"Language: he_IL\n"
+"Language-Team: Santali\n"
+"Language: sat_IN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Project-ID: 352097\n"
-"X-Crowdin-Language: he\n"
+"X-Crowdin-Language: sat\n"
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 "X-Crowdin-File-ID: 12\n"
 
@@ -23,41 +23,41 @@ msgstr ""
 
 # plume-front/src/editor.rs:282
 msgid "Open the rich text editor"
-msgstr ""
+msgstr "ᱨᱤᱪ ᱚᱞ ᱥᱟᱯᱟᱣᱤᱡ ᱠᱷᱩᱞᱟᱹᱭ ᱢᱮᱸ"
 
 # plume-front/src/editor.rs:315
 msgid "Title"
-msgstr ""
+msgstr "ᱴᱭᱴᱚᱞ"
 
 # plume-front/src/editor.rs:319
 msgid "Subtitle, or summary"
-msgstr ""
+msgstr "ᱥᱟᱹᱵᱴᱟᱭᱴᱟᱹᱞ, ᱟᱨ ᱵᱟᱝ ᱥᱟᱹᱢᱢᱟᱨᱭ"
 
 # plume-front/src/editor.rs:326
 msgid "Write your article here. Markdown is supported."
-msgstr ""
+msgstr "ᱟᱢᱟᱜ ᱚᱱᱚᱞ ᱱᱚᱰᱮ ᱚᱞ ᱛᱟᱢ ᱾ ᱪᱤᱱᱦᱟᱹ ᱥᱟᱯᱯᱚᱴ ᱜᱮᱭᱟ ᱾"
 
 # plume-front/src/editor.rs:337
 msgid "Around {} characters left"
-msgstr ""
+msgstr "ᱡᱷᱚᱛᱚ ᱨᱮ {} ᱡᱤᱱᱤᱥ ᱵᱟᱧᱪᱟᱣᱠᱟᱱᱟ"
 
 # plume-front/src/editor.rs:414
 msgid "Tags"
-msgstr ""
+msgstr "ᱴᱮᱜᱥ"
 
 # plume-front/src/editor.rs:415
 msgid "License"
-msgstr ""
+msgstr "ᱞᱚᱭᱥᱮᱸᱱᱥ"
 
 # plume-front/src/editor.rs:418
 msgid "Cover"
-msgstr ""
+msgstr "ᱠᱚᱵᱷᱚᱨ"
 
 # plume-front/src/editor.rs:438
 msgid "This is a draft"
-msgstr ""
+msgstr "ᱱᱚᱶᱟ ᱫᱚ ᱰᱨᱟᱯᱷᱼᱴ ᱠᱟᱱᱟ"
 
 # plume-front/src/editor.rs:445
 msgid "Publish"
-msgstr ""
+msgstr "ᱯᱟᱨᱥᱟᱞ"
 

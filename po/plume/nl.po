@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2019-12-16 21:06\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2020-12-19 09:55\n"
+"Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
@@ -12,927 +12,1002 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: plume\n"
+"X-Crowdin-Project-ID: 352097\n"
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
-
-# src/template_utils.rs:102
-msgid "{0} commented on your article."
-msgstr ""
-
-# src/template_utils.rs:103
-msgid "{0} is subscribed to you."
-msgstr ""
-
-# src/template_utils.rs:104
-msgid "{0} liked your article."
-msgstr ""
+"X-Crowdin-File-ID: 8\n"
 
 # src/template_utils.rs:105
-msgid "{0} mentioned you."
-msgstr ""
+msgid "{0} commented on your article."
+msgstr "{0} reageerde op je bericht."
 
 # src/template_utils.rs:106
+msgid "{0} is subscribed to you."
+msgstr "{0} is op je geabonneerd."
+
+# src/template_utils.rs:107
+msgid "{0} liked your article."
+msgstr "{0} vond je artikel leuk."
+
+# src/template_utils.rs:108
+msgid "{0} mentioned you."
+msgstr "{0} vermeldde jou."
+
+# src/template_utils.rs:109
 msgid "{0} boosted your article."
-msgstr ""
+msgstr "{0} heeft je artikel geboost."
 
-# src/template_utils.rs:142
+# src/template_utils.rs:116
+msgid "Your feed"
+msgstr "Jouw feed"
+
+# src/template_utils.rs:117
+msgid "Local feed"
+msgstr "Lokale feed"
+
+# src/template_utils.rs:118
+msgid "Federated feed"
+msgstr "Gefedereerde feed"
+
+# src/template_utils.rs:154
 msgid "{0}'s avatar"
-msgstr ""
+msgstr "{0}'s avatar"
 
-# src/routes/blogs.rs:64
+# src/template_utils.rs:198
+msgid "Previous page"
+msgstr "Vorige pagina"
+
+# src/template_utils.rs:209
+msgid "Next page"
+msgstr "Volgende pagina"
+
+# src/template_utils.rs:363
+msgid "Optional"
+msgstr "Optioneel"
+
+# src/routes/blogs.rs:63
 msgid "To create a new blog, you need to be logged in"
-msgstr ""
+msgstr "Om een nieuwe blog te maken moet je ingelogd zijn"
 
-# src/routes/blogs.rs:106
+# src/routes/blogs.rs:102
 msgid "A blog with the same name already exists."
-msgstr ""
+msgstr "Er bestaat al een blog met dezelfde naam."
 
-# src/routes/blogs.rs:141
+# src/routes/blogs.rs:140
 msgid "Your blog was successfully created!"
-msgstr ""
+msgstr "Je blog is succesvol aangemaakt!"
 
-# src/routes/blogs.rs:163
+# src/routes/blogs.rs:160
 msgid "Your blog was deleted."
-msgstr ""
+msgstr "Je blog is verwijderd."
 
-# src/routes/blogs.rs:170
+# src/routes/blogs.rs:168
 msgid "You are not allowed to delete this blog."
-msgstr ""
+msgstr "Je mag deze blog niet verwijderen."
 
-# src/routes/blogs.rs:218
+# src/routes/blogs.rs:219
 msgid "You are not allowed to edit this blog."
-msgstr ""
+msgstr "Je mag deze blog niet bewerken."
 
-# src/routes/blogs.rs:263
+# src/routes/blogs.rs:275
 msgid "You can't use this media as a blog icon."
-msgstr ""
+msgstr "Je kunt dit object niet als blogpictogram gebruiken."
 
-# src/routes/blogs.rs:281
+# src/routes/blogs.rs:293
 msgid "You can't use this media as a blog banner."
-msgstr ""
+msgstr "Je kunt dit object niet als blog banner gebruiken."
 
-# src/routes/blogs.rs:314
+# src/routes/blogs.rs:327
 msgid "Your blog information have been updated."
-msgstr ""
+msgstr "Je bloginformatie is bijgewerkt."
 
 # src/routes/comments.rs:97
 msgid "Your comment has been posted."
-msgstr ""
+msgstr "Je reactie is geplaatst."
 
 # src/routes/comments.rs:172
 msgid "Your comment has been deleted."
-msgstr ""
+msgstr "Je reactie is verwijderd."
 
-# src/routes/instance.rs:134
+# src/routes/instance.rs:120
 msgid "Instance settings have been saved."
+msgstr "Serverinstellingen zijn opgeslagen."
+
+# src/routes/instance.rs:152
+msgid "{} has been unblocked."
+msgstr "{} is gedeblokkeerd."
+
+# src/routes/instance.rs:154
+msgid "{} has been blocked."
+msgstr "{} is geblokkeerd."
+
+# src/routes/instance.rs:203
+msgid "Blocks deleted"
+msgstr "Blokken verwijderd"
+
+# src/routes/instance.rs:218
+msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:175
-msgid "{} have been unblocked."
-msgstr ""
+# src/routes/instance.rs:223
+msgid "Email Blocked"
+msgstr "E-mailadres geblokkeerd"
 
-# src/routes/instance.rs:177
-msgid "{} have been blocked."
-msgstr ""
+# src/routes/instance.rs:314
+msgid "You can't change your own rights."
+msgstr "Je kunt je eigen rechten niet veranderen."
 
-# src/routes/instance.rs:221
-msgid "{} have been banned."
-msgstr ""
+# src/routes/instance.rs:325
+msgid "You are not allowed to take this action."
+msgstr "Je mag deze actie niet uitvoeren."
 
-# src/routes/likes.rs:51
+# src/routes/instance.rs:362
+msgid "Done."
+msgstr "Klaar."
+
+# src/routes/likes.rs:53
 msgid "To like a post, you need to be logged in"
-msgstr ""
+msgstr "Om een bericht leuk te vinden, moet je ingelogd zijn"
 
-# src/routes/medias.rs:141
+# src/routes/medias.rs:145
 msgid "Your media have been deleted."
-msgstr ""
+msgstr "Je media zijn verwijderd."
 
-# src/routes/medias.rs:146
+# src/routes/medias.rs:150
 msgid "You are not allowed to delete this media."
-msgstr ""
+msgstr "Je mag dit medium niet verwijderen."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:167
 msgid "Your avatar has been updated."
-msgstr ""
+msgstr "Je avatar is bijgewerkt."
 
-# src/routes/medias.rs:168
+# src/routes/medias.rs:172
 msgid "You are not allowed to use this media."
-msgstr ""
+msgstr "Je mag dit mediabestand niet gebruiken."
 
 # src/routes/notifications.rs:28
 msgid "To see your notifications, you need to be logged in"
-msgstr ""
+msgstr "Om je meldingen te kunnen zien, moet je ingelogd zijn"
 
-# src/routes/posts.rs:93
+# src/routes/posts.rs:54
 msgid "This post isn't published yet."
-msgstr ""
+msgstr "Dit bericht is nog niet gepubliceerd."
 
-# src/routes/posts.rs:122
+# src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
-msgstr ""
+msgstr "Om een nieuwe bericht te schrijven moet je ingelogd zijn"
 
-# src/routes/posts.rs:139
+# src/routes/posts.rs:142
 msgid "You are not an author of this blog."
-msgstr ""
+msgstr "Je bent geen schrijver van deze blog."
 
-# src/routes/posts.rs:146
+# src/routes/posts.rs:149
 msgid "New post"
-msgstr ""
+msgstr "Nieuw bericht"
 
-# src/routes/posts.rs:191
+# src/routes/posts.rs:194
 msgid "Edit {0}"
-msgstr ""
+msgstr "{0} bewerken"
 
-# src/routes/posts.rs:260
+# src/routes/posts.rs:263
 msgid "You are not allowed to publish on this blog."
-msgstr ""
+msgstr "Je mag niet publiceren op deze blog."
 
-# src/routes/posts.rs:350
+# src/routes/posts.rs:355
 msgid "Your article has been updated."
-msgstr ""
+msgstr "Je artikel is bijgewerkt."
 
-# src/routes/posts.rs:532
+# src/routes/posts.rs:542
 msgid "Your article has been saved."
-msgstr ""
+msgstr "Je artikel is opgeslagen."
 
-# src/routes/posts.rs:538
+# src/routes/posts.rs:549
 msgid "New article"
-msgstr ""
+msgstr "Nieuw artikel"
 
-# src/routes/posts.rs:572
+# src/routes/posts.rs:582
 msgid "You are not allowed to delete this article."
-msgstr ""
+msgstr "Je mag dit artikel niet verwijderen."
 
-# src/routes/posts.rs:597
+# src/routes/posts.rs:607
 msgid "Your article has been deleted."
-msgstr ""
+msgstr "Je artikel is verwijderd."
 
-# src/routes/posts.rs:602
+# src/routes/posts.rs:612
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr ""
+msgstr "Het lijkt erop dat het artikel dat je probeerde te verwijderen niet bestaat. Misschien is het al verdwenen?"
 
-# src/routes/posts.rs:642
+# src/routes/posts.rs:652
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr ""
+msgstr "Kon niet genoeg informatie over je account opvragen. Controleer of je gebruikersnaam juist is."
 
-# src/routes/reshares.rs:51
+# src/routes/reshares.rs:54
 msgid "To reshare a post, you need to be logged in"
-msgstr ""
+msgstr "Om een bericht opnieuw te kunnen delen, moet je ingelogd zijn"
 
-# src/routes/session.rs:112
+# src/routes/session.rs:87
 msgid "You are now connected."
-msgstr ""
+msgstr "Je bent nu verbonden."
 
-# src/routes/session.rs:131
+# src/routes/session.rs:108
 msgid "You are now logged off."
-msgstr ""
+msgstr "Je bent nu uitgelogd."
 
-# src/routes/session.rs:188
+# src/routes/session.rs:153
 msgid "Password reset"
-msgstr ""
+msgstr "Wachtwoord opnieuw instellen"
 
-# src/routes/session.rs:189
+# src/routes/session.rs:154
 msgid "Here is the link to reset your password: {0}"
-msgstr ""
+msgstr "Hier is de link om je wachtwoord opnieuw in te stellen: {0}"
 
-# src/routes/session.rs:264
+# src/routes/session.rs:216
 msgid "Your password was successfully reset."
-msgstr ""
+msgstr "Je wachtwoord is succesvol ingesteld."
 
-# src/routes/session.rs:274
-msgid "Sorry, but the link expired. Try again"
-msgstr ""
-
-# src/routes/user.rs:136
+# src/routes/user.rs:141
 msgid "To access your dashboard, you need to be logged in"
-msgstr ""
+msgstr "Om toegang te krijgen tot je dashboard, moet je ingelogd zijn"
 
-# src/routes/user.rs:158
+# src/routes/user.rs:163
 msgid "You are no longer following {}."
-msgstr ""
+msgstr "Je volgt {} niet langer."
 
-# src/routes/user.rs:175
+# src/routes/user.rs:180
 msgid "You are now following {}."
-msgstr ""
+msgstr "Je volgt nu {}."
 
-# src/routes/user.rs:254
+# src/routes/user.rs:260
 msgid "To subscribe to someone, you need to be logged in"
-msgstr ""
+msgstr "Om je te abonneren op iemand, moet je ingelogd zijn"
 
-# src/routes/user.rs:356
+# src/routes/user.rs:364
 msgid "To edit your profile, you need to be logged in"
-msgstr ""
+msgstr "Om je profiel te bewerken moet je ingelogd zijn"
 
-# src/routes/user.rs:398
+# src/routes/user.rs:409
 msgid "Your profile has been updated."
-msgstr ""
+msgstr "Je profiel is bijgewerkt."
 
-# src/routes/user.rs:425
+# src/routes/user.rs:436
 msgid "Your account has been deleted."
-msgstr ""
+msgstr "Je account is verwijderd."
 
-# src/routes/user.rs:431
+# src/routes/user.rs:442
 msgid "You can't delete someone else's account."
-msgstr ""
+msgstr "Je kunt het account van iemand anders niet verwijderen."
 
-# src/routes/user.rs:503
+# src/routes/user.rs:526
 msgid "Registrations are closed on this instance."
-msgstr ""
+msgstr "Registraties zijn gesloten op deze server."
 
-# src/routes/user.rs:527
+# src/routes/user.rs:549
 msgid "Your account has been created. Now you just need to log in, before you can use it."
-msgstr ""
+msgstr "Je account is aangemaakt. Nu hoe je alleen maar in te loggen, om het te kunnen gebruiken."
 
-msgid "Internal server error"
-msgstr ""
-
-msgid "Something broke on our side."
-msgstr ""
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-
-msgid "You are not authorized."
-msgstr ""
-
-msgid "Page not found"
-msgstr ""
-
-msgid "We couldn't find this page."
-msgstr ""
-
-msgid "The link that led you here may be broken."
-msgstr ""
-
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
-msgstr ""
-
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr ""
-
-msgid "Articles tagged \"{0}\""
-msgstr ""
-
-msgid "There are currently no articles with such a tag"
-msgstr ""
-
-msgid "New Blog"
-msgstr ""
-
-msgid "Create a blog"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Title"
-msgstr ""
-
-# src/template_utils.rs:254
-msgid "Optional"
-msgstr ""
-
-msgid "Create blog"
-msgstr ""
-
-msgid "Edit \"{}\""
-msgstr ""
+msgid "Media upload"
+msgstr "Media uploaden"
 
 msgid "Description"
-msgstr ""
+msgstr "Beschrijving"
 
-msgid "Markdown syntax is supported"
-msgstr ""
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Handig voor slechtzienden en eveneens licentiegegevens"
 
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
+msgid "Content warning"
+msgstr "Inhoudswaarschuwing"
 
-msgid "Upload images"
-msgstr ""
+msgid "Leave it empty, if none is needed"
+msgstr "Laat het leeg als niets nodig is"
 
-msgid "Blog icon"
-msgstr ""
+msgid "File"
+msgstr "Bestand"
 
-msgid "Blog banner"
-msgstr ""
+msgid "Send"
+msgstr "Verstuur"
 
-msgid "Update blog"
-msgstr ""
+msgid "Your media"
+msgstr "Je media"
 
-msgid "Danger zone"
-msgstr ""
+msgid "Upload"
+msgstr "Uploaden"
 
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr ""
+msgid "You don't have any media yet."
+msgstr "Je hebt nog geen media."
 
-msgid "Permanently delete this blog"
-msgstr ""
+msgid "Content warning: {0}"
+msgstr "Waarschuwing voor inhoud: {0}"
 
-msgid "{}'s icon"
-msgstr ""
+msgid "Delete"
+msgstr "Verwijderen"
 
-msgid "Edit"
-msgstr ""
+msgid "Details"
+msgstr "Details"
 
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
+msgid "Media details"
+msgstr "Media details"
 
-msgid "Latest articles"
-msgstr ""
+msgid "Go back to the gallery"
+msgstr "Terug naar de galerij"
 
-msgid "No posts to see here yet."
-msgstr ""
+msgid "Markdown syntax"
+msgstr "Markdown syntax"
 
-msgid "Search result(s) for \"{0}\""
-msgstr ""
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Kopieer in je artikelen om deze media in te voegen:"
 
-msgid "Search result(s)"
-msgstr ""
+msgid "Use as an avatar"
+msgstr "Gebruik als avatar"
 
-msgid "No results for your query"
-msgstr ""
+msgid "Plume"
+msgstr "Plume"
 
-msgid "No more results for your query"
-msgstr ""
+msgid "Menu"
+msgstr "Menu"
 
 msgid "Search"
-msgstr ""
+msgstr "Zoeken"
 
-msgid "Your query"
-msgstr ""
+msgid "Dashboard"
+msgstr "Dashboard"
 
-msgid "Advanced search"
-msgstr ""
+msgid "Notifications"
+msgstr "Meldingen"
 
-# src/template_utils.rs:339
-msgid "Article title matching these words"
-msgstr ""
+msgid "Log Out"
+msgstr "Uitloggen"
 
-# src/template_utils.rs:339
-msgid "Subtitle matching these words"
-msgstr ""
+msgid "My account"
+msgstr "Mijn account"
 
-msgid "Subtitle - byline"
-msgstr ""
+msgid "Log In"
+msgstr "Inloggen"
 
-# src/template_utils.rs:339
-msgid "Content matching these words"
-msgstr ""
+msgid "Register"
+msgstr "Aanmelden"
 
-msgid "Body content"
-msgstr ""
+msgid "About this instance"
+msgstr "Over deze server"
 
-# src/template_utils.rs:339
-msgid "From this date"
-msgstr ""
+msgid "Privacy policy"
+msgstr "Privacybeleid"
 
-# src/template_utils.rs:339
-msgid "To this date"
-msgstr ""
+msgid "Administration"
+msgstr "Beheer"
 
-# src/template_utils.rs:339
-msgid "Containing these tags"
-msgstr ""
+msgid "Documentation"
+msgstr "Documentatie"
 
-msgid "Tags"
-msgstr ""
+msgid "Source code"
+msgstr "Broncode"
 
-# src/template_utils.rs:339
-msgid "Posted on one of these instances"
-msgstr ""
+msgid "Matrix room"
+msgstr "Matrix kamer"
 
-msgid "Instance domain"
-msgstr ""
+msgid "Admin"
+msgstr "Beheerder"
 
-# src/template_utils.rs:339
-msgid "Posted by one of these authors"
-msgstr ""
+msgid "It is you"
+msgstr "Dat ben jij"
 
-msgid "Author(s)"
-msgstr ""
+msgid "Edit your profile"
+msgstr "Bewerk je profiel"
 
-# src/template_utils.rs:339
-msgid "Posted on one of these blogs"
-msgstr ""
+msgid "Open on {0}"
+msgstr "Open op {0}"
 
-msgid "Blog title"
-msgstr ""
+msgid "Unsubscribe"
+msgstr "Afmelden"
 
-# src/template_utils.rs:339
-msgid "Written in this language"
-msgstr ""
+msgid "Subscribe"
+msgstr "Abonneren"
 
-msgid "Language"
-msgstr ""
+msgid "Follow {}"
+msgstr "Volg {}"
 
-# src/template_utils.rs:339
-msgid "Published under this license"
-msgstr ""
+msgid "Log in to follow"
+msgstr "Inloggen om te volgen"
 
-msgid "Article license"
-msgstr ""
+msgid "Enter your full username handle to follow"
+msgstr "Geef je volledige gebruikersnaam op om te volgen"
+
+msgid "{0}'s subscribers"
+msgstr "{0}'s abonnees"
+
+msgid "Articles"
+msgstr "Artikelen"
+
+msgid "Subscribers"
+msgstr "Abonnees"
+
+msgid "Subscriptions"
+msgstr "Abonnementen"
+
+msgid "Create your account"
+msgstr "Maak je account aan"
+
+msgid "Create an account"
+msgstr "Maak een account aan"
+
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+msgid "Email"
+msgstr "E-mailadres"
+
+msgid "Password"
+msgstr "Wachtwoord"
+
+msgid "Password confirmation"
+msgstr "Wachtwoordbevestiging"
+
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Excuses, maar registraties zijn gesloten voor deze server. Je kunt wel een andere vinden."
+
+msgid "{0}'s subscriptions"
+msgstr "{0}'s abonnementen"
+
+msgid "Your Dashboard"
+msgstr "Je dashboard"
+
+msgid "Your Blogs"
+msgstr "Je blogs"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Je hebt nog geen blog. Maak een blog, of vraag om aan een blog mee te mogen doen."
+
+msgid "Start a new blog"
+msgstr "Start een nieuwe blog"
+
+msgid "Your Drafts"
+msgstr "Je concepten"
+
+msgid "Go to your gallery"
+msgstr "Ga naar je galerij"
+
+msgid "Edit your account"
+msgstr "Bewerk je account"
+
+msgid "Your Profile"
+msgstr "Je profiel"
+
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "Om je avatar te veranderen upload je die naar je galerij en selecteer je avatar daar."
+
+msgid "Upload an avatar"
+msgstr "Upload een avatar"
+
+msgid "Display name"
+msgstr "Weergavenaam"
+
+msgid "Summary"
+msgstr "Samenvatting"
+
+msgid "Theme"
+msgstr "Thema"
+
+msgid "Default theme"
+msgstr "Standaardthema"
+
+msgid "Error while loading theme selector."
+msgstr "Fout bij het laden van de themaselector."
+
+msgid "Never load blogs custom themes"
+msgstr "Nooit blogs maatwerkthema's laden"
+
+msgid "Update account"
+msgstr "Account bijwerken"
+
+msgid "Danger zone"
+msgstr "Gevarenzone"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Voorzichtig, elke actie hier kan niet worden geannuleerd."
+
+msgid "Delete your account"
+msgstr "Verwijder je account"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Sorry, maar als beheerder, kan je je eigen server niet verlaten."
+
+msgid "Latest articles"
+msgstr "Nieuwste artikelen"
+
+msgid "Atom feed"
+msgstr "Atom feed"
+
+msgid "Recently boosted"
+msgstr "Onlangs geboost"
+
+msgid "Articles tagged \"{0}\""
+msgstr "Artikelen gelabeld \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "Er zijn momenteel geen artikelen met zo'n label"
+
+msgid "The content you sent can't be processed."
+msgstr "Je verstuurde bijdrage kan niet worden verwerkt."
+
+msgid "Maybe it was too long."
+msgstr "Misschien was het te lang."
+
+msgid "Internal server error"
+msgstr "Interne serverfout"
+
+msgid "Something broke on our side."
+msgstr "Iets fout aan onze kant."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Sorry. Als je denkt dat dit een bug is, rapporteer het dan."
+
+msgid "Invalid CSRF token"
+msgstr "Ongeldig CSRF token"
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Er is iets mis met het CSRF-token. Zorg ervoor dat cookies ingeschakeld zijn in je browser en probeer deze pagina opnieuw te laden. Als je dit foutbericht blijft zien, rapporteer het dan."
+
+msgid "You are not authorized."
+msgstr "Je bent niet geautoriseerd."
+
+msgid "Page not found"
+msgstr "Pagina niet gevonden"
+
+msgid "We couldn't find this page."
+msgstr "We konden deze pagina niet vinden."
+
+msgid "The link that led you here may be broken."
+msgstr "De link die jou hier naartoe heeft geleid, kan kapot zijn."
+
+msgid "Users"
+msgstr "Gebruikers"
+
+msgid "Configuration"
+msgstr "Configuratie"
+
+msgid "Instances"
+msgstr "Exemplaren"
+
+msgid "Email blocklist"
+msgstr "E-mail blokkeerlijst"
+
+msgid "Grant admin rights"
+msgstr "Beheerdersrechten toekennen"
+
+msgid "Revoke admin rights"
+msgstr "Beheerdersrechten intrekken"
+
+msgid "Grant moderator rights"
+msgstr "Moderatorrechten toekennen"
+
+msgid "Revoke moderator rights"
+msgstr "Moderatorrechten intrekken"
+
+msgid "Ban"
+msgstr "Verbannen"
+
+msgid "Run on selected users"
+msgstr "Uitvoeren op geselecteerde gebruikers"
+
+msgid "Moderator"
+msgstr "Moderator"
+
+msgid "Moderation"
+msgstr "Moderatie"
+
+msgid "Home"
+msgstr "Startpagina"
+
+msgid "Administration of {0}"
+msgstr "Beheer van {0}"
+
+msgid "Unblock"
+msgstr "Deblokkeer"
+
+msgid "Block"
+msgstr "Blokkeer"
+
+msgid "Name"
+msgstr "Naam"
+
+msgid "Allow anyone to register here"
+msgstr "Laat iedereen hier een account aanmaken"
+
+msgid "Short description"
+msgstr "Korte beschrijving"
+
+msgid "Markdown syntax is supported"
+msgstr "Markdown syntax wordt ondersteund"
+
+msgid "Long description"
+msgstr "Uitgebreide omschrijving"
+
+msgid "Default article license"
+msgstr "Standaard artikellicentie"
+
+msgid "Save these settings"
+msgstr "Deze instellingen opslaan"
+
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Als je deze site als bezoeker bekijkt, worden er geen gegevens over jou verzameld."
+
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr "Als geregistreerde gebruiker moet je je gebruikersnaam invoeren (dat hoeft niet je echte naam te zijn), je bestaande e-mailadres en een wachtwoord om in te kunnen loggen, artikelen en commentaar te schrijven. De inhoud die je opgeeft wordt opgeslagen totdat je die verwijdert."
+
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr "Als je inlogt, slaan we twee cookies op, de eerste om je sessie open te houden, de tweede om andere mensen te verhinderen om namens jou iets te doen. We slaan geen andere cookies op."
+
+msgid "Blocklisted Emails"
+msgstr "Geblokkeerde e-mailadressen"
+
+msgid "Email address"
+msgstr "E-mailadres"
+
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgstr "Het e-mailadres dat je wilt blokkeren. Om hele domeinen te blokkeren, kunt je de globale syntax gebruiken, bijvoorbeeld '*@example.com' blokkeert alle adressen van example.com"
+
+msgid "Note"
+msgstr "Opmerking"
+
+msgid "Notify the user?"
+msgstr "De gebruiker informeren?"
+
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgstr "Optioneel. Toont een bericht aan gebruikers wanneer ze een account met dat adres proberen aan te maken"
+
+msgid "Blocklisting notification"
+msgstr "Blokkeringsmelding"
+
+msgid "The message to be shown when the user attempts to create an account with this email address"
+msgstr "Het bericht dat wordt getoond als iemand een account met dit e-mailadres probeert aan te maken"
+
+msgid "Add blocklisted address"
+msgstr "Te blokkeren adres toevoegen"
+
+msgid "There are no blocked emails on your instance"
+msgstr "Er zijn geen geblokkeerde e-mails op jouw server"
+
+msgid "Delete selected emails"
+msgstr "Geselecteerde e-mails wissen"
+
+msgid "Email address:"
+msgstr "E-mailadres:"
+
+msgid "Blocklisted for:"
+msgstr "Geblokkeerd voor:"
+
+msgid "Will notify them on account creation with this message:"
+msgstr "Bij aanmaken account dit bericht sturen:"
+
+msgid "The user will be silently prevented from making an account"
+msgstr "De gebruiker wordt stilletjes verhinderd om een account aan te maken"
+
+msgid "Welcome to {}"
+msgstr "Welkom bij {}"
+
+msgid "View all"
+msgstr "Bekijk alles"
+
+msgid "About {0}"
+msgstr "Over {0}"
+
+msgid "Runs Plume {0}"
+msgstr "Draait Plume {0}"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "Thuis voor <em>{0}</em> mensen"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Die <em>{0}</em> artikelen hebben geschreven"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "En zijn verbonden met <em>{0}</em> andere servers"
+
+msgid "Administred by"
+msgstr "Beheerd door"
 
 msgid "Interact with {}"
-msgstr ""
+msgstr "Interactie met {}"
 
 msgid "Log in to interact"
-msgstr ""
+msgstr "Inloggen voor interactie"
 
 msgid "Enter your full username to interact"
-msgstr ""
+msgstr "Voer je volledige gebruikersnaam in om te interacteren"
 
 msgid "Publish"
-msgstr ""
+msgstr "Publiceren"
 
 msgid "Classic editor (any changes will be lost)"
-msgstr ""
+msgstr "Klassieke editor (alle wijzigingen zullen verloren gaan)"
 
-# src/template_utils.rs:251
+msgid "Title"
+msgstr "Titel"
+
 msgid "Subtitle"
-msgstr ""
+msgstr "Ondertitel"
 
 msgid "Content"
-msgstr ""
+msgstr "Inhoud"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr ""
+msgstr "Je kunt media uploaden naar je galerij en vervolgens de Markdown code in je artikelen kopiëren om ze in te voegen."
 
 msgid "Upload media"
-msgstr ""
+msgstr "Media uploaden"
 
-# src/template_utils.rs:251
 msgid "Tags, separated by commas"
-msgstr ""
+msgstr "Tags, gescheiden door komma's"
 
-# src/template_utils.rs:251
 msgid "License"
-msgstr ""
-
-# src/template_utils.rs:259
-msgid "Leave it empty to reserve all rights"
-msgstr ""
+msgstr "Licentie"
 
 msgid "Illustration"
-msgstr ""
+msgstr "Afbeelding"
 
 msgid "This is a draft, don't publish it yet."
-msgstr ""
+msgstr "Dit is een concept, nog niet publiceren."
 
 msgid "Update"
-msgstr ""
+msgstr "Bijwerken"
 
 msgid "Update, or publish"
-msgstr ""
+msgstr "Bijwerken of publiceren"
 
 msgid "Publish your post"
-msgstr ""
+msgstr "Publiceer je bericht"
 
 msgid "Written by {0}"
-msgstr ""
+msgstr "Geschreven door {0}"
 
 msgid "All rights reserved."
-msgstr ""
+msgstr "Alle rechten voorbehouden."
 
 msgid "This article is under the {0} license."
-msgstr ""
+msgstr "Dit artikel valt onder de {0} -licentie."
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Eén vind-ik-leuk"
+msgstr[1] "{0} vind-ik-leuks"
 
 msgid "I don't like this anymore"
-msgstr ""
+msgstr "Ik vind dit niet meer leuk"
 
 msgid "Add yours"
-msgstr ""
+msgstr "Voeg die van jou toe"
 
 msgid "One boost"
 msgid_plural "{0} boosts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Één boost"
+msgstr[1] "{0} boosts"
 
 msgid "I don't want to boost this anymore"
-msgstr ""
+msgstr "Ik wil dit niet meer boosten"
 
 msgid "Boost"
-msgstr ""
+msgstr "Boosten"
 
 msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr ""
-
-msgid "Unsubscribe"
-msgstr ""
-
-msgid "Subscribe"
-msgstr ""
+msgstr "{0}Log in{1}, of {2}gebruik je Fediverse account{3} om over dit artikel te communiceren"
 
 msgid "Comments"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Content warning"
-msgstr ""
+msgstr "Reacties"
 
 msgid "Your comment"
-msgstr ""
+msgstr "Jouw reactie"
 
 msgid "Submit comment"
-msgstr ""
+msgstr "Verstuur reactie"
 
 msgid "No comments yet. Be the first to react!"
-msgstr ""
+msgstr "Nog geen reacties. Wees de eerste om te reageren!"
 
 msgid "Are you sure?"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
+msgstr "Weet je het zeker?"
 
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
+msgstr "Dit artikel is nog een concept. Alleen jij en andere auteurs kunnen het bekijken."
 
 msgid "Only you and other authors can edit this article."
-msgstr ""
+msgstr "Alleen jij en andere auteurs kunnen dit artikel bewerken."
 
-msgid "Media upload"
-msgstr ""
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
-
-msgid "Leave it empty, if none is needed"
-msgstr ""
-
-msgid "File"
-msgstr ""
-
-msgid "Send"
-msgstr ""
-
-msgid "Your media"
-msgstr ""
-
-msgid "Upload"
-msgstr ""
-
-msgid "You don't have any media yet."
-msgstr ""
-
-msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Media details"
-msgstr ""
-
-msgid "Go back to the gallery"
-msgstr ""
-
-msgid "Markdown syntax"
-msgstr ""
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr ""
-
-msgid "Use as an avatar"
-msgstr ""
-
-msgid "Notifications"
-msgstr ""
-
-msgid "Plume"
-msgstr ""
-
-msgid "Menu"
-msgstr ""
-
-msgid "Dashboard"
-msgstr ""
-
-msgid "Log Out"
-msgstr ""
-
-msgid "My account"
-msgstr ""
-
-msgid "Log In"
-msgstr ""
-
-msgid "Register"
-msgstr ""
-
-msgid "About this instance"
-msgstr ""
-
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr ""
-
-msgid "Documentation"
-msgstr ""
-
-msgid "Source code"
-msgstr ""
-
-msgid "Matrix room"
-msgstr ""
-
-msgid "Your feed"
-msgstr ""
-
-msgid "Federated feed"
-msgstr ""
-
-msgid "Local feed"
-msgstr ""
-
-msgid "Nothing to see here yet. Try subscribing to more people."
-msgstr ""
-
-msgid "Articles from {}"
-msgstr ""
-
-msgid "All the articles of the Fediverse"
-msgstr ""
-
-msgid "Users"
-msgstr ""
-
-msgid "Configuration"
-msgstr ""
-
-msgid "Instances"
-msgstr ""
-
-msgid "Ban"
-msgstr ""
-
-msgid "Administration of {0}"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Name"
-msgstr ""
-
-msgid "Allow anyone to register here"
-msgstr ""
-
-msgid "Short description"
-msgstr ""
-
-msgid "Long description"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Default article license"
-msgstr ""
-
-msgid "Save these settings"
-msgstr ""
-
-msgid "About {0}"
-msgstr ""
-
-msgid "Runs Plume {0}"
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
-
-msgid "Administred by"
-msgstr ""
-
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr ""
-
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr ""
-
-msgid "Unblock"
-msgstr ""
-
-msgid "Block"
-msgstr ""
-
-msgid "Reset your password"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "New password"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
-msgstr ""
-
-msgid "Log in"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Username, or email"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Password"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "E-mail"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr ""
-
-msgid "Check your inbox!"
-msgstr ""
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr ""
-
-msgid "Open on {0}"
-msgstr ""
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Log in to follow"
-msgstr ""
-
-msgid "Enter your full username handle to follow"
-msgstr ""
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Articles"
-msgstr ""
-
-msgid "Subscribers"
-msgstr ""
-
-msgid "Subscriptions"
-msgstr ""
-
-msgid "Create your account"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Username"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Email"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Password confirmation"
-msgstr ""
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Edit your account"
-msgstr ""
-
-msgid "Your Profile"
-msgstr ""
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-# src/template_utils.rs:251
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr ""
-
-msgid "Update account"
-msgstr ""
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr ""
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr ""
-
-msgid "Your Blogs"
-msgstr ""
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-
-msgid "Start a new blog"
-msgstr ""
-
-msgid "Your Drafts"
-msgstr ""
-
-msgid "Go to your gallery"
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr ""
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "View all"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "By {0}"
-msgstr ""
-
-msgid "Draft"
-msgstr ""
-
-msgid "Respond"
-msgstr ""
-
-msgid "Delete this comment"
-msgstr ""
+msgid "Edit"
+msgstr "Bewerken"
 
 msgid "I'm from this instance"
-msgstr ""
+msgstr "Ik zit op deze server"
+
+msgid "Username, or email"
+msgstr "Gebruikersnaam of e-mailadres"
+
+msgid "Log in"
+msgstr "Inloggen"
 
 msgid "I'm from another instance"
-msgstr ""
-
-# src/template_utils.rs:259
-msgid "Example: user@plu.me"
-msgstr ""
+msgstr "Ik kom van een andere server"
 
 msgid "Continue to your instance"
-msgstr ""
+msgstr "Ga door naar je server"
+
+msgid "Reset your password"
+msgstr "Wachtwoord opnieuw instellen"
+
+msgid "New password"
+msgstr "Nieuw wachtwoord"
+
+msgid "Confirmation"
+msgstr "Bevestiging"
+
+msgid "Update password"
+msgstr "Wachtwoord bijwerken"
+
+msgid "Check your inbox!"
+msgstr "Ga naar je inbox!"
+
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgstr "We hebben een e-mail gestuurd naar het adres dat je hebt opgegeven, met een link om je wachtwoord te resetten."
+
+msgid "Send password reset link"
+msgstr "Wachtwoordresetlink versturen"
+
+msgid "This token has expired"
+msgstr "Dit token is verlopen"
+
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
+msgstr "Start het proces opnieuw door <a href=\"/password-reset\">hier</a> te klikken."
+
+msgid "New Blog"
+msgstr "Nieuwe blog"
+
+msgid "Create a blog"
+msgstr "Maak een blog aan"
+
+msgid "Create blog"
+msgstr "Creëer blog"
+
+msgid "Edit \"{}\""
+msgstr "\"{}\" bewerken"
+
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Je kunt afbeeldingen uploaden naar je galerij om ze als blogpictogrammen of banners te gebruiken."
+
+msgid "Upload images"
+msgstr "Afbeeldingen opladen"
+
+msgid "Blog icon"
+msgstr "Blogpictogram"
+
+msgid "Blog banner"
+msgstr "Blogbanner"
+
+msgid "Custom theme"
+msgstr "Aangepast thema"
+
+msgid "Update blog"
+msgstr "Blog bijwerken"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Voorzichtig, elke actie hier kan niet worden teruggedraaid."
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Weet je zeker dat je deze blog permanent wilt verwijderen?"
+
+msgid "Permanently delete this blog"
+msgstr "Deze blog permanent verwijderen"
+
+msgid "{}'s icon"
+msgstr "{}'s pictogram"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Er is één auteur voor dit blog: "
+msgstr[1] "Er zijn {0} auteurs op dit blog: "
+
+msgid "No posts to see here yet."
+msgstr "Er is nog niets te zien."
+
+msgid "Nothing to see here yet."
+msgstr "Nog niets te zien hier."
+
+msgid "None"
+msgstr "Geen"
+
+msgid "No description"
+msgstr "Geen omschrijving"
+
+msgid "Respond"
+msgstr "Reageer"
+
+msgid "Delete this comment"
+msgstr "Verwijder deze reactie"
+
+msgid "What is Plume?"
+msgstr "Wat is Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume is een gedecentraliseerde blogging-engine."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr "Auteurs kunnen meerdere blogs beheren, elk als een eigen website."
+
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgstr "Artikelen zijn ook zichtbaar op andere Plume-servers en je kunt ze direct vanuit andere platforms zoals Mastodon gebruiken."
+
+msgid "Read the detailed rules"
+msgstr "Lees de gedetailleerde instructies"
+
+msgid "By {0}"
+msgstr "Door {0}"
+
+msgid "Draft"
+msgstr "Concept"
+
+msgid "Search result(s) for \"{0}\""
+msgstr "Zoekresultaat voor \"{0}\""
+
+msgid "Search result(s)"
+msgstr "Zoekresultaten"
+
+msgid "No results for your query"
+msgstr "Geen zoekresultaten"
+
+msgid "No more results for your query"
+msgstr "Geen zoekresultaten meer"
+
+msgid "Advanced search"
+msgstr "Uitgebreid zoeken"
+
+msgid "Article title matching these words"
+msgstr "Artikeltitel die overeenkomt met deze woorden"
+
+msgid "Subtitle matching these words"
+msgstr "Ondertitel die overeenkomt met deze woorden"
+
+msgid "Content macthing these words"
+msgstr "Inhoud die overeenkomt met deze woorden"
+
+msgid "Body content"
+msgstr "Inhoud artikeltekst"
+
+msgid "From this date"
+msgstr "Vanaf deze datum"
+
+msgid "To this date"
+msgstr "Tot deze datum"
+
+msgid "Containing these tags"
+msgstr "Met deze tags"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Posted on one of these instances"
+msgstr "Geplaatst op een van deze servers"
+
+msgid "Instance domain"
+msgstr "Serverdomein"
+
+msgid "Posted by one of these authors"
+msgstr "Geplaatst door een van deze auteurs"
+
+msgid "Author(s)"
+msgstr "Auteur(s)"
+
+msgid "Posted on one of these blogs"
+msgstr "Geplaatst op een van deze blogs"
+
+msgid "Blog title"
+msgstr "Blogtitel"
+
+msgid "Written in this language"
+msgstr "Geschreven in deze taal"
+
+msgid "Language"
+msgstr "Taal"
+
+msgid "Published under this license"
+msgstr "Gepubliceerd onder deze licentie"
+
+msgid "Article license"
+msgstr "Artikel licentie"
 
