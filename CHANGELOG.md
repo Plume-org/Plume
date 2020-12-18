@@ -4,6 +4,31 @@
 
 ## [Unreleased] - No release date
 
+### Added
+
+- Vazir font for better support of languages written in Arabic script (#787)
+- Login via LDAP (#826)
+- cargo-release (#835)
+- Care about weak ETag header for better caching (#840)
+
+### Changed
+
+- Bump Docker base images to Buster flavor (#797)
+- Upgrade Rocket to 0.4.5 (#800)
+- Keep tags as-is (#832)
+- Update Docker image for testing (#838)
+- Update Dockerfile.dev (#841)
+
+### Fixed
+
+- Recreate search index if its format is outdated (#802)
+- Make it possible to switch to rich text editor (#808)
+- Fix margins for the mobile devices (#817)
+- GPU acceleration for the mobile menu (#818)
+- Natural title position for RtoL languages (#825)
+- Remove link to unimplemented page (#827)
+- Fix displaying not found page when submitting a duplicated blocklist email (#831)
+
 ## [0.5.0] - 2020-06-21
 
 ### Added
