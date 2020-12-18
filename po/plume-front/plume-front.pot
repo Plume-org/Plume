@@ -12,42 +12,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-# plume-front/src/editor.rs:115
+# plume-front/src/editor.rs:189
+msgid "Do you want to load the local autosave last edited at {}?"
+msgstr ""
+
+# plume-front/src/editor.rs:282
 msgid "Open the rich text editor"
 msgstr ""
 
-# plume-front/src/editor.rs:145
+# plume-front/src/editor.rs:315
 msgid "Title"
 msgstr ""
 
-# plume-front/src/editor.rs:149
+# plume-front/src/editor.rs:319
 msgid "Subtitle, or summary"
 msgstr ""
 
-# plume-front/src/editor.rs:156
+# plume-front/src/editor.rs:326
 msgid "Write your article here. Markdown is supported."
 msgstr ""
 
-# plume-front/src/editor.rs:167
+# plume-front/src/editor.rs:337
 msgid "Around {} characters left"
 msgstr ""
 
-# plume-front/src/editor.rs:243
+# plume-front/src/editor.rs:414
 msgid "Tags"
 msgstr ""
 
-# plume-front/src/editor.rs:244
+# plume-front/src/editor.rs:415
 msgid "License"
 msgstr ""
 
-# plume-front/src/editor.rs:247
+# plume-front/src/editor.rs:418
 msgid "Cover"
 msgstr ""
 
-# plume-front/src/editor.rs:267
+# plume-front/src/editor.rs:438
 msgid "This is a draft"
 msgstr ""
 
-# plume-front/src/editor.rs:274
+# plume-front/src/editor.rs:445
 msgid "Publish"
 msgstr ""
