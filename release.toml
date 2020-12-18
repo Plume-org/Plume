@@ -6,7 +6,7 @@ dev-version-ext = 'dev'
 # update all crates in plume at once:
 consolidate-commits = true
 
-pre-release-hook = ["crowdin", "pull"]
+pre-release-hook = ["crowdin", "pull", "--branch", "master"]
 
 pre-release-replacements = [
   {file="CHANGELOG.md", search="Unreleased", replace="[{{version}}]"},
