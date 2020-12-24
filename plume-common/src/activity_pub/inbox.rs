@@ -231,9 +231,6 @@ where
     fn is_spoofed_activity(actor_id: &str, act: &serde_json::Value) -> bool {
         use serde_json::Value::{Array, Object, String};
 
-        if act["type"] != String("Create".to_string()) {
-            return false;
-        }
         let attributed_to = act["object"].get("attributedTo");
         if attributed_to.is_none() {
             return false;
