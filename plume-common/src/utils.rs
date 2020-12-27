@@ -1,12 +1,11 @@
 use heck::CamelCase;
 use openssl::rand::rand_bytes;
-use pulldown_cmark::{html, Event, Options, Parser, Tag};
+use pulldown_cmark::{html, LinkType, Event, Options, Parser, Tag, CodeBlockKind, CowStr};
 use regex_syntax::is_word_character;
 use rocket::{
     http::uri::Uri,
     response::{Flash, Redirect},
 };
-use std::borrow::Cow;
 use std::collections::HashSet;
 use syntect::html::ClassedHTMLGenerator;
 use syntect::parsing::SyntaxSet;
@@ -51,10 +50,10 @@ enum State {
 
 fn to_inline(tag: Tag<'_>) -> Tag<'_> {
     match tag {
-        Tag::Header(_) | Tag::Table(_) | Tag::TableHead | Tag::TableRow | Tag::TableCell => {
+        Tag::Heading(_) | Tag::Table(_) | Tag::TableHead | Tag::TableRow | Tag::TableCell => {
             Tag::Paragraph
         }
-        Tag::Image(url, title) => Tag::Link(url, title),
+        Tag::Image(typ, url, title) => Tag::Link(typ, url, title),
         t => t,
     }
 }
@@ -66,21 +65,31 @@ fn highlight_code<'a>(
     evt: Event<'a>,
 ) -> Option<Vec<Event<'a>>> {
     match evt {
-        Event::Start(Tag::CodeBlock(lang)) => {
-            if lang.is_empty() {
-                Some(vec![Event::Start(Tag::CodeBlock(lang))])
-            } else {
-                *context = Some(HighlighterContext { content: vec![] });
-                Some(vec![Event::Start(Tag::CodeBlock(lang))])
+        Event::Start(Tag::CodeBlock(kind)) => {
+            match &kind {
+                CodeBlockKind::Fenced(lang) if !lang.is_empty() => {
+                    *context = Some(HighlighterContext { content: vec![] });
+                },
+                _ => {}
             }
+            Some(vec![Event::Start(Tag::CodeBlock(kind))])
         }
-        Event::End(Tag::CodeBlock(x)) => {
+        Event::End(Tag::CodeBlock(kind)) => {
             let mut result = vec![];
             if let Some(ctx) = context.take() {
+                let lang = if let CodeBlockKind::Fenced(lang) = &kind {
+                    if lang.is_empty() {
+                        unreachable!();
+                    } else {
+                        lang
+                    }
+                } else {
+                    unreachable!();
+                };
                 let syntax_set = SyntaxSet::load_defaults_newlines();
-                let syntax = syntax_set.find_syntax_by_token(&x).unwrap_or_else(|| {
+                let syntax = syntax_set.find_syntax_by_token(&lang).unwrap_or_else(|| {
                     syntax_set
-                        .find_syntax_by_name(&x)
+                        .find_syntax_by_name(&lang)
                         .unwrap_or_else(|| syntax_set.find_syntax_plain_text())
                 });
                 let mut html = ClassedHTMLGenerator::new(&syntax, &syntax_set);
@@ -90,7 +99,7 @@ fn highlight_code<'a>(
                 let q = html.finalize();
                 result.push(Event::Html(q.into()));
             }
-            result.push(Event::End(Tag::CodeBlock(x)));
+            result.push(Event::End(Tag::CodeBlock(kind)));
             *context = None;
             Some(result)
         }
@@ -113,10 +122,10 @@ fn flatten_text<'a>(state: &mut Option<String>, evt: Event<'a>) -> Option<Vec<Ev
                 prev_txt.push_str(&txt);
                 (Some(prev_txt), vec![])
             }
-            None => (Some(txt.into_owned()), vec![]),
+            None => (Some(txt.into_string()), vec![]),
         },
         e => match state.take() {
-            Some(prev) => (None, vec![Event::Text(Cow::Owned(prev)), e]),
+            Some(prev) => (None, vec![Event::Text(CowStr::Boxed(prev.into())), e]),
             None => (None, vec![e]),
         },
     };
@@ -156,11 +165,11 @@ fn process_image<'a, 'b>(
 ) -> Event<'a> {
     if let Some(ref processor) = *processor {
         match evt {
-            Event::Start(Tag::Image(id, title)) => {
+            Event::Start(Tag::Image(typ, id, title)) => {
                 if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
                     if let (Some(cw), false) = (cw, inline) {
                         // there is a cw, and where are not inline
-                        Event::Html(Cow::Owned(format!(
+                        Event::Html(CowStr::Boxed(format!(
                             r#"<label for="postcontent-cw-{id}">
   <input type="checkbox" id="postcontent-cw-{id}" checked="checked" class="cw-checkbox">
   <span class="cw-container">
@@ -171,27 +180,27 @@ fn process_image<'a, 'b>(
                             id = random_hex(),
                             cw = cw,
                             url = url
-                        )))
+                        ).into()))
                     } else {
-                        Event::Start(Tag::Image(Cow::Owned(url), title))
+                        Event::Start(Tag::Image(typ, CowStr::Boxed(url.into()), title))
                     }
                 } else {
-                    Event::Start(Tag::Image(id, title))
+                    Event::Start(Tag::Image(typ, id, title))
                 }
             }
-            Event::End(Tag::Image(id, title)) => {
+            Event::End(Tag::Image(typ, id, title)) => {
                 if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
                     if inline || cw.is_none() {
-                        Event::End(Tag::Image(Cow::Owned(url), title))
+                        Event::End(Tag::Image(typ, CowStr::Boxed(url.into()), title))
                     } else {
-                        Event::Html(Cow::Borrowed(
+                        Event::Html(CowStr::Borrowed(
                             r#""/>
   </span>
 </label>"#,
                         ))
                     }
                 } else {
-                    Event::End(Tag::Image(id, title))
+                    Event::End(Tag::Image(typ, id, title))
                 }
             }
             e => e,
@@ -231,19 +240,19 @@ pub fn md_to_html<'a>(
         // Ignore headings, images, and tables if inline = true
         .scan((vec![], inline), inline_tags)
         .scan(&mut DocumentContext::default(), |ctx, evt| match evt {
-            Event::Start(Tag::CodeBlock(_)) | Event::Start(Tag::Code) => {
+            Event::Start(Tag::CodeBlock(_)) => {
                 ctx.in_code = true;
                 Some((vec![evt], vec![], vec![]))
             }
-            Event::End(Tag::CodeBlock(_)) | Event::End(Tag::Code) => {
+            Event::End(Tag::CodeBlock(_)) => {
                 ctx.in_code = false;
                 Some((vec![evt], vec![], vec![]))
             }
-            Event::Start(Tag::Link(_, _)) => {
+            Event::Start(Tag::Link(_, _, _)) => {
                 ctx.in_link = true;
                 Some((vec![evt], vec![], vec![]))
             }
-            Event::End(Tag::Link(_, _)) => {
+            Event::End(Tag::Link(_, _, _)) => {
                 ctx.in_link = false;
                 Some((vec![evt], vec![], vec![]))
             }
@@ -264,6 +273,7 @@ pub fn md_to_html<'a>(
                                     let mention = text_acc;
                                     let short_mention = mention.splitn(1, '@').next().unwrap_or("");
                                     let link = Tag::Link(
+                                        LinkType::Inline,
                                         format!("{}@/{}/", base_url, &mention).into(),
                                         short_mention.to_owned().into(),
                                     );
@@ -294,6 +304,7 @@ pub fn md_to_html<'a>(
                                     }
                                     let hashtag = text_acc;
                                     let link = Tag::Link(
+                                        LinkType::Inline,
                                         format!("{}tag/{}", base_url, &hashtag).into(),
                                         hashtag.to_owned().into(),
                                     );
