@@ -470,11 +470,11 @@ mod tests {
     fn test_inline() {
         assert_eq!(
             md_to_html("# Hello", None, false, None).0,
-            String::from("<h1>Hello</h1>\n")
+            String::from("<h1 dir=\"auto\">Hello</h1>\n")
         );
         assert_eq!(
             md_to_html("# Hello", None, true, None).0,
-            String::from("<p>Hello</p>\n")
+            String::from("<p dir=\"auto\">Hello</p>\n")
         );
     }
 }

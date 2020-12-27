@@ -30,4 +30,5 @@ version = "0.4"
 
 [dependencies.pulldown-cmark]
 default-features = false
-version = "0.8.0"
+git = "https://git.joinplu.me/Plume/pulldown-cmark"
+branch = "bidi-plume"
