@@ -4,7 +4,7 @@
 
 ## [Unreleased] - ReleaseDate
 
-## [[0.6.0]] - 2020-12-19
+## [[0.6.0]] - Unreleased
 
 ### Added
 
