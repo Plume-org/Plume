@@ -1,6 +1,6 @@
 use heck::CamelCase;
 use openssl::rand::rand_bytes;
-use pulldown_cmark::{html, LinkType, Event, Options, Parser, Tag, CodeBlockKind, CowStr};
+use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
 use rocket::{
     http::uri::Uri,
@@ -69,7 +69,7 @@ fn highlight_code<'a>(
             match &kind {
                 CodeBlockKind::Fenced(lang) if !lang.is_empty() => {
                     *context = Some(HighlighterContext { content: vec![] });
-                },
+                }
                 _ => {}
             }
             Some(vec![Event::Start(Tag::CodeBlock(kind))])
@@ -169,18 +169,21 @@ fn process_image<'a, 'b>(
                 if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
                     if let (Some(cw), false) = (cw, inline) {
                         // there is a cw, and where are not inline
-                        Event::Html(CowStr::Boxed(format!(
-                            r#"<label for="postcontent-cw-{id}">
+                        Event::Html(CowStr::Boxed(
+                            format!(
+                                r#"<label for="postcontent-cw-{id}">
   <input type="checkbox" id="postcontent-cw-{id}" checked="checked" class="cw-checkbox">
   <span class="cw-container">
     <span class="cw-text">
         {cw}
     </span>
   <img src="{url}" alt=""#,
-                            id = random_hex(),
-                            cw = cw,
-                            url = url
-                        ).into()))
+                                id = random_hex(),
+                                cw = cw,
+                                url = url
+                            )
+                            .into(),
+                        ))
                     } else {
                         Event::Start(Tag::Image(typ, CowStr::Boxed(url.into()), title))
                     }

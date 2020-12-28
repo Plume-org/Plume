@@ -4,7 +4,7 @@
 
 ## [Unreleased] - ReleaseDate
 
-## [[0.6.0]] - 2020-12-19
+## [[0.6.0]] - Unreleased
 
 ### Added
 
@@ -12,6 +12,7 @@
 - Login via LDAP (#826)
 - cargo-release (#835)
 - Care about weak ETag header for better caching (#840)
+- Support for right to left languages in post content (#853)
 
 ### Changed
 
