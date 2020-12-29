@@ -34,7 +34,7 @@ rules and thematics, but they can all communicate with each other.
 
 ## Get involved
 
-If you want to have regular news about the project, the best place is probably [our blog](https://fediverse.blog/~/PlumeDev), or our Matrix room: [`#plume:disroot.org`](https://riot.im/app/#/room/#plume:disroot.org).
+If you want to have regular news about the project, the best place is probably [our blog](https://fediverse.blog/~/PlumeDev), or our Matrix room: [`#plume-blog:matrix.org`](https://matrix.to/#/#plume-blog:matrix.org).
 
 If you want to contribute more, a good first step is to read [our contribution guides](https://docs.joinplu.me/contribute). We accept all kind of contribution:
 
