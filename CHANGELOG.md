@@ -34,7 +34,7 @@
 
 ### Security
 
-- Validate spoofing of Create activity
+- Validate spoofing of activity
 
 ## [0.5.0] - 2020-06-21
 
