@@ -2712,7 +2712,7 @@ dependencies = [
  "url 2.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "webfinger 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "whatlang 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "whatlang 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -4524,7 +4524,7 @@ dependencies = [
 
 [[package]]
 name = "whatlang"
-version = "0.7.3"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "hashbrown 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -5110,7 +5110,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum wasm-bindgen-shared 0.2.69 (registry+https://github.com/rust-lang/crates.io-index)" = "7e7811dd7f9398f14cc76efd356f98f03aa30419dea46aa810d71e819fc97158"
 "checksum web-sys 0.3.46 (registry+https://github.com/rust-lang/crates.io-index)" = "222b1ef9334f92a21d3fb53dc3fd80f30836959a90f9274a626d7e06315ba3c3"
 "checksum webfinger 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "ec24b1b0700d4b466d280228ed0f62274eedeaa80206820f071fdc8ed787b664"
-"checksum whatlang 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)" = "3437a8cc85accfcd03f291a2d2a6ae8400fa78ad6f2b6aa6c38d2badb6e378e9"
+"checksum whatlang 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)" = "783066160df650d0cc2629fa4f616ef4fcf00817803789e92ca09a55eba6ff05"
 "checksum winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "167dc9d6949a9b857f3451275e911c3f44255842c1f7a76f33c55103a909087a"
 "checksum winapi 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419"
 "checksum winapi-build 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2d315eee3b34aca4797b2da6b13ed88266e6d612562a0c46390af8299fc699bc"
