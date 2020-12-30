@@ -11,7 +11,7 @@ askama_escape = "0.1"
 atom_syndication = "0.6"
 clap = "2.33"
 colored = "1.8"
-dotenv = "0.14"
+dotenv = "0.15.0"
 gettext = { git = "https://github.com/Plume-org/gettext/", rev = "294c54d74c699fbc66502b480a37cc66c1daa7f3" }
 gettext-macros = { git = "https://github.com/Plume-org/gettext-macros/", rev = "a7c605f7edd6bfbfbfe7778026bfefd88d82db10" }
 gettext-utils = { git = "https://github.com/Plume-org/gettext-macros/", rev = "a7c605f7edd6bfbfbfe7778026bfefd88d82db10" }
