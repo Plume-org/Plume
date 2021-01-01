@@ -2613,7 +2613,7 @@ dependencies = [
  "diesel 1.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "plume-models 0.6.1-dev",
- "rpassword 4.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rpassword 5.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -3257,6 +3257,15 @@ dependencies = [
 [[package]]
 name = "rpassword"
 version = "4.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "libc 0.2.81 (registry+https://github.com/rust-lang/crates.io-index)",
+ "winapi 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "rpassword"
+version = "5.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.81 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -4963,6 +4972,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum rocket_http 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = "a9d087de7203c7a60a0ed5cd3a135b552dbfbed9932c52d49d083e8629935257"
 "checksum rocket_i18n 0.4.0 (git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2)" = "<none>"
 "checksum rpassword 4.0.5 (registry+https://github.com/rust-lang/crates.io-index)" = "99371657d3c8e4d816fb6221db98fa408242b0b53bac08f8676a41f8554fe99f"
+"checksum rpassword 5.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d755237fc0f99d98641540e66abac8bc46a0652f19148ac9e21de2da06b326c9"
 "checksum rsass 0.9.8 (registry+https://github.com/rust-lang/crates.io-index)" = "7f4534cc03040beacd2668621815f26fe57e5b7cfe085790f98e5e87c1612316"
 "checksum ructe 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)" = "c85620b8046f88a870d93d90fa56904dec76cc79139bfcc22e71e87f0cd2169f"
 "checksum rust-stemmers 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e46a2036019fdb888131db7a4c847a1063a7493f971ed94ea82c67eada63ca54"
