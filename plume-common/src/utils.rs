@@ -7,7 +7,7 @@ use rocket::{
     response::{Flash, Redirect},
 };
 use std::collections::HashSet;
-use syntect::html::{ClassedHTMLGenerator, ClassStyle};
+use syntect::html::{ClassStyle, ClassedHTMLGenerator};
 use syntect::parsing::SyntaxSet;
 
 /// Generates an hexadecimal representation of 32 bytes of random data
@@ -92,7 +92,11 @@ fn highlight_code<'a>(
                         .find_syntax_by_name(&lang)
                         .unwrap_or_else(|| syntax_set.find_syntax_plain_text())
                 });
-                let mut html = ClassedHTMLGenerator::new_with_class_style(&syntax, &syntax_set, ClassStyle::Spaced);
+                let mut html = ClassedHTMLGenerator::new_with_class_style(
+                    &syntax,
+                    &syntax_set,
+                    ClassStyle::Spaced,
+                );
                 for line in ctx.content {
                     html.parse_html_for_line_which_includes_newline(&line);
                 }
