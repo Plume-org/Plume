@@ -488,7 +488,9 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 inst.long_description_html,
-                SafeString::new("<p dir=\"auto\"><a href=\"/with_link\">long_description</a></p>\n")
+                SafeString::new(
+                    "<p dir=\"auto\"><a href=\"/with_link\">long_description</a></p>\n"
+                )
             );
             assert_eq!(inst.short_description.get(), "[short](#link)");
             assert_eq!(
