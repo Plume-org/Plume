@@ -1,5 +1,6 @@
 use chrono::Utc;
 use heck::KebabCase;
+use rocket::http::uri::Uri;
 use rocket::request::LenientForm;
 use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;
@@ -642,7 +643,7 @@ pub fn remote_interact_post(
         .and_then(|blog| Post::find_by_slug(&rockets.conn, &slug, blog.id))?;
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
         .ok()
-        .map(|uri| uri.replace("{uri}", &target.ap_url))
+        .map(|uri| uri.replace("{uri}", &Uri::percent_encode(&target.ap_url)))
     {
         Ok(Redirect::to(uri).into())
     } else {
