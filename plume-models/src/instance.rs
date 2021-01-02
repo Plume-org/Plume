@@ -488,12 +488,14 @@ pub(crate) mod tests {
             );
             assert_eq!(
                 inst.long_description_html,
-                SafeString::new("<p><a href=\"/with_link\">long_description</a></p>\n")
+                SafeString::new(
+                    "<p dir=\"auto\"><a href=\"/with_link\">long_description</a></p>\n"
+                )
             );
             assert_eq!(inst.short_description.get(), "[short](#link)");
             assert_eq!(
                 inst.short_description_html,
-                SafeString::new("<p><a href=\"#link\">short</a></p>\n")
+                SafeString::new("<p dir=\"auto\"><a href=\"#link\">short</a></p>\n")
             );
             assert_eq!(inst.default_license, "CC-BY-SAO".to_owned());
             Ok(())
