@@ -11,14 +11,13 @@ use std::{
     borrow::{Borrow, Cow},
     fmt::{self, Display},
     io::Write,
-    iter,
     ops::Deref,
 };
 
 lazy_static! {
     static ref CLEAN: Builder<'static> = {
         let mut b = Builder::new();
-        b.add_generic_attributes(iter::once("id"))
+        b.add_generic_attributes(&["id", "dir"])
             .add_tags(&["iframe", "video", "audio", "label", "input"])
             .id_prefix(Some("postcontent-"))
             .url_relative(UrlRelative::Custom(Box::new(url_add_prefix)))
