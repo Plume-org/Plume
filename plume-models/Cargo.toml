@@ -16,7 +16,7 @@ lazy_static = "1.0"
 ldap3 = "0.7.1"
 migrations_internals= "1.4.0"
 openssl = "0.10.22"
-rocket = "0.4.5"
+rocket = "0.4.6"
 rocket_i18n = { git = "https://github.com/Plume-org/rocket_i18n", rev = "e922afa7c366038b3433278c03b1456b346074f2" }
 reqwest = "0.9"
 scheduled-thread-pool = "0.2.2"
@@ -27,7 +27,7 @@ tantivy = "0.12.0"
 url = "2.1"
 walkdir = "2.2"
 webfinger = "0.4.1"
-whatlang = "0.7.1"
+whatlang = "0.11.1"
 shrinkwraprs = "0.2.1"
 diesel-derive-newtype = "0.1.2"
 glob = "0.3.0"
@@ -39,7 +39,7 @@ version = "0.4"
 
 [dependencies.diesel]
 features = ["r2d2", "chrono"]
-version = "1.4.2"
+version = "1.4.5"
 
 [dependencies.plume-api]
 path = "../plume-api"

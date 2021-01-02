@@ -11,11 +11,11 @@ path = "src/main.rs"
 [dependencies]
 clap = "2.33"
 dotenv = "0.14"
-rpassword = "4.0"
+rpassword = "5.0.0"
 
 [dependencies.diesel]
 features = ["r2d2", "chrono"]
-version = "*"
+version = "1.4.5"
 
 [dependencies.plume-models]
 path = "../plume-models"
