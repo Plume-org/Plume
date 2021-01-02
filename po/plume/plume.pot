@@ -164,55 +164,55 @@ msgstr ""
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:54
+# src/routes/posts.rs:55
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:125
+# src/routes/posts.rs:126
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:142
+# src/routes/posts.rs:143
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:149
+# src/routes/posts.rs:150
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:194
+# src/routes/posts.rs:195
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:263
+# src/routes/posts.rs:264
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:355
+# src/routes/posts.rs:356
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:542
+# src/routes/posts.rs:543
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:549
+# src/routes/posts.rs:550
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:582
+# src/routes/posts.rs:583
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:607
+# src/routes/posts.rs:608
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:612
+# src/routes/posts.rs:613
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:652
+# src/routes/posts.rs:653
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
