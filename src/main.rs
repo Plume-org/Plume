@@ -29,8 +29,8 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 init_i18n!(
-    "plume", ar, bg, ca, cs, de, en, eo, es, fa, fr, gl, hi, hr, it, ja, nb, pl, pt, ro, ru, sr,
-    sk, sv
+    "plume", af, ar, bg, ca, cs, cy, da, de, el, en, eo, es, fa, fi, fr, gl, he, hi, hr, hu, it,
+    ja, ko, nb, nl, no, pl, pt, ro, ru, sat, si, sk, sl, sr, sv, tr, uk, vi, zh
 );
 
 mod api;
