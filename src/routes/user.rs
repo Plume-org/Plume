@@ -3,6 +3,7 @@ use activitypub::{
     collection::{OrderedCollection, OrderedCollectionPage},
 };
 use diesel::SaveChangesDsl;
+use tracing::{info, warn};
 use rocket::{
     http::{ContentType, Cookies},
     request::LenientForm,
@@ -67,9 +68,9 @@ pub fn details(
                     Ok(article) => {
                         Post::from_activity(&fetch_rockets, article)
                             .expect("Article from remote user couldn't be saved");
-                        println!("Fetched article from remote user");
+                        info!("Fetched article from remote user");
                     }
-                    Err(e) => println!("Error while fetching articles in background: {:?}", e),
+                    Err(e) => warn!("Error while fetching articles in background: {:?}", e),
                 }
             }
         });

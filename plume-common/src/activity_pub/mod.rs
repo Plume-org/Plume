@@ -1,5 +1,6 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
+use tracing::{debug, warn};
 use reqwest::r#async::ClientBuilder;
 use rocket::{
     http::Status,
@@ -153,10 +154,10 @@ where
                 .send()
                 .and_then(|r| r.into_body().concat2())
                 .map(move |response| {
-                    println!("Successfully sent activity to inbox ({})", inbox);
-                    println!("Response: \"{:?}\"\n", response)
+                    debug!("Successfully sent activity to inbox ({})", inbox);
+                    debug!("Response: \"{:?}\"\n", response)
                 })
-                .map_err(|e| println!("Error while sending to inbox ({:?})", e)),
+                .map_err(|e| warn!("Error while sending to inbox ({:?})", e)),
         );
     }
     rt.run().unwrap();

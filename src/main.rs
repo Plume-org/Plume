@@ -13,6 +13,7 @@ extern crate validator_derive;
 use chrono::Utc;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
+use tracing::warn;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
@@ -114,7 +115,7 @@ Then try to restart Plume.
                 .expect("main: error on backing up search index directory for recreating");
             if UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_ok() {
                 if fs::remove_dir_all(backup_path).is_err() {
-                    eprintln!(
+                    warn!(
                         "error on removing backup directory: {}. it remains",
                         backup_path.display()
                     );
@@ -173,8 +174,8 @@ Then try to restart Plume
 
     let mail = mail::init();
     if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
-        println!("Warning: the email server is not configured (or not completely).");
-        println!("Please refer to the documentation to see how to configure it.");
+        warn!("Warning: the email server is not configured (or not completely).");
+        warn!("Please refer to the documentation to see how to configure it.");
     }
 
     let rocket = rocket
