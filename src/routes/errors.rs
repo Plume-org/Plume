@@ -49,7 +49,7 @@ pub fn server_error(req: &Request<'_>) -> Ructe {
 #[post("/csrf-violation?<target>")]
 pub fn csrf_violation(target: Option<String>, rockets: PlumeRocket) -> Ructe {
     if let Some(uri) = target {
-        eprintln!("Csrf violation while acceding \"{}\"", uri)
+        eprintln!("Csrf violation while accessing \"{}\"", uri)
     }
     render!(errors::csrf(&rockets.to_context()))
 }
