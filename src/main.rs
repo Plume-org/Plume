@@ -50,12 +50,6 @@ compile_i18n!();
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
-    match dotenv::dotenv() {
-        Ok(path) => println!("Configuration read from {}", path.display()),
-        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
-        e => e.map(|_| ()).unwrap(),
-    }
-
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let mut builder = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
@@ -69,6 +63,12 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
+    match dotenv::dotenv() {
+        Ok(path) => println!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
+
     App::new("Plume")
         .bin_name("plume")
         .version(env!("CARGO_PKG_VERSION"))
