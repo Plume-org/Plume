@@ -65,7 +65,7 @@ fn init_pool() -> Option<DbPool> {
 
 fn main() {
     match dotenv::dotenv() {
-        Ok(path) => println!("Configuration read from {}", path.display()),
+        Ok(path) => eprintln!("Configuration read from {}", path.display()),
         Err(ref e) if e.not_found() => eprintln!("no .env was found"),
         e => e.map(|_| ()).unwrap(),
     }
