@@ -1,3 +1,4 @@
+pub mod actor;
 mod query;
 mod searcher;
 mod tokenizer;
