@@ -1,6 +1,6 @@
 use crate::{
     config::SearchTokenizerConfig, instance::Instance, posts::Post, schema::posts,
-    search::query::PlumeQuery, tags::Tag, Connection, Error, Result, CONFIG,
+    search::query::PlumeQuery, tags::Tag, Connection, Error, Result,
 };
 use chrono::{Datelike, Utc};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -69,16 +69,15 @@ impl Searcher {
         schema_builder.build()
     }
 
-    pub fn open_or_recreate() -> Self {
-        let mut open_searcher = Self::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
+    pub fn open_or_recreate(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Self {
+        let mut open_searcher = Self::open(path, tokenizers);
         if let Err(Error::Search(SearcherError::InvalidIndexDataError)) = open_searcher {
-            if Self::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_err() {
-                let current_path = Path::new(&CONFIG.search_index);
-                let backup_path = format!("{}.{}", &current_path.display(), Utc::now().timestamp());
+            if Self::create(path, tokenizers).is_err() {
+                let backup_path = format!("{}.{}", path.as_ref().display(), Utc::now().timestamp());
                 let backup_path = Path::new(&backup_path);
-                fs::rename(current_path, backup_path)
+                fs::rename(path, backup_path)
                     .expect("main: error on backing up search index directory for recreating");
-                if Self::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_ok() {
+                if Self::create(path, tokenizers).is_ok() {
                     if fs::remove_dir_all(backup_path).is_err() {
                         warn!(
                             "error on removing backup directory: {}. it remains",
@@ -89,7 +88,7 @@ impl Searcher {
                     panic!("main: error on recreating search index in new index format. remove search index and run `plm search init` manually");
                 }
             }
-            open_searcher = Self::open(&CONFIG.search_index, &CONFIG.search_tokenizers);
+            open_searcher = Self::open(path, tokenizers);
         }
         #[allow(clippy::match_wild_err_arm)]
         let searcher = match open_searcher {

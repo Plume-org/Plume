@@ -100,7 +100,10 @@ Then try to restart Plume.
     }
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
-    let searcher = Arc::new(UnmanagedSearcher::open_or_recreate());
+    let searcher = Arc::new(UnmanagedSearcher::open_or_recreate(
+        &CONFIG.search_index,
+        &CONFIG.search_tokenizers,
+    ));
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(
         Duration::from_secs(5),
