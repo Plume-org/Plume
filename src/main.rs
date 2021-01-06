@@ -16,7 +16,7 @@ use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
     migrations::IMPORTED_MIGRATIONS,
-    search::Searcher as UnmanagedSearcher,
+    search::{actor::SearchActor, Searcher as UnmanagedSearcher},
     Connection, CONFIG,
 };
 use rocket_csrf::CsrfFairingBuilder;
@@ -104,6 +104,7 @@ Then try to restart Plume.
         &CONFIG.search_index,
         &CONFIG.search_tokenizers,
     ));
+    SearchActor::init(searcher.clone(), dbpool.clone());
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(
         Duration::from_secs(5),
