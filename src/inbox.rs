@@ -1,3 +1,4 @@
+use tracing::warn;
 use plume_common::activity_pub::{
     inbox::FromId,
     request::Digest,
@@ -41,7 +42,7 @@ pub fn handle_incoming(
                 }
             })
             .map_err(|_| {
-                println!(
+                warn!(
                     "Rejected invalid activity supposedly from {}, with headers {:?}",
                     actor.username, headers.0
                 );
@@ -58,7 +59,7 @@ pub fn handle_incoming(
     Ok(match inbox(&rockets, act) {
         Ok(_) => String::new(),
         Err(e) => {
-            println!("Shared inbox error: {:?}", e);
+            warn!("Shared inbox error: {:?}", e);
             format!("Error: {:?}", e)
         }
     })

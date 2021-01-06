@@ -13,6 +13,7 @@ extern crate validator_derive;
 use chrono::Utc;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
+use tracing::warn;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
@@ -50,12 +51,6 @@ compile_i18n!();
 
 /// Initializes a database pool.
 fn init_pool() -> Option<DbPool> {
-    match dotenv::dotenv() {
-        Ok(path) => println!("Configuration read from {}", path.display()),
-        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
-        e => e.map(|_| ()).unwrap(),
-    }
-
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let mut builder = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
@@ -69,6 +64,12 @@ fn init_pool() -> Option<DbPool> {
 }
 
 fn main() {
+    match dotenv::dotenv() {
+        Ok(path) => eprintln!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
+
     App::new("Plume")
         .bin_name("plume")
         .version(env!("CARGO_PKG_VERSION"))
@@ -82,6 +83,8 @@ and https://docs.joinplu.me/installation/init for more info.
         "#,
         )
         .get_matches();
+    // Initialize Rocket early to load its internal logger
+    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap());
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
@@ -112,7 +115,7 @@ Then try to restart Plume.
                 .expect("main: error on backing up search index directory for recreating");
             if UnmanagedSearcher::create(&CONFIG.search_index, &CONFIG.search_tokenizers).is_ok() {
                 if fs::remove_dir_all(backup_path).is_err() {
-                    eprintln!(
+                    warn!(
                         "error on removing backup directory: {}. it remains",
                         backup_path.display()
                     );
@@ -171,11 +174,11 @@ Then try to restart Plume
 
     let mail = mail::init();
     if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
-        println!("Warning: the email server is not configured (or not completely).");
-        println!("Please refer to the documentation to see how to configure it.");
+        warn!("Warning: the email server is not configured (or not completely).");
+        warn!("Please refer to the documentation to see how to configure it.");
     }
 
-    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
+    let rocket = rocket
         .mount(
             "/",
             routes![

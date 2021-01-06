@@ -1,5 +1,6 @@
 use crate::{Connection, Error, Result};
 use diesel::connection::{Connection as Conn, SimpleConnection};
+use tracing::info;
 use migrations_internals::{setup_database, MigrationConnection};
 use std::path::Path;
 
@@ -26,7 +27,7 @@ struct ComplexMigration {
 
 impl ComplexMigration {
     fn run(&self, conn: &Connection, path: &Path) -> Result<()> {
-        println!("Running migration {}", self.name);
+        info!("Running migration {}", self.name);
         for step in self.up {
             step.run(conn, path)?
         }
@@ -34,7 +35,7 @@ impl ComplexMigration {
     }
 
     fn revert(&self, conn: &Connection, path: &Path) -> Result<()> {
-        println!("Reverting migration {}", self.name);
+        info!("Reverting migration {}", self.name);
         for step in self.down {
             step.run(conn, path)?
         }

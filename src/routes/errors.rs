@@ -1,4 +1,5 @@
 use crate::template_utils::{IntoContext, Ructe};
+use tracing::warn;
 use plume_models::{Error, PlumeRocket};
 use rocket::{
     response::{self, Responder},
@@ -49,7 +50,7 @@ pub fn server_error(req: &Request<'_>) -> Ructe {
 #[post("/csrf-violation?<target>")]
 pub fn csrf_violation(target: Option<String>, rockets: PlumeRocket) -> Ructe {
     if let Some(uri) = target {
-        eprintln!("Csrf violation while acceding \"{}\"", uri)
+        warn!("Csrf violation while accessing \"{}\"", uri)
     }
     render!(errors::csrf(&rockets.to_context()))
 }

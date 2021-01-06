@@ -30,6 +30,7 @@ shrinkwraprs = "0.2.1"
 validator = "0.8"
 validator_derive = "0.8"
 webfinger = "0.4.1"
+tracing = "0.1.22"
 
 [[bin]]
 name = "plume"

@@ -23,6 +23,7 @@ shrinkwraprs = "0.3.0"
 syntect = "4.5.0"
 tokio = "0.1.22"
 regex-syntax = { version = "0.6.17", default-features = false, features = ["unicode-perl"] }
+tracing = "0.1.22"
 
 [dependencies.chrono]
 features = ["serde"]

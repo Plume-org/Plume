@@ -1,5 +1,6 @@
 use crate::routes::RespondOrRedirect;
 use lettre::Transport;
+use tracing::warn;
 use rocket::http::ext::IntoOwned;
 use rocket::{
     http::{uri::Uri, Cookie, Cookies, SameSite},
@@ -155,7 +156,7 @@ pub fn password_reset_request(
         ) {
             if let Some(ref mut mail) = *mail.lock().unwrap() {
                 mail.send(message.into())
-                    .map_err(|_| eprintln!("Couldn't send password reset email"))
+                    .map_err(|_| warn!("Couldn't send password reset email"))
                     .ok();
             }
         }
