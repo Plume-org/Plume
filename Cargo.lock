@@ -3044,6 +3044,7 @@ dependencies = [
  "ldap3",
  "lindera-tantivy",
  "migrations_internals",
+ "once_cell",
  "openssl",
  "plume-api",
  "plume-common",
