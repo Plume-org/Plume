@@ -90,8 +90,8 @@ impl Searcher {
             }
             open_searcher = Self::open(path, tokenizers);
         }
-        #[allow(clippy::match_wild_err_arm)]
         let searcher = match open_searcher {
+            Ok(s) => s,
             Err(Error::Search(e)) => match e {
                 SearcherError::WriteLockAcquisitionError => panic!(
                     r#"
@@ -117,8 +117,7 @@ Then try to restart Plume
                 ),
                 e => Err(e).unwrap(),
             },
-            Err(_) => panic!("Unexpected error while opening search index"),
-            Ok(s) => s,
+            _ => panic!("Unexpected error while opening search index"),
         };
 
         searcher
