@@ -23,7 +23,7 @@ use std::collections::HashSet;
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
-#[derive(Queryable, Identifiable, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct Post {
     pub id: i32,
@@ -797,6 +797,25 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
 impl IntoId for Post {
     fn into_id(self) -> Id {
         Id::new(self.ap_url)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum PostEvent {
+    PostPublished(Post),
+    PostUpdated(Post),
+    PostDeleted(Post),
+}
+
+impl From<PostEvent> for Post {
+    fn from(event: PostEvent) -> Self {
+        use PostEvent::*;
+
+        match event {
+            PostPublished(post) => post,
+            PostUpdated(post) => post,
+            PostDeleted(post) => post,
+        }
     }
 }
 
