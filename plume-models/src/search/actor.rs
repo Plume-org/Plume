@@ -1,12 +1,18 @@
 use super::Searcher;
-use crate::{db_conn::DbPool, posts::PostEvent, POST_CHAN};
-use riker::actors::{Actor, ActorFactoryArgs, Context, Sender, Subscribe, Tell};
+use crate::{db_conn::DbPool, posts::PostEvent, ACTOR_SYS, POST_CHAN};
+use riker::actors::{Actor, ActorFactoryArgs, ActorRefFactory, Context, Sender, Subscribe, Tell};
 use std::sync::Arc;
 use tracing::error;
 
 pub struct SearchActor {
     searcher: Arc<Searcher>,
     conn: DbPool,
+}
+
+impl SearchActor {
+    pub fn init(searcher: Arc<Searcher>, conn: DbPool) {
+        ACTOR_SYS.actor_of_args::<SearchActor, _>("search", (searcher, conn)).expect("Failed to initialize searcher actor");
+    }
 }
 
 impl Actor for SearchActor {
