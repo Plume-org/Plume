@@ -21,13 +21,13 @@ impl Actor for SearchActor {
     type Msg = PostEvent;
 
     fn pre_start(&mut self, ctx: &Context<Self::Msg>) {
-        &POST_CHAN.tell(
+        POST_CHAN.tell(
             Subscribe {
                 actor: Box::new(ctx.myself()),
                 topic: "*".into(),
             },
             None,
-        );
+        )
     }
 
     fn recv(&mut self, _ctx: &Context<Self::Msg>, msg: Self::Msg, _sender: Sender) {
@@ -36,22 +36,28 @@ impl Actor for SearchActor {
         match msg {
             PostPublished(post) => {
                 let conn = self.conn.get();
-                if conn.is_ok() {
-                    self.searcher
-                        .add_document(&conn.unwrap(), &post)
-                        .unwrap_or_else(|e| error!("{:?}", e));
-                } else {
-                    error!("Failed to get database connection");
+                match conn {
+                    Ok(_) => {
+                        self.searcher
+                            .add_document(&conn.unwrap(), &post)
+                            .unwrap_or_else(|e| error!("{:?}", e));
+                    },
+                    _ => {
+                        error!("Failed to get database connection");
+                    }
                 }
             }
             PostUpdated(post) => {
                 let conn = self.conn.get();
-                if conn.is_ok() {
-                    self.searcher
-                        .update_document(&conn.unwrap(), &post)
-                        .unwrap_or_else(|e| error!("{:?}", e));
-                } else {
-                    error!("Failed to get database connection");
+                match conn {
+                    Ok(_) => {
+                        self.searcher
+                            .update_document(&conn.unwrap(), &post)
+                            .unwrap_or_else(|e| error!("{:?}", e));
+                    },
+                    _ => {
+                        error!("Failed to get database connection");
+                    }
                 }
             }
             PostDeleted(post) => self.searcher.delete_document(&post),

@@ -90,7 +90,7 @@ impl Searcher {
             }
             open_searcher = Self::open(path, tokenizers);
         }
-        let searcher = match open_searcher {
+        match open_searcher {
             Ok(s) => s,
             Err(Error::Search(e)) => match e {
                 SearcherError::WriteLockAcquisitionError => panic!(
@@ -118,9 +118,7 @@ Then try to restart Plume
                 e => Err(e).unwrap(),
             },
             _ => panic!("Unexpected error while opening search index"),
-        };
-
-        searcher
+        }
     }
 
     pub fn create(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {
