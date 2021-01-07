@@ -93,12 +93,12 @@ impl Post {
         Ok(post)
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+    pub fn delete(&self, conn: &Connection, _searcher: &Searcher) -> Result<()> {
         for m in Mention::list_for_post(&conn, self.id)? {
             m.delete(conn)?;
         }
         diesel::delete(self).execute(conn)?;
-        searcher.delete_document(self);
+        self.publish_deleted();
         Ok(())
     }
 
@@ -566,6 +566,16 @@ impl Post {
             Publish {
                 msg: PostUpdated(self.clone()),
                 topic: "post.updated".into(),
+            },
+            None,
+        )
+    }
+
+    fn publish_deleted(&self) {
+        POST_CHAN.tell(
+            Publish {
+                msg: PostDeleted(self.clone()),
+                topic: "post.deleted".into(),
             },
             None,
         )
