@@ -1,7 +1,7 @@
 use crate::{
     ap_url, blogs::Blog, instance::Instance, medias::Media, mentions::Mention, post_authors::*,
     safe_string::SafeString, schema::posts, search::Searcher, tags::*, timeline::*, users::User,
-    Connection, Error, PlumeRocket, Result, CONFIG,
+    Connection, Error, PlumeRocket, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
     activity::{Create, Delete, Update},
@@ -19,6 +19,7 @@ use plume_common::{
     },
     utils::md_to_html,
 };
+use riker::actors::{Publish, Tell};
 use std::collections::HashSet;
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
@@ -62,7 +63,7 @@ impl Post {
     find_by!(posts, find_by_ap_url, ap_url as &str);
 
     last!(posts);
-    pub fn insert(conn: &Connection, new: NewPost, searcher: &Searcher) -> Result<Self> {
+    pub fn insert(conn: &Connection, new: NewPost, _searcher: &Searcher) -> Result<Self> {
         diesel::insert_into(posts::table)
             .values(new)
             .execute(conn)?;
@@ -77,7 +78,10 @@ impl Post {
             let _: Post = post.save_changes(conn)?;
         }
 
-        searcher.add_document(conn, &post)?;
+        if post.published {
+            post.publish_published();
+        }
+
         Ok(post)
     }
 
@@ -544,6 +548,16 @@ impl Post {
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
         Ok(act)
+    }
+
+    fn publish_published(&self) {
+        POST_CHAN.tell(
+            Publish {
+                msg: PostPublished(self.clone()),
+                topic: "post.published".into(),
+            },
+            None,
+        )
     }
 }
 
