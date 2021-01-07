@@ -21,7 +21,6 @@ use plume_models::{
     instance::*,
     posts::Post,
     safe_string::SafeString,
-    search::Searcher,
     timeline::Timeline,
     users::{Role, User},
     Connection, Error, PlumeRocket, CONFIG,
@@ -331,7 +330,6 @@ pub fn edit_users(
     }
 
     let conn = &rockets.conn;
-    let searcher = &*rockets.searcher;
     let worker = &*rockets.worker;
     match form.action {
         UserActions::Admin => {
@@ -351,7 +349,7 @@ pub fn edit_users(
         }
         UserActions::Ban => {
             for u in form.ids.clone() {
-                ban(u, conn, searcher, worker)?;
+                ban(u, conn, worker)?;
             }
         }
     }
@@ -362,14 +360,9 @@ pub fn edit_users(
     ))
 }
 
-fn ban(
-    id: i32,
-    conn: &Connection,
-    searcher: &Searcher,
-    worker: &ScheduledThreadPool,
-) -> Result<(), ErrorPage> {
+fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), ErrorPage> {
     let u = User::get(&*conn, id)?;
-    u.delete(&*conn, searcher)?;
+    u.delete(&*conn)?;
     if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)

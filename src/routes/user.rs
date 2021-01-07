@@ -421,7 +421,7 @@ pub fn delete(
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let account = User::find_by_fqn(&rockets, &name)?;
     if user.id == account.id {
-        account.delete(&*rockets.conn, &rockets.searcher)?;
+        account.delete(&*rockets.conn)?;
 
         let target = User::one_by_instance(&*rockets.conn)?;
         let delete_act = account.delete_activity(&*rockets.conn)?;

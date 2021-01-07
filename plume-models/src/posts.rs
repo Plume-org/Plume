@@ -1,7 +1,7 @@
 use crate::{
     ap_url, blogs::Blog, instance::Instance, medias::Media, mentions::Mention, post_authors::*,
-    safe_string::SafeString, schema::posts, search::Searcher, tags::*, timeline::*, users::User,
-    Connection, Error, PlumeRocket, PostEvent::*, Result, CONFIG, POST_CHAN,
+    safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User, Connection, Error,
+    PlumeRocket, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
     activity::{Create, Delete, Update},
@@ -93,7 +93,7 @@ impl Post {
         Ok(post)
     }
 
-    pub fn delete(&self, conn: &Connection, _searcher: &Searcher) -> Result<()> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         for m in Mention::list_for_post(&conn, self.id)? {
             m.delete(conn)?;
         }
@@ -703,7 +703,7 @@ impl AsObject<User, Delete, &PlumeRocket> for Post {
             .into_iter()
             .any(|a| actor.id == a.id);
         if can_delete {
-            self.delete(&c.conn, &c.searcher).map(|_| ())
+            self.delete(&c.conn).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }

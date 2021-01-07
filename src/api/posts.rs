@@ -230,7 +230,7 @@ pub fn delete(auth: Authorization<Write, Post>, rockets: PlumeRocket, id: i32) -
     let author = User::get(&*rockets.conn, auth.0.user_id)?;
     if let Ok(post) = Post::get(&*rockets.conn, id) {
         if post.is_author(&*rockets.conn, author.id).unwrap_or(false) {
-            post.delete(&*rockets.conn, &rockets.searcher)?;
+            post.delete(&*rockets.conn)?;
         }
     }
     Ok(Json(()))

@@ -153,8 +153,7 @@ pub fn delete(name: String, rockets: PlumeRocket) -> RespondOrRedirect {
         .and_then(|u| u.is_author_in(&*conn, &blog).ok())
         .unwrap_or(false)
     {
-        blog.delete(&conn, &rockets.searcher)
-            .expect("blog::expect: deletion error");
+        blog.delete(&conn).expect("blog::expect: deletion error");
         Flash::success(
             Redirect::to(uri!(super::instance::index)),
             i18n!(rockets.intl.catalog, "Your blog was deleted."),

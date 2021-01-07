@@ -1,6 +1,6 @@
 use crate::{
     ap_url, instance::*, medias::Media, posts::Post, safe_string::SafeString, schema::blogs,
-    search::Searcher, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
+    users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
     actor::Group,
@@ -317,9 +317,9 @@ impl Blog {
             .and_then(|c| c.url().ok())
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         for post in Post::get_for_blog(conn, &self)? {
-            post.delete(conn, searcher)?;
+            post.delete(conn)?;
         }
         diesel::delete(self)
             .execute(conn)
