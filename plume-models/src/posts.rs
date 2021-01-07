@@ -85,7 +85,7 @@ impl Post {
         Ok(post)
     }
 
-    pub fn update(&self, conn: &Connection, _searcher: &Searcher) -> Result<Self> {
+    pub fn update(&self, conn: &Connection) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
         // TODO: Call publish_published() when newly published
@@ -750,7 +750,6 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
 
     fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
-        let searcher = &c.searcher;
         let mut post = Post::from_id(c, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
@@ -812,7 +811,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
             post.update_hashtags(conn, hashtags)?;
         }
 
-        post.update(conn, searcher)?;
+        post.update(conn)?;
         Ok(())
     }
 }

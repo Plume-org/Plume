@@ -298,8 +298,7 @@ pub fn update(
             post.source = form.content.clone();
             post.license = form.license.clone();
             post.cover_id = form.cover;
-            post.update(&*conn, &rockets.searcher)
-                .expect("post::update: update error");
+            post.update(&*conn).expect("post::update: update error");
 
             if post.published {
                 post.update_mentions(
