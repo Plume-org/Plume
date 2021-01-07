@@ -63,7 +63,7 @@ impl Post {
     find_by!(posts, find_by_ap_url, ap_url as &str);
 
     last!(posts);
-    pub fn insert(conn: &Connection, new: NewPost, _searcher: &Searcher) -> Result<Self> {
+    pub fn insert(conn: &Connection, new: NewPost) -> Result<Self> {
         diesel::insert_into(posts::table)
             .values(new)
             .execute(conn)?;
@@ -571,7 +571,6 @@ impl FromId<PlumeRocket> for Post {
 
     fn from_activity(c: &PlumeRocket, article: LicensedArticle) -> Result<Self> {
         let conn = &*c.conn;
-        let searcher = &c.searcher;
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
 
@@ -619,7 +618,6 @@ impl FromId<PlumeRocket> for Post {
                 source: article.ap_object_props.source_object::<Source>()?.content,
                 cover_id: cover,
             },
-            searcher,
         )?;
 
         for author in authors {
@@ -864,7 +862,6 @@ mod tests {
                     source: "Hello".into(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             PostAuthor::insert(

@@ -481,7 +481,6 @@ pub fn create(
                 source: form.content.clone(),
                 cover_id: form.cover,
             },
-            &rockets.searcher,
         )
         .expect("post::create: post save error");
 

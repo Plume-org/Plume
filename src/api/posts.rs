@@ -105,7 +105,6 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Api<PostData> {
     let conn = &*rockets.conn;
-    let search = &rockets.searcher;
     let worker = &rockets.worker;
 
     let author = User::get(conn, auth.0.user_id)?;
@@ -155,7 +154,6 @@ pub fn create(
             source: payload.source.clone(),
             cover_id: payload.cover_id,
         },
-        search,
     )?;
 
     PostAuthor::insert(
