@@ -188,31 +188,31 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:364
+# src/routes/posts.rs:363
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:554
+# src/routes/posts.rs:553
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:561
+# src/routes/posts.rs:560
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:598
+# src/routes/posts.rs:597
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:623
+# src/routes/posts.rs:622
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:628
+# src/routes/posts.rs:627
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:668
+# src/routes/posts.rs:667
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
