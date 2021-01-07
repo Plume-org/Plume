@@ -192,27 +192,27 @@ msgstr ""
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:555
+# src/routes/posts.rs:554
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:562
+# src/routes/posts.rs:561
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:599
+# src/routes/posts.rs:598
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:624
+# src/routes/posts.rs:623
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:629
+# src/routes/posts.rs:628
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:669
+# src/routes/posts.rs:668
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
