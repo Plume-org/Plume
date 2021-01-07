@@ -85,10 +85,11 @@ impl Post {
         Ok(post)
     }
 
-    pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
+    pub fn update(&self, conn: &Connection, _searcher: &Searcher) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
-        searcher.update_document(conn, &post)?;
+        // TODO: Call publish_published() when newly published
+        self.publish_updated();
         Ok(post)
     }
 
@@ -555,6 +556,16 @@ impl Post {
             Publish {
                 msg: PostPublished(self.clone()),
                 topic: "post.published".into(),
+            },
+            None,
+        )
+    }
+
+    fn publish_updated(&self) {
+        POST_CHAN.tell(
+            Publish {
+                msg: PostUpdated(self.clone()),
+                topic: "post.updated".into(),
             },
             None,
         )
