@@ -11,7 +11,9 @@ pub struct SearchActor {
 
 impl SearchActor {
     pub fn init(searcher: Arc<Searcher>, conn: DbPool) {
-        ACTOR_SYS.actor_of_args::<SearchActor, _>("search", (searcher, conn)).expect("Failed to initialize searcher actor");
+        ACTOR_SYS
+            .actor_of_args::<SearchActor, _>("search", (searcher, conn))
+            .expect("Failed to initialize searcher actor");
     }
 }
 
