@@ -41,7 +41,7 @@ impl Actor for SearchActor {
                         self.searcher
                             .add_document(&conn.unwrap(), &post)
                             .unwrap_or_else(|e| error!("{:?}", e));
-                    },
+                    }
                     _ => {
                         error!("Failed to get database connection");
                     }
@@ -54,7 +54,7 @@ impl Actor for SearchActor {
                         self.searcher
                             .update_document(&conn.unwrap(), &post)
                             .unwrap_or_else(|e| error!("{:?}", e));
-                    },
+                    }
                     _ => {
                         error!("Failed to get database connection");
                     }
