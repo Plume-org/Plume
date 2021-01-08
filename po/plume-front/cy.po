@@ -10,11 +10,16 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=(n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((n == 3) ? 3 : ((n == 6) ? 4 : 5))));\n"
+"Plural-Forms: nplurals=6; plural=(n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? "
+"2 : ((n == 3) ? 3 : ((n == 6) ? 4 : 5))));\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Language: cy\n"
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
+
+# plume-front/src/editor.rs:189
+msgid "Do you want to load the local autosave last edited at {}?"
+msgstr ""
 
 # plume-front/src/editor.rs:114
 msgid "Open the rich text editor"
@@ -24,8 +29,8 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-# plume-front/src/editor.rs:147
-msgid "Subtitle or summary"
+# plume-front/src/editor.rs:319
+msgid "Subtitle, or summary"
 msgstr ""
 
 # plume-front/src/editor.rs:154
@@ -55,4 +60,3 @@ msgstr ""
 # plume-front/src/editor.rs:259
 msgid "Publish"
 msgstr ""
-
