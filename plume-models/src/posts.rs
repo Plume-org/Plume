@@ -893,7 +893,7 @@ mod tests {
             )
             .unwrap();
             let create = post.create_activity(conn).unwrap();
-            post.delete(conn, &r.searcher).unwrap();
+            post.delete(conn).unwrap();
 
             match inbox(&r, serde_json::to_value(create).unwrap()).unwrap() {
                 InboxResult::Post(p) => {

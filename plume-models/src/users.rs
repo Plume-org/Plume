@@ -1130,9 +1130,7 @@ impl NewUser {
 pub(crate) mod tests {
     use super::*;
     use crate::{
-        config::CONFIG,
         instance::{tests as instance_tests, Instance},
-        search::tests::get_searcher,
         tests::{db, rockets},
         Connection as Conn,
     };
