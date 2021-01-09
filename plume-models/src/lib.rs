@@ -316,10 +316,6 @@ mod tests {
         db_conn::DbConn((*DB_POOL).get().unwrap())
     }
 
-    pub(crate) fn pool() -> &'static db_conn::DbPool {
-        &*DB_POOL
-    }
-
     lazy_static! {
         static ref DB_POOL: db_conn::DbPool = {
             let pool = db_conn::DbPool::builder()

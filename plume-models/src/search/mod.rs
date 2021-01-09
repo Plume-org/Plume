@@ -8,21 +8,20 @@ pub use self::tokenizer::TokenizerKind;
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use super::{actor::SearchActor, Query, Searcher, TokenizerKind};
+    use super::{Query, Searcher};
     use crate::{
         blogs::tests::fill_database,
         config::SearchTokenizerConfig,
         post_authors::*,
         posts::{NewPost, Post},
         safe_string::SafeString,
-        tests::pool,
+        tests::db,
         CONFIG,
     };
     use diesel::Connection;
     use plume_common::utils::random_hex;
     use std::env::temp_dir;
     use std::str::FromStr;
-    use std::sync::Arc;
 
     pub(crate) fn get_searcher(tokenizers: &SearchTokenizerConfig) -> Searcher {
         let dir = temp_dir().join(&format!("plume-test-{}", random_hex()));
@@ -120,23 +119,11 @@ pub(crate) mod tests {
         Searcher::open(&dir, &CONFIG.search_tokenizers).unwrap(); //verify it's well created
     }
 
-    /*
-    This assetions fails but I don't know why.
-    `test_transaction()` doesn't commit the transaction and
-    searcher working on the other thread cannot retrieve the result.
-    But, even when we use real `transaction()`, the searcher cannot retrieve.
-    I don't know why, but in the Plume process, it works.
-    It failes only when testing.
-     */
     #[test]
-    #[ignore]
     fn search() {
-        let pool = pool();
-        let conn = &pool.get().unwrap();
-
+        let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let searcher = Arc::new(get_searcher(&CONFIG.search_tokenizers));
-            SearchActor::init(searcher.clone(), pool.clone());
+            let searcher = get_searcher(&CONFIG.search_tokenizers);
             let blog = &fill_database(conn).1[0];
             let author = &blog.list_authors(conn).unwrap()[0];
 
@@ -167,7 +154,7 @@ pub(crate) mod tests {
                 },
             )
             .unwrap();
-
+            searcher.add_document(&conn, &post).unwrap();
             searcher.commit();
             assert_eq!(
                 searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
@@ -177,6 +164,7 @@ pub(crate) mod tests {
             let newtitle = random_hex()[..8].to_owned();
             post.title = newtitle.clone();
             post.update(conn).unwrap();
+            searcher.update_document(conn, &post).unwrap();
             searcher.commit();
             assert_eq!(
                 searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
@@ -186,7 +174,7 @@ pub(crate) mod tests {
                 .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
                 .is_empty());
 
-            post.delete(conn).unwrap();
+            searcher.delete_document(&post);
             searcher.commit();
             assert!(searcher
                 .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
