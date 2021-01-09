@@ -83,8 +83,6 @@ and https://docs.joinplu.me/installation/init for more info.
         "#,
         )
         .get_matches();
-    // Initialize Rocket early to load its internal logger
-    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap());
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
@@ -178,7 +176,7 @@ Then try to restart Plume
         warn!("Please refer to the documentation to see how to configure it.");
     }
 
-    let rocket = rocket
+    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",
             routes![
