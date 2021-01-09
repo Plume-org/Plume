@@ -89,7 +89,9 @@ impl Post {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
         // TODO: Call publish_published() when newly published
-        self.publish_updated();
+        if post.published {
+            self.publish_updated();
+        }
         Ok(post)
     }
 
