@@ -3,7 +3,6 @@ use activitypub::{
     collection::{OrderedCollection, OrderedCollectionPage},
 };
 use diesel::SaveChangesDsl;
-use tracing::{info, warn};
 use rocket::{
     http::{ContentType, Cookies},
     request::LenientForm,
@@ -12,6 +11,7 @@ use rocket::{
 use rocket_i18n::I18n;
 use serde_json;
 use std::{borrow::Cow, collections::HashMap};
+use tracing::{info, warn};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::inbox;

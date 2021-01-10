@@ -1,6 +1,5 @@
 use crate::routes::RespondOrRedirect;
 use lettre::Transport;
-use tracing::warn;
 use rocket::http::ext::IntoOwned;
 use rocket::{
     http::{uri::Uri, Cookie, Cookies, SameSite},
@@ -14,6 +13,7 @@ use std::{
     sync::{Arc, Mutex},
     time::Instant,
 };
+use tracing::warn;
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::mail::{build_mail, Mailer};

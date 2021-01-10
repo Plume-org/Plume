@@ -13,7 +13,6 @@ extern crate validator_derive;
 use chrono::Utc;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
-use tracing::warn;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
@@ -28,6 +27,7 @@ use std::path::Path;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use tracing::warn;
 
 init_i18n!(
     "plume", af, ar, bg, ca, cs, cy, da, de, el, en, eo, es, fa, fi, fr, gl, he, hi, hr, hu, it,

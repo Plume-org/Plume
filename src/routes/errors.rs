@@ -1,10 +1,10 @@
 use crate::template_utils::{IntoContext, Ructe};
-use tracing::warn;
 use plume_models::{Error, PlumeRocket};
 use rocket::{
     response::{self, Responder},
     Request,
 };
+use tracing::warn;
 
 #[derive(Debug)]
 pub struct ErrorPage(Error);
