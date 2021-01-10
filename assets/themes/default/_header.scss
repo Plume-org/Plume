@@ -19,7 +19,7 @@ body > header {
 
     a {
       transform: skewX(15deg);
-     	display: flex;
+      display: flex;
      	flex-direction: column;
      	align-items: center;
      	justify-content: center;
@@ -204,8 +204,10 @@ body > header {
    		display: block;
    		position: absolute;
    		left: 50%;
-   		transform: translate(-50%, 0);
-   		transform: translateZ(0);
+       transform: translate(-50%, 0);
+       transform: translateZ(0);
+       -webkit-transform: none !important;
+       
    		opacity: 0;
    		font-size: 0.9em;
    		white-space: nowrap;
@@ -217,7 +219,8 @@ body > header {
    	  i { margin-bottom: 0.75em; }
    	  .mobile-label {
    	    opacity: 1;
-     		transform: translate(-50%, 80%);
+         transform: translate(-50%, 80%);
+         -webkit-transform: translate(-50%) 80%);
    		}
     }
  	}
@@ -237,6 +240,18 @@ body > header {
       opacity: 1;
     }
   }
+    @-webkit-keyframes menuOpening {
+        from {
+          -webkit-transform: scaleX(0);
+          transform-origin: 'left';
+          opacity: 0;
+        }
+      to {
+      -webkit-transform: scaleX(1);
+      transform-origin: 'left';
+      opacity: 1;
+  }
+}
 
   body > header {
     flex-direction: column;
