@@ -1,4 +1,3 @@
-use tracing::warn;
 use plume_common::activity_pub::{
     inbox::FromId,
     request::Digest,
@@ -11,6 +10,7 @@ use rocket::{data::*, http::Status, response::status, Outcome::*, Request};
 use rocket_contrib::json::*;
 use serde::Deserialize;
 use std::io::Read;
+use tracing::warn;
 
 pub fn handle_incoming(
     rockets: PlumeRocket,

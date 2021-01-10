@@ -1,6 +1,5 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use tracing::{debug, warn};
 use reqwest::r#async::ClientBuilder;
 use rocket::{
     http::Status,
@@ -10,6 +9,7 @@ use rocket::{
 };
 use serde_json;
 use tokio::prelude::*;
+use tracing::{debug, warn};
 
 use self::sign::Signable;
 
