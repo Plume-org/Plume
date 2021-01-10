@@ -19,3 +19,4 @@ search_index
 .buildconfig
 __pycache__
 .vscode/
+*-journal
