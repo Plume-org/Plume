@@ -7,6 +7,7 @@
 ### Added
 
 - Allow `dir` attributes for LtoR text in RtoL document (#860)
+- More translation languages (#862)
 
 ### Changed
 
