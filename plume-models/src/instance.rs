@@ -306,12 +306,6 @@ pub(crate) mod tests {
         res
     }
 
-    pub(crate) fn clear_instances(conn: &Conn) {
-        diesel::delete(crate::schema::instances::table)
-            .execute(conn)
-            .unwrap();
-    }
-
     #[test]
     fn local_instance() {
         let conn = &db();

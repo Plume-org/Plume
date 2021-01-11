@@ -1171,12 +1171,6 @@ pub(crate) mod tests {
         vec![admin, user, other]
     }
 
-    pub(crate) fn clear_users(conn: &Conn) {
-        diesel::delete(crate::schema::users::table)
-            .execute(conn)
-            .unwrap();
-    }
-
     #[test]
     fn find_by() {
         let r = rockets();
