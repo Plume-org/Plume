@@ -1172,7 +1172,9 @@ pub(crate) mod tests {
     }
 
     pub(crate) fn clear_users(conn: &Conn) {
-        diesel::delete(crate::schema::users::table).execute(conn).unwrap();
+        diesel::delete(crate::schema::users::table)
+            .execute(conn)
+            .unwrap();
     }
 
     #[test]
