@@ -2,6 +2,8 @@ use super::Searcher;
 use crate::{db_conn::DbPool, posts::PostEvent, ACTOR_SYS, POST_CHAN};
 use riker::actors::{Actor, ActorFactoryArgs, ActorRefFactory, Context, Sender, Subscribe, Tell};
 use std::sync::Arc;
+use std::thread::sleep;
+use std::time::Duration;
 use tracing::error;
 
 pub struct SearchActor {
@@ -32,6 +34,9 @@ impl Actor for SearchActor {
 
     fn recv(&mut self, _ctx: &Context<Self::Msg>, msg: Self::Msg, _sender: Sender) {
         use PostEvent::*;
+
+        // Wait for transaction commited
+        sleep(Duration::from_millis(500));
 
         match msg {
             PostPublished(post) => {
