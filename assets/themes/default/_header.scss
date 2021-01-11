@@ -204,9 +204,9 @@ body > header {
    		display: block;
    		position: absolute;
    		left: 50%;
-       transform: translate(-50%, 0);
-       transform: translateZ(0);
-       -webkit-transform: none !important;
+         transform: translate(-50%, 0);
+         transform: translateZ(0);
+         -webkit-transform: none !important;
        
    		opacity: 0;
    		font-size: 0.9em;
@@ -219,8 +219,8 @@ body > header {
    	  i { margin-bottom: 0.75em; }
    	  .mobile-label {
    	    opacity: 1;
-         transform: translate(-50%, 80%);
-         -webkit-transform: translate(-50%, 80%);
+           transform: translate(-50%, 80%);
+           -webkit-transform: translate(-50%, 80%);
    		}
     }
  	}
