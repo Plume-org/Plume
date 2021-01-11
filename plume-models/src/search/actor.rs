@@ -42,9 +42,9 @@ impl Actor for SearchActor {
             PostPublished(post) => {
                 let conn = self.conn.get();
                 match conn {
-                    Ok(_) => {
+                    Ok(conn) => {
                         self.searcher
-                            .add_document(&conn.unwrap(), &post)
+                            .add_document(&conn, &post)
                             .unwrap_or_else(|e| error!("{:?}", e));
                     }
                     _ => {
