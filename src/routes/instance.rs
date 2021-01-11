@@ -387,7 +387,7 @@ fn ban(
         .unwrap();
         let target = User::one_by_instance(&*conn)?;
         let delete_act = u.delete_activity(&*conn)?;
-        worker.execute(move || broadcast(&u, delete_act, target));
+        worker.execute(move || broadcast(&u, delete_act, target, CONFIG.proxy().cloned()));
     }
 
     Ok(())
@@ -408,13 +408,13 @@ pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Opt
         return Some(Redirect::to(uri!(super::user::details: name = target)));
     }
 
-    if let Ok(post) = Post::from_id(&rockets, &target, None) {
+    if let Ok(post) = Post::from_id(&rockets, &target, None, CONFIG.proxy()) {
         return Some(Redirect::to(
             uri!(super::posts::details: blog = post.get_blog(&rockets.conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _),
         ));
     }
 
-    if let Ok(comment) = Comment::from_id(&rockets, &target, None) {
+    if let Ok(comment) = Comment::from_id(&rockets, &target, None, CONFIG.proxy()) {
         if comment.can_see(&rockets.conn, user.as_ref()) {
             let post = comment
                 .get_post(&rockets.conn)

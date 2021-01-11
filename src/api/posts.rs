@@ -8,6 +8,7 @@ use plume_common::{activity_pub::broadcast, utils::md_to_html};
 use plume_models::{
     blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::*, post_authors::*,
     posts::*, safe_string::SafeString, tags::*, timeline::*, users::User, Error, PlumeRocket,
+    CONFIG,
 };
 
 #[get("/posts/<id>")]
@@ -201,7 +202,7 @@ pub fn create(
 
         let act = post.create_activity(&*conn)?;
         let dest = User::one_by_instance(&*conn)?;
-        worker.execute(move || broadcast(&author, act, dest));
+        worker.execute(move || broadcast(&author, act, dest, CONFIG.proxy().cloned()));
     }
 
     Timeline::add_to_all_timelines(&rockets, &post, Kind::Original)?;

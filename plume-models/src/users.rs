@@ -1,8 +1,8 @@
 use crate::{
-    ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, config::CONFIG, db_conn::DbConn,
-    follows::Follow, instance::*, medias::Media, notifications::Notification,
-    post_authors::PostAuthor, posts::Post, safe_string::SafeString, schema::users,
-    search::Searcher, timeline::Timeline, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE,
+    ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, db_conn::DbConn, follows::Follow,
+    instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
+    safe_string::SafeString, schema::users, search::Searcher, timeline::Timeline, Connection,
+    Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
     activity::Delete,
@@ -210,7 +210,7 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(c, link.href.as_ref()?, None).map_err(|(_, e)| e)
+        User::from_id(c, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
     }
 
     pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {

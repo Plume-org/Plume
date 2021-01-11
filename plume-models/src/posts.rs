@@ -570,12 +570,15 @@ impl FromId<PlumeRocket> for Post {
             .into_iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
                 let url = link;
-                match User::from_id(&c, &url, None) {
+                match User::from_id(&c, &url, None, CONFIG.proxy()) {
                     Ok(u) => {
                         authors.push(u);
                         (blog, authors)
                     }
-                    Err(_) => (blog.or_else(|| Blog::from_id(&c, &url, None).ok()), authors),
+                    Err(_) => (
+                        blog.or_else(|| Blog::from_id(&c, &url, None, CONFIG.proxy()).ok()),
+                        authors,
+                    ),
                 }
             });
 
@@ -728,7 +731,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
     fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
         let searcher = &c.searcher;
-        let mut post = Post::from_id(c, &self.ap_url, None).map_err(|(_, e)| e)?;
+        let mut post = Post::from_id(c, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

@@ -4,7 +4,7 @@ use plume_common::activity_pub::{
     sign::{verify_http_headers, Signable},
 };
 use plume_models::{
-    headers::Headers, inbox::inbox, instance::Instance, users::User, Error, PlumeRocket,
+    headers::Headers, inbox::inbox, instance::Instance, users::User, Error, PlumeRocket, CONFIG,
 };
 use rocket::{data::*, http::Status, response::status, Outcome::*, Request};
 use rocket_contrib::json::*;
@@ -27,8 +27,8 @@ pub fn handle_incoming(
         .or_else(|| activity["actor"]["id"].as_str())
         .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor =
-        User::from_id(&rockets, actor_id, None).expect("instance::shared_inbox: user error");
+    let actor = User::from_id(&rockets, actor_id, None, CONFIG.proxy())
+        .expect("instance::shared_inbox: user error");
     if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
         // maybe we just know an old key?
         actor

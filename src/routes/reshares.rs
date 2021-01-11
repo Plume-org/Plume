@@ -6,7 +6,7 @@ use plume_common::activity_pub::broadcast;
 use plume_common::utils;
 use plume_models::{
     blogs::Blog, inbox::inbox, posts::Post, reshares::*, timeline::*, users::User, Error,
-    PlumeRocket,
+    PlumeRocket, CONFIG,
 };
 
 #[post("/~/<blog>/<slug>/reshare")]
@@ -28,7 +28,9 @@ pub fn create(
 
         let dest = User::one_by_instance(&*conn)?;
         let act = reshare.to_activity(&*conn)?;
-        rockets.worker.execute(move || broadcast(&user, act, dest));
+        rockets
+            .worker
+            .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
         let reshare = Reshare::find_by_user_on_post(&*conn, user.id, post.id)?;
         let delete_act = reshare.build_undo(&*conn)?;
@@ -40,7 +42,7 @@ pub fn create(
         let dest = User::one_by_instance(&*conn)?;
         rockets
             .worker
-            .execute(move || broadcast(&user, delete_act, dest));
+            .execute(move || broadcast(&user, delete_act, dest, CONFIG.proxy().cloned()));
     }
 
     Ok(Redirect::to(

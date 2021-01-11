@@ -1,6 +1,6 @@
 use crate::{
     notifications::*, posts::Post, schema::reshares, timeline::*, users::User, Connection, Error,
-    PlumeRocket, Result,
+    PlumeRocket, Result, CONFIG,
 };
 use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
@@ -140,12 +140,22 @@ impl FromId<PlumeRocket> for Reshare {
         let res = Reshare::insert(
             &c.conn,
             NewReshare {
-                post_id: Post::from_id(c, &act.announce_props.object_link::<Id>()?, None)
-                    .map_err(|(_, e)| e)?
-                    .id,
-                user_id: User::from_id(c, &act.announce_props.actor_link::<Id>()?, None)
-                    .map_err(|(_, e)| e)?
-                    .id,
+                post_id: Post::from_id(
+                    c,
+                    &act.announce_props.object_link::<Id>()?,
+                    None,
+                    CONFIG.proxy(),
+                )
+                .map_err(|(_, e)| e)?
+                .id,
+                user_id: User::from_id(
+                    c,
+                    &act.announce_props.actor_link::<Id>()?,
+                    None,
+                    CONFIG.proxy(),
+                )
+                .map_err(|(_, e)| e)?
+                .id,
                 ap_url: act.object_props.id_string()?,
             },
         )?;

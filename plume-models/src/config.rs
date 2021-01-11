@@ -1,6 +1,7 @@
 use crate::search::TokenizerKind as SearchTokenizer;
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
+use std::collections::HashSet;
 use std::env::{self, var};
 
 #[cfg(not(test))]
@@ -21,6 +22,12 @@ pub struct Config {
     pub default_theme: String,
     pub media_directory: String,
     pub ldap: Option<LdapConfig>,
+    pub proxy: Option<ProxyConfig>,
+}
+impl Config {
+    pub fn proxy(&self) -> Option<&reqwest::Proxy> {
+        self.proxy.as_ref().map(|p| &p.proxy)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -277,6 +284,49 @@ fn get_ldap_config() -> Option<LdapConfig> {
     }
 }
 
+pub struct ProxyConfig {
+    pub url: reqwest::Url,
+    pub only_domains: Option<HashSet<String>>,
+    pub proxy: reqwest::Proxy,
+}
+
+fn get_proxy_config() -> Option<ProxyConfig> {
+    let url: reqwest::Url = var("PROXY_URL").ok()?.parse().expect("Invalid PROXY_URL");
+    let proxy_url = url.clone();
+    let only_domains: Option<HashSet<String>> = var("PROXY_DOMAINS")
+        .ok()
+        .map(|ods| ods.split(",").map(str::to_owned).collect());
+    let proxy = if let Some(ref only_domains) = only_domains {
+        let only_domains = only_domains.clone();
+        reqwest::Proxy::custom(move |url| {
+            if let Some(domain) = url.domain() {
+                if only_domains.contains(domain)
+                    || only_domains
+                        .iter()
+                        .filter(|target| domain.ends_with(&format!(".{}", target)))
+                        .next()
+                        .is_some()
+                {
+                    Some(proxy_url.clone())
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        })
+    } else {
+        reqwest::Proxy::all(proxy_url)
+            .ok()
+            .expect("Invalid PROXY_URL")
+    };
+    Some(ProxyConfig {
+        url,
+        only_domains,
+        proxy,
+    })
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -305,5 +355,6 @@ lazy_static! {
         media_directory: var("MEDIA_UPLOAD_DIRECTORY")
             .unwrap_or_else(|_| "static/media".to_owned()),
         ldap: get_ldap_config(),
+        proxy: get_proxy_config(),
     };
 }

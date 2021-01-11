@@ -214,12 +214,20 @@ msgid "Your article has been deleted."
 msgstr "Makalen silindi."
 
 # src/routes/posts.rs:612
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr "Görünüşe göre silmek istediğin makale mevcut değil. Belki de zaten silinmiştir?"
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+"Görünüşe göre silmek istediğin makale mevcut değil. Belki de zaten "
+"silinmiştir?"
 
 # src/routes/posts.rs:652
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "Hesabın hakkında yeterli bilgi edinemedik. Lütfen kullanıcı adını doğru yazdığından emin ol."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+"Hesabın hakkında yeterli bilgi edinemedik. Lütfen kullanıcı adını doğru "
+"yazdığından emin ol."
 
 # src/routes/reshares.rs:54
 msgid "To reshare a post, you need to be logged in"
@@ -282,208 +290,66 @@ msgid "Registrations are closed on this instance."
 msgstr "Bu örnekte kayıtlar kapalıdır."
 
 # src/routes/user.rs:549
-msgid "Your account has been created. Now you just need to log in, before you can use it."
-msgstr "Hesabınız oluşturuldu. Şimdi kullanabilmeniz için giriş yapmanız yeterlidir."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
+msgstr ""
+"Hesabınız oluşturuldu. Şimdi kullanabilmeniz için giriş yapmanız yeterlidir."
 
-msgid "Media upload"
-msgstr "Medya karşıya yükleme"
+msgid "New Blog"
+msgstr "Yeni Günlük"
+
+msgid "Create a blog"
+msgstr "Bir günlük oluştur"
+
+msgid "Title"
+msgstr "Başlık"
+
+msgid "Create blog"
+msgstr "Günlük oluştur"
+
+msgid "{}'s icon"
+msgstr "{}'in simgesi"
+
+msgid "Edit"
+msgstr "Düzenle"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Bu günlükte bir tane yazar bulunmaktadır: "
+msgstr[1] "Bu günlükte {0} tane yazar bulunmaktadır: "
+
+msgid "Latest articles"
+msgstr "Son makaleler"
+
+msgid "No posts to see here yet."
+msgstr "Burada henüz görülecek gönderi yok."
+
+msgid "Edit \"{}\""
+msgstr "Düzenle: \"{}\""
 
 msgid "Description"
 msgstr "Açıklama"
 
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Görme engelli kişiler ve lisanslama bilgileri için kullanışlıdır"
+msgid "Markdown syntax is supported"
+msgstr "Markdown kullanabilirsin"
 
-msgid "Content warning"
-msgstr "İçerik uyarısı"
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+"Günlük simgeleri veya manşeti olarak kullanmak için resimleri galerinize "
+"yükleyebilirsiniz."
 
-msgid "Leave it empty, if none is needed"
-msgstr "Gerekmiyorsa boş bırakın"
+msgid "Upload images"
+msgstr "Resimleri karşıya yükle"
 
-msgid "File"
-msgstr "Dosya"
+msgid "Blog icon"
+msgstr "Günlük simgesi"
 
-msgid "Send"
-msgstr "Gönder"
+msgid "Blog banner"
+msgstr "Günlük manşeti"
 
-msgid "Your media"
-msgstr "Medyanız"
-
-msgid "Upload"
-msgstr "Karşıya yükle"
-
-msgid "You don't have any media yet."
-msgstr "Henüz medyanız yok."
-
-msgid "Content warning: {0}"
-msgstr "İçerik uyarısı: {0}"
-
-msgid "Delete"
-msgstr "Sil"
-
-msgid "Details"
-msgstr "Detaylar"
-
-msgid "Media details"
-msgstr "Medya detayları"
-
-msgid "Go back to the gallery"
-msgstr "Galeriye geri dön"
-
-msgid "Markdown syntax"
-msgstr "Markdown sözdizimi"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "Bu medya ögesini makalelerine eklemek için, bunu kopyala:"
-
-msgid "Use as an avatar"
-msgstr "Avatar olarak kullan"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "Menü"
-
-msgid "Search"
-msgstr "Ara"
-
-msgid "Dashboard"
-msgstr "Yönetim paneli"
-
-msgid "Notifications"
-msgstr "Bildirimler"
-
-msgid "Log Out"
-msgstr "Çıkış Yap"
-
-msgid "My account"
-msgstr "Hesabım"
-
-msgid "Log In"
-msgstr "Giriş Yap"
-
-msgid "Register"
-msgstr "Kayıt Ol"
-
-msgid "About this instance"
-msgstr "Bu örnek hakkında"
-
-msgid "Privacy policy"
-msgstr "Gizlilik politikası"
-
-msgid "Administration"
-msgstr "Yönetim"
-
-msgid "Documentation"
-msgstr "Dokümantasyon"
-
-msgid "Source code"
-msgstr "Kaynak kodu"
-
-msgid "Matrix room"
-msgstr "Matrix odası"
-
-msgid "Admin"
-msgstr "Yönetici"
-
-msgid "It is you"
-msgstr "Bu sizsiniz"
-
-msgid "Edit your profile"
-msgstr "Profilinizi düzenleyin"
-
-msgid "Open on {0}"
-msgstr "{0}'da Aç"
-
-msgid "Unsubscribe"
-msgstr "Abonelikten Çık"
-
-msgid "Subscribe"
-msgstr "Abone Ol"
-
-msgid "Follow {}"
-msgstr "Takip et: {}"
-
-msgid "Log in to follow"
-msgstr "Takip etmek için giriş yapın"
-
-msgid "Enter your full username handle to follow"
-msgstr "Takip etmek için kullanıcı adınızın tamamını girin"
-
-msgid "{0}'s subscribers"
-msgstr "{0}'in aboneleri"
-
-msgid "Articles"
-msgstr "Makaleler"
-
-msgid "Subscribers"
-msgstr "Aboneler"
-
-msgid "Subscriptions"
-msgstr "Abonelikler"
-
-msgid "Create your account"
-msgstr "Hesabınızı oluşturun"
-
-msgid "Create an account"
-msgstr "Bir hesap oluştur"
-
-msgid "Username"
-msgstr "Kullanıcı adı"
-
-msgid "Email"
-msgstr "E-posta"
-
-msgid "Password"
-msgstr "Parola"
-
-msgid "Password confirmation"
-msgstr "Parola doğrulama"
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "Özür dileriz, ancak bu örnek kayıt olmaya kapalıdır. Ama farklı bir tane bulabilirsiniz."
-
-msgid "{0}'s subscriptions"
-msgstr "{0}'in abonelikleri"
-
-msgid "Your Dashboard"
-msgstr "Yönetim Panelin"
-
-msgid "Your Blogs"
-msgstr "Günlüklerin"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "Henüz hiç günlüğün yok :( Bir tane yarat veya birine katılmak için izin al."
-
-msgid "Start a new blog"
-msgstr "Yeni bir günlük başlat"
-
-msgid "Your Drafts"
-msgstr "Taslakların"
-
-msgid "Go to your gallery"
-msgstr "Galerine git"
-
-msgid "Edit your account"
-msgstr "Hesabınızı düzenleyin"
-
-msgid "Your Profile"
-msgstr "Profiliniz"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "Avatarınızı değiştirmek için galerinize yükleyin ve ardından oradan seçin."
-
-msgid "Upload an avatar"
-msgstr "Bir avatar yükle"
-
-msgid "Display name"
-msgstr "Görünen isim"
-
-msgid "Summary"
-msgstr "Özet"
-
-msgid "Theme"
+msgid "Custom theme"
 msgstr ""
 
 msgid "Default theme"
@@ -492,218 +358,20 @@ msgstr ""
 msgid "Error while loading theme selector."
 msgstr ""
 
-msgid "Never load blogs custom themes"
-msgstr ""
-
-msgid "Update account"
-msgstr "Hesap güncelleme"
+msgid "Update blog"
+msgstr "Günlüğü güncelle"
 
 msgid "Danger zone"
 msgstr "Tehlikeli bölge"
 
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Çok dikkatli ol, burada yapacağın herhangi bir işlem iptal edilemez."
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Çok dikkatli ol, burada yapacağın herhangi bir işlem geri alınamaz."
 
-msgid "Delete your account"
-msgstr "Hesabını Sil"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "Üzgünüm ama bir yönetici olarak kendi oluşumundan çıkamazsın."
-
-msgid "Latest articles"
-msgstr "Son makaleler"
-
-msgid "Atom feed"
-msgstr "Atom haber akışı"
-
-msgid "Recently boosted"
-msgstr "Yakın zamanda desteklenler"
-
-msgid "Articles tagged \"{0}\""
-msgstr "\"{0}\" etiketine sahip makaleler"
-
-msgid "There are currently no articles with such a tag"
-msgstr "Öyle bir etikete sahip bir makale henüz yok"
-
-msgid "The content you sent can't be processed."
-msgstr "Gönderdiğiniz içerik işlenemiyor."
-
-msgid "Maybe it was too long."
-msgstr "Belki çok uzundu."
-
-msgid "Internal server error"
-msgstr "İç sunucu hatası"
-
-msgid "Something broke on our side."
-msgstr "Bizim tarafımızda bir şeyler bozuldu."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Bunun için üzgünüz. Bunun bir hata olduğunu düşünüyorsanız, lütfen bildirin."
-
-msgid "Invalid CSRF token"
-msgstr "Geçersiz CSRF belirteci"
-
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "CSRF belirtecinizle ilgili bir sorun var. Tarayıcınızda çerezlerin etkinleştirildiğinden emin olun ve bu sayfayı yeniden yüklemeyi deneyin. Bu hata mesajını görmeye devam ederseniz, lütfen bildirin."
-
-msgid "You are not authorized."
-msgstr "Yetkiniz yok."
-
-msgid "Page not found"
-msgstr "Sayfa bulunamadı"
-
-msgid "We couldn't find this page."
-msgstr "Bu sayfayı bulamadık."
-
-msgid "The link that led you here may be broken."
-msgstr "Seni buraya getiren bağlantı bozuk olabilir."
-
-msgid "Users"
-msgstr "Kullanıcılar"
-
-msgid "Configuration"
-msgstr "Yapılandırma"
-
-msgid "Instances"
-msgstr "Örnekler"
-
-msgid "Email blocklist"
+msgid "Are you sure that you want to permanently delete this blog?"
 msgstr ""
 
-msgid "Grant admin rights"
-msgstr ""
-
-msgid "Revoke admin rights"
-msgstr ""
-
-msgid "Grant moderator rights"
-msgstr ""
-
-msgid "Revoke moderator rights"
-msgstr ""
-
-msgid "Ban"
-msgstr "Yasakla"
-
-msgid "Run on selected users"
-msgstr ""
-
-msgid "Moderator"
-msgstr ""
-
-msgid "Moderation"
-msgstr ""
-
-msgid "Home"
-msgstr ""
-
-msgid "Administration of {0}"
-msgstr "{0} yönetimi"
-
-msgid "Unblock"
-msgstr "Engellemeyi kaldır"
-
-msgid "Block"
-msgstr "Engelle"
-
-msgid "Name"
-msgstr "İsim"
-
-msgid "Allow anyone to register here"
-msgstr "Herkesin buraya kaydolmasına izin ver"
-
-msgid "Short description"
-msgstr "Kısa açıklama"
-
-msgid "Markdown syntax is supported"
-msgstr "Markdown kullanabilirsin"
-
-msgid "Long description"
-msgstr "Uzun açıklama"
-
-msgid "Default article license"
-msgstr "Varsayılan makale lisansı"
-
-msgid "Save these settings"
-msgstr "Bu ayarları kaydet"
-
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr "Bu siteye ziyaretçi olarak göz atıyorsanız, hakkınızda veri toplanmamaktadır."
-
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr "Kayıtlı bir kullanıcı olarak, giriş yapmak, makale yazmak ve yorum yapmak için bir kullanıcı adına (ki bu kullanıcı adının senin gerçek adın olması gerekmiyor), kullanabildiğin bir e-posta adresine ve bir şifreye ihtiyacın var. Girdiğin bilgiler sen hesabını silene dek depolanır."
-
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr "Giriş yaptığınızda; biri oturumunuzu açık tutmak için, ikincisi başkalarının sizin adınıza hareket etmesini önlemek için iki çerez saklamaktayız. Başka çerez saklamıyoruz."
-
-msgid "Blocklisted Emails"
-msgstr ""
-
-msgid "Email address"
-msgstr ""
-
-msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
-msgstr ""
-
-msgid "Note"
-msgstr ""
-
-msgid "Notify the user?"
-msgstr ""
-
-msgid "Optional, shows a message to the user when they attempt to create an account with that address"
-msgstr ""
-
-msgid "Blocklisting notification"
-msgstr ""
-
-msgid "The message to be shown when the user attempts to create an account with this email address"
-msgstr ""
-
-msgid "Add blocklisted address"
-msgstr ""
-
-msgid "There are no blocked emails on your instance"
-msgstr ""
-
-msgid "Delete selected emails"
-msgstr ""
-
-msgid "Email address:"
-msgstr ""
-
-msgid "Blocklisted for:"
-msgstr ""
-
-msgid "Will notify them on account creation with this message:"
-msgstr ""
-
-msgid "The user will be silently prevented from making an account"
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr "{}'e hoş geldiniz"
-
-msgid "View all"
-msgstr "Hepsini görüntüle"
-
-msgid "About {0}"
-msgstr "{0} hakkında"
-
-msgid "Runs Plume {0}"
-msgstr "Plume {0} kullanır"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "<em>{0}</em> kişinin evi"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Makale yazan <em>{0}</em> yazar"
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr "Ve diğer <em>{0}</em> örneğe bağlı"
-
-msgid "Administred by"
-msgstr "Yönetenler"
+msgid "Permanently delete this blog"
+msgstr "Bu günlüğü kalıcı olarak sil"
 
 msgid "Interact with {}"
 msgstr "{} ile etkileşime geç"
@@ -720,17 +388,18 @@ msgstr "Yayınla"
 msgid "Classic editor (any changes will be lost)"
 msgstr "Klasik editör (bir değişiklik yaparsan kaydedilmeyecek)"
 
-msgid "Title"
-msgstr "Başlık"
-
 msgid "Subtitle"
 msgstr "Altyazı"
 
 msgid "Content"
 msgstr "İçerik"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "Galerine bir resim ekleyebilir, daha sonra makalene eklemek için resmin Markdown kodunu kopyalayabilirsin."
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+"Galerine bir resim ekleyebilir, daha sonra makalene eklemek için resmin "
+"Markdown kodunu kopyalayabilirsin."
 
 msgid "Upload media"
 msgstr "Medyayı karşıya yükle"
@@ -787,11 +456,24 @@ msgstr "Bunu artık desteklemek istemiyorum"
 msgid "Boost"
 msgstr "Destekle"
 
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr "{0}Giriş yaparak{1}, ya da {2}Fediverse hesabını kullanarak{3} bu makaleyle iletişime geç"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
+msgstr ""
+"{0}Giriş yaparak{1}, ya da {2}Fediverse hesabını kullanarak{3} bu makaleyle "
+"iletişime geç"
+
+msgid "Unsubscribe"
+msgstr "Abonelikten Çık"
+
+msgid "Subscribe"
+msgstr "Abone Ol"
 
 msgid "Comments"
 msgstr "Yorumlar"
+
+msgid "Content warning"
+msgstr "İçerik uyarısı"
 
 msgid "Your comment"
 msgstr "Yorumunuz"
@@ -805,14 +487,105 @@ msgstr "Henüz yorum yok. İlk tepki veren siz olun!"
 msgid "Are you sure?"
 msgstr "Emin misiniz?"
 
+msgid "Delete"
+msgstr "Sil"
+
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr "Bu makale hâlâ bir taslak. Yalnızca sen ve diğer yazarlar bunu görebilir."
+msgstr ""
+"Bu makale hâlâ bir taslak. Yalnızca sen ve diğer yazarlar bunu görebilir."
 
 msgid "Only you and other authors can edit this article."
 msgstr "Sadece sen ve diğer yazarlar bu makaleyi düzenleyebilir."
 
-msgid "Edit"
-msgstr "Düzenle"
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "Search"
+msgstr "Ara"
+
+msgid "Dashboard"
+msgstr "Yönetim paneli"
+
+msgid "Notifications"
+msgstr "Bildirimler"
+
+msgid "Log Out"
+msgstr "Çıkış Yap"
+
+msgid "My account"
+msgstr "Hesabım"
+
+msgid "Log In"
+msgstr "Giriş Yap"
+
+msgid "Register"
+msgstr "Kayıt Ol"
+
+msgid "About this instance"
+msgstr "Bu örnek hakkında"
+
+msgid "Privacy policy"
+msgstr "Gizlilik politikası"
+
+msgid "Administration"
+msgstr "Yönetim"
+
+msgid "Documentation"
+msgstr "Dokümantasyon"
+
+msgid "Source code"
+msgstr "Kaynak kodu"
+
+msgid "Matrix room"
+msgstr "Matrix odası"
+
+msgid "Media upload"
+msgstr "Medya karşıya yükleme"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Görme engelli kişiler ve lisanslama bilgileri için kullanışlıdır"
+
+msgid "Leave it empty, if none is needed"
+msgstr "Gerekmiyorsa boş bırakın"
+
+msgid "File"
+msgstr "Dosya"
+
+msgid "Send"
+msgstr "Gönder"
+
+msgid "Your media"
+msgstr "Medyanız"
+
+msgid "Upload"
+msgstr "Karşıya yükle"
+
+msgid "You don't have any media yet."
+msgstr "Henüz medyanız yok."
+
+msgid "Content warning: {0}"
+msgstr "İçerik uyarısı: {0}"
+
+msgid "Details"
+msgstr "Detaylar"
+
+msgid "Media details"
+msgstr "Medya detayları"
+
+msgid "Go back to the gallery"
+msgstr "Galeriye geri dön"
+
+msgid "Markdown syntax"
+msgstr "Markdown sözdizimi"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Bu medya ögesini makalelerine eklemek için, bunu kopyala:"
+
+msgid "Use as an avatar"
+msgstr "Avatar olarak kullan"
 
 msgid "I'm from this instance"
 msgstr "Ben bu oluşumdanım!"
@@ -820,139 +593,29 @@ msgstr "Ben bu oluşumdanım!"
 msgid "Username, or email"
 msgstr "Kullanıcı adı veya e-posta"
 
+msgid "Password"
+msgstr "Parola"
+
 msgid "Log in"
 msgstr "Oturum aç"
 
 msgid "I'm from another instance"
 msgstr "Başka bir oluşumdanım ben!"
 
+msgid "Username"
+msgstr "Kullanıcı adı"
+
 msgid "Continue to your instance"
 msgstr "Oluşumuna devam et"
-
-msgid "Reset your password"
-msgstr "Parolanızı sıfırlayın"
-
-msgid "New password"
-msgstr "Yeni parola"
-
-msgid "Confirmation"
-msgstr "Doğrulama"
-
-msgid "Update password"
-msgstr "Parolayı güncelle"
-
-msgid "Check your inbox!"
-msgstr "Gelen kutunuzu kontrol edin!"
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "Bize verdiğiniz adrese, parola sıfırlama linki içeren bir e-posta gönderdik."
-
-msgid "Send password reset link"
-msgstr "Parola sıfırlama linki gönder"
-
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
-msgstr ""
-
-msgid "New Blog"
-msgstr "Yeni Günlük"
-
-msgid "Create a blog"
-msgstr "Bir günlük oluştur"
-
-msgid "Create blog"
-msgstr "Günlük oluştur"
-
-msgid "Edit \"{}\""
-msgstr "Düzenle: \"{}\""
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "Günlük simgeleri veya manşeti olarak kullanmak için resimleri galerinize yükleyebilirsiniz."
-
-msgid "Upload images"
-msgstr "Resimleri karşıya yükle"
-
-msgid "Blog icon"
-msgstr "Günlük simgesi"
-
-msgid "Blog banner"
-msgstr "Günlük manşeti"
-
-msgid "Custom theme"
-msgstr ""
-
-msgid "Update blog"
-msgstr "Günlüğü güncelle"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Çok dikkatli ol, burada yapacağın herhangi bir işlem geri alınamaz."
-
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr "Bu günlüğü kalıcı olarak sil"
-
-msgid "{}'s icon"
-msgstr "{}'in simgesi"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Bu günlükte bir tane yazar bulunmaktadır: "
-msgstr[1] "Bu günlükte {0} tane yazar bulunmaktadır: "
-
-msgid "No posts to see here yet."
-msgstr "Burada henüz görülecek gönderi yok."
 
 msgid "Nothing to see here yet."
 msgstr ""
 
-msgid "None"
-msgstr "Resim ayarlanmamış"
+msgid "Articles tagged \"{0}\""
+msgstr "\"{0}\" etiketine sahip makaleler"
 
-msgid "No description"
-msgstr "Açıklama yok"
-
-msgid "Respond"
-msgstr "Yanıtla"
-
-msgid "Delete this comment"
-msgstr "Bu yorumu sil"
-
-msgid "What is Plume?"
-msgstr "Plume Nedir?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Plume merkezi olmayan bir internet günlüğü yazma motorudur."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "Yazarlar her biri farklı sitedeki birden çok günlüğü yönetebilirler."
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "Makaleler ayrıca diğer Plume oluşumlarında da görünür. Mastodon gibi platformlardan yazılarla doğrudan etkileşime geçebilirsin."
-
-msgid "Read the detailed rules"
-msgstr "Detaylı kuralları oku"
-
-msgid "By {0}"
-msgstr "{0} tarafından"
-
-msgid "Draft"
-msgstr "Taslak"
-
-msgid "Search result(s) for \"{0}\""
-msgstr "\"{0}\" için arama sonuçları"
-
-msgid "Search result(s)"
-msgstr "Arama sonuçları"
-
-msgid "No results for your query"
-msgstr "Sorgunuz için sonuç yok"
-
-msgid "No more results for your query"
-msgstr "Sorgunuz için başka sonuç yok"
+msgid "There are currently no articles with such a tag"
+msgstr "Öyle bir etikete sahip bir makale henüz yok"
 
 msgid "Advanced search"
 msgstr "Gelişmiş arama"
@@ -1011,3 +674,408 @@ msgstr "Bu lisans altında yayınlanan"
 msgid "Article license"
 msgstr "Makale lisansı"
 
+msgid "Search result(s) for \"{0}\""
+msgstr "\"{0}\" için arama sonuçları"
+
+msgid "Search result(s)"
+msgstr "Arama sonuçları"
+
+msgid "No results for your query"
+msgstr "Sorgunuz için sonuç yok"
+
+msgid "No more results for your query"
+msgstr "Sorgunuz için başka sonuç yok"
+
+msgid "{0}'s subscriptions"
+msgstr "{0}'in abonelikleri"
+
+msgid "Articles"
+msgstr "Makaleler"
+
+msgid "Subscribers"
+msgstr "Aboneler"
+
+msgid "Subscriptions"
+msgstr "Abonelikler"
+
+msgid "{0}'s subscribers"
+msgstr "{0}'in aboneleri"
+
+msgid "Admin"
+msgstr "Yönetici"
+
+msgid "It is you"
+msgstr "Bu sizsiniz"
+
+msgid "Edit your profile"
+msgstr "Profilinizi düzenleyin"
+
+msgid "Open on {0}"
+msgstr "{0}'da Aç"
+
+msgid "Create your account"
+msgstr "Hesabınızı oluşturun"
+
+msgid "Create an account"
+msgstr "Bir hesap oluştur"
+
+msgid "Email"
+msgstr "E-posta"
+
+msgid "Password confirmation"
+msgstr "Parola doğrulama"
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+"Özür dileriz, ancak bu örnek kayıt olmaya kapalıdır. Ama farklı bir tane "
+"bulabilirsiniz."
+
+msgid "Atom feed"
+msgstr "Atom haber akışı"
+
+msgid "Recently boosted"
+msgstr "Yakın zamanda desteklenler"
+
+msgid "Your Dashboard"
+msgstr "Yönetim Panelin"
+
+msgid "Your Blogs"
+msgstr "Günlüklerin"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Henüz hiç günlüğün yok :( Bir tane yarat veya birine katılmak için izin al."
+
+msgid "Start a new blog"
+msgstr "Yeni bir günlük başlat"
+
+msgid "Your Drafts"
+msgstr "Taslakların"
+
+msgid "Go to your gallery"
+msgstr "Galerine git"
+
+msgid "Follow {}"
+msgstr "Takip et: {}"
+
+msgid "Log in to follow"
+msgstr "Takip etmek için giriş yapın"
+
+msgid "Enter your full username handle to follow"
+msgstr "Takip etmek için kullanıcı adınızın tamamını girin"
+
+msgid "Edit your account"
+msgstr "Hesabınızı düzenleyin"
+
+msgid "Your Profile"
+msgstr "Profiliniz"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+"Avatarınızı değiştirmek için galerinize yükleyin ve ardından oradan seçin."
+
+msgid "Upload an avatar"
+msgstr "Bir avatar yükle"
+
+msgid "Display name"
+msgstr "Görünen isim"
+
+msgid "Summary"
+msgstr "Özet"
+
+msgid "Theme"
+msgstr ""
+
+msgid "Never load blogs custom themes"
+msgstr ""
+
+msgid "Update account"
+msgstr "Hesap güncelleme"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Çok dikkatli ol, burada yapacağın herhangi bir işlem iptal edilemez."
+
+msgid "Delete your account"
+msgstr "Hesabını Sil"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Üzgünüm ama bir yönetici olarak kendi oluşumundan çıkamazsın."
+
+msgid "Administration of {0}"
+msgstr "{0} yönetimi"
+
+msgid "Configuration"
+msgstr "Yapılandırma"
+
+msgid "Instances"
+msgstr "Örnekler"
+
+msgid "Users"
+msgstr "Kullanıcılar"
+
+msgid "Email blocklist"
+msgstr ""
+
+msgid "Name"
+msgstr "İsim"
+
+msgid "Allow anyone to register here"
+msgstr "Herkesin buraya kaydolmasına izin ver"
+
+msgid "Short description"
+msgstr "Kısa açıklama"
+
+msgid "Long description"
+msgstr "Uzun açıklama"
+
+msgid "Default article license"
+msgstr "Varsayılan makale lisansı"
+
+msgid "Save these settings"
+msgstr "Bu ayarları kaydet"
+
+msgid "Welcome to {}"
+msgstr "{}'e hoş geldiniz"
+
+msgid "View all"
+msgstr "Hepsini görüntüle"
+
+msgid "About {0}"
+msgstr "{0} hakkında"
+
+msgid "Runs Plume {0}"
+msgstr "Plume {0} kullanır"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "<em>{0}</em> kişinin evi"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Makale yazan <em>{0}</em> yazar"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "Ve diğer <em>{0}</em> örneğe bağlı"
+
+msgid "Administred by"
+msgstr "Yönetenler"
+
+msgid "Grant admin rights"
+msgstr ""
+
+msgid "Revoke admin rights"
+msgstr ""
+
+msgid "Grant moderator rights"
+msgstr ""
+
+msgid "Revoke moderator rights"
+msgstr ""
+
+msgid "Ban"
+msgstr "Yasakla"
+
+msgid "Run on selected users"
+msgstr ""
+
+msgid "Moderator"
+msgstr ""
+
+msgid "Unblock"
+msgstr "Engellemeyi kaldır"
+
+msgid "Block"
+msgstr "Engelle"
+
+msgid "Moderation"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Blocklisted Emails"
+msgstr ""
+
+msgid "Email address"
+msgstr ""
+
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Notify the user?"
+msgstr ""
+
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
+msgstr ""
+
+msgid "Blocklisting notification"
+msgstr ""
+
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
+msgstr ""
+
+msgid "Add blocklisted address"
+msgstr ""
+
+msgid "There are no blocked emails on your instance"
+msgstr ""
+
+msgid "Delete selected emails"
+msgstr ""
+
+msgid "Email address:"
+msgstr ""
+
+msgid "Blocklisted for:"
+msgstr ""
+
+msgid "Will notify them on account creation with this message:"
+msgstr ""
+
+msgid "The user will be silently prevented from making an account"
+msgstr ""
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+"Bu siteye ziyaretçi olarak göz atıyorsanız, hakkınızda veri toplanmamaktadır."
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+"Kayıtlı bir kullanıcı olarak, giriş yapmak, makale yazmak ve yorum yapmak "
+"için bir kullanıcı adına (ki bu kullanıcı adının senin gerçek adın olması "
+"gerekmiyor), kullanabildiğin bir e-posta adresine ve bir şifreye ihtiyacın "
+"var. Girdiğin bilgiler sen hesabını silene dek depolanır."
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+"Giriş yaptığınızda; biri oturumunuzu açık tutmak için, ikincisi başkalarının "
+"sizin adınıza hareket etmesini önlemek için iki çerez saklamaktayız. Başka "
+"çerez saklamıyoruz."
+
+msgid "Internal server error"
+msgstr "İç sunucu hatası"
+
+msgid "Something broke on our side."
+msgstr "Bizim tarafımızda bir şeyler bozuldu."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Bunun için üzgünüz. Bunun bir hata olduğunu düşünüyorsanız, lütfen bildirin."
+
+msgid "Page not found"
+msgstr "Sayfa bulunamadı"
+
+msgid "We couldn't find this page."
+msgstr "Bu sayfayı bulamadık."
+
+msgid "The link that led you here may be broken."
+msgstr "Seni buraya getiren bağlantı bozuk olabilir."
+
+msgid "The content you sent can't be processed."
+msgstr "Gönderdiğiniz içerik işlenemiyor."
+
+msgid "Maybe it was too long."
+msgstr "Belki çok uzundu."
+
+msgid "You are not authorized."
+msgstr "Yetkiniz yok."
+
+msgid "Invalid CSRF token"
+msgstr "Geçersiz CSRF belirteci"
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"CSRF belirtecinizle ilgili bir sorun var. Tarayıcınızda çerezlerin "
+"etkinleştirildiğinden emin olun ve bu sayfayı yeniden yüklemeyi deneyin. Bu "
+"hata mesajını görmeye devam ederseniz, lütfen bildirin."
+
+msgid "Respond"
+msgstr "Yanıtla"
+
+msgid "Delete this comment"
+msgstr "Bu yorumu sil"
+
+msgid "By {0}"
+msgstr "{0} tarafından"
+
+msgid "Draft"
+msgstr "Taslak"
+
+msgid "None"
+msgstr "Resim ayarlanmamış"
+
+msgid "No description"
+msgstr "Açıklama yok"
+
+msgid "What is Plume?"
+msgstr "Plume Nedir?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume merkezi olmayan bir internet günlüğü yazma motorudur."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr "Yazarlar her biri farklı sitedeki birden çok günlüğü yönetebilirler."
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"Makaleler ayrıca diğer Plume oluşumlarında da görünür. Mastodon gibi "
+"platformlardan yazılarla doğrudan etkileşime geçebilirsin."
+
+msgid "Read the detailed rules"
+msgstr "Detaylı kuralları oku"
+
+msgid "Check your inbox!"
+msgstr "Gelen kutunuzu kontrol edin!"
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+"Bize verdiğiniz adrese, parola sıfırlama linki içeren bir e-posta gönderdik."
+
+msgid "Reset your password"
+msgstr "Parolanızı sıfırlayın"
+
+msgid "Send password reset link"
+msgstr "Parola sıfırlama linki gönder"
+
+msgid "This token has expired"
+msgstr ""
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr ""
+
+msgid "New password"
+msgstr "Yeni parola"
+
+msgid "Confirmation"
+msgstr "Doğrulama"
+
+msgid "Update password"
+msgstr "Parolayı güncelle"

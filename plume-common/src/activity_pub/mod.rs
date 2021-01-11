@@ -109,7 +109,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .unwrap_or(Outcome::Forward(()))
     }
 }
-pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>)
+pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
 where
     S: sign::Signer,
     A: Activity,
@@ -133,10 +133,14 @@ where
 
     let mut rt = tokio::runtime::current_thread::Runtime::new()
         .expect("Error while initializing tokio runtime for federation");
-    let client = ClientBuilder::new()
-        .connect_timeout(std::time::Duration::from_secs(5))
-        .build()
-        .expect("Can't build client");
+    let client = if let Some(proxy) = proxy {
+        ClientBuilder::new().proxy(proxy)
+    } else {
+        ClientBuilder::new()
+    }
+    .connect_timeout(std::time::Duration::from_secs(5))
+    .build()
+    .expect("Can't build client");
     for inbox in boxes {
         let body = signed.to_string();
         let mut headers = request::headers();

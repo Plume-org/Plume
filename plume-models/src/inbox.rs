@@ -7,7 +7,7 @@ use crate::{
     posts::{Post, PostUpdate},
     reshares::Reshare,
     users::User,
-    Error, PlumeRocket,
+    Error, PlumeRocket, CONFIG,
 };
 use plume_common::activity_pub::inbox::Inbox;
 
@@ -48,18 +48,18 @@ impl_into_inbox_result! {
 
 pub fn inbox(ctx: &PlumeRocket, act: serde_json::Value) -> Result<InboxResult, Error> {
     Inbox::handle(ctx, act)
-        .with::<User, Announce, Post>()
-        .with::<User, Create, Comment>()
-        .with::<User, Create, Post>()
-        .with::<User, Delete, Comment>()
-        .with::<User, Delete, Post>()
-        .with::<User, Delete, User>()
-        .with::<User, Follow, User>()
-        .with::<User, Like, Post>()
-        .with::<User, Undo, Reshare>()
-        .with::<User, Undo, follows::Follow>()
-        .with::<User, Undo, likes::Like>()
-        .with::<User, Update, PostUpdate>()
+        .with::<User, Announce, Post>(CONFIG.proxy())
+        .with::<User, Create, Comment>(CONFIG.proxy())
+        .with::<User, Create, Post>(CONFIG.proxy())
+        .with::<User, Delete, Comment>(CONFIG.proxy())
+        .with::<User, Delete, Post>(CONFIG.proxy())
+        .with::<User, Delete, User>(CONFIG.proxy())
+        .with::<User, Follow, User>(CONFIG.proxy())
+        .with::<User, Like, Post>(CONFIG.proxy())
+        .with::<User, Undo, Reshare>(CONFIG.proxy())
+        .with::<User, Undo, follows::Follow>(CONFIG.proxy())
+        .with::<User, Undo, likes::Like>(CONFIG.proxy())
+        .with::<User, Update, PostUpdate>(CONFIG.proxy())
         .done()
 }
 

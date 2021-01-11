@@ -1,6 +1,6 @@
 use crate::{
     ap_url, instance::Instance, safe_string::SafeString, schema::medias, users::User, Connection,
-    Error, PlumeRocket, Result,
+    Error, PlumeRocket, Result, CONFIG,
 };
 use activitypub::object::Image;
 use askama_escape::escape;
@@ -212,10 +212,16 @@ impl Media {
         ));
 
         let mut dest = fs::File::create(path.clone()).ok()?;
-        reqwest::get(remote_url.as_str())
-            .ok()?
-            .copy_to(&mut dest)
-            .ok()?;
+        if let Some(proxy) = CONFIG.proxy() {
+            reqwest::ClientBuilder::new().proxy(proxy.clone()).build()?
+        } else {
+            reqwest::Client::new()
+        }
+        .get(remote_url.as_str())
+        .send()
+        .ok()?
+        .copy_to(&mut dest)
+        .ok()?;
 
         Media::insert(
             conn,
@@ -236,6 +242,7 @@ impl Media {
                         .next()?
                         .as_ref(),
                     None,
+                    CONFIG.proxy(),
                 )
                 .map_err(|(_, e)| e)?
                 .id,

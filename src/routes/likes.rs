@@ -6,6 +6,7 @@ use plume_common::activity_pub::broadcast;
 use plume_common::utils;
 use plume_models::{
     blogs::Blog, inbox::inbox, likes, posts::Post, timeline::*, users::User, Error, PlumeRocket,
+    CONFIG,
 };
 
 #[post("/~/<blog>/<slug>/like")]
@@ -27,7 +28,9 @@ pub fn create(
 
         let dest = User::one_by_instance(&*conn)?;
         let act = like.to_activity(&*conn)?;
-        rockets.worker.execute(move || broadcast(&user, act, dest));
+        rockets
+            .worker
+            .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
         let like = likes::Like::find_by_user_on_post(&*conn, user.id, post.id)?;
         let delete_act = like.build_undo(&*conn)?;
@@ -39,7 +42,7 @@ pub fn create(
         let dest = User::one_by_instance(&*conn)?;
         rockets
             .worker
-            .execute(move || broadcast(&user, delete_act, dest));
+            .execute(move || broadcast(&user, delete_act, dest, CONFIG.proxy().cloned()));
     }
 
     Ok(Redirect::to(
