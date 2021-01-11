@@ -4,6 +4,21 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Allow `dir` attributes for LtoR text in RtoL document (#860)
+- More translation languages (#862)
+
+### Changed
+
+- Upgrade some dependent crates (#858)
+- Use tracing crate (#868)
+
+### Fixed
+
+- Percent-encode URI for remote_interact (#866, #857)
+- Fix menu animation not opening on iOS (#876)
+
 ## [[0.6.0]] - 2020-12-29
 
 ### Added
