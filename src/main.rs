@@ -13,7 +13,6 @@ extern crate validator_derive;
 use chrono::Utc;
 use clap::App;
 use diesel::r2d2::ConnectionManager;
-use tracing::warn;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
@@ -28,6 +27,8 @@ use std::path::Path;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use tracing::warn;
+use tracing_subscriber;
 
 init_i18n!(
     "plume", af, ar, bg, ca, cs, cy, da, de, el, en, eo, es, fa, fi, fr, gl, he, hi, hr, hu, it,
@@ -69,6 +70,7 @@ fn main() {
         Err(ref e) if e.not_found() => eprintln!("no .env was found"),
         e => e.map(|_| ()).unwrap(),
     }
+    tracing_subscriber::fmt::init();
 
     App::new("Plume")
         .bin_name("plume")
@@ -83,8 +85,6 @@ and https://docs.joinplu.me/installation/init for more info.
         "#,
         )
         .get_matches();
-    // Initialize Rocket early to load its internal logger
-    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap());
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
@@ -178,7 +178,7 @@ Then try to restart Plume
         warn!("Please refer to the documentation to see how to configure it.");
     }
 
-    let rocket = rocket
+    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",
             routes![

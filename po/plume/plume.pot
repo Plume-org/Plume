@@ -220,63 +220,63 @@ msgstr ""
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
-# src/routes/session.rs:87
+# src/routes/session.rs:88
 msgid "You are now connected."
 msgstr ""
 
-# src/routes/session.rs:108
+# src/routes/session.rs:109
 msgid "You are now logged off."
 msgstr ""
 
-# src/routes/session.rs:153
+# src/routes/session.rs:154
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:154
+# src/routes/session.rs:155
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:216
+# src/routes/session.rs:217
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/user.rs:141
+# src/routes/user.rs:142
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:163
+# src/routes/user.rs:164
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:180
+# src/routes/user.rs:181
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:260
+# src/routes/user.rs:261
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:364
+# src/routes/user.rs:365
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:409
+# src/routes/user.rs:410
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:436
+# src/routes/user.rs:437
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:442
+# src/routes/user.rs:443
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:526
+# src/routes/user.rs:527
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:549
+# src/routes/user.rs:550
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
