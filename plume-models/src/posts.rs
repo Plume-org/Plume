@@ -21,6 +21,7 @@ use plume_common::{
 };
 use riker::actors::{Publish, Tell};
 use std::collections::HashSet;
+use std::sync::Arc;
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
@@ -556,7 +557,7 @@ impl Post {
     fn publish_published(&self) {
         POST_CHAN.tell(
             Publish {
-                msg: PostPublished(self.clone()),
+                msg: PostPublished(Arc::new(self.clone())),
                 topic: "post.published".into(),
             },
             None,
@@ -566,7 +567,7 @@ impl Post {
     fn publish_updated(&self) {
         POST_CHAN.tell(
             Publish {
-                msg: PostUpdated(self.clone()),
+                msg: PostUpdated(Arc::new(self.clone())),
                 topic: "post.updated".into(),
             },
             None,
@@ -576,7 +577,7 @@ impl Post {
     fn publish_deleted(&self) {
         POST_CHAN.tell(
             Publish {
-                msg: PostDeleted(self.clone()),
+                msg: PostDeleted(Arc::new(self.clone())),
                 topic: "post.deleted".into(),
             },
             None,
@@ -836,12 +837,12 @@ impl IntoId for Post {
 
 #[derive(Clone, Debug)]
 pub enum PostEvent {
-    PostPublished(Post),
-    PostUpdated(Post),
-    PostDeleted(Post),
+    PostPublished(Arc<Post>),
+    PostUpdated(Arc<Post>),
+    PostDeleted(Arc<Post>),
 }
 
-impl From<PostEvent> for Post {
+impl From<PostEvent> for Arc<Post> {
     fn from(event: PostEvent) -> Self {
         use PostEvent::*;
 
