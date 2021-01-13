@@ -31,7 +31,7 @@ use plume_models::{
     reshares::Reshare,
     safe_string::SafeString,
     users::*,
-    Error, PlumeRocket,
+    Error, PlumeRocket, CONFIG,
 };
 
 #[get("/me")]
@@ -82,8 +82,9 @@ pub fn details(
                 .fetch_followers_ids()
                 .expect("Remote user: fetching followers error")
             {
-                let follower = User::from_id(&fetch_followers_rockets, &user_id, None)
-                    .expect("user::details: Couldn't fetch follower");
+                let follower =
+                    User::from_id(&fetch_followers_rockets, &user_id, None, CONFIG.proxy())
+                        .expect("user::details: Couldn't fetch follower");
                 follows::Follow::insert(
                     &*fetch_followers_rockets.conn,
                     follows::NewFollow {
@@ -164,7 +165,7 @@ pub fn follow(
         let msg = i18n!(rockets.intl.catalog, "You are no longer following {}."; target.name());
         rockets
             .worker
-            .execute(move || broadcast(&user, delete_act, vec![target]));
+            .execute(move || broadcast(&user, delete_act, vec![target], CONFIG.proxy().cloned()));
         msg
     } else {
         let f = follows::Follow::insert(
@@ -181,7 +182,7 @@ pub fn follow(
         let msg = i18n!(rockets.intl.catalog, "You are now following {}."; target.name());
         rockets
             .worker
-            .execute(move || broadcast(&user, act, vec![target]));
+            .execute(move || broadcast(&user, act, vec![target], CONFIG.proxy().cloned()));
         msg
     };
     Ok(Flash::success(
@@ -426,7 +427,7 @@ pub fn delete(
         let delete_act = account.delete_activity(&*rockets.conn)?;
         rockets
             .worker
-            .execute(move || broadcast(&account, delete_act, target));
+            .execute(move || broadcast(&account, delete_act, target, CONFIG.proxy().cloned()));
 
         if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
             cookies.remove_private(cookie);

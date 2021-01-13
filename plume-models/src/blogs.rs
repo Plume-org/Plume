@@ -1,6 +1,6 @@
 use crate::{
     ap_url, instance::*, medias::Media, posts::Post, safe_string::SafeString, schema::blogs,
-    search::Searcher, users::User, Connection, Error, PlumeRocket, Result, ITEMS_PER_PAGE,
+    search::Searcher, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
     actor::Group,
@@ -150,7 +150,7 @@ impl Blog {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
-            .and_then(|l| Blog::from_id(c, &l.href?, None).map_err(|(_, e)| e))
+            .and_then(|l| Blog::from_id(c, &l.href?, None, CONFIG.proxy()).map_err(|(_, e)| e))
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
@@ -373,7 +373,7 @@ impl FromId<PlumeRocket> for Blog {
                 Media::save_remote(
                     &c.conn,
                     icon.object_props.url_string().ok()?,
-                    &User::from_id(c, &owner, None).ok()?,
+                    &User::from_id(c, &owner, None, CONFIG.proxy()).ok()?,
                 )
                 .ok()
             })
@@ -389,7 +389,7 @@ impl FromId<PlumeRocket> for Blog {
                 Media::save_remote(
                     &c.conn,
                     banner.object_props.url_string().ok()?,
-                    &User::from_id(c, &owner, None).ok()?,
+                    &User::from_id(c, &owner, None, CONFIG.proxy()).ok()?,
                 )
                 .ok()
             })

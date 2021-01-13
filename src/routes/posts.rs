@@ -30,7 +30,7 @@ use plume_models::{
     tags::*,
     timeline::*,
     users::User,
-    Error, PlumeRocket,
+    Error, PlumeRocket, CONFIG,
 };
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
@@ -339,7 +339,9 @@ pub fn update(
                         .create_activity(&conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&*conn).expect("post::update: dest error");
-                    rockets.worker.execute(move || broadcast(&user, act, dest));
+                    rockets
+                        .worker
+                        .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
 
                     Timeline::add_to_all_timelines(&rockets, &post, Kind::Original).ok();
                 } else {
@@ -347,7 +349,9 @@ pub fn update(
                         .update_activity(&*conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&*conn).expect("posts::update: dest error");
-                    rockets.worker.execute(move || broadcast(&user, act, dest));
+                    rockets
+                        .worker
+                        .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
                 }
             }
 
@@ -533,7 +537,7 @@ pub fn create(
                 .expect("posts::create: activity error");
             let dest = User::one_by_instance(&*conn).expect("posts::create: dest error");
             let worker = &rockets.worker;
-            worker.execute(move || broadcast(&user, act, dest));
+            worker.execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
 
             Timeline::add_to_all_timelines(&rockets, &post, Kind::Original)?;
         }
@@ -594,7 +598,7 @@ pub fn delete(
         let user_c = user.clone();
         rockets
             .worker
-            .execute(move || broadcast(&user_c, delete_activity, dest));
+            .execute(move || broadcast(&user_c, delete_activity, dest, CONFIG.proxy().cloned()));
         let conn = rockets.conn;
         rockets
             .worker

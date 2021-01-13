@@ -16,7 +16,7 @@ use plume_common::{
 };
 use plume_models::{
     blogs::Blog, comments::*, inbox::inbox, instance::Instance, medias::Media, mentions::Mention,
-    posts::Post, safe_string::SafeString, tags::Tag, users::User, Error, PlumeRocket,
+    posts::Post, safe_string::SafeString, tags::Tag, users::User, Error, PlumeRocket, CONFIG,
 };
 
 #[derive(Default, FromForm, Debug, Validate)]
@@ -86,9 +86,9 @@ pub fn create(
             // federate
             let dest = User::one_by_instance(&*conn).expect("comments::create: dest error");
             let user_clone = user.clone();
-            rockets
-                .worker
-                .execute(move || broadcast(&user_clone, new_comment, dest));
+            rockets.worker.execute(move || {
+                broadcast(&user_clone, new_comment, dest, CONFIG.proxy().cloned())
+            });
 
             Flash::success(
                 Redirect::to(
@@ -155,9 +155,9 @@ pub fn delete(
             )?;
 
             let user_c = user.clone();
-            rockets
-                .worker
-                .execute(move || broadcast(&user_c, delete_activity, dest));
+            rockets.worker.execute(move || {
+                broadcast(&user_c, delete_activity, dest, CONFIG.proxy().cloned())
+            });
             let conn = rockets.conn;
             rockets
                 .worker

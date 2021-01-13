@@ -71,8 +71,8 @@ use std::fmt::Debug;
 /// # let conn = ();
 /// #
 /// let result: Result<(), ()> = Inbox::handle(&conn, activity_json)
-///    .with::<User, Announce, Message>()
-///    .with::<User, Create,   Message>()
+///    .with::<User, Announce, Message>(None)
+///    .with::<User, Create,   Message>(None)
 ///    .done();
 /// ```
 pub enum Inbox<'a, C, E, R>
@@ -144,7 +144,7 @@ where
     }
 
     /// Registers an handler on this Inbox.
-    pub fn with<A, V, M>(self) -> Inbox<'a, C, E, R>
+    pub fn with<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Inbox<'a, C, E, R>
     where
         A: AsActor<&'a C> + FromId<C, Error = E>,
         V: activitypub::Activity,
@@ -174,6 +174,7 @@ where
                     ctx,
                     &actor_id,
                     serde_json::from_value(act["actor"].clone()).ok(),
+                    proxy,
                 ) {
                     Ok(a) => a,
                     // If the actor was not found, go to the next handler
@@ -194,6 +195,7 @@ where
                     ctx,
                     &obj_id,
                     serde_json::from_value(act["object"].clone()).ok(),
+                    proxy,
                 ) {
                     Ok(o) => o,
                     Err((json, e)) => {
@@ -292,43 +294,52 @@ pub trait FromId<C>: Sized {
         ctx: &C,
         id: &str,
         object: Option<Self::Object>,
+        proxy: Option<&reqwest::Proxy>,
     ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
         match Self::from_db(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
                 Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
-                None => Self::from_activity(ctx, Self::deref(id)?).map_err(|e| (None, e)),
+                None => Self::from_activity(ctx, Self::deref(id, proxy.cloned())?)
+                    .map_err(|e| (None, e)),
             },
         }
     }
 
     /// Dereferences an ID
-    fn deref(id: &str) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        reqwest::ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()
-            .map_err(|_| (None, InboxError::DerefError.into()))?
-            .get(id)
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &super::ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )
-                .map_err(|_| (None, InboxError::DerefError.into()))?,
+    fn deref(
+        id: &str,
+        proxy: Option<reqwest::Proxy>,
+    ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
+        if let Some(proxy) = proxy {
+            reqwest::ClientBuilder::new().proxy(proxy)
+        } else {
+            reqwest::ClientBuilder::new()
+        }
+        .connect_timeout(Some(std::time::Duration::from_secs(5)))
+        .build()
+        .map_err(|_| (None, InboxError::DerefError.into()))?
+        .get(id)
+        .header(
+            ACCEPT,
+            HeaderValue::from_str(
+                &super::ap_accept_header()
+                    .into_iter()
+                    .collect::<Vec<_>>()
+                    .join(", "),
             )
-            .send()
-            .map_err(|_| (None, InboxError::DerefError))
-            .and_then(|mut r| {
-                let json: serde_json::Value = r
-                    .json()
-                    .map_err(|_| (None, InboxError::InvalidObject(None)))?;
-                serde_json::from_value(json.clone())
-                    .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
-            })
-            .map_err(|(json, e)| (json, e.into()))
+            .map_err(|_| (None, InboxError::DerefError.into()))?,
+        )
+        .send()
+        .map_err(|_| (None, InboxError::DerefError))
+        .and_then(|mut r| {
+            let json: serde_json::Value = r
+                .json()
+                .map_err(|_| (None, InboxError::InvalidObject(None)))?;
+            serde_json::from_value(json.clone())
+                .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
+        })
+        .map_err(|(json, e)| (json, e.into()))
     }
 
     /// Builds a `Self` from its ActivityPub representation
@@ -550,7 +561,7 @@ mod tests {
     fn test_inbox_basic() {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Create, MyObject>()
+            .with::<MyActor, Create, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -559,10 +570,10 @@ mod tests {
     fn test_inbox_multi_handlers() {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject>()
-            .with::<MyActor, Delete, MyObject>()
-            .with::<MyActor, Create, MyObject>()
-            .with::<MyActor, Like, MyObject>()
+            .with::<MyActor, Announce, MyObject>(None)
+            .with::<MyActor, Delete, MyObject>(None)
+            .with::<MyActor, Create, MyObject>(None)
+            .with::<MyActor, Like, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -572,8 +583,8 @@ mod tests {
         let act = serde_json::to_value(build_create()).unwrap();
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject>()
-            .with::<MyActor, Like, MyObject>()
+            .with::<MyActor, Announce, MyObject>(None)
+            .with::<MyActor, Like, MyObject>(None)
             .done();
         assert!(res.is_err());
     }
@@ -621,13 +632,13 @@ mod tests {
         let act = serde_json::to_value(build_create()).unwrap();
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject>()
+            .with::<FailingActor, Create, MyObject>(None)
             .done();
         assert!(res.is_err());
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject>()
-            .with::<MyActor, Create, MyObject>()
+            .with::<FailingActor, Create, MyObject>(None)
+            .with::<MyActor, Create, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }

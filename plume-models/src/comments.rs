@@ -8,7 +8,7 @@ use crate::{
     safe_string::SafeString,
     schema::comments,
     users::User,
-    Connection, Error, PlumeRocket, Result,
+    Connection, Error, PlumeRocket, Result, CONFIG,
 };
 use activitypub::{
     activity::{Create, Delete},
@@ -239,6 +239,7 @@ impl FromId<PlumeRocket> for Comment {
                         c,
                         &note.object_props.attributed_to_link::<Id>()?,
                         None,
+                        CONFIG.proxy(),
                     )
                     .map_err(|(_, e)| e)?
                     .id,
@@ -296,7 +297,7 @@ impl FromId<PlumeRocket> for Comment {
                 .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
                 .into_iter()
                 .map(|v| {
-                    if let Ok(user) = User::from_id(c, &v, None) {
+                    if let Ok(user) = User::from_id(c, &v, None, CONFIG.proxy()) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection
