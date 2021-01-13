@@ -114,42 +114,35 @@ mod tests {
         let conn = db_pool.clone().get().unwrap();
 
         let title = random_hex()[..8].to_owned();
-        let mut post_id = 0;
-        let (instance, user, blog, post) = &conn
-            .transaction::<(Instance, User, Blog, Post), diesel::result::Error, _>(|| {
-                let (instance, user, blog) = fill_database(&conn);
-                let author = &blog.list_authors(&conn).unwrap()[0];
+        let (instance, user, blog) = fill_database(&conn);
+        let author = &blog.list_authors(&conn).unwrap()[0];
 
-                let post = Post::insert(
-                    &conn,
-                    NewPost {
-                        blog_id: blog.id,
-                        slug: title.clone(),
-                        title: title.clone(),
-                        content: SafeString::new(""),
-                        published: true,
-                        license: "CC-BY-SA".to_owned(),
-                        ap_url: "".to_owned(),
-                        creation_date: None,
-                        subtitle: "".to_owned(),
-                        source: "".to_owned(),
-                        cover_id: None,
-                    },
-                )
-                .unwrap();
-                PostAuthor::insert(
-                    &conn,
-                    NewPostAuthor {
-                        post_id: post.id,
-                        author_id: author.id,
-                    },
-                )
-                .unwrap();
-                post_id = post.id;
-
-                Ok((instance, user, blog, post))
-            })
-            .unwrap();
+        let post = Post::insert(
+            &conn,
+            NewPost {
+                blog_id: blog.id,
+                slug: title.clone(),
+                title: title.clone(),
+                content: SafeString::new(""),
+                published: true,
+                license: "CC-BY-SA".to_owned(),
+                ap_url: "".to_owned(),
+                creation_date: None,
+                subtitle: "".to_owned(),
+                source: "".to_owned(),
+                cover_id: None,
+            },
+        )
+        .unwrap();
+        PostAuthor::insert(
+            &conn,
+            NewPostAuthor {
+                post_id: post.id,
+                author_id: author.id,
+            },
+        )
+        .unwrap();
+        let post_id = post.id;
 
         // Wait for searcher on another thread add document asynchronously
         sleep(Duration::from_millis(700));
@@ -162,7 +155,7 @@ mod tests {
         post.delete(&conn).unwrap();
         blog.delete(&conn).unwrap();
         user.delete(&conn).unwrap();
-        diesel::delete(instance).execute(&conn).unwrap();
+        diesel::delete(&instance).execute(&conn).unwrap();
     }
 
     fn fill_database(conn: &Conn) -> (Instance, User, Blog) {
