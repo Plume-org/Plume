@@ -299,61 +299,214 @@ msgstr ""
 "Вашият акаунт беше създаден. Сега просто трябва да влезете за да можете да "
 "го използвате."
 
-msgid "New Blog"
-msgstr "Нов блог"
-
-msgid "Create a blog"
-msgstr "Създайте блог"
-
-msgid "Title"
-msgstr "Заглавие"
-
-msgid "Create blog"
-msgstr "Създайте блог"
-
-msgid "{}'s icon"
-msgstr "{} икона"
-
-msgid "Edit"
-msgstr "Редакция"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Има Един автор в този блог: "
-msgstr[1] "Има {0} автора в този блог: "
-
-msgid "Latest articles"
-msgstr "Последни статии"
-
-msgid "No posts to see here yet."
-msgstr "Все още няма публикации."
-
-msgid "Edit \"{}\""
-msgstr "редактирам \"{}\""
+msgid "Media upload"
+msgstr "Качи медия"
 
 msgid "Description"
 msgstr "Описание"
 
-msgid "Markdown syntax is supported"
-msgstr "Поддържа се Markdown синтаксис"
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Полезно е за хора със зрителни увреждания, както и лицензна информация"
+
+msgid "Content warning"
+msgstr "Предупреждение за съдържанието"
+
+msgid "Leave it empty, if none is needed"
+msgstr "Оставете го празно, ако не е необходимо"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "Send"
+msgstr "Изпрати"
+
+msgid "Your media"
+msgstr "Вашите медия файлове"
+
+msgid "Upload"
+msgstr "Качи"
+
+msgid "You don't have any media yet."
+msgstr "Все още нямате никакви медии."
+
+msgid "Content warning: {0}"
+msgstr "Предупреждение за съдържание: {0}"
+
+msgid "Delete"
+msgstr "Изтрий"
+
+msgid "Details"
+msgstr "Детайли"
+
+msgid "Media details"
+msgstr "Детайли за медията"
+
+msgid "Go back to the gallery"
+msgstr "Върнете се в галерията"
+
+msgid "Markdown syntax"
+msgstr "Markdown синтаксис"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Копирайте го в статиите си, за да вмъкнете медията:"
+
+msgid "Use as an avatar"
+msgstr "Използвайте като аватар"
+
+msgid "Plume"
+msgstr "Pluma"
+
+msgid "Menu"
+msgstr "Меню"
+
+msgid "Search"
+msgstr "Търсене"
+
+msgid "Dashboard"
+msgstr "Контролен панел"
+
+msgid "Notifications"
+msgstr "Известия"
+
+msgid "Log Out"
+msgstr "Излез"
+
+msgid "My account"
+msgstr "Моят профил"
+
+msgid "Log In"
+msgstr "Влез"
+
+msgid "Register"
+msgstr "Регистрация"
+
+msgid "About this instance"
+msgstr "За тази инстанция"
+
+msgid "Privacy policy"
+msgstr "Декларация за поверителност"
+
+msgid "Administration"
+msgstr "Aдминистрация"
+
+msgid "Documentation"
+msgstr "Документация"
+
+msgid "Source code"
+msgstr "Изходен код"
+
+msgid "Matrix room"
+msgstr "Matrix стая"
+
+msgid "Admin"
+msgstr "Администратор"
+
+msgid "It is you"
+msgstr "Това си ти"
+
+msgid "Edit your profile"
+msgstr "Редактиране на вашият профил"
+
+msgid "Open on {0}"
+msgstr "Отворен на {0}"
+
+msgid "Unsubscribe"
+msgstr "Отписване"
+
+msgid "Subscribe"
+msgstr "Абонирай се"
+
+msgid "Follow {}"
+msgstr "Последвай {}"
+
+msgid "Log in to follow"
+msgstr "Влезте, за да следвате"
+
+msgid "Enter your full username handle to follow"
+msgstr "Въведете пълното потребителско име, което искате да следвате"
+
+msgid "{0}'s subscribers"
+msgstr "{0} абонати"
+
+msgid "Articles"
+msgstr "Статии"
+
+msgid "Subscribers"
+msgstr "Абонати"
+
+msgid "Subscriptions"
+msgstr "Абонаменти"
+
+msgid "Create your account"
+msgstr "Създай профил"
+
+msgid "Create an account"
+msgstr "Създай профил"
+
+msgid "Username"
+msgstr "Потребителско име"
+
+msgid "Email"
+msgstr "Електронна поща"
+
+msgid "Password"
+msgstr "Парола"
+
+msgid "Password confirmation"
+msgstr "Потвърждение на парола"
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
-"Можете да качвате изображения в галерията си и да ги използвате като икони "
-"на блога или банери."
+"Извиняваме се, но регистрациите са затворени за тази конкретна инстанция. "
+"Можете обаче да намерите друга."
 
-msgid "Upload images"
-msgstr "Качване на изображения"
+msgid "{0}'s subscriptions"
+msgstr "{0} абонаменти"
 
-msgid "Blog icon"
-msgstr "Икона на блога"
+msgid "Your Dashboard"
+msgstr "Вашият контролен панел"
 
-msgid "Blog banner"
-msgstr "Банер в блога"
+msgid "Your Blogs"
+msgstr "Вашият Блог"
 
-msgid "Custom theme"
-msgstr "Собствена тема"
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Все още нямате блог. Създайте свой собствен или поискайте да се присъедините "
+"към някой друг."
+
+msgid "Start a new blog"
+msgstr "Започнете нов блог"
+
+msgid "Your Drafts"
+msgstr "Вашите Проекти"
+
+msgid "Go to your gallery"
+msgstr "Отидете в галерията си"
+
+msgid "Edit your account"
+msgstr "Редактирайте профила си"
+
+msgid "Your Profile"
+msgstr "Вашият профил"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+"За да промените аватара си, качете го в галерията и след това го изберете."
+
+msgid "Upload an avatar"
+msgstr "Качете аватар"
+
+msgid "Display name"
+msgstr "Показвано име"
+
+msgid "Summary"
+msgstr "Резюме"
+
+msgid "Theme"
+msgstr "Тема"
 
 msgid "Default theme"
 msgstr "Тема по подразбиране"
@@ -361,22 +514,258 @@ msgstr "Тема по подразбиране"
 msgid "Error while loading theme selector."
 msgstr "Грешка при зареждане на селектора с теми."
 
-msgid "Update blog"
-msgstr "Актуализация блог"
+msgid "Never load blogs custom themes"
+msgstr "Никога не зареждайте в блога теми по поръчка"
+
+msgid "Update account"
+msgstr "Актуализиране на профил"
 
 msgid "Danger zone"
 msgstr "Опасна зона"
 
-msgid "Be very careful, any action taken here can't be reversed."
+msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
-"Бъдете много внимателни, всяко действие, предприето тук не може да бъде "
+"Бъдете много внимателни, всяко действие предприето тук не може да бъде "
 "отменено."
 
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "Сигурни ли сте, че искате да изтриете окончателно този блог?"
+msgid "Delete your account"
+msgstr "Изтриване на вашият профил"
 
-msgid "Permanently delete this blog"
-msgstr "Изтрийте Завинаги този блог"
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+"За съжаление, като администратор не можете да напуснете своята собствена "
+"инстанция."
+
+msgid "Latest articles"
+msgstr "Последни статии"
+
+msgid "Atom feed"
+msgstr "Atom емисия"
+
+msgid "Recently boosted"
+msgstr "Наскоро подсилен"
+
+msgid "Articles tagged \"{0}\""
+msgstr "Маркирани статии \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "Понастоящем няма статии с такъв маркер"
+
+msgid "The content you sent can't be processed."
+msgstr "Съдържанието, което сте изпратили не може да бъде обработено."
+
+msgid "Maybe it was too long."
+msgstr "Може би беше твърде дълго."
+
+msgid "Internal server error"
+msgstr "Вътрешна грешка в сървъра"
+
+msgid "Something broke on our side."
+msgstr "Възникна грешка от ваша страна."
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+"Извиняваме се за това. Ако смятате, че това е грешка, моля докладвайте я."
+
+msgid "Invalid CSRF token"
+msgstr "Невалиден CSRF token (маркер)"
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Нещо не е наред с вашия CSRF token (маркер). Уверете се, че бисквитките са "
+"активирани в браузъра и опитайте да заредите отново тази страница. Ако "
+"продължите да виждате това съобщение за грешка, моля, подайте сигнал за това."
+
+msgid "You are not authorized."
+msgstr "Не сте упълномощени."
+
+msgid "Page not found"
+msgstr "Страницата не е намерена"
+
+msgid "We couldn't find this page."
+msgstr "Не можахме да намерим тази страница."
+
+msgid "The link that led you here may be broken."
+msgstr "Възможно е връзката, от която сте дошли да е неправилна."
+
+msgid "Users"
+msgstr "Потребители"
+
+msgid "Configuration"
+msgstr "Конфигурация"
+
+msgid "Instances"
+msgstr "Инстанция"
+
+msgid "Email blocklist"
+msgstr "Черен списък с е-mail"
+
+msgid "Grant admin rights"
+msgstr "Предоставяне на администраторски права"
+
+msgid "Revoke admin rights"
+msgstr "Анулиране на администраторски права"
+
+msgid "Grant moderator rights"
+msgstr "Даване на модераторски права"
+
+msgid "Revoke moderator rights"
+msgstr "Анулиране на модераторски права"
+
+msgid "Ban"
+msgstr "Забрани"
+
+msgid "Run on selected users"
+msgstr "Пускане на избрани потребители"
+
+msgid "Moderator"
+msgstr "Модератор"
+
+msgid "Moderation"
+msgstr "Модерация"
+
+msgid "Home"
+msgstr "Начало"
+
+msgid "Administration of {0}"
+msgstr "Администрирано от {0}"
+
+msgid "Unblock"
+msgstr "Отблокирай"
+
+msgid "Block"
+msgstr "Блокирай"
+
+msgid "Name"
+msgstr "Име"
+
+msgid "Allow anyone to register here"
+msgstr "Позволете на всеки да се регистрира"
+
+msgid "Short description"
+msgstr "Кратко описание"
+
+msgid "Markdown syntax is supported"
+msgstr "Поддържа се Markdown синтаксис"
+
+msgid "Long description"
+msgstr "Дълго описание"
+
+msgid "Default article license"
+msgstr "Лиценз по подразбиране"
+
+msgid "Save these settings"
+msgstr "Запаметете тези настройки"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Ако разглеждате този сайт като посетител, не се събират данни за вас."
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+"Като регистриран потребител трябва да предоставите потребителско име (което "
+"не е задължително да е вашето истинско име), вашия функционален имейл адрес "
+"и парола за да можете да влезете, да напишете статии и коментари. "
+"Съдържанието, което изпращате се съхранява докато не го изтриете."
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+"Когато влезете в системата, съхраняваме две „бисквитки“, една за отваряне на "
+"сесията, а втората за да попречи на други хора да действат от ваше име. Ние "
+"не съхраняваме никакви други бисквитки."
+
+msgid "Blocklisted Emails"
+msgstr "Имейли в череният списък"
+
+msgid "Email address"
+msgstr "Имейл адрес"
+
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+"Имейл адресът, който искате да блокирате. За да блокирате домейните можете "
+"да използвате широкообхватен синтаксис, например '*@example.com' блокира "
+"всички адреси от example.com"
+
+msgid "Note"
+msgstr "Бележка"
+
+msgid "Notify the user?"
+msgstr "Уведомяване на потребителя?"
+
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
+msgstr ""
+"По желание, показва съобщение на потребителя, когато той се опита да създаде "
+"акаунт с този адрес"
+
+msgid "Blocklisting notification"
+msgstr "Известие за блокиране от списък"
+
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
+msgstr ""
+"Съобщението, което трябва да се покаже, когато потребителят се опита да "
+"създаде акаунт с този имейл адрес"
+
+msgid "Add blocklisted address"
+msgstr "Добавяне на адрес в черният списък"
+
+msgid "There are no blocked emails on your instance"
+msgstr "Няма блокирани имейли във вашата инстанция"
+
+msgid "Delete selected emails"
+msgstr "Изтриване на избраните имейли"
+
+msgid "Email address:"
+msgstr "Имейл адрес:"
+
+msgid "Blocklisted for:"
+msgstr "Черен списък за:"
+
+msgid "Will notify them on account creation with this message:"
+msgstr "Ще бъдат уведомени с това съобщение при създаване на акаунт:"
+
+msgid "The user will be silently prevented from making an account"
+msgstr "Потребителят тихо ще бъде възпрепятстван да направи акаунт"
+
+msgid "Welcome to {}"
+msgstr "Добре дошли в {}"
+
+msgid "View all"
+msgstr "Виж всичко"
+
+msgid "About {0}"
+msgstr "Относно {0}"
+
+msgid "Runs Plume {0}"
+msgstr "Осъществено с Plume {0}"
+
+msgid "Home to <em>{0}</em> people"
+msgstr "Дом за <em>{0}</em> хора"
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr "Кой е написал <em>{0}</em> статии"
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr "И е свързана с <em> {0} </em> други инстанции"
+
+msgid "Administred by"
+msgstr "Администрира се от"
 
 msgid "Interact with {}"
 msgstr "Взаимодействие с {}"
@@ -392,6 +781,9 @@ msgstr "Публикувайте"
 
 msgid "Classic editor (any changes will be lost)"
 msgstr "Класически редактор (всички промени ще бъдат загубени)"
+
+msgid "Title"
+msgstr "Заглавие"
 
 msgid "Subtitle"
 msgstr "Подзаглавие"
@@ -468,17 +860,8 @@ msgstr ""
 "{0}Влезте {1}или {2}използвайте акаунта си в Fediverse{3}, за да "
 "взаимодействате с тази статия"
 
-msgid "Unsubscribe"
-msgstr "Отписване"
-
-msgid "Subscribe"
-msgstr "Абонирай се"
-
 msgid "Comments"
 msgstr "Коментари"
-
-msgid "Content warning"
-msgstr "Предупреждение за съдържанието"
 
 msgid "Your comment"
 msgstr "Вашият коментар"
@@ -492,9 +875,6 @@ msgstr "Все още няма коментари. Бъдете първите!"
 msgid "Are you sure?"
 msgstr "Сигурен ли си?"
 
-msgid "Delete"
-msgstr "Изтрий"
-
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 "Тази статия все още е проект. Само вие и другите автори можете да я видите."
@@ -502,95 +882,8 @@ msgstr ""
 msgid "Only you and other authors can edit this article."
 msgstr "Само вие и другите автори можете да редактирате тази статия."
 
-msgid "Plume"
-msgstr "Pluma"
-
-msgid "Menu"
-msgstr "Меню"
-
-msgid "Search"
-msgstr "Търсене"
-
-msgid "Dashboard"
-msgstr "Контролен панел"
-
-msgid "Notifications"
-msgstr "Известия"
-
-msgid "Log Out"
-msgstr "Излез"
-
-msgid "My account"
-msgstr "Моят профил"
-
-msgid "Log In"
-msgstr "Влез"
-
-msgid "Register"
-msgstr "Регистрация"
-
-msgid "About this instance"
-msgstr "За тази инстанция"
-
-msgid "Privacy policy"
-msgstr "Декларация за поверителност"
-
-msgid "Administration"
-msgstr "Aдминистрация"
-
-msgid "Documentation"
-msgstr "Документация"
-
-msgid "Source code"
-msgstr "Изходен код"
-
-msgid "Matrix room"
-msgstr "Matrix стая"
-
-msgid "Media upload"
-msgstr "Качи медия"
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Полезно е за хора със зрителни увреждания, както и лицензна информация"
-
-msgid "Leave it empty, if none is needed"
-msgstr "Оставете го празно, ако не е необходимо"
-
-msgid "File"
-msgstr "Файл"
-
-msgid "Send"
-msgstr "Изпрати"
-
-msgid "Your media"
-msgstr "Вашите медия файлове"
-
-msgid "Upload"
-msgstr "Качи"
-
-msgid "You don't have any media yet."
-msgstr "Все още нямате никакви медии."
-
-msgid "Content warning: {0}"
-msgstr "Предупреждение за съдържание: {0}"
-
-msgid "Details"
-msgstr "Детайли"
-
-msgid "Media details"
-msgstr "Детайли за медията"
-
-msgid "Go back to the gallery"
-msgstr "Върнете се в галерията"
-
-msgid "Markdown syntax"
-msgstr "Markdown синтаксис"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "Копирайте го в статиите си, за да вмъкнете медията:"
-
-msgid "Use as an avatar"
-msgstr "Използвайте като аватар"
+msgid "Edit"
+msgstr "Редакция"
 
 msgid "I'm from this instance"
 msgstr "Аз съм от тази инстанция"
@@ -598,29 +891,158 @@ msgstr "Аз съм от тази инстанция"
 msgid "Username, or email"
 msgstr "Потребителско име или имейл"
 
-msgid "Password"
-msgstr "Парола"
-
 msgid "Log in"
 msgstr "Влез"
 
 msgid "I'm from another instance"
 msgstr "Аз съм от друга инстанция"
 
-msgid "Username"
-msgstr "Потребителско име"
-
 msgid "Continue to your instance"
 msgstr "Продължете към инстанцията си"
+
+msgid "Reset your password"
+msgstr "Промяна на паролата ви"
+
+msgid "New password"
+msgstr "Нова парола"
+
+msgid "Confirmation"
+msgstr "Потвърждение"
+
+msgid "Update password"
+msgstr "Обнови паролата"
+
+msgid "Check your inbox!"
+msgstr "Проверете си пощата!"
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+"Изпратихме емайл с връзка за възстановяване на паролата ви, на адреса който "
+"ни дадохте."
+
+msgid "Send password reset link"
+msgstr "Изпращане на връзка за възстановяване на парола"
+
+msgid "This token has expired"
+msgstr "Този токен е изтекъл"
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr ""
+"Моля, стартирайте процеса отново като щракнете <a href=\"/password-reset"
+"\">тук</a>."
+
+msgid "New Blog"
+msgstr "Нов блог"
+
+msgid "Create a blog"
+msgstr "Създайте блог"
+
+msgid "Create blog"
+msgstr "Създайте блог"
+
+msgid "Edit \"{}\""
+msgstr "редактирам \"{}\""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+"Можете да качвате изображения в галерията си и да ги използвате като икони "
+"на блога или банери."
+
+msgid "Upload images"
+msgstr "Качване на изображения"
+
+msgid "Blog icon"
+msgstr "Икона на блога"
+
+msgid "Blog banner"
+msgstr "Банер в блога"
+
+msgid "Custom theme"
+msgstr "Собствена тема"
+
+msgid "Update blog"
+msgstr "Актуализация блог"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+"Бъдете много внимателни, всяко действие, предприето тук не може да бъде "
+"отменено."
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Сигурни ли сте, че искате да изтриете окончателно този блог?"
+
+msgid "Permanently delete this blog"
+msgstr "Изтрийте Завинаги този блог"
+
+msgid "{}'s icon"
+msgstr "{} икона"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Има Един автор в този блог: "
+msgstr[1] "Има {0} автора в този блог: "
+
+msgid "No posts to see here yet."
+msgstr "Все още няма публикации."
 
 msgid "Nothing to see here yet."
 msgstr "Тук още няма какво да се види."
 
-msgid "Articles tagged \"{0}\""
-msgstr "Маркирани статии \"{0}\""
+msgid "None"
+msgstr "Няма"
 
-msgid "There are currently no articles with such a tag"
-msgstr "Понастоящем няма статии с такъв маркер"
+msgid "No description"
+msgstr "Няма описание"
+
+msgid "Respond"
+msgstr "Отговори"
+
+msgid "Delete this comment"
+msgstr "Изтриване на този коментар"
+
+msgid "What is Plume?"
+msgstr "Какво е Pluma?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Pluma е децентрализиран двигател за блогове."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+"Авторите могат да управляват множество блогове, всеки като свой уникален "
+"уебсайт."
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"Статиите се виждат и на други Plume инстанции като можете да взаимодействате "
+"с тях директно и от други платформи като Mastodon."
+
+msgid "Read the detailed rules"
+msgstr "Прочетете подробните правила"
+
+msgid "By {0}"
+msgstr "От {0}"
+
+msgid "Draft"
+msgstr "Проект"
+
+msgid "Search result(s) for \"{0}\""
+msgstr "Резултат(и) от търсенето за \"{0}\""
+
+msgid "Search result(s)"
+msgstr "Резултат(и) от търсенето"
+
+msgid "No results for your query"
+msgstr "Няма резултати от вашата заявка"
+
+msgid "No more results for your query"
+msgstr "Няма повече резултати за вашата заявка"
 
 msgid "Advanced search"
 msgstr "Разширено търсене"
@@ -678,425 +1100,3 @@ msgstr "Публикувано под този лиценз"
 
 msgid "Article license"
 msgstr "Лиценз на статията"
-
-msgid "Search result(s) for \"{0}\""
-msgstr "Резултат(и) от търсенето за \"{0}\""
-
-msgid "Search result(s)"
-msgstr "Резултат(и) от търсенето"
-
-msgid "No results for your query"
-msgstr "Няма резултати от вашата заявка"
-
-msgid "No more results for your query"
-msgstr "Няма повече резултати за вашата заявка"
-
-msgid "{0}'s subscriptions"
-msgstr "{0} абонаменти"
-
-msgid "Articles"
-msgstr "Статии"
-
-msgid "Subscribers"
-msgstr "Абонати"
-
-msgid "Subscriptions"
-msgstr "Абонаменти"
-
-msgid "{0}'s subscribers"
-msgstr "{0} абонати"
-
-msgid "Admin"
-msgstr "Администратор"
-
-msgid "It is you"
-msgstr "Това си ти"
-
-msgid "Edit your profile"
-msgstr "Редактиране на вашият профил"
-
-msgid "Open on {0}"
-msgstr "Отворен на {0}"
-
-msgid "Create your account"
-msgstr "Създай профил"
-
-msgid "Create an account"
-msgstr "Създай профил"
-
-msgid "Email"
-msgstr "Електронна поща"
-
-msgid "Password confirmation"
-msgstr "Потвърждение на парола"
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-"Извиняваме се, но регистрациите са затворени за тази конкретна инстанция. "
-"Можете обаче да намерите друга."
-
-msgid "Atom feed"
-msgstr "Atom емисия"
-
-msgid "Recently boosted"
-msgstr "Наскоро подсилен"
-
-msgid "Your Dashboard"
-msgstr "Вашият контролен панел"
-
-msgid "Your Blogs"
-msgstr "Вашият Блог"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-"Все още нямате блог. Създайте свой собствен или поискайте да се присъедините "
-"към някой друг."
-
-msgid "Start a new blog"
-msgstr "Започнете нов блог"
-
-msgid "Your Drafts"
-msgstr "Вашите Проекти"
-
-msgid "Go to your gallery"
-msgstr "Отидете в галерията си"
-
-msgid "Follow {}"
-msgstr "Последвай {}"
-
-msgid "Log in to follow"
-msgstr "Влезте, за да следвате"
-
-msgid "Enter your full username handle to follow"
-msgstr "Въведете пълното потребителско име, което искате да следвате"
-
-msgid "Edit your account"
-msgstr "Редактирайте профила си"
-
-msgid "Your Profile"
-msgstr "Вашият профил"
-
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-"За да промените аватара си, качете го в галерията и след това го изберете."
-
-msgid "Upload an avatar"
-msgstr "Качете аватар"
-
-msgid "Display name"
-msgstr "Показвано име"
-
-msgid "Summary"
-msgstr "Резюме"
-
-msgid "Theme"
-msgstr "Тема"
-
-msgid "Never load blogs custom themes"
-msgstr "Никога не зареждайте в блога теми по поръчка"
-
-msgid "Update account"
-msgstr "Актуализиране на профил"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-"Бъдете много внимателни, всяко действие предприето тук не може да бъде "
-"отменено."
-
-msgid "Delete your account"
-msgstr "Изтриване на вашият профил"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-"За съжаление, като администратор не можете да напуснете своята собствена "
-"инстанция."
-
-msgid "Administration of {0}"
-msgstr "Администрирано от {0}"
-
-msgid "Configuration"
-msgstr "Конфигурация"
-
-msgid "Instances"
-msgstr "Инстанция"
-
-msgid "Users"
-msgstr "Потребители"
-
-msgid "Email blocklist"
-msgstr "Черен списък с е-mail"
-
-msgid "Name"
-msgstr "Име"
-
-msgid "Allow anyone to register here"
-msgstr "Позволете на всеки да се регистрира"
-
-msgid "Short description"
-msgstr "Кратко описание"
-
-msgid "Long description"
-msgstr "Дълго описание"
-
-msgid "Default article license"
-msgstr "Лиценз по подразбиране"
-
-msgid "Save these settings"
-msgstr "Запаметете тези настройки"
-
-msgid "Welcome to {}"
-msgstr "Добре дошли в {}"
-
-msgid "View all"
-msgstr "Виж всичко"
-
-msgid "About {0}"
-msgstr "Относно {0}"
-
-msgid "Runs Plume {0}"
-msgstr "Осъществено с Plume {0}"
-
-msgid "Home to <em>{0}</em> people"
-msgstr "Дом за <em>{0}</em> хора"
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr "Кой е написал <em>{0}</em> статии"
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr "И е свързана с <em> {0} </em> други инстанции"
-
-msgid "Administred by"
-msgstr "Администрира се от"
-
-msgid "Grant admin rights"
-msgstr "Предоставяне на администраторски права"
-
-msgid "Revoke admin rights"
-msgstr "Анулиране на администраторски права"
-
-msgid "Grant moderator rights"
-msgstr "Даване на модераторски права"
-
-msgid "Revoke moderator rights"
-msgstr "Анулиране на модераторски права"
-
-msgid "Ban"
-msgstr "Забрани"
-
-msgid "Run on selected users"
-msgstr "Пускане на избрани потребители"
-
-msgid "Moderator"
-msgstr "Модератор"
-
-msgid "Unblock"
-msgstr "Отблокирай"
-
-msgid "Block"
-msgstr "Блокирай"
-
-msgid "Moderation"
-msgstr "Модерация"
-
-msgid "Home"
-msgstr "Начало"
-
-msgid "Blocklisted Emails"
-msgstr "Имейли в череният списък"
-
-msgid "Email address"
-msgstr "Имейл адрес"
-
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
-msgstr ""
-"Имейл адресът, който искате да блокирате. За да блокирате домейните можете "
-"да използвате широкообхватен синтаксис, например '*@example.com' блокира "
-"всички адреси от example.com"
-
-msgid "Note"
-msgstr "Бележка"
-
-msgid "Notify the user?"
-msgstr "Уведомяване на потребителя?"
-
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
-msgstr ""
-"По желание, показва съобщение на потребителя, когато той се опита да създаде "
-"акаунт с този адрес"
-
-msgid "Blocklisting notification"
-msgstr "Известие за блокиране от списък"
-
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
-msgstr ""
-"Съобщението, което трябва да се покаже, когато потребителят се опита да "
-"създаде акаунт с този имейл адрес"
-
-msgid "Add blocklisted address"
-msgstr "Добавяне на адрес в черният списък"
-
-msgid "There are no blocked emails on your instance"
-msgstr "Няма блокирани имейли във вашата инстанция"
-
-msgid "Delete selected emails"
-msgstr "Изтриване на избраните имейли"
-
-msgid "Email address:"
-msgstr "Имейл адрес:"
-
-msgid "Blocklisted for:"
-msgstr "Черен списък за:"
-
-msgid "Will notify them on account creation with this message:"
-msgstr "Ще бъдат уведомени с това съобщение при създаване на акаунт:"
-
-msgid "The user will be silently prevented from making an account"
-msgstr "Потребителят тихо ще бъде възпрепятстван да направи акаунт"
-
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr "Ако разглеждате този сайт като посетител, не се събират данни за вас."
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-"Като регистриран потребител трябва да предоставите потребителско име (което "
-"не е задължително да е вашето истинско име), вашия функционален имейл адрес "
-"и парола за да можете да влезете, да напишете статии и коментари. "
-"Съдържанието, което изпращате се съхранява докато не го изтриете."
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
-"Когато влезете в системата, съхраняваме две „бисквитки“, една за отваряне на "
-"сесията, а втората за да попречи на други хора да действат от ваше име. Ние "
-"не съхраняваме никакви други бисквитки."
-
-msgid "Internal server error"
-msgstr "Вътрешна грешка в сървъра"
-
-msgid "Something broke on our side."
-msgstr "Възникна грешка от ваша страна."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-"Извиняваме се за това. Ако смятате, че това е грешка, моля докладвайте я."
-
-msgid "Page not found"
-msgstr "Страницата не е намерена"
-
-msgid "We couldn't find this page."
-msgstr "Не можахме да намерим тази страница."
-
-msgid "The link that led you here may be broken."
-msgstr "Възможно е връзката, от която сте дошли да е неправилна."
-
-msgid "The content you sent can't be processed."
-msgstr "Съдържанието, което сте изпратили не може да бъде обработено."
-
-msgid "Maybe it was too long."
-msgstr "Може би беше твърде дълго."
-
-msgid "You are not authorized."
-msgstr "Не сте упълномощени."
-
-msgid "Invalid CSRF token"
-msgstr "Невалиден CSRF token (маркер)"
-
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-"Нещо не е наред с вашия CSRF token (маркер). Уверете се, че бисквитките са "
-"активирани в браузъра и опитайте да заредите отново тази страница. Ако "
-"продължите да виждате това съобщение за грешка, моля, подайте сигнал за това."
-
-msgid "Respond"
-msgstr "Отговори"
-
-msgid "Delete this comment"
-msgstr "Изтриване на този коментар"
-
-msgid "By {0}"
-msgstr "От {0}"
-
-msgid "Draft"
-msgstr "Проект"
-
-msgid "None"
-msgstr "Няма"
-
-msgid "No description"
-msgstr "Няма описание"
-
-msgid "What is Plume?"
-msgstr "Какво е Pluma?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Pluma е децентрализиран двигател за блогове."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-"Авторите могат да управляват множество блогове, всеки като свой уникален "
-"уебсайт."
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-"Статиите се виждат и на други Plume инстанции като можете да взаимодействате "
-"с тях директно и от други платформи като Mastodon."
-
-msgid "Read the detailed rules"
-msgstr "Прочетете подробните правила"
-
-msgid "Check your inbox!"
-msgstr "Проверете си пощата!"
-
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr ""
-"Изпратихме емайл с връзка за възстановяване на паролата ви, на адреса който "
-"ни дадохте."
-
-msgid "Reset your password"
-msgstr "Промяна на паролата ви"
-
-msgid "Send password reset link"
-msgstr "Изпращане на връзка за възстановяване на парола"
-
-msgid "This token has expired"
-msgstr "Този токен е изтекъл"
-
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
-msgstr ""
-"Моля, стартирайте процеса отново като щракнете <a href=\"/password-reset"
-"\">тук</a>."
-
-msgid "New password"
-msgstr "Нова парола"
-
-msgid "Confirmation"
-msgstr "Потвърждение"
-
-msgid "Update password"
-msgstr "Обнови паролата"

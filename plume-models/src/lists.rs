@@ -246,22 +246,22 @@ impl List {
         private::ListElem::prefix_in_list(conn, self, word)
     }
 
-    /// Insert new users in a list
+    // Insert new users in a list
     func! {add: add_users, User}
 
-    /// Insert new blogs in a list
+    // Insert new blogs in a list
     func! {add: add_blogs, Blog}
 
-    /// Insert new words in a list
+    // Insert new words in a list
     func! {add: add_words, Word}
 
-    /// Insert new prefixes in a list
+    // Insert new prefixes in a list
     func! {add: add_prefixes, Prefix}
 
-    /// Get all users in the list
+    // Get all users in the list
     func! {list: list_users, User, users}
 
-    /// Get all blogs in the list
+    // Get all blogs in the list
     func! {list: list_blogs, Blog, blogs}
 
     /// Get all words in the list
