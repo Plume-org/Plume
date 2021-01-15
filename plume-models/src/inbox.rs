@@ -1,5 +1,4 @@
 use activitypub::activity::*;
-use serde_json;
 
 use crate::{
     comments::Comment,

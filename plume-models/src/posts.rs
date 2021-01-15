@@ -19,7 +19,6 @@ use plume_common::{
     },
     utils::md_to_html,
 };
-use serde_json;
 use std::collections::HashSet;
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;

@@ -1,4 +1,3 @@
-use base64;
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};

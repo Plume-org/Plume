@@ -20,7 +20,6 @@ use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
-use serde_json;
 use url::Url;
 use webfinger::*;
 

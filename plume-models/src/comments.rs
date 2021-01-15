@@ -24,7 +24,6 @@ use plume_common::{
     },
     utils,
 };
-use serde_json;
 use std::collections::HashSet;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset)]

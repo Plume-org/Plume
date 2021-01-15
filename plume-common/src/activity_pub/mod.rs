@@ -7,7 +7,6 @@ use rocket::{
     response::{Responder, Response},
     Outcome,
 };
-use serde_json;
 use tokio::prelude::*;
 use tracing::{debug, warn};
 

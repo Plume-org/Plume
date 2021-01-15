@@ -10,7 +10,6 @@ use plume_common::{
     activity_pub::{inbox::FromId, Id},
     utils::MediaProcessor,
 };
-use reqwest;
 use std::{fs, path::Path};
 
 #[derive(Clone, Identifiable, Queryable)]
