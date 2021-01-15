@@ -24,7 +24,7 @@
 
     @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
         @if let Some(ref theme) = blog.theme {
-            <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(theme).join("theme.css"), _build_id = CACHE_NAME)">
+            <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(theme).join("theme.css"), build_id = CACHE_NAME)">
         }
     }
 }, {

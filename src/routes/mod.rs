@@ -246,8 +246,9 @@ pub fn theme_files(file: PathBuf, _build_id: &RawStr) -> Option<ThemeFile> {
         .map(ThemeFile)
 }
 
-#[get("/static/cached/<_build_id>/<file..>", rank = 2)]
-pub fn plume_static_files(file: PathBuf, _build_id: &RawStr) -> Option<CachedFile> {
+#[allow(unused_variables)]
+#[get("/static/cached/<build_id>/<file..>", rank = 2)]
+pub fn plume_static_files(file: PathBuf, build_id: &RawStr) -> Option<CachedFile> {
     static_files(file)
 }
 #[get("/static/media/<file..>")]

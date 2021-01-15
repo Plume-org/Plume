@@ -378,9 +378,10 @@ pub struct UpdateUserForm {
     pub hide_custom_css: bool,
 }
 
-#[put("/@/<_name>/edit", data = "<form>")]
+#[allow(unused_variables)]
+#[put("/@/<name>/edit", data = "<form>")]
 pub fn update(
-    _name: String,
+    name: String,
     conn: DbConn,
     mut user: User,
     form: LenientForm<UpdateUserForm>,
