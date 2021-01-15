@@ -401,7 +401,7 @@ pub fn update(
     user.preferred_theme = form
         .theme
         .clone()
-        .and_then(|t| if &t == "" { None } else { Some(t) });
+        .and_then(|t| if t.is_empty() { None } else { Some(t) });
     user.hide_custom_css = form.hide_custom_css;
     let _: User = user.save_changes(&*conn).map_err(Error::from)?;
 
