@@ -303,9 +303,7 @@ fn get_proxy_config() -> Option<ProxyConfig> {
                 if only_domains.contains(domain)
                     || only_domains
                         .iter()
-                        .filter(|target| domain.ends_with(&format!(".{}", target)))
-                        .next()
-                        .is_some()
+                        .any(|target| domain.ends_with(&format!(".{}", target)))
                 {
                     Some(proxy_url.clone())
                 } else {
@@ -317,7 +315,6 @@ fn get_proxy_config() -> Option<ProxyConfig> {
         })
     } else {
         reqwest::Proxy::all(proxy_url)
-            .ok()
             .expect("Invalid PROXY_URL")
     };
     Some(ProxyConfig {

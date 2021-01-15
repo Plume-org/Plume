@@ -123,8 +123,7 @@ impl Post {
             .filter(posts::published.eq(true))
             .count()
             .load(conn)?
-            .iter()
-            .next()
+            .get(0)
             .cloned()
             .ok_or(Error::NotFound)
     }
@@ -287,17 +286,16 @@ impl Post {
     }
 
     pub fn get_receivers_urls(&self, conn: &Connection) -> Result<Vec<String>> {
-        let followers = self
-            .get_authors(conn)?
-            .into_iter()
-            .filter_map(|a| a.get_followers(conn).ok())
-            .collect::<Vec<Vec<User>>>();
-        Ok(followers.into_iter().fold(vec![], |mut acc, f| {
-            for x in f {
-                acc.push(x.ap_url);
-            }
-            acc
-        }))
+        Ok(self
+           .get_authors(conn)?
+           .into_iter()
+           .filter_map(|a| a.get_followers(conn).ok())
+           .fold(vec![], |mut acc, f| {
+               for x in f {
+                   acc.push(x.ap_url);
+               }
+               acc
+           }))
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
