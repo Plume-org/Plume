@@ -30,9 +30,9 @@ impl TryFrom<i32> for ListType {
     }
 }
 
-impl Into<i32> for ListType {
-    fn into(self) -> i32 {
-        match self {
+impl From<ListType> for i32 {
+    fn from(list_type: ListType) -> Self {
+        match list_type {
             ListType::User => 0,
             ListType::Blog => 1,
             ListType::Word => 2,
