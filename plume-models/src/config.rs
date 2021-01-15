@@ -295,7 +295,7 @@ fn get_proxy_config() -> Option<ProxyConfig> {
     let proxy_url = url.clone();
     let only_domains: Option<HashSet<String>> = var("PROXY_DOMAINS")
         .ok()
-        .map(|ods| ods.split(",").map(str::to_owned).collect());
+        .map(|ods| ods.split(',').map(str::to_owned).collect());
     let proxy = if let Some(ref only_domains) = only_domains {
         let only_domains = only_domains.clone();
         reqwest::Proxy::custom(move |url| {
