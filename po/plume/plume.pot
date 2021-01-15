@@ -96,11 +96,11 @@ msgstr ""
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:97
+# src/routes/comments.rs:99
 msgid "Your comment has been posted."
 msgstr ""
 
-# src/routes/comments.rs:172
+# src/routes/comments.rs:178
 msgid "Your comment has been deleted."
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr ""
 msgid "Done."
 msgstr ""
 
-# src/routes/likes.rs:56
+# src/routes/likes.rs:58
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
@@ -188,35 +188,35 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:360
+# src/routes/posts.rs:364
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:547
+# src/routes/posts.rs:555
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:554
+# src/routes/posts.rs:562
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:587
+# src/routes/posts.rs:599
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:612
+# src/routes/posts.rs:624
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:617
+# src/routes/posts.rs:629
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:657
+# src/routes/posts.rs:669
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
-# src/routes/reshares.rs:56
+# src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
@@ -236,7 +236,7 @@ msgstr ""
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:217
+# src/routes/session.rs:215
 msgid "Your password was successfully reset."
 msgstr ""
 
@@ -260,23 +260,23 @@ msgstr ""
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:410
+# src/routes/user.rs:411
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:437
+# src/routes/user.rs:438
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:443
+# src/routes/user.rs:444
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:527
+# src/routes/user.rs:528
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:550
+# src/routes/user.rs:551
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
