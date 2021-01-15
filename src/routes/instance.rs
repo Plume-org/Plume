@@ -408,9 +408,14 @@ pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Opt
     }
 
     if let Ok(post) = Post::from_id(&rockets, &target, None, CONFIG.proxy()) {
-        return Some(Redirect::to(
-            uri!(super::posts::details: blog = post.get_blog(&rockets.conn).expect("Can't retrieve blog").fqn, slug = &post.slug, responding_to = _),
-        ));
+        return Some(Redirect::to(uri!(
+            super::posts::details: blog = post
+                .get_blog(&rockets.conn)
+                .expect("Can't retrieve blog")
+                .fqn,
+            slug = &post.slug,
+            responding_to = _
+        )));
     }
 
     if let Ok(comment) = Comment::from_id(&rockets, &target, None, CONFIG.proxy()) {

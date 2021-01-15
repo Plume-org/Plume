@@ -314,8 +314,7 @@ fn get_proxy_config() -> Option<ProxyConfig> {
             }
         })
     } else {
-        reqwest::Proxy::all(proxy_url)
-            .expect("Invalid PROXY_URL")
+        reqwest::Proxy::all(proxy_url).expect("Invalid PROXY_URL")
     };
     Some(ProxyConfig {
         url,

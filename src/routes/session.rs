@@ -210,9 +210,7 @@ pub fn password_reset(
         .map_err(|err| password_reset_error_response(err, &rockets))?;
 
     Ok(Flash::success(
-        Redirect::to(uri!(
-            new: m = _
-        )),
+        Redirect::to(uri!(new: m = _)),
         i18n!(
             rockets.intl.catalog,
             "Your password was successfully reset."

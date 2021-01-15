@@ -287,15 +287,15 @@ impl Post {
 
     pub fn get_receivers_urls(&self, conn: &Connection) -> Result<Vec<String>> {
         Ok(self
-           .get_authors(conn)?
-           .into_iter()
-           .filter_map(|a| a.get_followers(conn).ok())
-           .fold(vec![], |mut acc, f| {
-               for x in f {
-                   acc.push(x.ap_url);
-               }
-               acc
-           }))
+            .get_authors(conn)?
+            .into_iter()
+            .filter_map(|a| a.get_followers(conn).ok())
+            .fold(vec![], |mut acc, f| {
+                for x in f {
+                    acc.push(x.ap_url);
+                }
+                acc
+            }))
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {

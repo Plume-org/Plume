@@ -356,7 +356,11 @@ pub fn update(
             }
 
             Flash::success(
-                Redirect::to(uri!(details: blog = blog, slug = new_slug, responding_to = _)),
+                Redirect::to(uri!(
+                    details: blog = blog,
+                    slug = new_slug,
+                    responding_to = _
+                )),
                 i18n!(intl, "Your article has been updated."),
             )
             .into()
@@ -543,7 +547,11 @@ pub fn create(
         }
 
         Ok(Flash::success(
-            Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
+            Redirect::to(uri!(
+                details: blog = blog_name,
+                slug = slug,
+                responding_to = _
+            )),
             i18n!(&rockets.intl.catalog, "Your article has been saved."),
         )
         .into())
@@ -583,7 +591,11 @@ pub fn delete(
             .any(|a| a.id == user.id)
         {
             return Ok(Flash::error(
-                Redirect::to(uri!(details: blog = blog_name, slug = slug, responding_to = _)),
+                Redirect::to(uri!(
+                    details: blog = blog_name,
+                    slug = slug,
+                    responding_to = _
+                )),
                 i18n!(intl.catalog, "You are not allowed to delete this article."),
             ));
         }
