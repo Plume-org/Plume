@@ -141,6 +141,9 @@ jobs:
     steps:
     - restore_env:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
+    - run_migration:
+        cmd: |
+          cargo run -p plume-cli -- migration run
     - run_with_coverage:
         cmd: |
           cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
