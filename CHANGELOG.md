@@ -8,16 +8,19 @@
 
 - Allow `dir` attributes for LtoR text in RtoL document (#860)
 - More translation languages (#862)
+- Proxy support (#829)
 
 ### Changed
 
 - Upgrade some dependent crates (#858)
 - Use tracing crate (#868)
+- Update Rust version to nightly-2021-01-15 (#878)
+- Upgrade Tantivy to 0.13.3 and lindera-tantivy to 0.7.1 (#878)
 
 ### Fixed
 
 - Percent-encode URI for remote_interact (#866, #857)
-- Fix menu animation not opening on iOS (#876)
+- Menu animation not opening on iOS (#876)
 
 ## [[0.6.0]] - 2020-12-29
 
