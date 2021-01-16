@@ -292,59 +292,208 @@ msgid ""
 "use it."
 msgstr ""
 
-msgid "New Blog"
-msgstr ""
-
-msgid "Create a blog"
-msgstr ""
-
-msgid "Title"
-msgstr ""
-
-msgid "Create blog"
-msgstr ""
-
-msgid "{}'s icon"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-msgid "Latest articles"
-msgstr "Najnoviji članci"
-
-msgid "No posts to see here yet."
-msgstr ""
-
-msgid "Edit \"{}\""
+msgid "Media upload"
 msgstr ""
 
 msgid "Description"
 msgstr ""
 
-msgid "Markdown syntax is supported"
-msgstr "Markdown sintaksa je podržana"
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr ""
+
+msgid "Content warning"
+msgstr ""
+
+msgid "Leave it empty, if none is needed"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
+msgid "Your media"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You don't have any media yet."
+msgstr ""
+
+msgid "Content warning: {0}"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Media details"
+msgstr ""
+
+msgid "Go back to the gallery"
+msgstr ""
+
+msgid "Markdown syntax"
+msgstr ""
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr ""
+
+msgid "Use as an avatar"
+msgstr ""
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Izbornik"
+
+msgid "Search"
+msgstr "Traži"
+
+msgid "Dashboard"
+msgstr "Upravljačka ploča"
+
+msgid "Notifications"
+msgstr "Obavijesti"
+
+msgid "Log Out"
+msgstr "Odjaviti se"
+
+msgid "My account"
+msgstr "Moj račun"
+
+msgid "Log In"
+msgstr "Prijaviti se"
+
+msgid "Register"
+msgstr "Registrirajte se"
+
+msgid "About this instance"
+msgstr ""
+
+msgid "Privacy policy"
+msgstr ""
+
+msgid "Administration"
+msgstr "Administracija"
+
+msgid "Documentation"
+msgstr ""
+
+msgid "Source code"
+msgstr "Izvorni kod"
+
+msgid "Matrix room"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "It is you"
+msgstr ""
+
+msgid "Edit your profile"
+msgstr ""
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "Follow {}"
+msgstr ""
+
+msgid "Log in to follow"
+msgstr ""
+
+msgid "Enter your full username handle to follow"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "Articles"
+msgstr "Članci"
+
+msgid "Subscribers"
+msgstr ""
+
+msgid "Subscriptions"
+msgstr ""
+
+msgid "Create your account"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Email"
+msgstr "E-pošta"
+
+msgid "Password"
+msgstr ""
+
+msgid "Password confirmation"
+msgstr ""
 
 msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 
-msgid "Upload images"
+msgid "{0}'s subscriptions"
 msgstr ""
 
-msgid "Blog icon"
+msgid "Your Dashboard"
 msgstr ""
 
-msgid "Blog banner"
+msgid "Your Blogs"
 msgstr ""
 
-msgid "Custom theme"
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+
+msgid "Start a new blog"
+msgstr ""
+
+msgid "Your Drafts"
+msgstr ""
+
+msgid "Go to your gallery"
+msgstr ""
+
+msgid "Edit your account"
+msgstr "Uredite svoj račun"
+
+msgid "Your Profile"
+msgstr "Tvoj Profil"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+
+msgid "Upload an avatar"
+msgstr ""
+
+msgid "Display name"
+msgstr ""
+
+msgid "Summary"
+msgstr "Sažetak"
+
+msgid "Theme"
 msgstr ""
 
 msgid "Default theme"
@@ -353,19 +502,235 @@ msgstr ""
 msgid "Error while loading theme selector."
 msgstr ""
 
-msgid "Update blog"
+msgid "Never load blogs custom themes"
 msgstr ""
+
+msgid "Update account"
+msgstr "Ažuriraj račun"
 
 msgid "Danger zone"
 msgstr "Opasna zona"
 
-msgid "Be very careful, any action taken here can't be reversed."
+msgid "Be very careful, any action taken here can't be cancelled."
 msgstr ""
 
-msgid "Are you sure that you want to permanently delete this blog?"
+msgid "Delete your account"
+msgstr "Izbrišite svoj račun"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr ""
 
-msgid "Permanently delete this blog"
+msgid "Latest articles"
+msgstr "Najnoviji članci"
+
+msgid "Atom feed"
+msgstr ""
+
+msgid "Recently boosted"
+msgstr ""
+
+msgid "Articles tagged \"{0}\""
+msgstr ""
+
+msgid "There are currently no articles with such a tag"
+msgstr ""
+
+msgid "The content you sent can't be processed."
+msgstr ""
+
+msgid "Maybe it was too long."
+msgstr ""
+
+msgid "Internal server error"
+msgstr ""
+
+msgid "Something broke on our side."
+msgstr ""
+
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr ""
+
+msgid "Invalid CSRF token"
+msgstr ""
+
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+
+msgid "You are not authorized."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "We couldn't find this page."
+msgstr ""
+
+msgid "The link that led you here may be broken."
+msgstr ""
+
+msgid "Users"
+msgstr "Korisnici"
+
+msgid "Configuration"
+msgstr "Konfiguracija"
+
+msgid "Instances"
+msgstr ""
+
+msgid "Email blocklist"
+msgstr ""
+
+msgid "Grant admin rights"
+msgstr ""
+
+msgid "Revoke admin rights"
+msgstr ""
+
+msgid "Grant moderator rights"
+msgstr ""
+
+msgid "Revoke moderator rights"
+msgstr ""
+
+msgid "Ban"
+msgstr "Zabraniti"
+
+msgid "Run on selected users"
+msgstr ""
+
+msgid "Moderator"
+msgstr ""
+
+msgid "Moderation"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Administration of {0}"
+msgstr "Administracija od {0}"
+
+msgid "Unblock"
+msgstr "Odblokiraj"
+
+msgid "Block"
+msgstr "Blokirati"
+
+msgid "Name"
+msgstr ""
+
+msgid "Allow anyone to register here"
+msgstr ""
+
+msgid "Short description"
+msgstr "Kratki opis"
+
+msgid "Markdown syntax is supported"
+msgstr "Markdown sintaksa je podržana"
+
+msgid "Long description"
+msgstr "Dugi opis"
+
+msgid "Default article license"
+msgstr ""
+
+msgid "Save these settings"
+msgstr ""
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+
+msgid "Blocklisted Emails"
+msgstr ""
+
+msgid "Email address"
+msgstr ""
+
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Notify the user?"
+msgstr ""
+
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
+msgstr ""
+
+msgid "Blocklisting notification"
+msgstr ""
+
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
+msgstr ""
+
+msgid "Add blocklisted address"
+msgstr ""
+
+msgid "There are no blocked emails on your instance"
+msgstr ""
+
+msgid "Delete selected emails"
+msgstr ""
+
+msgid "Email address:"
+msgstr ""
+
+msgid "Blocklisted for:"
+msgstr ""
+
+msgid "Will notify them on account creation with this message:"
+msgstr ""
+
+msgid "The user will be silently prevented from making an account"
+msgstr ""
+
+msgid "Welcome to {}"
+msgstr "Dobrodošli u {0}"
+
+msgid "View all"
+msgstr ""
+
+msgid "About {0}"
+msgstr "O {0}"
+
+msgid "Runs Plume {0}"
+msgstr ""
+
+msgid "Home to <em>{0}</em> people"
+msgstr ""
+
+msgid "Who wrote <em>{0}</em> articles"
+msgstr ""
+
+msgid "And are connected to <em>{0}</em> other instances"
+msgstr ""
+
+msgid "Administred by"
 msgstr ""
 
 msgid "Interact with {}"
@@ -381,6 +746,9 @@ msgid "Publish"
 msgstr ""
 
 msgid "Classic editor (any changes will be lost)"
+msgstr ""
+
+msgid "Title"
 msgstr ""
 
 msgid "Subtitle"
@@ -456,16 +824,7 @@ msgid ""
 "article"
 msgstr ""
 
-msgid "Unsubscribe"
-msgstr ""
-
-msgid "Subscribe"
-msgstr ""
-
 msgid "Comments"
-msgstr ""
-
-msgid "Content warning"
 msgstr ""
 
 msgid "Your comment"
@@ -480,103 +839,13 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-msgid "Delete"
-msgstr ""
-
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr ""
 
 msgid "Only you and other authors can edit this article."
 msgstr ""
 
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "Izbornik"
-
-msgid "Search"
-msgstr "Traži"
-
-msgid "Dashboard"
-msgstr "Upravljačka ploča"
-
-msgid "Notifications"
-msgstr "Obavijesti"
-
-msgid "Log Out"
-msgstr "Odjaviti se"
-
-msgid "My account"
-msgstr "Moj račun"
-
-msgid "Log In"
-msgstr "Prijaviti se"
-
-msgid "Register"
-msgstr "Registrirajte se"
-
-msgid "About this instance"
-msgstr ""
-
-msgid "Privacy policy"
-msgstr ""
-
-msgid "Administration"
-msgstr "Administracija"
-
-msgid "Documentation"
-msgstr ""
-
-msgid "Source code"
-msgstr "Izvorni kod"
-
-msgid "Matrix room"
-msgstr ""
-
-msgid "Media upload"
-msgstr ""
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr ""
-
-msgid "Leave it empty, if none is needed"
-msgstr ""
-
-msgid "File"
-msgstr ""
-
-msgid "Send"
-msgstr ""
-
-msgid "Your media"
-msgstr ""
-
-msgid "Upload"
-msgstr ""
-
-msgid "You don't have any media yet."
-msgstr ""
-
-msgid "Content warning: {0}"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Media details"
-msgstr ""
-
-msgid "Go back to the gallery"
-msgstr ""
-
-msgid "Markdown syntax"
-msgstr ""
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr ""
-
-msgid "Use as an avatar"
+msgid "Edit"
 msgstr ""
 
 msgid "I'm from this instance"
@@ -585,28 +854,146 @@ msgstr ""
 msgid "Username, or email"
 msgstr ""
 
-msgid "Password"
-msgstr ""
-
 msgid "Log in"
 msgstr ""
 
 msgid "I'm from another instance"
 msgstr ""
 
-msgid "Username"
+msgid "Continue to your instance"
 msgstr ""
 
-msgid "Continue to your instance"
+msgid "Reset your password"
+msgstr ""
+
+msgid "New password"
+msgstr ""
+
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+msgid "Send password reset link"
+msgstr ""
+
+msgid "This token has expired"
+msgstr ""
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr ""
+
+msgid "New Blog"
+msgstr ""
+
+msgid "Create a blog"
+msgstr ""
+
+msgid "Create blog"
+msgstr ""
+
+msgid "Edit \"{}\""
+msgstr ""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+
+msgid "Upload images"
+msgstr ""
+
+msgid "Blog icon"
+msgstr ""
+
+msgid "Blog banner"
+msgstr ""
+
+msgid "Custom theme"
+msgstr ""
+
+msgid "Update blog"
+msgstr ""
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr ""
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr ""
+
+msgid "{}'s icon"
+msgstr ""
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+msgid "No posts to see here yet."
 msgstr ""
 
 msgid "Nothing to see here yet."
 msgstr ""
 
-msgid "Articles tagged \"{0}\""
+msgid "None"
 msgstr ""
 
-msgid "There are currently no articles with such a tag"
+msgid "No description"
+msgstr ""
+
+msgid "Respond"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Search result(s) for \"{0}\""
+msgstr ""
+
+msgid "Search result(s)"
+msgstr ""
+
+msgid "No results for your query"
+msgstr ""
+
+msgid "No more results for your query"
 msgstr ""
 
 msgid "Advanced search"
@@ -664,391 +1051,4 @@ msgid "Published under this license"
 msgstr ""
 
 msgid "Article license"
-msgstr ""
-
-msgid "Search result(s) for \"{0}\""
-msgstr ""
-
-msgid "Search result(s)"
-msgstr ""
-
-msgid "No results for your query"
-msgstr ""
-
-msgid "No more results for your query"
-msgstr ""
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Articles"
-msgstr "Članci"
-
-msgid "Subscribers"
-msgstr ""
-
-msgid "Subscriptions"
-msgstr ""
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-msgid "It is you"
-msgstr ""
-
-msgid "Edit your profile"
-msgstr ""
-
-msgid "Open on {0}"
-msgstr ""
-
-msgid "Create your account"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-msgid "Email"
-msgstr "E-pošta"
-
-msgid "Password confirmation"
-msgstr ""
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-
-msgid "Atom feed"
-msgstr ""
-
-msgid "Recently boosted"
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr ""
-
-msgid "Your Blogs"
-msgstr ""
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-
-msgid "Start a new blog"
-msgstr ""
-
-msgid "Your Drafts"
-msgstr ""
-
-msgid "Go to your gallery"
-msgstr ""
-
-msgid "Follow {}"
-msgstr ""
-
-msgid "Log in to follow"
-msgstr ""
-
-msgid "Enter your full username handle to follow"
-msgstr ""
-
-msgid "Edit your account"
-msgstr "Uredite svoj račun"
-
-msgid "Your Profile"
-msgstr "Tvoj Profil"
-
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-
-msgid "Upload an avatar"
-msgstr ""
-
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr "Sažetak"
-
-msgid "Theme"
-msgstr ""
-
-msgid "Never load blogs custom themes"
-msgstr ""
-
-msgid "Update account"
-msgstr "Ažuriraj račun"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr ""
-
-msgid "Delete your account"
-msgstr "Izbrišite svoj račun"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr ""
-
-msgid "Administration of {0}"
-msgstr "Administracija od {0}"
-
-msgid "Configuration"
-msgstr "Konfiguracija"
-
-msgid "Instances"
-msgstr ""
-
-msgid "Users"
-msgstr "Korisnici"
-
-msgid "Email blocklist"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Allow anyone to register here"
-msgstr ""
-
-msgid "Short description"
-msgstr "Kratki opis"
-
-msgid "Long description"
-msgstr "Dugi opis"
-
-msgid "Default article license"
-msgstr ""
-
-msgid "Save these settings"
-msgstr ""
-
-msgid "Welcome to {}"
-msgstr "Dobrodošli u {0}"
-
-msgid "View all"
-msgstr ""
-
-msgid "About {0}"
-msgstr "O {0}"
-
-msgid "Runs Plume {0}"
-msgstr ""
-
-msgid "Home to <em>{0}</em> people"
-msgstr ""
-
-msgid "Who wrote <em>{0}</em> articles"
-msgstr ""
-
-msgid "And are connected to <em>{0}</em> other instances"
-msgstr ""
-
-msgid "Administred by"
-msgstr ""
-
-msgid "Grant admin rights"
-msgstr ""
-
-msgid "Revoke admin rights"
-msgstr ""
-
-msgid "Grant moderator rights"
-msgstr ""
-
-msgid "Revoke moderator rights"
-msgstr ""
-
-msgid "Ban"
-msgstr "Zabraniti"
-
-msgid "Run on selected users"
-msgstr ""
-
-msgid "Moderator"
-msgstr ""
-
-msgid "Unblock"
-msgstr "Odblokiraj"
-
-msgid "Block"
-msgstr "Blokirati"
-
-msgid "Moderation"
-msgstr ""
-
-msgid "Home"
-msgstr ""
-
-msgid "Blocklisted Emails"
-msgstr ""
-
-msgid "Email address"
-msgstr ""
-
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
-msgstr ""
-
-msgid "Note"
-msgstr ""
-
-msgid "Notify the user?"
-msgstr ""
-
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
-msgstr ""
-
-msgid "Blocklisting notification"
-msgstr ""
-
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
-msgstr ""
-
-msgid "Add blocklisted address"
-msgstr ""
-
-msgid "There are no blocked emails on your instance"
-msgstr ""
-
-msgid "Delete selected emails"
-msgstr ""
-
-msgid "Email address:"
-msgstr ""
-
-msgid "Blocklisted for:"
-msgstr ""
-
-msgid "Will notify them on account creation with this message:"
-msgstr ""
-
-msgid "The user will be silently prevented from making an account"
-msgstr ""
-
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
-
-msgid "Internal server error"
-msgstr ""
-
-msgid "Something broke on our side."
-msgstr ""
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-
-msgid "Page not found"
-msgstr ""
-
-msgid "We couldn't find this page."
-msgstr ""
-
-msgid "The link that led you here may be broken."
-msgstr ""
-
-msgid "The content you sent can't be processed."
-msgstr ""
-
-msgid "Maybe it was too long."
-msgstr ""
-
-msgid "You are not authorized."
-msgstr ""
-
-msgid "Invalid CSRF token"
-msgstr ""
-
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-
-msgid "Respond"
-msgstr ""
-
-msgid "Delete this comment"
-msgstr ""
-
-msgid "By {0}"
-msgstr ""
-
-msgid "Draft"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr ""
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "Check your inbox!"
-msgstr ""
-
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr ""
-
-msgid "Reset your password"
-msgstr ""
-
-msgid "Send password reset link"
-msgstr ""
-
-msgid "This token has expired"
-msgstr ""
-
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
-msgstr ""
-
-msgid "New password"
-msgstr ""
-
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
 msgstr ""

@@ -81,6 +81,7 @@ lazy_static! {
     };
 }
 
+#[allow(clippy::unnecessary_wraps)]
 fn url_add_prefix(url: &str) -> Option<Cow<'_, str>> {
     if url.starts_with('#') && !url.starts_with("#postcontent-") {
         //if start with an #

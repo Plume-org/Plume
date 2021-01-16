@@ -14,7 +14,7 @@
             @i18n!(ctx.1, "To change your avatar, upload it to your gallery and then select from there.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload an avatar")</a>
         </p>
-        <form method="post" action="@uri!(user::update: _name = u.username.clone())">
+        <form method="post" action="@uri!(user::update: name = u.username.clone())">
             <!-- Rocket hack to use various HTTP methods -->
             <input type=hidden name="_method" value="put">
 

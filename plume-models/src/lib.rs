@@ -11,7 +11,6 @@ extern crate lazy_static;
 extern crate plume_macro;
 #[macro_use]
 extern crate rocket;
-#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;

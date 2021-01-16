@@ -42,7 +42,7 @@
         }
     </main>
     @for res in &comment_tree.responses {
-        @:comment_html(ctx, res, comm.ap_url.as_ref().map(|u| &**u), blog, slug)
+        @:comment_html(ctx, res, comm.ap_url.as_deref(), blog, slug)
     }
 </div>
 }}

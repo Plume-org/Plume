@@ -45,7 +45,7 @@ pub fn upload(
     let (_, boundary) = ct
         .params()
         .find(|&(k, _)| k == "boundary")
-        .ok_or_else(|| status::BadRequest(Some("No boundary")))?;
+        .ok_or(status::BadRequest(Some("No boundary")))?;
 
     if let SaveResult::Full(entries) = Multipart::with_body(data.open(), boundary).save().temp() {
         let fields = entries.fields;
@@ -53,7 +53,7 @@ pub fn upload(
         let filename = fields
             .get("file")
             .and_then(|v| v.iter().next())
-            .ok_or_else(|| status::BadRequest(Some("No file uploaded")))?
+            .ok_or(status::BadRequest(Some("No file uploaded")))?
             .headers
             .filename
             .clone();

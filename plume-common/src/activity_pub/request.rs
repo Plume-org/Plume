@@ -1,4 +1,3 @@
-use base64;
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};
@@ -9,6 +8,9 @@ use crate::activity_pub::sign::Signer;
 use crate::activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
 
 const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
+
+#[derive(Debug)]
+pub struct Error();
 
 pub struct Digest(String);
 
@@ -62,16 +64,16 @@ impl Digest {
         base64::decode(&self.0[pos..]).expect("Digest::value: invalid encoding error")
     }
 
-    pub fn from_header(dig: &str) -> Result<Self, ()> {
+    pub fn from_header(dig: &str) -> Result<Self, Error> {
         if let Some(pos) = dig.find('=') {
             let pos = pos + 1;
             if base64::decode(&dig[pos..]).is_ok() {
                 Ok(Digest(dig.to_owned()))
             } else {
-                Err(())
+                Err(Error())
             }
         } else {
-            Err(())
+            Err(Error())
         }
     }
 
@@ -110,7 +112,7 @@ pub fn headers() -> HeaderMap {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderValue, ()> {
+pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderValue, Error> {
     let signed_string = headers
         .iter()
         .map(|(h, v)| {
@@ -130,7 +132,7 @@ pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderVal
         .join(" ")
         .to_lowercase();
 
-    let data = signer.sign(&signed_string).map_err(|_| ())?;
+    let data = signer.sign(&signed_string).map_err(|_| Error())?;
     let sign = base64::encode(&data);
 
     HeaderValue::from_str(&format!(
@@ -138,5 +140,5 @@ pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderVal
         key_id = signer.get_key_id(),
         signed_headers = signed_headers,
         signature = sign
-    )).map_err(|_| ())
+    )).map_err(|_| Error())
 }

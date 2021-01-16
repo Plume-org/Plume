@@ -20,7 +20,6 @@ use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
-use serde_json;
 use url::Url;
 use webfinger::*;
 
@@ -217,16 +216,16 @@ impl Blog {
 
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
         let mut coll = OrderedCollection::default();
-        coll.collection_props.items = serde_json::to_value(self.get_activities(conn)?)?;
+        coll.collection_props.items = serde_json::to_value(self.get_activities(conn))?;
         coll.collection_props
-            .set_total_items_u64(self.get_activities(conn)?.len() as u64)?;
+            .set_total_items_u64(self.get_activities(conn).len() as u64)?;
         coll.collection_props
             .set_first_link(Id::new(ap_url(&format!("{}?page=1", &self.outbox_url))))?;
         coll.collection_props
             .set_last_link(Id::new(ap_url(&format!(
                 "{}?page={}",
                 &self.outbox_url,
-                (self.get_activities(conn)?.len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
+                (self.get_activities(conn).len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
                     / ITEMS_PER_PAGE as u64
             ))))?;
         Ok(ActivityStream::new(coll))
@@ -237,7 +236,7 @@ impl Blog {
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         let mut coll = OrderedCollectionPage::default();
-        let acts = self.get_activity_page(&conn, (min, max))?;
+        let acts = self.get_activity_page(&conn, (min, max));
         //This still doesn't do anything because the outbox
         //doesn't do anything yet
         coll.collection_page_props.set_next_link(Id::new(&format!(
@@ -253,15 +252,15 @@ impl Blog {
         coll.collection_props.items = serde_json::to_value(acts)?;
         Ok(ActivityStream::new(coll))
     }
-    fn get_activities(&self, _conn: &Connection) -> Result<Vec<serde_json::Value>> {
-        Ok(vec![])
+    fn get_activities(&self, _conn: &Connection) -> Vec<serde_json::Value> {
+        vec![]
     }
     fn get_activity_page(
         &self,
         _conn: &Connection,
         (_min, _max): (i32, i32),
-    ) -> Result<Vec<serde_json::Value>> {
-        Ok(vec![])
+    ) -> Vec<serde_json::Value> {
+        vec![]
     }
 
     pub fn get_keypair(&self) -> Result<PKey<Private>> {

@@ -89,12 +89,12 @@ fn file_to_migration(file: &str) -> TokenStream2 {
     let mut actions = vec![];
     for line in file.lines() {
         if sql {
-            if line.starts_with("--#!") {
+            if let Some(acc_str) = line.strip_prefix("--#!") {
                 if !acc.trim().is_empty() {
                     actions.push(quote!(Action::Sql(#acc)));
                 }
                 sql = false;
-                acc = line[4..].to_string();
+                acc = acc_str.to_string();
                 acc.push('\n');
             } else if line.starts_with("--") {
                 continue;
@@ -102,8 +102,8 @@ fn file_to_migration(file: &str) -> TokenStream2 {
                 acc.push_str(line);
                 acc.push('\n');
             }
-        } else if line.starts_with("--#!") {
-            acc.push_str(&line[4..]);
+        } else if let Some(acc_str) = line.strip_prefix("--#!") {
+            acc.push_str(&acc_str);
             acc.push('\n');
         } else if line.starts_with("--") {
             continue;

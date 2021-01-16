@@ -1,5 +1,3 @@
-use rsass;
-
 use ructe::Ructe;
 use std::process::{Command, Stdio};
 use std::{ffi::OsStr, fs::*, io::Write, path::*};

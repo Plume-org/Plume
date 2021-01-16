@@ -9,7 +9,6 @@ use rocket::{
     response::{status, Content, Flash, Redirect},
 };
 use rocket_i18n::I18n;
-use serde_json;
 use std::{borrow::Cow, collections::HashMap};
 use tracing::{info, warn};
 use validator::{Validate, ValidationError, ValidationErrors};
@@ -379,9 +378,10 @@ pub struct UpdateUserForm {
     pub hide_custom_css: bool,
 }
 
-#[put("/@/<_name>/edit", data = "<form>")]
+#[allow(unused_variables)]
+#[put("/@/<name>/edit", data = "<form>")]
 pub fn update(
-    _name: String,
+    name: String,
     conn: DbConn,
     mut user: User,
     form: LenientForm<UpdateUserForm>,
@@ -402,7 +402,7 @@ pub fn update(
     user.preferred_theme = form
         .theme
         .clone()
-        .and_then(|t| if &t == "" { None } else { Some(t) });
+        .and_then(|t| if t.is_empty() { None } else { Some(t) });
     user.hide_custom_css = form.hide_custom_css;
     let _: User = user.save_changes(&*conn).map_err(Error::from)?;
 

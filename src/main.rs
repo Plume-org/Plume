@@ -28,7 +28,6 @@ use std::process::exit;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tracing::warn;
-use tracing_subscriber;
 
 init_i18n!(
     "plume", af, ar, bg, ca, cs, cy, da, de, el, en, eo, es, fa, fi, fr, gl, he, hi, hr, hu, it,

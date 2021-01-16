@@ -1,10 +1,7 @@
 use super::request;
-use base64;
 use chrono::{naive::NaiveDateTime, DateTime, Duration, Utc};
-use hex;
 use openssl::{pkey::PKey, rsa::Rsa, sha::sha256};
 use rocket::http::HeaderMap;
-use serde_json;
 
 /// Returns (public key, private key)
 pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
@@ -20,6 +17,9 @@ pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
     )
 }
 
+#[derive(Debug)]
+pub struct Error();
+
 pub trait Signer {
     type Error;
 
@@ -32,7 +32,7 @@ pub trait Signer {
 }
 
 pub trait Signable {
-    fn sign<T>(&mut self, creator: &T) -> Result<&mut Self, ()>
+    fn sign<T>(&mut self, creator: &T) -> Result<&mut Self, Error>
     where
         T: Signer;
     fn verify<T>(self, creator: &T) -> bool
@@ -46,7 +46,7 @@ pub trait Signable {
 }
 
 impl Signable for serde_json::Value {
-    fn sign<T: Signer>(&mut self, creator: &T) -> Result<&mut serde_json::Value, ()> {
+    fn sign<T: Signer>(&mut self, creator: &T) -> Result<&mut serde_json::Value, Error> {
         let creation_date = Utc::now().to_rfc3339();
         let mut options = json!({
             "type": "RsaSignature2017",
@@ -64,7 +64,7 @@ impl Signable for serde_json::Value {
         let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
 
-        let signature = base64::encode(&creator.sign(&to_be_signed).map_err(|_| ())?);
+        let signature = base64::encode(&creator.sign(&to_be_signed).map_err(|_| Error())?);
 
         options["signatureValue"] = serde_json::Value::String(signature);
         self["signature"] = options;

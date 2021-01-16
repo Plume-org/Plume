@@ -30,9 +30,9 @@ impl TryFrom<i32> for ListType {
     }
 }
 
-impl Into<i32> for ListType {
-    fn into(self) -> i32 {
-        match self {
+impl From<ListType> for i32 {
+    fn from(list_type: ListType) -> Self {
+        match list_type {
             ListType::User => 0,
             ListType::Blog => 1,
             ListType::Word => 2,
@@ -246,22 +246,22 @@ impl List {
         private::ListElem::prefix_in_list(conn, self, word)
     }
 
-    /// Insert new users in a list
+    // Insert new users in a list
     func! {add: add_users, User}
 
-    /// Insert new blogs in a list
+    // Insert new blogs in a list
     func! {add: add_blogs, Blog}
 
-    /// Insert new words in a list
+    // Insert new words in a list
     func! {add: add_words, Word}
 
-    /// Insert new prefixes in a list
+    // Insert new prefixes in a list
     func! {add: add_prefixes, Prefix}
 
-    /// Get all users in the list
+    // Get all users in the list
     func! {list: list_users, User, users}
 
-    /// Get all blogs in the list
+    // Get all blogs in the list
     func! {list: list_blogs, Blog, blogs}
 
     /// Get all words in the list

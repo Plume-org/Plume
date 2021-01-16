@@ -71,7 +71,7 @@ commands:
         type: string
     steps:
     - run: |
-       export RUSTFLAGS="-Zprofile -Zfewer-names -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads -Clink-arg=-Xlinker -Clink-arg=--no-keep-memory -Clink-arg=-Xlinker -Clink-arg=--reduce-memory-overheads"
+       export RUSTFLAGS="-Zprofile -Zfewer-names -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Clink-arg=-Xlinker -Clink-arg=--no-keep-memory -Clink-arg=-Xlinker -Clink-arg=--reduce-memory-overheads"
        export CARGO_INCREMENTAL=0
        << parameters.cmd >>
 

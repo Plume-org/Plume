@@ -60,6 +60,7 @@ fn to_inline(tag: Tag<'_>) -> Tag<'_> {
 struct HighlighterContext {
     content: Vec<String>,
 }
+#[allow(clippy::unnecessary_wraps)]
 fn highlight_code<'a>(
     context: &mut Option<HighlighterContext>,
     evt: Event<'a>,
@@ -119,6 +120,7 @@ fn highlight_code<'a>(
         _ => Some(vec![evt]),
     }
 }
+#[allow(clippy::unnecessary_wraps)]
 fn flatten_text<'a>(state: &mut Option<String>, evt: Event<'a>) -> Option<Vec<Event<'a>>> {
     let (s, res) = match evt {
         Event::Text(txt) => match state.take() {
@@ -137,6 +139,7 @@ fn flatten_text<'a>(state: &mut Option<String>, evt: Event<'a>) -> Option<Vec<Ev
     Some(res)
 }
 
+#[allow(clippy::unnecessary_wraps)]
 fn inline_tags<'a>(
     (state, inline): &mut (Vec<Tag<'a>>, bool),
     evt: Event<'a>,

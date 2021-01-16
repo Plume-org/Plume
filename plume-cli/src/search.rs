@@ -106,7 +106,7 @@ fn refill<'a>(args: &ArgMatches<'a>, conn: &Connection, searcher: Option<Searche
     searcher.commit();
 }
 
-fn unlock<'a>(args: &ArgMatches<'a>) {
+fn unlock(args: &ArgMatches) {
     let path = match args.value_of("path") {
         None => Path::new(&CONFIG.search_index),
         Some(x) => Path::new(x),

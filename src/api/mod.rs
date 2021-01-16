@@ -4,7 +4,6 @@ use rocket::{
     response::{self, Responder},
 };
 use rocket_contrib::json::Json;
-use serde_json;
 
 use plume_common::utils::random_hex;
 use plume_models::{api_tokens::*, apps::App, users::User, Error, PlumeRocket};

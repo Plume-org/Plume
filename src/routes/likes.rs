@@ -45,9 +45,11 @@ pub fn create(
             .execute(move || broadcast(&user, delete_act, dest, CONFIG.proxy().cloned()));
     }
 
-    Ok(Redirect::to(
-        uri!(super::posts::details: blog = blog, slug = slug, responding_to = _),
-    ))
+    Ok(Redirect::to(uri!(
+        super::posts::details: blog = blog,
+        slug = slug,
+        responding_to = _
+    )))
 }
 
 #[post("/~/<blog>/<slug>/like", rank = 2)]

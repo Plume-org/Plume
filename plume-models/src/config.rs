@@ -164,8 +164,8 @@ impl Default for LogoConfig {
             };
             let mut custom_icons = env::vars()
                 .filter_map(|(var, val)| {
-                    if var.starts_with("PLUME_LOGO_") {
-                        Some((var[11..].to_owned(), val))
+                    if let Some(size) = var.strip_prefix("PLUME_LOGO_") {
+                        Some((size.to_owned(), val))
                     } else {
                         None
                     }
@@ -295,7 +295,7 @@ fn get_proxy_config() -> Option<ProxyConfig> {
     let proxy_url = url.clone();
     let only_domains: Option<HashSet<String>> = var("PROXY_DOMAINS")
         .ok()
-        .map(|ods| ods.split(",").map(str::to_owned).collect());
+        .map(|ods| ods.split(',').map(str::to_owned).collect());
     let proxy = if let Some(ref only_domains) = only_domains {
         let only_domains = only_domains.clone();
         reqwest::Proxy::custom(move |url| {
@@ -303,9 +303,7 @@ fn get_proxy_config() -> Option<ProxyConfig> {
                 if only_domains.contains(domain)
                     || only_domains
                         .iter()
-                        .filter(|target| domain.ends_with(&format!(".{}", target)))
-                        .next()
-                        .is_some()
+                        .any(|target| domain.ends_with(&format!(".{}", target)))
                 {
                     Some(proxy_url.clone())
                 } else {
@@ -316,9 +314,7 @@ fn get_proxy_config() -> Option<ProxyConfig> {
             }
         })
     } else {
-        reqwest::Proxy::all(proxy_url)
-            .ok()
-            .expect("Invalid PROXY_URL")
+        reqwest::Proxy::all(proxy_url).expect("Invalid PROXY_URL")
     };
     Some(ProxyConfig {
         url,

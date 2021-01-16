@@ -12,9 +12,9 @@
         <meta charset="utf-8" />
         <title>@title ⋅ @i18n!(ctx.1, "Plume")</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(ctx.2.clone().and_then(|u| u.preferred_theme).unwrap_or_else(|| CONFIG.default_theme.clone())).join("theme.css"), _build_id = CACHE_NAME)" />
+        <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(ctx.2.clone().and_then(|u| u.preferred_theme).unwrap_or_else(|| CONFIG.default_theme.clone())).join("theme.css"), build_id = CACHE_NAME)" />
         <link rel="manifest" href="@uri!(instance::web_manifest)" />
-        <link rel="icon" type="image/png" href="@uri!(plume_static_files: file = CONFIG.logo.favicon.as_str(), _build_id = CACHE_NAME)">
+        <link rel="icon" type="image/png" href="@uri!(plume_static_files: file = CONFIG.logo.favicon.as_str(), build_id = CACHE_NAME)">
         <meta content='#282c37' name='theme-color'/>
         @:head()
     </head>
@@ -26,7 +26,7 @@
             <div id="content">
                 <nav>
                     <a href="@uri!(instance::index)" class="title">
-                        <img src="@uri!(plume_static_files: file = CONFIG.logo.main.as_str(), _build_id = CACHE_NAME)">
+                        <img src="@uri!(plume_static_files: file = CONFIG.logo.main.as_str(), build_id = CACHE_NAME)">
                         <p>@i18n!(ctx.1, "Plume")</p>
                     </a>
                     <hr/>
@@ -96,6 +96,6 @@
                 <a href="https://matrix.to/#/#plume-blog:matrix.org">@i18n!(ctx.1, "Matrix room")</a>
             </div>
         </footer>
-        <script src="@uri!(plume_static_files: file = "plume-front.js", _build_id = CACHE_NAME)"></script>
+        <script src="@uri!(plume_static_files: file = "plume-front.js", build_id = CACHE_NAME)"></script>
     </body>
 </html>

@@ -11,7 +11,7 @@ RUN apt update &&\
     rm -rf /var/lib/apt/lists/*
 
 #install and configure rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2020-12-07 -y &&\
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2021-01-15 -y &&\
     rustup component add rustfmt clippy &&\
     rustup component add rust-std --target wasm32-unknown-unknown
 

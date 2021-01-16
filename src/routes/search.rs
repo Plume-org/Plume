@@ -55,8 +55,7 @@ pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
     let query = query.map(Form::into_inner).unwrap_or_default();
     let page = query.page.unwrap_or_default();
     let mut parsed_query =
-        Query::from_str(&query.q.as_ref().map(String::as_str).unwrap_or_default())
-            .unwrap_or_default();
+        Query::from_str(&query.q.as_deref().unwrap_or_default()).unwrap_or_default();
 
     param_to_query!(query, parsed_query; normal: title, subtitle, content, tag,
               instance, author, blog, lang, license;
