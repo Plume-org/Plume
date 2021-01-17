@@ -64,37 +64,37 @@ main header.article {
 }
 
 main .article-info {
- 	margin: 0 auto 3em;
- 	font-size: 0.95em;
- 	font-weight: 400;
+  margin: 0 auto 3em;
+  font-size: 0.95em;
+  font-weight: 400;
 
- 	.author, .author a {
- 	  font-weight: 600;
- 	}
+  .author, .author a {
+    font-weight: 600;
+  }
 }
 
 /* The article itself */
 main article {
   max-width: $article-width;
- 	margin: 2.5em auto;
- 	font-family: $lora;
- 	font-size: 1.2em;
- 	line-height: 1.7;
+  margin: 2.5em auto;
+  font-family: $lora;
+  font-size: 1.2em;
+  line-height: 1.7;
 
- 	a:hover {
- 	  text-decoration: underline;
- 	}
+  a:hover {
+    text-decoration: underline;
+  }
 
- 	img {
-   	display: block;
-   	margin: 3em auto;
-   	max-width: 100%;
+  img {
+    display: block;
+    margin: 3em auto;
+    max-width: 100%;
   }
 
   pre {
-   	padding: 1em;
-   	background: $gray;
-   	overflow: auto;
+    padding: 1em;
+    background: $gray;
+    overflow: auto;
   }
 
   blockquote {
@@ -126,7 +126,7 @@ main .article-meta {
 
   > p {
     margin: 2em $horizontal-margin;
- 	  font-size: 0.9em;
+    font-size: 0.9em;
   }
 
   /* Article Tags */
@@ -157,15 +157,15 @@ main .article-meta {
   /* Likes & Boosts */
   .actions {
     display: flex;
-   	flex-direction: row;
-   	justify-content: space-around;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .likes, .reshares {
     display: flex;
-   	flex-direction: column;
-   	align-items: center;
-   	padding: 0.5em 0;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5em 0;
 
     p {
       font-size: 1.5em;
@@ -175,34 +175,34 @@ main .article-meta {
 
     .action {
       display: flex;
-     	flex-direction: column;
-     	align-items: center;
-     	justify-content: center;
-     	margin: 0;
-     	padding: 0;
-     	background: none;
-     	color: $text-color;
-     	border: none;
-     	font-size: 1.1em;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      background: none;
+      color: $text-color;
+      border: none;
+      font-size: 1.1em;
       cursor: pointer;
 
-     	svg.feather {
-       	transition: background 0.1s ease-in;
-       	display: flex;
-       	align-items: center;
-       	justify-content: center;
+      svg.feather {
+        transition: background 0.1s ease-in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-       	margin: 0.5em 0;
-       	width: 2.5em;
-       	height: 2.5em;
+        margin: 0.5em 0;
+        width: 2.5em;
+        height: 2.5em;
 
-       	border-radius: 50%;
+        border-radius: 50%;
       }
 
       &.reshared, &.liked {
         svg.feather {
-         	color: $background;
-         	font-weight: 900;
+          color: $background;
+          font-weight: 900;
         }
       }
     }
@@ -213,14 +213,14 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
-     	box-sizing: border-box;
-     	color: $red;
-     	fill: none;
-     	border: solid $red thin;
+      box-sizing: border-box;
+      color: $red;
+      fill: none;
+      border: solid $red thin;
     }
 
     .action:hover svg.feather {
-     	background: transparentize($red, 0.85);
+      background: transparentize($red, 0.85);
     }
 
     .action.liked svg.feather {
@@ -238,22 +238,22 @@ main .article-meta {
 
     .action svg.feather {
       padding: 0.7em;
-     	box-sizing: border-box;
-     	color: $primary;
-     	border: solid $primary thin;
-     	font-weight: 600;
+      box-sizing: border-box;
+      color: $primary;
+      border: solid $primary thin;
+      font-weight: 600;
     }
 
     .action:hover svg.feather {
-     	background: transparentize($primary, 0.85);
+      background: transparentize($primary, 0.85);
     }
 
     .action.reshared svg.feather {
       background: $primary;
     }
     .action.reshared:hover svg.feather {
-     	background: transparentize($primary, 0.75)
-     	color: $primary;
+      background: transparentize($primary, 0.75)
+      color: $primary;
     }
   }
 
@@ -262,9 +262,9 @@ main .article-meta {
     margin: 0 $horizontal-margin;
 
     h2 {
-     	color: $primary;
-     	font-size: 1.5em;
-     	font-weight: 600;
+      color: $primary;
+      font-size: 1.5em;
+      font-weight: 600;
     }
 
     summary {
@@ -279,16 +279,16 @@ main .article-meta {
 
     // Respond & delete comment buttons
     a.button, form.inline, form.inline input {
-     	padding: 0;
-     	background: none;
-     	color: $text-color;
-     	margin-right: 2em;
-     	font-family: $route159;
+      padding: 0;
+      background: none;
+      color: $text-color;
+      margin-right: 2em;
+      font-family: $route159;
       font-weight: normal;
 
-     	&::before {
-     	  color: $primary;
-     	  padding-right: 0.5em;
+      &::before {
+        color: $primary;
+        padding-right: 0.5em;
       }
 
       &:hover { color: $primary; }
@@ -296,8 +296,8 @@ main .article-meta {
 
     .comment {
       margin: 1em 0;
-     	font-size: 1em;
-     	border: none;
+      font-size: 1em;
+      border: none;
 
       .content {
         background: $gray;
@@ -328,36 +328,36 @@ main .article-meta {
         color: transparentize($text-color, 0.6);
       }
 
-     	.author {
-     	  display: flex;
-       	flex-direction: row;
-       	align-items: center;
-       	align-content: center;
+      .author {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        align-content: center;
 
-       	* {
-       	  transition: all 0.1s ease-in;
-       	}
+        * {
+          transition: all 0.1s ease-in;
+        }
 
-       	.display-name {
-         	color: $text-color;
+        .display-name {
+          color: $text-color;
         }
 
         &:hover {
           .display-name { color: $primary; }
           small { opacity: 1; }
         }
-     	}
+      }
 
       & > .comment {
           padding-left: 2em;
       }
 
-     	.text {
-       	padding: 1.25em 0;
-       	font-family: $lora;
-       	font-size: 1.1em;
-       	line-height: 1.4;
-       	text-align: left;
+      .text {
+        padding: 1.25em 0;
+        font-family: $lora;
+        font-size: 1.1em;
+        line-height: 1.4;
+        text-align: left;
       }
     }
   }

@@ -1,27 +1,27 @@
 label {
- 	display: block;
- 	margin: 2em auto .5em;
- 	font-size: 1.2em;
+  display: block;
+  margin: 2em auto .5em;
+  font-size: 1.2em;
 }
 input, textarea, select {
- 	transition: all 0.1s ease-in;
- 	display: block;
- 	width: 100%;
- 	margin: auto;
- 	padding: 1em;
- 	box-sizing: border-box;
+  transition: all 0.1s ease-in;
+  display: block;
+  width: 100%;
+  margin: auto;
+  padding: 1em;
+  box-sizing: border-box;
   -webkit-appearance: textarea;
 
- 	background: $form-input-background;
- 	color: $text-color;
- 	border: solid $form-input-border thin;
+  background: $form-input-background;
+  color: $text-color;
+  border: solid $form-input-border thin;
 
- 	font-size: 1.2em;
- 	font-weight: 400;
+  font-size: 1.2em;
+  font-weight: 400;
 
- 	&:focus {
- 	  border-color: $primary;
- 	}
+  &:focus {
+    border-color: $primary;
+  }
 }
 form input[type="submit"] {
  margin: 2em auto;
@@ -29,18 +29,18 @@ form input[type="submit"] {
 }
 
 textarea {
- 	resize: vertical;
+  resize: vertical;
   overflow-y: scroll;
- 	font-family: $lora;
- 	font-size: 1.1em;
- 	line-height: 1.5;
+  font-family: $lora;
+  font-size: 1.1em;
+  line-height: 1.5;
 }
 
 input[type="checkbox"] {
- 	display: inline;
- 	margin: initial;
- 	min-width: initial;
- 	width: initial;
+  display: inline;
+  margin: initial;
+  min-width: initial;
+  width: initial;
   -webkit-appearance: checkbox;
 }
 
@@ -71,31 +71,31 @@ form.inline {
 }
 
 .button, .button:visited, input[type="submit"], input[type="submit"].button {
- 	transition: all 0.1s ease-in;
- 	display: inline-block;
+  transition: all 0.1s ease-in;
+  display: inline-block;
   -webkit-appearance: none;
 
- 	margin: 0.5em auto;
- 	padding: 0.75em 1em;
+  margin: 0.5em auto;
+  padding: 0.75em 1em;
 
- 	background: $primary;
- 	color: $primary-text-color;
+  background: $primary;
+  color: $primary-text-color;
   font-weight: bold;
   border: none;
 
- 	cursor: pointer;
+  cursor: pointer;
 
- 	&:hover {
- 	  background: transparentize($primary, 0.1);
- 	}
+  &:hover {
+    background: transparentize($primary, 0.1);
+  }
 
- 	&.destructive {
- 	  background: $red;
+  &.destructive {
+    background: $red;
 
     &:hover {
       background: transparentize($red, 0.1);
     }
- 	}
+  }
 
   &.secondary {
     background: $gray;
@@ -115,20 +115,20 @@ input[type="submit"] {
 form.new-post {
   max-width: 60em;
   .title {
-   	margin: 0 auto;
-   	padding: 0.75em 0;
+    margin: 0 auto;
+    padding: 0.75em 0;
 
-   	background: none;
-   	border: none;
+    background: none;
+    border: none;
 
-   	font-family: $playfair;
-   	font-size: 2em;
-   	text-align: left;
+    font-family: $playfair;
+    font-size: 2em;
+    text-align: left;
   }
   textarea {
-   	min-height: 20em;
-   	overflow-y: scroll;
-   	resize: none;
+    min-height: 20em;
+    overflow-y: scroll;
+    resize: none;
    -webkit-appearance: textarea;
   }
 }
