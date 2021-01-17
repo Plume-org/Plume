@@ -33,6 +33,8 @@ diesel-derive-newtype = "0.1.2"
 glob = "0.3.0"
 lindera-tantivy = { version = "0.7.1", optional = true }
 tracing = "0.1.22"
+riker = "0.4.2"
+once_cell = "1.5.2"
 
 [dependencies.chrono]
 features = ["serde"]

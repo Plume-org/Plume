@@ -105,7 +105,6 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Api<PostData> {
     let conn = &*rockets.conn;
-    let search = &rockets.searcher;
     let worker = &rockets.worker;
 
     let author = User::get(conn, auth.0.user_id)?;
@@ -155,7 +154,6 @@ pub fn create(
             source: payload.source.clone(),
             cover_id: payload.cover_id,
         },
-        search,
     )?;
 
     PostAuthor::insert(
@@ -232,7 +230,7 @@ pub fn delete(auth: Authorization<Write, Post>, rockets: PlumeRocket, id: i32) -
     let author = User::get(&*rockets.conn, auth.0.user_id)?;
     if let Ok(post) = Post::get(&*rockets.conn, id) {
         if post.is_author(&*rockets.conn, author.id).unwrap_or(false) {
-            post.delete(&*rockets.conn, &rockets.searcher)?;
+            post.delete(&*rockets.conn)?;
         }
     }
     Ok(Json(()))

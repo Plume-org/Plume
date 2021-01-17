@@ -298,8 +298,7 @@ pub fn update(
             post.source = form.content.clone();
             post.license = form.license.clone();
             post.cover_id = form.cover;
-            post.update(&*conn, &rockets.searcher)
-                .expect("post::update: update error");
+            post.update(&*conn).expect("post::update: update error");
 
             if post.published {
                 post.update_mentions(
@@ -481,7 +480,6 @@ pub fn create(
                 source: form.content.clone(),
                 cover_id: form.cover,
             },
-            &rockets.searcher,
         )
         .expect("post::create: post save error");
 

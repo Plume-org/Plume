@@ -1,15 +1,17 @@
 use crate::{
     config::SearchTokenizerConfig, instance::Instance, posts::Post, schema::posts,
-    search::query::PlumeQuery, tags::Tag, Connection, Result,
+    search::query::PlumeQuery, tags::Tag, Connection, Error, Result,
 };
-use chrono::Datelike;
+use chrono::{Datelike, Utc};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
+use std::fs;
 use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
     ReloadPolicy, TantivyError, Term,
 };
+use tracing::warn;
 use whatlang::{detect as detect_lang, Lang};
 
 #[derive(Debug)]
@@ -65,6 +67,58 @@ impl Searcher {
         schema_builder.add_text_field("license", property_indexing);
 
         schema_builder.build()
+    }
+
+    pub fn open_or_recreate(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Self {
+        let mut open_searcher = Self::open(path, tokenizers);
+        if let Err(Error::Search(SearcherError::InvalidIndexDataError)) = open_searcher {
+            if Self::create(path, tokenizers).is_err() {
+                let backup_path = format!("{}.{}", path.as_ref().display(), Utc::now().timestamp());
+                let backup_path = Path::new(&backup_path);
+                fs::rename(path, backup_path)
+                    .expect("main: error on backing up search index directory for recreating");
+                if Self::create(path, tokenizers).is_ok() {
+                    if fs::remove_dir_all(backup_path).is_err() {
+                        warn!(
+                            "error on removing backup directory: {}. it remains",
+                            backup_path.display()
+                        );
+                    }
+                } else {
+                    panic!("main: error on recreating search index in new index format. remove search index and run `plm search init` manually");
+                }
+            }
+            open_searcher = Self::open(path, tokenizers);
+        }
+        match open_searcher {
+            Ok(s) => s,
+            Err(Error::Search(e)) => match e {
+                SearcherError::WriteLockAcquisitionError => panic!(
+                    r#"
+Your search index is locked. Plume can't start. To fix this issue
+make sure no other Plume instance is started, and run:
+
+    plm search unlock
+
+Then try to restart Plume.
+"#
+                ),
+                SearcherError::IndexOpeningError => panic!(
+                    r#"
+Plume was unable to open the search index. If you created the index
+before, make sure to run Plume in the same directory it was created in, or
+to set SEARCH_INDEX accordingly. If you did not yet create the search
+index, run this command:
+
+    plm search init
+
+Then try to restart Plume
+"#
+                ),
+                e => Err(e).unwrap(),
+            },
+            _ => panic!("Unexpected error while opening search index"),
+        }
     }
 
     pub fn create(path: &dyn AsRef<Path>, tokenizers: &SearchTokenizerConfig) -> Result<Self> {

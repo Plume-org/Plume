@@ -17,7 +17,10 @@ extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
 
+use once_cell::sync::Lazy;
 use plume_common::activity_pub::inbox::InboxError;
+use posts::PostEvent;
+use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
 compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
@@ -29,6 +32,16 @@ pub type Connection = diesel::SqliteConnection;
 
 #[cfg(all(not(feature = "sqlite"), feature = "postgres"))]
 pub type Connection = diesel::PgConnection;
+
+pub(crate) static ACTOR_SYS: Lazy<ActorSystem> = Lazy::new(|| {
+    SystemBuilder::new()
+        .name("plume")
+        .create()
+        .expect("Failed to create actor system")
+});
+
+pub(crate) static POST_CHAN: Lazy<ChannelRef<PostEvent>> =
+    Lazy::new(|| channel("post_events", &*ACTOR_SYS).expect("Failed to create post channel"));
 
 /// All the possible errors that can be encoutered in this crate
 #[derive(Debug)]

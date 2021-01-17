@@ -9,6 +9,7 @@
 - Allow `dir` attributes for LtoR text in RtoL document (#860)
 - More translation languages (#862)
 - Proxy support (#829)
+- Riker a actor system library (#870)
 
 ### Changed
 
@@ -16,6 +17,7 @@
 - Use tracing crate (#868)
 - Update Rust version to nightly-2021-01-15 (#878)
 - Upgrade Tantivy to 0.13.3 and lindera-tantivy to 0.7.1 (#878)
+- Run searcher on actor system (#870)
 
 ### Fixed
 

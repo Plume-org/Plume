@@ -1,6 +1,6 @@
 use crate::{
     ap_url, instance::*, medias::Media, posts::Post, safe_string::SafeString, schema::blogs,
-    search::Searcher, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
+    users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
     actor::Group,
@@ -317,9 +317,9 @@ impl Blog {
             .and_then(|c| c.url().ok())
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         for post in Post::get_for_blog(conn, &self)? {
-            post.delete(conn, searcher)?;
+            post.delete(conn)?;
         }
         diesel::delete(self)
             .execute(conn)
@@ -497,10 +497,8 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         blog_authors::*,
-        config::CONFIG,
         instance::tests as instance_tests,
         medias::NewMedia,
-        search::tests::get_searcher,
         tests::{db, rockets},
         users::tests as usersTests,
         Connection as Conn,
@@ -767,9 +765,7 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let (_, blogs) = fill_database(conn);
 
-            blogs[0]
-                .delete(conn, &get_searcher(&CONFIG.search_tokenizers))
-                .unwrap();
+            blogs[0].delete(conn).unwrap();
             assert!(Blog::get(conn, blogs[0].id).is_err());
             Ok(())
         })
@@ -779,7 +775,6 @@ pub(crate) mod tests {
     fn delete_via_user() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let searcher = get_searcher(&CONFIG.search_tokenizers);
             let (user, _) = fill_database(conn);
 
             let b1 = Blog::insert(
@@ -836,10 +831,10 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            user[0].delete(conn, &searcher).unwrap();
+            user[0].delete(conn).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_ok());
             assert!(Blog::get(conn, blog[1].id).is_err());
-            user[1].delete(conn, &searcher).unwrap();
+            user[1].delete(conn).unwrap();
             assert!(Blog::get(conn, blog[0].id).is_err());
             Ok(())
         })
@@ -886,7 +881,7 @@ pub(crate) mod tests {
             let _: Blog = blogs[0].save_changes(conn).unwrap();
 
             let ap_repr = blogs[0].to_activity(conn).unwrap();
-            blogs[0].delete(conn, &*r.searcher).unwrap();
+            blogs[0].delete(conn).unwrap();
             let blog = Blog::from_activity(&r, ap_repr).unwrap();
 
             assert_eq!(blog.actor_id, blogs[0].actor_id);

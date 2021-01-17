@@ -72,27 +72,27 @@ msgstr ""
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:160
+# src/routes/blogs.rs:159
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:168
+# src/routes/blogs.rs:167
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:219
+# src/routes/blogs.rs:218
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:275
+# src/routes/blogs.rs:274
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:293
+# src/routes/blogs.rs:292
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:327
+# src/routes/blogs.rs:326
 msgid "Your blog information have been updated."
 msgstr ""
 
@@ -104,39 +104,39 @@ msgstr ""
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/instance.rs:119
+# src/routes/instance.rs:118
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:151
+# src/routes/instance.rs:150
 msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:153
+# src/routes/instance.rs:152
 msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:202
+# src/routes/instance.rs:201
 msgid "Blocks deleted"
 msgstr ""
 
-# src/routes/instance.rs:217
+# src/routes/instance.rs:216
 msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:222
+# src/routes/instance.rs:221
 msgid "Email Blocked"
 msgstr ""
 
-# src/routes/instance.rs:313
+# src/routes/instance.rs:312
 msgid "You can't change your own rights."
 msgstr ""
 
-# src/routes/instance.rs:324
+# src/routes/instance.rs:323
 msgid "You are not allowed to take this action."
 msgstr ""
 
-# src/routes/instance.rs:361
+# src/routes/instance.rs:359
 msgid "Done."
 msgstr ""
 
@@ -188,31 +188,31 @@ msgstr ""
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:364
+# src/routes/posts.rs:363
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:555
+# src/routes/posts.rs:553
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:562
+# src/routes/posts.rs:560
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:599
+# src/routes/posts.rs:597
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:624
+# src/routes/posts.rs:622
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:629
+# src/routes/posts.rs:627
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:669
+# src/routes/posts.rs:667
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 

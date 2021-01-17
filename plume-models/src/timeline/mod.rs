@@ -408,7 +408,6 @@ mod tests {
                     source: "you must say GNU/Linux, not Linux!!!".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             assert!(gnu_tl.matches(r, &gnu_post, Kind::Original).unwrap());
@@ -428,7 +427,6 @@ mod tests {
                     source: "so is Microsoft".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             assert!(!gnu_tl.matches(r, &non_free_post, Kind::Original).unwrap());
@@ -481,7 +479,6 @@ mod tests {
                     subtitle: "".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             assert!(my_tl.matches(r, &post, Kind::Original).unwrap()); // matches because of "blog in fav_blogs" (and there is no cover)
@@ -503,7 +500,6 @@ mod tests {
                     subtitle: "".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             assert!(!my_tl.matches(r, &post, Kind::Like(&users[1])).unwrap());
@@ -549,7 +545,6 @@ mod tests {
                     source: "you must say GNU/Linux, not Linux!!!".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
 
@@ -568,7 +563,6 @@ mod tests {
                     source: "so is Microsoft".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
 
@@ -608,7 +602,6 @@ mod tests {
                     source: "you must say GNU/Linux, not Linux!!!".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             gnu_post
@@ -745,7 +738,6 @@ mod tests {
                     source: "you must say GNU/Linux, not Linux!!!".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             gnu_post.update_tags(conn, vec![Tag::build_activity("free".to_owned()).unwrap()]).unwrap();
@@ -779,7 +771,6 @@ mod tests {
                     source: "you must say GNU/Linux, not Linux!!!".to_string(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
 

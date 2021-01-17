@@ -1,8 +1,8 @@
 use crate::{
     ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, db_conn::DbConn, follows::Follow,
     instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
-    safe_string::SafeString, schema::users, search::Searcher, timeline::Timeline, Connection,
-    Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
+    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, PlumeRocket,
+    Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
     activity::Delete,
@@ -129,14 +129,14 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         use crate::schema::post_authors;
 
         for blog in Blog::find_for_author(conn, self)?
             .iter()
             .filter(|b| b.count_authors(conn).map(|c| c <= 1).unwrap_or(false))
         {
-            blog.delete(conn, searcher)?;
+            blog.delete(conn)?;
         }
         // delete the posts if they is the only author
         let all_their_posts_ids: Vec<i32> = post_authors::table
@@ -156,7 +156,7 @@ impl User {
                 .unwrap_or(&0)
                 > &0;
             if !has_other_authors {
-                Post::get(conn, post_id)?.delete(conn, searcher)?;
+                Post::get(conn, post_id)?.delete(conn)?;
             }
         }
 
@@ -1037,7 +1037,7 @@ impl AsObject<User, Delete, &PlumeRocket> for User {
 
     fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
-            self.delete(&c.conn, &c.searcher).map(|_| ())
+            self.delete(&c.conn).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
@@ -1130,9 +1130,7 @@ impl NewUser {
 pub(crate) mod tests {
     use super::*;
     use crate::{
-        config::CONFIG,
         instance::{tests as instance_tests, Instance},
-        search::tests::get_searcher,
         tests::{db, rockets},
         Connection as Conn,
     };
@@ -1227,9 +1225,7 @@ pub(crate) mod tests {
             let inserted = fill_database(conn);
 
             assert!(User::get(conn, inserted[0].id).is_ok());
-            inserted[0]
-                .delete(conn, &get_searcher(&CONFIG.search_tokenizers))
-                .unwrap();
+            inserted[0].delete(conn).unwrap();
             assert!(User::get(conn, inserted[0].id).is_err());
             Ok(())
         });
@@ -1319,7 +1315,7 @@ pub(crate) mod tests {
             let users = fill_database(conn);
 
             let ap_repr = users[0].to_activity(conn).unwrap();
-            users[0].delete(conn, &*r.searcher).unwrap();
+            users[0].delete(conn).unwrap();
             let user = User::from_activity(&r, ap_repr).unwrap();
 
             assert_eq!(user.username, users[0].username);

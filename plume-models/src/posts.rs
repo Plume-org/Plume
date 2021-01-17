@@ -1,7 +1,7 @@
 use crate::{
     ap_url, blogs::Blog, instance::Instance, medias::Media, mentions::Mention, post_authors::*,
-    safe_string::SafeString, schema::posts, search::Searcher, tags::*, timeline::*, users::User,
-    Connection, Error, PlumeRocket, Result, CONFIG,
+    safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User, Connection, Error,
+    PlumeRocket, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
     activity::{Create, Delete, Update},
@@ -19,11 +19,13 @@ use plume_common::{
     },
     utils::md_to_html,
 };
+use riker::actors::{Publish, Tell};
 use std::collections::HashSet;
+use std::sync::Arc;
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
 
-#[derive(Queryable, Identifiable, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct Post {
     pub id: i32,
@@ -62,7 +64,7 @@ impl Post {
     find_by!(posts, find_by_ap_url, ap_url as &str);
 
     last!(posts);
-    pub fn insert(conn: &Connection, new: NewPost, searcher: &Searcher) -> Result<Self> {
+    pub fn insert(conn: &Connection, new: NewPost) -> Result<Self> {
         diesel::insert_into(posts::table)
             .values(new)
             .execute(conn)?;
@@ -77,23 +79,29 @@ impl Post {
             let _: Post = post.save_changes(conn)?;
         }
 
-        searcher.add_document(conn, &post)?;
+        if post.published {
+            post.publish_published();
+        }
+
         Ok(post)
     }
 
-    pub fn update(&self, conn: &Connection, searcher: &Searcher) -> Result<Self> {
+    pub fn update(&self, conn: &Connection) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
-        searcher.update_document(conn, &post)?;
+        // TODO: Call publish_published() when newly published
+        if post.published {
+            self.publish_updated();
+        }
         Ok(post)
     }
 
-    pub fn delete(&self, conn: &Connection, searcher: &Searcher) -> Result<()> {
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
         for m in Mention::list_for_post(&conn, self.id)? {
             m.delete(conn)?;
         }
         diesel::delete(self).execute(conn)?;
-        searcher.delete_document(self);
+        self.publish_deleted();
         Ok(())
     }
 
@@ -545,6 +553,36 @@ impl Post {
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
         Ok(act)
     }
+
+    fn publish_published(&self) {
+        POST_CHAN.tell(
+            Publish {
+                msg: PostPublished(Arc::new(self.clone())),
+                topic: "post.published".into(),
+            },
+            None,
+        )
+    }
+
+    fn publish_updated(&self) {
+        POST_CHAN.tell(
+            Publish {
+                msg: PostUpdated(Arc::new(self.clone())),
+                topic: "post.updated".into(),
+            },
+            None,
+        )
+    }
+
+    fn publish_deleted(&self) {
+        POST_CHAN.tell(
+            Publish {
+                msg: PostDeleted(Arc::new(self.clone())),
+                topic: "post.deleted".into(),
+            },
+            None,
+        )
+    }
 }
 
 impl FromId<PlumeRocket> for Post {
@@ -557,7 +595,6 @@ impl FromId<PlumeRocket> for Post {
 
     fn from_activity(c: &PlumeRocket, article: LicensedArticle) -> Result<Self> {
         let conn = &*c.conn;
-        let searcher = &c.searcher;
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
 
@@ -605,7 +642,6 @@ impl FromId<PlumeRocket> for Post {
                 source: article.ap_object_props.source_object::<Source>()?.content,
                 cover_id: cover,
             },
-            searcher,
         )?;
 
         for author in authors {
@@ -670,7 +706,7 @@ impl AsObject<User, Delete, &PlumeRocket> for Post {
             .into_iter()
             .any(|a| actor.id == a.id);
         if can_delete {
-            self.delete(&c.conn, &c.searcher).map(|_| ())
+            self.delete(&c.conn).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
@@ -727,7 +763,6 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
 
     fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
         let conn = &*c.conn;
-        let searcher = &c.searcher;
         let mut post = Post::from_id(c, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
@@ -789,7 +824,7 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
             post.update_hashtags(conn, hashtags)?;
         }
 
-        post.update(conn, searcher)?;
+        post.update(conn)?;
         Ok(())
     }
 }
@@ -797,6 +832,25 @@ impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
 impl IntoId for Post {
     fn into_id(self) -> Id {
         Id::new(self.ap_url)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum PostEvent {
+    PostPublished(Arc<Post>),
+    PostUpdated(Arc<Post>),
+    PostDeleted(Arc<Post>),
+}
+
+impl From<PostEvent> for Arc<Post> {
+    fn from(event: PostEvent) -> Self {
+        use PostEvent::*;
+
+        match event {
+            PostPublished(post) => post,
+            PostUpdated(post) => post,
+            PostDeleted(post) => post,
+        }
     }
 }
 
@@ -831,7 +885,6 @@ mod tests {
                     source: "Hello".into(),
                     cover_id: None,
                 },
-                &r.searcher,
             )
             .unwrap();
             PostAuthor::insert(
@@ -843,7 +896,7 @@ mod tests {
             )
             .unwrap();
             let create = post.create_activity(conn).unwrap();
-            post.delete(conn, &r.searcher).unwrap();
+            post.delete(conn).unwrap();
 
             match inbox(&r, serde_json::to_value(create).unwrap()).unwrap() {
                 InboxResult::Post(p) => {

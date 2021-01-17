@@ -97,7 +97,6 @@ pub(crate) mod tests {
                 source: String::new(),
                 cover_id: None,
             },
-            &rockets.searcher,
         )
         .unwrap();
 

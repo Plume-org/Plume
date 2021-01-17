@@ -1,3 +1,4 @@
+pub mod actor;
 mod query;
 mod searcher;
 mod tokenizer;
@@ -7,12 +8,7 @@ pub use self::tokenizer::TokenizerKind;
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use super::{Query, Searcher, TokenizerKind};
-    use diesel::Connection;
-    use plume_common::utils::random_hex;
-    use std::env::temp_dir;
-    use std::str::FromStr;
-
+    use super::{Query, Searcher};
     use crate::{
         blogs::tests::fill_database,
         config::SearchTokenizerConfig,
@@ -22,6 +18,10 @@ pub(crate) mod tests {
         tests::db,
         CONFIG,
     };
+    use diesel::Connection;
+    use plume_common::utils::random_hex;
+    use std::env::temp_dir;
+    use std::str::FromStr;
 
     pub(crate) fn get_searcher(tokenizers: &SearchTokenizerConfig) -> Searcher {
         let dir = temp_dir().join(&format!("plume-test-{}", random_hex()));
@@ -144,7 +144,6 @@ pub(crate) mod tests {
                     source: "".to_owned(),
                     cover_id: None,
                 },
-                &searcher,
             )
             .unwrap();
             PostAuthor::insert(
@@ -155,7 +154,7 @@ pub(crate) mod tests {
                 },
             )
             .unwrap();
-
+            searcher.add_document(&conn, &post).unwrap();
             searcher.commit();
             assert_eq!(
                 searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
@@ -164,7 +163,8 @@ pub(crate) mod tests {
 
             let newtitle = random_hex()[..8].to_owned();
             post.title = newtitle.clone();
-            post.update(conn, &searcher).unwrap();
+            post.update(conn).unwrap();
+            searcher.update_document(conn, &post).unwrap();
             searcher.commit();
             assert_eq!(
                 searcher.search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))[0].id,
@@ -174,7 +174,7 @@ pub(crate) mod tests {
                 .search_document(conn, Query::from_str(&title).unwrap(), (0, 1))
                 .is_empty());
 
-            post.delete(conn, &searcher).unwrap();
+            searcher.delete_document(&post);
             searcher.commit();
             assert!(searcher
                 .search_document(conn, Query::from_str(&newtitle).unwrap(), (0, 1))
@@ -213,7 +213,6 @@ pub(crate) mod tests {
                     source: "".to_owned(),
                     cover_id: None,
                 },
-                &searcher,
             )
             .unwrap();
 
