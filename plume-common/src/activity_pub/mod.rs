@@ -1,6 +1,6 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use reqwest::r#async::ClientBuilder;
+use reqwest::{header::HeaderValue, r#async::ClientBuilder, Url};
 use rocket::{
     http::Status,
     request::{FromRequest, Request},
@@ -143,6 +143,20 @@ where
     for inbox in boxes {
         let body = signed.to_string();
         let mut headers = request::headers();
+        let url = Url::parse(&inbox);
+        if url.is_err() {
+            warn!("Inbox is invalid URL: {:?}", &inbox);
+            continue;
+        }
+        let url = url.unwrap();
+        if !url.has_host() {
+            warn!("Inbox doesn't have host: {:?}", &inbox);
+            continue;
+        };
+        headers.insert(
+            "Host",
+            HeaderValue::from_str(&url.host_str().unwrap()).unwrap(),
+        );
         headers.insert("Digest", request::Digest::digest(&body));
         rt.spawn(
             client
@@ -150,7 +164,7 @@ where
                 .headers(headers.clone())
                 .header(
                     "Signature",
-                    request::signature(sender, &headers)
+                    request::signature(sender, &headers, "post", url.path(), url.query())
                         .expect("activity_pub::broadcast: request signature error"),
                 )
                 .body(body)

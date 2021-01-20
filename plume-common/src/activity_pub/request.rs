@@ -112,25 +112,46 @@ pub fn headers() -> HeaderMap {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderValue, Error> {
-    let signed_string = headers
+type Method<'a> = &'a str;
+type Path<'a> = &'a str;
+type Query<'a> = &'a str;
+
+pub fn signature<S: Signer>(
+    signer: &S,
+    headers: &HeaderMap,
+    method: Method,
+    path: Path,
+    query: Option<Query>,
+) -> Result<HeaderValue, Error> {
+    let origin_form = if let Some(query) = query {
+        format!("{}?{}", path, query)
+    } else {
+        path.to_string()
+    };
+
+    let mut headers = headers
         .iter()
         .map(|(h, v)| {
-            format!(
-                "{}: {}",
+            (
                 h.as_str().to_lowercase(),
                 v.to_str()
-                    .expect("request::signature: invalid header error")
+                    .expect("request::signature: invalid header error"),
             )
         })
+        .collect::<Vec<(String, &str)>>();
+    let request_target = format!("{} {}", method.to_lowercase(), origin_form);
+    headers.push(("(request-target)".to_string(), &request_target));
+
+    let signed_string = headers
+        .iter()
+        .map(|(h, v)| format!("{}: {}", h, v))
         .collect::<Vec<String>>()
         .join("\n");
     let signed_headers = headers
         .iter()
-        .map(|(h, _)| h.as_str())
+        .map(|(h, _)| h.as_ref())
         .collect::<Vec<&str>>()
-        .join(" ")
-        .to_lowercase();
+        .join(" ");
 
     let data = signer.sign(&signed_string).map_err(|_| Error())?;
     let sign = base64::encode(&data);
