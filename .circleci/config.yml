@@ -143,7 +143,9 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cargo run -p plume-cli --no-default-features --features=${FEATURES} -j1 -- migration run
+          cargo build -p plume-cli --no-default-features --features=${FEATURES} -j1
+          ./target/debug/plm migration run
+          ./target/debug/plm search init
           cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
           for i in 36 4 2 1 1; do
               $cmd $i && break
