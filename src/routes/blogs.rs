@@ -401,8 +401,12 @@ mod tests {
 
         let (_instance, user, blog, post) = create_models(conn);
 
-        let blog_path = format!("/~/{}", blog.fqn);
-        let edit_link = format!(r#"href="{}/{}/edit""#, blog_path, post.slug);
+        let blog_path = uri!(super::activity_details: name = &blog.fqn).to_string();
+        let edit_link = uri!(
+            super::super::posts::edit: blog = &blog.fqn,
+            slug = &post.slug
+        )
+        .to_string();
 
         let mut response = client.get(&blog_path).dispatch();
         let body = response.body_string().unwrap();
