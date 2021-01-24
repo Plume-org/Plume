@@ -375,7 +375,7 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
 #[cfg(test)]
 mod tests {
     use crate::init_rocket;
-    use diesel::{Connection, RunQueryDsl};
+    use diesel::Connection;
     use plume_common::utils::random_hex;
     use plume_models::{
         blog_authors::{BlogAuthor, NewBlogAuthor},
@@ -399,7 +399,7 @@ mod tests {
         let dbpool = client.rocket().state::<DbPool>().unwrap();
         let conn = &DbConn(dbpool.get().unwrap());
 
-        let (instance, user, blog, post) = create_models(conn);
+        let (_instance, user, blog, post) = create_models(conn);
 
         let blog_path = format!("/~/{}", blog.fqn);
         let edit_link = format!(r#"href="{}/{}/edit""#, blog_path, post.slug);
@@ -413,13 +413,6 @@ mod tests {
         let mut response = request.dispatch();
         let body = response.body_string().unwrap();
         assert!(body.contains(&edit_link));
-
-        post.delete(conn).unwrap();
-        blog.delete(conn).unwrap();
-        user.delete(conn).unwrap();
-        diesel::delete(&instance)
-            .execute(&dbpool.get().unwrap())
-            .unwrap();
     }
 
     fn create_models(conn: &DbConn) -> (Instance, User, Blog, Post) {

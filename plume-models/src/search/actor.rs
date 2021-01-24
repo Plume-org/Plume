@@ -151,11 +151,6 @@ mod tests {
             searcher.search_document(&conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,
             post_id
         );
-        // TODO: Make sure records are deleted even when assertion failed
-        post.delete(&conn).unwrap();
-        blog.delete(&conn).unwrap();
-        user.delete(&conn).unwrap();
-        diesel::delete(&instance).execute(&conn).unwrap();
     }
 
     fn fill_database(conn: &Conn) -> (Instance, User, Blog) {
