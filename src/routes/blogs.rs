@@ -422,7 +422,7 @@ mod tests {
     fn create_models(conn: &DbConn) -> (Instance, User, Blog, Post) {
         conn.transaction::<(Instance, User, Blog, Post), diesel::result::Error, _>(|| {
             let instance = Instance::get_local().unwrap_or_else(|_| {
-                Instance::insert(
+                let instance = Instance::insert(
                     conn,
                     NewInstance {
                         default_license: "CC-0-BY-SA".to_string(),
@@ -436,7 +436,9 @@ mod tests {
                         public_domain: random_hex().to_string(),
                     },
                 )
-                .unwrap()
+                .unwrap();
+                Instance::cache_local(conn);
+                instance
             });
             let mut user = NewUser::default();
             user.instance_id = instance.id;
