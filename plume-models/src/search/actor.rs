@@ -79,7 +79,6 @@ impl ActorFactoryArgs<(Arc<Searcher>, DbPool)> for SearchActor {
 #[cfg(test)]
 mod tests {
     use crate::diesel::Connection;
-    use crate::diesel::RunQueryDsl;
     use crate::{
         blog_authors::{BlogAuthor, NewBlogAuthor},
         blogs::{Blog, NewBlog},
@@ -114,7 +113,7 @@ mod tests {
         let conn = db_pool.clone().get().unwrap();
 
         let title = random_hex()[..8].to_owned();
-        let (instance, user, blog) = fill_database(&conn);
+        let (_instance, _user, blog) = fill_database(&conn);
         let author = &blog.list_authors(&conn).unwrap()[0];
 
         let post = Post::insert(
@@ -159,7 +158,7 @@ mod tests {
                 conn,
                 NewInstance {
                     default_license: "CC-0-BY-SA".to_string(),
-                    local: true,
+                    local: false,
                     long_description: SafeString::new("Good morning"),
                     long_description_html: "<p>Good morning</p>".to_string(),
                     short_description: SafeString::new("Hello"),
@@ -170,14 +169,29 @@ mod tests {
                 },
             )
             .unwrap();
-            let mut user = NewUser::default();
-            user.instance_id = instance.id;
-            user.username = random_hex().to_string();
-            user.ap_url = random_hex().to_string();
-            user.inbox_url = random_hex().to_string();
-            user.outbox_url = random_hex().to_string();
-            user.followers_endpoint = random_hex().to_string();
-            let user = User::insert(conn, user).unwrap();
+            let user = User::insert(
+                conn,
+                NewUser {
+                    username: random_hex().to_string(),
+                    display_name: random_hex().to_string(),
+                    outbox_url: random_hex().to_string(),
+                    inbox_url: random_hex().to_string(),
+                    summary: "".to_string(),
+                    email: None,
+                    hashed_password: None,
+                    instance_id: instance.id,
+                    ap_url: random_hex().to_string(),
+                    private_key: None,
+                    public_key: "".to_string(),
+                    shared_inbox_url: None,
+                    followers_endpoint: random_hex().to_string(),
+                    avatar_id: None,
+                    summary_html: SafeString::new(""),
+                    role: 0,
+                    fqn: random_hex().to_string(),
+                },
+            )
+            .unwrap();
             let mut blog = NewBlog::default();
             blog.instance_id = instance.id;
             blog.actor_id = random_hex().to_string();
