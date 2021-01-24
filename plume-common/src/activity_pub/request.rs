@@ -115,14 +115,14 @@ pub fn headers() -> HeaderMap {
 type Method<'a> = &'a str;
 type Path<'a> = &'a str;
 type Query<'a> = &'a str;
+type RequestTarget<'a> = (Method<'a>, Path<'a>, Option<Query<'a>>);
 
 pub fn signature<S: Signer>(
     signer: &S,
     headers: &HeaderMap,
-    method: Method,
-    path: Path,
-    query: Option<Query>,
+    request_target: RequestTarget,
 ) -> Result<HeaderValue, Error> {
+    let (method, path, query) = request_target;
     let origin_form = if let Some(query) = query {
         format!("{}?{}", path, query)
     } else {

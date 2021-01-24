@@ -164,7 +164,7 @@ where
                 .headers(headers.clone())
                 .header(
                     "Signature",
-                    request::signature(sender, &headers, "post", url.path(), url.query())
+                    request::signature(sender, &headers, ("post", url.path(), url.query()))
                         .expect("activity_pub::broadcast: request signature error"),
                 )
                 .body(body)
