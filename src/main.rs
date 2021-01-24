@@ -60,7 +60,7 @@ fn init_pool() -> Option<DbPool> {
     Some(pool)
 }
 
-fn main() {
+pub(crate) fn init_rocket() -> rocket::Rocket {
     match dotenv::dotenv() {
         Ok(path) => eprintln!("Configuration read from {}", path.display()),
         Err(ref e) if e.not_found() => eprintln!("no .env was found"),
@@ -272,5 +272,9 @@ Then try to restart Plume.
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);
-    rocket.launch();
+    rocket
+}
+
+fn main() {
+    init_rocket().launch();
 }
