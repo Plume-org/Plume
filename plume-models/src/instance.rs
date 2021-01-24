@@ -247,6 +247,7 @@ pub(crate) mod tests {
     use diesel::Connection;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<(NewInstance, Instance)> {
+        diesel::delete(instances::table).execute(conn).unwrap();
         let res = vec![
             NewInstance {
                 default_license: "WTFPL".to_string(),
