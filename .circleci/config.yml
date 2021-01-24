@@ -148,7 +148,7 @@ jobs:
           for i in 36 4 2 1 1; do
               $cmd $i && break
           done
-          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1 -- --test-threads=1
+          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1
     - upload_coverage:
         type: unit
     - cache:
