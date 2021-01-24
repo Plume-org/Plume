@@ -126,7 +126,7 @@ Then try to restart Plume.
         warn!("Please refer to the documentation to see how to configure it.");
     }
 
-    let rocket = rocket::custom(CONFIG.rocket.clone().unwrap())
+    rocket::custom(CONFIG.rocket.clone().unwrap())
         .mount(
             "/",
             routes![
@@ -268,13 +268,14 @@ Then try to restart Plume.
                 ])
                 .finalize()
                 .expect("main: csrf fairing creation error"),
-        );
-
-    #[cfg(feature = "test")]
-    let rocket = rocket.mount("/test", routes![test_routes::health,]);
-    rocket
+        )
 }
 
 fn main() {
-    init_rocket().launch();
+    let rocket = init_rocket();
+
+    #[cfg(feature = "test")]
+    let rocket = rocket.mount("/test", routes![test_routes::health,]);
+
+    rocket.launch();
 }
