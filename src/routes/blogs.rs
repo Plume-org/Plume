@@ -389,7 +389,7 @@ mod tests {
     };
     use rocket::{
         http::{Cookie, Cookies, SameSite},
-        local::Client,
+        local::{Client, LocalRequest},
     };
 
     #[test]
@@ -409,11 +409,7 @@ mod tests {
         assert!(!body.contains(&edit_link));
 
         let request = client.get(&blog_path);
-        request.inner().guard::<Cookies>().unwrap().add_private(
-            Cookie::build(AUTH_COOKIE, user.id.to_string())
-                .same_site(SameSite::Lax)
-                .finish(),
-        );
+        login(&request, &user);
         let mut response = request.dispatch();
         let body = response.body_string().unwrap();
         assert!(body.contains(&edit_link));
@@ -498,5 +494,13 @@ mod tests {
             Ok((instance, user, blog, post))
         })
         .unwrap()
+    }
+
+    fn login(request: &LocalRequest, user: &User) {
+        request.inner().guard::<Cookies>().unwrap().add_private(
+            Cookie::build(AUTH_COOKIE, user.id.to_string())
+                .same_site(SameSite::Lax)
+                .finish(),
+        );
     }
 }
