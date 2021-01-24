@@ -6,43 +6,43 @@ html {
 }
 
 html, body {
- 	margin: 0;
- 	padding: 0;
- 	background: $background;
- 	color: $text-color;
- 	font-family: $route159;
+  margin: 0;
+  padding: 0;
+  background: $background;
+  color: $text-color;
+  font-family: $route159;
 
   ::selection {
     background: transparentize($primary, 0.7);
   }
-	::-moz-selection {
+ ::-moz-selection {
     background: transparentize($primary, 0.7);
-	}
+ }
 }
 
 a, a:visited {
- 	color: $primary;
- 	text-decoration: none;
+  color: $primary;
+  text-decoration: none;
 }
 a::selection {
-	color: $background;
+ color: $background;
 }
 a::-moz-selection {
-	color: $background;
+ color: $background;
 }
 small {
- 	margin-left: 1em;
- 	color: transparentize($text-color, 0.6);
- 	font-size: 0.75em;
- 	word-wrap: break-word;
- 	word-break: break-all;
+  margin-left: 1em;
+  color: transparentize($text-color, 0.6);
+  font-size: 0.75em;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .center {
- 	text-align: center;
- 	font-weight: bold;
- 	opacity: 0.6;
- 	padding: 5em;
+  text-align: center;
+  font-weight: bold;
+  opacity: 0.6;
+  padding: 5em;
 }
 
 .right {
@@ -53,28 +53,28 @@ small {
 }
 
 .spaced {
- 	margin: 4rem 0;
+  margin: 4rem 0;
 }
 
 .banner {
- 	background: $gray;
- 	padding-top: 2em;
- 	padding-bottom: 1em;
- 	margin: 3em 0px;
+  background: $gray;
+  padding-top: 2em;
+  padding-bottom: 1em;
+  margin: 3em 0px;
 }
 
 .hidden {
-	display: none;
-	appearance: none;
+ display: none;
+ appearance: none;
 }
 
 /* Main */
 body > main > *, .h-feed > * {
- 	margin: 1em $horizontal-margin;
+  margin: 1em $horizontal-margin;
 }
 
 body > main > .h-entry, .h-feed {
-	margin: 0;
+ margin: 0;
 }
 
 body > main {
@@ -98,18 +98,18 @@ main {
     margin-top: 1em;
 
     &.article {
-     	margin: 1em auto 0.5em;
-     	font-family: $playfair;
-     	font-size: 2.5em;
-     	font-weight: normal;
+      margin: 1em auto 0.5em;
+      font-family: $playfair;
+      font-size: 2.5em;
+      font-weight: normal;
     }
   }
 
   h2 {
-   	font-size: 1.75em;
-   	font-weight: 300;
+    font-size: 1.75em;
+    font-weight: 300;
 
-   	&.article {
+    &.article {
       font-size: 1.25em;
       margin-bottom: 0.5em;
     }
@@ -139,15 +139,15 @@ main {
 
 /* Errors */
 p.error {
- 	color: $red;
- 	font-weight: bold;
+  color: $red;
+  font-weight: bold;
 }
 
 /* User page */
 .user h1 {
- 	display: flex;
- 	flex-direction: row;
- 	align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin: 0px;
 }
 
@@ -156,14 +156,14 @@ p.error {
 }
 
 .badge {
- 	margin-right: 1em;
- 	padding: 0.35em 1em;
+  margin-right: 1em;
+  padding: 0.35em 1em;
 
- 	background: $background;
- 	color: $primary;
- 	border: 1px solid $primary;
+  background: $background;
+  color: $primary;
+  border: 1px solid $primary;
 
- 	font-size: 1rem;
+  font-size: 1rem;
 }
 
 .user-summary {
@@ -172,23 +172,25 @@ p.error {
 
 /* Cards */
 .cards {
- 	display: flex;
- 	flex-direction: row;
- 	flex-wrap: wrap;
- 	padding: 0 5%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0 5%;
   margin: 1rem 0 5rem;
 }
 .card {
- 	flex: 1;
- 	display: flex;
- 	flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 
- 	min-width: 20em;
- 	min-height: 20em;
- 	margin: 1em;
- 	box-sizing: border-box;
+  position: relative;
 
- 	background: $gray;
+  min-width: 20em;
+  min-height: 20em;
+  margin: 1em;
+  box-sizing: border-box;
+
+  background: $gray;
 
   text-overflow: ellipsis;
 
@@ -213,11 +215,11 @@ p.error {
   }
 
 
- 	> * {
- 	  margin: 20px;
- 	}
+  > * {
+    margin: 20px;
+  }
 
- 	.cover {
+  .cover {
     min-height: 10em;
     background-position: center;
     background-size: cover;
@@ -225,26 +227,38 @@ p.error {
   }
 
   h3 {
-   	margin: 0.75em 20px;
-   	font-family: $playfair;
-   	font-size: 1.75em;
-   	font-weight: normal;
-   	a {
-   	  transition: color 0.1s ease-in;
-   	  color: $text-color;
+    flex-grow: 1;
+    margin: 0;
+    font-family: $playfair;
+    font-size: 1.75em;
+    font-weight: normal;
+    line-height: 1.75;
+    a {
+      display: block;
+      transition: color 0.1s ease-in;
+      color: $text-color;
 
-   	  &:hover { color: $primary; }
-   	}
+      &:hover { color: $primary; }
+    }
+  }
+
+  .controls {
+    float: right;
+
+    .button {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
   }
 
   main {
-   	flex: 1;
+    flex: 1;
 
-   	font-family: $lora;
-   	font-size: 1em;
-   	line-height: 1.25;
-   	text-align: left;
-   	overflow: hidden;
+    font-family: $lora;
+    font-size: 1em;
+    line-height: 1.25;
+    text-align: left;
+    overflow: hidden;
   }
 }
 
@@ -286,15 +300,15 @@ p.error {
 
 /* Stats */
 .stats {
- 	display: flex;
- 	justify-content: space-around;
- 	margin: 2em;
+  display: flex;
+  justify-content: space-around;
+  margin: 2em;
 
- 	> div {
-   	display: flex;
-   	flex-direction: column;
-   	justify-content: center;
-   	align-items: center;
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   p {

@@ -8,11 +8,18 @@
     @if article.cover_id.is_some() {
         <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
     }
-    <h3 class="p-name" dir="auto">
-        <a class="u-url" href="@uri!(posts::details: blog = article.get_blog(ctx.0).unwrap().fqn, slug = &article.slug, responding_to = _)">
-            @article.title
-        </a>
-    </h3>
+    <header>
+        @if ctx.2.clone().and_then(|u| article.is_author(ctx.0, u.id).ok()).unwrap_or(false) {
+            <div class="controls">
+                <a class="button" href="@uri!(posts::edit: blog = &article.get_blog_fqn(ctx.0), slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
+            </div>
+        }
+        <h3 class="p-name" dir="auto">
+            <a class="u-url" href="@uri!(posts::details: blog = article.get_blog_fqn(ctx.0), slug = &article.slug, responding_to = _)">
+                @article.title
+            </a>
+        </h3>
+    </header>
     <main>
         <p class="p-summary" dir="auto">@article.subtitle</p>
     </main>
@@ -26,7 +33,7 @@
             @if article.published {
                 ⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
             }
-            ⋅ <a href="@uri!(blogs::details: name = &article.get_blog(ctx.0).unwrap().fqn, page = _)">@article.get_blog(ctx.0).unwrap().title</a>
+            ⋅ <a href="@uri!(blogs::details: name = &article.get_blog_fqn(ctx.0), page = _)">@article.get_blog(ctx.0).unwrap().title</a>
             ⋅
         </div>
         @if !article.published {

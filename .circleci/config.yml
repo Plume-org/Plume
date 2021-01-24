@@ -21,6 +21,7 @@ executors:
       RUST_TEST_THREADS: 1
       FEATURES: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
       DATABASE_URL: <<#parameters.postgres>>postgres://postgres@localhost/plume<</parameters.postgres>><<^parameters.postgres>>plume.sqlite<</parameters.postgres>>
+      ROCKET_SECRET_KEY: VN5xV1DN7XdpATadOCYcuGeR/dV0hHfgx9mx9TarLdM=
 
 
 commands:
@@ -143,12 +144,14 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cargo run -p plume-cli --no-default-features --features=${FEATURES} -- migration run
+          cargo build -p plume-cli --no-default-features --features=${FEATURES} -j1
+          ./target/debug/plm migration run
+          ./target/debug/plm search init
           cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
           for i in 36 4 2 1 1; do
               $cmd $i && break
           done
-          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1 -- --test-threads=1
+          cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1
     - upload_coverage:
         type: unit
     - cache:

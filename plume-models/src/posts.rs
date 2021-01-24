@@ -12,6 +12,7 @@ use activitypub::{
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use heck::KebabCase;
+use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
         inbox::{AsObject, FromId},
@@ -20,10 +21,12 @@ use plume_common::{
     utils::md_to_html,
 };
 use riker::actors::{Publish, Tell};
-use std::collections::HashSet;
-use std::sync::Arc;
+use std::collections::{HashMap, HashSet};
+use std::sync::{Arc, Mutex};
 
 pub type LicensedArticle = CustomObject<Licensed, Article>;
+
+static BLOG_FQN_CACHE: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
 #[changeset_options(treat_none_as_null = "true")]
@@ -273,6 +276,24 @@ impl Post {
             .filter(blogs::id.eq(self.blog_id))
             .first(conn)
             .map_err(Error::from)
+    }
+
+    /// This method exists for use in templates to reduce database access.
+    /// This should not be used for other purpose.
+    ///
+    /// This caches query result. The best way to cache query result is holding it in `Post`s field
+    /// but Diesel doesn't allow it currently.
+    /// If sometime Diesel allow it, this method should be removed.
+    pub fn get_blog_fqn(&self, conn: &Connection) -> String {
+        if let Some(blog_fqn) = BLOG_FQN_CACHE.lock().unwrap().get(&self.blog_id) {
+            return blog_fqn.to_string();
+        }
+        let blog_fqn = self.get_blog(conn).unwrap().fqn;
+        BLOG_FQN_CACHE
+            .lock()
+            .unwrap()
+            .insert(self.blog_id, blog_fqn.clone());
+        blog_fqn
     }
 
     pub fn count_likes(&self, conn: &Connection) -> Result<i64> {
