@@ -202,6 +202,13 @@ impl User {
         }
     }
 
+    pub fn find_first_local(conn: &Connection) -> Result<User> {
+        users::table
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
+            .first(&*conn)
+            .map_err(|_| Error::NotFound)
+    }
+
     fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
         let link = resolve(acct.to_owned(), true)?
             .links
@@ -220,21 +227,28 @@ impl User {
             .ok_or(Error::Webfinger)
     }
 
-    fn fetch(url: &str) -> Result<CustomPerson> {
+    fn fetch(url: &str, lu: User) -> Result<CustomPerson> {
+        let mut headers = plume_common::activity_pub::request::headers();
+        headers.insert(
+            ACCEPT,
+            HeaderValue::from_str(
+                &ap_accept_header()
+                    .into_iter()
+                    .collect::<Vec<_>>()
+                    .join(", "),
+            )?,
+        );
         let mut res = ClientBuilder::new()
             .connect_timeout(Some(std::time::Duration::from_secs(5)))
             .build()?
             .get(url)
+            .headers(headers.clone())
             .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
+                "Signature",
+                plume_common::activity_pub::request::signature(&lu, &headers).expect(""),
             )
             .send()?;
+
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;
@@ -244,11 +258,12 @@ impl User {
     }
 
     pub fn fetch_from_url(c: &PlumeRocket, url: &str) -> Result<User> {
-        User::fetch(url).and_then(|json| User::from_activity(c, json))
+        User::fetch(url, User::find_first_local(&*c.conn)?)
+            .and_then(|json| User::from_activity(c, json))
     }
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
-        User::fetch(&self.ap_url.clone()).and_then(|json| {
+        User::fetch(&self.ap_url.clone(), User::find_first_local(conn)?).and_then(|json| {
             let avatar = Media::save_remote(
                 conn,
                 json.object

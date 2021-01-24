@@ -57,7 +57,6 @@ impl Instance {
             .clone()
             .ok_or(Error::NotFound)
     }
-
     pub fn get_local_uncached(conn: &Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
