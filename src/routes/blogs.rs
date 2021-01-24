@@ -371,3 +371,132 @@ pub fn atom_feed(name: String, rockets: PlumeRocket) -> Option<Content<String>> 
         feed.to_string(),
     ))
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::init_rocket;
+    use diesel::{Connection, RunQueryDsl};
+    use plume_common::utils::random_hex;
+    use plume_models::{
+        blog_authors::{BlogAuthor, NewBlogAuthor},
+        blogs::{Blog, NewBlog},
+        db_conn::{DbConn, DbPool},
+        instance::{Instance, NewInstance},
+        post_authors::{NewPostAuthor, PostAuthor},
+        posts::{NewPost, Post},
+        safe_string::SafeString,
+        users::{NewUser, User, AUTH_COOKIE},
+    };
+    use rocket::{
+        http::{Cookie, Cookies, SameSite},
+        local::Client,
+    };
+
+    #[test]
+    fn edit_link_within_post_card() {
+        let rocket = init_rocket();
+        let client = Client::new(rocket).expect("valid rocket instance");
+        let dbpool = client.rocket().state::<DbPool>().unwrap();
+        let conn = &DbConn(dbpool.get().unwrap());
+
+        let (instance, user, blog, post) = create_models(conn);
+
+        let blog_path = format!("/~/{}", blog.fqn);
+        let edit_link = format!(r#"href="{}/{}/edit""#, blog_path, post.slug);
+
+        let mut response = client.get(&blog_path).dispatch();
+        let body = response.body_string().unwrap();
+        assert!(!body.contains(&edit_link));
+
+        let request = client.get(&blog_path);
+        request.inner().guard::<Cookies>().unwrap().add_private(
+            Cookie::build(AUTH_COOKIE, user.id.to_string())
+                .same_site(SameSite::Lax)
+                .finish(),
+        );
+        let mut response = request.dispatch();
+        let body = response.body_string().unwrap();
+        assert!(body.contains(&edit_link));
+
+        post.delete(conn).unwrap();
+        blog.delete(conn).unwrap();
+        user.delete(conn).unwrap();
+        diesel::delete(&instance)
+            .execute(&dbpool.get().unwrap())
+            .unwrap();
+    }
+
+    fn create_models(conn: &DbConn) -> (Instance, User, Blog, Post) {
+        conn.transaction::<(Instance, User, Blog, Post), diesel::result::Error, _>(|| {
+            let instance = Instance::get_local().unwrap_or_else(|_| {
+                Instance::insert(
+                    conn,
+                    NewInstance {
+                        default_license: "CC-0-BY-SA".to_string(),
+                        local: true,
+                        long_description: SafeString::new("Good morning"),
+                        long_description_html: "<p>Good morning</p>".to_string(),
+                        short_description: SafeString::new("Hello"),
+                        short_description_html: "<p>Hello</p>".to_string(),
+                        name: random_hex().to_string(),
+                        open_registrations: true,
+                        public_domain: random_hex().to_string(),
+                    },
+                )
+                .unwrap()
+            });
+            let mut user = NewUser::default();
+            user.instance_id = instance.id;
+            user.username = random_hex().to_string();
+            user.ap_url = random_hex().to_string();
+            user.inbox_url = random_hex().to_string();
+            user.outbox_url = random_hex().to_string();
+            user.followers_endpoint = random_hex().to_string();
+            let user = User::insert(conn, user).unwrap();
+            let mut blog = NewBlog::default();
+            blog.instance_id = instance.id;
+            blog.actor_id = random_hex().to_string();
+            blog.ap_url = random_hex().to_string();
+            blog.inbox_url = random_hex().to_string();
+            blog.outbox_url = random_hex().to_string();
+            let blog = Blog::insert(conn, blog).unwrap();
+            BlogAuthor::insert(
+                conn,
+                NewBlogAuthor {
+                    blog_id: blog.id,
+                    author_id: user.id,
+                    is_owner: true,
+                },
+            )
+            .unwrap();
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog.id,
+                    slug: random_hex()[..8].to_owned(),
+                    title: random_hex()[..8].to_owned(),
+                    content: SafeString::new(""),
+                    published: true,
+                    license: "CC-By-SA".to_owned(),
+                    ap_url: "".to_owned(),
+                    creation_date: None,
+                    subtitle: "".to_owned(),
+                    source: "".to_owned(),
+                    cover_id: None,
+                },
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: user.id,
+                },
+            )
+            .unwrap();
+
+            Ok((instance, user, blog, post))
+        })
+        .unwrap()
+    }
+}
