@@ -1,11 +1,12 @@
 use crate::{
     blogs::Blog,
+    db_conn::DbConn,
     lists::{self, ListType},
     posts::Post,
     tags::Tag,
     timeline::Timeline,
     users::User,
-    PlumeRocket, Result,
+    Result,
 };
 use plume_common::activity_pub::inbox::AsActor;
 use whatlang::{self, Lang};
@@ -160,19 +161,19 @@ enum TQ<'a> {
 impl<'a> TQ<'a> {
     fn matches(
         &self,
-        rocket: &PlumeRocket,
+        conn: &DbConn,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
     ) -> Result<bool> {
         match self {
             TQ::Or(inner) => inner.iter().try_fold(false, |s, e| {
-                e.matches(rocket, timeline, post, kind).map(|r| s || r)
+                e.matches(conn, timeline, post, kind).map(|r| s || r)
             }),
             TQ::And(inner) => inner.iter().try_fold(true, |s, e| {
-                e.matches(rocket, timeline, post, kind).map(|r| s && r)
+                e.matches(conn, timeline, post, kind).map(|r| s && r)
             }),
-            TQ::Arg(inner, invert) => Ok(inner.matches(rocket, timeline, post, kind)? ^ invert),
+            TQ::Arg(inner, invert) => Ok(inner.matches(conn, timeline, post, kind)? ^ invert),
         }
     }
 
@@ -205,15 +206,15 @@ enum Arg<'a> {
 impl<'a> Arg<'a> {
     pub fn matches(
         &self,
-        rocket: &PlumeRocket,
+        conn: &DbConn,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
     ) -> Result<bool> {
         match self {
-            Arg::In(t, l) => t.matches(rocket, timeline, post, l, kind),
+            Arg::In(t, l) => t.matches(conn, timeline, post, l, kind),
             Arg::Contains(t, v) => t.matches(post, v),
-            Arg::Boolean(t) => t.matches(rocket, timeline, post, kind),
+            Arg::Boolean(t) => t.matches(conn, timeline, post, kind),
         }
     }
 }
@@ -230,7 +231,7 @@ enum WithList {
 impl WithList {
     pub fn matches(
         &self,
-        rocket: &PlumeRocket,
+        conn: &DbConn,
         timeline: &Timeline,
         post: &Post,
         list: &List<'_>,
@@ -238,39 +239,34 @@ impl WithList {
     ) -> Result<bool> {
         match list {
             List::List(name) => {
-                let list =
-                    lists::List::find_for_user_by_name(&rocket.conn, timeline.user_id, &name)?;
+                let list = lists::List::find_for_user_by_name(conn, timeline.user_id, &name)?;
                 match (self, list.kind()) {
-                    (WithList::Blog, ListType::Blog) => {
-                        list.contains_blog(&rocket.conn, post.blog_id)
-                    }
+                    (WithList::Blog, ListType::Blog) => list.contains_blog(conn, post.blog_id),
                     (WithList::Author { boosts, likes }, ListType::User) => match kind {
                         Kind::Original => Ok(list
-                            .list_users(&rocket.conn)?
+                            .list_users(conn)?
                             .iter()
-                            .any(|a| post.is_author(&rocket.conn, a.id).unwrap_or(false))),
+                            .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
                         Kind::Reshare(u) => {
                             if *boosts {
-                                list.contains_user(&rocket.conn, u.id)
+                                list.contains_user(conn, u.id)
                             } else {
                                 Ok(false)
                             }
                         }
                         Kind::Like(u) => {
                             if *likes {
-                                list.contains_user(&rocket.conn, u.id)
+                                list.contains_user(conn, u.id)
                             } else {
                                 Ok(false)
                             }
                         }
                     },
-                    (WithList::License, ListType::Word) => {
-                        list.contains_word(&rocket.conn, &post.license)
-                    }
+                    (WithList::License, ListType::Word) => list.contains_word(conn, &post.license),
                     (WithList::Tags, ListType::Word) => {
-                        let tags = Tag::for_post(&rocket.conn, post.id)?;
+                        let tags = Tag::for_post(conn, post.id)?;
                         Ok(list
-                            .list_words(&rocket.conn)?
+                            .list_words(conn)?
                             .iter()
                             .any(|s| tags.iter().any(|t| s == &t.tag)))
                     }
@@ -285,7 +281,7 @@ impl WithList {
                             })
                             .unwrap_or(Lang::Eng)
                             .name();
-                        list.contains_prefix(&rocket.conn, lang)
+                        list.contains_prefix(conn, lang)
                     }
                     (_, _) => Err(QueryError::RuntimeError(format!(
                         "The list '{}' is of the wrong type for this usage",
@@ -297,13 +293,13 @@ impl WithList {
             List::Array(list) => match self {
                 WithList::Blog => Ok(list
                     .iter()
-                    .filter_map(|b| Blog::find_by_fqn(rocket, b).ok())
+                    .filter_map(|b| Blog::find_by_fqn(conn, b).ok())
                     .any(|b| b.id == post.blog_id)),
                 WithList::Author { boosts, likes } => match kind {
                     Kind::Original => Ok(list
                         .iter()
-                        .filter_map(|a| User::find_by_fqn(rocket, a).ok())
-                        .any(|a| post.is_author(&rocket.conn, a.id).unwrap_or(false))),
+                        .filter_map(|a| User::find_by_fqn(&*conn, a).ok())
+                        .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
                     Kind::Reshare(u) => {
                         if *boosts {
                             Ok(list.iter().any(|user| &u.fqn == user))
@@ -321,7 +317,7 @@ impl WithList {
                 },
                 WithList::License => Ok(list.iter().any(|s| s == &post.license)),
                 WithList::Tags => {
-                    let tags = Tag::for_post(&rocket.conn, post.id)?;
+                    let tags = Tag::for_post(conn, post.id)?;
                     Ok(list.iter().any(|s| tags.iter().any(|t| s == &t.tag)))
                 }
                 WithList::Lang => {
@@ -371,7 +367,7 @@ enum Bool {
 impl Bool {
     pub fn matches(
         &self,
-        rocket: &PlumeRocket,
+        conn: &DbConn,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
@@ -384,21 +380,19 @@ impl Bool {
                 let user = timeline.user_id.unwrap();
                 match kind {
                     Kind::Original => post
-                        .get_authors(&rocket.conn)?
+                        .get_authors(conn)?
                         .iter()
-                        .try_fold(false, |s, a| {
-                            a.is_followed_by(&rocket.conn, user).map(|r| s || r)
-                        }),
+                        .try_fold(false, |s, a| a.is_followed_by(conn, user).map(|r| s || r)),
                     Kind::Reshare(u) => {
                         if *boosts {
-                            u.is_followed_by(&rocket.conn, user)
+                            u.is_followed_by(conn, user)
                         } else {
                             Ok(false)
                         }
                     }
                     Kind::Like(u) => {
                         if *likes {
-                            u.is_followed_by(&rocket.conn, user)
+                            u.is_followed_by(conn, user)
                         } else {
                             Ok(false)
                         }
@@ -406,7 +400,7 @@ impl Bool {
                 }
             }
             Bool::HasCover => Ok(post.cover_id.is_some()),
-            Bool::Local => Ok(post.get_blog(&rocket.conn)?.is_local() && kind == Kind::Original),
+            Bool::Local => Ok(post.get_blog(conn)?.is_local() && kind == Kind::Original),
             Bool::All => Ok(kind == Kind::Original),
         }
     }
@@ -642,12 +636,12 @@ impl<'a> TimelineQuery<'a> {
 
     pub fn matches(
         &self,
-        rocket: &PlumeRocket,
+        conn: &DbConn,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
     ) -> Result<bool> {
-        self.0.matches(rocket, timeline, post, kind)
+        self.0.matches(conn, timeline, post, kind)
     }
 
     pub fn list_used_lists(&self) -> Vec<(String, ListType)> {

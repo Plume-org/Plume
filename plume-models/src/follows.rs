@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, notifications::*, schema::follows, users::User, Connection, Error, PlumeRocket, Result,
-    CONFIG,
+    ap_url, db_conn::DbConn, notifications::*, schema::follows, users::User, Connection, Error,
+    Result, CONFIG,
 };
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
@@ -141,11 +141,11 @@ impl Follow {
     }
 }
 
-impl AsObject<User, FollowAct, &PlumeRocket> for User {
+impl AsObject<User, FollowAct, &DbConn> for User {
     type Error = Error;
     type Output = Follow;
 
-    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Follow> {
+    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
         let mut follow = FollowAct::default();
@@ -153,21 +153,21 @@ impl AsObject<User, FollowAct, &PlumeRocket> for User {
         follow
             .follow_props
             .set_actor_link::<Id>(actor.clone().into_id())?;
-        Follow::accept_follow(&c.conn, &actor, &self, follow, actor.id, self.id)
+        Follow::accept_follow(conn, &actor, &self, follow, actor.id, self.id)
     }
 }
 
-impl FromId<PlumeRocket> for Follow {
+impl FromId<DbConn> for Follow {
     type Error = Error;
     type Object = FollowAct;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Follow::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Follow::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, follow: FollowAct) -> Result<Self> {
+    fn from_activity(conn: &DbConn, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
-            c,
+            conn,
             &follow.follow_props.actor_link::<Id>()?,
             None,
             CONFIG.proxy(),
@@ -175,28 +175,28 @@ impl FromId<PlumeRocket> for Follow {
         .map_err(|(_, e)| e)?;
 
         let target = User::from_id(
-            c,
+            conn,
             &follow.follow_props.object_link::<Id>()?,
             None,
             CONFIG.proxy(),
         )
         .map_err(|(_, e)| e)?;
-        Follow::accept_follow(&c.conn, &actor, &target, follow, actor.id, target.id)
+        Follow::accept_follow(conn, &actor, &target, follow, actor.id, target.id)
     }
 }
 
-impl AsObject<User, Undo, &PlumeRocket> for Follow {
+impl AsObject<User, Undo, &DbConn> for Follow {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
-        let conn = &*c.conn;
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        let conn = conn;
         if self.follower_id == actor.id {
-            diesel::delete(&self).execute(conn)?;
+            diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
-                diesel::delete(&notif).execute(conn)?;
+            if let Ok(notif) = Notification::find(&conn, notification_kind::FOLLOW, self.id) {
+                diesel::delete(&notif).execute(&**conn)?;
             }
 
             Ok(())

@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, instance::Instance, safe_string::SafeString, schema::medias, users::User, Connection,
-    Error, PlumeRocket, Result, CONFIG,
+    ap_url, db_conn::DbConn, instance::Instance, safe_string::SafeString, schema::medias,
+    users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::object::Image;
 use askama_escape::escape;
@@ -196,8 +196,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(c: &PlumeRocket, image: &Image) -> Result<Media> {
-        let conn = &*c.conn;
+    pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
         let remote_url = image.object_props.url_string().ok()?;
         let ext = remote_url
             .rsplit('.')
@@ -232,7 +231,7 @@ impl Media {
                 sensitive: image.object_props.summary_string().is_ok(),
                 content_warning: image.object_props.summary_string().ok(),
                 owner_id: User::from_id(
-                    c,
+                    conn,
                     image
                         .object_props
                         .attributed_to_link_vec::<Id>()

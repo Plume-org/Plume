@@ -1,8 +1,8 @@
 use crate::{
     ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, db_conn::DbConn, follows::Follow,
     instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
-    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, PlumeRocket,
-    Result, CONFIG, ITEMS_PER_PAGE,
+    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result, CONFIG,
+    ITEMS_PER_PAGE,
 };
 use activitypub::{
     activity::Delete,
@@ -186,29 +186,29 @@ impl User {
         users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
             .count()
-            .get_result(conn)
+            .get_result(&*conn)
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
+    pub fn find_by_fqn(conn: &DbConn, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .first(&*c.conn)
+            .first(&**conn)
             .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            User::fetch_from_webfinger(c, fqn)
+            User::fetch_from_webfinger(conn, fqn)
         }
     }
 
-    fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
+    fn fetch_from_webfinger(conn: &DbConn, acct: &str) -> Result<User> {
         let link = resolve(acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(c, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
+        User::from_id(conn, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
     }
 
     pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
@@ -243,8 +243,8 @@ impl User {
         Ok(json)
     }
 
-    pub fn fetch_from_url(c: &PlumeRocket, url: &str) -> Result<User> {
-        User::fetch(url).and_then(|json| User::from_activity(c, json))
+    pub fn fetch_from_url(conn: &DbConn, url: &str) -> Result<User> {
+        User::fetch(url).and_then(|json| User::from_activity(conn, json))
     }
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
@@ -915,20 +915,20 @@ impl IntoId for User {
 
 impl Eq for User {}
 
-impl FromId<PlumeRocket> for User {
+impl FromId<DbConn> for User {
     type Error = Error;
     type Object = CustomPerson;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, acct: CustomPerson) -> Result<Self> {
+    fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
         let inst = url.host_str()?;
-        let instance = Instance::find_by_domain(&c.conn, inst).or_else(|_| {
+        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
-                &c.conn,
+                conn,
                 NewInstance {
                     name: inst.to_owned(),
                     public_domain: inst.to_owned(),
@@ -957,7 +957,7 @@ impl FromId<PlumeRocket> for User {
         };
 
         let user = User::insert(
-            &c.conn,
+            conn,
             NewUser {
                 display_name: acct
                     .object
@@ -1003,10 +1003,10 @@ impl FromId<PlumeRocket> for User {
 
         if let Ok(icon) = acct.object.object_props.icon_image() {
             if let Ok(url) = icon.object_props.url_string() {
-                let avatar = Media::save_remote(&c.conn, url, &user);
+                let avatar = Media::save_remote(conn, url, &user);
 
                 if let Ok(avatar) = avatar {
-                    user.set_avatar(&c.conn, avatar.id)?;
+                    user.set_avatar(conn, avatar.id)?;
                 }
             }
         }
@@ -1015,7 +1015,7 @@ impl FromId<PlumeRocket> for User {
     }
 }
 
-impl AsActor<&PlumeRocket> for User {
+impl AsActor<&DbConn> for User {
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
@@ -1031,13 +1031,13 @@ impl AsActor<&PlumeRocket> for User {
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for User {
+impl AsObject<User, Delete, &DbConn> for User {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
-            self.delete(&c.conn).map(|_| ())
+            self.delete(conn).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }

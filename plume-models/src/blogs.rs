@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, instance::*, medias::Media, posts::Post, safe_string::SafeString, schema::blogs,
-    users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
+    ap_url, db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
+    schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
     actor::Group,
@@ -131,25 +131,25 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<Blog> {
+    pub fn find_by_fqn(conn: &DbConn, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
-            .first(&*c.conn)
+            .first(&**conn)
             .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            Blog::fetch_from_webfinger(c, fqn)
+            Blog::fetch_from_webfinger(conn, fqn)
         }
     }
 
-    fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<Blog> {
+    fn fetch_from_webfinger(conn: &DbConn, acct: &str) -> Result<Blog> {
         resolve_with_prefix(Prefix::Group, acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
-            .and_then(|l| Blog::from_id(c, &l.href?, None, CONFIG.proxy()).map_err(|(_, e)| e))
+            .and_then(|l| Blog::from_id(conn, &l.href?, None, CONFIG.proxy()).map_err(|(_, e)| e))
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
@@ -334,20 +334,20 @@ impl IntoId for Blog {
     }
 }
 
-impl FromId<PlumeRocket> for Blog {
+impl FromId<DbConn> for Blog {
     type Error = Error;
     type Object = CustomGroup;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(&conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, acct: CustomGroup) -> Result<Self> {
+    fn from_activity(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
         let inst = url.host_str()?;
-        let instance = Instance::find_by_domain(&c.conn, inst).or_else(|_| {
+        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
-                &c.conn,
+                conn,
                 NewInstance {
                     public_domain: inst.to_owned(),
                     name: inst.to_owned(),
@@ -370,9 +370,9 @@ impl FromId<PlumeRocket> for Blog {
             .and_then(|icon| {
                 let owner = icon.object_props.attributed_to_link::<Id>().ok()?;
                 Media::save_remote(
-                    &c.conn,
+                    conn,
                     icon.object_props.url_string().ok()?,
-                    &User::from_id(c, &owner, None, CONFIG.proxy()).ok()?,
+                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
                 )
                 .ok()
             })
@@ -386,9 +386,9 @@ impl FromId<PlumeRocket> for Blog {
             .and_then(|banner| {
                 let owner = banner.object_props.attributed_to_link::<Id>().ok()?;
                 Media::save_remote(
-                    &c.conn,
+                    conn,
                     banner.object_props.url_string().ok()?,
-                    &User::from_id(c, &owner, None, CONFIG.proxy()).ok()?,
+                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
                 )
                 .ok()
             })
@@ -400,7 +400,7 @@ impl FromId<PlumeRocket> for Blog {
         }
 
         Blog::insert(
-            &c.conn,
+            conn,
             NewBlog {
                 actor_id: name.clone(),
                 title: acct.object.object_props.name_string().unwrap_or(name),

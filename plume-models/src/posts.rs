@@ -1,7 +1,7 @@
 use crate::{
-    ap_url, blogs::Blog, instance::Instance, medias::Media, mentions::Mention, post_authors::*,
-    safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User, Connection, Error,
-    PlumeRocket, PostEvent::*, Result, CONFIG, POST_CHAN,
+    ap_url, blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::Mention,
+    post_authors::*, safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User,
+    Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
     activity::{Create, Delete, Update},
@@ -606,16 +606,16 @@ impl Post {
     }
 }
 
-impl FromId<PlumeRocket> for Post {
+impl FromId<DbConn> for Post {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, article: LicensedArticle) -> Result<Self> {
-        let conn = &*c.conn;
+    fn from_activity(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
+        let conn = conn;
         let license = article.custom_props.license_string().unwrap_or_default();
         let article = article.object;
 
@@ -625,13 +625,13 @@ impl FromId<PlumeRocket> for Post {
             .into_iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
                 let url = link;
-                match User::from_id(&c, &url, None, CONFIG.proxy()) {
+                match User::from_id(conn, &url, None, CONFIG.proxy()) {
                     Ok(u) => {
                         authors.push(u);
                         (blog, authors)
                     }
                     Err(_) => (
-                        blog.or_else(|| Blog::from_id(&c, &url, None, CONFIG.proxy()).ok()),
+                        blog.or_else(|| Blog::from_id(conn, &url, None, CONFIG.proxy()).ok()),
                         authors,
                     ),
                 }
@@ -641,7 +641,7 @@ impl FromId<PlumeRocket> for Post {
             .object_props
             .icon_object::<Image>()
             .ok()
-            .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id));
+            .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
 
         let title = article.object_props.name_string()?;
         let post = Post::insert(
@@ -701,33 +701,33 @@ impl FromId<PlumeRocket> for Post {
             }
         }
 
-        Timeline::add_to_all_timelines(c, &post, Kind::Original)?;
+        Timeline::add_to_all_timelines(conn, &post, Kind::Original)?;
 
         Ok(post)
     }
 }
 
-impl AsObject<User, Create, &PlumeRocket> for Post {
+impl AsObject<User, Create, &DbConn> for Post {
     type Error = Error;
     type Output = Post;
 
-    fn activity(self, _c: &PlumeRocket, _actor: User, _id: &str) -> Result<Post> {
+    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Post> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for Post {
+impl AsObject<User, Delete, &DbConn> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         let can_delete = self
-            .get_authors(&c.conn)?
+            .get_authors(conn)?
             .into_iter()
             .any(|a| actor.id == a.id);
         if can_delete {
-            self.delete(&c.conn).map(|_| ())
+            self.delete(conn).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
@@ -745,16 +745,16 @@ pub struct PostUpdate {
     pub tags: Option<serde_json::Value>,
 }
 
-impl FromId<PlumeRocket> for PostUpdate {
+impl FromId<DbConn> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(_: &PlumeRocket, _: &str) -> Result<Self> {
+    fn from_db(_: &DbConn, _: &str) -> Result<Self> {
         // Always fail because we always want to deserialize the AP object
         Err(Error::NotFound)
     }
 
-    fn from_activity(c: &PlumeRocket, updated: LicensedArticle) -> Result<Self> {
+    fn from_activity(conn: &DbConn, updated: LicensedArticle) -> Result<Self> {
         Ok(PostUpdate {
             ap_url: updated.object.object_props.id_string()?,
             title: updated.object.object_props.name_string().ok(),
@@ -765,7 +765,7 @@ impl FromId<PlumeRocket> for PostUpdate {
                 .object_props
                 .icon_object::<Image>()
                 .ok()
-                .and_then(|img| Media::from_activity(&c, &img).ok().map(|m| m.id)),
+                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id)),
             source: updated
                 .object
                 .ap_object_props
@@ -778,13 +778,13 @@ impl FromId<PlumeRocket> for PostUpdate {
     }
 }
 
-impl AsObject<User, Update, &PlumeRocket> for PostUpdate {
+impl AsObject<User, Update, &DbConn> for PostUpdate {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
-        let conn = &*c.conn;
-        let mut post = Post::from_id(c, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        let mut post =
+            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

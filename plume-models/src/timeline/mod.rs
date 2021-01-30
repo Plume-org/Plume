@@ -1,8 +1,9 @@
 use crate::{
+    db_conn::DbConn,
     lists::List,
     posts::Post,
     schema::{posts, timeline, timeline_definition},
-    Connection, Error, PlumeRocket, Result,
+    Connection, Error, Result,
 };
 use diesel::{self, BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 use std::ops::Deref;
@@ -208,14 +209,14 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(rocket: &PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<()> {
+    pub fn add_to_all_timelines(conn: &DbConn, post: &Post, kind: Kind<'_>) -> Result<()> {
         let timelines = timeline_definition::table
-            .load::<Self>(rocket.conn.deref())
+            .load::<Self>(conn.deref())
             .map_err(Error::from)?;
 
         for t in timelines {
-            if t.matches(rocket, post, kind)? {
-                t.add_post(&rocket.conn, post)?;
+            if t.matches(conn, post, kind)? {
+                t.add_post(conn, post)?;
             }
         }
         Ok(())
@@ -231,9 +232,9 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn matches(&self, rocket: &PlumeRocket, post: &Post, kind: Kind<'_>) -> Result<bool> {
+    pub fn matches(&self, conn: &DbConn, post: &Post, kind: Kind<'_>) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
-        query.matches(rocket, self, post, kind)
+        query.matches(conn, self, post, kind)
     }
 }
 
