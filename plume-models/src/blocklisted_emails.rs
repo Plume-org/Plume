@@ -87,7 +87,7 @@ impl BlocklistedEmail {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use crate::{instance::tests as instance_tests, tests::rockets, Connection as Conn};
+    use crate::{instance::tests as instance_tests, tests::db, Connection as Conn};
     use diesel::Connection;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<BlocklistedEmail> {
@@ -106,29 +106,28 @@ pub(crate) mod tests {
     }
     #[test]
     fn test_match() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let various = fill_database(conn);
+            let various = fill_database(&conn);
             let match1 = "user1@bad-actor.com";
             let match2 = "spammer@lax-administration.com";
             let no_match = "happy-user@lax-administration.com";
             assert_eq!(
-                BlocklistedEmail::matches_blocklist(conn, match1)
+                BlocklistedEmail::matches_blocklist(&conn, match1)
                     .unwrap()
                     .unwrap()
                     .id,
                 various[0].id
             );
             assert_eq!(
-                BlocklistedEmail::matches_blocklist(conn, match2)
+                BlocklistedEmail::matches_blocklist(&conn, match2)
                     .unwrap()
                     .unwrap()
                     .id,
                 various[1].id
             );
             assert_eq!(
-                BlocklistedEmail::matches_blocklist(conn, no_match)
+                BlocklistedEmail::matches_blocklist(&conn, no_match)
                     .unwrap()
                     .is_none(),
                 true

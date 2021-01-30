@@ -67,13 +67,13 @@ pub fn inbox(conn: DbConn, act: serde_json::Value) -> Result<InboxResult, Error>
 pub(crate) mod tests {
     use super::InboxResult;
     use crate::blogs::tests::fill_database as blog_fill_db;
+    use crate::db_conn::DbConn;
     use crate::safe_string::SafeString;
-    use crate::tests::rockets;
-    use crate::PlumeRocket;
+    use crate::tests::db;
     use diesel::Connection;
 
     pub fn fill_database(
-        rockets: &PlumeRocket,
+        conn: &DbConn,
     ) -> (
         Vec<crate::posts::Post>,
         Vec<crate::users::User>,
@@ -82,9 +82,9 @@ pub(crate) mod tests {
         use crate::post_authors::*;
         use crate::posts::*;
 
-        let (users, blogs) = blog_fill_db(&rockets.conn);
+        let (users, blogs) = blog_fill_db(&conn);
         let post = Post::insert(
-            &rockets.conn,
+            &conn,
             NewPost {
                 blog_id: blogs[0].id,
                 slug: "testing".to_owned(),
@@ -102,7 +102,7 @@ pub(crate) mod tests {
         .unwrap();
 
         PostAuthor::insert(
-            &rockets.conn,
+            &conn,
             NewPostAuthor {
                 post_id: post.id,
                 author_id: users[0].id,
@@ -115,10 +115,9 @@ pub(crate) mod tests {
 
     #[test]
     fn announce_post() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/announce/1",
                 "actor": users[0].ap_url,
@@ -126,7 +125,7 @@ pub(crate) mod tests {
                 "type": "Announce",
             });
 
-            match super::inbox(&r, act).unwrap() {
+            match super::inbox(&conn, act).unwrap() {
                 super::InboxResult::Reshared(r) => {
                     assert_eq!(r.post_id, posts[0].id);
                     assert_eq!(r.user_id, users[0].id);
@@ -140,10 +139,9 @@ pub(crate) mod tests {
 
     #[test]
     fn create_comment() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -158,7 +156,7 @@ pub(crate) mod tests {
                 "type": "Create",
             });
 
-            match super::inbox(&r, act).unwrap() {
+            match super::inbox(&conn, act).unwrap() {
                 super::InboxResult::Commented(c) => {
                     assert_eq!(c.author_id, users[0].id);
                     assert_eq!(c.post_id, posts[0].id);
@@ -174,10 +172,9 @@ pub(crate) mod tests {
 
     #[test]
     fn spoof_comment() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -193,7 +190,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&r, act.clone()),
+                super::inbox(&conn, act.clone()),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -204,10 +201,9 @@ pub(crate) mod tests {
 
     #[test]
     fn spoof_comment_by_object_with_id() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -225,7 +221,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&r, act.clone()),
+                super::inbox(&conn, act.clone()),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -235,10 +231,9 @@ pub(crate) mod tests {
     }
     #[test]
     fn spoof_comment_by_object_without_id() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -254,7 +249,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&r, act.clone()),
+                super::inbox(&conn, act.clone()),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -265,10 +260,9 @@ pub(crate) mod tests {
 
     #[test]
     fn create_post() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, blogs) = fill_database(&r);
+            let (_, users, blogs) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -289,9 +283,9 @@ pub(crate) mod tests {
                 "type": "Create",
             });
 
-            match super::inbox(&r, act).unwrap() {
+            match super::inbox(&conn, act).unwrap() {
                 super::InboxResult::Post(p) => {
-                    assert!(p.is_author(conn, users[0].id).unwrap());
+                    assert!(p.is_author(&conn, users[0].id).unwrap());
                     assert_eq!(p.source, "Hello.".to_owned());
                     assert_eq!(p.blog_id, blogs[0].id);
                     assert_eq!(p.content, SafeString::new("Hello."));
@@ -306,10 +300,9 @@ pub(crate) mod tests {
 
     #[test]
     fn spoof_post() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, blogs) = fill_database(&r);
+            let (_, users, blogs) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -331,7 +324,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&r, act.clone()),
+                super::inbox(&conn, act.clone()),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -342,10 +335,9 @@ pub(crate) mod tests {
 
     #[test]
     fn spoof_post_by_object_with_id() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, blogs) = fill_database(&r);
+            let (_, users, blogs) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -370,7 +362,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&r, act.clone()),
+                super::inbox(&conn, act.clone()),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -381,10 +373,9 @@ pub(crate) mod tests {
 
     #[test]
     fn spoof_post_by_object_without_id() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, blogs) = fill_database(&r);
+            let (_, users, blogs) = fill_database(&conn);
             let act = json!({
                 "id": "https://plu.me/comment/1/activity",
                 "actor": users[0].ap_url,
@@ -406,7 +397,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&r, act.clone()),
+                super::inbox(&conn, act.clone()),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -419,12 +410,11 @@ pub(crate) mod tests {
     fn delete_comment() {
         use crate::comments::*;
 
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
             Comment::insert(
-                conn,
+                &conn,
                 NewComment {
                     content: SafeString::new("My comment"),
                     in_response_to_id: None,
@@ -444,7 +434,7 @@ pub(crate) mod tests {
                 "object": "https://plu.me/comment/1",
                 "type": "Delete",
             });
-            assert!(super::inbox(&r, fail_act).is_err());
+            assert!(super::inbox(&conn, fail_act).is_err());
 
             let ok_act = json!({
                 "id": "https://plu.me/comment/1/delete",
@@ -452,17 +442,16 @@ pub(crate) mod tests {
                 "object": "https://plu.me/comment/1",
                 "type": "Delete",
             });
-            assert!(super::inbox(&r, ok_act).is_ok());
+            assert!(super::inbox(&conn, ok_act).is_ok());
             Ok(())
         })
     }
 
     #[test]
     fn delete_post() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let fail_act = json!({
                 "id": "https://plu.me/comment/1/delete",
@@ -470,7 +459,7 @@ pub(crate) mod tests {
                 "object": posts[0].ap_url,
                 "type": "Delete",
             });
-            assert!(super::inbox(&r, fail_act).is_err());
+            assert!(super::inbox(&conn, fail_act).is_err());
 
             let ok_act = json!({
                 "id": "https://plu.me/comment/1/delete",
@@ -478,17 +467,16 @@ pub(crate) mod tests {
                 "object": posts[0].ap_url,
                 "type": "Delete",
             });
-            assert!(super::inbox(&r, ok_act).is_ok());
+            assert!(super::inbox(&conn, ok_act).is_ok());
             Ok(())
         });
     }
 
     #[test]
     fn delete_user() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, _) = fill_database(&r);
+            let (_, users, _) = fill_database(&conn);
 
             let fail_act = json!({
                 "id": "https://plu.me/@/Admin#delete",
@@ -496,7 +484,7 @@ pub(crate) mod tests {
                 "object": users[0].ap_url,
                 "type": "Delete",
             });
-            assert!(super::inbox(&r, fail_act).is_err());
+            assert!(super::inbox(&conn, fail_act).is_err());
 
             let ok_act = json!({
                 "id": "https://plu.me/@/Admin#delete",
@@ -504,8 +492,8 @@ pub(crate) mod tests {
                 "object": users[0].ap_url,
                 "type": "Delete",
             });
-            assert!(super::inbox(&r, ok_act).is_ok());
-            assert!(crate::users::User::get(conn, users[0].id).is_err());
+            assert!(super::inbox(&conn, ok_act).is_ok());
+            assert!(crate::users::User::get(&conn, users[0].id).is_err());
 
             Ok(())
         });
@@ -513,10 +501,9 @@ pub(crate) mod tests {
 
     #[test]
     fn follow() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, _) = fill_database(&r);
+            let (_, users, _) = fill_database(&conn);
 
             let act = json!({
                 "id": "https://plu.me/follow/1",
@@ -524,7 +511,7 @@ pub(crate) mod tests {
                 "object": users[1].ap_url,
                 "type": "Follow",
             });
-            match super::inbox(&r, act).unwrap() {
+            match super::inbox(&conn, act).unwrap() {
                 InboxResult::Followed(f) => {
                     assert_eq!(f.follower_id, users[0].id);
                     assert_eq!(f.following_id, users[1].id);
@@ -538,10 +525,9 @@ pub(crate) mod tests {
 
     #[test]
     fn like() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let act = json!({
                 "id": "https://plu.me/like/1",
@@ -549,7 +535,7 @@ pub(crate) mod tests {
                 "object": posts[0].ap_url,
                 "type": "Like",
             });
-            match super::inbox(&r, act).unwrap() {
+            match super::inbox(&conn, act).unwrap() {
                 InboxResult::Liked(l) => {
                     assert_eq!(l.user_id, users[1].id);
                     assert_eq!(l.post_id, posts[0].id);
@@ -565,13 +551,12 @@ pub(crate) mod tests {
     fn undo_reshare() {
         use crate::reshares::*;
 
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let announce = Reshare::insert(
-                conn,
+                &conn,
                 NewReshare {
                     post_id: posts[0].id,
                     user_id: users[1].id,
@@ -586,7 +571,7 @@ pub(crate) mod tests {
                 "object": announce.ap_url,
                 "type": "Undo",
             });
-            assert!(super::inbox(&r, fail_act).is_err());
+            assert!(super::inbox(&conn, fail_act).is_err());
 
             let ok_act = json!({
                 "id": "https://plu.me/undo/1",
@@ -594,7 +579,7 @@ pub(crate) mod tests {
                 "object": announce.ap_url,
                 "type": "Undo",
             });
-            assert!(super::inbox(&r, ok_act).is_ok());
+            assert!(super::inbox(&conn, ok_act).is_ok());
             Ok(())
         });
     }
@@ -603,13 +588,12 @@ pub(crate) mod tests {
     fn undo_follow() {
         use crate::follows::*;
 
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, _) = fill_database(&r);
+            let (_, users, _) = fill_database(&conn);
 
             let follow = Follow::insert(
-                conn,
+                &conn,
                 NewFollow {
                     follower_id: users[0].id,
                     following_id: users[1].id,
@@ -624,7 +608,7 @@ pub(crate) mod tests {
                 "object": follow.ap_url,
                 "type": "Undo",
             });
-            assert!(super::inbox(&r, fail_act).is_err());
+            assert!(super::inbox(&conn, fail_act).is_err());
 
             let ok_act = json!({
                 "id": "https://plu.me/undo/1",
@@ -632,7 +616,7 @@ pub(crate) mod tests {
                 "object": follow.ap_url,
                 "type": "Undo",
             });
-            assert!(super::inbox(&r, ok_act).is_ok());
+            assert!(super::inbox(&conn, ok_act).is_ok());
             Ok(())
         });
     }
@@ -641,13 +625,12 @@ pub(crate) mod tests {
     fn undo_like() {
         use crate::likes::*;
 
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let like = Like::insert(
-                conn,
+                &conn,
                 NewLike {
                     post_id: posts[0].id,
                     user_id: users[1].id,
@@ -662,7 +645,7 @@ pub(crate) mod tests {
                 "object": like.ap_url,
                 "type": "Undo",
             });
-            assert!(super::inbox(&r, fail_act).is_err());
+            assert!(super::inbox(&conn, fail_act).is_err());
 
             let ok_act = json!({
                 "id": "https://plu.me/undo/1",
@@ -670,17 +653,16 @@ pub(crate) mod tests {
                 "object": like.ap_url,
                 "type": "Undo",
             });
-            assert!(super::inbox(&r, ok_act).is_ok());
+            assert!(super::inbox(&conn, ok_act).is_ok());
             Ok(())
         });
     }
 
     #[test]
     fn update_post() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let act = json!({
                 "id": "https://plu.me/update/1",
@@ -699,7 +681,7 @@ pub(crate) mod tests {
                 "type": "Update",
             });
 
-            super::inbox(&r, act).unwrap();
+            super::inbox(&conn, act).unwrap();
             Ok(())
         });
     }

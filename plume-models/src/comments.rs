@@ -392,17 +392,16 @@ mod tests {
     use super::*;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
-    use crate::tests::rockets;
+    use crate::tests::db;
     use diesel::Connection;
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
     #[test]
     fn self_federation() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let original_comm = Comment::insert(
                 conn,
@@ -418,14 +417,14 @@ mod tests {
                 },
             )
             .unwrap();
-            let act = original_comm.create_activity(&r).unwrap();
+            let act = original_comm.create_activity(&conn).unwrap();
             inbox(
-                &r,
-                serde_json::to_value(original_comm.build_delete(conn).unwrap()).unwrap(),
+                &conn,
+                serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
             )
             .unwrap();
 
-            match inbox(&r, serde_json::to_value(act).unwrap()).unwrap() {
+            match inbox(&conn, serde_json::to_value(act).unwrap()).unwrap() {
                 InboxResult::Commented(c) => {
                     // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
                     assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);

@@ -1131,7 +1131,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         instance::{tests as instance_tests, Instance},
-        tests::{db, rockets},
+        tests::db,
         Connection as Conn,
     };
     use diesel::Connection;
@@ -1173,12 +1173,11 @@ pub(crate) mod tests {
 
     #[test]
     fn find_by() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(conn);
+            fill_database(&conn);
             let test_user = NewUser::new_local(
-                conn,
+                &conn,
                 "test".to_owned(),
                 "test user".to_owned(),
                 Role::Normal,
@@ -1189,22 +1188,22 @@ pub(crate) mod tests {
             .unwrap();
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test", Instance::get_local().unwrap().id)
+                User::find_by_name(&conn, "test", Instance::get_local().unwrap().id)
                     .unwrap()
                     .id
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_fqn(&r, &test_user.fqn).unwrap().id
+                User::find_by_fqn(&conn, &test_user.fqn).unwrap().id
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_email(conn, "test@example.com").unwrap().id
+                User::find_by_email(&conn, "test@example.com").unwrap().id
             );
             assert_eq!(
                 test_user.id,
                 User::find_by_ap_url(
-                    conn,
+                    &conn,
                     &format!(
                         "https://{}/@/{}/",
                         Instance::get_local().unwrap().public_domain,
@@ -1222,11 +1221,11 @@ pub(crate) mod tests {
     fn delete() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
+            let inserted = fill_database(&conn);
 
-            assert!(User::get(conn, inserted[0].id).is_ok());
-            inserted[0].delete(conn).unwrap();
-            assert!(User::get(conn, inserted[0].id).is_err());
+            assert!(User::get(&conn, inserted[0].id).is_ok());
+            inserted[0].delete(&conn).unwrap();
+            assert!(User::get(&conn, inserted[0].id).is_err());
             Ok(())
         });
     }
@@ -1235,20 +1234,20 @@ pub(crate) mod tests {
     fn admin() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
+            let inserted = fill_database(&conn);
             let local_inst = Instance::get_local().unwrap();
             let mut i = 0;
-            while local_inst.has_admin(conn).unwrap() {
+            while local_inst.has_admin(&conn).unwrap() {
                 assert!(i < 100); //prevent from looping indefinitelly
                 local_inst
-                    .main_admin(conn)
+                    .main_admin(&conn)
                     .unwrap()
-                    .set_role(conn, Role::Normal)
+                    .set_role(&conn, Role::Normal)
                     .unwrap();
                 i += 1;
             }
-            inserted[0].set_role(conn, Role::Admin).unwrap();
-            assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
+            inserted[0].set_role(&conn, Role::Admin).unwrap();
+            assert_eq!(inserted[0].id, local_inst.main_admin(&conn).unwrap().id);
             Ok(())
         });
     }
@@ -1257,9 +1256,9 @@ pub(crate) mod tests {
     fn auth() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(conn);
+            fill_database(&conn);
             let test_user = NewUser::new_local(
-                conn,
+                &conn,
                 "test".to_owned(),
                 "test user".to_owned(),
                 Role::Normal,
@@ -1270,10 +1269,10 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(
-                User::login(conn, "test", "test_password").unwrap().id,
+                User::login(&conn, "test", "test_password").unwrap().id,
                 test_user.id
             );
-            assert!(User::login(conn, "test", "other_password").is_err());
+            assert!(User::login(&conn, "test", "other_password").is_err());
             Ok(())
         });
     }
@@ -1282,26 +1281,26 @@ pub(crate) mod tests {
     fn get_local_page() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(conn);
+            fill_database(&conn);
 
-            let page = User::get_local_page(conn, (0, 2)).unwrap();
+            let page = User::get_local_page(&conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             assert!(page[0].username <= page[1].username);
 
-            let mut last_username = User::get_local_page(conn, (0, 1)).unwrap()[0]
+            let mut last_username = User::get_local_page(&conn, (0, 1)).unwrap()[0]
                 .username
                 .clone();
-            for i in 1..User::count_local(conn).unwrap() as i32 {
-                let page = User::get_local_page(conn, (i, i + 1)).unwrap();
+            for i in 1..User::count_local(&conn).unwrap() as i32 {
+                let page = User::get_local_page(&conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_username <= page[0].username);
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(conn, (0, User::count_local(conn).unwrap() as i32 + 10))
+                User::get_local_page(&conn, (0, User::count_local(&conn).unwrap() as i32 + 10))
                     .unwrap()
                     .len() as i64,
-                User::count_local(conn).unwrap()
+                User::count_local(&conn).unwrap()
             );
             Ok(())
         });
@@ -1309,14 +1308,13 @@ pub(crate) mod tests {
 
     #[test]
     fn self_federation() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let users = fill_database(conn);
+            let users = fill_database(&conn);
 
-            let ap_repr = users[0].to_activity(conn).unwrap();
-            users[0].delete(conn).unwrap();
-            let user = User::from_activity(&r, ap_repr).unwrap();
+            let ap_repr = users[0].to_activity(&conn).unwrap();
+            users[0].delete(&conn).unwrap();
+            let user = User::from_activity(&conn, ap_repr).unwrap();
 
             assert_eq!(user.username, users[0].username);
             assert_eq!(user.display_name, users[0].display_name);
@@ -1327,7 +1325,7 @@ pub(crate) mod tests {
             assert_eq!(user.public_key, users[0].public_key);
             assert_eq!(user.shared_inbox_url, users[0].shared_inbox_url);
             assert_eq!(user.followers_endpoint, users[0].followers_endpoint);
-            assert_eq!(user.avatar_url(conn), users[0].avatar_url(conn));
+            assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
             assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
             Ok(())
