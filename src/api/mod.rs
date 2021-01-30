@@ -6,7 +6,7 @@ use rocket::{
 use rocket_contrib::json::Json;
 
 use plume_common::utils::random_hex;
-use plume_models::{api_tokens::*, apps::App, users::User, Error, PlumeRocket};
+use plume_models::{api_tokens::*, apps::App, db_conn::DbConn, users::User, Error};
 
 type Api<T> = Result<Json<T>, ApiError>;
 
@@ -54,16 +54,12 @@ pub struct OAuthRequest {
 }
 
 #[get("/oauth2?<query..>")]
-pub fn oauth(
-    query: Form<OAuthRequest>,
-    rockets: PlumeRocket,
-) -> Result<Json<serde_json::Value>, ApiError> {
-    let conn = &*rockets.conn;
-    let app = App::find_by_client_id(conn, &query.client_id)?;
+pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
+    let app = App::find_by_client_id(&conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::login(conn, &query.username, &query.password) {
+        if let Ok(user) = User::login(&conn, &query.username, &query.password) {
             let token = ApiToken::insert(
-                conn,
+                &conn,
                 NewApiToken {
                     app_id: app.id,
                     user_id: user.id,

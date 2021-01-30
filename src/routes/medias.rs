@@ -15,20 +15,25 @@ use rocket_i18n::I18n;
 use std::fs;
 
 #[get("/medias?<page>")]
-pub fn list(user: User, page: Option<Page>, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn list(
+    user: User,
+    page: Option<Page>,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let medias = Media::page_for_user(&*rockets.conn, &user, page.limits())?;
+    let medias = Media::page_for_user(&conn, &user, page.limits())?;
     Ok(render!(medias::index(
-        &rockets.to_context(),
+        &(&conn, &rockets).to_context(),
         medias,
         page.0,
-        Page::total(Media::count_for_user(&*rockets.conn, &user)? as i32)
+        Page::total(Media::count_for_user(&conn, &user)? as i32)
     )))
 }
 
 #[get("/medias/new")]
-pub fn new(_user: User, rockets: PlumeRocket) -> Ructe {
-    render!(medias::new(&rockets.to_context()))
+pub fn new(_user: User, conn: DbConn, rockets: PlumeRocket) -> Ructe {
+    render!(medias::new(&(&conn, &rockets).to_context()))
 }
 
 #[post("/medias/new", data = "<data>")]
@@ -95,7 +100,7 @@ pub fn upload(
             .map(|cw| cw.is_empty())
             .unwrap_or(false);
         let media = Media::insert(
-            &*conn,
+            &conn,
             NewMedia {
                 file_path: dest,
                 alt_text: read(&fields["alt"][0].data)?,
@@ -126,10 +131,18 @@ fn read(data: &SavedData) -> Result<String, status::BadRequest<&'static str>> {
 }
 
 #[get("/medias/<id>")]
-pub fn details(id: i32, user: User, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let media = Media::get(&*rockets.conn, id)?;
+pub fn details(
+    id: i32,
+    user: User,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let media = Media::get(&conn, id)?;
     if media.owner_id == user.id {
-        Ok(render!(medias::details(&rockets.to_context(), media)))
+        Ok(render!(medias::details(
+            &(&conn, &rockets).to_context(),
+            media
+        )))
     } else {
         Err(Error::Unauthorized.into())
     }

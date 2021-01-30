@@ -2,7 +2,7 @@ use rocket::http::ContentType;
 use rocket::response::Content;
 use webfinger::*;
 
-use plume_models::{ap_url, blogs::Blog, users::User, PlumeRocket, CONFIG};
+use plume_models::{ap_url, blogs::Blog, db_conn::DbConn, users::User, CONFIG};
 
 #[get("/.well-known/nodeinfo")]
 pub fn nodeinfo() -> Content<String> {
@@ -42,18 +42,18 @@ pub fn host_meta() -> String {
 
 struct WebfingerResolver;
 
-impl Resolver<PlumeRocket> for WebfingerResolver {
+impl Resolver<DbConn> for WebfingerResolver {
     fn instance_domain<'a>() -> &'a str {
         CONFIG.base_url.as_str()
     }
 
-    fn find(prefix: Prefix, acct: String, ctx: PlumeRocket) -> Result<Webfinger, ResolverError> {
+    fn find(prefix: Prefix, acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
         match prefix {
-            Prefix::Acct => User::find_by_fqn(&ctx, &acct)
-                .and_then(|usr| usr.webfinger(&*ctx.conn))
+            Prefix::Acct => User::find_by_fqn(&conn, &acct)
+                .and_then(|usr| usr.webfinger(&*conn))
                 .or(Err(ResolverError::NotFound)),
-            Prefix::Group => Blog::find_by_fqn(&ctx, &acct)
-                .and_then(|blog| blog.webfinger(&*ctx.conn))
+            Prefix::Group => Blog::find_by_fqn(&conn, &acct)
+                .and_then(|blog| blog.webfinger(&*conn))
                 .or(Err(ResolverError::NotFound)),
             Prefix::Custom(_) => Err(ResolverError::NotFound),
         }
@@ -61,8 +61,8 @@ impl Resolver<PlumeRocket> for WebfingerResolver {
 }
 
 #[get("/.well-known/webfinger?<resource>")]
-pub fn webfinger(resource: String, rockets: PlumeRocket) -> Content<String> {
-    match WebfingerResolver::endpoint(resource, rockets)
+pub fn webfinger(resource: String, conn: DbConn) -> Content<String> {
+    match WebfingerResolver::endpoint(resource, conn)
         .and_then(|wf| serde_json::to_string(&wf).map_err(|_| ResolverError::NotFound))
     {
         Ok(wf) => Content(ContentType::new("application", "jrd+json"), wf),

@@ -3,18 +3,23 @@
 use crate::routes::Page;
 use crate::template_utils::IntoContext;
 use crate::{routes::errors::ErrorPage, template_utils::Ructe};
-use plume_models::{timeline::*, PlumeRocket};
+use plume_models::{db_conn::DbConn, timeline::*, PlumeRocket};
 use rocket::response::Redirect;
 
 #[get("/timeline/<id>?<page>")]
-pub fn details(id: i32, rockets: PlumeRocket, page: Option<Page>) -> Result<Ructe, ErrorPage> {
+pub fn details(
+    id: i32,
+    conn: DbConn,
+    rockets: PlumeRocket,
+    page: Option<Page>,
+) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let all_tl = Timeline::list_all_for_user(&rockets.conn, rockets.user.clone().map(|u| u.id))?;
-    let tl = Timeline::get(&rockets.conn, id)?;
-    let posts = tl.get_page(&rockets.conn, page.limits())?;
-    let total_posts = tl.count_posts(&rockets.conn)?;
+    let all_tl = Timeline::list_all_for_user(&conn, rockets.user.clone().map(|u| u.id))?;
+    let tl = Timeline::get(&conn, id)?;
+    let posts = tl.get_page(&conn, page.limits())?;
+    let total_posts = tl.count_posts(&conn)?;
     Ok(render!(timelines::details(
-        &rockets.to_context(),
+        &(&conn, &rockets).to_context(),
         tl,
         posts,
         all_tl,

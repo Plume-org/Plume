@@ -1,4 +1,4 @@
-use plume_models::{notifications::*, users::User, Connection, PlumeRocket};
+use plume_models::{db_conn::DbConn, notifications::*, users::User, Connection, PlumeRocket};
 
 use crate::templates::Html;
 use rocket::http::hyper::header::{ETag, EntityTag};
@@ -31,7 +31,7 @@ pub trait IntoContext {
     );
 }
 
-impl IntoContext for PlumeRocket {
+impl IntoContext for (&DbConn, &PlumeRocket) {
     fn to_context(
         &self,
     ) -> (
@@ -41,10 +41,10 @@ impl IntoContext for PlumeRocket {
         Option<(String, String)>,
     ) {
         (
-            &*self.conn,
-            &self.intl.catalog,
-            self.user.clone(),
-            self.flash_msg.clone(),
+            &self.0,
+            &self.1.intl.catalog,
+            self.1.user.clone(),
+            self.1.flash_msg.clone(),
         )
     }
 }

@@ -4,7 +4,7 @@ use plume_common::activity_pub::{
     sign::{verify_http_headers, Signable},
 };
 use plume_models::{
-    headers::Headers, inbox::inbox, instance::Instance, users::User, Error, PlumeRocket, CONFIG,
+    db_conn::DbConn, headers::Headers, inbox::inbox, instance::Instance, users::User, Error, CONFIG,
 };
 use rocket::{data::*, http::Status, response::status, Outcome::*, Request};
 use rocket_contrib::json::*;
@@ -13,11 +13,10 @@ use std::io::Read;
 use tracing::warn;
 
 pub fn handle_incoming(
-    rockets: PlumeRocket,
+    conn: DbConn,
     data: SignedJson<serde_json::Value>,
     headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    let conn = &*rockets.conn;
     let act = data.1.into_inner();
     let sig = data.0;
 
@@ -27,13 +26,13 @@ pub fn handle_incoming(
         .or_else(|| activity["actor"]["id"].as_str())
         .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor = User::from_id(&rockets, actor_id, None, CONFIG.proxy())
+    let actor = User::from_id(&conn, actor_id, None, CONFIG.proxy())
         .expect("instance::shared_inbox: user error");
     if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
         // maybe we just know an old key?
         actor
-            .refetch(conn)
-            .and_then(|_| User::get(conn, actor.id))
+            .refetch(&conn)
+            .and_then(|_| User::get(&conn, actor.id))
             .and_then(|u| {
                 if verify_http_headers(&u, &headers.0, &sig).is_secure() || act.clone().verify(&u) {
                     Ok(())
@@ -50,13 +49,13 @@ pub fn handle_incoming(
             })?;
     }
 
-    if Instance::is_blocked(conn, actor_id)
+    if Instance::is_blocked(&conn, actor_id)
         .map_err(|_| status::BadRequest(Some("Can't tell if instance is blocked")))?
     {
         return Ok(String::new());
     }
 
-    Ok(match inbox(&rockets, act) {
+    Ok(match inbox(&conn, act) {
         Ok(_) => String::new(),
         Err(e) => {
             warn!("Shared inbox error: {:?}", e);

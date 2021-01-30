@@ -3,7 +3,7 @@ use rocket::request::Form;
 
 use crate::routes::Page;
 use crate::template_utils::{IntoContext, Ructe};
-use plume_models::{search::Query, PlumeRocket};
+use plume_models::{db_conn::DbConn, search::Query, PlumeRocket};
 use std::str::FromStr;
 
 #[derive(Default, FromForm)]
@@ -50,8 +50,7 @@ macro_rules! param_to_query {
 }
 
 #[get("/search?<query..>")]
-pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
-    let conn = &*rockets.conn;
+pub fn search(query: Option<Form<SearchQuery>>, conn: DbConn, rockets: PlumeRocket) -> Ructe {
     let query = query.map(Form::into_inner).unwrap_or_default();
     let page = query.page.unwrap_or_default();
     let mut parsed_query =
@@ -65,7 +64,7 @@ pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
 
     if str_query.is_empty() {
         render!(search::index(
-            &rockets.to_context(),
+            &(&conn, &rockets).to_context(),
             &format!("{}", Utc::today().format("%Y-%m-d"))
         ))
     } else {
@@ -74,7 +73,7 @@ pub fn search(query: Option<Form<SearchQuery>>, rockets: PlumeRocket) -> Ructe {
             .search_document(&conn, parsed_query, page.limits());
         let next_page = if res.is_empty() { 0 } else { page.0 + 1 };
         render!(search::result(
-            &rockets.to_context(),
+            &(&conn, &rockets).to_context(),
             &str_query,
             res,
             page.0,
