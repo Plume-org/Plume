@@ -43,6 +43,8 @@ impl Actor for RemoteFetchActor {
             RemoteUserFound(user) => match self.conn.get() {
                 Ok(conn) => {
                     let conn = DbConn(conn);
+                    // Don't call these functions in parallel
+                    // for the case database connections limit is too small
                     fetch_and_cache_articles(&user, &conn);
                     fetch_and_cache_followers(&user, &conn);
                     if user.needs_update() {
