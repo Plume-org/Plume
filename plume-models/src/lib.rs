@@ -356,6 +356,7 @@ pub mod password_reset_requests;
 pub mod plume_rocket;
 pub mod post_authors;
 pub mod posts;
+pub mod remote_fetch_actor;
 pub mod reshares;
 pub mod safe_string;
 #[allow(unused_imports)]
