@@ -1,6 +1,6 @@
 use crate::{
-    notifications::*, posts::Post, schema::reshares, timeline::*, users::User, Connection, Error,
-    PlumeRocket, Result, CONFIG,
+    db_conn::DbConn, notifications::*, posts::Post, schema::reshares, timeline::*, users::User,
+    Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
@@ -107,12 +107,12 @@ impl Reshare {
     }
 }
 
-impl AsObject<User, Announce, &PlumeRocket> for Post {
+impl AsObject<User, Announce, &DbConn> for Post {
     type Error = Error;
     type Output = Reshare;
 
-    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Reshare> {
-        let conn = &*c.conn;
+    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
+        let conn = conn;
         let reshare = Reshare::insert(
             conn,
             NewReshare {
@@ -123,25 +123,25 @@ impl AsObject<User, Announce, &PlumeRocket> for Post {
         )?;
         reshare.notify(conn)?;
 
-        Timeline::add_to_all_timelines(c, &self, Kind::Reshare(&actor))?;
+        Timeline::add_to_all_timelines(conn, &self, Kind::Reshare(&actor))?;
         Ok(reshare)
     }
 }
 
-impl FromId<PlumeRocket> for Reshare {
+impl FromId<DbConn> for Reshare {
     type Error = Error;
     type Object = Announce;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Reshare::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Reshare::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, act: Announce) -> Result<Self> {
+    fn from_activity(conn: &DbConn, act: Announce) -> Result<Self> {
         let res = Reshare::insert(
-            &c.conn,
+            conn,
             NewReshare {
                 post_id: Post::from_id(
-                    c,
+                    conn,
                     &act.announce_props.object_link::<Id>()?,
                     None,
                     CONFIG.proxy(),
@@ -149,7 +149,7 @@ impl FromId<PlumeRocket> for Reshare {
                 .map_err(|(_, e)| e)?
                 .id,
                 user_id: User::from_id(
-                    c,
+                    conn,
                     &act.announce_props.actor_link::<Id>()?,
                     None,
                     CONFIG.proxy(),
@@ -159,23 +159,22 @@ impl FromId<PlumeRocket> for Reshare {
                 ap_url: act.object_props.id_string()?,
             },
         )?;
-        res.notify(&c.conn)?;
+        res.notify(conn)?;
         Ok(res)
     }
 }
 
-impl AsObject<User, Undo, &PlumeRocket> for Reshare {
+impl AsObject<User, Undo, &DbConn> for Reshare {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
-        let conn = &*c.conn;
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
-            diesel::delete(&self).execute(conn)?;
+            diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
             if let Ok(notif) = Notification::find(&conn, notification_kind::RESHARE, self.id) {
-                diesel::delete(&notif).execute(conn)?;
+                diesel::delete(&notif).execute(&**conn)?;
             }
 
             Ok(())

@@ -21,6 +21,7 @@ use once_cell::sync::Lazy;
 use plume_common::activity_pub::inbox::InboxError;
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
+use users::UserEvent;
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
 compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
@@ -39,6 +40,9 @@ pub(crate) static ACTOR_SYS: Lazy<ActorSystem> = Lazy::new(|| {
         .create()
         .expect("Failed to create actor system")
 });
+
+pub(crate) static USER_CHAN: Lazy<ChannelRef<UserEvent>> =
+    Lazy::new(|| channel("user_events", &*ACTOR_SYS).expect("Failed to create user channel"));
 
 pub(crate) static POST_CHAN: Lazy<ChannelRef<PostEvent>> =
     Lazy::new(|| channel("post_events", &*ACTOR_SYS).expect("Failed to create post channel"));
@@ -294,12 +298,10 @@ pub fn ap_url(url: &str) -> String {
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use crate::{db_conn, migrations::IMPORTED_MIGRATIONS, search, Connection as Conn, CONFIG};
+    use crate::{db_conn, migrations::IMPORTED_MIGRATIONS, Connection as Conn, CONFIG};
     use diesel::r2d2::ConnectionManager;
     use plume_common::utils::random_hex;
-    use scheduled_thread_pool::ScheduledThreadPool;
     use std::env::temp_dir;
-    use std::sync::Arc;
 
     #[macro_export]
     macro_rules! part_eq {
@@ -329,15 +331,6 @@ mod tests {
             pool
         };
     }
-
-    pub fn rockets() -> super::PlumeRocket {
-        super::PlumeRocket {
-            conn: db_conn::DbConn((*DB_POOL).get().unwrap()),
-            searcher: Arc::new(search::tests::get_searcher(&CONFIG.search_tokenizers)),
-            worker: Arc::new(ScheduledThreadPool::new(2)),
-            user: None,
-        }
-    }
 }
 
 pub mod admin;
@@ -363,6 +356,7 @@ pub mod password_reset_requests;
 pub mod plume_rocket;
 pub mod post_authors;
 pub mod posts;
+pub mod remote_fetch_actor;
 pub mod reshares;
 pub mod safe_string;
 #[allow(unused_imports)]

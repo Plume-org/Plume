@@ -1,5 +1,6 @@
 use crate::{
     comment_seers::{CommentSeers, NewCommentSeers},
+    db_conn::DbConn,
     instance::Instance,
     medias::Media,
     mentions::Mention,
@@ -8,7 +9,7 @@ use crate::{
     safe_string::SafeString,
     schema::comments,
     users::User,
-    Connection, Error, PlumeRocket, Result, CONFIG,
+    Connection, Error, Result, CONFIG,
 };
 use activitypub::{
     activity::{Create, Delete},
@@ -104,13 +105,13 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, c: &PlumeRocket) -> Result<Note> {
-        let author = User::get(&c.conn, self.author_id)?;
+    pub fn to_activity(&self, conn: &DbConn) -> Result<Note> {
+        let author = User::get(conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
             Some(&Instance::get_local()?.public_domain),
             true,
-            Some(Media::get_media_processor(&c.conn, vec![&author])),
+            Some(Media::get_media_processor(conn, vec![&author])),
         );
 
         let mut note = Note::default();
@@ -123,8 +124,8 @@ impl Comment {
         note.object_props.set_content_string(html)?;
         note.object_props
             .set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(
-                || Ok(Post::get(&c.conn, self.post_id)?.ap_url),
-                |id| Ok(Comment::get(&c.conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
+                || Ok(Post::get(conn, self.post_id)?.ap_url),
+                |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
             )?))?;
         note.object_props
             .set_published_string(chrono::Utc::now().to_rfc3339())?;
@@ -133,16 +134,16 @@ impl Comment {
         note.object_props.set_tag_link_vec(
             mentions
                 .into_iter()
-                .filter_map(|m| Mention::build_activity(c, &m).ok())
+                .filter_map(|m| Mention::build_activity(conn, &m).ok())
                 .collect::<Vec<link::Mention>>(),
         )?;
         Ok(note)
     }
 
-    pub fn create_activity(&self, c: &PlumeRocket) -> Result<Create> {
-        let author = User::get(&c.conn, self.author_id)?;
+    pub fn create_activity(&self, conn: &DbConn) -> Result<Create> {
+        let author = User::get(&conn, self.author_id)?;
 
-        let note = self.to_activity(c)?;
+        let note = self.to_activity(conn)?;
         let mut act = Create::default();
         act.create_props.set_actor_link(author.into_id())?;
         act.create_props.set_object_object(note.clone())?;
@@ -151,7 +152,7 @@ impl Comment {
         act.object_props
             .set_to_link_vec(note.object_props.to_link_vec::<Id>()?)?;
         act.object_props
-            .set_cc_link_vec(vec![Id::new(self.get_author(&c.conn)?.followers_endpoint)])?;
+            .set_cc_link_vec(vec![Id::new(self.get_author(&conn)?.followers_endpoint)])?;
         Ok(act)
     }
 
@@ -193,16 +194,15 @@ impl Comment {
     }
 }
 
-impl FromId<PlumeRocket> for Comment {
+impl FromId<DbConn> for Comment {
     type Error = Error;
     type Object = Note;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, note: Note) -> Result<Self> {
-        let conn = &*c.conn;
+    fn from_activity(conn: &DbConn, note: Note) -> Result<Self> {
         let comm = {
             let previous_url = note.object_props.in_reply_to.as_ref()?.as_str()?;
             let previous_comment = Comment::find_by_ap_url(conn, previous_url);
@@ -235,7 +235,7 @@ impl FromId<PlumeRocket> for Comment {
                         Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>
                     })?,
                     author_id: User::from_id(
-                        c,
+                        conn,
                         &note.object_props.attributed_to_link::<Id>()?,
                         None,
                         CONFIG.proxy(),
@@ -296,7 +296,7 @@ impl FromId<PlumeRocket> for Comment {
                 .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
                 .into_iter()
                 .map(|v| {
-                    if let Ok(user) = User::from_id(c, &v, None, CONFIG.proxy()) {
+                    if let Ok(user) = User::from_id(conn, &v, None, CONFIG.proxy()) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection
@@ -322,41 +322,41 @@ impl FromId<PlumeRocket> for Comment {
     }
 }
 
-impl AsObject<User, Create, &PlumeRocket> for Comment {
+impl AsObject<User, Create, &DbConn> for Comment {
     type Error = Error;
     type Output = Self;
 
-    fn activity(self, _c: &PlumeRocket, _actor: User, _id: &str) -> Result<Self> {
+    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self> {
         // The actual creation takes place in the FromId impl
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for Comment {
+impl AsObject<User, Delete, &DbConn> for Comment {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.author_id != actor.id {
             return Err(Error::Unauthorized);
         }
 
-        for m in Mention::list_for_comment(&c.conn, self.id)? {
-            for n in Notification::find_for_mention(&c.conn, &m)? {
-                n.delete(&c.conn)?;
+        for m in Mention::list_for_comment(conn, self.id)? {
+            for n in Notification::find_for_mention(conn, &m)? {
+                n.delete(conn)?;
             }
-            m.delete(&c.conn)?;
+            m.delete(conn)?;
         }
 
-        for n in Notification::find_for_comment(&c.conn, &self)? {
-            n.delete(&c.conn)?;
+        for n in Notification::find_for_comment(&conn, &self)? {
+            n.delete(&**conn)?;
         }
 
         diesel::update(comments::table)
             .filter(comments::in_response_to_id.eq(self.id))
             .set(comments::in_response_to_id.eq(self.in_response_to_id))
-            .execute(&*c.conn)?;
-        diesel::delete(&self).execute(&*c.conn)?;
+            .execute(&**conn)?;
+        diesel::delete(&self).execute(&**conn)?;
         Ok(())
     }
 }
@@ -392,17 +392,16 @@ mod tests {
     use super::*;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
-    use crate::tests::rockets;
+    use crate::tests::db;
     use diesel::Connection;
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
     #[test]
     fn self_federation() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&r);
+            let (posts, users, _) = fill_database(&conn);
 
             let original_comm = Comment::insert(
                 conn,
@@ -418,14 +417,14 @@ mod tests {
                 },
             )
             .unwrap();
-            let act = original_comm.create_activity(&r).unwrap();
+            let act = original_comm.create_activity(&conn).unwrap();
             inbox(
-                &r,
-                serde_json::to_value(original_comm.build_delete(conn).unwrap()).unwrap(),
+                &conn,
+                serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
             )
             .unwrap();
 
-            match inbox(&r, serde_json::to_value(act).unwrap()).unwrap() {
+            match inbox(&conn, serde_json::to_value(act).unwrap()).unwrap() {
                 InboxResult::Commented(c) => {
                     // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
                     assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);

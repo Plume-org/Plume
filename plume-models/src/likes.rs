@@ -1,6 +1,6 @@
 use crate::{
-    notifications::*, posts::Post, schema::likes, timeline::*, users::User, Connection, Error,
-    PlumeRocket, Result, CONFIG,
+    db_conn::DbConn, notifications::*, posts::Post, schema::likes, timeline::*, users::User,
+    Connection, Error, Result, CONFIG,
 };
 use activitypub::activity;
 use chrono::NaiveDateTime;
@@ -83,40 +83,40 @@ impl Like {
     }
 }
 
-impl AsObject<User, activity::Like, &PlumeRocket> for Post {
+impl AsObject<User, activity::Like, &DbConn> for Post {
     type Error = Error;
     type Output = Like;
 
-    fn activity(self, c: &PlumeRocket, actor: User, id: &str) -> Result<Like> {
+    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
-            &c.conn,
+            conn,
             NewLike {
                 post_id: self.id,
                 user_id: actor.id,
                 ap_url: id.to_string(),
             },
         )?;
-        res.notify(&c.conn)?;
+        res.notify(conn)?;
 
-        Timeline::add_to_all_timelines(c, &self, Kind::Like(&actor))?;
+        Timeline::add_to_all_timelines(conn, &self, Kind::Like(&actor))?;
         Ok(res)
     }
 }
 
-impl FromId<PlumeRocket> for Like {
+impl FromId<DbConn> for Like {
     type Error = Error;
     type Object = activity::Like;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Like::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Like::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, act: activity::Like) -> Result<Self> {
+    fn from_activity(conn: &DbConn, act: activity::Like) -> Result<Self> {
         let res = Like::insert(
-            &c.conn,
+            conn,
             NewLike {
                 post_id: Post::from_id(
-                    c,
+                    conn,
                     &act.like_props.object_link::<Id>()?,
                     None,
                     CONFIG.proxy(),
@@ -124,7 +124,7 @@ impl FromId<PlumeRocket> for Like {
                 .map_err(|(_, e)| e)?
                 .id,
                 user_id: User::from_id(
-                    c,
+                    conn,
                     &act.like_props.actor_link::<Id>()?,
                     None,
                     CONFIG.proxy(),
@@ -134,23 +134,22 @@ impl FromId<PlumeRocket> for Like {
                 ap_url: act.object_props.id_string()?,
             },
         )?;
-        res.notify(&c.conn)?;
+        res.notify(conn)?;
         Ok(res)
     }
 }
 
-impl AsObject<User, activity::Undo, &PlumeRocket> for Like {
+impl AsObject<User, activity::Undo, &DbConn> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
-        let conn = &*c.conn;
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
-            diesel::delete(&self).execute(conn)?;
+            diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
-                diesel::delete(&notif).execute(conn)?;
+            if let Ok(notif) = Notification::find(&conn, notification_kind::LIKE, self.id) {
+                diesel::delete(&notif).execute(&**conn)?;
             }
             Ok(())
         } else {

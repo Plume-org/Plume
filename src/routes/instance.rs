@@ -27,8 +27,7 @@ use plume_models::{
 };
 
 #[get("/")]
-pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let conn = &*rockets.conn;
+pub fn index(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let inst = Instance::get_local()?;
     let timelines = Timeline::list_all_for_user(&conn, rockets.user.clone().map(|u| u.id))?
         .into_iter()
@@ -42,19 +41,19 @@ pub fn index(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
         .collect();
 
     Ok(render!(instance::index(
-        &rockets.to_context(),
+        &(&conn, &rockets).to_context(),
         inst,
-        User::count_local(conn)?,
-        Post::count_local(conn)?,
+        User::count_local(&conn)?,
+        Post::count_local(&conn)?,
         timelines
     )))
 }
 
 #[get("/admin")]
-pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn admin(_admin: Admin, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let local_inst = Instance::get_local()?;
     Ok(render!(instance::admin(
-        &rockets.to_context(),
+        &(&conn, &rockets).to_context(),
         local_inst.clone(),
         InstanceSettingsForm {
             name: local_inst.name.clone(),
@@ -68,8 +67,8 @@ pub fn admin(_admin: Admin, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 }
 
 #[get("/admin", rank = 2)]
-pub fn admin_mod(_mod: Moderator, rockets: PlumeRocket) -> Ructe {
-    render!(instance::admin_mod(&rockets.to_context()))
+pub fn admin_mod(_mod: Moderator, conn: DbConn, rockets: PlumeRocket) -> Ructe {
+    render!(instance::admin_mod(&(&conn, &rockets).to_context()))
 }
 
 #[derive(Clone, FromForm, Validate)]
@@ -87,14 +86,14 @@ pub struct InstanceSettingsForm {
 pub fn update_settings(
     _admin: Admin,
     form: LenientForm<InstanceSettingsForm>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
-    let conn = &*rockets.conn;
     if let Err(e) = form.validate() {
         let local_inst =
             Instance::get_local().expect("instance::update_settings: local instance error");
         render!(instance::admin(
-            &rockets.to_context(),
+            &(&conn, &rockets).to_context(),
             local_inst,
             form.clone(),
             e
@@ -105,7 +104,7 @@ pub fn update_settings(
             Instance::get_local().expect("instance::update_settings: local instance error");
         instance
             .update(
-                conn,
+                &*conn,
                 form.name.clone(),
                 form.open_registrations,
                 form.short_description.clone(),
@@ -125,16 +124,17 @@ pub fn update_settings(
 pub fn admin_instances(
     _mod: Moderator,
     page: Option<Page>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let instances = Instance::page(&*rockets.conn, page.limits())?;
+    let instances = Instance::page(&conn, page.limits())?;
     Ok(render!(instance::list(
-        &rockets.to_context(),
+        &(&conn, &rockets).to_context(),
         Instance::get_local()?,
         instances,
         page.0,
-        Page::total(Instance::count(&*rockets.conn)? as i32)
+        Page::total(Instance::count(&conn)? as i32)
     )))
 }
 
@@ -145,14 +145,14 @@ pub fn toggle_block(
     id: i32,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let inst = Instance::get(&*conn, id)?;
+    let inst = Instance::get(&conn, id)?;
     let message = if inst.blocked {
         i18n!(intl.catalog, "{} has been unblocked."; &inst.name)
     } else {
         i18n!(intl.catalog, "{} has been blocked."; &inst.name)
     };
 
-    inst.toggle_block(&*conn)?;
+    inst.toggle_block(&conn)?;
     Ok(Flash::success(
         Redirect::to(uri!(admin_instances: page = _)),
         message,
@@ -163,14 +163,15 @@ pub fn toggle_block(
 pub fn admin_users(
     _mod: Moderator,
     page: Option<Page>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(instance::users(
-        &rockets.to_context(),
-        User::get_local_page(&*rockets.conn, page.limits())?,
+        &(&conn, &rockets).to_context(),
+        User::get_local_page(&conn, page.limits())?,
         page.0,
-        Page::total(User::count_local(&*rockets.conn)? as i32)
+        Page::total(User::count_local(&conn)? as i32)
     )))
 }
 pub struct BlocklistEmailDeletion {
@@ -193,9 +194,10 @@ impl<'f> FromForm<'f> for BlocklistEmailDeletion {
 pub fn delete_email_blocklist(
     _mod: Moderator,
     form: Form<BlocklistEmailDeletion>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    BlocklistedEmail::delete_entries(&*rockets.conn, form.0.ids)?;
+    BlocklistedEmail::delete_entries(&conn, form.0.ids)?;
     Ok(Flash::success(
         Redirect::to(uri!(admin_email_blocklist: page = None)),
         i18n!(rockets.intl.catalog, "Blocks deleted"),
@@ -206,9 +208,10 @@ pub fn delete_email_blocklist(
 pub fn add_email_blocklist(
     _mod: Moderator,
     form: LenientForm<NewBlocklistedEmail>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let result = BlocklistedEmail::insert(&*rockets.conn, form.0);
+    let result = BlocklistedEmail::insert(&conn, form.0);
 
     if let Err(Error::Db(_)) = result {
         Ok(Flash::error(
@@ -226,14 +229,15 @@ pub fn add_email_blocklist(
 pub fn admin_email_blocklist(
     _mod: Moderator,
     page: Option<Page>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(instance::emailblocklist(
-        &rockets.to_context(),
-        BlocklistedEmail::page(&*rockets.conn, page.limits())?,
+        &(&conn, &rockets).to_context(),
+        BlocklistedEmail::page(&conn, page.limits())?,
         page.0,
-        Page::total(BlocklistedEmail::count(&*rockets.conn)? as i32)
+        Page::total(BlocklistedEmail::count(&conn)? as i32)
     )))
 }
 
@@ -303,6 +307,7 @@ impl FromStr for UserActions {
 pub fn edit_users(
     moderator: Moderator,
     form: LenientForm<MultiAction<UserActions>>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
     // you can't change your own rights
@@ -329,27 +334,26 @@ pub fn edit_users(
         }
     }
 
-    let conn = &rockets.conn;
     let worker = &*rockets.worker;
     match form.action {
         UserActions::Admin => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, Role::Admin)?;
+                User::get(&conn, u)?.set_role(&conn, Role::Admin)?;
             }
         }
         UserActions::Moderator => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, Role::Moderator)?;
+                User::get(&conn, u)?.set_role(&conn, Role::Moderator)?;
             }
         }
         UserActions::RevokeAdmin | UserActions::RevokeModerator => {
             for u in form.ids.clone() {
-                User::get(conn, u)?.set_role(conn, Role::Normal)?;
+                User::get(&conn, u)?.set_role(&conn, Role::Normal)?;
             }
         }
         UserActions::Ban => {
             for u in form.ids.clone() {
-                ban(u, conn, worker)?;
+                ban(u, &conn, worker)?;
             }
         }
     }
@@ -387,40 +391,33 @@ fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), E
 
 #[post("/inbox", data = "<data>")]
 pub fn shared_inbox(
-    rockets: PlumeRocket,
+    conn: DbConn,
     data: inbox::SignedJson<serde_json::Value>,
     headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    inbox::handle_incoming(rockets, data, headers)
+    inbox::handle_incoming(conn, data, headers)
 }
 
 #[get("/remote_interact?<target>")]
-pub fn interact(rockets: PlumeRocket, user: Option<User>, target: String) -> Option<Redirect> {
-    if User::find_by_fqn(&rockets, &target).is_ok() {
+pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redirect> {
+    if User::find_by_fqn(&conn, &target).is_ok() {
         return Some(Redirect::to(uri!(super::user::details: name = target)));
     }
 
-    if let Ok(post) = Post::from_id(&rockets, &target, None, CONFIG.proxy()) {
+    if let Ok(post) = Post::from_id(&conn, &target, None, CONFIG.proxy()) {
         return Some(Redirect::to(uri!(
-            super::posts::details: blog = post
-                .get_blog(&rockets.conn)
-                .expect("Can't retrieve blog")
-                .fqn,
+            super::posts::details: blog = post.get_blog(&conn).expect("Can't retrieve blog").fqn,
             slug = &post.slug,
             responding_to = _
         )));
     }
 
-    if let Ok(comment) = Comment::from_id(&rockets, &target, None, CONFIG.proxy()) {
-        if comment.can_see(&rockets.conn, user.as_ref()) {
-            let post = comment
-                .get_post(&rockets.conn)
-                .expect("Can't retrieve post");
+    if let Ok(comment) = Comment::from_id(&conn, &target, None, CONFIG.proxy()) {
+        if comment.can_see(&conn, user.as_ref()) {
+            let post = comment.get_post(&conn).expect("Can't retrieve post");
             return Some(Redirect::to(uri!(
-                super::posts::details: blog = post
-                    .get_blog(&rockets.conn)
-                    .expect("Can't retrieve blog")
-                    .fqn,
+                super::posts::details: blog =
+                    post.get_blog(&conn).expect("Can't retrieve blog").fqn,
                 slug = &post.slug,
                 responding_to = comment.id
             )));
@@ -450,10 +447,10 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
         "openRegistrations": local_inst.open_registrations,
         "usage": {
             "users": {
-                "total": User::count_local(&*conn)?
+                "total": User::count_local(&conn)?
             },
-            "localPosts": Post::count_local(&*conn)?,
-            "localComments": Comment::count_local(&*conn)?
+            "localPosts": Post::count_local(&conn)?,
+            "localComments": Comment::count_local(&conn)?
         },
         "metadata": {
             "nodeName": local_inst.name,
@@ -469,21 +466,20 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
 }
 
 #[get("/about")]
-pub fn about(rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let conn = &*rockets.conn;
+pub fn about(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     Ok(render!(instance::about(
-        &rockets.to_context(),
+        &(&conn, &rockets).to_context(),
         Instance::get_local()?,
-        Instance::get_local()?.main_admin(conn)?,
-        User::count_local(conn)?,
-        Post::count_local(conn)?,
-        Instance::count(conn)? - 1
+        Instance::get_local()?.main_admin(&conn)?,
+        User::count_local(&conn)?,
+        Post::count_local(&conn)?,
+        Instance::count(&conn)? - 1
     )))
 }
 
 #[get("/privacy")]
-pub fn privacy(rockets: PlumeRocket) -> Ructe {
-    render!(instance::privacy(&rockets.to_context()))
+pub fn privacy(conn: DbConn, rockets: PlumeRocket) -> Ructe {
+    render!(instance::privacy(&(&conn, &rockets).to_context()))
 }
 
 #[get("/manifest.json")]

@@ -1,6 +1,6 @@
 use crate::{
-    comments::Comment, notifications::*, posts::Post, schema::mentions, users::User, Connection,
-    Error, PlumeRocket, Result,
+    comments::Comment, db_conn::DbConn, notifications::*, posts::Post, schema::mentions,
+    users::User, Connection, Error, Result,
 };
 use activitypub::link;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -52,8 +52,8 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(c: &PlumeRocket, ment: &str) -> Result<link::Mention> {
-        let user = User::find_by_fqn(c, ment)?;
+    pub fn build_activity(conn: &DbConn, ment: &str) -> Result<link::Mention> {
+        let user = User::find_by_fqn(conn, ment)?;
         let mut mention = link::Mention::default();
         mention.link_props.set_href_string(user.ap_url)?;
         mention.link_props.set_name_string(format!("@{}", ment))?;

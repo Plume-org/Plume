@@ -1,8 +1,8 @@
 use crate::{
     ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, db_conn::DbConn, follows::Follow,
     instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
-    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, PlumeRocket,
-    Result, CONFIG, ITEMS_PER_PAGE,
+    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
+    UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
 use activitypub::{
     activity::Delete,
@@ -33,6 +33,7 @@ use reqwest::{
     header::{HeaderValue, ACCEPT},
     ClientBuilder,
 };
+use riker::actors::{Publish, Tell};
 use rocket::{
     outcome::IntoOutcome,
     request::{self, FromRequest, Request},
@@ -40,6 +41,7 @@ use rocket::{
 use std::{
     cmp::PartialEq,
     hash::{Hash, Hasher},
+    sync::Arc,
 };
 use url::Url;
 use webfinger::*;
@@ -186,29 +188,29 @@ impl User {
         users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
             .count()
-            .get_result(conn)
+            .get_result(&*conn)
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(c: &PlumeRocket, fqn: &str) -> Result<User> {
+    pub fn find_by_fqn(conn: &DbConn, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .first(&*c.conn)
+            .first(&**conn)
             .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
         } else {
-            User::fetch_from_webfinger(c, fqn)
+            User::fetch_from_webfinger(conn, fqn)
         }
     }
 
-    fn fetch_from_webfinger(c: &PlumeRocket, acct: &str) -> Result<User> {
+    fn fetch_from_webfinger(conn: &DbConn, acct: &str) -> Result<User> {
         let link = resolve(acct.to_owned(), true)?
             .links
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(c, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
+        User::from_id(conn, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
     }
 
     pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
@@ -243,8 +245,8 @@ impl User {
         Ok(json)
     }
 
-    pub fn fetch_from_url(c: &PlumeRocket, url: &str) -> Result<User> {
-        User::fetch(url).and_then(|json| User::from_activity(c, json))
+    pub fn fetch_from_url(conn: &DbConn, url: &str) -> Result<User> {
+        User::fetch(url).and_then(|json| User::from_activity(conn, json))
     }
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
@@ -891,6 +893,21 @@ impl User {
             self.fqn.clone()
         }
     }
+
+    pub fn remote_user_found(&self) {
+        tracing::trace!("{:?}", self);
+        self.publish_remote_user_found();
+    }
+
+    fn publish_remote_user_found(&self) {
+        USER_CHAN.tell(
+            Publish {
+                msg: RemoteUserFound(Arc::new(self.clone())),
+                topic: "user.remote_user_found".into(),
+            },
+            None,
+        )
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
@@ -915,20 +932,20 @@ impl IntoId for User {
 
 impl Eq for User {}
 
-impl FromId<PlumeRocket> for User {
+impl FromId<DbConn> for User {
     type Error = Error;
     type Object = CustomPerson;
 
-    fn from_db(c: &PlumeRocket, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(&c.conn, id)
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(c: &PlumeRocket, acct: CustomPerson) -> Result<Self> {
+    fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
         let inst = url.host_str()?;
-        let instance = Instance::find_by_domain(&c.conn, inst).or_else(|_| {
+        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
-                &c.conn,
+                conn,
                 NewInstance {
                     name: inst.to_owned(),
                     public_domain: inst.to_owned(),
@@ -957,7 +974,7 @@ impl FromId<PlumeRocket> for User {
         };
 
         let user = User::insert(
-            &c.conn,
+            conn,
             NewUser {
                 display_name: acct
                     .object
@@ -1003,10 +1020,10 @@ impl FromId<PlumeRocket> for User {
 
         if let Ok(icon) = acct.object.object_props.icon_image() {
             if let Ok(url) = icon.object_props.url_string() {
-                let avatar = Media::save_remote(&c.conn, url, &user);
+                let avatar = Media::save_remote(conn, url, &user);
 
                 if let Ok(avatar) = avatar {
-                    user.set_avatar(&c.conn, avatar.id)?;
+                    user.set_avatar(conn, avatar.id)?;
                 }
             }
         }
@@ -1015,7 +1032,7 @@ impl FromId<PlumeRocket> for User {
     }
 }
 
-impl AsActor<&PlumeRocket> for User {
+impl AsActor<&DbConn> for User {
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
@@ -1031,13 +1048,13 @@ impl AsActor<&PlumeRocket> for User {
     }
 }
 
-impl AsObject<User, Delete, &PlumeRocket> for User {
+impl AsObject<User, Delete, &DbConn> for User {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, c: &PlumeRocket, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
-            self.delete(&c.conn).map(|_| ())
+            self.delete(conn).map(|_| ())
         } else {
             Err(Error::Unauthorized)
         }
@@ -1126,12 +1143,27 @@ impl NewUser {
     }
 }
 
+#[derive(Clone, Debug)]
+pub enum UserEvent {
+    RemoteUserFound(Arc<User>),
+}
+
+impl From<UserEvent> for Arc<User> {
+    fn from(event: UserEvent) -> Self {
+        use UserEvent::*;
+
+        match event {
+            RemoteUserFound(user) => user,
+        }
+    }
+}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
     use crate::{
         instance::{tests as instance_tests, Instance},
-        tests::{db, rockets},
+        tests::db,
         Connection as Conn,
     };
     use diesel::Connection;
@@ -1173,12 +1205,11 @@ pub(crate) mod tests {
 
     #[test]
     fn find_by() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(conn);
+            fill_database(&conn);
             let test_user = NewUser::new_local(
-                conn,
+                &conn,
                 "test".to_owned(),
                 "test user".to_owned(),
                 Role::Normal,
@@ -1189,22 +1220,22 @@ pub(crate) mod tests {
             .unwrap();
             assert_eq!(
                 test_user.id,
-                User::find_by_name(conn, "test", Instance::get_local().unwrap().id)
+                User::find_by_name(&conn, "test", Instance::get_local().unwrap().id)
                     .unwrap()
                     .id
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_fqn(&r, &test_user.fqn).unwrap().id
+                User::find_by_fqn(&conn, &test_user.fqn).unwrap().id
             );
             assert_eq!(
                 test_user.id,
-                User::find_by_email(conn, "test@example.com").unwrap().id
+                User::find_by_email(&conn, "test@example.com").unwrap().id
             );
             assert_eq!(
                 test_user.id,
                 User::find_by_ap_url(
-                    conn,
+                    &conn,
                     &format!(
                         "https://{}/@/{}/",
                         Instance::get_local().unwrap().public_domain,
@@ -1222,11 +1253,11 @@ pub(crate) mod tests {
     fn delete() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
+            let inserted = fill_database(&conn);
 
-            assert!(User::get(conn, inserted[0].id).is_ok());
-            inserted[0].delete(conn).unwrap();
-            assert!(User::get(conn, inserted[0].id).is_err());
+            assert!(User::get(&conn, inserted[0].id).is_ok());
+            inserted[0].delete(&conn).unwrap();
+            assert!(User::get(&conn, inserted[0].id).is_err());
             Ok(())
         });
     }
@@ -1235,20 +1266,20 @@ pub(crate) mod tests {
     fn admin() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(conn);
+            let inserted = fill_database(&conn);
             let local_inst = Instance::get_local().unwrap();
             let mut i = 0;
-            while local_inst.has_admin(conn).unwrap() {
+            while local_inst.has_admin(&conn).unwrap() {
                 assert!(i < 100); //prevent from looping indefinitelly
                 local_inst
-                    .main_admin(conn)
+                    .main_admin(&conn)
                     .unwrap()
-                    .set_role(conn, Role::Normal)
+                    .set_role(&conn, Role::Normal)
                     .unwrap();
                 i += 1;
             }
-            inserted[0].set_role(conn, Role::Admin).unwrap();
-            assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
+            inserted[0].set_role(&conn, Role::Admin).unwrap();
+            assert_eq!(inserted[0].id, local_inst.main_admin(&conn).unwrap().id);
             Ok(())
         });
     }
@@ -1257,9 +1288,9 @@ pub(crate) mod tests {
     fn auth() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(conn);
+            fill_database(&conn);
             let test_user = NewUser::new_local(
-                conn,
+                &conn,
                 "test".to_owned(),
                 "test user".to_owned(),
                 Role::Normal,
@@ -1270,10 +1301,10 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(
-                User::login(conn, "test", "test_password").unwrap().id,
+                User::login(&conn, "test", "test_password").unwrap().id,
                 test_user.id
             );
-            assert!(User::login(conn, "test", "other_password").is_err());
+            assert!(User::login(&conn, "test", "other_password").is_err());
             Ok(())
         });
     }
@@ -1282,26 +1313,26 @@ pub(crate) mod tests {
     fn get_local_page() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(conn);
+            fill_database(&conn);
 
-            let page = User::get_local_page(conn, (0, 2)).unwrap();
+            let page = User::get_local_page(&conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             assert!(page[0].username <= page[1].username);
 
-            let mut last_username = User::get_local_page(conn, (0, 1)).unwrap()[0]
+            let mut last_username = User::get_local_page(&conn, (0, 1)).unwrap()[0]
                 .username
                 .clone();
-            for i in 1..User::count_local(conn).unwrap() as i32 {
-                let page = User::get_local_page(conn, (i, i + 1)).unwrap();
+            for i in 1..User::count_local(&conn).unwrap() as i32 {
+                let page = User::get_local_page(&conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_username <= page[0].username);
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(conn, (0, User::count_local(conn).unwrap() as i32 + 10))
+                User::get_local_page(&conn, (0, User::count_local(&conn).unwrap() as i32 + 10))
                     .unwrap()
                     .len() as i64,
-                User::count_local(conn).unwrap()
+                User::count_local(&conn).unwrap()
             );
             Ok(())
         });
@@ -1309,14 +1340,13 @@ pub(crate) mod tests {
 
     #[test]
     fn self_federation() {
-        let r = rockets();
-        let conn = &*r.conn;
+        let conn = db();
         conn.test_transaction::<_, (), _>(|| {
-            let users = fill_database(conn);
+            let users = fill_database(&conn);
 
-            let ap_repr = users[0].to_activity(conn).unwrap();
-            users[0].delete(conn).unwrap();
-            let user = User::from_activity(&r, ap_repr).unwrap();
+            let ap_repr = users[0].to_activity(&conn).unwrap();
+            users[0].delete(&conn).unwrap();
+            let user = User::from_activity(&conn, ap_repr).unwrap();
 
             assert_eq!(user.username, users[0].username);
             assert_eq!(user.display_name, users[0].display_name);
@@ -1327,7 +1357,7 @@ pub(crate) mod tests {
             assert_eq!(user.public_key, users[0].public_key);
             assert_eq!(user.shared_inbox_url, users[0].shared_inbox_url);
             assert_eq!(user.followers_endpoint, users[0].followers_endpoint);
-            assert_eq!(user.avatar_url(conn), users[0].avatar_url(conn));
+            assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
             assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
             Ok(())

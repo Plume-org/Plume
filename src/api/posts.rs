@@ -102,12 +102,12 @@ pub fn list(
 pub fn create(
     auth: Authorization<Write, Post>,
     payload: Json<NewPostData>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Api<PostData> {
-    let conn = &*rockets.conn;
     let worker = &rockets.worker;
 
-    let author = User::get(conn, auth.0.user_id)?;
+    let author = User::get(&conn, auth.0.user_id)?;
 
     let slug = &payload.title.clone().to_kebab_case();
     let date = payload.creation_date.clone().and_then(|d| {
@@ -119,11 +119,11 @@ pub fn create(
         &payload.source,
         Some(domain),
         false,
-        Some(Media::get_media_processor(conn, vec![&author])),
+        Some(Media::get_media_processor(&conn, vec![&author])),
     );
 
     let blog = payload.blog_id.or_else(|| {
-        let blogs = Blog::find_for_author(conn, &author).ok()?;
+        let blogs = Blog::find_for_author(&conn, &author).ok()?;
         if blogs.len() == 1 {
             Some(blogs[0].id)
         } else {
@@ -131,12 +131,12 @@ pub fn create(
         }
     })?;
 
-    if Post::find_by_slug(conn, slug, blog).is_ok() {
+    if Post::find_by_slug(&conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());
     }
 
     let post = Post::insert(
-        conn,
+        &conn,
         NewPost {
             blog_id: blog,
             slug: slug.to_string(),
@@ -157,7 +157,7 @@ pub fn create(
     )?;
 
     PostAuthor::insert(
-        conn,
+        &conn,
         NewPostAuthor {
             author_id: author.id,
             post_id: post.id,
@@ -167,7 +167,7 @@ pub fn create(
     if let Some(ref tags) = payload.tags {
         for tag in tags {
             Tag::insert(
-                conn,
+                &conn,
                 NewTag {
                     tag: tag.to_string(),
                     is_hashtag: false,
@@ -178,7 +178,7 @@ pub fn create(
     }
     for hashtag in hashtags {
         Tag::insert(
-            conn,
+            &conn,
             NewTag {
                 tag: hashtag,
                 is_hashtag: true,
@@ -190,25 +190,29 @@ pub fn create(
     if post.published {
         for m in mentions.into_iter() {
             Mention::from_activity(
-                &*conn,
-                &Mention::build_activity(&rockets, &m)?,
+                &conn,
+                &Mention::build_activity(&conn, &m)?,
                 post.id,
                 true,
                 true,
             )?;
         }
 
-        let act = post.create_activity(&*conn)?;
-        let dest = User::one_by_instance(&*conn)?;
+        let act = post.create_activity(&conn)?;
+        let dest = User::one_by_instance(&conn)?;
         worker.execute(move || broadcast(&author, act, dest, CONFIG.proxy().cloned()));
     }
 
-    Timeline::add_to_all_timelines(&rockets, &post, Kind::Original)?;
+    Timeline::add_to_all_timelines(&conn, &post, Kind::Original)?;
 
     Ok(Json(PostData {
-        authors: post.get_authors(conn)?.into_iter().map(|a| a.fqn).collect(),
+        authors: post
+            .get_authors(&conn)?
+            .into_iter()
+            .map(|a| a.fqn)
+            .collect(),
         creation_date: post.creation_date.format("%Y-%m-%d").to_string(),
-        tags: Tag::for_post(conn, post.id)?
+        tags: Tag::for_post(&conn, post.id)?
             .into_iter()
             .map(|t| t.tag)
             .collect(),
@@ -226,11 +230,11 @@ pub fn create(
 }
 
 #[delete("/posts/<id>")]
-pub fn delete(auth: Authorization<Write, Post>, rockets: PlumeRocket, id: i32) -> Api<()> {
-    let author = User::get(&*rockets.conn, auth.0.user_id)?;
-    if let Ok(post) = Post::get(&*rockets.conn, id) {
-        if post.is_author(&*rockets.conn, author.id).unwrap_or(false) {
-            post.delete(&*rockets.conn)?;
+pub fn delete(auth: Authorization<Write, Post>, conn: DbConn, id: i32) -> Api<()> {
+    let author = User::get(&conn, auth.0.user_id)?;
+    if let Ok(post) = Post::get(&conn, id) {
+        if post.is_author(&conn, author.id).unwrap_or(false) {
+            post.delete(&conn)?;
         }
     }
     Ok(Json(()))

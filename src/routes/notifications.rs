@@ -4,20 +4,21 @@ use rocket_i18n::I18n;
 use crate::routes::{errors::ErrorPage, Page};
 use crate::template_utils::{IntoContext, Ructe};
 use plume_common::utils;
-use plume_models::{notifications::Notification, users::User, PlumeRocket};
+use plume_models::{db_conn::DbConn, notifications::Notification, users::User, PlumeRocket};
 
 #[get("/notifications?<page>")]
 pub fn notifications(
     user: User,
     page: Option<Page>,
+    conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
     Ok(render!(notifications::index(
-        &rockets.to_context(),
-        Notification::page_for_user(&*rockets.conn, &user, page.limits())?,
+        &(&conn, &rockets).to_context(),
+        Notification::page_for_user(&conn, &user, page.limits())?,
         page.0,
-        Page::total(Notification::count_for_user(&*rockets.conn, &user)? as i32)
+        Page::total(Notification::count_for_user(&conn, &user)? as i32)
     )))
 }
 
