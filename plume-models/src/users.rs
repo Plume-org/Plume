@@ -40,6 +40,7 @@ use rocket::{
 use std::{
     cmp::PartialEq,
     hash::{Hash, Hasher},
+    sync::Arc,
 };
 use url::Url;
 use webfinger::*;
@@ -1123,6 +1124,21 @@ impl NewUser {
         Timeline::new_for_user(conn, res.id, "My feed".into(), "followed".into())?;
 
         Ok(res)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum UserEvent {
+    RemoteUserFound(Arc<User>),
+}
+
+impl From<UserEvent> for Arc<User> {
+    fn from(event: UserEvent) -> Self {
+        use UserEvent::*;
+
+        match event {
+            RemoteUserFound(user) => user,
+        }
     }
 }
 
