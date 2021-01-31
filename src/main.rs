@@ -16,6 +16,7 @@ use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
     migrations::IMPORTED_MIGRATIONS,
+    remote_fetch_actor::RemoteFetchActor,
     search::{actor::SearchActor, Searcher as UnmanagedSearcher},
     Connection, CONFIG,
 };
@@ -104,6 +105,7 @@ Then try to restart Plume.
         &CONFIG.search_index,
         &CONFIG.search_tokenizers,
     ));
+    RemoteFetchActor::init(dbpool.clone());
     SearchActor::init(searcher.clone(), dbpool.clone());
     let commiter = searcher.clone();
     workpool.execute_with_fixed_delay(
