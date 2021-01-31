@@ -1,7 +1,4 @@
-use activitypub::{
-    activity::Create,
-    collection::{OrderedCollection, OrderedCollectionPage},
-};
+use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::{ContentType, Cookies},
@@ -10,27 +7,17 @@ use rocket::{
 };
 use rocket_i18n::I18n;
 use std::{borrow::Cow, collections::HashMap};
-use tracing::{info, warn};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::inbox;
 use crate::routes::{errors::ErrorPage, Page, RemoteForm, RespondOrRedirect};
 use crate::template_utils::{IntoContext, Ructe};
-use plume_common::activity_pub::{broadcast, inbox::FromId, ActivityStream, ApRequest, Id};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, Id};
 use plume_common::utils;
 use plume_models::{
-    blogs::Blog,
-    db_conn::DbConn,
-    follows,
-    headers::Headers,
-    inbox::inbox as local_inbox,
-    instance::Instance,
-    medias::Media,
-    posts::{LicensedArticle, Post},
-    reshares::Reshare,
-    safe_string::SafeString,
-    users::*,
-    Error, PlumeRocket, CONFIG,
+    blogs::Blog, db_conn::DbConn, follows, headers::Headers, inbox::inbox as local_inbox,
+    instance::Instance, medias::Media, posts::Post, reshares::Reshare, safe_string::SafeString,
+    users::*, Error, PlumeRocket, CONFIG,
 };
 
 #[get("/me")]
@@ -42,69 +29,14 @@ pub fn me(user: Option<User>) -> RespondOrRedirect {
 }
 
 #[get("/@/<name>", rank = 2)]
-pub fn details(
-    name: String,
-    rockets: PlumeRocket,
-    conn: DbConn,
-    fetch_rockets: DbConn,
-    fetch_followers_rockets: DbConn,
-    update_conn: DbConn,
-) -> Result<Ructe, ErrorPage> {
+pub fn details(name: String, rockets: PlumeRocket, conn: DbConn) -> Result<Ructe, ErrorPage> {
     let user = User::find_by_fqn(&conn, &name)?;
     let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
     let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
-    let worker = &rockets.worker;
 
     if !user.get_instance(&*conn)?.local {
-        // Fetch new articles
-        let user_clone = user.clone();
-        worker.execute(move || {
-            for create_act in user_clone
-                .fetch_outbox::<Create>()
-                .expect("Remote user: outbox couldn't be fetched")
-            {
-                match create_act.create_props.object_object::<LicensedArticle>() {
-                    Ok(article) => {
-                        Post::from_activity(&fetch_rockets, article)
-                            .expect("Article from remote user couldn't be saved");
-                        info!("Fetched article from remote user");
-                    }
-                    Err(e) => warn!("Error while fetching articles in background: {:?}", e),
-                }
-            }
-        });
-
-        // Fetch followers
-        let user_clone = user.clone();
-        worker.execute(move || {
-            for user_id in user_clone
-                .fetch_followers_ids()
-                .expect("Remote user: fetching followers error")
-            {
-                let follower =
-                    User::from_id(&fetch_followers_rockets, &user_id, None, CONFIG.proxy())
-                        .expect("user::details: Couldn't fetch follower");
-                follows::Follow::insert(
-                    &*fetch_followers_rockets,
-                    follows::NewFollow {
-                        follower_id: follower.id,
-                        following_id: user_clone.id,
-                        ap_url: String::new(),
-                    },
-                )
-                .expect("Couldn't save follower for remote user");
-            }
-        });
-
-        // Update profile information if needed
-        let user_clone = user.clone();
-        if user.needs_update() {
-            worker.execute(move || {
-                user_clone
-                    .refetch(&*update_conn)
-                    .expect("Couldn't update user info");
-            });
-        }
+        tracing::trace!("remote user found");
+        user.remote_user_found(); // Doesn't block
     }
 
     Ok(render!(users::details(
