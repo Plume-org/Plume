@@ -66,40 +66,60 @@ impl ActorFactoryArgs<DbPool> for RemoteFetchActor {
 }
 
 fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
-    for create_act in user
-        .fetch_outbox::<Create>()
-        .expect("Remote user: outbox couldn't be fetched")
-    {
-        match create_act.create_props.object_object::<LicensedArticle>() {
-            Ok(article) => {
-                Post::from_activity(conn, article)
-                    .expect("Article from remote user couldn't be saved");
-                info!("Fetched article from remote user");
+    let create_acts = user.fetch_outbox::<Create>();
+    match create_acts {
+        Ok(create_acts) => {
+            for create_act in create_acts {
+                match create_act.create_props.object_object::<LicensedArticle>() {
+                    Ok(article) => {
+                        Post::from_activity(conn, article)
+                            .expect("Article from remote user couldn't be saved");
+                        info!("Fetched article from remote user");
+                    }
+                    Err(e) => warn!("Error while fetching articles in background: {:?}", e),
+                }
             }
-            Err(e) => warn!("Error while fetching articles in background: {:?}", e),
+        }
+        Err(err) => {
+            error!("Failed to fetch outboxes: {:?}", err);
         }
     }
 }
 
 fn fetch_and_cache_followers(user: &Arc<User>, conn: &DbConn) {
-    for user_id in user
-        .fetch_followers_ids()
-        .expect("Remote user: fetching followers error")
-    {
-        let follower = User::from_id(conn, &user_id, None, CONFIG.proxy())
-            .expect("user::details: Couldn't fetch follower");
-        follows::Follow::insert(
-            conn,
-            follows::NewFollow {
-                follower_id: follower.id,
-                following_id: user.id,
-                ap_url: String::new(),
-            },
-        )
-        .expect("Couldn't save follower for remote user");
+    let follower_ids = user.fetch_followers_ids();
+    match follower_ids {
+        Ok(user_ids) => {
+            for user_id in user_ids {
+                let follower = User::from_id(conn, &user_id, None, CONFIG.proxy());
+                match follower {
+                    Ok(follower) => {
+                        let inserted = follows::Follow::insert(
+                            conn,
+                            follows::NewFollow {
+                                follower_id: follower.id,
+                                following_id: user.id,
+                                ap_url: String::new(),
+                            },
+                        );
+                        if inserted.is_err() {
+                            error!("Couldn't save follower for remote user: {:?}", user_id);
+                        }
+                    }
+                    Err(err) => {
+                        error!("Couldn't fetch follower: {:?}", err);
+                    }
+                }
+            }
+        }
+        Err(err) => {
+            error!("Failed to fetch follower: {:?}", err);
+        }
     }
 }
 
 fn fetch_and_cache_user(user: &Arc<User>, conn: &DbConn) {
-    user.refetch(conn).expect("Couldn't update user info");
+    if user.refetch(conn).is_err() {
+        error!("Couldn't update user info: {:?}", user);
+    }
 }
