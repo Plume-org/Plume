@@ -1,8 +1,8 @@
 use crate::{
     ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, db_conn::DbConn, follows::Follow,
     instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
-    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result, CONFIG,
-    ITEMS_PER_PAGE,
+    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
+    UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
 use activitypub::{
     activity::Delete,
@@ -33,6 +33,7 @@ use reqwest::{
     header::{HeaderValue, ACCEPT},
     ClientBuilder,
 };
+use riker::actors::{Publish, Tell};
 use rocket::{
     outcome::IntoOutcome,
     request::{self, FromRequest, Request},
@@ -891,6 +892,21 @@ impl User {
         } else {
             self.fqn.clone()
         }
+    }
+
+    pub fn remote_user_found(&self) {
+        tracing::trace!("{:?}", self);
+        self.publish_remote_user_found();
+    }
+
+    fn publish_remote_user_found(&self) {
+        USER_CHAN.tell(
+            Publish {
+                msg: RemoteUserFound(Arc::new(self.clone())),
+                topic: "user.remote_user_found".into(),
+            },
+            None,
+        )
     }
 }
 
