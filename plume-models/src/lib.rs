@@ -21,6 +21,7 @@ use once_cell::sync::Lazy;
 use plume_common::activity_pub::inbox::InboxError;
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
+use users::UserEvent;
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
 compile_error!("Either feature \"sqlite\" or \"postgres\" must be enabled for this crate.");
@@ -39,6 +40,9 @@ pub(crate) static ACTOR_SYS: Lazy<ActorSystem> = Lazy::new(|| {
         .create()
         .expect("Failed to create actor system")
 });
+
+pub(crate) static USER_CHAN: Lazy<ChannelRef<UserEvent>> =
+    Lazy::new(|| channel("user_events", &*ACTOR_SYS).expect("Failed to create user channel"));
 
 pub(crate) static POST_CHAN: Lazy<ChannelRef<PostEvent>> =
     Lazy::new(|| channel("post_events", &*ACTOR_SYS).expect("Failed to create post channel"));
