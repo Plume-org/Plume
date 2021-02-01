@@ -9,9 +9,10 @@ body > header {
 
   nav#menu {
     position: relative;
-    display: block;
+    display: none;
     appearance: none;
     transform: skewX(-15deg);
+    -webkit-transform: skewX(-15deg);
     left: -1em;
     padding: 1em 1em 1em 2em;
     background: $primary;
@@ -19,6 +20,7 @@ body > header {
 
     a {
       transform: skewX(15deg);
+      -webkit-transform: skewX(15deg);
      	display: flex;
      	flex-direction: column;
      	align-items: center;
