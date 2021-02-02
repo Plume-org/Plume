@@ -19,6 +19,7 @@ body > header {
 
     a {
       transform: skewX(15deg);
+      -webkit-transform: skewX(15deg);
       display: flex;
       flex-direction: column;
       align-items: center;
