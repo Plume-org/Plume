@@ -159,7 +159,7 @@ body > header {
 
     animation-duration: 0.2s menuOpening;
 
-    &::before {
+    &::before, #content.show::before {
       content: "";
       position: absolute;
       transform: skewX(-10deg);
