@@ -49,30 +49,30 @@ body > header {
       
     }
     a {
-       display: flex;
-       align-items: center;
-       position: relative;
-       align-self: stretch;
-       margin: 0;
-       padding: 0 2em;
-       font-size: 1em;
+    display: flex;
+    align-items: center;
+    position: relative;
+    align-self: stretch;
+    margin: 0;
+    padding: 0 2em;
+    font-size: 1em;
 
-       i { font-size: 1.2em; }
+    i { font-size: 1.2em; }
 
-       &.title {
-         margin: 0;
-         text-align: center;
-         padding: 0.5em 1em;
-         font-size: 1.75em;
+    &.title {
+      margin: 0;
+      text-align: center;
+      padding: 0.5em 1em;
+      font-size: 1.75em;
 
-         img {
-           height: 1.75em;
-           width: 1.75em;
-         }
+      img {
+        height: 1.75em;
+        width: 1.75em;
+      }
 
-         p {
-           margin: 0;
-           padding-left: 0.5em;
+      p {
+        margin: 0;
+        padding-left: 0.5em;
         }
       }
     }
@@ -210,26 +210,26 @@ body > header {
 
 /* Only enable label animations on large screens */
 @media screen and (min-width: 600px) {
-  header nav a {
-    i {
-      transition: all 0.2s ease;
-      -webkit-transition: all 0.2s ease;
-      margin: 0;
-    }
+header nav a {
+  i {
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    margin: 0;
+  }
 
-    .mobile-label {
-      transition: all 0.2s ease;
-      -webkit-transition: all 0.2s ease;
-      display: block;
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%, 0);
-      -webkit-transform: translate(-50%, 0);
-      transform: translateZ(0);
-      -webkit-transform: none !important;
-      opacity: 0;
-      font-size: 0.9em;
-      white-space: nowrap;
+  .mobile-label {
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    display: block;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);
+    transform: translateZ(0);
+    -webkit-transform: none !important;
+    opacity: 0;
+    font-size: 0.9em;
+    white-space: nowrap;
     }
 
     img + .mobile-label { display: none; }
