@@ -3,8 +3,8 @@ body > header {
 
   #content {
     display: flex;
-    align-content: center;
-    justify-content: space-between;
+     align-content: center;
+     justify-content: space-between;
   }
 
   nav#menu {
@@ -49,30 +49,30 @@ body > header {
       
     }
     a {
-      display: flex;
-      align-items: center;
-      position: relative;
-      align-self: stretch;
-      margin: 0;
-      padding: 0 2em;
-      font-size: 1em;
+       display: flex;
+       align-items: center;
+       position: relative;
+       align-self: stretch;
+       margin: 0;
+       padding: 0 2em;
+       font-size: 1em;
 
-      i { font-size: 1.2em; }
+       i { font-size: 1.2em; }
 
-      &.title {
-        margin: 0;
-        text-align: center;
-        padding: 0.5em 1em;
-        font-size: 1.75em;
+       &.title {
+         margin: 0;
+         text-align: center;
+         padding: 0.5em 1em;
+         font-size: 1.75em;
 
-        img {
-          height: 1.75em;
-          width: 1.75em;
-        }
+         img {
+           height: 1.75em;
+           width: 1.75em;
+         }
 
-        p {
-          margin: 0;
-          padding-left: 0.5em;
+         p {
+           margin: 0;
+           padding-left: 0.5em;
         }
       }
     }
