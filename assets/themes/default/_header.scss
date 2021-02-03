@@ -212,9 +212,9 @@ body > header {
 @media screen and (min-width: 600px) {
 header nav a {
   i {
-    transition: all 0.2s ease;
-    -webkit-transition: all 0.2s ease;
-    margin: 0;
+   		transition: all 0.2s ease;
+   		-webkit-transition: all 0.2s ease;
+   		margin: 0;
   }
 
   .mobile-label {
