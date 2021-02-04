@@ -3,6 +3,7 @@ use openssl::hash::{Hasher, MessageDigest};
 use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};
 use std::ops::Deref;
 use std::time::SystemTime;
+use tracing::warn;
 
 use crate::activity_pub::sign::Signer;
 use crate::activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
@@ -129,25 +130,24 @@ pub fn signature<S: Signer>(
         path.to_string()
     };
 
-    let mut headers = headers
-        .iter()
-        .map(|(h, v)| {
-            (
-                h.as_str().to_lowercase(),
-                v.to_str()
-                    .expect("request::signature: invalid header error"),
-            )
-        })
-        .collect::<Vec<(String, &str)>>();
+    let mut headers_vec = Vec::with_capacity(headers.len());
+    for (h, v) in headers.iter() {
+        let v = v.to_str();
+        if v.is_err() {
+            warn!("invalid header error: {:?}", v.unwrap_err());
+            return Err(Error());
+        }
+        headers_vec.push((h.as_str().to_lowercase(), v.expect("Unreachable")));
+    }
     let request_target = format!("{} {}", method.to_lowercase(), origin_form);
-    headers.push(("(request-target)".to_string(), &request_target));
+    headers_vec.push(("(request-target)".to_string(), &request_target));
 
-    let signed_string = headers
+    let signed_string = headers_vec
         .iter()
         .map(|(h, v)| format!("{}: {}", h, v))
         .collect::<Vec<String>>()
         .join("\n");
-    let signed_headers = headers
+    let signed_headers = headers_vec
         .iter()
         .map(|(h, _)| h.as_ref())
         .collect::<Vec<&str>>()
