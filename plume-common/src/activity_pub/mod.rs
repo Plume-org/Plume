@@ -153,10 +153,12 @@ where
             warn!("Inbox doesn't have host: {:?}", &inbox);
             continue;
         };
-        headers.insert(
-            "Host",
-            HeaderValue::from_str(&url.host_str().unwrap()).unwrap(),
-        );
+        let host_header_value = HeaderValue::from_str(&url.host_str().expect("Unreachable"));
+        if host_header_value.is_err() {
+            warn!("Header valid is invalid: {:?}", url.host_str());
+            continue;
+        }
+        headers.insert("Host", host_header_value.unwrap());
         headers.insert("Digest", request::Digest::digest(&body));
         rt.spawn(
             client
