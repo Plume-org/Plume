@@ -10,6 +10,7 @@
 - More translation languages (#862)
 - Proxy support (#829)
 - Riker a actor system library (#870)
+- (request-target) and Host header in HTTP Signature (#872)
 
 ### Changed
 
