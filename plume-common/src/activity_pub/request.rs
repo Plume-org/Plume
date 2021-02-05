@@ -163,3 +163,61 @@ pub fn signature<S: Signer>(
         signature = sign
     )).map_err(|_| Error())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{signature, Error};
+    use crate::activity_pub::sign::{gen_keypair, Signer};
+    use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+    use reqwest::header::HeaderMap;
+
+    struct MySigner {
+        public_key: String,
+        private_key: String,
+    }
+
+    impl MySigner {
+        fn new() -> Self {
+            let (pub_key, priv_key) = gen_keypair();
+            Self {
+                public_key: String::from_utf8(pub_key).unwrap(),
+                private_key: String::from_utf8(priv_key).unwrap(),
+            }
+        }
+    }
+
+    impl Signer for MySigner {
+        type Error = Error;
+
+        fn get_key_id(&self) -> String {
+            "mysigner".into()
+        }
+
+        fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error> {
+            let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+                .unwrap();
+            let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+            signer.update(to_sign.as_bytes()).unwrap();
+            signer.sign_to_vec().map_err(|_| Error())
+        }
+
+        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error> {
+            let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+                .unwrap();
+            let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+            verifier.update(data.as_bytes()).unwrap();
+            verifier.verify(&signature).map_err(|_| Error())
+        }
+    }
+
+    #[test]
+    fn test_signature_request_target() {
+        let signer = MySigner::new();
+        let headers = HeaderMap::new();
+        let result = signature(&signer, &headers, ("post", "/inbox", None)).unwrap();
+        let fields: Vec<&str> = result.to_str().unwrap().split(",").collect();
+        assert_eq!(r#"headers="(request-target)""#, fields[2]);
+        let sign = &fields[3][11..(fields[3].len() - 1)];
+        assert!(signer.verify("post /inbox", sign.as_bytes()).is_ok());
+    }
+}
