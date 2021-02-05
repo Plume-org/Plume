@@ -63,6 +63,9 @@ lazy_static! {
         let lang = js! { return navigator.language }.into_string().unwrap();
         let lang = lang.splitn(2, '-').next().unwrap_or("en");
 
+        // Force a language (Add .env setting)
+        //let lang = "fa"; ???
+
         let english_position = catalogs
             .iter()
             .position(|(language_code, _)| *language_code == "en")
