@@ -100,7 +100,7 @@ commands:
     steps:
     - run: |
             cmd="cargo build <<#parameters.release>>--release<</parameters.release>> --no-default-features --features="${FEATURES}" -p <<parameters.package>> -j"
-            for i in 36 4 2 1 1; do
+            for i in 16 4 2 1 1; do
                 $cmd $i && exit 0
             done
             exit 1
@@ -148,7 +148,7 @@ jobs:
           ./target/debug/plm migration run
           ./target/debug/plm search init
           cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
-          for i in 36 4 2 1 1; do
+          for i in 16 4 2 1 1; do
               $cmd $i && break
           done
           cargo test --all --exclude plume-front --exclude plume-macro --no-default-features --features="${FEATURES}" -j1
@@ -172,14 +172,14 @@ jobs:
     - run_with_coverage:
         cmd: |
             cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . -j"
-            for i in 36 4 2 1 1; do
+            for i in 16 4 2 1 1; do
                 $cmd $i && exit 0
             done
             exit 1
     - run_with_coverage:
         cmd: |
             cmd="cargo install --debug --no-default-features --features="${FEATURES}" --force --path plume-cli -j"
-            for i in 36 4 2 1 1; do
+            for i in 16 4 2 1 1; do
                 $cmd $i && exit 0
             done
             exit 1
