@@ -3,6 +3,7 @@ use openssl::hash::{Hasher, MessageDigest};
 use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};
 use std::ops::Deref;
 use std::time::SystemTime;
+use tracing::warn;
 
 use crate::activity_pub::sign::Signer;
 use crate::activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
@@ -112,25 +113,45 @@ pub fn headers() -> HeaderMap {
     headers
 }
 
-pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderValue, Error> {
-    let signed_string = headers
+type Method<'a> = &'a str;
+type Path<'a> = &'a str;
+type Query<'a> = &'a str;
+type RequestTarget<'a> = (Method<'a>, Path<'a>, Option<Query<'a>>);
+
+pub fn signature<S: Signer>(
+    signer: &S,
+    headers: &HeaderMap,
+    request_target: RequestTarget,
+) -> Result<HeaderValue, Error> {
+    let (method, path, query) = request_target;
+    let origin_form = if let Some(query) = query {
+        format!("{}?{}", path, query)
+    } else {
+        path.to_string()
+    };
+
+    let mut headers_vec = Vec::with_capacity(headers.len());
+    for (h, v) in headers.iter() {
+        let v = v.to_str();
+        if v.is_err() {
+            warn!("invalid header error: {:?}", v.unwrap_err());
+            return Err(Error());
+        }
+        headers_vec.push((h.as_str().to_lowercase(), v.expect("Unreachable")));
+    }
+    let request_target = format!("{} {}", method.to_lowercase(), origin_form);
+    headers_vec.push(("(request-target)".to_string(), &request_target));
+
+    let signed_string = headers_vec
         .iter()
-        .map(|(h, v)| {
-            format!(
-                "{}: {}",
-                h.as_str().to_lowercase(),
-                v.to_str()
-                    .expect("request::signature: invalid header error")
-            )
-        })
+        .map(|(h, v)| format!("{}: {}", h, v))
         .collect::<Vec<String>>()
         .join("\n");
-    let signed_headers = headers
+    let signed_headers = headers_vec
         .iter()
-        .map(|(h, _)| h.as_str())
+        .map(|(h, _)| h.as_ref())
         .collect::<Vec<&str>>()
-        .join(" ")
-        .to_lowercase();
+        .join(" ");
 
     let data = signer.sign(&signed_string).map_err(|_| Error())?;
     let sign = base64::encode(&data);
@@ -141,4 +162,62 @@ pub fn signature<S: Signer>(signer: &S, headers: &HeaderMap) -> Result<HeaderVal
         signed_headers = signed_headers,
         signature = sign
     )).map_err(|_| Error())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{signature, Error};
+    use crate::activity_pub::sign::{gen_keypair, Signer};
+    use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+    use reqwest::header::HeaderMap;
+
+    struct MySigner {
+        public_key: String,
+        private_key: String,
+    }
+
+    impl MySigner {
+        fn new() -> Self {
+            let (pub_key, priv_key) = gen_keypair();
+            Self {
+                public_key: String::from_utf8(pub_key).unwrap(),
+                private_key: String::from_utf8(priv_key).unwrap(),
+            }
+        }
+    }
+
+    impl Signer for MySigner {
+        type Error = Error;
+
+        fn get_key_id(&self) -> String {
+            "mysigner".into()
+        }
+
+        fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error> {
+            let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+                .unwrap();
+            let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+            signer.update(to_sign.as_bytes()).unwrap();
+            signer.sign_to_vec().map_err(|_| Error())
+        }
+
+        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error> {
+            let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+                .unwrap();
+            let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+            verifier.update(data.as_bytes()).unwrap();
+            verifier.verify(&signature).map_err(|_| Error())
+        }
+    }
+
+    #[test]
+    fn test_signature_request_target() {
+        let signer = MySigner::new();
+        let headers = HeaderMap::new();
+        let result = signature(&signer, &headers, ("post", "/inbox", None)).unwrap();
+        let fields: Vec<&str> = result.to_str().unwrap().split(",").collect();
+        assert_eq!(r#"headers="(request-target)""#, fields[2]);
+        let sign = &fields[3][11..(fields[3].len() - 1)];
+        assert!(signer.verify("post /inbox", sign.as_bytes()).is_ok());
+    }
 }
