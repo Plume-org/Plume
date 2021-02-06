@@ -144,7 +144,7 @@ jobs:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
     - run_with_coverage:
         cmd: |
-          cargo build -p plume-cli --no-default-features --features=${FEATURES} -j1
+          cargo build -p plume-cli --no-default-features --features=${FEATURES} -j 4
           ./target/debug/plm migration run
           ./target/debug/plm search init
           cmd="cargo test --all --exclude plume-front --exclude plume-macro --no-run --no-default-features --features=${FEATURES} -j"
