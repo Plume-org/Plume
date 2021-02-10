@@ -4,6 +4,9 @@ version = "0.6.1-dev"
 authors = ["Plume contributors"]
 edition = "2018"
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
 stdweb = "=0.4.18"
 stdweb-internal-runtime = "=0.1.4"
