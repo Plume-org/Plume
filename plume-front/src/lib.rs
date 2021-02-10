@@ -7,7 +7,7 @@ extern crate gettext_macros;
 extern crate lazy_static;
 
 use wasm_bindgen::{prelude::*, JsCast};
-use web_sys::window;
+use web_sys::{window, Element, Event, HtmlInputElement, TouchEvent};
 
 init_i18n!(
     "plume-front",
@@ -53,6 +53,8 @@ init_i18n!(
     zh
 );
 
+// mod editor;
+
 compile_i18n!();
 
 lazy_static! {
@@ -89,7 +91,7 @@ fn menu() {
     let document = window().unwrap().document().unwrap();
     if let Some(button) = document.get_element_by_id("menu") {
         if let Some(menu) = document.get_element_by_id("content") {
-            let show_menu = Closure::wrap(Box::new(|_: web_sys::TouchEvent| {
+            let show_menu = Closure::wrap(Box::new(|_: TouchEvent| {
                 window()
                     .unwrap()
                     .document()
@@ -98,13 +100,13 @@ fn menu() {
                     .map(|menu| menu.class_list().add_1("show"))
                     .unwrap()
                     .unwrap();
-            }) as Box<dyn FnMut(web_sys::TouchEvent)>);
+            }) as Box<dyn FnMut(TouchEvent)>);
             button
                 .add_event_listener_with_callback("touchend", show_menu.as_ref().unchecked_ref())
                 .unwrap();
             show_menu.forget();
 
-            let close_menu = Closure::wrap(Box::new(|_: web_sys::TouchEvent| {
+            let close_menu = Closure::wrap(Box::new(|_: TouchEvent| {
                 window()
                     .unwrap()
                     .document()
@@ -113,7 +115,7 @@ fn menu() {
                     .map(|menu| menu.class_list().remove_1("show"))
                     .unwrap()
                     .unwrap()
-            }) as Box<dyn FnMut(web_sys::TouchEvent)>);
+            }) as Box<dyn FnMut(TouchEvent)>);
             menu.add_event_listener_with_callback("touchend", close_menu.as_ref().unchecked_ref())
                 .unwrap();
             close_menu.forget();
@@ -129,7 +131,7 @@ fn search() {
         .unwrap()
         .get_element_by_id("form")
     {
-        let normalize_query = Closure::wrap(Box::new(|_: web_sys::Event| {
+        let normalize_query = Closure::wrap(Box::new(|_: Event| {
             window()
                 .unwrap()
                 .document()
@@ -138,9 +140,9 @@ fn search() {
                 .map(|inputs| {
                     for i in 0..inputs.length() {
                         let input = inputs.get(i).unwrap();
-                        let input = input.dyn_ref::<web_sys::HtmlInputElement>().unwrap();
+                        let input = input.dyn_ref::<HtmlInputElement>().unwrap();
                         if input.name().is_empty() {
-                            input.set_name(&input.dyn_ref::<web_sys::Element>().unwrap().id());
+                            input.set_name(&input.dyn_ref::<Element>().unwrap().id());
                         }
                         if !input.name().is_empty() && input.value().is_empty() {
                             input.set_name("");
@@ -148,7 +150,7 @@ fn search() {
                     }
                 })
                 .unwrap();
-        }) as Box<dyn FnMut(web_sys::Event)>);
+        }) as Box<dyn FnMut(Event)>);
         form.add_event_listener_with_callback("submit", normalize_query.as_ref().unchecked_ref())
             .unwrap();
         normalize_query.forget();
