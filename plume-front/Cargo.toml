@@ -25,7 +25,11 @@ features = [
   'DomTokenList',
   'Element',
   'EventTarget',
+  'HtmlFormElement',
+  'HtmlInputElement',
   'Navigator',
+  'Node',
+  'NodeList',
   'TouchEvent',
   'Window'
 ]

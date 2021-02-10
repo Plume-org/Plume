@@ -77,6 +77,7 @@ lazy_static! {
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
     menu();
+    search();
     Ok(())
 }
 
@@ -117,5 +118,39 @@ fn menu() {
                 .unwrap();
             close_menu.forget();
         }
+    }
+}
+
+/// Clear the URL of the search page before submitting request
+fn search() {
+    if let Some(form) = window()
+        .unwrap()
+        .document()
+        .unwrap()
+        .get_element_by_id("form")
+    {
+        let normalize_query = Closure::wrap(Box::new(|_: web_sys::Event| {
+            window()
+                .unwrap()
+                .document()
+                .unwrap()
+                .query_selector_all("#form input")
+                .map(|inputs| {
+                    for i in 0..inputs.length() {
+                        let input = inputs.get(i).unwrap();
+                        let input = input.dyn_ref::<web_sys::HtmlInputElement>().unwrap();
+                        if input.name().is_empty() {
+                            input.set_name(&input.dyn_ref::<web_sys::Element>().unwrap().id());
+                        }
+                        if !input.name().is_empty() && input.value().is_empty() {
+                            input.set_name("");
+                        }
+                    }
+                })
+                .unwrap();
+        }) as Box<dyn FnMut(web_sys::Event)>);
+        form.add_event_listener_with_callback("submit", normalize_query.as_ref().unchecked_ref())
+            .unwrap();
+        normalize_query.forget();
     }
 }
