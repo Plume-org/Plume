@@ -96,6 +96,9 @@
                 <a href="https://matrix.to/#/#plume-blog:matrix.org">@i18n!(ctx.1, "Matrix room")</a>
             </div>
         </footer>
-        <script src="@uri!(plume_static_files: file = "plume-front.js", build_id = CACHE_NAME)"></script>
+        <script type="module">
+          import init from '@uri!(plume_static_files: file = "plume_front.js", build_id = CACHE_NAME)';
+          (async () => await init())();
+        </script>
     </body>
 </html>
