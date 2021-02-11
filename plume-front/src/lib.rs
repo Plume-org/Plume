@@ -7,7 +7,7 @@ extern crate gettext_macros;
 extern crate lazy_static;
 
 use wasm_bindgen::{prelude::*, JsCast};
-use web_sys::{window, Element, Event, HtmlInputElement, TouchEvent};
+use web_sys::{console, window, Element, Event, HtmlInputElement, TouchEvent};
 
 init_i18n!(
     "plume-front",
@@ -53,7 +53,7 @@ init_i18n!(
     zh
 );
 
-// mod editor;
+mod editor;
 
 compile_i18n!();
 
@@ -78,8 +78,15 @@ lazy_static! {
 
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
+    extern crate console_error_panic_hook;
+    use std::panic;
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     menu();
     search();
+    editor::init()
+        .map_err(|e| console::error_1(&&format!("Editor error: {:?}", e).into()))
+        .ok();
     Ok(())
 }
 
