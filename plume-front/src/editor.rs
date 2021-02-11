@@ -365,7 +365,11 @@ fn init_editor() -> Result<(), EditorError> {
             .set_property("display", "block")
             .map_err(|_| EditorError::DOMError)?;
         // And hide the HTML-only fallback
-        let old_ed = document().get_element_by_id("plume-fallback-editor")?;
+        let old_ed = document().get_element_by_id("plume-fallback-editor");
+        if old_ed.is_none() {
+            return Ok(());
+        }
+        let old_ed = old_ed.unwrap();
         let old_title = document().get_element_by_id("plume-editor-title")?;
         old_ed
             .dyn_ref::<HtmlElement>()
