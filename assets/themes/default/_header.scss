@@ -144,7 +144,7 @@ body > header {
     }
   }
 
-  body > header:focus-within #content, #content.show {
+  body > header:focus-within #content, .show + #content {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -280,7 +280,7 @@ body > header {
     }
   }
 
-  body > header:focus-within #content, #content.show {
+  body > header:focus-within #content, .show + #content {
     position: fixed;
     display: flex;
     flex-direction: column;
