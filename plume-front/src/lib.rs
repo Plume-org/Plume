@@ -95,14 +95,11 @@ pub fn main() -> Result<(), JsValue> {
 /// It should normally be working fine even without this code
 /// But :focus-within is not yet supported by Webkit/Blink
 fn menu() {
-    let document = window().unwrap().document().unwrap();
+    let document = document();
     if let Ok(Some(button)) = document.query_selector("#menu a") {
         if let Some(menu) = document.get_element_by_id("content") {
             let show_menu = Closure::wrap(Box::new(|_: TouchEvent| {
-                window()
-                    .unwrap()
-                    .document()
-                    .unwrap()
+                self::document()
                     .get_element_by_id("menu")
                     .map(|menu| menu.class_list().add_1("show"))
                     .unwrap()
@@ -114,10 +111,7 @@ fn menu() {
             show_menu.forget();
 
             let close_menu = Closure::wrap(Box::new(|_: TouchEvent| {
-                window()
-                    .unwrap()
-                    .document()
-                    .unwrap()
+                self::document()
                     .get_element_by_id("menu")
                     .map(|menu| menu.class_list().remove_1("show"))
                     .unwrap()
@@ -132,17 +126,9 @@ fn menu() {
 
 /// Clear the URL of the search page before submitting request
 fn search() {
-    if let Some(form) = window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .get_element_by_id("form")
-    {
+    if let Some(form) = document().get_element_by_id("form") {
         let normalize_query = Closure::wrap(Box::new(|_: Event| {
-            window()
-                .unwrap()
-                .document()
-                .unwrap()
+            document()
                 .query_selector_all("#form input")
                 .map(|inputs| {
                     for i in 0..inputs.length() {
