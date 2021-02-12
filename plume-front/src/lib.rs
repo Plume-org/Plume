@@ -101,7 +101,11 @@ fn menu() {
             let show_menu = Closure::wrap(Box::new(|_: TouchEvent| {
                 self::document()
                     .get_element_by_id("menu")
-                    .map(|menu| menu.class_list().add_1("show"))
+                    .map(|menu| {
+                        menu.set_attribute("aria-expanded", "true")
+                            .map(|_| menu.class_list().add_1("show"))
+                    })
+                    .unwrap()
                     .unwrap()
                     .unwrap();
             }) as Box<dyn FnMut(TouchEvent)>);
@@ -113,7 +117,11 @@ fn menu() {
             let close_menu = Closure::wrap(Box::new(|_: TouchEvent| {
                 self::document()
                     .get_element_by_id("menu")
-                    .map(|menu| menu.class_list().remove_1("show"))
+                    .map(|menu| {
+                        menu.set_attribute("aria-expanded", "false")
+                            .map(|_| menu.class_list().remove_1("show"))
+                    })
+                    .unwrap()
                     .unwrap()
                     .unwrap()
             }) as Box<dyn FnMut(TouchEvent)>);
