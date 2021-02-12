@@ -7,7 +7,7 @@ extern crate gettext_macros;
 extern crate lazy_static;
 
 use wasm_bindgen::{prelude::*, JsCast};
-use web_sys::{console, window, Element, Event, HtmlInputElement, TouchEvent};
+use web_sys::{console, window, Document, Element, Event, HtmlInputElement, TouchEvent};
 
 init_i18n!(
     "plume-front",
@@ -162,4 +162,8 @@ fn search() {
             .unwrap();
         normalize_query.forget();
     }
+}
+
+fn document() -> Document {
+    window().unwrap().document().unwrap()
 }

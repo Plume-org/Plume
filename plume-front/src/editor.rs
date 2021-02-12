@@ -1,12 +1,12 @@
-use crate::CATALOG;
+use crate::{document, CATALOG};
 use js_sys::{encode_uri_component, Date, RegExp};
 use serde_derive::{Deserialize, Serialize};
 use std::{convert::TryInto, sync::Mutex};
 use wasm_bindgen::{prelude::*, JsCast, JsValue};
 use web_sys::{
-    console, window, ClipboardEvent, Document, Element, Event, FocusEvent, HtmlAnchorElement,
-    HtmlDocument, HtmlElement, HtmlFormElement, HtmlInputElement, HtmlSelectElement,
-    HtmlTextAreaElement, KeyboardEvent, MouseEvent, Node,
+    console, window, ClipboardEvent, Element, Event, FocusEvent, HtmlAnchorElement, HtmlDocument,
+    HtmlElement, HtmlFormElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement,
+    KeyboardEvent, MouseEvent, Node,
 };
 
 macro_rules! mv {
@@ -16,10 +16,6 @@ macro_rules! mv {
             $exp
         }
     }
-}
-
-fn document() -> Document {
-    window().unwrap().document().unwrap()
 }
 
 fn get_elt_value(id: &'static str) -> String {
