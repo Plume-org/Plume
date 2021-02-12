@@ -22,6 +22,7 @@ executors:
       FEATURES: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
       DATABASE_URL: <<#parameters.postgres>>postgres://postgres@localhost/plume<</parameters.postgres>><<^parameters.postgres>>plume.sqlite<</parameters.postgres>>
       ROCKET_SECRET_KEY: VN5xV1DN7XdpATadOCYcuGeR/dV0hHfgx9mx9TarLdM=
+      RUSTFLAGS: --cfg=web_sys_unstable_apis
 
 
 commands:
@@ -72,7 +73,7 @@ commands:
         type: string
     steps:
     - run: |
-       export RUSTFLAGS="-Zprofile -Zfewer-names -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Clink-arg=-Xlinker -Clink-arg=--no-keep-memory -Clink-arg=-Xlinker -Clink-arg=--reduce-memory-overheads"
+       export RUSTFLAGS="-Zprofile -Zfewer-names -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Clink-arg=-Xlinker -Clink-arg=--no-keep-memory -Clink-arg=-Xlinker -Clink-arg=--reduce-memory-overheads $RUSTFLAGS"
        export CARGO_INCREMENTAL=0
        << parameters.cmd >>
 
@@ -168,7 +169,7 @@ jobs:
     steps:
     - restore_env:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
-    - run: RUSTFLAGS="--cfg=web_sys_unstable_apis" wasm-pack build --target web --release plume-front
+    - run: wasm-pack build --target web --release plume-front
     - run_with_coverage:
         cmd: |
             cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . -j"
@@ -203,7 +204,7 @@ jobs:
     steps:
     - restore_env:
         cache: release-<<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
-    - run: RUSTFLAGS="--cfg=web_sys_unstable_apis" wasm-pack build --target web --release plume-front
+    - run: wasm-pack build --target web --release plume-front
     - build:
         package: plume
         release: true
