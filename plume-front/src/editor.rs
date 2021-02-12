@@ -210,7 +210,7 @@ fn autosave_debounce() {
     if let Some(timeout) = timeout.take() {
         window.clear_timeout_with_handle(timeout);
     }
-    let callback = Closure::once(|| autosave());
+    let callback = Closure::once(autosave);
     **timeout = window
         .set_timeout_with_callback_and_timeout_and_arguments_0(
             callback.as_ref().unchecked_ref(),
