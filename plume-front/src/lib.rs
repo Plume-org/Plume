@@ -96,7 +96,7 @@ pub fn main() -> Result<(), JsValue> {
 /// But :focus-within is not yet supported by Webkit/Blink
 fn menu() {
     let document = window().unwrap().document().unwrap();
-    if let Some(button) = document.get_element_by_id("menu") {
+    if let Ok(Some(button)) = document.query_selector("#menu a") {
         if let Some(menu) = document.get_element_by_id("content") {
             let show_menu = Closure::wrap(Box::new(|_: TouchEvent| {
                 window()
