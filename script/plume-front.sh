@@ -21,7 +21,7 @@ EOF
 if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     export PATH=/opt/local/llvm/bin:${PATH}
     cd /app
-    RUSTFLAGS="-C linker=lld --cfg=web_sys_unstable_apis" wasm-pack build --target web --release plume-front
+    RUSTFLAGS="-C linker=lld" wasm-pack build --target web --release plume-front
 else
-    RUSTFLAGS="--cfg=web_sys_unstable_apis" wasm-pack build --target web --release plume-front
+    wasm-pack build --target web --release plume-front
 fi

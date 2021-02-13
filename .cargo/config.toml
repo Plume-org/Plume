@@ -1,0 +1,10 @@
+[target.wasm32-unknown-unknown]
+# required for clippy
+rustflags = [
+  "--cfg", "web_sys_unstable_apis",
+]
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+  "--cfg", "web_sys_unstable_apis",
+]
