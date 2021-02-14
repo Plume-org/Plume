@@ -1,7 +1,7 @@
 use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
 use diesel::SaveChangesDsl;
 use rocket::{
-    http::{ContentType, Cookies},
+    http::{uri::Uri, ContentType, Cookies},
     request::LenientForm,
     response::{status, Content, Flash, Redirect},
 };
@@ -137,11 +137,7 @@ pub fn follow_not_connected(
             .and_then(|uri| {
                 Some(uri.replace(
                     "{uri}",
-                    &format!(
-                        "{}@{}",
-                        target.fqn,
-                        target.get_instance(&conn).ok()?.public_domain
-                    ),
+                    &Uri::percent_encode(&target.acct_authority(&conn).ok()?),
                 ))
             })
         {

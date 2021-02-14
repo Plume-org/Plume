@@ -832,11 +832,7 @@ impl User {
 
     pub fn webfinger(&self, conn: &Connection) -> Result<Webfinger> {
         Ok(Webfinger {
-            subject: format!(
-                "acct:{}@{}",
-                self.username,
-                self.get_instance(conn)?.public_domain
-            ),
+            subject: format!("acct:{}", self.acct_authority(conn)?),
             aliases: vec![self.ap_url.clone()],
             links: vec![
                 Link {
@@ -872,6 +868,14 @@ impl User {
                 },
             ],
         })
+    }
+
+    pub fn acct_authority(&self, conn: &Connection) -> Result<String> {
+        Ok(format!(
+            "{}@{}",
+            self.username,
+            self.get_instance(conn)?.public_domain
+        ))
     }
 
     pub fn set_avatar(&self, conn: &Connection, id: i32) -> Result<()> {
