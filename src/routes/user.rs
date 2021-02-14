@@ -1,7 +1,7 @@
 use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
 use diesel::SaveChangesDsl;
 use rocket::{
-    http::{ContentType, Cookies},
+    http::{uri::Uri, ContentType, Cookies},
     request::LenientForm,
     response::{status, Content, Flash, Redirect},
 };
@@ -134,7 +134,12 @@ pub fn follow_not_connected(
     if let Some(remote_form) = remote_form {
         if let Some(uri) = User::fetch_remote_interact_uri(&remote_form)
             .ok()
-            .and_then(|uri| Some(uri.replace("{uri}", &target.acct_authority(&conn).ok()?)))
+            .and_then(|uri| {
+                Some(uri.replace(
+                    "{uri}",
+                    &Uri::percent_encode(&target.acct_authority(&conn).ok()?),
+                ))
+            })
         {
             Ok(Redirect::to(uri).into())
         } else {
