@@ -114,7 +114,18 @@ fn menu() {
                 .unwrap();
             show_menu.forget();
 
-            let close_menu = Closure::wrap(Box::new(|_: TouchEvent| {
+            let close_menu = Closure::wrap(Box::new(|evt: TouchEvent| {
+                if evt
+                    .target()
+                    .unwrap()
+                    .dyn_ref::<Element>()
+                    .unwrap()
+                    .closest("a")
+                    .unwrap()
+                    .is_some()
+                {
+                    return;
+                }
                 self::document()
                     .get_element_by_id("menu")
                     .map(|menu| {
