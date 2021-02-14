@@ -48,19 +48,13 @@ fn main() {
     create_dir_all(&Path::new("static").join("media")).expect("Couldn't init media directory");
 
     let cache_id = &compute_static_hash()[..8];
-    println!("cargo:rerun-if-changed=target/deploy/plume-front.wasm");
-    copy("target/deploy/plume-front.wasm", "static/plume-front.wasm")
-        .and_then(|_| read_to_string("target/deploy/plume-front.js"))
-        .and_then(|js| {
-            write(
-                "static/plume-front.js",
-                js.replace(
-                    "\"plume-front.wasm\"",
-                    &format!("\"/static/cached/{}/plume-front.wasm\"", cache_id),
-                ),
-            )
-        })
-        .ok();
+    println!("cargo:rerun-if-changed=plume-front/pkg/plume_front_bg.wasm");
+    copy(
+        "plume-front/pkg/plume_front_bg.wasm",
+        "static/plume_front_bg.wasm",
+    )
+    .and_then(|_| copy("plume-front/pkg/plume_front.js", "static/plume_front.js"))
+    .ok();
 
     println!("cargo:rustc-env=CACHE_ID={}", cache_id)
 }

@@ -38,17 +38,17 @@ parts:
       snapcraftctl set-version $(git describe --tags)
       export PATH=$PATH:$HOME/.cargo/bin
       rustup install stable
-      cargo +stable install --force cargo-web
+      cargo +stable install --force wasm-pack
 
       # Only Tier 1 Rust platforms get rust-lld
       # On the others (arm64, armhf, powerpc64, s390x) fall back to using
       # the system LLD we've installed earlier.
       case ${SNAPCRAFT_ARCH_TRIPLET} in \
         aarch64-linux-gnu|arm-linux-gnueabihf|powerpc64-linux-gnu|s390x-linux-gnu) \
-          RUSTFLAGS="-C linker=lld-8" cargo web deploy -p plume-front --release \
+          RUSTFLAGS="-C linker=lld" wasm-pack build --target web --release plume-front \
           ;; \
         *) \
-          cargo web deploy -p plume-front --release \
+          wasm-pack build --target web --release plume-front \
           ;; \
       esac
 

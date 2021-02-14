@@ -21,9 +21,9 @@
     <body>
         <header>
             <nav id="menu">
-                <a href="#" aria-label="@i18n!(ctx.1, "Menu")" title="@i18n!(ctx.1, "Menu")"><i class="icon icon-menu"></i></a>
+                <a href="#" aria-label="@i18n!(ctx.1, "Menu")" title="@i18n!(ctx.1, "Menu")" role="button" aria-haspopup="true" aria-controls="content" aria-epanded="false"><i class="icon icon-menu"></i></a>
             </nav>
-            <div id="content">
+            <div id="content" role="menu" aria-labelled-by="menu">
                 <nav>
                     <a href="@uri!(instance::index)" class="title">
                         <img src="@uri!(plume_static_files: file = CONFIG.logo.main.as_str(), build_id = CACHE_NAME)">
@@ -96,6 +96,9 @@
                 <a href="https://matrix.to/#/#plume-blog:matrix.org">@i18n!(ctx.1, "Matrix room")</a>
             </div>
         </footer>
-        <script src="@uri!(plume_static_files: file = "plume-front.js", build_id = CACHE_NAME)"></script>
+        <script type="module">
+          import init from '@uri!(plume_static_files: file = "plume_front.js", build_id = CACHE_NAME)';
+          (async () => await init())();
+        </script>
     </body>
 </html>

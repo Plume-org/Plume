@@ -21,7 +21,7 @@ EOF
 if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     export PATH=/opt/local/llvm/bin:${PATH}
     cd /app
-    RUSTFLAGS="-C linker=lld" cargo web deploy -p plume-front
+    RUSTFLAGS="-C linker=lld" wasm-pack build --target web --release plume-front
 else
-    cargo web deploy -p plume-front
+    wasm-pack build --target web --release plume-front
 fi

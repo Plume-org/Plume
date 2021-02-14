@@ -9,7 +9,7 @@ pkg="$4"
 build () {
     features="$1"
     cargo clean
-    cargo web deploy -p plume-front --release
+    wasm-pack build --target web --release plume-front
     cargo build --release --no-default-features --features="${features}" --package=plume-cli
     cargo build --release --no-default-features --features="${features}"
     ./script/generate_artifact.sh

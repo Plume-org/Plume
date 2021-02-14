@@ -10,7 +10,7 @@ executors:
         type: boolean
         default: false
     docker:
-    - image: plumeorg/plume-buildenv:v0.3.0
+    - image: plumeorg/plume-buildenv:v0.4.0
     - image: <<#parameters.postgres>>circleci/postgres:9.6-alpine<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
       environment:
         POSTGRES_USER: postgres
@@ -168,7 +168,7 @@ jobs:
     steps:
     - restore_env:
         cache: <<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
-    - run: cargo web deploy -p plume-front
+    - run: wasm-pack build --target web --release plume-front
     - run_with_coverage:
         cmd: |
             cmd="cargo install --debug --no-default-features --features="${FEATURES}",test --force --path . -j"
@@ -203,7 +203,7 @@ jobs:
     steps:
     - restore_env:
         cache: release-<<#parameters.postgres>>postgres<</ parameters.postgres>><<^parameters.postgres>>sqlite<</parameters.postgres>>
-    - run: cargo web deploy -p plume-front --release
+    - run: wasm-pack build --target web --release plume-front
     - build:
         package: plume
         release: true

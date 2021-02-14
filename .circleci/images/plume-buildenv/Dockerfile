@@ -1,4 +1,4 @@
-FROM debian:buster-20201117
+FROM debian:buster-20210208
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 #install native/circleci/build dependancies
@@ -16,7 +16,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2021-0
     rustup component add rust-std --target wasm32-unknown-unknown
 
 #compile some deps
-RUN cargo install cargo-web &&\
+RUN cargo install wasm-pack &&\
     cargo install grcov &&\
     strip /root/.cargo/bin/* &&\
     rm -fr ~/.cargo/registry

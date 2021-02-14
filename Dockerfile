@@ -19,7 +19,7 @@ RUN chmod a+x ./wasm-deps.sh && sleep 1 && ./wasm-deps.sh
 
 WORKDIR /app
 COPY Cargo.toml Cargo.lock rust-toolchain ./
-RUN cargo install cargo-web
+RUN cargo install wasm-pack
 
 COPY . .
 
