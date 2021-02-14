@@ -134,16 +134,7 @@ pub fn follow_not_connected(
     if let Some(remote_form) = remote_form {
         if let Some(uri) = User::fetch_remote_interact_uri(&remote_form)
             .ok()
-            .and_then(|uri| {
-                Some(uri.replace(
-                    "{uri}",
-                    &format!(
-                        "{}@{}",
-                        target.fqn,
-                        target.get_instance(&conn).ok()?.public_domain
-                    ),
-                ))
-            })
+            .and_then(|uri| Some(uri.replace("{uri}", &target.acct_authority(&conn).ok()?)))
         {
             Ok(Redirect::to(uri).into())
         } else {
