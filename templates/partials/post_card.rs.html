@@ -6,7 +6,7 @@
 
 <div class="card h-entry">
     @if article.cover_id.is_some() {
-        <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
+        <a href="@uri!(posts::details: blog = article.get_blog_fqn(ctx.0), slug = &article.slug, responding_to = _)"><div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div></a>
     }
     <header>
         @if ctx.2.clone().and_then(|u| article.is_author(ctx.0, u.id).ok()).unwrap_or(false) {
