@@ -224,6 +224,10 @@ p.error {
     background-position: center;
     background-size: cover;
     margin: 0px;
+
+    &:hover {
+        opacity: 0.9;
+    }
   }
 
   h3 {
