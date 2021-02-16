@@ -637,33 +637,37 @@ impl FromId<DbConn> for Post {
                 }
             });
 
-        let cover = article
-            .object_props
-            .icon_object::<Image>()
-            .ok()
-            .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
+        let post = Self::from_db(conn, &article.object_props.id_string()?).or_else(|_| {
+            let cover = article
+                .object_props
+                .icon_object::<Image>()
+                .ok()
+                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
 
-        let title = article.object_props.name_string()?;
-        let post = Post::insert(
-            conn,
-            NewPost {
-                blog_id: blog?.id,
-                slug: title.to_kebab_case(),
-                title,
-                content: SafeString::new(&article.object_props.content_string()?),
-                published: true,
-                license,
-                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                ap_url: article
-                    .object_props
-                    .url_string()
-                    .or_else(|_| article.object_props.id_string())?,
-                creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
-                subtitle: article.object_props.summary_string()?,
-                source: article.ap_object_props.source_object::<Source>()?.content,
-                cover_id: cover,
-            },
-        )?;
+            let title = article.object_props.name_string()?;
+            Self::insert(
+                conn,
+                NewPost {
+                    blog_id: blog?.id,
+                    slug: title.to_kebab_case(),
+                    title,
+                    content: SafeString::new(&article.object_props.content_string()?),
+                    published: true,
+                    license,
+                    // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                    ap_url: article
+                        .object_props
+                        .url_string()
+                        .or_else(|_| article.object_props.id_string())?,
+                    creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
+                    subtitle: article.object_props.summary_string()?,
+                    source: article.ap_object_props.source_object::<Source>()?.content,
+                    cover_id: cover,
+                },
+            )
+        })?;
+
+        // TODO: Update cover image if post's cover changes
 
         for author in authors {
             PostAuthor::insert(
