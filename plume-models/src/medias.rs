@@ -11,7 +11,7 @@ use plume_common::{
     utils::MediaProcessor,
 };
 use std::{
-    fs,
+    fs::{self, DirBuilder},
     path::{Path, PathBuf},
 };
 use tracing::warn;
@@ -206,6 +206,10 @@ impl Media {
     pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
         let remote_url = image.object_props.url_string().ok()?;
         let path = determine_mirror_file_path(&remote_url);
+        let parent = path.parent()?;
+        if !parent.is_dir() {
+            DirBuilder::new().recursive(true).create(parent)?;
+        }
 
         let mut dest = fs::File::create(path.clone()).ok()?;
         if let Some(proxy) = CONFIG.proxy() {
