@@ -10,7 +10,14 @@ use plume_common::{
     activity_pub::{inbox::FromId, Id},
     utils::MediaProcessor,
 };
-use std::{fs, path::Path};
+use std::{
+    fs::{self, DirBuilder},
+    path::{Path, PathBuf},
+};
+use tracing::warn;
+use url::Url;
+
+const REMOTE_MEDIA_DIRECTORY: &str = "remote";
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Media {
@@ -198,18 +205,14 @@ impl Media {
     // TODO: merge with save_remote?
     pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
         let remote_url = image.object_props.url_string().ok()?;
-        let ext = remote_url
-            .rsplit('.')
-            .next()
-            .map(ToOwned::to_owned)
-            .unwrap_or_else(|| String::from("png"));
-        let path = Path::new(&super::CONFIG.media_directory).join(format!(
-            "{}.{}",
-            GUID::rand().to_string(),
-            ext
-        ));
+        let path = determine_mirror_file_path(&remote_url);
+        let parent = path.parent()?;
+        if !parent.is_dir() {
+            DirBuilder::new().recursive(true).create(parent)?;
+        }
 
         let mut dest = fs::File::create(path.clone()).ok()?;
+        // TODO: conditional GET
         if let Some(proxy) = CONFIG.proxy() {
             reqwest::ClientBuilder::new().proxy(proxy.clone()).build()?
         } else {
@@ -221,6 +224,7 @@ impl Media {
         .copy_to(&mut dest)
         .ok()?;
 
+        // TODO: upsert
         Media::insert(
             conn,
             NewMedia {
@@ -260,6 +264,33 @@ impl Media {
             }
         })
     }
+}
+
+fn determine_mirror_file_path(url: &str) -> PathBuf {
+    let mut file_path = Path::new(&super::CONFIG.media_directory).join(REMOTE_MEDIA_DIRECTORY);
+    Url::parse(url)
+        .map(|url| {
+            if !url.has_host() {
+                return;
+            }
+            file_path.push(url.host_str().unwrap());
+            for segment in url.path_segments().expect("FIXME") {
+                file_path.push(segment);
+            }
+            // TODO: handle query
+            // HINT: Use characters which must be percent-encoded in path as separator between path and query
+            // HINT: handle extension
+        })
+        .unwrap_or_else(|err| {
+            warn!("Failed to parse url: {} {}", &url, err);
+            let ext = url
+                .rsplit('.')
+                .next()
+                .map(ToOwned::to_owned)
+                .unwrap_or_else(|| String::from("png"));
+            file_path.push(format!("{}.{}", GUID::rand().to_string(), ext));
+        });
+    file_path
 }
 
 #[cfg(test)]

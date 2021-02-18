@@ -644,6 +644,7 @@ impl FromId<DbConn> for Post {
             .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
 
         let title = article.object_props.name_string()?;
+        // TODO: upsert
         let post = Post::insert(
             conn,
             NewPost {
