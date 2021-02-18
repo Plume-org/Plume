@@ -212,6 +212,7 @@ impl Media {
         }
 
         let mut dest = fs::File::create(path.clone()).ok()?;
+        // TODO: conditional GET
         if let Some(proxy) = CONFIG.proxy() {
             reqwest::ClientBuilder::new().proxy(proxy.clone()).build()?
         } else {
@@ -223,6 +224,7 @@ impl Media {
         .copy_to(&mut dest)
         .ok()?;
 
+        // TODO: upsert
         Media::insert(
             conn,
             NewMedia {
