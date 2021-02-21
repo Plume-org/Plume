@@ -293,6 +293,21 @@ impl User {
         bcrypt::hash(pass, 10).map_err(Error::from)
     }
 
+    fn ldap_preconn(ldap_conn: &mut LdapConn) -> Result<()> {
+        let ldap = CONFIG.ldap.as_ref().unwrap();
+
+        if let Some((user, password)) = ldap.user.as_ref() {
+            let bind = ldap_conn
+                .simple_bind(user, password)
+                .map_err(|_| Error::NotFound)?;
+
+            if bind.success().is_err() {
+                return Err(Error::NotFound);
+            }
+        }
+        Ok(())
+    }
+
     fn ldap_register(conn: &Connection, name: &str, password: &str) -> Result<User> {
         if CONFIG.ldap.is_none() {
             return Err(Error::NotFound);
@@ -300,6 +315,9 @@ impl User {
         let ldap = CONFIG.ldap.as_ref().unwrap();
 
         let mut ldap_conn = LdapConn::new(&ldap.addr).map_err(|_| Error::NotFound)?;
+
+        User::ldap_preconn(&mut ldap_conn)?;
+
         let ldap_name = format!("{}={},{}", ldap.user_name_attr, name, ldap.base_dn);
         let bind = ldap_conn
             .simple_bind(&ldap_name, password)
@@ -346,6 +364,9 @@ impl User {
             } else {
                 return false;
             };
+            if User::ldap_preconn(&mut conn).is_err() {
+                return false;
+            }
             let name = format!(
                 "{}={},{}",
                 ldap.user_name_attr, &self.username, ldap.base_dn

@@ -254,6 +254,7 @@ pub struct LdapConfig {
     pub tls: bool,
     pub user_name_attr: String,
     pub mail_attr: String,
+    pub user: Option<(String, String)>,
 }
 
 fn get_ldap_config() -> Option<LdapConfig> {
@@ -269,16 +270,24 @@ fn get_ldap_config() -> Option<LdapConfig> {
             };
             let user_name_attr = var("LDAP_USER_NAME_ATTR").unwrap_or_else(|_| "cn".to_owned());
             let mail_attr = var("LDAP_USER_MAIL_ATTR").unwrap_or_else(|_| "mail".to_owned());
+            let user = var("LDAP_USER").ok();
+            let password = var("LDAP_PASSWORD").ok();
+            let user = match (user, password) {
+                (Some(user), Some(password)) => Some((user, password)),
+                (None, None) => None,
+                _ => panic!("Invalid LDAP configuration both or neither of LDAP_USER and LDAP_PASSWORD must be set")           
+            };
             Some(LdapConfig {
                 addr,
                 base_dn,
                 tls,
                 user_name_attr,
                 mail_attr,
+                user
             })
         }
         (None, None) => None,
-        (_, _) => {
+        _ => {
             panic!("Invalid LDAP configuration : both LDAP_ADDR and LDAP_BASE_DN must be set")
         }
     }
