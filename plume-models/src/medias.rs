@@ -65,6 +65,7 @@ impl MediaCategory {
 impl Media {
     insert!(medias, NewMedia);
     get!(medias);
+    find_by!(medias, find_by_file_path, file_path as &str);
 
     pub fn for_user(conn: &Connection, owner: i32) -> Result<Vec<Media>> {
         medias::table
