@@ -15,7 +15,7 @@ use heck::KebabCase;
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsObject, FromId},
+        inbox::{AsActor, AsObject, FromId},
         Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
     utils::md_to_html,
@@ -94,7 +94,10 @@ impl Post {
         let post = Self::get(conn, self.id)?;
         // TODO: Call publish_published() when newly published
         if post.published {
-            self.publish_updated();
+            let blog = post.get_blog(conn);
+            if blog.is_ok() && blog.unwrap().is_local() {
+                self.publish_updated();
+            }
         }
         Ok(post)
     }
