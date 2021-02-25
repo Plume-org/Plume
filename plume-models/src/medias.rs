@@ -12,7 +12,7 @@ use plume_common::{
 };
 use std::{
     fs::{self, DirBuilder},
-    path::{Path, PathBuf},
+    path::{self, Path, PathBuf},
 };
 use tracing::warn;
 use url::Url;
@@ -156,12 +156,11 @@ impl Media {
         if self.is_remote {
             Ok(self.remote_url.clone().unwrap_or_default())
         } else {
-            let p = Path::new(&self.file_path);
-            let filename: String = p.file_name().unwrap().to_str().unwrap().to_owned();
+            let file_path = self.file_path.replace(path::MAIN_SEPARATOR, "/");
             Ok(ap_url(&format!(
-                "{}/static/media/{}",
+                "{}/{}",
                 Instance::get_local()?.public_domain,
-                &filename
+                &file_path
             )))
         }
     }
