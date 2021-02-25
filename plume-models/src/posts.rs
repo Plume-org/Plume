@@ -706,17 +706,20 @@ impl FromId<DbConn> for Post {
                         cover_id: cover,
                     },
                 )
-            })?;
+                .and_then(|post| {
+                    for author in authors {
+                        PostAuthor::insert(
+                            conn,
+                            NewPostAuthor {
+                                post_id: post.id,
+                                author_id: author.id,
+                            },
+                        )?;
+                    }
 
-        for author in authors {
-            PostAuthor::insert(
-                conn,
-                NewPostAuthor {
-                    post_id: post.id,
-                    author_id: author.id,
-                },
-            )?;
-        }
+                    Ok(post)
+                })
+            })?;
 
         // save mentions and tags
         let mut hashtags = md_to_html(&post.source, None, false, None)
