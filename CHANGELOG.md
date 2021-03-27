@@ -24,6 +24,7 @@
 
 - Percent-encode URI for remote_interact (#866, #857)
 - Menu animation not opening on iOS (#876, #897)
+- Make actors subscribe to channel once (#913)
 
 ## [[0.6.0]] - 2020-12-29
 
