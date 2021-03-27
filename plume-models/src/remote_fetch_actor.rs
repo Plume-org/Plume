@@ -17,24 +17,22 @@ pub struct RemoteFetchActor {
 
 impl RemoteFetchActor {
     pub fn init(conn: DbPool) {
-        ACTOR_SYS
+        let actor = ACTOR_SYS
             .actor_of_args::<RemoteFetchActor, _>("remote-fetch", conn)
             .expect("Failed to initialize remote fetch actor");
-    }
-}
 
-impl Actor for RemoteFetchActor {
-    type Msg = UserEvent;
-
-    fn pre_start(&mut self, ctx: &Context<Self::Msg>) {
         USER_CHAN.tell(
             Subscribe {
-                actor: Box::new(ctx.myself()),
+                actor: Box::new(actor),
                 topic: "*".into(),
             },
             None,
         )
     }
+}
+
+impl Actor for RemoteFetchActor {
+    type Msg = UserEvent;
 
     fn recv(&mut self, _ctx: &Context<Self::Msg>, msg: Self::Msg, _sender: Sender) {
         use UserEvent::*;
