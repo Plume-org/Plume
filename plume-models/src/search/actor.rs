@@ -13,24 +13,22 @@ pub struct SearchActor {
 
 impl SearchActor {
     pub fn init(searcher: Arc<Searcher>, conn: DbPool) {
-        ACTOR_SYS
+        let actor = ACTOR_SYS
             .actor_of_args::<SearchActor, _>("search", (searcher, conn))
             .expect("Failed to initialize searcher actor");
-    }
-}
 
-impl Actor for SearchActor {
-    type Msg = PostEvent;
-
-    fn pre_start(&mut self, ctx: &Context<Self::Msg>) {
         POST_CHAN.tell(
             Subscribe {
-                actor: Box::new(ctx.myself()),
+                actor: Box::new(actor),
                 topic: "*".into(),
             },
             None,
         )
     }
+}
+
+impl Actor for SearchActor {
+    type Msg = PostEvent;
 
     fn recv(&mut self, _ctx: &Context<Self::Msg>, msg: Self::Msg, _sender: Sender) {
         use PostEvent::*;

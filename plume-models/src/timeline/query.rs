@@ -601,11 +601,10 @@ fn parse_l<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Lis
 }
 
 fn parse_m<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Vec<&'a str>)> {
-    let mut res: Vec<&str> = Vec::new();
-    res.push(match stream.get(0)? {
+    let mut res: Vec<&str> = vec![match stream.get(0)? {
         Token::Word(_, _, w) => w,
         t => return t.get_error(Token::Word(0, 0, "any word")),
-    });
+    }];
     stream = &stream[1..];
     while let Token::Comma(_) = stream[0] {
         res.push(match stream.get(1)? {

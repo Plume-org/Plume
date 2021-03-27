@@ -156,7 +156,7 @@ impl<'de> Deserialize<'de> for SafeString {
     where
         D: Deserializer<'de>,
     {
-        Ok(deserializer.deserialize_string(SafeStringVisitor)?)
+        deserializer.deserialize_string(SafeStringVisitor)
     }
 }
 

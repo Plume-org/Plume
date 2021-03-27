@@ -285,7 +285,8 @@ impl List {
             .select(list_elems::word)
             .load::<Option<String>>(conn)
             .map_err(Error::from)
-            .map(|r| r.into_iter().filter_map(|o| o).collect::<Vec<String>>())
+            // .map(|r| r.into_iter().filter_map(|o| o).collect::<Vec<String>>())
+            .map(|r| r.into_iter().flatten().collect::<Vec<String>>())
     }
 
     pub fn clear(&self, conn: &Connection) -> Result<()> {

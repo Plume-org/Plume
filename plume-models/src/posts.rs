@@ -443,13 +443,7 @@ impl Post {
                     m,
                 )
             })
-            .filter_map(|(id, m)| {
-                if let Some(id) = id {
-                    Some((m, id))
-                } else {
-                    None
-                }
-            })
+            .filter_map(|(id, m)| id.map(|id| (m, id)))
             .collect::<Vec<_>>();
 
         let old_mentions = Mention::list_for_post(&conn, self.id)?;
