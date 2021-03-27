@@ -15,7 +15,7 @@ use heck::KebabCase;
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsObject, FromId},
+        inbox::{AsActor, AsObject, FromId},
         Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
     utils::md_to_html,
@@ -94,7 +94,10 @@ impl Post {
         let post = Self::get(conn, self.id)?;
         // TODO: Call publish_published() when newly published
         if post.published {
-            self.publish_updated();
+            let blog = post.get_blog(conn);
+            if blog.is_ok() && blog.unwrap().is_local() {
+                self.publish_updated();
+            }
         }
         Ok(post)
     }
@@ -638,37 +641,85 @@ impl FromId<DbConn> for Post {
             .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
 
         let title = article.object_props.name_string()?;
-        // TODO: upsert
-        let post = Post::insert(
-            conn,
-            NewPost {
-                blog_id: blog?.id,
-                slug: title.to_kebab_case(),
-                title,
-                content: SafeString::new(&article.object_props.content_string()?),
-                published: true,
-                license,
-                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                ap_url: article
-                    .object_props
-                    .url_string()
-                    .or_else(|_| article.object_props.id_string())?,
-                creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
-                subtitle: article.object_props.summary_string()?,
-                source: article.ap_object_props.source_object::<Source>()?.content,
-                cover_id: cover,
-            },
-        )?;
+        let ap_url = article
+            .object_props
+            .url_string()
+            .or_else(|_| article.object_props.id_string())?;
+        let post = Post::from_db(conn, &ap_url)
+            .and_then(|mut post| {
+                let mut updated = false;
 
-        for author in authors {
-            PostAuthor::insert(
-                conn,
-                NewPostAuthor {
-                    post_id: post.id,
-                    author_id: author.id,
-                },
-            )?;
-        }
+                let slug = title.to_kebab_case();
+                let content = SafeString::new(&article.object_props.content_string()?);
+                let subtitle = article.object_props.summary_string()?;
+                let source = article.ap_object_props.source_object::<Source>()?.content;
+                if post.slug != slug {
+                    post.slug = slug;
+                    updated = true;
+                }
+                if post.title != title {
+                    post.title = title.clone();
+                    updated = true;
+                }
+                if post.content != content {
+                    post.content = content;
+                    updated = true;
+                }
+                if post.license != license {
+                    post.license = license.clone();
+                    updated = true;
+                }
+                if post.subtitle != subtitle {
+                    post.subtitle = subtitle;
+                    updated = true;
+                }
+                if post.source != source {
+                    post.source = source;
+                    updated = true;
+                }
+                if post.cover_id != cover {
+                    post.cover_id = cover;
+                    updated = true;
+                }
+
+                if updated {
+                    post.update(conn)?;
+                }
+
+                Ok(post)
+            })
+            .or_else(|_| {
+                Post::insert(
+                    conn,
+                    NewPost {
+                        blog_id: blog?.id,
+                        slug: title.to_kebab_case(),
+                        title,
+                        content: SafeString::new(&article.object_props.content_string()?),
+                        published: true,
+                        license,
+                        // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                        ap_url,
+                        creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
+                        subtitle: article.object_props.summary_string()?,
+                        source: article.ap_object_props.source_object::<Source>()?.content,
+                        cover_id: cover,
+                    },
+                )
+                .and_then(|post| {
+                    for author in authors {
+                        PostAuthor::insert(
+                            conn,
+                            NewPostAuthor {
+                                post_id: post.id,
+                                author_id: author.id,
+                            },
+                        )?;
+                    }
+
+                    Ok(post)
+                })
+            })?;
 
         // save mentions and tags
         let mut hashtags = md_to_html(&post.source, None, false, None)
