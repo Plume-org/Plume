@@ -486,10 +486,7 @@ impl User {
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<T>>();
 
-        let next = match json.get("next") {
-            Some(x) => Some(x.as_str().unwrap().to_owned()),
-            None => None,
-        };
+        let next = json.get("next").map(|x| x.as_str().unwrap().to_owned());
         Ok((items, next))
     }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {

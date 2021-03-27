@@ -255,9 +255,7 @@ impl FromId<DbConn> for Comment {
                         .and_then(|m| {
                             let author = &Post::get(conn, comm.post_id)?.get_authors(conn)?[0];
                             let not_author = m.link_props.href_string()? != author.ap_url.clone();
-                            Ok(Mention::from_activity(
-                                conn, &m, comm.id, false, not_author,
-                            )?)
+                            Mention::from_activity(conn, &m, comm.id, false, not_author)
                         })
                         .ok();
                 }

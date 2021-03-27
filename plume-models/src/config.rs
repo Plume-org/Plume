@@ -164,11 +164,8 @@ impl Default for LogoConfig {
             };
             let mut custom_icons = env::vars()
                 .filter_map(|(var, val)| {
-                    if let Some(size) = var.strip_prefix("PLUME_LOGO_") {
-                        Some((size.to_owned(), val))
-                    } else {
-                        None
-                    }
+                    var.strip_prefix("PLUME_LOGO_")
+                        .map(|size| (size.to_owned(), val))
                 })
                 .filter_map(|(var, val)| var.parse::<u64>().ok().map(|var| (var, val)))
                 .map(|(dim, src)| Icon {
