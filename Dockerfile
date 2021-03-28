@@ -40,6 +40,7 @@ WORKDIR /app
 COPY --from=builder /app /app
 COPY --from=builder /usr/local/cargo/bin/plm /bin/
 COPY --from=builder /usr/local/cargo/bin/plume /bin/
+COPY --from=builder /usr/local/cargo/bin/remove-dup-images /bin/
 
 CMD ["plume"]
 
