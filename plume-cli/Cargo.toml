@@ -8,6 +8,10 @@ edition = "2018"
 name = "plm"
 path = "src/main.rs"
 
+[[bin]]
+name = "remove-dup-images"
+path = "src/remove-dup-images.rs"
+
 [dependencies]
 clap = "2.33"
 dotenv = "0.14"
