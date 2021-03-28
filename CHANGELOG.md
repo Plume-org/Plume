@@ -26,7 +26,8 @@
 - Menu animation not opening on iOS (#876, #897)
 - Make actors subscribe to channel once (#913)
 - Upsert posts and media instead of trying to insert and fail (#912)
-- Update post's ActivityPub id when published by update
+- Update post's ActivityPub id when published by update (#915)
+- Calculate media URI properly even when MEDIA_UPLOAD_DIRECTORY configured (#916)
 
 ## [[0.6.0]] - 2020-12-29
 
