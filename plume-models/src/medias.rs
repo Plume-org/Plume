@@ -156,7 +156,11 @@ impl Media {
         if self.is_remote {
             Ok(self.remote_url.clone().unwrap_or_default())
         } else {
-            let file_path = self.file_path.replace(path::MAIN_SEPARATOR, "/");
+            let file_path = self.file_path.replace(path::MAIN_SEPARATOR, "/").replacen(
+                &CONFIG.media_directory,
+                "static/media",
+                1,
+            ); // "static/media" from plume::routs::plume_media_files()
             Ok(ap_url(&format!(
                 "{}/{}",
                 Instance::get_local()?.public_domain,
