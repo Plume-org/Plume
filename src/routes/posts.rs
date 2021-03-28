@@ -290,6 +290,13 @@ pub fn update(
             let newly_published = if !post.published && !form.draft {
                 post.published = true;
                 post.creation_date = Utc::now().naive_utc();
+                // TODO: share code with Post::insert()
+                post.ap_url = plume_models::ap_url(&format!(
+                    "{}/~/{}/{}/",
+                    CONFIG.base_url,
+                    post.get_blog(&conn).unwrap().fqn,
+                    new_slug
+                ));
                 true
             } else {
                 false
