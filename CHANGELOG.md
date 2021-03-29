@@ -28,6 +28,7 @@
 - Upsert posts and media instead of trying to insert and fail (#912)
 - Update post's ActivityPub id when published by update (#915)
 - Calculate media URI properly even when MEDIA_UPLOAD_DIRECTORY configured (#916)
+- Prevent duplicated posts in 'all' timeline (#917)
 
 ## [[0.6.0]] - 2020-12-29
 

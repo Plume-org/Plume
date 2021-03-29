@@ -223,6 +223,9 @@ impl Timeline {
     }
 
     pub fn add_post(&self, conn: &Connection, post: &Post) -> Result<()> {
+        if self.includes_post(conn, post)? {
+            return Ok(());
+        }
         diesel::insert_into(timeline::table)
             .values(TimelineEntry {
                 post_id: post.id,
@@ -235,6 +238,16 @@ impl Timeline {
     pub fn matches(&self, conn: &DbConn, post: &Post, kind: Kind<'_>) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
         query.matches(conn, self, post, kind)
+    }
+
+    fn includes_post(&self, conn: &Connection, post: &Post) -> Result<bool> {
+        diesel::dsl::select(diesel::dsl::exists(
+            timeline::table
+                .filter(timeline::timeline_id.eq(self.id))
+                .filter(timeline::post_id.eq(post.id)),
+        ))
+        .get_result(conn)
+        .map_err(Error::from)
     }
 }
 
