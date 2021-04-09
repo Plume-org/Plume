@@ -73,12 +73,7 @@ impl Post {
             .execute(conn)?;
         let mut post = Self::last(conn)?;
         if post.ap_url.is_empty() {
-            post.ap_url = ap_url(&format!(
-                "{}/~/{}/{}/",
-                CONFIG.base_url,
-                post.get_blog(conn)?.fqn,
-                post.slug
-            ));
+            post.ap_url = Self::ap_url(post.get_blog(conn)?, &post.slug);
             let _: Post = post.save_changes(conn)?;
         }
 
@@ -252,6 +247,10 @@ impl Post {
             .filter(posts::id.eq_any(posts))
             .load::<Post>(conn)
             .map_err(Error::from)
+    }
+
+    pub fn ap_url(blog: Blog, slug: &str) -> String {
+        ap_url(&format!("{}/~/{}/{}/", CONFIG.base_url, blog.fqn, slug))
     }
 
     pub fn get_authors(&self, conn: &Connection) -> Result<Vec<User>> {
