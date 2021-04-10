@@ -1,5 +1,4 @@
 use chrono::Utc;
-use heck::KebabCase;
 use rocket::http::uri::Uri;
 use rocket::request::LenientForm;
 use rocket::response::{Flash, Redirect};
@@ -236,7 +235,7 @@ pub fn update(
     let intl = &rockets.intl.catalog;
 
     let new_slug = if !post.published {
-        form.title.to_string().to_kebab_case()
+        Post::slug(&form.title).to_string()
     } else {
         post.slug.clone()
     };
@@ -400,7 +399,7 @@ pub struct NewPostForm {
 }
 
 pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
-    let slug = title.to_string().to_kebab_case();
+    let slug = Post::slug(title);
     if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
     } else if slug == "new" {
@@ -419,7 +418,7 @@ pub fn create(
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, ErrorPage> {
     let blog = Blog::find_by_fqn(&conn, &blog_name).expect("post::create: blog error");
-    let slug = form.title.to_string().to_kebab_case();
+    let slug = Post::slug(&form.title);
     let user = rockets.user.clone().unwrap();
 
     let mut errors = match form.validate() {

@@ -1,5 +1,4 @@
 use chrono::NaiveDateTime;
-use heck::KebabCase;
 use rocket_contrib::json::Json;
 
 use crate::api::{authorization::*, Api};
@@ -109,7 +108,7 @@ pub fn create(
 
     let author = User::get(&conn, auth.0.user_id)?;
 
-    let slug = &payload.title.clone().to_kebab_case();
+    let slug = Post::slug(&payload.title);
     let date = payload.creation_date.clone().and_then(|d| {
         NaiveDateTime::parse_from_str(format!("{} 00:00:00", d).as_ref(), "%Y-%m-%d %H:%M:%S").ok()
     });
