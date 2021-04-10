@@ -253,6 +253,11 @@ impl Post {
         ap_url(&format!("{}/~/{}/{}/", CONFIG.base_url, blog.fqn, slug))
     }
 
+    // It's better to calc slug in insert and update
+    pub fn slug(title: &str) -> &str {
+        title
+    }
+
     pub fn get_authors(&self, conn: &Connection) -> Result<Vec<User>> {
         use crate::schema::post_authors;
         use crate::schema::users;
