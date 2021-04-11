@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:56\n"
+"PO-Revision-Date: 2021-04-11 02:56\n"
 "Last-Translator: \n"
 "Language-Team: Sinhala\n"
 "Language: si_LK\n"
@@ -27,7 +27,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:315
 msgid "Title"
-msgstr ""
+msgstr "මාතෘකාව"
 
 # plume-front/src/editor.rs:319
 msgid "Subtitle, or summary"
@@ -47,7 +47,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:415
 msgid "License"
-msgstr ""
+msgstr "බලපත්‍රය"
 
 # plume-front/src/editor.rs:418
 msgid "Cover"

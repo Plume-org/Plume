@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:56\n"
+"PO-Revision-Date: 2021-04-11 02:56\n"
 "Last-Translator: \n"
 "Language-Team: Santali\n"
 "Language: sat_IN\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 # plume-front/src/editor.rs:189
 msgid "Do you want to load the local autosave last edited at {}?"
-msgstr ""
+msgstr "ᱟᱢ ᱪᱮᱫ ᱢᱟᱲᱟᱝ {} ᱨᱮ  ᱥᱟᱯᱲᱟᱣ ᱟᱠᱟᱱ ᱞᱚᱠᱟᱞ ᱚᱴᱚᱥᱮᱣ ᱞᱟᱫᱮ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ ᱥᱮ?"
 
 # plume-front/src/editor.rs:282
 msgid "Open the rich text editor"
-msgstr "ᱨᱤᱪ ᱚᱞ ᱥᱟᱯᱟᱣᱤᱡ ᱠᱷᱩᱞᱟᱹᱭ ᱢᱮᱸ"
+msgstr "ᱨᱤᱪ ᱚᱞ ᱥᱟᱯᱟᱣᱤᱡ ᱠᱷᱩᱞᱟᱹᱭ ᱢᱮ"
 
 # plume-front/src/editor.rs:315
 msgid "Title"
@@ -35,7 +35,7 @@ msgstr "ᱥᱟᱹᱵᱴᱟᱭᱴᱟᱹᱞ, ᱟᱨ ᱵᱟᱝ ᱥᱟᱹᱢᱢᱟ�
 
 # plume-front/src/editor.rs:326
 msgid "Write your article here. Markdown is supported."
-msgstr "ᱟᱢᱟᱜ ᱚᱱᱚᱞ ᱱᱚᱰᱮ ᱚᱞ ᱛᱟᱢ ᱾ ᱪᱤᱱᱦᱟᱹ ᱥᱟᱯᱯᱚᱴ ᱜᱮᱭᱟ ᱾"
+msgstr "ᱟᱢᱟᱜ ᱚᱱᱚᱞ ᱱᱚᱰᱮ ᱚᱞ ᱛᱟᱢ ᱾ ᱪᱤᱱᱦᱟᱹ ᱥᱟᱯᱚᱴ ᱜᱮᱭᱟ ᱾"
 
 # plume-front/src/editor.rs:337
 msgid "Around {} characters left"
@@ -43,15 +43,15 @@ msgstr "ᱡᱷᱚᱛᱚ ᱨᱮ {} ᱡᱤᱱᱤᱥ ᱵᱟᱧᱪᱟᱣᱠᱟᱱᱟ
 
 # plume-front/src/editor.rs:414
 msgid "Tags"
-msgstr "ᱴᱮᱜᱥ"
+msgstr "ᱴᱮᱜᱽᱥ"
 
 # plume-front/src/editor.rs:415
 msgid "License"
-msgstr "ᱞᱚᱭᱥᱮᱸᱱᱥ"
+msgstr "ᱞᱚᱭᱥᱮᱱᱥ"
 
 # plume-front/src/editor.rs:418
 msgid "Cover"
-msgstr "ᱠᱚᱵᱷᱚᱨ"
+msgstr "ᱢᱚᱭᱞᱟᱹᱴ"
 
 # plume-front/src/editor.rs:438
 msgid "This is a draft"

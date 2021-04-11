@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:55\n"
+"PO-Revision-Date: 2021-01-30 14:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -214,18 +214,12 @@ msgid "Your article has been deleted."
 msgstr ""
 
 # src/routes/posts.rs:612
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
 # src/routes/posts.rs:652
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
-msgstr ""
-"आपके अकाउंट के बारे में पर्याप्त जानकारी नहीं मिल पायी. कृपया जांच करें की आपका यूजरनाम "
-"सही है."
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgstr "आपके अकाउंट के बारे में पर्याप्त जानकारी नहीं मिल पायी. कृपया जांच करें की आपका यूजरनाम सही है."
 
 # src/routes/reshares.rs:54
 msgid "To reshare a post, you need to be logged in"
@@ -288,9 +282,7 @@ msgid "Registrations are closed on this instance."
 msgstr ""
 
 # src/routes/user.rs:549
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
 msgid "Media upload"
@@ -449,9 +441,7 @@ msgstr "पासवर्ड"
 msgid "Password confirmation"
 msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "{0}'s subscriptions"
@@ -481,8 +471,7 @@ msgstr "अपने अकाउंट में बदलाव करें"
 msgid "Your Profile"
 msgstr "आपकी प्रोफाइल"
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
+msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -554,10 +543,7 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
 
 msgid "You are not authorized."
@@ -641,21 +627,13 @@ msgstr "डिफ़ॉल्ट आलेख लायसेंस"
 msgid "Save these settings"
 msgstr "इन सेटिंग्स को सेव करें"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
 msgstr ""
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
 msgstr ""
 
 msgid "Blocklisted Emails"
@@ -664,10 +642,7 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
 msgstr ""
 
 msgid "Note"
@@ -676,17 +651,13 @@ msgstr ""
 msgid "Notify the user?"
 msgstr ""
 
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
 msgstr ""
 
 msgid "Blocklisting notification"
 msgstr ""
 
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
+msgid "The message to be shown when the user attempts to create an account with this email address"
 msgstr ""
 
 msgid "Add blocklisted address"
@@ -758,9 +729,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -818,12 +787,8 @@ msgstr "मुझे अब इसे बूस्ट नहीं करना 
 msgid "Boost"
 msgstr "बूस्ट"
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
-msgstr ""
-"{0}लोग इन करें{1}, या {2}आपके फेडिवेर्से अकाउंट का इस्तेमाल करें{3} इस आर्टिकल से इंटरैक्ट "
-"करने के लिए"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr "{0}लोग इन करें{1}, या {2}आपके फेडिवेर्से अकाउंट का इस्तेमाल करें{3} इस आर्टिकल से इंटरैक्ट करने के लिए"
 
 msgid "Comments"
 msgstr "कमैंट्स"
@@ -879,9 +844,7 @@ msgstr "पासवर्ड अपडेट करें"
 msgid "Check your inbox!"
 msgstr "आपका इनबॉक्स चेक करें"
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr "हमने आपके दिए गए इ-मेल पे पासवर्ड रिसेट लिंक भेज दिया है."
 
 msgid "Send password reset link"
@@ -890,9 +853,7 @@ msgstr "पासवर्ड रिसेट करने के लिए ल�
 msgid "This token has expired"
 msgstr ""
 
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
 msgstr ""
 
 msgid "New Blog"
@@ -907,8 +868,7 @@ msgstr "ब्लॉग बनाएं"
 msgid "Edit \"{}\""
 msgstr "{0} में बदलाव करें"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr "आप गैलरी में फोटो दाल कर, उनका ब्लॉग आइकॉन या बैनर के लिए उपयोग कर सकते हैं"
 
 msgid "Upload images"
@@ -970,9 +930,7 @@ msgstr ""
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -1052,3 +1010,4 @@ msgstr "इस लिसेंसे के साथ पब्लिश कि�
 
 msgid "Article license"
 msgstr "आर्टिकल लाइसेंस"
+
