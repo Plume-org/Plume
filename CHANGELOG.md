@@ -11,6 +11,7 @@
 - Proxy support (#829)
 - Riker a actor system library (#870)
 - (request-target) and Host header in HTTP Signature (#872)
+- Default log levels for RUST_LOG (#885, #886, #919)
 
 ### Changed
 
@@ -20,6 +21,8 @@
 - Upgrade Tantivy to 0.13.3 and lindera-tantivy to 0.7.1 (#878)
 - Run searcher on actor system (#870)
 - Use article title as its slug instead of capitalizing and inserting hyphens (#920)
+- Extract a function to calculate posts' ap_url and share it with some places (#918)
+- Keep title in URI (#920)
 
 ### Fixed
 
