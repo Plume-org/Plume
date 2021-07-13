@@ -3177,7 +3177,7 @@ dependencies = [
 [[package]]
 name = "pulldown-cmark"
 version = "0.8.0"
-source = "git+https://git.joinplu.me/Plume/pulldown-cmark?branch=bidi-plume#f485d6bf18921277f493e1300e160b07e3756c3b"
+source = "git+https://git.joinplu.me/Plume/pulldown-cmark?branch=bidi-plume#58514a67a52d0fa2233160bd0e8933684397bfd6"
 dependencies = [
  "bitflags 1.2.1",
  "memchr",
