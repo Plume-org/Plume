@@ -30,7 +30,7 @@ A lot of features are still missing, but what is already here should be quite st
 - **Media management**: you can upload pictures to illustrate your articles, but also audio files if you host a podcast, and manage them all from Plume.
 - **Federation**: Plume is part of a network of interconnected websites called the Fediverse. Each of these websites (often called *instances*) have their own
 rules and thematics, but they can all communicate with each other.
-- **Collaborative writing**: invite other people to your blogs, and write articles together.
+- **Collaborative writing**: invite other people to your blogs, and write articles together. (Not implemented yet, but will be in 1.0)
 
 ## Get involved
 
