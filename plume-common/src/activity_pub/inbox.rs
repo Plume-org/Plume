@@ -1,5 +1,6 @@
-use reqwest::header::{HeaderValue, ACCEPT};
 use std::fmt::Debug;
+
+use super::request;
 
 /// Represents an ActivityPub inbox.
 ///
@@ -311,6 +312,7 @@ pub trait FromId<C>: Sized {
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
+        let headers = request::headers();
         if let Some(proxy) = proxy {
             reqwest::ClientBuilder::new().proxy(proxy)
         } else {
@@ -320,16 +322,7 @@ pub trait FromId<C>: Sized {
         .build()
         .map_err(|_| (None, InboxError::DerefError.into()))?
         .get(id)
-        .header(
-            ACCEPT,
-            HeaderValue::from_str(
-                &super::ap_accept_header()
-                    .into_iter()
-                    .collect::<Vec<_>>()
-                    .join(", "),
-            )
-            .map_err(|_| (None, InboxError::DerefError.into()))?,
-        )
+        .headers(headers)
         .send()
         .map_err(|_| (None, InboxError::DerefError))
         .and_then(|mut r| {
