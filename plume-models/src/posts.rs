@@ -17,7 +17,7 @@ use plume_common::{
         inbox::{AsActor, AsObject, FromId},
         Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
-    utils::md_to_html,
+    utils::{iri_percent_encode_seg, md_to_html},
 };
 use riker::actors::{Publish, Tell};
 use std::collections::{HashMap, HashSet};
@@ -249,7 +249,12 @@ impl Post {
     }
 
     pub fn ap_url(blog: Blog, slug: &str) -> String {
-        ap_url(&format!("{}/~/{}/{}/", CONFIG.base_url, blog.fqn, slug))
+        ap_url(&format!(
+            "{}/~/{}/{}/",
+            CONFIG.base_url,
+            blog.fqn,
+            iri_percent_encode_seg(slug)
+        ))
     }
 
     // It's better to calc slug in insert and update

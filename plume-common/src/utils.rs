@@ -28,6 +28,59 @@ pub fn make_actor_id(name: &str) -> String {
 }
 
 /**
+ * Percent-encode characters which are not allowed in IRI path segments.
+ *
+ * Intended to be used for generating Post ap_url.
+ */
+pub fn iri_percent_encode_seg(segment: &str) -> String {
+    segment.chars().map(iri_percent_encode_seg_char).collect()
+}
+
+pub fn iri_percent_encode_seg_char(c: char) -> String {
+    if c.is_alphanumeric() {
+        c.to_string()
+    } else {
+        match c {
+            '-'
+            | '.'
+            | '_'
+            | '~'
+            | '\u{A0}'..='\u{D7FF}'
+            | '\u{20000}'..='\u{2FFFD}'
+            | '\u{30000}'..='\u{3FFFD}'
+            | '\u{40000}'..='\u{4FFFD}'
+            | '\u{50000}'..='\u{5FFFD}'
+            | '\u{60000}'..='\u{6FFFD}'
+            | '\u{70000}'..='\u{7FFFD}'
+            | '\u{80000}'..='\u{8FFFD}'
+            | '\u{90000}'..='\u{9FFFD}'
+            | '\u{A0000}'..='\u{AFFFD}'
+            | '\u{B0000}'..='\u{BFFFD}'
+            | '\u{C0000}'..='\u{CFFFD}'
+            | '\u{D0000}'..='\u{DFFFD}'
+            | '\u{E0000}'..='\u{EFFFD}'
+            | '!'
+            | '$'
+            | '&'
+            | '\''
+            | '('
+            | ')'
+            | '*'
+            | '+'
+            | ','
+            | ';'
+            | '='
+            | ':'
+            | '@' => c.to_string(),
+            _ => {
+                let s = c.to_string();
+                Uri::percent_encode(&s).to_string()
+            }
+        }
+    }
+}
+
+/**
 * Redirects to the login page with a given message.
 *
 * Note that the message should be translated before passed to this function.
@@ -474,6 +527,20 @@ mod tests {
                     .collect::<HashSet<String>>()
             );
         }
+    }
+
+    #[test]
+    fn test_iri_percent_encode_seg() {
+        assert_eq!(
+            &iri_percent_encode_seg("including whitespace"),
+            "including%20whitespace"
+        );
+        assert_eq!(&iri_percent_encode_seg("%20"), "%2520");
+        assert_eq!(&iri_percent_encode_seg("é"), "é");
+        assert_eq!(
+            &iri_percent_encode_seg("空白入り 日本語"),
+            "空白入り%20日本語"
+        );
     }
 
     #[test]
