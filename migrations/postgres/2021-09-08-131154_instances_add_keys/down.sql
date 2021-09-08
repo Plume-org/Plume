@@ -1,1 +1,2 @@
--- This file should undo anything in `up.sql`
+ALTER TABLE instances DROP COLUMN private_key;
+ALTER TABLE instances DROP COLUMN public_key;
