@@ -25,6 +25,8 @@ pub struct Instance {
     pub default_license: String,
     pub long_description_html: SafeString,
     pub short_description_html: SafeString,
+    pub private_key: Option<String>,
+    pub public_key: Option<String>,
 }
 
 #[derive(Clone, Insertable)]
@@ -39,6 +41,8 @@ pub struct NewInstance {
     pub default_license: String,
     pub long_description_html: String,
     pub short_description_html: String,
+    pub private_key: Option<String>,
+    pub public_key: Option<String>,
 }
 
 lazy_static! {
@@ -259,6 +263,8 @@ pub(crate) mod tests {
                 name: "My instance".to_string(),
                 open_registrations: true,
                 public_domain: "plu.me".to_string(),
+                private_key: None,
+                public_key: None,
             },
             NewInstance {
                 default_license: "WTFPL".to_string(),
@@ -270,6 +276,8 @@ pub(crate) mod tests {
                 name: "An instance".to_string(),
                 open_registrations: true,
                 public_domain: "1plu.me".to_string(),
+                private_key: None,
+                public_key: None,
             },
             NewInstance {
                 default_license: "CC-0".to_string(),
@@ -281,6 +289,8 @@ pub(crate) mod tests {
                 name: "Someone instance".to_string(),
                 open_registrations: false,
                 public_domain: "2plu.me".to_string(),
+                private_key: None,
+                public_key: None,
             },
             NewInstance {
                 default_license: "CC-0-BY-SA".to_string(),
@@ -292,6 +302,8 @@ pub(crate) mod tests {
                 name: "Nice day".to_string(),
                 open_registrations: true,
                 public_domain: "3plu.me".to_string(),
+                private_key: None,
+                public_key: None,
             },
         ]
         .into_iter()

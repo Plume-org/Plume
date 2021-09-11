@@ -958,6 +958,8 @@ impl FromId<DbConn> for User {
                     open_registrations: true,
                     short_description_html: String::new(),
                     long_description_html: String::new(),
+                    private_key: None,
+                    public_key: None,
                 },
             )
         })?;

@@ -359,6 +359,8 @@ impl FromId<DbConn> for Blog {
                     open_registrations: true,
                     short_description_html: String::new(),
                     long_description_html: String::new(),
+                    private_key: None,
+                    public_key: None,
                 },
             )
         })?;
