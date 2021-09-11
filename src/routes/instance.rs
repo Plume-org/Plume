@@ -11,7 +11,7 @@ use validator::{Validate, ValidationErrors};
 use crate::inbox;
 use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use crate::template_utils::{IntoContext, Ructe};
-use plume_common::activity_pub::{broadcast, inbox::FromId};
+use plume_common::activity_pub::{broadcast, inbox::FromId, ActivityStream, ApRequest};
 use plume_models::{
     admin::*,
     blocklisted_emails::*,
@@ -47,6 +47,36 @@ pub fn index(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
         Post::count_local(&conn)?,
         timelines
     )))
+}
+
+/// Experimental
+/// "!" might be change in the future
+///
+/// This exists for communication with Mastodon.
+/// Secure mode Mastodon requires HTTP signature for event GET requests.
+/// To sign requests, public key of request sender is required. We decided
+/// the sender is local instance.
+#[get("/!/<public_domain>")]
+pub fn activity_details(
+    public_domain: String,
+    conn: DbConn,
+    _ap: ApRequest,
+) -> Option<ActivityStream<CustomService>> {
+    if let Ok(instance) = Instance::find_by_domain(&conn, &public_domain) {
+        if !instance.local {
+            return None;
+        }
+        match instance.to_activity() {
+            Ok(activity) => Some(ActivityStream::new(activity)),
+            Err(plume_models::Error::NotFound) => None,
+            Err(err) => {
+                tracing::error!("{:?}", err);
+                panic!();
+            }
+        }
+    } else {
+        None
+    }
 }
 
 #[get("/admin")]

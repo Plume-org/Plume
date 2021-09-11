@@ -129,6 +129,7 @@ Then try to restart Plume.
                 routes::comments::delete,
                 routes::comments::activity_pub,
                 routes::instance::index,
+                routes::instance::activity_details,
                 routes::instance::admin,
                 routes::instance::admin_mod,
                 routes::instance::admin_instances,
