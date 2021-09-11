@@ -302,8 +302,10 @@ pub fn migrate_data(dbpool: &DbPool) -> Result<()> {
 }
 
 fn ensure_local_instance_keys(conn: &Connection) -> Result<()> {
-    let instance = Instance::get_local()?;
-    instance.set_keypair(conn)
+    for instance in Instance::get_locals(conn)? {
+        instance.set_keypair(conn)?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]
