@@ -164,6 +164,8 @@ mod tests {
                     name: random_hex().to_string(),
                     open_registrations: true,
                     public_domain: random_hex().to_string(),
+                    private_key: None,
+                    public_key: None,
                 },
             )
             .unwrap();
