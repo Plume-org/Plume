@@ -79,6 +79,13 @@ impl Instance {
         *LOCAL_INSTANCE.write().unwrap() = Instance::get_local_uncached(conn).ok();
     }
 
+    pub fn get_locals(conn: &Connection) -> Result<Vec<Instance>> {
+        instances::table
+            .filter(instances::local.eq(true))
+            .load::<Instance>(conn)
+            .map_err(Error::from)
+    }
+
     pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
         instances::table
             .filter(instances::local.eq(false))
