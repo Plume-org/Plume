@@ -17,6 +17,8 @@ extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
 
+use db_conn::DbPool;
+use instance::Instance;
 use once_cell::sync::Lazy;
 use plume_common::activity_pub::inbox::InboxError;
 use posts::PostEvent;
@@ -293,6 +295,15 @@ pub use config::CONFIG;
 
 pub fn ap_url(url: &str) -> String {
     format!("https://{}", url)
+}
+
+pub fn migrate_data(dbpool: &DbPool) -> Result<()> {
+    ensure_local_instance_keys(&dbpool.get().unwrap())
+}
+
+fn ensure_local_instance_keys(conn: &Connection) -> Result<()> {
+    let instance = Instance::get_local()?;
+    instance.set_keypair(conn)
 }
 
 #[cfg(test)]
