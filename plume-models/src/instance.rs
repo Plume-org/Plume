@@ -8,7 +8,7 @@ use crate::{
 };
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use plume_common::utils::md_to_html;
+use plume_common::{activity_pub::sign::gen_keypair, utils::md_to_html};
 use std::sync::RwLock;
 
 #[derive(Clone, Identifiable, Queryable)]
@@ -241,6 +241,35 @@ impl Instance {
                     .collect()
             })
             .map_err(Error::from)
+    }
+}
+
+impl NewInstance {
+    pub fn new_local(
+        conn: &Connection,
+        public_domain: String,
+        name: String,
+        open_registrations: bool,
+        default_license: String,
+    ) -> Result<Instance> {
+        let (pub_key, priv_key) = gen_keypair();
+
+        Instance::insert(
+            conn,
+            NewInstance {
+                public_domain,
+                name,
+                local: true,
+                open_registrations,
+                short_description: SafeString::new(""),
+                long_description: SafeString::new(""),
+                default_license,
+                long_description_html: String::new(),
+                short_description_html: String::new(),
+                private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
+                public_key: Some(String::from_utf8(pub_key).or(Err(Error::Signature))?),
+            },
+        )
     }
 }
 
