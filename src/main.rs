@@ -15,6 +15,7 @@ use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
+    migrate_data,
     migrations::IMPORTED_MIGRATIONS,
     remote_fetch_actor::RemoteFetchActor,
     search::{actor::SearchActor, Searcher as UnmanagedSearcher},
@@ -79,6 +80,7 @@ Then try to restart Plume.
 "#
         )
     }
+    migrate_data(&dbpool).expect("Failed to migrate data");
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     let searcher = Arc::new(UnmanagedSearcher::open_or_recreate(
