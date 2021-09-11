@@ -1,6 +1,6 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
 
-use plume_models::{instance::*, safe_string::SafeString, Connection};
+use plume_models::{instance::NewInstance, Connection};
 use std::env;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
@@ -53,21 +53,5 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         .unwrap_or_else(|| String::from("CC-BY-SA"));
     let open_reg = !args.is_present("private");
 
-    Instance::insert(
-        conn,
-        NewInstance {
-            public_domain: domain,
-            name,
-            local: true,
-            long_description: SafeString::new(""),
-            short_description: SafeString::new(""),
-            default_license: license,
-            open_registrations: open_reg,
-            short_description_html: String::new(),
-            long_description_html: String::new(),
-            private_key: None,
-            public_key: None,
-        },
-    )
-    .expect("Couldn't save instance");
+    NewInstance::new_local(conn, domain, name, open_reg, license).expect("Couldn't save instance");
 }
