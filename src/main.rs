@@ -63,6 +63,26 @@ fn init_pool() -> Option<DbPool> {
 }
 
 pub(crate) fn init_rocket() -> rocket::Rocket {
+    match dotenv::dotenv() {
+        Ok(path) => eprintln!("Configuration read from {}", path.display()),
+        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
+        e => e.map(|_| ()).unwrap(),
+    }
+    tracing_subscriber::fmt::init();
+
+    App::new("Plume")
+        .bin_name("plume")
+        .version(env!("CARGO_PKG_VERSION"))
+        .about("Plume backend server")
+        .after_help(
+            r#"
+The plume command should be run inside the directory
+containing the `.env` configuration file and `static` directory.
+See https://docs.joinplu.me/installation/config
+and https://docs.joinplu.me/installation/init for more info.
+        "#,
+        )
+        .get_matches();
     let dbpool = init_pool().expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
@@ -257,26 +277,6 @@ Then try to restart Plume.
 }
 
 fn main() {
-    match dotenv::dotenv() {
-        Ok(path) => eprintln!("Configuration read from {}", path.display()),
-        Err(ref e) if e.not_found() => eprintln!("no .env was found"),
-        e => e.map(|_| ()).unwrap(),
-    }
-    tracing_subscriber::fmt::init();
-
-    App::new("Plume")
-        .bin_name("plume")
-        .version(env!("CARGO_PKG_VERSION"))
-        .about("Plume backend server")
-        .after_help(
-            r#"
-The plume command should be run inside the directory
-containing the `.env` configuration file and `static` directory.
-See https://docs.joinplu.me/installation/config
-and https://docs.joinplu.me/installation/init for more info.
-        "#,
-        )
-        .get_matches();
     let rocket = init_rocket();
 
     #[cfg(feature = "test")]
