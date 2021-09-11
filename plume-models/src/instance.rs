@@ -242,6 +242,20 @@ impl Instance {
             })
             .map_err(Error::from)
     }
+
+    pub fn set_keypair(&self, conn: &Connection) -> Result<()> {
+        let (pub_key, priv_key) = gen_keypair();
+        let private_key = String::from_utf8(priv_key).or(Err(Error::Signature))?;
+        let public_key = String::from_utf8(pub_key).or(Err(Error::Signature))?;
+        diesel::update(self)
+            .set((
+                instances::private_key.eq(Some(private_key)),
+                instances::public_key.eq(Some(public_key)),
+            ))
+            .execute(conn)
+            .and(Ok(()))
+            .map_err(Error::from)
+    }
 }
 
 impl NewInstance {
