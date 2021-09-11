@@ -6,10 +6,16 @@ use crate::{
     users::{Role, User},
     Connection, Error, Result,
 };
+use activitypub::{actor::Service, CustomObject};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use plume_common::{activity_pub::sign::gen_keypair, utils::md_to_html};
+use plume_common::{
+    activity_pub::{sign::gen_keypair, ApSignature, PublicKey},
+    utils::md_to_html,
+};
 use std::sync::RwLock;
+
+pub type CustomService = CustomObject<ApSignature, Service>;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
@@ -255,6 +261,30 @@ impl Instance {
             .execute(conn)
             .and(Ok(()))
             .map_err(Error::from)
+    }
+
+    pub fn to_activity(&self) -> Result<CustomService> {
+        let mut actor = Service::default();
+        let id = ap_url(&format!(
+            "{}/!/{}",
+            Self::get_local()?.public_domain,
+            self.public_domain
+        ));
+        actor.object_props.set_id_string(id.clone())?;
+        actor.object_props.set_name_string(self.name.clone())?;
+
+        let mut ap_signature = ApSignature::default();
+        if self.local {
+            if let Some(pub_key) = self.public_key.clone() {
+                let mut public_key = PublicKey::default();
+                public_key.set_id_string(format!("{}#main-key", id))?;
+                public_key.set_owner_string(id)?;
+                public_key.set_public_key_pem_string(pub_key)?;
+                ap_signature.set_public_key_publickey(public_key)?;
+            }
+        };
+
+        Ok(CustomService::new(actor, ap_signature))
     }
 }
 
