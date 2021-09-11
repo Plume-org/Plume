@@ -106,6 +106,8 @@ table! {
         default_license -> Text,
         long_description_html -> Varchar,
         short_description_html -> Varchar,
+        private_key -> Nullable<Text>,
+        public_key -> Nullable<Text>,
     }
 }
 
