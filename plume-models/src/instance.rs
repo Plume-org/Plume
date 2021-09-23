@@ -9,11 +9,21 @@ use crate::{
 use activitypub::{actor::Service, CustomObject};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use openssl::{
+    hash::MessageDigest,
+    pkey::{PKey, Private},
+    rsa::Rsa,
+    sign,
+};
 use plume_common::{
-    activity_pub::{sign::gen_keypair, ApSignature, PublicKey},
+    activity_pub::{
+        sign::{gen_keypair, Signer},
+        ApSignature, PublicKey,
+    },
     utils::md_to_html,
 };
 use std::sync::RwLock;
+use tracing::warn;
 
 pub type CustomService = CustomObject<ApSignature, Service>;
 
@@ -270,13 +280,26 @@ impl Instance {
             .map_err(Error::from)
     }
 
+    pub fn get_keypair(&self) -> Result<PKey<Private>> {
+        PKey::from_rsa(Rsa::private_key_from_pem(
+            self.private_key.clone()?.as_ref(),
+        )?)
+        .map_err(Error::from)
+    }
+
+    /// This is experimental and might change in the future.
+    /// Currently "!" sign is used but it's not decided.
+    pub fn ap_url(&self) -> String {
+        ap_url(&format!(
+            "{}/!/{}",
+            Self::get_local().unwrap().public_domain,
+            self.public_domain
+        ))
+    }
+
     pub fn to_activity(&self) -> Result<CustomService> {
         let mut actor = Service::default();
-        let id = ap_url(&format!(
-            "{}/!/{}",
-            Self::get_local()?.public_domain,
-            self.public_domain
-        ));
+        let id = self.ap_url();
         actor.object_props.set_id_string(id.clone())?;
         actor.object_props.set_name_string(self.name.clone())?;
 
@@ -321,6 +344,34 @@ impl NewInstance {
                 public_key: Some(String::from_utf8(pub_key).or(Err(Error::Signature))?),
             },
         )
+    }
+}
+
+impl Signer for Instance {
+    type Error = Error;
+
+    fn get_key_id(&self) -> String {
+        format!("{}#main-key", self.ap_url())
+    }
+
+    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
+        let key = self.get_keypair()?;
+        let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)?;
+        signer.update(to_sign.as_bytes())?;
+        signer.sign_to_vec().map_err(Error::from)
+    }
+
+    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+        if self.public_key.is_none() {
+            warn!("missing public key for {}", self.public_domain);
+            return Err(Error::Signature);
+        }
+        let key = PKey::from_rsa(Rsa::public_key_from_pem(
+            self.public_key.clone().unwrap().as_ref(),
+        )?)?;
+        let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)?;
+        verifier.update(data.as_bytes())?;
+        verifier.verify(&signature).map_err(Error::from)
     }
 }
 
