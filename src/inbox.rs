@@ -26,8 +26,14 @@ pub fn handle_incoming(
         .or_else(|| activity["actor"]["id"].as_str())
         .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor = User::from_id(&conn, actor_id, None, CONFIG.proxy())
-        .expect("instance::shared_inbox: user error");
+    let actor = User::from_id(
+        &conn,
+        &Instance::get_local().expect("Failed to get local instance"),
+        actor_id,
+        None,
+        CONFIG.proxy(),
+    )
+    .expect("instance::shared_inbox: user error");
     if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
         // maybe we just know an old key?
         actor

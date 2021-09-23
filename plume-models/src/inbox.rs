@@ -3,7 +3,9 @@ use activitypub::activity::*;
 use crate::{
     comments::Comment,
     db_conn::DbConn,
-    follows, likes,
+    follows,
+    instance::Instance,
+    likes,
     posts::{Post, PostUpdate},
     reshares::Reshare,
     users::User,
@@ -47,20 +49,24 @@ impl_into_inbox_result! {
 }
 
 pub fn inbox(conn: &DbConn, act: serde_json::Value) -> Result<InboxResult, Error> {
-    Inbox::handle(conn, act)
-        .with::<User, Announce, Post>(CONFIG.proxy())
-        .with::<User, Create, Comment>(CONFIG.proxy())
-        .with::<User, Create, Post>(CONFIG.proxy())
-        .with::<User, Delete, Comment>(CONFIG.proxy())
-        .with::<User, Delete, Post>(CONFIG.proxy())
-        .with::<User, Delete, User>(CONFIG.proxy())
-        .with::<User, Follow, User>(CONFIG.proxy())
-        .with::<User, Like, Post>(CONFIG.proxy())
-        .with::<User, Undo, Reshare>(CONFIG.proxy())
-        .with::<User, Undo, follows::Follow>(CONFIG.proxy())
-        .with::<User, Undo, likes::Like>(CONFIG.proxy())
-        .with::<User, Update, PostUpdate>(CONFIG.proxy())
-        .done()
+    Inbox::handle(
+        conn,
+        &Instance::get_local().expect("Failed to get local instance"),
+        act,
+    )
+    .with::<User, Announce, Post>(CONFIG.proxy())
+    .with::<User, Create, Comment>(CONFIG.proxy())
+    .with::<User, Create, Post>(CONFIG.proxy())
+    .with::<User, Delete, Comment>(CONFIG.proxy())
+    .with::<User, Delete, Post>(CONFIG.proxy())
+    .with::<User, Delete, User>(CONFIG.proxy())
+    .with::<User, Follow, User>(CONFIG.proxy())
+    .with::<User, Like, Post>(CONFIG.proxy())
+    .with::<User, Undo, Reshare>(CONFIG.proxy())
+    .with::<User, Undo, follows::Follow>(CONFIG.proxy())
+    .with::<User, Undo, likes::Like>(CONFIG.proxy())
+    .with::<User, Update, PostUpdate>(CONFIG.proxy())
+    .done()
 }
 
 #[cfg(test)]

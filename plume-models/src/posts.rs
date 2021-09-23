@@ -630,13 +630,28 @@ impl FromId<DbConn> for Post {
             .into_iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
                 let url = link;
-                match User::from_id(conn, &url, None, CONFIG.proxy()) {
+                match User::from_id(
+                    conn,
+                    &Instance::get_local().expect("Failed to get local instance"),
+                    &url,
+                    None,
+                    CONFIG.proxy(),
+                ) {
                     Ok(u) => {
                         authors.push(u);
                         (blog, authors)
                     }
                     Err(_) => (
-                        blog.or_else(|| Blog::from_id(conn, &url, None, CONFIG.proxy()).ok()),
+                        blog.or_else(|| {
+                            Blog::from_id(
+                                conn,
+                                &Instance::get_local().expect("Failed to get local instance"),
+                                &url,
+                                None,
+                                CONFIG.proxy(),
+                            )
+                            .ok()
+                        }),
                         authors,
                     ),
                 }
@@ -837,8 +852,14 @@ impl AsObject<User, Update, &DbConn> for PostUpdate {
     type Output = ();
 
     fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        let mut post =
-            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
+        let mut post = Post::from_id(
+            conn,
+            &Instance::get_local().expect("Failed to get local instance"),
+            &self.ap_url,
+            None,
+            CONFIG.proxy(),
+        )
+        .map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

@@ -18,7 +18,8 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
+    sign::{self, Error as SignatureError, Result as SignatureResult},
+    ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
 };
 use url::Url;
 use webfinger::*;
@@ -149,7 +150,16 @@ impl Blog {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
-            .and_then(|l| Blog::from_id(conn, &l.href?, None, CONFIG.proxy()).map_err(|(_, e)| e))
+            .and_then(|l| {
+                Blog::from_id(
+                    conn,
+                    &Instance::get_local().expect("Failed to get local instance"),
+                    &l.href?,
+                    None,
+                    CONFIG.proxy(),
+                )
+                .map_err(|(_, e)| e)
+            })
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
@@ -374,7 +384,14 @@ impl FromId<DbConn> for Blog {
                 Media::save_remote(
                     conn,
                     icon.object_props.url_string().ok()?,
-                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
+                    &User::from_id(
+                        conn,
+                        &Instance::get_local().expect("Failed to get local instance"),
+                        &owner,
+                        None,
+                        CONFIG.proxy(),
+                    )
+                    .ok()?,
                 )
                 .ok()
             })
@@ -390,7 +407,14 @@ impl FromId<DbConn> for Blog {
                 Media::save_remote(
                     conn,
                     banner.object_props.url_string().ok()?,
-                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
+                    &User::from_id(
+                        conn,
+                        &Instance::get_local().expect("Failed to get local instance"),
+                        &owner,
+                        None,
+                        CONFIG.proxy(),
+                    )
+                    .ok()?,
                 )
                 .ok()
             })
@@ -453,24 +477,22 @@ impl AsActor<&PlumeRocket> for Blog {
 }
 
 impl sign::Signer for Blog {
-    type Error = Error;
-
     fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
+    fn sign(&self, to_sign: &str) -> SignatureResult<Vec<u8>> {
         let key = self.get_keypair()?;
         let mut signer = Signer::new(MessageDigest::sha256(), &key)?;
         signer.update(to_sign.as_bytes())?;
-        signer.sign_to_vec().map_err(Error::from)
+        signer.sign_to_vec().map_err(SignatureError::from)
     }
 
-    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+    fn verify(&self, data: &str, signature: &[u8]) -> SignatureResult<bool> {
         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(&signature).map_err(Error::from)
+        verifier.verify(&signature).map_err(SignatureError::from)
     }
 }
 

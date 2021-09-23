@@ -20,7 +20,7 @@ extern crate tantivy;
 use db_conn::DbPool;
 use instance::Instance;
 use once_cell::sync::Lazy;
-use plume_common::activity_pub::inbox::InboxError;
+use plume_common::activity_pub::{inbox::InboxError, sign};
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
 use users::UserEvent;
@@ -78,6 +78,12 @@ impl From<bcrypt::BcryptError> for Error {
 pub const ITEMS_PER_PAGE: i32 = 12;
 impl From<openssl::error::ErrorStack> for Error {
     fn from(_: openssl::error::ErrorStack) -> Self {
+        Error::Signature
+    }
+}
+
+impl From<sign::Error> for Error {
+    fn from(_: sign::Error) -> Self {
         Error::Signature
     }
 }
@@ -161,6 +167,12 @@ impl From<InboxError<Error>> for Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+impl From<Error> for sign::Error {
+    fn from(_: Error) -> Self {
+        Self()
+    }
+}
 
 /// Adds a function to a model, that returns the first
 /// matching row for a given list of fields.

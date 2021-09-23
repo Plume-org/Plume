@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, db_conn::DbConn, notifications::*, schema::follows, users::User, Connection, Error,
-    Result, CONFIG,
+    ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
+    Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
@@ -168,6 +168,7 @@ impl FromId<DbConn> for Follow {
     fn from_activity(conn: &DbConn, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
             conn,
+            &Instance::get_local().expect("Failed to get local instance"),
             &follow.follow_props.actor_link::<Id>()?,
             None,
             CONFIG.proxy(),
@@ -176,6 +177,7 @@ impl FromId<DbConn> for Follow {
 
         let target = User::from_id(
             conn,
+            &Instance::get_local().expect("Failed to get local instance"),
             &follow.follow_props.object_link::<Id>()?,
             None,
             CONFIG.proxy(),

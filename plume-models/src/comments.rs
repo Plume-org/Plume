@@ -236,6 +236,7 @@ impl FromId<DbConn> for Comment {
                     })?,
                     author_id: User::from_id(
                         conn,
+                        &Instance::get_local().expect("Failed to get local instance"),
                         &note.object_props.attributed_to_link::<Id>()?,
                         None,
                         CONFIG.proxy(),
@@ -294,7 +295,13 @@ impl FromId<DbConn> for Comment {
                 .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
                 .into_iter()
                 .map(|v| {
-                    if let Ok(user) = User::from_id(conn, &v, None, CONFIG.proxy()) {
+                    if let Ok(user) = User::from_id(
+                        conn,
+                        &Instance::get_local().expect("Failed to get local instance"),
+                        &v,
+                        None,
+                        CONFIG.proxy(),
+                    ) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection

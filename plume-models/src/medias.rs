@@ -272,6 +272,7 @@ impl Media {
                         content_warning: image.object_props.summary_string().ok(),
                         owner_id: User::from_id(
                             conn,
+                            &Instance::get_local().expect("Failed to get local instance"),
                             image
                                 .object_props
                                 .attributed_to_link_vec::<Id>()

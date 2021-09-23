@@ -118,8 +118,8 @@ type Path<'a> = &'a str;
 type Query<'a> = &'a str;
 type RequestTarget<'a> = (Method<'a>, Path<'a>, Option<Query<'a>>);
 
-pub fn signature<S: Signer>(
-    signer: &S,
+pub fn signature(
+    signer: &dyn Signer,
     headers: &HeaderMap,
     request_target: RequestTarget,
 ) -> Result<HeaderValue, Error> {
@@ -166,8 +166,10 @@ pub fn signature<S: Signer>(
 
 #[cfg(test)]
 mod tests {
-    use super::{signature, Error};
-    use crate::activity_pub::sign::{gen_keypair, Signer};
+    use super::signature;
+    use crate::activity_pub::sign::{
+        gen_keypair, Error as SignatureError, Result as SignatureResult, Signer,
+    };
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
     use reqwest::header::HeaderMap;
 
@@ -187,26 +189,24 @@ mod tests {
     }
 
     impl Signer for MySigner {
-        type Error = Error;
-
         fn get_key_id(&self) -> String {
             "mysigner".into()
         }
 
-        fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error> {
+        fn sign(&self, to_sign: &str) -> SignatureResult<Vec<u8>> {
             let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
                 .unwrap();
             let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
             signer.update(to_sign.as_bytes()).unwrap();
-            signer.sign_to_vec().map_err(|_| Error())
+            signer.sign_to_vec().map_err(|_| SignatureError())
         }
 
-        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error> {
+        fn verify(&self, data: &str, signature: &[u8]) -> SignatureResult<bool> {
             let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
                 .unwrap();
             let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
             verifier.update(data.as_bytes()).unwrap();
-            verifier.verify(&signature).map_err(|_| Error())
+            verifier.verify(&signature).map_err(|_| SignatureError())
         }
     }
 

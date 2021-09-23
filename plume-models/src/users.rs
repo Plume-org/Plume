@@ -24,7 +24,7 @@ use plume_common::{
     activity_pub::{
         ap_accept_header,
         inbox::{AsActor, AsObject, FromId},
-        sign::{gen_keypair, Signer},
+        sign::{gen_keypair, Error as SignatureError, Result as SignatureResult, Signer},
         ActivityStream, ApSignature, Id, IntoId, PublicKey, PUBLIC_VISIBILITY,
     },
     utils,
@@ -210,7 +210,14 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(conn, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
+        User::from_id(
+            conn,
+            &Instance::get_local().expect("Failed to get local instance"),
+            link.href.as_ref()?,
+            None,
+            CONFIG.proxy(),
+        )
+        .map_err(|(_, e)| e)
     }
 
     pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
@@ -1065,24 +1072,22 @@ impl AsObject<User, Delete, &DbConn> for User {
 }
 
 impl Signer for User {
-    type Error = Error;
-
     fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
+    fn sign(&self, to_sign: &str) -> SignatureResult<Vec<u8>> {
         let key = self.get_keypair()?;
         let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)?;
         signer.update(to_sign.as_bytes())?;
-        signer.sign_to_vec().map_err(Error::from)
+        signer.sign_to_vec().map_err(SignatureError::from)
     }
 
-    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+    fn verify(&self, data: &str, signature: &[u8]) -> SignatureResult<bool> {
         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(&signature).map_err(Error::from)
+        verifier.verify(&signature).map_err(SignatureError::from)
     }
 }
 

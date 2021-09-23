@@ -1,6 +1,7 @@
 use crate::{
     db_conn::{DbConn, DbPool},
     follows,
+    instance::Instance,
     posts::{LicensedArticle, Post},
     users::{User, UserEvent},
     ACTOR_SYS, CONFIG, USER_CHAN,
@@ -89,7 +90,13 @@ fn fetch_and_cache_followers(user: &Arc<User>, conn: &DbConn) {
     match follower_ids {
         Ok(user_ids) => {
             for user_id in user_ids {
-                let follower = User::from_id(conn, &user_id, None, CONFIG.proxy());
+                let follower = User::from_id(
+                    conn,
+                    &Instance::get_local().expect("Failed to get local instance"),
+                    &user_id,
+                    None,
+                    CONFIG.proxy(),
+                );
                 match follower {
                     Ok(follower) => {
                         let inserted = follows::Follow::insert(

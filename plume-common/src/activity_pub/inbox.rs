@@ -1,6 +1,10 @@
 use std::fmt::Debug;
 
-use super::request;
+use super::{request, sign::Signer};
+use reqwest::{
+    header::{HeaderValue, HOST},
+    Url,
+};
 
 /// Represents an ActivityPub inbox.
 ///
@@ -11,7 +15,8 @@ use super::request;
 /// ```rust
 /// # extern crate activitypub;
 /// # use activitypub::{actor::Person, activity::{Announce, Create}, object::Note};
-/// # use plume_common::activity_pub::inbox::*;
+/// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+/// # use plume_common::activity_pub::{inbox::*, sign::{gen_keypair, Error as SignatureError, Result as SignatureResult, Signer}};
 /// # struct User;
 /// # impl FromId<()> for User {
 /// #     type Error = ();
@@ -60,6 +65,42 @@ use super::request;
 /// #         Ok(())
 /// #     }
 /// # }
+/// # struct MySigner {
+/// #     public_key: String,
+/// #     private_key: String,
+/// # }
+/// #
+/// # impl MySigner {
+/// #     fn new() -> Self {
+/// #         let (pub_key, priv_key) = gen_keypair();
+/// #         Self {
+/// #             public_key: String::from_utf8(pub_key).unwrap(),
+/// #             private_key: String::from_utf8(priv_key).unwrap(),
+/// #         }
+/// #     }
+/// # }
+/// #
+/// # impl Signer for MySigner {
+/// #     fn get_key_id(&self) -> String {
+/// #         "mysigner".into()
+/// #     }
+/// #
+/// #     fn sign(&self, to_sign: &str) -> SignatureResult<Vec<u8>> {
+/// #         let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+/// #         signer.update(to_sign.as_bytes()).unwrap();
+/// #         signer.sign_to_vec().map_err(|_| SignatureError())
+/// #     }
+/// #
+/// #     fn verify(&self, data: &str, signature: &[u8]) -> SignatureResult<bool> {
+/// #         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+/// #         verifier.update(data.as_bytes()).unwrap();
+/// #         verifier.verify(&signature).map_err(|_| SignatureError())
+/// #     }
+/// # }
 /// #
 /// # let mut act = Create::default();
 /// # act.object_props.set_id_string(String::from("https://test.ap/activity")).unwrap();
@@ -70,8 +111,9 @@ use super::request;
 /// # let activity_json = serde_json::to_value(act).unwrap();
 /// #
 /// # let conn = ();
+/// # let sender = MySigner::new();
 /// #
-/// let result: Result<(), ()> = Inbox::handle(&conn, activity_json)
+/// let result: Result<(), ()> = Inbox::handle(&conn, &sender, activity_json)
 ///    .with::<User, Announce, Message>(None)
 ///    .with::<User, Create,   Message>(None)
 ///    .done();
@@ -85,9 +127,10 @@ where
     /// # Structure
     ///
     /// - the context to be passed to each handler.
+    /// - the sender actor to sign request
     /// - the activity
     /// - the reason it has not been handled yet
-    NotHandled(&'a C, serde_json::Value, InboxError<E>),
+    NotHandled(&'a C, &'a dyn Signer, serde_json::Value, InboxError<E>),
 
     /// A matching handler have been found but failed
     ///
@@ -140,8 +183,12 @@ where
     ///
     /// - `ctx`: the context to pass to each handler
     /// - `json`: the JSON representation of the incoming activity
-    pub fn handle(ctx: &'a C, json: serde_json::Value) -> Inbox<'a, C, E, R> {
-        Inbox::NotHandled(ctx, json, InboxError::NoMatch)
+    pub fn handle(
+        ctx: &'a C,
+        sender: &'a dyn Signer,
+        json: serde_json::Value,
+    ) -> Inbox<'a, C, E, R> {
+        Inbox::NotHandled(ctx, sender, json, InboxError::NoMatch)
     }
 
     /// Registers an handler on this Inbox.
@@ -152,27 +199,30 @@ where
         M: AsObject<A, V, &'a C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
-        if let Inbox::NotHandled(ctx, mut act, e) = self {
+        if let Inbox::NotHandled(ctx, sender, mut act, e) = self {
             if serde_json::from_value::<V>(act.clone()).is_ok() {
                 let act_clone = act.clone();
                 let act_id = match act_clone["id"].as_str() {
                     Some(x) => x,
-                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidID),
+                    None => return Inbox::NotHandled(ctx, sender, act, InboxError::InvalidID),
                 };
 
                 // Get the actor ID
                 let actor_id = match get_id(act["actor"].clone()) {
                     Some(x) => x,
-                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
+                    None => {
+                        return Inbox::NotHandled(ctx, sender, act, InboxError::InvalidActor(None))
+                    }
                 };
 
                 if Self::is_spoofed_activity(&actor_id, &act) {
-                    return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None));
+                    return Inbox::NotHandled(ctx, sender, act, InboxError::InvalidObject(None));
                 }
 
                 // Transform this actor to a model (see FromId for details about the from_id function)
                 let actor = match A::from_id(
                     ctx,
+                    sender,
                     &actor_id,
                     serde_json::from_value(act["actor"].clone()).ok(),
                     proxy,
@@ -183,17 +233,25 @@ where
                         if let Some(json) = json {
                             act["actor"] = json;
                         }
-                        return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)));
+                        return Inbox::NotHandled(
+                            ctx,
+                            sender,
+                            act,
+                            InboxError::InvalidActor(Some(e)),
+                        );
                     }
                 };
 
                 // Same logic for "object"
                 let obj_id = match get_id(act["object"].clone()) {
                     Some(x) => x,
-                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None)),
+                    None => {
+                        return Inbox::NotHandled(ctx, sender, act, InboxError::InvalidObject(None))
+                    }
                 };
                 let obj = match M::from_id(
                     ctx,
+                    sender,
                     &obj_id,
                     serde_json::from_value(act["object"].clone()).ok(),
                     proxy,
@@ -203,7 +261,12 @@ where
                         if let Some(json) = json {
                             act["object"] = json;
                         }
-                        return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e)));
+                        return Inbox::NotHandled(
+                            ctx,
+                            sender,
+                            act,
+                            InboxError::InvalidObject(Some(e)),
+                        );
                     }
                 };
 
@@ -215,7 +278,7 @@ where
             } else {
                 // If the Activity type is not matching the expected one for
                 // this handler, try with the next one.
-                Inbox::NotHandled(ctx, act, e)
+                Inbox::NotHandled(ctx, sender, act, e)
             }
         } else {
             self
@@ -226,7 +289,7 @@ where
     pub fn done(self) -> Result<R, E> {
         match self {
             Inbox::Handled(res) => Ok(res),
-            Inbox::NotHandled(_, _, err) => Err(E::from(err)),
+            Inbox::NotHandled(_, _, _, err) => Err(E::from(err)),
             Inbox::Failed(err) => Err(err),
         }
     }
@@ -293,6 +356,7 @@ pub trait FromId<C>: Sized {
     ///   If absent, the ID will be dereferenced.
     fn from_id(
         ctx: &C,
+        sender: &dyn Signer,
         id: &str,
         object: Option<Self::Object>,
         proxy: Option<&reqwest::Proxy>,
@@ -301,7 +365,7 @@ pub trait FromId<C>: Sized {
             Ok(x) => Ok(x),
             _ => match object {
                 Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
-                None => Self::from_activity(ctx, Self::deref(id, proxy.cloned())?)
+                None => Self::from_activity(ctx, Self::deref(id, sender, proxy.cloned())?)
                     .map_err(|e| (None, e)),
             },
         }
@@ -310,9 +374,17 @@ pub trait FromId<C>: Sized {
     /// Dereferences an ID
     fn deref(
         id: &str,
+        sender: &dyn Signer,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        let headers = request::headers();
+        let mut headers = request::headers();
+        let url = Url::parse(&id).map_err(|_| (None, InboxError::InvalidID.into()))?;
+        if !url.has_host() {
+            return Err((None, InboxError::InvalidID.into()));
+        }
+        let host_header_value = HeaderValue::from_str(&url.host_str().expect("Unreachable"))
+            .map_err(|_| (None, InboxError::DerefError.into()))?;
+        headers.insert(HOST, host_header_value);
         if let Some(proxy) = proxy {
             reqwest::ClientBuilder::new().proxy(proxy)
         } else {
@@ -322,7 +394,12 @@ pub trait FromId<C>: Sized {
         .build()
         .map_err(|_| (None, InboxError::DerefError.into()))?
         .get(id)
-        .headers(headers)
+        .headers(headers.clone())
+        .header(
+            "Signature",
+            request::signature(sender, &headers, ("get", url.path(), url.query()))
+                .map_err(|_| (None, InboxError::DerefError.into()))?,
+        )
         .send()
         .map_err(|_| (None, InboxError::DerefError))
         .and_then(|mut r| {
@@ -451,8 +528,10 @@ where
 
 #[cfg(test)]
 mod tests {
+    use super::super::sign::{gen_keypair, Error as SignatureError, Result as SignatureResult};
     use super::*;
     use activitypub::{activity::*, actor::Person, object::Note};
+    use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
 
     struct MyActor;
     impl FromId<()> for MyActor {
@@ -550,10 +629,47 @@ mod tests {
         act
     }
 
+    struct MySigner {
+        public_key: String,
+        private_key: String,
+    }
+
+    impl MySigner {
+        fn new() -> Self {
+            let (pub_key, priv_key) = gen_keypair();
+            Self {
+                public_key: String::from_utf8(pub_key).unwrap(),
+                private_key: String::from_utf8(priv_key).unwrap(),
+            }
+        }
+    }
+
+    impl Signer for MySigner {
+        fn get_key_id(&self) -> String {
+            "mysigner".into()
+        }
+
+        fn sign(&self, to_sign: &str) -> SignatureResult<Vec<u8>> {
+            let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+                .unwrap();
+            let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+            signer.update(to_sign.as_bytes()).unwrap();
+            signer.sign_to_vec().map_err(|_| SignatureError())
+        }
+
+        fn verify(&self, data: &str, signature: &[u8]) -> SignatureResult<bool> {
+            let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+                .unwrap();
+            let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+            verifier.update(data.as_bytes()).unwrap();
+            verifier.verify(&signature).map_err(|_| SignatureError())
+        }
+    }
+
     #[test]
     fn test_inbox_basic() {
         let act = serde_json::to_value(build_create()).unwrap();
-        let res: Result<(), ()> = Inbox::handle(&(), act)
+        let res: Result<(), ()> = Inbox::handle(&(), &MySigner::new(), act)
             .with::<MyActor, Create, MyObject>(None)
             .done();
         assert!(res.is_ok());
@@ -562,7 +678,7 @@ mod tests {
     #[test]
     fn test_inbox_multi_handlers() {
         let act = serde_json::to_value(build_create()).unwrap();
-        let res: Result<(), ()> = Inbox::handle(&(), act)
+        let res: Result<(), ()> = Inbox::handle(&(), &MySigner::new(), act)
             .with::<MyActor, Announce, MyObject>(None)
             .with::<MyActor, Delete, MyObject>(None)
             .with::<MyActor, Create, MyObject>(None)
@@ -575,7 +691,7 @@ mod tests {
     fn test_inbox_failure() {
         let act = serde_json::to_value(build_create()).unwrap();
         // Create is not handled by this inbox
-        let res: Result<(), ()> = Inbox::handle(&(), act)
+        let res: Result<(), ()> = Inbox::handle(&(), &MySigner::new(), act)
             .with::<MyActor, Announce, MyObject>(None)
             .with::<MyActor, Like, MyObject>(None)
             .done();
@@ -624,12 +740,12 @@ mod tests {
     fn test_inbox_actor_failure() {
         let act = serde_json::to_value(build_create()).unwrap();
 
-        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
+        let res: Result<(), ()> = Inbox::handle(&(), &MySigner::new(), act.clone())
             .with::<FailingActor, Create, MyObject>(None)
             .done();
         assert!(res.is_err());
 
-        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
+        let res: Result<(), ()> = Inbox::handle(&(), &MySigner::new(), act.clone())
             .with::<FailingActor, Create, MyObject>(None)
             .with::<MyActor, Create, MyObject>(None)
             .done();

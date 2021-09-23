@@ -434,7 +434,13 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
         return Some(Redirect::to(uri!(super::user::details: name = target)));
     }
 
-    if let Ok(post) = Post::from_id(&conn, &target, None, CONFIG.proxy()) {
+    if let Ok(post) = Post::from_id(
+        &conn,
+        &Instance::get_local().expect("Failed to get local instance"),
+        &target,
+        None,
+        CONFIG.proxy(),
+    ) {
         return Some(Redirect::to(uri!(
             super::posts::details: blog = post.get_blog(&conn).expect("Can't retrieve blog").fqn,
             slug = &post.slug,
@@ -442,7 +448,13 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
         )));
     }
 
-    if let Ok(comment) = Comment::from_id(&conn, &target, None, CONFIG.proxy()) {
+    if let Ok(comment) = Comment::from_id(
+        &conn,
+        &Instance::get_local().expect("Failed to get local instance"),
+        &target,
+        None,
+        CONFIG.proxy(),
+    ) {
         if comment.can_see(&conn, user.as_ref()) {
             let post = comment.get_post(&conn).expect("Can't retrieve post");
             return Some(Redirect::to(uri!(

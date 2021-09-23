@@ -1,6 +1,6 @@
 use crate::{
-    db_conn::DbConn, notifications::*, posts::Post, schema::likes, timeline::*, users::User,
-    Connection, Error, Result, CONFIG,
+    db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::likes, timeline::*,
+    users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::activity;
 use chrono::NaiveDateTime;
@@ -117,6 +117,7 @@ impl FromId<DbConn> for Like {
             NewLike {
                 post_id: Post::from_id(
                     conn,
+                    &Instance::get_local().expect("Failed to get local instance"),
                     &act.like_props.object_link::<Id>()?,
                     None,
                     CONFIG.proxy(),
@@ -125,6 +126,7 @@ impl FromId<DbConn> for Like {
                 .id,
                 user_id: User::from_id(
                     conn,
+                    &Instance::get_local().expect("Failed to get local instance"),
                     &act.like_props.actor_link::<Id>()?,
                     None,
                     CONFIG.proxy(),

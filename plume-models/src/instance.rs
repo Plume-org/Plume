@@ -17,7 +17,7 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        sign::{gen_keypair, Signer},
+        sign::{gen_keypair, Error as SignatureError, Result as SignatureResult, Signer},
         ApSignature, PublicKey,
     },
     utils::md_to_html,
@@ -348,30 +348,28 @@ impl NewInstance {
 }
 
 impl Signer for Instance {
-    type Error = Error;
-
     fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url())
     }
 
-    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
+    fn sign(&self, to_sign: &str) -> SignatureResult<Vec<u8>> {
         let key = self.get_keypair()?;
         let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)?;
         signer.update(to_sign.as_bytes())?;
-        signer.sign_to_vec().map_err(Error::from)
+        signer.sign_to_vec().map_err(SignatureError::from)
     }
 
-    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+    fn verify(&self, data: &str, signature: &[u8]) -> SignatureResult<bool> {
         if self.public_key.is_none() {
             warn!("missing public key for {}", self.public_domain);
-            return Err(Error::Signature);
+            return Err(SignatureError());
         }
         let key = PKey::from_rsa(Rsa::public_key_from_pem(
             self.public_key.clone().unwrap().as_ref(),
         )?)?;
         let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(&signature).map_err(Error::from)
+        verifier.verify(&signature).map_err(SignatureError::from)
     }
 }
 
