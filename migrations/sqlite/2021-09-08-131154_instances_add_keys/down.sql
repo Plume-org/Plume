@@ -11,7 +11,7 @@ CREATE TABLE instances_old (
     default_license TEXT NOT NULL DEFAULT 'CC-0',
     long_description_html VARCHAR NOT NULL DEFAULT '',
     short_description_html VARCHAR NOT NULL DEFAULT ''
-)
+);
 INSERT INTO instances_old SELECT
     id,
     public_domain,
