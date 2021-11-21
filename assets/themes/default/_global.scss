@@ -238,6 +238,7 @@ p.error {
     font-weight: normal;
     line-height: 1.75;
     display: inline-block;
+    position: absolute;
     a {
       display: block;
       transition: color 0.1s ease-in;
@@ -248,7 +249,7 @@ p.error {
   }
 
   .controls {
-    float: inline-end;
+    text-align: end;
 
     .button {
       margin-top: 0;
