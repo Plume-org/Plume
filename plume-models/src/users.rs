@@ -52,6 +52,7 @@ pub enum Role {
     Admin = 0,
     Moderator = 1,
     Normal = 2,
+    Instance = 3,
 }
 
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
@@ -78,6 +79,7 @@ pub struct User {
     pub summary_html: SafeString,
     /// 0 = admin
     /// 1 = moderator
+    /// 3 = local instance
     /// anything else = normal user
     pub role: i32,
     pub preferred_theme: Option<String>,
