@@ -3,11 +3,11 @@ use crate::{
     medias::Media,
     safe_string::SafeString,
     schema::{instances, users},
-    users::{Role, User},
+    users::{NewUser, Role, User},
     Connection, Error, Result,
 };
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::utils::md_to_html;
 use std::sync::RwLock;
 
@@ -44,6 +44,8 @@ pub struct NewInstance {
 lazy_static! {
     static ref LOCAL_INSTANCE: RwLock<Option<Instance>> = RwLock::new(None);
 }
+
+const LOCAL_INSTANCE_USER: &str = "__instance__";
 
 impl Instance {
     pub fn set_local(self) {
@@ -83,6 +85,28 @@ impl Instance {
             .limit((max - min).into())
             .load::<Instance>(conn)
             .map_err(Error::from)
+    }
+
+    pub fn get_local_instance_user(conn: &Connection) -> Result<User> {
+        users::table
+            .filter(users::role.eq(3))
+            .first(conn)
+            .or_else(|err| match err {
+                NotFound => {
+                    let instance = Instance::get_local().expect("Failed to get local instance");
+                    let email = format!("{}@{}", LOCAL_INSTANCE_USER, &instance.public_domain);
+                    NewUser::new_local(
+                        conn,
+                        LOCAL_INSTANCE_USER.into(),
+                        instance.public_domain,
+                        Role::Instance,
+                        "Local instance",
+                        email,
+                        None,
+                    )
+                }
+                _ => Err(Error::Db(err)),
+            })
     }
 
     insert!(instances, NewInstance);
