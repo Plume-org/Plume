@@ -68,4 +68,5 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         },
     )
     .expect("Couldn't save instance");
+    Instance::create_local_instance_user(conn).expect("Couldn't save local instance user");
 }
