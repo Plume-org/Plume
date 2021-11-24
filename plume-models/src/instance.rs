@@ -8,6 +8,7 @@ use crate::{
 };
 use chrono::NaiveDateTime;
 use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQueryDsl};
+use once_cell::sync::OnceCell;
 use plume_common::utils::md_to_html;
 use std::sync::RwLock;
 
@@ -46,6 +47,7 @@ lazy_static! {
 }
 
 const LOCAL_INSTANCE_USERNAME: &str = "__instance__";
+static LOCAL_INSTANCE_USER: OnceCell<User> = OnceCell::new();
 
 impl Instance {
     pub fn set_local(self) {
@@ -78,16 +80,11 @@ impl Instance {
             .map_err(Error::from)
     }
 
-    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
-        instances::table
-            .order(instances::public_domain.asc())
-            .offset(min.into())
-            .limit((max - min).into())
-            .load::<Instance>(conn)
-            .map_err(Error::from)
+    pub fn get_local_instance_user() -> Option<&'static User> {
+        LOCAL_INSTANCE_USER.get()
     }
 
-    pub fn get_local_instance_user(conn: &Connection) -> Result<User> {
+    pub fn get_local_instance_user_uncached(conn: &Connection) -> Result<User> {
         users::table
             .filter(users::role.eq(3))
             .first(conn)
@@ -107,6 +104,23 @@ impl Instance {
                 }
                 _ => Err(Error::Db(err)),
             })
+    }
+
+    pub fn cache_local_instance_user(conn: &Connection) {
+        let user = Self::get_local_instance_user_uncached(conn)
+            .expect("Failed to get local instance user");
+        LOCAL_INSTANCE_USER
+            .set(user)
+            .expect("Failed to set local instance user");
+    }
+
+    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
+        instances::table
+            .order(instances::public_domain.asc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<Instance>(conn)
+            .map_err(Error::from)
     }
 
     insert!(instances, NewInstance);
