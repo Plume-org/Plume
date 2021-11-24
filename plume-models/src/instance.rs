@@ -45,7 +45,7 @@ lazy_static! {
     static ref LOCAL_INSTANCE: RwLock<Option<Instance>> = RwLock::new(None);
 }
 
-const LOCAL_INSTANCE_USER: &str = "__instance__";
+const LOCAL_INSTANCE_USERNAME: &str = "__instance__";
 
 impl Instance {
     pub fn set_local(self) {
@@ -94,10 +94,10 @@ impl Instance {
             .or_else(|err| match err {
                 NotFound => {
                     let instance = Instance::get_local().expect("Failed to get local instance");
-                    let email = format!("{}@{}", LOCAL_INSTANCE_USER, &instance.public_domain);
+                    let email = format!("{}@{}", LOCAL_INSTANCE_USERNAME, &instance.public_domain);
                     NewUser::new_local(
                         conn,
-                        LOCAL_INSTANCE_USER.into(),
+                        LOCAL_INSTANCE_USERNAME.into(),
                         instance.public_domain,
                         Role::Instance,
                         "Local instance",
