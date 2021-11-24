@@ -80,6 +80,20 @@ impl Instance {
             .map_err(Error::from)
     }
 
+    pub fn create_local_instance_user(conn: &Connection) -> Result<User> {
+        let instance = Instance::get_local().expect("Failed to get local instance");
+        let email = format!("{}@{}", LOCAL_INSTANCE_USERNAME, &instance.public_domain);
+        NewUser::new_local(
+            conn,
+            LOCAL_INSTANCE_USERNAME.into(),
+            instance.public_domain,
+            Role::Instance,
+            "Local instance",
+            email,
+            None,
+        )
+    }
+
     pub fn get_local_instance_user() -> Option<&'static User> {
         LOCAL_INSTANCE_USER.get()
     }
@@ -89,19 +103,7 @@ impl Instance {
             .filter(users::role.eq(3))
             .first(conn)
             .or_else(|err| match err {
-                NotFound => {
-                    let instance = Instance::get_local().expect("Failed to get local instance");
-                    let email = format!("{}@{}", LOCAL_INSTANCE_USERNAME, &instance.public_domain);
-                    NewUser::new_local(
-                        conn,
-                        LOCAL_INSTANCE_USERNAME.into(),
-                        instance.public_domain,
-                        Role::Instance,
-                        "Local instance",
-                        email,
-                        None,
-                    )
-                }
+                NotFound => Self::create_local_instance_user(conn),
                 _ => Err(Error::Db(err)),
             })
     }
