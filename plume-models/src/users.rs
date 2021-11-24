@@ -1039,6 +1039,10 @@ impl FromId<DbConn> for User {
 
         Ok(user)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsActor<&DbConn> for User {

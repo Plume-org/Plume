@@ -443,6 +443,10 @@ impl FromId<DbConn> for Blog {
             },
         )
     }
+
+    fn get_sender() -> &'static dyn sign::Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsActor<&PlumeRocket> for Blog {

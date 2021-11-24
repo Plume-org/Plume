@@ -15,6 +15,7 @@ use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
+        sign::Signer,
         Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
@@ -759,6 +760,10 @@ impl FromId<DbConn> for Post {
 
         Ok(post)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsObject<User, Create, &DbConn> for Post {
@@ -829,6 +834,10 @@ impl FromId<DbConn> for PostUpdate {
             license: updated.custom_props.license_string().ok(),
             tags: updated.object.object_props.tag,
         })
+    }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
 

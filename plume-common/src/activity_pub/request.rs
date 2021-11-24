@@ -118,8 +118,8 @@ type Path<'a> = &'a str;
 type Query<'a> = &'a str;
 type RequestTarget<'a> = (Method<'a>, Path<'a>, Option<Query<'a>>);
 
-pub fn signature<S: Signer>(
-    signer: &S,
+pub fn signature(
+    signer: &dyn Signer,
     headers: &HeaderMap,
     request_target: RequestTarget,
 ) -> Result<HeaderValue, Error> {

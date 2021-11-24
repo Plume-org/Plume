@@ -1,5 +1,10 @@
-use reqwest::header::{HeaderValue, ACCEPT};
+use reqwest::{
+    header::{HeaderValue, HOST},
+    Url,
+};
 use std::fmt::Debug;
+
+use super::{request, sign::Signer};
 
 /// Represents an ActivityPub inbox.
 ///
@@ -311,6 +316,14 @@ pub trait FromId<C>: Sized {
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
+        let mut headers = request::headers();
+        let url = Url::parse(id).map_err(|_| (None, InboxError::DerefError.into()))?;
+        if !url.has_host() {
+            return Err((None, InboxError::DerefError.into()));
+        }
+        let host_header_value = HeaderValue::from_str(&url.host_str().expect("Unreachable"))
+            .map_err(|_| (None, InboxError::DerefError.into()))?;
+        headers.insert(HOST, host_header_value);
         if let Some(proxy) = proxy {
             reqwest::ClientBuilder::new().proxy(proxy)
         } else {
@@ -320,13 +333,13 @@ pub trait FromId<C>: Sized {
         .build()
         .map_err(|_| (None, InboxError::DerefError.into()))?
         .get(id)
+        .headers(headers.clone())
         .header(
-            ACCEPT,
-            HeaderValue::from_str(
-                &super::ap_accept_header()
-                    .into_iter()
-                    .collect::<Vec<_>>()
-                    .join(", "),
+            "Signature",
+            request::signature(
+                Self::get_sender(),
+                &headers,
+                ("get", url.path(), url.query()),
             )
             .map_err(|_| (None, InboxError::DerefError.into()))?,
         )
@@ -347,6 +360,8 @@ pub trait FromId<C>: Sized {
 
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
     fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+
+    fn get_sender() -> &'static dyn Signer;
 }
 
 /// Should be implemented by anything representing an ActivityPub actor.
