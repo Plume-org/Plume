@@ -17,7 +17,7 @@ extern crate serde_json;
 extern crate tantivy;
 
 use once_cell::sync::Lazy;
-use plume_common::activity_pub::inbox::InboxError;
+use plume_common::activity_pub::{inbox::InboxError, sign};
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
 use users::UserEvent;
@@ -75,6 +75,12 @@ impl From<bcrypt::BcryptError> for Error {
 pub const ITEMS_PER_PAGE: i32 = 12;
 impl From<openssl::error::ErrorStack> for Error {
     fn from(_: openssl::error::ErrorStack) -> Self {
+        Error::Signature
+    }
+}
+
+impl From<sign::Error> for Error {
+    fn from(_: sign::Error) -> Self {
         Error::Signature
     }
 }
