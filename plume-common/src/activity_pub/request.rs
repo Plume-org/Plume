@@ -166,8 +166,8 @@ pub fn signature(
 
 #[cfg(test)]
 mod tests {
-    use super::{signature, Error};
-    use crate::activity_pub::sign::{gen_keypair, Signer};
+    use super::signature;
+    use crate::activity_pub::sign::{gen_keypair, Error, Result, Signer};
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
     use reqwest::header::HeaderMap;
 
@@ -187,13 +187,11 @@ mod tests {
     }
 
     impl Signer for MySigner {
-        type Error = Error;
-
         fn get_key_id(&self) -> String {
             "mysigner".into()
         }
 
-        fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error> {
+        fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
             let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
                 .unwrap();
             let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
@@ -201,7 +199,7 @@ mod tests {
             signer.sign_to_vec().map_err(|_| Error())
         }
 
-        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error> {
+        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
             let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
                 .unwrap();
             let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
