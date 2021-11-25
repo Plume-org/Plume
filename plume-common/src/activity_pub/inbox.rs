@@ -15,7 +15,50 @@ use super::{request, sign::Signer};
 /// ```rust
 /// # extern crate activitypub;
 /// # use activitypub::{actor::Person, activity::{Announce, Create}, object::Note};
+/// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+/// # use once_cell::sync::Lazy;
 /// # use plume_common::activity_pub::inbox::*;
+/// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
+/// #
+/// # static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+/// #
+/// # struct MySigner {
+/// #     public_key: String,
+/// #     private_key: String,
+/// # }
+/// #
+/// # impl MySigner {
+/// #     fn new() -> Self {
+/// #         let (pub_key, priv_key) = gen_keypair();
+/// #         Self {
+/// #             public_key: String::from_utf8(pub_key).unwrap(),
+/// #             private_key: String::from_utf8(priv_key).unwrap(),
+/// #         }
+/// #     }
+/// # }
+/// #
+/// # impl Signer for MySigner {
+/// #     fn get_key_id(&self) -> String {
+/// #         "mysigner".into()
+/// #     }
+/// #
+/// #     fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+/// #         let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+/// #         signer.update(to_sign.as_bytes()).unwrap();
+/// #         signer.sign_to_vec().map_err(|_| SignError())
+/// #     }
+/// #
+/// #     fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+/// #         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+/// #         verifier.update(data.as_bytes()).unwrap();
+/// #         verifier.verify(&signature).map_err(|_| SignError())
+/// #     }
+/// # }
+/// #
 /// # struct User;
 /// # impl FromId<()> for User {
 /// #     type Error = ();
@@ -27,6 +70,10 @@ use super::{request, sign::Signer};
 /// #
 /// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
 /// #         Ok(User)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
 /// #     }
 /// # }
 /// # impl AsActor<&()> for User {
@@ -46,6 +93,10 @@ use super::{request, sign::Signer};
 /// #
 /// #     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
 /// #         Ok(Message)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
 /// #     }
 /// # }
 /// # impl AsObject<User, Create, &()> for Message {
@@ -400,6 +451,49 @@ pub trait AsActor<C> {
 /// # extern crate activitypub;
 /// # use activitypub::{activity::Create, actor::Person, object::Note};
 /// # use plume_common::activity_pub::inbox::{AsActor, AsObject, FromId};
+/// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
+/// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+/// # use once_cell::sync::Lazy;
+/// #
+/// # static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+/// #
+/// # struct MySigner {
+/// #     public_key: String,
+/// #     private_key: String,
+/// # }
+/// #
+/// # impl MySigner {
+/// #     fn new() -> Self {
+/// #         let (pub_key, priv_key) = gen_keypair();
+/// #         Self {
+/// #             public_key: String::from_utf8(pub_key).unwrap(),
+/// #             private_key: String::from_utf8(priv_key).unwrap(),
+/// #         }
+/// #     }
+/// # }
+/// #
+/// # impl Signer for MySigner {
+/// #     fn get_key_id(&self) -> String {
+/// #         "mysigner".into()
+/// #     }
+/// #
+/// #     fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+/// #         let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+/// #         signer.update(to_sign.as_bytes()).unwrap();
+/// #         signer.sign_to_vec().map_err(|_| SignError())
+/// #     }
+/// #
+/// #     fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+/// #         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+/// #         verifier.update(data.as_bytes()).unwrap();
+/// #         verifier.verify(&signature).map_err(|_| SignError())
+/// #     }
+/// # }
+/// #
 /// # struct Account;
 /// # impl FromId<()> for Account {
 /// #     type Error = ();
@@ -411,6 +505,10 @@ pub trait AsActor<C> {
 /// #
 /// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
 /// #         Ok(Account)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
 /// #     }
 /// # }
 /// # impl AsActor<()> for Account {
@@ -434,6 +532,10 @@ pub trait AsActor<C> {
 ///
 ///     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
 ///         Ok(Message { text: obj.object_props.content_string().map_err(|_| ())? })
+///     }
+///
+///     fn get_sender() -> &'static dyn Signer {
+///         &*MY_SIGNER
 ///     }
 /// }
 ///
@@ -474,7 +576,51 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::activity_pub::sign::{
+        gen_keypair, Error as SignError, Result as SignResult, Signer,
+    };
     use activitypub::{activity::*, actor::Person, object::Note};
+    use once_cell::sync::Lazy;
+    use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+
+    static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+
+    struct MySigner {
+        public_key: String,
+        private_key: String,
+    }
+
+    impl MySigner {
+        fn new() -> Self {
+            let (pub_key, priv_key) = gen_keypair();
+            Self {
+                public_key: String::from_utf8(pub_key).unwrap(),
+                private_key: String::from_utf8(priv_key).unwrap(),
+            }
+        }
+    }
+
+    impl Signer for MySigner {
+        fn get_key_id(&self) -> String {
+            "mysigner".into()
+        }
+
+        fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+            let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+                .unwrap();
+            let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+            signer.update(to_sign.as_bytes()).unwrap();
+            signer.sign_to_vec().map_err(|_| SignError())
+        }
+
+        fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+            let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+                .unwrap();
+            let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+            verifier.update(data.as_bytes()).unwrap();
+            verifier.verify(&signature).map_err(|_| SignError())
+        }
+    }
 
     struct MyActor;
     impl FromId<()> for MyActor {
@@ -487,6 +633,10 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
             Ok(MyActor)
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
         }
     }
 
@@ -511,6 +661,10 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Note) -> Result<Self, Self::Error> {
             Ok(MyObject)
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
         }
     }
     impl AsObject<MyActor, Create, &()> for MyObject {
@@ -615,6 +769,10 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
             Err(())
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
         }
     }
     impl AsActor<&()> for FailingActor {
