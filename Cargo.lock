@@ -3038,6 +3038,7 @@ dependencies = [
  "heck",
  "hex",
  "hyper 0.12.36",
+ "once_cell",
  "openssl",
  "pulldown-cmark",
  "regex-syntax 0.6.25",
