@@ -350,6 +350,7 @@ pub(crate) mod tests {
         })
         .collect();
         Instance::cache_local(conn);
+        Instance::cache_local_instance_user(conn);
         res
     }
 
