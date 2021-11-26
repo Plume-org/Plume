@@ -442,7 +442,6 @@ mod tests {
                 )
                 .unwrap();
                 Instance::cache_local(conn);
-                Instance::cache_local_instance_user(conn);
                 instance
             });
             let mut user = NewUser::default();
