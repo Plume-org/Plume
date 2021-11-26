@@ -109,8 +109,9 @@ impl Instance {
     }
 
     pub fn cache_local_instance_user(conn: &Connection) {
-        let user = Self::get_local_instance_user_uncached(conn)
-            .expect("Failed to get local instance user");
+        let user = Self::get_local_instance_user_uncached(conn).unwrap_or_else(|_| {
+            Self::create_local_instance_user(conn).expect("Failed to create local instance user")
+        });
         LOCAL_INSTANCE_USER
             .set(user)
             .expect("Failed to set local instance user");
