@@ -236,9 +236,9 @@ p.error {
     font-family: $playfair;
     font-size: 1.75em;
     font-weight: normal;
-    line-height: 1.75;
-    display: inline-block;
-    position: absolute;
+    line-height: 1.10;
+    display: block;
+    position: relative;
     a {
       display: block;
       transition: color 0.1s ease-in;
