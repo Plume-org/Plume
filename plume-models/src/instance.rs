@@ -11,6 +11,7 @@ use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQuer
 use once_cell::sync::OnceCell;
 use plume_common::utils::md_to_html;
 use std::sync::RwLock;
+use tracing::error;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
@@ -81,7 +82,7 @@ impl Instance {
     }
 
     pub fn create_local_instance_user(conn: &Connection) -> Result<User> {
-        let instance = Instance::get_local().expect("Failed to get local instance");
+        let instance = Instance::get_local()?;
         let email = format!("{}@{}", LOCAL_INSTANCE_USERNAME, &instance.public_domain);
         NewUser::new_local(
             conn,
@@ -109,9 +110,13 @@ impl Instance {
     }
 
     pub fn cache_local_instance_user(conn: &Connection) {
-        let user = Self::get_local_instance_user_uncached(conn).unwrap_or_else(|_| {
-            Self::create_local_instance_user(conn).expect("Failed to create local instance user")
-        });
+        let res = Self::get_local_instance_user_uncached(conn)
+            .or_else(|_| Self::create_local_instance_user(conn));
+        if res.is_err() {
+            error!("Failed to cache local instance user: {:?}", res);
+            return;
+        }
+        let user = res.expect("Unreachable");
         LOCAL_INSTANCE_USER
             .set(user)
             .expect("Failed to set local instance user");
