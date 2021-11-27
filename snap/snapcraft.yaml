@@ -25,7 +25,7 @@ parts:
   plume:
     plugin: rust
     source: .
-    rust-revision: nightly-2021-03-25
+    rust-revision: nightly-2021-11-27
     build-packages:
       - libssl-dev
       - pkg-config
