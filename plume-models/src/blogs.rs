@@ -149,7 +149,15 @@ impl Blog {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
-            .and_then(|l| Blog::from_id(conn, &l.href?, None, CONFIG.proxy()).map_err(|(_, e)| e))
+            .and_then(|l| {
+                Blog::from_id(
+                    conn,
+                    &l.href.ok_or(Error::MissingApProperty)?,
+                    None,
+                    CONFIG.proxy(),
+                )
+                .map_err(|(_, e)| e)
+            })
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
@@ -236,7 +244,7 @@ impl Blog {
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         let mut coll = OrderedCollectionPage::default();
-        let acts = self.get_activity_page(&conn, (min, max));
+        let acts = self.get_activity_page(conn, (min, max));
         //This still doesn't do anything because the outbox
         //doesn't do anything yet
         coll.collection_page_props.set_next_link(Id::new(&format!(
@@ -265,7 +273,10 @@ impl Blog {
 
     pub fn get_keypair(&self) -> Result<PKey<Private>> {
         PKey::from_rsa(Rsa::private_key_from_pem(
-            self.private_key.clone()?.as_ref(),
+            self.private_key
+                .clone()
+                .ok_or(Error::MissingApProperty)?
+                .as_ref(),
         )?)
         .map_err(Error::from)
     }
@@ -318,7 +329,7 @@ impl Blog {
     }
 
     pub fn delete(&self, conn: &Connection) -> Result<()> {
-        for post in Post::get_for_blog(conn, &self)? {
+        for post in Post::get_for_blog(conn, self)? {
             post.delete(conn)?;
         }
         diesel::delete(self)
@@ -339,12 +350,12 @@ impl FromId<DbConn> for Blog {
     type Object = CustomGroup;
 
     fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(&conn, id)
+        Self::find_by_ap_url(conn, id)
     }
 
     fn from_activity(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str()?;
+        let inst = url.host_str().ok_or(Error::Url)?;
         let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
                 conn,
@@ -468,7 +479,7 @@ impl sign::Signer for Blog {
         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(&signature).map_err(Error::from)
+        verifier.verify(signature).map_err(Error::from)
     }
 }
 

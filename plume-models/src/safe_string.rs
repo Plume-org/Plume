@@ -102,7 +102,7 @@ pub struct SafeString {
 impl SafeString {
     pub fn new(value: &str) -> Self {
         SafeString {
-            value: CLEAN.clean(&value).to_string(),
+            value: CLEAN.clean(value).to_string(),
         }
     }
 

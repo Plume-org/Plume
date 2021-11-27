@@ -182,7 +182,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     }
     let digest = all_headers.get_one("digest").unwrap_or("");
     let digest = request::Digest::from_header(digest);
-    if !digest.map(|d| d.verify_header(&data)).unwrap_or(false) {
+    if !digest.map(|d| d.verify_header(data)).unwrap_or(false) {
         // signature was valid, but body content does not match its digest
         return SignatureValidity::Invalid;
     }

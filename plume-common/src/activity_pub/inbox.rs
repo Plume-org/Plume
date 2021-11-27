@@ -207,7 +207,7 @@ where
                 };
 
                 // Handle the activity
-                match obj.activity(ctx, actor, &act_id) {
+                match obj.activity(ctx, actor, act_id) {
                     Ok(res) => Inbox::Handled(res.into()),
                     Err(e) => Inbox::Failed(e),
                 }

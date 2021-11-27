@@ -86,14 +86,18 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
         }
 
         let mut parsed_header = headers[0].split(' ');
-        let auth_type = parsed_header.next().map_or_else(
-            || Outcome::Failure((Status::BadRequest, TokenError::NoType)),
-            Outcome::Success,
-        )?;
-        let val = parsed_header.next().map_or_else(
-            || Outcome::Failure((Status::BadRequest, TokenError::NoValue)),
-            Outcome::Success,
-        )?;
+        let auth_type = parsed_header
+            .next()
+            .map_or_else::<rocket::Outcome<&str, _, ()>, _, _>(
+                || Outcome::Failure((Status::BadRequest, TokenError::NoType)),
+                Outcome::Success,
+            )?;
+        let val = parsed_header
+            .next()
+            .map_or_else::<rocket::Outcome<&str, _, ()>, _, _>(
+                || Outcome::Failure((Status::BadRequest, TokenError::NoValue)),
+                Outcome::Success,
+            )?;
 
         if auth_type == "Bearer" {
             let conn = request

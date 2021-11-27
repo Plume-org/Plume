@@ -553,14 +553,14 @@ pub fn ap_followers(
 #[get("/@/<name>/atom.xml")]
 pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
     let conn = &conn;
-    let author = User::find_by_fqn(&conn, &name).ok()?;
-    let entries = Post::get_recents_for_author(&conn, &author, 15).ok()?;
+    let author = User::find_by_fqn(conn, &name).ok()?;
+    let entries = Post::get_recents_for_author(conn, &author, 15).ok()?;
     let uri = Instance::get_local()
         .ok()?
         .compute_box("@", &name, "atom.xml");
     let title = &author.display_name;
     let default_updated = &author.creation_date;
-    let feed = super::build_atom_feed(entries, &uri, title, default_updated, &conn);
+    let feed = super::build_atom_feed(entries, &uri, title, default_updated, conn);
     Some(Content(
         ContentType::new("application", "atom+xml"),
         feed.to_string(),

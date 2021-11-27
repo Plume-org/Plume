@@ -97,7 +97,7 @@ impl Post {
     }
 
     pub fn delete(&self, conn: &Connection) -> Result<()> {
-        for m in Mention::list_for_post(&conn, self.id)? {
+        for m in Mention::list_for_post(conn, self.id)? {
             m.delete(conn)?;
         }
         diesel::delete(self).execute(conn)?;
@@ -457,14 +457,14 @@ impl Post {
             .filter_map(|(id, m)| id.map(|id| (m, id)))
             .collect::<Vec<_>>();
 
-        let old_mentions = Mention::list_for_post(&conn, self.id)?;
+        let old_mentions = Mention::list_for_post(conn, self.id)?;
         let old_user_mentioned = old_mentions
             .iter()
             .map(|m| m.mentioned_id)
             .collect::<HashSet<_>>();
         for (m, id) in &mentions {
-            if !old_user_mentioned.contains(&id) {
-                Mention::from_activity(&*conn, &m, self.id, true, true)?;
+            if !old_user_mentioned.contains(id) {
+                Mention::from_activity(&*conn, m, self.id, true, true)?;
             }
         }
 
@@ -476,7 +476,7 @@ impl Post {
             .iter()
             .filter(|m| !new_mentions.contains(&m.mentioned_id))
         {
-            m.delete(&conn)?;
+            m.delete(conn)?;
         }
         Ok(())
     }
@@ -700,7 +700,7 @@ impl FromId<DbConn> for Post {
                 Post::insert(
                     conn,
                     NewPost {
-                        blog_id: blog?.id,
+                        blog_id: blog.ok_or(Error::NotFound)?.id,
                         slug: Self::slug(&title).to_string(),
                         title,
                         content: SafeString::new(&article.object_props.content_string()?),

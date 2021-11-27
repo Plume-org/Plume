@@ -17,7 +17,7 @@ pub struct Config {
     pub db_min_idle: Option<u32>,
     pub search_index: String,
     pub search_tokenizers: SearchTokenizerConfig,
-    pub rocket: Result<RocketConfig, RocketError>,
+    pub rocket: Result<RocketConfig, InvalidRocketConfig>,
     pub logo: LogoConfig,
     pub default_theme: String,
     pub media_directory: String,
@@ -31,21 +31,21 @@ impl Config {
 }
 
 #[derive(Debug, Clone)]
-pub enum RocketError {
-    InvalidEnv,
-    InvalidAddress,
-    InvalidSecretKey,
+pub enum InvalidRocketConfig {
+    Env,
+    Address,
+    SecretKey,
 }
 
-fn get_rocket_config() -> Result<RocketConfig, RocketError> {
-    let mut c = RocketConfig::active().map_err(|_| RocketError::InvalidEnv)?;
+fn get_rocket_config() -> Result<RocketConfig, InvalidRocketConfig> {
+    let mut c = RocketConfig::active().map_err(|_| InvalidRocketConfig::Env)?;
 
     let address = var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned());
     let port = var("ROCKET_PORT")
         .ok()
         .map(|s| s.parse::<u16>().unwrap())
         .unwrap_or(7878);
-    let secret_key = var("ROCKET_SECRET_KEY").map_err(|_| RocketError::InvalidSecretKey)?;
+    let secret_key = var("ROCKET_SECRET_KEY").map_err(|_| InvalidRocketConfig::SecretKey)?;
     let form_size = var("FORM_SIZE")
         .unwrap_or_else(|_| "128".to_owned())
         .parse::<u64>()
@@ -56,10 +56,10 @@ fn get_rocket_config() -> Result<RocketConfig, RocketError> {
         .unwrap();
 
     c.set_address(address)
-        .map_err(|_| RocketError::InvalidAddress)?;
+        .map_err(|_| InvalidRocketConfig::Address)?;
     c.set_port(port);
     c.set_secret_key(secret_key)
-        .map_err(|_| RocketError::InvalidSecretKey)?;
+        .map_err(|_| InvalidRocketConfig::SecretKey)?;
 
     c.set_limits(
         Limits::new()
@@ -155,7 +155,7 @@ impl Default for LogoConfig {
             .ok()
             .or_else(|| custom_main.clone());
         let other = if let Some(main) = custom_main.clone() {
-            let ext = |path: &str| match path.rsplitn(2, '.').next() {
+            let ext = |path: &str| match path.rsplit_once('.').map(|x| x.1) {
                 Some("png") => Some("image/png".to_owned()),
                 Some("jpg") | Some("jpeg") => Some("image/jpeg".to_owned()),
                 Some("svg") => Some("image/svg+xml".to_owned()),

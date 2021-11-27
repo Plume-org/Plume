@@ -195,7 +195,7 @@ impl AsObject<User, Undo, &DbConn> for Follow {
             diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(&conn, notification_kind::FOLLOW, self.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
                 diesel::delete(&notif).execute(&**conn)?;
             }
 

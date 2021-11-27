@@ -372,7 +372,7 @@ fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), E
         .unwrap_or(false)
     {
         BlocklistedEmail::insert(
-            &conn,
+            conn,
             NewBlocklistedEmail {
                 email_address: u.email.clone().unwrap(),
                 note: "Banned".to_string(),

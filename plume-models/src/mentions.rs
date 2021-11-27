@@ -47,7 +47,11 @@ impl Mention {
 
     pub fn get_user(&self, conn: &Connection) -> Result<User> {
         match self.get_post(conn) {
-            Ok(p) => Ok(p.get_authors(conn)?.into_iter().next()?),
+            Ok(p) => Ok(p
+                .get_authors(conn)?
+                .into_iter()
+                .next()
+                .ok_or(Error::NotFound)?),
             Err(_) => self.get_comment(conn).and_then(|c| c.get_author(conn)),
         }
     }
@@ -77,7 +81,7 @@ impl Mention {
         in_post: bool,
         notify: bool,
     ) -> Result<Self> {
-        let ap_url = ment.link_props.href_string().ok()?;
+        let ap_url = ment.link_props.href_string().or(Err(Error::NotFound))?;
         let mentioned = User::find_by_ap_url(conn, &ap_url)?;
 
         if in_post {

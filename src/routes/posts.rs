@@ -425,7 +425,7 @@ pub fn create(
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Post::find_by_slug(&conn, &slug, blog.id).is_ok() {
+    if Post::find_by_slug(&conn, slug, blog.id).is_ok() {
         errors.add(
             "title",
             ValidationError {
