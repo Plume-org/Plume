@@ -145,7 +145,7 @@ where
             warn!("Inbox doesn't have host: {:?}", &inbox);
             continue;
         };
-        let host_header_value = HeaderValue::from_str(&url.host_str().expect("Unreachable"));
+        let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"));
         if host_header_value.is_err() {
             warn!("Header value is invalid: {:?}", url.host_str());
             continue;

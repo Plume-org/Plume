@@ -148,7 +148,7 @@ impl PlumeQuery {
 
     /// Parse a query string into this Query
     pub fn parse_query(&mut self, query: &str) -> &mut Self {
-        self.from_str_req(&query.trim())
+        self.from_str_req(query.trim())
     }
 
     /// Convert this Query to a Tantivy Query
@@ -360,7 +360,7 @@ impl std::str::FromStr for PlumeQuery {
     fn from_str(query: &str) -> Result<PlumeQuery, !> {
         let mut res: PlumeQuery = Default::default();
 
-        res.from_str_req(&query.trim());
+        res.from_str_req(query.trim());
         Ok(res)
     }
 }

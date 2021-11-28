@@ -61,7 +61,7 @@ impl PasswordResetRequest {
     }
 
     pub fn find_and_delete_by_token(conn: &Connection, token: &str) -> Result<Self> {
-        let request = Self::find_by_token(&conn, &token)?;
+        let request = Self::find_by_token(conn, token)?;
 
         let filter =
             password_reset_requests::table.filter(password_reset_requests::id.eq(request.id));

@@ -58,7 +58,7 @@ pub fn import_migrations(input: TokenStream) -> TokenStream {
             (name, up_sql, down_sql)
         })
         .collect::<Vec<_>>();
-    let migrations_name = migrations.iter().map(|m| &m.0).collect::<Vec<_>>();
+    let migrations_name = migrations.iter().map(|m| &m.0);
     let migrations_up = migrations
         .iter()
         .map(|m| m.1.as_str())
@@ -103,7 +103,7 @@ fn file_to_migration(file: &str) -> TokenStream2 {
                 acc.push('\n');
             }
         } else if let Some(acc_str) = line.strip_prefix("--#!") {
-            acc.push_str(&acc_str);
+            acc.push_str(acc_str);
             acc.push('\n');
         } else if line.starts_with("--") {
             continue;

@@ -28,7 +28,7 @@ impl BlocklistedEmail {
     pub fn delete_entries(conn: &Connection, ids: Vec<i32>) -> Result<bool> {
         use diesel::delete;
         for i in ids {
-            let be: BlocklistedEmail = BlocklistedEmail::find_by_id(&conn, i)?;
+            let be: BlocklistedEmail = BlocklistedEmail::find_by_id(conn, i)?;
             delete(&be).execute(conn)?;
         }
         Ok(true)

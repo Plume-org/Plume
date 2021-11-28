@@ -1,5 +1,5 @@
 #![recursion_limit = "128"]
-#![feature(decl_macro, proc_macro_hygiene, try_trait)]
+#![feature(decl_macro, proc_macro_hygiene)]
 
 #[macro_use]
 extern crate gettext_macros;
@@ -61,7 +61,7 @@ lazy_static! {
     static ref CATALOG: gettext::Catalog = {
         let catalogs = include_i18n!();
         let lang = window().unwrap().navigator().language().unwrap();
-        let lang = lang.splitn(2, '-').next().unwrap_or("en");
+        let lang = lang.split_once('-').map_or("en", |x| x.0);
 
         let english_position = catalogs
             .iter()
@@ -85,7 +85,7 @@ pub fn main() -> Result<(), JsValue> {
     menu();
     search();
     editor::init()
-        .map_err(|e| console::error_1(&&format!("Editor error: {:?}", e).into()))
+        .map_err(|e| console::error_1(&format!("Editor error: {:?}", e).into()))
         .ok();
     Ok(())
 }

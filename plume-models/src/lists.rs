@@ -143,6 +143,7 @@ macro_rules! func {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Queryable, Identifiable)]
 struct ListElem {
     pub id: i32,

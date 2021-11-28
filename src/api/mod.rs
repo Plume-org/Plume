@@ -19,12 +19,6 @@ impl From<Error> for ApiError {
     }
 }
 
-impl From<std::option::NoneError> for ApiError {
-    fn from(err: std::option::NoneError) -> ApiError {
-        ApiError(err.into())
-    }
-}
-
 impl<'r> Responder<'r> for ApiError {
     fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
         match self.0 {

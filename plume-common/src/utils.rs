@@ -141,13 +141,13 @@ fn highlight_code<'a>(
                     unreachable!();
                 };
                 let syntax_set = SyntaxSet::load_defaults_newlines();
-                let syntax = syntax_set.find_syntax_by_token(&lang).unwrap_or_else(|| {
+                let syntax = syntax_set.find_syntax_by_token(lang).unwrap_or_else(|| {
                     syntax_set
-                        .find_syntax_by_name(&lang)
+                        .find_syntax_by_name(lang)
                         .unwrap_or_else(|| syntax_set.find_syntax_plain_text())
                 });
                 let mut html = ClassedHTMLGenerator::new_with_class_style(
-                    &syntax,
+                    syntax,
                     &syntax_set,
                     ClassStyle::Spaced,
                 );
@@ -334,16 +334,15 @@ pub fn md_to_html<'a>(
                                         text_acc.push(c)
                                     }
                                     let mention = text_acc;
-                                    let short_mention = mention.splitn(1, '@').next().unwrap_or("");
                                     let link = Tag::Link(
                                         LinkType::Inline,
                                         format!("{}@/{}/", base_url, &mention).into(),
-                                        short_mention.to_owned().into(),
+                                        mention.clone().into(),
                                     );
 
                                     mentions.push(mention.clone());
                                     events.push(Event::Start(link.clone()));
-                                    events.push(Event::Text(format!("@{}", &short_mention).into()));
+                                    events.push(Event::Text(format!("@{}", &mention).into()));
                                     events.push(Event::End(link));
 
                                     (

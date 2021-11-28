@@ -148,7 +148,7 @@ impl AsObject<User, activity::Undo, &DbConn> for Like {
             diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(&conn, notification_kind::LIKE, self.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
                 diesel::delete(&notif).execute(&**conn)?;
             }
             Ok(())

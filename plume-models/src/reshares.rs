@@ -173,7 +173,7 @@ impl AsObject<User, Undo, &DbConn> for Reshare {
             diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(&conn, notification_kind::RESHARE, self.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
                 diesel::delete(&notif).execute(&**conn)?;
             }
 

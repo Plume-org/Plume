@@ -18,12 +18,6 @@ pub enum QueryError {
     RuntimeError(String),
 }
 
-impl From<std::option::NoneError> for QueryError {
-    fn from(_: std::option::NoneError) -> Self {
-        QueryError::UnexpectedEndOfQuery
-    }
-}
-
 pub type QueryResult<T> = std::result::Result<T, QueryError>;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -239,7 +233,7 @@ impl WithList {
     ) -> Result<bool> {
         match list {
             List::List(name) => {
-                let list = lists::List::find_for_user_by_name(conn, timeline.user_id, &name)?;
+                let list = lists::List::find_for_user_by_name(conn, timeline.user_id, name)?;
                 match (self, list.kind()) {
                     (WithList::Blog, ListType::Blog) => list.contains_blog(conn, post.blog_id),
                     (WithList::Author { boosts, likes }, ListType::User) => match kind {
@@ -414,7 +408,7 @@ enum List<'a> {
 
 fn parse_s<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<'a>)> {
     let mut res = Vec::new();
-    let (left, token) = parse_a(&stream)?;
+    let (left, token) = parse_a(stream)?;
     res.push(token);
     stream = left;
     while !stream.is_empty() {
@@ -436,7 +430,7 @@ fn parse_s<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
 
 fn parse_a<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<'a>)> {
     let mut res = Vec::new();
-    let (left, token) = parse_b(&stream)?;
+    let (left, token) = parse_b(stream)?;
     res.push(token);
     stream = left;
     while !stream.is_empty() {
@@ -463,7 +457,7 @@ fn parse_b<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<
             match left.get(0) {
                 Some(Token::RParent(_)) => Ok((&left[1..], token)),
                 Some(t) => t.get_error(Token::RParent(0)),
-                None => None?,
+                None => Err(QueryError::UnexpectedEndOfQuery),
             }
         }
         _ => parse_c(stream),
@@ -484,9 +478,13 @@ fn parse_c<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], TQ<
 }
 
 fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Arg<'a>)> {
-    match stream.get(0).map(Token::get_text)? {
+    match stream
+        .get(0)
+        .map(Token::get_text)
+        .ok_or(QueryError::UnexpectedEndOfQuery)?
+    {
         s @ "blog" | s @ "author" | s @ "license" | s @ "tags" | s @ "lang" => {
-            match stream.get(1)? {
+            match stream.get(1).ok_or(QueryError::UnexpectedEndOfQuery)? {
                 Token::Word(_, _, r#in) if r#in == &"in" => {
                     let (mut left, list) = parse_l(&stream[2..])?;
                     let kind = match s {
@@ -498,7 +496,12 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                                 if *clude != "include" && *clude != "exclude" {
                                     break;
                                 }
-                                match (*clude, left.get(1).map(Token::get_text)?) {
+                                match (
+                                    *clude,
+                                    left.get(1)
+                                        .map(Token::get_text)
+                                        .ok_or(QueryError::UnexpectedEndOfQuery)?,
+                                ) {
                                     ("include", "reshares") | ("include", "reshare") => {
                                         boosts = true
                                     }
@@ -529,7 +532,10 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                 t => t.get_error(Token::Word(0, 0, "'in'")),
             }
         }
-        s @ "title" | s @ "subtitle" | s @ "content" => match (stream.get(1)?, stream.get(2)?) {
+        s @ "title" | s @ "subtitle" | s @ "content" => match (
+            stream.get(1).ok_or(QueryError::UnexpectedEndOfQuery)?,
+            stream.get(2).ok_or(QueryError::UnexpectedEndOfQuery)?,
+        ) {
             (Token::Word(_, _, contains), Token::Word(_, _, w)) if contains == &"contains" => Ok((
                 &stream[3..],
                 Arg::Contains(
@@ -555,7 +561,13 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
                     if *clude != "include" && *clude != "exclude" {
                         break;
                     }
-                    match (*clude, stream.get(2).map(Token::get_text)?) {
+                    match (
+                        *clude,
+                        stream
+                            .get(2)
+                            .map(Token::get_text)
+                            .ok_or(QueryError::UnexpectedEndOfQuery)?,
+                    ) {
                         ("include", "reshares") | ("include", "reshare") => boosts = true,
                         ("exclude", "reshares") | ("exclude", "reshare") => boosts = false,
                         ("include", "likes") | ("include", "like") => likes = true,
@@ -577,20 +589,23 @@ fn parse_d<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>],
             "all" => Ok((&stream[1..], Arg::Boolean(Bool::All))),
             _ => unreachable!(),
         },
-        _ => stream.get(0)?.get_error(Token::Word(
-            0,
-            0,
-            "one of 'blog', 'author', 'license', 'tags', 'lang', \
+        _ => stream
+            .get(0)
+            .ok_or(QueryError::UnexpectedEndOfQuery)?
+            .get_error(Token::Word(
+                0,
+                0,
+                "one of 'blog', 'author', 'license', 'tags', 'lang', \
              'title', 'subtitle', 'content', 'followed', 'has_cover', 'local' or 'all'",
-        )),
+            )),
     }
 }
 
 fn parse_l<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], List<'a>)> {
-    match stream.get(0)? {
+    match stream.get(0).ok_or(QueryError::UnexpectedEndOfQuery)? {
         Token::LBracket(_) => {
             let (left, list) = parse_m(&stream[1..])?;
-            match left.get(0)? {
+            match left.get(0).ok_or(QueryError::UnexpectedEndOfQuery)? {
                 Token::RBracket(_) => Ok((&left[1..], List::Array(list))),
                 t => t.get_error(Token::Word(0, 0, "one of ']' or ','")),
             }
@@ -601,16 +616,20 @@ fn parse_l<'a, 'b>(stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Lis
 }
 
 fn parse_m<'a, 'b>(mut stream: &'b [Token<'a>]) -> QueryResult<(&'b [Token<'a>], Vec<&'a str>)> {
-    let mut res: Vec<&str> = vec![match stream.get(0)? {
-        Token::Word(_, _, w) => w,
-        t => return t.get_error(Token::Word(0, 0, "any word")),
-    }];
-    stream = &stream[1..];
-    while let Token::Comma(_) = stream[0] {
-        res.push(match stream.get(1)? {
+    let mut res: Vec<&str> = vec![
+        match stream.get(0).ok_or(QueryError::UnexpectedEndOfQuery)? {
             Token::Word(_, _, w) => w,
             t => return t.get_error(Token::Word(0, 0, "any word")),
-        });
+        },
+    ];
+    stream = &stream[1..];
+    while let Token::Comma(_) = stream[0] {
+        res.push(
+            match stream.get(1).ok_or(QueryError::UnexpectedEndOfQuery)? {
+                Token::Word(_, _, w) => w,
+                t => return t.get_error(Token::Word(0, 0, "any word")),
+            },
+        );
         stream = &stream[2..];
     }
 

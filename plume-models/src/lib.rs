@@ -1,4 +1,3 @@
-#![feature(try_trait)]
 #![feature(never_type)]
 #![feature(proc_macro_hygiene)]
 #![feature(box_patterns)]
@@ -83,12 +82,6 @@ impl From<openssl::error::ErrorStack> for Error {
 impl From<diesel::result::Error> for Error {
     fn from(err: diesel::result::Error) -> Self {
         Error::Db(err)
-    }
-}
-
-impl From<std::option::NoneError> for Error {
-    fn from(_: std::option::NoneError) -> Self {
-        Error::NotFound
     }
 }
 

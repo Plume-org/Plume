@@ -210,7 +210,13 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(conn, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
+        User::from_id(
+            conn,
+            link.href.as_ref().ok_or(Error::Webfinger)?,
+            None,
+            CONFIG.proxy(),
+        )
+        .map_err(|(_, e)| e)
     }
 
     pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
@@ -258,7 +264,7 @@ impl User {
                     .icon_image()?
                     .object_props
                     .url_string()?,
-                &self,
+                self,
             )
             .ok();
 
@@ -427,12 +433,12 @@ impl User {
         let last = &format!(
             "{}?page={}",
             &self.outbox_url,
-            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE) + 1
+            self.get_activities_count(conn) / i64::from(ITEMS_PER_PAGE) + 1
         );
         coll.collection_props.set_first_link(Id::new(first))?;
         coll.collection_props.set_last_link(Id::new(last))?;
         coll.collection_props
-            .set_total_items_u64(self.get_activities_count(&conn) as u64)?;
+            .set_total_items_u64(self.get_activities_count(conn) as u64)?;
         Ok(ActivityStream::new(coll))
     }
     pub fn outbox_page(
@@ -441,7 +447,7 @@ impl User {
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         let acts = self.get_activities_page(conn, (min, max))?;
-        let n_acts = self.get_activities_count(&conn);
+        let n_acts = self.get_activities_count(conn);
         let mut coll = OrderedCollectionPage::default();
         if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
             coll.collection_page_props.set_next_link(Id::new(&format!(
@@ -513,7 +519,7 @@ impl User {
                 if page.is_empty() {
                     break;
                 }
-                items.extend(page.drain(..));
+                items.append(&mut page);
                 if let Some(n) = nxt {
                     if n == next {
                         break;
@@ -720,7 +726,7 @@ impl User {
 
     pub fn get_keypair(&self) -> Result<PKey<Private>> {
         PKey::from_rsa(Rsa::private_key_from_pem(
-            self.private_key.clone()?.as_ref(),
+            self.private_key.clone().ok_or(Error::Signature)?.as_ref(),
         )?)
         .map_err(Error::from)
     }
@@ -943,7 +949,7 @@ impl FromId<DbConn> for User {
 
     fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str()?;
+        let inst = url.host_str().ok_or(Error::Url)?;
         let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
                 conn,
@@ -1080,7 +1086,7 @@ impl Signer for User {
         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(&signature).map_err(Error::from)
+        verifier.verify(signature).map_err(Error::from)
     }
 }
 
@@ -1121,7 +1127,7 @@ impl NewUser {
                 display_name,
                 role: role as i32,
                 summary: summary.to_owned(),
-                summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
+                summary_html: SafeString::new(&utils::md_to_html(summary, None, false, None).0),
                 email: Some(email),
                 hashed_password: password,
                 instance_id: instance.id,
