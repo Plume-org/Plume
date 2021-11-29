@@ -1,8 +1,10 @@
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::{
-    header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, HOST, USER_AGENT},
-    ClientBuilder, Proxy, Response, Url,
+    header::{
+        HeaderMap, HeaderValue, InvalidHeaderValue, ACCEPT, CONTENT_TYPE, DATE, HOST, USER_AGENT,
+    },
+    ClientBuilder, Proxy, Response, Url, UrlError,
 };
 use std::ops::Deref;
 use std::time::SystemTime;
@@ -15,6 +17,24 @@ const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
 #[derive(Debug)]
 pub struct Error();
+
+impl From<UrlError> for Error {
+    fn from(_err: UrlError) -> Self {
+        Error()
+    }
+}
+
+impl From<InvalidHeaderValue> for Error {
+    fn from(_err: InvalidHeaderValue) -> Self {
+        Error()
+    }
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(_err: reqwest::Error) -> Self {
+        Error()
+    }
+}
 
 pub struct Digest(String);
 
@@ -169,12 +189,11 @@ pub fn signature(
 
 pub fn get(url_str: &str, sender: &dyn Signer, proxy: Option<Proxy>) -> Result<Response, Error> {
     let mut headers = headers();
-    let url = Url::parse(url_str).map_err(|_| Error())?; // TODO: Define and use From trait
+    let url = Url::parse(url_str)?;
     if !url.has_host() {
         return Err(Error());
     }
-    let host_header_value =
-        HeaderValue::from_str(url.host_str().expect("Unreachable")).map_err(|_| Error())?;
+    let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"))?;
     headers.insert(HOST, host_header_value);
     if let Some(proxy) = proxy {
         ClientBuilder::new().proxy(proxy)
@@ -182,13 +201,12 @@ pub fn get(url_str: &str, sender: &dyn Signer, proxy: Option<Proxy>) -> Result<R
         ClientBuilder::new()
     }
     .connect_timeout(Some(std::time::Duration::from_secs(5)))
-    .build()
-    .map_err(|_| Error())?
+    .build()?
     .get(url_str)
     .headers(headers.clone())
     .header(
         "Signature",
-        signature(sender, &headers, ("get", url.path(), url.query())).map_err(|_| Error())?,
+        signature(sender, &headers, ("get", url.path(), url.query()))?,
     )
     .send()
     .map_err(|_| Error())
