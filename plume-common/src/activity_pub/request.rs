@@ -1,6 +1,9 @@
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
-use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};
+use reqwest::{
+    header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, HOST, USER_AGENT},
+    ClientBuilder, Proxy, Response, Url,
+};
 use std::ops::Deref;
 use std::time::SystemTime;
 use tracing::warn;
@@ -162,6 +165,33 @@ pub fn signature(
         signed_headers = signed_headers,
         signature = sign
     )).map_err(|_| Error())
+}
+
+pub fn get(url_str: &str, sender: &dyn Signer, proxy: Option<Proxy>) -> Result<Response, Error> {
+    let mut headers = headers();
+    let url = Url::parse(url_str).map_err(|_| Error())?; // TODO: Define and use From trait
+    if !url.has_host() {
+        return Err(Error());
+    }
+    let host_header_value =
+        HeaderValue::from_str(url.host_str().expect("Unreachable")).map_err(|_| Error())?;
+    headers.insert(HOST, host_header_value);
+    if let Some(proxy) = proxy {
+        ClientBuilder::new().proxy(proxy)
+    } else {
+        ClientBuilder::new()
+    }
+    .connect_timeout(Some(std::time::Duration::from_secs(5)))
+    .build()
+    .map_err(|_| Error())?
+    .get(url_str)
+    .headers(headers.clone())
+    .header(
+        "Signature",
+        signature(sender, &headers, ("get", url.path(), url.query())).map_err(|_| Error())?,
+    )
+    .send()
+    .map_err(|_| Error())
 }
 
 #[cfg(test)]
