@@ -372,7 +372,7 @@ pub trait FromId<C>: Sized {
         if !url.has_host() {
             return Err((None, InboxError::DerefError.into()));
         }
-        let host_header_value = HeaderValue::from_str(&url.host_str().expect("Unreachable"))
+        let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"))
             .map_err(|_| (None, InboxError::DerefError.into()))?;
         headers.insert(HOST, host_header_value);
         if let Some(proxy) = proxy {
