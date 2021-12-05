@@ -7,7 +7,7 @@ use askama_escape::escape;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId, Id},
+    activity_pub::{inbox::FromId, request, Id},
     utils::MediaProcessor,
 };
 use std::{
@@ -220,13 +220,11 @@ impl Media {
 
         let mut dest = fs::File::create(path.clone())?;
         // TODO: conditional GET
-        if let Some(proxy) = CONFIG.proxy() {
-            reqwest::ClientBuilder::new().proxy(proxy.clone()).build()?
-        } else {
-            reqwest::Client::new()
-        }
-        .get(remote_url.as_str())
-        .send()?
+        request::get(
+            remote_url.as_str(),
+            User::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?
         .copy_to(&mut dest)?;
 
         Media::find_by_file_path(conn, path.to_str().ok_or(Error::InvalidValue)?)

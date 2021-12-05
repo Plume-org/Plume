@@ -22,16 +22,12 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        ap_accept_header,
         inbox::{AsActor, AsObject, FromId},
+        request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, Id, IntoId, PublicKey, PUBLIC_VISIBILITY,
     },
     utils,
-};
-use reqwest::{
-    header::{HeaderValue, ACCEPT},
-    ClientBuilder,
 };
 use riker::actors::{Publish, Tell};
 use rocket::{
@@ -231,20 +227,7 @@ impl User {
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(url)
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;
@@ -293,7 +276,10 @@ impl User {
                 ))
                 .execute(conn)
                 .map(|_| ())
-                .map_err(Error::from)
+                .map_err(|err| {
+                    tracing::error!("{:?}", err);
+                    Error::from(err)
+                })
         })
     }
 
@@ -471,20 +457,7 @@ impl User {
         Ok(ActivityStream::new(coll))
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(url)
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
@@ -498,20 +471,11 @@ impl User {
         Ok((items, next))
     }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(&self.outbox_url[..])
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(
+            &self.outbox_url[..],
+            Self::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         if let Some(first) = json.get("first") {
@@ -543,20 +507,11 @@ impl User {
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(&self.followers_endpoint[..])
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(
+            &self.followers_endpoint[..],
+            Self::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         Ok(json["items"]

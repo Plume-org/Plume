@@ -1,7 +1,4 @@
-use reqwest::{
-    header::{HeaderValue, HOST},
-    Url,
-};
+use reqwest;
 use std::fmt::Debug;
 
 use super::{request, sign::Signer};
@@ -367,43 +364,16 @@ pub trait FromId<C>: Sized {
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        let mut headers = request::headers();
-        let url = Url::parse(id).map_err(|_| (None, InboxError::DerefError.into()))?;
-        if !url.has_host() {
-            return Err((None, InboxError::DerefError.into()));
-        }
-        let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"))
-            .map_err(|_| (None, InboxError::DerefError.into()))?;
-        headers.insert(HOST, host_header_value);
-        if let Some(proxy) = proxy {
-            reqwest::ClientBuilder::new().proxy(proxy)
-        } else {
-            reqwest::ClientBuilder::new()
-        }
-        .connect_timeout(Some(std::time::Duration::from_secs(5)))
-        .build()
-        .map_err(|_| (None, InboxError::DerefError.into()))?
-        .get(id)
-        .headers(headers.clone())
-        .header(
-            "Signature",
-            request::signature(
-                Self::get_sender(),
-                &headers,
-                ("get", url.path(), url.query()),
-            )
-            .map_err(|_| (None, InboxError::DerefError.into()))?,
-        )
-        .send()
-        .map_err(|_| (None, InboxError::DerefError))
-        .and_then(|mut r| {
-            let json: serde_json::Value = r
-                .json()
-                .map_err(|_| (None, InboxError::InvalidObject(None)))?;
-            serde_json::from_value(json.clone())
-                .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
-        })
-        .map_err(|(json, e)| (json, e.into()))
+        request::get(id, Self::get_sender(), proxy)
+            .map_err(|_| (None, InboxError::DerefError))
+            .and_then(|mut r| {
+                let json: serde_json::Value = r
+                    .json()
+                    .map_err(|_| (None, InboxError::InvalidObject(None)))?;
+                serde_json::from_value(json.clone())
+                    .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
+            })
+            .map_err(|(json, e)| (json, e.into()))
     }
 
     /// Builds a `Self` from its ActivityPub representation

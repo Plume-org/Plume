@@ -17,7 +17,7 @@ extern crate serde_json;
 extern crate tantivy;
 
 use once_cell::sync::Lazy;
-use plume_common::activity_pub::{inbox::InboxError, sign};
+use plume_common::activity_pub::{inbox::InboxError, request, sign};
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
 use users::UserEvent;
@@ -154,6 +154,12 @@ impl From<InboxError<Error>> for Error {
             InboxError::InvalidActor(Some(e)) | InboxError::InvalidObject(Some(e)) => e,
             e => Error::Inbox(Box::new(e)),
         }
+    }
+}
+
+impl From<request::Error> for Error {
+    fn from(_err: request::Error) -> Error {
+        Error::Request
     }
 }
 
