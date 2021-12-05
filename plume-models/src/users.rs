@@ -276,7 +276,7 @@ impl User {
                 ))
                 .execute(conn)
                 .map(|_| ())
-                .map_err(|err| Error::from(err))
+                .map_err(Error::from)
         })
     }
 
