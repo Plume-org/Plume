@@ -20,9 +20,9 @@
 - Update Rust version to nightly-2021-11-27 (#961)
 - Upgrade Tantivy to 0.13.3 and lindera-tantivy to 0.7.1 (#878)
 - Run searcher on actor system (#870)
-- Use article title as its slug instead of capitalizing and inserting hyphens (#920)
 - Extract a function to calculate posts' ap_url and share it with some places (#918)
-- Keep title in URI (#920)
+- Use article title as its slug instead of capitalizing and inserting hyphens (#920)
+- Sign GET requests to other instances (#957)
 
 ### Fixed
 

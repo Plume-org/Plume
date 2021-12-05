@@ -25,7 +25,7 @@ fn main() {
         e => e.map(|_| ()).unwrap(),
     }
     let conn = Conn::establish(CONFIG.database_url.as_str());
-    let _ = conn.as_ref().map(|conn| Instance::cache_local(conn));
+    let _ = conn.as_ref().map(Instance::cache_local);
 
     match matches.subcommand() {
         ("instance", Some(args)) => {

@@ -21,6 +21,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
+        sign::Signer,
         Id, IntoId, PUBLIC_VISIBILITY,
     },
     utils,
@@ -327,6 +328,10 @@ impl FromId<DbConn> for Comment {
 
         comm.notify(conn)?;
         Ok(comm)
+    }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
 

@@ -1,6 +1,11 @@
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
-use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, DATE, USER_AGENT};
+use reqwest::{
+    header::{
+        HeaderMap, HeaderValue, InvalidHeaderValue, ACCEPT, CONTENT_TYPE, DATE, HOST, USER_AGENT,
+    },
+    ClientBuilder, Proxy, Response, Url, UrlError,
+};
 use std::ops::Deref;
 use std::time::SystemTime;
 use tracing::warn;
@@ -12,6 +17,24 @@ const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 
 #[derive(Debug)]
 pub struct Error();
+
+impl From<UrlError> for Error {
+    fn from(_err: UrlError) -> Self {
+        Error()
+    }
+}
+
+impl From<InvalidHeaderValue> for Error {
+    fn from(_err: InvalidHeaderValue) -> Self {
+        Error()
+    }
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(_err: reqwest::Error) -> Self {
+        Error()
+    }
+}
 
 pub struct Digest(String);
 
@@ -118,8 +141,8 @@ type Path<'a> = &'a str;
 type Query<'a> = &'a str;
 type RequestTarget<'a> = (Method<'a>, Path<'a>, Option<Query<'a>>);
 
-pub fn signature<S: Signer>(
-    signer: &S,
+pub fn signature(
+    signer: &dyn Signer,
     headers: &HeaderMap,
     request_target: RequestTarget,
 ) -> Result<HeaderValue, Error> {
@@ -164,10 +187,35 @@ pub fn signature<S: Signer>(
     )).map_err(|_| Error())
 }
 
+pub fn get(url_str: &str, sender: &dyn Signer, proxy: Option<Proxy>) -> Result<Response, Error> {
+    let mut headers = headers();
+    let url = Url::parse(url_str)?;
+    if !url.has_host() {
+        return Err(Error());
+    }
+    let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"))?;
+    headers.insert(HOST, host_header_value);
+    if let Some(proxy) = proxy {
+        ClientBuilder::new().proxy(proxy)
+    } else {
+        ClientBuilder::new()
+    }
+    .connect_timeout(Some(std::time::Duration::from_secs(5)))
+    .build()?
+    .get(url_str)
+    .headers(headers.clone())
+    .header(
+        "Signature",
+        signature(sender, &headers, ("get", url.path(), url.query()))?,
+    )
+    .send()
+    .map_err(|_| Error())
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{signature, Error};
-    use crate::activity_pub::sign::{gen_keypair, Signer};
+    use super::signature;
+    use crate::activity_pub::sign::{gen_keypair, Error, Result, Signer};
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
     use reqwest::header::HeaderMap;
 
@@ -187,13 +235,11 @@ mod tests {
     }
 
     impl Signer for MySigner {
-        type Error = Error;
-
         fn get_key_id(&self) -> String {
             "mysigner".into()
         }
 
-        fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error> {
+        fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
             let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
                 .unwrap();
             let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
@@ -201,7 +247,7 @@ mod tests {
             signer.sign_to_vec().map_err(|_| Error())
         }
 
-        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error> {
+        fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
             let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
                 .unwrap();
             let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();

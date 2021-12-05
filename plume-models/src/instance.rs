@@ -3,11 +3,12 @@ use crate::{
     medias::Media,
     safe_string::SafeString,
     schema::{instances, users},
-    users::{Role, User},
+    users::{NewUser, Role, User},
     Connection, Error, Result,
 };
 use chrono::NaiveDateTime;
-use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQueryDsl};
+use once_cell::sync::OnceCell;
 use plume_common::utils::md_to_html;
 use std::sync::RwLock;
 
@@ -45,6 +46,9 @@ lazy_static! {
     static ref LOCAL_INSTANCE: RwLock<Option<Instance>> = RwLock::new(None);
 }
 
+const LOCAL_INSTANCE_USERNAME: &str = "__instance__";
+static LOCAL_INSTANCE_USER: OnceCell<User> = OnceCell::new();
+
 impl Instance {
     pub fn set_local(self) {
         LOCAL_INSTANCE.write().unwrap().replace(self);
@@ -74,6 +78,42 @@ impl Instance {
             .filter(instances::local.eq(false))
             .load::<Instance>(conn)
             .map_err(Error::from)
+    }
+
+    pub fn create_local_instance_user(conn: &Connection) -> Result<User> {
+        let instance = Instance::get_local()?;
+        let email = format!("{}@{}", LOCAL_INSTANCE_USERNAME, &instance.public_domain);
+        NewUser::new_local(
+            conn,
+            LOCAL_INSTANCE_USERNAME.into(),
+            instance.public_domain,
+            Role::Instance,
+            "Local instance",
+            email,
+            None,
+        )
+    }
+
+    pub fn get_local_instance_user() -> Option<&'static User> {
+        LOCAL_INSTANCE_USER.get()
+    }
+
+    pub fn get_local_instance_user_uncached(conn: &Connection) -> Result<User> {
+        users::table
+            .filter(users::role.eq(3))
+            .first(conn)
+            .or_else(|err| match err {
+                NotFound => Self::create_local_instance_user(conn),
+                _ => Err(Error::Db(err)),
+            })
+    }
+
+    pub fn cache_local_instance_user(conn: &Connection) {
+        let _ = LOCAL_INSTANCE_USER.get_or_init(|| {
+            Self::get_local_instance_user_uncached(conn)
+                .or_else(|_| Self::create_local_instance_user(conn))
+                .expect("Failed to cache local instance user")
+        });
     }
 
     pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
@@ -304,6 +344,7 @@ pub(crate) mod tests {
         })
         .collect();
         Instance::cache_local(conn);
+        Instance::cache_local_instance_user(conn);
         res
     }
 

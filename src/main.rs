@@ -57,7 +57,10 @@ fn init_pool() -> Option<DbPool> {
         builder = builder.max_size(max_size);
     };
     let pool = builder.build(manager).ok()?;
-    Instance::cache_local(&pool.get().unwrap());
+    let conn = pool.get().unwrap();
+    Instance::cache_local(&conn);
+    let _ = Instance::create_local_instance_user(&conn);
+    Instance::cache_local_instance_user(&conn);
     Some(pool)
 }
 

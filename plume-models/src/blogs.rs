@@ -443,6 +443,10 @@ impl FromId<DbConn> for Blog {
             },
         )
     }
+
+    fn get_sender() -> &'static dyn sign::Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsActor<&PlumeRocket> for Blog {
@@ -462,24 +466,22 @@ impl AsActor<&PlumeRocket> for Blog {
 }
 
 impl sign::Signer for Blog {
-    type Error = Error;
-
     fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
-        let key = self.get_keypair()?;
+    fn sign(&self, to_sign: &str) -> sign::Result<Vec<u8>> {
+        let key = self.get_keypair().map_err(|_| sign::Error())?;
         let mut signer = Signer::new(MessageDigest::sha256(), &key)?;
         signer.update(to_sign.as_bytes())?;
-        signer.sign_to_vec().map_err(Error::from)
+        signer.sign_to_vec().map_err(sign::Error::from)
     }
 
-    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+    fn verify(&self, data: &str, signature: &[u8]) -> sign::Result<bool> {
         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(signature).map_err(Error::from)
+        verifier.verify(signature).map_err(sign::Error::from)
     }
 }
 
