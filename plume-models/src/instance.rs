@@ -11,7 +11,6 @@ use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQuer
 use once_cell::sync::OnceCell;
 use plume_common::utils::md_to_html;
 use std::sync::RwLock;
-use tracing::error;
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Instance {
@@ -110,16 +109,11 @@ impl Instance {
     }
 
     pub fn cache_local_instance_user(conn: &Connection) {
-        let res = Self::get_local_instance_user_uncached(conn)
-            .or_else(|_| Self::create_local_instance_user(conn));
-        if res.is_err() {
-            error!("Failed to cache local instance user: {:?}", res);
-            return;
-        }
-        let user = res.expect("Unreachable");
-        LOCAL_INSTANCE_USER
-            .set(user)
-            .expect("Failed to set local instance user");
+        let _ = LOCAL_INSTANCE_USER.get_or_init(|| {
+            Self::get_local_instance_user_uncached(conn)
+                .or_else(|_| Self::create_local_instance_user(conn))
+                .expect("Failed to cache local instance user")
+        });
     }
 
     pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
