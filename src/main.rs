@@ -59,7 +59,7 @@ fn init_pool() -> Option<DbPool> {
     let pool = builder.build(manager).ok()?;
     let conn = pool.get().unwrap();
     Instance::cache_local(&conn);
-    Instance::create_local_instance_user(&conn);
+    let _ = Instance::create_local_instance_user(&conn);
     Instance::cache_local_instance_user(&conn);
     Some(pool)
 }
