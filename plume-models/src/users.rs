@@ -246,7 +246,7 @@ impl User {
                 conn,
                 json.object
                     .object_props
-                    .icon_image()?
+                    .icon_image()? // FIXME: Fails when icon is not set
                     .object_props
                     .url_string()?,
                 self,
