@@ -229,6 +229,10 @@ p.error {
         opacity: 0.9;
     }
   }
+  
+   header {
+    display: flex;
+  }
 
   h3 {
     flex-grow: 1;
@@ -237,7 +241,7 @@ p.error {
     font-size: 1.75em;
     font-weight: normal;
     line-height: 1.10;
-    display: block;
+    display: inline-block;
     position: relative;
     a {
       display: block;
