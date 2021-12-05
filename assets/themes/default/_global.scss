@@ -253,6 +253,7 @@ p.error {
   }
 
   .controls {
+    flex-shrink: 0;
     text-align: end;
 
     .button {
