@@ -33,6 +33,9 @@
 - Update post's ActivityPub id when published by update (#915)
 - Calculate media URI properly even when MEDIA_UPLOAD_DIRECTORY configured (#916)
 - Prevent duplicated posts in 'all' timeline (#917)
+- Draw side line for blockquote on start (#933)
+- Fix URIs of posts on Mastodon (#947)
+- Place edit link proper position (#956, #963, #964)
 
 ## [[0.6.0]] - 2020-12-29
 
