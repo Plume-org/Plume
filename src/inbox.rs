@@ -90,8 +90,8 @@ impl<'a, T: Deserialize<'a>> FromData<'a> for SignedJson<T> {
         o: Transformed<'a, Self>,
     ) -> rocket::data::Outcome<Self, Self::Error> {
         let string = o.borrowed()?;
-        match serde_json::from_str(&string) {
-            Ok(v) => Success(SignedJson(Digest::from_body(&string), Json(v))),
+        match serde_json::from_str(string) {
+            Ok(v) => Success(SignedJson(Digest::from_body(string), Json(v))),
             Err(e) => {
                 if e.is_data() {
                     Failure((Status::UnprocessableEntity, JsonError::Parse(string, e)))

@@ -77,12 +77,7 @@ pub fn upload(
                     .map(|ext| format!(".{}", ext))
             })
             .unwrap_or_default();
-        let dest = format!(
-            "{}/{}{}",
-            CONFIG.media_directory,
-            GUID::rand().to_string(),
-            ext
-        );
+        let dest = format!("{}/{}{}", CONFIG.media_directory, GUID::rand(), ext);
 
         match fields["file"][0].data {
             SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)

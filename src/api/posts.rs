@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use rocket_contrib::json::Json;
 
-use crate::api::{authorization::*, Api};
+use crate::api::{authorization::*, Api, ApiError};
 use plume_api::posts::*;
 use plume_common::{activity_pub::broadcast, utils::md_to_html};
 use plume_models::{
@@ -121,14 +121,17 @@ pub fn create(
         Some(Media::get_media_processor(&conn, vec![&author])),
     );
 
-    let blog = payload.blog_id.or_else(|| {
-        let blogs = Blog::find_for_author(&conn, &author).ok()?;
-        if blogs.len() == 1 {
-            Some(blogs[0].id)
-        } else {
-            None
-        }
-    })?;
+    let blog = payload
+        .blog_id
+        .or_else(|| {
+            let blogs = Blog::find_for_author(&conn, &author).ok()?;
+            if blogs.len() == 1 {
+                Some(blogs[0].id)
+            } else {
+                None
+            }
+        })
+        .ok_or(ApiError(Error::NotFound))?;
 
     if Post::find_by_slug(&conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());

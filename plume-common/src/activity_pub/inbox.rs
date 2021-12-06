@@ -1,5 +1,7 @@
-use reqwest::header::{HeaderValue, ACCEPT};
+use reqwest;
 use std::fmt::Debug;
+
+use super::{request, sign::Signer};
 
 /// Represents an ActivityPub inbox.
 ///
@@ -10,7 +12,50 @@ use std::fmt::Debug;
 /// ```rust
 /// # extern crate activitypub;
 /// # use activitypub::{actor::Person, activity::{Announce, Create}, object::Note};
+/// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+/// # use once_cell::sync::Lazy;
 /// # use plume_common::activity_pub::inbox::*;
+/// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
+/// #
+/// # static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+/// #
+/// # struct MySigner {
+/// #     public_key: String,
+/// #     private_key: String,
+/// # }
+/// #
+/// # impl MySigner {
+/// #     fn new() -> Self {
+/// #         let (pub_key, priv_key) = gen_keypair();
+/// #         Self {
+/// #             public_key: String::from_utf8(pub_key).unwrap(),
+/// #             private_key: String::from_utf8(priv_key).unwrap(),
+/// #         }
+/// #     }
+/// # }
+/// #
+/// # impl Signer for MySigner {
+/// #     fn get_key_id(&self) -> String {
+/// #         "mysigner".into()
+/// #     }
+/// #
+/// #     fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+/// #         let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+/// #         signer.update(to_sign.as_bytes()).unwrap();
+/// #         signer.sign_to_vec().map_err(|_| SignError())
+/// #     }
+/// #
+/// #     fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+/// #         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+/// #         verifier.update(data.as_bytes()).unwrap();
+/// #         verifier.verify(&signature).map_err(|_| SignError())
+/// #     }
+/// # }
+/// #
 /// # struct User;
 /// # impl FromId<()> for User {
 /// #     type Error = ();
@@ -22,6 +67,10 @@ use std::fmt::Debug;
 /// #
 /// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
 /// #         Ok(User)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
 /// #     }
 /// # }
 /// # impl AsActor<&()> for User {
@@ -41,6 +90,10 @@ use std::fmt::Debug;
 /// #
 /// #     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
 /// #         Ok(Message)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
 /// #     }
 /// # }
 /// # impl AsObject<User, Create, &()> for Message {
@@ -207,7 +260,7 @@ where
                 };
 
                 // Handle the activity
-                match obj.activity(ctx, actor, &act_id) {
+                match obj.activity(ctx, actor, act_id) {
                     Ok(res) => Inbox::Handled(res.into()),
                     Err(e) => Inbox::Failed(e),
                 }
@@ -311,35 +364,16 @@ pub trait FromId<C>: Sized {
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        if let Some(proxy) = proxy {
-            reqwest::ClientBuilder::new().proxy(proxy)
-        } else {
-            reqwest::ClientBuilder::new()
-        }
-        .connect_timeout(Some(std::time::Duration::from_secs(5)))
-        .build()
-        .map_err(|_| (None, InboxError::DerefError.into()))?
-        .get(id)
-        .header(
-            ACCEPT,
-            HeaderValue::from_str(
-                &super::ap_accept_header()
-                    .into_iter()
-                    .collect::<Vec<_>>()
-                    .join(", "),
-            )
-            .map_err(|_| (None, InboxError::DerefError.into()))?,
-        )
-        .send()
-        .map_err(|_| (None, InboxError::DerefError))
-        .and_then(|mut r| {
-            let json: serde_json::Value = r
-                .json()
-                .map_err(|_| (None, InboxError::InvalidObject(None)))?;
-            serde_json::from_value(json.clone())
-                .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
-        })
-        .map_err(|(json, e)| (json, e.into()))
+        request::get(id, Self::get_sender(), proxy)
+            .map_err(|_| (None, InboxError::DerefError))
+            .and_then(|mut r| {
+                let json: serde_json::Value = r
+                    .json()
+                    .map_err(|_| (None, InboxError::InvalidObject(None)))?;
+                serde_json::from_value(json.clone())
+                    .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
+            })
+            .map_err(|(json, e)| (json, e.into()))
     }
 
     /// Builds a `Self` from its ActivityPub representation
@@ -347,6 +381,8 @@ pub trait FromId<C>: Sized {
 
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
     fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+
+    fn get_sender() -> &'static dyn Signer;
 }
 
 /// Should be implemented by anything representing an ActivityPub actor.
@@ -385,6 +421,49 @@ pub trait AsActor<C> {
 /// # extern crate activitypub;
 /// # use activitypub::{activity::Create, actor::Person, object::Note};
 /// # use plume_common::activity_pub::inbox::{AsActor, AsObject, FromId};
+/// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
+/// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+/// # use once_cell::sync::Lazy;
+/// #
+/// # static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+/// #
+/// # struct MySigner {
+/// #     public_key: String,
+/// #     private_key: String,
+/// # }
+/// #
+/// # impl MySigner {
+/// #     fn new() -> Self {
+/// #         let (pub_key, priv_key) = gen_keypair();
+/// #         Self {
+/// #             public_key: String::from_utf8(pub_key).unwrap(),
+/// #             private_key: String::from_utf8(priv_key).unwrap(),
+/// #         }
+/// #     }
+/// # }
+/// #
+/// # impl Signer for MySigner {
+/// #     fn get_key_id(&self) -> String {
+/// #         "mysigner".into()
+/// #     }
+/// #
+/// #     fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+/// #         let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+/// #         signer.update(to_sign.as_bytes()).unwrap();
+/// #         signer.sign_to_vec().map_err(|_| SignError())
+/// #     }
+/// #
+/// #     fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+/// #         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+/// #         verifier.update(data.as_bytes()).unwrap();
+/// #         verifier.verify(&signature).map_err(|_| SignError())
+/// #     }
+/// # }
+/// #
 /// # struct Account;
 /// # impl FromId<()> for Account {
 /// #     type Error = ();
@@ -396,6 +475,10 @@ pub trait AsActor<C> {
 /// #
 /// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
 /// #         Ok(Account)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
 /// #     }
 /// # }
 /// # impl AsActor<()> for Account {
@@ -419,6 +502,10 @@ pub trait AsActor<C> {
 ///
 ///     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
 ///         Ok(Message { text: obj.object_props.content_string().map_err(|_| ())? })
+///     }
+///
+///     fn get_sender() -> &'static dyn Signer {
+///         &*MY_SIGNER
 ///     }
 /// }
 ///
@@ -459,7 +546,51 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::activity_pub::sign::{
+        gen_keypair, Error as SignError, Result as SignResult, Signer,
+    };
     use activitypub::{activity::*, actor::Person, object::Note};
+    use once_cell::sync::Lazy;
+    use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+
+    static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+
+    struct MySigner {
+        public_key: String,
+        private_key: String,
+    }
+
+    impl MySigner {
+        fn new() -> Self {
+            let (pub_key, priv_key) = gen_keypair();
+            Self {
+                public_key: String::from_utf8(pub_key).unwrap(),
+                private_key: String::from_utf8(priv_key).unwrap(),
+            }
+        }
+    }
+
+    impl Signer for MySigner {
+        fn get_key_id(&self) -> String {
+            "mysigner".into()
+        }
+
+        fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+            let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+                .unwrap();
+            let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+            signer.update(to_sign.as_bytes()).unwrap();
+            signer.sign_to_vec().map_err(|_| SignError())
+        }
+
+        fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+            let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+                .unwrap();
+            let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+            verifier.update(data.as_bytes()).unwrap();
+            verifier.verify(&signature).map_err(|_| SignError())
+        }
+    }
 
     struct MyActor;
     impl FromId<()> for MyActor {
@@ -472,6 +603,10 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
             Ok(MyActor)
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
         }
     }
 
@@ -496,6 +631,10 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Note) -> Result<Self, Self::Error> {
             Ok(MyObject)
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
         }
     }
     impl AsObject<MyActor, Create, &()> for MyObject {
@@ -600,6 +739,10 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
             Err(())
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
         }
     }
     impl AsActor<&()> for FailingActor {

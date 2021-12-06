@@ -22,16 +22,12 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        ap_accept_header,
         inbox::{AsActor, AsObject, FromId},
-        sign::{gen_keypair, Signer},
+        request::get,
+        sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, Id, IntoId, PublicKey, PUBLIC_VISIBILITY,
     },
     utils,
-};
-use reqwest::{
-    header::{HeaderValue, ACCEPT},
-    ClientBuilder,
 };
 use riker::actors::{Publish, Tell};
 use rocket::{
@@ -52,6 +48,7 @@ pub enum Role {
     Admin = 0,
     Moderator = 1,
     Normal = 2,
+    Instance = 3,
 }
 
 #[derive(Queryable, Identifiable, Clone, Debug, AsChangeset)]
@@ -78,6 +75,7 @@ pub struct User {
     pub summary_html: SafeString,
     /// 0 = admin
     /// 1 = moderator
+    /// 3 = local instance
     /// anything else = normal user
     pub role: i32,
     pub preferred_theme: Option<String>,
@@ -210,7 +208,13 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(conn, link.href.as_ref()?, None, CONFIG.proxy()).map_err(|(_, e)| e)
+        User::from_id(
+            conn,
+            link.href.as_ref().ok_or(Error::Webfinger)?,
+            None,
+            CONFIG.proxy(),
+        )
+        .map_err(|(_, e)| e)
     }
 
     pub fn fetch_remote_interact_uri(acct: &str) -> Result<String> {
@@ -223,20 +227,7 @@ impl User {
     }
 
     fn fetch(url: &str) -> Result<CustomPerson> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(url)
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;
@@ -255,10 +246,10 @@ impl User {
                 conn,
                 json.object
                     .object_props
-                    .icon_image()?
+                    .icon_image()? // FIXME: Fails when icon is not set
                     .object_props
                     .url_string()?,
-                &self,
+                self,
             )
             .ok();
 
@@ -427,12 +418,12 @@ impl User {
         let last = &format!(
             "{}?page={}",
             &self.outbox_url,
-            self.get_activities_count(&conn) / i64::from(ITEMS_PER_PAGE) + 1
+            self.get_activities_count(conn) / i64::from(ITEMS_PER_PAGE) + 1
         );
         coll.collection_props.set_first_link(Id::new(first))?;
         coll.collection_props.set_last_link(Id::new(last))?;
         coll.collection_props
-            .set_total_items_u64(self.get_activities_count(&conn) as u64)?;
+            .set_total_items_u64(self.get_activities_count(conn) as u64)?;
         Ok(ActivityStream::new(coll))
     }
     pub fn outbox_page(
@@ -441,7 +432,7 @@ impl User {
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         let acts = self.get_activities_page(conn, (min, max))?;
-        let n_acts = self.get_activities_count(&conn);
+        let n_acts = self.get_activities_count(conn);
         let mut coll = OrderedCollectionPage::default();
         if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
             coll.collection_page_props.set_next_link(Id::new(&format!(
@@ -463,20 +454,7 @@ impl User {
         Ok(ActivityStream::new(coll))
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(url)
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
@@ -490,20 +468,11 @@ impl User {
         Ok((items, next))
     }
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(&self.outbox_url[..])
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(
+            &self.outbox_url[..],
+            Self::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         if let Some(first) = json.get("first") {
@@ -513,7 +482,7 @@ impl User {
                 if page.is_empty() {
                     break;
                 }
-                items.extend(page.drain(..));
+                items.append(&mut page);
                 if let Some(n) = nxt {
                     if n == next {
                         break;
@@ -535,20 +504,11 @@ impl User {
     }
 
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
-        let mut res = ClientBuilder::new()
-            .connect_timeout(Some(std::time::Duration::from_secs(5)))
-            .build()?
-            .get(&self.followers_endpoint[..])
-            .header(
-                ACCEPT,
-                HeaderValue::from_str(
-                    &ap_accept_header()
-                        .into_iter()
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                )?,
-            )
-            .send()?;
+        let mut res = get(
+            &self.followers_endpoint[..],
+            Self::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         Ok(json["items"]
@@ -720,7 +680,7 @@ impl User {
 
     pub fn get_keypair(&self) -> Result<PKey<Private>> {
         PKey::from_rsa(Rsa::private_key_from_pem(
-            self.private_key.clone()?.as_ref(),
+            self.private_key.clone().ok_or(Error::Signature)?.as_ref(),
         )?)
         .map_err(Error::from)
     }
@@ -943,7 +903,7 @@ impl FromId<DbConn> for User {
 
     fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
         let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str()?;
+        let inst = url.host_str().ok_or(Error::Url)?;
         let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
             Instance::insert(
                 conn,
@@ -1031,6 +991,10 @@ impl FromId<DbConn> for User {
 
         Ok(user)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsActor<&DbConn> for User {
@@ -1063,24 +1027,22 @@ impl AsObject<User, Delete, &DbConn> for User {
 }
 
 impl Signer for User {
-    type Error = Error;
-
     fn get_key_id(&self) -> String {
         format!("{}#main-key", self.ap_url)
     }
 
-    fn sign(&self, to_sign: &str) -> Result<Vec<u8>> {
-        let key = self.get_keypair()?;
+    fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+        let key = self.get_keypair().map_err(|_| SignError())?;
         let mut signer = sign::Signer::new(MessageDigest::sha256(), &key)?;
         signer.update(to_sign.as_bytes())?;
-        signer.sign_to_vec().map_err(Error::from)
+        signer.sign_to_vec().map_err(SignError::from)
     }
 
-    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool> {
+    fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref())?)?;
         let mut verifier = sign::Verifier::new(MessageDigest::sha256(), &key)?;
         verifier.update(data.as_bytes())?;
-        verifier.verify(&signature).map_err(Error::from)
+        verifier.verify(signature).map_err(SignError::from)
     }
 }
 
@@ -1121,7 +1083,7 @@ impl NewUser {
                 display_name,
                 role: role as i32,
                 summary: summary.to_owned(),
-                summary_html: SafeString::new(&utils::md_to_html(&summary, None, false, None).0),
+                summary_html: SafeString::new(&utils::md_to_html(summary, None, false, None).0),
                 email: Some(email),
                 hashed_password: password,
                 instance_id: instance.id,

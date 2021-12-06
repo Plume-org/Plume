@@ -41,9 +41,9 @@ fn main() {
         .expect("compile templates");
 
     compile_themes().expect("Theme compilation error");
-    recursive_copy(&Path::new("assets").join("icons"), &Path::new("static"))
+    recursive_copy(&Path::new("assets").join("icons"), Path::new("static"))
         .expect("Couldn't copy icons");
-    recursive_copy(&Path::new("assets").join("images"), &Path::new("static"))
+    recursive_copy(&Path::new("assets").join("images"), Path::new("static"))
         .expect("Couldn't copy images");
     create_dir_all(&Path::new("static").join("media")).expect("Couldn't init media directory");
 
@@ -97,12 +97,12 @@ fn compile_theme(path: &Path, out_dir: &Path) -> std::io::Result<()> {
         .components()
         .skip_while(|c| *c != Component::Normal(OsStr::new("themes")))
         .skip(1)
-        .filter_map(|c| {
+        .map(|c| {
             c.as_os_str()
                 .to_str()
                 .unwrap_or_default()
-                .splitn(2, '.')
-                .next()
+                .split_once('.')
+                .map_or(c.as_os_str().to_str().unwrap_or_default(), |x| x.0)
         })
         .collect::<Vec<_>>()
         .join("-");

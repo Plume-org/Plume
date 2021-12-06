@@ -15,6 +15,7 @@ use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
+        sign::Signer,
         Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
@@ -97,7 +98,7 @@ impl Post {
     }
 
     pub fn delete(&self, conn: &Connection) -> Result<()> {
-        for m in Mention::list_for_post(&conn, self.id)? {
+        for m in Mention::list_for_post(conn, self.id)? {
             m.delete(conn)?;
         }
         diesel::delete(self).execute(conn)?;
@@ -457,14 +458,14 @@ impl Post {
             .filter_map(|(id, m)| id.map(|id| (m, id)))
             .collect::<Vec<_>>();
 
-        let old_mentions = Mention::list_for_post(&conn, self.id)?;
+        let old_mentions = Mention::list_for_post(conn, self.id)?;
         let old_user_mentioned = old_mentions
             .iter()
             .map(|m| m.mentioned_id)
             .collect::<HashSet<_>>();
         for (m, id) in &mentions {
-            if !old_user_mentioned.contains(&id) {
-                Mention::from_activity(&*conn, &m, self.id, true, true)?;
+            if !old_user_mentioned.contains(id) {
+                Mention::from_activity(&*conn, m, self.id, true, true)?;
             }
         }
 
@@ -476,7 +477,7 @@ impl Post {
             .iter()
             .filter(|m| !new_mentions.contains(&m.mentioned_id))
         {
-            m.delete(&conn)?;
+            m.delete(conn)?;
         }
         Ok(())
     }
@@ -700,7 +701,7 @@ impl FromId<DbConn> for Post {
                 Post::insert(
                     conn,
                     NewPost {
-                        blog_id: blog?.id,
+                        blog_id: blog.ok_or(Error::NotFound)?.id,
                         slug: Self::slug(&title).to_string(),
                         title,
                         content: SafeString::new(&article.object_props.content_string()?),
@@ -758,6 +759,10 @@ impl FromId<DbConn> for Post {
         Timeline::add_to_all_timelines(conn, &post, Kind::Original)?;
 
         Ok(post)
+    }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
 
@@ -829,6 +834,10 @@ impl FromId<DbConn> for PostUpdate {
             license: updated.custom_props.license_string().ok(),
             tags: updated.object.object_props.tag,
         })
+    }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
 

@@ -21,6 +21,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
+        sign::Signer,
         Id, IntoId, PUBLIC_VISIBILITY,
     },
     utils,
@@ -141,18 +142,20 @@ impl Comment {
     }
 
     pub fn create_activity(&self, conn: &DbConn) -> Result<Create> {
-        let author = User::get(&conn, self.author_id)?;
+        let author = User::get(conn, self.author_id)?;
 
         let note = self.to_activity(conn)?;
         let mut act = Create::default();
         act.create_props.set_actor_link(author.into_id())?;
         act.create_props.set_object_object(note.clone())?;
-        act.object_props
-            .set_id_string(format!("{}/activity", self.ap_url.clone()?,))?;
+        act.object_props.set_id_string(format!(
+            "{}/activity",
+            self.ap_url.clone().ok_or(Error::MissingApProperty)?,
+        ))?;
         act.object_props
             .set_to_link_vec(note.object_props.to_link_vec::<Id>()?)?;
         act.object_props
-            .set_cc_link_vec(vec![Id::new(self.get_author(&conn)?.followers_endpoint)])?;
+            .set_cc_link_vec(vec![Id::new(self.get_author(conn)?.followers_endpoint)])?;
         Ok(act)
     }
 
@@ -182,7 +185,9 @@ impl Comment {
             .set_actor_link(self.get_author(conn)?.into_id())?;
 
         let mut tombstone = Tombstone::default();
-        tombstone.object_props.set_id_string(self.ap_url.clone()?)?;
+        tombstone
+            .object_props
+            .set_id_string(self.ap_url.clone().ok_or(Error::MissingApProperty)?)?;
         act.delete_props.set_object_object(tombstone)?;
 
         act.object_props
@@ -204,7 +209,13 @@ impl FromId<DbConn> for Comment {
 
     fn from_activity(conn: &DbConn, note: Note) -> Result<Self> {
         let comm = {
-            let previous_url = note.object_props.in_reply_to.as_ref()?.as_str()?;
+            let previous_url = note
+                .object_props
+                .in_reply_to
+                .as_ref()
+                .ok_or(Error::MissingApProperty)?
+                .as_str()
+                .ok_or(Error::MissingApProperty)?;
             let previous_comment = Comment::find_by_ap_url(conn, previous_url);
 
             let is_public = |v: &Option<serde_json::Value>| match v
@@ -318,6 +329,10 @@ impl FromId<DbConn> for Comment {
         comm.notify(conn)?;
         Ok(comm)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsObject<User, Create, &DbConn> for Comment {
@@ -346,7 +361,7 @@ impl AsObject<User, Delete, &DbConn> for Comment {
             m.delete(conn)?;
         }
 
-        for n in Notification::find_for_comment(&conn, &self)? {
+        for n in Notification::find_for_comment(conn, &self)? {
             n.delete(&**conn)?;
         }
 

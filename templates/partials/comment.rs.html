@@ -4,7 +4,7 @@
 
 @(ctx: BaseContext, comment_tree: &CommentTree, in_reply_to: Option<&str>, blog: &str, slug: &str)
 
-@if let Some(ref comm) = Some(&comment_tree.comment) {
+@if let Some(comm) = Some(&comment_tree.comment) {
 @if let Ok(author) = comm.get_author(ctx.0) {
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <main class="content">

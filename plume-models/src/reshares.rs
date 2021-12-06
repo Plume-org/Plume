@@ -1,12 +1,13 @@
 use crate::{
-    db_conn::DbConn, notifications::*, posts::Post, schema::reshares, timeline::*, users::User,
-    Connection, Error, Result, CONFIG,
+    db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::reshares,
+    timeline::*, users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Announce, Undo};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
+    sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
 
@@ -162,6 +163,10 @@ impl FromId<DbConn> for Reshare {
         res.notify(conn)?;
         Ok(res)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsObject<User, Undo, &DbConn> for Reshare {
@@ -173,7 +178,7 @@ impl AsObject<User, Undo, &DbConn> for Reshare {
             diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(&conn, notification_kind::RESHARE, self.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
                 diesel::delete(&notif).execute(&**conn)?;
             }
 

@@ -41,7 +41,7 @@ impl IntoContext for (&DbConn, &PlumeRocket) {
         Option<(String, String)>,
     ) {
         (
-            &self.0,
+            self.0,
             &self.1.intl.catalog,
             self.1.user.clone(),
             self.1.flash_msg.clone(),

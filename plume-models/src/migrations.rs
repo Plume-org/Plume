@@ -105,7 +105,8 @@ impl ImportedMigrations {
     pub fn rerun_last_migration(&self, conn: &Connection, path: &Path) -> Result<()> {
         let latest_migration = conn.latest_run_migration_version()?;
         let id = latest_migration
-            .and_then(|m| self.0.binary_search_by_key(&m.as_str(), |m| m.name).ok())?;
+            .and_then(|m| self.0.binary_search_by_key(&m.as_str(), |m| m.name).ok())
+            .ok_or(Error::NotFound)?;
         let migration = &self.0[id];
         conn.transaction(|| {
             migration.revert(conn, path)?;

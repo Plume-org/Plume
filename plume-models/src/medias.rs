@@ -7,7 +7,7 @@ use askama_escape::escape;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId, Id},
+    activity_pub::{inbox::FromId, request, Id},
     utils::MediaProcessor,
 };
 use std::{
@@ -104,8 +104,8 @@ impl Media {
     pub fn category(&self) -> MediaCategory {
         match &*self
             .file_path
-            .rsplitn(2, '.')
-            .next()
+            .rsplit_once('.')
+            .map(|x| x.1)
             .expect("Media::category: extension error")
             .to_lowercase()
         {
@@ -208,31 +208,33 @@ impl Media {
 
     // TODO: merge with save_remote?
     pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
-        let remote_url = image.object_props.url_string().ok()?;
+        let remote_url = image
+            .object_props
+            .url_string()
+            .or(Err(Error::MissingApProperty))?;
         let path = determine_mirror_file_path(&remote_url);
-        let parent = path.parent()?;
+        let parent = path.parent().ok_or(Error::InvalidValue)?;
         if !parent.is_dir() {
             DirBuilder::new().recursive(true).create(parent)?;
         }
 
-        let mut dest = fs::File::create(path.clone()).ok()?;
+        let mut dest = fs::File::create(path.clone())?;
         // TODO: conditional GET
-        if let Some(proxy) = CONFIG.proxy() {
-            reqwest::ClientBuilder::new().proxy(proxy.clone()).build()?
-        } else {
-            reqwest::Client::new()
-        }
-        .get(remote_url.as_str())
-        .send()
-        .ok()?
-        .copy_to(&mut dest)
-        .ok()?;
+        request::get(
+            remote_url.as_str(),
+            User::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?
+        .copy_to(&mut dest)?;
 
-        Media::find_by_file_path(conn, &path.to_str()?)
+        Media::find_by_file_path(conn, path.to_str().ok_or(Error::InvalidValue)?)
             .and_then(|mut media| {
                 let mut updated = false;
 
-                let alt_text = image.object_props.content_string().ok()?;
+                let alt_text = image
+                    .object_props
+                    .content_string()
+                    .or(Err(Error::NotFound))?;
                 let sensitive = image.object_props.summary_string().is_ok();
                 let content_warning = image.object_props.summary_string().ok();
                 if media.alt_text != alt_text {
@@ -264,8 +266,11 @@ impl Media {
                 Media::insert(
                     conn,
                     NewMedia {
-                        file_path: path.to_str()?.to_string(),
-                        alt_text: image.object_props.content_string().ok()?,
+                        file_path: path.to_str().ok_or(Error::InvalidValue)?.to_string(),
+                        alt_text: image
+                            .object_props
+                            .content_string()
+                            .or(Err(Error::NotFound))?,
                         is_remote: false,
                         remote_url: None,
                         sensitive: image.object_props.summary_string().is_ok(),
@@ -275,9 +280,10 @@ impl Media {
                             image
                                 .object_props
                                 .attributed_to_link_vec::<Id>()
-                                .ok()?
+                                .or(Err(Error::NotFound))?
                                 .into_iter()
-                                .next()?
+                                .next()
+                                .ok_or(Error::NotFound)?
                                 .as_ref(),
                             None,
                             CONFIG.proxy(),
@@ -325,7 +331,7 @@ fn determine_mirror_file_path(url: &str) -> PathBuf {
                 .next()
                 .map(ToOwned::to_owned)
                 .unwrap_or_else(|| String::from("png"));
-            file_path.push(format!("{}.{}", GUID::rand().to_string(), ext));
+            file_path.push(format!("{}.{}", GUID::rand(), ext));
         });
     file_path
 }

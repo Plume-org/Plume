@@ -1,4 +1,3 @@
-#![feature(try_trait)]
 #![feature(never_type)]
 #![feature(proc_macro_hygiene)]
 #![feature(box_patterns)]
@@ -18,7 +17,7 @@ extern crate serde_json;
 extern crate tantivy;
 
 use once_cell::sync::Lazy;
-use plume_common::activity_pub::inbox::InboxError;
+use plume_common::activity_pub::{inbox::InboxError, request, sign};
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
 use users::UserEvent;
@@ -80,15 +79,15 @@ impl From<openssl::error::ErrorStack> for Error {
     }
 }
 
-impl From<diesel::result::Error> for Error {
-    fn from(err: diesel::result::Error) -> Self {
-        Error::Db(err)
+impl From<sign::Error> for Error {
+    fn from(_: sign::Error) -> Self {
+        Error::Signature
     }
 }
 
-impl From<std::option::NoneError> for Error {
-    fn from(_: std::option::NoneError) -> Self {
-        Error::NotFound
+impl From<diesel::result::Error> for Error {
+    fn from(err: diesel::result::Error) -> Self {
+        Error::Db(err)
     }
 }
 
@@ -155,6 +154,12 @@ impl From<InboxError<Error>> for Error {
             InboxError::InvalidActor(Some(e)) | InboxError::InvalidObject(Some(e)) => e,
             e => Error::Inbox(Box::new(e)),
         }
+    }
+}
+
+impl From<request::Error> for Error {
+    fn from(_err: request::Error) -> Error {
+        Error::Request
     }
 }
 

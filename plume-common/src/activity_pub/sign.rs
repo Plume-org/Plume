@@ -19,20 +19,25 @@ pub fn gen_keypair() -> (Vec<u8>, Vec<u8>) {
 
 #[derive(Debug)]
 pub struct Error();
+pub type Result<T> = std::result::Result<T, Error>;
+
+impl From<openssl::error::ErrorStack> for Error {
+    fn from(_: openssl::error::ErrorStack) -> Self {
+        Self()
+    }
+}
 
 pub trait Signer {
-    type Error;
-
     fn get_key_id(&self) -> String;
 
     /// Sign some data with the signer keypair
-    fn sign(&self, to_sign: &str) -> Result<Vec<u8>, Self::Error>;
+    fn sign(&self, to_sign: &str) -> Result<Vec<u8>>;
     /// Verify if the signature is valid
-    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool, Self::Error>;
+    fn verify(&self, data: &str, signature: &[u8]) -> Result<bool>;
 }
 
 pub trait Signable {
-    fn sign<T>(&mut self, creator: &T) -> Result<&mut Self, Error>
+    fn sign<T>(&mut self, creator: &T) -> Result<&mut Self>
     where
         T: Signer;
     fn verify<T>(self, creator: &T) -> bool
@@ -46,7 +51,7 @@ pub trait Signable {
 }
 
 impl Signable for serde_json::Value {
-    fn sign<T: Signer>(&mut self, creator: &T) -> Result<&mut serde_json::Value, Error> {
+    fn sign<T: Signer>(&mut self, creator: &T) -> Result<&mut serde_json::Value> {
         let creation_date = Utc::now().to_rfc3339();
         let mut options = json!({
             "type": "RsaSignature2017",
@@ -182,7 +187,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     }
     let digest = all_headers.get_one("digest").unwrap_or("");
     let digest = request::Digest::from_header(digest);
-    if !digest.map(|d| d.verify_header(&data)).unwrap_or(false) {
+    if !digest.map(|d| d.verify_header(data)).unwrap_or(false) {
         // signature was valid, but body content does not match its digest
         return SignatureValidity::Invalid;
     }

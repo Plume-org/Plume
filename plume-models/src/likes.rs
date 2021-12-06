@@ -1,12 +1,13 @@
 use crate::{
-    db_conn::DbConn, notifications::*, posts::Post, schema::likes, timeline::*, users::User,
-    Connection, Error, Result, CONFIG,
+    db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::likes, timeline::*,
+    users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::activity;
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
+    sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
 
@@ -137,6 +138,10 @@ impl FromId<DbConn> for Like {
         res.notify(conn)?;
         Ok(res)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsObject<User, activity::Undo, &DbConn> for Like {
@@ -148,7 +153,7 @@ impl AsObject<User, activity::Undo, &DbConn> for Like {
             diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(&conn, notification_kind::LIKE, self.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
                 diesel::delete(&notif).execute(&**conn)?;
             }
             Ok(())

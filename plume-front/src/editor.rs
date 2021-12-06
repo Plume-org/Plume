@@ -54,11 +54,6 @@ pub enum EditorError {
     DOMError,
 }
 
-impl From<std::option::NoneError> for EditorError {
-    fn from(_: std::option::NoneError) -> Self {
-        EditorError::NoneError
-    }
-}
 const AUTOSAVE_DEBOUNCE_TIME: i32 = 5000;
 #[derive(Serialize, Deserialize)]
 struct AutosaveInformation {
@@ -198,7 +193,7 @@ fn clear_autosave() {
         .unwrap()
         .remove_item(&get_autosave_id())
         .unwrap();
-    console::log_1(&&format!("Saved to {}", &get_autosave_id()).into());
+    console::log_1(&format!("Saved to {}", &get_autosave_id()).into());
 }
 type TimeoutHandle = i32;
 lazy_static! {
@@ -366,7 +361,9 @@ fn init_editor() -> Result<(), EditorError> {
             return Ok(());
         }
         let old_ed = old_ed.unwrap();
-        let old_title = document().get_element_by_id("plume-editor-title")?;
+        let old_title = document()
+            .get_element_by_id("plume-editor-title")
+            .ok_or(EditorError::NoneError)?;
         old_ed
             .dyn_ref::<HtmlElement>()
             .unwrap()
@@ -434,7 +431,8 @@ fn init_editor() -> Result<(), EditorError> {
             bg.class_list().add_1("show").unwrap();
         })) as Box<dyn FnMut(MouseEvent)>);
         document()
-            .get_element_by_id("publish")?
+            .get_element_by_id("publish")
+            .ok_or(EditorError::NoneError)?
             .add_event_listener_with_callback("click", show_popup.as_ref().unchecked_ref())
             .map_err(|_| EditorError::DOMError)?;
         show_popup.forget();
@@ -528,8 +526,14 @@ fn init_popup(
     cover_label
         .set_attribute("for", "cover")
         .map_err(|_| EditorError::DOMError)?;
-    let cover = document.get_element_by_id("cover")?;
-    cover.parent_element()?.remove_child(&cover).ok();
+    let cover = document
+        .get_element_by_id("cover")
+        .ok_or(EditorError::NoneError)?;
+    cover
+        .parent_element()
+        .ok_or(EditorError::NoneError)?
+        .remove_child(&cover)
+        .ok();
     popup
         .append_child(&cover_label)
         .map_err(|_| EditorError::DOMError)?;
@@ -554,7 +558,7 @@ fn init_popup(
         draft.set_checked(draft_checkbox.checked());
 
         draft_label
-            .append_child(&draft)
+            .append_child(draft)
             .map_err(|_| EditorError::DOMError)?;
         draft_label
             .append_child(&document.create_text_node(&i18n!(CATALOG, "This is a draft")))
@@ -620,11 +624,12 @@ fn init_popup(
         .map_err(|_| EditorError::DOMError)?;
     callback.forget();
     popup
-        .append_child(&button)
+        .append_child(button)
         .map_err(|_| EditorError::DOMError)?;
 
     document
-        .body()?
+        .body()
+        .ok_or(EditorError::NoneError)?
         .append_child(&popup)
         .map_err(|_| EditorError::DOMError)?;
     Ok(popup)
@@ -641,7 +646,8 @@ fn init_popup_bg() -> Result<Element, EditorError> {
         .map_err(|_| EditorError::DOMError)?;
 
     document()
-        .body()?
+        .body()
+        .ok_or(EditorError::NoneError)?
         .append_child(&bg)
         .map_err(|_| EditorError::DOMError)?;
     let callback = Closure::wrap(Box::new(|_| close_popup()) as Box<dyn FnMut(MouseEvent)>);

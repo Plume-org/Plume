@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, db_conn::DbConn, notifications::*, schema::follows, users::User, Connection, Error,
-    Result, CONFIG,
+    ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
+    Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
@@ -183,6 +183,10 @@ impl FromId<DbConn> for Follow {
         .map_err(|(_, e)| e)?;
         Follow::accept_follow(conn, &actor, &target, follow, actor.id, target.id)
     }
+
+    fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
 }
 
 impl AsObject<User, Undo, &DbConn> for Follow {
@@ -195,7 +199,7 @@ impl AsObject<User, Undo, &DbConn> for Follow {
             diesel::delete(&self).execute(&**conn)?;
 
             // delete associated notification if any
-            if let Ok(notif) = Notification::find(&conn, notification_kind::FOLLOW, self.id) {
+            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
                 diesel::delete(&notif).execute(&**conn)?;
             }
 

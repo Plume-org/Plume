@@ -16,10 +16,11 @@
 
 - Upgrade some dependent crates (#858)
 - Use tracing crate (#868)
-- Update Rust version to nightly-2021-01-15 (#878)
+- Update Rust version to nightly-2021-11-27 (#961)
 - Upgrade Tantivy to 0.13.3 and lindera-tantivy to 0.7.1 (#878)
 - Run searcher on actor system (#870)
 - Use article title as its slug instead of capitalizing and inserting hyphens (#920)
+- Sign GET requests to other instances (#957)
 
 ### Fixed
 
