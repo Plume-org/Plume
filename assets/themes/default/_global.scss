@@ -472,9 +472,10 @@ figure {
 
 /// Avatars
 .avatar {
-  background-position: center;
+  background-position: center !important;
   background-size: cover;
   border-radius: 100%;
+  flex-shrink: 0;
 
   &.small {
     width: 50px;
