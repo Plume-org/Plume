@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -219,7 +219,7 @@ msgstr "Vyzerá to tak, že článok, ktorý si sa pokúšal/a vymazať neexistu
 
 # src/routes/posts.rs:672
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "Nebolo možné zistiť postačujúce množstvo informácií o tvojom účte. Prosím over si, že celá tvoja prezývka je zadaná správne."
+msgstr "Nebolo možné zistiť postačujúce množstvo informácií o tvojom účte. Prosím over si, že tvoja prezývka je zadaná správne, v celku."
 
 # src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
@@ -592,7 +592,7 @@ msgid "Moderator"
 msgstr "Správca"
 
 msgid "Moderation"
-msgstr ""
+msgstr "Moderovanie"
 
 msgid "Home"
 msgstr "Domov"
@@ -655,7 +655,7 @@ msgid "Optional, shows a message to the user when they attempt to create an acco
 msgstr ""
 
 msgid "Blocklisting notification"
-msgstr ""
+msgstr "Oboznámenie o blokovaní"
 
 msgid "The message to be shown when the user attempts to create an account with this email address"
 msgstr ""
@@ -664,7 +664,7 @@ msgid "Add blocklisted address"
 msgstr "Pridaj blokovanú adresu"
 
 msgid "There are no blocked emails on your instance"
-msgstr ""
+msgstr "Na tvojej instancii niesú žiadné emailové adresy zakázané"
 
 msgid "Delete selected emails"
 msgstr "Vymaž vybrané emaily"
@@ -676,10 +676,10 @@ msgid "Blocklisted for:"
 msgstr "Zablokovaná kvôli:"
 
 msgid "Will notify them on account creation with this message:"
-msgstr ""
+msgstr "Pri vytvorení účtu budú užívatelia oboznámení touto správou:"
 
 msgid "The user will be silently prevented from making an account"
-msgstr ""
+msgstr "Užívateľovi bude v tichosti znemožnené vytvorenie účtu"
 
 msgid "Welcome to {}"
 msgstr "Vitaj na {}"

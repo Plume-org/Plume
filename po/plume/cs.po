@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -43,7 +43,7 @@ msgstr "Vaše zdroje"
 
 # src/template_utils.rs:117
 msgid "Local feed"
-msgstr "Místni zdroje"
+msgstr "Místní zdroje"
 
 # src/template_utils.rs:118
 msgid "Federated feed"
@@ -59,11 +59,11 @@ msgstr "Předchozí stránka"
 
 # src/template_utils.rs:209
 msgid "Next page"
-msgstr "Následující stránka"
+msgstr "Následující strana"
 
 # src/template_utils.rs:363
 msgid "Optional"
-msgstr "Nepovinné"
+msgstr "Volitelné"
 
 # src/routes/blogs.rs:67
 msgid "To create a new blog, you need to be logged in"
@@ -385,7 +385,7 @@ msgid "Matrix room"
 msgstr "Matrix místnost"
 
 msgid "Admin"
-msgstr "Administrátor"
+msgstr "Správce"
 
 msgid "It is you"
 msgstr "To jste vy"
@@ -589,13 +589,13 @@ msgid "Run on selected users"
 msgstr ""
 
 msgid "Moderator"
-msgstr ""
+msgstr "Moderátor"
 
 msgid "Moderation"
 msgstr ""
 
 msgid "Home"
-msgstr ""
+msgstr "Domů"
 
 msgid "Administration of {0}"
 msgstr "Správa {0}"
@@ -667,13 +667,13 @@ msgid "There are no blocked emails on your instance"
 msgstr ""
 
 msgid "Delete selected emails"
-msgstr ""
+msgstr "Smazat vybrané emaily"
 
 msgid "Email address:"
-msgstr ""
+msgstr "Emailová adresa:"
 
 msgid "Blocklisted for:"
-msgstr ""
+msgstr "Blokováno pro:"
 
 msgid "Will notify them on account creation with this message:"
 msgstr ""

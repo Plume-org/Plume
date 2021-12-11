@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -23,7 +23,7 @@ msgstr "{0} a commenté votre article."
 
 # src/template_utils.rs:106
 msgid "{0} is subscribed to you."
-msgstr "{0} est abonné à vous."
+msgstr "{0} vous suit."
 
 # src/template_utils.rs:107
 msgid "{0} liked your article."
@@ -75,7 +75,7 @@ msgstr "Un blog avec le même nom existe déjà."
 
 # src/routes/blogs.rs:147
 msgid "Your blog was successfully created!"
-msgstr "Votre blog a été créé avec succès!"
+msgstr "Votre blog a été créé avec succès !"
 
 # src/routes/blogs.rs:165
 msgid "Your blog was deleted."
@@ -131,7 +131,7 @@ msgstr "E-mail déjà bloqué"
 
 # src/routes/instance.rs:224
 msgid "Email Blocked"
-msgstr "Adresse email bloquée"
+msgstr "E-mail bloqué"
 
 # src/routes/instance.rs:317
 msgid "You can't change your own rights."
@@ -263,7 +263,7 @@ msgstr "Vous devez vous connecter pour vous abonner à quelqu'un"
 
 # src/routes/user.rs:299
 msgid "To edit your profile, you need to be logged in"
-msgstr "Vous devez vous connecter pour pour modifier votre profil"
+msgstr "Vous devez vous connecter pour modifier votre profil"
 
 # src/routes/user.rs:345
 msgid "Your profile has been updated."
@@ -279,7 +279,7 @@ msgstr "Vous ne pouvez pas supprimer le compte d'une autre personne."
 
 # src/routes/user.rs:463
 msgid "Registrations are closed on this instance."
-msgstr "Les inscriptions sont fermées dans cette instance."
+msgstr "Les inscriptions sont fermées sur cette instance."
 
 # src/routes/user.rs:486
 msgid "Your account has been created. Now you just need to log in, before you can use it."
@@ -298,7 +298,7 @@ msgid "Content warning"
 msgstr "Avertissement"
 
 msgid "Leave it empty, if none is needed"
-msgstr "Laisser vide, si aucun n'est nécessaire"
+msgstr "Laissez vide, si aucun avertissement n'est nécessaire"
 
 msgid "File"
 msgstr "Fichier"
@@ -334,7 +334,7 @@ msgid "Markdown syntax"
 msgstr "Syntaxe markdown"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr "Copiez-le dans vos articles, à insérer ce média :"
+msgstr "Copiez-le dans vos articles, pour insérer ce média :"
 
 msgid "Use as an avatar"
 msgstr "Utiliser comme avatar"
@@ -469,10 +469,10 @@ msgid "Edit your account"
 msgstr "Modifier votre compte"
 
 msgid "Your Profile"
-msgstr "Votre Profile"
+msgstr "Votre Profil"
 
 msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "Pour modifier votre avatar, téléversez-le dans votre galerie et sélectionner à partir de là."
+msgstr "Pour modifier votre avatar, téléversez-le dans votre galerie puis sélectionnez-le à partir de là."
 
 msgid "Upload an avatar"
 msgstr "Téléverser un avatar"
@@ -508,7 +508,7 @@ msgid "Delete your account"
 msgstr "Supprimer votre compte"
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "Désolé, mais en tant qu'administrateur, vous ne pouvez pas laisser votre propre instance."
+msgstr "Désolé, mais en tant qu'administrateur, vous ne pouvez pas quitter votre propre instance."
 
 msgid "Latest articles"
 msgstr "Derniers articles"
@@ -568,7 +568,7 @@ msgid "Instances"
 msgstr "Instances"
 
 msgid "Email blocklist"
-msgstr "Liste noire des emails"
+msgstr "Liste des e-mails proscrits"
 
 msgid "Grant admin rights"
 msgstr "Accorder les droits d'administration"
@@ -586,7 +586,7 @@ msgid "Ban"
 msgstr "Bannir"
 
 msgid "Run on selected users"
-msgstr "Exécuter sur les utilisateurices sélectionné⋅e⋅s"
+msgstr "Appliquer aux utilisateurices sélectionné⋅e⋅s"
 
 msgid "Moderator"
 msgstr "Modérateurice"
@@ -640,10 +640,10 @@ msgid "Blocklisted Emails"
 msgstr "Emails bloqués"
 
 msgid "Email address"
-msgstr "Adresse mail"
+msgstr "Adresse e-mail"
 
 msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
-msgstr "L'adresse e-mail que vous souhaitez bloquer. Pour bloquer des domaines, vous pouvez utiliser la syntaxe : '*@example.com' qui bloque toutes les adresses du domain exemple.com"
+msgstr "L'adresse e-mail que vous souhaitez bloquer. Pour bloquer des domaines, vous pouvez utiliser la syntaxe : '*@example.com' qui bloque toutes les adresses du domaine exemple.com"
 
 msgid "Note"
 msgstr "Note"
@@ -658,7 +658,7 @@ msgid "Blocklisting notification"
 msgstr "Notification de blocage"
 
 msgid "The message to be shown when the user attempts to create an account with this email address"
-msgstr "Le message à afficher lors de la création d'un compte avec cette adresse mail"
+msgstr "Le message à afficher lors de la création d'un compte avec cette adresse e-mail"
 
 msgid "Add blocklisted address"
 msgstr "Bloquer une adresse"
@@ -670,7 +670,7 @@ msgid "Delete selected emails"
 msgstr "Supprimer le(s) adresse(s) sélectionnée(s)"
 
 msgid "Email address:"
-msgstr "Adresse mail:"
+msgstr "Adresse e-mail:"
 
 msgid "Blocklisted for:"
 msgstr "Bloqué pour :"
@@ -842,7 +842,7 @@ msgid "Update password"
 msgstr "Mettre à jour le mot de passe"
 
 msgid "Check your inbox!"
-msgstr "Vérifiez votre boîte de réception!"
+msgstr "Vérifiez votre boîte de réception !"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr "Nous avons envoyé un mail à l'adresse que vous nous avez donnée, avec un lien pour réinitialiser votre mot de passe."
@@ -976,7 +976,7 @@ msgid "To this date"
 msgstr "Avant cette date"
 
 msgid "Containing these tags"
-msgstr "Avec ces tags"
+msgstr "Avec ces étiquettes"
 
 msgid "Tags"
 msgstr "Étiquettes"

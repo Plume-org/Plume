@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -67,7 +67,7 @@ msgstr "Opcional"
 
 # src/routes/blogs.rs:67
 msgid "To create a new blog, you need to be logged in"
-msgstr "Para crear un nuevo blog, necesita estar logueado"
+msgstr "Para crear un nuevo blog, necesitas estar conectado"
 
 # src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
@@ -127,7 +127,7 @@ msgstr "Bloqueos eliminados"
 
 # src/routes/instance.rs:219
 msgid "Email already blocked"
-msgstr ""
+msgstr "Correo electrónico ya bloqueado"
 
 # src/routes/instance.rs:224
 msgid "Email Blocked"
@@ -175,11 +175,11 @@ msgstr "Esta publicación aún no está publicada."
 
 # src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
-msgstr "Para escribir un nuevo artículo, necesita estar logueado"
+msgstr "Para escribir un nuevo artículo, necesitas estar conectado"
 
 # src/routes/posts.rs:146
 msgid "You are not an author of this blog."
-msgstr "No es un autor de este blog."
+msgstr "No eres un autor de este blog."
 
 # src/routes/posts.rs:153
 msgid "New post"
@@ -382,7 +382,7 @@ msgid "Source code"
 msgstr "Código fuente"
 
 msgid "Matrix room"
-msgstr "Sala de matriz"
+msgstr "Sala Matrix"
 
 msgid "Admin"
 msgstr "Administrador"

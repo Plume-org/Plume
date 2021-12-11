@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 # src/template_utils.rs:105
 msgid "{0} commented on your article."
-msgstr "{0} روی مطلب شما نظر داد."
+msgstr "{0} روی مقالهٔ شما نظر داد."
 
 # src/template_utils.rs:106
 msgid "{0} is subscribed to you."
@@ -27,7 +27,7 @@ msgstr "{0} شما را دنبال می‌کند."
 
 # src/template_utils.rs:107
 msgid "{0} liked your article."
-msgstr "{0} مطلب شما را پسندید."
+msgstr "{0} مقالهٔ شما را پسندید."
 
 # src/template_utils.rs:108
 msgid "{0} mentioned you."
@@ -35,7 +35,7 @@ msgstr "{0} به شما اشاره کرد."
 
 # src/template_utils.rs:109
 msgid "{0} boosted your article."
-msgstr "{0} مطلب شما را تقویت کرد."
+msgstr "{0} مقالهٔ شما را تقویت کرد."
 
 # src/template_utils.rs:116
 msgid "Your feed"
@@ -51,7 +51,7 @@ msgstr "خوراک سراسری"
 
 # src/template_utils.rs:154
 msgid "{0}'s avatar"
-msgstr "آواتار {0}"
+msgstr "چهرک {0}"
 
 # src/template_utils.rs:198
 msgid "Previous page"
@@ -123,15 +123,15 @@ msgstr "{} مسدود شده است."
 
 # src/routes/instance.rs:203
 msgid "Blocks deleted"
-msgstr "مسدود سازی حذف شد"
+msgstr "مسدودسازی‌ها حذف شدند"
 
 # src/routes/instance.rs:219
 msgid "Email already blocked"
-msgstr ""
+msgstr "رایانامه قبلاً مسدود شده است"
 
 # src/routes/instance.rs:224
 msgid "Email Blocked"
-msgstr "ایمیل مسدود شده"
+msgstr "رایانامه مسدود شده"
 
 # src/routes/instance.rs:317
 msgid "You can't change your own rights."
@@ -147,7 +147,7 @@ msgstr "انجام شد."
 
 # src/routes/likes.rs:58
 msgid "To like a post, you need to be logged in"
-msgstr "برای پسندیدن یک مطلب بایستی وارد شده باشید"
+msgstr "برای پسندیدن یک فرسته، بایستی وارد شده باشید"
 
 # src/routes/medias.rs:158
 msgid "Your media have been deleted."
@@ -159,7 +159,7 @@ msgstr "شما مجاز به پاک کردن این رسانه نیستید."
 
 # src/routes/medias.rs:180
 msgid "Your avatar has been updated."
-msgstr "آواتار شما به‌روز شده است."
+msgstr "چهرک شما به‌روز شده است."
 
 # src/routes/medias.rs:185
 msgid "You are not allowed to use this media."
@@ -171,19 +171,19 @@ msgstr "برای دیدن اعلانات خود بایستی وارد شده ب�
 
 # src/routes/posts.rs:55
 msgid "This post isn't published yet."
-msgstr "این مطلب هنوز منتشر نشده است."
+msgstr "این فرسته هنوز منتشر نشده است."
 
 # src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
-msgstr "برای نوشتن یک مطلب جدید بایستی وارد شده باشید"
+msgstr "برای نوشتن یک فرستهٔ جدید، بایستی وارد شده باشید"
 
 # src/routes/posts.rs:146
 msgid "You are not an author of this blog."
-msgstr "شما، نویسنده این بلاگ نیستید."
+msgstr "شما نویسندهٔ این بلاگ نیستید."
 
 # src/routes/posts.rs:153
 msgid "New post"
-msgstr "نوشتهٔ جدید"
+msgstr "فرستهٔ جدید"
 
 # src/routes/posts.rs:198
 msgid "Edit {0}"
@@ -195,35 +195,35 @@ msgstr "شما مجاز به انتشار روی این بلاگ نیستید."
 
 # src/routes/posts.rs:367
 msgid "Your article has been updated."
-msgstr "نوشتهٔ شما به‌روز شده است."
+msgstr "مقالهٔ شما به‌روز شده است."
 
 # src/routes/posts.rs:556
 msgid "Your article has been saved."
-msgstr "نوشتهٔ شما ذخیره شده است."
+msgstr "مقالهٔ شما ذخیره شده است."
 
 # src/routes/posts.rs:563
 msgid "New article"
-msgstr "نوشتهٔ جدید"
+msgstr "مقالهٔ جدید"
 
 # src/routes/posts.rs:601
 msgid "You are not allowed to delete this article."
-msgstr "شما مجاز به حذف این نوشته نیستید."
+msgstr "شما مجاز به حذف این مقاله نیستید."
 
 # src/routes/posts.rs:625
 msgid "Your article has been deleted."
-msgstr "نوشتهٔ شما پاک شده است."
+msgstr "مقالهٔ شما پاک شده است."
 
 # src/routes/posts.rs:630
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr "به نظر می‌رسد نوشته‌ای را که می‌خواهید پاک کنید، وجود ندارد. قبلا پاک نشده است؟"
+msgstr "به نظر می‌رسد مقاله‌ای را که می‌خواهید پاک کنید، وجود ندارد. قبلا پاک نشده است؟"
 
 # src/routes/posts.rs:672
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "نتوانستیم اطلاعات کافی درباره حساب شما دریافت کنیم. لطفا مطمئن شوید که نام کاربری درست است."
+msgstr "نتوانستیم اطّلاعات کافی دربارهٔ حساب شما دریافت کنیم. لطفاً مطمئن شوید که نام کاربری درست است."
 
 # src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
-msgstr "برای هم‌رسانی یک نوشته لازم است وارد شوید"
+msgstr "برای هم‌رسانی یک فرسته لازم است وارد شوید"
 
 # src/routes/session.rs:95
 msgid "You are now connected."
@@ -292,7 +292,7 @@ msgid "Description"
 msgstr "توضیحات"
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "مناسب برای کسانی که مشکل بینایی دارند و نیز درج اطلاعات پروانه نشر"
+msgstr "مناسب برای کسانی که مشکل بینایی دارند و نیز درج اطّلاعات پروانه نشر"
 
 msgid "Content warning"
 msgstr "هشدار محتوا"
@@ -334,7 +334,7 @@ msgid "Markdown syntax"
 msgstr "نحو مارک‌داون"
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr "برای درج رسانه، رونوشت این را در مطلب خود بگذارید:"
+msgstr "برای درج این رسانه، این را در مقاله‌تان رونویسی کنید:"
 
 msgid "Use as an avatar"
 msgstr "استفاده به عنوان آواتار"
@@ -415,7 +415,7 @@ msgid "{0}'s subscribers"
 msgstr "دنبال‌کنندگان {0}"
 
 msgid "Articles"
-msgstr "نوشته‌ها"
+msgstr "مقالات"
 
 msgid "Subscribers"
 msgstr "دنبال‌کنندگان"
@@ -487,7 +487,7 @@ msgid "Theme"
 msgstr "پوسته"
 
 msgid "Default theme"
-msgstr "پوسته پیش‌فرض"
+msgstr "پوستهٔ پیش‌فرض"
 
 msgid "Error while loading theme selector."
 msgstr "خطا هنگام بار شدن گزینش‌گر پوسته."
@@ -511,19 +511,19 @@ msgid "Sorry, but as an admin, you can't leave your own instance."
 msgstr "ببخشید اما به عنوان مدیر، نمی‌توانید نمونهٔ خودتان را ترک کنید."
 
 msgid "Latest articles"
-msgstr "آخرین نوشته‌ها"
+msgstr "آخرین مقالات"
 
 msgid "Atom feed"
 msgstr "خوراک اتم"
 
 msgid "Recently boosted"
-msgstr "نوشته‌هایی که اخیرا تقویت شده‌اند"
+msgstr "به‌تازگی تقویت شده"
 
 msgid "Articles tagged \"{0}\""
-msgstr "نوشته‌های دارای برچسب «{0}»"
+msgstr "مقالات دارای برچسب «{0}»"
 
 msgid "There are currently no articles with such a tag"
-msgstr "در حال حاضر نوشته‌ای با این برچسب وجود ندارد"
+msgstr "در حال حاضر مقاله‌ای با این برچسب وجود ندارد"
 
 msgid "The content you sent can't be processed."
 msgstr "محتوایی که فرستادید قابل پردازش نیست."
@@ -544,7 +544,7 @@ msgid "Invalid CSRF token"
 msgstr "توکن CSRF نامعتبر"
 
 msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "مشکلی در ارتباط با توکن CSRF ما وجود دارد. اطمینان حاصل کنید که کوکی در مرورگرتان فعال است و سپس این صفحه را مجددا فراخوانی کنید. اگر این پیام خطا را باز هم مشاهده کردید، موضوع را گزارش کنید."
+msgstr "مشکلی در ارتباط با توکن CSRF ما وجود دارد. اطمینان حاصل کنید که کوکی در مرورگرتان فعّال است و سپس این صفحه را مجددا فراخوانی کنید. اگر این پیام خطا را باز هم مشاهده کردید، موضوع را گزارش کنید."
 
 msgid "You are not authorized."
 msgstr "شما مجاز به این کار نیستید."
@@ -622,7 +622,7 @@ msgid "Long description"
 msgstr "توضیحات بلند"
 
 msgid "Default article license"
-msgstr "پروانه پیش‌فرض نوشته"
+msgstr "پروانهٔ پیش‌فرض مقاله"
 
 msgid "Save these settings"
 msgstr "ذخیره این تنظیمات"
@@ -631,10 +631,10 @@ msgid "If you are browsing this site as a visitor, no data about you is collecte
 msgstr "اگر شما به عنوان یک بازدیدکننده در حال مرور این پایگاه هستید، هیچ داده‌ای درباره شما گردآوری نمی‌شود."
 
 msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr "به عنوان یک کاربر ثبت‌نام شده، برای آن‌که بتوانید وارد شده و مطلب بنویسید یا نظر بدهید، لازم است که نام‌کاربری (که لازم نیست نام واقعی شما باشد) و نشانی رایانامه فعال را ارائه کنید. محتوایی که می‌فرستید، تا زمانی که خودتان آن را پاک نکنید نگه‌داری می‌شود."
+msgstr "به عنوان یک کاربر ثبت‌نام شده، برای آن‌که بتوانید وارد شده و مقاله بنویسید یا نظر بدهید، لازم است که نام کاربری (که لازم نیست نام واقعی شما باشد) و نشانی رایانامهٔ فعّال‌تان را ارائه کنید. محتوایی که ثبت می‌کنید، تا زمانی که خودتان آن را پاک نکنید نگه‌داری می‌شود."
 
 msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr "وقتی وارد می‌شوید، ما دو کوکی ذخیره می‌کنیم. یکی برای باز نگه‌داشتن نشست جاری و دومی برای اجتناب از فعالیت دیگران از جانب شما. ما هیچ کوکی دیگری ذخیره نمی‌کنیم."
+msgstr "وقتی وارد می‌شوید، ما دو کوکی ذخیره می‌کنیم. یکی برای باز نگه‌داشتن نشست جاری و دومی برای اجتناب از فعّالیت دیگران از جانب شما. ما هیچ کوکی دیگری ذخیره نمی‌کنیم."
 
 msgid "Blocklisted Emails"
 msgstr "رایانامه‌های مسدود شده"
@@ -697,7 +697,7 @@ msgid "Home to <em>{0}</em> people"
 msgstr "میزبان <em>{0}</em> نفر"
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr "که تاکنون <em>{0}</em> مطلب نوشته‌اند"
+msgstr "که تاکنون <em>{0}</em> مقاله نوشته‌اند"
 
 msgid "And are connected to <em>{0}</em> other instances"
 msgstr "و به <em>{0}</em> نمونه دیگر متصل‌اند"
@@ -730,7 +730,7 @@ msgid "Content"
 msgstr "محتوا"
 
 msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "برای درج رسانه می‌توانید آن را به نگارخانه خود افزوده و سپس به کمک کد مارک‌داونی که می‌گیرید وارد مطلب‌تان کنید."
+msgstr "می‌تواند رسانه را در نگار‌خانهٔ خود بارگذاری کنید، و سپس کد مارک‌داون آن‌ها را درون مقاله‌تان درج کنید."
 
 msgid "Upload media"
 msgstr "بارگذاری رسانه"
@@ -754,7 +754,7 @@ msgid "Update, or publish"
 msgstr "به‌روزرسانی، یا انتشار"
 
 msgid "Publish your post"
-msgstr "انتشار نوشته‌تان"
+msgstr "انتشار فرسته‌تان"
 
 msgid "Written by {0}"
 msgstr "نوشته شده توسط {0}"
@@ -763,7 +763,7 @@ msgid "All rights reserved."
 msgstr "تمامی حقوق محفوظ است."
 
 msgid "This article is under the {0} license."
-msgstr "این مطلب تحت پروانه {0} است."
+msgstr "این مقاله تحت پروانهٔ {0} است."
 
 msgid "One like"
 msgid_plural "{0} likes"
@@ -788,7 +788,7 @@ msgid "Boost"
 msgstr "تقویت"
 
 msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr "{0}وارد شوید{1} و یا {2}از حساب فدیورس خود{3} برای تعامل با این مطلب استفاده کنید"
+msgstr "{0}وارد شوید{1}، یا {2}از حساب فدیورس خود{3} برای تعامل با این مقاله استفاده کنید"
 
 msgid "Comments"
 msgstr "نظرات"
@@ -806,10 +806,10 @@ msgid "Are you sure?"
 msgstr "مطمئنید؟"
 
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr "این مطلب هنوز یک پیش‌نویس است. تنها شما و دیگر نویسندگان می‌توانید آن را ببینید."
+msgstr "این مقاله هنوز یک پیش‌نویس است. تنها شما و دیگر نویسندگان می‌توانید آن را ببینید."
 
 msgid "Only you and other authors can edit this article."
-msgstr "تنها شما و دیگر نویسندگان می‌توانید این نوشته را ویرایش کنید."
+msgstr "تنها شما و دیگر نویسندگان می‌توانید این مقاله را ویرایش کنید."
 
 msgid "Edit"
 msgstr "ویرایش"
@@ -833,7 +833,7 @@ msgid "Reset your password"
 msgstr "بازنشانی گذرواژه"
 
 msgid "New password"
-msgstr "گذرواژه جدید"
+msgstr "گذرواژهٔ جدید"
 
 msgid "Confirmation"
 msgstr "تایید"
@@ -904,7 +904,7 @@ msgstr[0] "یک نویسنده در این بلاگ است: "
 msgstr[1] "{0} نویسنده در این بلاگ هستند: "
 
 msgid "No posts to see here yet."
-msgstr "هنوز نوشته‌ای برای دیدن وجود ندارد."
+msgstr "هنوز فرسته‌ای برای دیدن وجود ندارد."
 
 msgid "Nothing to see here yet."
 msgstr "هنوز اینجا چیزی برای دیدن نیست."
@@ -931,7 +931,7 @@ msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "نویسندگان می‌توانند چندین بلاگ را مدیریت کنند که هر کدام‌شان مانند یک پایگاه وب مستقل هستند."
 
 msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "نوشته‌ها در سایر نمونه‌های پلوم نیز قابل مشاهده هستند و شما می‌توانید با آن‌ها به صورت مستقیم و از دیگر بن‌سازه‌ها مانند ماستدون تعامل داشته باشید."
+msgstr "مقالات در سایر نمونه‌های پلوم نیز قابل مشاهده هستند و شما می‌توانید با آن‌ها به صورت مستقیم و از دیگر بن‌سازه‌ها مانند ماستودون تعامل داشته باشید."
 
 msgid "Read the detailed rules"
 msgstr "قوانین کامل را مطالعه کنید"
@@ -958,7 +958,7 @@ msgid "Advanced search"
 msgstr "جستجوی پیشرفته"
 
 msgid "Article title matching these words"
-msgstr "عنوان مطلب با این واژگان انطباق داشته باشد"
+msgstr "عنوان مقاله با این واژگان انطباق داشته باشد"
 
 msgid "Subtitle matching these words"
 msgstr "زیرعنوان با این واژگان انطباق داشته باشد"
@@ -982,19 +982,19 @@ msgid "Tags"
 msgstr "برچسب‌ها"
 
 msgid "Posted on one of these instances"
-msgstr "منتشر شده روی یکی از این نمونه‌ها"
+msgstr "فرستاده شده روی یکی از این نمونه‌ها"
 
 msgid "Instance domain"
 msgstr "دامنهٔ نمونه"
 
 msgid "Posted by one of these authors"
-msgstr "منتشر شده توسط یکی از این نویسندگان"
+msgstr "فرستاده شده توسط یکی از این نویسندگان"
 
 msgid "Author(s)"
 msgstr "نویسنده(ها)"
 
 msgid "Posted on one of these blogs"
-msgstr "منتشر شده روی یکی از این بلاگ‌ها"
+msgstr "فرستاده شده روی یکی از این بلاگ‌ها"
 
 msgid "Blog title"
 msgstr "عنوان بلاگ"
@@ -1009,5 +1009,5 @@ msgid "Published under this license"
 msgstr "منتشر شده تحت این پروانه"
 
 msgid "Article license"
-msgstr "پروانهٔ نوشته"
+msgstr "پروانهٔ مقاله"
 

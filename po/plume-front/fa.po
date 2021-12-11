@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 # plume-front/src/editor.rs:188
 msgid "Do you want to load the local autosave last edited at {}?"
-msgstr ""
+msgstr "آیا می‌خواهید نسخهٔ ذخیره شدهٔ خودکار محلّی از آخرین ویرایش در {} را بار کنید؟"
 
 # plume-front/src/editor.rs:281
 msgid "Open the rich text editor"
@@ -35,7 +35,7 @@ msgstr "زیرعنوان، یا چکیده"
 
 # plume-front/src/editor.rs:325
 msgid "Write your article here. Markdown is supported."
-msgstr "مقاله را اینجا بنویسید. از مارک‌داون پشتیبانی می‌شود."
+msgstr "مقاله‌تان را این‌جا بنویسید. از مارک‌داون پشتیبانی می‌شود."
 
 # plume-front/src/editor.rs:336
 msgid "Around {} characters left"
@@ -51,7 +51,7 @@ msgstr "پروانه"
 
 # plume-front/src/editor.rs:417
 msgid "Cover"
-msgstr "تصویر شاخص"
+msgstr "جلد"
 
 # plume-front/src/editor.rs:437
 msgid "This is a draft"
