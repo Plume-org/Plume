@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - 'main'
-    tags:
-      - '*'
 
 jobs:
   docker:
@@ -29,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: plumeorg/plume:${{ startsWith(github.ref_name, 'refs/tags/') && github.ref || 'latest' }}
+          tags: plumeorg/plume:latest
