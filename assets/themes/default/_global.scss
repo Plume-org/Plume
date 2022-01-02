@@ -576,13 +576,6 @@ figure {
     }
   }
 
-  .bottom-bar {
-    align-items: center;
-    & > div:nth-child(2) {
-      margin: 0;
-    }
-  }
-
   main .article-meta .comments .comment {
     header {
       flex-direction: column;

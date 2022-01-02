@@ -516,4 +516,11 @@ input:checked ~ .cw-container > .cw-text {
   main .article-meta > *, main .article-meta .comments, main .article-meta > .banner > * {
     margin: 0 5%;
   }
+
+  .bottom-bar {
+    align-items: center;
+    & > div:nth-child(2) {
+      margin: 0;
+    }
+  }
 }
