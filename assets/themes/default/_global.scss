@@ -249,6 +249,9 @@ p.error {
     position: relative;
     a {
       display: block;
+      width: 100%;
+      height: 100%;
+      padding-block-start: 0.5em;
       transition: color 0.1s ease-in;
       color: $text-color;
 
