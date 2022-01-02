@@ -2966,7 +2966,7 @@ dependencies = [
 
 [[package]]
 name = "plume"
-version = "0.7.0"
+version = "0.7.1-dev"
 dependencies = [
  "activitypub",
  "askama_escape",
