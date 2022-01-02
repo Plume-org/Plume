@@ -10,7 +10,7 @@ use activitypub::{
     CustomObject,
 };
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
+use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
@@ -67,15 +67,15 @@ impl Post {
     find_by!(posts, find_by_ap_url, ap_url as &str);
 
     last!(posts);
-    pub fn insert(conn: &Connection, new: NewPost) -> Result<Self> {
+    pub fn insert(conn: &Connection, mut new: NewPost) -> Result<Self> {
+        if new.ap_url.is_empty() {
+            let blog = Blog::get(conn, new.blog_id)?;
+            new.ap_url = Self::ap_url(blog, &new.slug);
+        }
         diesel::insert_into(posts::table)
             .values(new)
             .execute(conn)?;
-        let mut post = Self::last(conn)?;
-        if post.ap_url.is_empty() {
-            post.ap_url = Self::ap_url(post.get_blog(conn)?, &post.slug);
-            let _: Post = post.save_changes(conn)?;
-        }
+        let post = Self::last(conn)?;
 
         if post.published {
             post.publish_published();
