@@ -219,15 +219,19 @@ p.error {
     margin: 20px;
   }
 
+  .cover-link {
+    margin: 0;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
   .cover {
     min-height: 10em;
     background-position: center;
     background-size: cover;
     margin: 0px;
-
-    &:hover {
-        opacity: 0.9;
-    }
   }
 
    header {
