@@ -3,15 +3,14 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:56\n"
+"PO-Revision-Date: 2021-05-05 18:31\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Project-ID: 352097\n"
 "X-Crowdin-Language: ro\n"
@@ -66,59 +65,59 @@ msgstr ""
 msgid "Optional"
 msgstr "Opţional"
 
-# src/routes/blogs.rs:63
+# src/routes/blogs.rs:67
 msgid "To create a new blog, you need to be logged in"
 msgstr "Pentru a crea un nou blog, trebuie sa fii logat"
 
-# src/routes/blogs.rs:102
+# src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
 msgstr ""
 
-# src/routes/blogs.rs:140
+# src/routes/blogs.rs:147
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:160
+# src/routes/blogs.rs:165
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:168
+# src/routes/blogs.rs:173
 msgid "You are not allowed to delete this blog."
 msgstr "Nu aveți permisiunea de a șterge acest blog."
 
-# src/routes/blogs.rs:219
+# src/routes/blogs.rs:223
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:275
+# src/routes/blogs.rs:279
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:293
+# src/routes/blogs.rs:297
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:327
+# src/routes/blogs.rs:331
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:97
+# src/routes/comments.rs:100
 msgid "Your comment has been posted."
 msgstr ""
 
-# src/routes/comments.rs:172
+# src/routes/comments.rs:177
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/instance.rs:120
+# src/routes/instance.rs:117
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:152
+# src/routes/instance.rs:150
 msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:154
+# src/routes/instance.rs:152
 msgid "{} has been blocked."
 msgstr ""
 
@@ -126,51 +125,51 @@ msgstr ""
 msgid "Blocks deleted"
 msgstr ""
 
-# src/routes/instance.rs:218
+# src/routes/instance.rs:219
 msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:223
+# src/routes/instance.rs:224
 msgid "Email Blocked"
 msgstr ""
 
-# src/routes/instance.rs:314
+# src/routes/instance.rs:317
 msgid "You can't change your own rights."
 msgstr ""
 
-# src/routes/instance.rs:325
+# src/routes/instance.rs:328
 msgid "You are not allowed to take this action."
 msgstr ""
 
-# src/routes/instance.rs:362
+# src/routes/instance.rs:363
 msgid "Done."
 msgstr ""
 
-# src/routes/likes.rs:53
+# src/routes/likes.rs:58
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
-# src/routes/medias.rs:145
+# src/routes/medias.rs:158
 msgid "Your media have been deleted."
 msgstr ""
 
-# src/routes/medias.rs:150
+# src/routes/medias.rs:163
 msgid "You are not allowed to delete this media."
 msgstr ""
 
-# src/routes/medias.rs:167
+# src/routes/medias.rs:180
 msgid "Your avatar has been updated."
 msgstr ""
 
-# src/routes/medias.rs:172
+# src/routes/medias.rs:185
 msgid "You are not allowed to use this media."
 msgstr ""
 
-# src/routes/notifications.rs:28
+# src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:54
+# src/routes/posts.rs:55
 msgid "This post isn't published yet."
 msgstr "Acest post nu a fost publicată încă."
 
@@ -178,118 +177,112 @@ msgstr "Acest post nu a fost publicată încă."
 msgid "To write a new post, you need to be logged in"
 msgstr "Pentru a scrie un post nou, trebuie să fii logat"
 
-# src/routes/posts.rs:142
+# src/routes/posts.rs:146
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:149
+# src/routes/posts.rs:153
 msgid "New post"
 msgstr "Postare nouă"
 
-# src/routes/posts.rs:194
+# src/routes/posts.rs:198
 msgid "Edit {0}"
 msgstr "Editare {0}"
 
-# src/routes/posts.rs:263
+# src/routes/posts.rs:267
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:355
+# src/routes/posts.rs:367
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:542
+# src/routes/posts.rs:556
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:549
+# src/routes/posts.rs:563
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:582
+# src/routes/posts.rs:601
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:607
+# src/routes/posts.rs:625
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:612
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
+# src/routes/posts.rs:630
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:652
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
+# src/routes/posts.rs:672
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
-# src/routes/reshares.rs:54
+# src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
 msgstr "Pentru a redistribui un post, trebuie să fii logat"
 
-# src/routes/session.rs:87
+# src/routes/session.rs:95
 msgid "You are now connected."
 msgstr ""
 
-# src/routes/session.rs:108
+# src/routes/session.rs:116
 msgid "You are now logged off."
 msgstr ""
 
-# src/routes/session.rs:153
+# src/routes/session.rs:162
 msgid "Password reset"
 msgstr "Resetare parolă"
 
-# src/routes/session.rs:154
+# src/routes/session.rs:163
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:216
+# src/routes/session.rs:235
 msgid "Your password was successfully reset."
 msgstr "Parola dumneavoastră a fost resetată cu succes."
 
-# src/routes/user.rs:141
+# src/routes/user.rs:74
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:163
+# src/routes/user.rs:96
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:180
+# src/routes/user.rs:113
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:260
+# src/routes/user.rs:190
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:364
+# src/routes/user.rs:299
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:409
+# src/routes/user.rs:345
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:436
+# src/routes/user.rs:373
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:442
+# src/routes/user.rs:379
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:526
+# src/routes/user.rs:463
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:549
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+# src/routes/user.rs:486
+msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
 msgid "Media upload"
@@ -448,9 +441,7 @@ msgstr "Parolă"
 msgid "Password confirmation"
 msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "{0}'s subscriptions"
@@ -480,8 +471,7 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
+msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -553,10 +543,7 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
 
 msgid "You are not authorized."
@@ -640,21 +627,13 @@ msgstr ""
 msgid "Save these settings"
 msgstr ""
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
 msgstr ""
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
 msgstr ""
 
 msgid "Blocklisted Emails"
@@ -663,10 +642,7 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
 msgstr ""
 
 msgid "Note"
@@ -675,17 +651,13 @@ msgstr ""
 msgid "Notify the user?"
 msgstr ""
 
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
 msgstr ""
 
 msgid "Blocklisting notification"
 msgstr ""
 
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
+msgid "The message to be shown when the user attempts to create an account with this email address"
 msgstr ""
 
 msgid "Add blocklisted address"
@@ -757,9 +729,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -819,9 +789,7 @@ msgstr ""
 msgid "Boost"
 msgstr "Boost"
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
 msgstr ""
 
 msgid "Comments"
@@ -878,9 +846,7 @@ msgstr ""
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
 msgid "Send password reset link"
@@ -889,9 +855,7 @@ msgstr ""
 msgid "This token has expired"
 msgstr ""
 
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
 msgstr ""
 
 msgid "New Blog"
@@ -906,8 +870,7 @@ msgstr ""
 msgid "Edit \"{}\""
 msgstr ""
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 msgid "Upload images"
@@ -970,9 +933,7 @@ msgstr ""
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -1052,3 +1013,4 @@ msgstr ""
 
 msgid "Article license"
 msgstr ""
+

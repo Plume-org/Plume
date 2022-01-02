@@ -4,6 +4,8 @@
 
 ## [Unreleased] - ReleaseDate
 
+## [[0.7.0]] - 2022-01-02
+
 ### Added
 
 - Allow `dir` attributes for LtoR text in RtoL document (#860)
@@ -11,6 +13,7 @@
 - Proxy support (#829)
 - Riker a actor system library (#870)
 - (request-target) and Host header in HTTP Signature (#872)
+- Default log levels for RUST_LOG (#885, #886, #919)
 
 ### Changed
 
@@ -19,6 +22,7 @@
 - Update Rust version to nightly-2021-11-27 (#961)
 - Upgrade Tantivy to 0.13.3 and lindera-tantivy to 0.7.1 (#878)
 - Run searcher on actor system (#870)
+- Extract a function to calculate posts' ap_url and share it with some places (#918)
 - Use article title as its slug instead of capitalizing and inserting hyphens (#920)
 - Sign GET requests to other instances (#957)
 
@@ -31,6 +35,9 @@
 - Update post's ActivityPub id when published by update (#915)
 - Calculate media URI properly even when MEDIA_UPLOAD_DIRECTORY configured (#916)
 - Prevent duplicated posts in 'all' timeline (#917)
+- Draw side line for blockquote on start (#933)
+- Fix URIs of posts on Mastodon (#947)
+- Place edit link proper position (#956, #963, #964)
 
 ## [[0.6.0]] - 2020-12-29
 
@@ -211,7 +218,8 @@
 - Ability to create multiple blogs
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Plume-org/Plume/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/Plume-org/Plume/compare/0.7.0...HEAD
+[[0.7.0]]: https://github.com/Plume-org/Plume/compare/0.6.0...0.7.0
 [[0.6.0]]: https://github.com/Plume-org/Plume/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Plume-org/Plume/compare/0.4.0-alpha-4...0.5.0
 [0.4.0]: https://github.com/Plume-org/Plume/compare/0.3.0-alpha-2...0.4.0-alpha-4

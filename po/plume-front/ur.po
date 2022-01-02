@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-02 11:39\n"
+"PO-Revision-Date: 2021-05-05 18:31\n"
 "Last-Translator: \n"
-"Language-Team: Czech\n"
-"Language: cs_CZ\n"
+"Language-Team: Urdu (Pakistan)\n"
+"Language: ur_PK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Project-ID: 352097\n"
-"X-Crowdin-Language: cs\n"
+"X-Crowdin-Language: ur-PK\n"
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 "X-Crowdin-File-ID: 12\n"
 
@@ -23,41 +23,41 @@ msgstr ""
 
 # plume-front/src/editor.rs:281
 msgid "Open the rich text editor"
-msgstr "Otevřít editor formátovaného textu"
+msgstr ""
 
 # plume-front/src/editor.rs:314
 msgid "Title"
-msgstr "Nadpis"
+msgstr ""
 
 # plume-front/src/editor.rs:318
 msgid "Subtitle, or summary"
-msgstr "Podnadpis, nebo shrnutí"
+msgstr ""
 
 # plume-front/src/editor.rs:325
 msgid "Write your article here. Markdown is supported."
-msgstr "Sem napište svůj článek. Markdown je podporován."
+msgstr ""
 
 # plume-front/src/editor.rs:336
 msgid "Around {} characters left"
-msgstr "Zbývá kolem {} znaků"
+msgstr ""
 
 # plume-front/src/editor.rs:413
 msgid "Tags"
-msgstr "Tagy"
+msgstr ""
 
 # plume-front/src/editor.rs:414
 msgid "License"
-msgstr "Licence"
+msgstr ""
 
 # plume-front/src/editor.rs:417
 msgid "Cover"
-msgstr "Titulka"
+msgstr ""
 
 # plume-front/src/editor.rs:437
 msgid "This is a draft"
-msgstr "Tohle je koncept"
+msgstr ""
 
 # plume-front/src/editor.rs:444
 msgid "Publish"
-msgstr "Zveřejnit"
+msgstr ""
 

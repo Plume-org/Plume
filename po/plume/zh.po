@@ -3,27 +3,27 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:55\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Simplified\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese Traditional\n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Project-ID: 352097\n"
-"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-Language: zh-TW\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 "X-Crowdin-File-ID: 8\n"
 
 # src/template_utils.rs:105
 msgid "{0} commented on your article."
-msgstr "{0} 评论了您的文章。"
+msgstr "{0} 評論了您的文章。"
 
 # src/template_utils.rs:106
 msgid "{0} is subscribed to you."
-msgstr "{0} 订阅了您。"
+msgstr "{0} 訂閱了您。"
 
 # src/template_utils.rs:107
 msgid "{0} liked your article."
@@ -35,11 +35,11 @@ msgstr "{0} 提到了您。"
 
 # src/template_utils.rs:109
 msgid "{0} boosted your article."
-msgstr "{0} 推荐了您的文章。"
+msgstr "{0} 推薦了您的文章。"
 
 # src/template_utils.rs:116
 msgid "Your feed"
-msgstr "您的订阅"
+msgstr "您的推流"
 
 # src/template_utils.rs:117
 msgid "Local feed"
@@ -51,1007 +51,960 @@ msgstr "跨站推流"
 
 # src/template_utils.rs:154
 msgid "{0}'s avatar"
-msgstr "{0} 的头像"
+msgstr "{0} 的頭像"
 
 # src/template_utils.rs:198
 msgid "Previous page"
-msgstr "上一页"
+msgstr "上一頁"
 
 # src/template_utils.rs:209
 msgid "Next page"
-msgstr "下一页"
+msgstr "下一頁"
 
 # src/template_utils.rs:363
 msgid "Optional"
-msgstr "可选"
+msgstr "可選"
 
-# src/routes/blogs.rs:63
+# src/routes/blogs.rs:67
 msgid "To create a new blog, you need to be logged in"
-msgstr "您需要登录才能创建新的博客"
+msgstr "您需要登入才能創建新的部落格"
 
-# src/routes/blogs.rs:102
+# src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
-msgstr "已存在同名博客。"
+msgstr "已存在同名的部落格。"
 
-# src/routes/blogs.rs:140
+# src/routes/blogs.rs:147
 msgid "Your blog was successfully created!"
-msgstr "您的博客已成功创建！"
+msgstr "您的部落格已成功創建！"
 
-# src/routes/blogs.rs:160
+# src/routes/blogs.rs:165
 msgid "Your blog was deleted."
-msgstr "您的博客已删除。"
+msgstr "您的部落格已經刪除。"
 
-# src/routes/blogs.rs:168
+# src/routes/blogs.rs:173
 msgid "You are not allowed to delete this blog."
-msgstr "您不能删除此博客。"
+msgstr "您不能刪除此部落格。"
 
-# src/routes/blogs.rs:219
+# src/routes/blogs.rs:223
 msgid "You are not allowed to edit this blog."
-msgstr "你不能编辑此博客。"
+msgstr "您不能編輯此部落格。"
 
-# src/routes/blogs.rs:275
+# src/routes/blogs.rs:279
 msgid "You can't use this media as a blog icon."
-msgstr "你不能将此媒体用作博客图标。"
+msgstr "您不能將此媒體用作部落格圖標。"
 
-# src/routes/blogs.rs:293
+# src/routes/blogs.rs:297
 msgid "You can't use this media as a blog banner."
-msgstr "你不能使用此媒体用作博客横幅。"
+msgstr "您不能將此媒體用作部落格橫幅。"
 
-# src/routes/blogs.rs:327
+# src/routes/blogs.rs:331
 msgid "Your blog information have been updated."
-msgstr "你的博客信息已经更新。"
+msgstr "您的部落格資訊已經更新。"
 
-# src/routes/comments.rs:97
+# src/routes/comments.rs:100
 msgid "Your comment has been posted."
-msgstr "你的评论已经发表。"
+msgstr "您的評論已經發表。"
 
-# src/routes/comments.rs:172
+# src/routes/comments.rs:177
 msgid "Your comment has been deleted."
-msgstr "你的评论已经删除。"
+msgstr "您的評論已經刪除。"
 
-# src/routes/instance.rs:120
+# src/routes/instance.rs:117
 msgid "Instance settings have been saved."
-msgstr "示例设置已保存。"
+msgstr "實例設定已儲存。"
+
+# src/routes/instance.rs:150
+msgid "{} has been unblocked."
+msgstr "已解除封鎖 {}。"
 
 # src/routes/instance.rs:152
-msgid "{} has been unblocked."
-msgstr "{} 已解除拦截。"
-
-# src/routes/instance.rs:154
 msgid "{} has been blocked."
-msgstr "{} 已被阻止。"
+msgstr "已封鎖 {}。"
 
 # src/routes/instance.rs:203
 msgid "Blocks deleted"
-msgstr "已删除块。"
+msgstr "已刪除封鎖的地址。"
 
-# src/routes/instance.rs:218
+# src/routes/instance.rs:219
 msgid "Email already blocked"
-msgstr ""
+msgstr "Email 地址已被屏蔽"
 
-# src/routes/instance.rs:223
+# src/routes/instance.rs:224
 msgid "Email Blocked"
-msgstr "电子邮件已被阻止。"
+msgstr "Email 地址被屏蔽了"
 
-# src/routes/instance.rs:314
+# src/routes/instance.rs:317
 msgid "You can't change your own rights."
-msgstr "你不能更改你自己的权利。"
+msgstr "您不能改變自己的權限。"
 
-# src/routes/instance.rs:325
+# src/routes/instance.rs:328
 msgid "You are not allowed to take this action."
-msgstr "你不能执行此操作。"
+msgstr "您不能執行此操作。"
 
-# src/routes/instance.rs:362
+# src/routes/instance.rs:363
 msgid "Done."
 msgstr "完成。"
 
-# src/routes/likes.rs:53
+# src/routes/likes.rs:58
 msgid "To like a post, you need to be logged in"
-msgstr "你需要登录后才能标记喜欢一篇文。"
+msgstr "您需要登入才能標記喜歡一篇文。"
 
-# src/routes/medias.rs:145
+# src/routes/medias.rs:158
 msgid "Your media have been deleted."
-msgstr "你的媒体已删除。"
+msgstr "您的媒體已刪除。"
 
-# src/routes/medias.rs:150
+# src/routes/medias.rs:163
 msgid "You are not allowed to delete this media."
-msgstr "你不能删除此媒体。"
+msgstr "您不能刪除此媒體。"
 
-# src/routes/medias.rs:167
+# src/routes/medias.rs:180
 msgid "Your avatar has been updated."
-msgstr "你的头像已更新。"
+msgstr "您的頭像已更新。"
 
-# src/routes/medias.rs:172
+# src/routes/medias.rs:185
 msgid "You are not allowed to use this media."
-msgstr "你不能使用此媒体。"
+msgstr "您不能使用此媒體。"
 
-# src/routes/notifications.rs:28
+# src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
-msgstr "你需要登录才能看到你的通知"
+msgstr "您需要登入才能看到您的通知"
 
-# src/routes/posts.rs:54
+# src/routes/posts.rs:55
 msgid "This post isn't published yet."
-msgstr "此文尚未发布。"
+msgstr "此文尚未發布。"
 
 # src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
-msgstr "你需要登录后才能写新文章。"
+msgstr "您需要登入後才能寫新文章。"
 
-# src/routes/posts.rs:142
+# src/routes/posts.rs:146
 msgid "You are not an author of this blog."
-msgstr "你不是这个博客的作者。"
+msgstr "您不是這個部落格的作者。"
 
-# src/routes/posts.rs:149
+# src/routes/posts.rs:153
 msgid "New post"
 msgstr "新文章"
 
-# src/routes/posts.rs:194
+# src/routes/posts.rs:198
 msgid "Edit {0}"
-msgstr "编辑 {0}"
+msgstr "編輯 {0}"
 
-# src/routes/posts.rs:263
+# src/routes/posts.rs:267
 msgid "You are not allowed to publish on this blog."
-msgstr "你不能在此博客上发布。"
+msgstr "您不能在此部落格上發布。"
 
-# src/routes/posts.rs:355
+# src/routes/posts.rs:367
 msgid "Your article has been updated."
-msgstr "你的文章已更新。"
+msgstr "已更新您的文章。"
 
-# src/routes/posts.rs:542
+# src/routes/posts.rs:556
 msgid "Your article has been saved."
-msgstr "你的文章已保存。"
+msgstr "已儲存您的文章。"
 
-# src/routes/posts.rs:549
+# src/routes/posts.rs:563
 msgid "New article"
-msgstr "新建文章"
+msgstr "新增文章"
 
-# src/routes/posts.rs:582
+# src/routes/posts.rs:601
 msgid "You are not allowed to delete this article."
-msgstr "你不能删除此文章。"
+msgstr "您不能刪除此文章。"
 
-# src/routes/posts.rs:607
+# src/routes/posts.rs:625
 msgid "Your article has been deleted."
-msgstr "你的文章已删除。"
+msgstr "已刪除您的文章。"
 
-# src/routes/posts.rs:612
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
-msgstr "你试图删除的文章不存在，可能早已删除。"
+# src/routes/posts.rs:630
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgstr "您試圖刪除的文章不存在。可能早已被刪除？"
 
-# src/routes/posts.rs:652
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
-msgstr "无法获得有关你帐户的足够信息。请确保你的用户名正确。"
+# src/routes/posts.rs:672
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgstr ""
 
-# src/routes/reshares.rs:54
+# src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
-msgstr "你需要登录后才能重新分享文章。"
+msgstr ""
 
-# src/routes/session.rs:87
+# src/routes/session.rs:95
 msgid "You are now connected."
-msgstr "你现在已连接。"
+msgstr ""
 
-# src/routes/session.rs:108
+# src/routes/session.rs:116
 msgid "You are now logged off."
-msgstr "你已经退出。"
+msgstr ""
 
-# src/routes/session.rs:153
+# src/routes/session.rs:162
 msgid "Password reset"
-msgstr "重置密码"
+msgstr ""
 
-# src/routes/session.rs:154
+# src/routes/session.rs:163
 msgid "Here is the link to reset your password: {0}"
-msgstr "这是重置密码的链接：{0}"
+msgstr ""
 
-# src/routes/session.rs:216
+# src/routes/session.rs:235
 msgid "Your password was successfully reset."
-msgstr "你已经成功重置密码。"
+msgstr ""
 
-# src/routes/user.rs:141
+# src/routes/user.rs:74
 msgid "To access your dashboard, you need to be logged in"
-msgstr "你需要登录才能访问你的控制面板。"
+msgstr ""
 
-# src/routes/user.rs:163
+# src/routes/user.rs:96
 msgid "You are no longer following {}."
-msgstr "你不再关注 {}。"
+msgstr ""
 
-# src/routes/user.rs:180
+# src/routes/user.rs:113
 msgid "You are now following {}."
-msgstr "你正在关注 {}。"
+msgstr ""
 
-# src/routes/user.rs:260
+# src/routes/user.rs:190
 msgid "To subscribe to someone, you need to be logged in"
-msgstr "你需要登录后才能订阅某人。"
+msgstr ""
 
-# src/routes/user.rs:364
+# src/routes/user.rs:299
 msgid "To edit your profile, you need to be logged in"
-msgstr "你需要登录后才能编辑你的个人资料。"
+msgstr ""
 
-# src/routes/user.rs:409
+# src/routes/user.rs:345
 msgid "Your profile has been updated."
-msgstr "你的资料已经更新。"
+msgstr ""
 
-# src/routes/user.rs:436
+# src/routes/user.rs:373
 msgid "Your account has been deleted."
-msgstr "你的帐号已经删除。"
+msgstr ""
 
-# src/routes/user.rs:442
+# src/routes/user.rs:379
 msgid "You can't delete someone else's account."
-msgstr "你不能删除其他人的帐号。"
+msgstr ""
 
-# src/routes/user.rs:526
+# src/routes/user.rs:463
 msgid "Registrations are closed on this instance."
-msgstr "此示例上的注册已经关闭。"
+msgstr ""
 
-# src/routes/user.rs:549
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
-msgstr "已创建你的帐号。只需登录即可享用。"
+# src/routes/user.rs:486
+msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgstr ""
 
 msgid "Media upload"
-msgstr "上传媒体"
+msgstr ""
 
 msgid "Description"
-msgstr "描述"
+msgstr ""
 
 msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "填写介绍对视力受损者有益，也建议填写许可协议信息。"
+msgstr ""
 
 msgid "Content warning"
-msgstr "主要内容"
+msgstr ""
 
 msgid "Leave it empty, if none is needed"
-msgstr "如果不需要则留空"
+msgstr ""
 
 msgid "File"
-msgstr "文件"
+msgstr ""
 
 msgid "Send"
-msgstr "发送​​"
+msgstr ""
 
 msgid "Your media"
-msgstr "你的媒体"
+msgstr ""
 
 msgid "Upload"
-msgstr "上传"
+msgstr ""
 
 msgid "You don't have any media yet."
-msgstr "您还没有任何媒体。"
+msgstr ""
 
 msgid "Content warning: {0}"
-msgstr "内容警告： {0}"
+msgstr ""
 
 msgid "Delete"
-msgstr "删除"
+msgstr ""
 
 msgid "Details"
-msgstr "详细"
+msgstr ""
 
 msgid "Media details"
-msgstr "媒体详情"
+msgstr ""
 
 msgid "Go back to the gallery"
-msgstr "返回媒体库"
+msgstr ""
 
 msgid "Markdown syntax"
-msgstr "Markdown 语法"
+msgstr ""
 
 msgid "Copy it into your articles, to insert this media:"
-msgstr "将此行复制到您的文章中："
+msgstr ""
 
 msgid "Use as an avatar"
-msgstr "设置为头像"
+msgstr ""
 
 msgid "Plume"
 msgstr ""
 
 msgid "Menu"
-msgstr "菜单"
+msgstr ""
 
 msgid "Search"
-msgstr "搜索"
+msgstr ""
 
 msgid "Dashboard"
-msgstr "仪表板"
+msgstr ""
 
 msgid "Notifications"
-msgstr "通知"
+msgstr ""
 
 msgid "Log Out"
-msgstr "登出"
+msgstr ""
 
 msgid "My account"
-msgstr "我的帐户"
+msgstr ""
 
 msgid "Log In"
-msgstr "登录"
+msgstr ""
 
 msgid "Register"
-msgstr "注册"
+msgstr ""
 
 msgid "About this instance"
-msgstr "关于此实例"
+msgstr ""
 
 msgid "Privacy policy"
-msgstr "隐私政策"
+msgstr ""
 
 msgid "Administration"
-msgstr "管理"
+msgstr ""
 
 msgid "Documentation"
-msgstr "文档"
+msgstr ""
 
 msgid "Source code"
-msgstr "源代码"
+msgstr ""
 
 msgid "Matrix room"
-msgstr "聊天室"
+msgstr ""
 
 msgid "Admin"
-msgstr "管理员"
+msgstr ""
 
 msgid "It is you"
-msgstr "那就是你"
+msgstr ""
 
 msgid "Edit your profile"
-msgstr "编辑你的资料"
+msgstr ""
 
 msgid "Open on {0}"
-msgstr "在 {0} 中打开"
+msgstr ""
 
 msgid "Unsubscribe"
-msgstr "取消订阅"
+msgstr ""
 
 msgid "Subscribe"
-msgstr "订阅"
+msgstr ""
 
 msgid "Follow {}"
-msgstr "关注 {}"
+msgstr ""
 
 msgid "Log in to follow"
-msgstr "登录以关注"
+msgstr ""
 
 msgid "Enter your full username handle to follow"
-msgstr "输入您的“用户名@实例名”以关注"
+msgstr ""
 
 msgid "{0}'s subscribers"
-msgstr "{0} 名订阅者"
+msgstr ""
 
 msgid "Articles"
-msgstr "文章"
+msgstr ""
 
 msgid "Subscribers"
-msgstr "订阅者"
+msgstr ""
 
 msgid "Subscriptions"
-msgstr "订阅"
+msgstr ""
 
 msgid "Create your account"
-msgstr "创建你的帐号"
+msgstr ""
 
 msgid "Create an account"
-msgstr "创建帐号"
+msgstr ""
 
 msgid "Username"
-msgstr "用户名"
+msgstr ""
 
 msgid "Email"
-msgstr "邮箱"
+msgstr ""
 
 msgid "Password"
-msgstr "密码"
+msgstr ""
 
 msgid "Password confirmation"
-msgstr "确认密码"
+msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr "抱歉，此实例上的注册已经关闭。你可以寻找其他的实例。"
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr ""
 
 msgid "{0}'s subscriptions"
-msgstr "{0} 的订阅"
+msgstr ""
 
 msgid "Your Dashboard"
-msgstr "你的仪表板"
+msgstr ""
 
 msgid "Your Blogs"
-msgstr "你的博客"
+msgstr ""
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "你没有任何博客。创建或加入一个。"
+msgstr ""
 
 msgid "Start a new blog"
-msgstr "创建新博客"
+msgstr ""
 
 msgid "Your Drafts"
-msgstr "你的草稿"
+msgstr ""
 
 msgid "Go to your gallery"
-msgstr "前往你的相册"
+msgstr ""
 
 msgid "Edit your account"
-msgstr "编辑你的帐号"
+msgstr ""
 
 msgid "Your Profile"
-msgstr "你的资料"
+msgstr ""
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr "要更改你的头像，需先上传到你的相册然后从中选择。"
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
 
 msgid "Upload an avatar"
-msgstr "上传头像"
+msgstr ""
 
 msgid "Display name"
-msgstr "显示名称"
+msgstr ""
 
 msgid "Summary"
-msgstr "摘要"
+msgstr ""
 
 msgid "Theme"
-msgstr "主题"
+msgstr ""
 
 msgid "Default theme"
-msgstr "默认主题"
+msgstr ""
 
 msgid "Error while loading theme selector."
-msgstr "加载主题选择器时出错。"
+msgstr ""
 
 msgid "Never load blogs custom themes"
-msgstr "从不加载博客自定义主题"
+msgstr ""
 
 msgid "Update account"
-msgstr "更新帐号"
+msgstr ""
 
 msgid "Danger zone"
-msgstr "危险区域"
+msgstr ""
 
 msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "务必小心，在这里采取的任何行动都不能取消。"
+msgstr ""
 
 msgid "Delete your account"
-msgstr "删除你的帐号"
+msgstr ""
 
 msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "抱歉，身为管理员，你不能离开自己的实例。"
+msgstr ""
 
 msgid "Latest articles"
-msgstr "最新文章"
+msgstr ""
 
 msgid "Atom feed"
-msgstr "Atom 源"
+msgstr ""
 
 msgid "Recently boosted"
-msgstr "最近转发的"
+msgstr ""
 
 msgid "Articles tagged \"{0}\""
-msgstr "使用标签“{0}”的文章"
+msgstr ""
 
 msgid "There are currently no articles with such a tag"
-msgstr "目前没有带此标签的文章"
+msgstr ""
 
 msgid "The content you sent can't be processed."
-msgstr "无法处理您发送的内容。"
+msgstr ""
 
 msgid "Maybe it was too long."
-msgstr "也许是字数太多了。"
+msgstr ""
 
 msgid "Internal server error"
-msgstr "内部服务器错误"
+msgstr ""
 
 msgid "Something broke on our side."
-msgstr "我们这边出现了一些问题。"
+msgstr ""
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "很抱歉，如果您认为这是一个漏洞，请报告它。"
+msgstr ""
 
 msgid "Invalid CSRF token"
-msgstr "无效的CSRF验证令牌"
-
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
 msgstr ""
-"您的 CSRF 令牌出了错。请确保您的浏览器启用 cookie 并尝试重新加载此页面。 如果"
-"您继续看到此错误消息，请报告。"
+
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr ""
 
 msgid "You are not authorized."
-msgstr "您未被授权"
+msgstr ""
 
 msgid "Page not found"
-msgstr "无法找到页面"
+msgstr ""
 
 msgid "We couldn't find this page."
-msgstr "哎呀！我们找不到该页面。"
+msgstr ""
 
 msgid "The link that led you here may be broken."
-msgstr "无效链接。"
+msgstr ""
 
 msgid "Users"
-msgstr "用户"
+msgstr ""
 
 msgid "Configuration"
-msgstr "配置"
+msgstr ""
 
 msgid "Instances"
-msgstr "实例"
+msgstr ""
 
 msgid "Email blocklist"
-msgstr "邮件拦截列表"
+msgstr ""
 
 msgid "Grant admin rights"
-msgstr "授予管理权限"
+msgstr ""
 
 msgid "Revoke admin rights"
-msgstr "撤销管理员权限"
+msgstr ""
 
 msgid "Grant moderator rights"
-msgstr "授予监察员权限"
+msgstr ""
 
 msgid "Revoke moderator rights"
-msgstr "撤销监察员权限"
+msgstr ""
 
 msgid "Ban"
-msgstr "封禁"
+msgstr ""
 
 msgid "Run on selected users"
-msgstr "在所选用户上运行"
+msgstr ""
 
 msgid "Moderator"
-msgstr "监察员"
+msgstr ""
 
 msgid "Moderation"
 msgstr ""
 
 msgid "Home"
-msgstr "主页"
+msgstr ""
 
 msgid "Administration of {0}"
-msgstr "正在管理{0}"
+msgstr ""
 
 msgid "Unblock"
-msgstr "解除封禁"
+msgstr ""
 
 msgid "Block"
-msgstr "封禁"
+msgstr ""
 
 msgid "Name"
-msgstr "昵称"
+msgstr ""
 
 msgid "Allow anyone to register here"
-msgstr "允许任何人在此注册"
+msgstr ""
 
 msgid "Short description"
-msgstr "简短说明"
+msgstr ""
 
 msgid "Markdown syntax is supported"
-msgstr "支持 Markdown 语法"
+msgstr ""
 
 msgid "Long description"
-msgstr "详细描述"
+msgstr ""
 
 msgid "Default article license"
-msgstr "默认文章许可协议"
+msgstr ""
 
 msgid "Save these settings"
-msgstr "保存这些设置"
-
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr "如果您正在以访客身份浏览此站点，我们不会收集有关您的数据。"
-
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
 msgstr ""
-"作为注册用户，您必须提供您的用户名(不必是您的真实姓名)、可用的电邮地址和密"
-"码，以便能够登录、写文章和评论。 您提交的内容可以由您完全删除。"
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
-"当您登录时，我们会存储两个cookie，一个是为了保持你的登陆状态，第二个是为了防"
-"止其他人代表您行事。 我们不存储任何其它的 cookie。"
+
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr ""
+
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr ""
 
 msgid "Blocklisted Emails"
-msgstr "已封禁的邮箱"
+msgstr ""
 
 msgid "Email address"
-msgstr "邮箱地址"
-
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
 msgstr ""
-"您想要屏蔽的电子邮件地址。您可以使用 globbing 语法（例如 '*@example.com' ）屏"
-"蔽所有后缀为example.com的电子邮箱。"
+
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgstr ""
 
 msgid "Note"
-msgstr "备注"
+msgstr ""
 
 msgid "Notify the user?"
-msgstr "通知用户？"
+msgstr ""
 
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
-msgstr "可选，当用户尝试使用该邮箱地址创建帐户时，向他们显示此条消息"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgstr ""
 
 msgid "Blocklisting notification"
-msgstr "屏蔽通知"
+msgstr ""
 
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
-msgstr "当用户尝试使用此电子邮件地址创建帐户时显示的消息"
+msgid "The message to be shown when the user attempts to create an account with this email address"
+msgstr ""
 
 msgid "Add blocklisted address"
-msgstr "添加黑名单地址"
+msgstr ""
 
 msgid "There are no blocked emails on your instance"
-msgstr "您的实例没有已屏蔽的邮件地址"
+msgstr ""
 
 msgid "Delete selected emails"
-msgstr "删除选中的电子邮件"
+msgstr ""
 
 msgid "Email address:"
-msgstr "邮箱地址:"
+msgstr ""
 
 msgid "Blocklisted for:"
-msgstr "封禁原因："
+msgstr ""
 
 msgid "Will notify them on account creation with this message:"
-msgstr "在创建帐户时将使用以下消息通知他们："
+msgstr ""
 
 msgid "The user will be silently prevented from making an account"
 msgstr ""
 
 msgid "Welcome to {}"
-msgstr "欢迎来到 {}"
+msgstr ""
 
 msgid "View all"
-msgstr "显示所有"
+msgstr ""
 
 msgid "About {0}"
-msgstr "关于 {0}"
+msgstr ""
 
 msgid "Runs Plume {0}"
-msgstr "Plume 版本：{0}"
+msgstr ""
 
 msgid "Home to <em>{0}</em> people"
-msgstr "这里共注册有<em>{0}</em>位用户"
+msgstr ""
 
 msgid "Who wrote <em>{0}</em> articles"
-msgstr "他们写下了<em>{0}</em>篇文章"
+msgstr ""
 
 msgid "And are connected to <em>{0}</em> other instances"
-msgstr "并和<em>{0}</em>个实例产生了联系"
+msgstr ""
 
 msgid "Administred by"
-msgstr "管理员："
+msgstr ""
 
 msgid "Interact with {}"
-msgstr "与 {} 互动"
+msgstr ""
 
 msgid "Log in to interact"
-msgstr "登陆以互动"
+msgstr ""
 
 msgid "Enter your full username to interact"
-msgstr "请输入完整用户名进行互动"
+msgstr ""
 
 msgid "Publish"
-msgstr "发布"
+msgstr ""
 
 msgid "Classic editor (any changes will be lost)"
-msgstr "经典编辑器 (任何更改将丢失)"
+msgstr ""
 
 msgid "Title"
-msgstr "标题"
+msgstr ""
 
 msgid "Subtitle"
-msgstr "副标题"
+msgstr ""
 
 msgid "Content"
-msgstr "内容"
+msgstr ""
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
-msgstr "你可以上传媒体到你的相册，然后复制它们的 Markdown 代码到文章中。"
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgstr ""
 
 msgid "Upload media"
-msgstr "上传媒体"
+msgstr ""
 
 msgid "Tags, separated by commas"
-msgstr "标签，用英文逗号分隔"
+msgstr ""
 
 msgid "License"
-msgstr "许可协议"
+msgstr ""
 
 msgid "Illustration"
-msgstr "封面图"
+msgstr ""
 
 msgid "This is a draft, don't publish it yet."
-msgstr "这是一篇草稿，先不要发布。"
+msgstr ""
 
 msgid "Update"
-msgstr "更新"
+msgstr ""
 
 msgid "Update, or publish"
-msgstr "更新或发布"
+msgstr ""
 
 msgid "Publish your post"
-msgstr "发布文章"
+msgstr ""
 
 msgid "Written by {0}"
-msgstr "作者：{0}"
+msgstr ""
 
 msgid "All rights reserved."
-msgstr "保留所有权利。"
+msgstr ""
 
 msgid "This article is under the {0} license."
-msgstr "此作品采用 {0} 许可协议进行许可。"
+msgstr ""
 
 msgid "One like"
 msgid_plural "{0} likes"
-msgstr[0] "{0} 喜欢"
+msgstr[0] ""
 
 msgid "I don't like this anymore"
-msgstr "我不再喜欢这个"
+msgstr ""
 
 msgid "Add yours"
-msgstr "喜欢"
+msgstr ""
 
 msgid "One boost"
 msgid_plural "{0} boosts"
-msgstr[0] "{0} 助推"
+msgstr[0] ""
 
 msgid "I don't want to boost this anymore"
-msgstr "我不想再助推这个"
+msgstr ""
 
 msgid "Boost"
-msgstr "助推"
+msgstr ""
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
-msgstr "{0}登录{1} 或 {2}使用你的 Fediverse 帐号{3} 与此文互动。"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr ""
 
 msgid "Comments"
-msgstr "评论"
+msgstr ""
 
 msgid "Your comment"
-msgstr "你的评论"
+msgstr ""
 
 msgid "Submit comment"
-msgstr "提交评论"
+msgstr ""
 
 msgid "No comments yet. Be the first to react!"
-msgstr "还没有评论。"
+msgstr ""
 
 msgid "Are you sure?"
-msgstr "你确定？"
+msgstr ""
 
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr "此文还是草稿，只有你和其他作者可见。"
+msgstr ""
 
 msgid "Only you and other authors can edit this article."
-msgstr "只有你和其他作者可以编辑此文。"
+msgstr ""
 
 msgid "Edit"
-msgstr "编辑"
+msgstr ""
 
 msgid "I'm from this instance"
-msgstr "我来自此实例"
+msgstr ""
 
 msgid "Username, or email"
-msgstr "用户名或邮箱"
+msgstr ""
 
 msgid "Log in"
-msgstr "登录"
+msgstr ""
 
 msgid "I'm from another instance"
-msgstr "我来自其他实例"
+msgstr ""
 
 msgid "Continue to your instance"
-msgstr "到您的实例继续操作"
+msgstr ""
 
 msgid "Reset your password"
-msgstr "重置您的密码"
+msgstr ""
 
 msgid "New password"
-msgstr "新密码"
+msgstr ""
 
 msgid "Confirmation"
-msgstr "确认"
+msgstr ""
 
 msgid "Update password"
-msgstr "更新密码"
+msgstr ""
 
 msgid "Check your inbox!"
-msgstr "请检查你的收件箱。"
+msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr "我们向您给我们的地址发送了一封邮件，这是重置您的密码的链接。"
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgstr ""
 
 msgid "Send password reset link"
-msgstr "发送密码重置链接"
+msgstr ""
 
 msgid "This token has expired"
-msgstr "此令牌已过期"
+msgstr ""
 
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
-msgstr "请点<a href=\"/password-reset\">这里</a>重新申请密码重置链接。"
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
+msgstr ""
 
 msgid "New Blog"
-msgstr "新建博客"
+msgstr ""
 
 msgid "Create a blog"
-msgstr "创建博客"
+msgstr ""
 
 msgid "Create blog"
-msgstr "创建博客"
+msgstr ""
 
 msgid "Edit \"{}\""
-msgstr "编辑 \"{}\""
+msgstr ""
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "您可以将图像上传到您的图片库，用作博客图标或横幅。"
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
 
 msgid "Upload images"
-msgstr "上传图片"
+msgstr ""
 
 msgid "Blog icon"
-msgstr "博客图标"
+msgstr ""
 
 msgid "Blog banner"
-msgstr "博客横幅"
+msgstr ""
 
 msgid "Custom theme"
-msgstr "自定义主题"
+msgstr ""
 
 msgid "Update blog"
-msgstr "更新博客"
+msgstr ""
 
 msgid "Be very careful, any action taken here can't be reversed."
-msgstr "请小心，在这里进行的所有操作都无法撤销"
+msgstr ""
 
 msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "你确定要永久删除这个博客吗"
+msgstr ""
 
 msgid "Permanently delete this blog"
-msgstr "永久删除这个博客"
+msgstr ""
 
 msgid "{}'s icon"
-msgstr "{} 的图标"
+msgstr ""
 
 msgid "There's one author on this blog: "
 msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "这个博客上有 {0} 个作者： "
+msgstr[0] ""
 
 msgid "No posts to see here yet."
-msgstr "这里还没有文章"
+msgstr ""
 
 msgid "Nothing to see here yet."
-msgstr "空空如也"
+msgstr ""
 
 msgid "None"
-msgstr "无"
+msgstr ""
 
 msgid "No description"
-msgstr "无描述"
+msgstr ""
 
 msgid "Respond"
 msgstr ""
 
 msgid "Delete this comment"
-msgstr "删除此评论"
+msgstr ""
 
 msgid "What is Plume?"
-msgstr "什么是 Plume？"
+msgstr ""
 
 msgid "Plume is a decentralized blogging engine."
-msgstr "Plume是一个去中心化的博客引擎。"
+msgstr ""
 
 msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "作者可以分开管理多个博客。"
-
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
 msgstr ""
-"文章在其他Plume实例中同样可见，您也可以直接从其他平台（如Mastodon等）与之互"
-"动。"
+
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgstr ""
 
 msgid "Read the detailed rules"
-msgstr "阅读详细规则"
+msgstr ""
 
 msgid "By {0}"
 msgstr ""
 
 msgid "Draft"
-msgstr "草稿"
+msgstr ""
 
 msgid "Search result(s) for \"{0}\""
-msgstr "关键词“{0}”的搜索结果"
+msgstr ""
 
 msgid "Search result(s)"
-msgstr "搜索结果"
+msgstr ""
 
 msgid "No results for your query"
-msgstr "您的查询无匹配项"
+msgstr ""
 
 msgid "No more results for your query"
-msgstr "您的查询无更多匹配项"
+msgstr ""
 
 msgid "Advanced search"
-msgstr "高级搜索"
+msgstr ""
 
 msgid "Article title matching these words"
-msgstr "匹配这些词的文章标题"
+msgstr ""
 
 msgid "Subtitle matching these words"
-msgstr "匹配这些词的文章副标题"
+msgstr ""
 
 msgid "Content macthing these words"
-msgstr "匹配这些词的文章内容"
+msgstr ""
 
 msgid "Body content"
-msgstr "正文内容"
+msgstr ""
 
 msgid "From this date"
-msgstr "从"
+msgstr ""
 
 msgid "To this date"
-msgstr "到"
+msgstr ""
 
 msgid "Containing these tags"
-msgstr "包含这些标签"
+msgstr ""
 
 msgid "Tags"
-msgstr "标签"
+msgstr ""
 
 msgid "Posted on one of these instances"
-msgstr "发布在哪个实例中"
+msgstr ""
 
 msgid "Instance domain"
-msgstr "实例域名"
+msgstr ""
 
 msgid "Posted by one of these authors"
-msgstr "发布作者"
+msgstr ""
 
 msgid "Author(s)"
-msgstr "作者"
+msgstr ""
 
 msgid "Posted on one of these blogs"
-msgstr "发布在哪个博客中"
+msgstr ""
 
 msgid "Blog title"
-msgstr "博客标题"
+msgstr ""
 
 msgid "Written in this language"
-msgstr "所用语言"
+msgstr ""
 
 msgid "Language"
-msgstr "语言"
+msgstr ""
 
 msgid "Published under this license"
-msgstr "发布所用许可证"
+msgstr ""
 
 msgid "Article license"
-msgstr "文章许可证"
+msgstr ""
+

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:55\n"
+"PO-Revision-Date: 2021-12-11 15:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -17,47 +17,47 @@ msgstr ""
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 "X-Crowdin-File-ID: 12\n"
 
-# plume-front/src/editor.rs:189
+# plume-front/src/editor.rs:188
 msgid "Do you want to load the local autosave last edited at {}?"
-msgstr ""
+msgstr "Möchten Sie die lokale automatische Speicherung laden, die zuletzt um {} bearbeitet wurde?"
 
-# plume-front/src/editor.rs:282
+# plume-front/src/editor.rs:281
 msgid "Open the rich text editor"
 msgstr " Rich Text Editor (RTE) öffnen"
 
-# plume-front/src/editor.rs:315
+# plume-front/src/editor.rs:314
 msgid "Title"
 msgstr "Titel"
 
-# plume-front/src/editor.rs:319
+# plume-front/src/editor.rs:318
 msgid "Subtitle, or summary"
 msgstr "Untertitel oder Zusammenfassung"
 
-# plume-front/src/editor.rs:326
+# plume-front/src/editor.rs:325
 msgid "Write your article here. Markdown is supported."
 msgstr "Schreiben  deinen Artikel hier. Markdown wird unterstützt."
 
-# plume-front/src/editor.rs:337
+# plume-front/src/editor.rs:336
 msgid "Around {} characters left"
 msgstr "Ungefähr {} Zeichen übrig"
 
-# plume-front/src/editor.rs:414
+# plume-front/src/editor.rs:413
 msgid "Tags"
 msgstr "Schlagwörter"
 
-# plume-front/src/editor.rs:415
+# plume-front/src/editor.rs:414
 msgid "License"
 msgstr "Lizenz"
 
-# plume-front/src/editor.rs:418
+# plume-front/src/editor.rs:417
 msgid "Cover"
 msgstr "Einband"
 
-# plume-front/src/editor.rs:438
+# plume-front/src/editor.rs:437
 msgid "This is a draft"
 msgstr "Dies ist ein Entwurf"
 
-# plume-front/src/editor.rs:445
+# plume-front/src/editor.rs:444
 msgid "Publish"
 msgstr "Veröffentlichen"
 

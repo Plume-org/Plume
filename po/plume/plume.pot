@@ -60,51 +60,51 @@ msgstr ""
 msgid "Optional"
 msgstr ""
 
-# src/routes/blogs.rs:63
+# src/routes/blogs.rs:67
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
-# src/routes/blogs.rs:102
+# src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
 msgstr ""
 
-# src/routes/blogs.rs:140
+# src/routes/blogs.rs:147
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:159
+# src/routes/blogs.rs:165
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:167
+# src/routes/blogs.rs:173
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:218
+# src/routes/blogs.rs:223
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:274
+# src/routes/blogs.rs:279
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:292
+# src/routes/blogs.rs:297
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:326
+# src/routes/blogs.rs:331
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:99
+# src/routes/comments.rs:100
 msgid "Your comment has been posted."
 msgstr ""
 
-# src/routes/comments.rs:178
+# src/routes/comments.rs:177
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/instance.rs:118
+# src/routes/instance.rs:117
 msgid "Instance settings have been saved."
 msgstr ""
 
@@ -116,27 +116,27 @@ msgstr ""
 msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:201
+# src/routes/instance.rs:203
 msgid "Blocks deleted"
 msgstr ""
 
-# src/routes/instance.rs:216
+# src/routes/instance.rs:219
 msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:221
+# src/routes/instance.rs:224
 msgid "Email Blocked"
 msgstr ""
 
-# src/routes/instance.rs:312
+# src/routes/instance.rs:317
 msgid "You can't change your own rights."
 msgstr ""
 
-# src/routes/instance.rs:323
+# src/routes/instance.rs:328
 msgid "You are not allowed to take this action."
 msgstr ""
 
-# src/routes/instance.rs:359
+# src/routes/instance.rs:363
 msgid "Done."
 msgstr ""
 
@@ -144,23 +144,23 @@ msgstr ""
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
-# src/routes/medias.rs:145
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr ""
 
-# src/routes/medias.rs:150
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr ""
 
-# src/routes/medias.rs:167
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr ""
 
-# src/routes/medias.rs:172
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr ""
 
-# src/routes/notifications.rs:28
+# src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
@@ -168,51 +168,51 @@ msgstr ""
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:126
+# src/routes/posts.rs:125
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:143
+# src/routes/posts.rs:146
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:150
+# src/routes/posts.rs:153
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:195
+# src/routes/posts.rs:198
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:264
+# src/routes/posts.rs:267
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:363
+# src/routes/posts.rs:367
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:553
+# src/routes/posts.rs:556
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:560
+# src/routes/posts.rs:563
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:597
+# src/routes/posts.rs:601
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:622
+# src/routes/posts.rs:625
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:627
+# src/routes/posts.rs:630
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:667
+# src/routes/posts.rs:672
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
@@ -220,63 +220,63 @@ msgstr ""
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
-# src/routes/session.rs:88
+# src/routes/session.rs:95
 msgid "You are now connected."
 msgstr ""
 
-# src/routes/session.rs:109
+# src/routes/session.rs:116
 msgid "You are now logged off."
 msgstr ""
 
-# src/routes/session.rs:154
+# src/routes/session.rs:162
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:155
+# src/routes/session.rs:163
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:215
+# src/routes/session.rs:235
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/user.rs:142
+# src/routes/user.rs:74
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:164
+# src/routes/user.rs:96
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:181
+# src/routes/user.rs:113
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:261
+# src/routes/user.rs:190
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:365
+# src/routes/user.rs:299
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:411
+# src/routes/user.rs:345
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:438
+# src/routes/user.rs:373
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:444
+# src/routes/user.rs:379
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:528
+# src/routes/user.rs:463
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/user.rs:551
+# src/routes/user.rs:486
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 

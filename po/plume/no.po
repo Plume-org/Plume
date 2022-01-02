@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2020-12-19 09:56\n"
+"PO-Revision-Date: 2021-05-05 18:31\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -65,59 +65,59 @@ msgstr ""
 msgid "Optional"
 msgstr "Valgfritt"
 
-# src/routes/blogs.rs:63
+# src/routes/blogs.rs:67
 msgid "To create a new blog, you need to be logged in"
 msgstr "Du må være logget inn for å lage en ny blogg"
 
-# src/routes/blogs.rs:102
+# src/routes/blogs.rs:109
 msgid "A blog with the same name already exists."
 msgstr "Det eksisterer allerede en blogg med dette navnet."
 
-# src/routes/blogs.rs:140
+# src/routes/blogs.rs:147
 msgid "Your blog was successfully created!"
 msgstr "Bloggen ble opprettet!"
 
-# src/routes/blogs.rs:160
+# src/routes/blogs.rs:165
 msgid "Your blog was deleted."
 msgstr "Bloggen din er nå slettet."
 
-# src/routes/blogs.rs:168
+# src/routes/blogs.rs:173
 msgid "You are not allowed to delete this blog."
 msgstr "Du har ikke rettigheter til å slette denne bloggen."
 
-# src/routes/blogs.rs:219
+# src/routes/blogs.rs:223
 msgid "You are not allowed to edit this blog."
 msgstr "Du har ikke rettigheter til å endre denne bloggen."
 
-# src/routes/blogs.rs:275
+# src/routes/blogs.rs:279
 msgid "You can't use this media as a blog icon."
 msgstr "Du kan ikke bruke dette bildet som bloggikon."
 
-# src/routes/blogs.rs:293
+# src/routes/blogs.rs:297
 msgid "You can't use this media as a blog banner."
 msgstr "Du kan ikke bruke dette bildet som bloggbanner."
 
-# src/routes/blogs.rs:327
+# src/routes/blogs.rs:331
 msgid "Your blog information have been updated."
 msgstr "Informasjon om bloggen er oppdatert."
 
-# src/routes/comments.rs:97
+# src/routes/comments.rs:100
 msgid "Your comment has been posted."
 msgstr "Kommentaren din er lagt til."
 
-# src/routes/comments.rs:172
+# src/routes/comments.rs:177
 msgid "Your comment has been deleted."
 msgstr "Kommentaren din er slettet."
 
-# src/routes/instance.rs:120
+# src/routes/instance.rs:117
 msgid "Instance settings have been saved."
 msgstr "Innstillingene for instansen er lagret."
 
-# src/routes/instance.rs:152
+# src/routes/instance.rs:150
 msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:154
+# src/routes/instance.rs:152
 msgid "{} has been blocked."
 msgstr ""
 
@@ -125,51 +125,51 @@ msgstr ""
 msgid "Blocks deleted"
 msgstr ""
 
-# src/routes/instance.rs:218
+# src/routes/instance.rs:219
 msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:223
+# src/routes/instance.rs:224
 msgid "Email Blocked"
 msgstr ""
 
-# src/routes/instance.rs:314
+# src/routes/instance.rs:317
 msgid "You can't change your own rights."
 msgstr ""
 
-# src/routes/instance.rs:325
+# src/routes/instance.rs:328
 msgid "You are not allowed to take this action."
 msgstr ""
 
-# src/routes/instance.rs:362
+# src/routes/instance.rs:363
 msgid "Done."
 msgstr ""
 
-# src/routes/likes.rs:53
+# src/routes/likes.rs:58
 msgid "To like a post, you need to be logged in"
 msgstr "Du må være innlogget for å like ett innlegg"
 
-# src/routes/medias.rs:145
+# src/routes/medias.rs:158
 msgid "Your media have been deleted."
 msgstr "Mediet er slettet."
 
-# src/routes/medias.rs:150
+# src/routes/medias.rs:163
 msgid "You are not allowed to delete this media."
 msgstr "Du har ikke rettigheter til å slette dette mediet."
 
-# src/routes/medias.rs:167
+# src/routes/medias.rs:180
 msgid "Your avatar has been updated."
 msgstr "Avataren din er oppdatert."
 
-# src/routes/medias.rs:172
+# src/routes/medias.rs:185
 msgid "You are not allowed to use this media."
 msgstr "Du har ikke rettigheter til å bruke dette mediet."
 
-# src/routes/notifications.rs:28
+# src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
 msgstr "Du må være innlogget for se varsler"
 
-# src/routes/posts.rs:54
+# src/routes/posts.rs:55
 msgid "This post isn't published yet."
 msgstr "Dette innlegget er ikke publisert enda."
 
@@ -177,122 +177,112 @@ msgstr "Dette innlegget er ikke publisert enda."
 msgid "To write a new post, you need to be logged in"
 msgstr "Du må være innlogget for å skrive ett nytt innlegg"
 
-# src/routes/posts.rs:142
+# src/routes/posts.rs:146
 msgid "You are not an author of this blog."
 msgstr "Du er ikke forfatter av denne bloggen."
 
-# src/routes/posts.rs:149
+# src/routes/posts.rs:153
 msgid "New post"
 msgstr "Nytt innlegg"
 
-# src/routes/posts.rs:194
+# src/routes/posts.rs:198
 msgid "Edit {0}"
 msgstr "Rediger {0}"
 
-# src/routes/posts.rs:263
+# src/routes/posts.rs:267
 msgid "You are not allowed to publish on this blog."
 msgstr "Du har ikke rettigheter til å publisere på denne bloggen."
 
-# src/routes/posts.rs:355
+# src/routes/posts.rs:367
 msgid "Your article has been updated."
 msgstr "Artikkelen er oppdatert."
 
-# src/routes/posts.rs:542
+# src/routes/posts.rs:556
 msgid "Your article has been saved."
 msgstr "Artikkelen er lagret."
 
-# src/routes/posts.rs:549
+# src/routes/posts.rs:563
 msgid "New article"
 msgstr "Ny artikkel"
 
-# src/routes/posts.rs:582
+# src/routes/posts.rs:601
 msgid "You are not allowed to delete this article."
 msgstr "Du har ikke rettigheter til å slette denne artikkelen."
 
-# src/routes/posts.rs:607
+# src/routes/posts.rs:625
 msgid "Your article has been deleted."
 msgstr "Artikkelen er slettet."
 
-# src/routes/posts.rs:612
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
-msgstr ""
-"Det ser ut som arikkelen du prøvde allerede er slettet; Kanskje den allerede "
-"er fjernet?"
+# src/routes/posts.rs:630
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgstr "Det ser ut som arikkelen du prøvde allerede er slettet; Kanskje den allerede er fjernet?"
 
-# src/routes/posts.rs:652
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
-msgstr ""
-"Klarte ikke å hente informasjon om kontoen din. Vennligst sjekk at "
-"brukernavnet er korrekt."
+# src/routes/posts.rs:672
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgstr "Klarte ikke å hente informasjon om kontoen din. Vennligst sjekk at brukernavnet er korrekt."
 
-# src/routes/reshares.rs:54
+# src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
 msgstr "Du må være innlogget for å dele ett innlegg"
 
-# src/routes/session.rs:87
+# src/routes/session.rs:95
 msgid "You are now connected."
 msgstr "Du er nå koblet til."
 
-# src/routes/session.rs:108
+# src/routes/session.rs:116
 msgid "You are now logged off."
 msgstr "Du er logget ut."
 
-# src/routes/session.rs:153
+# src/routes/session.rs:162
 msgid "Password reset"
 msgstr "Gjenopprette passord"
 
-# src/routes/session.rs:154
+# src/routes/session.rs:163
 msgid "Here is the link to reset your password: {0}"
 msgstr "Her denne pekeren for å gjenopprette passordet ditt: {0}"
 
-# src/routes/session.rs:216
+# src/routes/session.rs:235
 msgid "Your password was successfully reset."
 msgstr "Passordet ditt er gjenopprettet."
 
-# src/routes/user.rs:141
+# src/routes/user.rs:74
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Du må være innlogget for å se skrivebordet"
 
-# src/routes/user.rs:163
+# src/routes/user.rs:96
 msgid "You are no longer following {}."
 msgstr "Du følger ikke lenger {}."
 
-# src/routes/user.rs:180
+# src/routes/user.rs:113
 msgid "You are now following {}."
 msgstr "Du følger nå {}."
 
-# src/routes/user.rs:260
+# src/routes/user.rs:190
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Du må være innlogget for å følge noen"
 
-# src/routes/user.rs:364
+# src/routes/user.rs:299
 msgid "To edit your profile, you need to be logged in"
 msgstr "Du må være innlogget for å endre profilen din"
 
-# src/routes/user.rs:409
+# src/routes/user.rs:345
 msgid "Your profile has been updated."
 msgstr "Profilen din er oppdatert."
 
-# src/routes/user.rs:436
+# src/routes/user.rs:373
 msgid "Your account has been deleted."
 msgstr "Kontoen din er slettet."
 
-# src/routes/user.rs:442
+# src/routes/user.rs:379
 msgid "You can't delete someone else's account."
 msgstr "Du kan ikke slette andres kontoer."
 
-# src/routes/user.rs:526
+# src/routes/user.rs:463
 msgid "Registrations are closed on this instance."
 msgstr "Registrering er lukket på denne instansen."
 
-# src/routes/user.rs:549
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+# src/routes/user.rs:486
+msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr "Kontoen din er opprettet. Du må logge inn for å bruke den."
 
 msgid "Media upload"
@@ -451,12 +441,8 @@ msgstr "Passord"
 msgid "Password confirmation"
 msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
-"Beklager, nyregistreringer er lukket på denne instansen. Du kan istedet "
-"finne en annen instans."
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Beklager, nyregistreringer er lukket på denne instansen. Du kan istedet finne en annen instans."
 
 msgid "{0}'s subscriptions"
 msgstr ""
@@ -485,10 +471,8 @@ msgstr "Endre kontoen din"
 msgid "Your Profile"
 msgstr "Din profil"
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-"For å endre avataren din må du legge den til galleriet og velge den der."
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "For å endre avataren din må du legge den til galleriet og velge den der."
 
 msgid "Upload an avatar"
 msgstr "Last opp en avatar"
@@ -554,21 +538,13 @@ msgid "Something broke on our side."
 msgstr "Noe brakk hos oss."
 
 msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr ""
-"Beklager! Hvis du tror at dette er en programfeil, setter vi pris på at du "
-"sier ifra."
+msgstr "Beklager! Hvis du tror at dette er en programfeil, setter vi pris på at du sier ifra."
 
 msgid "Invalid CSRF token"
 msgstr "Ugyldig CSRF token"
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-"Noe er galt med CSRF token. Påse at informasjonskapsler er aktivert i "
-"nettleseren, prøv så å hente nettsiden på nytt. Hvis du fortsatt ser denne "
-"feilen, setter vi pris på om du sier ifra."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Noe er galt med CSRF token. Påse at informasjonskapsler er aktivert i nettleseren, prøv så å hente nettsiden på nytt. Hvis du fortsatt ser denne feilen, setter vi pris på om du sier ifra."
 
 msgid "You are not authorized."
 msgstr "Du har ikke tilgang."
@@ -651,30 +627,14 @@ msgstr "Standardlisens for artikler"
 msgid "Save these settings"
 msgstr "Lagre innstillingene"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-"Hvis du besøker denne siden som gjest, lagres ingen informasjon om deg."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Hvis du besøker denne siden som gjest, lagres ingen informasjon om deg."
 
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-"For å registrere deg må du oppgi ett brukernavn (dette behøver ikke å "
-"samsvare med ditt ekte navn), en fungerende epost-adresse og ett passord. "
-"Dette gjør at du kan logge inn, skrive artikler og kommentarer. Innholdet du "
-"legger inn blir lagret inntil du sletter det."
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr "For å registrere deg må du oppgi ett brukernavn (dette behøver ikke å samsvare med ditt ekte navn), en fungerende epost-adresse og ett passord. Dette gjør at du kan logge inn, skrive artikler og kommentarer. Innholdet du legger inn blir lagret inntil du sletter det."
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
-"Når du logger inn lagrer vi to informasjonskapsler. Den har informasjon om "
-"sesjonen din, den andre beskytter identiteten din. Vi lagrer ingen andre "
-"informasjonskapsler."
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr "Når du logger inn lagrer vi to informasjonskapsler. Den har informasjon om sesjonen din, den andre beskytter identiteten din. Vi lagrer ingen andre informasjonskapsler."
 
 msgid "Blocklisted Emails"
 msgstr ""
@@ -682,10 +642,7 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
 msgstr ""
 
 msgid "Note"
@@ -694,17 +651,13 @@ msgstr ""
 msgid "Notify the user?"
 msgstr ""
 
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
 msgstr ""
 
 msgid "Blocklisting notification"
 msgstr ""
 
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
+msgid "The message to be shown when the user attempts to create an account with this email address"
 msgstr ""
 
 msgid "Add blocklisted address"
@@ -776,12 +729,8 @@ msgstr ""
 msgid "Content"
 msgstr "Innhold"
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
-msgstr ""
-"Du kan laste opp medier til galleriet, og så lime inn Markdown syntaksen inn "
-"i artiklen for å bruke dem."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgstr "Du kan laste opp medier til galleriet, og så lime inn Markdown syntaksen inn i artiklen for å bruke dem."
 
 msgid "Upload media"
 msgstr "Last opp medie"
@@ -838,12 +787,8 @@ msgstr "Jeg vil ikke fremheve dette lenger"
 msgid "Boost"
 msgstr "Fremhev"
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
-msgstr ""
-"{0}Logg inn{1} eller {2}bruk din Fediverse konto{3} for å interaktere med "
-"denne artikkelen"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr "{0}Logg inn{1} eller {2}bruk din Fediverse konto{3} for å interaktere med denne artikkelen"
 
 msgid "Comments"
 msgstr "Kommentarer"
@@ -861,8 +806,7 @@ msgid "Are you sure?"
 msgstr ""
 
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-"Denne artikkelen er ett utkast. Bare du og andre forfattere kan se den."
+msgstr "Denne artikkelen er ett utkast. Bare du og andre forfattere kan se den."
 
 msgid "Only you and other authors can edit this article."
 msgstr "Bare du og andre forfattere kan endre denne artikkelen."
@@ -900,9 +844,7 @@ msgstr ""
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
 msgid "Send password reset link"
@@ -911,9 +853,7 @@ msgstr "Send lenke for tilbakestilling av passord"
 msgid "This token has expired"
 msgstr ""
 
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
 msgstr ""
 
 msgid "New Blog"
@@ -928,11 +868,8 @@ msgstr "Opprett blogg"
 msgid "Edit \"{}\""
 msgstr "Rediger \"{}\""
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-"Du kan legge opp bilder til galleriet ditt for å bruke den som bloggikoner "
-"eller bannere."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Du kan legge opp bilder til galleriet ditt for å bruke den som bloggikoner eller bannere."
 
 msgid "Upload images"
 msgstr "Last opp bilder"
@@ -993,9 +930,7 @@ msgstr ""
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -1075,3 +1010,4 @@ msgstr ""
 
 msgid "Article license"
 msgstr ""
+
