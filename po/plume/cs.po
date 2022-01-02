@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-12-11 15:00\n"
+"PO-Revision-Date: 2022-01-02 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -127,11 +127,11 @@ msgstr "Blokování odstraněno"
 
 # src/routes/instance.rs:219
 msgid "Email already blocked"
-msgstr ""
+msgstr "Email je již zablokován"
 
 # src/routes/instance.rs:224
 msgid "Email Blocked"
-msgstr ""
+msgstr "Email zablokován"
 
 # src/routes/instance.rs:317
 msgid "You can't change your own rights."

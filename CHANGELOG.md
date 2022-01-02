@@ -4,6 +4,8 @@
 
 ## [Unreleased] - ReleaseDate
 
+## [[0.7.0]] - 2022-01-02
+
 ### Added
 
 - Allow `dir` attributes for LtoR text in RtoL document (#860)
@@ -216,7 +218,8 @@
 - Ability to create multiple blogs
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Plume-org/Plume/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/Plume-org/Plume/compare/0.7.0...HEAD
+[[0.7.0]]: https://github.com/Plume-org/Plume/compare/0.6.0...0.7.0
 [[0.6.0]]: https://github.com/Plume-org/Plume/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Plume-org/Plume/compare/0.4.0-alpha-4...0.5.0
 [0.4.0]: https://github.com/Plume-org/Plume/compare/0.3.0-alpha-2...0.4.0-alpha-4
