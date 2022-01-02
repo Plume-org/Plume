@@ -6,6 +6,7 @@
 
 @if let Some(comm) = Some(&comment_tree.comment) {
 @if let Ok(author) = comm.get_author(ctx.0) {
+@* comment-@comm.id is used for link *@
 <div class="comment u-comment h-cite" id="comment-@comm.id">
     <main class="content">
         <header>
@@ -15,8 +16,9 @@
                 <small>@author.fqn</small>
     	    </a>
             <p class="dt-published" datetime="@comm.creation_date.format("%F %T")">
-                @if let Some(ref ap_url) = comm.ap_url {
-                    <a class="u-url" href="@ap_url">@comm.creation_date.format("%B %e, %Y %H:%M")</a>
+                @if let Ok(post) = comm.get_post(ctx.0) {
+                    @* comment-@comm.id is same to this div's id attribute *@
+                    <a class="u-url" href="@post.ap_url#comment-@comm.id">@comm.creation_date.format("%B %e, %Y %H:%M")</a>
                 }
             </p>
 
