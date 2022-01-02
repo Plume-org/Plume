@@ -6,7 +6,9 @@
 
 <div class="card h-entry">
     @if article.cover_id.is_some() {
-        <a href="@uri!(posts::details: blog = article.get_blog_fqn(ctx.0), slug = &article.slug, responding_to = _)"><div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div></a>
+    <a class="cover-link" href="@uri!(posts::details: blog = article.get_blog_fqn(ctx.0), slug = &article.slug, responding_to = _)">
+      <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
+    </a>
     }
     <header dir="auto">
         <h3 class="p-name">
