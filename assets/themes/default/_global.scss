@@ -219,17 +219,21 @@ p.error {
     margin: 20px;
   }
 
+  .cover-link {
+    margin: 0;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
   .cover {
     min-height: 10em;
     background-position: center;
     background-size: cover;
     margin: 0px;
-
-    &:hover {
-        opacity: 0.9;
-    }
   }
-  
+
    header {
     display: flex;
   }
@@ -245,6 +249,9 @@ p.error {
     position: relative;
     a {
       display: block;
+      width: 100%;
+      height: 100%;
+      padding-block-start: 0.5em;
       transition: color 0.1s ease-in;
       color: $text-color;
 
