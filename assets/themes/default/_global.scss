@@ -577,9 +577,8 @@ figure {
   }
 
   .bottom-bar {
-    flex-direction: column;
     align-items: center;
-    & > div {
+    & > div:nth-child(2) {
       margin: 0;
     }
   }
