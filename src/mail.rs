@@ -6,7 +6,7 @@ pub use self::mailer::*;
 
 #[cfg(feature = "debug-mailer")]
 mod mailer {
-    use lettre::{SendableEmail, Transport};
+    use plume_models::smtp::{SendableEmail, Transport};
     use std::io::Read;
 
     pub struct DebugTransport;
@@ -46,27 +46,24 @@ mod mailer {
 
 #[cfg(not(feature = "debug-mailer"))]
 mod mailer {
-    use lettre::{
-        smtp::{
-            authentication::{Credentials, Mechanism},
-            extension::ClientId,
-            ConnectionReuseParameters,
-        },
-        SmtpClient, SmtpTransport,
+    use plume_models::smtp::{
+        authentication::{Credentials, Mechanism},
+        extension::ClientId,
+        ConnectionReuseParameters, SmtpClient, SmtpTransport,
     };
-    use std::env;
+    use plume_models::{SmtpNewWithAddr, CONFIG};
 
     pub type Mailer = Option<SmtpTransport>;
 
     pub fn init() -> Mailer {
-        let server = env::var("MAIL_SERVER").ok()?;
-        let helo_name = env::var("MAIL_HELO_NAME").unwrap_or_else(|_| "localhost".to_owned());
-        let username = env::var("MAIL_USER").ok()?;
-        let password = env::var("MAIL_PASSWORD").ok()?;
-        let mail = SmtpClient::new_simple(&server)
+        let config = CONFIG.mail.as_ref()?;
+        let mail = SmtpClient::new_with_addr((&config.server, config.port))
             .unwrap()
-            .hello_name(ClientId::Domain(helo_name))
-            .credentials(Credentials::new(username, password))
+            .hello_name(ClientId::Domain(config.helo_name.clone()))
+            .credentials(Credentials::new(
+                config.username.clone(),
+                config.password.clone(),
+            ))
             .smtp_utf8(true)
             .authentication_mechanism(Mechanism::Plain)
             .connection_reuse(ConnectionReuseParameters::NoReuse)

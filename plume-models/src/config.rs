@@ -1,4 +1,5 @@
 use crate::search::TokenizerKind as SearchTokenizer;
+use crate::smtp::{SMTP_PORT, SUBMISSIONS_PORT, SUBMISSION_PORT};
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::collections::HashSet;
@@ -21,6 +22,7 @@ pub struct Config {
     pub logo: LogoConfig,
     pub default_theme: String,
     pub media_directory: String,
+    pub mail: Option<MailConfig>,
     pub ldap: Option<LdapConfig>,
     pub proxy: Option<ProxyConfig>,
 }
@@ -245,6 +247,31 @@ impl SearchTokenizerConfig {
     }
 }
 
+pub struct MailConfig {
+    pub server: String,
+    pub port: u16,
+    pub helo_name: String,
+    pub username: String,
+    pub password: String,
+}
+
+fn get_mail_config() -> Option<MailConfig> {
+    Some(MailConfig {
+        server: env::var("MAIL_SERVER").ok()?,
+        port: env::var("MAIL_PORT").map_or(SUBMISSIONS_PORT, |port| match port.as_str() {
+            "smtp" => SMTP_PORT,
+            "submissions" => SUBMISSIONS_PORT,
+            "submission" => SUBMISSION_PORT,
+            number => number
+                .parse()
+                .expect(r#"MAIL_PORT must be "smtp", "submissions", "submission" or an integer."#),
+        }),
+        helo_name: env::var("MAIL_HELO_NAME").unwrap_or_else(|_| "localhost".to_owned()),
+        username: env::var("MAIL_USER").ok()?,
+        password: env::var("MAIL_PASSWORD").ok()?,
+    })
+}
+
 pub struct LdapConfig {
     pub addr: String,
     pub base_dn: String,
@@ -347,6 +374,7 @@ lazy_static! {
         default_theme: var("DEFAULT_THEME").unwrap_or_else(|_| "default-light".to_owned()),
         media_directory: var("MEDIA_UPLOAD_DIRECTORY")
             .unwrap_or_else(|_| "static/media".to_owned()),
+        mail: get_mail_config(),
         ldap: get_ldap_config(),
         proxy: get_proxy_config(),
     };
