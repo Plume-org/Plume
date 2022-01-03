@@ -4,6 +4,10 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Fiexed
+
+- Fix a bug that notification page doesn't show
+
 ## [[0.7.0]] - 2022-01-02
 
 ### Added

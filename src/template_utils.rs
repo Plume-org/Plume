@@ -100,7 +100,9 @@ macro_rules! render {
 }
 
 pub fn translate_notification(ctx: BaseContext<'_>, notif: Notification) -> String {
-    let name = notif.get_actor(ctx.0).unwrap().name();
+    let name = notif
+        .get_actor(ctx.0)
+        .map_or_else(|_| i18n!(ctx.1, "Someone"), |user| user.name());
     match notif.kind.as_ref() {
         notification_kind::COMMENT => i18n!(ctx.1, "{0} commented on your article."; &name),
         notification_kind::FOLLOW => i18n!(ctx.1, "{0} is subscribed to you."; &name),
