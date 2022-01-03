@@ -4,6 +4,10 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Introduce environment variable `MAIL_PORT`
+
 ### Fiexed
 
 - Fix a bug that notification page doesn't show
