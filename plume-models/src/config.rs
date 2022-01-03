@@ -1,4 +1,5 @@
 use crate::search::TokenizerKind as SearchTokenizer;
+use crate::smtp::{SMTP_PORT, SUBMISSIONS_PORT, SUBMISSION_PORT};
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
 use std::collections::HashSet;
@@ -248,6 +249,7 @@ impl SearchTokenizerConfig {
 
 pub struct MailConfig {
     pub server: String,
+    pub port: u16,
     pub helo_name: String,
     pub username: String,
     pub password: String,
@@ -256,6 +258,14 @@ pub struct MailConfig {
 fn get_mail_config() -> Option<MailConfig> {
     Some(MailConfig {
         server: env::var("MAIL_SERVER").ok()?,
+        port: env::var("MAIL_PORT").map_or(SUBMISSIONS_PORT, |port| match port.as_str() {
+            "smtp" => SMTP_PORT,
+            "submissions" => SUBMISSIONS_PORT,
+            "submission" => SUBMISSION_PORT,
+            number => number
+                .parse()
+                .expect(r#"MAIL_PORT must be "smtp", "submissions", "submission" or an integer."#),
+        }),
         helo_name: env::var("MAIL_HELO_NAME").unwrap_or_else(|_| "localhost".to_owned()),
         username: env::var("MAIL_USER").ok()?,
         password: env::var("MAIL_PASSWORD").ok()?,

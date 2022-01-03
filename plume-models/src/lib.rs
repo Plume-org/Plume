@@ -16,6 +16,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
 
+pub use lettre::smtp;
 use once_cell::sync::Lazy;
 use plume_common::activity_pub::{inbox::InboxError, request, sign};
 use posts::PostEvent;
