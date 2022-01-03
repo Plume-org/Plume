@@ -3096,6 +3096,7 @@ dependencies = [
  "itertools 0.8.2",
  "lazy_static",
  "ldap3",
+ "lettre",
  "lindera-tantivy",
  "migrations_internals",
  "once_cell",
