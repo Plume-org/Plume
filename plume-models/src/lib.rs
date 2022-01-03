@@ -302,6 +302,33 @@ pub fn ap_url(url: &str) -> String {
     format!("https://{}", url)
 }
 
+pub trait SmtpNewWithAddr {
+    fn new_with_addr(
+        addr: (&str, u16),
+    ) -> std::result::Result<smtp::SmtpClient, smtp::error::Error>;
+}
+
+impl SmtpNewWithAddr for smtp::SmtpClient {
+    // Stolen from lettre::smtp::SmtpClient::new_simple()
+    fn new_with_addr(addr: (&str, u16)) -> std::result::Result<Self, smtp::error::Error> {
+        use native_tls::TlsConnector;
+        use smtp::{
+            client::net::{ClientTlsParameters, DEFAULT_TLS_PROTOCOLS},
+            ClientSecurity, SmtpClient,
+        };
+
+        let (domain, port) = addr;
+
+        let mut tls_builder = TlsConnector::builder();
+        tls_builder.min_protocol_version(Some(DEFAULT_TLS_PROTOCOLS[0]));
+
+        let tls_parameters =
+            ClientTlsParameters::new(domain.to_string(), tls_builder.build().unwrap());
+
+        SmtpClient::new((domain, port), ClientSecurity::Wrapper(tls_parameters))
+    }
+}
+
 #[cfg(test)]
 #[macro_use]
 mod tests {

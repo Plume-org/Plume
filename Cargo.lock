@@ -3098,6 +3098,7 @@ dependencies = [
  "lettre",
  "lindera-tantivy",
  "migrations_internals",
+ "native-tls",
  "once_cell",
  "openssl",
  "plume-api",
