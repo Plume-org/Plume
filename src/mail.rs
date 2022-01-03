@@ -6,7 +6,7 @@ pub use self::mailer::*;
 
 #[cfg(feature = "debug-mailer")]
 mod mailer {
-    use lettre::{SendableEmail, Transport};
+    use plume_models::smtp::{SendableEmail, Transport};
     use std::io::Read;
 
     pub struct DebugTransport;
@@ -46,13 +46,10 @@ mod mailer {
 
 #[cfg(not(feature = "debug-mailer"))]
 mod mailer {
-    use lettre::{
-        smtp::{
-            authentication::{Credentials, Mechanism},
-            extension::ClientId,
-            ConnectionReuseParameters,
-        },
-        SmtpClient, SmtpTransport,
+    use plume_models::smtp::{
+        authentication::{Credentials, Mechanism},
+        extension::ClientId,
+        ConnectionReuseParameters, SmtpClient, SmtpTransport,
     };
     use plume_models::CONFIG;
 

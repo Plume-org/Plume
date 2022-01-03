@@ -1,5 +1,5 @@
 use crate::routes::RespondOrRedirect;
-use lettre::Transport;
+use plume_models::lettre::Transport;
 use rocket::http::ext::IntoOwned;
 use rocket::{
     http::{uri::Uri, Cookie, Cookies, SameSite},
