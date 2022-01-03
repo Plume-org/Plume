@@ -54,19 +54,19 @@ mod mailer {
         },
         SmtpClient, SmtpTransport,
     };
-    use std::env;
+    use plume_models::CONFIG;
 
     pub type Mailer = Option<SmtpTransport>;
 
     pub fn init() -> Mailer {
-        let server = env::var("MAIL_SERVER").ok()?;
-        let helo_name = env::var("MAIL_HELO_NAME").unwrap_or_else(|_| "localhost".to_owned());
-        let username = env::var("MAIL_USER").ok()?;
-        let password = env::var("MAIL_PASSWORD").ok()?;
-        let mail = SmtpClient::new_simple(&server)
+        let config = CONFIG.mail.as_ref()?;
+        let mail = SmtpClient::new_simple(&config.server)
             .unwrap()
-            .hello_name(ClientId::Domain(helo_name))
-            .credentials(Credentials::new(username, password))
+            .hello_name(ClientId::Domain(config.helo_name.clone()))
+            .credentials(Credentials::new(
+                config.username.clone(),
+                config.password.clone(),
+            ))
             .smtp_utf8(true)
             .authentication_mechanism(Mechanism::Plain)
             .connection_reuse(ConnectionReuseParameters::NoReuse)

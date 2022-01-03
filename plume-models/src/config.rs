@@ -21,6 +21,7 @@ pub struct Config {
     pub logo: LogoConfig,
     pub default_theme: String,
     pub media_directory: String,
+    pub mail: Option<MailConfig>,
     pub ldap: Option<LdapConfig>,
     pub proxy: Option<ProxyConfig>,
 }
@@ -245,6 +246,22 @@ impl SearchTokenizerConfig {
     }
 }
 
+pub struct MailConfig {
+    pub server: String,
+    pub helo_name: String,
+    pub username: String,
+    pub password: String,
+}
+
+fn get_mail_config() -> Option<MailConfig> {
+    Some(MailConfig {
+        server: env::var("MAIL_SERVER").ok()?,
+        helo_name: env::var("MAIL_HELO_NAME").unwrap_or_else(|_| "localhost".to_owned()),
+        username: env::var("MAIL_USER").ok()?,
+        password: env::var("MAIL_PASSWORD").ok()?,
+    })
+}
+
 pub struct LdapConfig {
     pub addr: String,
     pub base_dn: String,
@@ -347,6 +364,7 @@ lazy_static! {
         default_theme: var("DEFAULT_THEME").unwrap_or_else(|_| "default-light".to_owned()),
         media_directory: var("MEDIA_UPLOAD_DIRECTORY")
             .unwrap_or_else(|_| "static/media".to_owned()),
+        mail: get_mail_config(),
         ldap: get_ldap_config(),
         proxy: get_proxy_config(),
     };
