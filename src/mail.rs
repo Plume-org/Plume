@@ -51,13 +51,13 @@ mod mailer {
         extension::ClientId,
         ConnectionReuseParameters, SmtpClient, SmtpTransport,
     };
-    use plume_models::CONFIG;
+    use plume_models::{SmtpNewWithAddr, CONFIG};
 
     pub type Mailer = Option<SmtpTransport>;
 
     pub fn init() -> Mailer {
         let config = CONFIG.mail.as_ref()?;
-        let mail = SmtpClient::new_simple(&config.server)
+        let mail = SmtpClient::new_with_addr((&config.server, config.port))
             .unwrap()
             .hello_name(ClientId::Domain(config.helo_name.clone()))
             .credentials(Credentials::new(
