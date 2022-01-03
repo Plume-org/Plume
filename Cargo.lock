@@ -2980,7 +2980,6 @@ dependencies = [
  "gettext-macros",
  "gettext-utils",
  "guid-create",
- "lettre",
  "lettre_email",
  "multipart",
  "num_cpus",
