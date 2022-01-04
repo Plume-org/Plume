@@ -33,4 +33,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: plumeorg/plume:v${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
