@@ -67,6 +67,7 @@ pub enum Error {
     Url,
     Webfinger,
     Expired,
+    UserAlreadyExists,
 }
 
 impl From<bcrypt::BcryptError> for Error {
@@ -376,6 +377,7 @@ pub mod blogs;
 pub mod comment_seers;
 pub mod comments;
 pub mod db_conn;
+pub mod email_signups;
 pub mod follows;
 pub mod headers;
 pub mod inbox;
