@@ -1,4 +1,5 @@
 use crate::search::TokenizerKind as SearchTokenizer;
+use crate::signups::Strategy as SignupStrategy;
 use crate::smtp::{SMTP_PORT, SUBMISSIONS_PORT, SUBMISSION_PORT};
 use rocket::config::Limits;
 use rocket::Config as RocketConfig;
@@ -16,6 +17,7 @@ pub struct Config {
     pub db_name: &'static str,
     pub db_max_size: Option<u32>,
     pub db_min_idle: Option<u32>,
+    pub signup: SignupStrategy,
     pub search_index: String,
     pub search_tokenizers: SearchTokenizerConfig,
     pub rocket: Result<RocketConfig, InvalidRocketConfig>,
@@ -362,6 +364,7 @@ lazy_static! {
             s.parse::<u32>()
                 .expect("Couldn't parse DB_MIN_IDLE into u32")
         )),
+        signup: var("SIGNUP").map_or(SignupStrategy::default(), |s| s.parse().unwrap()),
         #[cfg(feature = "postgres")]
         database_url: var("DATABASE_URL")
             .unwrap_or_else(|_| format!("postgres://plume:plume@localhost/{}", DB_NAME)),

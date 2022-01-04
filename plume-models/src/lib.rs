@@ -396,6 +396,7 @@ pub mod safe_string;
 #[allow(unused_imports)]
 pub mod schema;
 pub mod search;
+pub mod signups;
 pub mod tags;
 pub mod timeline;
 pub mod users;
