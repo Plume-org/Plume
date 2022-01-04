@@ -2,10 +2,8 @@ name: cd
 
 on:
   push:
-    branches:
-      - 'main'
     tags:
-      - '*'
+      - *.*.*
 
 jobs:
   docker:
@@ -35,4 +33,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ steps.meta.outputs.tags == 'master' && 'latest' || steps.meta.outputs.tags }}
+          tags: plumeorg/plume:v${{ steps.meta.outputs.tags }}
