@@ -167,9 +167,11 @@ pub fn show(token: String, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, 
         }
     }
 
-    let mut form = NewUserForm::default();
-    form.email = signup.email;
-    form.token = signup.token;
+    let form = NewUserForm {
+        email: signup.email,
+        token: signup.token,
+        ..NewUserForm::default()
+    };
     Ok(render!(email_signups::edit(
         &(&conn, &rockets).to_context(),
         Instance::get_local()?.open_registrations,
