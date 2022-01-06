@@ -13,6 +13,7 @@ use std::ops::Deref;
 
 const TOKEN_VALIDITY_HOURS: i64 = 2;
 
+#[repr(transparent)]
 pub struct Token(String);
 
 impl From<String> for Token {
