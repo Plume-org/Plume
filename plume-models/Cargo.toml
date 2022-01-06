@@ -7,7 +7,6 @@ edition = "2018"
 [dependencies]
 activitypub = "0.1.1"
 ammonia = "2.1.1"
-askama_escape = "0.1"
 bcrypt = "0.10.1"
 guid-create = "0.2"
 itertools = "0.8.0"
