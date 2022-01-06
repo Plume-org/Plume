@@ -1044,17 +1044,6 @@ dependencies = [
 
 [[package]]
 name = "dotenv"
-version = "0.14.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4424bad868b0ffe6ae351ee463526ba625bbca817978293bbe6bb7dc1804a175"
-dependencies = [
- "failure",
- "lazy_static",
- "regex",
-]
-
-[[package]]
-name = "dotenv"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
@@ -3020,7 +3009,7 @@ dependencies = [
  "clap",
  "ctrlc",
  "diesel",
- "dotenv 0.15.0",
+ "dotenv",
  "gettext",
  "gettext-macros",
  "gettext-utils",
@@ -3063,7 +3052,7 @@ version = "0.7.1-dev"
 dependencies = [
  "clap",
  "diesel",
- "dotenv 0.14.1",
+ "dotenv",
  "plume-models",
  "rpassword 5.0.1",
 ]
