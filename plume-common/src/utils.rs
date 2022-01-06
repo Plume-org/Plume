@@ -466,6 +466,10 @@ pub fn md_to_html<'a>(
     (buf, mentions.collect(), hashtags.collect())
 }
 
+pub fn escape(string: &str) -> askama_escape::Escaped<askama_escape::Html> {
+    askama_escape::escape(string, askama_escape::Html)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
