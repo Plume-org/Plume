@@ -1,4 +1,4 @@
-use heck::CamelCase;
+use heck::ToUpperCamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
@@ -21,7 +21,7 @@ pub fn random_hex() -> String {
 
 /// Remove non alphanumeric characters and CamelCase a string
 pub fn make_actor_id(name: &str) -> String {
-    name.to_camel_case()
+    name.to_upper_camel_case()
         .chars()
         .filter(|c| c.is_alphanumeric())
         .collect()
@@ -464,6 +464,10 @@ pub fn md_to_html<'a>(
     let mut buf = String::new();
     html::push_html(&mut buf, parser);
     (buf, mentions.collect(), hashtags.collect())
+}
+
+pub fn escape(string: &str) -> askama_escape::Escaped<askama_escape::Html> {
+    askama_escape::escape(string, askama_escape::Html)
 }
 
 #[cfg(test)]

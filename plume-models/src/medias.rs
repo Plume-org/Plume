@@ -3,12 +3,11 @@ use crate::{
     users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::object::Image;
-use askama_escape::escape;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
     activity_pub::{inbox::FromId, request, Id},
-    utils::MediaProcessor,
+    utils::{escape, MediaProcessor},
 };
 use std::{
     fs::{self, DirBuilder},

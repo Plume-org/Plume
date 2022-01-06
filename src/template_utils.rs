@@ -9,7 +9,7 @@ use rocket_i18n::Catalog;
 use std::collections::{btree_map::BTreeMap, hash_map::DefaultHasher};
 use std::hash::Hasher;
 
-pub use askama_escape::escape;
+pub use plume_common::utils::escape;
 
 pub static CACHE_NAME: &str = env!("CACHE_ID");
 

@@ -20,7 +20,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 #[derive(Default, FromForm, Validate)]
 #[validate(schema(
     function = "emails_match",
-    skip_on_field_errors = "false",
+    skip_on_field_errors = false,
     message = "Emails are not matching"
 ))]
 pub struct EmailSignupForm {
@@ -41,15 +41,15 @@ fn emails_match(form: &EmailSignupForm) -> Result<(), ValidationError> {
 #[derive(Default, FromForm, Validate)]
 #[validate(schema(
     function = "passwords_match",
-    skip_on_field_errors = "false",
+    skip_on_field_errors = false,
     message = "Passwords are not matching"
 ))]
 pub struct NewUserForm {
-    #[validate(length(min = "1", message = "Username should be at least 1 characters long"))]
+    #[validate(length(min = 1, message = "Username should be at least 1 characters long"))]
     pub username: String,
-    #[validate(length(min = "8", message = "Password should be at least 8 characters long"))]
+    #[validate(length(min = 8, message = "Password should be at least 8 characters long"))]
     pub password: String,
-    #[validate(length(min = "8", message = "Password should be at least 8 characters long"))]
+    #[validate(length(min = 8, message = "Password should be at least 8 characters long"))]
     pub password_confirmation: String,
     pub email: String,
     pub token: String,

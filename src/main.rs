@@ -7,8 +7,6 @@ extern crate gettext_macros;
 extern crate rocket;
 #[macro_use]
 extern crate serde_json;
-#[macro_use]
-extern crate validator_derive;
 
 use clap::App;
 use diesel::r2d2::ConnectionManager;

@@ -73,12 +73,12 @@ pub fn admin_mod(_mod: Moderator, conn: DbConn, rockets: PlumeRocket) -> Ructe {
 
 #[derive(Clone, FromForm, Validate)]
 pub struct InstanceSettingsForm {
-    #[validate(length(min = "1"))]
+    #[validate(length(min = 1))]
     pub name: String,
     pub open_registrations: bool,
     pub short_description: SafeString,
     pub long_description: SafeString,
-    #[validate(length(min = "1"))]
+    #[validate(length(min = 1))]
     pub default_license: String,
 }
 

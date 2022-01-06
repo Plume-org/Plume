@@ -37,9 +37,9 @@ pub fn new(m: Option<String>, conn: DbConn, rockets: PlumeRocket) -> Ructe {
 
 #[derive(Default, FromForm, Validate)]
 pub struct LoginForm {
-    #[validate(length(min = "1", message = "We need an email, or a username to identify you"))]
+    #[validate(length(min = 1, message = "We need an email, or a username to identify you"))]
     pub email_or_name: String,
-    #[validate(length(min = "1", message = "Your password can't be empty"))]
+    #[validate(length(min = 1, message = "Your password can't be empty"))]
     pub password: String,
 }
 
@@ -193,7 +193,7 @@ pub fn password_reset_form(
 #[derive(FromForm, Default, Validate)]
 #[validate(schema(
     function = "passwords_match",
-    skip_on_field_errors = "false",
+    skip_on_field_errors = false,
     message = "Passwords are not matching"
 ))]
 pub struct NewPasswordForm {

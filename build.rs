@@ -120,8 +120,14 @@ fn compile_theme(path: &Path, out_dir: &Path) -> std::io::Result<()> {
     // compile the .scss/.sass file
     let mut out = File::create(out.join("theme.css"))?;
     out.write_all(
-        &rsass::compile_scss_file(path, rsass::OutputStyle::Compressed)
-            .expect("SCSS compilation error"),
+        &rsass::compile_scss_path(
+            path,
+            rsass::output::Format {
+                style: rsass::output::Style::Compressed,
+                ..rsass::output::Format::default()
+            },
+        )
+        .expect("SCSS compilation error"),
     )?;
 
     Ok(())
