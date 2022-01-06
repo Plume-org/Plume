@@ -1533,15 +1533,15 @@ dependencies = [
 
 [[package]]
 name = "guid-create"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcea207bf7a6092166ab590f98fe5dde5a7deed1f1920d98dcac31f80814c40d"
+checksum = "31477e35c699193e6af9d34765c8ccaaf750a9695844cc6a7a380259452e308d"
 dependencies = [
  "byteorder 1.4.3",
  "chomp",
  "guid",
  "guid-parser",
- "rand 0.5.6",
+ "rand 0.8.4",
  "winapi 0.3.9",
 ]
 
@@ -3365,19 +3365,6 @@ dependencies = [
  "libc",
  "rand_core 0.3.1",
  "rdrand",
- "winapi 0.3.9",
-]
-
-[[package]]
-name = "rand"
-version = "0.5.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c618c47cd3ebd209790115ab837de41425723956ad3ce2e6a7f09890947cacb9"
-dependencies = [
- "cloudabi",
- "fuchsia-cprng",
- "libc",
- "rand_core 0.3.1",
  "winapi 0.3.9",
 ]
 
