@@ -3053,7 +3053,6 @@ dependencies = [
  "chrono",
  "heck",
  "hex",
- "hyper 0.12.36",
  "once_cell",
  "openssl",
  "pulldown-cmark",
