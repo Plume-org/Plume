@@ -81,36 +81,33 @@ impl EmailSignup {
         })
     }
 
-    pub fn confirm(conn: &DbConn, token: &Token, email: &str) -> Result<Self> {
-        Self::ensure_user_not_exist_by_email(conn, email)?;
-        let signup: Self = email_signups::table
+    pub fn find_by_token(conn: &DbConn, token: Token) -> Result<Self> {
+        let signup = email_signups::table
             .filter(email_signups::token.eq(token.as_str()))
-            .first(&**conn)
+            .first::<Self>(&**conn)
             .map_err(Error::from)?;
-        if signup.expired() {
-            Self::delete_existings_by_email(conn, email)?;
-            return Err(Error::Expired);
-        }
         Ok(signup)
     }
 
-    pub fn complete(
-        &self,
-        conn: &DbConn,
-        username: String,
-        display_name: String,
-        summary: &str,
-        password: String,
-    ) -> Result<User> {
+    pub fn confirm(&self, conn: &DbConn) -> Result<()> {
+        Self::ensure_user_not_exist_by_email(conn, &self.email)?;
+        if self.expired() {
+            Self::delete_existings_by_email(conn, &self.email)?;
+            return Err(Error::Expired);
+        }
+        Ok(())
+    }
+
+    pub fn complete(&self, conn: &DbConn, username: String, password: String) -> Result<User> {
         Self::ensure_user_not_exist_by_email(conn, &self.email)?;
         let user = NewUser::new_local(
             conn,
             username,
-            display_name,
+            "".to_string(),
             Role::Normal,
-            summary,
+            "",
             self.email.clone(),
-            Some(password),
+            Some(User::hash_pass(&password)?),
         )?;
         self.delete(conn)?;
         Ok(user)
