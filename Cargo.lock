@@ -3003,7 +3003,6 @@ dependencies = [
  "rocket_contrib",
  "rocket_csrf",
  "rocket_i18n",
- "rpassword 4.0.5",
  "rsass",
  "ructe",
  "scheduled-thread-pool",
@@ -3032,7 +3031,7 @@ dependencies = [
  "diesel",
  "dotenv",
  "plume-models",
- "rpassword 5.0.1",
+ "rpassword",
 ]
 
 [[package]]
@@ -3822,16 +3821,6 @@ source = "git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b34332
 dependencies = [
  "gettext",
  "rocket",
-]
-
-[[package]]
-name = "rpassword"
-version = "4.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99371657d3c8e4d816fb6221db98fa408242b0b53bac08f8676a41f8554fe99f"
-dependencies = [
- "libc",
- "winapi 0.3.9",
 ]
 
 [[package]]
