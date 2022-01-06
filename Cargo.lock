@@ -205,6 +205,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "719b48039ffac1564f67d70162109ba9341125cee0096a540e478355b3c724a7"
 
 [[package]]
+name = "askama_escape"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a1bb320f97e6edf9f756bf015900038e43c7700e059688e5724a928c8f3b8d5"
+
+[[package]]
 name = "async-trait"
 version = "0.1.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2981,7 +2987,7 @@ name = "plume"
 version = "0.7.1-dev"
 dependencies = [
  "activitypub",
- "askama_escape",
+ "askama_escape 0.1.0",
  "atom_syndication",
  "chrono",
  "clap",
@@ -3042,6 +3048,7 @@ dependencies = [
  "activitystreams-derive",
  "activitystreams-traits",
  "array_tool",
+ "askama_escape 0.10.2",
  "base64 0.10.1",
  "chrono",
  "heck",
@@ -3094,7 +3101,7 @@ version = "0.7.1-dev"
 dependencies = [
  "activitypub",
  "ammonia",
- "askama_escape",
+ "askama_escape 0.1.0",
  "bcrypt",
  "chrono",
  "diesel",
