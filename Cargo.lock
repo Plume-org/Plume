@@ -3052,7 +3052,7 @@ dependencies = [
  "activitystreams-traits",
  "array_tool",
  "askama_escape",
- "base64 0.10.1",
+ "base64 0.13.0",
  "chrono",
  "heck",
  "hex",
