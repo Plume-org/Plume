@@ -6,11 +6,18 @@
 
 ### Added
 
-- Introduce environment variable `MAIL_PORT`
+- Introduce environment variable `MAIL_PORT` (#980)
+- Introduce email sign-up feature (#636)
+
+### Changed
+
+- Some styling improvements (#976, #977, #978)
 
 ### Fiexed
 
-- Fix a bug that notification page doesn't show
+- Fix comment link (#974)
+- Fix a bug that prevents posting articles (#975)
+- Fix a bug that notification page doesn't show (#981)
 
 ## [[0.7.0]] - 2022-01-02
 
