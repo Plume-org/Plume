@@ -3121,7 +3121,7 @@ dependencies = [
  "serde 1.0.133",
  "serde_derive",
  "serde_json",
- "shrinkwraprs 0.2.3",
+ "shrinkwraprs 0.3.0",
  "tantivy 0.13.3",
  "tracing",
  "url 2.2.2",
