@@ -73,6 +73,7 @@ table! {
         user_id -> Int4,
     }
 }
+
 table! {
     email_blocklist(id){
         id -> Int4,
@@ -80,6 +81,15 @@ table! {
         note -> Text,
         notify_user -> Bool,
         notification_text -> Text,
+    }
+}
+
+table! {
+    email_signups (id) {
+        id -> Int4,
+        email -> Varchar,
+        token -> Varchar,
+        expiration_date -> Timestamp,
     }
 }
 
@@ -306,6 +316,7 @@ allow_tables_to_appear_in_same_query!(
     blogs,
     comments,
     comment_seers,
+    email_signups,
     follows,
     instances,
     likes,

@@ -190,6 +190,7 @@ fn post_to_atom(post: Post, conn: &Connection) -> Entry {
 
 pub mod blogs;
 pub mod comments;
+pub mod email_signups;
 pub mod errors;
 pub mod instance;
 pub mod likes;

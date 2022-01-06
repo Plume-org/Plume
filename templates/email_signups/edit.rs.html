@@ -1,0 +1,43 @@
+@use std::borrow::Cow;
+@use validator::{ValidationErrors, ValidationErrorsKind};
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::email_signups::NewUserForm;
+@use crate::routes::*;
+
+@(ctx: BaseContext, enabled: bool, form: &NewUserForm, errors: ValidationErrors)
+
+@:base(ctx, i18n!(ctx.1, "Create your account"), {}, {}, {
+    @if enabled {
+        <h1>@i18n!(ctx.1, "Create an account")</h1>
+        <form method="post" action="@uri!(email_signups::signup)">
+            @if let Some(ValidationErrorsKind::Field(errs)) = errors.clone().errors().get("__all__") {
+               <p class="error">@errs[0].message.as_ref().unwrap_or(&Cow::from("Unknown error"))</p>
+            }
+
+            @(Input::new("username", i18n!(ctx.1, "Username"))
+                .default(&form.username)
+                .error(&errors)
+                .set_prop("required", "")
+                .html(ctx.1))
+            @(Input::new("password", i18n!(ctx.1, "Password"))
+                .default(&form.password)
+                .error(&errors)
+                .set_prop("minlength", 8)
+                .input_type("password")
+                .html(ctx.1))
+            @(Input::new("password_confirmation", i18n!(ctx.1, "Password confirmation"))
+                .default(&form.password_confirmation)
+                .error(&errors)
+                .set_prop("minlength", 8)
+                .input_type("password")
+                .html(ctx.1))
+            <input type="hidden" name="email" value="@form.email">
+            <input type="hidden" name="token" value="@form.token">
+
+            <input type="submit" value="@i18n!(ctx.1, "Create your account")" />
+        </form>
+    } else {
+<p class="center">@i18n!(ctx.1, "Apologies, but registrations are closed on this particular instance. You can, however, find a different one.")</p>
+    }
+})

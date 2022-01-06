@@ -202,6 +202,22 @@ impl User {
         }
     }
 
+    /**
+     * TODO: Should create user record with normalized(lowercased) email
+     */
+    pub fn email_used(conn: &DbConn, email: &str) -> Result<bool> {
+        use diesel::dsl::{exists, select};
+
+        select(exists(
+            users::table
+                .filter(users::instance_id.eq(Instance::get_local()?.id))
+                .filter(users::email.eq(email))
+                .or_filter(users::email.eq(email.to_ascii_lowercase())),
+        ))
+        .get_result(&**conn)
+        .map_err(Error::from)
+    }
+
     fn fetch_from_webfinger(conn: &DbConn, acct: &str) -> Result<User> {
         let link = resolve(acct.to_owned(), true)?
             .links

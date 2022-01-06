@@ -10,14 +10,16 @@ use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::inbox;
-use crate::routes::{errors::ErrorPage, Page, RemoteForm, RespondOrRedirect};
+use crate::routes::{
+    email_signups::EmailSignupForm, errors::ErrorPage, Page, RemoteForm, RespondOrRedirect,
+};
 use crate::template_utils::{IntoContext, Ructe};
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, Id};
 use plume_common::utils;
 use plume_models::{
     blogs::Blog, db_conn::DbConn, follows, headers::Headers, inbox::inbox as local_inbox,
     instance::Instance, medias::Media, posts::Post, reshares::Reshare, safe_string::SafeString,
-    users::*, Error, PlumeRocket, CONFIG,
+    signups::Strategy as SignupStrategy, users::*, Error, PlumeRocket, CONFIG,
 };
 
 #[get("/me")]
@@ -260,12 +262,23 @@ pub fn activity_details(
 
 #[get("/users/new")]
 pub fn new(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    Ok(render!(users::new(
-        &(&conn, &rockets).to_context(),
-        Instance::get_local()?.open_registrations,
-        &NewUserForm::default(),
-        ValidationErrors::default()
-    )))
+    use SignupStrategy::*;
+
+    let rendered = match CONFIG.signup {
+        Password => render!(users::new(
+            &(&conn, &rockets).to_context(),
+            Instance::get_local()?.open_registrations,
+            &NewUserForm::default(),
+            ValidationErrors::default()
+        )),
+        Email => render!(email_signups::new(
+            &(&conn, &rockets).to_context(),
+            Instance::get_local()?.open_registrations,
+            &EmailSignupForm::default(),
+            ValidationErrors::default()
+        )),
+    };
+    Ok(rendered)
 }
 
 #[get("/@/<name>/edit")]
