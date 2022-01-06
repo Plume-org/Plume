@@ -17,6 +17,10 @@ msgstr ""
 "X-Crowdin-Language: cy\n"
 "X-Crowdin-File: /master/po/plume/plume.pot\n"
 
+# src/template_utils.rs:105
+msgid "Someone"
+msgstr ""
+
 # src/template_utils.rs:68
 msgid "{0} commented on your article."
 msgstr ""
@@ -104,6 +108,28 @@ msgstr ""
 
 # src/routes/comments.rs:172
 msgid "Your comment has been deleted."
+msgstr ""
+
+# src/routes/email_signups.rs:79
+msgid "Email registrations are not enabled. Please restart."
+msgstr ""
+
+# src/routes/user.rs:526
+msgid "Registrations are closed on this instance."
+msgstr ""
+
+# src/routes/email_signups.rs:132
+msgid "User registration"
+msgstr ""
+
+# src/routes/email_signups.rs:133
+msgid "Here is the link for registration: {0}"
+msgstr ""
+
+# src/routes/user.rs:549
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
 msgstr ""
 
 # src/routes/instance.rs:120
@@ -277,14 +303,44 @@ msgstr ""
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:526
-msgid "Registrations are closed on this instance."
+msgid "Create your account"
 msgstr ""
 
-# src/routes/user.rs:549
+msgid "Create an account"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Email"
+msgstr ""
+
+msgid "Email confirmation"
+msgstr ""
+
 msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+
+msgid "Registration"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link for registration."
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Username"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Password"
+msgstr ""
+
+# src/template_utils.rs:217
+msgid "Password confirmation"
 msgstr ""
 
 msgid "Media upload"
@@ -424,33 +480,6 @@ msgid "Subscribers"
 msgstr ""
 
 msgid "Subscriptions"
-msgstr ""
-
-msgid "Create your account"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Username"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Email"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password"
-msgstr ""
-
-# src/template_utils.rs:217
-msgid "Password confirmation"
-msgstr ""
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
 msgstr ""
 
 msgid "{0}'s subscriptions"
@@ -888,9 +917,6 @@ msgid "Confirmation"
 msgstr ""
 
 msgid "Update password"
-msgstr ""
-
-msgid "Check your inbox!"
 msgstr ""
 
 msgid ""

@@ -14,6 +14,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 3.2.2\n"
 
+# src/template_utils.rs:105
+msgid "Someone"
+msgstr ""
+
 #, fuzzy
 msgid "{0} commented on your article."
 msgstr "{0} la inn en kommentar til artikkelen din"
@@ -104,6 +108,28 @@ msgstr "Ingen innlegg å vise enda."
 #, fuzzy
 msgid "Your comment has been deleted."
 msgstr "Ingen innlegg å vise enda."
+
+# src/routes/email_signups.rs:79
+msgid "Email registrations are not enabled. Please restart."
+msgstr ""
+
+# src/routes/user.rs:473
+msgid "Registrations are closed on this instance."
+msgstr ""
+
+# src/routes/email_signups.rs:132
+msgid "User registration"
+msgstr ""
+
+# src/routes/email_signups.rs:133
+msgid "Here is the link for registration: {0}"
+msgstr ""
+
+# src/routes/user.rs:527
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
+msgstr ""
 
 # src/routes/instance.rs:145
 msgid "Instance settings have been saved."
@@ -275,15 +301,43 @@ msgstr "Ingen innlegg å vise enda."
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:473
-msgid "Registrations are closed on this instance."
+msgid "Create your account"
+msgstr "Opprett din konto"
+
+msgid "Create an account"
+msgstr "Lag en ny konto"
+
+msgid "Email"
+msgstr "Epost"
+
+#, fuzzy
+msgid "Email confirmation"
+msgstr "Oppsett"
+
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
 msgstr ""
 
-# src/routes/user.rs:527
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+#, fuzzy
+msgid "Registration"
+msgstr "Registrér deg"
+
+msgid "Check your inbox!"
 msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link for registration."
+msgstr ""
+
+msgid "Username"
+msgstr "Brukernavn"
+
+msgid "Password"
+msgstr "Passord"
+
+msgid "Password confirmation"
+msgstr "Passordbekreftelse"
 
 msgid "Media upload"
 msgstr ""
@@ -437,29 +491,6 @@ msgstr "Lang beskrivelse"
 #, fuzzy
 msgid "Subscriptions"
 msgstr "Lang beskrivelse"
-
-msgid "Create your account"
-msgstr "Opprett din konto"
-
-msgid "Create an account"
-msgstr "Lag en ny konto"
-
-msgid "Username"
-msgstr "Brukernavn"
-
-msgid "Email"
-msgstr "Epost"
-
-msgid "Password"
-msgstr "Passord"
-
-msgid "Password confirmation"
-msgstr "Passordbekreftelse"
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
-msgstr ""
 
 #, fuzzy
 msgid "{0}'s subscriptions"
@@ -926,9 +957,6 @@ msgstr "Oppsett"
 #, fuzzy
 msgid "Update password"
 msgstr "Oppdater konto"
-
-msgid "Check your inbox!"
-msgstr ""
 
 msgid ""
 "We sent a mail to the address you gave us, with a link to reset your "
