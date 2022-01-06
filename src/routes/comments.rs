@@ -23,7 +23,7 @@ use plume_models::{
 #[derive(Default, FromForm, Debug, Validate)]
 pub struct NewCommentForm {
     pub responding_to: Option<i32>,
-    #[validate(length(min = "1", message = "Your comment can't be empty"))]
+    #[validate(length(min = 1, message = "Your comment can't be empty"))]
     pub content: String,
     pub warning: String,
 }
