@@ -423,9 +423,9 @@ checksum = "40e38929add23cdf8a366df9b0e088953150724bcbe5fc330b0d8eb3b328eec8"
 
 [[package]]
 name = "bumpalo"
-version = "3.9.0"
+version = "3.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe438c9d2f2b0fb88a112154ed81e30b0a491c29322afe1db3b6eec5811f5ba0"
+checksum = "a4a45a46ab1f2412e53d3a0ade76ffad2025804294569aae387231a0cd6e0899"
 
 [[package]]
 name = "bytecount"
@@ -3037,7 +3037,7 @@ dependencies = [
  "scheduled-thread-pool",
  "serde 1.0.133",
  "serde_json",
- "shrinkwraprs 0.2.3",
+ "shrinkwraprs",
  "tracing",
  "tracing-subscriber",
  "validator",
@@ -3085,7 +3085,7 @@ dependencies = [
  "serde 1.0.133",
  "serde_derive",
  "serde_json",
- "shrinkwraprs 0.3.0",
+ "shrinkwraprs",
  "syntect",
  "tokio 0.1.22",
  "tracing",
@@ -3150,7 +3150,7 @@ dependencies = [
  "serde 1.0.133",
  "serde_derive",
  "serde_json",
- "shrinkwraprs 0.3.0",
+ "shrinkwraprs",
  "tantivy 0.13.3",
  "tracing",
  "url 2.2.2",
@@ -4100,9 +4100,9 @@ dependencies = [
 
 [[package]]
 name = "sha2"
-version = "0.9.8"
+version = "0.9.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b69f9a4c9740d74c5baa3fd2e547f9525fa8088a8a958e0ca2409a514e33f5fa"
+checksum = "4d58a1e1bf39749807d89cf2d98ac2dfa0ff1cb3faa38fbb64dd88ac8013d800"
 dependencies = [
  "block-buffer",
  "cfg-if 1.0.0",
@@ -4118,19 +4118,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "900fba806f70c630b0a382d0d825e17a0f19fcd059a2ade1ff237bcddf446b31"
 dependencies = [
  "lazy_static",
-]
-
-[[package]]
-name = "shrinkwraprs"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83695fde96cbe9e08f0e4eb96b1b56fdbd44f2098ee27462dda964c7745fddc7"
-dependencies = [
- "bitflags 1.3.2",
- "itertools 0.8.2",
- "proc-macro2 1.0.36",
- "quote 1.0.14",
- "syn 1.0.85",
 ]
 
 [[package]]
