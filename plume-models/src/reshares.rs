@@ -191,7 +191,7 @@ impl AsObject<User, Undo, &DbConn> for Reshare {
 
 impl NewReshare {
     pub fn new(p: &Post, u: &User) -> Self {
-        let ap_url = format!("{}/reshare/{}", u.ap_url, p.ap_url);
+        let ap_url = format!("{}reshare/{}", u.ap_url, p.ap_url);
         NewReshare {
             post_id: p.id,
             user_id: u.id,
