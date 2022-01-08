@@ -944,7 +944,23 @@ mod tests {
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
     use crate::tests::db;
+    use assert_json_diff::assert_json_eq;
+    use chrono::{naive::NaiveDateTime, Datelike, Timelike};
     use diesel::Connection;
+    use serde_json::{json, to_value};
+
+    fn format_datetime(dt: &NaiveDateTime) -> String {
+        format!(
+            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:06}Z",
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            dt.second(),
+            dt.timestamp_subsec_micros()
+        )
+    }
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
@@ -1037,5 +1053,139 @@ mod tests {
             "https://plu.me/~/Blog/my-article",
             &article.object.object_props.id_string().unwrap()
         );
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _blogs, _users) = fill_database(&conn);
+            let post = &posts[0];
+            let act = post.to_activity(&conn)?;
+
+            let expected = json!({
+                "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                "cc": [],
+                "content": "Hello",
+                "id": "https://plu.me/~/BlogName/testing",
+                "license": "WTFPL",
+                "name": "Testing",
+                "published": format_datetime(&post.creation_date),
+                "source": {
+                    "content": "",
+                    "mediaType": "text/markdown"
+                },
+                "summary": "",
+                "tag": [],
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Article",
+                "url": "https://plu.me/~/BlogName/testing"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn create_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _blogs, _users) = fill_database(&conn);
+            let post = &posts[0];
+            let act = post.create_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": [],
+                "id": "https://plu.me/~/BlogName/testing/activity",
+                "object": {
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "cc": [],
+                    "content": "Hello",
+                    "id": "https://plu.me/~/BlogName/testing",
+                    "license": "WTFPL",
+                    "name": "Testing",
+                    "published": format_datetime(&post.creation_date),
+                    "source": {
+                        "content": "",
+                        "mediaType": "text/markdown"
+                    },
+                    "summary": "",
+                    "tag": [],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Article",
+                    "url": "https://plu.me/~/BlogName/testing"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn update_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _blogs, _users) = fill_database(&conn);
+            let post = &posts[0];
+            let act = post.update_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": [],
+                "id": "https://plu.me/~/BlogName/testing/update-",
+                "object": {
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "cc": [],
+                    "content": "Hello",
+                    "id": "https://plu.me/~/BlogName/testing",
+                    "license": "WTFPL",
+                    "name": "Testing",
+                    "published": format_datetime(&post.creation_date),
+                    "source": {
+                        "content": "",
+                        "mediaType": "text/markdown"
+                    },
+                    "summary": "",
+                    "tag": [],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Article",
+                    "url": "https://plu.me/~/BlogName/testing"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Update"
+            });
+            let actual = to_value(act)?;
+
+            let id = actual["id"].to_string();
+            let (id_pre, id_post) = id.rsplit_once("-").unwrap();
+            assert_eq!(post.ap_url, "https://plu.me/~/BlogName/testing");
+            assert_eq!(
+                id_pre,
+                to_value("\"https://plu.me/~/BlogName/testing/update")
+                    .unwrap()
+                    .as_str()
+                    .unwrap()
+            );
+            assert_eq!(id_post.len(), 11);
+            assert_eq!(
+                id_post.matches(char::is_numeric).collect::<String>().len(),
+                10
+            );
+            for (key, value) in actual.as_object().unwrap().into_iter() {
+                if key == "id" {
+                    continue;
+                }
+                assert_eq!(value, expected.get(key).unwrap());
+            }
+
+            Ok(())
+        });
     }
 }
