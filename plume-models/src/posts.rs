@@ -413,7 +413,7 @@ impl Post {
         let article = self.to_activity(conn)?;
         let mut act = Create::default();
         act.object_props
-            .set_id_string(format!("{}activity", self.ap_url))?;
+            .set_id_string(format!("{}/activity", self.ap_url))?;
         act.object_props
             .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
         act.object_props
