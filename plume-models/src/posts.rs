@@ -942,6 +942,7 @@ impl From<PostEvent> for Arc<Post> {
 mod tests {
     use super::*;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
+    use crate::mentions::{Mention, NewMention};
     use crate::safe_string::SafeString;
     use crate::tests::db;
     use assert_json_diff::assert_json_eq;
@@ -960,6 +961,22 @@ mod tests {
             dt.second(),
             dt.timestamp_subsec_micros()
         )
+    }
+
+    fn prepare_activity(conn: &DbConn) -> (Post, Mention, Vec<Post>, Vec<User>, Vec<Blog>) {
+        let (posts, users, blogs) = fill_database(conn);
+        let post = &posts[0];
+        let mentioned = &users[1];
+        let mention = Mention::insert(
+            &conn,
+            NewMention {
+                mentioned_id: mentioned.id,
+                post_id: Some(post.id),
+                comment_id: None,
+            },
+        )
+        .unwrap();
+        (post.to_owned(), mention.to_owned(), posts, users, blogs)
     }
 
     // creates a post, get it's Create activity, delete the post,
@@ -1059,8 +1076,7 @@ mod tests {
     fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
             let act = post.to_activity(&conn)?;
 
             let expected = json!({
@@ -1076,7 +1092,13 @@ mod tests {
                     "mediaType": "text/markdown"
                 },
                 "summary": "",
-                "tag": [],
+                "tag": [
+                    {
+                        "href": "https://plu.me/@/user/",
+                        "name": "@user",
+                        "type": "Mention"
+                    }
+                ],
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Article",
                 "url": "https://plu.me/~/BlogName/testing"
@@ -1092,8 +1114,7 @@ mod tests {
     fn create_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
             let act = post.create_activity(&conn)?;
 
             let expected = json!({
@@ -1113,7 +1134,13 @@ mod tests {
                         "mediaType": "text/markdown"
                     },
                     "summary": "",
-                    "tag": [],
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
                     "to": ["https://www.w3.org/ns/activitystreams#Public"],
                     "type": "Article",
                     "url": "https://plu.me/~/BlogName/testing"
@@ -1132,8 +1159,7 @@ mod tests {
     fn update_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
             let act = post.update_activity(&conn)?;
 
             let expected = json!({
@@ -1153,7 +1179,13 @@ mod tests {
                         "mediaType": "text/markdown"
                     },
                     "summary": "",
-                    "tag": [],
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
                     "to": ["https://www.w3.org/ns/activitystreams#Public"],
                     "type": "Article",
                     "url": "https://plu.me/~/BlogName/testing"
