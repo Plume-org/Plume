@@ -165,8 +165,7 @@ impl AsObject<User, activity::Undo, &DbConn> for Like {
 
 impl NewLike {
     pub fn new(p: &Post, u: &User) -> Self {
-        // TODO: this URL is not valid
-        let ap_url = format!("{}/like/{}", u.ap_url, p.ap_url);
+        let ap_url = format!("{}like/{}", u.ap_url, p.ap_url);
         NewLike {
             post_id: p.id,
             user_id: u.id,
