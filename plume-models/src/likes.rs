@@ -174,3 +174,36 @@ impl NewLike {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::diesel::Connection;
+    use crate::{inbox::tests::fill_database, tests::db};
+    use assert_json_diff::assert_json_eq;
+    use serde_json::{json, to_value};
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &post.get_authors(&conn)?[0];
+            let like = Like::insert(&*conn, NewLike::new(post, user))?;
+            let act = like.to_activity(&conn).unwrap();
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
+                "object": "https://plu.me/~/BlogName/testing",
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Like",
+            });
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+}
