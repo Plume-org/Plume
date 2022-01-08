@@ -99,11 +99,27 @@ impl Follow {
         )?;
         res.notify(conn)?;
 
+        let accept = res.build_accept(from, target, follow)?;
+        broadcast(
+            &*target,
+            accept,
+            vec![from.clone()],
+            CONFIG.proxy().cloned(),
+        );
+        Ok(res)
+    }
+
+    pub fn build_accept<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
+        &self,
+        from: &B,
+        target: &A,
+        follow: FollowAct,
+    ) -> Result<Accept> {
         let mut accept = Accept::default();
         let accept_id = ap_url(&format!(
             "{}/follow/{}/accept",
             CONFIG.base_url.as_str(),
-            &res.id
+            self.id
         ));
         accept.object_props.set_id_string(accept_id)?;
         accept
@@ -116,13 +132,8 @@ impl Follow {
             .accept_props
             .set_actor_link::<Id>(target.clone().into_id())?;
         accept.accept_props.set_object_object(follow)?;
-        broadcast(
-            &*target,
-            accept,
-            vec![from.clone()],
-            CONFIG.proxy().cloned(),
-        );
-        Ok(res)
+
+        Ok(accept)
     }
 
     pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
