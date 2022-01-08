@@ -55,6 +55,7 @@ path = "../plume-common"
 path = "../plume-macro"
 
 [dev-dependencies]
+assert-json-diff = "2.0.1"
 diesel_migrations = "1.3.0"
 
 [features]
