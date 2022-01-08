@@ -205,4 +205,28 @@ mod tests {
             Ok(())
         });
     }
+
+    #[test]
+    fn build_undo() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &post.get_authors(&conn)?[0];
+            let like = Like::insert(&*conn, NewLike::new(post, user))?;
+            let act = like.build_undo(&*conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing#delete",
+                "object": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing#delete",
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Undo",
+            });
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
 }
