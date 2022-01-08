@@ -1059,7 +1059,7 @@ mod tests {
     fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _blogs, _users) = fill_database(&conn);
+            let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let act = post.to_activity(&conn)?;
 
@@ -1092,7 +1092,7 @@ mod tests {
     fn create_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _blogs, _users) = fill_database(&conn);
+            let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let act = post.create_activity(&conn)?;
 
@@ -1132,7 +1132,7 @@ mod tests {
     fn update_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _blogs, _users) = fill_database(&conn);
+            let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let act = post.update_activity(&conn)?;
 
