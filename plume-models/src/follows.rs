@@ -219,8 +219,10 @@ impl IntoId for Follow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{tests::db, users::tests as user_tests};
+    use crate::{tests::db, users::tests as user_tests, users::tests::fill_database};
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::{json, to_value};
 
     #[test]
     fn test_id() {
@@ -254,5 +256,38 @@ mod tests {
 
             Ok(())
         })
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let following = &users[1];
+            let follower = &users[2];
+            let mut follow = Follow::insert(
+                &conn,
+                NewFollow {
+                    follower_id: follower.id,
+                    following_id: following.id,
+                    ap_url: "".into(),
+                },
+            )?;
+            follow.ap_url = format!("https://plu.me/follows/{}", follow.id);
+            let act = follow.to_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/other/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://plu.me/follows/{}", follow.id),
+                "object": "https://plu.me/@/user/",
+                "to": ["https://plu.me/@/user/"],
+                "type": "Follow"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
     }
 }
