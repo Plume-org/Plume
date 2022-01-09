@@ -944,38 +944,10 @@ mod tests {
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::mentions::{Mention, NewMention};
     use crate::safe_string::SafeString;
-    use crate::tests::db;
+    use crate::tests::{db, format_datetime};
     use assert_json_diff::assert_json_eq;
-    use chrono::{naive::NaiveDateTime, Datelike, Timelike};
     use diesel::Connection;
     use serde_json::{json, to_value};
-
-    #[cfg(feature = "postgres")]
-    fn format_datetime(dt: &NaiveDateTime) -> String {
-        format!(
-            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:06}Z",
-            dt.year(),
-            dt.month(),
-            dt.day(),
-            dt.hour(),
-            dt.minute(),
-            dt.second(),
-            dt.timestamp_subsec_micros()
-        )
-    }
-
-    #[cfg(feature = "sqlite")]
-    fn format_datetime(dt: &NaiveDateTime) -> String {
-        format!(
-            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
-            dt.year(),
-            dt.month(),
-            dt.day(),
-            dt.hour(),
-            dt.minute(),
-            dt.second()
-        )
-    }
 
     fn prepare_activity(conn: &DbConn) -> (Post, Mention, Vec<Post>, Vec<User>, Vec<Blog>) {
         let (posts, users, blogs) = fill_database(conn);

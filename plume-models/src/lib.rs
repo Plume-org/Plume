@@ -334,6 +334,7 @@ impl SmtpNewWithAddr for smtp::SmtpClient {
 #[macro_use]
 mod tests {
     use crate::{db_conn, migrations::IMPORTED_MIGRATIONS, Connection as Conn, CONFIG};
+    use chrono::{naive::NaiveDateTime, Datelike, Timelike};
     use diesel::r2d2::ConnectionManager;
     use plume_common::utils::random_hex;
     use std::env::temp_dir;
@@ -365,6 +366,33 @@ mod tests {
                 .expect("Migrations error");
             pool
         };
+    }
+
+    #[cfg(feature = "postgres")]
+    pub(crate) fn format_datetime(dt: &NaiveDateTime) -> String {
+        format!(
+            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:06}Z",
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            dt.second(),
+            dt.timestamp_subsec_micros()
+        )
+    }
+
+    #[cfg(feature = "sqlite")]
+    pub(crate) fn format_datetime(dt: &NaiveDateTime) -> String {
+        format!(
+            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            dt.second()
+        )
     }
 }
 
