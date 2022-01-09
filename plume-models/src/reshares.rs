@@ -246,9 +246,16 @@ mod test {
                 "actor": "https://plu.me/@/admin/",
                 "cc": ["https://plu.me/@/admin/followers"],
                 "id": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing#delete",
-                "object": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing#delete",
+                "object": {
+                    "actor": "https://plu.me/@/admin/",
+                    "cc": ["https://plu.me/@/admin/followers"],
+                    "id": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing",
+                    "object": "https://plu.me/~/BlogName/testing",
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Announce"
+                },
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Announce",
+                "type": "Undo",
             });
             assert_json_eq!(to_value(act)?, expected);
 
