@@ -404,8 +404,10 @@ mod tests {
     use super::*;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
-    use crate::tests::db;
+    use crate::tests::{db, format_datetime};
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::{json, to_value};
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
@@ -418,7 +420,7 @@ mod tests {
             let original_comm = Comment::insert(
                 conn,
                 NewComment {
-                    content: SafeString::new("My comment"),
+                    content: SafeString::new("My comment, mentioning to @user"),
                     in_response_to_id: None,
                     post_id: posts[0].id,
                     author_id: users[0].id,
@@ -430,13 +432,40 @@ mod tests {
             )
             .unwrap();
             let act = original_comm.create_activity(&conn).unwrap();
+
+            assert_json_eq!(to_value(&act).unwrap(), json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", original_comm.id),
+                "object": {
+                    "attributedTo": "https://plu.me/@/admin/",
+                    "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
+"###,
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "inReplyTo": "https://plu.me/~/BlogName/testing",
+                    "published": format_datetime(&original_comm.creation_date),
+                    "summary": "My CW",
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Note"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create",
+            }));
+
             inbox(
                 &conn,
                 serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
             )
             .unwrap();
 
-            match inbox(&conn, serde_json::to_value(act).unwrap()).unwrap() {
+            match inbox(&conn, to_value(act).unwrap()).unwrap() {
                 InboxResult::Commented(c) => {
                     // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
                     assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);
