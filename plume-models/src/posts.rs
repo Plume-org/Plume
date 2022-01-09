@@ -950,6 +950,7 @@ mod tests {
     use diesel::Connection;
     use serde_json::{json, to_value};
 
+    #[cfg(feature = "postgres")]
     fn format_datetime(dt: &NaiveDateTime) -> String {
         format!(
             "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:06}Z",
@@ -960,6 +961,19 @@ mod tests {
             dt.minute(),
             dt.second(),
             dt.timestamp_subsec_micros()
+        )
+    }
+
+    #[cfg(feature = "sqlite")]
+    fn format_datetime(dt: &NaiveDateTime) -> String {
+        format!(
+            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            dt.second()
         )
     }
 
