@@ -16,7 +16,7 @@ use activitypub::{
     link,
     object::{Note, Tombstone},
 };
-use chrono::{self, NaiveDateTime};
+use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
@@ -59,7 +59,7 @@ impl Comment {
     insert!(comments, NewComment, |inserted, conn| {
         if inserted.ap_url.is_none() {
             inserted.ap_url = Some(format!(
-                "{}comment/{}",
+                "{}/comment/{}",
                 inserted.get_post(conn)?.ap_url,
                 inserted.id
             ));
@@ -129,7 +129,7 @@ impl Comment {
                 |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
             )?))?;
         note.object_props
-            .set_published_string(chrono::Utc::now().to_rfc3339())?;
+            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
         note.object_props.set_attributed_to_link(author.into_id())?;
         note.object_props.set_to_link_vec(to)?;
         note.object_props.set_tag_link_vec(
