@@ -271,7 +271,7 @@ pub fn md_to_html<'a>(
     media_processor: Option<MediaProcessor<'a>>,
 ) -> (String, HashSet<String>, HashSet<String>) {
     let base_url = if let Some(base_url) = base_url {
-        format!("//{}/", base_url)
+        format!("https://{}/", base_url)
     } else {
         "/".to_owned()
     };
