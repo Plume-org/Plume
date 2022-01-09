@@ -402,6 +402,7 @@ impl CommentTree {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::blogs::Blog;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
     use crate::tests::{db, format_datetime};
@@ -409,28 +410,34 @@ mod tests {
     use diesel::Connection;
     use serde_json::{json, to_value};
 
+    fn prepare_activity(conn: &DbConn) -> (Comment, Vec<Post>, Vec<User>, Vec<Blog>) {
+        let (posts, users, blogs) = fill_database(&conn);
+
+        let comment = Comment::insert(
+            conn,
+            NewComment {
+                content: SafeString::new("My comment, mentioning to @user"),
+                in_response_to_id: None,
+                post_id: posts[0].id,
+                author_id: users[0].id,
+                ap_url: None,
+                sensitive: true,
+                spoiler_text: "My CW".into(),
+                public_visibility: true,
+            },
+        )
+        .unwrap();
+
+        (comment, posts, users, blogs)
+    }
+
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
     #[test]
     fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&conn);
-
-            let original_comm = Comment::insert(
-                conn,
-                NewComment {
-                    content: SafeString::new("My comment, mentioning to @user"),
-                    in_response_to_id: None,
-                    post_id: posts[0].id,
-                    author_id: users[0].id,
-                    ap_url: None,
-                    sensitive: true,
-                    spoiler_text: "My CW".into(),
-                    public_visibility: true,
-                },
-            )
-            .unwrap();
+            let (original_comm, posts, users, _blogs) = prepare_activity(&conn);
             let act = original_comm.create_activity(&conn).unwrap();
 
             assert_json_eq!(to_value(&act).unwrap(), json!({
