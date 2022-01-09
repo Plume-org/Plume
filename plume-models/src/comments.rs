@@ -459,6 +459,41 @@ mod tests {
                 "type": "Create",
             }));
 
+            let reply = Comment::insert(
+                conn,
+                NewComment {
+                    content: SafeString::new(""),
+                    in_response_to_id: Some(original_comm.id),
+                    post_id: posts[0].id,
+                    author_id: users[1].id,
+                    ap_url: None,
+                    sensitive: false,
+                    spoiler_text: "".into(),
+                    public_visibility: true,
+                },
+            )
+            .unwrap();
+            let reply_act = reply.create_activity(&conn).unwrap();
+
+            assert_json_eq!(to_value(&reply_act).unwrap(), json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": ["https://plu.me/@/user/followers"],
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", reply.id),
+                "object": {
+                    "attributedTo": "https://plu.me/@/user/",
+                    "content": "",
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", reply.id),
+                    "inReplyTo": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "published": format_datetime(&reply.creation_date),
+                    "summary": "",
+                    "tag": [],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Note"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create"
+            }));
+
             inbox(
                 &conn,
                 serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
