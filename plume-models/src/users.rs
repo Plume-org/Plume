@@ -1156,9 +1156,11 @@ pub(crate) mod tests {
         instance::{tests as instance_tests, Instance},
         medias::{Media, NewMedia},
         tests::db,
-        Connection as Conn,
+        Connection as Conn, ITEMS_PER_PAGE,
     };
-    use diesel::Connection;
+    use assert_json_diff::assert_json_eq;
+    use diesel::{Connection, SaveChangesDsl};
+    use serde_json::to_value;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<User> {
         instance_tests::fill_database(conn);
@@ -1182,7 +1184,7 @@ pub(crate) mod tests {
             Some("invalid_user_password".to_owned()),
         )
         .unwrap();
-        let other = NewUser::new_local(
+        let mut other = NewUser::new_local(
             conn,
             "other".to_owned(),
             "Another user".to_owned(),
@@ -1192,10 +1194,10 @@ pub(crate) mod tests {
             Some("invalid_other_password".to_owned()),
         )
         .unwrap();
-        let _avatar = Media::insert(
+        let avatar = Media::insert(
             conn,
             NewMedia {
-                file_path: "https://plu.me/media/example.png".into(),
+                file_path: "static/media/example.png".into(),
                 alt_text: "Another user".into(),
                 is_remote: false,
                 remote_url: None,
@@ -1205,8 +1207,58 @@ pub(crate) mod tests {
             },
         )
         .unwrap();
+        other.avatar_id = Some(avatar.id);
+        let other = other.save_changes::<User>(&*conn).unwrap();
 
         vec![admin, user, other]
+    }
+
+    fn fill_pages(
+        conn: &DbConn,
+    ) -> (
+        Vec<crate::posts::Post>,
+        Vec<crate::users::User>,
+        Vec<crate::blogs::Blog>,
+    ) {
+        use crate::post_authors::NewPostAuthor;
+        use crate::posts::NewPost;
+
+        let (mut posts, users, blogs) = crate::inbox::tests::fill_database(conn);
+        let user = &users[0];
+        let blog = &blogs[0];
+
+        for i in 1..(ITEMS_PER_PAGE * 4 + 3) {
+            let title = format!("Post {}", i);
+            let content = format!("Content for post {}.", i);
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog.id,
+                    slug: title.clone(),
+                    title: title.clone(),
+                    content: SafeString::new(&content),
+                    published: true,
+                    license: "CC-0".into(),
+                    creation_date: None,
+                    ap_url: format!("{}/{}", blog.ap_url, title),
+                    subtitle: "".into(),
+                    source: content,
+                    cover_id: None,
+                },
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: user.id,
+                },
+            )
+            .unwrap();
+            posts.push(post);
+        }
+
+        (posts, users, blogs)
     }
 
     #[test]
@@ -1366,6 +1418,141 @@ pub(crate) mod tests {
             assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
             assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[0];
+            let act = user.to_activity(&conn)?;
+
+            let expected = json!({
+                "endpoints": {
+                    "sharedInbox": "https://plu.me/inbox"
+                },
+                "followers": "https://plu.me/@/admin/followers",
+                "following": null,
+                "id": "https://plu.me/@/admin/",
+                "inbox": "https://plu.me/@/admin/inbox",
+                "liked": null,
+                "name": "The admin",
+                "outbox": "https://plu.me/@/admin/outbox",
+                "preferredUsername": "admin",
+                "publicKey": {
+                    "id": "https://plu.me/@/admin/#main-key",
+                    "owner": "https://plu.me/@/admin/",
+                    "publicKeyPem": user.public_key,
+                },
+                "summary": "<p dir=\"auto\">Hello there, I’m the admin</p>\n",
+                "type": "Person",
+                "url": "https://plu.me/@/admin/"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            let other = &users[2];
+            let other_act = other.to_activity(&conn)?;
+            let expected_other = json!({
+                "endpoints": {
+                    "sharedInbox": "https://plu.me/inbox"
+                },
+                "followers": "https://plu.me/@/other/followers",
+                "following": null,
+                "icon": {
+                    "url": "https://plu.me/static/media/example.png",
+                    "type": "Image",
+                },
+                "id": "https://plu.me/@/other/",
+                "inbox": "https://plu.me/@/other/inbox",
+                "liked": null,
+                "name": "Another user",
+                "outbox": "https://plu.me/@/other/outbox",
+                "preferredUsername": "other",
+                "publicKey": {
+                    "id": "https://plu.me/@/other/#main-key",
+                    "owner": "https://plu.me/@/other/",
+                    "publicKeyPem": other.public_key,
+                },
+                "summary": "<p dir=\"auto\">Hello there, I’m someone else</p>\n",
+                "type": "Person",
+                "url": "https://plu.me/@/other/"
+            });
+
+            assert_json_eq!(to_value(other_act)?, expected_other);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn delete_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[1];
+            let act = user.delete_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": [],
+                "id": "https://plu.me/@/user/#delete",
+                "object": {
+                    "id": "https://plu.me/@/user/",
+                    "type": "Tombstone",
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Delete",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_pages, users, _blogs) = fill_pages(&conn);
+            let user = &users[0];
+            let act = user.outbox_collection(&conn)?;
+
+            let expected = json!({
+                "first": "https://plu.me/@/admin/outbox?page=1",
+                "items": null,
+                "last": "https://plu.me/@/admin/outbox?page=5",
+                "totalItems": 51,
+                "type": "OrderedCollection",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection_page() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[0];
+            let act = user.outbox_collection_page(&conn, (33, 36))?;
+
+            let expected = json!({
+                "items": [],
+                "partOf": "https://plu.me/@/admin/outbox",
+                "prev": "https://plu.me/@/admin/outbox?page=2",
+                "type": "OrderedCollectionPage",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
             Ok(())
         });
     }
