@@ -775,13 +775,13 @@ impl User {
         let mut ap_signature = ApSignature::default();
         ap_signature.set_public_key_publickey(public_key)?;
 
-        let mut avatar = Image::default();
-        avatar.object_props.set_url_string(
-            self.avatar_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-                .unwrap_or_default(),
-        )?;
-        actor.object_props.set_icon_object(avatar)?;
+        if let Some(avatar_id) = self.avatar_id {
+            let mut avatar = Image::default();
+            avatar
+                .object_props
+                .set_url_string(Media::get(conn, avatar_id)?.url()?)?;
+            actor.object_props.set_icon_object(avatar)?;
+        }
 
         Ok(CustomPerson::new(actor, ap_signature))
     }
