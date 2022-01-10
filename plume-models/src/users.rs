@@ -1142,6 +1142,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         instance::{tests as instance_tests, Instance},
+        medias::{Media, NewMedia},
         tests::db,
         Connection as Conn,
     };
@@ -1179,6 +1180,20 @@ pub(crate) mod tests {
             Some("invalid_other_password".to_owned()),
         )
         .unwrap();
+        let _avatar = Media::insert(
+            conn,
+            NewMedia {
+                file_path: "https://plu.me/media/example.png".into(),
+                alt_text: "Another user".into(),
+                is_remote: false,
+                remote_url: None,
+                sensitive: false,
+                content_warning: None,
+                owner_id: other.id,
+            },
+        )
+        .unwrap();
+
         vec![admin, user, other]
     }
 
