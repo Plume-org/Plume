@@ -450,6 +450,15 @@ impl User {
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
+        Ok(ActivityStream::new(
+            self.outbox_collection_page(conn, (min, max))?,
+        ))
+    }
+    pub fn outbox_collection_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<OrderedCollectionPage> {
         let acts = self.get_activities_page(conn, (min, max))?;
         let n_acts = self.get_activities_count(conn);
         let mut coll = OrderedCollectionPage::default();
@@ -470,7 +479,7 @@ impl User {
         coll.collection_props.items = serde_json::to_value(acts)?;
         coll.collection_page_props
             .set_part_of_link(Id::new(&self.outbox_url))?;
-        Ok(ActivityStream::new(coll))
+        Ok(coll)
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
         let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
