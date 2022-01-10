@@ -429,6 +429,9 @@ impl User {
             .map_err(Error::from)
     }
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        Ok(ActivityStream::new(self.outbox_collection(conn)?))
+    }
+    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
         let mut coll = OrderedCollection::default();
         let first = &format!("{}?page=1", &self.outbox_url);
         let last = &format!(
@@ -440,7 +443,7 @@ impl User {
         coll.collection_props.set_last_link(Id::new(last))?;
         coll.collection_props
             .set_total_items_u64(self.get_activities_count(conn) as u64)?;
-        Ok(ActivityStream::new(coll))
+        Ok(coll)
     }
     pub fn outbox_page(
         &self,
