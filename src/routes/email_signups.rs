@@ -206,11 +206,8 @@ pub fn signup(
         let mut err = ValidationErrors::default();
         err.add("email", ValidationError::new("Email couldn't changed"));
         let form = NewUserForm {
-            username: form.username.clone(),
-            password: form.password.clone(),
-            password_confirmation: form.password_confirmation.clone(),
             email: signup.email,
-            token: form.token.clone(),
+            ..form.into_inner()
         };
         return Ok(Response(render!(email_signups::edit(
             &(&conn, &rockets).to_context(),
