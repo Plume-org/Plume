@@ -3,7 +3,7 @@ use rocket_i18n::I18n;
 
 use crate::routes::{errors::ErrorPage, Page};
 use crate::template_utils::{IntoContext, Ructe};
-use plume_common::utils;
+use crate::utils::requires_login;
 use plume_models::{db_conn::DbConn, notifications::Notification, users::User, PlumeRocket};
 
 #[get("/notifications?<page>")]
@@ -24,7 +24,7 @@ pub fn notifications(
 
 #[get("/notifications?<page>", rank = 2)]
 pub fn notifications_auth(i18n: I18n, page: Option<Page>) -> Flash<Redirect> {
-    utils::requires_login(
+    requires_login(
         &i18n!(
             i18n.catalog,
             "To see your notifications, you need to be logged in"

@@ -2,10 +2,7 @@ use heck::ToUpperCamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
-use rocket::{
-    http::uri::Uri,
-    response::{Flash, Redirect},
-};
+use rocket::http::uri::Uri;
 use std::collections::HashSet;
 use syntect::html::{ClassStyle, ClassedHTMLGenerator};
 use syntect::parsing::SyntaxSet;
@@ -78,19 +75,6 @@ pub fn iri_percent_encode_seg_char(c: char) -> String {
             }
         }
     }
-}
-
-/**
-* Redirects to the login page with a given message.
-*
-* Note that the message should be translated before passed to this function.
-*/
-pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Redirect> {
-    Flash::new(
-        Redirect::to(format!("/login?m={}", Uri::percent_encode(message))),
-        "callback",
-        url.into().to_string(),
-    )
 }
 
 #[derive(Debug)]
