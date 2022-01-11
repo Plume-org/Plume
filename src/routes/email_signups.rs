@@ -4,11 +4,7 @@ use crate::{
     template_utils::{IntoContext, Ructe},
 };
 use plume_models::{
-    db_conn::DbConn,
-    email_signups::EmailSignup,
-    instance::Instance,
-    lettre::Transport,
-    signups::{self, Strategy as SignupStrategy},
+    db_conn::DbConn, email_signups::EmailSignup, instance::Instance, lettre::Transport, signups,
     Error, PlumeRocket, CONFIG,
 };
 use rocket::{
@@ -75,17 +71,6 @@ pub fn create(
     rockets: PlumeRocket,
     _enabled: signups::Email,
 ) -> Result<RespondOrRedirect, Ructe> {
-    if !matches!(CONFIG.signup, SignupStrategy::Email) {
-        return Ok(Flash::error(
-            Redirect::to(uri!(super::user::new)),
-            i18n!(
-                rockets.intl.catalog,
-                "Email registrations are not enabled. Please restart."
-            ),
-        )
-        .into());
-    }
-
     let registration_open = !Instance::get_local()
         .map(|i| i.open_registrations)
         .unwrap_or(true);
