@@ -70,16 +70,15 @@ pub fn create(
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, Ructe> {
-    use RespondOrRedirect::{FlashRedirect, Response};
-
     if !matches!(CONFIG.signup, SignupStrategy::Email) {
-        return Ok(FlashRedirect(Flash::error(
+        return Ok(Flash::error(
             Redirect::to(uri!(super::user::new)),
             i18n!(
                 rockets.intl.catalog,
                 "Email registrations are not enabled. Please restart."
             ),
-        )));
+        )
+        .into());
     }
 
     let registration_open = !Instance::get_local()
@@ -87,13 +86,14 @@ pub fn create(
         .unwrap_or(true);
 
     if registration_open {
-        return Ok(FlashRedirect(Flash::error(
+        return Ok(Flash::error(
             Redirect::to(uri!(super::user::new)),
             i18n!(
                 rockets.intl.catalog,
                 "Registrations are closed on this instance."
             ),
-        ))); // Actually, it is an error
+        )
+        .into()); // Actually, it is an error
     }
     let mut form = form.into_inner();
     form.email = form.email.trim().to_owned();
@@ -111,14 +111,10 @@ pub fn create(
             Error::UserAlreadyExists => {
                 // TODO: Notify to admin (and the user?)
                 warn!("Registration attempted for existing user: {}. Registraion halted and email sending skipped.", &form.email);
-                Response(render!(email_signups::create(
-                    &(&conn, &rockets).to_context()
-                )))
+                render!(email_signups::create(&(&conn, &rockets).to_context())).into()
             }
-            Error::NotFound => {
-                Response(render!(errors::not_found(&(&conn, &rockets).to_context())))
-            }
-            _ => Response(render!(errors::not_found(&(&conn, &rockets).to_context()))), // FIXME
+            Error::NotFound => render!(errors::not_found(&(&conn, &rockets).to_context())).into(),
+            _ => render!(errors::not_found(&(&conn, &rockets).to_context())).into(), // FIXME
         });
     }
     let token = res.unwrap();
@@ -138,9 +134,7 @@ pub fn create(
         mailer.send(message.into()).ok(); // TODO: Render error page
     }
 
-    Ok(Response(render!(email_signups::create(
-        &(&conn, &rockets).to_context()
-    ))))
+    Ok(render!(email_signups::create(&(&conn, &rockets).to_context())).into())
 }
 
 #[get("/email_signups/new")]
