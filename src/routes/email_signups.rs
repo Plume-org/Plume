@@ -4,8 +4,12 @@ use crate::{
     template_utils::{IntoContext, Ructe},
 };
 use plume_models::{
-    db_conn::DbConn, email_signups::EmailSignup, instance::Instance, lettre::Transport,
-    signups::Strategy as SignupStrategy, Error, PlumeRocket, CONFIG,
+    db_conn::DbConn,
+    email_signups::EmailSignup,
+    instance::Instance,
+    lettre::Transport,
+    signups::{self, Strategy as SignupStrategy},
+    Error, PlumeRocket, CONFIG,
 };
 use rocket::{
     http::Status,
@@ -69,6 +73,7 @@ pub fn create(
     form: LenientForm<EmailSignupForm>,
     conn: DbConn,
     rockets: PlumeRocket,
+    _enabled: signups::Email,
 ) -> Result<RespondOrRedirect, Ructe> {
     if !matches!(CONFIG.signup, SignupStrategy::Email) {
         return Ok(Flash::error(
@@ -138,12 +143,17 @@ pub fn create(
 }
 
 #[get("/email_signups/new")]
-pub fn created(conn: DbConn, rockets: PlumeRocket) -> Ructe {
+pub fn created(conn: DbConn, rockets: PlumeRocket, _enabled: signups::Email) -> Ructe {
     render!(email_signups::create(&(&conn, &rockets).to_context()))
 }
 
 #[get("/email_signups/<token>")]
-pub fn show(token: String, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn show(
+    token: String,
+    conn: DbConn,
+    rockets: PlumeRocket,
+    _enabled: signups::Email,
+) -> Result<Ructe, ErrorPage> {
     let signup = EmailSignup::find_by_token(&conn, token.into())?;
     let confirmation = signup.confirm(&conn);
     if let Some(err) = confirmation.err() {
@@ -179,6 +189,7 @@ pub fn signup(
     form: LenientForm<NewUserForm>,
     conn: DbConn,
     rockets: PlumeRocket,
+    _enabled: signups::Email,
 ) -> Result<RespondOrRedirect, Status> {
     use RespondOrRedirect::{FlashRedirect, Response};
 
