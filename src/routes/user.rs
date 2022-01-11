@@ -18,9 +18,19 @@ use crate::utils::requires_login;
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, Id};
 use plume_common::utils::md_to_html;
 use plume_models::{
-    blogs::Blog, db_conn::DbConn, follows, headers::Headers, inbox::inbox as local_inbox,
-    instance::Instance, medias::Media, posts::Post, reshares::Reshare, safe_string::SafeString,
-    signups::Strategy as SignupStrategy, users::*, Error, PlumeRocket, CONFIG,
+    blogs::Blog,
+    db_conn::DbConn,
+    follows,
+    headers::Headers,
+    inbox::inbox as local_inbox,
+    instance::Instance,
+    medias::Media,
+    posts::Post,
+    reshares::Reshare,
+    safe_string::SafeString,
+    signups::{self, Strategy as SignupStrategy},
+    users::*,
+    Error, PlumeRocket, CONFIG,
 };
 
 #[get("/me")]
@@ -466,6 +476,7 @@ pub fn create(
     form: LenientForm<NewUserForm>,
     conn: DbConn,
     rockets: PlumeRocket,
+    _enabled: signups::Password,
 ) -> Result<Flash<Redirect>, Ructe> {
     if !Instance::get_local()
         .map(|i| i.open_registrations)
