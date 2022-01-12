@@ -1,5 +1,5 @@
 # we don't have a crate yet, so
-disable-publish = true
+publish = true
 # change when we all have gpg keys
 sign-commit = false
 dev-version-ext = 'dev'
