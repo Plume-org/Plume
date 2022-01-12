@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2022-01-12 01:20\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -21,51 +21,51 @@ msgstr ""
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:105
+# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr "{0} reageerde op je bericht."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr "{0} is op je geabonneerd."
 
-# src/template_utils.rs:107
+# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr "{0} vond je artikel leuk."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr "{0} vermeldde jou."
 
-# src/template_utils.rs:109
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr "{0} heeft je artikel geboost."
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr "Jouw feed"
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Lokale feed"
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr "Gefedereerde feed"
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr "{0}'s avatar"
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr "Vorige pagina"
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr "Volgende pagina"
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr "Optioneel"
 
@@ -113,11 +113,7 @@ msgstr "Je reactie is geplaatst."
 msgid "Your comment has been deleted."
 msgstr "Je reactie is verwijderd."
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
-# src/routes/user.rs:463
+# src/routes/email_signups.rs:93
 msgid "Registrations are closed on this instance."
 msgstr "Registraties zijn gesloten op deze server."
 
@@ -125,12 +121,11 @@ msgstr "Registraties zijn gesloten op deze server."
 msgid "User registration"
 msgstr ""
 
-# src/routes/session.rs:163
-#, fuzzy
+# src/routes/email_signups.rs:133
 msgid "Here is the link for registration: {0}"
-msgstr "Hier is de link om je wachtwoord opnieuw in te stellen: {0}"
+msgstr ""
 
-# src/routes/user.rs:486
+# src/routes/email_signups.rs:231
 msgid ""
 "Your account has been created. Now you just need to log in, before you can "
 "use it."
@@ -178,19 +173,19 @@ msgstr "Klaar."
 msgid "To like a post, you need to be logged in"
 msgstr "Om een bericht leuk te vinden, moet je ingelogd zijn"
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr "Je media zijn verwijderd."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr "Je mag dit medium niet verwijderen."
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr "Je avatar is bijgewerkt."
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr "Je mag dit mediabestand niet gebruiken."
 
@@ -282,35 +277,35 @@ msgstr "Hier is de link om je wachtwoord opnieuw in te stellen: {0}"
 msgid "Your password was successfully reset."
 msgstr "Je wachtwoord is succesvol ingesteld."
 
-# src/routes/user.rs:74
+# src/routes/user.rs:76
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Om toegang te krijgen tot je dashboard, moet je ingelogd zijn"
 
-# src/routes/user.rs:96
+# src/routes/user.rs:98
 msgid "You are no longer following {}."
 msgstr "Je volgt {} niet langer."
 
-# src/routes/user.rs:113
+# src/routes/user.rs:115
 msgid "You are now following {}."
 msgstr "Je volgt nu {}."
 
-# src/routes/user.rs:190
+# src/routes/user.rs:192
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Om je te abonneren op iemand, moet je ingelogd zijn"
 
-# src/routes/user.rs:299
+# src/routes/user.rs:312
 msgid "To edit your profile, you need to be logged in"
 msgstr "Om je profiel te bewerken moet je ingelogd zijn"
 
-# src/routes/user.rs:345
+# src/routes/user.rs:358
 msgid "Your profile has been updated."
 msgstr "Je profiel is bijgewerkt."
 
-# src/routes/user.rs:373
+# src/routes/user.rs:386
 msgid "Your account has been deleted."
 msgstr "Je account is verwijderd."
 
-# src/routes/user.rs:379
+# src/routes/user.rs:392
 msgid "You can't delete someone else's account."
 msgstr "Je kunt het account van iemand anders niet verwijderen."
 
@@ -323,9 +318,8 @@ msgstr "Maak een account aan"
 msgid "Email"
 msgstr "E-mailadres"
 
-#, fuzzy
 msgid "Email confirmation"
-msgstr "Bevestiging"
+msgstr ""
 
 msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
@@ -334,19 +328,15 @@ msgstr ""
 "Excuses, maar registraties zijn gesloten voor deze server. Je kunt wel een "
 "andere vinden."
 
-#, fuzzy
 msgid "Registration"
-msgstr "Aanmelden"
+msgstr ""
 
 msgid "Check your inbox!"
 msgstr "Ga naar je inbox!"
 
-#, fuzzy
 msgid ""
 "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
-"We hebben een e-mail gestuurd naar het adres dat je hebt opgegeven, met een "
-"link om je wachtwoord te resetten."
 
 msgid "Username"
 msgstr "Gebruikersnaam"

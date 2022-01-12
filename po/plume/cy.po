@@ -110,10 +110,6 @@ msgstr ""
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
 # src/routes/user.rs:526
 msgid "Registrations are closed on this instance."
 msgstr ""

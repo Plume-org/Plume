@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2022-01-12 01:20\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -23,51 +23,51 @@ msgstr ""
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:105
+# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr "{0} прокомментировал(а) Вашу статью."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr "{0} подписан на вас."
 
-# src/template_utils.rs:107
+# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr "{0} понравилась ваша статья."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr "{0} упомянул вас."
 
-# src/template_utils.rs:109
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr "{0} продвинули вашу статью."
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr "Ваша лента"
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Локальная лента"
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr "Объединенная лента"
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr "Аватар {0}"
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr "Предыдущая страница"
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr "Следующая страница"
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr "Не обязательно"
 
@@ -115,11 +115,7 @@ msgstr "Ваш комментарий опубликован."
 msgid "Your comment has been deleted."
 msgstr "Ваш комментарий был удалён."
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
-# src/routes/user.rs:463
+# src/routes/email_signups.rs:93
 msgid "Registrations are closed on this instance."
 msgstr "Регистрации на данном экземпляре закрыты."
 
@@ -127,12 +123,11 @@ msgstr "Регистрации на данном экземпляре закры
 msgid "User registration"
 msgstr ""
 
-# src/routes/session.rs:163
-#, fuzzy
+# src/routes/email_signups.rs:133
 msgid "Here is the link for registration: {0}"
-msgstr "Перейдите по ссылке для сброса вашего пароля: {0}"
+msgstr ""
 
-# src/routes/user.rs:486
+# src/routes/email_signups.rs:231
 msgid ""
 "Your account has been created. Now you just need to log in, before you can "
 "use it."
@@ -180,19 +175,19 @@ msgstr "Выполнено."
 msgid "To like a post, you need to be logged in"
 msgstr "Чтобы лайкнуть сообщением, вы должны войти в систему"
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr "Ваш файл был удалён."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr "У вас нет прав на удаление этого файла."
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr "Ваш аватар был обновлен."
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr "Вы не можете использовать этот файл."
 
@@ -284,35 +279,35 @@ msgstr "Перейдите по ссылке для сброса вашего п
 msgid "Your password was successfully reset."
 msgstr "Ваш пароль был успешно сброшен."
 
-# src/routes/user.rs:74
+# src/routes/user.rs:76
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Для доступа к панели инструментов необходимо войти в систему"
 
-# src/routes/user.rs:96
+# src/routes/user.rs:98
 msgid "You are no longer following {}."
 msgstr "Вы больше не отслеживаете {}."
 
-# src/routes/user.rs:113
+# src/routes/user.rs:115
 msgid "You are now following {}."
 msgstr "Теперь вы отслеживаете {}."
 
-# src/routes/user.rs:190
+# src/routes/user.rs:192
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Чтобы подписаться на кого-то, необходимо войти в систему"
 
-# src/routes/user.rs:299
+# src/routes/user.rs:312
 msgid "To edit your profile, you need to be logged in"
 msgstr "Для редактирования профиля необходимо войти в систему"
 
-# src/routes/user.rs:345
+# src/routes/user.rs:358
 msgid "Your profile has been updated."
 msgstr "Ваш профиль был изменен."
 
-# src/routes/user.rs:373
+# src/routes/user.rs:386
 msgid "Your account has been deleted."
 msgstr "Ваша учетная запись удалена."
 
-# src/routes/user.rs:379
+# src/routes/user.rs:392
 msgid "You can't delete someone else's account."
 msgstr "Вы не можете удалить чужую учетную запись."
 
@@ -325,9 +320,8 @@ msgstr "Создать новый аккаунт"
 msgid "Email"
 msgstr "Электронная почта"
 
-#, fuzzy
 msgid "Email confirmation"
-msgstr "Подтверждение"
+msgstr ""
 
 msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
@@ -336,19 +330,15 @@ msgstr ""
 "Приносим извинения, но регистрация на данном узле закрыта. Однако, вы можете "
 "найти другой."
 
-#, fuzzy
 msgid "Registration"
-msgstr "Зарегистрироваться"
+msgstr ""
 
 msgid "Check your inbox!"
 msgstr "Проверьте ваш почтовый ящик!"
 
-#, fuzzy
 msgid ""
 "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
-"Мы отправили письмо на адрес, который вы нам дали, со ссылкой для сброса "
-"пароля."
 
 msgid "Username"
 msgstr "Имя пользователя"

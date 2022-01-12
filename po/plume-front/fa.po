@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-12-11 15:00\n"
+"PO-Revision-Date: 2022-01-12 01:20\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -17,47 +17,47 @@ msgstr ""
 "X-Crowdin-File: /master/po/plume-front/plume-front.pot\n"
 "X-Crowdin-File-ID: 12\n"
 
-# plume-front/src/editor.rs:188
+# plume-front/src/editor.rs:172
 msgid "Do you want to load the local autosave last edited at {}?"
 msgstr "آیا می‌خواهید نسخهٔ ذخیره شدهٔ خودکار محلّی از آخرین ویرایش در {} را بار کنید؟"
 
-# plume-front/src/editor.rs:281
+# plume-front/src/editor.rs:326
 msgid "Open the rich text editor"
 msgstr "باز کردن ویرایش‌گر غنی"
 
-# plume-front/src/editor.rs:314
+# plume-front/src/editor.rs:385
 msgid "Title"
 msgstr "عنوان"
 
-# plume-front/src/editor.rs:318
+# plume-front/src/editor.rs:389
 msgid "Subtitle, or summary"
 msgstr "زیرعنوان، یا چکیده"
 
-# plume-front/src/editor.rs:325
+# plume-front/src/editor.rs:396
 msgid "Write your article here. Markdown is supported."
 msgstr "مقاله‌تان را این‌جا بنویسید. از مارک‌داون پشتیبانی می‌شود."
 
-# plume-front/src/editor.rs:336
+# plume-front/src/editor.rs:407
 msgid "Around {} characters left"
 msgstr "نزدیک به {} حرف باقی مانده است"
 
-# plume-front/src/editor.rs:413
+# plume-front/src/editor.rs:517
 msgid "Tags"
 msgstr "برچسب‌ها"
 
-# plume-front/src/editor.rs:414
+# plume-front/src/editor.rs:518
 msgid "License"
 msgstr "پروانه"
 
-# plume-front/src/editor.rs:417
+# plume-front/src/editor.rs:524
 msgid "Cover"
 msgstr "جلد"
 
-# plume-front/src/editor.rs:437
+# plume-front/src/editor.rs:564
 msgid "This is a draft"
 msgstr "این، یک پیش‌نویس است"
 
-# plume-front/src/editor.rs:444
+# plume-front/src/editor.rs:575
 msgid "Publish"
 msgstr "انتشار"
 

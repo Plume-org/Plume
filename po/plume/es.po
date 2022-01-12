@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-02 11:39\n"
+"PO-Revision-Date: 2022-01-12 01:20\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -21,51 +21,51 @@ msgstr ""
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:105
+# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr "{0} ha comentado tu artículo."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr "{0} esta suscrito a tí."
 
-# src/template_utils.rs:107
+# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr "A {0} le gustó tu artículo."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr "{0} te ha mencionado."
 
-# src/template_utils.rs:109
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr "{0} compartió su artículo."
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr "Tu Feed"
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Feed local"
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr "Feed federada"
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr "Avatar de {0}"
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr "Página anterior"
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr "Página siguiente"
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr "Opcional"
 
@@ -113,11 +113,7 @@ msgstr "Se ha publicado el comentario."
 msgid "Your comment has been deleted."
 msgstr "Se ha eliminado el comentario."
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
-# src/routes/user.rs:463
+# src/routes/email_signups.rs:93
 msgid "Registrations are closed on this instance."
 msgstr "Los registros están cerrados en esta instancia."
 
@@ -125,12 +121,11 @@ msgstr "Los registros están cerrados en esta instancia."
 msgid "User registration"
 msgstr ""
 
-# src/routes/session.rs:163
-#, fuzzy
+# src/routes/email_signups.rs:133
 msgid "Here is the link for registration: {0}"
-msgstr "Aquí está el enlace para restablecer tu contraseña: {0}"
+msgstr ""
 
-# src/routes/user.rs:486
+# src/routes/email_signups.rs:231
 msgid ""
 "Your account has been created. Now you just need to log in, before you can "
 "use it."
@@ -178,19 +173,19 @@ msgstr "Hecho."
 msgid "To like a post, you need to be logged in"
 msgstr "Para darle un Me Gusta a un artículo, necesita estar conectado"
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr "Tus medios han sido eliminados."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr "No tienes permisos para eliminar este medio."
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr "Tu avatar ha sido actualizado."
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr "No tienes permisos para usar este medio."
 
@@ -282,35 +277,35 @@ msgstr "Aquí está el enlace para restablecer tu contraseña: {0}"
 msgid "Your password was successfully reset."
 msgstr "Su contraseña se ha restablecido correctamente."
 
-# src/routes/user.rs:74
+# src/routes/user.rs:76
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Para acceder a su panel de control, necesita estar conectado"
 
-# src/routes/user.rs:96
+# src/routes/user.rs:98
 msgid "You are no longer following {}."
 msgstr "Ya no estás siguiendo a {}."
 
-# src/routes/user.rs:113
+# src/routes/user.rs:115
 msgid "You are now following {}."
 msgstr "Ahora estás siguiendo a {}."
 
-# src/routes/user.rs:190
+# src/routes/user.rs:192
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Para suscribirse a alguien, necesita estar conectado"
 
-# src/routes/user.rs:299
+# src/routes/user.rs:312
 msgid "To edit your profile, you need to be logged in"
 msgstr "Para editar su perfil, necesita estar conectado"
 
-# src/routes/user.rs:345
+# src/routes/user.rs:358
 msgid "Your profile has been updated."
 msgstr "Tu perfil ha sido actualizado."
 
-# src/routes/user.rs:373
+# src/routes/user.rs:386
 msgid "Your account has been deleted."
 msgstr "Tu cuenta ha sido eliminada."
 
-# src/routes/user.rs:379
+# src/routes/user.rs:392
 msgid "You can't delete someone else's account."
 msgstr "No puedes eliminar la cuenta de otra persona."
 
@@ -323,9 +318,8 @@ msgstr "Crear una cuenta"
 msgid "Email"
 msgstr "Correo electrónico"
 
-#, fuzzy
 msgid "Email confirmation"
-msgstr "Confirmación"
+msgstr ""
 
 msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
@@ -334,19 +328,15 @@ msgstr ""
 "Lo sentimos, pero las inscripciones están cerradas en esta instancia. Sin "
 "embargo, puede encontrar una instancia distinta."
 
-#, fuzzy
 msgid "Registration"
-msgstr "Registrarse"
+msgstr ""
 
 msgid "Check your inbox!"
 msgstr "Revise su bandeja de entrada!"
 
-#, fuzzy
 msgid ""
 "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
-"Enviamos un correo a la dirección que nos dio, con un enlace para "
-"restablecer su contraseña."
 
 msgid "Username"
 msgstr "Nombre de usuario"

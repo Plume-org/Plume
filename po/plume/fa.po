@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-12-11 15:00\n"
+"PO-Revision-Date: 2022-01-12 01:20\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -21,51 +21,51 @@ msgstr ""
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:105
+# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr "{0} روی مقالهٔ شما نظر داد."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr "{0} شما را دنبال می‌کند."
 
-# src/template_utils.rs:107
+# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr "{0} مقالهٔ شما را پسندید."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr "{0} به شما اشاره کرد."
 
-# src/template_utils.rs:109
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr "{0} مقالهٔ شما را تقویت کرد."
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr "خوراک شما"
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr "خوراک محلی"
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr "خوراک سراسری"
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr "چهرک {0}"
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr "برگ پیشین"
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr "برگ پسین"
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr "اختیاری"
 
@@ -113,11 +113,7 @@ msgstr "نظر شما فرستاده شده است."
 msgid "Your comment has been deleted."
 msgstr "نظر شما پاک شده است."
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
-# src/routes/user.rs:463
+# src/routes/email_signups.rs:93
 msgid "Registrations are closed on this instance."
 msgstr "ثبت‌نام روی این نمونه بسته شده است."
 
@@ -125,12 +121,11 @@ msgstr "ثبت‌نام روی این نمونه بسته شده است."
 msgid "User registration"
 msgstr ""
 
-# src/routes/session.rs:163
-#, fuzzy
+# src/routes/email_signups.rs:133
 msgid "Here is the link for registration: {0}"
-msgstr "اینجا، پیوندی برای بازنشانی گذرواژهٔ شماست: {0}"
+msgstr ""
 
-# src/routes/user.rs:486
+# src/routes/email_signups.rs:231
 msgid ""
 "Your account has been created. Now you just need to log in, before you can "
 "use it."
@@ -177,19 +172,19 @@ msgstr "انجام شد."
 msgid "To like a post, you need to be logged in"
 msgstr "برای پسندیدن یک فرسته، بایستی وارد شده باشید"
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr "رسانه شما پاک شده است."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr "شما مجاز به پاک کردن این رسانه نیستید."
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr "چهرک شما به‌روز شده است."
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr "شما مجاز به استفاده از این رسانه نیستید."
 
@@ -280,35 +275,35 @@ msgstr "اینجا، پیوندی برای بازنشانی گذرواژهٔ ش�
 msgid "Your password was successfully reset."
 msgstr "گذرواژه شما با موفقیت بازنشانی شد."
 
-# src/routes/user.rs:74
+# src/routes/user.rs:76
 msgid "To access your dashboard, you need to be logged in"
 msgstr "برای دسترسی به پیشخوان بایستی وارد شده باشید"
 
-# src/routes/user.rs:96
+# src/routes/user.rs:98
 msgid "You are no longer following {}."
 msgstr "دیگر {} را دنبال نمی‌کنید."
 
-# src/routes/user.rs:113
+# src/routes/user.rs:115
 msgid "You are now following {}."
 msgstr "اکنون {} را دنبال می‌کنید."
 
-# src/routes/user.rs:190
+# src/routes/user.rs:192
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "برای دنبال کردن یک نفر، باید وارد شوید"
 
-# src/routes/user.rs:299
+# src/routes/user.rs:312
 msgid "To edit your profile, you need to be logged in"
 msgstr "برای ویرایش نمایهٔ خود، باید وارد شوید"
 
-# src/routes/user.rs:345
+# src/routes/user.rs:358
 msgid "Your profile has been updated."
 msgstr "نمایهٔ شما به‌روز شده است."
 
-# src/routes/user.rs:373
+# src/routes/user.rs:386
 msgid "Your account has been deleted."
 msgstr "حساب شما پاک شده است."
 
-# src/routes/user.rs:379
+# src/routes/user.rs:392
 msgid "You can't delete someone else's account."
 msgstr "نمی‌توانید حساب شخص دیگری را پاک کنید."
 
@@ -321,9 +316,8 @@ msgstr "حسابی بسازید"
 msgid "Email"
 msgstr "رایانامه"
 
-#, fuzzy
 msgid "Email confirmation"
-msgstr "تایید"
+msgstr ""
 
 msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
@@ -332,19 +326,15 @@ msgstr ""
 "معذرت می‌خواهیم. ثبت‌نام روی این نمونه خاص بسته شده است. با این حال شما "
 "می‌توانید یک نمونه دیگر پیدا کنید."
 
-#, fuzzy
 msgid "Registration"
-msgstr "نام‌نویسی"
+msgstr ""
 
 msgid "Check your inbox!"
 msgstr "صندوق پستی خود را بررسی کنید!"
 
-#, fuzzy
 msgid ""
 "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
-"ما، یک رایانامه به نشانی‌ای که به ما دادید فرستاده‌ایم. با پیوندی که در آن است "
-"می‌توانید گذرواژه خود را تغییر دهید."
 
 msgid "Username"
 msgstr "نام کاربری"

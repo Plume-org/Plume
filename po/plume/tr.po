@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2022-01-12 01:20\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -21,51 +21,51 @@ msgstr ""
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:105
+# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr "{0} makalene yorum yaptı."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr "{0} sana abone oldu."
 
-# src/template_utils.rs:107
+# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr "{0} makaleni beğendi."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr "{0} senden bahsetti."
 
-# src/template_utils.rs:109
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr "{0} makaleni destekledi."
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr "Özet akışınız"
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Yerel özet akışı"
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr "Birleşik özet akışı"
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr "{0} adlı kişinin avatarı"
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr ""
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr ""
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr "İsteğe bağlı"
 
@@ -113,11 +113,7 @@ msgstr "Yorumun yayınlandı."
 msgid "Your comment has been deleted."
 msgstr "Yorumun silindi."
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
-# src/routes/user.rs:463
+# src/routes/email_signups.rs:93
 msgid "Registrations are closed on this instance."
 msgstr "Bu örnekte kayıtlar kapalıdır."
 
@@ -125,12 +121,11 @@ msgstr "Bu örnekte kayıtlar kapalıdır."
 msgid "User registration"
 msgstr ""
 
-# src/routes/session.rs:163
-#, fuzzy
+# src/routes/email_signups.rs:133
 msgid "Here is the link for registration: {0}"
-msgstr "İşte şifreni sıfırlamak için kullabileceğin bağlantı: {0}"
+msgstr ""
 
-# src/routes/user.rs:486
+# src/routes/email_signups.rs:231
 msgid ""
 "Your account has been created. Now you just need to log in, before you can "
 "use it."
@@ -177,19 +172,19 @@ msgstr ""
 msgid "To like a post, you need to be logged in"
 msgstr "Bir yazıyı beğenmek için, giriş yapman lazım"
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr "Dosyan silindi."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr "Bu dosyayı silme iznin yok."
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr "Avatarın güncellendi."
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr "Bu dosyayı kullanma iznin yok."
 
@@ -281,35 +276,35 @@ msgstr "İşte şifreni sıfırlamak için kullabileceğin bağlantı: {0}"
 msgid "Your password was successfully reset."
 msgstr "Şifren başarıyla sıfırlandı."
 
-# src/routes/user.rs:74
+# src/routes/user.rs:76
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Yönetim panelinize erişmek için giriş yapmanız gerekmektedir"
 
-# src/routes/user.rs:96
+# src/routes/user.rs:98
 msgid "You are no longer following {}."
 msgstr "Artık {} kullanıcısını takip etmiyorsunuz."
 
-# src/routes/user.rs:113
+# src/routes/user.rs:115
 msgid "You are now following {}."
 msgstr "Artık {} kullanıcısını takip ediyorsunuz."
 
-# src/routes/user.rs:190
+# src/routes/user.rs:192
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Birisine abone olmak için giriş yapmanız gerekmektedir"
 
-# src/routes/user.rs:299
+# src/routes/user.rs:312
 msgid "To edit your profile, you need to be logged in"
 msgstr "Profilinizi düzenlemek için giriş yapmanız gerekmektedir"
 
-# src/routes/user.rs:345
+# src/routes/user.rs:358
 msgid "Your profile has been updated."
 msgstr "Profiliniz güncellendi."
 
-# src/routes/user.rs:373
+# src/routes/user.rs:386
 msgid "Your account has been deleted."
 msgstr "Hesabınız silindi."
 
-# src/routes/user.rs:379
+# src/routes/user.rs:392
 msgid "You can't delete someone else's account."
 msgstr "Başka birisinin hesabını silemezsiniz."
 
@@ -322,9 +317,8 @@ msgstr "Bir hesap oluştur"
 msgid "Email"
 msgstr "E-posta"
 
-#, fuzzy
 msgid "Email confirmation"
-msgstr "Doğrulama"
+msgstr ""
 
 msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
@@ -333,18 +327,15 @@ msgstr ""
 "Özür dileriz, ancak bu örnek kayıt olmaya kapalıdır. Ama farklı bir tane "
 "bulabilirsiniz."
 
-#, fuzzy
 msgid "Registration"
-msgstr "Kayıt Ol"
+msgstr ""
 
 msgid "Check your inbox!"
 msgstr "Gelen kutunuzu kontrol edin!"
 
-#, fuzzy
 msgid ""
 "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
-"Bize verdiğiniz adrese, parola sıfırlama linki içeren bir e-posta gönderdik."
 
 msgid "Username"
 msgstr "Kullanıcı adı"
