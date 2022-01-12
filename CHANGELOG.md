@@ -4,6 +4,8 @@
 
 ## [Unreleased] - ReleaseDate
 
+## [[0.7.1]] - 2022-01-12
+
 ### Added
 
 - Introduce environment variable `MAIL_PORT` (#980)
@@ -234,7 +236,8 @@
 - Ability to create multiple blogs
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Plume-org/Plume/compare/0.7.0...HEAD
+[Unreleased]: https://github.com/Plume-org/Plume/compare/0.7.1...HEAD
+[[0.7.1]]: https://github.com/Plume-org/Plume/compare/0.7.0...0.7.1
 [[0.7.0]]: https://github.com/Plume-org/Plume/compare/0.6.0...0.7.0
 [[0.6.0]]: https://github.com/Plume-org/Plume/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Plume-org/Plume/compare/0.4.0-alpha-4...0.5.0
