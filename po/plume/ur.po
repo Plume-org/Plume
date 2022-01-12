@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2022-01-12 01:28\n"
 "Last-Translator: \n"
 "Language-Team: Urdu (Pakistan)\n"
 "Language: ur_PK\n"
@@ -18,86 +18,90 @@ msgstr ""
 "X-Crowdin-File-ID: 8\n"
 
 # src/template_utils.rs:105
-msgid "{0} commented on your article."
-msgstr ""
-
-# src/template_utils.rs:106
-msgid "{0} is subscribed to you."
+msgid "Someone"
 msgstr ""
 
 # src/template_utils.rs:107
-msgid "{0} liked your article."
+msgid "{0} commented on your article."
 msgstr ""
 
 # src/template_utils.rs:108
-msgid "{0} mentioned you."
+msgid "{0} is subscribed to you."
 msgstr ""
 
 # src/template_utils.rs:109
+msgid "{0} liked your article."
+msgstr ""
+
+# src/template_utils.rs:110
+msgid "{0} mentioned you."
+msgstr ""
+
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr ""
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr ""
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr ""
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr ""
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr ""
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr ""
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr ""
 
-# src/routes/blogs.rs:67
+# src/routes/blogs.rs:68
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
-# src/routes/blogs.rs:109
+# src/routes/blogs.rs:110
 msgid "A blog with the same name already exists."
 msgstr ""
 
-# src/routes/blogs.rs:147
+# src/routes/blogs.rs:148
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:165
+# src/routes/blogs.rs:166
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:173
+# src/routes/blogs.rs:174
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:223
+# src/routes/blogs.rs:224
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:279
+# src/routes/blogs.rs:280
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:297
+# src/routes/blogs.rs:298
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:331
+# src/routes/blogs.rs:332
 msgid "Your blog information have been updated."
 msgstr ""
 
@@ -107,6 +111,22 @@ msgstr ""
 
 # src/routes/comments.rs:177
 msgid "Your comment has been deleted."
+msgstr ""
+
+# src/routes/email_signups.rs:82
+msgid "Registrations are closed on this instance."
+msgstr ""
+
+# src/routes/email_signups.rs:119
+msgid "User registration"
+msgstr ""
+
+# src/routes/email_signups.rs:120
+msgid "Here is the link for registration: {0}"
+msgstr ""
+
+# src/routes/email_signups.rs:219
+msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
 # src/routes/instance.rs:117
@@ -149,19 +169,19 @@ msgstr ""
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr ""
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr ""
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr ""
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr ""
 
@@ -169,55 +189,55 @@ msgstr ""
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:55
+# src/routes/posts.rs:56
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:125
+# src/routes/posts.rs:126
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:146
+# src/routes/posts.rs:147
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:153
+# src/routes/posts.rs:154
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:198
+# src/routes/posts.rs:199
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:267
+# src/routes/posts.rs:268
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:367
+# src/routes/posts.rs:368
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:556
+# src/routes/posts.rs:557
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:563
+# src/routes/posts.rs:564
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:601
+# src/routes/posts.rs:602
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:625
+# src/routes/posts.rs:626
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:630
+# src/routes/posts.rs:631
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:672
+# src/routes/posts.rs:673
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
@@ -245,44 +265,69 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/user.rs:74
+# src/routes/user.rs:87
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:96
+# src/routes/user.rs:109
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:113
+# src/routes/user.rs:126
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:190
+# src/routes/user.rs:203
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:299
+# src/routes/user.rs:323
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:345
+# src/routes/user.rs:369
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:373
+# src/routes/user.rs:397
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:379
+# src/routes/user.rs:403
 msgid "You can't delete someone else's account."
 msgstr ""
 
-# src/routes/user.rs:463
-msgid "Registrations are closed on this instance."
+msgid "Create your account"
 msgstr ""
 
-# src/routes/user.rs:486
-msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgid "Create an account"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Email confirmation"
+msgstr ""
+
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr ""
+
+msgid "Registration"
+msgstr ""
+
+msgid "Check your inbox!"
+msgstr ""
+
+msgid "We sent a mail to the address you gave us, with a link for registration."
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Password confirmation"
 msgstr ""
 
 msgid "Media upload"
@@ -421,27 +466,6 @@ msgid "Subscribers"
 msgstr ""
 
 msgid "Subscriptions"
-msgstr ""
-
-msgid "Create your account"
-msgstr ""
-
-msgid "Create an account"
-msgstr ""
-
-msgid "Username"
-msgstr ""
-
-msgid "Email"
-msgstr ""
-
-msgid "Password"
-msgstr ""
-
-msgid "Password confirmation"
-msgstr ""
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "{0}'s subscriptions"
@@ -839,9 +863,6 @@ msgid "Confirmation"
 msgstr ""
 
 msgid "Update password"
-msgstr ""
-
-msgid "Check your inbox!"
 msgstr ""
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."

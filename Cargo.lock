@@ -3008,7 +3008,7 @@ dependencies = [
 
 [[package]]
 name = "plume"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "activitypub",
  "atom_syndication",
@@ -3046,7 +3046,7 @@ dependencies = [
 
 [[package]]
 name = "plume-api"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "serde 1.0.133",
  "serde_derive",
@@ -3054,7 +3054,7 @@ dependencies = [
 
 [[package]]
 name = "plume-cli"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "clap",
  "diesel",
@@ -3065,7 +3065,7 @@ dependencies = [
 
 [[package]]
 name = "plume-common"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "activitypub",
  "activitystreams-derive",
@@ -3093,7 +3093,7 @@ dependencies = [
 
 [[package]]
 name = "plume-front"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "console_error_panic_hook",
  "gettext",
@@ -3110,7 +3110,7 @@ dependencies = [
 
 [[package]]
 name = "plume-macro"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "proc-macro2 0.4.30",
  "quote 0.6.13",
@@ -3119,7 +3119,7 @@ dependencies = [
 
 [[package]]
 name = "plume-models"
-version = "0.7.1-dev"
+version = "0.7.1"
 dependencies = [
  "activitypub",
  "ammonia",

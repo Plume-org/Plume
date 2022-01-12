@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2021-05-05 18:31\n"
+"PO-Revision-Date: 2022-01-12 01:28\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -21,87 +21,87 @@ msgstr ""
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:105
+# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr "{0} reageerde op je bericht."
 
-# src/template_utils.rs:106
+# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr "{0} is op je geabonneerd."
 
-# src/template_utils.rs:107
+# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr "{0} vond je artikel leuk."
 
-# src/template_utils.rs:108
+# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr "{0} vermeldde jou."
 
-# src/template_utils.rs:109
+# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr "{0} heeft je artikel geboost."
 
-# src/template_utils.rs:116
+# src/template_utils.rs:118
 msgid "Your feed"
 msgstr "Jouw feed"
 
-# src/template_utils.rs:117
+# src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Lokale feed"
 
-# src/template_utils.rs:118
+# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr "Gefedereerde feed"
 
-# src/template_utils.rs:154
+# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr "{0}'s avatar"
 
-# src/template_utils.rs:198
+# src/template_utils.rs:200
 msgid "Previous page"
 msgstr "Vorige pagina"
 
-# src/template_utils.rs:209
+# src/template_utils.rs:211
 msgid "Next page"
 msgstr "Volgende pagina"
 
-# src/template_utils.rs:363
+# src/template_utils.rs:365
 msgid "Optional"
 msgstr "Optioneel"
 
-# src/routes/blogs.rs:67
+# src/routes/blogs.rs:68
 msgid "To create a new blog, you need to be logged in"
 msgstr "Om een nieuwe blog te maken moet je ingelogd zijn"
 
-# src/routes/blogs.rs:109
+# src/routes/blogs.rs:110
 msgid "A blog with the same name already exists."
 msgstr "Er bestaat al een blog met dezelfde naam."
 
-# src/routes/blogs.rs:147
+# src/routes/blogs.rs:148
 msgid "Your blog was successfully created!"
 msgstr "Je blog is succesvol aangemaakt!"
 
-# src/routes/blogs.rs:165
+# src/routes/blogs.rs:166
 msgid "Your blog was deleted."
 msgstr "Je blog is verwijderd."
 
-# src/routes/blogs.rs:173
+# src/routes/blogs.rs:174
 msgid "You are not allowed to delete this blog."
 msgstr "Je mag deze blog niet verwijderen."
 
-# src/routes/blogs.rs:223
+# src/routes/blogs.rs:224
 msgid "You are not allowed to edit this blog."
 msgstr "Je mag deze blog niet bewerken."
 
-# src/routes/blogs.rs:279
+# src/routes/blogs.rs:280
 msgid "You can't use this media as a blog icon."
 msgstr "Je kunt dit object niet als blogpictogram gebruiken."
 
-# src/routes/blogs.rs:297
+# src/routes/blogs.rs:298
 msgid "You can't use this media as a blog banner."
 msgstr "Je kunt dit object niet als blog banner gebruiken."
 
-# src/routes/blogs.rs:331
+# src/routes/blogs.rs:332
 msgid "Your blog information have been updated."
 msgstr "Je bloginformatie is bijgewerkt."
 
@@ -113,30 +113,21 @@ msgstr "Je reactie is geplaatst."
 msgid "Your comment has been deleted."
 msgstr "Je reactie is verwijderd."
 
-# src/routes/email_signups.rs:79
-msgid "Email registrations are not enabled. Please restart."
-msgstr ""
-
-# src/routes/user.rs:463
+# src/routes/email_signups.rs:82
 msgid "Registrations are closed on this instance."
 msgstr "Registraties zijn gesloten op deze server."
 
-# src/routes/email_signups.rs:132
+# src/routes/email_signups.rs:119
 msgid "User registration"
 msgstr ""
 
-# src/routes/session.rs:163
-#, fuzzy
+# src/routes/email_signups.rs:120
 msgid "Here is the link for registration: {0}"
-msgstr "Hier is de link om je wachtwoord opnieuw in te stellen: {0}"
-
-# src/routes/user.rs:486
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
 msgstr ""
-"Je account is aangemaakt. Nu hoe je alleen maar in te loggen, om het te "
-"kunnen gebruiken."
+
+# src/routes/email_signups.rs:219
+msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgstr "Je account is aangemaakt. Nu hoe je alleen maar in te loggen, om het te kunnen gebruiken."
 
 # src/routes/instance.rs:117
 msgid "Instance settings have been saved."
@@ -178,19 +169,19 @@ msgstr "Klaar."
 msgid "To like a post, you need to be logged in"
 msgstr "Om een bericht leuk te vinden, moet je ingelogd zijn"
 
-# src/routes/medias.rs:158
+# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr "Je media zijn verwijderd."
 
-# src/routes/medias.rs:163
+# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr "Je mag dit medium niet verwijderen."
 
-# src/routes/medias.rs:180
+# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr "Je avatar is bijgewerkt."
 
-# src/routes/medias.rs:185
+# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr "Je mag dit mediabestand niet gebruiken."
 
@@ -198,65 +189,57 @@ msgstr "Je mag dit mediabestand niet gebruiken."
 msgid "To see your notifications, you need to be logged in"
 msgstr "Om je meldingen te kunnen zien, moet je ingelogd zijn"
 
-# src/routes/posts.rs:55
+# src/routes/posts.rs:56
 msgid "This post isn't published yet."
 msgstr "Dit bericht is nog niet gepubliceerd."
 
-# src/routes/posts.rs:125
+# src/routes/posts.rs:126
 msgid "To write a new post, you need to be logged in"
 msgstr "Om een nieuwe bericht te schrijven moet je ingelogd zijn"
 
-# src/routes/posts.rs:146
+# src/routes/posts.rs:147
 msgid "You are not an author of this blog."
 msgstr "Je bent geen schrijver van deze blog."
 
-# src/routes/posts.rs:153
+# src/routes/posts.rs:154
 msgid "New post"
 msgstr "Nieuw bericht"
 
-# src/routes/posts.rs:198
+# src/routes/posts.rs:199
 msgid "Edit {0}"
 msgstr "{0} bewerken"
 
-# src/routes/posts.rs:267
+# src/routes/posts.rs:268
 msgid "You are not allowed to publish on this blog."
 msgstr "Je mag niet publiceren op deze blog."
 
-# src/routes/posts.rs:367
+# src/routes/posts.rs:368
 msgid "Your article has been updated."
 msgstr "Je artikel is bijgewerkt."
 
-# src/routes/posts.rs:556
+# src/routes/posts.rs:557
 msgid "Your article has been saved."
 msgstr "Je artikel is opgeslagen."
 
-# src/routes/posts.rs:563
+# src/routes/posts.rs:564
 msgid "New article"
 msgstr "Nieuw artikel"
 
-# src/routes/posts.rs:601
+# src/routes/posts.rs:602
 msgid "You are not allowed to delete this article."
 msgstr "Je mag dit artikel niet verwijderen."
 
-# src/routes/posts.rs:625
+# src/routes/posts.rs:626
 msgid "Your article has been deleted."
 msgstr "Je artikel is verwijderd."
 
-# src/routes/posts.rs:630
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
-msgstr ""
-"Het lijkt erop dat het artikel dat je probeerde te verwijderen niet bestaat. "
-"Misschien is het al verdwenen?"
+# src/routes/posts.rs:631
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgstr "Het lijkt erop dat het artikel dat je probeerde te verwijderen niet bestaat. Misschien is het al verdwenen?"
 
-# src/routes/posts.rs:672
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
-msgstr ""
-"Kon niet genoeg informatie over je account opvragen. Controleer of je "
-"gebruikersnaam juist is."
+# src/routes/posts.rs:673
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgstr "Kon niet genoeg informatie over je account opvragen. Controleer of je gebruikersnaam juist is."
 
 # src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
@@ -282,35 +265,35 @@ msgstr "Hier is de link om je wachtwoord opnieuw in te stellen: {0}"
 msgid "Your password was successfully reset."
 msgstr "Je wachtwoord is succesvol ingesteld."
 
-# src/routes/user.rs:74
+# src/routes/user.rs:87
 msgid "To access your dashboard, you need to be logged in"
 msgstr "Om toegang te krijgen tot je dashboard, moet je ingelogd zijn"
 
-# src/routes/user.rs:96
+# src/routes/user.rs:109
 msgid "You are no longer following {}."
 msgstr "Je volgt {} niet langer."
 
-# src/routes/user.rs:113
+# src/routes/user.rs:126
 msgid "You are now following {}."
 msgstr "Je volgt nu {}."
 
-# src/routes/user.rs:190
+# src/routes/user.rs:203
 msgid "To subscribe to someone, you need to be logged in"
 msgstr "Om je te abonneren op iemand, moet je ingelogd zijn"
 
-# src/routes/user.rs:299
+# src/routes/user.rs:323
 msgid "To edit your profile, you need to be logged in"
 msgstr "Om je profiel te bewerken moet je ingelogd zijn"
 
-# src/routes/user.rs:345
+# src/routes/user.rs:369
 msgid "Your profile has been updated."
 msgstr "Je profiel is bijgewerkt."
 
-# src/routes/user.rs:373
+# src/routes/user.rs:397
 msgid "Your account has been deleted."
 msgstr "Je account is verwijderd."
 
-# src/routes/user.rs:379
+# src/routes/user.rs:403
 msgid "You can't delete someone else's account."
 msgstr "Je kunt het account van iemand anders niet verwijderen."
 
@@ -323,30 +306,20 @@ msgstr "Maak een account aan"
 msgid "Email"
 msgstr "E-mailadres"
 
-#, fuzzy
 msgid "Email confirmation"
-msgstr "Bevestiging"
-
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
 msgstr ""
-"Excuses, maar registraties zijn gesloten voor deze server. Je kunt wel een "
-"andere vinden."
 
-#, fuzzy
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
+msgstr "Excuses, maar registraties zijn gesloten voor deze server. Je kunt wel een andere vinden."
+
 msgid "Registration"
-msgstr "Aanmelden"
+msgstr ""
 
 msgid "Check your inbox!"
 msgstr "Ga naar je inbox!"
 
-#, fuzzy
-msgid ""
-"We sent a mail to the address you gave us, with a link for registration."
+msgid "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
-"We hebben een e-mail gestuurd naar het adres dat je hebt opgegeven, met een "
-"link om je wachtwoord te resetten."
 
 msgid "Username"
 msgstr "Gebruikersnaam"
@@ -505,9 +478,7 @@ msgid "Your Blogs"
 msgstr "Je blogs"
 
 msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr ""
-"Je hebt nog geen blog. Maak een blog, of vraag om aan een blog mee te mogen "
-"doen."
+msgstr "Je hebt nog geen blog. Maak een blog, of vraag om aan een blog mee te mogen doen."
 
 msgid "Start a new blog"
 msgstr "Start een nieuwe blog"
@@ -524,11 +495,8 @@ msgstr "Bewerk je account"
 msgid "Your Profile"
 msgstr "Je profiel"
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
-msgstr ""
-"Om je avatar te veranderen upload je die naar je galerij en selecteer je "
-"avatar daar."
+msgid "To change your avatar, upload it to your gallery and then select from there."
+msgstr "Om je avatar te veranderen upload je die naar je galerij en selecteer je avatar daar."
 
 msgid "Upload an avatar"
 msgstr "Upload een avatar"
@@ -599,14 +567,8 @@ msgstr "Sorry. Als je denkt dat dit een bug is, rapporteer het dan."
 msgid "Invalid CSRF token"
 msgstr "Ongeldig CSRF token"
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
-msgstr ""
-"Er is iets mis met het CSRF-token. Zorg ervoor dat cookies ingeschakeld zijn "
-"in je browser en probeer deze pagina opnieuw te laden. Als je dit "
-"foutbericht blijft zien, rapporteer het dan."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
+msgstr "Er is iets mis met het CSRF-token. Zorg ervoor dat cookies ingeschakeld zijn in je browser en probeer deze pagina opnieuw te laden. Als je dit foutbericht blijft zien, rapporteer het dan."
 
 msgid "You are not authorized."
 msgstr "Je bent niet geautoriseerd."
@@ -689,31 +651,14 @@ msgstr "Standaard artikellicentie"
 msgid "Save these settings"
 msgstr "Deze instellingen opslaan"
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
-msgstr ""
-"Als je deze site als bezoeker bekijkt, worden er geen gegevens over jou "
-"verzameld."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Als je deze site als bezoeker bekijkt, worden er geen gegevens over jou verzameld."
 
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
-msgstr ""
-"Als geregistreerde gebruiker moet je je gebruikersnaam invoeren (dat hoeft "
-"niet je echte naam te zijn), je bestaande e-mailadres en een wachtwoord om "
-"in te kunnen loggen, artikelen en commentaar te schrijven. De inhoud die je "
-"opgeeft wordt opgeslagen totdat je die verwijdert."
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
+msgstr "Als geregistreerde gebruiker moet je je gebruikersnaam invoeren (dat hoeft niet je echte naam te zijn), je bestaande e-mailadres en een wachtwoord om in te kunnen loggen, artikelen en commentaar te schrijven. De inhoud die je opgeeft wordt opgeslagen totdat je die verwijdert."
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
-msgstr ""
-"Als je inlogt, slaan we twee cookies op, de eerste om je sessie open te "
-"houden, de tweede om andere mensen te verhinderen om namens jou iets te "
-"doen. We slaan geen andere cookies op."
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgstr "Als je inlogt, slaan we twee cookies op, de eerste om je sessie open te houden, de tweede om andere mensen te verhinderen om namens jou iets te doen. We slaan geen andere cookies op."
 
 msgid "Blocklisted Emails"
 msgstr "Geblokkeerde e-mailadressen"
@@ -721,14 +666,8 @@ msgstr "Geblokkeerde e-mailadressen"
 msgid "Email address"
 msgstr "E-mailadres"
 
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
-msgstr ""
-"Het e-mailadres dat je wilt blokkeren. Om hele domeinen te blokkeren, kunt "
-"je de globale syntax gebruiken, bijvoorbeeld '*@example.com' blokkeert alle "
-"adressen van example.com"
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgstr "Het e-mailadres dat je wilt blokkeren. Om hele domeinen te blokkeren, kunt je de globale syntax gebruiken, bijvoorbeeld '*@example.com' blokkeert alle adressen van example.com"
 
 msgid "Note"
 msgstr "Opmerking"
@@ -736,22 +675,14 @@ msgstr "Opmerking"
 msgid "Notify the user?"
 msgstr "De gebruiker informeren?"
 
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
-msgstr ""
-"Optioneel. Toont een bericht aan gebruikers wanneer ze een account met dat "
-"adres proberen aan te maken"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgstr "Optioneel. Toont een bericht aan gebruikers wanneer ze een account met dat adres proberen aan te maken"
 
 msgid "Blocklisting notification"
 msgstr "Blokkeringsmelding"
 
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
-msgstr ""
-"Het bericht dat wordt getoond als iemand een account met dit e-mailadres "
-"probeert aan te maken"
+msgid "The message to be shown when the user attempts to create an account with this email address"
+msgstr "Het bericht dat wordt getoond als iemand een account met dit e-mailadres probeert aan te maken"
 
 msgid "Add blocklisted address"
 msgstr "Te blokkeren adres toevoegen"
@@ -822,12 +753,8 @@ msgstr "Ondertitel"
 msgid "Content"
 msgstr "Inhoud"
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
-msgstr ""
-"Je kunt media uploaden naar je galerij en vervolgens de Markdown code in je "
-"artikelen kopiëren om ze in te voegen."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
+msgstr "Je kunt media uploaden naar je galerij en vervolgens de Markdown code in je artikelen kopiëren om ze in te voegen."
 
 msgid "Upload media"
 msgstr "Media uploaden"
@@ -884,12 +811,8 @@ msgstr "Ik wil dit niet meer boosten"
 msgid "Boost"
 msgstr "Boosten"
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
-msgstr ""
-"{0}Log in{1}, of {2}gebruik je Fediverse account{3} om over dit artikel te "
-"communiceren"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgstr "{0}Log in{1}, of {2}gebruik je Fediverse account{3} om over dit artikel te communiceren"
 
 msgid "Comments"
 msgstr "Reacties"
@@ -907,9 +830,7 @@ msgid "Are you sure?"
 msgstr "Weet je het zeker?"
 
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr ""
-"Dit artikel is nog een concept. Alleen jij en andere auteurs kunnen het "
-"bekijken."
+msgstr "Dit artikel is nog een concept. Alleen jij en andere auteurs kunnen het bekijken."
 
 msgid "Only you and other authors can edit this article."
 msgstr "Alleen jij en andere auteurs kunnen dit artikel bewerken."
@@ -944,12 +865,8 @@ msgstr "Bevestiging"
 msgid "Update password"
 msgstr "Wachtwoord bijwerken"
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
-msgstr ""
-"We hebben een e-mail gestuurd naar het adres dat je hebt opgegeven, met een "
-"link om je wachtwoord te resetten."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
+msgstr "We hebben een e-mail gestuurd naar het adres dat je hebt opgegeven, met een link om je wachtwoord te resetten."
 
 msgid "Send password reset link"
 msgstr "Wachtwoordresetlink versturen"
@@ -957,12 +874,8 @@ msgstr "Wachtwoordresetlink versturen"
 msgid "This token has expired"
 msgstr "Dit token is verlopen"
 
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
-msgstr ""
-"Start het proces opnieuw door <a href=\"/password-reset\">hier</a> te "
-"klikken."
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
+msgstr "Start het proces opnieuw door <a href=\"/password-reset\">hier</a> te klikken."
 
 msgid "New Blog"
 msgstr "Nieuwe blog"
@@ -976,11 +889,8 @@ msgstr "Creëer blog"
 msgid "Edit \"{}\""
 msgstr "\"{}\" bewerken"
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr ""
-"Je kunt afbeeldingen uploaden naar je galerij om ze als blogpictogrammen of "
-"banners te gebruiken."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "Je kunt afbeeldingen uploaden naar je galerij om ze als blogpictogrammen of banners te gebruiken."
 
 msgid "Upload images"
 msgstr "Afbeeldingen opladen"
@@ -1041,12 +951,8 @@ msgstr "Plume is een gedecentraliseerde blogging-engine."
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr "Auteurs kunnen meerdere blogs beheren, elk als een eigen website."
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
-msgstr ""
-"Artikelen zijn ook zichtbaar op andere Plume-servers en je kunt ze direct "
-"vanuit andere platforms zoals Mastodon gebruiken."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
+msgstr "Artikelen zijn ook zichtbaar op andere Plume-servers en je kunt ze direct vanuit andere platforms zoals Mastodon gebruiken."
 
 msgid "Read the detailed rules"
 msgstr "Lees de gedetailleerde instructies"
@@ -1125,3 +1031,4 @@ msgstr "Gepubliceerd onder deze licentie"
 
 msgid "Article license"
 msgstr "Artikel licentie"
+
