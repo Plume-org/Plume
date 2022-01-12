@@ -14,8 +14,9 @@ use crate::routes::{
     comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm, RespondOrRedirect,
 };
 use crate::template_utils::{IntoContext, Ructe};
+use crate::utils::requires_login;
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
-use plume_common::utils;
+use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::*,
     comments::{Comment, CommentTree},
@@ -120,7 +121,7 @@ pub fn activity_details(
 
 #[get("/~/<blog>/new", rank = 2)]
 pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
-    utils::requires_login(
+    requires_login(
         &i18n!(
             i18n.catalog,
             "To write a new post, you need to be logged in"
@@ -268,7 +269,7 @@ pub fn update(
             )
             .into()
         } else {
-            let (content, mentions, hashtags) = utils::md_to_html(
+            let (content, mentions, hashtags) = md_to_html(
                 form.content.to_string().as_ref(),
                 Some(
                     &Instance::get_local()
@@ -452,7 +453,7 @@ pub fn create(
             .into());
         }
 
-        let (content, mentions, hashtags) = utils::md_to_html(
+        let (content, mentions, hashtags) = md_to_html(
             form.content.to_string().as_ref(),
             Some(
                 &Instance::get_local()

@@ -1,6 +1,7 @@
 use crate::template_utils::{IntoContext, Ructe};
 use plume_models::{db_conn::DbConn, Error, PlumeRocket};
 use rocket::{
+    http::Status,
     response::{self, Responder},
     Request,
 };
@@ -16,18 +17,13 @@ impl From<Error> for ErrorPage {
 }
 
 impl<'r> Responder<'r> for ErrorPage {
-    fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
-        let conn = req.guard::<DbConn>().unwrap();
-        let rockets = req.guard::<PlumeRocket>().unwrap();
+    fn respond_to(self, _req: &Request<'_>) -> response::Result<'r> {
+        warn!("{:?}", self.0);
 
         match self.0 {
-            Error::NotFound => {
-                render!(errors::not_found(&(&conn, &rockets).to_context())).respond_to(req)
-            }
-            Error::Unauthorized => {
-                render!(errors::not_found(&(&conn, &rockets).to_context())).respond_to(req)
-            }
-            _ => render!(errors::not_found(&(&conn, &rockets).to_context())).respond_to(req),
+            Error::NotFound => Err(Status::NotFound),
+            Error::Unauthorized => Err(Status::NotFound),
+            _ => Err(Status::InternalServerError),
         }
     }
 }

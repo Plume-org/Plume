@@ -11,6 +11,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use crate::template_utils::{IntoContext, Ructe};
+use crate::utils::requires_login;
 use plume_common::activity_pub::{ActivityStream, ApRequest};
 use plume_common::utils;
 use plume_models::{
@@ -62,7 +63,7 @@ pub fn new(conn: DbConn, rockets: PlumeRocket, _user: User) -> Ructe {
 
 #[get("/blogs/new", rank = 2)]
 pub fn new_auth(i18n: I18n) -> Flash<Redirect> {
-    utils::requires_login(
+    requires_login(
         &i18n!(
             i18n.catalog,
             "To create a new blog, you need to be logged in"

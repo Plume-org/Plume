@@ -33,6 +33,7 @@ init_i18n!(
 mod api;
 mod inbox;
 mod mail;
+mod utils;
 #[macro_use]
 mod template_utils;
 mod routes;

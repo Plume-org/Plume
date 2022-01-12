@@ -2,8 +2,8 @@ use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;
 
 use crate::routes::errors::ErrorPage;
+use crate::utils::requires_login;
 use plume_common::activity_pub::broadcast;
-use plume_common::utils;
 use plume_models::{
     blogs::Blog, db_conn::DbConn, inbox::inbox, posts::Post, reshares::*, timeline::*, users::User,
     Error, PlumeRocket, CONFIG,
@@ -54,7 +54,7 @@ pub fn create(
 
 #[post("/~/<blog>/<slug>/reshare", rank = 1)]
 pub fn create_auth(blog: String, slug: String, i18n: I18n) -> Flash<Redirect> {
-    utils::requires_login(
+    requires_login(
         &i18n!(i18n.catalog, "To reshare a post, you need to be logged in"),
         uri!(create: blog = blog, slug = slug),
     )
