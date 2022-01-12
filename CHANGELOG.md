@@ -7,11 +7,12 @@
 ### Added
 
 - Introduce environment variable `MAIL_PORT` (#980)
-- Introduce email sign-up feature (#636)
+- Introduce email sign-up feature (#636, #1001)
 
 ### Changed
 
 - Some styling improvements (#976, #977, #978)
+- Respond with error status code when error (#1002)
 
 ### Fiexed
 
