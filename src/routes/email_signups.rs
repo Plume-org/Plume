@@ -71,11 +71,11 @@ pub fn create(
     rockets: PlumeRocket,
     _enabled: signups::Email,
 ) -> Result<RespondOrRedirect, Ructe> {
-    let registration_open = !Instance::get_local()
+    let registration_open = Instance::get_local()
         .map(|i| i.open_registrations)
         .unwrap_or(true);
 
-    if registration_open {
+    if !registration_open {
         return Ok(Flash::error(
             Redirect::to(uri!(super::user::new)),
             i18n!(
