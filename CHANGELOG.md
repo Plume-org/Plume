@@ -7,7 +7,7 @@
 ### Added
 
 - Introduce environment variable `MAIL_PORT` (#980)
-- Introduce email sign-up feature (#636, #1001)
+- Introduce email sign-up feature (#636, #1002)
 
 ### Changed
 
