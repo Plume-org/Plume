@@ -70,7 +70,7 @@ pub fn create(
     conn: DbConn,
     rockets: PlumeRocket,
     _enabled: signups::Email,
-) -> Result<RespondOrRedirect, Ructe> {
+) -> Result<RespondOrRedirect, ErrorPage> {
     let registration_open = Instance::get_local()
         .map(|i| i.open_registrations)
         .unwrap_or(true);
@@ -87,14 +87,15 @@ pub fn create(
     }
     let mut form = form.into_inner();
     form.email = form.email.trim().to_owned();
-    form.validate().map_err(|err| {
-        render!(email_signups::new(
+    if let Err(err) = form.validate() {
+        return Ok(render!(email_signups::new(
             &(&conn, &rockets).to_context(),
             registration_open,
             &form,
             err
         ))
-    })?;
+        .into());
+    }
     let res = EmailSignup::start(&conn, &form.email);
     if let Some(err) = res.as_ref().err() {
         return Ok(match err {
