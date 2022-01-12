@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-12 01:20\n"
+"PO-Revision-Date: 2022-01-12 01:28\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -69,39 +69,39 @@ msgstr ""
 msgid "Optional"
 msgstr ""
 
-# src/routes/blogs.rs:67
+# src/routes/blogs.rs:68
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
-# src/routes/blogs.rs:109
+# src/routes/blogs.rs:110
 msgid "A blog with the same name already exists."
 msgstr ""
 
-# src/routes/blogs.rs:147
+# src/routes/blogs.rs:148
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:165
+# src/routes/blogs.rs:166
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:173
+# src/routes/blogs.rs:174
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:223
+# src/routes/blogs.rs:224
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:279
+# src/routes/blogs.rs:280
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:297
+# src/routes/blogs.rs:298
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:331
+# src/routes/blogs.rs:332
 msgid "Your blog information have been updated."
 msgstr ""
 
@@ -113,22 +113,20 @@ msgstr ""
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/email_signups.rs:93
+# src/routes/email_signups.rs:82
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/email_signups.rs:132
+# src/routes/email_signups.rs:119
 msgid "User registration"
 msgstr ""
 
-# src/routes/email_signups.rs:133
+# src/routes/email_signups.rs:120
 msgid "Here is the link for registration: {0}"
 msgstr ""
 
-# src/routes/email_signups.rs:231
-msgid ""
-"Your account has been created. Now you just need to log in, before you can "
-"use it."
+# src/routes/email_signups.rs:219
+msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
 # src/routes/instance.rs:117
@@ -191,60 +189,56 @@ msgstr ""
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:55
+# src/routes/posts.rs:56
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:125
+# src/routes/posts.rs:126
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:146
+# src/routes/posts.rs:147
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:153
+# src/routes/posts.rs:154
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:198
+# src/routes/posts.rs:199
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:267
+# src/routes/posts.rs:268
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:367
+# src/routes/posts.rs:368
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:556
+# src/routes/posts.rs:557
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:563
+# src/routes/posts.rs:564
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:601
+# src/routes/posts.rs:602
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:625
+# src/routes/posts.rs:626
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:630
-msgid ""
-"It looks like the article you tried to delete doesn't exist. Maybe it is "
-"already gone?"
+# src/routes/posts.rs:631
+msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:672
-msgid ""
-"Couldn't obtain enough information about your account. Please make sure your "
-"username is correct."
+# src/routes/posts.rs:673
+msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
 # src/routes/reshares.rs:58
@@ -271,35 +265,35 @@ msgstr ""
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/user.rs:76
+# src/routes/user.rs:87
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:98
+# src/routes/user.rs:109
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:115
+# src/routes/user.rs:126
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:192
+# src/routes/user.rs:203
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:312
+# src/routes/user.rs:323
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:358
+# src/routes/user.rs:369
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:386
+# src/routes/user.rs:397
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:392
+# src/routes/user.rs:403
 msgid "You can't delete someone else's account."
 msgstr ""
 
@@ -315,9 +309,7 @@ msgstr ""
 msgid "Email confirmation"
 msgstr ""
 
-msgid ""
-"Apologies, but registrations are closed on this particular instance. You "
-"can, however, find a different one."
+msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 
 msgid "Registration"
@@ -326,8 +318,7 @@ msgstr ""
 msgid "Check your inbox!"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link for registration."
+msgid "We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
 
 msgid "Username"
@@ -504,8 +495,7 @@ msgstr ""
 msgid "Your Profile"
 msgstr ""
 
-msgid ""
-"To change your avatar, upload it to your gallery and then select from there."
+msgid "To change your avatar, upload it to your gallery and then select from there."
 msgstr ""
 
 msgid "Upload an avatar"
@@ -577,10 +567,7 @@ msgstr ""
 msgid "Invalid CSRF token"
 msgstr ""
 
-msgid ""
-"Something is wrong with your CSRF token. Make sure cookies are enabled in "
-"you browser, and try reloading this page. If you continue to see this error "
-"message, please report it."
+msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
 msgstr ""
 
 msgid "You are not authorized."
@@ -664,21 +651,13 @@ msgstr ""
 msgid "Save these settings"
 msgstr ""
 
-msgid ""
-"If you are browsing this site as a visitor, no data about you is collected."
+msgid "If you are browsing this site as a visitor, no data about you is collected."
 msgstr ""
 
-msgid ""
-"As a registered user, you have to provide your username (which does not have "
-"to be your real name), your functional email address and a password, in "
-"order to be able to log in, write articles and comment. The content you "
-"submit is stored until you delete it."
+msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
 msgstr ""
 
-msgid ""
-"When you log in, we store two cookies, one to keep your session open, the "
-"second to prevent other people to act on your behalf. We don't store any "
-"other cookies."
+msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
 msgstr ""
 
 msgid "Blocklisted Emails"
@@ -687,10 +666,7 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-msgid ""
-"The email address you wish to block. In order to block domains, you can use "
-"globbing syntax, for example '*@example.com' blocks all addresses from "
-"example.com"
+msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
 msgstr ""
 
 msgid "Note"
@@ -699,17 +675,13 @@ msgstr ""
 msgid "Notify the user?"
 msgstr ""
 
-msgid ""
-"Optional, shows a message to the user when they attempt to create an account "
-"with that address"
+msgid "Optional, shows a message to the user when they attempt to create an account with that address"
 msgstr ""
 
 msgid "Blocklisting notification"
 msgstr ""
 
-msgid ""
-"The message to be shown when the user attempts to create an account with "
-"this email address"
+msgid "The message to be shown when the user attempts to create an account with this email address"
 msgstr ""
 
 msgid "Add blocklisted address"
@@ -781,9 +753,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-msgid ""
-"You can upload media to your gallery, and then copy their Markdown code into "
-"your articles to insert them."
+msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
 msgstr ""
 
 msgid "Upload media"
@@ -841,9 +811,7 @@ msgstr ""
 msgid "Boost"
 msgstr ""
 
-msgid ""
-"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
-"article"
+msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
 msgstr ""
 
 msgid "Comments"
@@ -897,9 +865,7 @@ msgstr ""
 msgid "Update password"
 msgstr ""
 
-msgid ""
-"We sent a mail to the address you gave us, with a link to reset your "
-"password."
+msgid "We sent a mail to the address you gave us, with a link to reset your password."
 msgstr ""
 
 msgid "Send password reset link"
@@ -908,9 +874,7 @@ msgstr ""
 msgid "This token has expired"
 msgstr ""
 
-msgid ""
-"Please start the process again by clicking <a href=\"/password-reset\">here</"
-"a>."
+msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
 msgstr ""
 
 msgid "New Blog"
@@ -925,8 +889,7 @@ msgstr ""
 msgid "Edit \"{}\""
 msgstr ""
 
-msgid ""
-"You can upload images to your gallery, to use them as blog icons, or banners."
+msgid "You can upload images to your gallery, to use them as blog icons, or banners."
 msgstr ""
 
 msgid "Upload images"
@@ -988,9 +951,7 @@ msgstr ""
 msgid "Authors can manage multiple blogs, each as its own website."
 msgstr ""
 
-msgid ""
-"Articles are also visible on other Plume instances, and you can interact "
-"with them directly from other platforms like Mastodon."
+msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
 msgstr ""
 
 msgid "Read the detailed rules"
@@ -1070,3 +1031,4 @@ msgstr ""
 
 msgid "Article license"
 msgstr ""
+
