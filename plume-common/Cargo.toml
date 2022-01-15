@@ -14,7 +14,7 @@ heck = "0.4.0"
 hex = "0.4"
 openssl = "0.10.22"
 rocket = "0.4.6"
-reqwest = { version = "0.9", features = ["socks"] }
+reqwest = { version = "0.10", features = ["socks"] }
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0.70"

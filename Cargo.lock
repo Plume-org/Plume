@@ -3080,7 +3080,7 @@ dependencies = [
  "openssl",
  "pulldown-cmark",
  "regex-syntax 0.6.25",
- "reqwest 0.9.24",
+ "reqwest 0.10.10",
  "rocket",
  "serde 1.0.133",
  "serde_derive",
@@ -3142,7 +3142,7 @@ dependencies = [
  "plume-api",
  "plume-common",
  "plume-macro",
- "reqwest 0.9.24",
+ "reqwest 0.10.10",
  "riker",
  "rocket",
  "rocket_i18n",
@@ -3683,7 +3683,6 @@ dependencies = [
  "serde 1.0.133",
  "serde_json",
  "serde_urlencoded 0.5.5",
- "socks",
  "time 0.1.43",
  "tokio 0.1.22",
  "tokio-executor",
@@ -3722,6 +3721,7 @@ dependencies = [
  "serde 1.0.133",
  "serde_urlencoded 0.7.0",
  "tokio 0.2.25",
+ "tokio-socks",
  "tokio-tls",
  "url 2.2.2",
  "wasm-bindgen",
@@ -4212,18 +4212,6 @@ dependencies = [
  "cfg-if 1.0.0",
  "libc",
  "winapi 0.3.9",
-]
-
-[[package]]
-name = "socks"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "30f86c7635fadf2814201a4f67efefb0007588ae7422ce299f354ab5c97f61ae"
-dependencies = [
- "byteorder 1.4.3",
- "libc",
- "winapi 0.2.8",
- "ws2_32-sys",
 ]
 
 [[package]]
@@ -4826,6 +4814,19 @@ dependencies = [
  "tokio-executor",
  "tokio-io",
  "tokio-sync",
+]
+
+[[package]]
+name = "tokio-socks"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d611fd5d241872372d52a0a3d309c52d0b95a6a67671a6c8f7ab2c4a37fb2539"
+dependencies = [
+ "bytes 0.4.12",
+ "either 1.6.1",
+ "futures 0.3.19",
+ "thiserror",
+ "tokio 0.2.25",
 ]
 
 [[package]]
