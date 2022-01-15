@@ -10,7 +10,7 @@ license = "AGPLv3"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "0.4"
+proc-macro2 = "1.0"
 quote = "0.6.12"
 syn = "0.15.27"
 
