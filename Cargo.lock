@@ -9,7 +9,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5bfd311e7b4102971757a2a6f143a93b1a8e6b5afc2c46936af827fd9eab403f"
 dependencies = [
  "activitystreams-derive",
- "activitystreams-traits",
+ "activitystreams-traits 0.1.0",
  "activitystreams-types",
  "serde 1.0.133",
  "serde_derive",
@@ -39,13 +39,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "activitystreams-traits"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0c2a3958d240f40eff1f31b5f679a6e0d4ce2a16812886a3ec0164f3a2ca517"
+dependencies = [
+ "serde 1.0.133",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "activitystreams-types"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff74c5765278614a009f97b9ec12f9a7c732bbcc5e0337fcfcab619b784860ec"
 dependencies = [
  "activitystreams-derive",
- "activitystreams-traits",
+ "activitystreams-traits 0.1.0",
  "chrono",
  "mime 0.3.16",
  "serde 1.0.133",
@@ -3069,7 +3080,7 @@ version = "0.7.1"
 dependencies = [
  "activitypub",
  "activitystreams-derive",
- "activitystreams-traits",
+ "activitystreams-traits 0.2.0",
  "array_tool",
  "askama_escape",
  "base64 0.13.0",
