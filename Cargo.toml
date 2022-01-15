@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 activitypub = "0.1.3"
-atom_syndication = "0.6"
+atom_syndication = "0.11"
 clap = "2.33"
 dotenv = "0.15.0"
 gettext = { git = "https://github.com/Plume-org/gettext/", rev = "294c54d74c699fbc66502b480a37cc66c1daa7f3" }
