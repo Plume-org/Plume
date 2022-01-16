@@ -3,7 +3,7 @@ use crate::template_utils::Ructe;
 use atom_syndication::{
     ContentBuilder, Entry, EntryBuilder, Feed, FeedBuilder, LinkBuilder, Person, PersonBuilder,
 };
-use chrono::naive::NaiveDateTime;
+use chrono::{naive::NaiveDateTime, DateTime, Utc};
 use plume_models::{posts::Post, Connection, CONFIG, ITEMS_PER_PAGE};
 use rocket::{
     http::{
@@ -134,7 +134,7 @@ pub fn build_atom_feed(
     FeedBuilder::default()
         .title(title)
         .id(uri)
-        .updated(updated.format("%Y-%m-%dT%H:%M:%SZ").to_string())
+        .updated(DateTime::<Utc>::from_utc(*updated, Utc))
         .entries(
             entries
                 .into_iter()
@@ -145,22 +145,18 @@ pub fn build_atom_feed(
             .href(uri)
             .rel("self")
             .mime_type("application/atom+xml".to_string())
-            .build()
-            .expect("Atom feed: link error")])
+            .build()])
         .build()
-        .expect("user::atom_feed: Error building Atom feed")
 }
 
 fn post_to_atom(post: Post, conn: &Connection) -> Entry {
-    let formatted_creation_date = post.creation_date.format("%Y-%m-%dT%H:%M:%SZ").to_string();
     EntryBuilder::default()
         .title(format!("<![CDATA[{}]]>", post.title))
         .content(
             ContentBuilder::default()
                 .value(format!("<![CDATA[{}]]>", *post.content.get()))
                 .content_type("html".to_string())
-                .build()
-                .expect("Atom feed: content error"),
+                .build(),
         )
         .authors(
             post.get_authors(&*conn)
@@ -171,21 +167,18 @@ fn post_to_atom(post: Post, conn: &Connection) -> Entry {
                         .name(a.display_name)
                         .uri(a.ap_url)
                         .build()
-                        .expect("Atom feed: author error")
                 })
                 .collect::<Vec<Person>>(),
         )
         // Using RFC 4287 format, see https://tools.ietf.org/html/rfc4287#section-3.3 for dates
         // eg: 2003-12-13T18:30:02Z (Z is here because there is no timezone support with the NaiveDateTime crate)
-        .published(formatted_creation_date.clone())
-        .updated(formatted_creation_date)
+        .published(Some(
+            DateTime::<Utc>::from_utc(post.creation_date, Utc).into(),
+        ))
+        .updated(DateTime::<Utc>::from_utc(post.creation_date, Utc))
         .id(post.ap_url.clone())
-        .links(vec![LinkBuilder::default()
-            .href(post.ap_url)
-            .build()
-            .expect("Atom feed: link error")])
+        .links(vec![LinkBuilder::default().href(post.ap_url).build()])
         .build()
-        .expect("Atom feed: entry error")
 }
 
 pub mod blogs;
