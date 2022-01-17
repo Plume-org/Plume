@@ -6,7 +6,7 @@ repository = "https://github.com/Plume-org/Plume"
 edition = "2018"
 
 [dependencies]
-activitypub = "0.1.3"
+activitypub = "0.4.0"
 atom_syndication = "0.11.0"
 clap = "2.33"
 dotenv = "0.15.0"

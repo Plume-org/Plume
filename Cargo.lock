@@ -4,17 +4,9 @@ version = 3
 
 [[package]]
 name = "activitypub"
-version = "0.1.6"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5bfd311e7b4102971757a2a6f143a93b1a8e6b5afc2c46936af827fd9eab403f"
-dependencies = [
- "activitystreams-derive",
- "activitystreams-traits",
- "activitystreams-types",
- "serde 1.0.133",
- "serde_derive",
- "serde_json",
-]
+checksum = "78161102a72e7696387a31cbe650f1b329a3f551a50e0ba6383da80a0aa4d766"
 
 [[package]]
 name = "activitystreams-derive"
@@ -35,21 +27,6 @@ checksum = "670ef03168e704b0cae242e7a5d8b40506772b339687e01a3496fc4afe2e8542"
 dependencies = [
  "failure",
  "serde 1.0.133",
- "serde_json",
-]
-
-[[package]]
-name = "activitystreams-types"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff74c5765278614a009f97b9ec12f9a7c732bbcc5e0337fcfcab619b784860ec"
-dependencies = [
- "activitystreams-derive",
- "activitystreams-traits",
- "chrono",
- "mime 0.3.16",
- "serde 1.0.133",
- "serde_derive",
  "serde_json",
 ]
 

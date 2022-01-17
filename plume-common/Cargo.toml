@@ -5,7 +5,7 @@ authors = ["Plume contributors"]
 edition = "2018"
 
 [dependencies]
-activitypub = "0.1.1"
+activitypub = "0.4.0"
 activitystreams-derive = "0.1.1"
 activitystreams-traits = "0.1.0"
 array_tool = "1.0"
