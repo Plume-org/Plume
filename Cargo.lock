@@ -5461,13 +5461,12 @@ dependencies = [
 
 [[package]]
 name = "webfinger"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec24b1b0700d4b466d280228ed0f62274eedeaa80206820f071fdc8ed787b664"
+checksum = "4b2821f6de671bfbe4792927622004b6f5364068b8edba4f51af14c10b36204e"
 dependencies = [
  "reqwest 0.9.24",
  "serde 1.0.133",
- "serde_derive",
 ]
 
 [[package]]
