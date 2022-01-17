@@ -8,7 +8,7 @@ version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5bfd311e7b4102971757a2a6f143a93b1a8e6b5afc2c46936af827fd9eab403f"
 dependencies = [
- "activitystreams-derive",
+ "activitystreams-derive 0.1.1",
  "activitystreams-traits",
  "activitystreams-types",
  "serde 1.0.133",
@@ -28,6 +28,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "activitystreams-derive"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c39ba5929399e9f921055bac76dd8f47419fa5b6b6da1ac4c1e82b94ed0ac7b4"
+dependencies = [
+ "proc-macro2 1.0.36",
+ "quote 1.0.14",
+ "syn 1.0.85",
+]
+
+[[package]]
 name = "activitystreams-traits"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -44,7 +55,7 @@ version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff74c5765278614a009f97b9ec12f9a7c732bbcc5e0337fcfcab619b784860ec"
 dependencies = [
- "activitystreams-derive",
+ "activitystreams-derive 0.1.1",
  "activitystreams-traits",
  "chrono",
  "mime 0.3.16",
@@ -3136,7 +3147,7 @@ name = "plume-common"
 version = "0.7.1"
 dependencies = [
  "activitypub",
- "activitystreams-derive",
+ "activitystreams-derive 0.6.1",
  "activitystreams-traits",
  "array_tool",
  "askama_escape",
