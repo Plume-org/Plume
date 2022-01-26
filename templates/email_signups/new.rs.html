@@ -29,6 +29,8 @@
                 .set_prop("required", "")
                 .html(ctx.1))
 
+            <p>@i18n!(ctx.1, "An email will be sent to provided email. You can continue signing-up via the email.")</p>
+
             <input type="submit" value="@i18n!(ctx.1, "Create your account")" />
         </form>
     } else {
