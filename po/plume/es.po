@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-12 01:28\n"
+"PO-Revision-Date: 2022-01-26 13:16\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 # src/template_utils.rs:105
 msgid "Someone"
-msgstr ""
+msgstr "Alguien"
 
 # src/template_utils.rs:107
 msgid "{0} commented on your article."
@@ -119,11 +119,11 @@ msgstr "Los registros están cerrados en esta instancia."
 
 # src/routes/email_signups.rs:119
 msgid "User registration"
-msgstr ""
+msgstr "Registro de usuarios"
 
 # src/routes/email_signups.rs:120
 msgid "Here is the link for registration: {0}"
-msgstr ""
+msgstr "Aquí está el enlace para la inscripción: {0}"
 
 # src/routes/email_signups.rs:219
 msgid "Your account has been created. Now you just need to log in, before you can use it."
@@ -307,19 +307,19 @@ msgid "Email"
 msgstr "Correo electrónico"
 
 msgid "Email confirmation"
-msgstr ""
+msgstr "Confirmación de correo electrónico"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr "Lo sentimos, pero las inscripciones están cerradas en esta instancia. Sin embargo, puede encontrar una instancia distinta."
 
 msgid "Registration"
-msgstr ""
+msgstr "Inscripción"
 
 msgid "Check your inbox!"
 msgstr "Revise su bandeja de entrada!"
 
 msgid "We sent a mail to the address you gave us, with a link for registration."
-msgstr ""
+msgstr "Hemos enviado un correo a la dirección que nos has facilitado, con un enlace para la inscripción."
 
 msgid "Username"
 msgstr "Nombre de usuario"

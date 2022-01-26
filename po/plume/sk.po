@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-12 01:28\n"
+"PO-Revision-Date: 2022-01-26 13:16\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 # src/template_utils.rs:105
 msgid "Someone"
-msgstr ""
+msgstr "Niekto"
 
 # src/template_utils.rs:107
 msgid "{0} commented on your article."
@@ -119,11 +119,11 @@ msgstr "Registrácie na tejto instancii sú uzatvorené."
 
 # src/routes/email_signups.rs:119
 msgid "User registration"
-msgstr ""
+msgstr "Registrácia užívateľa"
 
 # src/routes/email_signups.rs:120
 msgid "Here is the link for registration: {0}"
-msgstr ""
+msgstr "Link pre zaregistrovanie je tu: {0}"
 
 # src/routes/email_signups.rs:219
 msgid "Your account has been created. Now you just need to log in, before you can use it."
@@ -307,13 +307,13 @@ msgid "Email"
 msgstr "Emailová adresa"
 
 msgid "Email confirmation"
-msgstr ""
+msgstr "Potvrdenie emailom"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr "Ospravedlňujeme sa, ale na tejto konkrétnej instancii sú registrácie zatvorené. Môžeš si však nájsť inú."
 
 msgid "Registration"
-msgstr ""
+msgstr "Registrovať"
 
 msgid "Check your inbox!"
 msgstr "Pozri si svoju Doručenú poštu!"
