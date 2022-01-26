@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-12 01:28\n"
+"PO-Revision-Date: 2022-01-26 13:16\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 # src/template_utils.rs:105
 msgid "Someone"
-msgstr ""
+msgstr "Jemand"
 
 # src/template_utils.rs:107
 msgid "{0} commented on your article."

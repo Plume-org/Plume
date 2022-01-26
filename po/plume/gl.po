@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-12 01:28\n"
+"PO-Revision-Date: 2022-01-26 13:16\n"
 "Last-Translator: \n"
 "Language-Team: Galician\n"
 "Language: gl_ES\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 # src/template_utils.rs:105
 msgid "Someone"
-msgstr ""
+msgstr "Alguén"
 
 # src/template_utils.rs:107
 msgid "{0} commented on your article."
@@ -119,11 +119,11 @@ msgstr "O rexistro está pechado en esta instancia."
 
 # src/routes/email_signups.rs:119
 msgid "User registration"
-msgstr ""
+msgstr "Rexistro de usuarias"
 
 # src/routes/email_signups.rs:120
 msgid "Here is the link for registration: {0}"
-msgstr ""
+msgstr "Aquí tes a ligazón para crear a conta: {0}"
 
 # src/routes/email_signups.rs:219
 msgid "Your account has been created. Now you just need to log in, before you can use it."
@@ -307,19 +307,19 @@ msgid "Email"
 msgstr "Correo-e"
 
 msgid "Email confirmation"
-msgstr ""
+msgstr "Email de confirmación"
 
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr "Desculpe, pero o rexistro en esta instancia está pechado. Porén pode atopar outra no fediverso."
 
 msgid "Registration"
-msgstr ""
+msgstr "Rexistro"
 
 msgid "Check your inbox!"
 msgstr "Comprobe o seu correo!"
 
 msgid "We sent a mail to the address you gave us, with a link for registration."
-msgstr ""
+msgstr "Enviamos un email ao enderezo indicado cunha ligazón para crear a conta."
 
 msgid "Username"
 msgstr "Nome de usuaria"
@@ -866,7 +866,7 @@ msgid "Update password"
 msgstr "Actualizar contrasinal"
 
 msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "Enviamoslle un correo ao enderezo que nos deu, con unha ligazón para restablecer o contrasinal."
+msgstr "Enviamosche un correo ao enderezo que indicado, cunha ligazón para restablecer o contrasinal."
 
 msgid "Send password reset link"
 msgstr "Enviar ligazón para restablecer contrasinal"

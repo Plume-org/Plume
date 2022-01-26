@@ -26,8 +26,8 @@ use std::time::Duration;
 use tracing::warn;
 
 init_i18n!(
-    "plume", af, ar, bg, ca, cs, cy, da, de, el, en, eo, es, fa, fi, fr, gl, he, hi, hr, hu, it,
-    ja, ko, nb, nl, no, pl, pt, ro, ru, sat, si, sk, sl, sr, sv, tr, uk, vi, zh
+    "plume", af, ar, bg, ca, cs, cy, da, de, el, en, eo, es, eu, fa, fi, fr, gl, he, hi, hr, hu,
+    it, ja, ko, nb, nl, no, pl, pt, ro, ru, sat, si, sk, sl, sr, sv, tr, uk, vi, zh
 );
 
 mod api;
