@@ -304,6 +304,9 @@ msgstr ""
 msgid "Email confirmation"
 msgstr ""
 
+msgid "An email will be sent to provided email. You can continue signing-up via the email."
+msgstr ""
+
 msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
 msgstr ""
 

@@ -29,9 +29,11 @@
                 .set_prop("required", "")
                 .html(ctx.1))
 
+            <p>@i18n!(ctx.1, "An email will be sent to provided email. You can continue signing-up via the email.")</p>
+
             <input type="submit" value="@i18n!(ctx.1, "Create your account")" />
         </form>
     } else {
-<p class="center">@i18n!(ctx.1, "Apologies, but registrations are closed on this particular instance. You can, however, find a different one.")</p>
+        <p class="center">@i18n!(ctx.1, "Apologies, but registrations are closed on this particular instance. You can, however, find a different one.")</p>
     }
 })
