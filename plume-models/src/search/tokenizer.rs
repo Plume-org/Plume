@@ -57,7 +57,7 @@ impl<'a> WhitespaceTokenStream<'a> {
             .filter(|&(_, ref c)| c.is_whitespace())
             .map(|(offset, _)| offset)
             .next()
-            .unwrap_or_else(|| self.text.len())
+            .unwrap_or(self.text.len())
     }
 }
 

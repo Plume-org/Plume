@@ -304,14 +304,13 @@ impl FromId<DbConn> for Comment {
                 .chain(bcc)
                 .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
                 .into_iter()
-                .map(|v| {
+                .flat_map(|v| {
                     if let Ok(user) = User::from_id(conn, &v, None, CONFIG.proxy()) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection
                     }
                 })
-                .flatten()
                 .filter(|u| u.get_instance(conn).map(|i| i.local).unwrap_or(false))
                 .collect::<HashSet<User>>(); //remove duplicates (prevent db error)
 
