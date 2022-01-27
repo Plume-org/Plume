@@ -4,6 +4,14 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Basque language
+
+### Fixed
+
+- Add explanation of sign-up step at sign-up page when email sign-up mode
+
 ## [[0.7.1]] - 2022-01-12
 
 ### Added
