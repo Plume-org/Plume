@@ -8,6 +8,10 @@
 
 - Basque language
 
+### Changed
+
+- Bump Rust to nightly 2022-01-26
+
 ### Fixed
 
 - Add explanation of sign-up step at sign-up page when email sign-up mode

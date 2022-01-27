@@ -17,7 +17,7 @@
                 @if !media.alt_text.is_empty() {
                     @media.alt_text
                 } else {
-                    @media.content_warning.unwrap_or(i18n!(ctx.1, "No description"))
+                    @media.content_warning.unwrap_or_else(|| i18n!(ctx.1, "No description")))
                 }
             </option>
         }
