@@ -15,6 +15,7 @@
 ### Fixed
 
 - Add explanation of sign-up step at sign-up page when email sign-up mode
+- Add NOT NULL constraint to email_blocklist table fields
 
 ## [[0.7.1]] - 2022-01-12
 
