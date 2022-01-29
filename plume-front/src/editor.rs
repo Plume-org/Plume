@@ -397,7 +397,9 @@ fn init_editor() -> Result<(), EditorError> {
             content_val.clone(),
             false,
         )?;
-        content.set_inner_html(&content_val);
+        if !content_val.is_empty() {
+            content.set_inner_html(&content_val);
+        }
 
         // character counter
         let character_counter = Closure::wrap(Box::new(mv!(content => move |_| {
