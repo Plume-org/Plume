@@ -75,9 +75,9 @@ table! {
 }
 
 table! {
-    email_blocklist(id){
+    email_blocklist (id) {
         id -> Int4,
-        email_address -> VarChar,
+        email_address -> Text,
         note -> Text,
         notify_user -> Bool,
         notification_text -> Text,
@@ -316,6 +316,7 @@ allow_tables_to_appear_in_same_query!(
     blogs,
     comments,
     comment_seers,
+    email_blocklist,
     email_signups,
     follows,
     instances,
