@@ -1530,11 +1530,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "gettext"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ebb594e753d5997e4be036e5a8cf048ab9414352870fb45c779557bbc9ba971"
+dependencies = [
+ "byteorder 1.4.3",
+ "encoding",
+]
+
+[[package]]
 name = "gettext-macros"
 version = "0.4.0"
 source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
 dependencies = [
- "gettext",
+ "gettext 0.3.0",
  "gettext-utils",
 ]
 
@@ -3064,7 +3074,7 @@ dependencies = [
  "ctrlc",
  "diesel",
  "dotenv",
- "gettext",
+ "gettext 0.4.0",
  "gettext-macros",
  "gettext-utils",
  "guid-create",
@@ -3143,7 +3153,7 @@ name = "plume-front"
 version = "0.7.1"
 dependencies = [
  "console_error_panic_hook",
- "gettext",
+ "gettext 0.4.0",
  "gettext-macros",
  "gettext-utils",
  "js-sys",
@@ -3891,7 +3901,7 @@ name = "rocket_i18n"
 version = "0.4.0"
 source = "git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2#e922afa7c366038b3433278c03b1456b346074f2"
 dependencies = [
- "gettext",
+ "gettext 0.3.0",
  "rocket",
 ]
 
