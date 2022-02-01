@@ -35,6 +35,7 @@ riker = "0.4.2"
 once_cell = "1.10.0"
 lettre = "0.9.6"
 native-tls = "0.2.10"
+activitystreams = "0.7.0-alpha.18"
 
 [dependencies.chrono]
 features = ["serde"]
