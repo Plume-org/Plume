@@ -261,3 +261,94 @@ pub struct Licensed {
 }
 
 impl Object for Licensed {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use assert_json_diff::assert_json_eq;
+    use serde_json::{from_str, json, to_value};
+
+    #[test]
+    fn se_ap_signature() {
+        let ap_signature = ApSignature07 {
+            public_key: PublicKey07 {
+                id: "https://example.com/pubkey".parse().unwrap(),
+                owner: "https://example.com/owner".parse().unwrap(),
+                public_key_pem: "pubKeyPem".into(),
+            },
+        };
+        let expected = json!({
+            "publicKey": {
+                "id": "https://example.com/pubkey",
+                "owner": "https://example.com/owner",
+                "publicKeyPem": "pubKeyPem"
+            }
+        });
+        assert_json_eq!(to_value(ap_signature).unwrap(), expected);
+    }
+
+    #[test]
+    fn de_ap_signature() {
+        let value: ApSignature07 = from_str(
+            r#"
+              {
+                "publicKey": {
+                  "id": "https://example.com/",
+                  "owner": "https://example.com/",
+                  "publicKeyPem": ""
+                }
+              }
+            "#,
+        )
+        .unwrap();
+        let expected = ApSignature07 {
+            public_key: PublicKey07 {
+                id: "https://example.com/".parse().unwrap(),
+                owner: "https://example.com/".parse().unwrap(),
+                public_key_pem: "".into(),
+            },
+        };
+        assert_eq!(value, expected);
+    }
+
+    #[test]
+    fn se_custom_person() {
+        let actor = ApActor::new("https://example.com/inbox".parse().unwrap(), Person::new());
+        let person = CustomPerson::new(
+            actor,
+            ApSignature07 {
+                public_key: PublicKey07 {
+                    id: "https://example.com/pubkey".parse().unwrap(),
+                    owner: "https://example.com/owner".parse().unwrap(),
+                    public_key_pem: "pubKeyPem".into(),
+                },
+            },
+        );
+        let expected = json!({
+            "inbox": "https://example.com/inbox",
+            "type": "Person",
+            "publicKey": {
+                "id": "https://example.com/pubkey",
+                "owner": "https://example.com/owner",
+                "publicKeyPem": "pubKeyPem"
+            }
+        });
+        assert_eq!(to_value(person).unwrap(), expected);
+    }
+
+    #[test]
+    fn se_licensed_article() {
+        let object = ApObject::new(Article::new());
+        let licensed_article = LicensedArticle::new(
+            object,
+            Licensed07 {
+                license: "CC-0".into(),
+            },
+        );
+        let expected = json!({
+            "type": "Article",
+            "license": "CC-0"
+        });
+        assert_json_eq!(to_value(licensed_article).unwrap(), expected);
+    }
+}
