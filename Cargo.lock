@@ -3220,6 +3220,7 @@ dependencies = [
  "activitystreams-traits",
  "array_tool",
  "askama_escape",
+ "assert-json-diff",
  "base64 0.13.0",
  "chrono",
  "heck",
