@@ -42,6 +42,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "activitystreams-ext"
+version = "0.1.0-alpha.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb8e19a0810cc25df3535061a08b7d8f8a734d309ea4411c57a9767e4a2ffa0e"
+dependencies = [
+ "activitystreams",
+ "serde 1.0.136",
+ "serde_json",
+]
+
+[[package]]
 name = "activitystreams-kinds"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3205,6 +3216,7 @@ dependencies = [
  "activitypub",
  "activitystreams",
  "activitystreams-derive",
+ "activitystreams-ext",
  "activitystreams-traits",
  "array_tool",
  "askama_escape",
