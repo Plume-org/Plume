@@ -145,3 +145,62 @@ impl Mention {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{inbox::tests::fill_database, tests::db, Error};
+    use assert_json_diff::assert_json_eq;
+    use diesel::Connection;
+    use serde_json::{json, to_value};
+
+    #[test]
+    fn build_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_posts, users, _blogs) = fill_database(&conn);
+            let user = &users[0];
+            let name = &user.username;
+            let act = Mention::build_activity(&conn, name)?;
+
+            let expected = json!({
+                "href": "https://plu.me/@/admin/",
+                "name": "@admin",
+                "type": "Mention",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &users[0];
+            let mention = Mention::insert(
+                &conn,
+                NewMention {
+                    mentioned_id: user.id,
+                    post_id: Some(post.id),
+                    comment_id: None,
+                },
+            )?;
+            let act = mention.to_activity(&conn)?;
+
+            let expected = json!({
+                "href": "https://plu.me/@/admin/",
+                "name": "@admin",
+                "type": "Mention",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+}

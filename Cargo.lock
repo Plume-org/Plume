@@ -17,6 +17,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "activitystreams"
+version = "0.7.0-alpha.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bcc3fbb392890a1942b1e5cca76cba93c8ed24b5ff50004cc3289afaab3f92c"
+dependencies = [
+ "activitystreams-kinds",
+ "chrono",
+ "mime 0.3.16",
+ "serde 1.0.133",
+ "serde_json",
+ "thiserror",
+ "url 2.2.2",
+]
+
+[[package]]
 name = "activitystreams-derive"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -25,6 +40,16 @@ dependencies = [
  "proc-macro2 0.3.8",
  "quote 0.5.2",
  "syn 0.13.11",
+]
+
+[[package]]
+name = "activitystreams-kinds"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0784e99afd032199d3ed70cefb8eb3a8d1aef15f7f2c4e68d033c4e12bb6079e"
+dependencies = [
+ "serde 1.0.133",
+ "url 2.2.2",
 ]
 
 [[package]]
@@ -204,6 +229,16 @@ name = "askama_escape"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a1bb320f97e6edf9f756bf015900038e43c7700e059688e5724a928c8f3b8d5"
+
+[[package]]
+name = "assert-json-diff"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50f1c3703dd33532d7f0ca049168930e9099ecac238e23cf932f3a69c42f06da"
+dependencies = [
+ "serde 1.0.133",
+ "serde_json",
+]
 
 [[package]]
 name = "async-trait"
@@ -3136,6 +3171,7 @@ name = "plume-common"
 version = "0.7.1"
 dependencies = [
  "activitypub",
+ "activitystreams",
  "activitystreams-derive",
  "activitystreams-traits",
  "array_tool",
@@ -3190,7 +3226,9 @@ name = "plume-models"
 version = "0.7.1"
 dependencies = [
  "activitypub",
+ "activitystreams",
  "ammonia",
+ "assert-json-diff",
  "bcrypt",
  "chrono",
  "diesel",
@@ -5232,6 +5270,7 @@ dependencies = [
  "idna 0.2.3",
  "matches",
  "percent-encoding 2.1.0",
+ "serde 1.0.133",
 ]
 
 [[package]]

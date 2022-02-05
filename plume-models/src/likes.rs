@@ -165,12 +165,75 @@ impl AsObject<User, activity::Undo, &DbConn> for Like {
 
 impl NewLike {
     pub fn new(p: &Post, u: &User) -> Self {
-        // TODO: this URL is not valid
-        let ap_url = format!("{}/like/{}", u.ap_url, p.ap_url);
+        let ap_url = format!("{}like/{}", u.ap_url, p.ap_url);
         NewLike {
             post_id: p.id,
             user_id: u.id,
             ap_url,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::diesel::Connection;
+    use crate::{inbox::tests::fill_database, tests::db};
+    use assert_json_diff::assert_json_eq;
+    use serde_json::{json, to_value};
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &post.get_authors(&conn)?[0];
+            let like = Like::insert(&*conn, NewLike::new(post, user))?;
+            let act = like.to_activity(&conn).unwrap();
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
+                "object": "https://plu.me/~/BlogName/testing",
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Like",
+            });
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn build_undo() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &post.get_authors(&conn)?[0];
+            let like = Like::insert(&*conn, NewLike::new(post, user))?;
+            let act = like.build_undo(&*conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing#delete",
+                "object": {
+                    "actor": "https://plu.me/@/admin/",
+                    "cc": ["https://plu.me/@/admin/followers"],
+                    "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
+                    "object": "https://plu.me/~/BlogName/testing",
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Like",
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Undo",
+            });
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
     }
 }

@@ -99,11 +99,27 @@ impl Follow {
         )?;
         res.notify(conn)?;
 
+        let accept = res.build_accept(from, target, follow)?;
+        broadcast(
+            &*target,
+            accept,
+            vec![from.clone()],
+            CONFIG.proxy().cloned(),
+        );
+        Ok(res)
+    }
+
+    pub fn build_accept<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
+        &self,
+        from: &B,
+        target: &A,
+        follow: FollowAct,
+    ) -> Result<Accept> {
         let mut accept = Accept::default();
         let accept_id = ap_url(&format!(
-            "{}/follow/{}/accept",
+            "{}/follows/{}/accept",
             CONFIG.base_url.as_str(),
-            &res.id
+            self.id
         ));
         accept.object_props.set_id_string(accept_id)?;
         accept
@@ -116,13 +132,8 @@ impl Follow {
             .accept_props
             .set_actor_link::<Id>(target.clone().into_id())?;
         accept.accept_props.set_object_object(follow)?;
-        broadcast(
-            &*target,
-            accept,
-            vec![from.clone()],
-            CONFIG.proxy().cloned(),
-        );
-        Ok(res)
+
+        Ok(accept)
     }
 
     pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
@@ -219,8 +230,29 @@ impl IntoId for Follow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{tests::db, users::tests as user_tests};
+    use crate::{tests::db, users::tests as user_tests, users::tests::fill_database};
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::{json, to_value};
+
+    fn prepare_activity(conn: &DbConn) -> (Follow, User, User, Vec<User>) {
+        let users = fill_database(conn);
+        let following = &users[1];
+        let follower = &users[2];
+        let mut follow = Follow::insert(
+            conn,
+            NewFollow {
+                follower_id: follower.id,
+                following_id: following.id,
+                ap_url: "".into(),
+            },
+        )
+        .unwrap();
+        // following.ap_url = format!("https://plu.me/follows/{}", follow.id);
+        follow.ap_url = format!("https://plu.me/follows/{}", follow.id);
+
+        (follow, following.to_owned(), follower.to_owned(), users)
+    }
 
     #[test]
     fn test_id() {
@@ -254,5 +286,78 @@ mod tests {
 
             Ok(())
         })
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (follow, _following, _follower, _users) = prepare_activity(&conn);
+            let act = follow.to_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/other/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://plu.me/follows/{}", follow.id),
+                "object": "https://plu.me/@/user/",
+                "to": ["https://plu.me/@/user/"],
+                "type": "Follow"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn build_accept() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (follow, following, follower, _users) = prepare_activity(&conn);
+            let act = follow.build_accept(&follower, &following, follow.to_activity(&conn)?)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://127.0.0.1:7878/follows/{}/accept", follow.id),
+                "object": {
+                    "actor": "https://plu.me/@/other/",
+                    "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "id": format!("https://plu.me/follows/{}", follow.id),
+                    "object": "https://plu.me/@/user/",
+                    "to": ["https://plu.me/@/user/"],
+                    "type": "Follow"
+                },
+                "to": ["https://plu.me/@/other/"],
+                "type": "Accept"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn build_undo() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (follow, _following, _follower, _users) = prepare_activity(&conn);
+            let act = follow.build_undo(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/other/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://plu.me/follows/{}/undo", follow.id),
+                "object": format!("https://plu.me/follows/{}", follow.id),
+                "to": ["https://plu.me/@/user/"],
+                "type": "Undo"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
     }
 }

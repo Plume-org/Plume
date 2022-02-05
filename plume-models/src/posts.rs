@@ -413,7 +413,7 @@ impl Post {
         let article = self.to_activity(conn)?;
         let mut act = Create::default();
         act.object_props
-            .set_id_string(format!("{}activity", self.ap_url))?;
+            .set_id_string(format!("{}/activity", self.ap_url))?;
         act.object_props
             .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
         act.object_props
@@ -942,9 +942,28 @@ impl From<PostEvent> for Arc<Post> {
 mod tests {
     use super::*;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
+    use crate::mentions::{Mention, NewMention};
     use crate::safe_string::SafeString;
-    use crate::tests::db;
+    use crate::tests::{db, format_datetime};
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::{json, to_value};
+
+    fn prepare_activity(conn: &DbConn) -> (Post, Mention, Vec<Post>, Vec<User>, Vec<Blog>) {
+        let (posts, users, blogs) = fill_database(conn);
+        let post = &posts[0];
+        let mentioned = &users[1];
+        let mention = Mention::insert(
+            &conn,
+            NewMention {
+                mentioned_id: mentioned.id,
+                post_id: Some(post.id),
+                comment_id: None,
+            },
+        )
+        .unwrap();
+        (post.to_owned(), mention.to_owned(), posts, users, blogs)
+    }
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
@@ -1037,5 +1056,154 @@ mod tests {
             "https://plu.me/~/Blog/my-article",
             &article.object.object_props.id_string().unwrap()
         );
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = post.to_activity(&conn)?;
+
+            let expected = json!({
+                "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                "cc": [],
+                "content": "Hello",
+                "id": "https://plu.me/~/BlogName/testing",
+                "license": "WTFPL",
+                "name": "Testing",
+                "published": format_datetime(&post.creation_date),
+                "source": {
+                    "content": "",
+                    "mediaType": "text/markdown"
+                },
+                "summary": "",
+                "tag": [
+                    {
+                        "href": "https://plu.me/@/user/",
+                        "name": "@user",
+                        "type": "Mention"
+                    }
+                ],
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Article",
+                "url": "https://plu.me/~/BlogName/testing"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn create_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = post.create_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": [],
+                "id": "https://plu.me/~/BlogName/testing/activity",
+                "object": {
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "cc": [],
+                    "content": "Hello",
+                    "id": "https://plu.me/~/BlogName/testing",
+                    "license": "WTFPL",
+                    "name": "Testing",
+                    "published": format_datetime(&post.creation_date),
+                    "source": {
+                        "content": "",
+                        "mediaType": "text/markdown"
+                    },
+                    "summary": "",
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Article",
+                    "url": "https://plu.me/~/BlogName/testing"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn update_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = post.update_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": [],
+                "id": "https://plu.me/~/BlogName/testing/update-",
+                "object": {
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "cc": [],
+                    "content": "Hello",
+                    "id": "https://plu.me/~/BlogName/testing",
+                    "license": "WTFPL",
+                    "name": "Testing",
+                    "published": format_datetime(&post.creation_date),
+                    "source": {
+                        "content": "",
+                        "mediaType": "text/markdown"
+                    },
+                    "summary": "",
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Article",
+                    "url": "https://plu.me/~/BlogName/testing"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Update"
+            });
+            let actual = to_value(act)?;
+
+            let id = actual["id"].to_string();
+            let (id_pre, id_post) = id.rsplit_once("-").unwrap();
+            assert_eq!(post.ap_url, "https://plu.me/~/BlogName/testing");
+            assert_eq!(
+                id_pre,
+                to_value("\"https://plu.me/~/BlogName/testing/update")
+                    .unwrap()
+                    .as_str()
+                    .unwrap()
+            );
+            assert_eq!(id_post.len(), 11);
+            assert_eq!(
+                id_post.matches(char::is_numeric).collect::<String>().len(),
+                10
+            );
+            for (key, value) in actual.as_object().unwrap().into_iter() {
+                if key == "id" {
+                    continue;
+                }
+                assert_eq!(value, expected.get(key).unwrap());
+            }
+
+            Ok(())
+        });
     }
 }

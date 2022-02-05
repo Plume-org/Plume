@@ -16,7 +16,7 @@ use activitypub::{
     link,
     object::{Note, Tombstone},
 };
-use chrono::{self, NaiveDateTime};
+use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
@@ -59,7 +59,7 @@ impl Comment {
     insert!(comments, NewComment, |inserted, conn| {
         if inserted.ap_url.is_none() {
             inserted.ap_url = Some(format!(
-                "{}comment/{}",
+                "{}/comment/{}",
                 inserted.get_post(conn)?.ap_url,
                 inserted.id
             ));
@@ -129,7 +129,7 @@ impl Comment {
                 |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
             )?))?;
         note.object_props
-            .set_published_string(chrono::Utc::now().to_rfc3339())?;
+            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
         note.object_props.set_attributed_to_link(author.into_id())?;
         note.object_props.set_to_link_vec(to)?;
         note.object_props.set_tag_link_vec(
@@ -402,10 +402,34 @@ impl CommentTree {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::blogs::Blog;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
-    use crate::tests::db;
+    use crate::tests::{db, format_datetime};
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::{json, to_value};
+
+    fn prepare_activity(conn: &DbConn) -> (Comment, Vec<Post>, Vec<User>, Vec<Blog>) {
+        let (posts, users, blogs) = fill_database(&conn);
+
+        let comment = Comment::insert(
+            conn,
+            NewComment {
+                content: SafeString::new("My comment, mentioning to @user"),
+                in_response_to_id: None,
+                post_id: posts[0].id,
+                author_id: users[0].id,
+                ap_url: None,
+                sensitive: true,
+                spoiler_text: "My CW".into(),
+                public_visibility: true,
+            },
+        )
+        .unwrap();
+
+        (comment, posts, users, blogs)
+    }
 
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
@@ -413,30 +437,77 @@ mod tests {
     fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (posts, users, _) = fill_database(&conn);
+            let (original_comm, posts, users, _blogs) = prepare_activity(&conn);
+            let act = original_comm.create_activity(&conn).unwrap();
 
-            let original_comm = Comment::insert(
+            assert_json_eq!(to_value(&act).unwrap(), json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", original_comm.id),
+                "object": {
+                    "attributedTo": "https://plu.me/@/admin/",
+                    "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
+"###,
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "inReplyTo": "https://plu.me/~/BlogName/testing",
+                    "published": format_datetime(&original_comm.creation_date),
+                    "summary": "My CW",
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Note"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create",
+            }));
+
+            let reply = Comment::insert(
                 conn,
                 NewComment {
-                    content: SafeString::new("My comment"),
-                    in_response_to_id: None,
+                    content: SafeString::new(""),
+                    in_response_to_id: Some(original_comm.id),
                     post_id: posts[0].id,
-                    author_id: users[0].id,
+                    author_id: users[1].id,
                     ap_url: None,
-                    sensitive: true,
-                    spoiler_text: "My CW".into(),
+                    sensitive: false,
+                    spoiler_text: "".into(),
                     public_visibility: true,
                 },
             )
             .unwrap();
-            let act = original_comm.create_activity(&conn).unwrap();
+            let reply_act = reply.create_activity(&conn).unwrap();
+
+            assert_json_eq!(to_value(&reply_act).unwrap(), json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": ["https://plu.me/@/user/followers"],
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", reply.id),
+                "object": {
+                    "attributedTo": "https://plu.me/@/user/",
+                    "content": "",
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", reply.id),
+                    "inReplyTo": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "published": format_datetime(&reply.creation_date),
+                    "summary": "",
+                    "tag": [],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Note"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create"
+            }));
+
             inbox(
                 &conn,
                 serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
             )
             .unwrap();
 
-            match inbox(&conn, serde_json::to_value(act).unwrap()).unwrap() {
+            match inbox(&conn, to_value(act).unwrap()).unwrap() {
                 InboxResult::Commented(c) => {
                     // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
                     assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);
@@ -450,5 +521,61 @@ mod tests {
             };
             Ok(())
         })
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = comment.to_activity(&conn)?;
+
+            let expected = json!({
+                "attributedTo": "https://plu.me/@/admin/",
+                "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
+"###,
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
+                "inReplyTo": "https://plu.me/~/BlogName/testing",
+                "published": format_datetime(&comment.creation_date),
+                "summary": "My CW",
+                "tag": [
+                    {
+                        "href": "https://plu.me/@/user/",
+                        "name": "@user",
+                        "type": "Mention"
+                    }
+                ],
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Note"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn build_delete() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = comment.build_delete(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}#delete", comment.id),
+                "object": {
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
+                    "type": "Tombstone"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Delete"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
     }
 }

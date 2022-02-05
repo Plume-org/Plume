@@ -429,6 +429,9 @@ impl User {
             .map_err(Error::from)
     }
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        Ok(ActivityStream::new(self.outbox_collection(conn)?))
+    }
+    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
         let mut coll = OrderedCollection::default();
         let first = &format!("{}?page=1", &self.outbox_url);
         let last = &format!(
@@ -440,13 +443,22 @@ impl User {
         coll.collection_props.set_last_link(Id::new(last))?;
         coll.collection_props
             .set_total_items_u64(self.get_activities_count(conn) as u64)?;
-        Ok(ActivityStream::new(coll))
+        Ok(coll)
     }
     pub fn outbox_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
+        Ok(ActivityStream::new(
+            self.outbox_collection_page(conn, (min, max))?,
+        ))
+    }
+    pub fn outbox_collection_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<OrderedCollectionPage> {
         let acts = self.get_activities_page(conn, (min, max))?;
         let n_acts = self.get_activities_count(conn);
         let mut coll = OrderedCollectionPage::default();
@@ -467,7 +479,7 @@ impl User {
         coll.collection_props.items = serde_json::to_value(acts)?;
         coll.collection_page_props
             .set_part_of_link(Id::new(&self.outbox_url))?;
-        Ok(ActivityStream::new(coll))
+        Ok(coll)
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
         let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
@@ -763,13 +775,13 @@ impl User {
         let mut ap_signature = ApSignature::default();
         ap_signature.set_public_key_publickey(public_key)?;
 
-        let mut avatar = Image::default();
-        avatar.object_props.set_url_string(
-            self.avatar_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-                .unwrap_or_default(),
-        )?;
-        actor.object_props.set_icon_object(avatar)?;
+        if let Some(avatar_id) = self.avatar_id {
+            let mut avatar = Image::default();
+            avatar
+                .object_props
+                .set_url_string(Media::get(conn, avatar_id)?.url()?)?;
+            actor.object_props.set_icon_object(avatar)?;
+        }
 
         Ok(CustomPerson::new(actor, ap_signature))
     }
@@ -1142,10 +1154,13 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         instance::{tests as instance_tests, Instance},
+        medias::{Media, NewMedia},
         tests::db,
-        Connection as Conn,
+        Connection as Conn, ITEMS_PER_PAGE,
     };
-    use diesel::Connection;
+    use assert_json_diff::assert_json_eq;
+    use diesel::{Connection, SaveChangesDsl};
+    use serde_json::to_value;
 
     pub(crate) fn fill_database(conn: &Conn) -> Vec<User> {
         instance_tests::fill_database(conn);
@@ -1169,7 +1184,7 @@ pub(crate) mod tests {
             Some("invalid_user_password".to_owned()),
         )
         .unwrap();
-        let other = NewUser::new_local(
+        let mut other = NewUser::new_local(
             conn,
             "other".to_owned(),
             "Another user".to_owned(),
@@ -1179,7 +1194,71 @@ pub(crate) mod tests {
             Some("invalid_other_password".to_owned()),
         )
         .unwrap();
+        let avatar = Media::insert(
+            conn,
+            NewMedia {
+                file_path: "static/media/example.png".into(),
+                alt_text: "Another user".into(),
+                is_remote: false,
+                remote_url: None,
+                sensitive: false,
+                content_warning: None,
+                owner_id: other.id,
+            },
+        )
+        .unwrap();
+        other.avatar_id = Some(avatar.id);
+        let other = other.save_changes::<User>(&*conn).unwrap();
+
         vec![admin, user, other]
+    }
+
+    fn fill_pages(
+        conn: &DbConn,
+    ) -> (
+        Vec<crate::posts::Post>,
+        Vec<crate::users::User>,
+        Vec<crate::blogs::Blog>,
+    ) {
+        use crate::post_authors::NewPostAuthor;
+        use crate::posts::NewPost;
+
+        let (mut posts, users, blogs) = crate::inbox::tests::fill_database(conn);
+        let user = &users[0];
+        let blog = &blogs[0];
+
+        for i in 1..(ITEMS_PER_PAGE * 4 + 3) {
+            let title = format!("Post {}", i);
+            let content = format!("Content for post {}.", i);
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog.id,
+                    slug: title.clone(),
+                    title: title.clone(),
+                    content: SafeString::new(&content),
+                    published: true,
+                    license: "CC-0".into(),
+                    creation_date: None,
+                    ap_url: format!("{}/{}", blog.ap_url, title),
+                    subtitle: "".into(),
+                    source: content,
+                    cover_id: None,
+                },
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: user.id,
+                },
+            )
+            .unwrap();
+            posts.push(post);
+        }
+
+        (posts, users, blogs)
     }
 
     #[test]
@@ -1339,6 +1418,141 @@ pub(crate) mod tests {
             assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
             assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[0];
+            let act = user.to_activity(&conn)?;
+
+            let expected = json!({
+                "endpoints": {
+                    "sharedInbox": "https://plu.me/inbox"
+                },
+                "followers": "https://plu.me/@/admin/followers",
+                "following": null,
+                "id": "https://plu.me/@/admin/",
+                "inbox": "https://plu.me/@/admin/inbox",
+                "liked": null,
+                "name": "The admin",
+                "outbox": "https://plu.me/@/admin/outbox",
+                "preferredUsername": "admin",
+                "publicKey": {
+                    "id": "https://plu.me/@/admin/#main-key",
+                    "owner": "https://plu.me/@/admin/",
+                    "publicKeyPem": user.public_key,
+                },
+                "summary": "<p dir=\"auto\">Hello there, I’m the admin</p>\n",
+                "type": "Person",
+                "url": "https://plu.me/@/admin/"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            let other = &users[2];
+            let other_act = other.to_activity(&conn)?;
+            let expected_other = json!({
+                "endpoints": {
+                    "sharedInbox": "https://plu.me/inbox"
+                },
+                "followers": "https://plu.me/@/other/followers",
+                "following": null,
+                "icon": {
+                    "url": "https://plu.me/static/media/example.png",
+                    "type": "Image",
+                },
+                "id": "https://plu.me/@/other/",
+                "inbox": "https://plu.me/@/other/inbox",
+                "liked": null,
+                "name": "Another user",
+                "outbox": "https://plu.me/@/other/outbox",
+                "preferredUsername": "other",
+                "publicKey": {
+                    "id": "https://plu.me/@/other/#main-key",
+                    "owner": "https://plu.me/@/other/",
+                    "publicKeyPem": other.public_key,
+                },
+                "summary": "<p dir=\"auto\">Hello there, I’m someone else</p>\n",
+                "type": "Person",
+                "url": "https://plu.me/@/other/"
+            });
+
+            assert_json_eq!(to_value(other_act)?, expected_other);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn delete_activity() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[1];
+            let act = user.delete_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": [],
+                "id": "https://plu.me/@/user/#delete",
+                "object": {
+                    "id": "https://plu.me/@/user/",
+                    "type": "Tombstone",
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Delete",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_pages, users, _blogs) = fill_pages(&conn);
+            let user = &users[0];
+            let act = user.outbox_collection(&conn)?;
+
+            let expected = json!({
+                "first": "https://plu.me/@/admin/outbox?page=1",
+                "items": null,
+                "last": "https://plu.me/@/admin/outbox?page=5",
+                "totalItems": 51,
+                "type": "OrderedCollection",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection_page() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[0];
+            let act = user.outbox_collection_page(&conn, (33, 36))?;
+
+            let expected = json!({
+                "items": [],
+                "partOf": "https://plu.me/@/admin/outbox",
+                "prev": "https://plu.me/@/admin/outbox?page=2",
+                "type": "OrderedCollectionPage",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
             Ok(())
         });
     }
