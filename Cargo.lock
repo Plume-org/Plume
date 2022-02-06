@@ -3898,10 +3898,11 @@ dependencies = [
 
 [[package]]
 name = "rocket_i18n"
-version = "0.4.0"
-source = "git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2#e922afa7c366038b3433278c03b1456b346074f2"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbf9f4c872b824ac0506557be9c66e0315d66d0e378d2ae02ee2e7b0fed2a338"
 dependencies = [
- "gettext 0.3.0",
+ "gettext 0.4.0",
  "rocket",
 ]
 
