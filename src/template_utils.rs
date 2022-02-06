@@ -1,11 +1,11 @@
 use plume_models::{db_conn::DbConn, notifications::*, users::User, Connection, PlumeRocket};
 
 use crate::templates::Html;
+use gettext::Catalog;
 use rocket::http::hyper::header::{ETag, EntityTag};
 use rocket::http::{Method, Status};
 use rocket::request::Request;
 use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
-use rocket_i18n::Catalog;
 use std::collections::{btree_map::BTreeMap, hash_map::DefaultHasher};
 use std::hash::Hasher;
 
