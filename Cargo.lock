@@ -25,7 +25,7 @@ dependencies = [
  "activitystreams-kinds",
  "chrono",
  "mime 0.3.16",
- "serde 1.0.133",
+ "serde 1.0.136",
  "serde_json",
  "thiserror",
  "url 2.2.2",
@@ -48,7 +48,7 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0784e99afd032199d3ed70cefb8eb3a8d1aef15f7f2c4e68d033c4e12bb6079e"
 dependencies = [
- "serde 1.0.133",
+ "serde 1.0.136",
  "url 2.2.2",
 ]
 
@@ -236,7 +236,7 @@ version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50f1c3703dd33532d7f0ca049168930e9099ecac238e23cf932f3a69c42f06da"
 dependencies = [
- "serde 1.0.133",
+ "serde 1.0.136",
  "serde_json",
 ]
 
@@ -3971,9 +3971,9 @@ dependencies = [
 
 [[package]]
 name = "rsass"
-version = "0.23.2"
+version = "0.23.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47d3d887143c4ffd66335779e475de36320725e486061c011df346638f41ee9a"
+checksum = "92bfc58e02cd215730b021f9e6f0f46e0a7e1f75aa558ca7a7492763fbe88df2"
 dependencies = [
  "fastrand",
  "lazy_static",
@@ -5270,7 +5270,7 @@ dependencies = [
  "idna 0.2.3",
  "matches",
  "percent-encoding 2.1.0",
- "serde 1.0.133",
+ "serde 1.0.136",
 ]
 
 [[package]]
