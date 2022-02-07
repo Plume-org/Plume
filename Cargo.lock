@@ -18,17 +18,16 @@ dependencies = [
 
 [[package]]
 name = "activitystreams"
-version = "0.7.0-alpha.14"
+version = "0.7.0-alpha.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6bcc3fbb392890a1942b1e5cca76cba93c8ed24b5ff50004cc3289afaab3f92c"
+checksum = "40c952a7b1b76c4a7355bf4635ff4e13f4b545bbb7fd75397c9ee1b91ff04c50"
 dependencies = [
  "activitystreams-kinds",
- "chrono",
+ "iri-string",
  "mime 0.3.16",
- "serde 1.0.133",
+ "serde 1.0.136",
  "serde_json",
- "thiserror",
- "url 2.2.2",
+ "time 0.3.5",
 ]
 
 [[package]]
@@ -44,12 +43,12 @@ dependencies = [
 
 [[package]]
 name = "activitystreams-kinds"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0784e99afd032199d3ed70cefb8eb3a8d1aef15f7f2c4e68d033c4e12bb6079e"
+checksum = "4a762e3441050b51cd0695c1413735cd04195950f50dba8f5da5d7201628fcfc"
 dependencies = [
- "serde 1.0.133",
- "url 2.2.2",
+ "iri-string",
+ "serde 1.0.136",
 ]
 
 [[package]]
@@ -236,7 +235,7 @@ version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50f1c3703dd33532d7f0ca049168930e9099ecac238e23cf932f3a69c42f06da"
 dependencies = [
- "serde 1.0.133",
+ "serde 1.0.136",
  "serde_json",
 ]
 
@@ -2030,6 +2029,15 @@ name = "ipnet"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68f2d64f2edebec4ce84ad108148e67e1064789bee435edc5b60ad398714a3a9"
+
+[[package]]
+name = "iri-string"
+version = "0.5.0-beta.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e646c4df8aab0077f846d8869c8c677989f1aa27819456c3792ead45c0d10b5"
+dependencies = [
+ "serde 1.0.136",
+]
 
 [[package]]
 name = "itertools"
@@ -5270,7 +5278,6 @@ dependencies = [
  "idna 0.2.3",
  "matches",
  "percent-encoding 2.1.0",
- "serde 1.0.133",
 ]
 
 [[package]]
