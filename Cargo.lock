@@ -25,7 +25,7 @@ dependencies = [
  "activitystreams-kinds",
  "chrono",
  "mime 0.3.16",
- "serde 1.0.133",
+ "serde 1.0.136",
  "serde_json",
  "thiserror",
  "url 2.2.2",
@@ -48,7 +48,7 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0784e99afd032199d3ed70cefb8eb3a8d1aef15f7f2c4e68d033c4e12bb6079e"
 dependencies = [
- "serde 1.0.133",
+ "serde 1.0.136",
  "url 2.2.2",
 ]
 
@@ -236,7 +236,7 @@ version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50f1c3703dd33532d7f0ca049168930e9099ecac238e23cf932f3a69c42f06da"
 dependencies = [
- "serde 1.0.133",
+ "serde 1.0.136",
  "serde_json",
 ]
 
@@ -5128,9 +5128,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-subscriber"
-version = "0.3.7"
+version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5312f325fe3588e277415f5a6cca1f4ccad0f248c4cd5a4bd33032d7286abc22"
+checksum = "74786ce43333fcf51efe947aed9718fbe46d5c7328ec3f1029e818083966d9aa"
 dependencies = [
  "ansi_term",
  "sharded-slab",
@@ -5270,7 +5270,7 @@ dependencies = [
  "idna 0.2.3",
  "matches",
  "percent-encoding 2.1.0",
- "serde 1.0.133",
+ "serde 1.0.136",
 ]
 
 [[package]]
