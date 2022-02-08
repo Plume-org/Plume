@@ -51,7 +51,7 @@
                             <span class="mobile-label">@i18n!(ctx.1, "Log Out")</span>
                         </a>
                         <a href="@uri!(user::me)" title="@i18n!(ctx.1, "My account")">
-                            @avatar(ctx.0, &ctx.2.clone().unwrap(), Size::Small, false, &ctx.1)
+                            @avatar(ctx.0, &ctx.2.clone().unwrap(), Size::Small, false, ctx.1)
                             <span class="mobile-label">@i18n!(ctx.1, "My account")</span>
                         </a>
                     } else {
