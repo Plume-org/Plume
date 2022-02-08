@@ -63,7 +63,7 @@ commands:
         type: boolean
         default: false
     steps:
-    - run: cargo clippy <<^parameters.no_feature>>--no-default-features --features="${FEATURES}"<</parameters.no_feature>> --release -p <<parameters.package>> -- -D warnings -A clippy::needless_borrow
+    - run: cargo clippy <<^parameters.no_feature>>--no-default-features --features="${FEATURES}"<</parameters.no_feature>> --release -p <<parameters.package>> -- -D warnings
 
   run_with_coverage:
     description: run command with environment for coverage
