@@ -3934,9 +3934,9 @@ dependencies = [
 
 [[package]]
 name = "rsass"
-version = "0.23.2"
+version = "0.23.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47d3d887143c4ffd66335779e475de36320725e486061c011df346638f41ee9a"
+checksum = "92bfc58e02cd215730b021f9e6f0f46e0a7e1f75aa558ca7a7492763fbe88df2"
 dependencies = [
  "fastrand",
  "lazy_static",
@@ -5085,9 +5085,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-subscriber"
-version = "0.3.7"
+version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5312f325fe3588e277415f5a6cca1f4ccad0f248c4cd5a4bd33032d7286abc22"
+checksum = "74786ce43333fcf51efe947aed9718fbe46d5c7328ec3f1029e818083966d9aa"
 dependencies = [
  "ansi_term",
  "sharded-slab",
