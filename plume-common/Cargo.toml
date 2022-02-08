@@ -24,7 +24,6 @@ tokio = "0.1.22"
 regex-syntax = { version = "0.6.17", default-features = false, features = ["unicode-perl"] }
 tracing = "0.1.30"
 askama_escape = "0.10.2"
-activitystreams = "0.7.0-alpha.14"
 
 [dependencies.chrono]
 features = ["serde"]
