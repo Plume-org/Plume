@@ -274,6 +274,84 @@ where
         }
     }
 
+    /// Registers an handler on this Inbox.
+    pub fn with07<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Self
+    where
+        A: AsActor<&'a C> + FromId07<C, Error = E>,
+        V: activitystreams::markers::Activity + serde::de::DeserializeOwned,
+        M: AsObject07<A, V, &'a C, Error = E> + FromId07<C, Error = E>,
+        M::Output: Into<R>,
+    {
+        if let Self::NotHandled(ctx, mut act, e) = self {
+            if serde_json::from_value::<V>(act.clone()).is_ok() {
+                let act_clone = act.clone();
+                let act_id = match act_clone["id"].as_str() {
+                    Some(x) => x,
+                    None => return Self::NotHandled(ctx, act, InboxError::InvalidID),
+                };
+
+                // Get the actor ID
+                let actor_id = match get_id(act["actor"].clone()) {
+                    Some(x) => x,
+                    None => return Self::NotHandled(ctx, act, InboxError::InvalidActor(None)),
+                };
+
+                if Self::is_spoofed_activity(&actor_id, &act) {
+                    return Self::NotHandled(ctx, act, InboxError::InvalidObject(None));
+                }
+
+                // Transform this actor to a model (see FromId for details about the from_id function)
+                let actor = match A::from_id(
+                    ctx,
+                    &actor_id,
+                    serde_json::from_value(act["actor"].clone()).ok(),
+                    proxy,
+                ) {
+                    Ok(a) => a,
+                    // If the actor was not found, go to the next handler
+                    Err((json, e)) => {
+                        if let Some(json) = json {
+                            act["actor"] = json;
+                        }
+                        return Self::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)));
+                    }
+                };
+
+                // Same logic for "object"
+                let obj_id = match get_id(act["object"].clone()) {
+                    Some(x) => x,
+                    None => return Self::NotHandled(ctx, act, InboxError::InvalidObject(None)),
+                };
+                let obj = match M::from_id(
+                    ctx,
+                    &obj_id,
+                    serde_json::from_value(act["object"].clone()).ok(),
+                    proxy,
+                ) {
+                    Ok(o) => o,
+                    Err((json, e)) => {
+                        if let Some(json) = json {
+                            act["object"] = json;
+                        }
+                        return Self::NotHandled(ctx, act, InboxError::InvalidObject(Some(e)));
+                    }
+                };
+
+                // Handle the activity
+                match obj.activity(ctx, actor, act_id) {
+                    Ok(res) => Self::Handled(res.into()),
+                    Err(e) => Self::Failed(e),
+                }
+            } else {
+                // If the Activity type is not matching the expected one for
+                // this handler, try with the next one.
+                Self::NotHandled(ctx, act, e)
+            }
+        } else {
+            self
+        }
+    }
+
     /// Transforms the inbox in a `Result`
     pub fn done(self) -> Result<R, E> {
         match self {
@@ -334,6 +412,72 @@ pub trait FromId<C>: Sized {
 
     /// The ActivityPub object type representing Self
     type Object: activitypub::Object;
+
+    /// Tries to get an instance of `Self` from an ActivityPub ID.
+    ///
+    /// # Parameters
+    ///
+    /// - `ctx`: a context to get this instance (= a database in which to search)
+    /// - `id`: the ActivityPub ID of the object to find
+    /// - `object`: optional object that will be used if the object was not found in the database
+    ///   If absent, the ID will be dereferenced.
+    fn from_id(
+        ctx: &C,
+        id: &str,
+        object: Option<Self::Object>,
+        proxy: Option<&reqwest::Proxy>,
+    ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
+        match Self::from_db(ctx, id) {
+            Ok(x) => Ok(x),
+            _ => match object {
+                Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
+                None => Self::from_activity(ctx, Self::deref(id, proxy.cloned())?)
+                    .map_err(|e| (None, e)),
+            },
+        }
+    }
+
+    /// Dereferences an ID
+    fn deref(
+        id: &str,
+        proxy: Option<reqwest::Proxy>,
+    ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
+        request::get(id, Self::get_sender(), proxy)
+            .map_err(|_| (None, InboxError::DerefError))
+            .and_then(|mut r| {
+                let json: serde_json::Value = r
+                    .json()
+                    .map_err(|_| (None, InboxError::InvalidObject(None)))?;
+                serde_json::from_value(json.clone())
+                    .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
+            })
+            .map_err(|(json, e)| (json, e.into()))
+    }
+
+    /// Builds a `Self` from its ActivityPub representation
+    fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
+
+    /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
+    fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+
+    fn get_sender() -> &'static dyn Signer;
+}
+/// A trait for ActivityPub objects that can be retrieved or constructed from ID.
+///
+/// The two functions to implement are `from_activity` to create (and save) a new object
+/// of this type from its AP representation, and `from_db` to try to find it in the database
+/// using its ID.
+///
+/// When dealing with the "object" field of incoming activities, `Inbox` will try to see if it is
+/// a full object, and if so, save it with `from_activity`. If it is only an ID, it will try to find
+/// it in the database with `from_db`, and otherwise dereference (fetch) the full object and parse it
+/// with `from_activity`.
+pub trait FromId07<C>: Sized {
+    /// The type representing a failure
+    type Error: From<InboxError<Self::Error>> + Debug;
+
+    /// The ActivityPub object type representing Self
+    type Object: activitystreams::markers::Object + serde::de::DeserializeOwned;
 
     /// Tries to get an instance of `Self` from an ActivityPub ID.
     ///
@@ -522,6 +666,146 @@ pub trait AsActor<C> {
 pub trait AsObject<A, V, C>
 where
     V: activitypub::Activity,
+{
+    /// What kind of error is returned when something fails
+    type Error;
+
+    /// What is returned by `AsObject::activity`, if anything is returned
+    type Output = ();
+
+    /// Handle a specific type of activity dealing with this type of objects.
+    ///
+    /// The implementations should check that the actor is actually authorized
+    /// to perform this action.
+    ///
+    /// # Parameters
+    ///
+    /// - `self`: the object on which the activity acts
+    /// - `ctx`: the context passed to `Inbox::handle`
+    /// - `actor`: the actor who did this activity
+    /// - `id`: the ID of this activity
+    fn activity(self, ctx: C, actor: A, id: &str) -> Result<Self::Output, Self::Error>;
+}
+
+/// Should be implemented by anything representing an ActivityPub object.
+///
+/// # Type parameters
+///
+/// - `A`: the actor type
+/// - `V`: the ActivityPub verb/activity
+/// - `O`: the ActivityPub type of the Object for this activity (usually the type corresponding to `Self`)
+/// - `C`: the context needed to handle the activity (usually a database connection)
+///
+/// # Example
+///
+/// An implementation of AsObject that handles Note creation by an Account model,
+/// representing the Note by a Message type, without any specific context.
+///
+/// ```rust
+/// # extern crate activitypub;
+/// # use activitypub::{activity::Create, actor::Person, object::Note};
+/// # use plume_common::activity_pub::inbox::{AsActor, AsObject, FromId};
+/// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
+/// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
+/// # use once_cell::sync::Lazy;
+/// #
+/// # static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+/// #
+/// # struct MySigner {
+/// #     public_key: String,
+/// #     private_key: String,
+/// # }
+/// #
+/// # impl MySigner {
+/// #     fn new() -> Self {
+/// #         let (pub_key, priv_key) = gen_keypair();
+/// #         Self {
+/// #             public_key: String::from_utf8(pub_key).unwrap(),
+/// #             private_key: String::from_utf8(priv_key).unwrap(),
+/// #         }
+/// #     }
+/// # }
+/// #
+/// # impl Signer for MySigner {
+/// #     fn get_key_id(&self) -> String {
+/// #         "mysigner".into()
+/// #     }
+/// #
+/// #     fn sign(&self, to_sign: &str) -> SignResult<Vec<u8>> {
+/// #         let key = PKey::from_rsa(Rsa::private_key_from_pem(self.private_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut signer = openssl::sign::Signer::new(MessageDigest::sha256(), &key).unwrap();
+/// #         signer.update(to_sign.as_bytes()).unwrap();
+/// #         signer.sign_to_vec().map_err(|_| SignError())
+/// #     }
+/// #
+/// #     fn verify(&self, data: &str, signature: &[u8]) -> SignResult<bool> {
+/// #         let key = PKey::from_rsa(Rsa::public_key_from_pem(self.public_key.as_ref()).unwrap())
+/// #             .unwrap();
+/// #         let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
+/// #         verifier.update(data.as_bytes()).unwrap();
+/// #         verifier.verify(&signature).map_err(|_| SignError())
+/// #     }
+/// # }
+/// #
+/// # struct Account;
+/// # impl FromId<()> for Account {
+/// #     type Error = ();
+/// #     type Object = Person;
+/// #
+/// #     fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+/// #         Ok(Account)
+/// #     }
+/// #
+/// #     fn from_activity(_: &(), obj: Person) -> Result<Self, Self::Error> {
+/// #         Ok(Account)
+/// #     }
+/// #
+/// #     fn get_sender() -> &'static dyn Signer {
+/// #         &*MY_SIGNER
+/// #     }
+/// # }
+/// # impl AsActor<()> for Account {
+/// #    fn get_inbox_url(&self) -> String {
+/// #        String::new()
+/// #    }
+/// #    fn is_local(&self) -> bool { false }
+/// # }
+/// #[derive(Debug)]
+/// struct Message {
+///     text: String,
+/// }
+///
+/// impl FromId<()> for Message {
+///     type Error = ();
+///     type Object = Note;
+///
+///     fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+///         Ok(Message { text: "From DB".into() })
+///     }
+///
+///     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
+///         Ok(Message { text: obj.object_props.content_string().map_err(|_| ())? })
+///     }
+///
+///     fn get_sender() -> &'static dyn Signer {
+///         &*MY_SIGNER
+///     }
+/// }
+///
+/// impl AsObject<Account, Create, ()> for Message {
+///     type Error = ();
+///     type Output = ();
+///
+///     fn activity(self, _: (), _actor: Account, _id: &str) -> Result<(), ()> {
+///         println!("New Note: {:?}", self);
+///         Ok(())
+///     }
+/// }
+/// ```
+pub trait AsObject07<A, V, C>
+where
+    V: activitystreams::markers::Activity,
 {
     /// What kind of error is returned when something fails
     type Error;
