@@ -834,6 +834,15 @@ mod tests {
         gen_keypair, Error as SignError, Result as SignResult, Signer,
     };
     use activitypub::{activity::*, actor::Person, object::Note};
+    use activitystreams::{
+        activity::{
+            Announce as Announce07, Create as Create07, Delete as Delete07, Like as Like07,
+        },
+        actor::Person as Person07,
+        base::Base,
+        object::Note as Note07,
+        prelude::*,
+    };
     use once_cell::sync::Lazy;
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
 
@@ -887,6 +896,22 @@ mod tests {
 
         fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
             Ok(MyActor)
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
+        }
+    }
+    impl FromId07<()> for MyActor {
+        type Error = ();
+        type Object = Person07;
+
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+            Ok(Self)
+        }
+
+        fn from_activity(_: &(), _obj: Person07) -> Result<Self, Self::Error> {
+            Ok(Self)
         }
 
         fn get_sender() -> &'static dyn Signer {
@@ -961,6 +986,63 @@ mod tests {
         }
     }
 
+    struct MyObject07;
+    impl FromId07<()> for MyObject07 {
+        type Error = ();
+        type Object = Note07;
+
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+            Ok(Self)
+        }
+
+        fn from_activity(_: &(), _obj: Note07) -> Result<Self, Self::Error> {
+            Ok(Self)
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
+        }
+    }
+    impl AsObject07<MyActor, Create07, &()> for MyObject07 {
+        type Error = ();
+        type Output = ();
+
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+            println!("MyActor is creating a Note");
+            Ok(())
+        }
+    }
+
+    impl AsObject07<MyActor, Like07, &()> for MyObject07 {
+        type Error = ();
+        type Output = ();
+
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+            println!("MyActor is liking a Note");
+            Ok(())
+        }
+    }
+
+    impl AsObject07<MyActor, Delete07, &()> for MyObject07 {
+        type Error = ();
+        type Output = ();
+
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+            println!("MyActor is deleting a Note");
+            Ok(())
+        }
+    }
+
+    impl AsObject07<MyActor, Announce07, &()> for MyObject07 {
+        type Error = ();
+        type Output = ();
+
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+            println!("MyActor is announcing a Note");
+            Ok(())
+        }
+    }
+
     fn build_create() -> Create {
         let mut act = Create::default();
         act.object_props
@@ -980,11 +1062,33 @@ mod tests {
         act
     }
 
+    fn build_create07() -> Create07 {
+        let mut person = Person07::new();
+        person.set_id("https://test.ap/actor".parse().unwrap());
+        let mut note = Note07::new();
+        note.set_id("https://test.ap/note".parse().unwrap());
+        let mut act = Create07::new(
+            Base::retract(person).unwrap().into_generic().unwrap(),
+            Base::retract(note).unwrap().into_generic().unwrap(),
+        );
+        act.set_id("https://test.ap/activity".parse().unwrap());
+        act
+    }
+
     #[test]
     fn test_inbox_basic() {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
             .with::<MyActor, Create, MyObject>(None)
+            .done();
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn test_inbox_basic07() {
+        let act = serde_json::to_value(build_create07()).unwrap();
+        let res: Result<(), ()> = Inbox::handle(&(), act)
+            .with07::<MyActor, Create07, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -1002,12 +1106,35 @@ mod tests {
     }
 
     #[test]
+    fn test_inbox_multi_handlers07() {
+        let act = serde_json::to_value(build_create()).unwrap();
+        let res: Result<(), ()> = Inbox::handle(&(), act)
+            .with07::<MyActor, Announce07, MyObject07>(None)
+            .with07::<MyActor, Delete07, MyObject07>(None)
+            .with07::<MyActor, Create07, MyObject07>(None)
+            .with07::<MyActor, Like07, MyObject07>(None)
+            .done();
+        assert!(res.is_ok());
+    }
+
+    #[test]
     fn test_inbox_failure() {
         let act = serde_json::to_value(build_create()).unwrap();
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
             .with::<MyActor, Announce, MyObject>(None)
             .with::<MyActor, Like, MyObject>(None)
+            .done();
+        assert!(res.is_err());
+    }
+
+    #[test]
+    fn test_inbox_failure07() {
+        let act = serde_json::to_value(build_create07()).unwrap();
+        // Create is not handled by this inbox
+        let res: Result<(), ()> = Inbox::handle(&(), act)
+            .with07::<MyActor, Announce07, MyObject07>(None)
+            .with07::<MyActor, Like07, MyObject07>(None)
             .done();
         assert!(res.is_err());
     }
@@ -1054,6 +1181,38 @@ mod tests {
         }
     }
 
+    impl FromId07<()> for FailingActor {
+        type Error = ();
+        type Object = Person07;
+
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+            Err(())
+        }
+
+        fn from_activity(_: &(), _obj: Self::Object) -> Result<Self, Self::Error> {
+            Err(())
+        }
+
+        fn get_sender() -> &'static dyn Signer {
+            &*MY_SIGNER
+        }
+    }
+
+    impl AsObject07<FailingActor, Create07, &()> for MyObject07 {
+        type Error = ();
+        type Output = ();
+
+        fn activity(
+            self,
+            _: &(),
+            _actor: FailingActor,
+            _id: &str,
+        ) -> Result<Self::Output, Self::Error> {
+            println!("FailingActor is creating a Note");
+            Ok(())
+        }
+    }
+
     #[test]
     fn test_inbox_actor_failure() {
         let act = serde_json::to_value(build_create()).unwrap();
@@ -1066,6 +1225,22 @@ mod tests {
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
             .with::<FailingActor, Create, MyObject>(None)
             .with::<MyActor, Create, MyObject>(None)
+            .done();
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn test_inbox_actor_failure07() {
+        let act = serde_json::to_value(build_create07()).unwrap();
+
+        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
+            .with07::<FailingActor, Create07, MyObject07>(None)
+            .done();
+        assert!(res.is_err());
+
+        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
+            .with07::<FailingActor, Create07, MyObject07>(None)
+            .with07::<MyActor, Create07, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
