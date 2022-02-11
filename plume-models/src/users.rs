@@ -11,6 +11,7 @@ use activitypub::{
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
+use activitystreams::{actor::ApActor, object::AsApObject, prelude::*};
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use ldap3::{LdapConn, Scope, SearchEntry};
@@ -22,10 +23,11 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, FromId},
+        inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
-        ActivityStream, ApSignature, Id, IntoId, PublicKey, PUBLIC_VISIBILITY,
+        ActivityStream, ApSignature, CustomPerson as CustomPerson07, Id, IntoId, PublicKey,
+        PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -1021,6 +1023,23 @@ impl FromId<DbConn> for User {
     }
 
     fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for User {
+    type Error = Error;
+    type Object = CustomPerson07;
+
+    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
+    }
+
+    fn from_activity07(conn: &DbConn, acct: CustomPerson07) -> Result<Self> {
+        let url = Url::parse(acct.ap_object_ref().id()?)?;
+    }
+
+    fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
