@@ -1,8 +1,8 @@
 use activitypub::{Activity, Link, Object};
 use activitystreams::{
-    activity::AsActivity,
     actor::{ApActor, Group, Person},
     iri_string::types::IriString,
+    markers::Activity as Activity07,
     object::{ApObject, Article},
     unparsed::UnparsedMutExt,
 };
@@ -196,7 +196,7 @@ where
 pub fn broadcast07<S, T, A, K, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
 where
     S: sign::Signer,
-    A: AsActivity<K> + serde::Serialize,
+    A: Activity07 + serde::Serialize,
     T: inbox::AsActor<C>,
 {
     let boxes = to
