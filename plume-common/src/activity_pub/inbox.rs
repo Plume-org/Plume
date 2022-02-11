@@ -301,7 +301,7 @@ where
                 }
 
                 // Transform this actor to a model (see FromId for details about the from_id function)
-                let actor = match A::from_id(
+                let actor = match A::from_id07(
                     ctx,
                     &actor_id,
                     serde_json::from_value(act["actor"].clone()).ok(),
@@ -322,7 +322,7 @@ where
                     Some(x) => x,
                     None => return Self::NotHandled(ctx, act, InboxError::InvalidObject(None)),
                 };
-                let obj = match M::from_id(
+                let obj = match M::from_id07(
                     ctx,
                     &obj_id,
                     serde_json::from_value(act["object"].clone()).ok(),
@@ -338,7 +338,7 @@ where
                 };
 
                 // Handle the activity
-                match obj.activity(ctx, actor, act_id) {
+                match obj.activity07(ctx, actor, act_id) {
                     Ok(res) => Self::Handled(res.into()),
                     Err(e) => Self::Failed(e),
                 }
@@ -487,28 +487,28 @@ pub trait FromId07<C>: Sized {
     /// - `id`: the ActivityPub ID of the object to find
     /// - `object`: optional object that will be used if the object was not found in the database
     ///   If absent, the ID will be dereferenced.
-    fn from_id(
+    fn from_id07(
         ctx: &C,
         id: &str,
         object: Option<Self::Object>,
         proxy: Option<&reqwest::Proxy>,
     ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
-        match Self::from_db(ctx, id) {
+        match Self::from_db07(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
-                Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
-                None => Self::from_activity(ctx, Self::deref(id, proxy.cloned())?)
+                Some(o) => Self::from_activity07(ctx, o).map_err(|e| (None, e)),
+                None => Self::from_activity07(ctx, Self::deref07(id, proxy.cloned())?)
                     .map_err(|e| (None, e)),
             },
         }
     }
 
     /// Dereferences an ID
-    fn deref(
+    fn deref07(
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        request::get(id, Self::get_sender(), proxy)
+        request::get(id, Self::get_sender07(), proxy)
             .map_err(|_| (None, InboxError::DerefError))
             .and_then(|mut r| {
                 let json: serde_json::Value = r
@@ -521,12 +521,12 @@ pub trait FromId07<C>: Sized {
     }
 
     /// Builds a `Self` from its ActivityPub representation
-    fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
+    fn from_activity07(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
 
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
-    fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+    fn from_db07(ctx: &C, id: &str) -> Result<Self, Self::Error>;
 
-    fn get_sender() -> &'static dyn Signer;
+    fn get_sender07() -> &'static dyn Signer;
 }
 
 /// Should be implemented by anything representing an ActivityPub actor.
@@ -824,7 +824,7 @@ where
     /// - `ctx`: the context passed to `Inbox::handle`
     /// - `actor`: the actor who did this activity
     /// - `id`: the ID of this activity
-    fn activity(self, ctx: C, actor: A, id: &str) -> Result<Self::Output, Self::Error>;
+    fn activity07(self, ctx: C, actor: A, id: &str) -> Result<Self::Output, Self::Error>;
 }
 
 #[cfg(test)]
@@ -906,15 +906,15 @@ mod tests {
         type Error = ();
         type Object = Person07;
 
-        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+        fn from_db07(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
-        fn from_activity(_: &(), _obj: Person07) -> Result<Self, Self::Error> {
+        fn from_activity07(_: &(), _obj: Person07) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
-        fn get_sender() -> &'static dyn Signer {
+        fn get_sender07() -> &'static dyn Signer {
             &*MY_SIGNER
         }
     }
@@ -991,15 +991,15 @@ mod tests {
         type Error = ();
         type Object = Note07;
 
-        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+        fn from_db07(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
-        fn from_activity(_: &(), _obj: Note07) -> Result<Self, Self::Error> {
+        fn from_activity07(_: &(), _obj: Note07) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
-        fn get_sender() -> &'static dyn Signer {
+        fn get_sender07() -> &'static dyn Signer {
             &*MY_SIGNER
         }
     }
@@ -1007,7 +1007,12 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity07(
+            self,
+            _: &(),
+            _actor: MyActor,
+            _id: &str,
+        ) -> Result<Self::Output, Self::Error> {
             println!("MyActor is creating a Note");
             Ok(())
         }
@@ -1017,7 +1022,12 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity07(
+            self,
+            _: &(),
+            _actor: MyActor,
+            _id: &str,
+        ) -> Result<Self::Output, Self::Error> {
             println!("MyActor is liking a Note");
             Ok(())
         }
@@ -1027,7 +1037,12 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity07(
+            self,
+            _: &(),
+            _actor: MyActor,
+            _id: &str,
+        ) -> Result<Self::Output, Self::Error> {
             println!("MyActor is deleting a Note");
             Ok(())
         }
@@ -1037,7 +1052,12 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
+        fn activity07(
+            self,
+            _: &(),
+            _actor: MyActor,
+            _id: &str,
+        ) -> Result<Self::Output, Self::Error> {
             println!("MyActor is announcing a Note");
             Ok(())
         }
@@ -1185,15 +1205,15 @@ mod tests {
         type Error = ();
         type Object = Person07;
 
-        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
+        fn from_db07(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Err(())
         }
 
-        fn from_activity(_: &(), _obj: Self::Object) -> Result<Self, Self::Error> {
+        fn from_activity07(_: &(), _obj: Self::Object) -> Result<Self, Self::Error> {
             Err(())
         }
 
-        fn get_sender() -> &'static dyn Signer {
+        fn get_sender07() -> &'static dyn Signer {
             &*MY_SIGNER
         }
     }
@@ -1202,7 +1222,7 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity(
+        fn activity07(
             self,
             _: &(),
             _actor: FailingActor,
