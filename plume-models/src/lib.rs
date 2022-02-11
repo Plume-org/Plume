@@ -127,6 +127,12 @@ impl From<activitypub::Error> for Error {
     }
 }
 
+impl From<activitystreams::checked::CheckError> for Error {
+    fn from(_: activitystreams::checked::CheckError) -> Error {
+        Error::MissingApProperty
+    }
+}
+
 impl From<webfinger::WebfingerError> for Error {
     fn from(_: webfinger::WebfingerError) -> Self {
         Error::Webfinger
