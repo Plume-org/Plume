@@ -1674,6 +1674,27 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn outbox_collection07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_pages, users, _blogs) = fill_pages(&conn);
+            let user = &users[0];
+            let act = user.outbox_collection07(&conn)?;
+
+            let expected = json!({
+                "first": "https://plu.me/@/admin/outbox?page=1",
+                "last": "https://plu.me/@/admin/outbox?page=5",
+                "totalItems": 51,
+                "type": "OrderedCollection",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn outbox_collection_page() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
