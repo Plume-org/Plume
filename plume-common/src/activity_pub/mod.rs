@@ -446,15 +446,12 @@ pub trait ToAsUri {
 impl ToAsUri for OneOrMany<AnyBase> {
     fn to_as_uri(&self) -> Option<String> {
         self.as_one()
-            .and_then(|prop| prop.as_xsd_any_uri().map(|uri| uri.to_string()))
+            .and_then(|prop| prop.as_xsd_any_uri())
             .or_else(|| {
-                self.as_many().and_then(|props| {
-                    props
-                        .iter()
-                        .next()
-                        .and_then(|prop| prop.as_xsd_any_uri().map(|uri| uri.to_string()))
-                })
+                self.as_many()
+                    .and_then(|props| props.iter().next().and_then(|prop| prop.as_xsd_any_uri()))
             })
+            .map(|uri| uri.to_string())
     }
 }
 
