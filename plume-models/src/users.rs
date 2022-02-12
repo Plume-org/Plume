@@ -31,7 +31,7 @@ use plume_common::{
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, CustomPerson as CustomPerson07, Id, IntoId, PublicKey,
-        PUBLIC_VISIBILITY,
+        ToAsString, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -1053,45 +1053,20 @@ impl FromId07<DbConn> for User {
         let summary = acct
             .object_ref()
             .summary()
-            .and_then(|prop| {
-                if let Some(p) = prop.as_one() {
-                    p.as_xsd_string()
-                        .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
-                } else if let Some(ps) = prop.as_many() {
-                    ps.iter().next().and_then(|p| {
-                        p.as_xsd_string()
-                            .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
-                    })
-                } else {
-                    None
-                }
-            })
+            .and_then(|prop| prop.to_as_string())
             .unwrap_or_default();
         let mut new_user = NewUser {
             display_name: acct
                 .object_ref()
                 .name()
-                .and_then(|prop| {
-                    if let Some(p) = prop.as_one() {
-                        p.as_xsd_string()
-                            .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
-                    } else if let Some(ps) = prop.as_many() {
-                        ps.iter().next().and_then(|p| {
-                            p.as_xsd_string()
-                                .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
-                        })
-                    } else {
-                        None
-                    }
-                })
-                .unwrap_or(&username)
-                .to_string(),
-            username: username.to_string(),
+                .and_then(|prop| prop.to_as_string())
+                .unwrap_or_else(|| username.clone()),
+            username: username.clone(),
             outbox_url: actor.outbox()?.ok_or(Error::MissingApProperty)?.to_string(),
             inbox_url: actor.inbox()?.to_string(),
             role: 2,
-            summary: summary.to_string(),
-            summary_html: SafeString::new(summary),
+            summary_html: SafeString::new(&summary),
+            summary,
             public_key: acct.ext_one.public_key.public_key_pem.to_string(),
             shared_inbox_url: actor
                 .endpoints()?
@@ -1150,7 +1125,7 @@ impl FromId07<DbConn> for User {
         })?;
         new_user.instance_id = instance.id;
         new_user.fqn = if instance.local {
-            username.to_string()
+            username
         } else {
             format!("{}@{}", username, instance.public_domain)
         };
