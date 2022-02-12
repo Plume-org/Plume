@@ -11,7 +11,11 @@ use activitypub::{
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
-use activitystreams::{actor::ApActor, object::AsApObject, prelude::*};
+use activitystreams::{
+    actor::AsApActor,
+    object::{AsApObject, AsObject as _},
+    prelude::*,
+};
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use ldap3::{LdapConn, Scope, SearchEntry};
@@ -1036,7 +1040,133 @@ impl FromId07<DbConn> for User {
     }
 
     fn from_activity07(conn: &DbConn, acct: CustomPerson07) -> Result<Self> {
-        let url = Url::parse(acct.ap_object_ref().id()?)?;
+        let actor = acct.ap_actor_ref();
+        let username = actor
+            .preferred_username()
+            .ok_or(Error::MissingApProperty)?
+            .to_string();
+
+        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+            return Err(Error::InvalidValue);
+        }
+
+        let summary = acct
+            .object_ref()
+            .summary()
+            .and_then(|prop| {
+                if let Some(p) = prop.as_one() {
+                    p.as_xsd_string()
+                        .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
+                } else if let Some(ps) = prop.as_many() {
+                    ps.iter().next().and_then(|p| {
+                        p.as_xsd_string()
+                            .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
+                    })
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_default();
+        let mut new_user = NewUser {
+            display_name: acct
+                .object_ref()
+                .name()
+                .and_then(|prop| {
+                    if let Some(p) = prop.as_one() {
+                        p.as_xsd_string()
+                            .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
+                    } else if let Some(ps) = prop.as_many() {
+                        ps.iter().next().and_then(|p| {
+                            p.as_xsd_string()
+                                .or_else(|| p.as_rdf_lang_string().map(|ls| ls.value.as_str()))
+                        })
+                    } else {
+                        None
+                    }
+                })
+                .unwrap_or(&username)
+                .to_string(),
+            username: username.to_string(),
+            outbox_url: actor.outbox()?.ok_or(Error::MissingApProperty)?.to_string(),
+            inbox_url: actor.inbox()?.to_string(),
+            role: 2,
+            summary: summary.to_string(),
+            summary_html: SafeString::new(summary),
+            public_key: acct.ext_one.public_key.public_key_pem.to_string(),
+            shared_inbox_url: actor
+                .endpoints()?
+                .and_then(|e| e.shared_inbox.map(|inbox| inbox.to_string())),
+            followers_endpoint: actor
+                .followers()?
+                .ok_or(Error::MissingApProperty)?
+                .to_string(),
+            ..NewUser::default()
+        };
+
+        let avatar_id = if let Some(icon) = acct.object_ref().icon() {
+            if let Some(prop) = icon.as_one() {
+                prop.as_xsd_any_uri().map(|uri| uri.to_string())
+            } else if let Some(prop) = icon.as_many() {
+                prop.iter()
+                    .next()
+                    .and_then(|p| p.as_xsd_any_uri())
+                    .map(|uri| uri.to_string())
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
+        let (ap_url, inst) = {
+            let any_base = acct.into_any_base()?;
+            let id = any_base.id().ok_or(Error::MissingApProperty)?;
+            (
+                id.to_string(),
+                id.authority_components()
+                    .ok_or(Error::Url)?
+                    .host()
+                    .to_string(),
+            )
+        };
+        new_user.ap_url = ap_url;
+
+        let instance = Instance::find_by_domain(conn, &inst).or_else(|_| {
+            Instance::insert(
+                conn,
+                NewInstance {
+                    name: inst.to_owned(),
+                    public_domain: inst.to_owned(),
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: SafeString::new(""),
+                    short_description: SafeString::new(""),
+                    default_license: String::new(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new(),
+                },
+            )
+        })?;
+        new_user.instance_id = instance.id;
+        new_user.fqn = if instance.local {
+            username.to_string()
+        } else {
+            format!("{}@{}", username, instance.public_domain)
+        };
+
+        let user = User::insert(conn, new_user)?;
+        if let Some(avatar_id) = avatar_id {
+            let avatar = Media::save_remote(conn, avatar_id, &user);
+
+            if let Ok(avatar) = avatar {
+                if let Err(e) = user.set_avatar(conn, avatar.id) {
+                    tracing::error!("{:?}", e);
+                }
+            }
+        }
+
+        Ok(user)
     }
 
     fn get_sender07() -> &'static dyn Signer {
