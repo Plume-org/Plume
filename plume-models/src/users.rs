@@ -437,6 +437,9 @@ impl User {
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
         Ok(ActivityStream::new(self.outbox_collection(conn)?))
     }
+    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection07>> {
+        Ok(ActivityStream::new(self.outbox_collection07(conn)?))
+    }
     pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
         let mut coll = OrderedCollection::default();
         let first = &format!("{}?page=1", &self.outbox_url);
