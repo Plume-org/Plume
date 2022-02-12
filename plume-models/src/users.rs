@@ -11,7 +11,9 @@ use activitypub::{
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
-use activitystreams::{actor::AsApActor, object::AsObject as _, prelude::*};
+use activitystreams::{
+    activity::Delete as Delete07, actor::AsApActor, object::AsObject as _, prelude::*,
+};
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use ldap3::{LdapConn, Scope, SearchEntry};
@@ -1153,6 +1155,19 @@ impl AsObject<User, Delete, &DbConn> for User {
     type Output = ();
 
     fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        if self.id == actor.id {
+            self.delete(conn).map(|_| ())
+        } else {
+            Err(Error::Unauthorized)
+        }
+    }
+}
+
+impl AsObject07<User, Delete07, &DbConn> for User {
+    type Error = Error;
+    type Output = ();
+
+    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
             self.delete(conn).map(|_| ())
         } else {
