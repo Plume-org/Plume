@@ -1074,11 +1074,7 @@ impl FromId07<DbConn> for User {
             ..NewUser::default()
         };
 
-        let avatar_id = if let Some(icon) = acct.object_ref().icon() {
-            icon.to_as_uri()
-        } else {
-            None
-        };
+        let avatar_id = acct.object_ref().icon().and_then(|icon| icon.to_as_uri());
 
         let (ap_url, inst) = {
             let any_base = acct.into_any_base()?;
