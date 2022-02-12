@@ -414,13 +414,7 @@ pub trait ToAsString {
 
 impl ToAsString for OneOrMany<&AnyString> {
     fn to_as_string(&self) -> Option<String> {
-        self.as_one()
-            .and_then(|prop| prop.as_as_str())
-            .or_else(|| {
-                self.as_many()
-                    .and_then(|props| props.iter().next().and_then(|prop| prop.as_as_str()))
-            })
-            .map(|s| s.to_string())
+        self.as_as_str().map(|s| s.to_string())
     }
 }
 
