@@ -27,7 +27,7 @@ use plume_common::{
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, CustomPerson as CustomPerson07, Id, IntoId, PublicKey,
-        ToAsString, PUBLIC_VISIBILITY,
+        ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -1075,16 +1075,7 @@ impl FromId07<DbConn> for User {
         };
 
         let avatar_id = if let Some(icon) = acct.object_ref().icon() {
-            if let Some(prop) = icon.as_one() {
-                prop.as_xsd_any_uri().map(|uri| uri.to_string())
-            } else if let Some(prop) = icon.as_many() {
-                prop.iter()
-                    .next()
-                    .and_then(|p| p.as_xsd_any_uri())
-                    .map(|uri| uri.to_string())
-            } else {
-                None
-            }
+            icon.to_as_uri()
         } else {
             None
         };
