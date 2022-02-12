@@ -11,11 +11,7 @@ use activitypub::{
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
-use activitystreams::{
-    actor::AsApActor,
-    object::{AsApObject, AsObject as _},
-    prelude::*,
-};
+use activitystreams::{actor::AsApActor, object::AsObject as _, prelude::*};
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
 use ldap3::{LdapConn, Scope, SearchEntry};
