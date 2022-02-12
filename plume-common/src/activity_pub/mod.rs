@@ -1,6 +1,7 @@
 use activitypub::{Activity, Link, Object};
 use activitystreams::{
     actor::{ApActor, Group, Person},
+    base::AnyBase,
     iri_string::types::IriString,
     markers::Activity as Activity07,
     object::{ApObject, Article},
@@ -435,6 +436,25 @@ impl AsAsStr for OneOrMany<&AnyString> {
             self.as_many()
                 .and_then(|props| props.iter().next().and_then(|prop| prop.as_as_str()))
         })
+    }
+}
+
+pub trait ToAsUri {
+    fn to_as_uri(&self) -> Option<String>;
+}
+
+impl ToAsUri for OneOrMany<AnyBase> {
+    fn to_as_uri(&self) -> Option<String> {
+        if let Some(prop) = self.as_one() {
+            prop.as_xsd_any_uri().map(|uri| uri.to_string())
+        } else if let Some(prop) = self.as_many() {
+            prop.iter()
+                .next()
+                .and_then(|p| p.as_xsd_any_uri())
+                .map(|uri| uri.to_string())
+        } else {
+            None
+        }
     }
 }
 
