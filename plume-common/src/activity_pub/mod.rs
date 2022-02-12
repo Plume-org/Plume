@@ -435,6 +435,15 @@ impl AsAsStr for &AnyString {
     }
 }
 
+impl AsAsStr for OneOrMany<&AnyString> {
+    fn as_as_str(&self) -> Option<&str> {
+        self.as_one().and_then(|prop| prop.as_as_str()).or_else(|| {
+            self.as_many()
+                .and_then(|props| props.iter().next().and_then(|prop| prop.as_as_str()))
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
