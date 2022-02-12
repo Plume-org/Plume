@@ -415,13 +415,9 @@ pub trait ToAsString {
 impl ToAsString for OneOrMany<&AnyString> {
     fn to_as_string(&self) -> Option<String> {
         if let Some(prop) = self.as_one() {
-            prop.as_xsd_string()
-                .or_else(|| prop.as_rdf_lang_string().map(|ls| ls.value.as_str()))
+            prop.as_as_str()
         } else if let Some(props) = self.as_many() {
-            props.iter().next().and_then(|prop| {
-                prop.as_xsd_string()
-                    .or_else(|| prop.as_rdf_lang_string().map(|ls| ls.value.as_str()))
-            })
+            props.iter().next().and_then(|prop| prop.as_as_str())
         } else {
             None
         }
