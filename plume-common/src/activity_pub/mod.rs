@@ -429,6 +429,17 @@ impl ToAsString for OneOrMany<&AnyString> {
     }
 }
 
+trait AsAsStr {
+    fn as_as_str(&self) -> Option<&str>;
+}
+
+impl AsAsStr for &AnyString {
+    fn as_as_str(&self) -> Option<&str> {
+        self.as_xsd_string()
+            .or_else(|| self.as_rdf_lang_string().map(|ls| ls.value.as_str()))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
