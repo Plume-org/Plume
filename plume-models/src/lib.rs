@@ -16,6 +16,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
 
+use activitystreams::iri_string;
 pub use lettre;
 pub use lettre::smtp;
 use once_cell::sync::Lazy;
@@ -96,6 +97,12 @@ impl From<diesel::result::Error> for Error {
 
 impl From<url::ParseError> for Error {
     fn from(_: url::ParseError) -> Self {
+        Error::Url
+    }
+}
+
+impl From<iri_string::validate::Error> for Error {
+    fn from(_: iri_string::validate::Error) -> Self {
         Error::Url
     }
 }
