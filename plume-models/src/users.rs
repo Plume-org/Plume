@@ -12,7 +12,9 @@ use activitypub::{
     Activity, CustomObject, Endpoint,
 };
 use activitystreams::{
-    activity::Delete as Delete07, actor::AsApActor, object::AsObject as _, prelude::*,
+    activity::Delete as Delete07, actor::AsApActor,
+    collection::OrderedCollection as OrderedCollection07, iri_string::types::IriString,
+    object::AsObject as _, prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
@@ -447,6 +449,19 @@ impl User {
         coll.collection_props.set_last_link(Id::new(last))?;
         coll.collection_props
             .set_total_items_u64(self.get_activities_count(conn) as u64)?;
+        Ok(coll)
+    }
+    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection07> {
+        let mut coll = OrderedCollection07::new();
+        let first = &format!("{}?page=1", &self.outbox_url);
+        let last = &format!(
+            "{}?page={}",
+            &self.outbox_url,
+            self.get_activities_count(conn) / i64::from(ITEMS_PER_PAGE) + 1
+        );
+        coll.set_first(first.parse::<IriString>()?);
+        coll.set_last(last.parse::<IriString>()?);
+        coll.set_total_items(self.get_activities_count(conn) as u64);
         Ok(coll)
     }
     pub fn outbox_page(
