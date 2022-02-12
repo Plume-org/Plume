@@ -313,15 +313,15 @@ pub struct PublicKey {
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ApSignature07 {
-    public_key: PublicKey07,
+    pub public_key: PublicKey07,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct PublicKey07 {
-    id: IriString,
-    owner: IriString,
-    public_key_pem: String,
+    pub id: IriString,
+    pub owner: IriString,
+    pub public_key_pem: String,
 }
 
 impl<U> UnparsedExtension<U> for ApSignature07
