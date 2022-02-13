@@ -1,4 +1,5 @@
 use activitypub::activity::*;
+use activitystreams::activity::Delete as Delete07;
 
 use crate::{
     comments::Comment,
@@ -53,7 +54,7 @@ pub fn inbox(conn: &DbConn, act: serde_json::Value) -> Result<InboxResult, Error
         .with::<User, Create, Post>(CONFIG.proxy())
         .with::<User, Delete, Comment>(CONFIG.proxy())
         .with::<User, Delete, Post>(CONFIG.proxy())
-        .with::<User, Delete, User>(CONFIG.proxy())
+        .with07::<User, Delete07, User>(CONFIG.proxy())
         .with::<User, Follow, User>(CONFIG.proxy())
         .with::<User, Like, Post>(CONFIG.proxy())
         .with::<User, Undo, Reshare>(CONFIG.proxy())
