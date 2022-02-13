@@ -12,9 +12,13 @@ use activitypub::{
     Activity, CustomObject, Endpoint,
 };
 use activitystreams::{
-    activity::Delete as Delete07, actor::AsApActor,
-    collection::OrderedCollection as OrderedCollection07, iri_string::types::IriString,
-    object::AsObject as _, prelude::*,
+    activity::Delete as Delete07,
+    actor::AsApActor,
+    actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
+    collection::OrderedCollection as OrderedCollection07,
+    iri_string::types::IriString,
+    object::{AsObject as _, Image as Image07},
+    prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
@@ -30,8 +34,8 @@ use plume_common::{
         inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
-        ActivityStream, ApSignature, CustomPerson as CustomPerson07, Id, IntoId, PublicKey,
-        ToAsString, ToAsUri, PUBLIC_VISIBILITY,
+        ActivityStream, ApSignature, ApSignature07, CustomPerson as CustomPerson07, Id, IntoId,
+        PublicKey, PublicKey07, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -806,6 +810,44 @@ impl User {
         }
 
         Ok(CustomPerson::new(actor, ap_signature))
+    }
+
+    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomPerson07> {
+        let mut actor = ApActor07::new(self.inbox_url.parse()?, Person07::new());
+        let ap_url = self.ap_url.parse::<IriString>()?;
+        actor.set_id(ap_url.clone());
+        actor.set_name(self.display_name.clone());
+        actor.set_summary(self.summary_html.get().clone());
+        actor.set_url(ap_url.clone());
+        actor.set_inbox(self.inbox_url.parse()?);
+        actor.set_outbox(self.outbox_url.parse()?);
+        actor.set_preferred_username(self.username.clone());
+        actor.set_followers(self.followers_endpoint.parse()?);
+
+        if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
+            let endpoints = Endpoints07 {
+                shared_inbox: Some(shared_inbox_url.parse::<IriString>()?),
+                ..Endpoints07::default()
+            };
+            actor.set_endpoints(endpoints);
+        }
+
+        let pub_key = PublicKey07 {
+            id: format!("{}#main-key", self.ap_url).parse()?,
+            owner: ap_url,
+            public_key_pem: self.public_key.clone(),
+        };
+        let ap_signature = ApSignature07 {
+            public_key: pub_key,
+        };
+
+        if let Some(avatar_id) = self.avatar_id {
+            let mut avatar = Image07::new();
+            avatar.set_url(Media::get(conn, avatar_id)?.url()?.parse::<IriString>()?);
+            actor.set_icon(avatar.into_any_base()?);
+        }
+
+        Ok(CustomPerson07::new(actor, ap_signature))
     }
 
     pub fn delete_activity(&self, conn: &Connection) -> Result<Delete> {
