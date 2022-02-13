@@ -1803,6 +1803,32 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn delete_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[1];
+            let act = user.delete_activity07(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": [],
+                "id": "https://plu.me/@/user/#delete",
+                "object": {
+                    "id": "https://plu.me/@/user/",
+                    "type": "Tombstone",
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Delete",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn outbox_collection() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
