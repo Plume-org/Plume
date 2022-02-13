@@ -15,7 +15,9 @@ use activitystreams::{
     activity::Delete as Delete07,
     actor::AsApActor,
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
-    collection::OrderedCollection as OrderedCollection07,
+    collection::{
+        OrderedCollection as OrderedCollection07, OrderedCollectionPage as OrderedCollectionPage07,
+    },
     iri_string::types::IriString,
     object::{AsObject as _, Image as Image07, Tombstone as Tombstone07},
     prelude::*,
@@ -478,6 +480,15 @@ impl User {
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         Ok(ActivityStream::new(
             self.outbox_collection_page(conn, (min, max))?,
+        ))
+    }
+    pub fn outbox_page07(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<ActivityStream<OrderedCollectionPage07>> {
+        Ok(ActivityStream::new(
+            self.outbox_collection_page07(conn, (min, max))?,
         ))
     }
     pub fn outbox_collection_page(
