@@ -1669,6 +1669,67 @@ pub(crate) mod tests {
             Ok(())
         });
     }
+    #[test]
+    fn to_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[0];
+            let act = user.to_activity07(&conn)?;
+
+            let expected = json!({
+                "endpoints": {
+                    "sharedInbox": "https://plu.me/inbox"
+                },
+                "followers": "https://plu.me/@/admin/followers",
+                "id": "https://plu.me/@/admin/",
+                "inbox": "https://plu.me/@/admin/inbox",
+                "name": "The admin",
+                "outbox": "https://plu.me/@/admin/outbox",
+                "preferredUsername": "admin",
+                "publicKey": {
+                    "id": "https://plu.me/@/admin/#main-key",
+                    "owner": "https://plu.me/@/admin/",
+                    "publicKeyPem": user.public_key,
+                },
+                "summary": "<p dir=\"auto\">Hello there, I’m the admin</p>\n",
+                "type": "Person",
+                "url": "https://plu.me/@/admin/"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            let other = &users[2];
+            let other_act = other.to_activity07(&conn)?;
+            let expected_other = json!({
+                "endpoints": {
+                    "sharedInbox": "https://plu.me/inbox"
+                },
+                "followers": "https://plu.me/@/other/followers",
+                "icon": {
+                    "url": "https://plu.me/static/media/example.png",
+                    "type": "Image",
+                },
+                "id": "https://plu.me/@/other/",
+                "inbox": "https://plu.me/@/other/inbox",
+                "name": "Another user",
+                "outbox": "https://plu.me/@/other/outbox",
+                "preferredUsername": "other",
+                "publicKey": {
+                    "id": "https://plu.me/@/other/#main-key",
+                    "owner": "https://plu.me/@/other/",
+                    "publicKeyPem": other.public_key,
+                },
+                "summary": "<p dir=\"auto\">Hello there, I’m someone else</p>\n",
+                "type": "Person",
+                "url": "https://plu.me/@/other/"
+            });
+
+            assert_json_eq!(to_value(other_act)?, expected_other);
+
+            Ok(())
+        });
+    }
 
     #[test]
     fn delete_activity() {
