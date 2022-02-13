@@ -20,6 +20,7 @@ use activitystreams::{
         OrderedCollection as OrderedCollection07, OrderedCollectionPage as OrderedCollectionPage07,
     },
     iri_string::types::IriString,
+    markers::Activity as Activity07,
     object::{AsObject as _, Image as Image07, Tombstone as Tombstone07},
     prelude::*,
 };
@@ -547,6 +548,23 @@ impl User {
         Ok(coll)
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
+        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
+        let text = &res.text()?;
+        let json: serde_json::Value = serde_json::from_str(text)?;
+        let items = json["items"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .iter()
+            .filter_map(|j| serde_json::from_value(j.clone()).ok())
+            .collect::<Vec<T>>();
+
+        let next = json.get("next").map(|x| x.as_str().unwrap().to_owned());
+        Ok((items, next))
+    }
+    pub fn fetch_outbox_page07<T: Activity07 + serde::de::DeserializeOwned>(
+        &self,
+        url: &str,
+    ) -> Result<(Vec<T>, Option<String>)> {
         let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
