@@ -1605,6 +1605,32 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn self_federation07() {
+        let conn = db();
+        conn.test_transaction::<_, (), _>(|| {
+            let users = fill_database(&conn);
+
+            let ap_repr = users[0].to_activity07(&conn).unwrap();
+            users[0].delete(&conn).unwrap();
+            let user = User::from_activity07(&conn, ap_repr).unwrap();
+
+            assert_eq!(user.username, users[0].username);
+            assert_eq!(user.display_name, users[0].display_name);
+            assert_eq!(user.outbox_url, users[0].outbox_url);
+            assert_eq!(user.inbox_url, users[0].inbox_url);
+            assert_eq!(user.instance_id, users[0].instance_id);
+            assert_eq!(user.ap_url, users[0].ap_url);
+            assert_eq!(user.public_key, users[0].public_key);
+            assert_eq!(user.shared_inbox_url, users[0].shared_inbox_url);
+            assert_eq!(user.followers_endpoint, users[0].followers_endpoint);
+            assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
+            assert_eq!(user.fqn, users[0].fqn);
+            assert_eq!(user.summary_html, users[0].summary_html);
+            Ok(())
+        });
+    }
+
+    #[test]
     fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
