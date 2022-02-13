@@ -614,6 +614,42 @@ impl User {
         }
     }
 
+    pub fn fetch_outbox07<T: Activity07 + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
+        let mut res = get(
+            &self.outbox_url[..],
+            Self::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?;
+        let text = &res.text()?;
+        let json: serde_json::Value = serde_json::from_str(text)?;
+        if let Some(first) = json.get("first") {
+            let mut items: Vec<T> = Vec::new();
+            let mut next = first.as_str().unwrap().to_owned();
+            while let Ok((mut page, nxt)) = self.fetch_outbox_page07(&next) {
+                if page.is_empty() {
+                    break;
+                }
+                items.append(&mut page);
+                if let Some(n) = nxt {
+                    if n == next {
+                        break;
+                    }
+                    next = n;
+                } else {
+                    break;
+                }
+            }
+            Ok(items)
+        } else {
+            Ok(json["items"]
+                .as_array()
+                .unwrap_or(&vec![])
+                .iter()
+                .filter_map(|j| serde_json::from_value(j.clone()).ok())
+                .collect::<Vec<T>>())
+        }
+    }
+
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
         let mut res = get(
             &self.followers_endpoint[..],
