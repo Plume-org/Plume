@@ -17,7 +17,7 @@ use activitystreams::{
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
     collection::OrderedCollection as OrderedCollection07,
     iri_string::types::IriString,
-    object::{AsObject as _, Image as Image07},
+    object::{AsObject as _, Image as Image07, Tombstone as Tombstone07},
     prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
@@ -869,6 +869,25 @@ impl User {
                 .map(|f| Id::new(f.ap_url))
                 .collect(),
         )?;
+
+        Ok(del)
+    }
+
+    pub fn delete_activity07(&self, conn: &Connection) -> Result<Delete07> {
+        let mut tombstone = Tombstone07::new();
+        tombstone.set_id(self.ap_url.parse()?);
+
+        let mut del = Delete07::new(
+            self.ap_url.parse::<IriString>()?,
+            tombstone.into_any_base()?,
+        );
+        del.set_id(format!("{}#delete", self.ap_url).parse()?);
+        del.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        del.set_many_ccs(
+            self.get_followers(conn)?
+                .into_iter()
+                .filter_map(|f| f.ap_url.parse::<IriString>().ok()),
+        );
 
         Ok(del)
     }
