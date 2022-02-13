@@ -1930,4 +1930,25 @@ pub(crate) mod tests {
             Ok(())
         });
     }
+
+    #[test]
+    fn outbox_collection_page07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let users = fill_database(&conn);
+            let user = &users[0];
+            let act = user.outbox_collection_page07(&conn, (33, 36))?;
+
+            let expected = json!({
+                "items": [],
+                "partOf": "https://plu.me/@/admin/outbox",
+                "prev": "https://plu.me/@/admin/outbox?page=2",
+                "type": "OrderedCollectionPage",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
 }
