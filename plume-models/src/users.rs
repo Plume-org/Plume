@@ -15,6 +15,7 @@ use activitystreams::{
     activity::Delete as Delete07,
     actor::AsApActor,
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
+    base::AnyBase,
     collection::{
         OrderedCollection as OrderedCollection07, OrderedCollectionPage as OrderedCollectionPage07,
     },
@@ -516,6 +517,33 @@ impl User {
         coll.collection_props.items = serde_json::to_value(acts)?;
         coll.collection_page_props
             .set_part_of_link(Id::new(&self.outbox_url))?;
+        Ok(coll)
+    }
+    pub fn outbox_collection_page07(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<OrderedCollectionPage07> {
+        let acts = self.get_activities_page(conn, (min, max))?;
+        let n_acts = self.get_activities_count(conn);
+        let mut coll = OrderedCollectionPage07::new();
+        if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
+            coll.set_next(
+                format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE + 2)
+                    .parse::<IriString>()?,
+            );
+        }
+        if min > 0 {
+            coll.set_prev(
+                format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE)
+                    .parse::<IriString>()?,
+            );
+        }
+        coll.set_many_items(
+            acts.iter()
+                .filter_map(|value| AnyBase::from_arbitrary_json(value).ok()),
+        );
+        coll.set_part_of(self.outbox_url.parse::<IriString>()?);
         Ok(coll)
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
