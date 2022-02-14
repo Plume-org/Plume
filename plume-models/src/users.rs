@@ -15,7 +15,7 @@ use activitystreams::{
     activity::Delete as Delete07,
     actor::AsApActor,
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
-    base::AnyBase,
+    base::{AnyBase, Base},
     collection::{
         OrderedCollection as OrderedCollection07, OrderedCollectionPage as OrderedCollectionPage07,
     },
@@ -972,7 +972,7 @@ impl User {
 
         let mut del = Delete07::new(
             self.ap_url.parse::<IriString>()?,
-            tombstone.into_any_base()?,
+            Base::retract(tombstone)?.into_generic()?,
         );
         del.set_id(format!("{}#delete", self.ap_url).parse()?);
         del.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
