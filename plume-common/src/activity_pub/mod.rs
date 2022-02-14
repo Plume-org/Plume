@@ -423,19 +423,9 @@ trait AsAsStr {
     fn as_as_str(&self) -> Option<&str>;
 }
 
-impl AsAsStr for &AnyString {
-    fn as_as_str(&self) -> Option<&str> {
-        self.as_xsd_string()
-            .or_else(|| self.as_rdf_lang_string().map(|ls| ls.value.as_str()))
-    }
-}
-
 impl AsAsStr for OneOrMany<&AnyString> {
     fn as_as_str(&self) -> Option<&str> {
-        self.as_one().and_then(|prop| prop.as_as_str()).or_else(|| {
-            self.as_many()
-                .and_then(|props| props.iter().next().and_then(|prop| prop.as_as_str()))
-        })
+        self.iter().next().map(|prop| prop.as_str())
     }
 }
 
@@ -445,13 +435,9 @@ pub trait ToAsUri {
 
 impl ToAsUri for OneOrMany<AnyBase> {
     fn to_as_uri(&self) -> Option<String> {
-        self.as_one()
-            .and_then(|prop| prop.as_xsd_any_uri())
-            .or_else(|| {
-                self.as_many()
-                    .and_then(|props| props.iter().next().and_then(|prop| prop.as_xsd_any_uri()))
-            })
-            .map(|uri| uri.to_string())
+        self.iter()
+            .next()
+            .and_then(|prop| prop.as_xsd_any_uri().map(|uri| uri.to_string()))
     }
 }
 
