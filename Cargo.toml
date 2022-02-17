@@ -21,7 +21,7 @@ rocket_contrib = { version = "0.4.5", features = ["json"] }
 rocket_i18n = "0.4.1"
 scheduled-thread-pool = "0.2.2"
 serde = "1.0"
-serde_json = "1.0.70"
+serde_json = "1.0.79"
 shrinkwraprs = "0.3.0"
 validator = { version = "0.14", features = ["derive"] }
 webfinger = "0.4.1"
