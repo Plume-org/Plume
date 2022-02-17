@@ -319,7 +319,7 @@ version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "489d6c0ed21b11d038c31b6ceccca973e65d73ba3bd8ecb9a2babf5546164643"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "safemem",
 ]
 
@@ -329,7 +329,7 @@ version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b25d992356d2eb0ed82172f5248873db5560c4721f564b13cb5193bda5e668e"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
 ]
 
 [[package]]
@@ -400,7 +400,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe3ff3fc1de48c1ac2e3341c4df38b0d1bfb8fdf04632a187c8b75aaa319a7ab"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "cipher 0.3.0",
  "opaque-debug",
 ]
@@ -435,12 +435,6 @@ checksum = "72feb31ffc86498dacdbd0fcebb56138e7177a8cc5cea4516031d15ae85a742e"
 
 [[package]]
 name = "byteorder"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96c8b41881888cc08af32d47ac4edd52bc7fa27fef774be47a92443756451304"
-
-[[package]]
-name = "byteorder"
 version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
@@ -451,7 +445,7 @@ version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "206fdffcfa2df7cbe15601ef46c813fce0965eb3286db6b56c583b814b51c81c"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "either 1.6.1",
  "iovec",
 ]
@@ -1038,7 +1032,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b28135ecf6b7d446b43e27e225622a038cc4e2930a1022f51cdb97ada19b8e4d"
 dependencies = [
  "bitflags 1.3.2",
- "byteorder 1.4.3",
+ "byteorder",
  "chrono",
  "diesel_derives",
  "libsqlite3-sys",
@@ -1522,26 +1516,36 @@ dependencies = [
 
 [[package]]
 name = "gettext"
-version = "0.3.0"
-source = "git+https://github.com/Plume-org/gettext/?rev=294c54d74c699fbc66502b480a37cc66c1daa7f3#294c54d74c699fbc66502b480a37cc66c1daa7f3"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ebb594e753d5997e4be036e5a8cf048ab9414352870fb45c779557bbc9ba971"
 dependencies = [
- "byteorder 0.4.2",
+ "byteorder",
  "encoding",
 ]
 
 [[package]]
 name = "gettext-macros"
-version = "0.4.0"
-source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
+version = "0.6.0"
+source = "git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9#2227905fb949ee107053eeda982530407e51ae99"
 dependencies = [
  "gettext",
- "gettext-utils",
+ "gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "proc-macro2 1.0.36",
+ "quote 1.0.15",
+ "syn 1.0.86",
 ]
 
 [[package]]
 name = "gettext-utils"
 version = "0.1.0"
-source = "git+https://github.com/Plume-org/gettext-macros/?rev=a7c605f7edd6bfbfbfe7778026bfefd88d82db10#a7c605f7edd6bfbfbfe7778026bfefd88d82db10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "46dd079379f756f6a1ae74b051813e242893f84fbf6ac898bce827fc77958d70"
+
+[[package]]
+name = "gettext-utils"
+version = "0.1.0"
+source = "git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9#2227905fb949ee107053eeda982530407e51ae99"
 
 [[package]]
 name = "ghash"
@@ -1586,7 +1590,7 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "31477e35c699193e6af9d34765c8ccaaf750a9695844cc6a7a380259452e308d"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "chomp",
  "guid",
  "guid-parser",
@@ -1623,7 +1627,7 @@ version = "0.1.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a5b34c246847f938a410a03c5458c7fee2274436675e76d8b903c08efc29c462"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "bytes 0.4.12",
  "fnv",
  "futures 0.1.31",
@@ -2061,7 +2065,7 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a99b520993b21a6faab32643cf4726573dc18ca4cf2d48cbeb24d248c86c930"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "bytes 1.1.0",
  "nom 2.2.1",
 ]
@@ -2165,7 +2169,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "361efd98843cc0ccbdecbbf62feb9794a66d1c29758af8f45af34c140f7d2143"
 dependencies = [
  "bincode",
- "byteorder 1.4.3",
+ "byteorder",
  "encoding",
  "lindera-core",
  "lindera-dictionary",
@@ -2182,7 +2186,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c22c6a86b9be6871766dcfa1d333eae7d2331fed217df8c3798514496e0ae110"
 dependencies = [
  "bincode",
- "byteorder 1.4.3",
+ "byteorder",
  "encoding",
  "serde 1.0.136",
  "yada",
@@ -2195,7 +2199,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0eabe5730e9d20293e0ed8f295f60ebf656a173f6c129b69f37355a4879e6393"
 dependencies = [
  "bincode",
- "byteorder 1.4.3",
+ "byteorder",
  "lindera-core",
 ]
 
@@ -2206,7 +2210,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e69130ce218cacb40abad09b101f859bf464e44acb7b653c2118f90d706f404a"
 dependencies = [
  "bincode",
- "byteorder 1.4.3",
+ "byteorder",
  "flate2",
  "lindera-core",
  "lindera-ipadic-builder",
@@ -2222,7 +2226,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1484640839a69c383b9aa56a55a9f1be9f998a0293e9a9a135c13ff1af1f398b"
 dependencies = [
  "bincode",
- "byteorder 1.4.3",
+ "byteorder",
  "clap",
  "encoding",
  "glob",
@@ -2575,7 +2579,7 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d736ff882f0e85fe9689fb23db229616c4c00aee2b3ac282f666d8f20eb25d4a"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
 ]
 
 [[package]]
@@ -3066,7 +3070,7 @@ dependencies = [
  "dotenv",
  "gettext",
  "gettext-macros",
- "gettext-utils",
+ "gettext-utils 0.1.0 (git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9)",
  "guid-create",
  "lettre_email",
  "multipart",
@@ -3145,7 +3149,7 @@ dependencies = [
  "console_error_panic_hook",
  "gettext",
  "gettext-macros",
- "gettext-utils",
+ "gettext-utils 0.1.0 (git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9)",
  "js-sys",
  "lazy_static",
  "serde 1.0.136",
@@ -3888,8 +3892,9 @@ dependencies = [
 
 [[package]]
 name = "rocket_i18n"
-version = "0.4.0"
-source = "git+https://github.com/Plume-org/rocket_i18n?rev=e922afa7c366038b3433278c03b1456b346074f2#e922afa7c366038b3433278c03b1456b346074f2"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbf9f4c872b824ac0506557be9c66e0315d66d0e378d2ae02ee2e7b0fed2a338"
 dependencies = [
  "gettext",
  "rocket",
@@ -4254,7 +4259,7 @@ version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "30f86c7635fadf2814201a4f67efefb0007588ae7422ce299f354ab5c97f61ae"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "libc",
  "winapi 0.2.8",
  "ws2_32-sys",
@@ -4429,7 +4434,7 @@ dependencies = [
  "atomicwrites",
  "base64 0.12.3",
  "bitpacking",
- "byteorder 1.4.3",
+ "byteorder",
  "census",
  "chrono",
  "crc32fast",
@@ -4473,7 +4478,7 @@ checksum = "edca90bddda472f39fdc74a031d61d52b08b1de97f2a704afae726a8004abb0d"
 dependencies = [
  "base64 0.13.0",
  "bitpacking",
- "byteorder 1.4.3",
+ "byteorder",
  "census",
  "chrono",
  "crc32fast",
@@ -4513,7 +4518,7 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cb20cdc0d83e9184560bdde9cd60142dbb4af2e0f770e88fce45770495224205"
 dependencies = [
- "byteorder 1.4.3",
+ "byteorder",
  "regex-syntax 0.4.2",
  "utf8-ranges",
 ]
