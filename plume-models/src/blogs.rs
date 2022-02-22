@@ -644,8 +644,14 @@ impl NewBlog {
 pub(crate) mod tests {
     use super::*;
     use crate::{
-        blog_authors::*, instance::tests as instance_tests, medias::NewMedia, tests::db,
-        users::tests as usersTests, Connection as Conn,
+        blog_authors::*,
+        instance::tests as instance_tests,
+        medias::NewMedia,
+        post_authors::{NewPostAuthor, PostAuthor},
+        posts::{NewPost, Post},
+        tests::db,
+        users::tests as usersTests,
+        Connection as Conn, ITEMS_PER_PAGE,
     };
     use assert_json_diff::assert_json_eq;
     use diesel::Connection;
@@ -727,6 +733,37 @@ pub(crate) mod tests {
             },
         )
         .unwrap();
+
+        for i in 1..(ITEMS_PER_PAGE * 4 + 3) {
+            let title = format!("Post {}", i);
+            let content = format!("Content for post {}.", i);
+            let post = Post::insert(
+                conn,
+                NewPost {
+                    blog_id: blog1.id,
+                    slug: title.clone(),
+                    title: title.clone(),
+                    content: SafeString::new(&content),
+                    published: true,
+                    license: "CC-0".into(),
+                    creation_date: None,
+                    ap_url: format!("{}/{}", blog1.ap_url, title),
+                    subtitle: "".into(),
+                    source: content,
+                    cover_id: None,
+                },
+            )
+            .unwrap();
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: users[0].id,
+                },
+            )
+            .unwrap();
+        }
+
         (users, vec![blog1, blog2, blog3])
     }
 
@@ -1083,6 +1120,28 @@ pub(crate) mod tests {
                 },
                 "summary": "",
                 "type": "Group"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_users, blogs) = fill_database(conn);
+            let blog = &blogs[0];
+            let act = blog.outbox_collection(conn)?;
+
+            let expected = json!({
+                "items": [],
+                "totalItems": 0,
+                "first": "https://plu.me/~/BlogName/outbox?page=1",
+                "last": "https://plu.me/~/BlogName/outbox?page=0",
+                "type": "OrderedCollection"
             });
 
             assert_json_eq!(to_value(act)?, expected);
