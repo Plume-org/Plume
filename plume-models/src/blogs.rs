@@ -1,5 +1,5 @@
 use crate::{
-    ap_url, db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
+    db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitypub::{
@@ -239,14 +239,13 @@ impl Blog {
         coll.collection_props
             .set_total_items_u64(self.get_activities(conn).len() as u64)?;
         coll.collection_props
-            .set_first_link(Id::new(ap_url(&format!("{}?page=1", &self.outbox_url))))?;
-        coll.collection_props
-            .set_last_link(Id::new(ap_url(&format!(
-                "{}?page={}",
-                &self.outbox_url,
-                (self.get_activities(conn).len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
-                    / ITEMS_PER_PAGE as u64
-            ))))?;
+            .set_first_link(Id::new(&format!("{}?page=1", &self.outbox_url)))?;
+        coll.collection_props.set_last_link(Id::new(&format!(
+            "{}?page={}",
+            &self.outbox_url,
+            (self.get_activities(conn).len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
+                / ITEMS_PER_PAGE as u64
+        )))?;
         Ok(coll)
     }
     pub fn outbox_page(
