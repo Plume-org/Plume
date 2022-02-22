@@ -254,6 +254,14 @@ impl Blog {
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
+        self.outbox_collection_page(conn, (min, max))
+            .map(|coll| ActivityStream::new(coll))
+    }
+    pub fn outbox_collection_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<OrderedCollectionPage> {
         let mut coll = OrderedCollectionPage::default();
         let acts = self.get_activity_page(conn, (min, max));
         //This still doesn't do anything because the outbox
@@ -269,7 +277,7 @@ impl Blog {
             min / ITEMS_PER_PAGE - 1
         )))?;
         coll.collection_props.items = serde_json::to_value(acts)?;
-        Ok(ActivityStream::new(coll))
+        Ok(coll)
     }
     fn get_activities(&self, _conn: &Connection) -> Vec<serde_json::Value> {
         vec![]
