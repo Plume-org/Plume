@@ -643,7 +643,9 @@ pub(crate) mod tests {
         blog_authors::*, instance::tests as instance_tests, medias::NewMedia, tests::db,
         users::tests as usersTests, Connection as Conn,
     };
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::to_value;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Blog>) {
         instance_tests::fill_database(conn);
@@ -1037,5 +1039,51 @@ pub(crate) mod tests {
 
             Ok(())
         })
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_users, blogs) = fill_database(&conn);
+            let blog = &blogs[0];
+            let act = blog.to_activity(conn)?;
+
+            let expected = json!({
+                "followers": null,
+                "following": null,
+                "icon": {
+                    "attributedTo": "",
+                    "type": "Image",
+                    "url": ""
+                },
+                "id": "https://plu.me/~/BlogName/",
+                "image": {
+                    "attributedTo": "",
+                    "type": "Image",
+                    "url": ""
+                },
+                "inbox": "https://plu.me/~/BlogName/inbox",
+                "liked": null,
+                "name": "Blog name",
+                "outbox": "https://plu.me/~/BlogName/outbox",
+                "preferredUsername": "BlogName",
+                "publicKey": {
+                    "id": "https://plu.me/~/BlogName/#main-key",
+                    "owner": "https://plu.me/~/BlogName/",
+                    "publicKeyPem": blog.public_key
+                },
+                "source": {
+                    "content": "This is a small blog",
+                    "mediaType": "text/markdown"
+                },
+                "summary": "",
+                "type": "Group"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
     }
 }
