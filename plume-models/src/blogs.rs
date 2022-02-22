@@ -8,6 +8,12 @@ use activitypub::{
     object::Image,
     CustomObject,
 };
+use activitystreams::{
+    actor::AsApActor,
+    base::AnyBase,
+    object::{kind::ImageType, ApObject, ApObjectExt, Image as Image07, ObjectExt},
+    prelude::*,
+};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use openssl::{
@@ -17,8 +23,9 @@ use openssl::{
     sign::{Signer, Verifier},
 };
 use plume_common::activity_pub::{
-    inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
+    inbox::{AsActor, FromId, FromId07},
+    sign, ActivityStream, ApSignature, CustomGroup as CustomGroup07, Id, IntoId, PublicKey, Source,
+    ToAsString, ToAsUri,
 };
 use url::Url;
 use webfinger::*;
@@ -445,6 +452,130 @@ impl FromId<DbConn> for Blog {
     }
 
     fn get_sender() -> &'static dyn sign::Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for Blog {
+    type Error = Error;
+    type Object = CustomGroup07;
+
+    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
+    }
+
+    fn from_activity07(conn: &DbConn, acct: CustomGroup07) -> Result<Self> {
+        let (name, outbox_url, inbox_url) = {
+            let actor = acct.ap_actor_ref();
+            let name = actor
+                .preferred_username()
+                .ok_or(Error::MissingApProperty)?
+                .to_string();
+            if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+                return Err(Error::InvalidValue);
+            }
+            (
+                name,
+                actor.outbox()?.ok_or(Error::MissingApProperty)?.to_string(),
+                actor.inbox()?.to_string(),
+            )
+        };
+
+        let mut new_blog = NewBlog {
+            actor_id: name.to_string(),
+            outbox_url,
+            inbox_url,
+            public_key: acct.ext_one.public_key.public_key_pem.to_string(),
+            private_key: None,
+            theme: None,
+            ..NewBlog::default()
+        };
+
+        let object = ApObject::new(acct.inner);
+        new_blog.title = object
+            .name()
+            .and_then(|name| name.to_as_string())
+            .unwrap_or_else(|| name);
+        new_blog.summary_html = SafeString::new(
+            &object
+                .summary()
+                .and_then(|summary| summary.to_as_string())
+                .unwrap_or_default(),
+        );
+
+        let icon_id = object
+            .icon()
+            .and_then(|icons| {
+                icons.iter().next().and_then(|icon| {
+                    let icon = icon.to_owned().extend::<Image07, ImageType>().ok()??;
+                    let owner = icon.attributed_to()?.to_as_uri()?;
+                    Media::save_remote(
+                        conn,
+                        icon.url()?.to_as_uri()?,
+                        &User::from_id07(conn, &owner, None, CONFIG.proxy()).ok()?,
+                    )
+                    .ok()
+                })
+            })
+            .map(|m| m.id);
+        new_blog.icon_id = icon_id;
+
+        let banner_id = object
+            .image()
+            .and_then(|banners| {
+                banners.iter().next().and_then(|banner| {
+                    let banner = banner.to_owned().extend::<Image07, ImageType>().ok()??;
+                    let owner = banner.attributed_to()?.to_as_uri()?;
+                    Media::save_remote(
+                        conn,
+                        banner.url()?.to_as_uri()?,
+                        &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
+                    )
+                    .ok()
+                })
+            })
+            .map(|m| m.id);
+        new_blog.banner_id = banner_id;
+
+        let source = object
+            .source()
+            .and_then(|s| s.as_xsd_string())
+            .unwrap_or_default()
+            .to_string();
+        new_blog.summary = source;
+
+        let any_base = AnyBase::from_extended(object)?;
+        let id = any_base.id().ok_or(Error::MissingApProperty)?;
+        new_blog.ap_url = id.to_string();
+
+        let inst = id
+            .authority_components()
+            .ok_or(Error::Url)?
+            .host()
+            .to_string();
+        let instance = Instance::find_by_domain(conn, &inst).or_else(|_| {
+            Instance::insert(
+                conn,
+                NewInstance {
+                    public_domain: inst.to_owned(),
+                    name: inst.to_owned(),
+                    local: false,
+                    // We don't really care about all the following for remote instances
+                    long_description: SafeString::new(""),
+                    short_description: SafeString::new(""),
+                    default_license: String::new(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new(),
+                },
+            )
+        })?;
+        new_blog.instance_id = instance.id;
+
+        Blog::insert(conn, new_blog)
+    }
+
+    fn get_sender07() -> &'static dyn sign::Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
