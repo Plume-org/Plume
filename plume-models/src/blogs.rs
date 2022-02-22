@@ -230,6 +230,10 @@ impl Blog {
     }
 
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        self.outbox_collection(conn)
+            .map(|coll| ActivityStream::new(coll))
+    }
+    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
         let mut coll = OrderedCollection::default();
         coll.collection_props.items = serde_json::to_value(self.get_activities(conn))?;
         coll.collection_props
@@ -243,7 +247,7 @@ impl Blog {
                 (self.get_activities(conn).len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
                     / ITEMS_PER_PAGE as u64
             ))))?;
-        Ok(ActivityStream::new(coll))
+        Ok(coll)
     }
     pub fn outbox_page(
         &self,
