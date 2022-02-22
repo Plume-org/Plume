@@ -1156,4 +1156,25 @@ pub(crate) mod tests {
             Ok(())
         });
     }
+
+    #[test]
+    fn outbox_collection_page() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_users, blogs) = fill_database(conn);
+            let blog = &blogs[0];
+            let act = blog.outbox_collection_page(conn, (33, 36))?;
+
+            let expected = json!({
+                "next": "https://plu.me/~/BlogName/outbox?page=3",
+                "prev": "https://plu.me/~/BlogName/outbox?page=1",
+                "items": [],
+                "type": "OrderedCollectionPage"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
 }
