@@ -8,7 +8,7 @@ use activitystreams::{
     primitives::{AnyString, OneOrMany},
     unparsed::UnparsedMutExt,
 };
-use activitystreams_ext::{Ext1, UnparsedExtension};
+use activitystreams_ext::{Ext1, Ext2, UnparsedExtension};
 use array_tool::vec::Uniq;
 use reqwest::{header::HeaderValue, r#async::ClientBuilder, Url};
 use rocket::{
@@ -344,8 +344,32 @@ where
     }
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ActorSource {
+    pub source: Source,
+}
+
+impl<U> UnparsedExtension<U> for ActorSource
+where
+    U: UnparsedMutExt,
+{
+    type Error = serde_json::Error;
+
+    fn try_from_unparsed(unparsed_mut: &mut U) -> Result<Self, Self::Error> {
+        Ok(ActorSource {
+            source: unparsed_mut.remove("source")?,
+        })
+    }
+
+    fn try_into_unparsed(self, unparsed_mut: &mut U) -> Result<(), Self::Error> {
+        unparsed_mut.insert("source", self.source)?;
+        Ok(())
+    }
+}
+
 pub type CustomPerson = Ext1<ApActor<Person>, ApSignature07>;
-pub type CustomGroup = Ext1<ApActor<Group>, ApSignature07>;
+pub type CustomGroup = Ext2<ApActor<Group>, ApSignature07, ActorSource>;
 
 #[derive(Clone, Debug, Default, UnitString)]
 #[activitystreams(Hashtag)]
@@ -364,7 +388,7 @@ pub struct Hashtag {
     pub name: Option<serde_json::Value>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Source {
     pub media_type: String,
@@ -373,6 +397,26 @@ pub struct Source {
 }
 
 impl Object for Source {}
+
+impl<U> UnparsedExtension<U> for Source
+where
+    U: UnparsedMutExt,
+{
+    type Error = serde_json::Error;
+
+    fn try_from_unparsed(unparsed_mut: &mut U) -> Result<Self, Self::Error> {
+        Ok(Source {
+            content: unparsed_mut.remove("content")?,
+            media_type: unparsed_mut.remove("mediaType")?,
+        })
+    }
+
+    fn try_into_unparsed(self, unparsed_mut: &mut U) -> Result<(), Self::Error> {
+        unparsed_mut.insert("content", self.content)?;
+        unparsed_mut.insert("mediaType", self.media_type)?;
+        Ok(())
+    }
+}
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
 #[serde(rename_all = "camelCase")]
