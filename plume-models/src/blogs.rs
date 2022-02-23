@@ -291,10 +291,6 @@ impl Blog {
             public_key: pub_key,
         };
 
-        // assert_eq!("sumhtml", &self.summary_html.to_string());
-        // assert_eq!("sum", blog.summary().unwrap().as_single_xsd_string().unwrap());
-        // assert_eq!(json!({}), serde_json::to_value(&blog).unwrap());
-
         Ok(CustomGroup07::new(blog, ap_signature, source))
     }
 
@@ -881,36 +877,6 @@ pub(crate) mod tests {
             .id,
         );
         let _: Blog = blog1.save_changes(&*conn).unwrap();
-
-        for i in 1..(ITEMS_PER_PAGE * 4 + 3) {
-            let title = format!("Post {}", i);
-            let content = format!("Content for post {}.", i);
-            let post = Post::insert(
-                conn,
-                NewPost {
-                    blog_id: blog1.id,
-                    slug: title.clone(),
-                    title: title.clone(),
-                    content: SafeString::new(&content),
-                    published: true,
-                    license: "CC-0".into(),
-                    creation_date: None,
-                    ap_url: format!("{}/{}", blog1.ap_url, title),
-                    subtitle: "".into(),
-                    source: content,
-                    cover_id: None,
-                },
-            )
-            .unwrap();
-            PostAuthor::insert(
-                conn,
-                NewPostAuthor {
-                    post_id: post.id,
-                    author_id: users[0].id,
-                },
-            )
-            .unwrap();
-        }
 
         (users, vec![blog1, blog2, blog3])
     }
