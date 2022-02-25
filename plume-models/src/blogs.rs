@@ -754,14 +754,8 @@ impl NewBlog {
 pub(crate) mod tests {
     use super::*;
     use crate::{
-        blog_authors::*,
-        instance::tests as instance_tests,
-        medias::NewMedia,
-        post_authors::{NewPostAuthor, PostAuthor},
-        posts::{NewPost, Post},
-        tests::db,
-        users::tests as usersTests,
-        Connection as Conn, ITEMS_PER_PAGE,
+        blog_authors::*, instance::tests as instance_tests, medias::NewMedia, tests::db,
+        users::tests as usersTests, Connection as Conn,
     };
     use assert_json_diff::assert_json_eq;
     use diesel::Connection;
