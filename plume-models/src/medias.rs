@@ -3,10 +3,11 @@ use crate::{
     users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::object::Image;
+use activitystreams::{object::Image as Image07, prelude::*};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId, request, Id},
+    activity_pub::{inbox::FromId, request, Id, ToAsString, ToAsUri},
     utils::{escape, MediaProcessor},
 };
 use std::{
@@ -284,6 +285,89 @@ impl Media {
                                 .next()
                                 .ok_or(Error::NotFound)?
                                 .as_ref(),
+                            None,
+                            CONFIG.proxy(),
+                        )
+                        .map_err(|(_, e)| e)?
+                        .id,
+                    },
+                )
+            })
+    }
+
+    // TODO: merge with save_remote?
+    pub fn from_activity07(conn: &DbConn, image: &Image07) -> Result<Media> {
+        let remote_url = image
+            .url()
+            .and_then(|url| url.to_as_uri())
+            .ok_or(Error::MissingApProperty)?;
+        let path = determine_mirror_file_path(&remote_url);
+        let parent = path.parent().ok_or(Error::InvalidValue)?;
+        if !parent.is_dir() {
+            DirBuilder::new().recursive(true).create(parent)?;
+        }
+
+        let mut dest = fs::File::create(path.clone())?;
+        // TODO: conditional GET
+        request::get(
+            remote_url.as_str(),
+            User::get_sender(),
+            CONFIG.proxy().cloned(),
+        )?
+        .copy_to(&mut dest)?;
+
+        Media::find_by_file_path(conn, path.to_str().ok_or(Error::InvalidValue)?)
+            .and_then(|mut media| {
+                let mut updated = false;
+
+                let alt_text = image
+                    .content()
+                    .and_then(|content| content.to_as_string())
+                    .ok_or(Error::NotFound)?;
+                let summary = image.summary().and_then(|summary| summary.to_as_string());
+                let sensitive = summary.is_some();
+                let content_warning = summary;
+                if media.alt_text != alt_text {
+                    media.alt_text = alt_text;
+                    updated = true;
+                }
+                if media.is_remote {
+                    media.is_remote = false;
+                    updated = true;
+                }
+                if media.sensitive != sensitive {
+                    media.sensitive = sensitive;
+                    updated = true;
+                }
+                if media.content_warning != content_warning {
+                    media.content_warning = content_warning;
+                    updated = true;
+                }
+                if updated {
+                    diesel::update(&media).set(&media).execute(&**conn)?;
+                }
+                Ok(media)
+            })
+            .or_else(|_| {
+                let summary = image.summary().and_then(|summary| summary.to_as_string());
+                Media::insert(
+                    conn,
+                    NewMedia {
+                        file_path: path.to_str().ok_or(Error::InvalidValue)?.to_string(),
+                        alt_text: image
+                            .content()
+                            .and_then(|content| content.to_as_string())
+                            .ok_or(Error::NotFound)?,
+                        is_remote: false,
+                        remote_url: None,
+                        sensitive: summary.is_some(),
+                        content_warning: summary,
+                        owner_id: User::from_id(
+                            conn,
+                            &image
+                                .attributed_to()
+                                .and_then(|attributed_to| attributed_to.to_as_uri())
+                                .ok_or(Error::MissingApProperty)?,
                             None,
                             CONFIG.proxy(),
                         )
