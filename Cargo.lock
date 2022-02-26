@@ -1535,11 +1535,12 @@ dependencies = [
 
 [[package]]
 name = "gettext-macros"
-version = "0.6.0"
-source = "git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9#2227905fb949ee107053eeda982530407e51ae99"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "649db3b5cda06091ea6aacb9f66f7002dfe885505b324b8ed795261253ffc2b3"
 dependencies = [
  "gettext",
- "gettext-utils 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gettext-utils",
  "proc-macro2 1.0.36",
  "quote 1.0.15",
  "syn 1.0.86",
@@ -1550,11 +1551,6 @@ name = "gettext-utils"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46dd079379f756f6a1ae74b051813e242893f84fbf6ac898bce827fc77958d70"
-
-[[package]]
-name = "gettext-utils"
-version = "0.1.0"
-source = "git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9#2227905fb949ee107053eeda982530407e51ae99"
 
 [[package]]
 name = "ghash"
@@ -3088,7 +3084,7 @@ dependencies = [
  "dotenv",
  "gettext",
  "gettext-macros",
- "gettext-utils 0.1.0 (git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9)",
+ "gettext-utils",
  "guid-create",
  "lettre_email",
  "multipart",
@@ -3167,7 +3163,7 @@ dependencies = [
  "console_error_panic_hook",
  "gettext",
  "gettext-macros",
- "gettext-utils 0.1.0 (git+https://git.joinplu.me/plume/gettext-macros?rev=2227905fb9)",
+ "gettext-utils",
  "js-sys",
  "lazy_static",
  "serde 1.0.136",
