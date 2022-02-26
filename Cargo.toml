@@ -11,8 +11,8 @@ atom_syndication = "0.11.0"
 clap = "2.33"
 dotenv = "0.15.0"
 gettext = "0.4.0"
-gettext-macros = { git = "https://git.joinplu.me/plume/gettext-macros", rev = "2227905fb9" }
-gettext-utils = { git = "https://git.joinplu.me/plume/gettext-macros", rev = "2227905fb9" }
+gettext-macros = "0.6.1"
+gettext-utils = "0.1.0"
 guid-create = "0.2"
 lettre_email = "0.9.2"
 num_cpus = "1.10"
