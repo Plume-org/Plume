@@ -69,3 +69,54 @@ impl Tag {
             .map_err(Error::from)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tests::db;
+    use crate::{diesel::Connection, instance::tests::fill_database};
+    use assert_json_diff::assert_json_eq;
+    use serde_json::to_value;
+
+    #[test]
+    fn to_activity() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            fill_database(conn);
+            let tag = Tag {
+                id: 0,
+                tag: "a_tag".into(),
+                is_hashtag: false,
+                post_id: 0,
+            };
+            let act = tag.to_activity()?;
+            let expected = json!({
+                "href": "https://plu.me/tag/a_tag",
+                "name": "a_tag",
+                "type": "Hashtag"
+            });
+
+            assert_json_eq!(to_value(&act)?, expected);
+
+            Ok(())
+        })
+    }
+
+    #[test]
+    fn build_activity() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            fill_database(conn);
+            let act = Tag::build_activity("a_tag".into())?;
+            let expected = json!({
+                "href": "https://plu.me/tag/a_tag",
+                "name": "a_tag",
+                "type": "Hashtag"
+            });
+
+            assert_json_eq!(to_value(&act)?, expected);
+
+            Ok(())
+        });
+    }
+}
