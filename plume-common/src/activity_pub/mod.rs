@@ -573,7 +573,7 @@ where
     }
 }
 
-pub type LicensedArticle = Ext1<ApObject<Article>, Licensed07>;
+pub type LicensedArticle = Ext2<ApObject<Article>, Licensed07, SourceProperty>;
 
 pub trait ToAsString {
     fn to_as_string(&self) -> Option<String>;
@@ -688,6 +688,12 @@ mod tests {
             object,
             Licensed07 {
                 license: "CC-0".into(),
+            },
+            SourceProperty {
+                source: Source {
+                    content: "content".into(),
+                    media_type: "text/plain".into(),
+                },
             },
         );
         let expected = json!({
