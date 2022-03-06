@@ -3,6 +3,11 @@ use crate::{
     users::User, Connection, Error, Result,
 };
 use activitypub::link;
+use activitystreams::{
+    base::BaseExt,
+    iri_string::types::IriString,
+    link::{self as link07, LinkExt},
+};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::inbox::AsActor;
 
@@ -64,6 +69,14 @@ impl Mention {
         Ok(mention)
     }
 
+    pub fn build_activity07(conn: &DbConn, ment: &str) -> Result<link07::Mention> {
+        let user = User::find_by_fqn(conn, ment)?;
+        let mut mention = link07::Mention::new();
+        mention.set_href(user.ap_url.parse::<IriString>()?);
+        mention.set_name(format!("@{}", ment));
+        Ok(mention)
+    }
+
     pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
         let user = self.get_mentioned(conn)?;
         let mut mention = link::Mention::default();
@@ -71,6 +84,14 @@ impl Mention {
         mention
             .link_props
             .set_name_string(format!("@{}", user.fqn))?;
+        Ok(mention)
+    }
+
+    pub fn to_activity07(&self, conn: &Connection) -> Result<link07::Mention> {
+        let user = self.get_mentioned(conn)?;
+        let mut mention = link07::Mention::new();
+        mention.set_href(user.ap_url.parse::<IriString>()?);
+        mention.set_name(format!("@{}", user.fqn));
         Ok(mention)
     }
 
@@ -176,6 +197,27 @@ mod tests {
     }
 
     #[test]
+    fn build_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_posts, users, _blogs) = fill_database(&conn);
+            let user = &users[0];
+            let name = &user.username;
+            let act = Mention::build_activity07(&conn, name)?;
+
+            let expected = json!({
+                "href": "https://plu.me/@/admin/",
+                "name": "@admin",
+                "type": "Mention",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
@@ -191,6 +233,35 @@ mod tests {
                 },
             )?;
             let act = mention.to_activity(&conn)?;
+
+            let expected = json!({
+                "href": "https://plu.me/@/admin/",
+                "name": "@admin",
+                "type": "Mention",
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &users[0];
+            let mention = Mention::insert(
+                &conn,
+                NewMention {
+                    mentioned_id: user.id,
+                    post_id: Some(post.id),
+                    comment_id: None,
+                },
+            )?;
+            let act = mention.to_activity07(&conn)?;
 
             let expected = json!({
                 "href": "https://plu.me/@/admin/",
