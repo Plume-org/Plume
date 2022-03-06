@@ -66,6 +66,22 @@ impl Tag {
         )
     }
 
+    pub fn from_activity07(
+        conn: &Connection,
+        tag: &Hashtag07,
+        post: i32,
+        is_hashtag: bool,
+    ) -> Result<Tag> {
+        Tag::insert(
+            conn,
+            NewTag {
+                tag: tag.name().ok_or(Error::MissingApProperty)?.as_str().into(),
+                is_hashtag,
+                post_id: post,
+            },
+        )
+    }
+
     pub fn build_activity(tag: String) -> Result<Hashtag> {
         let mut ht = Hashtag::default();
         ht.set_href_string(ap_url(&format!(
