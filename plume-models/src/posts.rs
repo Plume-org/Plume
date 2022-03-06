@@ -9,6 +9,13 @@ use activitypub::{
     object::{Article, Image, Tombstone},
     CustomObject,
 };
+use activitystreams::{
+    base::AnyBase,
+    iri_string::types::IriString,
+    object::{ApObject, Article as Article07, Image as Image07},
+    prelude::*,
+    time::OffsetDateTime,
+};
 use chrono::{NaiveDateTime, TimeZone, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
@@ -16,7 +23,8 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
+        Hashtag, Id, IntoId, Licensed, Licensed07, LicensedArticle as LicensedArticle07, Source,
+        SourceProperty, PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
 };
@@ -407,6 +415,74 @@ impl Post {
         let mut license = Licensed::default();
         license.set_license_string(self.license.clone())?;
         Ok(LicensedArticle::new(article, license))
+    }
+
+    pub fn to_activity07(&self, conn: &Connection) -> Result<LicensedArticle07> {
+        let cc = self.get_receivers_urls(conn)?;
+        let to = vec![PUBLIC_VISIBILITY.to_string()];
+
+        let mut mentions_json = Mention::list_for_post(conn, self.id)?
+            .into_iter()
+            .map(|m| json!(m.to_activity07(conn).ok()))
+            .collect::<Vec<serde_json::Value>>();
+        let mut tags_json = Tag::for_post(conn, self.id)?
+            .into_iter()
+            .map(|t| json!(t.to_activity07().ok()))
+            .collect::<Vec<serde_json::Value>>();
+        mentions_json.append(&mut tags_json);
+
+        let mut article = ApObject::new(Article07::new());
+        article.set_name(self.title.clone());
+        article.set_id(self.ap_url.parse::<IriString>()?);
+
+        let mut authors = self
+            .get_authors(conn)?
+            .into_iter()
+            .filter_map(|x| x.ap_url.parse::<IriString>().ok())
+            .collect::<Vec<IriString>>();
+        authors.push(self.get_blog(conn)?.ap_url.parse::<IriString>()?); // add the blog URL here too
+        article.set_many_attributed_tos(authors);
+        article.set_content(self.content.get().clone());
+        let source = SourceProperty {
+            content: self.source.clone(),
+            media_type: String::from("text/markdown"),
+        };
+        article.set_published(
+            OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
+                .expect("OffsetDateTime"),
+        );
+        article.set_summary(&*self.subtitle);
+        article.set_tag(AnyBase::from_arbitrary_json(json!(mentions_json))?);
+
+        if let Some(media_id) = self.cover_id {
+            let media = Media::get(conn, media_id)?;
+            let mut cover = Image07::new();
+            cover.set_url(media.url()?);
+            if media.sensitive {
+                cover.set_summary(media.content_warning.unwrap_or_default());
+            }
+            cover.set_content(media.alt_text);
+            cover.set_many_attributed_tos(vec![User::get(conn, media.owner_id)?
+                .ap_url
+                .parse::<IriString>()?]);
+            article.set_icon(cover.into_any_base()?);
+        }
+
+        article.set_url(self.ap_url.parse::<IriString>()?);
+        article.set_many_tos(
+            to.into_iter()
+                .filter_map(|to| to.parse::<IriString>().ok())
+                .collect::<Vec<IriString>>(),
+        );
+        article.set_many_ccs(
+            cc.into_iter()
+                .filter_map(|cc| cc.parse::<IriString>().ok())
+                .collect::<Vec<IriString>>(),
+        );
+        let license = Licensed07 {
+            license: self.license.clone(),
+        };
+        Ok(LicensedArticle07::new(article, license, source))
     }
 
     pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
