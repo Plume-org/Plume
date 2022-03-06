@@ -1,6 +1,7 @@
 use crate::{ap_url, instance::Instance, schema::tags, Connection, Error, Result};
+use activitystreams::iri_string::types::IriString;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use plume_common::activity_pub::Hashtag;
+use plume_common::activity_pub::{Hashtag, Hashtag07, HashtagExt};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Tag {
@@ -35,6 +36,20 @@ impl Tag {
         Ok(ht)
     }
 
+    pub fn to_activity07(&self) -> Result<Hashtag07> {
+        let mut ht = Hashtag07::new();
+        ht.set_href(
+            ap_url(&format!(
+                "{}/tag/{}",
+                Instance::get_local()?.public_domain,
+                self.tag
+            ))
+            .parse::<IriString>()?,
+        );
+        ht.set_name(self.tag.clone());
+        Ok(ht)
+    }
+
     pub fn from_activity(
         conn: &Connection,
         tag: &Hashtag,
@@ -59,6 +74,20 @@ impl Tag {
             tag
         )))?;
         ht.set_name_string(tag)?;
+        Ok(ht)
+    }
+
+    pub fn build_activity07(tag: String) -> Result<Hashtag07> {
+        let mut ht = Hashtag07::new();
+        ht.set_href(
+            ap_url(&format!(
+                "{}/tag/{}",
+                Instance::get_local()?.public_domain,
+                tag
+            ))
+            .parse::<IriString>()?,
+        );
+        ht.set_name(tag);
         Ok(ht)
     }
 
@@ -126,6 +155,48 @@ mod tests {
         conn.test_transaction::<_, Error, _>(|| {
             fill_database(conn);
             let act = Tag::build_activity("a_tag".into())?;
+            let expected = json!({
+                "href": "https://plu.me/tag/a_tag",
+                "name": "a_tag",
+                "type": "Hashtag"
+            });
+
+            assert_json_eq!(to_value(&act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity07() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            fill_database(conn);
+            let tag = Tag {
+                id: 0,
+                tag: "a_tag".into(),
+                is_hashtag: false,
+                post_id: 0,
+            };
+            let act = tag.to_activity07()?;
+            let expected = json!({
+                "href": "https://plu.me/tag/a_tag",
+                "name": "a_tag",
+                "type": "Hashtag"
+            });
+
+            assert_json_eq!(to_value(&act)?, expected);
+
+            Ok(())
+        })
+    }
+
+    #[test]
+    fn build_activity07() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            fill_database(conn);
+            let act = Tag::build_activity07("a_tag".into())?;
             let expected = json!({
                 "href": "https://plu.me/tag/a_tag",
                 "name": "a_tag",
