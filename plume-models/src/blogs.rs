@@ -28,8 +28,8 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId, FromId07},
-    sign, ActivityStream, ActorSource, ApSignature, ApSignature07, CustomGroup as CustomGroup07,
-    Id, IntoId, PublicKey, PublicKey07, Source, ToAsString, ToAsUri,
+    sign, ActivityStream, ApSignature, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId,
+    PublicKey, PublicKey07, Source, SourceProperty, ToAsString, ToAsUri,
 };
 use url::Url;
 use webfinger::*;
@@ -239,7 +239,7 @@ impl Blog {
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
         blog.set_summary(self.summary_html.to_string());
-        let source = ActorSource {
+        let source = SourceProperty {
             source: Source {
                 content: self.summary.clone(),
                 media_type: String::from("text/markdown"),

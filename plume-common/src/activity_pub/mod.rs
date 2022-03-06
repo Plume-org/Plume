@@ -347,18 +347,18 @@ where
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct ActorSource {
+pub struct SourceProperty {
     pub source: Source,
 }
 
-impl<U> UnparsedExtension<U> for ActorSource
+impl<U> UnparsedExtension<U> for SourceProperty
 where
     U: UnparsedMutExt,
 {
     type Error = serde_json::Error;
 
     fn try_from_unparsed(unparsed_mut: &mut U) -> Result<Self, Self::Error> {
-        Ok(ActorSource {
+        Ok(SourceProperty {
             source: unparsed_mut.remove("source")?,
         })
     }
@@ -370,7 +370,7 @@ where
 }
 
 pub type CustomPerson = Ext1<ApActor<Person>, ApSignature07>;
-pub type CustomGroup = Ext2<ApActor<Group>, ApSignature07, ActorSource>;
+pub type CustomGroup = Ext2<ApActor<Group>, ApSignature07, SourceProperty>;
 
 #[derive(Clone, Debug, Default, UnitString)]
 #[activitystreams(Hashtag)]
