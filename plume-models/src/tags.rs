@@ -74,7 +74,7 @@ impl Tag {
 mod tests {
     use super::*;
     use crate::tests::db;
-    use crate::{diesel::Connection, instance::tests::fill_database};
+    use crate::{diesel::Connection, inbox::tests::fill_database};
     use assert_json_diff::assert_json_eq;
     use serde_json::to_value;
 
@@ -100,6 +100,24 @@ mod tests {
 
             Ok(())
         })
+    }
+
+    #[test]
+    fn from_activity() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(conn);
+            let post_id = posts[0].id;
+            let mut ht = Hashtag::default();
+            ht.set_href_string(ap_url(&format!("https://plu.me/tag/a_tag")))?;
+            ht.set_name_string("a_tag".into())?;
+            let tag = Tag::from_activity(conn, &ht, post_id, true)?;
+
+            assert_eq!(&tag.tag, "a_tag");
+            assert!(tag.is_hashtag);
+
+            Ok(())
+        });
     }
 
     #[test]
