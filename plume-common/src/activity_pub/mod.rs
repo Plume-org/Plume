@@ -405,7 +405,7 @@ pub struct Hashtag07 {
 
 impl Hashtag07 {
     pub fn new() -> Self {
-        Hashtag07 {
+        Self {
             href: None,
             name: None,
             inner: Object07::new(),
@@ -416,11 +416,11 @@ impl Hashtag07 {
         let href = inner.remove("href")?;
         let name = inner.remove("name")?;
 
-        Ok(Hashtag07 { href, name, inner })
+        Ok(Self { href, name, inner })
     }
 
     pub fn retracting(self) -> Result<Object07<HashtagType07>, serde_json::Error> {
-        let Hashtag07 {
+        let Self {
             href,
             name,
             mut inner,
@@ -482,12 +482,18 @@ pub trait HashtagExt: AsHashtag {
     }
 }
 
+impl Default for Hashtag07 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AsHashtag for Hashtag07 {
-    fn hashtag_ref(&self) -> &Hashtag07 {
+    fn hashtag_ref(&self) -> &Self {
         self
     }
 
-    fn hashtag_mut(&mut self) -> &mut Hashtag07 {
+    fn hashtag_mut(&mut self) -> &mut Self {
         self
     }
 }
