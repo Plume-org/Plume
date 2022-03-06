@@ -444,8 +444,10 @@ impl Post {
         article.set_many_attributed_tos(authors);
         article.set_content(self.content.get().clone());
         let source = SourceProperty {
-            content: self.source.clone(),
-            media_type: String::from("text/markdown"),
+            source: Source {
+                content: self.source.clone(),
+                media_type: String::from("text/markdown"),
+            },
         };
         article.set_published(
             OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
