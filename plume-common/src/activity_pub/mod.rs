@@ -698,7 +698,11 @@ mod tests {
         );
         let expected = json!({
             "type": "Article",
-            "license": "CC-0"
+            "license": "CC-0",
+            "source": {
+                "content": "content",
+                "mediaType": "text/plain"
+            }
         });
         assert_json_eq!(to_value(licensed_article).unwrap(), expected);
     }
