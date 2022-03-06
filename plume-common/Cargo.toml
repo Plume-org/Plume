@@ -35,6 +35,6 @@ git = "https://git.joinplu.me/Plume/pulldown-cmark"
 branch = "bidi-plume"
 
 [dev-dependencies]
-once_cell = "1.5.2"
+once_cell = "1.10.0"
 
 [features]
