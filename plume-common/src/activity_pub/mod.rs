@@ -1,10 +1,11 @@
 use activitypub::{Activity, Link, Object};
 use activitystreams::{
     actor::{ApActor, Group, Person},
-    base::AnyBase,
+    base::{AnyBase, Base, Extends},
     iri_string::types::IriString,
-    markers::Activity as Activity07,
-    object::{ApObject, Article},
+    kind,
+    markers::{self, Activity as Activity07},
+    object::{ApObject, Article, Object as Object07},
     primitives::{AnyString, OneOrMany},
     unparsed::UnparsedMutExt,
 };
@@ -387,6 +388,127 @@ pub struct Hashtag {
     #[activitystreams(concrete(String), functional)]
     pub name: Option<serde_json::Value>,
 }
+
+kind!(HashtagType07, Hashtag);
+
+#[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
+pub struct Hashtag07 {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub href: Option<IriString>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<AnyString>,
+
+    #[serde(flatten)]
+    inner: Object07<HashtagType07>,
+}
+
+impl Hashtag07 {
+    pub fn new() -> Self {
+        Hashtag07 {
+            href: None,
+            name: None,
+            inner: Object07::new(),
+        }
+    }
+
+    pub fn extending(mut inner: Object07<HashtagType07>) -> Result<Self, serde_json::Error> {
+        let href = inner.remove("href")?;
+        let name = inner.remove("name")?;
+
+        Ok(Hashtag07 { href, name, inner })
+    }
+
+    pub fn retracting(self) -> Result<Object07<HashtagType07>, serde_json::Error> {
+        let Hashtag07 {
+            href,
+            name,
+            mut inner,
+        } = self;
+
+        inner.insert("href", href)?;
+        inner.insert("name", name)?;
+        Ok(inner)
+    }
+}
+
+pub trait AsHashtag: markers::Object {
+    fn hashtag_ref(&self) -> &Hashtag07;
+
+    fn hashtag_mut(&mut self) -> &mut Hashtag07;
+}
+
+pub trait HashtagExt: AsHashtag {
+    fn href(&self) -> Option<&IriString> {
+        self.hashtag_ref().href.as_ref()
+    }
+
+    fn set_href<T>(&mut self, href: T) -> &mut Self
+    where
+        T: Into<IriString>,
+    {
+        self.hashtag_mut().href = Some(href.into());
+        self
+    }
+
+    fn take_href(&mut self) -> Option<IriString> {
+        self.hashtag_mut().href.take()
+    }
+
+    fn delete_href(&mut self) -> &mut Self {
+        self.hashtag_mut().href = None;
+        self
+    }
+
+    fn name(&self) -> Option<&AnyString> {
+        self.hashtag_ref().name.as_ref()
+    }
+
+    fn set_name<T>(&mut self, name: T) -> &mut Self
+    where
+        T: Into<AnyString>,
+    {
+        self.hashtag_mut().name = Some(name.into());
+        self
+    }
+
+    fn take_name(&mut self) -> Option<AnyString> {
+        self.hashtag_mut().name.take()
+    }
+
+    fn delete_name(&mut self) -> &mut Self {
+        self.hashtag_mut().name = None;
+        self
+    }
+}
+
+impl AsHashtag for Hashtag07 {
+    fn hashtag_ref(&self) -> &Hashtag07 {
+        self
+    }
+
+    fn hashtag_mut(&mut self) -> &mut Hashtag07 {
+        self
+    }
+}
+
+impl Extends<HashtagType07> for Hashtag07 {
+    type Error = serde_json::Error;
+
+    fn extends(base: Base<HashtagType07>) -> Result<Self, Self::Error> {
+        let inner = Object07::extends(base)?;
+        Self::extending(inner)
+    }
+
+    fn retracts(self) -> Result<Base<HashtagType07>, Self::Error> {
+        let inner = self.retracting()?;
+        inner.retracts()
+    }
+}
+
+impl markers::Base for Hashtag07 {}
+impl markers::Object for Hashtag07 {}
+impl<T> HashtagExt for T where T: AsHashtag {}
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
