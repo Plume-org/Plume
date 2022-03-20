@@ -1175,6 +1175,44 @@ mod tests {
     }
 
     #[test]
+    fn to_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = post.to_activity07(&conn)?;
+
+            let expected = json!({
+                "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                "cc": [],
+                "content": "Hello",
+                "id": "https://plu.me/~/BlogName/testing",
+                "license": "WTFPL",
+                "name": "Testing",
+                "published": format_datetime(&post.creation_date),
+                "source": {
+                    "content": "",
+                    "mediaType": "text/markdown"
+                },
+                "summary": "",
+                "tag": [
+                    {
+                        "href": "https://plu.me/@/user/",
+                        "name": "@user",
+                        "type": "Mention"
+                    }
+                ],
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Article",
+                "url": "https://plu.me/~/BlogName/testing"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn create_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
