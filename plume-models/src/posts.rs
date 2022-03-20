@@ -454,7 +454,11 @@ impl Post {
                 .expect("OffsetDateTime"),
         );
         article.set_summary(&*self.subtitle);
-        article.set_tag(AnyBase::from_arbitrary_json(json!(mentions_json))?);
+        article.set_many_tags(
+            mentions_json
+                .iter()
+                .filter_map(|mention_json| AnyBase::from_arbitrary_json(mention_json).ok()),
+        );
 
         if let Some(media_id) = self.cover_id {
             let media = Media::get(conn, media_id)?;
