@@ -11,7 +11,7 @@ path = "src/main.rs"
 [dependencies]
 clap = "2.33"
 dotenv = "0.15"
-rpassword = "5.0.0"
+rpassword = "6.0.1"
 
 [dependencies.diesel]
 features = ["r2d2", "chrono"]
