@@ -138,6 +138,49 @@ impl Mention {
         }
     }
 
+    pub fn from_activity07(
+        conn: &Connection,
+        ment: &link07::Mention,
+        inside: i32,
+        in_post: bool,
+        notify: bool,
+    ) -> Result<Self> {
+        let ap_url = ment.href().ok_or(Error::NotFound)?.as_str();
+        let mentioned = User::find_by_ap_url(conn, ap_url)?;
+
+        if in_post {
+            Post::get(conn, inside).and_then(|post| {
+                let res = Mention::insert(
+                    conn,
+                    NewMention {
+                        mentioned_id: mentioned.id,
+                        post_id: Some(post.id),
+                        comment_id: None,
+                    },
+                )?;
+                if notify {
+                    res.notify(conn)?;
+                }
+                Ok(res)
+            })
+        } else {
+            Comment::get(conn, inside).and_then(|comment| {
+                let res = Mention::insert(
+                    conn,
+                    NewMention {
+                        mentioned_id: mentioned.id,
+                        post_id: None,
+                        comment_id: Some(comment.id),
+                    },
+                )?;
+                if notify {
+                    res.notify(conn)?;
+                }
+                Ok(res)
+            })
+        }
+    }
+
     pub fn delete(&self, conn: &Connection) -> Result<()> {
         //find related notifications and delete them
         if let Ok(n) = Notification::find(conn, notification_kind::MENTION, self.id) {
