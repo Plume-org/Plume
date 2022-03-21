@@ -13,7 +13,7 @@ use activitystreams::{
     activity::{Create as Create07, Delete as Delete07, Update as Update07},
     base::{AnyBase, Base},
     iri_string::types::IriString,
-    link as link07,
+    link::{self as link07, kind::MentionType},
     object::{ApObject, Article as Article07, Image as Image07, Tombstone as Tombstone07},
     prelude::*,
     time::OffsetDateTime,
@@ -23,10 +23,11 @@ use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, FromId},
+        inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
         sign::Signer,
-        Hashtag, Hashtag07, Id, IntoId, Licensed, Licensed07, LicensedArticle as LicensedArticle07,
-        Source, SourceProperty, PUBLIC_VISIBILITY,
+        Hashtag, Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
+        LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
+        PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
 };
@@ -1010,6 +1011,190 @@ impl FromId<DbConn> for Post {
 
     fn get_sender() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for Post {
+    type Error = Error;
+    type Object = LicensedArticle07;
+
+    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
+    }
+
+    fn from_activity07(conn: &DbConn, article: LicensedArticle07) -> Result<Self> {
+        let license = article.ext_one.license;
+        let source = article.ext_two.source.content;
+        let article = article.inner;
+
+        let (blog, authors) = article
+            .attributed_to()
+            .ok_or(Error::MissingApProperty)
+            .iter()
+            .fold((None, vec![]), |(blog, mut authors), link| {
+                let url = link.to_as_uri().expect("Exists");
+                match User::from_id(conn, &url, None, CONFIG.proxy()) {
+                    Ok(u) => {
+                        authors.push(u);
+                        (blog, authors)
+                    }
+                    Err(_) => (
+                        blog.or_else(|| Blog::from_id(conn, &url, None, CONFIG.proxy()).ok()),
+                        authors,
+                    ),
+                }
+            });
+
+        let cover = article.icon().and_then(|icon| {
+            icon.iter().next().and_then(|img| {
+                let image: Image07 = img.extend().ok()??;
+                Media::from_activity07(conn, &image).ok().map(|m| m.id)
+            })
+        });
+
+        let title = article
+            .name()
+            .and_then(|name| name.to_as_string())
+            .ok_or(Error::MissingApProperty)?;
+        let ap_url = article
+            .url()
+            .and_then(|url| {
+                url.to_as_uri().or_else(|| {
+                    AnyBase::from_extended(article)
+                        .ok()?
+                        .id()
+                        .map(|id| id.to_string())
+                })
+            })
+            .ok_or(Error::MissingApProperty)?;
+        let post = Post::from_db07(conn, &ap_url)
+            .and_then(|mut post| {
+                let mut updated = false;
+
+                let slug = Self::slug(&title);
+                let content = SafeString::new(
+                    &article
+                        .content()
+                        .and_then(|content| content.to_as_string())
+                        .ok_or(Error::MissingApProperty)?,
+                );
+                let subtitle = article
+                    .summary()
+                    .and_then(|summary| summary.to_as_string())
+                    .ok_or(Error::MissingApProperty)?;
+
+                if post.slug != slug {
+                    post.slug = slug.to_string();
+                    updated = true;
+                }
+                if post.title != title {
+                    post.title = title.clone();
+                    updated = true;
+                }
+                if post.content != content {
+                    post.content = content;
+                    updated = true;
+                }
+                if post.license != license {
+                    post.license = license.clone();
+                    updated = true;
+                }
+                if post.subtitle != subtitle {
+                    post.subtitle = subtitle;
+                    updated = true;
+                }
+                if post.source != source {
+                    post.source = source;
+                    updated = true;
+                }
+                if post.cover_id != cover {
+                    post.cover_id = cover;
+                    updated = true;
+                }
+
+                if updated {
+                    post.update(conn)?;
+                }
+
+                Ok(post)
+            })
+            .or_else(|_| {
+                Post::insert(
+                    conn,
+                    NewPost {
+                        blog_id: blog.ok_or(Error::NotFound)?.id,
+                        slug: Self::slug(&title).to_string(),
+                        title,
+                        content: SafeString::new(
+                            &article
+                                .content()
+                                .and_then(|content| content.to_as_string())
+                                .ok_or(Error::MissingApProperty)?,
+                        ),
+                        published: true,
+                        license,
+                        // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                        ap_url,
+                        creation_date: article.published().map(|published| {
+                            let timestamp_secs = published.unix_timestamp();
+                            let timestamp_nanos = published.unix_timestamp_nanos()
+                                - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
+                            NaiveDateTime::from_timestamp(timestamp_secs, timestamp_nanos as u32)
+                        }),
+                        subtitle: article
+                            .summary()
+                            .and_then(|summary| summary.to_as_string())
+                            .ok_or(Error::MissingApProperty)?,
+                        source: source,
+                        cover_id: cover,
+                    },
+                )
+                .and_then(|post| {
+                    for author in authors {
+                        PostAuthor::insert(
+                            conn,
+                            NewPostAuthor {
+                                post_id: post.id,
+                                author_id: author.id,
+                            },
+                        )?;
+                    }
+
+                    Ok(post)
+                })
+            })?;
+
+        // save mentions and tags
+        let mut hashtags = md_to_html(&post.source, None, false, None)
+            .2
+            .into_iter()
+            .collect::<HashSet<_>>();
+        if let Some(tags) = article.tag() {
+            for tag in tags.iter() {
+                tag.extend::<link07::Mention, MentionType>()
+                    .map(|mention| {
+                        mention.map(|m| Mention::from_activity07(conn, &m, post.id, true, true))
+                    })
+                    .ok();
+
+                tag.extend::<Hashtag07, HashtagType07>()
+                    .and_then(|hashtag| {
+                        Ok(hashtag.and_then(|t| {
+                            let tag_name = t.name?.as_str();
+                            Tag::from_activity07(conn, &t, post.id, hashtags.remove(tag_name)).ok()
+                        }))
+                    })
+                    .ok();
+            }
+        }
+
+        Timeline::add_to_all_timelines(conn, &post, Kind::Original)?;
+
+        Ok(post)
+    }
+
+    fn get_sender07() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to get local instance user")
     }
 }
 
