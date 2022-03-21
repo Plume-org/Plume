@@ -10,11 +10,11 @@ use activitypub::{
     CustomObject,
 };
 use activitystreams::{
-    activity::{Create as Create07, Update as Update07},
+    activity::{Create as Create07, Delete as Delete07, Update as Update07},
     base::{AnyBase, Base},
     iri_string::types::IriString,
     link as link07,
-    object::{ApObject, Article as Article07, Image as Image07},
+    object::{ApObject, Article as Article07, Image as Image07, Tombstone as Tombstone07},
     prelude::*,
     time::OffsetDateTime,
 };
@@ -808,6 +808,23 @@ impl Post {
             .set_id_string(format!("{}#delete", self.ap_url))?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
+        Ok(act)
+    }
+
+    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete07> {
+        let mut tombstone = Tombstone07::new();
+        tombstone.set_id(self.ap_url.parse()?);
+
+        let mut act = Delete07::new(
+            self.get_authors(conn)?[0]
+                .clone()
+                .into_id()
+                .parse::<IriString>()?,
+            Base::retract(tombstone)?.into_generic()?,
+        );
+
+        act.set_id(format!("{}#delete", self.ap_url).parse()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
         Ok(act)
     }
 
