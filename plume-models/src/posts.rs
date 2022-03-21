@@ -747,6 +747,43 @@ impl Post {
         Ok(())
     }
 
+    pub fn update_hashtags07(&self, conn: &Connection, tags: Vec<Hashtag07>) -> Result<()> {
+        let tags_name = tags
+            .iter()
+            .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
+            .collect::<HashSet<_>>();
+
+        let old_tags = Tag::for_post(&*conn, self.id)?;
+        let old_tags_name = old_tags
+            .iter()
+            .filter_map(|tag| {
+                if tag.is_hashtag {
+                    Some(tag.tag.clone())
+                } else {
+                    None
+                }
+            })
+            .collect::<HashSet<_>>();
+
+        for t in tags {
+            if !t
+                .name
+                .as_ref()
+                .map(|n| old_tags_name.contains(n.as_str()))
+                .unwrap_or(true)
+            {
+                Tag::from_activity07(conn, &t, self.id, true)?;
+            }
+        }
+
+        for ot in old_tags.into_iter().filter(|t| t.is_hashtag) {
+            if !tags_name.contains(&ot.tag) {
+                ot.delete(conn)?;
+            }
+        }
+        Ok(())
+    }
+
     pub fn url(&self, conn: &Connection) -> Result<String> {
         let blog = self.get_blog(conn)?;
         Ok(format!("/~/{}/{}", blog.fqn, self.slug))
