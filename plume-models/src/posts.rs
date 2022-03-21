@@ -13,6 +13,7 @@ use activitystreams::{
     activity::{Create as Create07, Update as Update07},
     base::{AnyBase, Base},
     iri_string::types::IriString,
+    link as link07,
     object::{ApObject, Article as Article07, Image as Image07},
     prelude::*,
     time::OffsetDateTime,
@@ -579,6 +580,48 @@ impl Post {
         for (m, id) in &mentions {
             if !old_user_mentioned.contains(id) {
                 Mention::from_activity(&*conn, m, self.id, true, true)?;
+            }
+        }
+
+        let new_mentions = mentions
+            .into_iter()
+            .map(|(_m, id)| id)
+            .collect::<HashSet<_>>();
+        for m in old_mentions
+            .iter()
+            .filter(|m| !new_mentions.contains(&m.mentioned_id))
+        {
+            m.delete(conn)?;
+        }
+        Ok(())
+    }
+
+    pub fn update_mentions07(
+        &self,
+        conn: &Connection,
+        mentions: Vec<link07::Mention>,
+    ) -> Result<()> {
+        let mentions = mentions
+            .into_iter()
+            .map(|m| {
+                (
+                    m.href()
+                        .and_then(|ap_url| User::find_by_ap_url(conn, ap_url.as_ref()).ok())
+                        .map(|u| u.id),
+                    m,
+                )
+            })
+            .filter_map(|(id, m)| id.map(|id| (m, id)))
+            .collect::<Vec<_>>();
+
+        let old_mentions = Mention::list_for_post(conn, self.id)?;
+        let old_user_mentioned = old_mentions
+            .iter()
+            .map(|m| m.mentioned_id)
+            .collect::<HashSet<_>>();
+        for (m, id) in &mentions {
+            if !old_user_mentioned.contains(id) {
+                Mention::from_activity07(&*conn, m, self.id, true, true)?;
             }
         }
 
