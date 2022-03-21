@@ -10,7 +10,8 @@ use activitypub::{
     CustomObject,
 };
 use activitystreams::{
-    base::AnyBase,
+    activity::Create as Create07,
+    base::{AnyBase, Base},
     iri_string::types::IriString,
     object::{ApObject, Article as Article07, Image as Image07},
     prelude::*,
@@ -503,6 +504,20 @@ impl Post {
         act.create_props
             .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
         act.create_props.set_object_object(article)?;
+        Ok(act)
+    }
+
+    pub fn create_activity07(&self, conn: &Connection) -> Result<Create07> {
+        let article = self.to_activity07(conn)?;
+        let to = article.to().ok_or(Error::MissingApProperty)?.clone();
+        let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
+        let mut act = Create07::new(
+            self.get_authors(conn)?[0].ap_url.parse::<IriString>()?,
+            Base::retract(article)?.into_generic()?,
+        );
+        act.set_id(format!("{}/activity", self.ap_url).parse::<IriString>()?);
+        act.set_many_tos(to);
+        act.set_many_ccs(cc);
         Ok(act)
     }
 
