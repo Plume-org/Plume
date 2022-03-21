@@ -1402,4 +1402,70 @@ mod tests {
             Ok(())
         });
     }
+
+    #[test]
+    fn update_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = post.update_activity07(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": [],
+                "id": "https://plu.me/~/BlogName/testing/update-",
+                "object": {
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "cc": [],
+                    "content": "Hello",
+                    "id": "https://plu.me/~/BlogName/testing",
+                    "license": "WTFPL",
+                    "name": "Testing",
+                    "published": format_datetime(&post.creation_date),
+                    "source": {
+                        "content": "",
+                        "mediaType": "text/markdown"
+                    },
+                    "summary": "",
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Article",
+                    "url": "https://plu.me/~/BlogName/testing"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Update"
+            });
+            let actual = to_value(act)?;
+
+            let id = actual["id"].to_string();
+            let (id_pre, id_post) = id.rsplit_once("-").unwrap();
+            assert_eq!(post.ap_url, "https://plu.me/~/BlogName/testing");
+            assert_eq!(
+                id_pre,
+                to_value("\"https://plu.me/~/BlogName/testing/update")
+                    .unwrap()
+                    .as_str()
+                    .unwrap()
+            );
+            assert_eq!(id_post.len(), 11);
+            assert_eq!(
+                id_post.matches(char::is_numeric).collect::<String>().len(),
+                10
+            );
+            for (key, value) in actual.as_object().unwrap().into_iter() {
+                if key == "id" {
+                    continue;
+                }
+                assert_eq!(value, expected.get(key).unwrap());
+            }
+
+            Ok(())
+        });
+    }
 }
