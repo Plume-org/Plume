@@ -3929,9 +3929,9 @@ dependencies = [
 
 [[package]]
 name = "rsass"
-version = "0.23.4"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92bfc58e02cd215730b021f9e6f0f46e0a7e1f75aa558ca7a7492763fbe88df2"
+checksum = "d74a71f39f2d0e35ada983c76aeaa3a58b6c5735c8865073a87d190219c64eb1"
 dependencies = [
  "fastrand",
  "lazy_static",
