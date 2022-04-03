@@ -712,4 +712,45 @@ mod tests {
         });
         assert_json_eq!(to_value(licensed_article).unwrap(), expected);
     }
+
+    #[test]
+    fn de_licensed_article() {
+        let value: LicensedArticle = from_str(
+            r#"
+              {
+                "type": "Article",
+                "id": "https://plu.me/~/Blog/my-article",
+                "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
+                "content": "Hello.",
+                "name": "My Article",
+                "summary": "Bye.",
+                "source": {
+                  "content": "Hello.",
+                  "mediaType": "text/markdown"
+                },
+                "published": "2014-12-12T12:12:12Z",
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "license": "CC-0"
+             }
+           "#,
+        )
+        .unwrap();
+        let expected = json!({
+            "type": "Article",
+            "id": "https://plu.me/~/Blog/my-article",
+            "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
+            "content": "Hello.",
+            "name": "My Article",
+            "summary": "Bye.",
+            "source": {
+                "content": "Hello.",
+                "mediaType": "text/markdown"
+            },
+            "published": "2014-12-12T12:12:12Z",
+            "to": ["https://www.w3.org/ns/activitystreams#Public"],
+            "license": "CC-0"
+        });
+
+        assert_eq!(to_value(value).unwrap(), expected);
+    }
 }
