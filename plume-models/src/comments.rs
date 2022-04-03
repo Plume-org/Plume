@@ -597,6 +597,38 @@ mod tests {
     }
 
     #[test]
+    fn to_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = comment.to_activity07(&conn)?;
+
+            let expected = json!({
+                "attributedTo": "https://plu.me/@/admin/",
+                "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
+"###,
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
+                "inReplyTo": "https://plu.me/~/BlogName/testing",
+                "published": format_datetime(&comment.creation_date),
+                "summary": "My CW",
+                "tag": [
+                    {
+                        "href": "https://plu.me/@/user/",
+                        "name": "@user",
+                        "type": "Mention"
+                    }
+                ],
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Note"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn build_delete() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
