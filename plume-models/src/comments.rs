@@ -699,4 +699,28 @@ mod tests {
             Ok(())
         });
     }
+
+    #[test]
+    fn build_delete07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = comment.build_delete07(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}#delete", comment.id),
+                "object": {
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
+                    "type": "Tombstone"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Delete"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
 }
