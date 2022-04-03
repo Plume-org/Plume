@@ -16,6 +16,9 @@ use activitypub::{
     link,
     object::{Note, Tombstone},
 };
+use activitystreams::{
+    iri_string::types::IriString, object::Note as Note07, prelude::*, time::OffsetDateTime,
+};
 use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
@@ -138,6 +141,44 @@ impl Comment {
                 .filter_map(|m| Mention::build_activity(conn, &m).ok())
                 .collect::<Vec<link::Mention>>(),
         )?;
+        Ok(note)
+    }
+
+    pub fn to_activity07(&self, conn: &DbConn) -> Result<Note07> {
+        let author = User::get(conn, self.author_id)?;
+        let (html, mentions, _hashtags) = utils::md_to_html(
+            self.content.get().as_ref(),
+            Some(&Instance::get_local()?.public_domain),
+            true,
+            Some(Media::get_media_processor(conn, vec![&author])),
+        );
+
+        let mut note = Note07::new();
+        let to = vec![PUBLIC_VISIBILITY.parse::<IriString>()?];
+
+        note.set_id(
+            self.ap_url
+                .clone()
+                .unwrap_or_default()
+                .parse::<IriString>()?,
+        );
+        note.set_summary(self.spoiler_text.clone());
+        note.set_content(html);
+        note.set_in_reply_to(self.in_response_to_id.map_or_else(
+            || Post::get(conn, self.post_id).map(|post| post.ap_url),
+            |id| Comment::get(conn, id).map(|comment| comment.ap_url.unwrap_or_default()),
+        )?);
+        note.set_published(
+            OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
+                .expect("OffsetDateTime"),
+        );
+        note.set_attributed_to(author.into_id().parse::<IriString>()?);
+        note.set_many_tos(to);
+        note.set_many_tags(mentions.into_iter().filter_map(|m| {
+            Mention::build_activity07(conn, &m)
+                .map(|mention| mention.into_any_base().expect("Can convert"))
+                .ok()
+        }));
         Ok(note)
     }
 
