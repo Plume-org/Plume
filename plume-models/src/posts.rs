@@ -1476,6 +1476,56 @@ mod tests {
         });
     }
 
+    // creates a post, get it's Create activity, delete the post,
+    // "send" the Create to the inbox, and check it works
+    #[test]
+    fn self_federation07() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let (_, users, blogs) = fill_database(&conn);
+            let post = Post::insert(
+                &conn,
+                NewPost {
+                    blog_id: blogs[0].id,
+                    slug: "yo".into(),
+                    title: "Yo".into(),
+                    content: SafeString::new("Hello"),
+                    published: true,
+                    license: "WTFPL".to_string(),
+                    creation_date: None,
+                    ap_url: String::new(), // automatically updated when inserting
+                    subtitle: "Testing".into(),
+                    source: "Hello".into(),
+                    cover_id: None,
+                },
+            )
+            .unwrap();
+            PostAuthor::insert(
+                &conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: users[0].id,
+                },
+            )
+            .unwrap();
+            let create = post.create_activity07(&conn).unwrap();
+            post.delete(&conn).unwrap();
+
+            match inbox(&conn, serde_json::to_value(create).unwrap()).unwrap() {
+                InboxResult::Post(p) => {
+                    assert!(p.is_author(&conn, users[0].id).unwrap());
+                    assert_eq!(p.source, "Hello".to_owned());
+                    assert_eq!(p.blog_id, blogs[0].id);
+                    assert_eq!(p.content, SafeString::new("Hello"));
+                    assert_eq!(p.subtitle, "Testing".to_owned());
+                    assert_eq!(p.title, "Yo".to_owned());
+                }
+                _ => panic!("Unexpected result"),
+            };
+            Ok(())
+        });
+    }
+
     #[test]
     fn licensed_article_serde() {
         let mut article = Article::default();
