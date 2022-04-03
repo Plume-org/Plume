@@ -17,7 +17,8 @@ use activitypub::{
     object::{Note, Tombstone},
 };
 use activitystreams::{
-    iri_string::types::IriString, object::Note as Note07, prelude::*, time::OffsetDateTime,
+    activity::Create as Create07, base::Base, iri_string::types::IriString, object::Note as Note07,
+    prelude::*, time::OffsetDateTime,
 };
 use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
@@ -197,6 +198,29 @@ impl Comment {
             .set_to_link_vec(note.object_props.to_link_vec::<Id>()?)?;
         act.object_props
             .set_cc_link_vec(vec![Id::new(self.get_author(conn)?.followers_endpoint)])?;
+        Ok(act)
+    }
+
+    pub fn create_activity07(&self, conn: &DbConn) -> Result<Create07> {
+        let author = User::get(conn, self.author_id)?;
+
+        let note = self.to_activity07(conn)?;
+        let to = note.to().ok_or(Error::MissingApProperty)?.clone();
+        let cc = note.cc().ok_or(Error::MissingApProperty)?.clone();
+
+        let mut act = Create07::new(
+            author.into_id().parse::<IriString>()?,
+            Base::retract(note)?.into_generic()?,
+        );
+        act.set_id(
+            format!(
+                "{}/activity",
+                self.ap_url.clone().ok_or(Error::MissingApProperty)?,
+            )
+            .parse::<IriString>()?,
+        );
+        act.set_many_tos(to);
+        act.set_many_ccs(cc);
         Ok(act)
     }
 
