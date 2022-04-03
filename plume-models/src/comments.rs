@@ -17,8 +17,12 @@ use activitypub::{
     object::{Note, Tombstone},
 };
 use activitystreams::{
-    activity::Create as Create07, base::Base, iri_string::types::IriString, object::Note as Note07,
-    prelude::*, time::OffsetDateTime,
+    activity::{Create as Create07, Delete as Delete07},
+    base::Base,
+    iri_string::types::IriString,
+    object::{Note as Note07, Tombstone as Tombstone07},
+    prelude::*,
+    time::OffsetDateTime,
 };
 use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
@@ -259,6 +263,26 @@ impl Comment {
             .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))?;
         act.object_props
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
+
+        Ok(act)
+    }
+
+    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete07> {
+        let mut tombstone = Tombstone07::new();
+        tombstone.set_id(
+            self.ap_url
+                .as_ref()
+                .ok_or(Error::MissingApProperty)?
+                .parse::<IriString>()?,
+        );
+
+        let mut act = Delete07::new(
+            self.get_author(conn)?.into_id().parse::<IriString>()?,
+            Base::retract(tombstone)?.into_generic()?,
+        );
+
+        act.set_id(format!("{}#delete", self.ap_url.clone().unwrap()).parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
 
         Ok(act)
     }
