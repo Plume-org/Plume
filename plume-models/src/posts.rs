@@ -1210,11 +1210,38 @@ impl AsObject<User, Create, &DbConn> for Post {
     }
 }
 
+impl AsObject07<User, Create07, &DbConn> for Post {
+    type Error = Error;
+    type Output = Self;
+
+    fn activity07(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self::Output> {
+        // TODO: check that _actor is actually one of the author?
+        Ok(self)
+    }
+}
+
 impl AsObject<User, Delete, &DbConn> for Post {
     type Error = Error;
     type Output = ();
 
     fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        let can_delete = self
+            .get_authors(conn)?
+            .into_iter()
+            .any(|a| actor.id == a.id);
+        if can_delete {
+            self.delete(conn).map(|_| ())
+        } else {
+            Err(Error::Unauthorized)
+        }
+    }
+}
+
+impl AsObject07<User, Delete07, &DbConn> for Post {
+    type Error = Error;
+    type Output = ();
+
+    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<Self::Output> {
         let can_delete = self
             .get_authors(conn)?
             .into_iter()
