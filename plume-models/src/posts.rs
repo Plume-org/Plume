@@ -14,7 +14,9 @@ use activitystreams::{
     base::{AnyBase, Base},
     iri_string::types::IriString,
     link::{self as link07, kind::MentionType},
-    object::{ApObject, Article as Article07, Image as Image07, Tombstone as Tombstone07},
+    object::{
+        kind::ImageType, ApObject, Article as Article07, Image as Image07, Tombstone as Tombstone07,
+    },
     prelude::*,
     time::OffsetDateTime,
 };
@@ -1047,7 +1049,7 @@ impl FromId07<DbConn> for Post {
 
         let cover = article.icon().and_then(|icon| {
             icon.iter().next().and_then(|img| {
-                let image: Image07 = img.extend().ok()??;
+                let image = img.to_owned().extend::<Image07, ImageType>().ok()??;
                 Media::from_activity07(conn, &image).ok().map(|m| m.id)
             })
         });
@@ -1056,16 +1058,14 @@ impl FromId07<DbConn> for Post {
             .name()
             .and_then(|name| name.to_as_string())
             .ok_or(Error::MissingApProperty)?;
+        let id = AnyBase::from_extended(article.clone()) // FIXME: Don't clone
+            .ok()
+            .ok_or(Error::MissingApProperty)?
+            .id()
+            .map(|id| id.to_string());
         let ap_url = article
             .url()
-            .and_then(|url| {
-                url.to_as_uri().or_else(|| {
-                    AnyBase::from_extended(article)
-                        .ok()?
-                        .id()
-                        .map(|id| id.to_string())
-                })
-            })
+            .and_then(|url| url.to_as_uri().or(id))
             .ok_or(Error::MissingApProperty)?;
         let post = Post::from_db07(conn, &ap_url)
             .and_then(|mut post| {
@@ -1104,7 +1104,7 @@ impl FromId07<DbConn> for Post {
                     updated = true;
                 }
                 if post.source != source {
-                    post.source = source;
+                    post.source = source.clone(); // FIXME: Don't clone
                     updated = true;
                 }
                 if post.cover_id != cover {
@@ -1171,17 +1171,19 @@ impl FromId07<DbConn> for Post {
             .collect::<HashSet<_>>();
         if let Some(tags) = article.tag() {
             for tag in tags.iter() {
-                tag.extend::<link07::Mention, MentionType>()
+                tag.clone()
+                    .extend::<link07::Mention, MentionType>() // FIXME: Don't clone
                     .map(|mention| {
                         mention.map(|m| Mention::from_activity07(conn, &m, post.id, true, true))
                     })
                     .ok();
 
-                tag.extend::<Hashtag07, HashtagType07>()
+                tag.clone()
+                    .extend::<Hashtag07, HashtagType07>() // FIXME: Don't clone
                     .and_then(|hashtag| {
                         Ok(hashtag.and_then(|t| {
-                            let tag_name = t.name?.as_str();
-                            Tag::from_activity07(conn, &t, post.id, hashtags.remove(tag_name)).ok()
+                            let tag_name = t.name.clone()?.as_str().to_string();
+                            Tag::from_activity07(conn, &t, post.id, hashtags.remove(&tag_name)).ok()
                         }))
                     })
                     .ok();
