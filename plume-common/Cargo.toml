@@ -39,6 +39,5 @@ branch = "bidi-plume"
 [dev-dependencies]
 assert-json-diff = "2.0.1"
 once_cell = "1.10.0"
-assert-json-diff = "2.0.1"
 
 [features]
