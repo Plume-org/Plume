@@ -12,7 +12,7 @@ use activitystreams::{
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, FromId},
+    inbox::{AsActor, AsObject, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -123,6 +123,26 @@ impl AsObject<User, activity::Like, &DbConn> for Post {
     type Output = Like;
 
     fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Like> {
+        let res = Like::insert(
+            conn,
+            NewLike {
+                post_id: self.id,
+                user_id: actor.id,
+                ap_url: id.to_string(),
+            },
+        )?;
+        res.notify(conn)?;
+
+        Timeline::add_to_all_timelines(conn, &self, Kind::Like(&actor))?;
+        Ok(res)
+    }
+}
+
+impl AsObject07<User, Like07, &DbConn> for Post {
+    type Error = Error;
+    type Output = Like;
+
+    fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             conn,
             NewLike {
