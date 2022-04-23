@@ -4,7 +4,7 @@ use crate::{
 };
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use activitystreams::{
-    activity::{Accept as Accept07, Follow as FollowAct07, Undo as Undo07},
+    activity::{Accept as Accept07, ActorAndObjectRef, Follow as FollowAct07, Undo as Undo07},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -12,7 +12,7 @@ use activitystreams::{
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast, broadcast07,
-    inbox::{AsActor, AsObject, AsObject07, FromId},
+    inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -298,6 +298,46 @@ impl FromId<DbConn> for Follow {
     }
 
     fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for Follow {
+    type Error = Error;
+    type Object = FollowAct07;
+
+    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+        Follow::find_by_ap_url(conn, id)
+    }
+
+    fn from_activity07(conn: &DbConn, follow: FollowAct07) -> Result<Self> {
+        let actor = User::from_id07(
+            conn,
+            follow
+                .actor_field_ref()
+                .as_single_id()
+                .ok_or(Error::MissingApProperty)?
+                .as_str(),
+            None,
+            CONFIG.proxy(),
+        )
+        .map_err(|(_, e)| e)?;
+
+        let target = User::from_id07(
+            conn,
+            follow
+                .object_field_ref()
+                .as_single_id()
+                .ok_or(Error::MissingApProperty)?
+                .as_str(),
+            None,
+            CONFIG.proxy(),
+        )
+        .map_err(|(_, e)| e)?;
+        Follow::accept_follow07(conn, &actor, &target, follow, actor.id, target.id)
+    }
+
+    fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
