@@ -71,6 +71,19 @@ impl Follow {
         Ok(act)
     }
 
+    pub fn to_activity07(&self, conn: &Connection) -> Result<FollowAct07> {
+        let user = User::get(conn, self.follower_id)?;
+        let target = User::get(conn, self.following_id)?;
+        let target_id = target.ap_url.parse::<IriString>()?;
+
+        let mut act = FollowAct07::new(user.ap_url.parse::<IriString>()?, target_id.clone());
+        act.set_id(self.ap_url.parse::<IriString>()?);
+        act.set_many_tos(vec![target_id]);
+        act.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+
+        Ok(act)
+    }
+
     pub fn notify(&self, conn: &Connection) -> Result<()> {
         if User::get(conn, self.following_id)?.is_local() {
             Notification::insert(
