@@ -7,7 +7,7 @@ use activitystreams::{activity::Announce as Announce07, iri_string::types::IriSt
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, FromId},
+    inbox::{AsActor, AsObject, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -129,6 +129,27 @@ impl AsObject<User, Announce, &DbConn> for Post {
     type Output = Reshare;
 
     fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
+        let conn = conn;
+        let reshare = Reshare::insert(
+            conn,
+            NewReshare {
+                post_id: self.id,
+                user_id: actor.id,
+                ap_url: id.to_string(),
+            },
+        )?;
+        reshare.notify(conn)?;
+
+        Timeline::add_to_all_timelines(conn, &self, Kind::Reshare(&actor))?;
+        Ok(reshare)
+    }
+}
+
+impl AsObject07<User, Announce07, &DbConn> for Post {
+    type Error = Error;
+    type Output = Reshare;
+
+    fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
         let conn = conn;
         let reshare = Reshare::insert(
             conn,
