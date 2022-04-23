@@ -51,6 +51,20 @@ impl Like {
         Ok(act)
     }
 
+    pub fn to_activity07(&self, conn: &Connection) -> Result<Like07> {
+        let mut act = Like07::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
+        );
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![User::get(conn, self.user_id)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
+        act.set_id(self.ap_url.parse::<IriString>()?);
+
+        Ok(act)
+    }
+
     pub fn notify(&self, conn: &Connection) -> Result<()> {
         let post = Post::get(conn, self.post_id)?;
         for author in post.get_authors(conn)? {
