@@ -196,7 +196,7 @@ where
     rt.run().unwrap();
 }
 
-pub fn broadcast07<S, T, A, K, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
+pub fn broadcast07<S, T, A, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
 where
     S: sign::Signer,
     A: Activity07 + serde::Serialize,
