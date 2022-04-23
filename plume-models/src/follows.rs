@@ -191,6 +191,22 @@ impl Follow {
             .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         Ok(undo)
     }
+
+    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo07> {
+        let mut undo = Undo07::new(
+            User::get(conn, self.follower_id)?
+                .ap_url
+                .parse::<IriString>()?,
+            self.ap_url.parse::<IriString>()?,
+        );
+        undo.set_id(format!("{}/undo", self.ap_url).parse::<IriString>()?);
+        undo.set_many_tos(vec![User::get(conn, self.following_id)?
+            .ap_url
+            .parse::<IriString>()?]);
+        undo.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+
+        Ok(undo)
+    }
 }
 
 impl AsObject<User, FollowAct, &DbConn> for User {
