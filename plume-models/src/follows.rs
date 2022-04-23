@@ -12,7 +12,7 @@ use activitystreams::{
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast, broadcast07,
-    inbox::{AsActor, AsObject, FromId},
+    inbox::{AsActor, AsObject, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -255,6 +255,18 @@ impl AsObject<User, FollowAct, &DbConn> for User {
             .follow_props
             .set_actor_link::<Id>(actor.clone().into_id())?;
         Follow::accept_follow(conn, &actor, &self, follow, actor.id, self.id)
+    }
+}
+
+impl AsObject07<User, FollowAct07, &DbConn> for User {
+    type Error = Error;
+    type Output = Follow;
+
+    fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
+        // Mastodon (at least) requires the full Follow object when accepting it,
+        // so we rebuilt it here
+        let follow = FollowAct07::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
+        Follow::accept_follow07(conn, &actor, &self, follow, actor.id, self.id)
     }
 }
 
