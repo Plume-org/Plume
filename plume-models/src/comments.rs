@@ -18,19 +18,21 @@ use activitypub::{
 };
 use activitystreams::{
     activity::{Create as Create07, Delete as Delete07},
-    base::Base,
+    base::{AnyBase, Base},
     iri_string::types::IriString,
+    link::{self as link07, kind::MentionType},
     object::{Note as Note07, Tombstone as Tombstone07},
     prelude::*,
+    primitives::OneOrMany,
     time::OffsetDateTime,
 };
 use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, FromId},
+        inbox::{AsActor, AsObject, FromId, FromId07},
         sign::Signer,
-        Id, IntoId, PUBLIC_VISIBILITY,
+        Id, IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -419,6 +421,143 @@ impl FromId<DbConn> for Comment {
     }
 
     fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for Comment {
+    type Error = Error;
+    type Object = Note07;
+
+    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+        Self::find_by_ap_url(conn, id)
+    }
+
+    fn from_activity07(conn: &DbConn, note: Note07) -> Result<Self> {
+        let comm = {
+            let previous_url = note
+                .in_reply_to()
+                .ok_or(Error::MissingApProperty)?
+                .iter()
+                .next()
+                .ok_or(Error::MissingApProperty)?
+                .as_xsd_string()
+                .ok_or(Error::MissingApProperty)?;
+            let previous_comment = Comment::find_by_ap_url(conn, previous_url);
+
+            let is_public = |v: &Option<&OneOrMany<AnyBase>>| match v {
+                Some(one_or_many) => one_or_many.iter().any(|any_base| {
+                    let xsd_string = any_base.as_xsd_string();
+                    xsd_string.is_some() && xsd_string.unwrap() == PUBLIC_VISIBILITY
+                }),
+                None => false,
+            };
+
+            let public_visibility = is_public(&note.to())
+                || is_public(&note.bto())
+                || is_public(&note.cc())
+                || is_public(&note.bcc());
+
+            let summary = note.summary().and_then(|summary| summary.to_as_string());
+            let sensitive = summary.is_some();
+            let comm = Comment::insert(
+                conn,
+                NewComment {
+                    content: SafeString::new(
+                        &note
+                            .content()
+                            .ok_or(Error::MissingApProperty)?
+                            .to_as_string()
+                            .ok_or(Error::InvalidValue)?,
+                    ),
+                    spoiler_text: summary.unwrap_or_default(),
+                    ap_url: Some(
+                        note.id_unchecked()
+                            .ok_or(Error::MissingApProperty)?
+                            .to_string(),
+                    ),
+                    in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
+                    post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
+                        Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>
+                    })?,
+                    author_id: User::from_id(
+                        conn,
+                        &note
+                            .attributed_to()
+                            .ok_or(Error::MissingApProperty)?
+                            .to_as_uri()
+                            .ok_or(Error::MissingApProperty)?,
+                        None,
+                        CONFIG.proxy(),
+                    )
+                    .map_err(|(_, e)| e)?
+                    .id,
+                    sensitive,
+                    public_visibility,
+                },
+            )?;
+
+            // save mentions
+            if let Some(tags) = note.tag() {
+                let author_url = &Post::get(conn, comm.post_id)?.get_authors(conn)?[0].ap_url;
+                for tag in tags.iter() {
+                    let m = tag.clone().extend::<link07::Mention, MentionType>()?; // FIXME: Don't clone
+                    if m.is_none() {
+                        continue;
+                    }
+                    let m = m.unwrap();
+                    let not_author = m.href().ok_or(Error::MissingApProperty)? != author_url;
+                    let _ = Mention::from_activity07(conn, &m, comm.id, false, not_author);
+                }
+            }
+            comm
+        };
+
+        if !comm.public_visibility {
+            let mut receiver_ids = HashSet::new();
+            let mut receivers_id = |v: Option<&'_ OneOrMany<AnyBase>>| {
+                if let Some(one_or_many) = v {
+                    for any_base in one_or_many.iter() {
+                        if let Some(id) = any_base.id() {
+                            receiver_ids.insert(id.to_string());
+                        }
+                    }
+                }
+            };
+
+            receivers_id(note.to());
+            receivers_id(note.cc());
+            receivers_id(note.bto());
+            receivers_id(note.bcc());
+
+            let receivers_ap_url = receiver_ids
+                .into_iter()
+                .flat_map(|v| {
+                    if let Ok(user) = User::from_id(conn, v.as_ref(), None, CONFIG.proxy()) {
+                        vec![user]
+                    } else {
+                        vec![] // TODO try to fetch collection
+                    }
+                })
+                .filter(|u| u.get_instance(conn).map(|i| i.local).unwrap_or(false))
+                .collect::<HashSet<User>>(); //remove duplicates (prevent db error)
+
+            for user in &receivers_ap_url {
+                CommentSeers::insert(
+                    conn,
+                    NewCommentSeers {
+                        comment_id: comm.id,
+                        user_id: user.id,
+                    },
+                )?;
+            }
+        }
+
+        comm.notify(conn)?;
+        Ok(comm)
+    }
+
+    fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
