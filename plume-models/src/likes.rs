@@ -266,6 +266,25 @@ impl AsObject<User, activity::Undo, &DbConn> for Like {
     }
 }
 
+impl AsObject07<User, Undo07, &DbConn> for Like {
+    type Error = Error;
+    type Output = ();
+
+    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        if actor.id == self.user_id {
+            diesel::delete(&self).execute(&**conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
+                diesel::delete(&notif).execute(&**conn)?;
+            }
+            Ok(())
+        } else {
+            Err(Error::Unauthorized)
+        }
+    }
+}
+
 impl NewLike {
     pub fn new(p: &Post, u: &User) -> Self {
         let ap_url = format!("{}like/{}", u.ap_url, p.ap_url);
