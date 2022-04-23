@@ -381,6 +381,35 @@ mod tests {
     }
 
     #[test]
+    fn build_accept07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (follow, following, follower, _users) = prepare_activity(&conn);
+            let act = follow.build_accept07(&follower, &following, follow.to_activity07(&conn)?)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://127.0.0.1:7878/follows/{}/accept", follow.id),
+                "object": {
+                    "actor": "https://plu.me/@/other/",
+                    "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "id": format!("https://plu.me/follows/{}", follow.id),
+                    "object": "https://plu.me/@/user/",
+                    "to": ["https://plu.me/@/user/"],
+                    "type": "Follow"
+                },
+                "to": ["https://plu.me/@/other/"],
+                "type": "Accept"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
     fn build_undo() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
