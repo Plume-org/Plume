@@ -30,7 +30,7 @@ use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, FromId, FromId07},
+        inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
         sign::Signer,
         Id, IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
@@ -581,6 +581,45 @@ impl AsObject<User, Delete, &DbConn> for Comment {
     type Output = ();
 
     fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        if self.author_id != actor.id {
+            return Err(Error::Unauthorized);
+        }
+
+        for m in Mention::list_for_comment(conn, self.id)? {
+            for n in Notification::find_for_mention(conn, &m)? {
+                n.delete(conn)?;
+            }
+            m.delete(conn)?;
+        }
+
+        for n in Notification::find_for_comment(conn, &self)? {
+            n.delete(&**conn)?;
+        }
+
+        diesel::update(comments::table)
+            .filter(comments::in_response_to_id.eq(self.id))
+            .set(comments::in_response_to_id.eq(self.in_response_to_id))
+            .execute(&**conn)?;
+        diesel::delete(&self).execute(&**conn)?;
+        Ok(())
+    }
+}
+
+impl AsObject07<User, Create07, &DbConn> for Comment {
+    type Error = Error;
+    type Output = Self;
+
+    fn activity07(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self> {
+        // The actual creation takes place in the FromId impl
+        Ok(self)
+    }
+}
+
+impl AsObject07<User, Delete07, &DbConn> for Comment {
+    type Error = Error;
+    type Output = ();
+
+    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.author_id != actor.id {
             return Err(Error::Unauthorized);
         }
