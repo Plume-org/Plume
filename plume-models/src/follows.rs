@@ -4,7 +4,7 @@ use crate::{
 };
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
 use activitystreams::{
-    activity::{Accept as Accept07, Follow as FollowAct07},
+    activity::{Accept as Accept07, Follow as FollowAct07, Undo as Undo07},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -437,6 +437,28 @@ mod tests {
         conn.test_transaction::<_, Error, _>(|| {
             let (follow, _following, _follower, _users) = prepare_activity(&conn);
             let act = follow.build_undo(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/other/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://plu.me/follows/{}/undo", follow.id),
+                "object": format!("https://plu.me/follows/{}", follow.id),
+                "to": ["https://plu.me/@/user/"],
+                "type": "Undo"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn build_undo07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (follow, _following, _follower, _users) = prepare_activity(&conn);
+            let act = follow.build_undo07(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/other/",
