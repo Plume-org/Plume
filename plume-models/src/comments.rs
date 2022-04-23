@@ -751,6 +751,98 @@ mod tests {
         })
     }
 
+    // creates a post, get it's Create activity, delete the post,
+    // "send" the Create to the inbox, and check it works
+    #[test]
+    fn self_federation07() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let (original_comm, posts, users, _blogs) = prepare_activity(&conn);
+            let act = original_comm.create_activity07(&conn).unwrap();
+
+            assert_json_eq!(to_value(&act).unwrap(), json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", original_comm.id),
+                "object": {
+                    "attributedTo": "https://plu.me/@/admin/",
+                    "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
+"###,
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "inReplyTo": "https://plu.me/~/BlogName/testing",
+                    "published": format_datetime(&original_comm.creation_date),
+                    "summary": "My CW",
+                    "tag": [
+                        {
+                            "href": "https://plu.me/@/user/",
+                            "name": "@user",
+                            "type": "Mention"
+                        }
+                    ],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Note"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create",
+            }));
+
+            let reply = Comment::insert(
+                conn,
+                NewComment {
+                    content: SafeString::new(""),
+                    in_response_to_id: Some(original_comm.id),
+                    post_id: posts[0].id,
+                    author_id: users[1].id,
+                    ap_url: None,
+                    sensitive: false,
+                    spoiler_text: "".into(),
+                    public_visibility: true,
+                },
+            )
+            .unwrap();
+            let reply_act = reply.create_activity07(&conn).unwrap();
+
+            assert_json_eq!(to_value(&reply_act).unwrap(), json!({
+                "actor": "https://plu.me/@/user/",
+                "cc": ["https://plu.me/@/user/followers"],
+                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", reply.id),
+                "object": {
+                    "attributedTo": "https://plu.me/@/user/",
+                    "content": "",
+                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", reply.id),
+                    "inReplyTo": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "published": format_datetime(&reply.creation_date),
+                    "summary": "",
+                    "tag": [],
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Note"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Create"
+            }));
+
+            inbox(
+                &conn,
+                serde_json::to_value(original_comm.build_delete07(&conn).unwrap()).unwrap(),
+            )
+            .unwrap();
+
+            match inbox(&conn, to_value(act).unwrap()).unwrap() {
+                InboxResult::Commented(c) => {
+                    // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
+                    assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);
+                    assert_eq!(c.post_id, original_comm.post_id);
+                    assert_eq!(c.author_id, original_comm.author_id);
+                    assert_eq!(c.ap_url, original_comm.ap_url);
+                    assert_eq!(c.spoiler_text, original_comm.spoiler_text);
+                    assert_eq!(c.public_visibility, original_comm.public_visibility);
+                }
+                _ => panic!("Unexpected result"),
+            };
+            Ok(())
+        })
+    }
+
     #[test]
     fn to_activity() {
         let conn = db();
