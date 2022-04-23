@@ -155,6 +155,28 @@ impl Follow {
         Ok(accept)
     }
 
+    pub fn build_accept07<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
+        &self,
+        from: &B,
+        target: &A,
+        follow: FollowAct07,
+    ) -> Result<Accept07> {
+        let mut accept = Accept07::new(
+            target.clone().into_id().parse::<IriString>()?,
+            AnyBase::from_extended(follow)?,
+        );
+        let accept_id = ap_url(&format!(
+            "{}/follows/{}/accept",
+            CONFIG.base_url.as_str(),
+            self.id
+        ));
+        accept.set_id(accept_id.parse::<IriString>()?);
+        accept.set_many_tos(vec![from.clone().into_id().parse::<IriString>()?]);
+        accept.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+
+        Ok(accept)
+    }
+
     pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
         let mut undo = Undo::default();
         undo.undo_props
