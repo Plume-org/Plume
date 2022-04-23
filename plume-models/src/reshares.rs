@@ -3,6 +3,7 @@ use crate::{
     timeline::*, users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Announce, Undo};
+use activitystreams::{activity::Announce as Announce07, iri_string::types::IriString, prelude::*};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
@@ -217,6 +218,30 @@ mod test {
             let user = &post.get_authors(&conn)?[0];
             let reshare = Reshare::insert(&*conn, NewReshare::new(post, user))?;
             let act = reshare.to_activity(&conn).unwrap();
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing",
+                "object": "https://plu.me/~/BlogName/testing",
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Announce",
+            });
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &post.get_authors(&conn)?[0];
+            let reshare = Reshare::insert(&*conn, NewReshare::new(post, user))?;
+            let act = reshare.to_activity07(&conn).unwrap();
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
