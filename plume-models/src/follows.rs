@@ -3,6 +3,12 @@ use crate::{
     Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Accept, Follow as FollowAct, Undo};
+use activitystreams::{
+    activity::{Accept as Accept07, Follow as FollowAct07},
+    base::AnyBase,
+    iri_string::types::IriString,
+    prelude::*,
+};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast,
@@ -294,6 +300,28 @@ mod tests {
         conn.test_transaction::<_, Error, _>(|| {
             let (follow, _following, _follower, _users) = prepare_activity(&conn);
             let act = follow.to_activity(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/other/",
+                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
+                "id": format!("https://plu.me/follows/{}", follow.id),
+                "object": "https://plu.me/@/user/",
+                "to": ["https://plu.me/@/user/"],
+                "type": "Follow"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn to_activity07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (follow, _following, _follower, _users) = prepare_activity(&conn);
+            let act = follow.to_activity07(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/other/",
