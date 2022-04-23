@@ -3,11 +3,15 @@ use crate::{
     timeline::*, users::User, Connection, Error, Result, CONFIG,
 };
 use activitypub::activity::{Announce, Undo};
-use activitystreams::{activity::Announce as Announce07, iri_string::types::IriString, prelude::*};
+use activitystreams::{
+    activity::{ActorAndObjectRef, Announce as Announce07},
+    iri_string::types::IriString,
+    prelude::*,
+};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, AsObject07, FromId},
+    inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -202,6 +206,55 @@ impl FromId<DbConn> for Reshare {
     }
 
     fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for Reshare {
+    type Error = Error;
+    type Object = Announce07;
+
+    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+        Reshare::find_by_ap_url(conn, id)
+    }
+
+    fn from_activity07(conn: &DbConn, act: Announce07) -> Result<Self> {
+        let res = Reshare::insert(
+            conn,
+            NewReshare {
+                post_id: Post::from_id(
+                    conn,
+                    act.object_field_ref()
+                        .as_single_id()
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str(),
+                    None,
+                    CONFIG.proxy(),
+                )
+                .map_err(|(_, e)| e)?
+                .id,
+                user_id: User::from_id(
+                    conn,
+                    act.actor_field_ref()
+                        .as_single_id()
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str(),
+                    None,
+                    CONFIG.proxy(),
+                )
+                .map_err(|(_, e)| e)?
+                .id,
+                ap_url: act
+                    .id_unchecked()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_string(),
+            },
+        )?;
+        res.notify(conn)?;
+        Ok(res)
+    }
+
+    fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
