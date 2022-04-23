@@ -363,6 +363,27 @@ impl AsObject<User, Undo, &DbConn> for Follow {
     }
 }
 
+impl AsObject07<User, Undo07, &DbConn> for Follow {
+    type Error = Error;
+    type Output = ();
+
+    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        let conn = conn;
+        if self.follower_id == actor.id {
+            diesel::delete(&self).execute(&**conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
+                diesel::delete(&notif).execute(&**conn)?;
+            }
+
+            Ok(())
+        } else {
+            Err(Error::Unauthorized)
+        }
+    }
+}
+
 impl IntoId for Follow {
     fn into_id(self) -> Id {
         Id::new(self.ap_url)
