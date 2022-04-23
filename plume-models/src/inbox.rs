@@ -1,5 +1,8 @@
 use activitypub::activity::*;
-use activitystreams::activity::{Announce as Announce07, Delete as Delete07, Undo as Undo07};
+use activitystreams::activity::{
+    Announce as Announce07, Create as Create07, Delete as Delete07, Follow as Follow07,
+    Like as Like07, Undo as Undo07, Update as Update07,
+};
 
 use crate::{
     comments::Comment,
@@ -52,14 +55,14 @@ pub fn inbox(conn: &DbConn, act: serde_json::Value) -> Result<InboxResult, Error
         .with07::<User, Announce07, Post>(CONFIG.proxy())
         .with::<User, Create, Comment>(CONFIG.proxy())
         .with::<User, Create, Post>(CONFIG.proxy())
-        .with::<User, Delete, Comment>(CONFIG.proxy())
-        .with::<User, Delete, Post>(CONFIG.proxy())
+        .with07::<User, Delete07, Comment>(CONFIG.proxy())
+        .with07::<User, Delete07, Post>(CONFIG.proxy())
         .with07::<User, Delete07, User>(CONFIG.proxy())
         .with::<User, Follow, User>(CONFIG.proxy())
-        .with::<User, Like, Post>(CONFIG.proxy())
+        .with07::<User, Like07, Post>(CONFIG.proxy())
         .with07::<User, Undo07, Reshare>(CONFIG.proxy())
         .with07::<User, Undo07, follows::Follow>(CONFIG.proxy())
-        .with::<User, Undo, likes::Like>(CONFIG.proxy())
+        .with07::<User, Undo07, likes::Like>(CONFIG.proxy())
         .with::<User, Update, PostUpdate>(CONFIG.proxy())
         .done()
 }
