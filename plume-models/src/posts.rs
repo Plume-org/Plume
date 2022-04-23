@@ -1145,7 +1145,7 @@ impl FromId07<DbConn> for Post {
                             .summary()
                             .and_then(|summary| summary.to_as_string())
                             .ok_or(Error::MissingApProperty)?,
-                        source: source,
+                        source,
                         cover_id: cover,
                     },
                 )
@@ -1180,11 +1180,11 @@ impl FromId07<DbConn> for Post {
 
                 tag.clone()
                     .extend::<Hashtag07, HashtagType07>() // FIXME: Don't clone
-                    .and_then(|hashtag| {
-                        Ok(hashtag.and_then(|t| {
+                    .map(|hashtag| {
+                        hashtag.and_then(|t| {
                             let tag_name = t.name.clone()?.as_str().to_string();
                             Tag::from_activity07(conn, &t, post.id, hashtags.remove(&tag_name)).ok()
-                        }))
+                        })
                     })
                     .ok();
             }
