@@ -5,6 +5,7 @@ use crate::{
 use activitypub::activity::{Announce, Undo};
 use activitystreams::{
     activity::{ActorAndObjectRef, Announce as Announce07, Undo as Undo07},
+    base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
 };
@@ -123,6 +124,21 @@ impl Reshare {
             .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
         act.object_props
             .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
+
+        Ok(act)
+    }
+
+    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo07> {
+        let mut act = Undo07::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            AnyBase::from_extended(self.to_activity07(conn)?)?,
+        );
+        act.set_id(format!("{}#delete", self.ap_url).parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![self
+            .get_user(conn)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
 
         Ok(act)
     }
