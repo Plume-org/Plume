@@ -102,6 +102,20 @@ impl Like {
 
         Ok(act)
     }
+
+    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo07> {
+        let mut act = Undo07::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            AnyBase::from_extended(self.to_activity07(conn)?)?,
+        );
+        act.set_id(format!("{}#delete", self.ap_url).parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![User::get(conn, self.user_id)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
+
+        Ok(act)
+    }
 }
 
 impl AsObject<User, activity::Like, &DbConn> for Post {
