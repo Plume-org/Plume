@@ -396,4 +396,35 @@ mod test {
             Ok(())
         });
     }
+
+    #[test]
+    fn build_undo07() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(&conn);
+            let post = &posts[0];
+            let user = &post.get_authors(&conn)?[0];
+            let reshare = Reshare::insert(&*conn, NewReshare::new(post, user))?;
+            let act = reshare.build_undo07(&*conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "cc": ["https://plu.me/@/admin/followers"],
+                "id": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing#delete",
+                "object": {
+                    "actor": "https://plu.me/@/admin/",
+                    "cc": ["https://plu.me/@/admin/followers"],
+                    "id": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing",
+                    "object": "https://plu.me/~/BlogName/testing",
+                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                    "type": "Announce"
+                },
+                "to": ["https://www.w3.org/ns/activitystreams#Public"],
+                "type": "Undo",
+            });
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
 }
