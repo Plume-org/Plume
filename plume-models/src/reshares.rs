@@ -4,7 +4,7 @@ use crate::{
 };
 use activitypub::activity::{Announce, Undo};
 use activitystreams::{
-    activity::{ActorAndObjectRef, Announce as Announce07},
+    activity::{ActorAndObjectRef, Announce as Announce07, Undo as Undo07},
     iri_string::types::IriString,
     prelude::*,
 };
@@ -264,6 +264,26 @@ impl AsObject<User, Undo, &DbConn> for Reshare {
     type Output = ();
 
     fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+        if actor.id == self.user_id {
+            diesel::delete(&self).execute(&**conn)?;
+
+            // delete associated notification if any
+            if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
+                diesel::delete(&notif).execute(&**conn)?;
+            }
+
+            Ok(())
+        } else {
+            Err(Error::Unauthorized)
+        }
+    }
+}
+
+impl AsObject07<User, Undo07, &DbConn> for Reshare {
+    type Error = Error;
+    type Output = ();
+
+    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
             diesel::delete(&self).execute(&**conn)?;
 
