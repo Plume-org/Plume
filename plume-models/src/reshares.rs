@@ -76,6 +76,21 @@ impl Reshare {
         Ok(act)
     }
 
+    pub fn to_activity07(&self, conn: &Connection) -> Result<Announce07> {
+        let mut act = Announce07::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
+        );
+        act.set_id(self.ap_url.parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![self
+            .get_user(conn)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
+
+        Ok(act)
+    }
+
     pub fn notify(&self, conn: &Connection) -> Result<()> {
         let post = self.get_post(conn)?;
         for author in post.get_authors(conn)? {
