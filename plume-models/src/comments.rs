@@ -211,8 +211,7 @@ impl Comment {
         let author = User::get(conn, self.author_id)?;
 
         let note = self.to_activity07(conn)?;
-        let to = note.to().ok_or(Error::MissingApProperty)?.clone();
-        let cc = note.cc().ok_or(Error::MissingApProperty)?.clone();
+        let note_clone = note.clone();
 
         let mut act = Create07::new(
             author.into_id().parse::<IriString>()?,
@@ -225,8 +224,13 @@ impl Comment {
             )
             .parse::<IriString>()?,
         );
-        act.set_many_tos(to);
-        act.set_many_ccs(cc);
+        act.set_many_tos(
+            note_clone
+                .to()
+                .iter()
+                .flat_map(|tos| tos.iter().map(|to| to.to_owned())),
+        );
+        act.set_many_ccs(vec![self.get_author(conn)?.followers_endpoint]);
         Ok(act)
     }
 
