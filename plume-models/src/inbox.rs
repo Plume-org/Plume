@@ -53,8 +53,8 @@ impl_into_inbox_result! {
 pub fn inbox(conn: &DbConn, act: serde_json::Value) -> Result<InboxResult, Error> {
     Inbox::handle(conn, act)
         .with07::<User, Announce07, Post>(CONFIG.proxy())
-        .with::<User, Create, Comment>(CONFIG.proxy())
-        .with::<User, Create, Post>(CONFIG.proxy())
+        .with07::<User, Create07, Comment>(CONFIG.proxy())
+        .with07::<User, Create07, Post>(CONFIG.proxy())
         .with07::<User, Delete07, Comment>(CONFIG.proxy())
         .with07::<User, Delete07, Post>(CONFIG.proxy())
         .with07::<User, Delete07, User>(CONFIG.proxy())
