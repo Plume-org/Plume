@@ -445,14 +445,14 @@ impl FromId07<DbConn> for Comment {
                 .iter()
                 .next()
                 .ok_or(Error::MissingApProperty)?
-                .as_xsd_string()
+                .id()
                 .ok_or(Error::MissingApProperty)?;
-            let previous_comment = Comment::find_by_ap_url(conn, previous_url);
+            let previous_comment = Comment::find_by_ap_url(conn, previous_url.as_str());
 
             let is_public = |v: &Option<&OneOrMany<AnyBase>>| match v {
                 Some(one_or_many) => one_or_many.iter().any(|any_base| {
-                    let xsd_string = any_base.as_xsd_string();
-                    xsd_string.is_some() && xsd_string.unwrap() == PUBLIC_VISIBILITY
+                    let id = any_base.id();
+                    id.is_some() && id.unwrap() == PUBLIC_VISIBILITY
                 }),
                 None => false,
             };
@@ -482,7 +482,7 @@ impl FromId07<DbConn> for Comment {
                     ),
                     in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
                     post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
-                        Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>
+                        Ok(Post::find_by_ap_url(conn, previous_url.as_str())?.id) as Result<i32>
                     })?,
                     author_id: User::from_id(
                         conn,
