@@ -265,7 +265,9 @@ impl AsObject07<User, FollowAct07, &DbConn> for User {
     fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
-        let follow = FollowAct07::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
+        let mut follow =
+            FollowAct07::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
+        follow.set_id(id.parse::<IriString>()?);
         Follow::accept_follow07(conn, &actor, &self, follow, actor.id, self.id)
     }
 }
