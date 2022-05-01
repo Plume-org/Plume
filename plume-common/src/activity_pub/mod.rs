@@ -693,7 +693,7 @@ mod tests {
         let licensed_article = LicensedArticle::new(
             object,
             Licensed07 {
-                license: "CC-0".into(),
+                license: Some("CC-0".into()),
             },
             SourceProperty {
                 source: Source {
