@@ -492,7 +492,7 @@ impl Post {
                 .collect::<Vec<IriString>>(),
         );
         let license = Licensed07 {
-            license: self.license.clone(),
+            license: Some(self.license.clone()),
         };
         Ok(LicensedArticle07::new(article, license, source))
     }
@@ -1026,7 +1026,7 @@ impl FromId07<DbConn> for Post {
     }
 
     fn from_activity07(conn: &DbConn, article: LicensedArticle07) -> Result<Self> {
-        let license = article.ext_one.license;
+        let license = article.ext_one.license.unwrap_or_default();
         let source = article.ext_two.source.content;
         let article = article.inner;
 
@@ -1357,7 +1357,7 @@ impl FromId07<DbConn> for PostUpdate {
                 .and_then(|m| m.map(|m| m.id))
         });
         post_update.source = Some(updated.ext_two.source.content);
-        post_update.license = Some(updated.ext_one.license);
+        post_update.license = updated.ext_one.license;
 
         Ok(post_update)
     }

@@ -63,7 +63,7 @@ pub fn inbox(conn: &DbConn, act: serde_json::Value) -> Result<InboxResult, Error
         .with07::<User, Undo07, Reshare>(CONFIG.proxy())
         .with07::<User, Undo07, follows::Follow>(CONFIG.proxy())
         .with07::<User, Undo07, likes::Like>(CONFIG.proxy())
-        .with::<User, Update, PostUpdate>(CONFIG.proxy())
+        .with07::<User, Update07, PostUpdate>(CONFIG.proxy())
         .done()
 }
 

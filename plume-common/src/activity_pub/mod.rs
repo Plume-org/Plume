@@ -558,7 +558,7 @@ impl Object for Licensed {}
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Licensed07 {
-    pub license: String,
+    pub license: Option<String>,
 }
 
 impl<U> UnparsedExtension<U> for Licensed07
