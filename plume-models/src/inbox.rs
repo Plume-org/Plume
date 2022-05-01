@@ -1,4 +1,3 @@
-use activitypub::activity::*;
 use activitystreams::activity::{
     Announce as Announce07, Create as Create07, Delete as Delete07, Follow as Follow07,
     Like as Like07, Undo as Undo07, Update as Update07,
