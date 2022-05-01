@@ -15,7 +15,8 @@ use activitystreams::{
     iri_string::types::IriString,
     link::{self as link07, kind::MentionType},
     object::{
-        kind::ImageType, ApObject, Article as Article07, Image as Image07, Tombstone as Tombstone07,
+        kind::ImageType, ApObject, Article as Article07, AsApObject, Image as Image07,
+        Tombstone as Tombstone07,
     },
     prelude::*,
     time::OffsetDateTime,
@@ -1298,6 +1299,63 @@ impl FromId<DbConn> for PostUpdate {
     }
 
     fn get_sender() -> &'static dyn Signer {
+        Instance::get_local_instance_user().expect("Failed to local instance user")
+    }
+}
+
+impl FromId07<DbConn> for PostUpdate {
+    type Error = Error;
+    type Object = LicensedArticle07;
+
+    fn from_db07(_: &DbConn, _: &str) -> Result<Self> {
+        // Always fail because we always want to deserialize the AP object
+        Err(Error::NotFound)
+    }
+
+    fn from_activity07(conn: &DbConn, updated: Self::Object) -> Result<Self> {
+        let mut post_update = PostUpdate {
+            ap_url: updated
+                .ap_object_ref()
+                .id_unchecked()
+                .ok_or(Error::MissingApProperty)?
+                .to_string(),
+            title: updated
+                .ap_object_ref()
+                .name()
+                .and_then(|name| name.to_as_string()),
+            subtitle: updated
+                .ap_object_ref()
+                .summary()
+                .and_then(|summary| summary.to_as_string()),
+            content: updated
+                .ap_object_ref()
+                .content()
+                .and_then(|content| content.to_as_string()),
+            cover: None,
+            source: None,
+            license: None,
+            tags: updated
+                .tag()
+                .and_then(|tags| serde_json::to_value(tags).ok()),
+        };
+        post_update.cover = updated.ap_object_ref().icon().and_then(|img| {
+            img.iter()
+                .next()
+                .and_then(|img| {
+                    img.clone()
+                        .extend::<Image07, ImageType>()
+                        .map(|img| img.and_then(|img| Media::from_activity07(conn, &img).ok()))
+                        .ok()
+                })
+                .and_then(|m| m.map(|m| m.id))
+        });
+        post_update.source = Some(updated.ext_two.source.content);
+        post_update.license = Some(updated.ext_one.license);
+
+        Ok(post_update)
+    }
+
+    fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
