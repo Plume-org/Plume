@@ -1031,20 +1031,27 @@ impl FromId07<DbConn> for Post {
         let article = article.inner;
 
         let (blog, authors) = article
+            .ap_object_ref()
             .attributed_to()
-            .ok_or(Error::MissingApProperty)
+            .ok_or(Error::MissingApProperty)?
             .iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
-                let url = link.to_as_uri().expect("Exists");
-                match User::from_id(conn, &url, None, CONFIG.proxy()) {
-                    Ok(u) => {
-                        authors.push(u);
-                        (blog, authors)
+                if let Some(url) = link.id() {
+                    match User::from_id07(conn, url.as_str(), None, CONFIG.proxy()) {
+                        Ok(u) => {
+                            authors.push(u);
+                            (blog, authors)
+                        }
+                        Err(_) => (
+                            blog.or_else(|| {
+                                Blog::from_id07(conn, url.as_str(), None, CONFIG.proxy()).ok()
+                            }),
+                            authors,
+                        ),
                     }
-                    Err(_) => (
-                        blog.or_else(|| Blog::from_id(conn, &url, None, CONFIG.proxy()).ok()),
-                        authors,
-                    ),
+                } else {
+                    // logically, url possible to be an object without id proprty like {"type":"Person", "name":"Sally"} but we ignore the case
+                    (blog, authors)
                 }
             });
 
