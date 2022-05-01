@@ -1715,10 +1715,10 @@ mod tests {
                 "name": "Testing",
                 "published": format_datetime(&post.creation_date),
                 "source": {
-                    "content": "",
+                    "content": "Hello",
                     "mediaType": "text/markdown"
                 },
-                "summary": "",
+                "summary": "Bye",
                 "tag": [
                     {
                         "href": "https://plu.me/@/user/",
@@ -1753,10 +1753,10 @@ mod tests {
                 "name": "Testing",
                 "published": format_datetime(&post.creation_date),
                 "source": {
-                    "content": "",
+                    "content": "Hello",
                     "mediaType": "text/markdown"
                 },
-                "summary": "",
+                "summary": "Bye",
                 "tag": [
                     {
                         "href": "https://plu.me/@/user/",
@@ -1795,10 +1795,10 @@ mod tests {
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
                     "source": {
-                        "content": "",
+                        "content": "Hello",
                         "mediaType": "text/markdown"
                     },
-                    "summary": "",
+                    "summary": "Bye",
                     "tag": [
                         {
                             "href": "https://plu.me/@/user/",
@@ -1840,10 +1840,10 @@ mod tests {
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
                     "source": {
-                        "content": "",
+                        "content": "Hello",
                         "mediaType": "text/markdown"
                     },
-                    "summary": "",
+                    "summary": "Bye",
                     "tag": [
                         {
                             "href": "https://plu.me/@/user/",
@@ -1885,10 +1885,10 @@ mod tests {
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
                     "source": {
-                        "content": "",
+                        "content": "Hello",
                         "mediaType": "text/markdown"
                     },
-                    "summary": "",
+                    "summary": "Bye",
                     "tag": [
                         {
                             "href": "https://plu.me/@/user/",
@@ -1924,7 +1924,7 @@ mod tests {
                 if key == "id" {
                     continue;
                 }
-                assert_eq!(value, expected.get(key).unwrap());
+                assert_json_eq!(value, expected.get(key).unwrap());
             }
 
             Ok(())
@@ -1951,10 +1951,10 @@ mod tests {
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
                     "source": {
-                        "content": "",
+                        "content": "Hello",
                         "mediaType": "text/markdown"
                     },
-                    "summary": "",
+                    "summary": "Bye",
                     "tag": [
                         {
                             "href": "https://plu.me/@/user/",
@@ -1990,7 +1990,7 @@ mod tests {
                 if key == "id" {
                     continue;
                 }
-                assert_eq!(value, expected.get(key).unwrap());
+                assert_json_eq!(value, expected.get(key).unwrap());
             }
 
             Ok(())
