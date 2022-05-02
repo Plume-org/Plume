@@ -3,7 +3,6 @@ use crate::{
     post_authors::*, safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User,
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
-use activitypub::{object::Article, CustomObject};
 use activitystreams::{
     activity::{Create as Create07, Delete as Delete07, Update as Update07},
     base::{AnyBase, Base},
@@ -23,17 +22,14 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, HashtagType, Id, IntoId, Licensed, Licensed07,
-        LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
-        PUBLIC_VISIBILITY,
+        Hashtag, HashtagType, Id, IntoId, Licensed07, LicensedArticle as LicensedArticle07, Source,
+        SourceProperty, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
 };
 use riker::actors::{Publish, Tell};
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
-
-pub type LicensedArticle = CustomObject<Licensed, Article>;
 
 static BLOG_FQN_CACHE: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
@@ -1089,49 +1085,6 @@ mod tests {
             };
             Ok(())
         });
-    }
-
-    #[test]
-    fn licensed_article_serde() {
-        let mut article = Article::default();
-        article.object_props.set_id_string("Yo".into()).unwrap();
-        let mut license = Licensed::default();
-        license.set_license_string("WTFPL".into()).unwrap();
-        let full_article = LicensedArticle::new(article, license);
-
-        let json = serde_json::to_value(full_article).unwrap();
-        let article_from_json: LicensedArticle = serde_json::from_value(json).unwrap();
-        assert_eq!(
-            "Yo",
-            &article_from_json.object.object_props.id_string().unwrap()
-        );
-        assert_eq!(
-            "WTFPL",
-            &article_from_json.custom_props.license_string().unwrap()
-        );
-    }
-
-    #[test]
-    fn licensed_article_deserialization() {
-        let json = json!({
-            "type": "Article",
-            "id": "https://plu.me/~/Blog/my-article",
-            "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
-            "content": "Hello.",
-            "name": "My Article",
-            "summary": "Bye.",
-            "source": {
-                "content": "Hello.",
-                "mediaType": "text/markdown"
-            },
-            "published": "2014-12-12T12:12:12Z",
-            "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
-        });
-        let article: LicensedArticle = serde_json::from_value(json).unwrap();
-        assert_eq!(
-            "https://plu.me/~/Blog/my-article",
-            &article.object.object_props.id_string().unwrap()
-        );
     }
 
     #[test]
