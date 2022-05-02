@@ -2,7 +2,7 @@ use crate::{
     db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
-use activitypub::{actor::Group, object::Image, CustomObject};
+use activitypub::{actor::Group, CustomObject};
 use activitystreams::{
     actor::{ApActor, ApActorExt, AsApActor, Group as Group07},
     base::AnyBase,
@@ -22,7 +22,7 @@ use openssl::{
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId,
-    PublicKey, PublicKey07, Source, SourceProperty, ToAsString, ToAsUri,
+    PublicKey07, Source, SourceProperty, ToAsString, ToAsUri,
 };
 use webfinger::*;
 
@@ -161,68 +161,6 @@ impl Blog {
                 )
                 .map_err(|(_, e)| e)
             })
-    }
-
-    pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
-        let mut blog = Group::default();
-        blog.ap_actor_props
-            .set_preferred_username_string(self.actor_id.clone())?;
-        blog.object_props.set_name_string(self.title.clone())?;
-        blog.ap_actor_props
-            .set_outbox_string(self.outbox_url.clone())?;
-        blog.ap_actor_props
-            .set_inbox_string(self.inbox_url.clone())?;
-        blog.object_props
-            .set_summary_string(self.summary_html.to_string())?;
-        blog.ap_object_props.set_source_object(Source {
-            content: self.summary.clone(),
-            media_type: String::from("text/markdown"),
-        })?;
-
-        let mut icon = Image::default();
-        icon.object_props.set_url_string(
-            self.icon_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-                .unwrap_or_default(),
-        )?;
-        icon.object_props.set_attributed_to_link(
-            self.icon_id
-                .and_then(|id| {
-                    Media::get(conn, id)
-                        .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
-                        .ok()
-                })
-                .unwrap_or_else(|| Id::new(String::new())),
-        )?;
-        blog.object_props.set_icon_object(icon)?;
-
-        let mut banner = Image::default();
-        banner.object_props.set_url_string(
-            self.banner_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-                .unwrap_or_default(),
-        )?;
-        banner.object_props.set_attributed_to_link(
-            self.banner_id
-                .and_then(|id| {
-                    Media::get(conn, id)
-                        .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
-                        .ok()
-                })
-                .unwrap_or_else(|| Id::new(String::new())),
-        )?;
-        blog.object_props.set_image_object(banner)?;
-
-        blog.object_props.set_id_string(self.ap_url.clone())?;
-
-        let mut public_key = PublicKey::default();
-        public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
-        public_key.set_owner_string(self.ap_url.clone())?;
-        public_key.set_public_key_pem_string(self.public_key.clone())?;
-        let mut ap_signature = ApSignature::default();
-        ap_signature.set_public_key_publickey(public_key)?;
-
-        Ok(CustomGroup::new(blog, ap_signature))
     }
 
     pub fn to_activity07(&self, conn: &Connection) -> Result<CustomGroup07> {
@@ -1038,52 +976,6 @@ pub(crate) mod tests {
 
             Ok(())
         })
-    }
-
-    #[test]
-    fn to_activity() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (_users, blogs) = fill_database(&conn);
-            let blog = &blogs[0];
-            let act = blog.to_activity(conn)?;
-
-            let expected = json!({
-                "followers": null,
-                "following": null,
-                "icon": {
-                    "attributedTo": "https://plu.me/@/admin/",
-                    "type": "Image",
-                    "url": "https://plu.me/aaa.png"
-                },
-                "id": "https://plu.me/~/BlogName/",
-                "image": {
-                    "attributedTo": "https://plu.me/@/admin/",
-                    "type": "Image",
-                    "url": "https://plu.me/bbb.png"
-                },
-                "inbox": "https://plu.me/~/BlogName/inbox",
-                "liked": null,
-                "name": "Blog name",
-                "outbox": "https://plu.me/~/BlogName/outbox",
-                "preferredUsername": "BlogName",
-                "publicKey": {
-                    "id": "https://plu.me/~/BlogName/#main-key",
-                    "owner": "https://plu.me/~/BlogName/",
-                    "publicKeyPem": blog.public_key
-                },
-                "source": {
-                    "content": "This is a small blog",
-                    "mediaType": "text/markdown"
-                },
-                "summary": "",
-                "type": "Group"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
     }
 
     #[test]

@@ -12,7 +12,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use crate::routes::{errors::ErrorPage, Page, RespondOrRedirect};
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{ActivityStream, ApRequest};
+use plume_common::activity_pub::{ActivityStream, ApRequest, CustomGroup};
 use plume_common::utils;
 use plume_models::{
     blog_authors::*, blogs::*, db_conn::DbConn, instance::Instance, medias::*, posts::Post,
@@ -49,7 +49,7 @@ pub fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    Some(ActivityStream::new(blog.to_activity(&conn).ok()?))
+    Some(ActivityStream::new(blog.to_activity07(&conn).ok()?))
 }
 
 #[get("/blogs/new")]
