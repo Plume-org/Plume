@@ -3,11 +3,11 @@ use crate::{
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitystreams::{
-    actor::{ApActor, ApActorExt, AsApActor, Group as Group07},
+    actor::{ApActor, ApActorExt, AsApActor, Group},
     base::AnyBase,
     collection::{OrderedCollection, OrderedCollectionPage},
     iri_string::types::IriString,
-    object::{kind::ImageType, ApObject, Image as Image07, ObjectExt},
+    object::{kind::ImageType, ApObject, Image, ObjectExt},
     prelude::*,
 };
 use chrono::NaiveDateTime;
@@ -20,8 +20,8 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId, PublicKey07,
-    Source, SourceProperty, ToAsString, ToAsUri,
+    sign, ActivityStream, ApSignature07, CustomGroup, Id, IntoId, PublicKey07, Source,
+    SourceProperty, ToAsString, ToAsUri,
 };
 use webfinger::*;
 
@@ -160,8 +160,8 @@ impl Blog {
             })
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomGroup07> {
-        let mut blog = ApActor::new(self.inbox_url.parse()?, Group07::new());
+    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomGroup> {
+        let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
         blog.set_preferred_username(self.actor_id.clone());
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
@@ -173,7 +173,7 @@ impl Blog {
             },
         };
 
-        let mut icon = Image07::new();
+        let mut icon = Image::new();
         let _ = self.icon_id.map(|id| {
             Media::get(conn, id).and_then(|m| {
                 let _ = m
@@ -190,7 +190,7 @@ impl Blog {
         });
         blog.set_icon(icon.into_any_base()?);
 
-        let mut banner = Image07::new();
+        let mut banner = Image::new();
         let _ = self.banner_id.map(|id| {
             Media::get(conn, id).and_then(|m| {
                 let _ = m
@@ -218,7 +218,7 @@ impl Blog {
             public_key: pub_key,
         };
 
-        Ok(CustomGroup07::new(blog, ap_signature, source))
+        Ok(CustomGroup::new(blog, ap_signature, source))
     }
 
     pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
@@ -363,13 +363,13 @@ impl IntoId for Blog {
 
 impl FromId<DbConn> for Blog {
     type Error = Error;
-    type Object = CustomGroup07;
+    type Object = CustomGroup;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, acct: CustomGroup07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
         let (name, outbox_url, inbox_url) = {
             let actor = acct.ap_actor_ref();
             let name = actor
@@ -412,7 +412,7 @@ impl FromId<DbConn> for Blog {
             .icon()
             .and_then(|icons| {
                 icons.iter().next().and_then(|icon| {
-                    let icon = icon.to_owned().extend::<Image07, ImageType>().ok()??;
+                    let icon = icon.to_owned().extend::<Image, ImageType>().ok()??;
                     let owner = icon.attributed_to()?.to_as_uri()?;
                     Media::save_remote(
                         conn,
@@ -429,7 +429,7 @@ impl FromId<DbConn> for Blog {
             .image()
             .and_then(|banners| {
                 banners.iter().next().and_then(|banner| {
-                    let banner = banner.to_owned().extend::<Image07, ImageType>().ok()??;
+                    let banner = banner.to_owned().extend::<Image, ImageType>().ok()??;
                     let owner = banner.attributed_to()?.to_as_uri()?;
                     Media::save_remote(
                         conn,
