@@ -9,7 +9,7 @@ use activitystreams::{
     activity::Delete,
     actor::{ApActor, AsApActor, Endpoints, Person},
     base::{AnyBase, Base},
-    collection::{OrderedCollection as OrderedCollection07, OrderedCollectionPage},
+    collection::{OrderedCollection, OrderedCollectionPage},
     iri_string::types::IriString,
     markers::Activity as Activity07,
     object::{kind::ImageType, AsObject as _, Image, Tombstone},
@@ -461,11 +461,11 @@ impl User {
             .load::<User>(conn)
             .map_err(Error::from)
     }
-    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection07>> {
+    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
         Ok(ActivityStream::new(self.outbox_collection07(conn)?))
     }
-    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection07> {
-        let mut coll = OrderedCollection07::new();
+    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection> {
+        let mut coll = OrderedCollection::new();
         let first = &format!("{}?page=1", &self.outbox_url);
         let last = &format!(
             "{}?page={}",
