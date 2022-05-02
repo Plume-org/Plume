@@ -2,7 +2,6 @@ use crate::{
     db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
-use activitypub::{actor::Group, CustomObject};
 use activitystreams::{
     actor::{ApActor, ApActorExt, AsApActor, Group as Group07},
     base::AnyBase,
@@ -21,12 +20,10 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId,
-    PublicKey07, Source, SourceProperty, ToAsString, ToAsUri,
+    sign, ActivityStream, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId, PublicKey07,
+    Source, SourceProperty, ToAsString, ToAsUri,
 };
 use webfinger::*;
-
-pub type CustomGroup = CustomObject<ApSignature, Group>;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
 #[changeset_options(treat_none_as_null = "true")]
