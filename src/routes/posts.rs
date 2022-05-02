@@ -306,11 +306,11 @@ pub fn update(
             post.update(&conn).expect("post::update: update error");
 
             if post.published {
-                post.update_mentions(
+                post.update_mentions07(
                     &conn,
                     mentions
                         .into_iter()
-                        .filter_map(|m| Mention::build_activity(&conn, &m).ok())
+                        .filter_map(|m| Mention::build_activity07(&conn, &m).ok())
                         .collect(),
                 )
                 .expect("post::update: mentions error");

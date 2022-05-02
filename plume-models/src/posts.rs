@@ -5,7 +5,6 @@ use crate::{
 };
 use activitypub::{
     activity::{Create, Delete, Update},
-    link,
     object::{Article, Image, Tombstone},
     CustomObject,
 };
@@ -558,46 +557,6 @@ impl Post {
         act.set_many_tos(to);
         act.set_many_ccs(cc);
         Ok(act)
-    }
-
-    pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
-        let mentions = mentions
-            .into_iter()
-            .map(|m| {
-                (
-                    m.link_props
-                        .href_string()
-                        .ok()
-                        .and_then(|ap_url| User::find_by_ap_url(conn, &ap_url).ok())
-                        .map(|u| u.id),
-                    m,
-                )
-            })
-            .filter_map(|(id, m)| id.map(|id| (m, id)))
-            .collect::<Vec<_>>();
-
-        let old_mentions = Mention::list_for_post(conn, self.id)?;
-        let old_user_mentioned = old_mentions
-            .iter()
-            .map(|m| m.mentioned_id)
-            .collect::<HashSet<_>>();
-        for (m, id) in &mentions {
-            if !old_user_mentioned.contains(id) {
-                Mention::from_activity(&*conn, m, self.id, true, true)?;
-            }
-        }
-
-        let new_mentions = mentions
-            .into_iter()
-            .map(|(_m, id)| id)
-            .collect::<HashSet<_>>();
-        for m in old_mentions
-            .iter()
-            .filter(|m| !new_mentions.contains(&m.mentioned_id))
-        {
-            m.delete(conn)?;
-        }
-        Ok(())
     }
 
     pub fn update_mentions07(
@@ -1194,15 +1153,19 @@ impl AsObject<User, Update07, &DbConn> for PostUpdate {
             let mut tags = vec![];
             let mut hashtags = vec![];
             for tag in mention_tags {
-                serde_json::from_value::<link::Mention>(tag.clone())
+                serde_json::from_value::<link07::Mention>(tag.clone())
                     .map(|m| mentions.push(m))
                     .ok();
 
-                serde_json::from_value::<Hashtag>(tag.clone())
+                serde_json::from_value::<Hashtag07>(tag.clone())
                     .map_err(Error::from)
                     .and_then(|t| {
-                        let tag_name = t.name_string()?;
-                        if txt_hashtags.remove(&tag_name) {
+                        let tag_name = t.name.as_ref().ok_or(Error::MissingApProperty)?;
+                        let tag_name_str = tag_name
+                            .as_xsd_string()
+                            .or_else(|| tag_name.as_rdf_lang_string().map(|rls| &*rls.value))
+                            .ok_or(Error::MissingApProperty)?;
+                        if txt_hashtags.remove(tag_name_str) {
                             hashtags.push(t);
                         } else {
                             tags.push(t);
@@ -1211,9 +1174,9 @@ impl AsObject<User, Update07, &DbConn> for PostUpdate {
                     })
                     .ok();
             }
-            post.update_mentions(conn, mentions)?;
-            post.update_tags(conn, tags)?;
-            post.update_hashtags(conn, hashtags)?;
+            post.update_mentions07(conn, mentions)?;
+            post.update_tags07(conn, tags)?;
+            post.update_hashtags07(conn, hashtags)?;
         }
 
         post.update(conn)?;
