@@ -6,11 +6,11 @@ use crate::{
     ACTOR_SYS, CONFIG, USER_CHAN,
 };
 use activitystreams::{
-    activity::{ActorAndObjectRef, Create as Create07},
+    activity::{ActorAndObjectRef, Create},
     base::AnyBase,
     object::kind::ArticleType,
 };
-use plume_common::activity_pub::{inbox::FromId, LicensedArticle as LicensedArticle07};
+use plume_common::activity_pub::{inbox::FromId, LicensedArticle};
 use riker::actors::{Actor, ActorFactoryArgs, ActorRefFactory, Context, Sender, Subscribe, Tell};
 use std::sync::Arc;
 use tracing::{error, info, warn};
@@ -68,7 +68,7 @@ impl ActorFactoryArgs<DbPool> for RemoteFetchActor {
 }
 
 fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
-    let create_acts = user.fetch_outbox07::<Create07>();
+    let create_acts = user.fetch_outbox07::<Create>();
     match create_acts {
         Ok(create_acts) => {
             for create_act in create_acts {
@@ -77,7 +77,7 @@ fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
                     .as_single_base()
                     .and_then(|base| {
                         let any_base = AnyBase::from_base(base.clone()); // FIXME: Don't clone()
-                        any_base.extend::<LicensedArticle07, ArticleType>().ok()
+                        any_base.extend::<LicensedArticle, ArticleType>().ok()
                     }) {
                     Some(Some(article)) => {
                         Post::from_activity07(conn, article)
