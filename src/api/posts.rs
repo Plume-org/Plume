@@ -191,9 +191,9 @@ pub fn create(
 
     if post.published {
         for m in mentions.into_iter() {
-            Mention::from_activity(
+            Mention::from_activity07(
                 &conn,
-                &Mention::build_activity(&conn, &m)?,
+                &Mention::build_activity07(&conn, &m)?,
                 post.id,
                 true,
                 true,

@@ -61,14 +61,6 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(conn: &DbConn, ment: &str) -> Result<link::Mention> {
-        let user = User::find_by_fqn(conn, ment)?;
-        let mut mention = link::Mention::default();
-        mention.link_props.set_href_string(user.ap_url)?;
-        mention.link_props.set_name_string(format!("@{}", ment))?;
-        Ok(mention)
-    }
-
     pub fn build_activity07(conn: &DbConn, ment: &str) -> Result<link07::Mention> {
         let user = User::find_by_fqn(conn, ment)?;
         let mut mention = link07::Mention::new();
@@ -217,27 +209,6 @@ mod tests {
     use assert_json_diff::assert_json_eq;
     use diesel::Connection;
     use serde_json::{json, to_value};
-
-    #[test]
-    fn build_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (_posts, users, _blogs) = fill_database(&conn);
-            let user = &users[0];
-            let name = &user.username;
-            let act = Mention::build_activity(&conn, name)?;
-
-            let expected = json!({
-                "href": "https://plu.me/@/admin/",
-                "name": "@admin",
-                "type": "Mention",
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
 
     #[test]
     fn build_activity07() {

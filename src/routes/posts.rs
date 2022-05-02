@@ -530,9 +530,10 @@ pub fn create(
 
         if post.published {
             for m in mentions {
-                Mention::from_activity(
+                Mention::from_activity07(
                     &conn,
-                    &Mention::build_activity(&conn, &m).expect("post::create: mention build error"),
+                    &Mention::build_activity07(&conn, &m)
+                        .expect("post::create: mention build error"),
                     post.id,
                     true,
                     true,
