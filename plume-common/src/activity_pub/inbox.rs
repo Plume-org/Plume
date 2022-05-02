@@ -10,8 +10,7 @@ use super::{request, sign::Signer};
 /// # Example
 ///
 /// ```rust
-/// # extern crate activitypub;
-/// # use activitypub::{actor::Person, activity::{Announce, Create}, object::Note};
+/// # use activitystreams::{prelude::*, base::Base, actor::Person, activity::{Announce, Create}, object::Note, iri_string::types::IriString};
 /// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
 /// # use once_cell::sync::Lazy;
 /// # use plume_common::activity_pub::inbox::*;
@@ -113,12 +112,13 @@ use super::{request, sign::Signer};
 /// #     }
 /// # }
 /// #
-/// # let mut act = Create::default();
-/// # act.object_props.set_id_string(String::from("https://test.ap/activity")).unwrap();
-/// # let mut person = Person::default();
-/// # person.object_props.set_id_string(String::from("https://test.ap/actor")).unwrap();
-/// # act.create_props.set_actor_object(person).unwrap();
-/// # act.create_props.set_object_object(Note::default()).unwrap();
+/// # let mut person = Person::new();
+/// # person.set_id("https://test.ap/actor".parse::<IriString>().unwrap());
+/// # let mut act = Create::new(
+/// #     Base::retract(person).unwrap().into_generic().unwrap(),
+/// #     Base::retract(Note::new()).unwrap().into_generic().unwrap()
+/// # );
+/// # act.set_id("https://test.ap/activity".parse::<IriString>().unwrap());
 /// # let activity_json = serde_json::to_value(act).unwrap();
 /// #
 /// # let conn = ();
@@ -418,8 +418,7 @@ pub trait AsActor<C> {
 /// representing the Note by a Message type, without any specific context.
 ///
 /// ```rust
-/// # extern crate activitypub;
-/// # use activitypub::{activity::Create, actor::Person, object::Note};
+/// # use activitystreams::{prelude::*, activity::Create, actor::Person, object::Note};
 /// # use plume_common::activity_pub::inbox::{AsActor, AsObject, FromId};
 /// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
 /// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
@@ -501,7 +500,10 @@ pub trait AsActor<C> {
 ///     }
 ///
 ///     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
-///         Ok(Message { text: obj.object_props.content_string().map_err(|_| ())? })
+///         Ok(Message {
+///             text: obj.content()
+///                 .and_then(|content| content.to_owned().single_xsd_string()).ok_or(())?
+///         })
 ///     }
 ///
 ///     fn get_sender() -> &'static dyn Signer {
