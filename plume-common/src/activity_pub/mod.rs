@@ -372,23 +372,6 @@ where
 pub type CustomPerson = Ext1<ApActor<Person>, ApSignature07>;
 pub type CustomGroup = Ext2<ApActor<Group>, ApSignature07, SourceProperty>;
 
-#[derive(Clone, Debug, Default, UnitString)]
-#[activitystreams(Hashtag)]
-pub struct HashtagType;
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
-#[serde(rename_all = "camelCase")]
-pub struct Hashtag {
-    #[serde(rename = "type")]
-    kind: HashtagType,
-
-    #[activitystreams(concrete(String), functional)]
-    pub href: Option<serde_json::Value>,
-
-    #[activitystreams(concrete(String), functional)]
-    pub name: Option<serde_json::Value>,
-}
-
 kind!(HashtagType07, Hashtag);
 
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
