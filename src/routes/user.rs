@@ -1,6 +1,7 @@
-use activitypub::collection::OrderedCollection;
-use activitystreams::collection::{
-    OrderedCollection as OrderedCollection07, OrderedCollectionPage,
+use activitystreams::{
+    collection::{OrderedCollection, OrderedCollectionPage},
+    iri_string::types::IriString,
+    prelude::*,
 };
 use diesel::SaveChangesDsl;
 use rocket::{
@@ -18,7 +19,7 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, CustomPerson, Id};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, CustomPerson};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::Blog,
@@ -529,7 +530,7 @@ pub fn create(
 }
 
 #[get("/@/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection07>> {
+pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
     user.outbox(&conn).ok()
 }
@@ -564,17 +565,13 @@ pub fn ap_followers(
         .get_followers(&conn)
         .ok()?
         .into_iter()
-        .map(|f| Id::new(f.ap_url))
-        .collect::<Vec<Id>>();
+        .filter_map(|f| f.ap_url.parse::<IriString>().ok())
+        .collect::<Vec<IriString>>();
 
-    let mut coll = OrderedCollection::default();
-    coll.object_props
-        .set_id_string(user.followers_endpoint)
-        .ok()?;
-    coll.collection_props
-        .set_total_items_u64(followers.len() as u64)
-        .ok()?;
-    coll.collection_props.set_items_link_vec(followers).ok()?;
+    let mut coll = OrderedCollection::new();
+    coll.set_id(user.followers_endpoint.parse::<IriString>().ok()?);
+    coll.set_total_items(followers.len() as u64);
+    coll.set_many_items(followers);
     Some(ActivityStream::new(coll))
 }
 
