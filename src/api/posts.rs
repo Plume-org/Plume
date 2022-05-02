@@ -3,7 +3,7 @@ use rocket_contrib::json::Json;
 
 use crate::api::{authorization::*, Api, ApiError};
 use plume_api::posts::*;
-use plume_common::{activity_pub::broadcast07, utils::md_to_html};
+use plume_common::{activity_pub::broadcast, utils::md_to_html};
 use plume_models::{
     blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::*, post_authors::*,
     posts::*, safe_string::SafeString, tags::*, timeline::*, users::User, Error, PlumeRocket,
@@ -202,7 +202,7 @@ pub fn create(
 
         let act = post.create_activity07(&conn)?;
         let dest = User::one_by_instance(&conn)?;
-        worker.execute(move || broadcast07(&author, act, dest, CONFIG.proxy().cloned()));
+        worker.execute(move || broadcast(&author, act, dest, CONFIG.proxy().cloned()));
     }
 
     Timeline::add_to_all_timelines(&conn, &post, Kind::Original)?;

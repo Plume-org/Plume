@@ -3,7 +3,7 @@ use rocket_i18n::I18n;
 
 use crate::routes::errors::ErrorPage;
 use crate::utils::requires_login;
-use plume_common::activity_pub::broadcast07;
+use plume_common::activity_pub::broadcast;
 use plume_models::{
     blogs::Blog, db_conn::DbConn, inbox::inbox, posts::Post, reshares::*, timeline::*, users::User,
     Error, PlumeRocket, CONFIG,
@@ -30,7 +30,7 @@ pub fn create(
         let act = reshare.to_activity07(&conn)?;
         rockets
             .worker
-            .execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
+            .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
         let reshare = Reshare::find_by_user_on_post(&conn, user.id, post.id)?;
         let delete_act = reshare.build_undo07(&conn)?;
@@ -42,7 +42,7 @@ pub fn create(
         let dest = User::one_by_instance(&conn)?;
         rockets
             .worker
-            .execute(move || broadcast07(&user, delete_act, dest, CONFIG.proxy().cloned()));
+            .execute(move || broadcast(&user, delete_act, dest, CONFIG.proxy().cloned()));
     }
 
     Ok(Redirect::to(uri!(

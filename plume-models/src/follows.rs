@@ -10,7 +10,7 @@ use activitystreams::{
 };
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
-    broadcast07,
+    broadcast,
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
@@ -106,7 +106,7 @@ impl Follow {
         res.notify(conn)?;
 
         let accept = res.build_accept07(from, target, follow)?;
-        broadcast07(
+        broadcast(
             &*target,
             accept,
             vec![from.clone()],

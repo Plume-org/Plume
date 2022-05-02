@@ -120,7 +120,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
     }
 }
 
-pub fn broadcast07<S, T, A, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
+pub fn broadcast<S, T, A, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
 where
     S: sign::Signer,
     A: Activity + serde::Serialize,

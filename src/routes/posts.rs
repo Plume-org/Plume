@@ -16,7 +16,7 @@ use crate::routes::{
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
 use plume_common::activity_pub::{
-    broadcast07, ActivityStream, ApRequest, LicensedArticle as LicensedArticle07,
+    broadcast, ActivityStream, ApRequest, LicensedArticle as LicensedArticle07,
 };
 use plume_common::utils::md_to_html;
 use plume_models::{
@@ -347,7 +347,7 @@ pub fn update(
                     let dest = User::one_by_instance(&conn).expect("post::update: dest error");
                     rockets
                         .worker
-                        .execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
+                        .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
 
                     Timeline::add_to_all_timelines(&conn, &post, Kind::Original).ok();
                 } else {
@@ -357,7 +357,7 @@ pub fn update(
                     let dest = User::one_by_instance(&conn).expect("posts::update: dest error");
                     rockets
                         .worker
-                        .execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
+                        .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
                 }
             }
 
@@ -546,7 +546,7 @@ pub fn create(
                 .expect("posts::create: activity error");
             let dest = User::one_by_instance(&conn).expect("posts::create: dest error");
             let worker = &rockets.worker;
-            worker.execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
+            worker.execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
 
             Timeline::add_to_all_timelines(&conn, &post, Kind::Original)?;
         }
@@ -616,7 +616,7 @@ pub fn delete(
         let user_c = user.clone();
         rockets
             .worker
-            .execute(move || broadcast07(&user_c, delete_activity, dest, CONFIG.proxy().cloned()));
+            .execute(move || broadcast(&user_c, delete_activity, dest, CONFIG.proxy().cloned()));
         rockets
             .worker
             .execute_after(Duration::from_secs(10 * 60), move || {

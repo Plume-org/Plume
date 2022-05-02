@@ -11,7 +11,7 @@ use std::time::Duration;
 use crate::routes::errors::ErrorPage;
 use crate::template_utils::IntoContext;
 use plume_common::{
-    activity_pub::{broadcast07, ActivityStream, ApRequest},
+    activity_pub::{broadcast, ActivityStream, ApRequest},
     utils,
 };
 use plume_models::{
@@ -88,7 +88,7 @@ pub fn create(
             let dest = User::one_by_instance(&conn).expect("comments::create: dest error");
             let user_clone = user.clone();
             rockets.worker.execute(move || {
-                broadcast07(&user_clone, new_comment, dest, CONFIG.proxy().cloned())
+                broadcast(&user_clone, new_comment, dest, CONFIG.proxy().cloned())
             });
 
             Flash::success(
@@ -158,7 +158,7 @@ pub fn delete(
 
             let user_c = user.clone();
             rockets.worker.execute(move || {
-                broadcast07(&user_c, delete_activity, dest, CONFIG.proxy().cloned())
+                broadcast(&user_c, delete_activity, dest, CONFIG.proxy().cloned())
             });
             rockets
                 .worker
