@@ -353,14 +353,14 @@ pub trait FromId<C>: Sized {
             Ok(x) => Ok(x),
             _ => match object {
                 Some(o) => Self::from_activity07(ctx, o).map_err(|e| (None, e)),
-                None => Self::from_activity07(ctx, Self::deref07(id, proxy.cloned())?)
+                None => Self::from_activity07(ctx, Self::deref(id, proxy.cloned())?)
                     .map_err(|e| (None, e)),
             },
         }
     }
 
     /// Dereferences an ID
-    fn deref07(
+    fn deref(
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
