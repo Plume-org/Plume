@@ -3157,6 +3157,7 @@ name = "plume"
 version = "0.7.1"
 dependencies = [
  "activitypub",
+ "activitystreams",
  "atom_syndication",
  "chrono",
  "clap",
