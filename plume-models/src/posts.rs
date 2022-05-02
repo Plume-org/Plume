@@ -4,14 +4,11 @@ use crate::{
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitystreams::{
-    activity::{Create as Create07, Delete as Delete07, Update as Update07},
+    activity::{Create, Delete, Update},
     base::{AnyBase, Base},
     iri_string::types::IriString,
-    link::{self as link07, kind::MentionType},
-    object::{
-        kind::ImageType, ApObject, Article as Article07, AsApObject, Image as Image07,
-        Tombstone as Tombstone07,
-    },
+    link::{self, kind::MentionType},
+    object::{kind::ImageType, ApObject, Article, AsApObject, Image, Tombstone},
     prelude::*,
     time::OffsetDateTime,
 };
@@ -22,8 +19,8 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, HashtagType, Id, IntoId, Licensed07, LicensedArticle as LicensedArticle07, Source,
-        SourceProperty, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
+        Hashtag, HashtagType, Id, IntoId, Licensed07, LicensedArticle, Source, SourceProperty,
+        ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
 };
@@ -344,7 +341,7 @@ impl Post {
             }))
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<LicensedArticle07> {
+    pub fn to_activity07(&self, conn: &Connection) -> Result<LicensedArticle> {
         let cc = self.get_receivers_urls(conn)?;
         let to = vec![PUBLIC_VISIBILITY.to_string()];
 
@@ -358,7 +355,7 @@ impl Post {
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
-        let mut article = ApObject::new(Article07::new());
+        let mut article = ApObject::new(Article::new());
         article.set_name(self.title.clone());
         article.set_id(self.ap_url.parse::<IriString>()?);
 
@@ -389,7 +386,7 @@ impl Post {
 
         if let Some(media_id) = self.cover_id {
             let media = Media::get(conn, media_id)?;
-            let mut cover = Image07::new();
+            let mut cover = Image::new();
             cover.set_url(media.url()?);
             if media.sensitive {
                 cover.set_summary(media.content_warning.unwrap_or_default());
@@ -415,14 +412,14 @@ impl Post {
         let license = Licensed07 {
             license: Some(self.license.clone()),
         };
-        Ok(LicensedArticle07::new(article, license, source))
+        Ok(LicensedArticle::new(article, license, source))
     }
 
-    pub fn create_activity07(&self, conn: &Connection) -> Result<Create07> {
+    pub fn create_activity07(&self, conn: &Connection) -> Result<Create> {
         let article = self.to_activity07(conn)?;
         let to = article.to().ok_or(Error::MissingApProperty)?.clone();
         let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
-        let mut act = Create07::new(
+        let mut act = Create::new(
             self.get_authors(conn)?[0].ap_url.parse::<IriString>()?,
             Base::retract(article)?.into_generic()?,
         );
@@ -432,11 +429,11 @@ impl Post {
         Ok(act)
     }
 
-    pub fn update_activity07(&self, conn: &Connection) -> Result<Update07> {
+    pub fn update_activity07(&self, conn: &Connection) -> Result<Update> {
         let article = self.to_activity07(conn)?;
         let to = article.to().ok_or(Error::MissingApProperty)?.clone();
         let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
-        let mut act = Update07::new(
+        let mut act = Update::new(
             self.get_authors(conn)?[0].ap_url.parse::<IriString>()?,
             Base::retract(article)?.into_generic()?,
         );
@@ -448,11 +445,7 @@ impl Post {
         Ok(act)
     }
 
-    pub fn update_mentions07(
-        &self,
-        conn: &Connection,
-        mentions: Vec<link07::Mention>,
-    ) -> Result<()> {
+    pub fn update_mentions07(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
         let mentions = mentions
             .into_iter()
             .map(|m| {
@@ -575,11 +568,11 @@ impl Post {
             .and_then(|c| c.url().ok())
     }
 
-    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete07> {
-        let mut tombstone = Tombstone07::new();
+    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete> {
+        let mut tombstone = Tombstone::new();
         tombstone.set_id(self.ap_url.parse()?);
 
-        let mut act = Delete07::new(
+        let mut act = Delete::new(
             self.get_authors(conn)?[0]
                 .clone()
                 .into_id()
@@ -625,13 +618,13 @@ impl Post {
 
 impl FromId<DbConn> for Post {
     type Error = Error;
-    type Object = LicensedArticle07;
+    type Object = LicensedArticle;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, article: LicensedArticle07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
         let license = article.ext_one.license.unwrap_or_default();
         let source = article.ext_two.source.content;
         let article = article.inner;
@@ -663,7 +656,7 @@ impl FromId<DbConn> for Post {
 
         let cover = article.icon().and_then(|icon| {
             icon.iter().next().and_then(|img| {
-                let image = img.to_owned().extend::<Image07, ImageType>().ok()??;
+                let image = img.to_owned().extend::<Image, ImageType>().ok()??;
                 Media::from_activity07(conn, &image).ok().map(|m| m.id)
             })
         });
@@ -786,7 +779,7 @@ impl FromId<DbConn> for Post {
         if let Some(tags) = article.tag() {
             for tag in tags.iter() {
                 tag.clone()
-                    .extend::<link07::Mention, MentionType>() // FIXME: Don't clone
+                    .extend::<link::Mention, MentionType>() // FIXME: Don't clone
                     .map(|mention| {
                         mention.map(|m| Mention::from_activity07(conn, &m, post.id, true, true))
                     })
@@ -814,7 +807,7 @@ impl FromId<DbConn> for Post {
     }
 }
 
-impl AsObject<User, Create07, &DbConn> for Post {
+impl AsObject<User, Create, &DbConn> for Post {
     type Error = Error;
     type Output = Self;
 
@@ -824,7 +817,7 @@ impl AsObject<User, Create07, &DbConn> for Post {
     }
 }
 
-impl AsObject<User, Delete07, &DbConn> for Post {
+impl AsObject<User, Delete, &DbConn> for Post {
     type Error = Error;
     type Output = ();
 
@@ -854,7 +847,7 @@ pub struct PostUpdate {
 
 impl FromId<DbConn> for PostUpdate {
     type Error = Error;
-    type Object = LicensedArticle07;
+    type Object = LicensedArticle;
 
     fn from_db07(_: &DbConn, _: &str) -> Result<Self> {
         // Always fail because we always want to deserialize the AP object
@@ -892,7 +885,7 @@ impl FromId<DbConn> for PostUpdate {
                 .next()
                 .and_then(|img| {
                     img.clone()
-                        .extend::<Image07, ImageType>()
+                        .extend::<Image, ImageType>()
                         .map(|img| img.and_then(|img| Media::from_activity07(conn, &img).ok()))
                         .ok()
                 })
@@ -909,7 +902,7 @@ impl FromId<DbConn> for PostUpdate {
     }
 }
 
-impl AsObject<User, Update07, &DbConn> for PostUpdate {
+impl AsObject<User, Update, &DbConn> for PostUpdate {
     type Error = Error;
     type Output = ();
 
@@ -954,7 +947,7 @@ impl AsObject<User, Update07, &DbConn> for PostUpdate {
             let mut tags = vec![];
             let mut hashtags = vec![];
             for tag in mention_tags {
-                serde_json::from_value::<link07::Mention>(tag.clone())
+                serde_json::from_value::<link::Mention>(tag.clone())
                     .map(|m| mentions.push(m))
                     .ok();
 
