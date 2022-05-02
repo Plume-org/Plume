@@ -16,7 +16,7 @@ use activitystreams::{
     base::{AnyBase, Base},
     iri_string::types::IriString,
     link::{self, kind::MentionType},
-    object::{Note as Note07, Tombstone},
+    object::{Note, Tombstone},
     prelude::*,
     primitives::OneOrMany,
     time::OffsetDateTime,
@@ -111,7 +111,7 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity07(&self, conn: &DbConn) -> Result<Note07> {
+    pub fn to_activity07(&self, conn: &DbConn) -> Result<Note> {
         let author = User::get(conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
@@ -120,7 +120,7 @@ impl Comment {
             Some(Media::get_media_processor(conn, vec![&author])),
         );
 
-        let mut note = Note07::new();
+        let mut note = Note::new();
         let to = vec![PUBLIC_VISIBILITY.parse::<IriString>()?];
 
         note.set_id(
@@ -219,13 +219,13 @@ impl Comment {
 
 impl FromId<DbConn> for Comment {
     type Error = Error;
-    type Object = Note07;
+    type Object = Note;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, note: Note07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, note: Note) -> Result<Self> {
         let comm = {
             let previous_url = note
                 .in_reply_to()
