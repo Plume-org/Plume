@@ -568,42 +568,6 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
-        let tags_name = tags
-            .iter()
-            .filter_map(|t| t.name_string().ok())
-            .collect::<HashSet<_>>();
-
-        let old_tags = Tag::for_post(&*conn, self.id)?;
-        let old_tags_name = old_tags
-            .iter()
-            .filter_map(|tag| {
-                if !tag.is_hashtag {
-                    Some(tag.tag.clone())
-                } else {
-                    None
-                }
-            })
-            .collect::<HashSet<_>>();
-
-        for t in tags {
-            if !t
-                .name_string()
-                .map(|n| old_tags_name.contains(&n))
-                .unwrap_or(true)
-            {
-                Tag::from_activity(conn, &t, self.id, false)?;
-            }
-        }
-
-        for ot in old_tags.iter().filter(|t| !t.is_hashtag) {
-            if !tags_name.contains(&ot.tag) {
-                ot.delete(conn)?;
-            }
-        }
-        Ok(())
-    }
-
     pub fn update_tags07(&self, conn: &Connection, tags: Vec<Hashtag07>) -> Result<()> {
         let tags_name = tags
             .iter()

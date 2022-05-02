@@ -325,9 +325,9 @@ pub fn update(
                 .filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(t.to_string()).ok())
+                .filter_map(|t| Tag::build_activity07(t.to_string()).ok())
                 .collect::<Vec<_>>();
-            post.update_tags(&conn, tags)
+            post.update_tags07(&conn, tags)
                 .expect("post::update: tags error");
 
             let hashtags = hashtags

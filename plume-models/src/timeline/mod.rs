@@ -623,7 +623,10 @@ mod tests {
             )
             .unwrap();
             gnu_post
-                .update_tags(&conn, vec![Tag::build_activity("free".to_owned()).unwrap()])
+                .update_tags07(
+                    &conn,
+                    vec![Tag::build_activity07("free".to_owned()).unwrap()],
+                )
                 .unwrap();
             PostAuthor::insert(
                 &conn,
