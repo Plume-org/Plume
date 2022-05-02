@@ -1,4 +1,5 @@
-use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
+use activitypub::collection::OrderedCollection;
+use activitystreams::collection::OrderedCollectionPage;
 use diesel::SaveChangesDsl;
 use rocket::{
     http::{uri::Uri, ContentType, Cookies},
@@ -537,7 +538,7 @@ pub fn outbox_page(
     conn: DbConn,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
-    user.outbox_page(&conn, page.limits()).ok()
+    user.outbox_page07(&conn, page.limits()).ok()
 }
 #[post("/@/<name>/inbox", data = "<data>")]
 pub fn inbox(

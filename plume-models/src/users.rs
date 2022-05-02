@@ -7,7 +7,7 @@ use crate::{
 use activitypub::{
     activity::Delete,
     actor::Person,
-    collection::{OrderedCollection, OrderedCollectionPage},
+    collection::OrderedCollection,
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
@@ -16,9 +16,7 @@ use activitystreams::{
     actor::{ApActor, AsApActor},
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
     base::{AnyBase, Base},
-    collection::{
-        OrderedCollection as OrderedCollection07, OrderedCollectionPage as OrderedCollectionPage07,
-    },
+    collection::{OrderedCollection as OrderedCollection07, OrderedCollectionPage},
     iri_string::types::IriString,
     markers::Activity as Activity07,
     object::{kind::ImageType, AsObject as _, Image as Image07, Tombstone as Tombstone07},
@@ -505,59 +503,23 @@ impl User {
         coll.set_total_items(self.get_activities_count(conn) as u64);
         Ok(coll)
     }
-    pub fn outbox_page(
+    pub fn outbox_page07(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         Ok(ActivityStream::new(
-            self.outbox_collection_page(conn, (min, max))?,
-        ))
-    }
-    pub fn outbox_page07(
-        &self,
-        conn: &Connection,
-        (min, max): (i32, i32),
-    ) -> Result<ActivityStream<OrderedCollectionPage07>> {
-        Ok(ActivityStream::new(
             self.outbox_collection_page07(conn, (min, max))?,
         ))
     }
-    pub fn outbox_collection_page(
+    pub fn outbox_collection_page07(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<OrderedCollectionPage> {
         let acts = self.get_activities_page(conn, (min, max))?;
         let n_acts = self.get_activities_count(conn);
-        let mut coll = OrderedCollectionPage::default();
-        if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
-            coll.collection_page_props.set_next_link(Id::new(&format!(
-                "{}?page={}",
-                &self.outbox_url,
-                min / ITEMS_PER_PAGE + 2
-            )))?;
-        }
-        if min > 0 {
-            coll.collection_page_props.set_prev_link(Id::new(&format!(
-                "{}?page={}",
-                &self.outbox_url,
-                min / ITEMS_PER_PAGE
-            )))?;
-        }
-        coll.collection_props.items = serde_json::to_value(acts)?;
-        coll.collection_page_props
-            .set_part_of_link(Id::new(&self.outbox_url))?;
-        Ok(coll)
-    }
-    pub fn outbox_collection_page07(
-        &self,
-        conn: &Connection,
-        (min, max): (i32, i32),
-    ) -> Result<OrderedCollectionPage07> {
-        let acts = self.get_activities_page(conn, (min, max))?;
-        let n_acts = self.get_activities_count(conn);
-        let mut coll = OrderedCollectionPage07::new();
+        let mut coll = OrderedCollectionPage::new();
         if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
             coll.set_next(
                 format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE + 2)
@@ -1843,27 +1805,6 @@ pub(crate) mod tests {
                 "last": "https://plu.me/@/admin/outbox?page=5",
                 "totalItems": 51,
                 "type": "OrderedCollection",
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn outbox_collection_page() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let users = fill_database(&conn);
-            let user = &users[0];
-            let act = user.outbox_collection_page(&conn, (33, 36))?;
-
-            let expected = json!({
-                "items": [],
-                "partOf": "https://plu.me/@/admin/outbox",
-                "prev": "https://plu.me/@/admin/outbox?page=2",
-                "type": "OrderedCollectionPage",
             });
 
             assert_json_eq!(to_value(act)?, expected);
