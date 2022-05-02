@@ -7,7 +7,7 @@ use activitystreams::{object::Image as Image07, prelude::*};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId, request, Id, ToAsString, ToAsUri},
+    activity_pub::{inbox::FromId07, request, Id, ToAsString, ToAsUri},
     utils::{escape, MediaProcessor},
 };
 use std::{
@@ -222,7 +222,7 @@ impl Media {
         // TODO: conditional GET
         request::get(
             remote_url.as_str(),
-            User::get_sender(),
+            User::get_sender07(),
             CONFIG.proxy().cloned(),
         )?
         .copy_to(&mut dest)?;
@@ -275,7 +275,7 @@ impl Media {
                         remote_url: None,
                         sensitive: image.object_props.summary_string().is_ok(),
                         content_warning: image.object_props.summary_string().ok(),
-                        owner_id: User::from_id(
+                        owner_id: User::from_id07(
                             conn,
                             image
                                 .object_props
@@ -311,7 +311,7 @@ impl Media {
         // TODO: conditional GET
         request::get(
             remote_url.as_str(),
-            User::get_sender(),
+            User::get_sender07(),
             CONFIG.proxy().cloned(),
         )?
         .copy_to(&mut dest)?;
@@ -362,7 +362,7 @@ impl Media {
                         remote_url: None,
                         sensitive: summary.is_some(),
                         content_warning: summary,
-                        owner_id: User::from_id(
+                        owner_id: User::from_id07(
                             conn,
                             &image
                                 .attributed_to()

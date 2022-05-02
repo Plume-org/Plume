@@ -12,7 +12,7 @@ use activitystreams::{
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
+    inbox::{AsActor, AsObject, AsObject07, FromId07},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -186,46 +186,6 @@ impl AsObject07<User, Announce07, &DbConn> for Post {
     }
 }
 
-impl FromId<DbConn> for Reshare {
-    type Error = Error;
-    type Object = Announce;
-
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Reshare::find_by_ap_url(conn, id)
-    }
-
-    fn from_activity(conn: &DbConn, act: Announce) -> Result<Self> {
-        let res = Reshare::insert(
-            conn,
-            NewReshare {
-                post_id: Post::from_id(
-                    conn,
-                    &act.announce_props.object_link::<Id>()?,
-                    None,
-                    CONFIG.proxy(),
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                user_id: User::from_id(
-                    conn,
-                    &act.announce_props.actor_link::<Id>()?,
-                    None,
-                    CONFIG.proxy(),
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                ap_url: act.object_props.id_string()?,
-            },
-        )?;
-        res.notify(conn)?;
-        Ok(res)
-    }
-
-    fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
 impl FromId07<DbConn> for Reshare {
     type Error = Error;
     type Object = Announce07;
@@ -238,7 +198,7 @@ impl FromId07<DbConn> for Reshare {
         let res = Reshare::insert(
             conn,
             NewReshare {
-                post_id: Post::from_id(
+                post_id: Post::from_id07(
                     conn,
                     act.object_field_ref()
                         .as_single_id()
@@ -249,7 +209,7 @@ impl FromId07<DbConn> for Reshare {
                 )
                 .map_err(|(_, e)| e)?
                 .id,
-                user_id: User::from_id(
+                user_id: User::from_id07(
                     conn,
                     act.actor_field_ref()
                         .as_single_id()

@@ -26,7 +26,7 @@ use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
+        inbox::{AsActor, AsObject, AsObject07, FromId07},
         sign::Signer,
         Hashtag, Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
         LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
@@ -863,160 +863,6 @@ impl Post {
     }
 }
 
-impl FromId<DbConn> for Post {
-    type Error = Error;
-    type Object = LicensedArticle;
-
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(conn, id)
-    }
-
-    fn from_activity(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
-        let conn = conn;
-        let license = article.custom_props.license_string().unwrap_or_default();
-        let article = article.object;
-
-        let (blog, authors) = article
-            .object_props
-            .attributed_to_link_vec::<Id>()?
-            .into_iter()
-            .fold((None, vec![]), |(blog, mut authors), link| {
-                let url = link;
-                match User::from_id(conn, &url, None, CONFIG.proxy()) {
-                    Ok(u) => {
-                        authors.push(u);
-                        (blog, authors)
-                    }
-                    Err(_) => (
-                        blog.or_else(|| Blog::from_id(conn, &url, None, CONFIG.proxy()).ok()),
-                        authors,
-                    ),
-                }
-            });
-
-        let cover = article
-            .object_props
-            .icon_object::<Image>()
-            .ok()
-            .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
-
-        let title = article.object_props.name_string()?;
-        let ap_url = article
-            .object_props
-            .url_string()
-            .or_else(|_| article.object_props.id_string())?;
-        let post = Post::from_db(conn, &ap_url)
-            .and_then(|mut post| {
-                let mut updated = false;
-
-                let slug = Self::slug(&title);
-                let content = SafeString::new(&article.object_props.content_string()?);
-                let subtitle = article.object_props.summary_string()?;
-                let source = article.ap_object_props.source_object::<Source>()?.content;
-                if post.slug != slug {
-                    post.slug = slug.to_string();
-                    updated = true;
-                }
-                if post.title != title {
-                    post.title = title.clone();
-                    updated = true;
-                }
-                if post.content != content {
-                    post.content = content;
-                    updated = true;
-                }
-                if post.license != license {
-                    post.license = license.clone();
-                    updated = true;
-                }
-                if post.subtitle != subtitle {
-                    post.subtitle = subtitle;
-                    updated = true;
-                }
-                if post.source != source {
-                    post.source = source;
-                    updated = true;
-                }
-                if post.cover_id != cover {
-                    post.cover_id = cover;
-                    updated = true;
-                }
-
-                if updated {
-                    post.update(conn)?;
-                }
-
-                Ok(post)
-            })
-            .or_else(|_| {
-                Post::insert(
-                    conn,
-                    NewPost {
-                        blog_id: blog.ok_or(Error::NotFound)?.id,
-                        slug: Self::slug(&title).to_string(),
-                        title,
-                        content: SafeString::new(&article.object_props.content_string()?),
-                        published: true,
-                        license,
-                        // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                        ap_url,
-                        creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
-                        subtitle: article.object_props.summary_string()?,
-                        source: article.ap_object_props.source_object::<Source>()?.content,
-                        cover_id: cover,
-                    },
-                )
-                .and_then(|post| {
-                    for author in authors {
-                        PostAuthor::insert(
-                            conn,
-                            NewPostAuthor {
-                                post_id: post.id,
-                                author_id: author.id,
-                            },
-                        )?;
-                    }
-
-                    Ok(post)
-                })
-            })?;
-
-        // save mentions and tags
-        let mut hashtags = md_to_html(&post.source, None, false, None)
-            .2
-            .into_iter()
-            .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag {
-            for tag in tags {
-                serde_json::from_value::<link::Mention>(tag.clone())
-                    .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
-                    .ok();
-
-                serde_json::from_value::<Hashtag>(tag.clone())
-                    .map_err(Error::from)
-                    .and_then(|t| {
-                        let tag_name = t.name_string()?;
-                        Ok(Tag::from_activity(
-                            conn,
-                            &t,
-                            post.id,
-                            hashtags.remove(&tag_name),
-                        ))
-                    })
-                    .ok();
-            }
-        }
-
-        Timeline::add_to_all_timelines(conn, &post, Kind::Original)?;
-
-        Ok(post)
-    }
-
-    fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
 impl FromId07<DbConn> for Post {
     type Error = Error;
     type Object = LicensedArticle07;
@@ -1273,43 +1119,6 @@ pub struct PostUpdate {
     pub tags: Option<serde_json::Value>,
 }
 
-impl FromId<DbConn> for PostUpdate {
-    type Error = Error;
-    type Object = LicensedArticle;
-
-    fn from_db(_: &DbConn, _: &str) -> Result<Self> {
-        // Always fail because we always want to deserialize the AP object
-        Err(Error::NotFound)
-    }
-
-    fn from_activity(conn: &DbConn, updated: LicensedArticle) -> Result<Self> {
-        Ok(PostUpdate {
-            ap_url: updated.object.object_props.id_string()?,
-            title: updated.object.object_props.name_string().ok(),
-            subtitle: updated.object.object_props.summary_string().ok(),
-            content: updated.object.object_props.content_string().ok(),
-            cover: updated
-                .object
-                .object_props
-                .icon_object::<Image>()
-                .ok()
-                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id)),
-            source: updated
-                .object
-                .ap_object_props
-                .source_object::<Source>()
-                .ok()
-                .map(|x| x.content),
-            license: updated.custom_props.license_string().ok(),
-            tags: updated.object.object_props.tag,
-        })
-    }
-
-    fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
 impl FromId07<DbConn> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle07;
@@ -1373,7 +1182,7 @@ impl AsObject<User, Update, &DbConn> for PostUpdate {
 
     fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         let mut post =
-            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
+            Post::from_id07(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime
@@ -1445,7 +1254,7 @@ impl AsObject07<User, Update07, &DbConn> for PostUpdate {
 
     fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         let mut post =
-            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
+            Post::from_id07(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

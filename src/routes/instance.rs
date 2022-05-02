@@ -11,7 +11,7 @@ use validator::{Validate, ValidationErrors};
 use crate::inbox;
 use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use crate::template_utils::{IntoContext, Ructe};
-use plume_common::activity_pub::{broadcast, inbox::FromId};
+use plume_common::activity_pub::{broadcast, inbox::FromId07};
 use plume_models::{
     admin::*,
     blocklisted_emails::*,
@@ -404,7 +404,7 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
         return Some(Redirect::to(uri!(super::user::details: name = target)));
     }
 
-    if let Ok(post) = Post::from_id(&conn, &target, None, CONFIG.proxy()) {
+    if let Ok(post) = Post::from_id07(&conn, &target, None, CONFIG.proxy()) {
         return Some(Redirect::to(uri!(
             super::posts::details: blog = post.get_blog(&conn).expect("Can't retrieve blog").fqn,
             slug = &post.slug,
@@ -412,7 +412,7 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
         )));
     }
 
-    if let Ok(comment) = Comment::from_id(&conn, &target, None, CONFIG.proxy()) {
+    if let Ok(comment) = Comment::from_id07(&conn, &target, None, CONFIG.proxy()) {
         if comment.can_see(&conn, user.as_ref()) {
             let post = comment.get_post(&conn).expect("Can't retrieve post");
             return Some(Redirect::to(uri!(

@@ -13,7 +13,7 @@ use activitypub::{
 };
 use activitystreams::{
     activity::Delete as Delete07,
-    actor::AsApActor,
+    actor::{ApActor, AsApActor},
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
     base::{AnyBase, Base},
     collection::{
@@ -21,7 +21,7 @@ use activitystreams::{
     },
     iri_string::types::IriString,
     markers::Activity as Activity07,
-    object::{AsObject as _, Image as Image07, Tombstone as Tombstone07},
+    object::{kind::ImageType, AsObject as _, Image as Image07, Tombstone as Tombstone07},
     prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
@@ -35,7 +35,7 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
+        inbox::{AsActor, AsObject, AsObject07, FromId07},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, ApSignature07, CustomPerson as CustomPerson07, Id, IntoId,
@@ -53,7 +53,6 @@ use std::{
     hash::{Hash, Hasher},
     sync::Arc,
 };
-use url::Url;
 use webfinger::*;
 
 pub type CustomPerson = CustomObject<ApSignature, Person>;
@@ -238,7 +237,7 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id(
+        User::from_id07(
             conn,
             link.href.as_ref().ok_or(Error::Webfinger)?,
             None,
@@ -256,53 +255,84 @@ impl User {
             .ok_or(Error::Webfinger)
     }
 
-    fn fetch(url: &str) -> Result<CustomPerson> {
-        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
+    fn fetch(url: &str) -> Result<CustomPerson07> {
+        let mut res = get(url, Self::get_sender07(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
-        let ap_sign = serde_json::from_str::<ApSignature>(text)?;
-        let mut json = serde_json::from_str::<CustomPerson>(text)?;
-        json.custom_props = ap_sign;
+        let ap_sign = serde_json::from_str::<ApSignature07>(text)?;
+        let person = serde_json::from_str::<Person07>(text)?;
+        let json = CustomPerson07::new(
+            ApActor::new(
+                person
+                    .clone()
+                    .id_unchecked()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_owned(),
+                person,
+            ),
+            ap_sign,
+        ); // FIXME: Don't clone()
         Ok(json)
     }
 
     pub fn fetch_from_url(conn: &DbConn, url: &str) -> Result<User> {
-        User::fetch(url).and_then(|json| User::from_activity(conn, json))
+        User::fetch(url).and_then(|json| User::from_activity07(conn, json))
     }
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
         User::fetch(&self.ap_url.clone()).and_then(|json| {
             let avatar = Media::save_remote(
                 conn,
-                json.object
-                    .object_props
-                    .icon_image()? // FIXME: Fails when icon is not set
-                    .object_props
-                    .url_string()?,
+                json.ap_actor_ref()
+                    .icon()
+                    .ok_or(Error::MissingApProperty)? // FIXME: Fails when icon is not set
+                    .iter()
+                    .next()
+                    .and_then(|i| {
+                        i.clone()
+                            .extend::<Image07, ImageType>() // FIXME: Don't clone()
+                            .ok()?
+                            .and_then(|url| Some(url.id_unchecked()?.to_string()))
+                    })
+                    .ok_or(Error::MissingApProperty)?,
                 self,
             )
             .ok();
 
+            let pub_key = &json.ext_one.public_key.public_key_pem;
             diesel::update(self)
                 .set((
-                    users::username.eq(json.object.ap_actor_props.preferred_username_string()?),
-                    users::display_name.eq(json.object.object_props.name_string()?),
-                    users::outbox_url.eq(json.object.ap_actor_props.outbox_string()?),
-                    users::inbox_url.eq(json.object.ap_actor_props.inbox_string()?),
+                    users::username.eq(json
+                        .ap_actor_ref()
+                        .preferred_username()
+                        .ok_or(Error::MissingApProperty)?),
+                    users::display_name.eq(json
+                        .ap_actor_ref()
+                        .name()
+                        .ok_or(Error::MissingApProperty)?
+                        .to_as_string()
+                        .ok_or(Error::MissingApProperty)?),
+                    users::outbox_url.eq(json
+                        .ap_actor_ref()
+                        .outbox()?
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str()),
+                    users::inbox_url.eq(json.ap_actor_ref().inbox()?.as_str()),
                     users::summary.eq(SafeString::new(
                         &json
-                            .object
-                            .object_props
-                            .summary_string()
+                            .ap_actor_ref()
+                            .summary()
+                            .and_then(|summary| summary.to_as_string())
                             .unwrap_or_default(),
                     )),
-                    users::followers_endpoint.eq(json.object.ap_actor_props.followers_string()?),
+                    users::followers_endpoint.eq(json
+                        .ap_actor_ref()
+                        .followers()?
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str()),
                     users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
-                    users::public_key.eq(json
-                        .custom_props
-                        .public_key_publickey()?
-                        .public_key_pem_string()?),
+                    users::public_key.eq(pub_key),
                 ))
                 .execute(conn)
                 .map(|_| ())
@@ -548,7 +578,7 @@ impl User {
         Ok(coll)
     }
     fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
+        let mut res = get(url, Self::get_sender07(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
@@ -565,7 +595,7 @@ impl User {
         &self,
         url: &str,
     ) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
+        let mut res = get(url, Self::get_sender07(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
@@ -581,7 +611,7 @@ impl User {
     pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
         let mut res = get(
             &self.outbox_url[..],
-            Self::get_sender(),
+            Self::get_sender07(),
             CONFIG.proxy().cloned(),
         )?;
         let text = &res.text()?;
@@ -617,7 +647,7 @@ impl User {
     pub fn fetch_outbox07<T: Activity07 + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
         let mut res = get(
             &self.outbox_url[..],
-            Self::get_sender(),
+            Self::get_sender07(),
             CONFIG.proxy().cloned(),
         )?;
         let text = &res.text()?;
@@ -653,7 +683,7 @@ impl User {
     pub fn fetch_followers_ids(&self) -> Result<Vec<String>> {
         let mut res = get(
             &self.followers_endpoint[..],
-            Self::get_sender(),
+            Self::get_sender07(),
             CONFIG.proxy().cloned(),
         )?;
         let text = &res.text()?;
@@ -1096,110 +1126,6 @@ impl IntoId for User {
 }
 
 impl Eq for User {}
-
-impl FromId<DbConn> for User {
-    type Error = Error;
-    type Object = CustomPerson;
-
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(conn, id)
-    }
-
-    fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
-        let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str().ok_or(Error::Url)?;
-        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
-            Instance::insert(
-                conn,
-                NewInstance {
-                    name: inst.to_owned(),
-                    public_domain: inst.to_owned(),
-                    local: false,
-                    // We don't really care about all the following for remote instances
-                    long_description: SafeString::new(""),
-                    short_description: SafeString::new(""),
-                    default_license: String::new(),
-                    open_registrations: true,
-                    short_description_html: String::new(),
-                    long_description_html: String::new(),
-                },
-            )
-        })?;
-
-        let username = acct.object.ap_actor_props.preferred_username_string()?;
-
-        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
-            return Err(Error::InvalidValue);
-        }
-
-        let fqn = if instance.local {
-            username.clone()
-        } else {
-            format!("{}@{}", username, instance.public_domain)
-        };
-
-        let user = User::insert(
-            conn,
-            NewUser {
-                display_name: acct
-                    .object
-                    .object_props
-                    .name_string()
-                    .unwrap_or_else(|_| username.clone()),
-                username,
-                outbox_url: acct.object.ap_actor_props.outbox_string()?,
-                inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                role: 2,
-                summary: acct
-                    .object
-                    .object_props
-                    .summary_string()
-                    .unwrap_or_default(),
-                summary_html: SafeString::new(
-                    &acct
-                        .object
-                        .object_props
-                        .summary_string()
-                        .unwrap_or_default(),
-                ),
-                email: None,
-                hashed_password: None,
-                instance_id: instance.id,
-                ap_url: acct.object.object_props.id_string()?,
-                public_key: acct
-                    .custom_props
-                    .public_key_publickey()?
-                    .public_key_pem_string()?,
-                private_key: None,
-                shared_inbox_url: acct
-                    .object
-                    .ap_actor_props
-                    .endpoints_endpoint()
-                    .and_then(|e| e.shared_inbox_string())
-                    .ok(),
-                followers_endpoint: acct.object.ap_actor_props.followers_string()?,
-                fqn,
-                avatar_id: None,
-            },
-        )?;
-
-        if let Ok(icon) = acct.object.object_props.icon_image() {
-            if let Ok(url) = icon.object_props.url_string() {
-                let avatar = Media::save_remote(conn, url, &user);
-
-                if let Ok(avatar) = avatar {
-                    user.set_avatar(conn, avatar.id)?;
-                }
-            }
-        }
-
-        Ok(user)
-    }
-
-    fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
 
 impl FromId07<DbConn> for User {
     type Error = Error;
@@ -1686,32 +1612,6 @@ pub(crate) mod tests {
                     .len() as i64,
                 User::count_local(&conn).unwrap()
             );
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn self_federation() {
-        let conn = db();
-        conn.test_transaction::<_, (), _>(|| {
-            let users = fill_database(&conn);
-
-            let ap_repr = users[0].to_activity(&conn).unwrap();
-            users[0].delete(&conn).unwrap();
-            let user = User::from_activity(&conn, ap_repr).unwrap();
-
-            assert_eq!(user.username, users[0].username);
-            assert_eq!(user.display_name, users[0].display_name);
-            assert_eq!(user.outbox_url, users[0].outbox_url);
-            assert_eq!(user.inbox_url, users[0].inbox_url);
-            assert_eq!(user.instance_id, users[0].instance_id);
-            assert_eq!(user.ap_url, users[0].ap_url);
-            assert_eq!(user.public_key, users[0].public_key);
-            assert_eq!(user.shared_inbox_url, users[0].shared_inbox_url);
-            assert_eq!(user.followers_endpoint, users[0].followers_endpoint);
-            assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
-            assert_eq!(user.fqn, users[0].fqn);
-            assert_eq!(user.summary_html, users[0].summary_html);
             Ok(())
         });
     }

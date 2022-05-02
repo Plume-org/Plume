@@ -12,7 +12,7 @@ use activitystreams::{
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast, broadcast07,
-    inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
+    inbox::{AsActor, AsObject, AsObject07, FromId07},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -269,38 +269,6 @@ impl AsObject07<User, FollowAct07, &DbConn> for User {
             FollowAct07::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
         follow.set_id(id.parse::<IriString>()?);
         Follow::accept_follow07(conn, &actor, &self, follow, actor.id, self.id)
-    }
-}
-
-impl FromId<DbConn> for Follow {
-    type Error = Error;
-    type Object = FollowAct;
-
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Follow::find_by_ap_url(conn, id)
-    }
-
-    fn from_activity(conn: &DbConn, follow: FollowAct) -> Result<Self> {
-        let actor = User::from_id(
-            conn,
-            &follow.follow_props.actor_link::<Id>()?,
-            None,
-            CONFIG.proxy(),
-        )
-        .map_err(|(_, e)| e)?;
-
-        let target = User::from_id(
-            conn,
-            &follow.follow_props.object_link::<Id>()?,
-            None,
-            CONFIG.proxy(),
-        )
-        .map_err(|(_, e)| e)?;
-        Follow::accept_follow(conn, &actor, &target, follow, actor.id, target.id)
-    }
-
-    fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
 

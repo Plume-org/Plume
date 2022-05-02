@@ -1,12 +1,16 @@
 use crate::{
     db_conn::{DbConn, DbPool},
     follows,
-    posts::{LicensedArticle, Post},
+    posts::Post,
     users::{User, UserEvent},
     ACTOR_SYS, CONFIG, USER_CHAN,
 };
-use activitypub::activity::Create;
-use plume_common::activity_pub::inbox::FromId;
+use activitystreams::{
+    activity::{ActorAndObjectRef, Create as Create07},
+    base::AnyBase,
+    object::kind::ArticleType,
+};
+use plume_common::activity_pub::{inbox::FromId07, LicensedArticle as LicensedArticle07};
 use riker::actors::{Actor, ActorFactoryArgs, ActorRefFactory, Context, Sender, Subscribe, Tell};
 use std::sync::Arc;
 use tracing::{error, info, warn};
@@ -64,17 +68,23 @@ impl ActorFactoryArgs<DbPool> for RemoteFetchActor {
 }
 
 fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
-    let create_acts = user.fetch_outbox::<Create>();
+    let create_acts = user.fetch_outbox07::<Create07>();
     match create_acts {
         Ok(create_acts) => {
             for create_act in create_acts {
-                match create_act.create_props.object_object::<LicensedArticle>() {
-                    Ok(article) => {
-                        Post::from_activity(conn, article)
+                match create_act
+                    .object_field_ref()
+                    .as_single_base()
+                    .and_then(|base| {
+                        let any_base = AnyBase::from_base(base.clone()); // FIXME: Don't clone()
+                        any_base.extend::<LicensedArticle07, ArticleType>().ok()
+                    }) {
+                    Some(Some(article)) => {
+                        Post::from_activity07(conn, article)
                             .expect("Article from remote user couldn't be saved");
                         info!("Fetched article from remote user");
                     }
-                    Err(e) => warn!("Error while fetching articles in background: {:?}", e),
+                    _ => warn!("Error while fetching articles in background"),
                 }
             }
         }
@@ -89,7 +99,7 @@ fn fetch_and_cache_followers(user: &Arc<User>, conn: &DbConn) {
     match follower_ids {
         Ok(user_ids) => {
             for user_id in user_ids {
-                let follower = User::from_id(conn, &user_id, None, CONFIG.proxy());
+                let follower = User::from_id07(conn, &user_id, None, CONFIG.proxy());
                 match follower {
                     Ok(follower) => {
                         let inserted = follows::Follow::insert(

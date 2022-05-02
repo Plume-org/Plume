@@ -27,11 +27,10 @@ use openssl::{
     sign::{Signer, Verifier},
 };
 use plume_common::activity_pub::{
-    inbox::{AsActor, FromId, FromId07},
+    inbox::{AsActor, FromId07},
     sign, ActivityStream, ApSignature, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId,
     PublicKey, PublicKey07, Source, SourceProperty, ToAsString, ToAsUri,
 };
-use url::Url;
 use webfinger::*;
 
 pub type CustomGroup = CustomObject<ApSignature, Group>;
@@ -161,7 +160,7 @@ impl Blog {
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
             .and_then(|l| {
-                Blog::from_id(
+                Blog::from_id07(
                     conn,
                     &l.href.ok_or(Error::MissingApProperty)?,
                     None,
@@ -471,110 +470,6 @@ impl IntoId for Blog {
     }
 }
 
-impl FromId<DbConn> for Blog {
-    type Error = Error;
-    type Object = CustomGroup;
-
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(conn, id)
-    }
-
-    fn from_activity(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
-        let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str().ok_or(Error::Url)?;
-        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
-            Instance::insert(
-                conn,
-                NewInstance {
-                    public_domain: inst.to_owned(),
-                    name: inst.to_owned(),
-                    local: false,
-                    // We don't really care about all the following for remote instances
-                    long_description: SafeString::new(""),
-                    short_description: SafeString::new(""),
-                    default_license: String::new(),
-                    open_registrations: true,
-                    short_description_html: String::new(),
-                    long_description_html: String::new(),
-                },
-            )
-        })?;
-        let icon_id = acct
-            .object
-            .object_props
-            .icon_image()
-            .ok()
-            .and_then(|icon| {
-                let owner = icon.object_props.attributed_to_link::<Id>().ok()?;
-                Media::save_remote(
-                    conn,
-                    icon.object_props.url_string().ok()?,
-                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
-                )
-                .ok()
-            })
-            .map(|m| m.id);
-
-        let banner_id = acct
-            .object
-            .object_props
-            .image_image()
-            .ok()
-            .and_then(|banner| {
-                let owner = banner.object_props.attributed_to_link::<Id>().ok()?;
-                Media::save_remote(
-                    conn,
-                    banner.object_props.url_string().ok()?,
-                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
-                )
-                .ok()
-            })
-            .map(|m| m.id);
-
-        let name = acct.object.ap_actor_props.preferred_username_string()?;
-        if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
-            return Err(Error::InvalidValue);
-        }
-
-        Blog::insert(
-            conn,
-            NewBlog {
-                actor_id: name.clone(),
-                title: acct.object.object_props.name_string().unwrap_or(name),
-                outbox_url: acct.object.ap_actor_props.outbox_string()?,
-                inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                summary: acct
-                    .object
-                    .ap_object_props
-                    .source_object::<Source>()
-                    .map(|s| s.content)
-                    .unwrap_or_default(),
-                instance_id: instance.id,
-                ap_url: acct.object.object_props.id_string()?,
-                public_key: acct
-                    .custom_props
-                    .public_key_publickey()?
-                    .public_key_pem_string()?,
-                private_key: None,
-                banner_id,
-                icon_id,
-                summary_html: SafeString::new(
-                    &acct
-                        .object
-                        .object_props
-                        .summary_string()
-                        .unwrap_or_default(),
-                ),
-                theme: None,
-            },
-        )
-    }
-
-    fn get_sender() -> &'static dyn sign::Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
 impl FromId07<DbConn> for Blog {
     type Error = Error;
     type Object = CustomGroup07;
@@ -648,7 +543,7 @@ impl FromId07<DbConn> for Blog {
                     Media::save_remote(
                         conn,
                         banner.url()?.to_as_uri()?,
-                        &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
+                        &User::from_id07(conn, &owner, None, CONFIG.proxy()).ok()?,
                     )
                     .ok()
                 })
@@ -1126,33 +1021,6 @@ pub(crate) mod tests {
             assert!(Blog::get(&conn, blog[1].id).is_err());
             user[1].delete(&conn).unwrap();
             assert!(Blog::get(&conn, blog[0].id).is_err());
-            Ok(())
-        })
-    }
-
-    #[test]
-    fn self_federation() {
-        let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let (_users, blogs) = fill_database(&conn);
-
-            let ap_repr = blogs[0].to_activity(&conn).unwrap();
-            blogs[0].delete(&conn).unwrap();
-            let blog = Blog::from_activity(&conn, ap_repr).unwrap();
-
-            assert_eq!(blog.actor_id, blogs[0].actor_id);
-            assert_eq!(blog.title, blogs[0].title);
-            assert_eq!(blog.summary, blogs[0].summary);
-            assert_eq!(blog.outbox_url, blogs[0].outbox_url);
-            assert_eq!(blog.inbox_url, blogs[0].inbox_url);
-            assert_eq!(blog.instance_id, blogs[0].instance_id);
-            assert_eq!(blog.ap_url, blogs[0].ap_url);
-            assert_eq!(blog.public_key, blogs[0].public_key);
-            assert_eq!(blog.fqn, blogs[0].fqn);
-            assert_eq!(blog.summary_html, blogs[0].summary_html);
-            assert_eq!(blog.icon_url(&conn), blogs[0].icon_url(&conn));
-            assert_eq!(blog.banner_url(&conn), blogs[0].banner_url(&conn));
-
             Ok(())
         })
     }

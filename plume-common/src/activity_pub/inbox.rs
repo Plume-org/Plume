@@ -328,72 +328,6 @@ fn get_id(json: serde_json::Value) -> Option<String> {
 /// a full object, and if so, save it with `from_activity`. If it is only an ID, it will try to find
 /// it in the database with `from_db`, and otherwise dereference (fetch) the full object and parse it
 /// with `from_activity`.
-pub trait FromId<C>: Sized {
-    /// The type representing a failure
-    type Error: From<InboxError<Self::Error>> + Debug;
-
-    /// The ActivityPub object type representing Self
-    type Object: activitypub::Object;
-
-    /// Tries to get an instance of `Self` from an ActivityPub ID.
-    ///
-    /// # Parameters
-    ///
-    /// - `ctx`: a context to get this instance (= a database in which to search)
-    /// - `id`: the ActivityPub ID of the object to find
-    /// - `object`: optional object that will be used if the object was not found in the database
-    ///   If absent, the ID will be dereferenced.
-    fn from_id(
-        ctx: &C,
-        id: &str,
-        object: Option<Self::Object>,
-        proxy: Option<&reqwest::Proxy>,
-    ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
-        match Self::from_db(ctx, id) {
-            Ok(x) => Ok(x),
-            _ => match object {
-                Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
-                None => Self::from_activity(ctx, Self::deref(id, proxy.cloned())?)
-                    .map_err(|e| (None, e)),
-            },
-        }
-    }
-
-    /// Dereferences an ID
-    fn deref(
-        id: &str,
-        proxy: Option<reqwest::Proxy>,
-    ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        request::get(id, Self::get_sender(), proxy)
-            .map_err(|_| (None, InboxError::DerefError))
-            .and_then(|mut r| {
-                let json: serde_json::Value = r
-                    .json()
-                    .map_err(|_| (None, InboxError::InvalidObject(None)))?;
-                serde_json::from_value(json.clone())
-                    .map_err(|_| (Some(json), InboxError::InvalidObject(None)))
-            })
-            .map_err(|(json, e)| (json, e.into()))
-    }
-
-    /// Builds a `Self` from its ActivityPub representation
-    fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
-
-    /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
-    fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
-
-    fn get_sender() -> &'static dyn Signer;
-}
-/// A trait for ActivityPub objects that can be retrieved or constructed from ID.
-///
-/// The two functions to implement are `from_activity` to create (and save) a new object
-/// of this type from its AP representation, and `from_db` to try to find it in the database
-/// using its ID.
-///
-/// When dealing with the "object" field of incoming activities, `Inbox` will try to see if it is
-/// a full object, and if so, save it with `from_activity`. If it is only an ID, it will try to find
-/// it in the database with `from_db`, and otherwise dereference (fetch) the full object and parse it
-/// with `from_activity`.
 pub trait FromId07<C>: Sized {
     /// The type representing a failure
     type Error: From<InboxError<Self::Error>> + Debug;
@@ -808,22 +742,6 @@ mod tests {
     }
 
     struct MyActor;
-    impl FromId<()> for MyActor {
-        type Error = ();
-        type Object = Person;
-
-        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
-            Ok(MyActor)
-        }
-
-        fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
-            Ok(MyActor)
-        }
-
-        fn get_sender() -> &'static dyn Signer {
-            &*MY_SIGNER
-        }
-    }
     impl FromId07<()> for MyActor {
         type Error = ();
         type Object = Person07;
@@ -852,22 +770,6 @@ mod tests {
     }
 
     struct MyObject;
-    impl FromId<()> for MyObject {
-        type Error = ();
-        type Object = Note;
-
-        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
-            Ok(MyObject)
-        }
-
-        fn from_activity(_: &(), _obj: Note) -> Result<Self, Self::Error> {
-            Ok(MyObject)
-        }
-
-        fn get_sender() -> &'static dyn Signer {
-            &*MY_SIGNER
-        }
-    }
     impl AsObject<MyActor, Create, &()> for MyObject {
         type Error = ();
         type Output = ();
@@ -1018,31 +920,10 @@ mod tests {
     }
 
     #[test]
-    fn test_inbox_basic() {
-        let act = serde_json::to_value(build_create()).unwrap();
-        let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Create, MyObject>(None)
-            .done();
-        assert!(res.is_ok());
-    }
-
-    #[test]
     fn test_inbox_basic07() {
         let act = serde_json::to_value(build_create07()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
             .with07::<MyActor, Create07, MyObject07>(None)
-            .done();
-        assert!(res.is_ok());
-    }
-
-    #[test]
-    fn test_inbox_multi_handlers() {
-        let act = serde_json::to_value(build_create()).unwrap();
-        let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject>(None)
-            .with::<MyActor, Delete, MyObject>(None)
-            .with::<MyActor, Create, MyObject>(None)
-            .with::<MyActor, Like, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -1060,17 +941,6 @@ mod tests {
     }
 
     #[test]
-    fn test_inbox_failure() {
-        let act = serde_json::to_value(build_create()).unwrap();
-        // Create is not handled by this inbox
-        let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject>(None)
-            .with::<MyActor, Like, MyObject>(None)
-            .done();
-        assert!(res.is_err());
-    }
-
-    #[test]
     fn test_inbox_failure07() {
         let act = serde_json::to_value(build_create07()).unwrap();
         // Create is not handled by this inbox
@@ -1082,22 +952,6 @@ mod tests {
     }
 
     struct FailingActor;
-    impl FromId<()> for FailingActor {
-        type Error = ();
-        type Object = Person;
-
-        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
-            Err(())
-        }
-
-        fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
-            Err(())
-        }
-
-        fn get_sender() -> &'static dyn Signer {
-            &*MY_SIGNER
-        }
-    }
     impl AsActor<&()> for FailingActor {
         fn get_inbox_url(&self) -> String {
             String::from("https://test.ap/failing-actor/inbox")
@@ -1153,22 +1007,6 @@ mod tests {
             println!("FailingActor is creating a Note");
             Ok(())
         }
-    }
-
-    #[test]
-    fn test_inbox_actor_failure() {
-        let act = serde_json::to_value(build_create()).unwrap();
-
-        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject>(None)
-            .done();
-        assert!(res.is_err());
-
-        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject>(None)
-            .with::<MyActor, Create, MyObject>(None)
-            .done();
-        assert!(res.is_ok());
     }
 
     #[test]

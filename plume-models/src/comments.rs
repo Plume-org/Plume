@@ -30,7 +30,7 @@ use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId, FromId07},
+        inbox::{AsActor, AsObject, AsObject07, FromId07},
         sign::Signer,
         Id, IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
@@ -294,141 +294,6 @@ impl Comment {
     }
 }
 
-impl FromId<DbConn> for Comment {
-    type Error = Error;
-    type Object = Note;
-
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
-        Self::find_by_ap_url(conn, id)
-    }
-
-    fn from_activity(conn: &DbConn, note: Note) -> Result<Self> {
-        let comm = {
-            let previous_url = note
-                .object_props
-                .in_reply_to
-                .as_ref()
-                .ok_or(Error::MissingApProperty)?
-                .as_str()
-                .ok_or(Error::MissingApProperty)?;
-            let previous_comment = Comment::find_by_ap_url(conn, previous_url);
-
-            let is_public = |v: &Option<serde_json::Value>| match v
-                .as_ref()
-                .unwrap_or(&serde_json::Value::Null)
-            {
-                serde_json::Value::Array(v) => v
-                    .iter()
-                    .filter_map(serde_json::Value::as_str)
-                    .any(|s| s == PUBLIC_VISIBILITY),
-                serde_json::Value::String(s) => s == PUBLIC_VISIBILITY,
-                _ => false,
-            };
-
-            let public_visibility = is_public(&note.object_props.to)
-                || is_public(&note.object_props.bto)
-                || is_public(&note.object_props.cc)
-                || is_public(&note.object_props.bcc);
-
-            let comm = Comment::insert(
-                conn,
-                NewComment {
-                    content: SafeString::new(&note.object_props.content_string()?),
-                    spoiler_text: note.object_props.summary_string().unwrap_or_default(),
-                    ap_url: note.object_props.id_string().ok(),
-                    in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
-                    post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
-                        Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>
-                    })?,
-                    author_id: User::from_id(
-                        conn,
-                        &note.object_props.attributed_to_link::<Id>()?,
-                        None,
-                        CONFIG.proxy(),
-                    )
-                    .map_err(|(_, e)| e)?
-                    .id,
-                    sensitive: note.object_props.summary_string().is_ok(),
-                    public_visibility,
-                },
-            )?;
-
-            // save mentions
-            if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
-                for tag in tags {
-                    serde_json::from_value::<link::Mention>(tag)
-                        .map_err(Error::from)
-                        .and_then(|m| {
-                            let author = &Post::get(conn, comm.post_id)?.get_authors(conn)?[0];
-                            let not_author = m.link_props.href_string()? != author.ap_url.clone();
-                            Mention::from_activity(conn, &m, comm.id, false, not_author)
-                        })
-                        .ok();
-                }
-            }
-            comm
-        };
-
-        if !comm.public_visibility {
-            let receivers_ap_url = |v: Option<serde_json::Value>| {
-                let filter = |e: serde_json::Value| {
-                    if let serde_json::Value::String(s) = e {
-                        Some(s)
-                    } else {
-                        None
-                    }
-                };
-                match v.unwrap_or(serde_json::Value::Null) {
-                    serde_json::Value::Array(v) => v,
-                    v => vec![v],
-                }
-                .into_iter()
-                .filter_map(filter)
-            };
-
-            let mut note = note;
-
-            let to = receivers_ap_url(note.object_props.to.take());
-            let cc = receivers_ap_url(note.object_props.cc.take());
-            let bto = receivers_ap_url(note.object_props.bto.take());
-            let bcc = receivers_ap_url(note.object_props.bcc.take());
-
-            let receivers_ap_url = to
-                .chain(cc)
-                .chain(bto)
-                .chain(bcc)
-                .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
-                .into_iter()
-                .flat_map(|v| {
-                    if let Ok(user) = User::from_id(conn, &v, None, CONFIG.proxy()) {
-                        vec![user]
-                    } else {
-                        vec![] // TODO try to fetch collection
-                    }
-                })
-                .filter(|u| u.get_instance(conn).map(|i| i.local).unwrap_or(false))
-                .collect::<HashSet<User>>(); //remove duplicates (prevent db error)
-
-            for user in &receivers_ap_url {
-                CommentSeers::insert(
-                    conn,
-                    NewCommentSeers {
-                        comment_id: comm.id,
-                        user_id: user.id,
-                    },
-                )?;
-            }
-        }
-
-        comm.notify(conn)?;
-        Ok(comm)
-    }
-
-    fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
 impl FromId07<DbConn> for Comment {
     type Error = Error;
     type Object = Note07;
@@ -484,7 +349,7 @@ impl FromId07<DbConn> for Comment {
                     post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
                         Ok(Post::find_by_ap_url(conn, previous_url.as_str())?.id) as Result<i32>
                     })?,
-                    author_id: User::from_id(
+                    author_id: User::from_id07(
                         conn,
                         &note
                             .attributed_to()
@@ -537,7 +402,7 @@ impl FromId07<DbConn> for Comment {
             let receivers_ap_url = receiver_ids
                 .into_iter()
                 .flat_map(|v| {
-                    if let Ok(user) = User::from_id(conn, v.as_ref(), None, CONFIG.proxy()) {
+                    if let Ok(user) = User::from_id07(conn, v.as_ref(), None, CONFIG.proxy()) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection
