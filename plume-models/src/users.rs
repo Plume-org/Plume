@@ -4,11 +4,11 @@ use crate::{
     safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
     UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
-use activitypub::{actor::Person, Activity, CustomObject};
+use activitypub::Activity;
 use activitystreams::{
     activity::Delete,
     actor::{ApActor, AsApActor},
-    actor::{ApActor as ApActor07, Endpoints, Person as Person07},
+    actor::{ApActor as ApActor07, Endpoints, Person},
     base::{AnyBase, Base},
     collection::{OrderedCollection as OrderedCollection07, OrderedCollectionPage},
     iri_string::types::IriString,
@@ -30,8 +30,8 @@ use plume_common::{
         inbox::{AsActor, AsObject, FromId},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
-        ActivityStream, ApSignature, ApSignature07, CustomPerson as CustomPerson07, Id, IntoId,
-        PublicKey07, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
+        ActivityStream, ApSignature07, CustomPerson, Id, IntoId, PublicKey07, ToAsString, ToAsUri,
+        PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -46,8 +46,6 @@ use std::{
     sync::Arc,
 };
 use webfinger::*;
-
-pub type CustomPerson = CustomObject<ApSignature, Person>;
 
 pub enum Role {
     Admin = 0,
@@ -247,13 +245,13 @@ impl User {
             .ok_or(Error::Webfinger)
     }
 
-    fn fetch(url: &str) -> Result<CustomPerson07> {
+    fn fetch(url: &str) -> Result<CustomPerson> {
         let mut res = get(url, Self::get_sender07(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature07>(text)?;
-        let person = serde_json::from_str::<Person07>(text)?;
-        let json = CustomPerson07::new(
+        let person = serde_json::from_str::<Person>(text)?;
+        let json = CustomPerson::new(
             ApActor::new(
                 person
                     .clone()
@@ -827,8 +825,8 @@ impl User {
         }
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomPerson07> {
-        let mut actor = ApActor07::new(self.inbox_url.parse()?, Person07::new());
+    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomPerson> {
+        let mut actor = ApActor07::new(self.inbox_url.parse()?, Person::new());
         let ap_url = self.ap_url.parse::<IriString>()?;
         actor.set_id(ap_url.clone());
         actor.set_name(self.display_name.clone());
@@ -862,7 +860,7 @@ impl User {
             actor.set_icon(avatar.into_any_base()?);
         }
 
-        Ok(CustomPerson07::new(actor, ap_signature))
+        Ok(CustomPerson::new(actor, ap_signature))
     }
 
     pub fn delete_activity07(&self, conn: &Connection) -> Result<Delete> {
@@ -998,13 +996,13 @@ impl Eq for User {}
 
 impl FromId<DbConn> for User {
     type Error = Error;
-    type Object = CustomPerson07;
+    type Object = CustomPerson;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, acct: CustomPerson07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
         let actor = acct.ap_actor_ref();
         let username = actor
             .preferred_username()
