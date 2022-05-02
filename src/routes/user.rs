@@ -105,7 +105,7 @@ pub fn follow(
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let target = User::find_by_fqn(&conn, &name)?;
     let message = if let Ok(follow) = follows::Follow::find(&conn, user.id, target.id) {
-        let delete_act = follow.build_undo(&conn)?;
+        let delete_act = follow.build_undo07(&conn)?;
         local_inbox(
             &conn,
             serde_json::to_value(&delete_act).map_err(Error::from)?,
@@ -114,7 +114,7 @@ pub fn follow(
         let msg = i18n!(rockets.intl.catalog, "You are no longer following {}."; target.name());
         rockets
             .worker
-            .execute(move || broadcast(&user, delete_act, vec![target], CONFIG.proxy().cloned()));
+            .execute(move || broadcast07(&user, delete_act, vec![target], CONFIG.proxy().cloned()));
         msg
     } else {
         let f = follows::Follow::insert(

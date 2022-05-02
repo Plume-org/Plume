@@ -2,9 +2,9 @@ use crate::{
     ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::activity::{Accept, Follow as FollowAct, Undo};
+use activitypub::activity::{Accept, Follow as FollowAct};
 use activitystreams::{
-    activity::{Accept as Accept07, ActorAndObjectRef, Follow as FollowAct07, Undo as Undo07},
+    activity::{Accept as Accept07, ActorAndObjectRef, Follow as FollowAct07, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -210,23 +210,8 @@ impl Follow {
         Ok(accept)
     }
 
-    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
-        let mut undo = Undo::default();
-        undo.undo_props
-            .set_actor_link(User::get(conn, self.follower_id)?.into_id())?;
-        undo.object_props
-            .set_id_string(format!("{}/undo", self.ap_url))?;
-        undo.undo_props
-            .set_object_link::<Id>(self.clone().into_id())?;
-        undo.object_props
-            .set_to_link_vec(vec![User::get(conn, self.following_id)?.into_id()])?;
-        undo.object_props
-            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        Ok(undo)
-    }
-
-    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo07> {
-        let mut undo = Undo07::new(
+    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo> {
+        let mut undo = Undo::new(
             User::get(conn, self.follower_id)?
                 .ap_url
                 .parse::<IriString>()?,
@@ -296,7 +281,7 @@ impl FromId<DbConn> for Follow {
     }
 }
 
-impl AsObject<User, Undo07, &DbConn> for Follow {
+impl AsObject<User, Undo, &DbConn> for Follow {
     type Error = Error;
     type Output = ();
 
@@ -478,28 +463,6 @@ mod tests {
                 },
                 "to": ["https://plu.me/@/other/"],
                 "type": "Accept"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn build_undo() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (follow, _following, _follower, _users) = prepare_activity(&conn);
-            let act = follow.build_undo(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/other/",
-                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
-                "id": format!("https://plu.me/follows/{}/undo", follow.id),
-                "object": format!("https://plu.me/follows/{}", follow.id),
-                "to": ["https://plu.me/@/user/"],
-                "type": "Undo"
             });
 
             assert_json_eq!(to_value(act)?, expected);
