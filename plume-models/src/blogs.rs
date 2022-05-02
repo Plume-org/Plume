@@ -311,6 +311,10 @@ impl Blog {
         )))?;
         Ok(coll)
     }
+
+    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection07>> {
+        self.outbox_collection07(conn).map(ActivityStream::new)
+    }
     pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection07> {
         let acts = self.get_activities(conn);
         let acts = acts
