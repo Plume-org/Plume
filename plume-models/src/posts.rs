@@ -19,7 +19,7 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, HashtagType, Id, IntoId, Licensed07, LicensedArticle, Source, SourceProperty,
+        Hashtag, HashtagType, Id, IntoId, Licensed, LicensedArticle, Source, SourceProperty,
         ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
@@ -409,7 +409,7 @@ impl Post {
                 .filter_map(|cc| cc.parse::<IriString>().ok())
                 .collect::<Vec<IriString>>(),
         );
-        let license = Licensed07 {
+        let license = Licensed {
             license: Some(self.license.clone()),
         };
         Ok(LicensedArticle::new(article, license, source))

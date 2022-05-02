@@ -435,18 +435,18 @@ where
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct Licensed07 {
+pub struct Licensed {
     pub license: Option<String>,
 }
 
-impl<U> UnparsedExtension<U> for Licensed07
+impl<U> UnparsedExtension<U> for Licensed
 where
     U: UnparsedMutExt,
 {
     type Error = serde_json::Error;
 
     fn try_from_unparsed(unparsed_mut: &mut U) -> Result<Self, Self::Error> {
-        Ok(Licensed07 {
+        Ok(Licensed {
             license: unparsed_mut.remove("license")?,
         })
     }
@@ -457,7 +457,7 @@ where
     }
 }
 
-pub type LicensedArticle = Ext2<ApObject<Article>, Licensed07, SourceProperty>;
+pub type LicensedArticle = Ext2<ApObject<Article>, Licensed, SourceProperty>;
 
 pub trait ToAsString {
     fn to_as_string(&self) -> Option<String>;
@@ -570,7 +570,7 @@ mod tests {
         let object = ApObject::new(Article::new());
         let licensed_article = LicensedArticle::new(
             object,
-            Licensed07 {
+            Licensed {
                 license: Some("CC-0".into()),
             },
             SourceProperty {
