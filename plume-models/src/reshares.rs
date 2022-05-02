@@ -2,9 +2,8 @@ use crate::{
     db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::reshares,
     timeline::*, users::User, Connection, Error, Result, CONFIG,
 };
-use activitypub::activity::Announce;
 use activitystreams::{
-    activity::{ActorAndObjectRef, Announce as Announce07, Undo},
+    activity::{ActorAndObjectRef, Announce, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -14,7 +13,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
-    Id, IntoId, PUBLIC_VISIBILITY,
+    PUBLIC_VISIBILITY,
 };
 
 #[derive(Clone, Queryable, Identifiable)]
@@ -66,23 +65,8 @@ impl Reshare {
         User::get(conn, self.user_id)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<Announce> {
-        let mut act = Announce::default();
-        act.announce_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.announce_props
-            .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
-        act.object_props.set_id_string(self.ap_url.clone())?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props
-            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
-
-        Ok(act)
-    }
-
-    pub fn to_activity07(&self, conn: &Connection) -> Result<Announce07> {
-        let mut act = Announce07::new(
+    pub fn to_activity07(&self, conn: &Connection) -> Result<Announce> {
+        let mut act = Announce::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
         );
@@ -129,7 +113,7 @@ impl Reshare {
     }
 }
 
-impl AsObject<User, Announce07, &DbConn> for Post {
+impl AsObject<User, Announce, &DbConn> for Post {
     type Error = Error;
     type Output = Reshare;
 
@@ -152,13 +136,13 @@ impl AsObject<User, Announce07, &DbConn> for Post {
 
 impl FromId<DbConn> for Reshare {
     type Error = Error;
-    type Object = Announce07;
+    type Object = Announce;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Reshare::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, act: Announce07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, act: Announce) -> Result<Self> {
         let res = Reshare::insert(
             conn,
             NewReshare {
@@ -237,30 +221,6 @@ mod test {
     use crate::{inbox::tests::fill_database, tests::db};
     use assert_json_diff::assert_json_eq;
     use serde_json::{json, to_value};
-
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
-            let user = &post.get_authors(&conn)?[0];
-            let reshare = Reshare::insert(&*conn, NewReshare::new(post, user))?;
-            let act = reshare.to_activity(&conn).unwrap();
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "cc": ["https://plu.me/@/admin/followers"],
-                "id": "https://plu.me/@/admin/reshare/https://plu.me/~/BlogName/testing",
-                "object": "https://plu.me/~/BlogName/testing",
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Announce",
-            });
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
 
     #[test]
     fn to_activity07() {
