@@ -2,9 +2,9 @@ use crate::{
     ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::activity::{Accept, Follow as FollowAct};
+use activitypub::activity::Follow as FollowAct;
 use activitystreams::{
-    activity::{Accept as Accept07, ActorAndObjectRef, Follow as FollowAct07, Undo},
+    activity::{Accept, ActorAndObjectRef, Follow as FollowAct07, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -131,40 +131,13 @@ impl Follow {
         Ok(res)
     }
 
-    pub fn build_accept<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
-        &self,
-        from: &B,
-        target: &A,
-        follow: FollowAct,
-    ) -> Result<Accept> {
-        let mut accept = Accept::default();
-        let accept_id = ap_url(&format!(
-            "{}/follows/{}/accept",
-            CONFIG.base_url.as_str(),
-            self.id
-        ));
-        accept.object_props.set_id_string(accept_id)?;
-        accept
-            .object_props
-            .set_to_link_vec(vec![from.clone().into_id()])?;
-        accept
-            .object_props
-            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        accept
-            .accept_props
-            .set_actor_link::<Id>(target.clone().into_id())?;
-        accept.accept_props.set_object_object(follow)?;
-
-        Ok(accept)
-    }
-
     pub fn build_accept07<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
         &self,
         from: &B,
         target: &A,
         follow: FollowAct07,
-    ) -> Result<Accept07> {
-        let mut accept = Accept07::new(
+    ) -> Result<Accept> {
+        let mut accept = Accept::new(
             target.clone().into_id().parse::<IriString>()?,
             AnyBase::from_extended(follow)?,
         );
@@ -375,35 +348,6 @@ mod tests {
                 "object": "https://plu.me/@/user/",
                 "to": ["https://plu.me/@/user/"],
                 "type": "Follow"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn build_accept() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (follow, following, follower, _users) = prepare_activity(&conn);
-            let act = follow.build_accept(&follower, &following, follow.to_activity(&conn)?)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/user/",
-                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
-                "id": format!("https://127.0.0.1:7878/follows/{}/accept", follow.id),
-                "object": {
-                    "actor": "https://plu.me/@/other/",
-                    "cc": ["https://www.w3.org/ns/activitystreams#Public"],
-                    "id": format!("https://plu.me/follows/{}", follow.id),
-                    "object": "https://plu.me/@/user/",
-                    "to": ["https://plu.me/@/user/"],
-                    "type": "Follow"
-                },
-                "to": ["https://plu.me/@/other/"],
-                "type": "Accept"
             });
 
             assert_json_eq!(to_value(act)?, expected);
