@@ -372,10 +372,10 @@ where
 pub type CustomPerson = Ext1<ApActor<Person>, ApSignature07>;
 pub type CustomGroup = Ext2<ApActor<Group>, ApSignature07, SourceProperty>;
 
-kind!(HashtagType07, Hashtag);
+kind!(HashtagType, Hashtag);
 
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
-pub struct Hashtag07 {
+pub struct Hashtag {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub href: Option<IriString>,
 
@@ -383,10 +383,10 @@ pub struct Hashtag07 {
     pub name: Option<AnyString>,
 
     #[serde(flatten)]
-    inner: Object07<HashtagType07>,
+    inner: Object07<HashtagType>,
 }
 
-impl Hashtag07 {
+impl Hashtag {
     pub fn new() -> Self {
         Self {
             href: None,
@@ -395,14 +395,14 @@ impl Hashtag07 {
         }
     }
 
-    pub fn extending(mut inner: Object07<HashtagType07>) -> Result<Self, serde_json::Error> {
+    pub fn extending(mut inner: Object07<HashtagType>) -> Result<Self, serde_json::Error> {
         let href = inner.remove("href")?;
         let name = inner.remove("name")?;
 
         Ok(Self { href, name, inner })
     }
 
-    pub fn retracting(self) -> Result<Object07<HashtagType07>, serde_json::Error> {
+    pub fn retracting(self) -> Result<Object07<HashtagType>, serde_json::Error> {
         let Self {
             href,
             name,
@@ -416,9 +416,9 @@ impl Hashtag07 {
 }
 
 pub trait AsHashtag: markers::Object {
-    fn hashtag_ref(&self) -> &Hashtag07;
+    fn hashtag_ref(&self) -> &Hashtag;
 
-    fn hashtag_mut(&mut self) -> &mut Hashtag07;
+    fn hashtag_mut(&mut self) -> &mut Hashtag;
 }
 
 pub trait HashtagExt: AsHashtag {
@@ -465,13 +465,13 @@ pub trait HashtagExt: AsHashtag {
     }
 }
 
-impl Default for Hashtag07 {
+impl Default for Hashtag {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl AsHashtag for Hashtag07 {
+impl AsHashtag for Hashtag {
     fn hashtag_ref(&self) -> &Self {
         self
     }
@@ -481,22 +481,22 @@ impl AsHashtag for Hashtag07 {
     }
 }
 
-impl Extends<HashtagType07> for Hashtag07 {
+impl Extends<HashtagType> for Hashtag {
     type Error = serde_json::Error;
 
-    fn extends(base: Base<HashtagType07>) -> Result<Self, Self::Error> {
+    fn extends(base: Base<HashtagType>) -> Result<Self, Self::Error> {
         let inner = Object07::extends(base)?;
         Self::extending(inner)
     }
 
-    fn retracts(self) -> Result<Base<HashtagType07>, Self::Error> {
+    fn retracts(self) -> Result<Base<HashtagType>, Self::Error> {
         let inner = self.retracting()?;
         inner.retracts()
     }
 }
 
-impl markers::Base for Hashtag07 {}
-impl markers::Object for Hashtag07 {}
+impl markers::Base for Hashtag {}
+impl markers::Object for Hashtag {}
 impl<T> HashtagExt for T where T: AsHashtag {}
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]

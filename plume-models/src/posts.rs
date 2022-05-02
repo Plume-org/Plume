@@ -23,7 +23,7 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
+        Hashtag, HashtagType, Id, IntoId, Licensed, Licensed07,
         LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
         PUBLIC_VISIBILITY,
     },
@@ -494,7 +494,7 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_tags07(&self, conn: &Connection, tags: Vec<Hashtag07>) -> Result<()> {
+    pub fn update_tags07(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
@@ -531,7 +531,7 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_hashtags07(&self, conn: &Connection, tags: Vec<Hashtag07>) -> Result<()> {
+    pub fn update_hashtags07(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
@@ -797,7 +797,7 @@ impl FromId<DbConn> for Post {
                     .ok();
 
                 tag.clone()
-                    .extend::<Hashtag07, HashtagType07>() // FIXME: Don't clone
+                    .extend::<Hashtag, HashtagType>() // FIXME: Don't clone
                     .map(|hashtag| {
                         hashtag.and_then(|t| {
                             let tag_name = t.name.clone()?.as_str().to_string();
@@ -962,7 +962,7 @@ impl AsObject<User, Update07, &DbConn> for PostUpdate {
                     .map(|m| mentions.push(m))
                     .ok();
 
-                serde_json::from_value::<Hashtag07>(tag.clone())
+                serde_json::from_value::<Hashtag>(tag.clone())
                     .map_err(Error::from)
                     .and_then(|t| {
                         let tag_name = t.name.as_ref().ok_or(Error::MissingApProperty)?;

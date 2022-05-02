@@ -1,7 +1,7 @@
 use crate::{ap_url, instance::Instance, schema::tags, Connection, Error, Result};
 use activitystreams::iri_string::types::IriString;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use plume_common::activity_pub::{Hashtag07, HashtagExt};
+use plume_common::activity_pub::{Hashtag, HashtagExt};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Tag {
@@ -25,8 +25,8 @@ impl Tag {
     find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
-    pub fn to_activity07(&self) -> Result<Hashtag07> {
-        let mut ht = Hashtag07::new();
+    pub fn to_activity07(&self) -> Result<Hashtag> {
+        let mut ht = Hashtag::new();
         ht.set_href(
             ap_url(&format!(
                 "{}/tag/{}",
@@ -41,7 +41,7 @@ impl Tag {
 
     pub fn from_activity07(
         conn: &Connection,
-        tag: &Hashtag07,
+        tag: &Hashtag,
         post: i32,
         is_hashtag: bool,
     ) -> Result<Tag> {
@@ -55,8 +55,8 @@ impl Tag {
         )
     }
 
-    pub fn build_activity07(tag: String) -> Result<Hashtag07> {
-        let mut ht = Hashtag07::new();
+    pub fn build_activity07(tag: String) -> Result<Hashtag> {
+        let mut ht = Hashtag::new();
         ht.set_href(
             ap_url(&format!(
                 "{}/tag/{}",
@@ -91,7 +91,7 @@ mod tests {
         conn.test_transaction::<_, Error, _>(|| {
             let (posts, _users, _blogs) = fill_database(conn);
             let post_id = posts[0].id;
-            let mut ht = Hashtag07::new();
+            let mut ht = Hashtag::new();
             ht.set_href(ap_url(&format!("https://plu.me/tag/a_tag")).parse::<IriString>()?);
             ht.set_name("a_tag".to_string());
             let tag = Tag::from_activity07(conn, &ht, post_id, true)?;
