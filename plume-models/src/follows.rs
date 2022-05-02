@@ -2,9 +2,8 @@ use crate::{
     ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::activity::Follow as FollowAct;
 use activitystreams::{
-    activity::{Accept, ActorAndObjectRef, Follow as FollowAct07, Undo},
+    activity::{Accept, ActorAndObjectRef, Follow as FollowAct, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -56,27 +55,12 @@ impl Follow {
             .map_err(Error::from)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<FollowAct> {
-        let user = User::get(conn, self.follower_id)?;
-        let target = User::get(conn, self.following_id)?;
-
-        let mut act = FollowAct::default();
-        act.follow_props.set_actor_link::<Id>(user.into_id())?;
-        act.follow_props
-            .set_object_link::<Id>(target.clone().into_id())?;
-        act.object_props.set_id_string(self.ap_url.clone())?;
-        act.object_props.set_to_link_vec(vec![target.into_id()])?;
-        act.object_props
-            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        Ok(act)
-    }
-
-    pub fn to_activity07(&self, conn: &Connection) -> Result<FollowAct07> {
+    pub fn to_activity07(&self, conn: &Connection) -> Result<FollowAct> {
         let user = User::get(conn, self.follower_id)?;
         let target = User::get(conn, self.following_id)?;
         let target_id = target.ap_url.parse::<IriString>()?;
 
-        let mut act = FollowAct07::new(user.ap_url.parse::<IriString>()?, target_id.clone());
+        let mut act = FollowAct::new(user.ap_url.parse::<IriString>()?, target_id.clone());
         act.set_id(self.ap_url.parse::<IriString>()?);
         act.set_many_tos(vec![target_id]);
         act.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
@@ -104,7 +88,7 @@ impl Follow {
         conn: &Connection,
         from: &B,
         target: &A,
-        follow: FollowAct07,
+        follow: FollowAct,
         from_id: i32,
         target_id: i32,
     ) -> Result<Follow> {
@@ -135,7 +119,7 @@ impl Follow {
         &self,
         from: &B,
         target: &A,
-        follow: FollowAct07,
+        follow: FollowAct,
     ) -> Result<Accept> {
         let mut accept = Accept::new(
             target.clone().into_id().parse::<IriString>()?,
@@ -170,7 +154,7 @@ impl Follow {
     }
 }
 
-impl AsObject<User, FollowAct07, &DbConn> for User {
+impl AsObject<User, FollowAct, &DbConn> for User {
     type Error = Error;
     type Output = Follow;
 
@@ -178,7 +162,7 @@ impl AsObject<User, FollowAct07, &DbConn> for User {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
         let mut follow =
-            FollowAct07::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
+            FollowAct::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
         follow.set_id(id.parse::<IriString>()?);
         Follow::accept_follow07(conn, &actor, &self, follow, actor.id, self.id)
     }
@@ -186,13 +170,13 @@ impl AsObject<User, FollowAct07, &DbConn> for User {
 
 impl FromId<DbConn> for Follow {
     type Error = Error;
-    type Object = FollowAct07;
+    type Object = FollowAct;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Follow::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, follow: FollowAct07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
             conn,
             follow
@@ -310,28 +294,6 @@ mod tests {
 
             Ok(())
         })
-    }
-
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (follow, _following, _follower, _users) = prepare_activity(&conn);
-            let act = follow.to_activity(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/other/",
-                "cc": ["https://www.w3.org/ns/activitystreams#Public"],
-                "id": format!("https://plu.me/follows/{}", follow.id),
-                "object": "https://plu.me/@/user/",
-                "to": ["https://plu.me/@/user/"],
-                "type": "Follow"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
     }
 
     #[test]

@@ -18,9 +18,7 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{
-    broadcast, broadcast07, ActivityStream, ApRequest, CustomPerson, Id,
-};
+use plume_common::activity_pub::{broadcast07, ActivityStream, ApRequest, CustomPerson, Id};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::Blog,
@@ -127,11 +125,11 @@ pub fn follow(
         )?;
         f.notify(&conn)?;
 
-        let act = f.to_activity(&conn)?;
+        let act = f.to_activity07(&conn)?;
         let msg = i18n!(rockets.intl.catalog, "You are now following {}."; target.name());
         rockets
             .worker
-            .execute(move || broadcast(&user, act, vec![target], CONFIG.proxy().cloned()));
+            .execute(move || broadcast07(&user, act, vec![target], CONFIG.proxy().cloned()));
         msg
     };
     Ok(Flash::success(
