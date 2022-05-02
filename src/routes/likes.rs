@@ -3,7 +3,7 @@ use rocket_i18n::I18n;
 
 use crate::routes::errors::ErrorPage;
 use crate::utils::requires_login;
-use plume_common::activity_pub::broadcast;
+use plume_common::activity_pub::{broadcast, broadcast07};
 use plume_models::{
     blogs::Blog, db_conn::DbConn, inbox::inbox, likes, posts::Post, timeline::*, users::User,
     Error, PlumeRocket, CONFIG,
@@ -33,7 +33,7 @@ pub fn create(
             .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
         let like = likes::Like::find_by_user_on_post(&conn, user.id, post.id)?;
-        let delete_act = like.build_undo(&conn)?;
+        let delete_act = like.build_undo07(&conn)?;
         inbox(
             &conn,
             serde_json::to_value(&delete_act).map_err(Error::from)?,
@@ -42,7 +42,7 @@ pub fn create(
         let dest = User::one_by_instance(&conn)?;
         rockets
             .worker
-            .execute(move || broadcast(&user, delete_act, dest, CONFIG.proxy().cloned()));
+            .execute(move || broadcast07(&user, delete_act, dest, CONFIG.proxy().cloned()));
     }
 
     Ok(Redirect::to(uri!(

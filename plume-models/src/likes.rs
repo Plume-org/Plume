@@ -87,22 +87,6 @@ impl Like {
         Ok(())
     }
 
-    pub fn build_undo(&self, conn: &Connection) -> Result<activity::Undo> {
-        let mut act = activity::Undo::default();
-        act.undo_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.undo_props.set_object_object(self.to_activity(conn)?)?;
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(
-            User::get(conn, self.user_id)?.followers_endpoint,
-        )])?;
-
-        Ok(act)
-    }
-
     pub fn build_undo07(&self, conn: &Connection) -> Result<Undo07> {
         let mut act = Undo07::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
@@ -266,37 +250,6 @@ mod tests {
                 "object": "https://plu.me/~/BlogName/testing",
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Like",
-            });
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn build_undo() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
-            let user = &post.get_authors(&conn)?[0];
-            let like = Like::insert(&*conn, NewLike::new(post, user))?;
-            let act = like.build_undo(&*conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "cc": ["https://plu.me/@/admin/followers"],
-                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing#delete",
-                "object": {
-                    "actor": "https://plu.me/@/admin/",
-                    "cc": ["https://plu.me/@/admin/followers"],
-                    "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
-                    "object": "https://plu.me/~/BlogName/testing",
-                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                    "type": "Like",
-                },
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Undo",
             });
             assert_json_eq!(to_value(act)?, expected);
 
