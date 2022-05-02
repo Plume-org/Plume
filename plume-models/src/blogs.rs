@@ -2,13 +2,11 @@ use crate::{
     db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
-use activitypub::{actor::Group, collection::OrderedCollectionPage, object::Image, CustomObject};
+use activitypub::{actor::Group, object::Image, CustomObject};
 use activitystreams::{
     actor::{ApActor, ApActorExt, AsApActor, Group as Group07},
     base::AnyBase,
-    collection::{
-        OrderedCollection as OrderedCollection07, OrderedCollectionPage as OrderedCollectionPage07,
-    },
+    collection::{OrderedCollection, OrderedCollectionPage},
     iri_string::types::IriString,
     object::{kind::ImageType, ApObject, Image as Image07, ObjectExt},
     prelude::*,
@@ -288,17 +286,17 @@ impl Blog {
         Ok(CustomGroup07::new(blog, ap_signature, source))
     }
 
-    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection07>> {
+    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
         self.outbox_collection07(conn).map(ActivityStream::new)
     }
-    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection07> {
+    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection> {
         let acts = self.get_activities(conn);
         let acts = acts
             .iter()
             .filter_map(|value| AnyBase::from_arbitrary_json(value).ok())
             .collect::<Vec<AnyBase>>();
         let n_acts = acts.len();
-        let mut coll = OrderedCollection07::new();
+        let mut coll = OrderedCollection::new();
         coll.set_many_items(acts);
         coll.set_total_items(n_acts as u64);
         coll.set_first(format!("{}?page=1", &self.outbox_url).parse::<IriString>()?);
@@ -312,41 +310,11 @@ impl Blog {
         );
         Ok(coll)
     }
-    pub fn outbox_page(
-        &self,
-        conn: &Connection,
-        (min, max): (i32, i32),
-    ) -> Result<ActivityStream<OrderedCollectionPage>> {
-        self.outbox_collection_page(conn, (min, max))
-            .map(ActivityStream::new)
-    }
-    pub fn outbox_collection_page(
-        &self,
-        conn: &Connection,
-        (min, max): (i32, i32),
-    ) -> Result<OrderedCollectionPage> {
-        let mut coll = OrderedCollectionPage::default();
-        let acts = self.get_activity_page(conn, (min, max));
-        //This still doesn't do anything because the outbox
-        //doesn't do anything yet
-        coll.collection_page_props.set_next_link(Id::new(&format!(
-            "{}?page={}",
-            &self.outbox_url,
-            min / ITEMS_PER_PAGE + 1
-        )))?;
-        coll.collection_page_props.set_prev_link(Id::new(&format!(
-            "{}?page={}",
-            &self.outbox_url,
-            min / ITEMS_PER_PAGE - 1
-        )))?;
-        coll.collection_props.items = serde_json::to_value(acts)?;
-        Ok(coll)
-    }
     pub fn outbox_page07(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
-    ) -> Result<ActivityStream<OrderedCollectionPage07>> {
+    ) -> Result<ActivityStream<OrderedCollectionPage>> {
         self.outbox_collection_page07(conn, (min, max))
             .map(ActivityStream::new)
     }
@@ -354,8 +322,8 @@ impl Blog {
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
-    ) -> Result<OrderedCollectionPage07> {
-        let mut coll = OrderedCollectionPage07::new();
+    ) -> Result<OrderedCollectionPage> {
+        let mut coll = OrderedCollectionPage::new();
         let acts = self.get_activity_page(conn, (min, max));
         //This still doesn't do anything because the outbox
         //doesn't do anything yet
@@ -1175,27 +1143,6 @@ pub(crate) mod tests {
                 "first": "https://plu.me/~/BlogName/outbox?page=1",
                 "last": "https://plu.me/~/BlogName/outbox?page=0",
                 "type": "OrderedCollection"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn outbox_collection_page() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (_users, blogs) = fill_database(conn);
-            let blog = &blogs[0];
-            let act = blog.outbox_collection_page(conn, (33, 36))?;
-
-            let expected = json!({
-                "next": "https://plu.me/~/BlogName/outbox?page=3",
-                "prev": "https://plu.me/~/BlogName/outbox?page=1",
-                "items": [],
-                "type": "OrderedCollectionPage"
             });
 
             assert_json_eq!(to_value(act)?, expected);
