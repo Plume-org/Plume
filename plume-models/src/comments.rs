@@ -111,7 +111,7 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity07(&self, conn: &DbConn) -> Result<Note> {
+    pub fn to_activity(&self, conn: &DbConn) -> Result<Note> {
         let author = User::get(conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
@@ -142,17 +142,17 @@ impl Comment {
         note.set_attributed_to(author.into_id().parse::<IriString>()?);
         note.set_many_tos(to);
         note.set_many_tags(mentions.into_iter().filter_map(|m| {
-            Mention::build_activity07(conn, &m)
+            Mention::build_activity(conn, &m)
                 .map(|mention| mention.into_any_base().expect("Can convert"))
                 .ok()
         }));
         Ok(note)
     }
 
-    pub fn create_activity07(&self, conn: &DbConn) -> Result<Create> {
+    pub fn create_activity(&self, conn: &DbConn) -> Result<Create> {
         let author = User::get(conn, self.author_id)?;
 
-        let note = self.to_activity07(conn)?;
+        let note = self.to_activity(conn)?;
         let note_clone = note.clone();
 
         let mut act = Create::new(
@@ -358,7 +358,7 @@ impl AsObject<User, Create, &DbConn> for Comment {
     type Error = Error;
     type Output = Self;
 
-    fn activity07(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self> {
+    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self> {
         // The actual creation takes place in the FromId impl
         Ok(self)
     }
@@ -368,7 +368,7 @@ impl AsObject<User, Delete, &DbConn> for Comment {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.author_id != actor.id {
             return Err(Error::Unauthorized);
         }
@@ -458,7 +458,7 @@ mod tests {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let (original_comm, posts, users, _blogs) = prepare_activity(&conn);
-            let act = original_comm.create_activity07(&conn).unwrap();
+            let act = original_comm.create_activity(&conn).unwrap();
 
             assert_json_eq!(to_value(&act).unwrap(), json!({
                 "actor": "https://plu.me/@/admin/",
@@ -500,7 +500,7 @@ mod tests {
                 },
             )
             .unwrap();
-            let reply_act = reply.create_activity07(&conn).unwrap();
+            let reply_act = reply.create_activity(&conn).unwrap();
 
             assert_json_eq!(to_value(&reply_act).unwrap(), json!({
                 "actor": "https://plu.me/@/user/",
@@ -544,11 +544,11 @@ mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = comment.to_activity07(&conn)?;
+            let act = comment.to_activity(&conn)?;
 
             let expected = json!({
                 "attributedTo": "https://plu.me/@/admin/",

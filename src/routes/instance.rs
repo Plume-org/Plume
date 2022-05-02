@@ -382,7 +382,7 @@ fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), E
         )
         .unwrap();
         let target = User::one_by_instance(&*conn)?;
-        let delete_act = u.delete_activity07(&*conn)?;
+        let delete_act = u.delete_activity(&*conn)?;
         worker.execute(move || broadcast(&u, delete_act, target, CONFIG.proxy().cloned()));
     }
 

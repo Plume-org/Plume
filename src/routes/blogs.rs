@@ -49,7 +49,7 @@ pub fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
     let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    Some(ActivityStream::new(blog.to_activity07(&conn).ok()?))
+    Some(ActivityStream::new(blog.to_activity(&conn).ok()?))
 }
 
 #[get("/blogs/new")]

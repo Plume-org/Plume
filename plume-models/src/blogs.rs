@@ -160,7 +160,7 @@ impl Blog {
             })
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomGroup> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
         let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
         blog.set_preferred_username(self.actor_id.clone());
         blog.set_name(self.title.clone());
@@ -954,7 +954,7 @@ pub(crate) mod tests {
                 .id,
             );
             let _: Blog = blogs[0].save_changes(&**conn).unwrap();
-            let ap_repr = blogs[0].to_activity07(&conn).unwrap();
+            let ap_repr = blogs[0].to_activity(&conn).unwrap();
             blogs[0].delete(&conn).unwrap();
             let blog = Blog::from_activity(&conn, ap_repr).unwrap();
 
@@ -976,12 +976,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
             let (_users, blogs) = fill_database(&conn);
             let blog = &blogs[0];
-            let act = blog.to_activity07(conn)?;
+            let act = blog.to_activity(conn)?;
 
             let expected = json!({
                 "icon": {

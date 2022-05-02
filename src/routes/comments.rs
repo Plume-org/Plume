@@ -66,14 +66,14 @@ pub fn create(
             )
             .expect("comments::create: insert error");
             let new_comment = comm
-                .create_activity07(&conn)
+                .create_activity(&conn)
                 .expect("comments::create: activity error");
 
             // save mentions
             for ment in mentions {
                 Mention::from_activity(
                     &conn,
-                    &Mention::build_activity07(&conn, &ment)
+                    &Mention::build_activity(&conn, &ment)
                         .expect("comments::create: build mention error"),
                     comm.id,
                     false,
@@ -187,7 +187,7 @@ pub fn activity_pub(
     conn: DbConn,
 ) -> Option<ActivityStream<Note>> {
     Comment::get(&conn, id)
-        .and_then(|c| c.to_activity07(&conn))
+        .and_then(|c| c.to_activity(&conn))
         .ok()
         .map(ActivityStream::new)
 }

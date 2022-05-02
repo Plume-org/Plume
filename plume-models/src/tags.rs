@@ -25,7 +25,7 @@ impl Tag {
     find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
-    pub fn to_activity07(&self) -> Result<Hashtag> {
+    pub fn to_activity(&self) -> Result<Hashtag> {
         let mut ht = Hashtag::new();
         ht.set_href(
             ap_url(&format!(
@@ -55,7 +55,7 @@ impl Tag {
         )
     }
 
-    pub fn build_activity07(tag: String) -> Result<Hashtag> {
+    pub fn build_activity(tag: String) -> Result<Hashtag> {
         let mut ht = Hashtag::new();
         ht.set_href(
             ap_url(&format!(
@@ -104,7 +104,7 @@ mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
             fill_database(conn);
@@ -114,7 +114,7 @@ mod tests {
                 is_hashtag: false,
                 post_id: 0,
             };
-            let act = tag.to_activity07()?;
+            let act = tag.to_activity()?;
             let expected = json!({
                 "href": "https://plu.me/tag/a_tag",
                 "name": "a_tag",
@@ -128,11 +128,11 @@ mod tests {
     }
 
     #[test]
-    fn build_activity07() {
+    fn build_activity() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
             fill_database(conn);
-            let act = Tag::build_activity07("a_tag".into())?;
+            let act = Tag::build_activity("a_tag".into())?;
             let expected = json!({
                 "href": "https://plu.me/tag/a_tag",
                 "name": "a_tag",

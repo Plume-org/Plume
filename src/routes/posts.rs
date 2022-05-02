@@ -113,7 +113,7 @@ pub fn activity_details(
     let post = Post::find_by_slug(&conn, &slug, blog.id).map_err(|_| None)?;
     if post.published {
         Ok(ActivityStream::new(
-            post.to_activity07(&conn)
+            post.to_activity(&conn)
                 .map_err(|_| String::from("Post serialization error"))?,
         ))
     } else {
@@ -312,7 +312,7 @@ pub fn update(
                     &conn,
                     mentions
                         .into_iter()
-                        .filter_map(|m| Mention::build_activity07(&conn, &m).ok())
+                        .filter_map(|m| Mention::build_activity(&conn, &m).ok())
                         .collect(),
                 )
                 .expect("post::update: mentions error");
@@ -325,7 +325,7 @@ pub fn update(
                 .filter(|t| !t.is_empty())
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity07(t.to_string()).ok())
+                .filter_map(|t| Tag::build_activity(t.to_string()).ok())
                 .collect::<Vec<_>>();
             post.update_tags07(&conn, tags)
                 .expect("post::update: tags error");
@@ -334,7 +334,7 @@ pub fn update(
                 .into_iter()
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity07(t).ok())
+                .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
             post.update_hashtags07(&conn, hashtags)
                 .expect("post::update: hashtags error");
@@ -342,7 +342,7 @@ pub fn update(
             if post.published {
                 if newly_published {
                     let act = post
-                        .create_activity07(&conn)
+                        .create_activity(&conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&conn).expect("post::update: dest error");
                     rockets
@@ -352,7 +352,7 @@ pub fn update(
                     Timeline::add_to_all_timelines(&conn, &post, Kind::Original).ok();
                 } else {
                     let act = post
-                        .update_activity07(&conn)
+                        .update_activity(&conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&conn).expect("posts::update: dest error");
                     rockets
@@ -532,8 +532,7 @@ pub fn create(
             for m in mentions {
                 Mention::from_activity(
                     &conn,
-                    &Mention::build_activity07(&conn, &m)
-                        .expect("post::create: mention build error"),
+                    &Mention::build_activity(&conn, &m).expect("post::create: mention build error"),
                     post.id,
                     true,
                     true,
@@ -542,7 +541,7 @@ pub fn create(
             }
 
             let act = post
-                .create_activity07(&conn)
+                .create_activity(&conn)
                 .expect("posts::create: activity error");
             let dest = User::one_by_instance(&conn).expect("posts::create: dest error");
             let worker = &rockets.worker;

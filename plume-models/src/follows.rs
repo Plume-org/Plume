@@ -55,7 +55,7 @@ impl Follow {
             .map_err(Error::from)
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<FollowAct> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<FollowAct> {
         let user = User::get(conn, self.follower_id)?;
         let target = User::get(conn, self.following_id)?;
         let target_id = target.ap_url.parse::<IriString>()?;
@@ -158,7 +158,7 @@ impl AsObject<User, FollowAct, &DbConn> for User {
     type Error = Error;
     type Output = Follow;
 
-    fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
+    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
         let mut follow =
@@ -212,7 +212,7 @@ impl AsObject<User, Undo, &DbConn> for Follow {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         let conn = conn;
         if self.follower_id == actor.id {
             diesel::delete(&self).execute(&**conn)?;
@@ -297,11 +297,11 @@ mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (follow, _following, _follower, _users) = prepare_activity(&conn);
-            let act = follow.to_activity07(&conn)?;
+            let act = follow.to_activity(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/other/",
@@ -323,7 +323,7 @@ mod tests {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (follow, following, follower, _users) = prepare_activity(&conn);
-            let act = follow.build_accept07(&follower, &following, follow.to_activity07(&conn)?)?;
+            let act = follow.build_accept07(&follower, &following, follow.to_activity(&conn)?)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/user/",

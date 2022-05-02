@@ -27,7 +27,7 @@ pub fn create(
         Timeline::add_to_all_timelines(&conn, &post, Kind::Like(&user))?;
 
         let dest = User::one_by_instance(&*conn)?;
-        let act = like.to_activity07(&*conn)?;
+        let act = like.to_activity(&*conn)?;
         rockets
             .worker
             .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));

@@ -39,7 +39,7 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<LikeAct> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<LikeAct> {
         let mut act = LikeAct::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
@@ -73,7 +73,7 @@ impl Like {
     pub fn build_undo07(&self, conn: &Connection) -> Result<Undo> {
         let mut act = Undo::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
-            AnyBase::from_extended(self.to_activity07(conn)?)?,
+            AnyBase::from_extended(self.to_activity(conn)?)?,
         );
         act.set_id(format!("{}#delete", self.ap_url).parse::<IriString>()?);
         act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
@@ -89,7 +89,7 @@ impl AsObject<User, LikeAct, &DbConn> for Post {
     type Error = Error;
     type Output = Like;
 
-    fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Like> {
+    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             conn,
             NewLike {
@@ -158,7 +158,7 @@ impl AsObject<User, Undo, &DbConn> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
             diesel::delete(&self).execute(&**conn)?;
 
@@ -193,14 +193,14 @@ mod tests {
     use serde_json::{json, to_value};
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let user = &post.get_authors(&conn)?[0];
             let like = Like::insert(&*conn, NewLike::new(post, user))?;
-            let act = like.to_activity07(&conn).unwrap();
+            let act = like.to_activity(&conn).unwrap();
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",

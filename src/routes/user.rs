@@ -125,7 +125,7 @@ pub fn follow(
         )?;
         f.notify(&conn)?;
 
-        let act = f.to_activity07(&conn)?;
+        let act = f.to_activity(&conn)?;
         let msg = i18n!(rockets.intl.catalog, "You are now following {}."; target.name());
         rockets
             .worker
@@ -271,7 +271,7 @@ pub fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
-    Some(ActivityStream::new(user.to_activity07(&conn).ok()?))
+    Some(ActivityStream::new(user.to_activity(&conn).ok()?))
 }
 
 #[get("/users/new")]
@@ -386,7 +386,7 @@ pub fn delete(
         account.delete(&conn)?;
 
         let target = User::one_by_instance(&conn)?;
-        let delete_act = account.delete_activity07(&conn)?;
+        let delete_act = account.delete_activity(&conn)?;
         rockets
             .worker
             .execute(move || broadcast(&account, delete_act, target, CONFIG.proxy().cloned()));

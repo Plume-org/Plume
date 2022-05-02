@@ -60,7 +60,7 @@ impl Mention {
         }
     }
 
-    pub fn build_activity07(conn: &DbConn, ment: &str) -> Result<link::Mention> {
+    pub fn build_activity(conn: &DbConn, ment: &str) -> Result<link::Mention> {
         let user = User::find_by_fqn(conn, ment)?;
         let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);
@@ -68,7 +68,7 @@ impl Mention {
         Ok(mention)
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<link::Mention> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
         let user = self.get_mentioned(conn)?;
         let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);
@@ -157,13 +157,13 @@ mod tests {
     use serde_json::{json, to_value};
 
     #[test]
-    fn build_activity07() {
+    fn build_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (_posts, users, _blogs) = fill_database(&conn);
             let user = &users[0];
             let name = &user.username;
-            let act = Mention::build_activity07(&conn, name)?;
+            let act = Mention::build_activity(&conn, name)?;
 
             let expected = json!({
                 "href": "https://plu.me/@/admin/",
@@ -178,7 +178,7 @@ mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (posts, users, _blogs) = fill_database(&conn);
@@ -192,7 +192,7 @@ mod tests {
                     comment_id: None,
                 },
             )?;
-            let act = mention.to_activity07(&conn)?;
+            let act = mention.to_activity(&conn)?;
 
             let expected = json!({
                 "href": "https://plu.me/@/admin/",

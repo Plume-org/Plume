@@ -611,7 +611,7 @@ impl User {
         Ok(posts
             .into_iter()
             .filter_map(|p| {
-                p.create_activity07(conn)
+                p.create_activity(conn)
                     .ok()
                     .and_then(|a| serde_json::to_value(a).ok())
             })
@@ -775,7 +775,7 @@ impl User {
         }
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<CustomPerson> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<CustomPerson> {
         let mut actor = ApActor::new(self.inbox_url.parse()?, Person::new());
         let ap_url = self.ap_url.parse::<IriString>()?;
         actor.set_id(ap_url.clone());
@@ -813,7 +813,7 @@ impl User {
         Ok(CustomPerson::new(actor, ap_signature))
     }
 
-    pub fn delete_activity07(&self, conn: &Connection) -> Result<Delete> {
+    pub fn delete_activity(&self, conn: &Connection) -> Result<Delete> {
         let mut tombstone = Tombstone::new();
         tombstone.set_id(self.ap_url.parse()?);
 
@@ -1069,7 +1069,7 @@ impl AsObject<User, Delete, &DbConn> for User {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
             self.delete(conn).map(|_| ())
         } else {
@@ -1426,7 +1426,7 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             let users = fill_database(&conn);
 
-            let ap_repr = users[0].to_activity07(&conn).unwrap();
+            let ap_repr = users[0].to_activity(&conn).unwrap();
             users[0].delete(&conn).unwrap();
             let user = User::from_activity(&conn, ap_repr).unwrap();
 
@@ -1447,12 +1447,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let users = fill_database(&conn);
             let user = &users[0];
-            let act = user.to_activity07(&conn)?;
+            let act = user.to_activity(&conn)?;
 
             let expected = json!({
                 "endpoints": {
@@ -1477,7 +1477,7 @@ pub(crate) mod tests {
             assert_json_eq!(to_value(act)?, expected);
 
             let other = &users[2];
-            let other_act = other.to_activity07(&conn)?;
+            let other_act = other.to_activity(&conn)?;
             let expected_other = json!({
                 "endpoints": {
                     "sharedInbox": "https://plu.me/inbox"
@@ -1509,12 +1509,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn delete_activity07() {
+    fn delete_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let users = fill_database(&conn);
             let user = &users[1];
-            let act = user.delete_activity07(&conn)?;
+            let act = user.delete_activity(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/user/",

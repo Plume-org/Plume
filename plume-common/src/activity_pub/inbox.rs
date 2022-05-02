@@ -260,7 +260,7 @@ where
                 };
 
                 // Handle the activity
-                match obj.activity07(ctx, actor, act_id) {
+                match obj.activity(ctx, actor, act_id) {
                     Ok(res) => Self::Handled(res.into()),
                     Err(e) => Self::Failed(e),
                 }
@@ -540,7 +540,7 @@ where
     /// - `ctx`: the context passed to `Inbox::handle`
     /// - `actor`: the actor who did this activity
     /// - `id`: the ID of this activity
-    fn activity07(self, ctx: C, actor: A, id: &str) -> Result<Self::Output, Self::Error>;
+    fn activity(self, ctx: C, actor: A, id: &str) -> Result<Self::Output, Self::Error>;
 }
 
 #[cfg(test)]
@@ -650,12 +650,7 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity07(
-            self,
-            _: &(),
-            _actor: MyActor,
-            _id: &str,
-        ) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is creating a Note");
             Ok(())
         }
@@ -665,12 +660,7 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity07(
-            self,
-            _: &(),
-            _actor: MyActor,
-            _id: &str,
-        ) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is liking a Note");
             Ok(())
         }
@@ -680,12 +670,7 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity07(
-            self,
-            _: &(),
-            _actor: MyActor,
-            _id: &str,
-        ) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is deleting a Note");
             Ok(())
         }
@@ -695,12 +680,7 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity07(
-            self,
-            _: &(),
-            _actor: MyActor,
-            _id: &str,
-        ) -> Result<Self::Output, Self::Error> {
+        fn activity(self, _: &(), _actor: MyActor, _id: &str) -> Result<Self::Output, Self::Error> {
             println!("MyActor is announcing a Note");
             Ok(())
         }
@@ -802,7 +782,7 @@ mod tests {
         type Error = ();
         type Output = ();
 
-        fn activity07(
+        fn activity(
             self,
             _: &(),
             _actor: FailingActor,

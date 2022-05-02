@@ -65,7 +65,7 @@ impl Reshare {
         User::get(conn, self.user_id)
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<Announce> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<Announce> {
         let mut act = Announce::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
@@ -100,7 +100,7 @@ impl Reshare {
     pub fn build_undo07(&self, conn: &Connection) -> Result<Undo> {
         let mut act = Undo::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
-            AnyBase::from_extended(self.to_activity07(conn)?)?,
+            AnyBase::from_extended(self.to_activity(conn)?)?,
         );
         act.set_id(format!("{}#delete", self.ap_url).parse::<IriString>()?);
         act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
@@ -117,7 +117,7 @@ impl AsObject<User, Announce, &DbConn> for Post {
     type Error = Error;
     type Output = Reshare;
 
-    fn activity07(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
+    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
         let conn = conn;
         let reshare = Reshare::insert(
             conn,
@@ -187,7 +187,7 @@ impl AsObject<User, Undo, &DbConn> for Reshare {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
             diesel::delete(&self).execute(&**conn)?;
 
@@ -223,14 +223,14 @@ mod test {
     use serde_json::{json, to_value};
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let user = &post.get_authors(&conn)?[0];
             let reshare = Reshare::insert(&*conn, NewReshare::new(post, user))?;
-            let act = reshare.to_activity07(&conn).unwrap();
+            let act = reshare.to_activity(&conn).unwrap();
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",

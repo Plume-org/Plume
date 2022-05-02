@@ -193,14 +193,14 @@ pub fn create(
         for m in mentions.into_iter() {
             Mention::from_activity(
                 &conn,
-                &Mention::build_activity07(&conn, &m)?,
+                &Mention::build_activity(&conn, &m)?,
                 post.id,
                 true,
                 true,
             )?;
         }
 
-        let act = post.create_activity07(&conn)?;
+        let act = post.create_activity(&conn)?;
         let dest = User::one_by_instance(&conn)?;
         worker.execute(move || broadcast(&author, act, dest, CONFIG.proxy().cloned()));
     }

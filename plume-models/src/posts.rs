@@ -341,17 +341,17 @@ impl Post {
             }))
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<LicensedArticle> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
         let cc = self.get_receivers_urls(conn)?;
         let to = vec![PUBLIC_VISIBILITY.to_string()];
 
         let mut mentions_json = Mention::list_for_post(conn, self.id)?
             .into_iter()
-            .map(|m| json!(m.to_activity07(conn).ok()))
+            .map(|m| json!(m.to_activity(conn).ok()))
             .collect::<Vec<serde_json::Value>>();
         let mut tags_json = Tag::for_post(conn, self.id)?
             .into_iter()
-            .map(|t| json!(t.to_activity07().ok()))
+            .map(|t| json!(t.to_activity().ok()))
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
@@ -415,8 +415,8 @@ impl Post {
         Ok(LicensedArticle::new(article, license, source))
     }
 
-    pub fn create_activity07(&self, conn: &Connection) -> Result<Create> {
-        let article = self.to_activity07(conn)?;
+    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
+        let article = self.to_activity(conn)?;
         let to = article.to().ok_or(Error::MissingApProperty)?.clone();
         let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
         let mut act = Create::new(
@@ -429,8 +429,8 @@ impl Post {
         Ok(act)
     }
 
-    pub fn update_activity07(&self, conn: &Connection) -> Result<Update> {
-        let article = self.to_activity07(conn)?;
+    pub fn update_activity(&self, conn: &Connection) -> Result<Update> {
+        let article = self.to_activity(conn)?;
         let to = article.to().ok_or(Error::MissingApProperty)?.clone();
         let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
         let mut act = Update::new(
@@ -811,7 +811,7 @@ impl AsObject<User, Create, &DbConn> for Post {
     type Error = Error;
     type Output = Self;
 
-    fn activity07(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self::Output> {
+    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self::Output> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
     }
@@ -821,7 +821,7 @@ impl AsObject<User, Delete, &DbConn> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<Self::Output> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<Self::Output> {
         let can_delete = self
             .get_authors(conn)?
             .into_iter()
@@ -906,7 +906,7 @@ impl AsObject<User, Update, &DbConn> for PostUpdate {
     type Error = Error;
     type Output = ();
 
-    fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         let mut post =
             Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
@@ -1062,7 +1062,7 @@ mod tests {
                 },
             )
             .unwrap();
-            let create = post.create_activity07(&conn).unwrap();
+            let create = post.create_activity(&conn).unwrap();
             post.delete(&conn).unwrap();
 
             match inbox(&conn, serde_json::to_value(create).unwrap()).unwrap() {
@@ -1081,11 +1081,11 @@ mod tests {
     }
 
     #[test]
-    fn to_activity07() {
+    fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.to_activity07(&conn)?;
+            let act = post.to_activity(&conn)?;
 
             let expected = json!({
                 "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
@@ -1119,11 +1119,11 @@ mod tests {
     }
 
     #[test]
-    fn create_activity07() {
+    fn create_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.create_activity07(&conn)?;
+            let act = post.create_activity(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
@@ -1164,11 +1164,11 @@ mod tests {
     }
 
     #[test]
-    fn update_activity07() {
+    fn update_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.update_activity07(&conn)?;
+            let act = post.update_activity(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
