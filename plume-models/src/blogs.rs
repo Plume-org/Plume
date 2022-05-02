@@ -342,6 +342,14 @@ impl Blog {
         coll.collection_props.items = serde_json::to_value(acts)?;
         Ok(coll)
     }
+    pub fn outbox_page07(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<ActivityStream<OrderedCollectionPage07>> {
+        self.outbox_collection_page07(conn, (min, max))
+            .map(ActivityStream::new)
+    }
     pub fn outbox_collection_page07(
         &self,
         conn: &Connection,
