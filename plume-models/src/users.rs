@@ -4,14 +4,13 @@ use crate::{
     safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
     UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
-use activitypub::Activity;
 use activitystreams::{
     activity::Delete,
     actor::{ApActor, AsApActor, Endpoints, Person},
     base::{AnyBase, Base},
     collection::{OrderedCollection, OrderedCollectionPage},
     iri_string::types::IriString,
-    markers::Activity as Activity07,
+    markers::Activity,
     object::{kind::ImageType, AsObject as _, Image, Tombstone},
     prelude::*,
 };
@@ -513,21 +512,8 @@ impl User {
         coll.set_part_of(self.outbox_url.parse::<IriString>()?);
         Ok(coll)
     }
-    fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = get(url, Self::get_sender07(), CONFIG.proxy().cloned())?;
-        let text = &res.text()?;
-        let json: serde_json::Value = serde_json::from_str(text)?;
-        let items = json["items"]
-            .as_array()
-            .unwrap_or(&vec![])
-            .iter()
-            .filter_map(|j| serde_json::from_value(j.clone()).ok())
-            .collect::<Vec<T>>();
 
-        let next = json.get("next").map(|x| x.as_str().unwrap().to_owned());
-        Ok((items, next))
-    }
-    pub fn fetch_outbox_page07<T: Activity07 + serde::de::DeserializeOwned>(
+    pub fn fetch_outbox_page07<T: Activity + serde::de::DeserializeOwned>(
         &self,
         url: &str,
     ) -> Result<(Vec<T>, Option<String>)> {
@@ -544,43 +530,8 @@ impl User {
         let next = json.get("next").map(|x| x.as_str().unwrap().to_owned());
         Ok((items, next))
     }
-    pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
-        let mut res = get(
-            &self.outbox_url[..],
-            Self::get_sender07(),
-            CONFIG.proxy().cloned(),
-        )?;
-        let text = &res.text()?;
-        let json: serde_json::Value = serde_json::from_str(text)?;
-        if let Some(first) = json.get("first") {
-            let mut items: Vec<T> = Vec::new();
-            let mut next = first.as_str().unwrap().to_owned();
-            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
-                if page.is_empty() {
-                    break;
-                }
-                items.append(&mut page);
-                if let Some(n) = nxt {
-                    if n == next {
-                        break;
-                    }
-                    next = n;
-                } else {
-                    break;
-                }
-            }
-            Ok(items)
-        } else {
-            Ok(json["items"]
-                .as_array()
-                .unwrap_or(&vec![])
-                .iter()
-                .filter_map(|j| serde_json::from_value(j.clone()).ok())
-                .collect::<Vec<T>>())
-        }
-    }
 
-    pub fn fetch_outbox07<T: Activity07 + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
+    pub fn fetch_outbox07<T: Activity + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
         let mut res = get(
             &self.outbox_url[..],
             Self::get_sender07(),
