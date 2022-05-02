@@ -2,9 +2,8 @@ use crate::{
     db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::likes, timeline::*,
     users::User, Connection, Error, Result, CONFIG,
 };
-use activitypub::activity;
 use activitystreams::{
-    activity::{ActorAndObjectRef, Like as Like07, Undo as Undo07},
+    activity::{ActorAndObjectRef, Like as Like07, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -14,7 +13,7 @@ use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
-    Id, IntoId, PUBLIC_VISIBILITY,
+    PUBLIC_VISIBILITY,
 };
 
 #[derive(Clone, Queryable, Identifiable)]
@@ -39,22 +38,6 @@ impl Like {
     get!(likes);
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
-
-    pub fn to_activity(&self, conn: &Connection) -> Result<activity::Like> {
-        let mut act = activity::Like::default();
-        act.like_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.like_props
-            .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(
-            User::get(conn, self.user_id)?.followers_endpoint,
-        )])?;
-        act.object_props.set_id_string(self.ap_url.clone())?;
-
-        Ok(act)
-    }
 
     pub fn to_activity07(&self, conn: &Connection) -> Result<Like07> {
         let mut act = Like07::new(
@@ -87,8 +70,8 @@ impl Like {
         Ok(())
     }
 
-    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo07> {
-        let mut act = Undo07::new(
+    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo> {
+        let mut act = Undo::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             AnyBase::from_extended(self.to_activity07(conn)?)?,
         );
@@ -171,7 +154,7 @@ impl FromId<DbConn> for Like {
     }
 }
 
-impl AsObject<User, Undo07, &DbConn> for Like {
+impl AsObject<User, Undo, &DbConn> for Like {
     type Error = Error;
     type Output = ();
 
@@ -208,30 +191,6 @@ mod tests {
     use crate::{inbox::tests::fill_database, tests::db};
     use assert_json_diff::assert_json_eq;
     use serde_json::{json, to_value};
-
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
-            let user = &post.get_authors(&conn)?[0];
-            let like = Like::insert(&*conn, NewLike::new(post, user))?;
-            let act = like.to_activity(&conn).unwrap();
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "cc": ["https://plu.me/@/admin/followers"],
-                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
-                "object": "https://plu.me/~/BlogName/testing",
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Like",
-            });
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
 
     #[test]
     fn to_activity07() {

@@ -3,7 +3,7 @@ use rocket_i18n::I18n;
 
 use crate::routes::errors::ErrorPage;
 use crate::utils::requires_login;
-use plume_common::activity_pub::{broadcast, broadcast07};
+use plume_common::activity_pub::broadcast07;
 use plume_models::{
     blogs::Blog, db_conn::DbConn, inbox::inbox, likes, posts::Post, timeline::*, users::User,
     Error, PlumeRocket, CONFIG,
@@ -27,10 +27,10 @@ pub fn create(
         Timeline::add_to_all_timelines(&conn, &post, Kind::Like(&user))?;
 
         let dest = User::one_by_instance(&*conn)?;
-        let act = like.to_activity(&*conn)?;
+        let act = like.to_activity07(&*conn)?;
         rockets
             .worker
-            .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
+            .execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
         let like = likes::Like::find_by_user_on_post(&conn, user.id, post.id)?;
         let delete_act = like.build_undo07(&conn)?;
