@@ -2,11 +2,10 @@ use crate::{
     comments::Comment, db_conn::DbConn, notifications::*, posts::Post, schema::mentions,
     users::User, Connection, Error, Result,
 };
-use activitypub::link;
 use activitystreams::{
     base::BaseExt,
     iri_string::types::IriString,
-    link::{self as link07, LinkExt},
+    link::{self, LinkExt},
 };
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::inbox::AsActor;
@@ -61,68 +60,25 @@ impl Mention {
         }
     }
 
-    pub fn build_activity07(conn: &DbConn, ment: &str) -> Result<link07::Mention> {
+    pub fn build_activity07(conn: &DbConn, ment: &str) -> Result<link::Mention> {
         let user = User::find_by_fqn(conn, ment)?;
-        let mut mention = link07::Mention::new();
+        let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);
         mention.set_name(format!("@{}", ment));
         Ok(mention)
     }
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<link07::Mention> {
+    pub fn to_activity07(&self, conn: &Connection) -> Result<link::Mention> {
         let user = self.get_mentioned(conn)?;
-        let mut mention = link07::Mention::new();
+        let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);
         mention.set_name(format!("@{}", user.fqn));
         Ok(mention)
     }
 
-    pub fn from_activity(
-        conn: &Connection,
-        ment: &link::Mention,
-        inside: i32,
-        in_post: bool,
-        notify: bool,
-    ) -> Result<Self> {
-        let ap_url = ment.link_props.href_string().or(Err(Error::NotFound))?;
-        let mentioned = User::find_by_ap_url(conn, &ap_url)?;
-
-        if in_post {
-            Post::get(conn, inside).and_then(|post| {
-                let res = Mention::insert(
-                    conn,
-                    NewMention {
-                        mentioned_id: mentioned.id,
-                        post_id: Some(post.id),
-                        comment_id: None,
-                    },
-                )?;
-                if notify {
-                    res.notify(conn)?;
-                }
-                Ok(res)
-            })
-        } else {
-            Comment::get(conn, inside).and_then(|comment| {
-                let res = Mention::insert(
-                    conn,
-                    NewMention {
-                        mentioned_id: mentioned.id,
-                        post_id: None,
-                        comment_id: Some(comment.id),
-                    },
-                )?;
-                if notify {
-                    res.notify(conn)?;
-                }
-                Ok(res)
-            })
-        }
-    }
-
     pub fn from_activity07(
         conn: &Connection,
-        ment: &link07::Mention,
+        ment: &link::Mention,
         inside: i32,
         in_post: bool,
         notify: bool,
