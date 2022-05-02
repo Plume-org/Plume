@@ -1,4 +1,5 @@
-use activitypub::collection::{OrderedCollection, OrderedCollectionPage};
+use activitypub::collection::OrderedCollectionPage;
+use activitystreams::collection::OrderedCollection as OrderedCollection07;
 use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
@@ -347,9 +348,9 @@ pub fn update(
 }
 
 #[get("/~/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection07>> {
     let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    blog.outbox(&conn).ok()
+    blog.outbox07(&conn).ok()
 }
 #[allow(unused_variables)]
 #[get("/~/<name>/outbox?<page>")]

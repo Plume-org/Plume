@@ -2,12 +2,7 @@ use crate::{
     db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
-use activitypub::{
-    actor::Group,
-    collection::{OrderedCollection, OrderedCollectionPage},
-    object::Image,
-    CustomObject,
-};
+use activitypub::{actor::Group, collection::OrderedCollectionPage, object::Image, CustomObject};
 use activitystreams::{
     actor::{ApActor, ApActorExt, AsApActor, Group as Group07},
     base::AnyBase,
@@ -291,25 +286,6 @@ impl Blog {
         };
 
         Ok(CustomGroup07::new(blog, ap_signature, source))
-    }
-
-    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        self.outbox_collection(conn).map(ActivityStream::new)
-    }
-    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
-        let mut coll = OrderedCollection::default();
-        coll.collection_props.items = serde_json::to_value(self.get_activities(conn))?;
-        coll.collection_props
-            .set_total_items_u64(self.get_activities(conn).len() as u64)?;
-        coll.collection_props
-            .set_first_link(Id::new(&format!("{}?page=1", &self.outbox_url)))?;
-        coll.collection_props.set_last_link(Id::new(&format!(
-            "{}?page={}",
-            &self.outbox_url,
-            (self.get_activities(conn).len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
-                / ITEMS_PER_PAGE as u64
-        )))?;
-        Ok(coll)
     }
 
     pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection07>> {
@@ -1169,28 +1145,6 @@ pub(crate) mod tests {
                 },
                 "summary": "",
                 "type": "Group"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn outbox_collection() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (_users, blogs) = fill_database(conn);
-            let blog = &blogs[0];
-            let act = blog.outbox_collection(conn)?;
-
-            let expected = json!({
-                "items": [],
-                "totalItems": 0,
-                "first": "https://plu.me/~/BlogName/outbox?page=1",
-                "last": "https://plu.me/~/BlogName/outbox?page=0",
-                "type": "OrderedCollection"
             });
 
             assert_json_eq!(to_value(act)?, expected);
