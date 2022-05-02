@@ -76,7 +76,7 @@ impl Mention {
         Ok(mention)
     }
 
-    pub fn from_activity07(
+    pub fn from_activity(
         conn: &Connection,
         ment: &link::Mention,
         inside: i32,

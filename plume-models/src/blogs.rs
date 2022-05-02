@@ -369,7 +369,7 @@ impl FromId<DbConn> for Blog {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
+    fn from_activity(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
         let (name, outbox_url, inbox_url) = {
             let actor = acct.ap_actor_ref();
             let name = actor
@@ -956,7 +956,7 @@ pub(crate) mod tests {
             let _: Blog = blogs[0].save_changes(&**conn).unwrap();
             let ap_repr = blogs[0].to_activity07(&conn).unwrap();
             blogs[0].delete(&conn).unwrap();
-            let blog = Blog::from_activity07(&conn, ap_repr).unwrap();
+            let blog = Blog::from_activity(&conn, ap_repr).unwrap();
 
             assert_eq!(blog.actor_id, blogs[0].actor_id);
             assert_eq!(blog.title, blogs[0].title);

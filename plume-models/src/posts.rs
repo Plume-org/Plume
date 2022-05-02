@@ -466,7 +466,7 @@ impl Post {
             .collect::<HashSet<_>>();
         for (m, id) in &mentions {
             if !old_user_mentioned.contains(id) {
-                Mention::from_activity07(&*conn, m, self.id, true, true)?;
+                Mention::from_activity(&*conn, m, self.id, true, true)?;
             }
         }
 
@@ -508,7 +508,7 @@ impl Post {
                 .map(|n| old_tags_name.contains(n.as_str()))
                 .unwrap_or(true)
             {
-                Tag::from_activity07(conn, &t, self.id, false)?;
+                Tag::from_activity(conn, &t, self.id, false)?;
             }
         }
 
@@ -545,7 +545,7 @@ impl Post {
                 .map(|n| old_tags_name.contains(n.as_str()))
                 .unwrap_or(true)
             {
-                Tag::from_activity07(conn, &t, self.id, true)?;
+                Tag::from_activity(conn, &t, self.id, true)?;
             }
         }
 
@@ -624,7 +624,7 @@ impl FromId<DbConn> for Post {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
+    fn from_activity(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
         let license = article.ext_one.license.unwrap_or_default();
         let source = article.ext_two.source.content;
         let article = article.inner;
@@ -657,7 +657,7 @@ impl FromId<DbConn> for Post {
         let cover = article.icon().and_then(|icon| {
             icon.iter().next().and_then(|img| {
                 let image = img.to_owned().extend::<Image, ImageType>().ok()??;
-                Media::from_activity07(conn, &image).ok().map(|m| m.id)
+                Media::from_activity(conn, &image).ok().map(|m| m.id)
             })
         });
 
@@ -781,7 +781,7 @@ impl FromId<DbConn> for Post {
                 tag.clone()
                     .extend::<link::Mention, MentionType>() // FIXME: Don't clone
                     .map(|mention| {
-                        mention.map(|m| Mention::from_activity07(conn, &m, post.id, true, true))
+                        mention.map(|m| Mention::from_activity(conn, &m, post.id, true, true))
                     })
                     .ok();
 
@@ -790,7 +790,7 @@ impl FromId<DbConn> for Post {
                     .map(|hashtag| {
                         hashtag.and_then(|t| {
                             let tag_name = t.name.clone()?.as_str().to_string();
-                            Tag::from_activity07(conn, &t, post.id, hashtags.remove(&tag_name)).ok()
+                            Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name)).ok()
                         })
                     })
                     .ok();
@@ -854,7 +854,7 @@ impl FromId<DbConn> for PostUpdate {
         Err(Error::NotFound)
     }
 
-    fn from_activity07(conn: &DbConn, updated: Self::Object) -> Result<Self> {
+    fn from_activity(conn: &DbConn, updated: Self::Object) -> Result<Self> {
         let mut post_update = PostUpdate {
             ap_url: updated
                 .ap_object_ref()
@@ -886,7 +886,7 @@ impl FromId<DbConn> for PostUpdate {
                 .and_then(|img| {
                     img.clone()
                         .extend::<Image, ImageType>()
-                        .map(|img| img.and_then(|img| Media::from_activity07(conn, &img).ok()))
+                        .map(|img| img.and_then(|img| Media::from_activity(conn, &img).ok()))
                         .ok()
                 })
                 .and_then(|m| m.map(|m| m.id))

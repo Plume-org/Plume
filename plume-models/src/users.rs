@@ -264,7 +264,7 @@ impl User {
     }
 
     pub fn fetch_from_url(conn: &DbConn, url: &str) -> Result<User> {
-        User::fetch(url).and_then(|json| User::from_activity07(conn, json))
+        User::fetch(url).and_then(|json| User::from_activity(conn, json))
     }
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
@@ -952,7 +952,7 @@ impl FromId<DbConn> for User {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
+    fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
         let actor = acct.ap_actor_ref();
         let username = actor
             .preferred_username()
@@ -1428,7 +1428,7 @@ pub(crate) mod tests {
 
             let ap_repr = users[0].to_activity07(&conn).unwrap();
             users[0].delete(&conn).unwrap();
-            let user = User::from_activity07(&conn, ap_repr).unwrap();
+            let user = User::from_activity(&conn, ap_repr).unwrap();
 
             assert_eq!(user.username, users[0].username);
             assert_eq!(user.display_name, users[0].display_name);

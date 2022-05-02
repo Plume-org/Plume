@@ -206,7 +206,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity07(conn: &DbConn, image: &Image) -> Result<Media> {
+    pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
         let remote_url = image
             .url()
             .and_then(|url| url.to_as_uri())

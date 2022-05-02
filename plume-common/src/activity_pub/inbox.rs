@@ -352,8 +352,8 @@ pub trait FromId<C>: Sized {
         match Self::from_db07(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
-                Some(o) => Self::from_activity07(ctx, o).map_err(|e| (None, e)),
-                None => Self::from_activity07(ctx, Self::deref(id, proxy.cloned())?)
+                Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
+                None => Self::from_activity(ctx, Self::deref(id, proxy.cloned())?)
                     .map_err(|e| (None, e)),
             },
         }
@@ -377,7 +377,7 @@ pub trait FromId<C>: Sized {
     }
 
     /// Builds a `Self` from its ActivityPub representation
-    fn from_activity07(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
+    fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
 
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
     fn from_db07(ctx: &C, id: &str) -> Result<Self, Self::Error>;
@@ -610,7 +610,7 @@ mod tests {
             Ok(Self)
         }
 
-        fn from_activity07(_: &(), _obj: Person07) -> Result<Self, Self::Error> {
+        fn from_activity(_: &(), _obj: Person07) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
@@ -638,7 +638,7 @@ mod tests {
             Ok(Self)
         }
 
-        fn from_activity07(_: &(), _obj: Note07) -> Result<Self, Self::Error> {
+        fn from_activity(_: &(), _obj: Note07) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
@@ -789,7 +789,7 @@ mod tests {
             Err(())
         }
 
-        fn from_activity07(_: &(), _obj: Self::Object) -> Result<Self, Self::Error> {
+        fn from_activity(_: &(), _obj: Self::Object) -> Result<Self, Self::Error> {
             Err(())
         }
 

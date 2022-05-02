@@ -80,7 +80,7 @@ fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
                         any_base.extend::<LicensedArticle, ArticleType>().ok()
                     }) {
                     Some(Some(article)) => {
-                        Post::from_activity07(conn, article)
+                        Post::from_activity(conn, article)
                             .expect("Article from remote user couldn't be saved");
                         info!("Fetched article from remote user");
                     }

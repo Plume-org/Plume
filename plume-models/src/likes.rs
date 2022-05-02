@@ -113,7 +113,7 @@ impl FromId<DbConn> for Like {
         Like::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, act: LikeAct) -> Result<Self> {
+    fn from_activity(conn: &DbConn, act: LikeAct) -> Result<Self> {
         let res = Like::insert(
             conn,
             NewLike {

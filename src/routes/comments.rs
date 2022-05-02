@@ -71,7 +71,7 @@ pub fn create(
 
             // save mentions
             for ment in mentions {
-                Mention::from_activity07(
+                Mention::from_activity(
                     &conn,
                     &Mention::build_activity07(&conn, &ment)
                         .expect("comments::create: build mention error"),

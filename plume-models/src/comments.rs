@@ -225,7 +225,7 @@ impl FromId<DbConn> for Comment {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, note: Note) -> Result<Self> {
+    fn from_activity(conn: &DbConn, note: Note) -> Result<Self> {
         let comm = {
             let previous_url = note
                 .in_reply_to()
@@ -299,7 +299,7 @@ impl FromId<DbConn> for Comment {
                     }
                     let m = m.unwrap();
                     let not_author = m.href().ok_or(Error::MissingApProperty)? != author_url;
-                    let _ = Mention::from_activity07(conn, &m, comm.id, false, not_author);
+                    let _ = Mention::from_activity(conn, &m, comm.id, false, not_author);
                 }
             }
             comm

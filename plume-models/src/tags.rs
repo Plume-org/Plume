@@ -39,7 +39,7 @@ impl Tag {
         Ok(ht)
     }
 
-    pub fn from_activity07(
+    pub fn from_activity(
         conn: &Connection,
         tag: &Hashtag,
         post: i32,
@@ -86,7 +86,7 @@ mod tests {
     use serde_json::to_value;
 
     #[test]
-    fn from_activity07() {
+    fn from_activity() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
             let (posts, _users, _blogs) = fill_database(conn);
@@ -94,7 +94,7 @@ mod tests {
             let mut ht = Hashtag::new();
             ht.set_href(ap_url(&format!("https://plu.me/tag/a_tag")).parse::<IriString>()?);
             ht.set_name("a_tag".to_string());
-            let tag = Tag::from_activity07(conn, &ht, post_id, true)?;
+            let tag = Tag::from_activity(conn, &ht, post_id, true)?;
 
             assert_eq!(&tag.tag, "a_tag");
             assert!(tag.is_hashtag);

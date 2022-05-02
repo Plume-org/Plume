@@ -176,7 +176,7 @@ impl FromId<DbConn> for Follow {
         Follow::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, follow: FollowAct) -> Result<Self> {
+    fn from_activity(conn: &DbConn, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
             conn,
             follow

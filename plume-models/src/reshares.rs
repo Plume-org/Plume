@@ -142,7 +142,7 @@ impl FromId<DbConn> for Reshare {
         Reshare::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, act: Announce) -> Result<Self> {
+    fn from_activity(conn: &DbConn, act: Announce) -> Result<Self> {
         let res = Reshare::insert(
             conn,
             NewReshare {
