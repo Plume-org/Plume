@@ -197,7 +197,7 @@ where
     }
 
     /// Registers an handler on this Inbox.
-    pub fn with07<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Self
+    pub fn with<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Self
     where
         A: AsActor<&'a C> + FromId<C, Error = E>,
         V: activitystreams::markers::Activity + serde::de::DeserializeOwned,
@@ -742,7 +742,7 @@ mod tests {
     fn test_inbox_basic07() {
         let act = serde_json::to_value(build_create07()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with07::<MyActor, Create07, MyObject07>(None)
+            .with::<MyActor, Create07, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -751,10 +751,10 @@ mod tests {
     fn test_inbox_multi_handlers07() {
         let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with07::<MyActor, Announce07, MyObject07>(None)
-            .with07::<MyActor, Delete07, MyObject07>(None)
-            .with07::<MyActor, Create07, MyObject07>(None)
-            .with07::<MyActor, Like07, MyObject07>(None)
+            .with::<MyActor, Announce07, MyObject07>(None)
+            .with::<MyActor, Delete07, MyObject07>(None)
+            .with::<MyActor, Create07, MyObject07>(None)
+            .with::<MyActor, Like07, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -764,8 +764,8 @@ mod tests {
         let act = serde_json::to_value(build_create07()).unwrap();
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with07::<MyActor, Announce07, MyObject07>(None)
-            .with07::<MyActor, Like07, MyObject07>(None)
+            .with::<MyActor, Announce07, MyObject07>(None)
+            .with::<MyActor, Like07, MyObject07>(None)
             .done();
         assert!(res.is_err());
     }
@@ -818,13 +818,13 @@ mod tests {
         let act = serde_json::to_value(build_create07()).unwrap();
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with07::<FailingActor, Create07, MyObject07>(None)
+            .with::<FailingActor, Create07, MyObject07>(None)
             .done();
         assert!(res.is_err());
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with07::<FailingActor, Create07, MyObject07>(None)
-            .with07::<MyActor, Create07, MyObject07>(None)
+            .with::<FailingActor, Create07, MyObject07>(None)
+            .with::<MyActor, Create07, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
