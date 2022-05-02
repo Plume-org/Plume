@@ -802,7 +802,7 @@ impl FromId<DbConn> for Post {
         Ok(post)
     }
 
-    fn get_sender07() -> &'static dyn Signer {
+    fn get_sender() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to get local instance user")
     }
 }
@@ -897,7 +897,7 @@ impl FromId<DbConn> for PostUpdate {
         Ok(post_update)
     }
 
-    fn get_sender07() -> &'static dyn Signer {
+    fn get_sender() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }

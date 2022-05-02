@@ -221,7 +221,7 @@ impl Media {
         // TODO: conditional GET
         request::get(
             remote_url.as_str(),
-            User::get_sender07(),
+            User::get_sender(),
             CONFIG.proxy().cloned(),
         )?
         .copy_to(&mut dest)?;

@@ -364,7 +364,7 @@ pub trait FromId<C>: Sized {
         id: &str,
         proxy: Option<reqwest::Proxy>,
     ) -> Result<Self::Object, (Option<serde_json::Value>, Self::Error)> {
-        request::get(id, Self::get_sender07(), proxy)
+        request::get(id, Self::get_sender(), proxy)
             .map_err(|_| (None, InboxError::DerefError))
             .and_then(|mut r| {
                 let json: serde_json::Value = r
@@ -382,7 +382,7 @@ pub trait FromId<C>: Sized {
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
     fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
 
-    fn get_sender07() -> &'static dyn Signer;
+    fn get_sender() -> &'static dyn Signer;
 }
 
 /// Should be implemented by anything representing an ActivityPub actor.
@@ -614,7 +614,7 @@ mod tests {
             Ok(Self)
         }
 
-        fn get_sender07() -> &'static dyn Signer {
+        fn get_sender() -> &'static dyn Signer {
             &*MY_SIGNER
         }
     }
@@ -642,7 +642,7 @@ mod tests {
             Ok(Self)
         }
 
-        fn get_sender07() -> &'static dyn Signer {
+        fn get_sender() -> &'static dyn Signer {
             &*MY_SIGNER
         }
     }
@@ -793,7 +793,7 @@ mod tests {
             Err(())
         }
 
-        fn get_sender07() -> &'static dyn Signer {
+        fn get_sender() -> &'static dyn Signer {
             &*MY_SIGNER
         }
     }

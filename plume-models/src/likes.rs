@@ -149,7 +149,7 @@ impl FromId<DbConn> for Like {
         Ok(res)
     }
 
-    fn get_sender07() -> &'static dyn Signer {
+    fn get_sender() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }

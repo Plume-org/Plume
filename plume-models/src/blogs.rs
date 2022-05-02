@@ -475,7 +475,7 @@ impl FromId<DbConn> for Blog {
         Blog::insert(conn, new_blog)
     }
 
-    fn get_sender07() -> &'static dyn sign::Signer {
+    fn get_sender() -> &'static dyn sign::Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
     }
 }
