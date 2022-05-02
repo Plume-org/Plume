@@ -138,7 +138,7 @@ impl FromId<DbConn> for Reshare {
     type Error = Error;
     type Object = Announce;
 
-    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
         Reshare::find_by_ap_url(conn, id)
     }
 

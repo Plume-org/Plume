@@ -365,7 +365,7 @@ impl FromId<DbConn> for Blog {
     type Error = Error;
     type Object = CustomGroup;
 
-    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 

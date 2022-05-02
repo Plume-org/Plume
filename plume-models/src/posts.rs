@@ -620,7 +620,7 @@ impl FromId<DbConn> for Post {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
@@ -674,7 +674,7 @@ impl FromId<DbConn> for Post {
             .url()
             .and_then(|url| url.to_as_uri().or(id))
             .ok_or(Error::MissingApProperty)?;
-        let post = Post::from_db07(conn, &ap_url)
+        let post = Post::from_db(conn, &ap_url)
             .and_then(|mut post| {
                 let mut updated = false;
 
@@ -849,7 +849,7 @@ impl FromId<DbConn> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db07(_: &DbConn, _: &str) -> Result<Self> {
+    fn from_db(_: &DbConn, _: &str) -> Result<Self> {
         // Always fail because we always want to deserialize the AP object
         Err(Error::NotFound)
     }

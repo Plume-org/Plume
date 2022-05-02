@@ -349,7 +349,7 @@ pub trait FromId<C>: Sized {
         object: Option<Self::Object>,
         proxy: Option<&reqwest::Proxy>,
     ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
-        match Self::from_db07(ctx, id) {
+        match Self::from_db(ctx, id) {
             Ok(x) => Ok(x),
             _ => match object {
                 Some(o) => Self::from_activity(ctx, o).map_err(|e| (None, e)),
@@ -380,7 +380,7 @@ pub trait FromId<C>: Sized {
     fn from_activity(ctx: &C, activity: Self::Object) -> Result<Self, Self::Error>;
 
     /// Tries to find a `Self` with a given ID (`id`), using `ctx` (a database)
-    fn from_db07(ctx: &C, id: &str) -> Result<Self, Self::Error>;
+    fn from_db(ctx: &C, id: &str) -> Result<Self, Self::Error>;
 
     fn get_sender07() -> &'static dyn Signer;
 }
@@ -606,7 +606,7 @@ mod tests {
         type Error = ();
         type Object = Person07;
 
-        fn from_db07(_: &(), _id: &str) -> Result<Self, Self::Error> {
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
@@ -634,7 +634,7 @@ mod tests {
         type Error = ();
         type Object = Note07;
 
-        fn from_db07(_: &(), _id: &str) -> Result<Self, Self::Error> {
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
@@ -785,7 +785,7 @@ mod tests {
         type Error = ();
         type Object = Person07;
 
-        fn from_db07(_: &(), _id: &str) -> Result<Self, Self::Error> {
+        fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Err(())
         }
 

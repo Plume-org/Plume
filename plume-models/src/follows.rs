@@ -172,7 +172,7 @@ impl FromId<DbConn> for Follow {
     type Error = Error;
     type Object = FollowAct;
 
-    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
         Follow::find_by_ap_url(conn, id)
     }
 

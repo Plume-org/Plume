@@ -109,7 +109,7 @@ impl FromId<DbConn> for Like {
     type Error = Error;
     type Object = LikeAct;
 
-    fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
         Like::find_by_ap_url(conn, id)
     }
 
