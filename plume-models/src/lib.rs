@@ -125,15 +125,6 @@ impl From<reqwest::header::InvalidHeaderValue> for Error {
     }
 }
 
-impl From<activitypub::Error> for Error {
-    fn from(err: activitypub::Error) -> Self {
-        match err {
-            activitypub::Error::NotFound => Error::MissingApProperty,
-            _ => Error::SerDe,
-        }
-    }
-}
-
 impl From<activitystreams::checked::CheckError> for Error {
     fn from(_: activitystreams::checked::CheckError) -> Error {
         Error::MissingApProperty
