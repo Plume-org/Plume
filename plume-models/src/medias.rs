@@ -2,12 +2,11 @@ use crate::{
     ap_url, db_conn::DbConn, instance::Instance, safe_string::SafeString, schema::medias,
     users::User, Connection, Error, Result, CONFIG,
 };
-use activitypub::object::Image;
-use activitystreams::{object::Image as Image07, prelude::*};
+use activitystreams::{object::Image, prelude::*};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId, request, Id, ToAsString, ToAsUri},
+    activity_pub::{inbox::FromId, request, ToAsString, ToAsUri},
     utils::{escape, MediaProcessor},
 };
 use std::{
@@ -207,96 +206,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
-        let remote_url = image
-            .object_props
-            .url_string()
-            .or(Err(Error::MissingApProperty))?;
-        let path = determine_mirror_file_path(&remote_url);
-        let parent = path.parent().ok_or(Error::InvalidValue)?;
-        if !parent.is_dir() {
-            DirBuilder::new().recursive(true).create(parent)?;
-        }
-
-        let mut dest = fs::File::create(path.clone())?;
-        // TODO: conditional GET
-        request::get(
-            remote_url.as_str(),
-            User::get_sender07(),
-            CONFIG.proxy().cloned(),
-        )?
-        .copy_to(&mut dest)?;
-
-        Media::find_by_file_path(conn, path.to_str().ok_or(Error::InvalidValue)?)
-            .and_then(|mut media| {
-                let mut updated = false;
-
-                let alt_text = image
-                    .object_props
-                    .content_string()
-                    .or(Err(Error::NotFound))?;
-                let sensitive = image.object_props.summary_string().is_ok();
-                let content_warning = image.object_props.summary_string().ok();
-                if media.alt_text != alt_text {
-                    media.alt_text = alt_text;
-                    updated = true;
-                }
-                if media.is_remote {
-                    media.is_remote = false;
-                    updated = true;
-                }
-                if media.remote_url.is_some() {
-                    media.remote_url = None;
-                    updated = true;
-                }
-                if media.sensitive != sensitive {
-                    media.sensitive = sensitive;
-                    updated = true;
-                }
-                if media.content_warning != content_warning {
-                    media.content_warning = content_warning;
-                    updated = true;
-                }
-                if updated {
-                    diesel::update(&media).set(&media).execute(&**conn)?;
-                }
-                Ok(media)
-            })
-            .or_else(|_| {
-                Media::insert(
-                    conn,
-                    NewMedia {
-                        file_path: path.to_str().ok_or(Error::InvalidValue)?.to_string(),
-                        alt_text: image
-                            .object_props
-                            .content_string()
-                            .or(Err(Error::NotFound))?,
-                        is_remote: false,
-                        remote_url: None,
-                        sensitive: image.object_props.summary_string().is_ok(),
-                        content_warning: image.object_props.summary_string().ok(),
-                        owner_id: User::from_id(
-                            conn,
-                            image
-                                .object_props
-                                .attributed_to_link_vec::<Id>()
-                                .or(Err(Error::NotFound))?
-                                .into_iter()
-                                .next()
-                                .ok_or(Error::NotFound)?
-                                .as_ref(),
-                            None,
-                            CONFIG.proxy(),
-                        )
-                        .map_err(|(_, e)| e)?
-                        .id,
-                    },
-                )
-            })
-    }
-
-    // TODO: merge with save_remote?
-    pub fn from_activity07(conn: &DbConn, image: &Image07) -> Result<Media> {
+    pub fn from_activity07(conn: &DbConn, image: &Image) -> Result<Media> {
         let remote_url = image
             .url()
             .and_then(|url| url.to_as_uri())
