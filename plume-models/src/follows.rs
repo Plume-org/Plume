@@ -11,7 +11,7 @@ use activitystreams::{
 };
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
-    broadcast, broadcast07,
+    broadcast07,
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
@@ -96,36 +96,6 @@ impl Follow {
             )?;
         }
         Ok(())
-    }
-
-    /// from -> The one sending the follow request
-    /// target -> The target of the request, responding with Accept
-    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
-        conn: &Connection,
-        from: &B,
-        target: &A,
-        follow: FollowAct,
-        from_id: i32,
-        target_id: i32,
-    ) -> Result<Follow> {
-        let res = Follow::insert(
-            conn,
-            NewFollow {
-                follower_id: from_id,
-                following_id: target_id,
-                ap_url: follow.object_props.id_string()?,
-            },
-        )?;
-        res.notify(conn)?;
-
-        let accept = res.build_accept(from, target, follow)?;
-        broadcast(
-            &*target,
-            accept,
-            vec![from.clone()],
-            CONFIG.proxy().cloned(),
-        );
-        Ok(res)
     }
 
     /// from -> The one sending the follow request
