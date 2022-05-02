@@ -4,8 +4,7 @@ use crate::{
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
-    activity::Delete,
-    object::{Article, Image, Tombstone},
+    object::{Article, Image},
     CustomObject,
 };
 use activitystreams::{
@@ -651,22 +650,6 @@ impl Post {
         self.cover_id
             .and_then(|i| Media::get(conn, i).ok())
             .and_then(|c| c.url().ok())
-    }
-
-    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
-        let mut act = Delete::default();
-        act.delete_props
-            .set_actor_link(self.get_authors(conn)?[0].clone().into_id())?;
-
-        let mut tombstone = Tombstone::default();
-        tombstone.object_props.set_id_string(self.ap_url.clone())?;
-        act.delete_props.set_object_object(tombstone)?;
-
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
-        Ok(act)
     }
 
     pub fn build_delete07(&self, conn: &Connection) -> Result<Delete07> {
@@ -1406,32 +1389,6 @@ mod tests {
                 }
                 assert_json_eq!(value, expected.get(key).unwrap());
             }
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn build_delete() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.build_delete(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "id": "https://plu.me/~/BlogName/testing#delete",
-                "object": {
-                    "id": "https://plu.me/~/BlogName/testing",
-                    "type": "Tombstone"
-                },
-                "to": [
-                    "https://www.w3.org/ns/activitystreams#Public"
-                ],
-                "type": "Delete"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
 
             Ok(())
         });

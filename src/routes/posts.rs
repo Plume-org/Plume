@@ -16,7 +16,7 @@ use crate::routes::{
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
 use plume_common::activity_pub::{
-    broadcast, broadcast07, ActivityStream, ApRequest, LicensedArticle as LicensedArticle07,
+    broadcast07, ActivityStream, ApRequest, LicensedArticle as LicensedArticle07,
 };
 use plume_common::utils::md_to_html;
 use plume_models::{
@@ -606,7 +606,7 @@ pub fn delete(
         }
 
         let dest = User::one_by_instance(&conn)?;
-        let delete_activity = post.build_delete(&conn)?;
+        let delete_activity = post.build_delete07(&conn)?;
         inbox(
             &conn,
             serde_json::to_value(&delete_activity).map_err(Error::from)?,
@@ -615,7 +615,7 @@ pub fn delete(
         let user_c = user.clone();
         rockets
             .worker
-            .execute(move || broadcast(&user_c, delete_activity, dest, CONFIG.proxy().cloned()));
+            .execute(move || broadcast07(&user_c, delete_activity, dest, CONFIG.proxy().cloned()));
         rockets
             .worker
             .execute_after(Duration::from_secs(10 * 60), move || {
