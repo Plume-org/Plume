@@ -295,26 +295,26 @@ impl Link for Id {}
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct ApSignature07 {
-    pub public_key: PublicKey07,
+pub struct ApSignature {
+    pub public_key: PublicKey,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct PublicKey07 {
+pub struct PublicKey {
     pub id: IriString,
     pub owner: IriString,
     pub public_key_pem: String,
 }
 
-impl<U> UnparsedExtension<U> for ApSignature07
+impl<U> UnparsedExtension<U> for ApSignature
 where
     U: UnparsedMutExt,
 {
     type Error = serde_json::Error;
 
     fn try_from_unparsed(unparsed_mut: &mut U) -> Result<Self, Self::Error> {
-        Ok(ApSignature07 {
+        Ok(ApSignature {
             public_key: unparsed_mut.remove("publicKey")?,
         })
     }
@@ -349,8 +349,8 @@ where
     }
 }
 
-pub type CustomPerson = Ext1<ApActor<Person>, ApSignature07>;
-pub type CustomGroup = Ext2<ApActor<Group>, ApSignature07, SourceProperty>;
+pub type CustomPerson = Ext1<ApActor<Person>, ApSignature>;
+pub type CustomGroup = Ext2<ApActor<Group>, ApSignature, SourceProperty>;
 
 kind!(HashtagType, Hashtag);
 
@@ -584,8 +584,8 @@ mod tests {
 
     #[test]
     fn se_ap_signature() {
-        let ap_signature = ApSignature07 {
-            public_key: PublicKey07 {
+        let ap_signature = ApSignature {
+            public_key: PublicKey {
                 id: "https://example.com/pubkey".parse().unwrap(),
                 owner: "https://example.com/owner".parse().unwrap(),
                 public_key_pem: "pubKeyPem".into(),
@@ -603,7 +603,7 @@ mod tests {
 
     #[test]
     fn de_ap_signature() {
-        let value: ApSignature07 = from_str(
+        let value: ApSignature = from_str(
             r#"
               {
                 "publicKey": {
@@ -615,8 +615,8 @@ mod tests {
             "#,
         )
         .unwrap();
-        let expected = ApSignature07 {
-            public_key: PublicKey07 {
+        let expected = ApSignature {
+            public_key: PublicKey {
                 id: "https://example.com/".parse().unwrap(),
                 owner: "https://example.com/".parse().unwrap(),
                 public_key_pem: "".into(),
@@ -630,8 +630,8 @@ mod tests {
         let actor = ApActor::new("https://example.com/inbox".parse().unwrap(), Person::new());
         let person = CustomPerson::new(
             actor,
-            ApSignature07 {
-                public_key: PublicKey07 {
+            ApSignature {
+                public_key: PublicKey {
                     id: "https://example.com/pubkey".parse().unwrap(),
                     owner: "https://example.com/owner".parse().unwrap(),
                     public_key_pem: "pubKeyPem".into(),

@@ -28,7 +28,7 @@ use plume_common::{
         inbox::{AsActor, AsObject, FromId},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
-        ActivityStream, ApSignature07, CustomPerson, Id, IntoId, PublicKey07, ToAsString, ToAsUri,
+        ActivityStream, ApSignature, CustomPerson, Id, IntoId, PublicKey, ToAsString, ToAsUri,
         PUBLIC_VISIBILITY,
     },
     utils,
@@ -247,7 +247,7 @@ impl User {
         let mut res = get(url, Self::get_sender07(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
-        let ap_sign = serde_json::from_str::<ApSignature07>(text)?;
+        let ap_sign = serde_json::from_str::<ApSignature>(text)?;
         let person = serde_json::from_str::<Person>(text)?;
         let json = CustomPerson::new(
             ApActor::new(
@@ -795,12 +795,12 @@ impl User {
             actor.set_endpoints(endpoints);
         }
 
-        let pub_key = PublicKey07 {
+        let pub_key = PublicKey {
             id: format!("{}#main-key", self.ap_url).parse()?,
             owner: ap_url,
             public_key_pem: self.public_key.clone(),
         };
-        let ap_signature = ApSignature07 {
+        let ap_signature = ApSignature {
             public_key: pub_key,
         };
 

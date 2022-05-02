@@ -20,8 +20,8 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature07, CustomGroup, Id, IntoId, PublicKey07, Source,
-    SourceProperty, ToAsString, ToAsUri,
+    sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source, SourceProperty,
+    ToAsString, ToAsUri,
 };
 use webfinger::*;
 
@@ -209,12 +209,12 @@ impl Blog {
 
         blog.set_id(self.ap_url.parse()?);
 
-        let pub_key = PublicKey07 {
+        let pub_key = PublicKey {
             id: format!("{}#main-key", self.ap_url).parse()?,
             owner: self.ap_url.parse()?,
             public_key_pem: self.public_key.clone(),
         };
-        let ap_signature = ApSignature07 {
+        let ap_signature = ApSignature {
             public_key: pub_key,
         };
 
