@@ -334,9 +334,9 @@ pub fn update(
                 .into_iter()
                 .collect::<HashSet<_>>()
                 .into_iter()
-                .filter_map(|t| Tag::build_activity(t).ok())
+                .filter_map(|t| Tag::build_activity07(t).ok())
                 .collect::<Vec<_>>();
-            post.update_hashtags(&conn, hashtags)
+            post.update_hashtags07(&conn, hashtags)
                 .expect("post::update: hashtags error");
 
             if post.published {

@@ -27,7 +27,7 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
+        Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
         LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
         PUBLIC_VISIBILITY,
     },
@@ -598,42 +598,6 @@ impl Post {
         }
 
         for ot in old_tags.iter().filter(|t| !t.is_hashtag) {
-            if !tags_name.contains(&ot.tag) {
-                ot.delete(conn)?;
-            }
-        }
-        Ok(())
-    }
-
-    pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
-        let tags_name = tags
-            .iter()
-            .filter_map(|t| t.name_string().ok())
-            .collect::<HashSet<_>>();
-
-        let old_tags = Tag::for_post(&*conn, self.id)?;
-        let old_tags_name = old_tags
-            .iter()
-            .filter_map(|tag| {
-                if tag.is_hashtag {
-                    Some(tag.tag.clone())
-                } else {
-                    None
-                }
-            })
-            .collect::<HashSet<_>>();
-
-        for t in tags {
-            if !t
-                .name_string()
-                .map(|n| old_tags_name.contains(&n))
-                .unwrap_or(true)
-            {
-                Tag::from_activity(conn, &t, self.id, true)?;
-            }
-        }
-
-        for ot in old_tags.into_iter().filter(|t| t.is_hashtag) {
             if !tags_name.contains(&ot.tag) {
                 ot.delete(conn)?;
             }
