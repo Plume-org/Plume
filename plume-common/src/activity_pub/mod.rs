@@ -1,10 +1,10 @@
-use activitypub::{Activity, Link, Object};
+use activitypub::{Link, Object};
 use activitystreams::{
     actor::{ApActor, Group, Person},
     base::{AnyBase, Base, Extends},
     iri_string::types::IriString,
     kind,
-    markers::{self, Activity as Activity07},
+    markers::{self, Activity},
     object::{ApObject, Article, Object as Object07},
     primitives::{AnyString, OneOrMany},
     unparsed::UnparsedMutExt,
@@ -119,87 +119,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .unwrap_or(Outcome::Forward(()))
     }
 }
-pub fn broadcast<S, A, T, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
-where
-    S: sign::Signer,
-    A: Activity,
-    T: inbox::AsActor<C>,
-{
-    let boxes = to
-        .into_iter()
-        .filter(|u| !u.is_local())
-        .map(|u| {
-            u.get_shared_inbox_url()
-                .unwrap_or_else(|| u.get_inbox_url())
-        })
-        .collect::<Vec<String>>()
-        .unique();
-
-    let mut act = serde_json::to_value(act).expect("activity_pub::broadcast: serialization error");
-    act["@context"] = context();
-    let signed = act
-        .sign(sender)
-        .expect("activity_pub::broadcast: signature error");
-
-    let mut rt = tokio::runtime::current_thread::Runtime::new()
-        .expect("Error while initializing tokio runtime for federation");
-    for inbox in boxes {
-        let body = signed.to_string();
-        let mut headers = request::headers();
-        let url = Url::parse(&inbox);
-        if url.is_err() {
-            warn!("Inbox is invalid URL: {:?}", &inbox);
-            continue;
-        }
-        let url = url.unwrap();
-        if !url.has_host() {
-            warn!("Inbox doesn't have host: {:?}", &inbox);
-            continue;
-        };
-        let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"));
-        if host_header_value.is_err() {
-            warn!("Header value is invalid: {:?}", url.host_str());
-            continue;
-        }
-        headers.insert("Host", host_header_value.unwrap());
-        headers.insert("Digest", request::Digest::digest(&body));
-        rt.spawn(
-            if let Some(proxy) = proxy.clone() {
-                ClientBuilder::new().proxy(proxy)
-            } else {
-                ClientBuilder::new()
-            }
-            .connect_timeout(std::time::Duration::from_secs(5))
-            .build()
-            .expect("Can't build client")
-            .post(&inbox)
-            .headers(headers.clone())
-            .header(
-                "Signature",
-                request::signature(sender, &headers, ("post", url.path(), url.query()))
-                    .expect("activity_pub::broadcast: request signature error"),
-            )
-            .body(body)
-            .send()
-            .and_then(move |r| {
-                if r.status().is_success() {
-                    debug!("Successfully sent activity to inbox ({})", &inbox);
-                } else {
-                    warn!("Error while sending to inbox ({:?})", &r)
-                }
-                r.into_body().concat2()
-            })
-            .map(move |response| debug!("Response: \"{:?}\"\n", response))
-            .map_err(|e| warn!("Error while sending to inbox ({:?})", e)),
-        );
-    }
-    rt.run().unwrap();
-}
 
 pub fn broadcast07<S, T, A, C>(sender: &S, act: A, to: Vec<T>, proxy: Option<reqwest::Proxy>)
 where
     S: sign::Signer,
-    A: Activity07 + serde::Serialize,
+    A: Activity + serde::Serialize,
     T: inbox::AsActor<C>,
 {
     let boxes = to
