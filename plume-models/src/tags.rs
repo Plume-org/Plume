@@ -1,7 +1,7 @@
 use crate::{ap_url, instance::Instance, schema::tags, Connection, Error, Result};
 use activitystreams::iri_string::types::IriString;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use plume_common::activity_pub::{Hashtag, Hashtag07, HashtagExt};
+use plume_common::activity_pub::{Hashtag07, HashtagExt};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Tag {
@@ -25,17 +25,6 @@ impl Tag {
     find_by!(tags, find_by_name, tag as &str);
     list_by!(tags, for_post, post_id as i32);
 
-    pub fn to_activity(&self) -> Result<Hashtag> {
-        let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(&format!(
-            "{}/tag/{}",
-            Instance::get_local()?.public_domain,
-            self.tag
-        )))?;
-        ht.set_name_string(self.tag.clone())?;
-        Ok(ht)
-    }
-
     pub fn to_activity07(&self) -> Result<Hashtag07> {
         let mut ht = Hashtag07::new();
         ht.set_href(
@@ -48,22 +37,6 @@ impl Tag {
         );
         ht.set_name(self.tag.clone());
         Ok(ht)
-    }
-
-    pub fn from_activity(
-        conn: &Connection,
-        tag: &Hashtag,
-        post: i32,
-        is_hashtag: bool,
-    ) -> Result<Tag> {
-        Tag::insert(
-            conn,
-            NewTag {
-                tag: tag.name_string()?,
-                is_hashtag,
-                post_id: post,
-            },
-        )
     }
 
     pub fn from_activity07(
@@ -80,17 +53,6 @@ impl Tag {
                 post_id: post,
             },
         )
-    }
-
-    pub fn build_activity(tag: String) -> Result<Hashtag> {
-        let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(&format!(
-            "{}/tag/{}",
-            Instance::get_local()?.public_domain,
-            tag
-        )))?;
-        ht.set_name_string(tag)?;
-        Ok(ht)
     }
 
     pub fn build_activity07(tag: String) -> Result<Hashtag07> {
@@ -124,48 +86,6 @@ mod tests {
     use serde_json::to_value;
 
     #[test]
-    fn to_activity() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            fill_database(conn);
-            let tag = Tag {
-                id: 0,
-                tag: "a_tag".into(),
-                is_hashtag: false,
-                post_id: 0,
-            };
-            let act = tag.to_activity()?;
-            let expected = json!({
-                "href": "https://plu.me/tag/a_tag",
-                "name": "a_tag",
-                "type": "Hashtag"
-            });
-
-            assert_json_eq!(to_value(&act)?, expected);
-
-            Ok(())
-        })
-    }
-
-    #[test]
-    fn from_activity() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(conn);
-            let post_id = posts[0].id;
-            let mut ht = Hashtag::default();
-            ht.set_href_string(ap_url(&format!("https://plu.me/tag/a_tag")))?;
-            ht.set_name_string("a_tag".into())?;
-            let tag = Tag::from_activity(conn, &ht, post_id, true)?;
-
-            assert_eq!(&tag.tag, "a_tag");
-            assert!(tag.is_hashtag);
-
-            Ok(())
-        });
-    }
-
-    #[test]
     fn from_activity07() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
@@ -178,24 +98,6 @@ mod tests {
 
             assert_eq!(&tag.tag, "a_tag");
             assert!(tag.is_hashtag);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn build_activity() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            fill_database(conn);
-            let act = Tag::build_activity("a_tag".into())?;
-            let expected = json!({
-                "href": "https://plu.me/tag/a_tag",
-                "name": "a_tag",
-                "type": "Hashtag"
-            });
-
-            assert_json_eq!(to_value(&act)?, expected);
 
             Ok(())
         });
