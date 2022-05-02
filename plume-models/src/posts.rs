@@ -26,7 +26,7 @@ use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject07, FromId},
+        inbox::{AsActor, AsObject, FromId},
         sign::Signer,
         Hashtag, Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
         LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
@@ -1054,7 +1054,7 @@ impl FromId<DbConn> for Post {
     }
 }
 
-impl AsObject07<User, Create07, &DbConn> for Post {
+impl AsObject<User, Create07, &DbConn> for Post {
     type Error = Error;
     type Output = Self;
 
@@ -1064,7 +1064,7 @@ impl AsObject07<User, Create07, &DbConn> for Post {
     }
 }
 
-impl AsObject07<User, Delete07, &DbConn> for Post {
+impl AsObject<User, Delete07, &DbConn> for Post {
     type Error = Error;
     type Output = ();
 
@@ -1149,7 +1149,7 @@ impl FromId<DbConn> for PostUpdate {
     }
 }
 
-impl AsObject07<User, Update07, &DbConn> for PostUpdate {
+impl AsObject<User, Update07, &DbConn> for PostUpdate {
     type Error = Error;
     type Output = ();
 

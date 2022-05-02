@@ -35,7 +35,7 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject07, FromId},
+        inbox::{AsActor, AsObject, FromId},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, ApSignature07, CustomPerson as CustomPerson07, Id, IntoId,
@@ -1248,7 +1248,7 @@ impl AsActor<&DbConn> for User {
     }
 }
 
-impl AsObject07<User, Delete07, &DbConn> for User {
+impl AsObject<User, Delete07, &DbConn> for User {
     type Error = Error;
     type Output = ();
 

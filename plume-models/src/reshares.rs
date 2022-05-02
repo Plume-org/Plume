@@ -12,7 +12,7 @@ use activitystreams::{
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject07, FromId},
+    inbox::{AsActor, AsObject, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -144,7 +144,7 @@ impl Reshare {
     }
 }
 
-impl AsObject07<User, Announce07, &DbConn> for Post {
+impl AsObject<User, Announce07, &DbConn> for Post {
     type Error = Error;
     type Output = Reshare;
 
@@ -214,7 +214,7 @@ impl FromId<DbConn> for Reshare {
     }
 }
 
-impl AsObject07<User, Undo07, &DbConn> for Reshare {
+impl AsObject<User, Undo07, &DbConn> for Reshare {
     type Error = Error;
     type Output = ();
 

@@ -201,7 +201,7 @@ where
     where
         A: AsActor<&'a C> + FromId<C, Error = E>,
         V: activitystreams::markers::Activity + serde::de::DeserializeOwned,
-        M: AsObject07<A, V, &'a C, Error = E> + FromId<C, Error = E>,
+        M: AsObject<A, V, &'a C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
         if let Self::NotHandled(ctx, mut act, e) = self {
@@ -519,7 +519,7 @@ pub trait AsActor<C> {
 ///     }
 /// }
 /// ```
-pub trait AsObject07<A, V, C>
+pub trait AsObject<A, V, C>
 where
     V: activitystreams::markers::Activity,
 {
@@ -646,7 +646,7 @@ mod tests {
             &*MY_SIGNER
         }
     }
-    impl AsObject07<MyActor, Create07, &()> for MyObject07 {
+    impl AsObject<MyActor, Create07, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -661,7 +661,7 @@ mod tests {
         }
     }
 
-    impl AsObject07<MyActor, Like07, &()> for MyObject07 {
+    impl AsObject<MyActor, Like07, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -676,7 +676,7 @@ mod tests {
         }
     }
 
-    impl AsObject07<MyActor, Delete07, &()> for MyObject07 {
+    impl AsObject<MyActor, Delete07, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -691,7 +691,7 @@ mod tests {
         }
     }
 
-    impl AsObject07<MyActor, Announce07, &()> for MyObject07 {
+    impl AsObject<MyActor, Announce07, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -798,7 +798,7 @@ mod tests {
         }
     }
 
-    impl AsObject07<FailingActor, Create07, &()> for MyObject07 {
+    impl AsObject<FailingActor, Create07, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
