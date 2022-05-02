@@ -626,8 +626,8 @@ mod tests {
         }
     }
 
-    struct MyObject07;
-    impl FromId<()> for MyObject07 {
+    struct MyObject;
+    impl FromId<()> for MyObject {
         type Error = ();
         type Object = Note;
 
@@ -643,7 +643,7 @@ mod tests {
             &*MY_SIGNER
         }
     }
-    impl AsObject<MyActor, Create, &()> for MyObject07 {
+    impl AsObject<MyActor, Create, &()> for MyObject {
         type Error = ();
         type Output = ();
 
@@ -653,7 +653,7 @@ mod tests {
         }
     }
 
-    impl AsObject<MyActor, Like, &()> for MyObject07 {
+    impl AsObject<MyActor, Like, &()> for MyObject {
         type Error = ();
         type Output = ();
 
@@ -663,7 +663,7 @@ mod tests {
         }
     }
 
-    impl AsObject<MyActor, Delete, &()> for MyObject07 {
+    impl AsObject<MyActor, Delete, &()> for MyObject {
         type Error = ();
         type Output = ();
 
@@ -673,7 +673,7 @@ mod tests {
         }
     }
 
-    impl AsObject<MyActor, Announce, &()> for MyObject07 {
+    impl AsObject<MyActor, Announce, &()> for MyObject {
         type Error = ();
         type Output = ();
 
@@ -683,7 +683,7 @@ mod tests {
         }
     }
 
-    fn build_create07() -> Create {
+    fn build_create() -> Create {
         let mut person = Person::new();
         person.set_id("https://test.ap/actor".parse().unwrap());
         let mut note = Note::new();
@@ -697,33 +697,33 @@ mod tests {
     }
 
     #[test]
-    fn test_inbox_basic07() {
-        let act = serde_json::to_value(build_create07()).unwrap();
+    fn test_inbox_basic() {
+        let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Create, MyObject07>(None)
+            .with::<MyActor, Create, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }
 
     #[test]
-    fn test_inbox_multi_handlers07() {
-        let act = serde_json::to_value(build_create07()).unwrap();
+    fn test_inbox_multi_handlers() {
+        let act = serde_json::to_value(build_create()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject07>(None)
-            .with::<MyActor, Delete, MyObject07>(None)
-            .with::<MyActor, Create, MyObject07>(None)
-            .with::<MyActor, Like, MyObject07>(None)
+            .with::<MyActor, Announce, MyObject>(None)
+            .with::<MyActor, Delete, MyObject>(None)
+            .with::<MyActor, Create, MyObject>(None)
+            .with::<MyActor, Like, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }
 
     #[test]
-    fn test_inbox_failure07() {
-        let act = serde_json::to_value(build_create07()).unwrap();
+    fn test_inbox_failure() {
+        let act = serde_json::to_value(build_create()).unwrap();
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce, MyObject07>(None)
-            .with::<MyActor, Like, MyObject07>(None)
+            .with::<MyActor, Announce, MyObject>(None)
+            .with::<MyActor, Like, MyObject>(None)
             .done();
         assert!(res.is_err());
     }
@@ -756,7 +756,7 @@ mod tests {
         }
     }
 
-    impl AsObject<FailingActor, Create, &()> for MyObject07 {
+    impl AsObject<FailingActor, Create, &()> for MyObject {
         type Error = ();
         type Output = ();
 
@@ -772,17 +772,17 @@ mod tests {
     }
 
     #[test]
-    fn test_inbox_actor_failure07() {
-        let act = serde_json::to_value(build_create07()).unwrap();
+    fn test_inbox_actor_failure() {
+        let act = serde_json::to_value(build_create()).unwrap();
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject07>(None)
+            .with::<FailingActor, Create, MyObject>(None)
             .done();
         assert!(res.is_err());
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create, MyObject07>(None)
-            .with::<MyActor, Create, MyObject07>(None)
+            .with::<FailingActor, Create, MyObject>(None)
+            .with::<MyActor, Create, MyObject>(None)
             .done();
         assert!(res.is_ok());
     }
