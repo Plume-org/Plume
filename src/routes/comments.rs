@@ -1,5 +1,5 @@
 use crate::template_utils::Ructe;
-use activitypub::object::Note;
+use activitystreams::object::Note;
 use rocket::{
     request::LenientForm,
     response::{Flash, Redirect},
@@ -187,7 +187,7 @@ pub fn activity_pub(
     conn: DbConn,
 ) -> Option<ActivityStream<Note>> {
     Comment::get(&conn, id)
-        .and_then(|c| c.to_activity(&conn))
+        .and_then(|c| c.to_activity07(&conn))
         .ok()
         .map(ActivityStream::new)
 }

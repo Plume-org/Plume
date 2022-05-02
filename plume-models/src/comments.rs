@@ -11,24 +11,23 @@ use crate::{
     users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::{link, object::Note};
 use activitystreams::{
-    activity::{Create as Create07, Delete},
+    activity::{Create, Delete},
     base::{AnyBase, Base},
     iri_string::types::IriString,
-    link::{self as link07, kind::MentionType},
+    link::{self, kind::MentionType},
     object::{Note as Note07, Tombstone},
     prelude::*,
     primitives::OneOrMany,
     time::OffsetDateTime,
 };
-use chrono::{self, NaiveDateTime, TimeZone, Utc};
+use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Id, IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
+        IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -112,41 +111,6 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, conn: &DbConn) -> Result<Note> {
-        let author = User::get(conn, self.author_id)?;
-        let (html, mentions, _hashtags) = utils::md_to_html(
-            self.content.get().as_ref(),
-            Some(&Instance::get_local()?.public_domain),
-            true,
-            Some(Media::get_media_processor(conn, vec![&author])),
-        );
-
-        let mut note = Note::default();
-        let to = vec![Id::new(PUBLIC_VISIBILITY.to_string())];
-
-        note.object_props
-            .set_id_string(self.ap_url.clone().unwrap_or_default())?;
-        note.object_props
-            .set_summary_string(self.spoiler_text.clone())?;
-        note.object_props.set_content_string(html)?;
-        note.object_props
-            .set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(
-                || Ok(Post::get(conn, self.post_id)?.ap_url),
-                |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
-            )?))?;
-        note.object_props
-            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
-        note.object_props.set_attributed_to_link(author.into_id())?;
-        note.object_props.set_to_link_vec(to)?;
-        note.object_props.set_tag_link_vec(
-            mentions
-                .into_iter()
-                .filter_map(|m| Mention::build_activity(conn, &m).ok())
-                .collect::<Vec<link::Mention>>(),
-        )?;
-        Ok(note)
-    }
-
     pub fn to_activity07(&self, conn: &DbConn) -> Result<Note07> {
         let author = User::get(conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
@@ -185,13 +149,13 @@ impl Comment {
         Ok(note)
     }
 
-    pub fn create_activity07(&self, conn: &DbConn) -> Result<Create07> {
+    pub fn create_activity07(&self, conn: &DbConn) -> Result<Create> {
         let author = User::get(conn, self.author_id)?;
 
         let note = self.to_activity07(conn)?;
         let note_clone = note.clone();
 
-        let mut act = Create07::new(
+        let mut act = Create::new(
             author.into_id().parse::<IriString>()?,
             Base::retract(note)?.into_generic()?,
         );
@@ -329,7 +293,7 @@ impl FromId<DbConn> for Comment {
             if let Some(tags) = note.tag() {
                 let author_url = &Post::get(conn, comm.post_id)?.get_authors(conn)?[0].ap_url;
                 for tag in tags.iter() {
-                    let m = tag.clone().extend::<link07::Mention, MentionType>()?; // FIXME: Don't clone
+                    let m = tag.clone().extend::<link::Mention, MentionType>()?; // FIXME: Don't clone
                     if m.is_none() {
                         continue;
                     }
@@ -390,7 +354,7 @@ impl FromId<DbConn> for Comment {
     }
 }
 
-impl AsObject<User, Create07, &DbConn> for Comment {
+impl AsObject<User, Create, &DbConn> for Comment {
     type Error = Error;
     type Output = Self;
 
@@ -577,38 +541,6 @@ mod tests {
             };
             Ok(())
         })
-    }
-
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = comment.to_activity(&conn)?;
-
-            let expected = json!({
-                "attributedTo": "https://plu.me/@/admin/",
-                "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
-"###,
-                "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
-                "inReplyTo": "https://plu.me/~/BlogName/testing",
-                "published": format_datetime(&comment.creation_date),
-                "summary": "My CW",
-                "tag": [
-                    {
-                        "href": "https://plu.me/@/user/",
-                        "name": "@user",
-                        "type": "Mention"
-                    }
-                ],
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Note"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
     }
 
     #[test]
