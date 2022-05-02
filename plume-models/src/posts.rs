@@ -3,10 +3,7 @@ use crate::{
     post_authors::*, safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User,
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
-use activitypub::{
-    object::{Article, Image},
-    CustomObject,
-};
+use activitypub::{object::Article, CustomObject};
 use activitystreams::{
     activity::{Create as Create07, Delete as Delete07, Update as Update07},
     base::{AnyBase, Base},
@@ -19,7 +16,7 @@ use activitystreams::{
     prelude::*,
     time::OffsetDateTime,
 };
-use chrono::{NaiveDateTime, TimeZone, Utc};
+use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
@@ -349,76 +346,6 @@ impl Post {
                 }
                 acc
             }))
-    }
-
-    pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
-        let cc = self.get_receivers_urls(conn)?;
-        let to = vec![PUBLIC_VISIBILITY.to_string()];
-
-        let mut mentions_json = Mention::list_for_post(conn, self.id)?
-            .into_iter()
-            .map(|m| json!(m.to_activity(conn).ok()))
-            .collect::<Vec<serde_json::Value>>();
-        let mut tags_json = Tag::for_post(conn, self.id)?
-            .into_iter()
-            .map(|t| json!(t.to_activity().ok()))
-            .collect::<Vec<serde_json::Value>>();
-        mentions_json.append(&mut tags_json);
-
-        let mut article = Article::default();
-        article.object_props.set_name_string(self.title.clone())?;
-        article.object_props.set_id_string(self.ap_url.clone())?;
-
-        let mut authors = self
-            .get_authors(conn)?
-            .into_iter()
-            .map(|x| Id::new(x.ap_url))
-            .collect::<Vec<Id>>();
-        authors.push(self.get_blog(conn)?.into_id()); // add the blog URL here too
-        article
-            .object_props
-            .set_attributed_to_link_vec::<Id>(authors)?;
-        article
-            .object_props
-            .set_content_string(self.content.get().clone())?;
-        article.ap_object_props.set_source_object(Source {
-            content: self.source.clone(),
-            media_type: String::from("text/markdown"),
-        })?;
-        article
-            .object_props
-            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
-        article
-            .object_props
-            .set_summary_string(self.subtitle.clone())?;
-        article.object_props.tag = Some(json!(mentions_json));
-
-        if let Some(media_id) = self.cover_id {
-            let media = Media::get(conn, media_id)?;
-            let mut cover = Image::default();
-            cover.object_props.set_url_string(media.url()?)?;
-            if media.sensitive {
-                cover
-                    .object_props
-                    .set_summary_string(media.content_warning.unwrap_or_default())?;
-            }
-            cover.object_props.set_content_string(media.alt_text)?;
-            cover
-                .object_props
-                .set_attributed_to_link_vec(vec![User::get(conn, media.owner_id)?.into_id()])?;
-            article.object_props.set_icon_object(cover)?;
-        }
-
-        article.object_props.set_url_string(self.ap_url.clone())?;
-        article
-            .object_props
-            .set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect())?;
-        article
-            .object_props
-            .set_cc_link_vec::<Id>(cc.into_iter().map(Id::new).collect())?;
-        let mut license = Licensed::default();
-        license.set_license_string(self.license.clone())?;
-        Ok(LicensedArticle::new(article, license))
     }
 
     pub fn to_activity07(&self, conn: &Connection) -> Result<LicensedArticle07> {
@@ -1205,44 +1132,6 @@ mod tests {
             "https://plu.me/~/Blog/my-article",
             &article.object.object_props.id_string().unwrap()
         );
-    }
-
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.to_activity(&conn)?;
-
-            let expected = json!({
-                "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
-                "cc": [],
-                "content": "Hello",
-                "id": "https://plu.me/~/BlogName/testing",
-                "license": "WTFPL",
-                "name": "Testing",
-                "published": format_datetime(&post.creation_date),
-                "source": {
-                    "content": "Hello",
-                    "mediaType": "text/markdown"
-                },
-                "summary": "Bye",
-                "tag": [
-                    {
-                        "href": "https://plu.me/@/user/",
-                        "name": "@user",
-                        "type": "Mention"
-                    }
-                ],
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Article",
-                "url": "https://plu.me/~/BlogName/testing"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
     }
 
     #[test]
