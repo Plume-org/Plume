@@ -4,21 +4,16 @@ use crate::{
     safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
     UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
-use activitypub::{
-    activity::Delete,
-    actor::Person,
-    object::{Image, Tombstone},
-    Activity, CustomObject, Endpoint,
-};
+use activitypub::{actor::Person, object::Image, Activity, CustomObject, Endpoint};
 use activitystreams::{
-    activity::Delete as Delete07,
+    activity::Delete,
     actor::{ApActor, AsApActor},
     actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
     base::{AnyBase, Base},
     collection::{OrderedCollection as OrderedCollection07, OrderedCollectionPage},
     iri_string::types::IriString,
     markers::Activity as Activity07,
-    object::{kind::ImageType, AsObject as _, Image as Image07, Tombstone as Tombstone07},
+    object::{kind::ImageType, AsObject as _, Image as Image07, Tombstone},
     prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
@@ -917,34 +912,11 @@ impl User {
         Ok(CustomPerson07::new(actor, ap_signature))
     }
 
-    pub fn delete_activity(&self, conn: &Connection) -> Result<Delete> {
-        let mut del = Delete::default();
-
-        let mut tombstone = Tombstone::default();
-        tombstone.object_props.set_id_string(self.ap_url.clone())?;
-
-        del.delete_props
-            .set_actor_link(Id::new(self.ap_url.clone()))?;
-        del.delete_props.set_object_object(tombstone)?;
-        del.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        del.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
-        del.object_props.set_cc_link_vec(
-            self.get_followers(conn)?
-                .into_iter()
-                .map(|f| Id::new(f.ap_url))
-                .collect(),
-        )?;
-
-        Ok(del)
-    }
-
-    pub fn delete_activity07(&self, conn: &Connection) -> Result<Delete07> {
-        let mut tombstone = Tombstone07::new();
+    pub fn delete_activity07(&self, conn: &Connection) -> Result<Delete> {
+        let mut tombstone = Tombstone::new();
         tombstone.set_id(self.ap_url.parse()?);
 
-        let mut del = Delete07::new(
+        let mut del = Delete::new(
             self.ap_url.parse::<IriString>()?,
             Base::retract(tombstone)?.into_generic()?,
         );
@@ -1192,7 +1164,7 @@ impl AsActor<&DbConn> for User {
     }
 }
 
-impl AsObject<User, Delete07, &DbConn> for User {
+impl AsObject<User, Delete, &DbConn> for User {
     type Error = Error;
     type Output = ();
 
@@ -1695,32 +1667,6 @@ pub(crate) mod tests {
             });
 
             assert_json_eq!(to_value(other_act)?, expected_other);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn delete_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let users = fill_database(&conn);
-            let user = &users[1];
-            let act = user.delete_activity(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/user/",
-                "cc": [],
-                "id": "https://plu.me/@/user/#delete",
-                "object": {
-                    "id": "https://plu.me/@/user/",
-                    "type": "Tombstone",
-                },
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Delete",
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
 
             Ok(())
         });

@@ -18,7 +18,7 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, Id};
+use plume_common::activity_pub::{broadcast, broadcast07, ActivityStream, ApRequest, Id};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::Blog,
@@ -386,10 +386,10 @@ pub fn delete(
         account.delete(&conn)?;
 
         let target = User::one_by_instance(&conn)?;
-        let delete_act = account.delete_activity(&conn)?;
+        let delete_act = account.delete_activity07(&conn)?;
         rockets
             .worker
-            .execute(move || broadcast(&account, delete_act, target, CONFIG.proxy().cloned()));
+            .execute(move || broadcast07(&account, delete_act, target, CONFIG.proxy().cloned()));
 
         if let Some(cookie) = cookies.get_private(AUTH_COOKIE) {
             cookies.remove_private(cookie);

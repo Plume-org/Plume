@@ -11,7 +11,7 @@ use validator::{Validate, ValidationErrors};
 use crate::inbox;
 use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
 use crate::template_utils::{IntoContext, Ructe};
-use plume_common::activity_pub::{broadcast, inbox::FromId};
+use plume_common::activity_pub::{broadcast07, inbox::FromId};
 use plume_models::{
     admin::*,
     blocklisted_emails::*,
@@ -382,8 +382,8 @@ fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), E
         )
         .unwrap();
         let target = User::one_by_instance(&*conn)?;
-        let delete_act = u.delete_activity(&*conn)?;
-        worker.execute(move || broadcast(&u, delete_act, target, CONFIG.proxy().cloned()));
+        let delete_act = u.delete_activity07(&*conn)?;
+        worker.execute(move || broadcast07(&u, delete_act, target, CONFIG.proxy().cloned()));
     }
 
     Ok(())
