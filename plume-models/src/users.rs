@@ -35,7 +35,7 @@ use openssl::{
 };
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId},
+        inbox::{AsActor, AsObject07, FromId},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, ApSignature07, CustomPerson as CustomPerson07, Id, IntoId,
@@ -1245,19 +1245,6 @@ impl AsActor<&DbConn> for User {
         Instance::get_local()
             .map(|i| self.instance_id == i.id)
             .unwrap_or(false)
-    }
-}
-
-impl AsObject<User, Delete, &DbConn> for User {
-    type Error = Error;
-    type Output = ();
-
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        if self.id == actor.id {
-            self.delete(conn).map(|_| ())
-        } else {
-            Err(Error::Unauthorized)
-        }
     }
 }
 

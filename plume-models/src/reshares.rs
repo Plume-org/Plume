@@ -12,7 +12,7 @@ use activitystreams::{
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, AsObject07, FromId},
+    inbox::{AsActor, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -144,27 +144,6 @@ impl Reshare {
     }
 }
 
-impl AsObject<User, Announce, &DbConn> for Post {
-    type Error = Error;
-    type Output = Reshare;
-
-    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
-        let conn = conn;
-        let reshare = Reshare::insert(
-            conn,
-            NewReshare {
-                post_id: self.id,
-                user_id: actor.id,
-                ap_url: id.to_string(),
-            },
-        )?;
-        reshare.notify(conn)?;
-
-        Timeline::add_to_all_timelines(conn, &self, Kind::Reshare(&actor))?;
-        Ok(reshare)
-    }
-}
-
 impl AsObject07<User, Announce07, &DbConn> for Post {
     type Error = Error;
     type Output = Reshare;
@@ -232,26 +211,6 @@ impl FromId<DbConn> for Reshare {
 
     fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
-impl AsObject<User, Undo, &DbConn> for Reshare {
-    type Error = Error;
-    type Output = ();
-
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        if actor.id == self.user_id {
-            diesel::delete(&self).execute(&**conn)?;
-
-            // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
-                diesel::delete(&notif).execute(&**conn)?;
-            }
-
-            Ok(())
-        } else {
-            Err(Error::Unauthorized)
-        }
     }
 }
 

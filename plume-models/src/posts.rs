@@ -26,7 +26,7 @@ use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId},
+        inbox::{AsActor, AsObject07, FromId},
         sign::Signer,
         Hashtag, Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
         LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
@@ -1054,16 +1054,6 @@ impl FromId<DbConn> for Post {
     }
 }
 
-impl AsObject<User, Create, &DbConn> for Post {
-    type Error = Error;
-    type Output = Post;
-
-    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Post> {
-        // TODO: check that _actor is actually one of the author?
-        Ok(self)
-    }
-}
-
 impl AsObject07<User, Create07, &DbConn> for Post {
     type Error = Error;
     type Output = Self;
@@ -1071,23 +1061,6 @@ impl AsObject07<User, Create07, &DbConn> for Post {
     fn activity07(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self::Output> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
-    }
-}
-
-impl AsObject<User, Delete, &DbConn> for Post {
-    type Error = Error;
-    type Output = ();
-
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        let can_delete = self
-            .get_authors(conn)?
-            .into_iter()
-            .any(|a| actor.id == a.id);
-        if can_delete {
-            self.delete(conn).map(|_| ())
-        } else {
-            Err(Error::Unauthorized)
-        }
     }
 }
 
@@ -1173,78 +1146,6 @@ impl FromId<DbConn> for PostUpdate {
 
     fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
-impl AsObject<User, Update, &DbConn> for PostUpdate {
-    type Error = Error;
-    type Output = ();
-
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        let mut post =
-            Post::from_id07(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
-
-        if !post.is_author(conn, actor.id)? {
-            // TODO: maybe the author was added in the meantime
-            return Err(Error::Unauthorized);
-        }
-
-        if let Some(title) = self.title {
-            post.slug = Post::slug(&title).to_string();
-            post.title = title;
-        }
-
-        if let Some(content) = self.content {
-            post.content = SafeString::new(&content);
-        }
-
-        if let Some(subtitle) = self.subtitle {
-            post.subtitle = subtitle;
-        }
-
-        post.cover_id = self.cover;
-
-        if let Some(source) = self.source {
-            post.source = source;
-        }
-
-        if let Some(license) = self.license {
-            post.license = license;
-        }
-
-        let mut txt_hashtags = md_to_html(&post.source, None, false, None)
-            .2
-            .into_iter()
-            .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(mention_tags)) = self.tags {
-            let mut mentions = vec![];
-            let mut tags = vec![];
-            let mut hashtags = vec![];
-            for tag in mention_tags {
-                serde_json::from_value::<link::Mention>(tag.clone())
-                    .map(|m| mentions.push(m))
-                    .ok();
-
-                serde_json::from_value::<Hashtag>(tag.clone())
-                    .map_err(Error::from)
-                    .and_then(|t| {
-                        let tag_name = t.name_string()?;
-                        if txt_hashtags.remove(&tag_name) {
-                            hashtags.push(t);
-                        } else {
-                            tags.push(t);
-                        }
-                        Ok(())
-                    })
-                    .ok();
-            }
-            post.update_mentions(conn, mentions)?;
-            post.update_tags(conn, tags)?;
-            post.update_hashtags(conn, hashtags)?;
-        }
-
-        post.update(conn)?;
-        Ok(())
     }
 }
 

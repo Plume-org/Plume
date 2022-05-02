@@ -12,7 +12,7 @@ use activitystreams::{
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast, broadcast07,
-    inbox::{AsActor, AsObject, AsObject07, FromId},
+    inbox::{AsActor, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -242,22 +242,6 @@ impl Follow {
     }
 }
 
-impl AsObject<User, FollowAct, &DbConn> for User {
-    type Error = Error;
-    type Output = Follow;
-
-    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
-        // Mastodon (at least) requires the full Follow object when accepting it,
-        // so we rebuilt it here
-        let mut follow = FollowAct::default();
-        follow.object_props.set_id_string(id.to_string())?;
-        follow
-            .follow_props
-            .set_actor_link::<Id>(actor.clone().into_id())?;
-        Follow::accept_follow(conn, &actor, &self, follow, actor.id, self.id)
-    }
-}
-
 impl AsObject07<User, FollowAct07, &DbConn> for User {
     type Error = Error;
     type Output = Follow;
@@ -309,27 +293,6 @@ impl FromId<DbConn> for Follow {
 
     fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
-impl AsObject<User, Undo, &DbConn> for Follow {
-    type Error = Error;
-    type Output = ();
-
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        let conn = conn;
-        if self.follower_id == actor.id {
-            diesel::delete(&self).execute(&**conn)?;
-
-            // delete associated notification if any
-            if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
-                diesel::delete(&notif).execute(&**conn)?;
-            }
-
-            Ok(())
-        } else {
-            Err(Error::Unauthorized)
-        }
     }
 }
 

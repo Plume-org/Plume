@@ -30,7 +30,7 @@ use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId},
+        inbox::{AsActor, AsObject07, FromId},
         sign::Signer,
         Id, IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
@@ -428,45 +428,6 @@ impl FromId<DbConn> for Comment {
 
     fn get_sender07() -> &'static dyn Signer {
         Instance::get_local_instance_user().expect("Failed to local instance user")
-    }
-}
-
-impl AsObject<User, Create, &DbConn> for Comment {
-    type Error = Error;
-    type Output = Self;
-
-    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self> {
-        // The actual creation takes place in the FromId impl
-        Ok(self)
-    }
-}
-
-impl AsObject<User, Delete, &DbConn> for Comment {
-    type Error = Error;
-    type Output = ();
-
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
-        if self.author_id != actor.id {
-            return Err(Error::Unauthorized);
-        }
-
-        for m in Mention::list_for_comment(conn, self.id)? {
-            for n in Notification::find_for_mention(conn, &m)? {
-                n.delete(conn)?;
-            }
-            m.delete(conn)?;
-        }
-
-        for n in Notification::find_for_comment(conn, &self)? {
-            n.delete(&**conn)?;
-        }
-
-        diesel::update(comments::table)
-            .filter(comments::in_response_to_id.eq(self.id))
-            .set(comments::in_response_to_id.eq(self.in_response_to_id))
-            .execute(&**conn)?;
-        diesel::delete(&self).execute(&**conn)?;
-        Ok(())
     }
 }
 
