@@ -11,7 +11,7 @@ use std::time::Duration;
 use crate::routes::errors::ErrorPage;
 use crate::template_utils::IntoContext;
 use plume_common::{
-    activity_pub::{broadcast, broadcast07, ActivityStream, ApRequest},
+    activity_pub::{broadcast07, ActivityStream, ApRequest},
     utils,
 };
 use plume_models::{
@@ -150,7 +150,7 @@ pub fn delete(
     if let Ok(comment) = Comment::get(&conn, id) {
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&conn)?;
-            let delete_activity = comment.build_delete(&conn)?;
+            let delete_activity = comment.build_delete07(&conn)?;
             inbox(
                 &conn,
                 serde_json::to_value(&delete_activity).map_err(Error::from)?,
@@ -158,7 +158,7 @@ pub fn delete(
 
             let user_c = user.clone();
             rockets.worker.execute(move || {
-                broadcast(&user_c, delete_activity, dest, CONFIG.proxy().cloned())
+                broadcast07(&user_c, delete_activity, dest, CONFIG.proxy().cloned())
             });
             rockets
                 .worker

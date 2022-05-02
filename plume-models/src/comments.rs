@@ -11,17 +11,13 @@ use crate::{
     users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::{
-    activity::Delete,
-    link,
-    object::{Note, Tombstone},
-};
+use activitypub::{link, object::Note};
 use activitystreams::{
-    activity::{Create as Create07, Delete as Delete07},
+    activity::{Create as Create07, Delete},
     base::{AnyBase, Base},
     iri_string::types::IriString,
     link::{self as link07, kind::MentionType},
-    object::{Note as Note07, Tombstone as Tombstone07},
+    object::{Note as Note07, Tombstone},
     prelude::*,
     primitives::OneOrMany,
     time::OffsetDateTime,
@@ -236,27 +232,8 @@ impl Comment {
         Ok(())
     }
 
-    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
-        let mut act = Delete::default();
-        act.delete_props
-            .set_actor_link(self.get_author(conn)?.into_id())?;
-
-        let mut tombstone = Tombstone::default();
-        tombstone
-            .object_props
-            .set_id_string(self.ap_url.clone().ok_or(Error::MissingApProperty)?)?;
-        act.delete_props.set_object_object(tombstone)?;
-
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
-
-        Ok(act)
-    }
-
-    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete07> {
-        let mut tombstone = Tombstone07::new();
+    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete> {
+        let mut tombstone = Tombstone::new();
         tombstone.set_id(
             self.ap_url
                 .as_ref()
@@ -264,7 +241,7 @@ impl Comment {
                 .parse::<IriString>()?,
         );
 
-        let mut act = Delete07::new(
+        let mut act = Delete::new(
             self.get_author(conn)?.into_id().parse::<IriString>()?,
             Base::retract(tombstone)?.into_generic()?,
         );
@@ -423,7 +400,7 @@ impl AsObject<User, Create07, &DbConn> for Comment {
     }
 }
 
-impl AsObject<User, Delete07, &DbConn> for Comment {
+impl AsObject<User, Delete, &DbConn> for Comment {
     type Error = Error;
     type Output = ();
 
@@ -658,30 +635,6 @@ mod tests {
                 ],
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Note"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn build_delete() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = comment.build_delete(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "id": format!("https://plu.me/~/BlogName/testing/comment/{}#delete", comment.id),
-                "object": {
-                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
-                    "type": "Tombstone"
-                },
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Delete"
             });
 
             assert_json_eq!(to_value(act)?, expected);
