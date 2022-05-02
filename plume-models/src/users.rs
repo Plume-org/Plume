@@ -237,7 +237,7 @@ impl User {
             .into_iter()
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)?;
-        User::from_id07(
+        User::from_id(
             conn,
             link.href.as_ref().ok_or(Error::Webfinger)?,
             None,

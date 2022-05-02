@@ -883,14 +883,14 @@ impl FromId<DbConn> for Post {
             .iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
                 if let Some(url) = link.id() {
-                    match User::from_id07(conn, url.as_str(), None, CONFIG.proxy()) {
+                    match User::from_id(conn, url.as_str(), None, CONFIG.proxy()) {
                         Ok(u) => {
                             authors.push(u);
                             (blog, authors)
                         }
                         Err(_) => (
                             blog.or_else(|| {
-                                Blog::from_id07(conn, url.as_str(), None, CONFIG.proxy()).ok()
+                                Blog::from_id(conn, url.as_str(), None, CONFIG.proxy()).ok()
                             }),
                             authors,
                         ),
@@ -1155,7 +1155,7 @@ impl AsObject<User, Update07, &DbConn> for PostUpdate {
 
     fn activity07(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
         let mut post =
-            Post::from_id07(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
+            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

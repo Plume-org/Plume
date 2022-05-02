@@ -275,7 +275,7 @@ impl Media {
                         remote_url: None,
                         sensitive: image.object_props.summary_string().is_ok(),
                         content_warning: image.object_props.summary_string().ok(),
-                        owner_id: User::from_id07(
+                        owner_id: User::from_id(
                             conn,
                             image
                                 .object_props
@@ -362,7 +362,7 @@ impl Media {
                         remote_url: None,
                         sensitive: summary.is_some(),
                         content_warning: summary,
-                        owner_id: User::from_id07(
+                        owner_id: User::from_id(
                             conn,
                             &image
                                 .attributed_to()

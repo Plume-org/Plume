@@ -150,7 +150,7 @@ impl FromId<DbConn> for Like {
         let res = Like::insert(
             conn,
             NewLike {
-                post_id: Post::from_id07(
+                post_id: Post::from_id(
                     conn,
                     act.object_field_ref()
                         .as_single_id()
@@ -161,7 +161,7 @@ impl FromId<DbConn> for Like {
                 )
                 .map_err(|(_, e)| e)?
                 .id,
-                user_id: User::from_id07(
+                user_id: User::from_id(
                     conn,
                     act.actor_field_ref()
                         .as_single_id()

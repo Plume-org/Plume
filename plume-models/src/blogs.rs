@@ -160,7 +160,7 @@ impl Blog {
             .find(|l| l.mime_type == Some(String::from("application/activity+json")))
             .ok_or(Error::Webfinger)
             .and_then(|l| {
-                Blog::from_id07(
+                Blog::from_id(
                     conn,
                     &l.href.ok_or(Error::MissingApProperty)?,
                     None,
@@ -526,7 +526,7 @@ impl FromId<DbConn> for Blog {
                     Media::save_remote(
                         conn,
                         icon.url()?.to_as_uri()?,
-                        &User::from_id07(conn, &owner, None, CONFIG.proxy()).ok()?,
+                        &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
                     )
                     .ok()
                 })
@@ -543,7 +543,7 @@ impl FromId<DbConn> for Blog {
                     Media::save_remote(
                         conn,
                         banner.url()?.to_as_uri()?,
-                        &User::from_id07(conn, &owner, None, CONFIG.proxy()).ok()?,
+                        &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
                     )
                     .ok()
                 })

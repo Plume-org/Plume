@@ -223,7 +223,7 @@ where
                 }
 
                 // Transform this actor to a model (see FromId for details about the from_id function)
-                let actor = match A::from_id07(
+                let actor = match A::from_id(
                     ctx,
                     &actor_id,
                     serde_json::from_value(act["actor"].clone()).ok(),
@@ -244,7 +244,7 @@ where
                     Some(x) => x,
                     None => return Self::NotHandled(ctx, act, InboxError::InvalidObject(None)),
                 };
-                let obj = match M::from_id07(
+                let obj = match M::from_id(
                     ctx,
                     &obj_id,
                     serde_json::from_value(act["object"].clone()).ok(),
@@ -343,7 +343,7 @@ pub trait FromId<C>: Sized {
     /// - `id`: the ActivityPub ID of the object to find
     /// - `object`: optional object that will be used if the object was not found in the database
     ///   If absent, the ID will be dereferenced.
-    fn from_id07(
+    fn from_id(
         ctx: &C,
         id: &str,
         object: Option<Self::Object>,

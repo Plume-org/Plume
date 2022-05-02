@@ -349,7 +349,7 @@ impl FromId<DbConn> for Comment {
                     post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
                         Ok(Post::find_by_ap_url(conn, previous_url.as_str())?.id) as Result<i32>
                     })?,
-                    author_id: User::from_id07(
+                    author_id: User::from_id(
                         conn,
                         &note
                             .attributed_to()
@@ -402,7 +402,7 @@ impl FromId<DbConn> for Comment {
             let receivers_ap_url = receiver_ids
                 .into_iter()
                 .flat_map(|v| {
-                    if let Ok(user) = User::from_id07(conn, v.as_ref(), None, CONFIG.proxy()) {
+                    if let Ok(user) = User::from_id(conn, v.as_ref(), None, CONFIG.proxy()) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection

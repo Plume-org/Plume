@@ -265,7 +265,7 @@ impl FromId<DbConn> for Follow {
     }
 
     fn from_activity07(conn: &DbConn, follow: FollowAct07) -> Result<Self> {
-        let actor = User::from_id07(
+        let actor = User::from_id(
             conn,
             follow
                 .actor_field_ref()
@@ -277,7 +277,7 @@ impl FromId<DbConn> for Follow {
         )
         .map_err(|(_, e)| e)?;
 
-        let target = User::from_id07(
+        let target = User::from_id(
             conn,
             follow
                 .object_field_ref()
