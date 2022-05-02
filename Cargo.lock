@@ -3,20 +3,6 @@
 version = 3
 
 [[package]]
-name = "activitypub"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5bfd311e7b4102971757a2a6f143a93b1a8e6b5afc2c46936af827fd9eab403f"
-dependencies = [
- "activitystreams-derive",
- "activitystreams-traits",
- "activitystreams-types",
- "serde 1.0.136",
- "serde_derive",
- "serde_json",
-]
-
-[[package]]
 name = "activitystreams"
 version = "0.7.0-alpha.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -28,17 +14,6 @@ dependencies = [
  "serde 1.0.136",
  "serde_json",
  "time 0.3.9",
-]
-
-[[package]]
-name = "activitystreams-derive"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "176bdecfca82b1980e4769e3d54b6a392284b724083e0bff68272e290f17458f"
-dependencies = [
- "proc-macro2 0.3.8",
- "quote 0.5.2",
- "syn 0.13.11",
 ]
 
 [[package]]
@@ -60,32 +35,6 @@ checksum = "6d014a4fb8828870b7b46bee6257b9a89d06188ae8d435381ba94f14c8c697d8"
 dependencies = [
  "iri-string",
  "serde 1.0.136",
-]
-
-[[package]]
-name = "activitystreams-traits"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670ef03168e704b0cae242e7a5d8b40506772b339687e01a3496fc4afe2e8542"
-dependencies = [
- "failure",
- "serde 1.0.136",
- "serde_json",
-]
-
-[[package]]
-name = "activitystreams-types"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff74c5765278614a009f97b9ec12f9a7c732bbcc5e0337fcfcab619b784860ec"
-dependencies = [
- "activitystreams-derive",
- "activitystreams-traits",
- "chrono",
- "mime 0.3.16",
- "serde 1.0.136",
- "serde_derive",
- "serde_json",
 ]
 
 [[package]]
@@ -3156,7 +3105,6 @@ dependencies = [
 name = "plume"
 version = "0.7.1"
 dependencies = [
- "activitypub",
  "activitystreams",
  "atom_syndication",
  "chrono",
@@ -3214,11 +3162,8 @@ dependencies = [
 name = "plume-common"
 version = "0.7.1"
 dependencies = [
- "activitypub",
  "activitystreams",
- "activitystreams-derive",
  "activitystreams-ext",
- "activitystreams-traits",
  "array_tool",
  "askama_escape",
  "assert-json-diff",
@@ -3271,7 +3216,6 @@ dependencies = [
 name = "plume-models"
 version = "0.7.1"
 dependencies = [
- "activitypub",
  "activitystreams",
  "ammonia",
  "assert-json-diff",
@@ -3399,15 +3343,6 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "0.3.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b06e2f335f48d24442b35a19df506a835fb3547bc3c06ef27340da9acf5cae7"
-dependencies = [
- "unicode-xid 0.1.0",
-]
-
-[[package]]
-name = "proc-macro2"
 version = "0.4.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
@@ -3467,15 +3402,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1eca14c727ad12702eb4b6bfb5a232287dcf8385cb8ca83a3eeaf6519c44c408"
 dependencies = [
  "proc-macro2 0.2.3",
-]
-
-[[package]]
-name = "quote"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9949cfe66888ffe1d53e6ec9d9f3b70714083854be20fd5e271b232a017401e8"
-dependencies = [
- "proc-macro2 0.3.8",
 ]
 
 [[package]]
@@ -4434,17 +4360,6 @@ checksum = "c97c05b8ebc34ddd6b967994d5c6e9852fa92f8b82b3858c39451f97346dcce5"
 dependencies = [
  "proc-macro2 0.2.3",
  "quote 0.4.2",
- "unicode-xid 0.1.0",
-]
-
-[[package]]
-name = "syn"
-version = "0.13.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14f9bf6292f3a61d2c716723fdb789a41bbe104168e6f496dc6497e531ea1b9b"
-dependencies = [
- "proc-macro2 0.3.8",
- "quote 0.5.2",
  "unicode-xid 0.1.0",
 ]
 
