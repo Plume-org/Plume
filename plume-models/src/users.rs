@@ -7,8 +7,7 @@ use crate::{
 use activitypub::Activity;
 use activitystreams::{
     activity::Delete,
-    actor::{ApActor, AsApActor},
-    actor::{ApActor as ApActor07, Endpoints, Person},
+    actor::{ApActor, AsApActor, Endpoints, Person},
     base::{AnyBase, Base},
     collection::{OrderedCollection as OrderedCollection07, OrderedCollectionPage},
     iri_string::types::IriString,
@@ -826,7 +825,7 @@ impl User {
     }
 
     pub fn to_activity07(&self, conn: &Connection) -> Result<CustomPerson> {
-        let mut actor = ApActor07::new(self.inbox_url.parse()?, Person::new());
+        let mut actor = ApActor::new(self.inbox_url.parse()?, Person::new());
         let ap_url = self.ap_url.parse::<IriString>()?;
         actor.set_id(ap_url.clone());
         actor.set_name(self.display_name.clone());
