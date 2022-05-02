@@ -15,9 +15,7 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{
-    broadcast, ActivityStream, ApRequest, LicensedArticle as LicensedArticle07,
-};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, LicensedArticle};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::*,
@@ -108,7 +106,7 @@ pub fn activity_details(
     slug: String,
     _ap: ApRequest,
     conn: DbConn,
-) -> Result<ActivityStream<LicensedArticle07>, Option<String>> {
+) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
     let blog = Blog::find_by_fqn(&conn, &blog).map_err(|_| None)?;
     let post = Post::find_by_slug(&conn, &slug, blog.id).map_err(|_| None)?;
     if post.published {
