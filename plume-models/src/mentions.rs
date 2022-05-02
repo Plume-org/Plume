@@ -69,16 +69,6 @@ impl Mention {
         Ok(mention)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
-        let user = self.get_mentioned(conn)?;
-        let mut mention = link::Mention::default();
-        mention.link_props.set_href_string(user.ap_url.clone())?;
-        mention
-            .link_props
-            .set_name_string(format!("@{}", user.fqn))?;
-        Ok(mention)
-    }
-
     pub fn to_activity07(&self, conn: &Connection) -> Result<link07::Mention> {
         let user = self.get_mentioned(conn)?;
         let mut mention = link07::Mention::new();
@@ -218,35 +208,6 @@ mod tests {
             let user = &users[0];
             let name = &user.username;
             let act = Mention::build_activity07(&conn, name)?;
-
-            let expected = json!({
-                "href": "https://plu.me/@/admin/",
-                "name": "@admin",
-                "type": "Mention",
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (posts, users, _blogs) = fill_database(&conn);
-            let post = &posts[0];
-            let user = &users[0];
-            let mention = Mention::insert(
-                &conn,
-                NewMention {
-                    mentioned_id: user.id,
-                    post_id: Some(post.id),
-                    comment_id: None,
-                },
-            )?;
-            let act = mention.to_activity(&conn)?;
 
             let expected = json!({
                 "href": "https://plu.me/@/admin/",
