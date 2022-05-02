@@ -4,7 +4,7 @@ use crate::{
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
-    activity::{Delete, Update},
+    activity::Delete,
     object::{Article, Image, Tombstone},
     CustomObject,
 };
@@ -507,24 +507,6 @@ impl Post {
         act.set_id(format!("{}/activity", self.ap_url).parse::<IriString>()?);
         act.set_many_tos(to);
         act.set_many_ccs(cc);
-        Ok(act)
-    }
-
-    pub fn update_activity(&self, conn: &Connection) -> Result<Update> {
-        let article = self.to_activity(conn)?;
-        let mut act = Update::default();
-        act.object_props.set_id_string(format!(
-            "{}/update-{}",
-            self.ap_url,
-            Utc::now().timestamp()
-        ))?;
-        act.object_props
-            .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
-        act.object_props
-            .set_cc_link_vec::<Id>(article.object.object_props.cc_link_vec()?)?;
-        act.update_props
-            .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
-        act.update_props.set_object_object(article)?;
         Ok(act)
     }
 
@@ -1430,72 +1412,6 @@ mod tests {
             });
 
             assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn update_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.update_activity(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "cc": [],
-                "id": "https://plu.me/~/BlogName/testing/update-",
-                "object": {
-                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
-                    "cc": [],
-                    "content": "Hello",
-                    "id": "https://plu.me/~/BlogName/testing",
-                    "license": "WTFPL",
-                    "name": "Testing",
-                    "published": format_datetime(&post.creation_date),
-                    "source": {
-                        "content": "Hello",
-                        "mediaType": "text/markdown"
-                    },
-                    "summary": "Bye",
-                    "tag": [
-                        {
-                            "href": "https://plu.me/@/user/",
-                            "name": "@user",
-                            "type": "Mention"
-                        }
-                    ],
-                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                    "type": "Article",
-                    "url": "https://plu.me/~/BlogName/testing"
-                },
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Update"
-            });
-            let actual = to_value(act)?;
-
-            let id = actual["id"].to_string();
-            let (id_pre, id_post) = id.rsplit_once("-").unwrap();
-            assert_eq!(post.ap_url, "https://plu.me/~/BlogName/testing");
-            assert_eq!(
-                id_pre,
-                to_value("\"https://plu.me/~/BlogName/testing/update")
-                    .unwrap()
-                    .as_str()
-                    .unwrap()
-            );
-            assert_eq!(id_post.len(), 11);
-            assert_eq!(
-                id_post.matches(char::is_numeric).collect::<String>().len(),
-                10
-            );
-            for (key, value) in actual.as_object().unwrap().into_iter() {
-                if key == "id" {
-                    continue;
-                }
-                assert_json_eq!(value, expected.get(key).unwrap());
-            }
 
             Ok(())
         });
