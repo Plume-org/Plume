@@ -7,7 +7,6 @@ use crate::{
 use activitypub::{
     activity::Delete,
     actor::Person,
-    collection::OrderedCollection,
     object::{Image, Tombstone},
     Activity, CustomObject, Endpoint,
 };
@@ -470,25 +469,8 @@ impl User {
             .load::<User>(conn)
             .map_err(Error::from)
     }
-    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        Ok(ActivityStream::new(self.outbox_collection(conn)?))
-    }
     pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection07>> {
         Ok(ActivityStream::new(self.outbox_collection07(conn)?))
-    }
-    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
-        let mut coll = OrderedCollection::default();
-        let first = &format!("{}?page=1", &self.outbox_url);
-        let last = &format!(
-            "{}?page={}",
-            &self.outbox_url,
-            self.get_activities_count(conn) / i64::from(ITEMS_PER_PAGE) + 1
-        );
-        coll.collection_props.set_first_link(Id::new(first))?;
-        coll.collection_props.set_last_link(Id::new(last))?;
-        coll.collection_props
-            .set_total_items_u64(self.get_activities_count(conn) as u64)?;
-        Ok(coll)
     }
     pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection07> {
         let mut coll = OrderedCollection07::new();
@@ -1762,28 +1744,6 @@ pub(crate) mod tests {
                 },
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Delete",
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn outbox_collection() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (_pages, users, _blogs) = fill_pages(&conn);
-            let user = &users[0];
-            let act = user.outbox_collection(&conn)?;
-
-            let expected = json!({
-                "first": "https://plu.me/@/admin/outbox?page=1",
-                "items": null,
-                "last": "https://plu.me/@/admin/outbox?page=5",
-                "totalItems": 51,
-                "type": "OrderedCollection",
             });
 
             assert_json_eq!(to_value(act)?, expected);

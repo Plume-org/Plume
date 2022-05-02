@@ -1,5 +1,7 @@
 use activitypub::collection::OrderedCollection;
-use activitystreams::collection::OrderedCollectionPage;
+use activitystreams::collection::{
+    OrderedCollection as OrderedCollection07, OrderedCollectionPage,
+};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::{uri::Uri, ContentType, Cookies},
@@ -527,9 +529,9 @@ pub fn create(
 }
 
 #[get("/@/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection07>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
-    user.outbox(&conn).ok()
+    user.outbox07(&conn).ok()
 }
 #[get("/@/<name>/outbox?<page>")]
 pub fn outbox_page(
