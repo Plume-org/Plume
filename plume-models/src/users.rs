@@ -4,16 +4,16 @@ use crate::{
     safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
     UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
-use activitypub::{actor::Person, object::Image, Activity, CustomObject, Endpoint};
+use activitypub::{actor::Person, Activity, CustomObject};
 use activitystreams::{
     activity::Delete,
     actor::{ApActor, AsApActor},
-    actor::{ApActor as ApActor07, Endpoints as Endpoints07, Person as Person07},
+    actor::{ApActor as ApActor07, Endpoints, Person as Person07},
     base::{AnyBase, Base},
     collection::{OrderedCollection as OrderedCollection07, OrderedCollectionPage},
     iri_string::types::IriString,
     markers::Activity as Activity07,
-    object::{kind::ImageType, AsObject as _, Image as Image07, Tombstone},
+    object::{kind::ImageType, AsObject as _, Image, Tombstone},
     prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
@@ -31,7 +31,7 @@ use plume_common::{
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
         ActivityStream, ApSignature, ApSignature07, CustomPerson as CustomPerson07, Id, IntoId,
-        PublicKey, PublicKey07, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
+        PublicKey07, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -282,7 +282,7 @@ impl User {
                     .next()
                     .and_then(|i| {
                         i.clone()
-                            .extend::<Image07, ImageType>() // FIXME: Don't clone()
+                            .extend::<Image, ImageType>() // FIXME: Don't clone()
                             .ok()?
                             .and_then(|url| Some(url.id_unchecked()?.to_string()))
                     })
@@ -827,53 +827,6 @@ impl User {
         }
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<CustomPerson> {
-        let mut actor = Person::default();
-        actor.object_props.set_id_string(self.ap_url.clone())?;
-        actor
-            .object_props
-            .set_name_string(self.display_name.clone())?;
-        actor
-            .object_props
-            .set_summary_string(self.summary_html.get().clone())?;
-        actor.object_props.set_url_string(self.ap_url.clone())?;
-        actor
-            .ap_actor_props
-            .set_inbox_string(self.inbox_url.clone())?;
-        actor
-            .ap_actor_props
-            .set_outbox_string(self.outbox_url.clone())?;
-        actor
-            .ap_actor_props
-            .set_preferred_username_string(self.username.clone())?;
-        actor
-            .ap_actor_props
-            .set_followers_string(self.followers_endpoint.clone())?;
-
-        if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
-            let mut endpoints = Endpoint::default();
-            endpoints.set_shared_inbox_string(shared_inbox_url)?;
-            actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
-        }
-
-        let mut public_key = PublicKey::default();
-        public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
-        public_key.set_owner_string(self.ap_url.clone())?;
-        public_key.set_public_key_pem_string(self.public_key.clone())?;
-        let mut ap_signature = ApSignature::default();
-        ap_signature.set_public_key_publickey(public_key)?;
-
-        if let Some(avatar_id) = self.avatar_id {
-            let mut avatar = Image::default();
-            avatar
-                .object_props
-                .set_url_string(Media::get(conn, avatar_id)?.url()?)?;
-            actor.object_props.set_icon_object(avatar)?;
-        }
-
-        Ok(CustomPerson::new(actor, ap_signature))
-    }
-
     pub fn to_activity07(&self, conn: &Connection) -> Result<CustomPerson07> {
         let mut actor = ApActor07::new(self.inbox_url.parse()?, Person07::new());
         let ap_url = self.ap_url.parse::<IriString>()?;
@@ -887,9 +840,9 @@ impl User {
         actor.set_followers(self.followers_endpoint.parse()?);
 
         if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
-            let endpoints = Endpoints07 {
+            let endpoints = Endpoints {
                 shared_inbox: Some(shared_inbox_url.parse::<IriString>()?),
-                ..Endpoints07::default()
+                ..Endpoints::default()
             };
             actor.set_endpoints(endpoints);
         }
@@ -904,7 +857,7 @@ impl User {
         };
 
         if let Some(avatar_id) = self.avatar_id {
-            let mut avatar = Image07::new();
+            let mut avatar = Image::new();
             avatar.set_url(Media::get(conn, avatar_id)?.url()?.parse::<IriString>()?);
             actor.set_icon(avatar.into_any_base()?);
         }
@@ -1545,71 +1498,6 @@ pub(crate) mod tests {
         });
     }
 
-    #[test]
-    fn to_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let users = fill_database(&conn);
-            let user = &users[0];
-            let act = user.to_activity(&conn)?;
-
-            let expected = json!({
-                "endpoints": {
-                    "sharedInbox": "https://plu.me/inbox"
-                },
-                "followers": "https://plu.me/@/admin/followers",
-                "following": null,
-                "id": "https://plu.me/@/admin/",
-                "inbox": "https://plu.me/@/admin/inbox",
-                "liked": null,
-                "name": "The admin",
-                "outbox": "https://plu.me/@/admin/outbox",
-                "preferredUsername": "admin",
-                "publicKey": {
-                    "id": "https://plu.me/@/admin/#main-key",
-                    "owner": "https://plu.me/@/admin/",
-                    "publicKeyPem": user.public_key,
-                },
-                "summary": "<p dir=\"auto\">Hello there, I’m the admin</p>\n",
-                "type": "Person",
-                "url": "https://plu.me/@/admin/"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            let other = &users[2];
-            let other_act = other.to_activity(&conn)?;
-            let expected_other = json!({
-                "endpoints": {
-                    "sharedInbox": "https://plu.me/inbox"
-                },
-                "followers": "https://plu.me/@/other/followers",
-                "following": null,
-                "icon": {
-                    "url": "https://plu.me/static/media/example.png",
-                    "type": "Image",
-                },
-                "id": "https://plu.me/@/other/",
-                "inbox": "https://plu.me/@/other/inbox",
-                "liked": null,
-                "name": "Another user",
-                "outbox": "https://plu.me/@/other/outbox",
-                "preferredUsername": "other",
-                "publicKey": {
-                    "id": "https://plu.me/@/other/#main-key",
-                    "owner": "https://plu.me/@/other/",
-                    "publicKeyPem": other.public_key,
-                },
-                "summary": "<p dir=\"auto\">Hello there, I’m someone else</p>\n",
-                "type": "Person",
-                "url": "https://plu.me/@/other/"
-            });
-
-            assert_json_eq!(to_value(other_act)?, expected_other);
-
-            Ok(())
-        });
-    }
     #[test]
     fn to_activity07() {
         let conn = db();

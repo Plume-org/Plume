@@ -18,7 +18,9 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{broadcast, broadcast07, ActivityStream, ApRequest, Id};
+use plume_common::activity_pub::{
+    broadcast, broadcast07, ActivityStream, ApRequest, CustomPerson, Id,
+};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::Blog,
@@ -271,7 +273,7 @@ pub fn activity_details(
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomPerson>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
-    Some(ActivityStream::new(user.to_activity(&conn).ok()?))
+    Some(ActivityStream::new(user.to_activity07(&conn).ok()?))
 }
 
 #[get("/users/new")]
