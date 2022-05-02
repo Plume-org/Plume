@@ -549,14 +549,11 @@ mod tests {
     use crate::activity_pub::sign::{
         gen_keypair, Error as SignError, Result as SignResult, Signer,
     };
-    use activitypub::{activity::*, actor::Person, object::Note};
     use activitystreams::{
-        activity::{
-            Announce as Announce07, Create as Create07, Delete as Delete07, Like as Like07,
-        },
-        actor::Person as Person07,
+        activity::{Announce, Create, Delete, Like},
+        actor::Person,
         base::Base,
-        object::Note as Note07,
+        object::Note,
         prelude::*,
     };
     use once_cell::sync::Lazy;
@@ -604,13 +601,13 @@ mod tests {
     struct MyActor;
     impl FromId<()> for MyActor {
         type Error = ();
-        type Object = Person07;
+        type Object = Person;
 
         fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
-        fn from_activity(_: &(), _obj: Person07) -> Result<Self, Self::Error> {
+        fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
@@ -632,13 +629,13 @@ mod tests {
     struct MyObject07;
     impl FromId<()> for MyObject07 {
         type Error = ();
-        type Object = Note07;
+        type Object = Note;
 
         fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
-        fn from_activity(_: &(), _obj: Note07) -> Result<Self, Self::Error> {
+        fn from_activity(_: &(), _obj: Note) -> Result<Self, Self::Error> {
             Ok(Self)
         }
 
@@ -646,7 +643,7 @@ mod tests {
             &*MY_SIGNER
         }
     }
-    impl AsObject<MyActor, Create07, &()> for MyObject07 {
+    impl AsObject<MyActor, Create, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -656,7 +653,7 @@ mod tests {
         }
     }
 
-    impl AsObject<MyActor, Like07, &()> for MyObject07 {
+    impl AsObject<MyActor, Like, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -666,7 +663,7 @@ mod tests {
         }
     }
 
-    impl AsObject<MyActor, Delete07, &()> for MyObject07 {
+    impl AsObject<MyActor, Delete, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -676,7 +673,7 @@ mod tests {
         }
     }
 
-    impl AsObject<MyActor, Announce07, &()> for MyObject07 {
+    impl AsObject<MyActor, Announce, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -686,31 +683,12 @@ mod tests {
         }
     }
 
-    fn build_create() -> Create {
-        let mut act = Create::default();
-        act.object_props
-            .set_id_string(String::from("https://test.ap/activity"))
-            .unwrap();
-        let mut person = Person::default();
-        person
-            .object_props
-            .set_id_string(String::from("https://test.ap/actor"))
-            .unwrap();
-        act.create_props.set_actor_object(person).unwrap();
-        let mut note = Note::default();
-        note.object_props
-            .set_id_string(String::from("https://test.ap/note"))
-            .unwrap();
-        act.create_props.set_object_object(note).unwrap();
-        act
-    }
-
-    fn build_create07() -> Create07 {
-        let mut person = Person07::new();
+    fn build_create07() -> Create {
+        let mut person = Person::new();
         person.set_id("https://test.ap/actor".parse().unwrap());
-        let mut note = Note07::new();
+        let mut note = Note::new();
         note.set_id("https://test.ap/note".parse().unwrap());
-        let mut act = Create07::new(
+        let mut act = Create::new(
             Base::retract(person).unwrap().into_generic().unwrap(),
             Base::retract(note).unwrap().into_generic().unwrap(),
         );
@@ -722,19 +700,19 @@ mod tests {
     fn test_inbox_basic07() {
         let act = serde_json::to_value(build_create07()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Create07, MyObject07>(None)
+            .with::<MyActor, Create, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
 
     #[test]
     fn test_inbox_multi_handlers07() {
-        let act = serde_json::to_value(build_create()).unwrap();
+        let act = serde_json::to_value(build_create07()).unwrap();
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce07, MyObject07>(None)
-            .with::<MyActor, Delete07, MyObject07>(None)
-            .with::<MyActor, Create07, MyObject07>(None)
-            .with::<MyActor, Like07, MyObject07>(None)
+            .with::<MyActor, Announce, MyObject07>(None)
+            .with::<MyActor, Delete, MyObject07>(None)
+            .with::<MyActor, Create, MyObject07>(None)
+            .with::<MyActor, Like, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
@@ -744,8 +722,8 @@ mod tests {
         let act = serde_json::to_value(build_create07()).unwrap();
         // Create is not handled by this inbox
         let res: Result<(), ()> = Inbox::handle(&(), act)
-            .with::<MyActor, Announce07, MyObject07>(None)
-            .with::<MyActor, Like07, MyObject07>(None)
+            .with::<MyActor, Announce, MyObject07>(None)
+            .with::<MyActor, Like, MyObject07>(None)
             .done();
         assert!(res.is_err());
     }
@@ -763,7 +741,7 @@ mod tests {
 
     impl FromId<()> for FailingActor {
         type Error = ();
-        type Object = Person07;
+        type Object = Person;
 
         fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
             Err(())
@@ -778,7 +756,7 @@ mod tests {
         }
     }
 
-    impl AsObject<FailingActor, Create07, &()> for MyObject07 {
+    impl AsObject<FailingActor, Create, &()> for MyObject07 {
         type Error = ();
         type Output = ();
 
@@ -798,13 +776,13 @@ mod tests {
         let act = serde_json::to_value(build_create07()).unwrap();
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create07, MyObject07>(None)
+            .with::<FailingActor, Create, MyObject07>(None)
             .done();
         assert!(res.is_err());
 
         let res: Result<(), ()> = Inbox::handle(&(), act.clone())
-            .with::<FailingActor, Create07, MyObject07>(None)
-            .with::<MyActor, Create07, MyObject07>(None)
+            .with::<FailingActor, Create, MyObject07>(None)
+            .with::<MyActor, Create, MyObject07>(None)
             .done();
         assert!(res.is_ok());
     }
