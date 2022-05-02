@@ -3,7 +3,7 @@ use crate::{
     users::User, Connection, Error, Result, CONFIG,
 };
 use activitystreams::{
-    activity::{ActorAndObjectRef, Like as Like07, Undo},
+    activity::{ActorAndObjectRef, Like as LikeAct, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -39,8 +39,8 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn to_activity07(&self, conn: &Connection) -> Result<Like07> {
-        let mut act = Like07::new(
+    pub fn to_activity07(&self, conn: &Connection) -> Result<LikeAct> {
+        let mut act = LikeAct::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
         );
@@ -85,7 +85,7 @@ impl Like {
     }
 }
 
-impl AsObject<User, Like07, &DbConn> for Post {
+impl AsObject<User, LikeAct, &DbConn> for Post {
     type Error = Error;
     type Output = Like;
 
@@ -107,13 +107,13 @@ impl AsObject<User, Like07, &DbConn> for Post {
 
 impl FromId<DbConn> for Like {
     type Error = Error;
-    type Object = Like07;
+    type Object = LikeAct;
 
     fn from_db07(conn: &DbConn, id: &str) -> Result<Self> {
         Like::find_by_ap_url(conn, id)
     }
 
-    fn from_activity07(conn: &DbConn, act: Like07) -> Result<Self> {
+    fn from_activity07(conn: &DbConn, act: LikeAct) -> Result<Self> {
         let res = Like::insert(
             conn,
             NewLike {
