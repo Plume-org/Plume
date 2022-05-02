@@ -308,7 +308,7 @@ pub fn update(
             post.update(&conn).expect("post::update: update error");
 
             if post.published {
-                post.update_mentions07(
+                post.update_mentions(
                     &conn,
                     mentions
                         .into_iter()
@@ -327,7 +327,7 @@ pub fn update(
                 .into_iter()
                 .filter_map(|t| Tag::build_activity(t.to_string()).ok())
                 .collect::<Vec<_>>();
-            post.update_tags07(&conn, tags)
+            post.update_tags(&conn, tags)
                 .expect("post::update: tags error");
 
             let hashtags = hashtags
@@ -336,7 +336,7 @@ pub fn update(
                 .into_iter()
                 .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
-            post.update_hashtags07(&conn, hashtags)
+            post.update_hashtags(&conn, hashtags)
                 .expect("post::update: hashtags error");
 
             if post.published {
@@ -606,7 +606,7 @@ pub fn delete(
         }
 
         let dest = User::one_by_instance(&conn)?;
-        let delete_activity = post.build_delete07(&conn)?;
+        let delete_activity = post.build_delete(&conn)?;
         inbox(
             &conn,
             serde_json::to_value(&delete_activity).map_err(Error::from)?,

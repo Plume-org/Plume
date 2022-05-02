@@ -221,10 +221,10 @@ impl Blog {
         Ok(CustomGroup::new(blog, ap_signature, source))
     }
 
-    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        self.outbox_collection07(conn).map(ActivityStream::new)
+    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        self.outbox_collection(conn).map(ActivityStream::new)
     }
-    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection> {
+    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
         let acts = self.get_activities(conn);
         let acts = acts
             .iter()
@@ -245,15 +245,15 @@ impl Blog {
         );
         Ok(coll)
     }
-    pub fn outbox_page07(
+    pub fn outbox_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
-        self.outbox_collection_page07(conn, (min, max))
+        self.outbox_collection_page(conn, (min, max))
             .map(ActivityStream::new)
     }
-    pub fn outbox_collection_page07(
+    pub fn outbox_collection_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
@@ -917,7 +917,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn self_federation07() {
+    fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let (users, mut blogs) = fill_database(&conn);
@@ -1019,12 +1019,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn outbox_collection07() {
+    fn outbox_collection() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
             let (_users, blogs) = fill_database(conn);
             let blog = &blogs[0];
-            let act = blog.outbox_collection07(conn)?;
+            let act = blog.outbox_collection(conn)?;
 
             let expected = json!({
                 "items": [],
@@ -1041,12 +1041,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn outbox_collection_page07() {
+    fn outbox_collection_page() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
             let (_users, blogs) = fill_database(conn);
             let blog = &blogs[0];
-            let act = blog.outbox_collection_page07(conn, (33, 36))?;
+            let act = blog.outbox_collection_page(conn, (33, 36))?;
 
             let expected = json!({
                 "next": "https://plu.me/~/BlogName/outbox?page=3",

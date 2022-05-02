@@ -97,7 +97,7 @@ impl Reshare {
         Ok(())
     }
 
-    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo> {
+    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
         let mut act = Undo::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             AnyBase::from_extended(self.to_activity(conn)?)?,
@@ -247,14 +247,14 @@ mod test {
     }
 
     #[test]
-    fn build_undo07() {
+    fn build_undo() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let user = &post.get_authors(&conn)?[0];
             let reshare = Reshare::insert(&*conn, NewReshare::new(post, user))?;
-            let act = reshare.build_undo07(&*conn)?;
+            let act = reshare.build_undo(&*conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",

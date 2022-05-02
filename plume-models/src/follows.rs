@@ -84,7 +84,7 @@ impl Follow {
 
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
-    pub fn accept_follow07<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
+    pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
         conn: &Connection,
         from: &B,
         target: &A,
@@ -105,7 +105,7 @@ impl Follow {
         )?;
         res.notify(conn)?;
 
-        let accept = res.build_accept07(from, target, follow)?;
+        let accept = res.build_accept(from, target, follow)?;
         broadcast(
             &*target,
             accept,
@@ -115,7 +115,7 @@ impl Follow {
         Ok(res)
     }
 
-    pub fn build_accept07<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
+    pub fn build_accept<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
         &self,
         from: &B,
         target: &A,
@@ -137,7 +137,7 @@ impl Follow {
         Ok(accept)
     }
 
-    pub fn build_undo07(&self, conn: &Connection) -> Result<Undo> {
+    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
         let mut undo = Undo::new(
             User::get(conn, self.follower_id)?
                 .ap_url
@@ -164,7 +164,7 @@ impl AsObject<User, FollowAct, &DbConn> for User {
         let mut follow =
             FollowAct::new(id.parse::<IriString>()?, actor.ap_url.parse::<IriString>()?);
         follow.set_id(id.parse::<IriString>()?);
-        Follow::accept_follow07(conn, &actor, &self, follow, actor.id, self.id)
+        Follow::accept_follow(conn, &actor, &self, follow, actor.id, self.id)
     }
 }
 
@@ -200,7 +200,7 @@ impl FromId<DbConn> for Follow {
             CONFIG.proxy(),
         )
         .map_err(|(_, e)| e)?;
-        Follow::accept_follow07(conn, &actor, &target, follow, actor.id, target.id)
+        Follow::accept_follow(conn, &actor, &target, follow, actor.id, target.id)
     }
 
     fn get_sender() -> &'static dyn Signer {
@@ -319,11 +319,11 @@ mod tests {
     }
 
     #[test]
-    fn build_accept07() {
+    fn build_accept() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (follow, following, follower, _users) = prepare_activity(&conn);
-            let act = follow.build_accept07(&follower, &following, follow.to_activity(&conn)?)?;
+            let act = follow.build_accept(&follower, &following, follow.to_activity(&conn)?)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/user/",
@@ -348,11 +348,11 @@ mod tests {
     }
 
     #[test]
-    fn build_undo07() {
+    fn build_undo() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (follow, _following, _follower, _users) = prepare_activity(&conn);
-            let act = follow.build_undo07(&conn)?;
+            let act = follow.build_undo(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/other/",

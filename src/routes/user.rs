@@ -103,7 +103,7 @@ pub fn follow(
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let target = User::find_by_fqn(&conn, &name)?;
     let message = if let Ok(follow) = follows::Follow::find(&conn, user.id, target.id) {
-        let delete_act = follow.build_undo07(&conn)?;
+        let delete_act = follow.build_undo(&conn)?;
         local_inbox(
             &conn,
             serde_json::to_value(&delete_act).map_err(Error::from)?,
@@ -531,7 +531,7 @@ pub fn create(
 #[get("/@/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection07>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
-    user.outbox07(&conn).ok()
+    user.outbox(&conn).ok()
 }
 #[get("/@/<name>/outbox?<page>")]
 pub fn outbox_page(
@@ -540,7 +540,7 @@ pub fn outbox_page(
     conn: DbConn,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
     let user = User::find_by_fqn(&conn, &name).ok()?;
-    user.outbox_page07(&conn, page.limits()).ok()
+    user.outbox_page(&conn, page.limits()).ok()
 }
 #[post("/@/<name>/inbox", data = "<data>")]
 pub fn inbox(

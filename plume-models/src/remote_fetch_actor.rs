@@ -68,7 +68,7 @@ impl ActorFactoryArgs<DbPool> for RemoteFetchActor {
 }
 
 fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
-    let create_acts = user.fetch_outbox07::<Create>();
+    let create_acts = user.fetch_outbox::<Create>();
     match create_acts {
         Ok(create_acts) => {
             for create_act in create_acts {

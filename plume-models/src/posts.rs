@@ -445,7 +445,7 @@ impl Post {
         Ok(act)
     }
 
-    pub fn update_mentions07(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
+    pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
         let mentions = mentions
             .into_iter()
             .map(|m| {
@@ -483,7 +483,7 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_tags07(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
+    pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
@@ -520,7 +520,7 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_hashtags07(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
+    pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
@@ -568,7 +568,7 @@ impl Post {
             .and_then(|c| c.url().ok())
     }
 
-    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete> {
+    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
         let mut tombstone = Tombstone::new();
         tombstone.set_id(self.ap_url.parse()?);
 
@@ -968,9 +968,9 @@ impl AsObject<User, Update, &DbConn> for PostUpdate {
                     })
                     .ok();
             }
-            post.update_mentions07(conn, mentions)?;
-            post.update_tags07(conn, tags)?;
-            post.update_hashtags07(conn, hashtags)?;
+            post.update_mentions(conn, mentions)?;
+            post.update_tags(conn, tags)?;
+            post.update_hashtags(conn, hashtags)?;
         }
 
         post.update(conn)?;
@@ -1033,7 +1033,7 @@ mod tests {
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
     #[test]
-    fn self_federation07() {
+    fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let (_, users, blogs) = fill_database(&conn);
@@ -1230,11 +1230,11 @@ mod tests {
     }
 
     #[test]
-    fn build_delete07() {
+    fn build_delete() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.build_delete07(&conn)?;
+            let act = post.build_delete(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",

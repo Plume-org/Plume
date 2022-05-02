@@ -196,7 +196,7 @@ impl Comment {
         Ok(())
     }
 
-    pub fn build_delete07(&self, conn: &Connection) -> Result<Delete> {
+    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
         let mut tombstone = Tombstone::new();
         tombstone.set_id(
             self.ap_url
@@ -454,7 +454,7 @@ mod tests {
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
     #[test]
-    fn self_federation07() {
+    fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
             let (original_comm, posts, users, _blogs) = prepare_activity(&conn);
@@ -523,7 +523,7 @@ mod tests {
 
             inbox(
                 &conn,
-                serde_json::to_value(original_comm.build_delete07(&conn).unwrap()).unwrap(),
+                serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
             )
             .unwrap();
 
@@ -576,11 +576,11 @@ mod tests {
     }
 
     #[test]
-    fn build_delete07() {
+    fn build_delete() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (comment, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = comment.build_delete07(&conn)?;
+            let act = comment.build_delete(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",

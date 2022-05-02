@@ -460,10 +460,10 @@ impl User {
             .load::<User>(conn)
             .map_err(Error::from)
     }
-    pub fn outbox07(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        Ok(ActivityStream::new(self.outbox_collection07(conn)?))
+    pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
+        Ok(ActivityStream::new(self.outbox_collection(conn)?))
     }
-    pub fn outbox_collection07(&self, conn: &Connection) -> Result<OrderedCollection> {
+    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
         let mut coll = OrderedCollection::new();
         let first = &format!("{}?page=1", &self.outbox_url);
         let last = &format!(
@@ -476,16 +476,16 @@ impl User {
         coll.set_total_items(self.get_activities_count(conn) as u64);
         Ok(coll)
     }
-    pub fn outbox_page07(
+    pub fn outbox_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
         Ok(ActivityStream::new(
-            self.outbox_collection_page07(conn, (min, max))?,
+            self.outbox_collection_page(conn, (min, max))?,
         ))
     }
-    pub fn outbox_collection_page07(
+    pub fn outbox_collection_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
@@ -513,7 +513,7 @@ impl User {
         Ok(coll)
     }
 
-    pub fn fetch_outbox_page07<T: Activity + serde::de::DeserializeOwned>(
+    pub fn fetch_outbox_page<T: Activity + serde::de::DeserializeOwned>(
         &self,
         url: &str,
     ) -> Result<(Vec<T>, Option<String>)> {
@@ -531,7 +531,7 @@ impl User {
         Ok((items, next))
     }
 
-    pub fn fetch_outbox07<T: Activity + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
+    pub fn fetch_outbox<T: Activity + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
         let mut res = get(
             &self.outbox_url[..],
             Self::get_sender(),
@@ -542,7 +542,7 @@ impl User {
         if let Some(first) = json.get("first") {
             let mut items: Vec<T> = Vec::new();
             let mut next = first.as_str().unwrap().to_owned();
-            while let Ok((mut page, nxt)) = self.fetch_outbox_page07(&next) {
+            while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
                 if page.is_empty() {
                     break;
                 }
@@ -1421,7 +1421,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn self_federation07() {
+    fn self_federation() {
         let conn = db();
         conn.test_transaction::<_, (), _>(|| {
             let users = fill_database(&conn);
@@ -1535,12 +1535,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn outbox_collection07() {
+    fn outbox_collection() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let (_pages, users, _blogs) = fill_pages(&conn);
             let user = &users[0];
-            let act = user.outbox_collection07(&conn)?;
+            let act = user.outbox_collection(&conn)?;
 
             let expected = json!({
                 "first": "https://plu.me/@/admin/outbox?page=1",
@@ -1556,12 +1556,12 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn outbox_collection_page07() {
+    fn outbox_collection_page() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
             let users = fill_database(&conn);
             let user = &users[0];
-            let act = user.outbox_collection_page07(&conn, (33, 36))?;
+            let act = user.outbox_collection_page(&conn, (33, 36))?;
 
             let expected = json!({
                 "items": [],

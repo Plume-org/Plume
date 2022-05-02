@@ -33,7 +33,7 @@ pub fn create(
             .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
         let like = likes::Like::find_by_user_on_post(&conn, user.id, post.id)?;
-        let delete_act = like.build_undo07(&conn)?;
+        let delete_act = like.build_undo(&conn)?;
         inbox(
             &conn,
             serde_json::to_value(&delete_act).map_err(Error::from)?,

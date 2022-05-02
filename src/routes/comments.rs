@@ -150,7 +150,7 @@ pub fn delete(
     if let Ok(comment) = Comment::get(&conn, id) {
         if comment.author_id == user.id {
             let dest = User::one_by_instance(&conn)?;
-            let delete_activity = comment.build_delete07(&conn)?;
+            let delete_activity = comment.build_delete(&conn)?;
             inbox(
                 &conn,
                 serde_json::to_value(&delete_activity).map_err(Error::from)?,

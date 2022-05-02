@@ -349,7 +349,7 @@ pub fn update(
 #[get("/~/<name>/outbox")]
 pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
     let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    blog.outbox07(&conn).ok()
+    blog.outbox(&conn).ok()
 }
 #[allow(unused_variables)]
 #[get("/~/<name>/outbox?<page>")]
@@ -359,7 +359,7 @@ pub fn outbox_page(
     conn: DbConn,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
     let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    blog.outbox_page07(&conn, page.limits()).ok()
+    blog.outbox_page(&conn, page.limits()).ok()
 }
 #[get("/~/<name>/atom.xml")]
 pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
