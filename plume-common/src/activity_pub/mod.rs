@@ -293,26 +293,6 @@ pub trait IntoId {
 
 impl Link for Id {}
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
-#[serde(rename_all = "camelCase")]
-pub struct ApSignature {
-    #[activitystreams(concrete(PublicKey), functional)]
-    pub public_key: Option<serde_json::Value>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize, Properties)]
-#[serde(rename_all = "camelCase")]
-pub struct PublicKey {
-    #[activitystreams(concrete(String), functional)]
-    pub id: Option<serde_json::Value>,
-
-    #[activitystreams(concrete(String), functional)]
-    pub owner: Option<serde_json::Value>,
-
-    #[activitystreams(concrete(String), functional)]
-    pub public_key_pem: Option<serde_json::Value>,
-}
-
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ApSignature07 {
