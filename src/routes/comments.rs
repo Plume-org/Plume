@@ -11,7 +11,7 @@ use std::time::Duration;
 use crate::routes::errors::ErrorPage;
 use crate::template_utils::IntoContext;
 use plume_common::{
-    activity_pub::{broadcast, ActivityStream, ApRequest},
+    activity_pub::{broadcast, broadcast07, ActivityStream, ApRequest},
     utils,
 };
 use plume_models::{
@@ -66,7 +66,7 @@ pub fn create(
             )
             .expect("comments::create: insert error");
             let new_comment = comm
-                .create_activity(&conn)
+                .create_activity07(&conn)
                 .expect("comments::create: activity error");
 
             // save mentions
@@ -88,7 +88,7 @@ pub fn create(
             let dest = User::one_by_instance(&conn).expect("comments::create: dest error");
             let user_clone = user.clone();
             rockets.worker.execute(move || {
-                broadcast(&user_clone, new_comment, dest, CONFIG.proxy().cloned())
+                broadcast07(&user_clone, new_comment, dest, CONFIG.proxy().cloned())
             });
 
             Flash::success(
