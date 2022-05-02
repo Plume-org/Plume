@@ -4,7 +4,7 @@ use crate::{
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitypub::{
-    activity::{Create, Delete, Update},
+    activity::{Delete, Update},
     object::{Article, Image, Tombstone},
     CustomObject,
 };
@@ -494,21 +494,6 @@ impl Post {
             license: Some(self.license.clone()),
         };
         Ok(LicensedArticle07::new(article, license, source))
-    }
-
-    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
-        let article = self.to_activity(conn)?;
-        let mut act = Create::default();
-        act.object_props
-            .set_id_string(format!("{}/activity", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
-        act.object_props
-            .set_cc_link_vec::<Id>(article.object.object_props.cc_link_vec()?)?;
-        act.create_props
-            .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
-        act.create_props.set_object_object(article)?;
-        Ok(act)
     }
 
     pub fn create_activity07(&self, conn: &Connection) -> Result<Create07> {
@@ -1239,56 +1224,6 @@ mod tests {
     // creates a post, get it's Create activity, delete the post,
     // "send" the Create to the inbox, and check it works
     #[test]
-    fn self_federation() {
-        let conn = &db();
-        conn.test_transaction::<_, (), _>(|| {
-            let (_, users, blogs) = fill_database(&conn);
-            let post = Post::insert(
-                &conn,
-                NewPost {
-                    blog_id: blogs[0].id,
-                    slug: "yo".into(),
-                    title: "Yo".into(),
-                    content: SafeString::new("Hello"),
-                    published: true,
-                    license: "WTFPL".to_string(),
-                    creation_date: None,
-                    ap_url: String::new(), // automatically updated when inserting
-                    subtitle: "Testing".into(),
-                    source: "Hello".into(),
-                    cover_id: None,
-                },
-            )
-            .unwrap();
-            PostAuthor::insert(
-                &conn,
-                NewPostAuthor {
-                    post_id: post.id,
-                    author_id: users[0].id,
-                },
-            )
-            .unwrap();
-            let create = post.create_activity(&conn).unwrap();
-            post.delete(&conn).unwrap();
-
-            match inbox(&conn, serde_json::to_value(create).unwrap()).unwrap() {
-                InboxResult::Post(p) => {
-                    assert!(p.is_author(&conn, users[0].id).unwrap());
-                    assert_eq!(p.source, "Hello".to_owned());
-                    assert_eq!(p.blog_id, blogs[0].id);
-                    assert_eq!(p.content, SafeString::new("Hello"));
-                    assert_eq!(p.subtitle, "Testing".to_owned());
-                    assert_eq!(p.title, "Yo".to_owned());
-                }
-                _ => panic!("Unexpected result"),
-            };
-            Ok(())
-        });
-    }
-
-    // creates a post, get it's Create activity, delete the post,
-    // "send" the Create to the inbox, and check it works
-    #[test]
     fn self_federation07() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
@@ -1447,51 +1382,6 @@ mod tests {
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Article",
                 "url": "https://plu.me/~/BlogName/testing"
-            });
-
-            assert_json_eq!(to_value(act)?, expected);
-
-            Ok(())
-        });
-    }
-
-    #[test]
-    fn create_activity() {
-        let conn = db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
-            let act = post.create_activity(&conn)?;
-
-            let expected = json!({
-                "actor": "https://plu.me/@/admin/",
-                "cc": [],
-                "id": "https://plu.me/~/BlogName/testing/activity",
-                "object": {
-                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
-                    "cc": [],
-                    "content": "Hello",
-                    "id": "https://plu.me/~/BlogName/testing",
-                    "license": "WTFPL",
-                    "name": "Testing",
-                    "published": format_datetime(&post.creation_date),
-                    "source": {
-                        "content": "Hello",
-                        "mediaType": "text/markdown"
-                    },
-                    "summary": "Bye",
-                    "tag": [
-                        {
-                            "href": "https://plu.me/@/user/",
-                            "name": "@user",
-                            "type": "Mention"
-                        }
-                    ],
-                    "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                    "type": "Article",
-                    "url": "https://plu.me/~/BlogName/testing"
-                },
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "type": "Create"
             });
 
             assert_json_eq!(to_value(act)?, expected);

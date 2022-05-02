@@ -74,7 +74,7 @@ impl<T> ActivityStream<T> {
     }
 }
 
-impl<'r, O: Object> Responder<'r> for ActivityStream<O> {
+impl<'r, O: serde::Serialize> Responder<'r> for ActivityStream<O> {
     fn respond_to(self, request: &Request<'_>) -> Result<Response<'r>, Status> {
         let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();

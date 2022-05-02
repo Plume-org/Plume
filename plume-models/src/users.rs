@@ -724,7 +724,7 @@ impl User {
         Ok(posts
             .into_iter()
             .filter_map(|p| {
-                p.create_activity(conn)
+                p.create_activity07(conn)
                     .ok()
                     .and_then(|a| serde_json::to_value(a).ok())
             })

@@ -15,7 +15,9 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
+use plume_common::activity_pub::{
+    broadcast, broadcast07, ActivityStream, ApRequest, LicensedArticle as LicensedArticle07,
+};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::*,
@@ -106,12 +108,12 @@ pub fn activity_details(
     slug: String,
     _ap: ApRequest,
     conn: DbConn,
-) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
+) -> Result<ActivityStream<LicensedArticle07>, Option<String>> {
     let blog = Blog::find_by_fqn(&conn, &blog).map_err(|_| None)?;
     let post = Post::find_by_slug(&conn, &slug, blog.id).map_err(|_| None)?;
     if post.published {
         Ok(ActivityStream::new(
-            post.to_activity(&conn)
+            post.to_activity07(&conn)
                 .map_err(|_| String::from("Post serialization error"))?,
         ))
     } else {
@@ -340,22 +342,22 @@ pub fn update(
             if post.published {
                 if newly_published {
                     let act = post
-                        .create_activity(&conn)
+                        .create_activity07(&conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&conn).expect("post::update: dest error");
                     rockets
                         .worker
-                        .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
+                        .execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
 
                     Timeline::add_to_all_timelines(&conn, &post, Kind::Original).ok();
                 } else {
                     let act = post
-                        .update_activity(&conn)
+                        .update_activity07(&conn)
                         .expect("post::update: act error");
                     let dest = User::one_by_instance(&conn).expect("posts::update: dest error");
                     rockets
                         .worker
-                        .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
+                        .execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
                 }
             }
 
@@ -539,11 +541,11 @@ pub fn create(
             }
 
             let act = post
-                .create_activity(&conn)
+                .create_activity07(&conn)
                 .expect("posts::create: activity error");
             let dest = User::one_by_instance(&conn).expect("posts::create: dest error");
             let worker = &rockets.worker;
-            worker.execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
+            worker.execute(move || broadcast07(&user, act, dest, CONFIG.proxy().cloned()));
 
             Timeline::add_to_all_timelines(&conn, &post, Kind::Original)?;
         }
