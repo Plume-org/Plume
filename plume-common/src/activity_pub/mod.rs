@@ -1,4 +1,3 @@
-use activitypub::Link;
 use activitystreams::{
     actor::{ApActor, Group, Person},
     base::{AnyBase, Base, Extends},
@@ -214,8 +213,6 @@ impl AsRef<str> for Id {
 pub trait IntoId {
     fn into_id(self) -> Id;
 }
-
-impl Link for Id {}
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
