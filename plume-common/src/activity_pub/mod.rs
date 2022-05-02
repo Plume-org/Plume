@@ -1,11 +1,11 @@
-use activitypub::{Link, Object};
+use activitypub::Link;
 use activitystreams::{
     actor::{ApActor, Group, Person},
     base::{AnyBase, Base, Extends},
     iri_string::types::IriString,
     kind,
     markers::{self, Activity},
-    object::{ApObject, Article, Object as Object07},
+    object::{ApObject, Article, Object},
     primitives::{AnyString, OneOrMany},
     unparsed::UnparsedMutExt,
 };
@@ -287,7 +287,7 @@ pub struct Hashtag {
     pub name: Option<AnyString>,
 
     #[serde(flatten)]
-    inner: Object07<HashtagType>,
+    inner: Object<HashtagType>,
 }
 
 impl Hashtag {
@@ -295,18 +295,18 @@ impl Hashtag {
         Self {
             href: None,
             name: None,
-            inner: Object07::new(),
+            inner: Object::new(),
         }
     }
 
-    pub fn extending(mut inner: Object07<HashtagType>) -> Result<Self, serde_json::Error> {
+    pub fn extending(mut inner: Object<HashtagType>) -> Result<Self, serde_json::Error> {
         let href = inner.remove("href")?;
         let name = inner.remove("name")?;
 
         Ok(Self { href, name, inner })
     }
 
-    pub fn retracting(self) -> Result<Object07<HashtagType>, serde_json::Error> {
+    pub fn retracting(self) -> Result<Object<HashtagType>, serde_json::Error> {
         let Self {
             href,
             name,
@@ -389,7 +389,7 @@ impl Extends<HashtagType> for Hashtag {
     type Error = serde_json::Error;
 
     fn extends(base: Base<HashtagType>) -> Result<Self, Self::Error> {
-        let inner = Object07::extends(base)?;
+        let inner = Object::extends(base)?;
         Self::extending(inner)
     }
 
@@ -410,8 +410,6 @@ pub struct Source {
 
     pub content: String,
 }
-
-impl Object for Source {}
 
 impl<U> UnparsedExtension<U> for Source
 where
