@@ -10,7 +10,7 @@ use activitystreams::{
     base::AnyBase,
     object::kind::ArticleType,
 };
-use plume_common::activity_pub::{inbox::FromId07, LicensedArticle as LicensedArticle07};
+use plume_common::activity_pub::{inbox::FromId, LicensedArticle as LicensedArticle07};
 use riker::actors::{Actor, ActorFactoryArgs, ActorRefFactory, Context, Sender, Subscribe, Tell};
 use std::sync::Arc;
 use tracing::{error, info, warn};

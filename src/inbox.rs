@@ -1,5 +1,5 @@
 use plume_common::activity_pub::{
-    inbox::FromId07,
+    inbox::FromId,
     request::Digest,
     sign::{verify_http_headers, Signable},
 };

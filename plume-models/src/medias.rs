@@ -7,7 +7,7 @@ use activitystreams::{object::Image as Image07, prelude::*};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId07, request, Id, ToAsString, ToAsUri},
+    activity_pub::{inbox::FromId, request, Id, ToAsString, ToAsUri},
     utils::{escape, MediaProcessor},
 };
 use std::{

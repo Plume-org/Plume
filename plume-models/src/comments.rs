@@ -30,7 +30,7 @@ use chrono::{self, NaiveDateTime, TimeZone, Utc};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId07},
+        inbox::{AsActor, AsObject, AsObject07, FromId},
         sign::Signer,
         Id, IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
@@ -294,7 +294,7 @@ impl Comment {
     }
 }
 
-impl FromId07<DbConn> for Comment {
+impl FromId<DbConn> for Comment {
     type Error = Error;
     type Object = Note07;
 

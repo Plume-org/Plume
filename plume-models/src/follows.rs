@@ -12,7 +12,7 @@ use activitystreams::{
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast, broadcast07,
-    inbox::{AsActor, AsObject, AsObject07, FromId07},
+    inbox::{AsActor, AsObject, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -272,7 +272,7 @@ impl AsObject07<User, FollowAct07, &DbConn> for User {
     }
 }
 
-impl FromId07<DbConn> for Follow {
+impl FromId<DbConn> for Follow {
     type Error = Error;
     type Object = FollowAct07;
 

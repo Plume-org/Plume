@@ -26,7 +26,7 @@ use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
-        inbox::{AsActor, AsObject, AsObject07, FromId07},
+        inbox::{AsActor, AsObject, AsObject07, FromId},
         sign::Signer,
         Hashtag, Hashtag07, HashtagType07, Id, IntoId, Licensed, Licensed07,
         LicensedArticle as LicensedArticle07, Source, SourceProperty, ToAsString, ToAsUri,
@@ -863,7 +863,7 @@ impl Post {
     }
 }
 
-impl FromId07<DbConn> for Post {
+impl FromId<DbConn> for Post {
     type Error = Error;
     type Object = LicensedArticle07;
 
@@ -1119,7 +1119,7 @@ pub struct PostUpdate {
     pub tags: Option<serde_json::Value>,
 }
 
-impl FromId07<DbConn> for PostUpdate {
+impl FromId<DbConn> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle07;
 

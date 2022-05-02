@@ -199,9 +199,9 @@ where
     /// Registers an handler on this Inbox.
     pub fn with07<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Self
     where
-        A: AsActor<&'a C> + FromId07<C, Error = E>,
+        A: AsActor<&'a C> + FromId<C, Error = E>,
         V: activitystreams::markers::Activity + serde::de::DeserializeOwned,
-        M: AsObject07<A, V, &'a C, Error = E> + FromId07<C, Error = E>,
+        M: AsObject07<A, V, &'a C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
         if let Self::NotHandled(ctx, mut act, e) = self {
@@ -328,7 +328,7 @@ fn get_id(json: serde_json::Value) -> Option<String> {
 /// a full object, and if so, save it with `from_activity`. If it is only an ID, it will try to find
 /// it in the database with `from_db`, and otherwise dereference (fetch) the full object and parse it
 /// with `from_activity`.
-pub trait FromId07<C>: Sized {
+pub trait FromId<C>: Sized {
     /// The type representing a failure
     type Error: From<InboxError<Self::Error>> + Debug;
 
@@ -742,7 +742,7 @@ mod tests {
     }
 
     struct MyActor;
-    impl FromId07<()> for MyActor {
+    impl FromId<()> for MyActor {
         type Error = ();
         type Object = Person07;
 
@@ -811,7 +811,7 @@ mod tests {
     }
 
     struct MyObject07;
-    impl FromId07<()> for MyObject07 {
+    impl FromId<()> for MyObject07 {
         type Error = ();
         type Object = Note07;
 
@@ -977,7 +977,7 @@ mod tests {
         }
     }
 
-    impl FromId07<()> for FailingActor {
+    impl FromId<()> for FailingActor {
         type Error = ();
         type Object = Person07;
 

@@ -27,7 +27,7 @@ use openssl::{
     sign::{Signer, Verifier},
 };
 use plume_common::activity_pub::{
-    inbox::{AsActor, FromId07},
+    inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, ApSignature07, CustomGroup as CustomGroup07, Id, IntoId,
     PublicKey, PublicKey07, Source, SourceProperty, ToAsString, ToAsUri,
 };
@@ -470,7 +470,7 @@ impl IntoId for Blog {
     }
 }
 
-impl FromId07<DbConn> for Blog {
+impl FromId<DbConn> for Blog {
     type Error = Error;
     type Object = CustomGroup07;
 

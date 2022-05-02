@@ -12,7 +12,7 @@ use activitystreams::{
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
-    inbox::{AsActor, AsObject, AsObject07, FromId07},
+    inbox::{AsActor, AsObject, AsObject07, FromId},
     sign::Signer,
     Id, IntoId, PUBLIC_VISIBILITY,
 };
@@ -158,7 +158,7 @@ impl AsObject07<User, Like07, &DbConn> for Post {
     }
 }
 
-impl FromId07<DbConn> for Like {
+impl FromId<DbConn> for Like {
     type Error = Error;
     type Object = Like07;
 
