@@ -245,6 +245,10 @@ impl Media {
                     media.is_remote = false;
                     updated = true;
                 }
+                if media.remote_url.is_some() {
+                    media.remote_url = None;
+                    updated = true;
+                }
                 if media.sensitive != sensitive {
                     media.sensitive = sensitive;
                     updated = true;
