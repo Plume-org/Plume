@@ -24,8 +24,8 @@ pub const AP_CONTENT_TYPE: &str =
 
 pub fn ap_accept_header() -> Vec<&'static str> {
     vec![
-        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"",
-        "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"",
+        "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"",
+        "application/ld+json;profile=\"https://www.w3.org/ns/activitystreams\"",
         "application/activity+json",
         "application/ld+json",
     ]
