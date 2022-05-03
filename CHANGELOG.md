@@ -18,6 +18,7 @@
 - Add NOT NULL constraint to email_blocklist table fields (#1016)
 - Don't fill empty content when switching rich editor (#1017)
 - Fix accept header (#1058)
+- Reuse reqwest client on broadcasting (#1059)
 
 ## [[0.7.1]] - 2022-01-12
 
