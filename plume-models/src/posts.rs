@@ -884,18 +884,15 @@ impl FromId<DbConn> for PostUpdate {
                 .content()
                 .and_then(|content| content.to_as_string()),
             cover: None,
-            source: updated
-                .source()
-                .and_then(|s| {
-                    serde_json::to_value(s).ok().and_then(|obj| {
-                        if !obj.is_object() {
-                            return None;
-                        }
-                        obj.get("content")
-                            .and_then(|content| content.as_str().map(|c| c.to_string()))
-                    })
+            source: updated.source().and_then(|s| {
+                serde_json::to_value(s).ok().and_then(|obj| {
+                    if !obj.is_object() {
+                        return None;
+                    }
+                    obj.get("content")
+                        .and_then(|content| content.as_str().map(|c| c.to_string()))
                 })
-                .map(|s| s.to_string()),
+            }),
             license: None,
             tags: updated
                 .tag()
