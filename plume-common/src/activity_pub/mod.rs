@@ -132,7 +132,7 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
-    let client = if let Some(proxy) = proxy.clone() {
+    let client = if let Some(proxy) = proxy {
         ClientBuilder::new().proxy(proxy)
     } else {
         ClientBuilder::new()
