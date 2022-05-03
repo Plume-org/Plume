@@ -127,6 +127,7 @@ where
 {
     let boxes = to
         .into_iter()
+        .filter(|u| !u.is_local())
         .map(|u| {
             u.get_shared_inbox_url()
                 .unwrap_or_else(|| u.get_inbox_url())
