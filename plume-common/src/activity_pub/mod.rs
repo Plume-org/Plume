@@ -34,8 +34,8 @@ pub const AP_CONTENT_TYPE: &str =
 
 pub fn ap_accept_header() -> Vec<&'static str> {
     vec![
-        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\"",
-        "application/ld+json;profile=\"https://w3.org/ns/activitystreams\"",
+        "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"",
+        "application/ld+json;profile=\"https://www.w3.org/ns/activitystreams\"",
         "application/activity+json",
         "application/ld+json",
     ]
@@ -97,14 +97,16 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .map(|header| {
                 header
                     .split(',')
-                    .map(|ct| match ct.trim() {
+                    .map(|ct| {
+                        match ct.trim() {
                         // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
-                        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
-                        | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
+                        "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
+                        | "application/ld+json;profile=\"https://www.w3.org/ns/activitystreams\""
                         | "application/activity+json"
                         | "application/ld+json" => Outcome::Success(ApRequest),
                         "text/html" => Outcome::Forward(true),
                         _ => Outcome::Forward(false),
+                    }
                     })
                     .fold(Outcome::Forward(false), |out, ct| {
                         if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
@@ -141,6 +143,14 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
+    let client = if let Some(proxy) = proxy {
+        ClientBuilder::new().proxy(proxy)
+    } else {
+        ClientBuilder::new()
+    }
+    .connect_timeout(std::time::Duration::from_secs(5))
+    .build()
+    .expect("Can't build client");
     let mut rt = tokio::runtime::current_thread::Runtime::new()
         .expect("Error while initializing tokio runtime for federation");
     for inbox in boxes {
@@ -164,33 +174,26 @@ where
         headers.insert("Host", host_header_value.unwrap());
         headers.insert("Digest", request::Digest::digest(&body));
         rt.spawn(
-            if let Some(proxy) = proxy.clone() {
-                ClientBuilder::new().proxy(proxy)
-            } else {
-                ClientBuilder::new()
-            }
-            .connect_timeout(std::time::Duration::from_secs(5))
-            .build()
-            .expect("Can't build client")
-            .post(&inbox)
-            .headers(headers.clone())
-            .header(
-                "Signature",
-                request::signature(sender, &headers, ("post", url.path(), url.query()))
-                    .expect("activity_pub::broadcast: request signature error"),
-            )
-            .body(body)
-            .send()
-            .and_then(move |r| {
-                if r.status().is_success() {
-                    debug!("Successfully sent activity to inbox ({})", &inbox);
-                } else {
-                    warn!("Error while sending to inbox ({:?})", &r)
-                }
-                r.into_body().concat2()
-            })
-            .map(move |response| debug!("Response: \"{:?}\"\n", response))
-            .map_err(|e| warn!("Error while sending to inbox ({:?})", e)),
+            client
+                .post(&inbox)
+                .headers(headers.clone())
+                .header(
+                    "Signature",
+                    request::signature(sender, &headers, ("post", url.path(), url.query()))
+                        .expect("activity_pub::broadcast: request signature error"),
+                )
+                .body(body)
+                .send()
+                .and_then(move |r| {
+                    if r.status().is_success() {
+                        debug!("Successfully sent activity to inbox ({})", &inbox);
+                    } else {
+                        warn!("Error while sending to inbox ({:?})", &r)
+                    }
+                    r.into_body().concat2()
+                })
+                .map(move |response| debug!("Response: \"{:?}\"\n", response))
+                .map_err(|e| warn!("Error while sending to inbox ({:?})", e)),
         );
     }
     rt.run().unwrap();
