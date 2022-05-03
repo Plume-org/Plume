@@ -72,18 +72,16 @@ fn fetch_and_cache_articles(user: &Arc<User>, conn: &DbConn) {
     match create_acts {
         Ok(create_acts) => {
             for create_act in create_acts {
-                match create_act
-                    .object_field_ref()
-                    .as_single_base()
-                    .and_then(|base| {
-                        let any_base = AnyBase::from_base(base.clone()); // FIXME: Don't clone()
-                        any_base.extend::<LicensedArticle, ArticleType>().ok()
-                    }) {
-                    Some(Some(article)) => {
+                match create_act.object_field_ref().as_single_base().map(|base| {
+                    let any_base = AnyBase::from_base(base.clone()); // FIXME: Don't clone()
+                    any_base.extend::<LicensedArticle, ArticleType>()
+                }) {
+                    Some(Ok(Some(article))) => {
                         Post::from_activity(conn, article)
                             .expect("Article from remote user couldn't be saved");
                         info!("Fetched article from remote user");
                     }
+                    Some(Err(e)) => warn!("Error while fetching articles in background: {:?}", e),
                     _ => warn!("Error while fetching articles in background"),
                 }
             }

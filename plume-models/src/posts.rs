@@ -8,7 +8,7 @@ use activitystreams::{
     base::{AnyBase, Base},
     iri_string::types::IriString,
     link::{self, kind::MentionType},
-    object::{kind::ImageType, ApObject, Article, AsApObject, Image, Tombstone},
+    object::{kind::ImageType, ApObject, Article, AsApObject, Image, ObjectExt, Tombstone},
     prelude::*,
     time::OffsetDateTime,
 };
@@ -19,8 +19,8 @@ use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, HashtagType, Id, IntoId, Licensed, LicensedArticle, Source, SourceProperty,
-        ToAsString, ToAsUri, PUBLIC_VISIBILITY,
+        Hashtag, HashtagType, Id, IntoId, Licensed, LicensedArticle, ToAsString, ToAsUri,
+        PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
 };
@@ -367,12 +367,13 @@ impl Post {
         authors.push(self.get_blog(conn)?.ap_url.parse::<IriString>()?); // add the blog URL here too
         article.set_many_attributed_tos(authors);
         article.set_content(self.content.get().clone());
-        let source = SourceProperty {
-            source: Source {
-                content: self.source.clone(),
-                media_type: String::from("text/markdown"),
-            },
-        };
+        let source = AnyBase::from_arbitrary_json(serde_json::json!({
+            "source": {
+                "content": self.source,
+                "mediaType": "text/markdown",
+            }
+        }))?;
+        article.set_source(source);
         article.set_published(
             OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
                 .expect("OffsetDateTime"),
@@ -412,7 +413,7 @@ impl Post {
         let license = Licensed {
             license: Some(self.license.clone()),
         };
-        Ok(LicensedArticle::new(article, license, source))
+        Ok(LicensedArticle::new(article, license))
     }
 
     pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
@@ -626,7 +627,6 @@ impl FromId<DbConn> for Post {
 
     fn from_activity(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
         let license = article.ext_one.license.unwrap_or_default();
-        let source = article.ext_two.source.content;
         let article = article.inner;
 
         let (blog, authors) = article
@@ -674,6 +674,18 @@ impl FromId<DbConn> for Post {
             .url()
             .and_then(|url| url.to_as_uri().or(id))
             .ok_or(Error::MissingApProperty)?;
+        let source = article
+            .source()
+            .and_then(|s| {
+                serde_json::to_value(s).ok().and_then(|obj| {
+                    if !obj.is_object() {
+                        return None;
+                    }
+                    obj.get("content")
+                        .and_then(|content| content.as_str().map(|c| c.to_string()))
+                })
+            })
+            .unwrap_or_default();
         let post = Post::from_db(conn, &ap_url)
             .and_then(|mut post| {
                 let mut updated = false;
@@ -711,7 +723,7 @@ impl FromId<DbConn> for Post {
                     updated = true;
                 }
                 if post.source != source {
-                    post.source = source.clone(); // FIXME: Don't clone
+                    post.source = source.clone();
                     updated = true;
                 }
                 if post.cover_id != cover {
@@ -874,7 +886,18 @@ impl FromId<DbConn> for PostUpdate {
                 .content()
                 .and_then(|content| content.to_as_string()),
             cover: None,
-            source: None,
+            source: updated
+                .source()
+                .and_then(|s| {
+                    serde_json::to_value(s).ok().and_then(|obj| {
+                        if !obj.is_object() {
+                            return None;
+                        }
+                        obj.get("content")
+                            .and_then(|content| content.as_str().map(|c| c.to_string()))
+                    })
+                })
+                .map(|s| s.to_string()),
             license: None,
             tags: updated
                 .tag()
@@ -891,7 +914,6 @@ impl FromId<DbConn> for PostUpdate {
                 })
                 .and_then(|m| m.map(|m| m.id))
         });
-        post_update.source = Some(updated.ext_two.source.content);
         post_update.license = updated.ext_one.license;
 
         Ok(post_update)

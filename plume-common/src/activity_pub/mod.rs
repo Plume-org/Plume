@@ -452,7 +452,7 @@ where
     }
 }
 
-pub type LicensedArticle = Ext2<ApObject<Article>, Licensed, SourceProperty>;
+pub type LicensedArticle = Ext1<ApObject<Article>, Licensed>;
 
 pub trait ToAsString {
     fn to_as_string(&self) -> Option<String>;
@@ -489,7 +489,10 @@ impl ToAsUri for OneOrMany<AnyBase> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use activitystreams::activity::Create;
+    use activitystreams::{
+        activity::{ActorAndObjectRef, Create},
+        object::kind::ArticleType,
+    };
     use assert_json_diff::assert_json_eq;
     use serde_json::{from_str, json, to_value};
 
@@ -569,20 +572,10 @@ mod tests {
             Licensed {
                 license: Some("CC-0".into()),
             },
-            SourceProperty {
-                source: Source {
-                    content: "content".into(),
-                    media_type: "text/plain".into(),
-                },
-            },
         );
         let expected = json!({
             "type": "Article",
             "license": "CC-0",
-            "source": {
-                "content": "content",
-                "mediaType": "text/plain"
-            }
         });
         assert_json_eq!(to_value(licensed_article).unwrap(), expected);
     }
@@ -630,7 +623,7 @@ mod tests {
 
     #[test]
     fn de_create_with_licensed_article() {
-        let value: Create = from_str(
+        let create: Create = from_str(
             r#"
               {
                 "id": "https://plu.me/~/Blog/my-article",
@@ -656,26 +649,23 @@ mod tests {
             "#,
         )
         .unwrap();
+        let base = create.object_field_ref().as_single_base().unwrap();
+        let any_base = AnyBase::from_base(base.clone());
+        let value = any_base.extend::<LicensedArticle, ArticleType>().unwrap();
         let expected = json!({
+            "type": "Article",
             "id": "https://plu.me/~/Blog/my-article",
-            "type": "Create",
-            "actor": "https://plu.me/@/Admin",
-            "to": "https://www.w3.org/ns/activitystreams#Public",
-            "object": {
-                "type": "Article",
-                "id": "https://plu.me/~/Blog/my-article",
-                "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
+            "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
+            "content": "Hello.",
+            "name": "My Article",
+            "summary": "Bye.",
+            "source": {
                 "content": "Hello.",
-                "name": "My Article",
-                "summary": "Bye.",
-                "source": {
-                    "content": "Hello.",
-                    "mediaType": "text/markdown"
-                },
-                "published": "2014-12-12T12:12:12Z",
-                "to": ["https://www.w3.org/ns/activitystreams#Public"],
-                "license": "CC-0"
-            }
+                "mediaType": "text/markdown"
+            },
+            "published": "2014-12-12T12:12:12Z",
+            "to": ["https://www.w3.org/ns/activitystreams#Public"],
+            "license": "CC-0"
         });
 
         assert_eq!(to_value(value).unwrap(), expected);
