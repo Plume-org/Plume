@@ -11,6 +11,7 @@
 ### Changed
 
 - Bump Rust to nightly 2022-01-26 (#1015)
+- Migrate ActivityPub-related crates from activitypub 0.1 to activitystreams 0.7
 
 ### Fixed
 
