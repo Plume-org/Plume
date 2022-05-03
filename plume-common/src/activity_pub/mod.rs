@@ -87,14 +87,16 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
             .map(|header| {
                 header
                     .split(',')
-                    .map(|ct| match ct.trim() {
+                    .map(|ct| {
+                        match ct.trim() {
                         // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
-                        "application/ld+json; profile=\"https://w3.org/ns/activitystreams\""
-                        | "application/ld+json;profile=\"https://w3.org/ns/activitystreams\""
+                        "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
+                        | "application/ld+json;profile=\"https://www.w3.org/ns/activitystreams\""
                         | "application/activity+json"
                         | "application/ld+json" => Outcome::Success(ApRequest),
                         "text/html" => Outcome::Forward(true),
                         _ => Outcome::Forward(false),
+                    }
                     })
                     .fold(Outcome::Forward(false), |out, ct| {
                         if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
