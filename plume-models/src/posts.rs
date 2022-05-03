@@ -368,10 +368,8 @@ impl Post {
         article.set_many_attributed_tos(authors);
         article.set_content(self.content.get().clone());
         let source = AnyBase::from_arbitrary_json(serde_json::json!({
-            "source": {
-                "content": self.source,
-                "mediaType": "text/markdown",
-            }
+            "content": self.source,
+            "mediaType": "text/markdown",
         }))?;
         article.set_source(source);
         article.set_published(
