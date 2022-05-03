@@ -565,6 +565,40 @@ mod tests {
     }
 
     #[test]
+    fn de_custom_group() {
+        let group = CustomGroup::new(
+            ApActor::new("https://example.com/inbox".parse().unwrap(), Group::new()),
+            ApSignature {
+                public_key: PublicKey {
+                    id: "https://example.com/pubkey".parse().unwrap(),
+                    owner: "https://example.com/owner".parse().unwrap(),
+                    public_key_pem: "pubKeyPem".into(),
+                },
+            },
+            SourceProperty {
+                source: Source {
+                    content: String::from("This is a *custom* group."),
+                    media_type: String::from("text/markdown"),
+                },
+            },
+        );
+        let expected = json!({
+            "inbox": "https://example.com/inbox",
+            "type": "Group",
+            "publicKey": {
+                "id": "https://example.com/pubkey",
+                "owner": "https://example.com/owner",
+                "publicKeyPem": "pubKeyPem"
+            },
+            "source": {
+                "content": "This is a *custom* group.",
+                "mediaType": "text/markdown"
+            }
+        });
+        assert_eq!(to_value(group).unwrap(), expected);
+    }
+
+    #[test]
     fn se_licensed_article() {
         let object = ApObject::new(Article::new());
         let licensed_article = LicensedArticle::new(
