@@ -21,8 +21,9 @@ impl<'r> Responder<'r> for ErrorPage {
         warn!("{:?}", self.0);
 
         match self.0 {
-            Error::NotFound => Err(Status::NotFound),
-            Error::Unauthorized => Err(Status::NotFound),
+            Error::NotFound | Error::Unauthorized | Error::Db(diesel::result::Error::NotFound) => {
+                Err(Status::NotFound)
+            }
             _ => Err(Status::InternalServerError),
         }
     }
