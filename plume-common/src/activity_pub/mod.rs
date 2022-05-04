@@ -1,6 +1,6 @@
 use activitypub::{Activity, Link, Object};
 use array_tool::vec::Uniq;
-use reqwest::{header::HeaderValue, ClientBuilder, Url};
+use reqwest::{blocking::ClientBuilder, header::HeaderValue, Url};
 use rocket::{
     http::Status,
     request::{FromRequest, Request},

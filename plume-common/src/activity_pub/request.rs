@@ -1,10 +1,11 @@
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::{
+    blocking::{ClientBuilder, Response},
     header::{
         HeaderMap, HeaderValue, InvalidHeaderValue, ACCEPT, CONTENT_TYPE, DATE, HOST, USER_AGENT,
     },
-    ClientBuilder, Proxy, Response, Url, UrlError,
+    Proxy, Url,
 };
 use std::ops::Deref;
 use std::time::SystemTime;
@@ -18,8 +19,8 @@ const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
 #[derive(Debug)]
 pub struct Error();
 
-impl From<UrlError> for Error {
-    fn from(_err: UrlError) -> Self {
+impl From<url::ParseError> for Error {
+    fn from(_err: url::ParseError) -> Self {
         Error()
     }
 }
