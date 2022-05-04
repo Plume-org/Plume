@@ -177,7 +177,7 @@ where
                     if r.status().is_success() {
                         debug!("Successfully sent activity to inbox ({})", &inbox);
                     } else {
-                        warn!("Error while sending to inbox ({:?})", &r)
+                        warn!("Error while sending to inbox ({} {:?})", &inbox, &r)
                     }
                     r.into_body().concat2()
                 })
