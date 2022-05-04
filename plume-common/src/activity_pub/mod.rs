@@ -173,26 +173,28 @@ where
             );
             let client = client.clone();
             let tx = tx.clone();
-            rt.spawn(async move {
-                let _ = tx.send(
+            let _ = tx.send(
+                rt.spawn(
                     client
                         .post(&inbox)
                         .headers(headers.clone())
                         .body(body)
-                        .send()
-                        .await,
-                );
-            });
+                        .send(),
+                ),
+            );
         }
         while let Some(request) = rx.recv().await {
             let _ = request
+                .await
                 .map(move |r| {
-                    if r.status().is_success() {
-                        debug!("Successfully sent activity to inbox ({})", &r.url());
-                    } else {
-                        warn!("Error while sending to inbox ({} {:?})", &r.url(), &r)
-                    }
-                    debug!("Response: \"{:?}\"\n", r);
+                    r.map(|r| {
+                        if r.status().is_success() {
+                            debug!("Successfully sent activity to inbox ({})", &r.url());
+                        } else {
+                            warn!("Error while sending to inbox ({} {:?})", &r.url(), &r)
+                        }
+                        debug!("Response: \"{:?}\"\n", r);
+                    })
                 })
                 .map_err(|e| warn!("Error while sending to inbox ({:?})", e));
         }
