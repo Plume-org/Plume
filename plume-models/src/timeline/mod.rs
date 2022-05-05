@@ -6,6 +6,7 @@ use crate::{
     Connection, Error, Result,
 };
 use diesel::{self, BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
+use std::cmp::Ordering;
 use std::ops::Deref;
 
 pub(crate) mod query;
@@ -85,6 +86,16 @@ impl Timeline {
                         .or(timeline_definition::user_id.is_null()),
                 )
                 .load::<Self>(conn)
+                .map(|mut timelines| {
+                    timelines.sort_by(|t1, t2| {
+                        if t1.user_id.is_some() && t2.user_id.is_none() {
+                            Ordering::Less
+                        } else {
+                            Ordering::Equal
+                        }
+                    });
+                    timelines
+                })
                 .map_err(Error::from)
         } else {
             timeline_definition::table

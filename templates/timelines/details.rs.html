@@ -8,21 +8,20 @@
 @(ctx: BaseContext, tl: Timeline, articles: Vec<Post>, all_tl: Vec<Timeline>, page: i32, n_pages: i32)
 
 @:base(ctx, tl.name.clone(), {}, {}, {
-	<section class="flex wrap" dir="auto">
-		<h1 class="grow">@i18n_timeline_name(ctx.1, &tl.name)</h1>
-	</section>
+    <section class="flex wrap" dir="auto">
+        <h1 class="grow">@i18n_timeline_name(ctx.1, &tl.name)</h1>
+    </section>
 
-    @tabs(&vec![(format!("{}", uri!(instance::index)), i18n!(ctx.1, "Latest articles"), false)]
-        .into_iter().chain(all_tl
+    @tabs(&all_tl
             .into_iter()
             .map(|t| {
-            	let url = format!("{}", uri!(timelines::details: id = t.id, page = _));
+                let url = format!("{}", uri!(timelines::details: id = t.id, page = _));
                 (url, i18n_timeline_name(ctx.1, &t.name), t.id == tl.id)
             })
-        ).collect::<Vec<_>>()
+            .collect::<Vec<_>>()
     )
 
-	@if !articles.is_empty() {
+    @if !articles.is_empty() {
         <div class="cards">
             @for article in articles {
                 @:post_card(ctx, article)

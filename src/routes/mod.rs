@@ -59,6 +59,12 @@ impl From<Flash<Redirect>> for RespondOrRedirect {
 #[derive(Shrinkwrap, Copy, Clone, UriDisplayQuery)]
 pub struct Page(i32);
 
+impl From<i32> for Page {
+    fn from(page: i32) -> Self {
+        Self(page)
+    }
+}
+
 impl<'v> FromFormValue<'v> for Page {
     type Error = &'v RawStr;
     fn from_form_value(form_value: &'v RawStr) -> Result<Page, &'v RawStr> {
