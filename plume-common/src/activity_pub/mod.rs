@@ -146,6 +146,9 @@ where
         .build()
         .expect("Error while initializing tokio runtime for federation");
     rt.block_on(async {
+        // TODO: should be determined dependent on database connections because
+        // after broadcasting, target instance sends request to this instance,
+        // and Plume accesses database at that time.
         let capacity = 6;
         let (tx, rx) = flume::bounded::<RequestBuilder>(capacity);
         let mut handles = Vec::with_capacity(capacity);
