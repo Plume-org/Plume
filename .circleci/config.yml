@@ -11,7 +11,7 @@ executors:
         default: false
     docker:
     - image: plumeorg/plume-buildenv:v0.4.0
-    - image: <<#parameters.postgres>>circleci/postgres:9.6-alpine<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
+    - image: <<#parameters.postgres>>cimg/postgres:14.2<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
       environment:
         POSTGRES_USER: postgres
         POSTGRES_DB: plume
