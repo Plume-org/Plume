@@ -517,7 +517,7 @@ impl User {
         &self,
         url: &str,
     ) -> Result<(Vec<T>, Option<String>)> {
-        let mut res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
+        let res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
         let items = json["items"]
@@ -532,7 +532,7 @@ impl User {
     }
 
     pub fn fetch_outbox<T: Activity + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
-        let mut res = get(
+        let res = get(
             &self.outbox_url[..],
             Self::get_sender(),
             CONFIG.proxy().cloned(),
