@@ -507,6 +507,7 @@ figure {
   margin: auto $horizontal-margin 2em;
   overflow: auto;
   display: flex;
+  justify-content: center;
 
   a {
     display: inline-block;
