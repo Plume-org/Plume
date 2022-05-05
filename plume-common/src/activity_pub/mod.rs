@@ -10,14 +10,14 @@ use activitystreams::{
 };
 use activitystreams_ext::{Ext1, Ext2, UnparsedExtension};
 use array_tool::vec::Uniq;
-use reqwest::{header::HeaderValue, r#async::ClientBuilder, Url};
+use reqwest::{header::HeaderValue, ClientBuilder, Url};
 use rocket::{
     http::Status,
     request::{FromRequest, Request},
     response::{Responder, Response},
     Outcome,
 };
-use tokio::prelude::*;
+use tokio::{runtime, sync::mpsc};
 use tracing::{debug, warn};
 
 use self::sign::Signable;
@@ -151,52 +151,65 @@ where
     .connect_timeout(std::time::Duration::from_secs(5))
     .build()
     .expect("Can't build client");
-    let mut rt = tokio::runtime::current_thread::Runtime::new()
+    let rt = runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
         .expect("Error while initializing tokio runtime for federation");
-    for inbox in boxes {
-        let body = signed.to_string();
-        let mut headers = request::headers();
-        let url = Url::parse(&inbox);
-        if url.is_err() {
-            warn!("Inbox is invalid URL: {:?}", &inbox);
-            continue;
+    rt.block_on(async {
+        let (tx, mut rx) = mpsc::channel(32);
+        for inbox in boxes {
+            let body = signed.to_string();
+            let mut headers = request::headers();
+            let url = Url::parse(&inbox);
+            if url.is_err() {
+                warn!("Inbox is invalid URL: {:?}", &inbox);
+                continue;
+            }
+            let url = url.unwrap();
+            if !url.has_host() {
+                warn!("Inbox doesn't have host: {:?}", &inbox);
+                continue;
+            };
+            let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"));
+            if host_header_value.is_err() {
+                warn!("Header value is invalid: {:?}", url.host_str());
+                continue;
+            }
+            headers.insert("Host", host_header_value.unwrap());
+            headers.insert("Digest", request::Digest::digest(&body));
+            headers.insert(
+                "Signature",
+                request::signature(sender, &headers, ("post", url.path(), url.query()))
+                    .expect("activity_pub::broadcast: request signature error"),
+            );
+            let client = client.clone();
+            let tx = tx.clone();
+            let _ = tx.send(
+                rt.spawn(
+                    client
+                        .post(&inbox)
+                        .headers(headers.clone())
+                        .body(body)
+                        .send(),
+                ),
+            );
         }
-        let url = url.unwrap();
-        if !url.has_host() {
-            warn!("Inbox doesn't have host: {:?}", &inbox);
-            continue;
-        };
-        let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"));
-        if host_header_value.is_err() {
-            warn!("Header value is invalid: {:?}", url.host_str());
-            continue;
-        }
-        headers.insert("Host", host_header_value.unwrap());
-        headers.insert("Digest", request::Digest::digest(&body));
-        rt.spawn(
-            client
-                .post(&inbox)
-                .headers(headers.clone())
-                .header(
-                    "Signature",
-                    request::signature(sender, &headers, ("post", url.path(), url.query()))
-                        .expect("activity_pub::broadcast: request signature error"),
-                )
-                .body(body)
-                .send()
-                .and_then(move |r| {
-                    if r.status().is_success() {
-                        debug!("Successfully sent activity to inbox ({})", &inbox);
-                    } else {
-                        warn!("Error while sending to inbox ({:?})", &r)
-                    }
-                    r.into_body().concat2()
+        while let Some(request) = rx.recv().await {
+            let _ = request
+                .await
+                .map(move |r| {
+                    r.map(|r| {
+                        if r.status().is_success() {
+                            debug!("Successfully sent activity to inbox ({})", &r.url());
+                        } else {
+                            warn!("Error while sending to inbox ({} {:?})", &r.url(), &r)
+                        }
+                        debug!("Response: \"{:?}\"\n", r);
+                    })
                 })
-                .map(move |response| debug!("Response: \"{:?}\"\n", response))
-                .map_err(|e| warn!("Error while sending to inbox ({:?})", e)),
-        );
-    }
-    rt.run().unwrap();
+                .map_err(|e| warn!("Error while sending to inbox ({:?})", e));
+        }
+    });
 }
 
 #[derive(Shrinkwrap, Clone, Serialize, Deserialize)]
