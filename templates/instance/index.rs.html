@@ -4,37 +4,37 @@
 @use crate::templates::{base, partials::*};
 @use crate::template_utils::*;
 @use crate::routes::*;
+@use rocket::uri;
 
-@(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, all_tl: Vec<(Timeline, Vec<Post>)>)
+@(ctx: BaseContext, instance: Instance, n_users: i64, n_articles: i64, tl_id: i32, articles: Vec<Post>, all_tl: Vec<Timeline>, n_pages: i32)
 
 @:base(ctx, instance.name.clone(), {}, {}, {
-  <h1>@i18n!(ctx.1, "Welcome to {}"; instance.name.as_str())</h1>
+    <section class="flex wrap" dir="auto">
+        <h1 class="grow">@i18n!(ctx.1, "Welcome to {}"; instance.name.as_str())</h1>
+    </section>
 
-    @tabs(&vec![(format!("{}", uri!(instance::index)), i18n!(ctx.1, "Latest articles"), true)]
-        .into_iter().chain(all_tl.clone()
+    @tabs(&all_tl
             .into_iter()
-            .map(|(tl, _)| {
-                let url = format!("{}", uri!(timelines::details: id = tl.id, page = _));
-                (url, i18n_timeline_name(ctx.1, &tl.name), false)
+            .map(|t| {
+                let url = format!("{}", uri!(timelines::details: id = t.id, page = _));
+                (url, i18n_timeline_name(ctx.1, &t.name), t.id == tl_id)
             })
-        ).collect::<Vec<_>>()
+            .collect::<Vec<_>>()
     )
 
-    @for (tl, articles) in all_tl {
-        @if !articles.is_empty() {
-            <div class="h-feed">
-                <h2 dir="auto">
-                    <span class="p-name">@i18n_timeline_name(ctx.1, &tl.name)</span>
-                    &mdash;
-                    <a href="@uri!(timelines::details: id = tl.id, page = _)">@i18n!(ctx.1, "View all")</a>
-                </h2>
-                <div class="cards">
-                    @for article in articles {
-                        @:post_card(ctx, article)
-                    }
-                </div>
-            </div>
-        }
+    @if !articles.is_empty() {
+        <div class="cards">
+            @for article in articles {
+                @:post_card(ctx, article)
+            }
+        </div>
+    } else {
+        <p class="center">@i18n!(ctx.1, "Nothing to see here yet.")</p>
+    }
+    @if n_pages > 1 {
+        <div class="pagination" dir="auto">
+            <a href="@uri!(timelines::details: id = tl_id, page = Some(2.into()))">@i18n!(ctx.1, "Next page")</a>
+        </div>
     }
 
     @:instance_description(ctx, instance, n_users, n_articles)
