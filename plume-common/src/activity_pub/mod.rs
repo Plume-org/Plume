@@ -146,7 +146,7 @@ where
         .build()
         .expect("Error while initializing tokio runtime for federation");
     rt.block_on(async {
-        let capacity = 50;
+        let capacity = 6;
         let (tx, rx) = flume::bounded::<RequestBuilder>(capacity);
         let mut handles = Vec::with_capacity(capacity);
         for _ in 0..capacity {
