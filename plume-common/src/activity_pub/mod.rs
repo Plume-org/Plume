@@ -201,7 +201,7 @@ where
                         .expect("activity_pub::broadcast: request signature error"),
                 )
                 .body(body);
-            tx.send_async(request_builder).await.unwrap();
+            let _ = tx.send_async(request_builder).await;
         }
         drop(tx);
         join_all(handles).await;
