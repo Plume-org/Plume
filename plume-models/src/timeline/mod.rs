@@ -91,7 +91,7 @@ impl Timeline {
                         if t1.user_id.is_some() && t2.user_id.is_none() {
                             Ordering::Less
                         } else {
-                            Ordering::Equal
+                            t1.id.cmp(&t2.id)
                         }
                     });
                     timelines
