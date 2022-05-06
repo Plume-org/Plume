@@ -8,7 +8,10 @@ use rocket::{
     response::{Responder, Response},
     Outcome,
 };
-use tokio::runtime;
+use tokio::{
+    runtime,
+    time::{sleep, Duration},
+};
 use tracing::{debug, warn};
 
 use self::sign::Signable;
@@ -156,6 +159,9 @@ where
             let rx = rx.clone();
             let handle = rt.spawn(async move {
                 while let Ok(request_builder) = rx.recv_async().await {
+                    // After broadcasting, target instance sends request to this instance.
+                    // Sleep here in order to reduce requests at once
+                    sleep(Duration::from_millis(500)).await;
                     let _ = request_builder
                         .send()
                         .await
