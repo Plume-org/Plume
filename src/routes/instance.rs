@@ -28,25 +28,26 @@ use plume_models::{
 
 #[get("/")]
 pub fn index(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let inst = Instance::get_local()?;
-    let timelines = Timeline::list_all_for_user(&conn, rockets.user.clone().map(|u| u.id))?
-        .into_iter()
-        .filter_map(|t| {
-            if let Ok(latest) = t.get_latest(&conn, 12) {
-                Some((t, latest))
-            } else {
-                None
-            }
-        })
-        .collect();
-
-    Ok(render!(instance::index(
-        &(&conn, &rockets).to_context(),
-        inst,
-        User::count_local(&conn)?,
-        Post::count_local(&conn)?,
-        timelines
-    )))
+    let all_tl = Timeline::list_all_for_user(&conn, rockets.user.clone().map(|u| u.id))?;
+    if all_tl.is_empty() {
+        Err(Error::NotFound.into())
+    } else {
+        let inst = Instance::get_local()?;
+        let page = Page::default();
+        let tl = &all_tl[0];
+        let posts = tl.get_page(&conn, page.limits())?;
+        let total_posts = tl.count_posts(&conn)?;
+        Ok(render!(instance::index(
+            &(&conn, &rockets).to_context(),
+            inst,
+            User::count_local(&conn)?,
+            Post::count_local(&conn)?,
+            tl.id,
+            posts,
+            all_tl,
+            Page::total(total_posts as i32)
+        )))
+    }
 }
 
 #[get("/admin")]

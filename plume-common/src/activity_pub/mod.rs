@@ -157,6 +157,9 @@ where
         .build()
         .expect("Error while initializing tokio runtime for federation");
     rt.block_on(async {
+        // TODO: should be determined dependent on database connections because
+        // after broadcasting, target instance sends request to this instance,
+        // and Plume accesses database at that time.
         let capacity = 6;
         let (tx, rx) = flume::bounded::<RequestBuilder>(capacity);
         let mut handles = Vec::with_capacity(capacity);
@@ -206,7 +209,7 @@ where
                     .expect("activity_pub::broadcast: request signature error"),
             );
             let request_builder = client.post(&inbox).headers(headers.clone()).body(body);
-            tx.send_async(request_builder).await.unwrap();
+            let _ = tx.send_async(request_builder).await;
         }
         drop(tx);
         join_all(handles).await;
