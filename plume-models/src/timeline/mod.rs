@@ -86,16 +86,6 @@ impl Timeline {
                         .or(timeline_definition::user_id.is_null()),
                 )
                 .load::<Self>(conn)
-                .map(|mut timelines| {
-                    timelines.sort_by(|t1, t2| {
-                        if t1.user_id.is_some() && t2.user_id.is_none() {
-                            Ordering::Less
-                        } else {
-                            t1.id.cmp(&t2.id)
-                        }
-                    });
-                    timelines
-                })
                 .map_err(Error::from)
         } else {
             timeline_definition::table
@@ -103,6 +93,16 @@ impl Timeline {
                 .load::<Self>(conn)
                 .map_err(Error::from)
         }
+        .map(|mut timelines| {
+            timelines.sort_by(|t1, t2| {
+                if t1.user_id.is_some() && t2.user_id.is_none() {
+                    Ordering::Less
+                } else {
+                    t1.id.cmp(&t2.id)
+                }
+            });
+            timelines
+        })
     }
 
     pub fn new_for_user(
