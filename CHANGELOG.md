@@ -7,12 +7,13 @@
 ### Added
 
 - Basque language (#1013)
+- Unit tests for ActivityPub (#1021)
 
 ### Changed
 
 - Bump Rust to nightly 2022-01-26 (#1015)
 - Remove "Latest articles" timeline (#1069)
-- Change order of timeline tabs (#1069, #1070)
+- Change order of timeline tabs (#1069, #1070, #1072)
 
 ### Fixed
 
@@ -20,7 +21,10 @@
 - Add NOT NULL constraint to email_blocklist table fields (#1016)
 - Don't fill empty content when switching rich editor (#1017)
 - Fix accept header (#1058)
+- Render 404 page instead of 500 when data is not found (#1062)
 - Reuse reqwest client on broadcasting (#1059)
+- Reduce broadcasting HTTP request at once to prevent them being timed out (#1068, #1071)
+- Some ActivityPub data (#1021)
 
 ## [[0.7.1]] - 2022-01-12
 
