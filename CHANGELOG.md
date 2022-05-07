@@ -11,6 +11,8 @@
 ### Changed
 
 - Bump Rust to nightly 2022-01-26 (#1015)
+- Remove "Latest articles" timeline (#1069)
+- Change order of timeline tabs (#1069, #1070)
 
 ### Fixed
 
