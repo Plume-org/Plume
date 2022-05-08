@@ -8,13 +8,14 @@
 
 - Basque language (#1013)
 - Unit tests for ActivityPub (#1021)
+- Move to action area after liking/boosting/commenting (#1074)
 
 ### Changed
 
 - Bump Rust to nightly 2022-01-26 (#1015)
 - Remove "Latest articles" timeline (#1069)
 - Change order of timeline tabs (#1069, #1070, #1072)
-- Migrate ActivityPub-related crates from activitypub 0.1 to activitystreams 0.7
+- Migrate ActivityPub-related crates from activitypub 0.1 to activitystreams 0.7 (#1022)
 
 ### Fixed
 

@@ -78,7 +78,7 @@
         </section>
         @if ctx.2.is_some() {
             <section class="actions">
-                <form class="likes" action="@uri!(likes::create: blog = &blog.fqn, slug = &article.slug)" method="POST">
+                <form id="likes" class="likes" action="@uri!(likes::create: blog = &blog.fqn, slug = &article.slug)#likes" method="POST">
                     <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
                     </p>
@@ -89,7 +89,7 @@
                         <button type="submit" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</button>
                     }
                 </form>
-                <form class="reshares" action="@uri!(reshares::create: blog = &blog.fqn, slug = &article.slug)" method="POST">
+                <form id="reshares" class="reshares" action="@uri!(reshares::create: blog = &blog.fqn, slug = &article.slug)#reshares" method="POST">
                     <p aria-label="@i18n!(ctx.1, "One boost", "{0} boosts"; n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts"; n_reshares)">
                         @n_reshares
                     </p>
@@ -108,14 +108,14 @@
                 ))
             </p>
             <section class="actions">
-                <div class="likes">
+                <div id="likes" class="likes">
                     <p aria-label="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; n_likes)">
                         @n_likes
                     </p>
                     <a href="@uri!(posts::remote_interact: blog_name = &blog.fqn, slug = &article.slug)" class="action">@icon!("heart") @i18n!(ctx.1, "Add yours")</a>
                 </div>
 
-                <div class="reshares">
+                <div id="reshares" class="reshares">
                     <p aria-label="@i18n!(ctx.1, "One boost", "{0} boost"; n_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts"; n_reshares)">
                         @n_reshares
                     </p>
@@ -140,11 +140,11 @@
         	    }
             </div>
         </section>
-        <section class="comments" dir="auto">
+        <section id="comments" class="comments" dir="auto">
             <h2>@i18n!(ctx.1, "Comments")</h2>
 
             @if ctx.2.is_some() {
-                <form method="post" action="@uri!(comments::create: blog_name = &blog.fqn, slug = &article.slug)">
+                <form method="post" action="@uri!(comments::create: blog_name = &blog.fqn, slug = &article.slug)#comments">
                     @(Input::new("warning", i18n!(ctx.1, "Content warning"))
                         .default(&comment_form.warning)
                         .error(&comment_errors)
@@ -155,7 +155,7 @@
                     @if let Some(ref prev) = previous_comment {
                         <input type="hidden" name="responding_to" value="@prev.id"/>
                     }
-                    <textarea id="plume-editor" name="content" dir="auto">@comment_form.content</textarea>
+                    <textarea id="plume-editor" name="content" dir="auto" required>@comment_form.content</textarea>
                     <input type="submit" value="@i18n!(ctx.1, "Submit comment")" />
                 </form>
             }
