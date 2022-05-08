@@ -14,6 +14,7 @@
 - Bump Rust to nightly 2022-01-26 (#1015)
 - Remove "Latest articles" timeline (#1069)
 - Change order of timeline tabs (#1069, #1070, #1072)
+- Migrate ActivityPub-related crates from activitypub 0.1 to activitystreams 0.7
 
 ### Fixed
 

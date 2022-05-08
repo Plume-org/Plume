@@ -4,12 +4,15 @@ use crate::{
     safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
     UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
-use activitypub::{
+use activitystreams::{
     activity::Delete,
-    actor::Person,
+    actor::{ApActor, AsApActor, Endpoints, Person},
+    base::{AnyBase, Base},
     collection::{OrderedCollection, OrderedCollectionPage},
-    object::{Image, Tombstone},
-    Activity, CustomObject, Endpoint,
+    iri_string::types::IriString,
+    markers::Activity,
+    object::{kind::ImageType, AsObject as _, Image, Tombstone},
+    prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
@@ -25,7 +28,8 @@ use plume_common::{
         inbox::{AsActor, AsObject, FromId},
         request::get,
         sign::{gen_keypair, Error as SignError, Result as SignResult, Signer},
-        ActivityStream, ApSignature, Id, IntoId, PublicKey, PUBLIC_VISIBILITY,
+        ActivityStream, ApSignature, CustomPerson, Id, IntoId, PublicKey, ToAsString, ToAsUri,
+        PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -39,10 +43,7 @@ use std::{
     hash::{Hash, Hasher},
     sync::Arc,
 };
-use url::Url;
 use webfinger::*;
-
-pub type CustomPerson = CustomObject<ApSignature, Person>;
 
 pub enum Role {
     Admin = 0,
@@ -247,8 +248,18 @@ impl User {
         let text = &res.text()?;
         // without this workaround, publicKey is not correctly deserialized
         let ap_sign = serde_json::from_str::<ApSignature>(text)?;
-        let mut json = serde_json::from_str::<CustomPerson>(text)?;
-        json.custom_props = ap_sign;
+        let person = serde_json::from_str::<Person>(text)?;
+        let json = CustomPerson::new(
+            ApActor::new(
+                person
+                    .clone()
+                    .id_unchecked()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_owned(),
+                person,
+            ),
+            ap_sign,
+        ); // FIXME: Don't clone()
         Ok(json)
     }
 
@@ -260,35 +271,56 @@ impl User {
         User::fetch(&self.ap_url.clone()).and_then(|json| {
             let avatar = Media::save_remote(
                 conn,
-                json.object
-                    .object_props
-                    .icon_image()? // FIXME: Fails when icon is not set
-                    .object_props
-                    .url_string()?,
+                json.ap_actor_ref()
+                    .icon()
+                    .ok_or(Error::MissingApProperty)? // FIXME: Fails when icon is not set
+                    .iter()
+                    .next()
+                    .and_then(|i| {
+                        i.clone()
+                            .extend::<Image, ImageType>() // FIXME: Don't clone()
+                            .ok()?
+                            .and_then(|url| Some(url.id_unchecked()?.to_string()))
+                    })
+                    .ok_or(Error::MissingApProperty)?,
                 self,
             )
             .ok();
 
+            let pub_key = &json.ext_one.public_key.public_key_pem;
             diesel::update(self)
                 .set((
-                    users::username.eq(json.object.ap_actor_props.preferred_username_string()?),
-                    users::display_name.eq(json.object.object_props.name_string()?),
-                    users::outbox_url.eq(json.object.ap_actor_props.outbox_string()?),
-                    users::inbox_url.eq(json.object.ap_actor_props.inbox_string()?),
+                    users::username.eq(json
+                        .ap_actor_ref()
+                        .preferred_username()
+                        .ok_or(Error::MissingApProperty)?),
+                    users::display_name.eq(json
+                        .ap_actor_ref()
+                        .name()
+                        .ok_or(Error::MissingApProperty)?
+                        .to_as_string()
+                        .ok_or(Error::MissingApProperty)?),
+                    users::outbox_url.eq(json
+                        .ap_actor_ref()
+                        .outbox()?
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str()),
+                    users::inbox_url.eq(json.ap_actor_ref().inbox()?.as_str()),
                     users::summary.eq(SafeString::new(
                         &json
-                            .object
-                            .object_props
-                            .summary_string()
+                            .ap_actor_ref()
+                            .summary()
+                            .and_then(|summary| summary.to_as_string())
                             .unwrap_or_default(),
                     )),
-                    users::followers_endpoint.eq(json.object.ap_actor_props.followers_string()?),
+                    users::followers_endpoint.eq(json
+                        .ap_actor_ref()
+                        .followers()?
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str()),
                     users::avatar_id.eq(avatar.map(|a| a.id)),
                     users::last_fetched_date.eq(Utc::now().naive_utc()),
-                    users::public_key.eq(json
-                        .custom_props
-                        .public_key_publickey()?
-                        .public_key_pem_string()?),
+                    users::public_key.eq(pub_key),
                 ))
                 .execute(conn)
                 .map(|_| ())
@@ -432,17 +464,16 @@ impl User {
         Ok(ActivityStream::new(self.outbox_collection(conn)?))
     }
     pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
-        let mut coll = OrderedCollection::default();
+        let mut coll = OrderedCollection::new();
         let first = &format!("{}?page=1", &self.outbox_url);
         let last = &format!(
             "{}?page={}",
             &self.outbox_url,
             self.get_activities_count(conn) / i64::from(ITEMS_PER_PAGE) + 1
         );
-        coll.collection_props.set_first_link(Id::new(first))?;
-        coll.collection_props.set_last_link(Id::new(last))?;
-        coll.collection_props
-            .set_total_items_u64(self.get_activities_count(conn) as u64)?;
+        coll.set_first(first.parse::<IriString>()?);
+        coll.set_last(last.parse::<IriString>()?);
+        coll.set_total_items(self.get_activities_count(conn) as u64);
         Ok(coll)
     }
     pub fn outbox_page(
@@ -461,27 +492,31 @@ impl User {
     ) -> Result<OrderedCollectionPage> {
         let acts = self.get_activities_page(conn, (min, max))?;
         let n_acts = self.get_activities_count(conn);
-        let mut coll = OrderedCollectionPage::default();
+        let mut coll = OrderedCollectionPage::new();
         if n_acts - i64::from(min) >= i64::from(ITEMS_PER_PAGE) {
-            coll.collection_page_props.set_next_link(Id::new(&format!(
-                "{}?page={}",
-                &self.outbox_url,
-                min / ITEMS_PER_PAGE + 2
-            )))?;
+            coll.set_next(
+                format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE + 2)
+                    .parse::<IriString>()?,
+            );
         }
         if min > 0 {
-            coll.collection_page_props.set_prev_link(Id::new(&format!(
-                "{}?page={}",
-                &self.outbox_url,
-                min / ITEMS_PER_PAGE
-            )))?;
+            coll.set_prev(
+                format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE)
+                    .parse::<IriString>()?,
+            );
         }
-        coll.collection_props.items = serde_json::to_value(acts)?;
-        coll.collection_page_props
-            .set_part_of_link(Id::new(&self.outbox_url))?;
+        coll.set_many_items(
+            acts.iter()
+                .filter_map(|value| AnyBase::from_arbitrary_json(value).ok()),
+        );
+        coll.set_part_of(self.outbox_url.parse::<IriString>()?);
         Ok(coll)
     }
-    fn fetch_outbox_page<T: Activity>(&self, url: &str) -> Result<(Vec<T>, Option<String>)> {
+
+    pub fn fetch_outbox_page<T: Activity + serde::de::DeserializeOwned>(
+        &self,
+        url: &str,
+    ) -> Result<(Vec<T>, Option<String>)> {
         let res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
@@ -495,7 +530,8 @@ impl User {
         let next = json.get("next").map(|x| x.as_str().unwrap().to_owned());
         Ok((items, next))
     }
-    pub fn fetch_outbox<T: Activity>(&self) -> Result<Vec<T>> {
+
+    pub fn fetch_outbox<T: Activity + serde::de::DeserializeOwned>(&self) -> Result<Vec<T>> {
         let res = get(
             &self.outbox_url[..],
             Self::get_sender(),
@@ -740,71 +776,58 @@ impl User {
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomPerson> {
-        let mut actor = Person::default();
-        actor.object_props.set_id_string(self.ap_url.clone())?;
-        actor
-            .object_props
-            .set_name_string(self.display_name.clone())?;
-        actor
-            .object_props
-            .set_summary_string(self.summary_html.get().clone())?;
-        actor.object_props.set_url_string(self.ap_url.clone())?;
-        actor
-            .ap_actor_props
-            .set_inbox_string(self.inbox_url.clone())?;
-        actor
-            .ap_actor_props
-            .set_outbox_string(self.outbox_url.clone())?;
-        actor
-            .ap_actor_props
-            .set_preferred_username_string(self.username.clone())?;
-        actor
-            .ap_actor_props
-            .set_followers_string(self.followers_endpoint.clone())?;
+        let mut actor = ApActor::new(self.inbox_url.parse()?, Person::new());
+        let ap_url = self.ap_url.parse::<IriString>()?;
+        actor.set_id(ap_url.clone());
+        actor.set_name(self.display_name.clone());
+        actor.set_summary(self.summary_html.get().clone());
+        actor.set_url(ap_url.clone());
+        actor.set_inbox(self.inbox_url.parse()?);
+        actor.set_outbox(self.outbox_url.parse()?);
+        actor.set_preferred_username(self.username.clone());
+        actor.set_followers(self.followers_endpoint.parse()?);
 
         if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
-            let mut endpoints = Endpoint::default();
-            endpoints.set_shared_inbox_string(shared_inbox_url)?;
-            actor.ap_actor_props.set_endpoints_endpoint(endpoints)?;
+            let endpoints = Endpoints {
+                shared_inbox: Some(shared_inbox_url.parse::<IriString>()?),
+                ..Endpoints::default()
+            };
+            actor.set_endpoints(endpoints);
         }
 
-        let mut public_key = PublicKey::default();
-        public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
-        public_key.set_owner_string(self.ap_url.clone())?;
-        public_key.set_public_key_pem_string(self.public_key.clone())?;
-        let mut ap_signature = ApSignature::default();
-        ap_signature.set_public_key_publickey(public_key)?;
+        let pub_key = PublicKey {
+            id: format!("{}#main-key", self.ap_url).parse()?,
+            owner: ap_url,
+            public_key_pem: self.public_key.clone(),
+        };
+        let ap_signature = ApSignature {
+            public_key: pub_key,
+        };
 
         if let Some(avatar_id) = self.avatar_id {
-            let mut avatar = Image::default();
-            avatar
-                .object_props
-                .set_url_string(Media::get(conn, avatar_id)?.url()?)?;
-            actor.object_props.set_icon_object(avatar)?;
+            let mut avatar = Image::new();
+            avatar.set_url(Media::get(conn, avatar_id)?.url()?.parse::<IriString>()?);
+            actor.set_icon(avatar.into_any_base()?);
         }
 
         Ok(CustomPerson::new(actor, ap_signature))
     }
 
     pub fn delete_activity(&self, conn: &Connection) -> Result<Delete> {
-        let mut del = Delete::default();
+        let mut tombstone = Tombstone::new();
+        tombstone.set_id(self.ap_url.parse()?);
 
-        let mut tombstone = Tombstone::default();
-        tombstone.object_props.set_id_string(self.ap_url.clone())?;
-
-        del.delete_props
-            .set_actor_link(Id::new(self.ap_url.clone()))?;
-        del.delete_props.set_object_object(tombstone)?;
-        del.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        del.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
-        del.object_props.set_cc_link_vec(
+        let mut del = Delete::new(
+            self.ap_url.parse::<IriString>()?,
+            Base::retract(tombstone)?.into_generic()?,
+        );
+        del.set_id(format!("{}#delete", self.ap_url).parse()?);
+        del.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        del.set_many_ccs(
             self.get_followers(conn)?
                 .into_iter()
-                .map(|f| Id::new(f.ap_url))
-                .collect(),
-        )?;
+                .filter_map(|f| f.ap_url.parse::<IriString>().ok()),
+        );
 
         Ok(del)
     }
@@ -930,9 +953,60 @@ impl FromId<DbConn> for User {
     }
 
     fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
-        let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str().ok_or(Error::Url)?;
-        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
+        let actor = acct.ap_actor_ref();
+        let username = actor
+            .preferred_username()
+            .ok_or(Error::MissingApProperty)?
+            .to_string();
+
+        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+            return Err(Error::InvalidValue);
+        }
+
+        let summary = acct
+            .object_ref()
+            .summary()
+            .and_then(|prop| prop.to_as_string())
+            .unwrap_or_default();
+        let mut new_user = NewUser {
+            display_name: acct
+                .object_ref()
+                .name()
+                .and_then(|prop| prop.to_as_string())
+                .unwrap_or_else(|| username.clone()),
+            username: username.clone(),
+            outbox_url: actor.outbox()?.ok_or(Error::MissingApProperty)?.to_string(),
+            inbox_url: actor.inbox()?.to_string(),
+            role: 2,
+            summary_html: SafeString::new(&summary),
+            summary,
+            public_key: acct.ext_one.public_key.public_key_pem.to_string(),
+            shared_inbox_url: actor
+                .endpoints()?
+                .and_then(|e| e.shared_inbox.map(|inbox| inbox.to_string())),
+            followers_endpoint: actor
+                .followers()?
+                .ok_or(Error::MissingApProperty)?
+                .to_string(),
+            ..NewUser::default()
+        };
+
+        let avatar_id = acct.object_ref().icon().and_then(|icon| icon.to_as_uri());
+
+        let (ap_url, inst) = {
+            let any_base = acct.into_any_base()?;
+            let id = any_base.id().ok_or(Error::MissingApProperty)?;
+            (
+                id.to_string(),
+                id.authority_components()
+                    .ok_or(Error::Url)?
+                    .host()
+                    .to_string(),
+            )
+        };
+        new_user.ap_url = ap_url;
+
+        let instance = Instance::find_by_domain(conn, &inst).or_else(|_| {
             Instance::insert(
                 conn,
                 NewInstance {
@@ -949,70 +1023,20 @@ impl FromId<DbConn> for User {
                 },
             )
         })?;
-
-        let username = acct.object.ap_actor_props.preferred_username_string()?;
-
-        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
-            return Err(Error::InvalidValue);
-        }
-
-        let fqn = if instance.local {
-            username.clone()
+        new_user.instance_id = instance.id;
+        new_user.fqn = if instance.local {
+            username
         } else {
             format!("{}@{}", username, instance.public_domain)
         };
 
-        let user = User::insert(
-            conn,
-            NewUser {
-                display_name: acct
-                    .object
-                    .object_props
-                    .name_string()
-                    .unwrap_or_else(|_| username.clone()),
-                username,
-                outbox_url: acct.object.ap_actor_props.outbox_string()?,
-                inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                role: 2,
-                summary: acct
-                    .object
-                    .object_props
-                    .summary_string()
-                    .unwrap_or_default(),
-                summary_html: SafeString::new(
-                    &acct
-                        .object
-                        .object_props
-                        .summary_string()
-                        .unwrap_or_default(),
-                ),
-                email: None,
-                hashed_password: None,
-                instance_id: instance.id,
-                ap_url: acct.object.object_props.id_string()?,
-                public_key: acct
-                    .custom_props
-                    .public_key_publickey()?
-                    .public_key_pem_string()?,
-                private_key: None,
-                shared_inbox_url: acct
-                    .object
-                    .ap_actor_props
-                    .endpoints_endpoint()
-                    .and_then(|e| e.shared_inbox_string())
-                    .ok(),
-                followers_endpoint: acct.object.ap_actor_props.followers_string()?,
-                fqn,
-                avatar_id: None,
-            },
-        )?;
+        let user = User::insert(conn, new_user)?;
+        if let Some(avatar_id) = avatar_id {
+            let avatar = Media::save_remote(conn, avatar_id, &user);
 
-        if let Ok(icon) = acct.object.object_props.icon_image() {
-            if let Ok(url) = icon.object_props.url_string() {
-                let avatar = Media::save_remote(conn, url, &user);
-
-                if let Ok(avatar) = avatar {
-                    user.set_avatar(conn, avatar.id)?;
+            if let Ok(avatar) = avatar {
+                if let Err(e) = user.set_avatar(conn, avatar.id) {
+                    tracing::error!("{:?}", e);
                 }
             }
         }
@@ -1435,10 +1459,8 @@ pub(crate) mod tests {
                     "sharedInbox": "https://plu.me/inbox"
                 },
                 "followers": "https://plu.me/@/admin/followers",
-                "following": null,
                 "id": "https://plu.me/@/admin/",
                 "inbox": "https://plu.me/@/admin/inbox",
-                "liked": null,
                 "name": "The admin",
                 "outbox": "https://plu.me/@/admin/outbox",
                 "preferredUsername": "admin",
@@ -1461,14 +1483,12 @@ pub(crate) mod tests {
                     "sharedInbox": "https://plu.me/inbox"
                 },
                 "followers": "https://plu.me/@/other/followers",
-                "following": null,
                 "icon": {
                     "url": "https://plu.me/static/media/example.png",
                     "type": "Image",
                 },
                 "id": "https://plu.me/@/other/",
                 "inbox": "https://plu.me/@/other/inbox",
-                "liked": null,
                 "name": "Another user",
                 "outbox": "https://plu.me/@/other/outbox",
                 "preferredUsername": "other",
@@ -1524,7 +1544,6 @@ pub(crate) mod tests {
 
             let expected = json!({
                 "first": "https://plu.me/@/admin/outbox?page=1",
-                "items": null,
                 "last": "https://plu.me/@/admin/outbox?page=5",
                 "totalItems": 51,
                 "type": "OrderedCollection",

@@ -1,12 +1,14 @@
 use crate::{
-    ap_url, db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
+    db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
     schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
-use activitypub::{
-    actor::Group,
+use activitystreams::{
+    actor::{ApActor, ApActorExt, AsApActor, Group},
+    base::AnyBase,
     collection::{OrderedCollection, OrderedCollectionPage},
-    object::Image,
-    CustomObject,
+    iri_string::types::IriString,
+    object::{kind::ImageType, ApObject, Image, ObjectExt},
+    prelude::*,
 };
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SaveChangesDsl};
@@ -18,14 +20,12 @@ use openssl::{
 };
 use plume_common::activity_pub::{
     inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, Id, IntoId, PublicKey, Source,
+    sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source, SourceProperty,
+    ToAsString, ToAsUri,
 };
-use url::Url;
 use webfinger::*;
 
-pub type CustomGroup = CustomObject<ApSignature, Group>;
-
-#[derive(Queryable, Identifiable, Clone, AsChangeset)]
+#[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct Blog {
     pub id: i32,
@@ -161,104 +161,120 @@ impl Blog {
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
-        let mut blog = Group::default();
-        blog.ap_actor_props
-            .set_preferred_username_string(self.actor_id.clone())?;
-        blog.object_props.set_name_string(self.title.clone())?;
-        blog.ap_actor_props
-            .set_outbox_string(self.outbox_url.clone())?;
-        blog.ap_actor_props
-            .set_inbox_string(self.inbox_url.clone())?;
-        blog.object_props
-            .set_summary_string(self.summary_html.to_string())?;
-        blog.ap_object_props.set_source_object(Source {
-            content: self.summary.clone(),
-            media_type: String::from("text/markdown"),
-        })?;
+        let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
+        blog.set_preferred_username(self.actor_id.clone());
+        blog.set_name(self.title.clone());
+        blog.set_outbox(self.outbox_url.parse()?);
+        blog.set_summary(self.summary_html.to_string());
+        let source = SourceProperty {
+            source: Source {
+                content: self.summary.clone(),
+                media_type: String::from("text/markdown"),
+            },
+        };
 
-        let mut icon = Image::default();
-        icon.object_props.set_url_string(
-            self.icon_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-                .unwrap_or_default(),
-        )?;
-        icon.object_props.set_attributed_to_link(
-            self.icon_id
-                .and_then(|id| {
-                    Media::get(conn, id)
-                        .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
-                        .ok()
-                })
-                .unwrap_or_else(|| Id::new(String::new())),
-        )?;
-        blog.object_props.set_icon_object(icon)?;
+        let mut icon = Image::new();
+        let _ = self.icon_id.map(|id| {
+            Media::get(conn, id).and_then(|m| {
+                let _ = m
+                    .url()
+                    .and_then(|url| url.parse::<IriString>().map_err(|_| Error::Url))
+                    .map(|url| icon.set_url(url));
+                icon.set_attributed_to(
+                    User::get(conn, m.owner_id)?
+                        .into_id()
+                        .parse::<IriString>()?,
+                );
+                Ok(())
+            })
+        });
+        blog.set_icon(icon.into_any_base()?);
 
-        let mut banner = Image::default();
-        banner.object_props.set_url_string(
-            self.banner_id
-                .and_then(|id| Media::get(conn, id).and_then(|m| m.url()).ok())
-                .unwrap_or_default(),
-        )?;
-        banner.object_props.set_attributed_to_link(
-            self.banner_id
-                .and_then(|id| {
-                    Media::get(conn, id)
-                        .and_then(|m| Ok(User::get(conn, m.owner_id)?.into_id()))
-                        .ok()
-                })
-                .unwrap_or_else(|| Id::new(String::new())),
-        )?;
-        blog.object_props.set_image_object(banner)?;
+        let mut banner = Image::new();
+        let _ = self.banner_id.map(|id| {
+            Media::get(conn, id).and_then(|m| {
+                let _ = m
+                    .url()
+                    .and_then(|url| url.parse::<IriString>().map_err(|_| Error::Url))
+                    .map(|url| banner.set_url(url));
+                banner.set_attributed_to(
+                    User::get(conn, m.owner_id)?
+                        .into_id()
+                        .parse::<IriString>()?,
+                );
+                Ok(())
+            })
+        });
+        blog.set_image(banner.into_any_base()?);
 
-        blog.object_props.set_id_string(self.ap_url.clone())?;
+        blog.set_id(self.ap_url.parse()?);
 
-        let mut public_key = PublicKey::default();
-        public_key.set_id_string(format!("{}#main-key", self.ap_url))?;
-        public_key.set_owner_string(self.ap_url.clone())?;
-        public_key.set_public_key_pem_string(self.public_key.clone())?;
-        let mut ap_signature = ApSignature::default();
-        ap_signature.set_public_key_publickey(public_key)?;
+        let pub_key = PublicKey {
+            id: format!("{}#main-key", self.ap_url).parse()?,
+            owner: self.ap_url.parse()?,
+            public_key_pem: self.public_key.clone(),
+        };
+        let ap_signature = ApSignature {
+            public_key: pub_key,
+        };
 
-        Ok(CustomGroup::new(blog, ap_signature))
+        Ok(CustomGroup::new(blog, ap_signature, source))
     }
 
     pub fn outbox(&self, conn: &Connection) -> Result<ActivityStream<OrderedCollection>> {
-        let mut coll = OrderedCollection::default();
-        coll.collection_props.items = serde_json::to_value(self.get_activities(conn))?;
-        coll.collection_props
-            .set_total_items_u64(self.get_activities(conn).len() as u64)?;
-        coll.collection_props
-            .set_first_link(Id::new(ap_url(&format!("{}?page=1", &self.outbox_url))))?;
-        coll.collection_props
-            .set_last_link(Id::new(ap_url(&format!(
+        self.outbox_collection(conn).map(ActivityStream::new)
+    }
+    pub fn outbox_collection(&self, conn: &Connection) -> Result<OrderedCollection> {
+        let acts = self.get_activities(conn);
+        let acts = acts
+            .iter()
+            .filter_map(|value| AnyBase::from_arbitrary_json(value).ok())
+            .collect::<Vec<AnyBase>>();
+        let n_acts = acts.len();
+        let mut coll = OrderedCollection::new();
+        coll.set_many_items(acts);
+        coll.set_total_items(n_acts as u64);
+        coll.set_first(format!("{}?page=1", &self.outbox_url).parse::<IriString>()?);
+        coll.set_last(
+            format!(
                 "{}?page={}",
                 &self.outbox_url,
-                (self.get_activities(conn).len() as u64 + ITEMS_PER_PAGE as u64 - 1) as u64
-                    / ITEMS_PER_PAGE as u64
-            ))))?;
-        Ok(ActivityStream::new(coll))
+                (n_acts as u64 + ITEMS_PER_PAGE as u64 - 1) as u64 / ITEMS_PER_PAGE as u64
+            )
+            .parse::<IriString>()?,
+        );
+        Ok(coll)
     }
     pub fn outbox_page(
         &self,
         conn: &Connection,
         (min, max): (i32, i32),
     ) -> Result<ActivityStream<OrderedCollectionPage>> {
-        let mut coll = OrderedCollectionPage::default();
+        self.outbox_collection_page(conn, (min, max))
+            .map(ActivityStream::new)
+    }
+    pub fn outbox_collection_page(
+        &self,
+        conn: &Connection,
+        (min, max): (i32, i32),
+    ) -> Result<OrderedCollectionPage> {
+        let mut coll = OrderedCollectionPage::new();
         let acts = self.get_activity_page(conn, (min, max));
         //This still doesn't do anything because the outbox
         //doesn't do anything yet
-        coll.collection_page_props.set_next_link(Id::new(&format!(
-            "{}?page={}",
-            &self.outbox_url,
-            min / ITEMS_PER_PAGE + 1
-        )))?;
-        coll.collection_page_props.set_prev_link(Id::new(&format!(
-            "{}?page={}",
-            &self.outbox_url,
-            min / ITEMS_PER_PAGE - 1
-        )))?;
-        coll.collection_props.items = serde_json::to_value(acts)?;
-        Ok(ActivityStream::new(coll))
+        coll.set_next(
+            format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE + 1)
+                .parse::<IriString>()?,
+        );
+        coll.set_prev(
+            format!("{}?page={}", &self.outbox_url, min / ITEMS_PER_PAGE - 1)
+                .parse::<IriString>()?,
+        );
+        coll.set_many_items(
+            acts.iter()
+                .filter_map(|value| AnyBase::from_arbitrary_json(value).ok()),
+        );
+        Ok(coll)
     }
     fn get_activities(&self, _conn: &Connection) -> Vec<serde_json::Value> {
         vec![]
@@ -354,9 +370,90 @@ impl FromId<DbConn> for Blog {
     }
 
     fn from_activity(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
-        let url = Url::parse(&acct.object.object_props.id_string()?)?;
-        let inst = url.host_str().ok_or(Error::Url)?;
-        let instance = Instance::find_by_domain(conn, inst).or_else(|_| {
+        let (name, outbox_url, inbox_url) = {
+            let actor = acct.ap_actor_ref();
+            let name = actor
+                .preferred_username()
+                .ok_or(Error::MissingApProperty)?
+                .to_string();
+            if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+                return Err(Error::InvalidValue);
+            }
+            (
+                name,
+                actor.outbox()?.ok_or(Error::MissingApProperty)?.to_string(),
+                actor.inbox()?.to_string(),
+            )
+        };
+
+        let mut new_blog = NewBlog {
+            actor_id: name.to_string(),
+            outbox_url,
+            inbox_url,
+            public_key: acct.ext_one.public_key.public_key_pem.to_string(),
+            private_key: None,
+            theme: None,
+            ..NewBlog::default()
+        };
+
+        let object = ApObject::new(acct.inner);
+        new_blog.title = object
+            .name()
+            .and_then(|name| name.to_as_string())
+            .unwrap_or(name);
+        new_blog.summary_html = SafeString::new(
+            &object
+                .summary()
+                .and_then(|summary| summary.to_as_string())
+                .unwrap_or_default(),
+        );
+
+        let icon_id = object
+            .icon()
+            .and_then(|icons| {
+                icons.iter().next().and_then(|icon| {
+                    let icon = icon.to_owned().extend::<Image, ImageType>().ok()??;
+                    let owner = icon.attributed_to()?.to_as_uri()?;
+                    Media::save_remote(
+                        conn,
+                        icon.url()?.to_as_uri()?,
+                        &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
+                    )
+                    .ok()
+                })
+            })
+            .map(|m| m.id);
+        new_blog.icon_id = icon_id;
+
+        let banner_id = object
+            .image()
+            .and_then(|banners| {
+                banners.iter().next().and_then(|banner| {
+                    let banner = banner.to_owned().extend::<Image, ImageType>().ok()??;
+                    let owner = banner.attributed_to()?.to_as_uri()?;
+                    Media::save_remote(
+                        conn,
+                        banner.url()?.to_as_uri()?,
+                        &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
+                    )
+                    .ok()
+                })
+            })
+            .map(|m| m.id);
+        new_blog.banner_id = banner_id;
+
+        new_blog.summary = acct.ext_two.source.content;
+
+        let any_base = AnyBase::from_extended(object)?;
+        let id = any_base.id().ok_or(Error::MissingApProperty)?;
+        new_blog.ap_url = id.to_string();
+
+        let inst = id
+            .authority_components()
+            .ok_or(Error::Url)?
+            .host()
+            .to_string();
+        let instance = Instance::find_by_domain(conn, &inst).or_else(|_| {
             Instance::insert(
                 conn,
                 NewInstance {
@@ -373,75 +470,9 @@ impl FromId<DbConn> for Blog {
                 },
             )
         })?;
-        let icon_id = acct
-            .object
-            .object_props
-            .icon_image()
-            .ok()
-            .and_then(|icon| {
-                let owner = icon.object_props.attributed_to_link::<Id>().ok()?;
-                Media::save_remote(
-                    conn,
-                    icon.object_props.url_string().ok()?,
-                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
-                )
-                .ok()
-            })
-            .map(|m| m.id);
+        new_blog.instance_id = instance.id;
 
-        let banner_id = acct
-            .object
-            .object_props
-            .image_image()
-            .ok()
-            .and_then(|banner| {
-                let owner = banner.object_props.attributed_to_link::<Id>().ok()?;
-                Media::save_remote(
-                    conn,
-                    banner.object_props.url_string().ok()?,
-                    &User::from_id(conn, &owner, None, CONFIG.proxy()).ok()?,
-                )
-                .ok()
-            })
-            .map(|m| m.id);
-
-        let name = acct.object.ap_actor_props.preferred_username_string()?;
-        if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
-            return Err(Error::InvalidValue);
-        }
-
-        Blog::insert(
-            conn,
-            NewBlog {
-                actor_id: name.clone(),
-                title: acct.object.object_props.name_string().unwrap_or(name),
-                outbox_url: acct.object.ap_actor_props.outbox_string()?,
-                inbox_url: acct.object.ap_actor_props.inbox_string()?,
-                summary: acct
-                    .object
-                    .ap_object_props
-                    .source_object::<Source>()
-                    .map(|s| s.content)
-                    .unwrap_or_default(),
-                instance_id: instance.id,
-                ap_url: acct.object.object_props.id_string()?,
-                public_key: acct
-                    .custom_props
-                    .public_key_publickey()?
-                    .public_key_pem_string()?,
-                private_key: None,
-                banner_id,
-                icon_id,
-                summary_html: SafeString::new(
-                    &acct
-                        .object
-                        .object_props
-                        .summary_string()
-                        .unwrap_or_default(),
-                ),
-                theme: None,
-            },
-        )
+        Blog::insert(conn, new_blog)
     }
 
     fn get_sender() -> &'static dyn sign::Signer {
@@ -512,12 +543,14 @@ pub(crate) mod tests {
         blog_authors::*, instance::tests as instance_tests, medias::NewMedia, tests::db,
         users::tests as usersTests, Connection as Conn,
     };
+    use assert_json_diff::assert_json_eq;
     use diesel::Connection;
+    use serde_json::to_value;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Blog>) {
         instance_tests::fill_database(conn);
         let users = usersTests::fill_database(conn);
-        let blog1 = Blog::insert(
+        let mut blog1 = Blog::insert(
             conn,
             NewBlog::new_local(
                 "BlogName".to_owned(),
@@ -590,6 +623,41 @@ pub(crate) mod tests {
             },
         )
         .unwrap();
+
+        blog1.icon_id = Some(
+            Media::insert(
+                conn,
+                NewMedia {
+                    file_path: "aaa.png".into(),
+                    alt_text: String::new(),
+                    is_remote: false,
+                    remote_url: None,
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: users[0].id,
+                },
+            )
+            .unwrap()
+            .id,
+        );
+        blog1.banner_id = Some(
+            Media::insert(
+                conn,
+                NewMedia {
+                    file_path: "bbb.png".into(),
+                    alt_text: String::new(),
+                    is_remote: false,
+                    remote_url: None,
+                    sensitive: false,
+                    content_warning: None,
+                    owner_id: users[0].id,
+                },
+            )
+            .unwrap()
+            .id,
+        );
+        let _: Blog = blog1.save_changes(&*conn).unwrap();
+
         (users, vec![blog1, blog2, blog3])
     }
 
@@ -886,7 +954,6 @@ pub(crate) mod tests {
                 .id,
             );
             let _: Blog = blogs[0].save_changes(&**conn).unwrap();
-
             let ap_repr = blogs[0].to_activity(&conn).unwrap();
             blogs[0].delete(&conn).unwrap();
             let blog = Blog::from_activity(&conn, ap_repr).unwrap();
@@ -906,5 +973,91 @@ pub(crate) mod tests {
 
             Ok(())
         })
+    }
+
+    #[test]
+    fn to_activity() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_users, blogs) = fill_database(&conn);
+            let blog = &blogs[0];
+            let act = blog.to_activity(conn)?;
+
+            let expected = json!({
+                "icon": {
+                    "attributedTo": "https://plu.me/@/admin/",
+                    "type": "Image",
+                    "url": "https://plu.me/aaa.png"
+                },
+                "id": "https://plu.me/~/BlogName/",
+                "image": {
+                    "attributedTo": "https://plu.me/@/admin/",
+                    "type": "Image",
+                    "url": "https://plu.me/bbb.png"
+                },
+                "inbox": "https://plu.me/~/BlogName/inbox",
+                "name": "Blog name",
+                "outbox": "https://plu.me/~/BlogName/outbox",
+                "preferredUsername": "BlogName",
+                "publicKey": {
+                    "id": "https://plu.me/~/BlogName/#main-key",
+                    "owner": "https://plu.me/~/BlogName/",
+                    "publicKeyPem": blog.public_key
+                },
+                "source": {
+                    "content": "This is a small blog",
+                    "mediaType": "text/markdown"
+                },
+                "summary": "",
+                "type": "Group"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_users, blogs) = fill_database(conn);
+            let blog = &blogs[0];
+            let act = blog.outbox_collection(conn)?;
+
+            let expected = json!({
+                "items": [],
+                "totalItems": 0,
+                "first": "https://plu.me/~/BlogName/outbox?page=1",
+                "last": "https://plu.me/~/BlogName/outbox?page=0",
+                "type": "OrderedCollection"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn outbox_collection_page() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (_users, blogs) = fill_database(conn);
+            let blog = &blogs[0];
+            let act = blog.outbox_collection_page(conn, (33, 36))?;
+
+            let expected = json!({
+                "next": "https://plu.me/~/BlogName/outbox?page=3",
+                "prev": "https://plu.me/~/BlogName/outbox?page=1",
+                "items": [],
+                "type": "OrderedCollectionPage"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
+
+            Ok(())
+        });
     }
 }

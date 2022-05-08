@@ -1,6 +1,7 @@
 use crate::{ap_url, instance::Instance, schema::tags, Connection, Error, Result};
+use activitystreams::iri_string::types::IriString;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
-use plume_common::activity_pub::Hashtag;
+use plume_common::activity_pub::{Hashtag, HashtagExt};
 
 #[derive(Clone, Identifiable, Queryable)]
 pub struct Tag {
@@ -25,13 +26,16 @@ impl Tag {
     list_by!(tags, for_post, post_id as i32);
 
     pub fn to_activity(&self) -> Result<Hashtag> {
-        let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(&format!(
-            "{}/tag/{}",
-            Instance::get_local()?.public_domain,
-            self.tag
-        )))?;
-        ht.set_name_string(self.tag.clone())?;
+        let mut ht = Hashtag::new();
+        ht.set_href(
+            ap_url(&format!(
+                "{}/tag/{}",
+                Instance::get_local()?.public_domain,
+                self.tag
+            ))
+            .parse::<IriString>()?,
+        );
+        ht.set_name(self.tag.clone());
         Ok(ht)
     }
 
@@ -44,7 +48,7 @@ impl Tag {
         Tag::insert(
             conn,
             NewTag {
-                tag: tag.name_string()?,
+                tag: tag.name().ok_or(Error::MissingApProperty)?.as_str().into(),
                 is_hashtag,
                 post_id: post,
             },
@@ -52,13 +56,16 @@ impl Tag {
     }
 
     pub fn build_activity(tag: String) -> Result<Hashtag> {
-        let mut ht = Hashtag::default();
-        ht.set_href_string(ap_url(&format!(
-            "{}/tag/{}",
-            Instance::get_local()?.public_domain,
-            tag
-        )))?;
-        ht.set_name_string(tag)?;
+        let mut ht = Hashtag::new();
+        ht.set_href(
+            ap_url(&format!(
+                "{}/tag/{}",
+                Instance::get_local()?.public_domain,
+                tag
+            ))
+            .parse::<IriString>()?,
+        );
+        ht.set_name(tag);
         Ok(ht)
     }
 
@@ -77,6 +84,24 @@ mod tests {
     use crate::{diesel::Connection, inbox::tests::fill_database};
     use assert_json_diff::assert_json_eq;
     use serde_json::to_value;
+
+    #[test]
+    fn from_activity() {
+        let conn = &db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (posts, _users, _blogs) = fill_database(conn);
+            let post_id = posts[0].id;
+            let mut ht = Hashtag::new();
+            ht.set_href(ap_url(&format!("https://plu.me/tag/a_tag")).parse::<IriString>()?);
+            ht.set_name("a_tag".to_string());
+            let tag = Tag::from_activity(conn, &ht, post_id, true)?;
+
+            assert_eq!(&tag.tag, "a_tag");
+            assert!(tag.is_hashtag);
+
+            Ok(())
+        });
+    }
 
     #[test]
     fn to_activity() {
@@ -100,24 +125,6 @@ mod tests {
 
             Ok(())
         })
-    }
-
-    #[test]
-    fn from_activity() {
-        let conn = &db();
-        conn.test_transaction::<_, Error, _>(|| {
-            let (posts, _users, _blogs) = fill_database(conn);
-            let post_id = posts[0].id;
-            let mut ht = Hashtag::default();
-            ht.set_href_string(ap_url(&format!("https://plu.me/tag/a_tag")))?;
-            ht.set_name_string("a_tag".into())?;
-            let tag = Tag::from_activity(conn, &ht, post_id, true)?;
-
-            assert_eq!(&tag.tag, "a_tag");
-            assert!(tag.is_hashtag);
-
-            Ok(())
-        });
     }
 
     #[test]

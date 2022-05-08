@@ -1,5 +1,5 @@
 use crate::template_utils::Ructe;
-use activitypub::object::Note;
+use activitystreams::object::Note;
 use rocket::{
     request::LenientForm,
     response::{Flash, Redirect},

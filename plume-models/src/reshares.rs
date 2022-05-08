@@ -2,13 +2,18 @@ use crate::{
     db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::reshares,
     timeline::*, users::User, Connection, Error, Result, CONFIG,
 };
-use activitypub::activity::{Announce, Undo};
+use activitystreams::{
+    activity::{ActorAndObjectRef, Announce, Undo},
+    base::AnyBase,
+    iri_string::types::IriString,
+    prelude::*,
+};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
-    Id, IntoId, PUBLIC_VISIBILITY,
+    PUBLIC_VISIBILITY,
 };
 
 #[derive(Clone, Queryable, Identifiable)]
@@ -61,16 +66,16 @@ impl Reshare {
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<Announce> {
-        let mut act = Announce::default();
-        act.announce_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.announce_props
-            .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
-        act.object_props.set_id_string(self.ap_url.clone())?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props
-            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
+        let mut act = Announce::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
+        );
+        act.set_id(self.ap_url.parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![self
+            .get_user(conn)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
 
         Ok(act)
     }
@@ -93,16 +98,16 @@ impl Reshare {
     }
 
     pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
-        let mut act = Undo::default();
-        act.undo_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.undo_props.set_object_object(self.to_activity(conn)?)?;
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props
-            .set_cc_link_vec(vec![Id::new(self.get_user(conn)?.followers_endpoint)])?;
+        let mut act = Undo::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            AnyBase::from_extended(self.to_activity(conn)?)?,
+        );
+        act.set_id(format!("{}#delete", self.ap_url).parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![self
+            .get_user(conn)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
 
         Ok(act)
     }
@@ -143,7 +148,10 @@ impl FromId<DbConn> for Reshare {
             NewReshare {
                 post_id: Post::from_id(
                     conn,
-                    &act.announce_props.object_link::<Id>()?,
+                    act.object_field_ref()
+                        .as_single_id()
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str(),
                     None,
                     CONFIG.proxy(),
                 )
@@ -151,13 +159,19 @@ impl FromId<DbConn> for Reshare {
                 .id,
                 user_id: User::from_id(
                     conn,
-                    &act.announce_props.actor_link::<Id>()?,
+                    act.actor_field_ref()
+                        .as_single_id()
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str(),
                     None,
                     CONFIG.proxy(),
                 )
                 .map_err(|(_, e)| e)?
                 .id,
-                ap_url: act.object_props.id_string()?,
+                ap_url: act
+                    .id_unchecked()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_string(),
             },
         )?;
         res.notify(conn)?;

@@ -3,28 +3,30 @@ use crate::{
     post_authors::*, safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User,
     Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
-use activitypub::{
+use activitystreams::{
     activity::{Create, Delete, Update},
-    link,
-    object::{Article, Image, Tombstone},
-    CustomObject,
+    base::{AnyBase, Base},
+    iri_string::types::IriString,
+    link::{self, kind::MentionType},
+    object::{kind::ImageType, ApObject, Article, AsApObject, Image, ObjectExt, Tombstone},
+    prelude::*,
+    time::OffsetDateTime,
 };
-use chrono::{NaiveDateTime, TimeZone, Utc};
+use chrono::{NaiveDateTime, Utc};
 use diesel::{self, BelongingToDsl, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::Lazy;
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Hashtag, Id, IntoId, Licensed, Source, PUBLIC_VISIBILITY,
+        Hashtag, HashtagType, Id, IntoId, Licensed, LicensedArticle, ToAsString, ToAsUri,
+        PUBLIC_VISIBILITY,
     },
     utils::{iri_percent_encode_seg, md_to_html},
 };
 use riker::actors::{Publish, Tell};
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
-
-pub type LicensedArticle = CustomObject<Licensed, Article>;
 
 static BLOG_FQN_CACHE: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
@@ -353,92 +355,92 @@ impl Post {
             .collect::<Vec<serde_json::Value>>();
         mentions_json.append(&mut tags_json);
 
-        let mut article = Article::default();
-        article.object_props.set_name_string(self.title.clone())?;
-        article.object_props.set_id_string(self.ap_url.clone())?;
+        let mut article = ApObject::new(Article::new());
+        article.set_name(self.title.clone());
+        article.set_id(self.ap_url.parse::<IriString>()?);
 
         let mut authors = self
             .get_authors(conn)?
             .into_iter()
-            .map(|x| Id::new(x.ap_url))
-            .collect::<Vec<Id>>();
-        authors.push(self.get_blog(conn)?.into_id()); // add the blog URL here too
-        article
-            .object_props
-            .set_attributed_to_link_vec::<Id>(authors)?;
-        article
-            .object_props
-            .set_content_string(self.content.get().clone())?;
-        article.ap_object_props.set_source_object(Source {
-            content: self.source.clone(),
-            media_type: String::from("text/markdown"),
-        })?;
-        article
-            .object_props
-            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
-        article
-            .object_props
-            .set_summary_string(self.subtitle.clone())?;
-        article.object_props.tag = Some(json!(mentions_json));
+            .filter_map(|x| x.ap_url.parse::<IriString>().ok())
+            .collect::<Vec<IriString>>();
+        authors.push(self.get_blog(conn)?.ap_url.parse::<IriString>()?); // add the blog URL here too
+        article.set_many_attributed_tos(authors);
+        article.set_content(self.content.get().clone());
+        let source = AnyBase::from_arbitrary_json(serde_json::json!({
+            "content": self.source,
+            "mediaType": "text/markdown",
+        }))?;
+        article.set_source(source);
+        article.set_published(
+            OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
+                .expect("OffsetDateTime"),
+        );
+        article.set_summary(&*self.subtitle);
+        article.set_many_tags(
+            mentions_json
+                .iter()
+                .filter_map(|mention_json| AnyBase::from_arbitrary_json(mention_json).ok()),
+        );
 
         if let Some(media_id) = self.cover_id {
             let media = Media::get(conn, media_id)?;
-            let mut cover = Image::default();
-            cover.object_props.set_url_string(media.url()?)?;
+            let mut cover = Image::new();
+            cover.set_url(media.url()?);
             if media.sensitive {
-                cover
-                    .object_props
-                    .set_summary_string(media.content_warning.unwrap_or_default())?;
+                cover.set_summary(media.content_warning.unwrap_or_default());
             }
-            cover.object_props.set_content_string(media.alt_text)?;
-            cover
-                .object_props
-                .set_attributed_to_link_vec(vec![User::get(conn, media.owner_id)?.into_id()])?;
-            article.object_props.set_icon_object(cover)?;
+            cover.set_content(media.alt_text);
+            cover.set_many_attributed_tos(vec![User::get(conn, media.owner_id)?
+                .ap_url
+                .parse::<IriString>()?]);
+            article.set_icon(cover.into_any_base()?);
         }
 
-        article.object_props.set_url_string(self.ap_url.clone())?;
-        article
-            .object_props
-            .set_to_link_vec::<Id>(to.into_iter().map(Id::new).collect())?;
-        article
-            .object_props
-            .set_cc_link_vec::<Id>(cc.into_iter().map(Id::new).collect())?;
-        let mut license = Licensed::default();
-        license.set_license_string(self.license.clone())?;
+        article.set_url(self.ap_url.parse::<IriString>()?);
+        article.set_many_tos(
+            to.into_iter()
+                .filter_map(|to| to.parse::<IriString>().ok())
+                .collect::<Vec<IriString>>(),
+        );
+        article.set_many_ccs(
+            cc.into_iter()
+                .filter_map(|cc| cc.parse::<IriString>().ok())
+                .collect::<Vec<IriString>>(),
+        );
+        let license = Licensed {
+            license: Some(self.license.clone()),
+        };
         Ok(LicensedArticle::new(article, license))
     }
 
     pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
         let article = self.to_activity(conn)?;
-        let mut act = Create::default();
-        act.object_props
-            .set_id_string(format!("{}/activity", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
-        act.object_props
-            .set_cc_link_vec::<Id>(article.object.object_props.cc_link_vec()?)?;
-        act.create_props
-            .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
-        act.create_props.set_object_object(article)?;
+        let to = article.to().ok_or(Error::MissingApProperty)?.clone();
+        let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
+        let mut act = Create::new(
+            self.get_authors(conn)?[0].ap_url.parse::<IriString>()?,
+            Base::retract(article)?.into_generic()?,
+        );
+        act.set_id(format!("{}/activity", self.ap_url).parse::<IriString>()?);
+        act.set_many_tos(to);
+        act.set_many_ccs(cc);
         Ok(act)
     }
 
     pub fn update_activity(&self, conn: &Connection) -> Result<Update> {
         let article = self.to_activity(conn)?;
-        let mut act = Update::default();
-        act.object_props.set_id_string(format!(
-            "{}/update-{}",
-            self.ap_url,
-            Utc::now().timestamp()
-        ))?;
-        act.object_props
-            .set_to_link_vec::<Id>(article.object.object_props.to_link_vec()?)?;
-        act.object_props
-            .set_cc_link_vec::<Id>(article.object.object_props.cc_link_vec()?)?;
-        act.update_props
-            .set_actor_link(Id::new(self.get_authors(conn)?[0].clone().ap_url))?;
-        act.update_props.set_object_object(article)?;
+        let to = article.to().ok_or(Error::MissingApProperty)?.clone();
+        let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
+        let mut act = Update::new(
+            self.get_authors(conn)?[0].ap_url.parse::<IriString>()?,
+            Base::retract(article)?.into_generic()?,
+        );
+        act.set_id(
+            format!("{}/update-{}", self.ap_url, Utc::now().timestamp()).parse::<IriString>()?,
+        );
+        act.set_many_tos(to);
+        act.set_many_ccs(cc);
         Ok(act)
     }
 
@@ -447,10 +449,8 @@ impl Post {
             .into_iter()
             .map(|m| {
                 (
-                    m.link_props
-                        .href_string()
-                        .ok()
-                        .and_then(|ap_url| User::find_by_ap_url(conn, &ap_url).ok())
+                    m.href()
+                        .and_then(|ap_url| User::find_by_ap_url(conn, ap_url.as_ref()).ok())
                         .map(|u| u.id),
                     m,
                 )
@@ -485,7 +485,7 @@ impl Post {
     pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
-            .filter_map(|t| t.name_string().ok())
+            .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
             .collect::<HashSet<_>>();
 
         let old_tags = Tag::for_post(&*conn, self.id)?;
@@ -502,8 +502,9 @@ impl Post {
 
         for t in tags {
             if !t
-                .name_string()
-                .map(|n| old_tags_name.contains(&n))
+                .name
+                .as_ref()
+                .map(|n| old_tags_name.contains(n.as_str()))
                 .unwrap_or(true)
             {
                 Tag::from_activity(conn, &t, self.id, false)?;
@@ -521,7 +522,7 @@ impl Post {
     pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
-            .filter_map(|t| t.name_string().ok())
+            .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
             .collect::<HashSet<_>>();
 
         let old_tags = Tag::for_post(&*conn, self.id)?;
@@ -538,8 +539,9 @@ impl Post {
 
         for t in tags {
             if !t
-                .name_string()
-                .map(|n| old_tags_name.contains(&n))
+                .name
+                .as_ref()
+                .map(|n| old_tags_name.contains(n.as_str()))
                 .unwrap_or(true)
             {
                 Tag::from_activity(conn, &t, self.id, true)?;
@@ -566,18 +568,19 @@ impl Post {
     }
 
     pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
-        let mut act = Delete::default();
-        act.delete_props
-            .set_actor_link(self.get_authors(conn)?[0].clone().into_id())?;
+        let mut tombstone = Tombstone::new();
+        tombstone.set_id(self.ap_url.parse()?);
 
-        let mut tombstone = Tombstone::default();
-        tombstone.object_props.set_id_string(self.ap_url.clone())?;
-        act.delete_props.set_object_object(tombstone)?;
+        let mut act = Delete::new(
+            self.get_authors(conn)?[0]
+                .clone()
+                .into_id()
+                .parse::<IriString>()?,
+            Base::retract(tombstone)?.into_generic()?,
+        );
 
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
+        act.set_id(format!("{}#delete", self.ap_url).parse()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
         Ok(act)
     }
 
@@ -621,47 +624,82 @@ impl FromId<DbConn> for Post {
     }
 
     fn from_activity(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
-        let conn = conn;
-        let license = article.custom_props.license_string().unwrap_or_default();
-        let article = article.object;
+        let license = article.ext_one.license.unwrap_or_default();
+        let article = article.inner;
 
         let (blog, authors) = article
-            .object_props
-            .attributed_to_link_vec::<Id>()?
-            .into_iter()
+            .ap_object_ref()
+            .attributed_to()
+            .ok_or(Error::MissingApProperty)?
+            .iter()
             .fold((None, vec![]), |(blog, mut authors), link| {
-                let url = link;
-                match User::from_id(conn, &url, None, CONFIG.proxy()) {
-                    Ok(u) => {
-                        authors.push(u);
-                        (blog, authors)
+                if let Some(url) = link.id() {
+                    match User::from_id(conn, url.as_str(), None, CONFIG.proxy()) {
+                        Ok(u) => {
+                            authors.push(u);
+                            (blog, authors)
+                        }
+                        Err(_) => (
+                            blog.or_else(|| {
+                                Blog::from_id(conn, url.as_str(), None, CONFIG.proxy()).ok()
+                            }),
+                            authors,
+                        ),
                     }
-                    Err(_) => (
-                        blog.or_else(|| Blog::from_id(conn, &url, None, CONFIG.proxy()).ok()),
-                        authors,
-                    ),
+                } else {
+                    // logically, url possible to be an object without id proprty like {"type":"Person", "name":"Sally"} but we ignore the case
+                    (blog, authors)
                 }
             });
 
-        let cover = article
-            .object_props
-            .icon_object::<Image>()
-            .ok()
-            .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id));
+        let cover = article.icon().and_then(|icon| {
+            icon.iter().next().and_then(|img| {
+                let image = img.to_owned().extend::<Image, ImageType>().ok()??;
+                Media::from_activity(conn, &image).ok().map(|m| m.id)
+            })
+        });
 
-        let title = article.object_props.name_string()?;
+        let title = article
+            .name()
+            .and_then(|name| name.to_as_string())
+            .ok_or(Error::MissingApProperty)?;
+        let id = AnyBase::from_extended(article.clone()) // FIXME: Don't clone
+            .ok()
+            .ok_or(Error::MissingApProperty)?
+            .id()
+            .map(|id| id.to_string());
         let ap_url = article
-            .object_props
-            .url_string()
-            .or_else(|_| article.object_props.id_string())?;
+            .url()
+            .and_then(|url| url.to_as_uri().or(id))
+            .ok_or(Error::MissingApProperty)?;
+        let source = article
+            .source()
+            .and_then(|s| {
+                serde_json::to_value(s).ok().and_then(|obj| {
+                    if !obj.is_object() {
+                        return None;
+                    }
+                    obj.get("content")
+                        .and_then(|content| content.as_str().map(|c| c.to_string()))
+                })
+            })
+            .unwrap_or_default();
         let post = Post::from_db(conn, &ap_url)
             .and_then(|mut post| {
                 let mut updated = false;
 
                 let slug = Self::slug(&title);
-                let content = SafeString::new(&article.object_props.content_string()?);
-                let subtitle = article.object_props.summary_string()?;
-                let source = article.ap_object_props.source_object::<Source>()?.content;
+                let content = SafeString::new(
+                    &article
+                        .content()
+                        .and_then(|content| content.to_as_string())
+                        .ok_or(Error::MissingApProperty)?,
+                );
+                let subtitle = article
+                    .summary()
+                    .and_then(|summary| summary.to_as_string())
+                    .ok_or(Error::MissingApProperty)?;
+
                 if post.slug != slug {
                     post.slug = slug.to_string();
                     updated = true;
@@ -683,7 +721,7 @@ impl FromId<DbConn> for Post {
                     updated = true;
                 }
                 if post.source != source {
-                    post.source = source;
+                    post.source = source.clone();
                     updated = true;
                 }
                 if post.cover_id != cover {
@@ -704,14 +742,27 @@ impl FromId<DbConn> for Post {
                         blog_id: blog.ok_or(Error::NotFound)?.id,
                         slug: Self::slug(&title).to_string(),
                         title,
-                        content: SafeString::new(&article.object_props.content_string()?),
+                        content: SafeString::new(
+                            &article
+                                .content()
+                                .and_then(|content| content.to_as_string())
+                                .ok_or(Error::MissingApProperty)?,
+                        ),
                         published: true,
                         license,
                         // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
                         ap_url,
-                        creation_date: Some(article.object_props.published_utctime()?.naive_utc()),
-                        subtitle: article.object_props.summary_string()?,
-                        source: article.ap_object_props.source_object::<Source>()?.content,
+                        creation_date: article.published().map(|published| {
+                            let timestamp_secs = published.unix_timestamp();
+                            let timestamp_nanos = published.unix_timestamp_nanos()
+                                - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
+                            NaiveDateTime::from_timestamp(timestamp_secs, timestamp_nanos as u32)
+                        }),
+                        subtitle: article
+                            .summary()
+                            .and_then(|summary| summary.to_as_string())
+                            .ok_or(Error::MissingApProperty)?,
+                        source,
                         cover_id: cover,
                     },
                 )
@@ -735,22 +786,22 @@ impl FromId<DbConn> for Post {
             .2
             .into_iter()
             .collect::<HashSet<_>>();
-        if let Some(serde_json::Value::Array(tags)) = article.object_props.tag {
-            for tag in tags {
-                serde_json::from_value::<link::Mention>(tag.clone())
-                    .map(|m| Mention::from_activity(conn, &m, post.id, true, true))
+        if let Some(tags) = article.tag() {
+            for tag in tags.iter() {
+                tag.clone()
+                    .extend::<link::Mention, MentionType>() // FIXME: Don't clone
+                    .map(|mention| {
+                        mention.map(|m| Mention::from_activity(conn, &m, post.id, true, true))
+                    })
                     .ok();
 
-                serde_json::from_value::<Hashtag>(tag.clone())
-                    .map_err(Error::from)
-                    .and_then(|t| {
-                        let tag_name = t.name_string()?;
-                        Ok(Tag::from_activity(
-                            conn,
-                            &t,
-                            post.id,
-                            hashtags.remove(&tag_name),
-                        ))
+                tag.clone()
+                    .extend::<Hashtag, HashtagType>() // FIXME: Don't clone
+                    .map(|hashtag| {
+                        hashtag.and_then(|t| {
+                            let tag_name = t.name.clone()?.as_str().to_string();
+                            Tag::from_activity(conn, &t, post.id, hashtags.remove(&tag_name)).ok()
+                        })
                     })
                     .ok();
             }
@@ -762,15 +813,15 @@ impl FromId<DbConn> for Post {
     }
 
     fn get_sender() -> &'static dyn Signer {
-        Instance::get_local_instance_user().expect("Failed to local instance user")
+        Instance::get_local_instance_user().expect("Failed to get local instance user")
     }
 }
 
 impl AsObject<User, Create, &DbConn> for Post {
     type Error = Error;
-    type Output = Post;
+    type Output = Self;
 
-    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Post> {
+    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self::Output> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
     }
@@ -780,7 +831,7 @@ impl AsObject<User, Delete, &DbConn> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<Self::Output> {
         let can_delete = self
             .get_authors(conn)?
             .into_iter()
@@ -813,27 +864,54 @@ impl FromId<DbConn> for PostUpdate {
         Err(Error::NotFound)
     }
 
-    fn from_activity(conn: &DbConn, updated: LicensedArticle) -> Result<Self> {
-        Ok(PostUpdate {
-            ap_url: updated.object.object_props.id_string()?,
-            title: updated.object.object_props.name_string().ok(),
-            subtitle: updated.object.object_props.summary_string().ok(),
-            content: updated.object.object_props.content_string().ok(),
-            cover: updated
-                .object
-                .object_props
-                .icon_object::<Image>()
-                .ok()
-                .and_then(|img| Media::from_activity(conn, &img).ok().map(|m| m.id)),
-            source: updated
-                .object
-                .ap_object_props
-                .source_object::<Source>()
-                .ok()
-                .map(|x| x.content),
-            license: updated.custom_props.license_string().ok(),
-            tags: updated.object.object_props.tag,
-        })
+    fn from_activity(conn: &DbConn, updated: Self::Object) -> Result<Self> {
+        let mut post_update = PostUpdate {
+            ap_url: updated
+                .ap_object_ref()
+                .id_unchecked()
+                .ok_or(Error::MissingApProperty)?
+                .to_string(),
+            title: updated
+                .ap_object_ref()
+                .name()
+                .and_then(|name| name.to_as_string()),
+            subtitle: updated
+                .ap_object_ref()
+                .summary()
+                .and_then(|summary| summary.to_as_string()),
+            content: updated
+                .ap_object_ref()
+                .content()
+                .and_then(|content| content.to_as_string()),
+            cover: None,
+            source: updated.source().and_then(|s| {
+                serde_json::to_value(s).ok().and_then(|obj| {
+                    if !obj.is_object() {
+                        return None;
+                    }
+                    obj.get("content")
+                        .and_then(|content| content.as_str().map(|c| c.to_string()))
+                })
+            }),
+            license: None,
+            tags: updated
+                .tag()
+                .and_then(|tags| serde_json::to_value(tags).ok()),
+        };
+        post_update.cover = updated.ap_object_ref().icon().and_then(|img| {
+            img.iter()
+                .next()
+                .and_then(|img| {
+                    img.clone()
+                        .extend::<Image, ImageType>()
+                        .map(|img| img.and_then(|img| Media::from_activity(conn, &img).ok()))
+                        .ok()
+                })
+                .and_then(|m| m.map(|m| m.id))
+        });
+        post_update.license = updated.ext_one.license;
+
+        Ok(post_update)
     }
 
     fn get_sender() -> &'static dyn Signer {
@@ -893,8 +971,12 @@ impl AsObject<User, Update, &DbConn> for PostUpdate {
                 serde_json::from_value::<Hashtag>(tag.clone())
                     .map_err(Error::from)
                     .and_then(|t| {
-                        let tag_name = t.name_string()?;
-                        if txt_hashtags.remove(&tag_name) {
+                        let tag_name = t.name.as_ref().ok_or(Error::MissingApProperty)?;
+                        let tag_name_str = tag_name
+                            .as_xsd_string()
+                            .or_else(|| tag_name.as_rdf_lang_string().map(|rls| &*rls.value))
+                            .ok_or(Error::MissingApProperty)?;
+                        if txt_hashtags.remove(tag_name_str) {
                             hashtags.push(t);
                         } else {
                             tags.push(t);
@@ -1016,49 +1098,6 @@ mod tests {
     }
 
     #[test]
-    fn licensed_article_serde() {
-        let mut article = Article::default();
-        article.object_props.set_id_string("Yo".into()).unwrap();
-        let mut license = Licensed::default();
-        license.set_license_string("WTFPL".into()).unwrap();
-        let full_article = LicensedArticle::new(article, license);
-
-        let json = serde_json::to_value(full_article).unwrap();
-        let article_from_json: LicensedArticle = serde_json::from_value(json).unwrap();
-        assert_eq!(
-            "Yo",
-            &article_from_json.object.object_props.id_string().unwrap()
-        );
-        assert_eq!(
-            "WTFPL",
-            &article_from_json.custom_props.license_string().unwrap()
-        );
-    }
-
-    #[test]
-    fn licensed_article_deserialization() {
-        let json = json!({
-            "type": "Article",
-            "id": "https://plu.me/~/Blog/my-article",
-            "attributedTo": ["https://plu.me/@/Admin", "https://plu.me/~/Blog"],
-            "content": "Hello.",
-            "name": "My Article",
-            "summary": "Bye.",
-            "source": {
-                "content": "Hello.",
-                "mediaType": "text/markdown"
-            },
-            "published": "2014-12-12T12:12:12Z",
-            "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
-        });
-        let article: LicensedArticle = serde_json::from_value(json).unwrap();
-        assert_eq!(
-            "https://plu.me/~/Blog/my-article",
-            &article.object.object_props.id_string().unwrap()
-        );
-    }
-
-    #[test]
     fn to_activity() {
         let conn = db();
         conn.test_transaction::<_, Error, _>(|| {
@@ -1074,10 +1113,10 @@ mod tests {
                 "name": "Testing",
                 "published": format_datetime(&post.creation_date),
                 "source": {
-                    "content": "",
+                    "content": "Hello",
                     "mediaType": "text/markdown"
                 },
-                "summary": "",
+                "summary": "Bye",
                 "tag": [
                     {
                         "href": "https://plu.me/@/user/",
@@ -1116,10 +1155,10 @@ mod tests {
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
                     "source": {
-                        "content": "",
+                        "content": "Hello",
                         "mediaType": "text/markdown"
                     },
-                    "summary": "",
+                    "summary": "Bye",
                     "tag": [
                         {
                             "href": "https://plu.me/@/user/",
@@ -1161,10 +1200,10 @@ mod tests {
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
                     "source": {
-                        "content": "",
+                        "content": "Hello",
                         "mediaType": "text/markdown"
                     },
-                    "summary": "",
+                    "summary": "Bye",
                     "tag": [
                         {
                             "href": "https://plu.me/@/user/",
@@ -1200,8 +1239,34 @@ mod tests {
                 if key == "id" {
                     continue;
                 }
-                assert_eq!(value, expected.get(key).unwrap());
+                assert_json_eq!(value, expected.get(key).unwrap());
             }
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn build_delete() {
+        let conn = db();
+        conn.test_transaction::<_, Error, _>(|| {
+            let (post, _mention, _posts, _users, _blogs) = prepare_activity(&conn);
+            let act = post.build_delete(&conn)?;
+
+            let expected = json!({
+                "actor": "https://plu.me/@/admin/",
+                "id": "https://plu.me/~/BlogName/testing#delete",
+                "object": {
+                    "id": "https://plu.me/~/BlogName/testing",
+                    "type": "Tombstone"
+                },
+                "to": [
+                    "https://www.w3.org/ns/activitystreams#Public"
+                ],
+                "type": "Delete"
+            });
+
+            assert_json_eq!(to_value(act)?, expected);
 
             Ok(())
         });

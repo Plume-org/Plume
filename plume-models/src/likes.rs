@@ -2,13 +2,18 @@ use crate::{
     db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::likes, timeline::*,
     users::User, Connection, Error, Result, CONFIG,
 };
-use activitypub::activity;
+use activitystreams::{
+    activity::{ActorAndObjectRef, Like as LikeAct, Undo},
+    base::AnyBase,
+    iri_string::types::IriString,
+    prelude::*,
+};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::{
     inbox::{AsActor, AsObject, FromId},
     sign::Signer,
-    Id, IntoId, PUBLIC_VISIBILITY,
+    PUBLIC_VISIBILITY,
 };
 
 #[derive(Clone, Queryable, Identifiable)]
@@ -34,18 +39,16 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<activity::Like> {
-        let mut act = activity::Like::default();
-        act.like_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.like_props
-            .set_object_link(Post::get(conn, self.post_id)?.into_id())?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(
-            User::get(conn, self.user_id)?.followers_endpoint,
-        )])?;
-        act.object_props.set_id_string(self.ap_url.clone())?;
+    pub fn to_activity(&self, conn: &Connection) -> Result<LikeAct> {
+        let mut act = LikeAct::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
+        );
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![User::get(conn, self.user_id)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
+        act.set_id(self.ap_url.parse::<IriString>()?);
 
         Ok(act)
     }
@@ -67,24 +70,22 @@ impl Like {
         Ok(())
     }
 
-    pub fn build_undo(&self, conn: &Connection) -> Result<activity::Undo> {
-        let mut act = activity::Undo::default();
-        act.undo_props
-            .set_actor_link(User::get(conn, self.user_id)?.into_id())?;
-        act.undo_props.set_object_object(self.to_activity(conn)?)?;
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        act.object_props.set_cc_link_vec(vec![Id::new(
-            User::get(conn, self.user_id)?.followers_endpoint,
-        )])?;
+    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
+        let mut act = Undo::new(
+            User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
+            AnyBase::from_extended(self.to_activity(conn)?)?,
+        );
+        act.set_id(format!("{}#delete", self.ap_url).parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+        act.set_many_ccs(vec![User::get(conn, self.user_id)?
+            .followers_endpoint
+            .parse::<IriString>()?]);
 
         Ok(act)
     }
 }
 
-impl AsObject<User, activity::Like, &DbConn> for Post {
+impl AsObject<User, LikeAct, &DbConn> for Post {
     type Error = Error;
     type Output = Like;
 
@@ -106,19 +107,22 @@ impl AsObject<User, activity::Like, &DbConn> for Post {
 
 impl FromId<DbConn> for Like {
     type Error = Error;
-    type Object = activity::Like;
+    type Object = LikeAct;
 
     fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
         Like::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, act: activity::Like) -> Result<Self> {
+    fn from_activity(conn: &DbConn, act: LikeAct) -> Result<Self> {
         let res = Like::insert(
             conn,
             NewLike {
                 post_id: Post::from_id(
                     conn,
-                    &act.like_props.object_link::<Id>()?,
+                    act.object_field_ref()
+                        .as_single_id()
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str(),
                     None,
                     CONFIG.proxy(),
                 )
@@ -126,13 +130,19 @@ impl FromId<DbConn> for Like {
                 .id,
                 user_id: User::from_id(
                     conn,
-                    &act.like_props.actor_link::<Id>()?,
+                    act.actor_field_ref()
+                        .as_single_id()
+                        .ok_or(Error::MissingApProperty)?
+                        .as_str(),
                     None,
                     CONFIG.proxy(),
                 )
                 .map_err(|(_, e)| e)?
                 .id,
-                ap_url: act.object_props.id_string()?,
+                ap_url: act
+                    .id_unchecked()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_string(),
             },
         )?;
         res.notify(conn)?;
@@ -144,7 +154,7 @@ impl FromId<DbConn> for Like {
     }
 }
 
-impl AsObject<User, activity::Undo, &DbConn> for Like {
+impl AsObject<User, Undo, &DbConn> for Like {
     type Error = Error;
     type Output = ();
 

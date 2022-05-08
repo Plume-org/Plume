@@ -2,7 +2,11 @@ use crate::{
     comments::Comment, db_conn::DbConn, notifications::*, posts::Post, schema::mentions,
     users::User, Connection, Error, Result,
 };
-use activitypub::link;
+use activitystreams::{
+    base::BaseExt,
+    iri_string::types::IriString,
+    link::{self, LinkExt},
+};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use plume_common::activity_pub::inbox::AsActor;
 
@@ -58,19 +62,17 @@ impl Mention {
 
     pub fn build_activity(conn: &DbConn, ment: &str) -> Result<link::Mention> {
         let user = User::find_by_fqn(conn, ment)?;
-        let mut mention = link::Mention::default();
-        mention.link_props.set_href_string(user.ap_url)?;
-        mention.link_props.set_name_string(format!("@{}", ment))?;
+        let mut mention = link::Mention::new();
+        mention.set_href(user.ap_url.parse::<IriString>()?);
+        mention.set_name(format!("@{}", ment));
         Ok(mention)
     }
 
     pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
         let user = self.get_mentioned(conn)?;
-        let mut mention = link::Mention::default();
-        mention.link_props.set_href_string(user.ap_url.clone())?;
-        mention
-            .link_props
-            .set_name_string(format!("@{}", user.fqn))?;
+        let mut mention = link::Mention::new();
+        mention.set_href(user.ap_url.parse::<IriString>()?);
+        mention.set_name(format!("@{}", user.fqn));
         Ok(mention)
     }
 
@@ -81,8 +83,8 @@ impl Mention {
         in_post: bool,
         notify: bool,
     ) -> Result<Self> {
-        let ap_url = ment.link_props.href_string().or(Err(Error::NotFound))?;
-        let mentioned = User::find_by_ap_url(conn, &ap_url)?;
+        let ap_url = ment.href().ok_or(Error::NotFound)?.as_str();
+        let mentioned = User::find_by_ap_url(conn, ap_url)?;
 
         if in_post {
             Post::get(conn, inside).and_then(|post| {

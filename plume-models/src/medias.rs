@@ -2,11 +2,11 @@ use crate::{
     ap_url, db_conn::DbConn, instance::Instance, safe_string::SafeString, schema::medias,
     users::User, Connection, Error, Result, CONFIG,
 };
-use activitypub::object::Image;
+use activitystreams::{object::Image, prelude::*};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use guid_create::GUID;
 use plume_common::{
-    activity_pub::{inbox::FromId, request, Id},
+    activity_pub::{inbox::FromId, request, ToAsString, ToAsUri},
     utils::{escape, MediaProcessor},
 };
 use std::{
@@ -208,9 +208,9 @@ impl Media {
     // TODO: merge with save_remote?
     pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
         let remote_url = image
-            .object_props
-            .url_string()
-            .or(Err(Error::MissingApProperty))?;
+            .url()
+            .and_then(|url| url.to_as_uri())
+            .ok_or(Error::MissingApProperty)?;
         let path = determine_mirror_file_path(&remote_url);
         let parent = path.parent().ok_or(Error::InvalidValue)?;
         if !parent.is_dir() {
@@ -231,11 +231,12 @@ impl Media {
                 let mut updated = false;
 
                 let alt_text = image
-                    .object_props
-                    .content_string()
-                    .or(Err(Error::NotFound))?;
-                let sensitive = image.object_props.summary_string().is_ok();
-                let content_warning = image.object_props.summary_string().ok();
+                    .content()
+                    .and_then(|content| content.to_as_string())
+                    .ok_or(Error::NotFound)?;
+                let summary = image.summary().and_then(|summary| summary.to_as_string());
+                let sensitive = summary.is_some();
+                let content_warning = summary;
                 if media.alt_text != alt_text {
                     media.alt_text = alt_text;
                     updated = true;
@@ -262,28 +263,25 @@ impl Media {
                 Ok(media)
             })
             .or_else(|_| {
+                let summary = image.summary().and_then(|summary| summary.to_as_string());
                 Media::insert(
                     conn,
                     NewMedia {
                         file_path: path.to_str().ok_or(Error::InvalidValue)?.to_string(),
                         alt_text: image
-                            .object_props
-                            .content_string()
-                            .or(Err(Error::NotFound))?,
+                            .content()
+                            .and_then(|content| content.to_as_string())
+                            .ok_or(Error::NotFound)?,
                         is_remote: false,
                         remote_url: None,
-                        sensitive: image.object_props.summary_string().is_ok(),
-                        content_warning: image.object_props.summary_string().ok(),
+                        sensitive: summary.is_some(),
+                        content_warning: summary,
                         owner_id: User::from_id(
                             conn,
-                            image
-                                .object_props
-                                .attributed_to_link_vec::<Id>()
-                                .or(Err(Error::NotFound))?
-                                .into_iter()
-                                .next()
-                                .ok_or(Error::NotFound)?
-                                .as_ref(),
+                            &image
+                                .attributed_to()
+                                .and_then(|attributed_to| attributed_to.to_as_uri())
+                                .ok_or(Error::MissingApProperty)?,
                             None,
                             CONFIG.proxy(),
                         )

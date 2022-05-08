@@ -1,4 +1,4 @@
-use activitypub::activity::*;
+use activitystreams::activity::{Announce, Create, Delete, Follow, Like, Undo, Update};
 
 use crate::{
     comments::Comment,
@@ -94,8 +94,8 @@ pub(crate) mod tests {
                 license: "WTFPL".to_owned(),
                 creation_date: None,
                 ap_url: format!("https://plu.me/~/{}/testing", blogs[0].actor_id),
-                subtitle: String::new(),
-                source: String::new(),
+                subtitle: "Bye".to_string(),
+                source: "Hello".to_string(),
                 cover_id: None,
             },
         )
@@ -268,7 +268,7 @@ pub(crate) mod tests {
                 "actor": users[0].ap_url,
                 "object": {
                     "type": "Article",
-                    "id": "https://plu.me/~/Blog/my-article",
+                    "id": "https://plu.me/~/BlogName/testing",
                     "attributedTo": [users[0].ap_url, blogs[0].ap_url],
                     "content": "Hello.",
                     "name": "My Article",
@@ -286,11 +286,11 @@ pub(crate) mod tests {
             match super::inbox(&conn, act).unwrap() {
                 super::InboxResult::Post(p) => {
                     assert!(p.is_author(&conn, users[0].id).unwrap());
-                    assert_eq!(p.source, "Hello.".to_owned());
+                    assert_eq!(p.source, "Hello".to_owned());
                     assert_eq!(p.blog_id, blogs[0].id);
-                    assert_eq!(p.content, SafeString::new("Hello."));
-                    assert_eq!(p.subtitle, "Bye.".to_owned());
-                    assert_eq!(p.title, "My Article".to_owned());
+                    assert_eq!(p.content, SafeString::new("Hello"));
+                    assert_eq!(p.subtitle, "Bye".to_owned());
+                    assert_eq!(p.title, "Testing".to_owned());
                 }
                 _ => panic!("Unexpected result"),
             };

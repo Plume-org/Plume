@@ -15,7 +15,7 @@ use crate::routes::{
 };
 use crate::template_utils::{IntoContext, Ructe};
 use crate::utils::requires_login;
-use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest};
+use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, LicensedArticle};
 use plume_common::utils::md_to_html;
 use plume_models::{
     blogs::*,

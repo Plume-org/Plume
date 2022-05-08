@@ -10,8 +10,7 @@ use super::{request, sign::Signer};
 /// # Example
 ///
 /// ```rust
-/// # extern crate activitypub;
-/// # use activitypub::{actor::Person, activity::{Announce, Create}, object::Note};
+/// # use activitystreams::{prelude::*, base::Base, actor::Person, activity::{Announce, Create}, object::Note, iri_string::types::IriString};
 /// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
 /// # use once_cell::sync::Lazy;
 /// # use plume_common::activity_pub::inbox::*;
@@ -113,12 +112,13 @@ use super::{request, sign::Signer};
 /// #     }
 /// # }
 /// #
-/// # let mut act = Create::default();
-/// # act.object_props.set_id_string(String::from("https://test.ap/activity")).unwrap();
-/// # let mut person = Person::default();
-/// # person.object_props.set_id_string(String::from("https://test.ap/actor")).unwrap();
-/// # act.create_props.set_actor_object(person).unwrap();
-/// # act.create_props.set_object_object(Note::default()).unwrap();
+/// # let mut person = Person::new();
+/// # person.set_id("https://test.ap/actor".parse::<IriString>().unwrap());
+/// # let mut act = Create::new(
+/// #     Base::retract(person).unwrap().into_generic().unwrap(),
+/// #     Base::retract(Note::new()).unwrap().into_generic().unwrap()
+/// # );
+/// # act.set_id("https://test.ap/activity".parse::<IriString>().unwrap());
 /// # let activity_json = serde_json::to_value(act).unwrap();
 /// #
 /// # let conn = ();
@@ -197,29 +197,29 @@ where
     }
 
     /// Registers an handler on this Inbox.
-    pub fn with<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Inbox<'a, C, E, R>
+    pub fn with<A, V, M>(self, proxy: Option<&reqwest::Proxy>) -> Self
     where
         A: AsActor<&'a C> + FromId<C, Error = E>,
-        V: activitypub::Activity,
+        V: activitystreams::markers::Activity + serde::de::DeserializeOwned,
         M: AsObject<A, V, &'a C, Error = E> + FromId<C, Error = E>,
         M::Output: Into<R>,
     {
-        if let Inbox::NotHandled(ctx, mut act, e) = self {
+        if let Self::NotHandled(ctx, mut act, e) = self {
             if serde_json::from_value::<V>(act.clone()).is_ok() {
                 let act_clone = act.clone();
                 let act_id = match act_clone["id"].as_str() {
                     Some(x) => x,
-                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidID),
+                    None => return Self::NotHandled(ctx, act, InboxError::InvalidID),
                 };
 
                 // Get the actor ID
                 let actor_id = match get_id(act["actor"].clone()) {
                     Some(x) => x,
-                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(None)),
+                    None => return Self::NotHandled(ctx, act, InboxError::InvalidActor(None)),
                 };
 
                 if Self::is_spoofed_activity(&actor_id, &act) {
-                    return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None));
+                    return Self::NotHandled(ctx, act, InboxError::InvalidObject(None));
                 }
 
                 // Transform this actor to a model (see FromId for details about the from_id function)
@@ -235,14 +235,14 @@ where
                         if let Some(json) = json {
                             act["actor"] = json;
                         }
-                        return Inbox::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)));
+                        return Self::NotHandled(ctx, act, InboxError::InvalidActor(Some(e)));
                     }
                 };
 
                 // Same logic for "object"
                 let obj_id = match get_id(act["object"].clone()) {
                     Some(x) => x,
-                    None => return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(None)),
+                    None => return Self::NotHandled(ctx, act, InboxError::InvalidObject(None)),
                 };
                 let obj = match M::from_id(
                     ctx,
@@ -255,19 +255,19 @@ where
                         if let Some(json) = json {
                             act["object"] = json;
                         }
-                        return Inbox::NotHandled(ctx, act, InboxError::InvalidObject(Some(e)));
+                        return Self::NotHandled(ctx, act, InboxError::InvalidObject(Some(e)));
                     }
                 };
 
                 // Handle the activity
                 match obj.activity(ctx, actor, act_id) {
-                    Ok(res) => Inbox::Handled(res.into()),
-                    Err(e) => Inbox::Failed(e),
+                    Ok(res) => Self::Handled(res.into()),
+                    Err(e) => Self::Failed(e),
                 }
             } else {
                 // If the Activity type is not matching the expected one for
                 // this handler, try with the next one.
-                Inbox::NotHandled(ctx, act, e)
+                Self::NotHandled(ctx, act, e)
             }
         } else {
             self
@@ -333,7 +333,7 @@ pub trait FromId<C>: Sized {
     type Error: From<InboxError<Self::Error>> + Debug;
 
     /// The ActivityPub object type representing Self
-    type Object: activitypub::Object;
+    type Object: activitystreams::markers::Object + serde::de::DeserializeOwned;
 
     /// Tries to get an instance of `Self` from an ActivityPub ID.
     ///
@@ -418,8 +418,7 @@ pub trait AsActor<C> {
 /// representing the Note by a Message type, without any specific context.
 ///
 /// ```rust
-/// # extern crate activitypub;
-/// # use activitypub::{activity::Create, actor::Person, object::Note};
+/// # use activitystreams::{prelude::*, activity::Create, actor::Person, object::Note};
 /// # use plume_common::activity_pub::inbox::{AsActor, AsObject, FromId};
 /// # use plume_common::activity_pub::sign::{gen_keypair, Error as SignError, Result as SignResult, Signer};
 /// # use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
@@ -501,7 +500,10 @@ pub trait AsActor<C> {
 ///     }
 ///
 ///     fn from_activity(_: &(), obj: Note) -> Result<Self, Self::Error> {
-///         Ok(Message { text: obj.object_props.content_string().map_err(|_| ())? })
+///         Ok(Message {
+///             text: obj.content()
+///                 .and_then(|content| content.to_owned().single_xsd_string()).ok_or(())?
+///         })
 ///     }
 ///
 ///     fn get_sender() -> &'static dyn Signer {
@@ -521,7 +523,7 @@ pub trait AsActor<C> {
 /// ```
 pub trait AsObject<A, V, C>
 where
-    V: activitypub::Activity,
+    V: activitystreams::markers::Activity,
 {
     /// What kind of error is returned when something fails
     type Error;
@@ -549,7 +551,13 @@ mod tests {
     use crate::activity_pub::sign::{
         gen_keypair, Error as SignError, Result as SignResult, Signer,
     };
-    use activitypub::{activity::*, actor::Person, object::Note};
+    use activitystreams::{
+        activity::{Announce, Create, Delete, Like},
+        actor::Person,
+        base::Base,
+        object::Note,
+        prelude::*,
+    };
     use once_cell::sync::Lazy;
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
 
@@ -598,11 +606,11 @@ mod tests {
         type Object = Person;
 
         fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
-            Ok(MyActor)
+            Ok(Self)
         }
 
         fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
-            Ok(MyActor)
+            Ok(Self)
         }
 
         fn get_sender() -> &'static dyn Signer {
@@ -626,11 +634,11 @@ mod tests {
         type Object = Note;
 
         fn from_db(_: &(), _id: &str) -> Result<Self, Self::Error> {
-            Ok(MyObject)
+            Ok(Self)
         }
 
         fn from_activity(_: &(), _obj: Note) -> Result<Self, Self::Error> {
-            Ok(MyObject)
+            Ok(Self)
         }
 
         fn get_sender() -> &'static dyn Signer {
@@ -678,21 +686,15 @@ mod tests {
     }
 
     fn build_create() -> Create {
-        let mut act = Create::default();
-        act.object_props
-            .set_id_string(String::from("https://test.ap/activity"))
-            .unwrap();
-        let mut person = Person::default();
-        person
-            .object_props
-            .set_id_string(String::from("https://test.ap/actor"))
-            .unwrap();
-        act.create_props.set_actor_object(person).unwrap();
-        let mut note = Note::default();
-        note.object_props
-            .set_id_string(String::from("https://test.ap/note"))
-            .unwrap();
-        act.create_props.set_object_object(note).unwrap();
+        let mut person = Person::new();
+        person.set_id("https://test.ap/actor".parse().unwrap());
+        let mut note = Note::new();
+        note.set_id("https://test.ap/note".parse().unwrap());
+        let mut act = Create::new(
+            Base::retract(person).unwrap().into_generic().unwrap(),
+            Base::retract(note).unwrap().into_generic().unwrap(),
+        );
+        act.set_id("https://test.ap/activity".parse().unwrap());
         act
     }
 
@@ -729,6 +731,16 @@ mod tests {
     }
 
     struct FailingActor;
+    impl AsActor<&()> for FailingActor {
+        fn get_inbox_url(&self) -> String {
+            String::from("https://test.ap/failing-actor/inbox")
+        }
+
+        fn is_local(&self) -> bool {
+            false
+        }
+    }
+
     impl FromId<()> for FailingActor {
         type Error = ();
         type Object = Person;
@@ -737,21 +749,12 @@ mod tests {
             Err(())
         }
 
-        fn from_activity(_: &(), _obj: Person) -> Result<Self, Self::Error> {
+        fn from_activity(_: &(), _obj: Self::Object) -> Result<Self, Self::Error> {
             Err(())
         }
 
         fn get_sender() -> &'static dyn Signer {
             &*MY_SIGNER
-        }
-    }
-    impl AsActor<&()> for FailingActor {
-        fn get_inbox_url(&self) -> String {
-            String::from("https://test.ap/failing-actor/inbox")
-        }
-
-        fn is_local(&self) -> bool {
-            false
         }
     }
 

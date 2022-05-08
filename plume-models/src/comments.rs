@@ -11,18 +11,23 @@ use crate::{
     users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::{
+use activitystreams::{
     activity::{Create, Delete},
-    link,
+    base::{AnyBase, Base},
+    iri_string::types::IriString,
+    link::{self, kind::MentionType},
     object::{Note, Tombstone},
+    prelude::*,
+    primitives::OneOrMany,
+    time::OffsetDateTime,
 };
-use chrono::{self, NaiveDateTime, TimeZone, Utc};
+use chrono::{self, NaiveDateTime};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::{
     activity_pub::{
         inbox::{AsActor, AsObject, FromId},
         sign::Signer,
-        Id, IntoId, PUBLIC_VISIBILITY,
+        IntoId, ToAsString, ToAsUri, PUBLIC_VISIBILITY,
     },
     utils,
 };
@@ -115,29 +120,32 @@ impl Comment {
             Some(Media::get_media_processor(conn, vec![&author])),
         );
 
-        let mut note = Note::default();
-        let to = vec![Id::new(PUBLIC_VISIBILITY.to_string())];
+        let mut note = Note::new();
+        let to = vec![PUBLIC_VISIBILITY.parse::<IriString>()?];
 
-        note.object_props
-            .set_id_string(self.ap_url.clone().unwrap_or_default())?;
-        note.object_props
-            .set_summary_string(self.spoiler_text.clone())?;
-        note.object_props.set_content_string(html)?;
-        note.object_props
-            .set_in_reply_to_link(Id::new(self.in_response_to_id.map_or_else(
-                || Ok(Post::get(conn, self.post_id)?.ap_url),
-                |id| Ok(Comment::get(conn, id)?.ap_url.unwrap_or_default()) as Result<String>,
-            )?))?;
-        note.object_props
-            .set_published_utctime(Utc.from_utc_datetime(&self.creation_date))?;
-        note.object_props.set_attributed_to_link(author.into_id())?;
-        note.object_props.set_to_link_vec(to)?;
-        note.object_props.set_tag_link_vec(
-            mentions
-                .into_iter()
-                .filter_map(|m| Mention::build_activity(conn, &m).ok())
-                .collect::<Vec<link::Mention>>(),
-        )?;
+        note.set_id(
+            self.ap_url
+                .clone()
+                .unwrap_or_default()
+                .parse::<IriString>()?,
+        );
+        note.set_summary(self.spoiler_text.clone());
+        note.set_content(html);
+        note.set_in_reply_to(self.in_response_to_id.map_or_else(
+            || Post::get(conn, self.post_id).map(|post| post.ap_url),
+            |id| Comment::get(conn, id).map(|comment| comment.ap_url.unwrap_or_default()),
+        )?);
+        note.set_published(
+            OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
+                .expect("OffsetDateTime"),
+        );
+        note.set_attributed_to(author.into_id().parse::<IriString>()?);
+        note.set_many_tos(to);
+        note.set_many_tags(mentions.into_iter().filter_map(|m| {
+            Mention::build_activity(conn, &m)
+                .map(|mention| mention.into_any_base().expect("Can convert"))
+                .ok()
+        }));
         Ok(note)
     }
 
@@ -145,17 +153,26 @@ impl Comment {
         let author = User::get(conn, self.author_id)?;
 
         let note = self.to_activity(conn)?;
-        let mut act = Create::default();
-        act.create_props.set_actor_link(author.into_id())?;
-        act.create_props.set_object_object(note.clone())?;
-        act.object_props.set_id_string(format!(
-            "{}/activity",
-            self.ap_url.clone().ok_or(Error::MissingApProperty)?,
-        ))?;
-        act.object_props
-            .set_to_link_vec(note.object_props.to_link_vec::<Id>()?)?;
-        act.object_props
-            .set_cc_link_vec(vec![Id::new(self.get_author(conn)?.followers_endpoint)])?;
+        let note_clone = note.clone();
+
+        let mut act = Create::new(
+            author.into_id().parse::<IriString>()?,
+            Base::retract(note)?.into_generic()?,
+        );
+        act.set_id(
+            format!(
+                "{}/activity",
+                self.ap_url.clone().ok_or(Error::MissingApProperty)?,
+            )
+            .parse::<IriString>()?,
+        );
+        act.set_many_tos(
+            note_clone
+                .to()
+                .iter()
+                .flat_map(|tos| tos.iter().map(|to| to.to_owned())),
+        );
+        act.set_many_ccs(vec![self.get_author(conn)?.followers_endpoint]);
         Ok(act)
     }
 
@@ -180,20 +197,21 @@ impl Comment {
     }
 
     pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
-        let mut act = Delete::default();
-        act.delete_props
-            .set_actor_link(self.get_author(conn)?.into_id())?;
+        let mut tombstone = Tombstone::new();
+        tombstone.set_id(
+            self.ap_url
+                .as_ref()
+                .ok_or(Error::MissingApProperty)?
+                .parse::<IriString>()?,
+        );
 
-        let mut tombstone = Tombstone::default();
-        tombstone
-            .object_props
-            .set_id_string(self.ap_url.clone().ok_or(Error::MissingApProperty)?)?;
-        act.delete_props.set_object_object(tombstone)?;
+        let mut act = Delete::new(
+            self.get_author(conn)?.into_id().parse::<IriString>()?,
+            Base::retract(tombstone)?.into_generic()?,
+        );
 
-        act.object_props
-            .set_id_string(format!("{}#delete", self.ap_url.clone().unwrap()))?;
-        act.object_props
-            .set_to_link_vec(vec![Id::new(PUBLIC_VISIBILITY)])?;
+        act.set_id(format!("{}#delete", self.ap_url.clone().unwrap()).parse::<IriString>()?);
+        act.set_many_tos(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
 
         Ok(act)
     }
@@ -210,102 +228,104 @@ impl FromId<DbConn> for Comment {
     fn from_activity(conn: &DbConn, note: Note) -> Result<Self> {
         let comm = {
             let previous_url = note
-                .object_props
-                .in_reply_to
-                .as_ref()
+                .in_reply_to()
                 .ok_or(Error::MissingApProperty)?
-                .as_str()
+                .iter()
+                .next()
+                .ok_or(Error::MissingApProperty)?
+                .id()
                 .ok_or(Error::MissingApProperty)?;
-            let previous_comment = Comment::find_by_ap_url(conn, previous_url);
+            let previous_comment = Comment::find_by_ap_url(conn, previous_url.as_str());
 
-            let is_public = |v: &Option<serde_json::Value>| match v
-                .as_ref()
-                .unwrap_or(&serde_json::Value::Null)
-            {
-                serde_json::Value::Array(v) => v
-                    .iter()
-                    .filter_map(serde_json::Value::as_str)
-                    .any(|s| s == PUBLIC_VISIBILITY),
-                serde_json::Value::String(s) => s == PUBLIC_VISIBILITY,
-                _ => false,
+            let is_public = |v: &Option<&OneOrMany<AnyBase>>| match v {
+                Some(one_or_many) => one_or_many.iter().any(|any_base| {
+                    let id = any_base.id();
+                    id.is_some() && id.unwrap() == PUBLIC_VISIBILITY
+                }),
+                None => false,
             };
 
-            let public_visibility = is_public(&note.object_props.to)
-                || is_public(&note.object_props.bto)
-                || is_public(&note.object_props.cc)
-                || is_public(&note.object_props.bcc);
+            let public_visibility = is_public(&note.to())
+                || is_public(&note.bto())
+                || is_public(&note.cc())
+                || is_public(&note.bcc());
 
+            let summary = note.summary().and_then(|summary| summary.to_as_string());
+            let sensitive = summary.is_some();
             let comm = Comment::insert(
                 conn,
                 NewComment {
-                    content: SafeString::new(&note.object_props.content_string()?),
-                    spoiler_text: note.object_props.summary_string().unwrap_or_default(),
-                    ap_url: note.object_props.id_string().ok(),
+                    content: SafeString::new(
+                        &note
+                            .content()
+                            .ok_or(Error::MissingApProperty)?
+                            .to_as_string()
+                            .ok_or(Error::InvalidValue)?,
+                    ),
+                    spoiler_text: summary.unwrap_or_default(),
+                    ap_url: Some(
+                        note.id_unchecked()
+                            .ok_or(Error::MissingApProperty)?
+                            .to_string(),
+                    ),
                     in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
                     post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
-                        Ok(Post::find_by_ap_url(conn, previous_url)?.id) as Result<i32>
+                        Ok(Post::find_by_ap_url(conn, previous_url.as_str())?.id) as Result<i32>
                     })?,
                     author_id: User::from_id(
                         conn,
-                        &note.object_props.attributed_to_link::<Id>()?,
+                        &note
+                            .attributed_to()
+                            .ok_or(Error::MissingApProperty)?
+                            .to_as_uri()
+                            .ok_or(Error::MissingApProperty)?,
                         None,
                         CONFIG.proxy(),
                     )
                     .map_err(|(_, e)| e)?
                     .id,
-                    sensitive: note.object_props.summary_string().is_ok(),
+                    sensitive,
                     public_visibility,
                 },
             )?;
 
             // save mentions
-            if let Some(serde_json::Value::Array(tags)) = note.object_props.tag.clone() {
-                for tag in tags {
-                    serde_json::from_value::<link::Mention>(tag)
-                        .map_err(Error::from)
-                        .and_then(|m| {
-                            let author = &Post::get(conn, comm.post_id)?.get_authors(conn)?[0];
-                            let not_author = m.link_props.href_string()? != author.ap_url.clone();
-                            Mention::from_activity(conn, &m, comm.id, false, not_author)
-                        })
-                        .ok();
+            if let Some(tags) = note.tag() {
+                let author_url = &Post::get(conn, comm.post_id)?.get_authors(conn)?[0].ap_url;
+                for tag in tags.iter() {
+                    let m = tag.clone().extend::<link::Mention, MentionType>()?; // FIXME: Don't clone
+                    if m.is_none() {
+                        continue;
+                    }
+                    let m = m.unwrap();
+                    let not_author = m.href().ok_or(Error::MissingApProperty)? != author_url;
+                    let _ = Mention::from_activity(conn, &m, comm.id, false, not_author);
                 }
             }
             comm
         };
 
         if !comm.public_visibility {
-            let receivers_ap_url = |v: Option<serde_json::Value>| {
-                let filter = |e: serde_json::Value| {
-                    if let serde_json::Value::String(s) = e {
-                        Some(s)
-                    } else {
-                        None
+            let mut receiver_ids = HashSet::new();
+            let mut receivers_id = |v: Option<&'_ OneOrMany<AnyBase>>| {
+                if let Some(one_or_many) = v {
+                    for any_base in one_or_many.iter() {
+                        if let Some(id) = any_base.id() {
+                            receiver_ids.insert(id.to_string());
+                        }
                     }
-                };
-                match v.unwrap_or(serde_json::Value::Null) {
-                    serde_json::Value::Array(v) => v,
-                    v => vec![v],
                 }
-                .into_iter()
-                .filter_map(filter)
             };
 
-            let mut note = note;
+            receivers_id(note.to());
+            receivers_id(note.cc());
+            receivers_id(note.bto());
+            receivers_id(note.bcc());
 
-            let to = receivers_ap_url(note.object_props.to.take());
-            let cc = receivers_ap_url(note.object_props.cc.take());
-            let bto = receivers_ap_url(note.object_props.bto.take());
-            let bcc = receivers_ap_url(note.object_props.bcc.take());
-
-            let receivers_ap_url = to
-                .chain(cc)
-                .chain(bto)
-                .chain(bcc)
-                .collect::<HashSet<_>>() // remove duplicates (don't do a query more than once)
+            let receivers_ap_url = receiver_ids
                 .into_iter()
                 .flat_map(|v| {
-                    if let Ok(user) = User::from_id(conn, &v, None, CONFIG.proxy()) {
+                    if let Ok(user) = User::from_id(conn, v.as_ref(), None, CONFIG.proxy()) {
                         vec![user]
                     } else {
                         vec![] // TODO try to fetch collection

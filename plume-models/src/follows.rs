@@ -2,7 +2,12 @@ use crate::{
     ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
     Connection, Error, Result, CONFIG,
 };
-use activitypub::activity::{Accept, Follow as FollowAct, Undo};
+use activitystreams::{
+    activity::{Accept, ActorAndObjectRef, Follow as FollowAct, Undo},
+    base::AnyBase,
+    iri_string::types::IriString,
+    prelude::*,
+};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl, SaveChangesDsl};
 use plume_common::activity_pub::{
     broadcast,
@@ -53,15 +58,13 @@ impl Follow {
     pub fn to_activity(&self, conn: &Connection) -> Result<FollowAct> {
         let user = User::get(conn, self.follower_id)?;
         let target = User::get(conn, self.following_id)?;
+        let target_id = target.ap_url.parse::<IriString>()?;
 
-        let mut act = FollowAct::default();
-        act.follow_props.set_actor_link::<Id>(user.into_id())?;
-        act.follow_props
-            .set_object_link::<Id>(target.clone().into_id())?;
-        act.object_props.set_id_string(self.ap_url.clone())?;
-        act.object_props.set_to_link_vec(vec![target.into_id()])?;
-        act.object_props
-            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        let mut act = FollowAct::new(user.ap_url.parse::<IriString>()?, target_id.clone());
+        act.set_id(self.ap_url.parse::<IriString>()?);
+        act.set_many_tos(vec![target_id]);
+        act.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+
         Ok(act)
     }
 
@@ -94,7 +97,11 @@ impl Follow {
             NewFollow {
                 follower_id: from_id,
                 following_id: target_id,
-                ap_url: follow.object_props.id_string()?,
+                ap_url: follow
+                    .object_field_ref()
+                    .as_single_id()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_string(),
             },
         )?;
         res.notify(conn)?;
@@ -115,39 +122,35 @@ impl Follow {
         target: &A,
         follow: FollowAct,
     ) -> Result<Accept> {
-        let mut accept = Accept::default();
+        let mut accept = Accept::new(
+            target.clone().into_id().parse::<IriString>()?,
+            AnyBase::from_extended(follow)?,
+        );
         let accept_id = ap_url(&format!(
             "{}/follows/{}/accept",
             CONFIG.base_url.as_str(),
             self.id
         ));
-        accept.object_props.set_id_string(accept_id)?;
-        accept
-            .object_props
-            .set_to_link_vec(vec![from.clone().into_id()])?;
-        accept
-            .object_props
-            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
-        accept
-            .accept_props
-            .set_actor_link::<Id>(target.clone().into_id())?;
-        accept.accept_props.set_object_object(follow)?;
+        accept.set_id(accept_id.parse::<IriString>()?);
+        accept.set_many_tos(vec![from.clone().into_id().parse::<IriString>()?]);
+        accept.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
 
         Ok(accept)
     }
 
     pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
-        let mut undo = Undo::default();
-        undo.undo_props
-            .set_actor_link(User::get(conn, self.follower_id)?.into_id())?;
-        undo.object_props
-            .set_id_string(format!("{}/undo", self.ap_url))?;
-        undo.undo_props
-            .set_object_link::<Id>(self.clone().into_id())?;
-        undo.object_props
-            .set_to_link_vec(vec![User::get(conn, self.following_id)?.into_id()])?;
-        undo.object_props
-            .set_cc_link_vec(vec![Id::new(PUBLIC_VISIBILITY.to_string())])?;
+        let mut undo = Undo::new(
+            User::get(conn, self.follower_id)?
+                .ap_url
+                .parse::<IriString>()?,
+            self.ap_url.parse::<IriString>()?,
+        );
+        undo.set_id(format!("{}/undo", self.ap_url).parse::<IriString>()?);
+        undo.set_many_tos(vec![User::get(conn, self.following_id)?
+            .ap_url
+            .parse::<IriString>()?]);
+        undo.set_many_ccs(vec![PUBLIC_VISIBILITY.parse::<IriString>()?]);
+
         Ok(undo)
     }
 }
@@ -159,11 +162,7 @@ impl AsObject<User, FollowAct, &DbConn> for User {
     fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
-        let mut follow = FollowAct::default();
-        follow.object_props.set_id_string(id.to_string())?;
-        follow
-            .follow_props
-            .set_actor_link::<Id>(actor.clone().into_id())?;
+        let follow = FollowAct::new(actor.ap_url.parse::<IriString>()?, id.parse::<IriString>()?);
         Follow::accept_follow(conn, &actor, &self, follow, actor.id, self.id)
     }
 }
@@ -179,7 +178,11 @@ impl FromId<DbConn> for Follow {
     fn from_activity(conn: &DbConn, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
             conn,
-            &follow.follow_props.actor_link::<Id>()?,
+            follow
+                .actor_field_ref()
+                .as_single_id()
+                .ok_or(Error::MissingApProperty)?
+                .as_str(),
             None,
             CONFIG.proxy(),
         )
@@ -187,7 +190,11 @@ impl FromId<DbConn> for Follow {
 
         let target = User::from_id(
             conn,
-            &follow.follow_props.object_link::<Id>()?,
+            follow
+                .object_field_ref()
+                .as_single_id()
+                .ok_or(Error::MissingApProperty)?
+                .as_str(),
             None,
             CONFIG.proxy(),
         )

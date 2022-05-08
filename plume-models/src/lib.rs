@@ -16,6 +16,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate tantivy;
 
+use activitystreams::iri_string;
 pub use lettre;
 pub use lettre::smtp;
 use once_cell::sync::Lazy;
@@ -100,6 +101,12 @@ impl From<url::ParseError> for Error {
     }
 }
 
+impl From<iri_string::validate::Error> for Error {
+    fn from(_: iri_string::validate::Error) -> Self {
+        Error::Url
+    }
+}
+
 impl From<serde_json::Error> for Error {
     fn from(_: serde_json::Error) -> Self {
         Error::SerDe
@@ -118,12 +125,9 @@ impl From<reqwest::header::InvalidHeaderValue> for Error {
     }
 }
 
-impl From<activitypub::Error> for Error {
-    fn from(err: activitypub::Error) -> Self {
-        match err {
-            activitypub::Error::NotFound => Error::MissingApProperty,
-            _ => Error::SerDe,
-        }
+impl From<activitystreams::checked::CheckError> for Error {
+    fn from(_: activitystreams::checked::CheckError) -> Error {
+        Error::MissingApProperty
     }
 }
 
