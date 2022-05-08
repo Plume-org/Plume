@@ -155,7 +155,7 @@
                     @if let Some(ref prev) = previous_comment {
                         <input type="hidden" name="responding_to" value="@prev.id"/>
                     }
-                    <textarea id="plume-editor" name="content" dir="auto">@comment_form.content</textarea>
+                    <textarea id="plume-editor" name="content" dir="auto" required>@comment_form.content</textarea>
                     <input type="submit" value="@i18n!(ctx.1, "Submit comment")" />
                 </form>
             }
