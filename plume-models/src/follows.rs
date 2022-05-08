@@ -98,7 +98,8 @@ impl Follow {
                 follower_id: from_id,
                 following_id: target_id,
                 ap_url: follow
-                    .id_unchecked()
+                    .object_field_ref()
+                    .as_single_id()
                     .ok_or(Error::MissingApProperty)?
                     .to_string(),
             },
