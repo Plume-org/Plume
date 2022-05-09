@@ -3305,7 +3305,7 @@ dependencies = [
 name = "plume-macro"
 version = "0.7.1"
 dependencies = [
- "proc-macro2 0.4.30",
+ "proc-macro2 1.0.37",
  "quote 0.6.13",
  "syn 0.15.44",
 ]
