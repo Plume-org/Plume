@@ -12,283 +12,213 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-# src/template_utils.rs:105
 msgid "Someone"
 msgstr ""
 
-# src/template_utils.rs:107
 msgid "{0} commented on your article."
 msgstr ""
 
-# src/template_utils.rs:108
 msgid "{0} is subscribed to you."
 msgstr ""
 
-# src/template_utils.rs:109
 msgid "{0} liked your article."
 msgstr ""
 
-# src/template_utils.rs:110
 msgid "{0} mentioned you."
 msgstr ""
 
-# src/template_utils.rs:111
 msgid "{0} boosted your article."
 msgstr ""
 
-# src/template_utils.rs:118
 msgid "Your feed"
 msgstr ""
 
-# src/template_utils.rs:119
 msgid "Local feed"
 msgstr ""
 
-# src/template_utils.rs:120
 msgid "Federated feed"
 msgstr ""
 
-# src/template_utils.rs:156
 msgid "{0}'s avatar"
 msgstr ""
 
-# src/template_utils.rs:200
 msgid "Previous page"
 msgstr ""
 
-# src/template_utils.rs:211
 msgid "Next page"
 msgstr ""
 
-# src/template_utils.rs:365
 msgid "Optional"
 msgstr ""
 
-# src/routes/blogs.rs:68
 msgid "To create a new blog, you need to be logged in"
 msgstr ""
 
-# src/routes/blogs.rs:110
 msgid "A blog with the same name already exists."
 msgstr ""
 
-# src/routes/blogs.rs:148
 msgid "Your blog was successfully created!"
 msgstr ""
 
-# src/routes/blogs.rs:166
 msgid "Your blog was deleted."
 msgstr ""
 
-# src/routes/blogs.rs:174
 msgid "You are not allowed to delete this blog."
 msgstr ""
 
-# src/routes/blogs.rs:224
 msgid "You are not allowed to edit this blog."
 msgstr ""
 
-# src/routes/blogs.rs:280
 msgid "You can't use this media as a blog icon."
 msgstr ""
 
-# src/routes/blogs.rs:298
 msgid "You can't use this media as a blog banner."
 msgstr ""
 
-# src/routes/blogs.rs:332
 msgid "Your blog information have been updated."
 msgstr ""
 
-# src/routes/comments.rs:100
 msgid "Your comment has been posted."
 msgstr ""
 
-# src/routes/comments.rs:177
 msgid "Your comment has been deleted."
 msgstr ""
 
-# src/routes/email_signups.rs:82
 msgid "Registrations are closed on this instance."
 msgstr ""
 
-# src/routes/email_signups.rs:119
 msgid "User registration"
 msgstr ""
 
-# src/routes/email_signups.rs:120
 msgid "Here is the link for registration: {0}"
 msgstr ""
 
-# src/routes/email_signups.rs:219
 msgid "Your account has been created. Now you just need to log in, before you can use it."
 msgstr ""
 
-# src/routes/instance.rs:117
 msgid "Instance settings have been saved."
 msgstr ""
 
-# src/routes/instance.rs:150
 msgid "{} has been unblocked."
 msgstr ""
 
-# src/routes/instance.rs:152
 msgid "{} has been blocked."
 msgstr ""
 
-# src/routes/instance.rs:203
 msgid "Blocks deleted"
 msgstr ""
 
-# src/routes/instance.rs:219
 msgid "Email already blocked"
 msgstr ""
 
-# src/routes/instance.rs:224
 msgid "Email Blocked"
 msgstr ""
 
-# src/routes/instance.rs:317
 msgid "You can't change your own rights."
 msgstr ""
 
-# src/routes/instance.rs:328
 msgid "You are not allowed to take this action."
 msgstr ""
 
-# src/routes/instance.rs:363
 msgid "Done."
 msgstr ""
 
-# src/routes/likes.rs:58
 msgid "To like a post, you need to be logged in"
 msgstr ""
 
-# src/routes/medias.rs:153
 msgid "Your media have been deleted."
 msgstr ""
 
-# src/routes/medias.rs:158
 msgid "You are not allowed to delete this media."
 msgstr ""
 
-# src/routes/medias.rs:175
 msgid "Your avatar has been updated."
 msgstr ""
 
-# src/routes/medias.rs:180
 msgid "You are not allowed to use this media."
 msgstr ""
 
-# src/routes/notifications.rs:29
 msgid "To see your notifications, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:56
 msgid "This post isn't published yet."
 msgstr ""
 
-# src/routes/posts.rs:126
 msgid "To write a new post, you need to be logged in"
 msgstr ""
 
-# src/routes/posts.rs:147
 msgid "You are not an author of this blog."
 msgstr ""
 
-# src/routes/posts.rs:154
 msgid "New post"
 msgstr ""
 
-# src/routes/posts.rs:199
 msgid "Edit {0}"
 msgstr ""
 
-# src/routes/posts.rs:268
 msgid "You are not allowed to publish on this blog."
 msgstr ""
 
-# src/routes/posts.rs:368
 msgid "Your article has been updated."
 msgstr ""
 
-# src/routes/posts.rs:557
 msgid "Your article has been saved."
 msgstr ""
 
-# src/routes/posts.rs:564
 msgid "New article"
 msgstr ""
 
-# src/routes/posts.rs:602
 msgid "You are not allowed to delete this article."
 msgstr ""
 
-# src/routes/posts.rs:626
 msgid "Your article has been deleted."
 msgstr ""
 
-# src/routes/posts.rs:631
 msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
 msgstr ""
 
-# src/routes/posts.rs:673
 msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
 msgstr ""
 
-# src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
 msgstr ""
 
-# src/routes/session.rs:95
 msgid "You are now connected."
 msgstr ""
 
-# src/routes/session.rs:116
 msgid "You are now logged off."
 msgstr ""
 
-# src/routes/session.rs:162
 msgid "Password reset"
 msgstr ""
 
-# src/routes/session.rs:163
 msgid "Here is the link to reset your password: {0}"
 msgstr ""
 
-# src/routes/session.rs:235
 msgid "Your password was successfully reset."
 msgstr ""
 
-# src/routes/user.rs:87
 msgid "To access your dashboard, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:109
 msgid "You are no longer following {}."
 msgstr ""
 
-# src/routes/user.rs:126
 msgid "You are now following {}."
 msgstr ""
 
-# src/routes/user.rs:203
 msgid "To subscribe to someone, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:323
 msgid "To edit your profile, you need to be logged in"
 msgstr ""
 
-# src/routes/user.rs:369
 msgid "Your profile has been updated."
 msgstr ""
 
-# src/routes/user.rs:397
 msgid "Your account has been deleted."
 msgstr ""
 
-# src/routes/user.rs:403
 msgid "You can't delete someone else's account."
 msgstr ""
 
@@ -706,7 +636,7 @@ msgstr ""
 msgid "Welcome to {}"
 msgstr ""
 
-msgid "View all"
+msgid "Nothing to see here yet."
 msgstr ""
 
 msgid "About {0}"
@@ -920,9 +850,6 @@ msgid_plural "There are {0} authors on this blog: "
 msgstr[0] ""
 
 msgid "No posts to see here yet."
-msgstr ""
-
-msgid "Nothing to see here yet."
 msgstr ""
 
 msgid "None"

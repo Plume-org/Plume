@@ -313,6 +313,11 @@ msgid "Email confirmation"
 msgstr ""
 
 msgid ""
+"An email will be sent to provided email. You can continue signing-up via the "
+"email."
+msgstr ""
+
+msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
 msgstr ""
@@ -740,7 +745,7 @@ msgstr ""
 msgid "Welcome to {}"
 msgstr ""
 
-msgid "View all"
+msgid "Nothing to see here yet."
 msgstr ""
 
 msgid "About {0}"
@@ -984,9 +989,6 @@ msgstr[4] ""
 msgstr[5] ""
 
 msgid "No posts to see here yet."
-msgstr ""
-
-msgid "Nothing to see here yet."
 msgstr ""
 
 msgid "None"

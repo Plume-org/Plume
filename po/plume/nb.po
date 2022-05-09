@@ -311,6 +311,11 @@ msgid "Email confirmation"
 msgstr "Oppsett"
 
 msgid ""
+"An email will be sent to provided email. You can continue signing-up via the "
+"email."
+msgstr ""
+
+msgid ""
 "Apologies, but registrations are closed on this particular instance. You "
 "can, however, find a different one."
 msgstr ""
@@ -773,8 +778,9 @@ msgstr ""
 msgid "Welcome to {}"
 msgstr ""
 
-msgid "View all"
-msgstr ""
+#, fuzzy
+msgid "Nothing to see here yet."
+msgstr "Ingen innlegg å vise enda."
 
 msgid "About {0}"
 msgstr ""
@@ -1026,10 +1032,6 @@ msgstr[0] "Én forfatter av denne bloggen: "
 msgstr[1] "{0} forfattere av denne bloggen: "
 
 msgid "No posts to see here yet."
-msgstr "Ingen innlegg å vise enda."
-
-#, fuzzy
-msgid "Nothing to see here yet."
 msgstr "Ingen innlegg å vise enda."
 
 msgid "None"
