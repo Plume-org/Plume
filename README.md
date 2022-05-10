@@ -53,3 +53,4 @@ As we want the various spaces related to the project (GitHub, Matrix, Loomio, et
 
 We provide various way to install Plume: from source, with pre-built binaries, with Docker or with YunoHost.
 For detailed explanations, please refer to [the documentation](https://docs.joinplu.me/installation/).
+
