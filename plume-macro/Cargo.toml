@@ -1,6 +1,6 @@
 [package]
 name = "plume-macro"
-version = "0.7.1"
+version = "0.7.2"
 authors = ["Trinity Pointard <trinity.pointard@insa-rennes.fr>"]
 edition = "2018"
 description = "Plume procedural macros"

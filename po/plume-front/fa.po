@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: plume\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-15 16:33-0700\n"
-"PO-Revision-Date: 2022-01-12 01:20\n"
+"PO-Revision-Date: 2022-05-10 17:54\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -23,7 +23,7 @@ msgstr "آیا می‌خواهید نسخهٔ ذخیره شدهٔ خودکار �
 
 # plume-front/src/editor.rs:326
 msgid "Open the rich text editor"
-msgstr "باز کردن ویرایش‌گر غنی"
+msgstr "گشودن ویرایشگر غنی"
 
 # plume-front/src/editor.rs:385
 msgid "Title"

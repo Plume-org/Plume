@@ -4,6 +4,8 @@
 
 ## [Unreleased] - ReleaseDate
 
+## [[0.7.2]] - 2022-05-11
+
 ### Added
 
 - Basque language (#1013)
@@ -260,7 +262,8 @@
 - Ability to create multiple blogs
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Plume-org/Plume/compare/0.7.1...HEAD
+[Unreleased]: https://github.com/Plume-org/Plume/compare/0.7.2...HEAD
+[[0.7.2]]: https://github.com/Plume-org/Plume/compare/0.7.1...0.7.2
 [[0.7.1]]: https://github.com/Plume-org/Plume/compare/0.7.0...0.7.1
 [[0.7.0]]: https://github.com/Plume-org/Plume/compare/0.6.0...0.7.0
 [[0.6.0]]: https://github.com/Plume-org/Plume/compare/0.5.0...0.6.0
