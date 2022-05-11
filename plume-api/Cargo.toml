@@ -1,6 +1,6 @@
 [package]
 name = "plume-api"
-version = "0.7.1"
+version = "0.7.2"
 authors = ["Plume contributors"]
 edition = "2018"
 
