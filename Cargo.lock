@@ -1039,11 +1039,10 @@ dependencies = [
 
 [[package]]
 name = "diesel-derive-newtype"
-version = "0.1.2"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e844e8e6f65dcf27aa0b97d4234f974d93dfbf56816033d71b5e0c7eb701709f"
+checksum = "6f5e96f584cab47f91f47a496e33cb35558f63d375f374282421dcccaa9f7ef5"
 dependencies = [
- "diesel",
  "proc-macro2 0.4.30",
  "quote 0.6.13",
  "syn 0.14.9",
