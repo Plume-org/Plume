@@ -116,6 +116,7 @@ pub fn translate_notification(ctx: BaseContext<'_>, notif: Notification) -> Stri
 pub fn i18n_timeline_name(cat: &Catalog, tl: &str) -> String {
     match tl {
         "Your feed" => i18n!(cat, "Your feed"),
+        "My feed" => i18n!(cat, "My feed"),
         "Local feed" => i18n!(cat, "Local feed"),
         "Federated feed" => i18n!(cat, "Federated feed"),
         n => n.to_string(),
