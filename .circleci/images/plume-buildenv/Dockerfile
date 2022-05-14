@@ -15,7 +15,6 @@ RUN apt update &&\
 #compile some deps
 RUN cargo install wasm-pack &&\
     cargo install grcov &&\
-    strip /root/.cargo/bin/* &&\
     rm -fr ~/.cargo/registry
 
 #set some compilation parametters
