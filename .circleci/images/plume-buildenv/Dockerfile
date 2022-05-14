@@ -1,4 +1,4 @@
-FROM debian:buster-20210208
+FROM rust:1-buster
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 #install native/circleci/build dependancies
@@ -9,11 +9,6 @@ RUN apt update &&\
     apt update &&\
     apt install -y --no-install-recommends binutils-dev build-essential cmake curl gcc gettext git libcurl4-openssl-dev libdw-dev libelf-dev libiberty-dev libpq-dev libsqlite3-dev libssl-dev make openssl pkg-config postgresql postgresql-contrib python zlib1g-dev python3-pip zip unzip libclang-dev clang caddy&&\
     rm -rf /var/lib/apt/lists/*
-
-#install and configure rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2021-11-27 -y &&\
-    rustup component add rustfmt clippy &&\
-    rustup component add rust-std --target wasm32-unknown-unknown
 
 #compile some deps
 RUN cargo install wasm-pack &&\
