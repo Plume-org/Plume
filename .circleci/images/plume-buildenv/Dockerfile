@@ -1,4 +1,4 @@
-FROM debian:buster-20210208
+FROM rust:1-buster
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 #install native/circleci/build dependancies
@@ -6,34 +6,22 @@ RUN apt update &&\
     apt install -y --no-install-recommends git ssh tar gzip ca-certificates default-jre&&\
     echo "deb [trusted=yes] https://apt.fury.io/caddy/ /" \
     | tee -a /etc/apt/sources.list.d/caddy-fury.list &&\
+    wget -qO - https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | apt-key add - &&\
+    echo "deb https://artifacts.crowdin.com/repo/deb/ /" > /etc/apt/sources.list.d/crowdin.list &&\
     apt update &&\
-    apt install -y --no-install-recommends binutils-dev build-essential cmake curl gcc gettext git libcurl4-openssl-dev libdw-dev libelf-dev libiberty-dev libpq-dev libsqlite3-dev libssl-dev make openssl pkg-config postgresql postgresql-contrib python zlib1g-dev python3-pip zip unzip libclang-dev clang caddy&&\
+    apt install -y --no-install-recommends binutils-dev build-essential cmake curl gcc gettext git libcurl4-openssl-dev libdw-dev libelf-dev libiberty-dev libpq-dev libsqlite3-dev libssl-dev make openssl pkg-config postgresql postgresql-contrib python zlib1g-dev python3-venv python3-dev zip unzip libclang-dev clang caddy crowdin3 &&\
     rm -rf /var/lib/apt/lists/*
-
-#install and configure rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly-2021-11-27 -y &&\
-    rustup component add rustfmt clippy &&\
-    rustup component add rust-std --target wasm32-unknown-unknown
 
 #compile some deps
 RUN cargo install wasm-pack &&\
     cargo install grcov &&\
-    strip /root/.cargo/bin/* &&\
     rm -fr ~/.cargo/registry
 
 #set some compilation parametters
 COPY cargo_config /root/.cargo/config
 
 #install selenium for front end tests
-RUN pip3 install selenium
+RUN python3 -m venv .venv && bash -c "source .venv/bin/activate && pip3 install selenium"
 
 #configure caddy
 COPY Caddyfile /Caddyfile
-
-#install crowdin
-RUN mkdir /crowdin && cd /crowdin &&\
-    curl -O https://downloads.crowdin.com/cli/v2/crowdin-cli.zip &&\
-    unzip crowdin-cli.zip && rm crowdin-cli.zip &&\
-    cd * && mv crowdin-cli.jar /usr/local/bin && cd && rm -rf /crowdin &&\
-    /bin/echo -e '#!/bin/sh\njava -jar /usr/local/bin/crowdin-cli.jar $@' > /usr/local/bin/crowdin &&\
-    chmod +x /usr/local/bin/crowdin

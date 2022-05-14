@@ -10,7 +10,7 @@ executors:
         type: boolean
         default: false
     docker:
-    - image: plumeorg/plume-buildenv:v0.4.0
+    - image: plumeorg/plume-buildenv:v0.5.0
     - image: <<#parameters.postgres>>cimg/postgres:14.2<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
       environment:
         POSTGRES_USER: postgres
