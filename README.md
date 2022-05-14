@@ -1,10 +1,10 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/Plume-org/Plume/master/assets/icons/trwnh/feather/plumeFeather64.png" alt="Plume's logo">
+  <img src="https://raw.githubusercontent.com/Plume-org/Plume/main/assets/icons/trwnh/feather/plumeFeather64.png" alt="Plume's logo">
   Plume
 </h1>
 <p align="center">
   <a href="https://github.com/Plume-org/Plume/"><img alt="CircleCI" src="https://img.shields.io/circleci/build/gh/Plume-org/Plume.svg"></a>
-  <a href="https://codecov.io/gh/Plume-org/Plume"><img src="https://codecov.io/gh/Plume-org/Plume/branch/master/graph/badge.svg" alt="Code coverage"></a>
+  <a href="https://codecov.io/gh/Plume-org/Plume"><img src="https://codecov.io/gh/Plume-org/Plume/branch/main/graph/badge.svg" alt="Code coverage"></a>
   <a title="Crowdin" target="_blank" href="https://crowdin.com/project/plume"><img src="https://d322cqt584bo4o.cloudfront.net/plume/localized.svg"></a>
   <a href="https://hub.docker.com/r/plumeorg/plume"><img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/plumeorg/plume.svg"></a>
   <a href="https://liberapay.com/Plume"><img alt="Liberapay patrons" src="https://img.shields.io/liberapay/patrons/Plume.svg"></a>

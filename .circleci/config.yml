@@ -38,7 +38,7 @@ commands:
     - restore_cache:
         keys:
         - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-{{ .Branch }}
-        - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-master
+        - v0-<< parameters.cache >>-{{ checksum "Cargo.lock" }}-main
 
   cache:
     description: push cache
@@ -258,4 +258,4 @@ workflows:
         filters:
           branches:
             only:
-              - /^master/
+              - /^main/
