@@ -14,7 +14,7 @@ caddy run -config /Caddyfile &
 
 until curl http://localhost:7878/test/health -f; do sleep 1; done 2>/dev/null >/dev/null
 
-source .venv/bin/activate
+source ../.venv/bin/activate
 cd $(dirname $0)/browser_test/
 python3 -m unittest *.py
 
