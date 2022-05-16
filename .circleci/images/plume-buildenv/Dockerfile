@@ -15,9 +15,6 @@ RUN apt update &&\
 #stick rust environment
 COPY rust-toolchain ./
 
-#add rust toolchains
-RUN rustup component add fmt && rustup component add clippy
-
 #compile some deps
 RUN cargo install wasm-pack &&\
     cargo install grcov &&\
