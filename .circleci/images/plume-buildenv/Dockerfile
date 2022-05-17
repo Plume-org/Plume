@@ -9,7 +9,7 @@ RUN apt update &&\
     wget -qO - https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | apt-key add - &&\
     echo "deb https://artifacts.crowdin.com/repo/deb/ /" > /etc/apt/sources.list.d/crowdin.list &&\
     apt update &&\
-    apt install -y --no-install-recommends binutils-dev build-essential cmake curl gcc gettext git libcurl4-openssl-dev libdw-dev libelf-dev libiberty-dev libpq-dev libsqlite3-dev libssl-dev make openssl pkg-config postgresql postgresql-contrib python zlib1g-dev python3-venv python3-dev zip unzip libclang-dev clang caddy crowdin3 &&\
+    apt install -y --no-install-recommends binutils-dev build-essential cmake curl gcc gettext git libcurl4-openssl-dev libdw-dev libelf-dev libiberty-dev libpq-dev libsqlite3-dev libssl-dev make openssl pkg-config postgresql postgresql-contrib python zlib1g-dev python3-dev python3-pip python3-setuptools zip unzip libclang-dev clang caddy crowdin3 &&\
     rm -rf /var/lib/apt/lists/*
 
 #stick rust environment
@@ -24,7 +24,7 @@ RUN cargo install wasm-pack &&\
 COPY cargo_config /root/.cargo/config
 
 #install selenium for front end tests
-RUN python3 -m venv .venv && bash -c "source .venv/bin/activate && pip3 install selenium"
+RUN pip3 install selenium
 
 #configure caddy
 COPY Caddyfile /Caddyfile
