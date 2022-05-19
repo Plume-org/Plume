@@ -7,7 +7,6 @@ edition = "2018"
 [dependencies]
 array_tool = "1.0"
 base64 = "0.13"
-heck = "0.4.0"
 hex = "0.4"
 openssl = "0.10.40"
 rocket = "0.4.6"
