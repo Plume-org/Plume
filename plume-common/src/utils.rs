@@ -1,4 +1,3 @@
-use heck::ToUpperCamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
@@ -14,14 +13,6 @@ pub fn random_hex() -> String {
     bytes
         .iter()
         .fold(String::new(), |res, byte| format!("{}{:x}", res, byte))
-}
-
-/// Remove non alphanumeric characters and CamelCase a string
-pub fn make_actor_id(name: &str) -> String {
-    name.to_upper_camel_case()
-        .chars()
-        .filter(|c| c.is_alphanumeric())
-        .collect()
 }
 
 /**
