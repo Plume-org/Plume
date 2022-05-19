@@ -101,7 +101,7 @@ pub fn create(
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Blog::find_by_fqn(&conn, &slug).is_ok() {
+    if Blog::find_by_fqn(&conn, slug).is_ok() {
         errors.add(
             "title",
             ValidationError {
