@@ -379,6 +379,7 @@ pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
 
 #[cfg(test)]
 mod tests {
+    use super::valid_slug;
     use crate::init_rocket;
     use diesel::Connection;
     use plume_common::utils::random_hex;
@@ -523,5 +524,11 @@ mod tests {
                 .same_site(SameSite::Lax)
                 .finish(),
         );
+    }
+
+    #[test]
+    fn test_valid_slug() {
+        assert!(valid_slug("Blog Title").is_ok());
+        assert!(valid_slug("ブログ タイトル").is_ok());
     }
 }
