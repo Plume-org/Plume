@@ -65,7 +65,7 @@ rev = "29910f2829e7e590a540da3804336577b48c7b31"
 
 [build-dependencies]
 ructe = "0.14.0"
-rsass = "0.24"
+rsass = "0.25"
 
 [features]
 default = ["postgres"]
