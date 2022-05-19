@@ -79,7 +79,7 @@ pub struct NewBlogForm {
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
-    let slug = utils::make_actor_id(title);
+    let slug = Blog::slug(title);
     if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
     } else {
@@ -93,7 +93,7 @@ pub fn create(
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
-    let slug = utils::make_actor_id(&form.title);
+    let slug = Blog::slug(&form.title);
     let intl = &rockets.intl.catalog;
     let user = rockets.user.clone().unwrap();
 
@@ -122,7 +122,7 @@ pub fn create(
     let blog = Blog::insert(
         &conn,
         NewBlog::new_local(
-            slug.clone(),
+            slug.into(),
             form.title.to_string(),
             String::from(""),
             Instance::get_local()
