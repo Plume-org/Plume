@@ -16,14 +16,6 @@ pub fn random_hex() -> String {
         .fold(String::new(), |res, byte| format!("{}{:x}", res, byte))
 }
 
-/// Remove non alphanumeric characters and CamelCase a string
-pub fn make_actor_id(name: &str) -> String {
-    name.to_upper_camel_case()
-        .chars()
-        .filter(|c| c.is_alphanumeric())
-        .collect()
-}
-
 /**
  * Percent-encode characters which are not allowed in IRI path segments.
  *
