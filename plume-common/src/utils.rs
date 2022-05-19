@@ -1,4 +1,3 @@
-use heck::ToUpperCamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
