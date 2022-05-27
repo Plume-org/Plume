@@ -9,7 +9,7 @@ array_tool = "1.0"
 base64 = "0.13"
 hex = "0.4"
 openssl = "0.10.40"
-rocket = "0.4.6"
+rocket = "0.4.11"
 reqwest = { version = "0.11.10", features = ["blocking", "json", "socks"] }
 serde = "1.0"
 serde_derive = "1.0"
