@@ -79,7 +79,7 @@ pub struct NewBlogForm {
 }
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
-    let slug = utils::make_actor_id(title);
+    let slug = Blog::slug(title);
     if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
     } else {
@@ -93,7 +93,7 @@ pub fn create(
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
-    let slug = utils::make_actor_id(&form.title);
+    let slug = Blog::slug(&form.title);
     let intl = &rockets.intl.catalog;
     let user = rockets.user.clone().unwrap();
 
@@ -101,7 +101,7 @@ pub fn create(
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Blog::find_by_fqn(&conn, &slug).is_ok() {
+    if Blog::find_by_fqn(&conn, slug).is_ok() {
         errors.add(
             "title",
             ValidationError {
@@ -122,7 +122,7 @@ pub fn create(
     let blog = Blog::insert(
         &conn,
         NewBlog::new_local(
-            slug.clone(),
+            slug.into(),
             form.title.to_string(),
             String::from(""),
             Instance::get_local()
@@ -379,6 +379,7 @@ pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
 
 #[cfg(test)]
 mod tests {
+    use super::valid_slug;
     use crate::init_rocket;
     use diesel::Connection;
     use plume_common::utils::random_hex;
@@ -523,5 +524,11 @@ mod tests {
                 .same_site(SameSite::Lax)
                 .finish(),
         );
+    }
+
+    #[test]
+    fn test_valid_slug() {
+        assert!(valid_slug("Blog Title").is_ok());
+        assert!(valid_slug("ブログ タイトル").is_ok());
     }
 }
