@@ -3264,7 +3264,7 @@ dependencies = [
  "openssl",
  "pulldown-cmark",
  "regex-syntax 0.6.26",
- "reqwest 0.11.10",
+ "reqwest 0.11.11",
  "rocket",
  "serde 1.0.137",
  "serde_derive",
@@ -3328,7 +3328,7 @@ dependencies = [
  "plume-api",
  "plume-common",
  "plume-macro",
- "reqwest 0.11.10",
+ "reqwest 0.11.11",
  "riker",
  "rocket",
  "rocket_i18n",
@@ -3864,9 +3864,9 @@ dependencies = [
 
 [[package]]
 name = "reqwest"
-version = "0.11.10"
+version = "0.11.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46a1f7aa4f35e5e8b4160449f51afc758f0ce6454315a9fa7d0d113e958c41eb"
+checksum = "b75aa69a3f06bbcc66ede33af2af253c6f7a86b1ca0033f60c580a27074fbf92"
 dependencies = [
  "base64 0.13.0",
  "bytes 1.1.0",
@@ -3892,6 +3892,7 @@ dependencies = [
  "tokio 1.19.2",
  "tokio-native-tls",
  "tokio-socks",
+ "tower-service",
  "url 2.2.2",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -5524,9 +5525,9 @@ checksum = "6a89911bd99e5f3659ec4acf9c4d93b0a90fe4a2a11f15328472058edc5261be"
 
 [[package]]
 name = "web-sys"
-version = "0.3.57"
+version = "0.3.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b17e741662c70c8bd24ac5c5b18de314a2c26c32bf8346ee1e6f53de919c283"
+checksum = "2fed94beee57daf8dd7d51f2b15dc2bcde92d7a72304cdf662a4371008b71b90"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
