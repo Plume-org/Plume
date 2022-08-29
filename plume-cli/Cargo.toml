@@ -9,7 +9,7 @@ name = "plm"
 path = "src/main.rs"
 
 [dependencies]
-clap = "2.33"
+clap = "3.2"
 dotenv = "0.15"
 rpassword = "6.0.1"
 
