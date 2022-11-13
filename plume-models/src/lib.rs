@@ -69,6 +69,7 @@ pub enum Error {
     Webfinger,
     Expired,
     UserAlreadyExists,
+    Anyhow(anyhow::Error),
 }
 
 impl From<bcrypt::BcryptError> for Error {
@@ -167,6 +168,12 @@ impl From<InboxError<Error>> for Error {
 impl From<request::Error> for Error {
     fn from(_err: request::Error) -> Error {
         Error::Request
+    }
+}
+
+impl From<anyhow::Error> for Error {
+    fn from(err: anyhow::Error) -> Error {
+        Error::Anyhow(err)
     }
 }
 

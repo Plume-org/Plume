@@ -9,7 +9,7 @@ use rocket::{
     http::{
         hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
         uri::{FromUriParam, Query},
-        RawStr, Status,
+        ContentType, RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
     response::{self, Flash, NamedFile, Redirect, Responder, Response},
@@ -205,9 +205,15 @@ pub mod user;
 pub mod well_known;
 
 #[derive(Responder)]
+enum FileKind {
+    Local(NamedFile),
+    S3(Vec<u8>, ContentType),
+}
+
+#[derive(Responder)]
 #[response()]
 pub struct CachedFile {
-    inner: NamedFile,
+    inner: FileKind,
     cache_control: CacheControl,
 }
 
@@ -253,19 +259,36 @@ pub fn plume_static_files(file: PathBuf, build_id: &RawStr) -> Option<CachedFile
 }
 #[get("/static/media/<file..>")]
 pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
-    NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
-        .ok()
-        .map(|f| CachedFile {
-            inner: f,
+    if let Some(config) = &CONFIG.s3 {
+        let ct = file.extension()
+            .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy()))
+            .unwrap_or(ContentType::Binary);
+
+        let (data, code) = config.get_bucket()
+            .get_object_blocking(format!("plume-media/{}", file.to_string_lossy())).ok()?;
+        if code != 200 {
+            return None;
+        }
+
+        Some(CachedFile {
+            inner: FileKind::S3 ( data, ct),
             cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
         })
+    } else {
+        NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
+            .ok()
+            .map(|f| CachedFile {
+                inner: FileKind::Local(f),
+                cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            })
+    }
 }
 #[get("/static/<file..>", rank = 3)]
 pub fn static_files(file: PathBuf) -> Option<CachedFile> {
     NamedFile::open(Path::new("static/").join(file))
         .ok()
         .map(|f| CachedFile {
-            inner: f,
+            inner: FileKind::Local(f),
             cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
         })
 }
