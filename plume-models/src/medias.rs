@@ -170,7 +170,12 @@ impl Media {
 
     pub fn delete(&self, conn: &Connection) -> Result<()> {
         if !self.is_remote {
-            fs::remove_file(self.file_path.as_str())?;
+            if let Some(config) = &CONFIG.s3 {
+                config.get_bucket()
+                    .delete_object_blocking(&self.file_path)?;
+            } else {
+                fs::remove_file(self.file_path.as_str())?;
+            }
         }
         diesel::delete(self)
             .execute(conn)
