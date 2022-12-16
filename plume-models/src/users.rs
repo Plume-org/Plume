@@ -191,10 +191,10 @@ impl User {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(conn: &DbConn, fqn: &str) -> Result<User> {
+    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<User> {
         let from_db = users::table
             .filter(users::fqn.eq(fqn))
-            .first(&**conn)
+            .first(conn)
             .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
@@ -219,7 +219,7 @@ impl User {
         .map_err(Error::from)
     }
 
-    fn fetch_from_webfinger(conn: &DbConn, acct: &str) -> Result<User> {
+    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<User> {
         let link = resolve(acct.to_owned(), true)?
             .links
             .into_iter()
@@ -944,15 +944,15 @@ impl IntoId for User {
 
 impl Eq for User {}
 
-impl FromId<DbConn> for User {
+impl FromId<Connection> for User {
     type Error = Error;
     type Object = CustomPerson;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, acct: CustomPerson) -> Result<Self> {
+    fn from_activity(conn: &Connection, acct: CustomPerson) -> Result<Self> {
         let actor = acct.ap_actor_ref();
         let username = actor
             .preferred_username()
@@ -1049,7 +1049,7 @@ impl FromId<DbConn> for User {
     }
 }
 
-impl AsActor<&DbConn> for User {
+impl AsActor<&Connection> for User {
     fn get_inbox_url(&self) -> String {
         self.inbox_url.clone()
     }
@@ -1065,11 +1065,11 @@ impl AsActor<&DbConn> for User {
     }
 }
 
-impl AsObject<User, Delete, &DbConn> for User {
+impl AsObject<User, Delete, &Connection> for User {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
         if self.id == actor.id {
             self.delete(conn).map(|_| ())
         } else {

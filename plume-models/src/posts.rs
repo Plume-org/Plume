@@ -1,7 +1,7 @@
 use crate::{
-    ap_url, blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::Mention,
-    post_authors::*, safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User,
-    Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
+    ap_url, blogs::Blog, instance::Instance, medias::Media, mentions::Mention, post_authors::*,
+    safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User, Connection, Error,
+    PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitystreams::{
     activity::{Create, Delete, Update},
@@ -615,15 +615,15 @@ impl Post {
     }
 }
 
-impl FromId<DbConn> for Post {
+impl FromId<Connection> for Post {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, article: LicensedArticle) -> Result<Self> {
+    fn from_activity(conn: &Connection, article: LicensedArticle) -> Result<Self> {
         let license = article.ext_one.license.unwrap_or_default();
         let article = article.inner;
 
@@ -817,21 +817,21 @@ impl FromId<DbConn> for Post {
     }
 }
 
-impl AsObject<User, Create, &DbConn> for Post {
+impl AsObject<User, Create, &Connection> for Post {
     type Error = Error;
     type Output = Self;
 
-    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self::Output> {
+    fn activity(self, _conn: &Connection, _actor: User, _id: &str) -> Result<Self::Output> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &DbConn> for Post {
+impl AsObject<User, Delete, &Connection> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<Self::Output> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<Self::Output> {
         let can_delete = self
             .get_authors(conn)?
             .into_iter()
@@ -855,16 +855,16 @@ pub struct PostUpdate {
     pub tags: Option<serde_json::Value>,
 }
 
-impl FromId<DbConn> for PostUpdate {
+impl FromId<Connection> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(_: &DbConn, _: &str) -> Result<Self> {
+    fn from_db(_: &Connection, _: &str) -> Result<Self> {
         // Always fail because we always want to deserialize the AP object
         Err(Error::NotFound)
     }
 
-    fn from_activity(conn: &DbConn, updated: Self::Object) -> Result<Self> {
+    fn from_activity(conn: &Connection, updated: Self::Object) -> Result<Self> {
         let mut post_update = PostUpdate {
             ap_url: updated
                 .ap_object_ref()
@@ -919,11 +919,11 @@ impl FromId<DbConn> for PostUpdate {
     }
 }
 
-impl AsObject<User, Update, &DbConn> for PostUpdate {
+impl AsObject<User, Update, &Connection> for PostUpdate {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
         let mut post =
             Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
 

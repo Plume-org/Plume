@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, db_conn::DbConn, instance::Instance, notifications::*, schema::follows, users::User,
-    Connection, Error, Result, CONFIG,
+    ap_url, instance::Instance, notifications::*, schema::follows, users::User, Connection, Error,
+    Result, CONFIG,
 };
 use activitystreams::{
     activity::{Accept, ActorAndObjectRef, Follow as FollowAct, Undo},
@@ -155,11 +155,11 @@ impl Follow {
     }
 }
 
-impl AsObject<User, FollowAct, &DbConn> for User {
+impl AsObject<User, FollowAct, &Connection> for User {
     type Error = Error;
     type Output = Follow;
 
-    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Follow> {
+    fn activity(self, conn: &Connection, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
         let follow = FollowAct::new(actor.ap_url.parse::<IriString>()?, id.parse::<IriString>()?);
@@ -167,15 +167,15 @@ impl AsObject<User, FollowAct, &DbConn> for User {
     }
 }
 
-impl FromId<DbConn> for Follow {
+impl FromId<Connection> for Follow {
     type Error = Error;
     type Object = FollowAct;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Follow::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, follow: FollowAct) -> Result<Self> {
+    fn from_activity(conn: &Connection, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
             conn,
             follow
@@ -207,18 +207,18 @@ impl FromId<DbConn> for Follow {
     }
 }
 
-impl AsObject<User, Undo, &DbConn> for Follow {
+impl AsObject<User, Undo, &Connection> for Follow {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
         let conn = conn;
         if self.follower_id == actor.id {
-            diesel::delete(&self).execute(&**conn)?;
+            diesel::delete(&self).execute(conn)?;
 
             // delete associated notification if any
             if let Ok(notif) = Notification::find(conn, notification_kind::FOLLOW, self.id) {
-                diesel::delete(&notif).execute(&**conn)?;
+                diesel::delete(&notif).execute(conn)?;
             }
 
             Ok(())

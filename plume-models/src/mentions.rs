@@ -1,6 +1,6 @@
 use crate::{
-    comments::Comment, db_conn::DbConn, notifications::*, posts::Post, schema::mentions,
-    users::User, Connection, Error, Result,
+    comments::Comment, notifications::*, posts::Post, schema::mentions, users::User, Connection,
+    Error, Result,
 };
 use activitystreams::{
     base::BaseExt,
@@ -60,7 +60,7 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(conn: &DbConn, ment: &str) -> Result<link::Mention> {
+    pub fn build_activity(conn: &Connection, ment: &str) -> Result<link::Mention> {
         let user = User::find_by_fqn(conn, ment)?;
         let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);

@@ -6,6 +6,7 @@ use std::io::{self, prelude::*};
 mod instance;
 mod migration;
 mod search;
+mod timeline;
 mod users;
 
 fn main() {
@@ -16,6 +17,7 @@ fn main() {
         .subcommand(instance::command())
         .subcommand(migration::command())
         .subcommand(search::command())
+        .subcommand(timeline::command())
         .subcommand(users::command());
     let matches = app.clone().get_matches();
 
@@ -36,6 +38,9 @@ fn main() {
         }
         ("search", Some(args)) => {
             search::run(args, &conn.expect("Couldn't connect to the database."))
+        }
+        ("timeline", Some(args)) => {
+            timeline::run(args, &conn.expect("Couldn't connect to the database."))
         }
         ("users", Some(args)) => {
             users::run(args, &conn.expect("Couldn't connect to the database."))
