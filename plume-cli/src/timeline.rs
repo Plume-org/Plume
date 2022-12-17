@@ -192,7 +192,7 @@ fn preload(timeline: Timeline, count: usize, conn: &Connection) {
     }
 
     for post in posts.iter().rev() {
-        timeline.add_post(conn, &post).unwrap();
+        timeline.add_post(conn, post).unwrap();
     }
 }
 
