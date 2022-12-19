@@ -4,9 +4,9 @@ version = 3
 
 [[package]]
 name = "activitystreams"
-version = "0.7.0-alpha.20"
+version = "0.7.0-alpha.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "459a89e7d449cf49e57044d59dcf637d2927362b7a75737c90bd3679ba476a78"
+checksum = "713061473d42baa5527b1dbf07b86a506c48df3190a4fb840fb7fcea8cf1b724"
 dependencies = [
  "activitystreams-kinds",
  "iri-string",
@@ -18,9 +18,9 @@ dependencies = [
 
 [[package]]
 name = "activitystreams-ext"
-version = "0.1.0-alpha.2"
+version = "0.1.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb8e19a0810cc25df3535061a08b7d8f8a734d309ea4411c57a9767e4a2ffa0e"
+checksum = "cd4cc5f95aabf2bc2e0672400f7494094ffae30b597317cb825b4ac5c8a405b3"
 dependencies = [
  "activitystreams",
  "serde 1.0.137",
@@ -29,9 +29,9 @@ dependencies = [
 
 [[package]]
 name = "activitystreams-kinds"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d014a4fb8828870b7b46bee6257b9a89d06188ae8d435381ba94f14c8c697d8"
+checksum = "e97dfe76efd8c0b113cc3580a6b5f4acba47662e3cfbbfcce081c9ac89798990"
 dependencies = [
  "iri-string",
  "serde 1.0.137",
@@ -2076,10 +2076,11 @@ checksum = "879d54834c8c76457ef4293a689b2a8c59b076067ad77b15efafbb05f92a592b"
 
 [[package]]
 name = "iri-string"
-version = "0.5.4"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e76a2a488a2bce15f9e696e3b9b66a4e1412c13339344bba8a24b7eae30f91b"
+checksum = "21859b667d66a4c1dacd9df0863b3efb65785474255face87f5bca39dd8407c0"
 dependencies = [
+ "memchr",
  "serde 1.0.137",
 ]
 
