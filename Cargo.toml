@@ -60,8 +60,8 @@ path = "plume-common"
 path = "plume-models"
 
 [dependencies.rocket_csrf]
-git = "https://github.com/fdb-hiroshima/rocket_csrf"
-rev = "29910f2829e7e590a540da3804336577b48c7b31"
+git = "https://git.joinplu.me/plume/rocket_csrf"
+rev = "0.1.1"
 
 [build-dependencies]
 ructe = "0.14.0"
