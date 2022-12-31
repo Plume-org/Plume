@@ -27,7 +27,7 @@ webfinger = "0.4.1"
 tracing = "0.1.35"
 tracing-subscriber = "0.3.10"
 riker = "0.4.2"
-activitystreams = "0.7.0-alpha.18"
+activitystreams = "=0.7.0-alpha.18"
 
 [[bin]]
 name = "plume"
