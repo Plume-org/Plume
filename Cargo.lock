@@ -2076,9 +2076,9 @@ checksum = "879d54834c8c76457ef4293a689b2a8c59b076067ad77b15efafbb05f92a592b"
 
 [[package]]
 name = "iri-string"
-version = "0.5.4"
+version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e76a2a488a2bce15f9e696e3b9b66a4e1412c13339344bba8a24b7eae30f91b"
+checksum = "bf071934ee7ee97e52fa1868a9540a7885eab75926bd70794030304a9797cea1"
 dependencies = [
  "serde 1.0.137",
 ]
