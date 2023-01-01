@@ -19,7 +19,9 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .short("t")
                         .long("type")
                         .takes_value(true)
-                        .help("The type of this list"),
+                        .help(
+                            r#"The type of this list (one of "user", "blog", "word" or "prefix")"#,
+                        ),
                 )
                 .arg(
                     Arg::with_name("user")
@@ -51,7 +53,8 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .short("y")
                         .long("yes")
                         .help("Confirm the deletion"),
-                ),
+                )
+                .about("Delete a list"),
         )
         .subcommand(
             SubCommand::with_name("add")
@@ -75,7 +78,8 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .long("value")
                         .takes_value(true)
                         .help("The value to add"),
-                ),
+                )
+                .about("Add element to a list"),
         )
         .subcommand(
             SubCommand::with_name("rm")
@@ -99,7 +103,8 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .long("value")
                         .takes_value(true)
                         .help("The value to remove"),
-                ),
+                )
+                .about("Remove element from list"),
         )
 }
 

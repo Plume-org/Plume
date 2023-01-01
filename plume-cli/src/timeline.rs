@@ -62,7 +62,8 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .short("y")
                         .long("yes")
                         .help("Confirm the deletion"),
-                ),
+                )
+                .about("Delete a timeline"),
         )
         .subcommand(
             SubCommand::with_name("edit")
@@ -86,7 +87,8 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .long("query")
                         .takes_value(true)
                         .help("The query posts in this timelines have to match"),
-                ),
+                )
+                .about("Edit the query of a timeline"),
         )
         .subcommand(
             SubCommand::with_name("repopulate")
@@ -112,7 +114,8 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
                         .long("preload-count")
                         .takes_value(true)
                         .help("Number of posts to try to preload in this timeline at its creation"),
-                ),
+                )
+                .about("Repopulate a timeline. Run this after modifying a list the timeline depends on."),
         )
 }
 
