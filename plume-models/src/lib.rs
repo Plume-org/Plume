@@ -354,7 +354,7 @@ mod tests {
         };
     }
 
-    pub fn db<'a>() -> db_conn::DbConn {
+    pub fn db() -> db_conn::DbConn {
         db_conn::DbConn((*DB_POOL).get().unwrap())
     }
 

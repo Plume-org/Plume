@@ -523,7 +523,7 @@ pub(crate) mod tests {
             .unwrap();
             let inst = Instance::get(conn, inst.id).unwrap();
             assert_eq!(inst.name, "NewName".to_owned());
-            assert_eq!(inst.open_registrations, false);
+            assert!(!inst.open_registrations);
             assert_eq!(
                 inst.long_description.get(),
                 "[long_description](/with_link)"

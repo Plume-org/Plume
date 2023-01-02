@@ -69,7 +69,8 @@ pub(crate) mod tests {
     impl CustomizeConnection<Connection, ConnError> for TestConnectionCustomizer {
         fn on_acquire(&self, conn: &mut Connection) -> Result<(), ConnError> {
             PragmaForeignKey.on_acquire(conn)?;
-            Ok(conn.begin_test_transaction().unwrap())
+            conn.begin_test_transaction().unwrap();
+            Ok(())
         }
     }
 }

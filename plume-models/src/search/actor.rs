@@ -108,7 +108,7 @@ mod tests {
 
         let searcher = Arc::new(get_searcher(&CONFIG.search_tokenizers));
         SearchActor::init(searcher.clone(), db_pool.clone());
-        let conn = db_pool.clone().get().unwrap();
+        let conn = db_pool.get().unwrap();
 
         let title = random_hex()[..8].to_owned();
         let (_instance, _user, blog) = fill_database(&conn);
@@ -161,41 +161,43 @@ mod tests {
                     long_description_html: "<p>Good morning</p>".to_string(),
                     short_description: SafeString::new("Hello"),
                     short_description_html: "<p>Hello</p>".to_string(),
-                    name: random_hex().to_string(),
+                    name: random_hex(),
                     open_registrations: true,
-                    public_domain: random_hex().to_string(),
+                    public_domain: random_hex(),
                 },
             )
             .unwrap();
             let user = User::insert(
                 conn,
                 NewUser {
-                    username: random_hex().to_string(),
-                    display_name: random_hex().to_string(),
-                    outbox_url: random_hex().to_string(),
-                    inbox_url: random_hex().to_string(),
+                    username: random_hex(),
+                    display_name: random_hex(),
+                    outbox_url: random_hex(),
+                    inbox_url: random_hex(),
                     summary: "".to_string(),
                     email: None,
                     hashed_password: None,
                     instance_id: instance.id,
-                    ap_url: random_hex().to_string(),
+                    ap_url: random_hex(),
                     private_key: None,
                     public_key: "".to_string(),
                     shared_inbox_url: None,
-                    followers_endpoint: random_hex().to_string(),
+                    followers_endpoint: random_hex(),
                     avatar_id: None,
                     summary_html: SafeString::new(""),
                     role: 0,
-                    fqn: random_hex().to_string(),
+                    fqn: random_hex(),
                 },
             )
             .unwrap();
-            let mut blog = NewBlog::default();
-            blog.instance_id = instance.id;
-            blog.actor_id = random_hex().to_string();
-            blog.ap_url = random_hex().to_string();
-            blog.inbox_url = random_hex().to_string();
-            blog.outbox_url = random_hex().to_string();
+            let blog = NewBlog {
+                instance_id: instance.id,
+                actor_id: random_hex(),
+                ap_url: random_hex(),
+                inbox_url: random_hex(),
+                outbox_url: random_hex(),
+                ..Default::default()
+            };
             let blog = Blog::insert(conn, blog).unwrap();
             BlogAuthor::insert(
                 conn,

@@ -48,10 +48,10 @@ pub fn me(user: Option<User>) -> RespondOrRedirect {
 #[get("/@/<name>", rank = 2)]
 pub fn details(name: String, rockets: PlumeRocket, conn: DbConn) -> Result<Ructe, ErrorPage> {
     let user = User::find_by_fqn(&conn, &name)?;
-    let recents = Post::get_recents_for_author(&*conn, &user, 6)?;
-    let reshares = Reshare::get_recents_for_author(&*conn, &user, 6)?;
+    let recents = Post::get_recents_for_author(&conn, &user, 6)?;
+    let reshares = Reshare::get_recents_for_author(&conn, &user, 6)?;
 
-    if !user.get_instance(&*conn)?.local {
+    if !user.get_instance(&conn)?.local {
         tracing::trace!("remote user found");
         user.remote_user_found(); // Doesn't block
     }
@@ -62,14 +62,14 @@ pub fn details(name: String, rockets: PlumeRocket, conn: DbConn) -> Result<Ructe
         rockets
             .user
             .clone()
-            .and_then(|x| x.is_following(&*conn, user.id).ok())
+            .and_then(|x| x.is_following(&conn, user.id).ok())
             .unwrap_or(false),
         user.instance_id != Instance::get_local()?.id,
-        user.get_instance(&*conn)?.public_domain,
+        user.get_instance(&conn)?.public_domain,
         recents,
         reshares
             .into_iter()
-            .filter_map(|r| r.get_post(&*conn).ok())
+            .filter_map(|r| r.get_post(&conn).ok())
             .collect()
     )))
 }

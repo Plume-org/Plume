@@ -85,7 +85,7 @@ impl<'r> Responder<'r> for Ructe {
 macro_rules! render {
     ($group:tt :: $page:tt ( $( $param:expr ),* ) ) => {
         {
-            use crate::templates;
+            use $crate::templates;
 
             let mut res = vec![];
             templates::$group::$page(

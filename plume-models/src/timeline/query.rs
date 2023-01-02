@@ -11,7 +11,7 @@ use crate::{
 use plume_common::activity_pub::inbox::AsActor;
 use whatlang::{self, Lang};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum QueryError {
     SyntaxError(usize, usize, String),
     UnexpectedEndOfQuery,
@@ -20,7 +20,7 @@ pub enum QueryError {
 
 pub type QueryResult<T> = std::result::Result<T, QueryError>;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Kind<'a> {
     Original,
     Reshare(&'a User),
@@ -292,7 +292,7 @@ impl WithList {
                 WithList::Author { boosts, likes } => match kind {
                     Kind::Original => Ok(list
                         .iter()
-                        .filter_map(|a| User::find_by_fqn(&*conn, a).ok())
+                        .filter_map(|a| User::find_by_fqn(conn, a).ok())
                         .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
                     Kind::Reshare(u) => {
                         if *boosts {

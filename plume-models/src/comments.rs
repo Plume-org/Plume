@@ -381,7 +381,7 @@ impl AsObject<User, Delete, &DbConn> for Comment {
         }
 
         for n in Notification::find_for_comment(conn, &self)? {
-            n.delete(&**conn)?;
+            n.delete(conn)?;
         }
 
         diesel::update(comments::table)
@@ -431,7 +431,7 @@ mod tests {
     use serde_json::{json, to_value};
 
     fn prepare_activity(conn: &DbConn) -> (Comment, Vec<Post>, Vec<User>, Vec<Blog>) {
-        let (posts, users, blogs) = fill_database(&conn);
+        let (posts, users, blogs) = fill_database(conn);
 
         let comment = Comment::insert(
             conn,
@@ -457,8 +457,8 @@ mod tests {
     fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (original_comm, posts, users, _blogs) = prepare_activity(&conn);
-            let act = original_comm.create_activity(&conn).unwrap();
+            let (original_comm, posts, users, _blogs) = prepare_activity(conn);
+            let act = original_comm.create_activity(conn).unwrap();
 
             assert_json_eq!(to_value(&act).unwrap(), json!({
                 "actor": "https://plu.me/@/admin/",
@@ -500,7 +500,7 @@ mod tests {
                 },
             )
             .unwrap();
-            let reply_act = reply.create_activity(&conn).unwrap();
+            let reply_act = reply.create_activity(conn).unwrap();
 
             assert_json_eq!(to_value(&reply_act).unwrap(), json!({
                 "actor": "https://plu.me/@/user/",
@@ -522,12 +522,12 @@ mod tests {
             }));
 
             inbox(
-                &conn,
-                serde_json::to_value(original_comm.build_delete(&conn).unwrap()).unwrap(),
+                conn,
+                serde_json::to_value(original_comm.build_delete(conn).unwrap()).unwrap(),
             )
             .unwrap();
 
-            match inbox(&conn, to_value(act).unwrap()).unwrap() {
+            match inbox(conn, to_value(act).unwrap()).unwrap() {
                 InboxResult::Commented(c) => {
                     // TODO: one is HTML, the other markdown: assert_eq!(c.content, original_comm.content);
                     assert_eq!(c.in_response_to_id, original_comm.in_response_to_id);
