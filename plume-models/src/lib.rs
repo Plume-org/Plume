@@ -177,7 +177,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 ///
 /// Usage:
 ///
-/// ```rust
+/// ```ignore
 /// impl Model {
 ///     find_by!(model_table, name_of_the_function, field1 as String, field2 as i32);
 /// }
@@ -201,7 +201,7 @@ macro_rules! find_by {
 ///
 /// Usage:
 ///
-/// ```rust
+/// ```ignore
 /// impl Model {
 ///     list_by!(model_table, name_of_the_function, field1 as String);
 /// }
@@ -225,7 +225,7 @@ macro_rules! list_by {
 ///
 /// # Usage
 ///
-/// ```rust
+/// ```ignore
 /// impl Model {
 ///     get!(model_table);
 /// }
@@ -248,7 +248,7 @@ macro_rules! get {
 ///
 /// # Usage
 ///
-/// ```rust
+/// ```ignore
 /// impl Model {
 ///     insert!(model_table, NewModelType);
 /// }
@@ -280,7 +280,7 @@ macro_rules! insert {
 ///
 /// # Usage
 ///
-/// ```rust
+/// ```ignore
 /// impl Model {
 ///     last!(model_table);
 /// }
@@ -354,7 +354,7 @@ mod tests {
         };
     }
 
-    pub fn db<'a>() -> db_conn::DbConn {
+    pub fn db() -> db_conn::DbConn {
         db_conn::DbConn((*DB_POOL).get().unwrap())
     }
 

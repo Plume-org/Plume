@@ -82,9 +82,9 @@ pub(crate) mod tests {
         use crate::post_authors::*;
         use crate::posts::*;
 
-        let (users, blogs) = blog_fill_db(&conn);
+        let (users, blogs) = blog_fill_db(conn);
         let post = Post::insert(
-            &conn,
+            conn,
             NewPost {
                 blog_id: blogs[0].id,
                 slug: "testing".to_owned(),
@@ -102,7 +102,7 @@ pub(crate) mod tests {
         .unwrap();
 
         PostAuthor::insert(
-            &conn,
+            conn,
             NewPostAuthor {
                 post_id: post.id,
                 author_id: users[0].id,
@@ -190,7 +190,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&conn, act.clone()),
+                super::inbox(&conn, act),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -221,7 +221,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&conn, act.clone()),
+                super::inbox(&conn, act),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -249,7 +249,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&conn, act.clone()),
+                super::inbox(&conn, act),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -324,7 +324,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&conn, act.clone()),
+                super::inbox(&conn, act),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -362,7 +362,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&conn, act.clone()),
+                super::inbox(&conn, act),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))
@@ -397,7 +397,7 @@ pub(crate) mod tests {
             });
 
             assert!(matches!(
-                super::inbox(&conn, act.clone()),
+                super::inbox(&conn, act),
                 Err(super::Error::Inbox(
                     box plume_common::activity_pub::inbox::InboxError::InvalidObject(_),
                 ))

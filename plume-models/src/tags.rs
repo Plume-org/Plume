@@ -92,7 +92,7 @@ mod tests {
             let (posts, _users, _blogs) = fill_database(conn);
             let post_id = posts[0].id;
             let mut ht = Hashtag::new();
-            ht.set_href(ap_url(&format!("https://plu.me/tag/a_tag")).parse::<IriString>()?);
+            ht.set_href(ap_url("https://plu.me/tag/a_tag").parse::<IriString>()?);
             ht.set_name("a_tag".to_string());
             let tag = Tag::from_activity(conn, &ht, post_id, true)?;
 

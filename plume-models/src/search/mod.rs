@@ -154,7 +154,7 @@ pub(crate) mod tests {
                 },
             )
             .unwrap();
-            searcher.add_document(&conn, &post).unwrap();
+            searcher.add_document(conn, &post).unwrap();
             searcher.commit();
             assert_eq!(
                 searcher.search_document(conn, Query::from_str(&title).unwrap(), (0, 1))[0].id,

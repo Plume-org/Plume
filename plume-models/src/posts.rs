@@ -133,8 +133,7 @@ impl Post {
             .filter(posts::id.eq_any(ids))
             .filter(posts::published.eq(true))
             .count()
-            .load(conn)?
-            .get(0)
+            .load(conn)?.first()
             .cloned()
             .ok_or(Error::NotFound)
     }
@@ -465,7 +464,7 @@ impl Post {
             .collect::<HashSet<_>>();
         for (m, id) in &mentions {
             if !old_user_mentioned.contains(id) {
-                Mention::from_activity(&*conn, m, self.id, true, true)?;
+                Mention::from_activity(conn, m, self.id, true, true)?;
             }
         }
 
@@ -488,7 +487,7 @@ impl Post {
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
             .collect::<HashSet<_>>();
 
-        let old_tags = Tag::for_post(&*conn, self.id)?;
+        let old_tags = Tag::for_post(conn, self.id)?;
         let old_tags_name = old_tags
             .iter()
             .filter_map(|tag| {
@@ -525,7 +524,7 @@ impl Post {
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
             .collect::<HashSet<_>>();
 
-        let old_tags = Tag::for_post(&*conn, self.id)?;
+        let old_tags = Tag::for_post(conn, self.id)?;
         let old_tags_name = old_tags
             .iter()
             .filter_map(|tag| {
@@ -1036,7 +1035,7 @@ mod tests {
         let post = &posts[0];
         let mentioned = &users[1];
         let mention = Mention::insert(
-            &conn,
+            conn,
             NewMention {
                 mentioned_id: mentioned.id,
                 post_id: Some(post.id),
@@ -1044,7 +1043,7 @@ mod tests {
             },
         )
         .unwrap();
-        (post.to_owned(), mention.to_owned(), posts, users, blogs)
+        (post.to_owned(), mention, posts, users, blogs)
     }
 
     // creates a post, get it's Create activity, delete the post,
@@ -1053,9 +1052,9 @@ mod tests {
     fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, users, blogs) = fill_database(&conn);
+            let (_, users, blogs) = fill_database(conn);
             let post = Post::insert(
-                &conn,
+                conn,
                 NewPost {
                     blog_id: blogs[0].id,
                     slug: "yo".into(),
@@ -1072,19 +1071,19 @@ mod tests {
             )
             .unwrap();
             PostAuthor::insert(
-                &conn,
+                conn,
                 NewPostAuthor {
                     post_id: post.id,
                     author_id: users[0].id,
                 },
             )
             .unwrap();
-            let create = post.create_activity(&conn).unwrap();
-            post.delete(&conn).unwrap();
+            let create = post.create_activity(conn).unwrap();
+            post.delete(conn).unwrap();
 
-            match inbox(&conn, serde_json::to_value(create).unwrap()).unwrap() {
+            match inbox(conn, serde_json::to_value(create).unwrap()).unwrap() {
                 InboxResult::Post(p) => {
-                    assert!(p.is_author(&conn, users[0].id).unwrap());
+                    assert!(p.is_author(conn, users[0].id).unwrap());
                     assert_eq!(p.source, "Hello".to_owned());
                     assert_eq!(p.blog_id, blogs[0].id);
                     assert_eq!(p.content, SafeString::new("Hello"));
@@ -1221,7 +1220,7 @@ mod tests {
             let actual = to_value(act)?;
 
             let id = actual["id"].to_string();
-            let (id_pre, id_post) = id.rsplit_once("-").unwrap();
+            let (id_pre, id_post) = id.rsplit_once('-').unwrap();
             assert_eq!(post.ap_url, "https://plu.me/~/BlogName/testing");
             assert_eq!(
                 id_pre,

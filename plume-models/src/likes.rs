@@ -199,7 +199,7 @@ mod tests {
             let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let user = &post.get_authors(&conn)?[0];
-            let like = Like::insert(&*conn, NewLike::new(post, user))?;
+            let like = Like::insert(&conn, NewLike::new(post, user))?;
             let act = like.to_activity(&conn).unwrap();
 
             let expected = json!({
@@ -223,8 +223,8 @@ mod tests {
             let (posts, _users, _blogs) = fill_database(&conn);
             let post = &posts[0];
             let user = &post.get_authors(&conn)?[0];
-            let like = Like::insert(&*conn, NewLike::new(post, user))?;
-            let act = like.build_undo(&*conn)?;
+            let like = Like::insert(&conn, NewLike::new(post, user))?;
+            let act = like.build_undo(&conn)?;
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",

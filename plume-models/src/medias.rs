@@ -42,7 +42,7 @@ pub struct NewMedia {
     pub owner_id: i32,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum MediaCategory {
     Image,
     Audio,
@@ -343,7 +343,7 @@ pub(crate) mod tests {
     use std::path::Path;
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Media>) {
-        let mut wd = current_dir().unwrap().to_path_buf();
+        let mut wd = current_dir().unwrap();
         while wd.pop() {
             if wd.join(".git").exists() {
                 set_current_dir(wd).unwrap();
@@ -456,7 +456,7 @@ pub(crate) mod tests {
             let media = Media::insert(
                 conn,
                 NewMedia {
-                    file_path: path.clone(),
+                    file_path: path,
                     alt_text: "alt message".to_owned(),
                     is_remote: false,
                     remote_url: None,

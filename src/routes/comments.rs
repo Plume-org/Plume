@@ -125,7 +125,7 @@ pub fn create(
                 user.has_reshared(&conn, &post)
                     .expect("comments::create: reshared error"),
                 user.is_following(
-                    &*conn,
+                    &conn,
                     post.get_authors(&conn)
                         .expect("comments::create: authors error")[0]
                         .id

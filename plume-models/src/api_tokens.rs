@@ -103,7 +103,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
             let conn = request
                 .guard::<DbConn>()
                 .map_failure(|_| (Status::InternalServerError, TokenError::DbError))?;
-            if let Ok(token) = ApiToken::find_by_value(&*conn, val) {
+            if let Ok(token) = ApiToken::find_by_value(&conn, val) {
                 return Outcome::Success(token);
             }
         }

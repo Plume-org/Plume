@@ -20,8 +20,6 @@ RUN chmod a+x ./wasm-deps.sh && sleep 1 && ./wasm-deps.sh
 WORKDIR /app
 
 COPY . .
-RUN echo nightly-2022-07-19 > rust-toolchain
-
 RUN cargo install wasm-pack
 RUN chmod a+x ./script/plume-front.sh && sleep 1 && ./script/plume-front.sh
 RUN cargo install --path ./ --force --no-default-features --features postgres

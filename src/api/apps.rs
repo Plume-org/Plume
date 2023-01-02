@@ -10,7 +10,7 @@ pub fn create(conn: DbConn, data: Json<NewAppData>) -> Api<App> {
     let client_id = random_hex();
     let client_secret = random_hex();
     let app = App::insert(
-        &*conn,
+        &conn,
         NewApp {
             name: data.name.clone(),
             client_id,

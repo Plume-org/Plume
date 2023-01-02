@@ -413,7 +413,7 @@ mod tests {
                 &List::find_for_user_by_name(conn, l1.user_id, &l1.name).unwrap(),
             );
             l_eq(
-                &&l1u,
+                &l1u,
                 &List::find_for_user_by_name(conn, l1u.user_id, &l1u.name).unwrap(),
             );
             Ok(())

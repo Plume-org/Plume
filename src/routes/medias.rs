@@ -145,9 +145,9 @@ pub fn details(
 
 #[post("/medias/<id>/delete")]
 pub fn delete(id: i32, user: User, conn: DbConn, intl: I18n) -> Result<Flash<Redirect>, ErrorPage> {
-    let media = Media::get(&*conn, id)?;
+    let media = Media::get(&conn, id)?;
     if media.owner_id == user.id {
-        media.delete(&*conn)?;
+        media.delete(&conn)?;
         Ok(Flash::success(
             Redirect::to(uri!(list: page = _)),
             i18n!(intl.catalog, "Your media have been deleted."),
@@ -167,9 +167,9 @@ pub fn set_avatar(
     conn: DbConn,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let media = Media::get(&*conn, id)?;
+    let media = Media::get(&conn, id)?;
     if media.owner_id == user.id {
-        user.set_avatar(&*conn, media.id)?;
+        user.set_avatar(&conn, media.id)?;
         Ok(Flash::success(
             Redirect::to(uri!(details: id = id)),
             i18n!(intl.catalog, "Your avatar has been updated."),

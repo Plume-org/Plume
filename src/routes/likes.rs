@@ -20,14 +20,14 @@ pub fn create(
     let b = Blog::find_by_fqn(&conn, &blog)?;
     let post = Post::find_by_slug(&conn, &slug, b.id)?;
 
-    if !user.has_liked(&*conn, &post)? {
-        let like = likes::Like::insert(&*conn, likes::NewLike::new(&post, &user))?;
-        like.notify(&*conn)?;
+    if !user.has_liked(&conn, &post)? {
+        let like = likes::Like::insert(&conn, likes::NewLike::new(&post, &user))?;
+        like.notify(&conn)?;
 
         Timeline::add_to_all_timelines(&conn, &post, Kind::Like(&user))?;
 
-        let dest = User::one_by_instance(&*conn)?;
-        let act = like.to_activity(&*conn)?;
+        let dest = User::one_by_instance(&conn)?;
+        let act = like.to_activity(&conn)?;
         rockets
             .worker
             .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
