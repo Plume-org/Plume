@@ -4,6 +4,9 @@ version = "0.7.2"
 authors = ["Plume contributors"]
 edition = "2018"
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
 [lib]
 crate-type = ["cdylib"]
 
