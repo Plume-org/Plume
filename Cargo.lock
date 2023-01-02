@@ -3998,8 +3998,8 @@ dependencies = [
 
 [[package]]
 name = "rocket_csrf"
-version = "0.1.1"
-source = "git+https://git.joinplu.me/plume/rocket_csrf?rev=0.1.1#e400909066fe57c1da7640bd086361e5233d8511"
+version = "0.1.2"
+source = "git+https://git.joinplu.me/plume/rocket_csrf?rev=0.1.2#446d306ec5f08773253eb380f62d77077d306143"
 dependencies = [
  "data-encoding",
  "ring",
