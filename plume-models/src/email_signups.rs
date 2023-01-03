@@ -61,9 +61,7 @@ pub struct NewEmailSignup<'a> {
 
 impl EmailSignup {
     pub fn start(conn: &DbConn, email: &str) -> Result<Token> {
-        if let Some(x) = BlocklistedEmail::matches_blocklist(conn, email)? {
-            return Err(Error::Blocklisted(x.notify_user, x.notification_text));
-        }
+        Self::ensure_email_not_blocked(conn, email)?;
 
         conn.transaction(|| {
             Self::ensure_user_not_exist_by_email(conn, email)?;
@@ -95,9 +93,8 @@ impl EmailSignup {
     }
 
     pub fn confirm(&self, conn: &DbConn) -> Result<()> {
-        if let Some(x) = BlocklistedEmail::matches_blocklist(conn, &self.email)? {
-            return Err(Error::Blocklisted(x.notify_user, x.notification_text));
-        }
+        Self::ensure_email_not_blocked(conn, &self.email)?;
+
         conn.transaction(|| {
             Self::ensure_user_not_exist_by_email(conn, &self.email)?;
             if self.expired() {
@@ -109,9 +106,8 @@ impl EmailSignup {
     }
 
     pub fn complete(&self, conn: &DbConn, username: String, password: String) -> Result<User> {
-        if let Some(x) = BlocklistedEmail::matches_blocklist(conn, &self.email)? {
-            return Err(Error::Blocklisted(x.notify_user, x.notification_text));
-        }
+        Self::ensure_email_not_blocked(conn, &self.email)?;
+
         conn.transaction(|| {
             Self::ensure_user_not_exist_by_email(conn, &self.email)?;
             let user = NewUser::new_local(
@@ -131,6 +127,14 @@ impl EmailSignup {
     fn delete(&self, conn: &DbConn) -> Result<()> {
         let _rows = diesel::delete(self).execute(&**conn).map_err(Error::from)?;
         Ok(())
+    }
+
+    fn ensure_email_not_blocked(conn: &DbConn, email: &str) -> Result<()> {
+        if let Some(x) = BlocklistedEmail::matches_blocklist(conn, email)? {
+            Err(Error::Blocklisted(x.notify_user, x.notification_text))
+        } else {
+            Ok(())
+        }
     }
 
     fn ensure_user_not_exist_by_email(conn: &DbConn, email: &str) -> Result<()> {
