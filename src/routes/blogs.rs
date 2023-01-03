@@ -463,20 +463,24 @@ mod tests {
                 Instance::cache_local(conn);
                 instance
             });
-            let mut user = NewUser::default();
-            user.instance_id = instance.id;
-            user.username = random_hex();
-            user.ap_url = random_hex();
-            user.inbox_url = random_hex();
-            user.outbox_url = random_hex();
-            user.followers_endpoint = random_hex();
+            let user = NewUser {
+                instance_id: instance.id,
+                username: random_hex(),
+                ap_url: random_hex(),
+                inbox_url: random_hex(),
+                outbox_url: random_hex(),
+                followers_endpoint: random_hex(),
+                ..Default::default()
+            };
             let user = User::insert(conn, user).unwrap();
-            let mut blog = NewBlog::default();
-            blog.instance_id = instance.id;
-            blog.actor_id = random_hex();
-            blog.ap_url = random_hex();
-            blog.inbox_url = random_hex();
-            blog.outbox_url = random_hex();
+            let blog = NewBlog {
+                instance_id: instance.id,
+                actor_id: random_hex(),
+                ap_url: random_hex(),
+                inbox_url: random_hex(),
+                outbox_url: random_hex(),
+                ..Default::default()
+            };
             let blog = Blog::insert(conn, blog).unwrap();
             BlogAuthor::insert(
                 conn,
