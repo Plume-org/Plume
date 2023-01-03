@@ -18,10 +18,13 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
-use plume_common::activity_pub::{
-    inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source, SourceProperty,
-    ToAsString, ToAsUri,
+use plume_common::{
+    activity_pub::{
+        inbox::{AsActor, FromId},
+        sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source,
+        SourceProperty, ToAsString, ToAsUri,
+    },
+    utils::iri_percent_encode_seg,
 };
 use webfinger::*;
 
@@ -450,7 +453,7 @@ impl FromId<DbConn> for Blog {
 
         let any_base = AnyBase::from_extended(object)?;
         let id = any_base.id().ok_or(Error::MissingApProperty)?;
-        new_blog.ap_url = id.to_string();
+        new_blog.ap_url = iri_percent_encode_seg(id.as_ref());
 
         let inst = id
             .authority_components()
