@@ -126,11 +126,9 @@ pub(crate) mod tests {
                     .id,
                 various[1].id
             );
-            assert!(
-                BlocklistedEmail::matches_blocklist(&conn, no_match)
-                    .unwrap()
-                    .is_none()
-            );
+            assert!(BlocklistedEmail::matches_blocklist(&conn, no_match)
+                .unwrap()
+                .is_none());
             Ok(())
         });
     }

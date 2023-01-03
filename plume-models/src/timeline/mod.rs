@@ -291,13 +291,7 @@ mod tests {
                 "all".to_owned(),
             )
             .unwrap();
-            List::new(
-                conn,
-                "languages I speak",
-                Some(&users[1]),
-                ListType::Prefix,
-            )
-            .unwrap();
+            List::new(conn, "languages I speak", Some(&users[1]), ListType::Prefix).unwrap();
             let tl2_u1 = Timeline::new_for_user(
                 conn,
                 users[0].id,
@@ -337,18 +331,14 @@ mod tests {
 
             let tl_instance = Timeline::list_for_user(conn, None).unwrap();
             assert_eq!(3, tl_instance.len()); // there are also the local and federated feed by default
-            assert!(tl_instance
-                .iter()
-                .any(|tl| *tl == tl1_instance));
+            assert!(tl_instance.iter().any(|tl| *tl == tl1_instance));
 
             tl1_u1.name = "My Super TL".to_owned();
             let new_tl1_u2 = tl1_u2.update(conn).unwrap();
 
             let tl_u2 = Timeline::list_for_user(conn, Some(users[1].id)).unwrap();
             assert_eq!(2, tl_u2.len()); // same here
-            assert!(tl_u2
-                .iter()
-                .any(|tl| *tl == new_tl1_u2));
+            assert!(tl_u2.iter().any(|tl| *tl == new_tl1_u2));
 
             Ok(())
         });
