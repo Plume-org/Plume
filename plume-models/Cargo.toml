@@ -5,7 +5,7 @@ authors = ["Plume contributors"]
 edition = "2018"
 
 [dependencies]
-ammonia = "3.2.0"
+ammonia = "3.3.0"
 bcrypt = "0.12.1"
 guid-create = "0.2"
 itertools = "0.10.3"
