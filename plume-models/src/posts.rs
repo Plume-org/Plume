@@ -133,7 +133,8 @@ impl Post {
             .filter(posts::id.eq_any(ids))
             .filter(posts::published.eq(true))
             .count()
-            .load(conn)?.first()
+            .load(conn)?
+            .first()
             .cloned()
             .ok_or(Error::NotFound)
     }
