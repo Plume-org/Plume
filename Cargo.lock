@@ -2094,9 +2094,9 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.10.3"
+version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
+checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
 dependencies = [
  "either 1.6.1",
 ]
@@ -3316,7 +3316,7 @@ dependencies = [
  "diesel_migrations",
  "glob",
  "guid-create",
- "itertools 0.10.3",
+ "itertools 0.10.5",
  "lazy_static",
  "ldap3",
  "lettre",
@@ -4072,7 +4072,7 @@ checksum = "ef88d8c2492d7266e264b31e0ffcf1149d5ba183bccd3abaf1483ee905fc85de"
 dependencies = [
  "base64 0.13.0",
  "bytecount",
- "itertools 0.10.3",
+ "itertools 0.10.5",
  "md5",
  "nom 7.1.1",
 ]
