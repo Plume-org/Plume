@@ -255,7 +255,7 @@ impl Post {
         ap_url(&format!(
             "{}/~/{}/{}/",
             CONFIG.base_url,
-            blog.fqn,
+            iri_percent_encode_seg(&blog.fqn),
             iri_percent_encode_seg(slug)
         ))
     }
