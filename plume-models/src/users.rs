@@ -246,20 +246,7 @@ impl User {
     fn fetch(url: &str) -> Result<CustomPerson> {
         let res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
-        // without this workaround, publicKey is not correctly deserialized
-        let ap_sign = serde_json::from_str::<ApSignature>(text)?;
-        let person = serde_json::from_str::<Person>(text)?;
-        let json = CustomPerson::new(
-            ApActor::new(
-                person
-                    .clone()
-                    .id_unchecked()
-                    .ok_or(Error::MissingApProperty)?
-                    .to_owned(),
-                person,
-            ),
-            ap_sign,
-        ); // FIXME: Don't clone()
+        let json = serde_json::from_str::<CustomPerson>(text)?;
         Ok(json)
     }
 
