@@ -19,7 +19,7 @@ syntect = "4.5.0"
 regex-syntax = { version = "0.6.26", default-features = false, features = ["unicode-perl"] }
 tracing = "0.1.35"
 askama_escape = "0.10.3"
-activitystreams = "=0.7.0-alpha.20"
+activitystreams = "=0.7.0-alpha.24"
 activitystreams-ext = "0.1.0-alpha.2"
 url = "2.2.2"
 flume = "0.10.13"
