@@ -18,11 +18,11 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
-use plume_common::activity_pub::{
+use plume_common::{activity_pub::{
     inbox::{AsActor, FromId},
     sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source, SourceProperty,
     ToAsString, ToAsUri,
-};
+}, utils::iri_percent_encode_seg};
 use webfinger::*;
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
@@ -83,9 +83,9 @@ impl Blog {
 
         if inserted.fqn.is_empty() {
             if instance.local {
-                inserted.fqn = inserted.actor_id.clone();
+                inserted.fqn = iri_percent_encode_seg(&inserted.actor_id.clone());
             } else {
-                inserted.fqn = format!("{}@{}", inserted.actor_id, instance.public_domain);
+                inserted.fqn = format!("{}@{}", iri_percent_encode_seg(&inserted.actor_id), instance.public_domain);
             }
         }
 
