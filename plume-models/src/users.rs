@@ -256,23 +256,13 @@ impl User {
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
         User::fetch(&self.ap_url.clone()).and_then(|json| {
-            let avatar = Media::save_remote(
-                conn,
-                json.ap_actor_ref()
-                    .icon()
-                    .ok_or(Error::MissingApProperty)? // FIXME: Fails when icon is not set
-                    .iter()
-                    .next()
-                    .and_then(|i| {
-                        i.clone()
-                            .extend::<Image, ImageType>() // FIXME: Don't clone()
-                            .ok()?
-                            .and_then(|url| Some(url.id_unchecked()?.to_string()))
-                    })
-                    .ok_or(Error::MissingApProperty)?,
-                self,
-            )
-            .ok();
+            let avatar = json
+                .icon()
+                .and_then(|icon| icon.iter().next())
+                .and_then(|i| i.clone().extend::<Image, ImageType>().ok())
+                .and_then(|image| image)
+                .and_then(|image| image.id_unchecked().map(|url| url.to_string()))
+                .and_then(|url| Media::save_remote(conn, url, self).ok());
 
             let pub_key = &json.ext_one.public_key.public_key_pem;
             diesel::update(self)
