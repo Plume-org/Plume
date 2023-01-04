@@ -381,6 +381,7 @@ impl FromId<DbConn> for Blog {
                 .ok_or(Error::MissingApProperty)?
                 .to_string();
             if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+                tracing::error!("preferredUsername includes invalid character(s): {}", &name);
                 return Err(Error::InvalidValue);
             }
             (
