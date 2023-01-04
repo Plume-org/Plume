@@ -1065,7 +1065,7 @@ version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf3cde8413353dc7f5d72fa8ce0b99a560a359d2c5ef1e5817ca731cd9008f4c"
 dependencies = [
- "migrations_internals",
+ "migrations_internals 1.4.1",
  "migrations_macros",
 ]
 
@@ -2494,12 +2494,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "migrations_internals"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c493c09323068c01e54c685f7da41a9ccf9219735c3766fbfd6099806ea08fbc"
+dependencies = [
+ "serde 1.0.137",
+ "toml 0.5.9",
+]
+
+[[package]]
 name = "migrations_macros"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9753f12909fd8d923f75ae5c3258cae1ed3c8ec052e1b38c93c21a6d157f789c"
 dependencies = [
- "migrations_internals",
+ "migrations_internals 1.4.1",
  "proc-macro2 1.0.37",
  "quote 1.0.18",
  "syn 1.0.92",
@@ -3321,7 +3331,7 @@ dependencies = [
  "ldap3",
  "lettre",
  "lindera-tantivy",
- "migrations_internals",
+ "migrations_internals 2.0.0",
  "native-tls",
  "once_cell",
  "openssl",
