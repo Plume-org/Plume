@@ -45,7 +45,10 @@ impl Actor for RemoteFetchActor {
             RemoteUserFound(user) => match self.conn.get() {
                 Ok(conn) => {
                     let conn = DbConn(conn);
-                    if user.get_instance(&conn).map_or(false, |instance| instance.blocked) {
+                    if user
+                        .get_instance(&conn)
+                        .map_or(false, |instance| instance.blocked)
+                    {
                         return;
                     }
                     // Don't call these functions in parallel
