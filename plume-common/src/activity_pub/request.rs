@@ -253,7 +253,7 @@ mod tests {
                 .unwrap();
             let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
             verifier.update(data.as_bytes()).unwrap();
-            verifier.verify(&signature).map_err(|_| Error())
+            verifier.verify(signature).map_err(|_| Error())
         }
     }
 
@@ -262,7 +262,7 @@ mod tests {
         let signer = MySigner::new();
         let headers = HeaderMap::new();
         let result = signature(&signer, &headers, ("post", "/inbox", None)).unwrap();
-        let fields: Vec<&str> = result.to_str().unwrap().split(",").collect();
+        let fields: Vec<&str> = result.to_str().unwrap().split(',').collect();
         assert_eq!(r#"headers="(request-target)""#, fields[2]);
         let sign = &fields[3][11..(fields[3].len() - 1)];
         assert!(signer.verify("post /inbox", sign.as_bytes()).is_ok());
