@@ -937,7 +937,10 @@ impl FromId<DbConn> for User {
             .to_string();
 
         if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
-            tracing::error!("preferredUsername includes invalid character(s): {}", &username);
+            tracing::error!(
+                "preferredUsername includes invalid character(s): {}",
+                &username
+            );
             return Err(Error::InvalidValue);
         }
 
