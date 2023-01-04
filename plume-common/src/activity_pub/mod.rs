@@ -592,7 +592,7 @@ mod tests {
     }
 
     #[test]
-    fn de_custom_group() {
+    fn se_custom_group() {
         let group = CustomGroup::new(
             ApActor::new("https://example.com/inbox".parse().unwrap(), Group::new()),
             ApSignature {
