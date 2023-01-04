@@ -82,6 +82,8 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
     let slug = Blog::slug(title);
     if slug.is_empty() {
         Err(ValidationError::new("empty_slug"))
+    } else if slug.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\n', '\t'][..]) {
+        Err(ValidationError::new("slug_illegal_char"))
     } else {
         Ok(())
     }
