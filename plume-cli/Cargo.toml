@@ -15,7 +15,7 @@ rpassword = "6.0.1"
 
 [dependencies.diesel]
 features = ["r2d2", "chrono"]
-version = "1.4.5"
+version = "2.0.2"
 
 [dependencies.plume-models]
 path = "../plume-models"
