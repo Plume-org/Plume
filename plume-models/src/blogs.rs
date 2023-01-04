@@ -166,7 +166,7 @@ impl Blog {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
         let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
-        blog.set_preferred_username(self.actor_id.clone());
+        blog.set_preferred_username(iri_percent_encode_seg(&self.actor_id));
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
         blog.set_summary(self.summary_html.to_string());
