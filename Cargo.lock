@@ -325,9 +325,15 @@ checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
 name = "base64"
-version = "0.13.0"
+version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
+checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
+
+[[package]]
+name = "base64"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
 
 [[package]]
 name = "bcrypt"
@@ -335,7 +341,7 @@ version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6fe4fef31efb0f76133ae8e3576a88e58edb7cfc5584c81c758c349ba46b43fc"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.13.1",
  "blowfish",
  "getrandom 0.2.6",
  "zeroize",
@@ -613,7 +619,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80f6044740a4a516b8aac14c140cdf35c1a640b1bd6b98b6224e49143b2f1566"
 dependencies = [
  "aes-gcm",
- "base64 0.13.0",
+ "base64 0.13.1",
  "hkdf",
  "hmac",
  "percent-encoding 2.1.0",
@@ -3181,7 +3187,7 @@ version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bd39bc6cdc9355ad1dc5eeedefee696bb35c34caf21768741e81826c0bbd7225"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.13.1",
  "indexmap",
  "line-wrap",
  "serde 1.0.137",
@@ -3255,7 +3261,7 @@ dependencies = [
  "array_tool",
  "askama_escape",
  "assert-json-diff",
- "base64 0.13.0",
+ "base64 0.20.0",
  "chrono",
  "flume",
  "futures 0.3.21",
@@ -3833,7 +3839,7 @@ version = "0.10.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0718f81a8e14c4dbb3b34cf23dc6aaf9ab8a0dfec160c534b3dbca1aaa21f47c"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.13.1",
  "bytes 0.5.6",
  "encoding_rs",
  "futures-core",
@@ -3868,7 +3874,7 @@ version = "0.11.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b75aa69a3f06bbcc66ede33af2af253c6f7a86b1ca0033f60c580a27074fbf92"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.13.1",
  "bytes 1.1.0",
  "encoding_rs",
  "futures-core",
@@ -3954,7 +3960,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83b9d9dc08c5dcc1d8126a9dd615545e6a358f8c13c883c8dfed8c0376fa355e"
 dependencies = [
  "atty",
- "base64 0.13.0",
+ "base64 0.13.1",
  "log 0.4.17",
  "memchr",
  "num_cpus",
@@ -4070,7 +4076,7 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ef88d8c2492d7266e264b31e0ffcf1149d5ba183bccd3abaf1483ee905fc85de"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.13.1",
  "bytecount",
  "itertools 0.10.3",
  "md5",
@@ -4616,7 +4622,7 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edca90bddda472f39fdc74a031d61d52b08b1de97f2a704afae726a8004abb0d"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.13.1",
  "bitpacking",
  "byteorder",
  "census",
